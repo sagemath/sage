@@ -143,7 +143,7 @@ cdef class FiniteRingElement(CommutativeRingElement):
             raise ValueError("unknown algorithm")
 
     def to_bytes(self, byteorder="big"):
-        """
+        r"""
         Return an array of bytes representing an integer.
 
         Internally relies on the python ``int.to_bytes()`` method.
@@ -208,9 +208,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``var`` - string (default: 'x')
+        - ``var`` -- string (default: 'x')
 
-        - ``algorithm`` - string (default: 'pari')
+        - ``algorithm`` -- string (default: 'pari')
 
           - 'pari' -- use pari's minpoly
 
@@ -545,7 +545,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``var`` -- default: ``None`` - a string for a new variable name to use.
+        - ``var`` -- (default: ``None``); a string for a new variable name to use.
 
         EXAMPLES::
 
@@ -1136,7 +1136,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         return self.to_integer().to_bytes(length=length, byteorder=byteorder)
 
 cdef class Cache_base(SageObject):
-    cpdef FinitePolyExtElement fetch_int(self, number) noexcept:
+    cpdef FinitePolyExtElement fetch_int(self, number):
         r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns

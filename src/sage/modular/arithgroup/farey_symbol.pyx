@@ -1,4 +1,6 @@
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
+# distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 # sage.doctest: needs sage.libs.pari
 r"""
 Farey symbol for arithmetic subgroups of `\PSL_2(\ZZ)`
@@ -31,14 +33,14 @@ from sage.rings.real_mpfr import RR
 from sage.rings.cc import CC
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
-from .congroup_gammaH import is_GammaH
-from .congroup_gamma1 import is_Gamma1
-from .congroup_gamma0 import is_Gamma0
-from .congroup_gamma import is_Gamma
+from .congroup_gammaH import GammaH_class
+from .congroup_gamma1 import Gamma1_class
+from .congroup_gamma0 import Gamma0_class
+from .congroup_gamma import Gamma_class
 from .congroup_sl2z import SL2Z
 from sage.modular.cusps import Cusp
 
-from sage.misc.decorators import options, rename_keyword
+from sage.misc.decorators import options
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp cimport richcmp_not_equal
 
@@ -108,7 +110,7 @@ cdef class Farey:
 
     INPUT:
 
-    - `G` - an arithmetic subgroup of `\PSL_2(\ZZ)`
+    - `G` -- an arithmetic subgroup of `\PSL_2(\ZZ)`
 
     EXAMPLES:
 
@@ -216,19 +218,19 @@ cdef class Farey:
             sig_on()
             self.this_ptr = new cpp_farey()
             sig_off()
-        elif is_Gamma0(group):
+        elif isinstance(group, Gamma0_class):
             sig_on()
             self.this_ptr = new cpp_farey(group, new is_element_Gamma0(p))
             sig_off()
-        elif is_Gamma1(group):
+        elif isinstance(group, Gamma1_class):
             sig_on()
             self.this_ptr = new cpp_farey(group, new is_element_Gamma1(p))
             sig_off()
-        elif is_Gamma(group):
+        elif isinstance(group, Gamma_class):
             sig_on()
             self.this_ptr = new cpp_farey(group, new is_element_Gamma(p))
             sig_off()
-        elif is_GammaH(group):
+        elif isinstance(group, GammaH_class):
             sig_on()
             l = group._GammaH_class__H
             self.this_ptr = new cpp_farey(group, new is_element_GammaH(p, l))
@@ -846,7 +848,7 @@ cdef class Farey:
 
         INPUT:
 
-        ``c`` -- a cusp
+        - ``c`` -- a cusp
 
         EXAMPLES::
 
@@ -867,7 +869,7 @@ cdef class Farey:
 
         INPUT:
 
-        ``r`` -- a rational number
+        - ``r`` -- a rational number
 
         EXAMPLES::
 
@@ -895,7 +897,6 @@ cdef class Farey:
         sig_off()
         return result
 
-    @rename_keyword(rgbcolor='color')
     @options(alpha=1, fill=True, thickness=1, color='lightgray',
              color_even='white',
              zorder=2, linestyle='solid', show_pairing=True,
@@ -1038,26 +1039,26 @@ cdef public long convert_to_long(n) noexcept:
     cdef long m = n
     return m
 
-cdef public object convert_to_Integer(mpz_class a) noexcept:
+cdef public object convert_to_Integer(mpz_class a):
     A = Integer()
     A.set_from_mpz(a.get_mpz_t())
     return A
 
-cdef public object convert_to_rational(mpq_class r) noexcept:
+cdef public object convert_to_rational(mpq_class r):
     a = Integer()
     a.set_from_mpz(r.get_num_mpz_t())
     b = Integer()
     b.set_from_mpz(r.get_den_mpz_t())
     return a/b
 
-cdef public object convert_to_cusp(mpq_class r) noexcept:
+cdef public object convert_to_cusp(mpq_class r):
     a = Integer()
     a.set_from_mpz(r.get_num_mpz_t())
     b = Integer()
     b.set_from_mpz(r.get_den_mpz_t())
     return Cusp(a/b)
 
-cdef public object convert_to_SL2Z(cpp_SL2Z M) noexcept:
+cdef public object convert_to_SL2Z(cpp_SL2Z M):
     a = convert_to_Integer(M.a())
     b = convert_to_Integer(M.b())
     c = convert_to_Integer(M.c())

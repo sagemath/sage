@@ -14,7 +14,6 @@ where functions that depend on the ramification of the defining polynomial are p
 AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
@@ -332,7 +331,7 @@ cdef inline int ccopy(celement out, celement a, PowComputer_ prime_pow) except -
     """
     out._coeffs = a._coeffs[:]
 
-cdef inline cpickle(celement a, PowComputer_ prime_pow) noexcept:
+cdef inline cpickle(celement a, PowComputer_ prime_pow):
     r"""
     Return a representation of ``a`` for pickling.
 

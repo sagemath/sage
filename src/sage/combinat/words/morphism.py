@@ -112,9 +112,9 @@ def get_cycles(f, domain):
 
     INPUT:
 
-    - ``f`` - function.
+    - ``f`` -- function.
 
-    - ``domain`` - iterable, a subdomain of the domain of definition of ``f``.
+    - ``domain`` -- iterable, a subdomain of the domain of definition of ``f``.
 
     EXAMPLES::
 
@@ -401,7 +401,7 @@ class WordMorphism(SageObject):
 
             self._morph = {}
 
-            dom_alph = list()
+            dom_alph = []
             for key, val in data.items():
                 dom_alph.append(key)
                 if val in codomain.alphabet():
@@ -463,7 +463,7 @@ class WordMorphism(SageObject):
 
     def _build_codomain(self, data):
         r"""
-        Return a Words domain containing all the letter in the keys of
+        Return a Words domain containing all the letters in the values of
         data (which must be a dictionary).
 
         TESTS:
@@ -489,10 +489,10 @@ class WordMorphism(SageObject):
             Finite words over {0, 1, 2}
         """
         codom_alphabet = set()
-        for key, val in data.items():
+        for val in data.values():
             try:
                 it = iter(val)
-            except Exception:
+            except TypeError:
                 it = [val]
             codom_alphabet.update(it)
         try:
@@ -632,13 +632,13 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``w`` - word or sequence in the domain of self
+        -  ``w`` -- word or sequence in the domain of self
 
-        -  ``order`` - integer or plus ``Infinity`` (default: 1)
+        -  ``order`` -- integer or plus ``Infinity`` (default: 1)
 
         OUTPUT:
 
-        -  ``word`` - order-th iterated image under self of ``w``
+        -  ``word`` -- order-th iterated image under self of ``w``
 
         EXAMPLES:
 
@@ -821,13 +821,13 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``layout`` - string (default: ``None``), can take one of the
+        - ``layout`` -- string (default: ``None``), can take one of the
           following values:
 
-          - ``None`` - Returns the actual latex layout. By default, the
+          - ``None`` -- Returns the actual latex layout. By default, the
             layout is ``'array'``
-          - ``'oneliner'`` - Set the layout to ``'oneliner'``
-          - ``'array'`` - Set the layout to ``'array'``
+          - ``'oneliner'`` -- Set the layout to ``'oneliner'``
+          - ``'array'`` -- Set the layout to ``'array'``
 
         EXAMPLES::
 
@@ -883,18 +883,15 @@ class WordMorphism(SageObject):
         A = self.domain().alphabet()
         latex_layout = self.latex_layout()
         if latex_layout == 'oneliner':
-            L = [r"%s \mapsto %s" % (a, self.image(a)) for a in A]
-            return LatexExpr(r','.join(L))
-        elif latex_layout == 'array':
+            lines = (fr"{a} \mapsto {self.image(a)}" for a in A)
+            return LatexExpr(r','.join(lines))
+        if latex_layout == 'array':
             s = r"\begin{array}{l}" + '\n'
-            lines = []
-            for a in A:
-                lines.append(r"%s \mapsto %s" % (a, self.image(a)))
+            lines = (fr"{a} \mapsto {self.image(a)}" for a in A)
             s += '\\\\\n'.join(lines)
             s += '\n' + r"\end{array}"
             return LatexExpr(s)
-        else:
-            raise ValueError('unknown latex_layout(=%s)' % latex_layout)
+        raise ValueError('unknown latex_layout(=%s)' % latex_layout)
 
     def __mul__(self, other):
         r"""
@@ -950,7 +947,8 @@ class WordMorphism(SageObject):
             sage: m * WordMorphism('')
             WordMorphism:
         """
-        return WordMorphism(dict((key, self(w)) for key, w in other._morph.items()), codomain=self.codomain())
+        return WordMorphism({key: self(w) for key, w in other._morph.items()},
+                            codomain=self.codomain())
 
     def __pow__(self, exp):
         r"""
@@ -958,7 +956,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``exp`` - a positive integer
+        -  ``exp`` -- a positive integer
 
         EXAMPLES::
 
@@ -1020,7 +1018,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``other`` - a WordMorphism.
+        -  ``other`` -- a WordMorphism.
 
         OUTPUT:
 
@@ -1065,7 +1063,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``alphabet`` - an iterable
+        - ``alphabet`` -- an iterable
 
         OUTPUT:
 
@@ -1090,7 +1088,8 @@ class WordMorphism(SageObject):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
         """
-        return WordMorphism(dict((a, self(a)) for a in alphabet if a in self.domain().alphabet()))
+        return WordMorphism({a: self(a) for a in alphabet
+                             if a in self.domain().alphabet()})
 
     def _matrix_(self, R=None):
         r"""
@@ -1276,7 +1275,7 @@ class WordMorphism(SageObject):
         """
         return self._morph[letter]
 
-    def images(self):
+    def images(self) -> list:
         r"""
         Return the list of all the images of the letters of the alphabet
         under ``self``.
@@ -1397,7 +1396,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` - An involution.
+        - ``self`` -- An involution.
 
         OUTPUT:
 
@@ -1451,7 +1450,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` - an endomorphism
+        - ``self`` -- an endomorphism
 
         EXAMPLES::
 
@@ -1491,7 +1490,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` - a Pisot irreducible substitution.
+        - ``self`` -- a Pisot irreducible substitution.
 
         EXAMPLES::
 
@@ -1521,7 +1520,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` - a Pisot irreducible substitution.
+        - ``self`` -- a Pisot irreducible substitution.
 
         EXAMPLES::
 
@@ -1543,7 +1542,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` - the codomain must be an instance of Words
+        - ``self`` -- the codomain must be an instance of Words
 
         EXAMPLES::
 
@@ -1577,7 +1576,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` - an endomorphism
+        - ``self`` -- an endomorphism
 
         ALGORITHM:
 
@@ -1646,8 +1645,8 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` - its codomain must be an instance of Words
-        - ``letter`` - a letter in the domain alphabet
+        - ``self`` -- its codomain must be an instance of Words
+        - ``letter`` -- a letter in the domain alphabet
 
         OUTPUT:
 
@@ -1691,14 +1690,13 @@ class WordMorphism(SageObject):
             TypeError: codomain of self must be an instance of Words
         """
         if letter not in self.domain().alphabet():
-            raise TypeError("letter (=%s) is not in the domain alphabet (=%s)"
-                            % (letter, self.domain().alphabet()))
+            raise TypeError("letter (={}) is not in the domain alphabet (={})".format(letter, self.domain().alphabet()))
         image = self.image(letter)
         return not image.is_empty() and letter == image[0]
 
     def is_uniform(self, k=None):
         r"""
-        Return True if self is a `k`-uniform morphism.
+        Return ``True`` if ``self`` is a `k`-uniform morphism.
 
         Let `k` be a positive integer. A morphism `\phi` is called `k`-uniform
         if for every letter `\alpha`, we have `|\phi(\alpha)| = k`. In other
@@ -1707,9 +1705,10 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``k`` - a positive integer or None. If set to a positive integer,
-          then the function return True if self is `k`-uniform. If set to
-          None, then the function return True if self is uniform.
+        - ``k`` -- a positive integer or ``None``. If set to a positive integer,
+          then the function return ``True`` if ``self`` is `k`-uniform.
+          If set to ``None``, then the function return ``True`` if ``self``
+          is uniform.
 
         EXAMPLES::
 
@@ -1725,11 +1724,19 @@ class WordMorphism(SageObject):
             False
             sage: tau.is_uniform(k=2)
             True
+
+        TESTS::
+
+            sage: phi = WordMorphism('')
+            sage: phi.is_uniform()
+            True
         """
         if k is None:
-            return len(set(w.length() for w in self.images())) == 1
-        else:
-            return all(w.length() == k for w in self.images())
+            try:
+                k = self.images()[0].length()
+            except IndexError:
+                return True
+        return all(w.length() == k for w in self.images())
 
     def fixed_point(self, letter):
         r"""
@@ -1740,15 +1747,15 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``self`` - an endomorphism (or more generally a self-composable
+        -  ``self`` -- an endomorphism (or more generally a self-composable
            morphism), must be prolongable on ``letter``
 
-        -  ``letter`` - in the domain of ``self``, the first letter
+        -  ``letter`` -- in the domain of ``self``, the first letter
            of the fixed point.
 
         OUTPUT:
 
-        - ``word`` - the fixed point of ``self`` beginning with ``letter``.
+        - ``word`` -- the fixed point of ``self`` beginning with ``letter``.
 
         EXAMPLES::
 
@@ -1882,11 +1889,9 @@ class WordMorphism(SageObject):
             []
 
         """
-        L = []
-        for letter in self.domain().alphabet():
-            if self.is_prolongable(letter=letter):
-                L.append(self.fixed_point(letter=letter))
-        return L
+        return [self.fixed_point(letter=letter)
+                for letter in self.domain().alphabet()
+                if self.is_prolongable(letter=letter)]
 
     def periodic_point(self, letter):
         r"""
@@ -1980,7 +1985,7 @@ class WordMorphism(SageObject):
             raise NotImplementedError("f should be non erasing")
 
         A = self.domain().alphabet()
-        d = dict((letter, self(letter)[0]) for letter in A)
+        d = {letter: self(letter)[0] for letter in A}
         G = set(self.growing_letters())
 
         res = []
@@ -2003,7 +2008,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``n`` -- non-negative integer - length of the words in the language
+        - ``n`` -- non-negative integer; length of the words in the language
 
         - ``u`` -- a word used as a seed
 
@@ -2064,9 +2069,9 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``n`` -- non-negative integer - length of the words in the language
+        - ``n`` -- non-negative integer; length of the words in the language
 
-        - ``u`` -- a word or ``None`` (optional, default ``None``) - if set to
+        - ``u`` -- a word or ``None`` (default: ``None``); if set to
           ``None`` some letter of the alphabet is used
 
         OUTPUT: a Python set
@@ -2156,7 +2161,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``pos`` - integer
+        - ``pos`` -- integer
 
         EXAMPLES::
 
@@ -2173,7 +2178,8 @@ class WordMorphism(SageObject):
             sage: m.conjugate(2)
             WordMorphism: a->cdeab, b->zxy
         """
-        return WordMorphism(dict((key, w.conjugate(pos)) for (key, w) in self._morph.items()))
+        return WordMorphism({key: w.conjugate(pos)
+                             for (key, w) in self._morph.items()})
 
     def has_left_conjugate(self):
         r"""
@@ -2334,7 +2340,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of ``self``.
+        -  ``f`` -- involution (default: None) on the alphabet of ``self``.
            It must be callable on letters as well as words (e.g. WordMorphism).
 
         REFERENCES:
@@ -2412,7 +2418,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of ``self``.
+        -  ``f`` -- involution (default: None) on the alphabet of ``self``.
            It must be callable on letters as well as words (e.g. WordMorphism).
 
         REFERENCES:
@@ -2450,9 +2456,9 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` - unimodular endomorphism defined on integers
+        - ``self`` -- unimodular endomorphism defined on integers
           ``1, 2, \ldots, d``
-        - ``k`` - integer (optional, default: 1)
+        - ``k`` -- integer (default: 1)
 
         OUTPUT:
 
@@ -2493,7 +2499,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``eig`` - a real element of ``QQbar`` of degree >= 2 (default: ``None``).
+        - ``eig`` -- a real element of ``QQbar`` of degree >= 2 (default: ``None``).
           The eigenvalue used for the projection.
           It must be an eigenvalue of ``self.incidence_matrix()``.
           The one used by default is the maximal eigenvalue of
@@ -2501,7 +2507,7 @@ class WordMorphism(SageObject):
           but for substitutions with more than 3 letters
           other interesting choices are sometimes possible.
 
-        - ``prec`` - integer (default: ``53``).
+        - ``prec`` -- integer (default: ``53``).
           The number of bits used in the floating point representations
           of the coordinates.
 
@@ -2736,15 +2742,15 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``n`` - integer (default: ``None``)
+        - ``n`` -- integer (default: ``None``)
           The number of points used to plot the fractal.
           Default values: ``1000`` for a 1D fractal,
           ``50000`` for a 2D fractal, ``10000`` for a 3D fractal.
 
-        - ``exchange`` - boolean (default: ``False``).
+        - ``exchange`` -- boolean (default: ``False``).
           Plot the Rauzy fractal with domain exchange.
 
-        - ``eig`` - a real element of ``QQbar`` of degree >= 2 (default: ``None``).
+        - ``eig`` -- a real element of ``QQbar`` of degree >= 2 (default: ``None``).
           The eigenvalue used to plot the fractal.
           It must be an eigenvalue of ``self.incidence_matrix()``.
           The one used by default the maximal eigenvalue of
@@ -2752,7 +2758,7 @@ class WordMorphism(SageObject):
           but for substitutions with more than 3 letters
           other interesting choices are sometimes possible.
 
-        - ``translate`` - a list of vectors of ``RR^size_alphabet``,
+        - ``translate`` -- a list of vectors of ``RR^size_alphabet``,
           or a dictionary from the alphabet to lists of vectors (default: ``None``).
           Plot translated copies of the fractal.
           This option allows to plot tilings easily.
@@ -2765,28 +2771,28 @@ class WordMorphism(SageObject):
           is not plotted with the ``translate`` option;
           the vector ``(0,0,...,0)`` has to be added manually.
 
-        - ``prec`` - integer (default: ``53``).
+        - ``prec`` -- integer (default: ``53``).
           The number of bits used in the floating point representations
           of the points of the fractal.
 
-        - ``colormap`` - color map or dictionary (default: ``'hsv'``).
+        - ``colormap`` -- color map or dictionary (default: ``'hsv'``).
           It can be one of the following:
 
-           - ``string`` - a coloring map. For available coloring map names type:
+           - ``string`` -- a coloring map. For available coloring map names type:
              ``sorted(colormaps)``
 
-           - ``dict`` - a dictionary of the alphabet mapped to colors.
+           - ``dict`` -- a dictionary of the alphabet mapped to colors.
 
-        - ``opacity`` - a dictionary from the alphabet to the real interval [0,1] (default: ``None``).
+        - ``opacity`` -- a dictionary from the alphabet to the real interval [0,1] (default: ``None``).
           If none is specified, all letters are plotted with opacity ``1``.
 
-        - ``plot_origin`` - a couple ``(k,c)`` (default: ``None``).
+        - ``plot_origin`` -- a couple ``(k,c)`` (default: ``None``).
           If specified, mark the origin by a point of size ``k`` and color ``c``.
 
-        - ``plot_basis`` - boolean (default: ``False``).
+        - ``plot_basis`` -- boolean (default: ``False``).
           Plot the projection of the canonical basis with the fractal.
 
-        - ``point_size`` - float (default: ``None``).
+        - ``point_size`` -- float (default: ``None``).
           The size of the points used to plot the fractal.
 
         EXAMPLES:
@@ -3785,7 +3791,7 @@ class WordMorphism(SageObject):
             h = {letter: [letter] if image else [] for letter, image in f.items()}
         elif len(Y) < len(X):  # Trivial case #2.
             k = {x: [y] for x, y in zip(X, Y)}
-            k_inverse = {y: x for y, x in zip(Y, X)}
+            k_inverse = dict(zip(Y, X))
             h = {x: [k_inverse[y] for y in image] for x, image in f.items()}
         elif not self.is_injective():  # Non-trivial but a fast case.
             k = dict(f)
@@ -3822,7 +3828,7 @@ class WordMorphism(SageObject):
             for comb in combinations(factors, len(X) - 1):
                 if any(x.is_proper_prefix(y) for x in comb for y in comb):
                     continue
-                k = {x: image for x, image in zip(X, comb)}
+                k = dict(zip(X, comb))
                 h = try_create_h(f, k)
                 if h:
                     break

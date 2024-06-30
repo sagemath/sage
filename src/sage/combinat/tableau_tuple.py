@@ -16,7 +16,7 @@ A :class:`TableauTuple` is an ordered tuple
 its *level* and the tableaux `t^{(1)}, t^{(2)}, \ldots, t^{(l)}` are the
 components of the :class:`TableauTuple`.
 
-A tableaux can be thought of as the labelled diagram of a partition.
+A tableau can be thought of as the labelled diagram of a partition.
 Analogously, a :class:`TableauTuple` is the labelled diagram of a
 :class:`PartitionTuple`. That is, a :class:`TableauTuple` is a tableau of
 :class:`PartitionTuple` shape. As much as possible, :class:`TableauTuples`
@@ -198,7 +198,6 @@ Parent classes:
 
 Much of the combinatorics implemented here is motivated by this and
 subsequent papers on the representation theory of these algebras.
-
 """
 
 # ****************************************************************************
@@ -211,9 +210,9 @@ subsequent papers on the representation theory of these algebras.
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import factorial
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.words.word import Word
-from sage.combinat.posets.posets import Poset
 from sage.combinat.tableau import (Tableau, Tableaux, Tableaux_size, Tableaux_all,
                                    StandardTableau, RowStandardTableau,
                                    StandardTableaux, StandardTableaux_size,
@@ -222,13 +221,12 @@ from sage.combinat.tableau import (Tableau, Tableaux, Tableaux_size, Tableaux_al
                                    RowStandardTableaux_all, RowStandardTableaux_shape)
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
-from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.flatten import flatten
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randint
-from sage.arith.misc import factorial
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.semirings.non_negative_integer_semiring import NN
@@ -239,6 +237,9 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.combinat import permutation
+
+lazy_import('sage.combinat.posets.posets', 'Poset')
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
 
 
 # -------------------------------------------------
@@ -597,7 +598,7 @@ class TableauTuple(CombinatorialElement):
               6  7
               8  9
         """
-        return [t for t in self]
+        return list(self)
 
     def to_list(self):
         """
@@ -2371,9 +2372,8 @@ class TableauTuples(UniqueRepresentation, Parent):
              ([[3, 5], [4]], [[1, 2]])]
         """
         if self.is_finite():
-            return [y for y in self]
-        else:
-            raise NotImplementedError('this is an infinite set of tableaux')
+            return list(self)
+        raise NotImplementedError('this is an infinite set of tableaux')
 
 
 class TableauTuples_all(TableauTuples):
@@ -2666,7 +2666,7 @@ class TableauTuples_level_size(TableauTuples):
         if self.size() == 0:
             return self.element_class(self, [[] for _ in range(self.level())])
 
-        tab = [[[m for m in range(1, self.size() + 1)]]]
+        tab = [[list(range(1, self.size() + 1))]]
         for _ in range(self.level() - 1):
             tab.append([])
         return self.element_class(self, tab)

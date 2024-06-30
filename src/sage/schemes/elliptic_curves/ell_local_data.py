@@ -76,7 +76,6 @@ AUTHORS:
   ``ell_number_field.py`` and ``ell_rational_field.py``)
 
 - Chris Wuthrich: more documentation 2010-01
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -100,7 +99,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
+from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
 
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.ideal import is_Ideal
@@ -178,7 +177,7 @@ class EllipticCurveLocalData(SageObject):
           `\QQ`. If "generic", use the general number field
           implementation.
 
-        - ``globally`` (bool, default: False) -- If True, the algorithm
+        - ``globally`` (bool, default: ``False``) -- If True, the algorithm
           uses the generators of principal ideals rather than an arbitrary
           uniformizer.
 
@@ -742,7 +741,7 @@ class EllipticCurveLocalData(SageObject):
             sage: # needs sage.rings.number_field
             sage: K.<t> = NumberField(x^7 - 2*x + 177)
             sage: E = EllipticCurve([0,1,0,t,t])
-            sage: P = K.ideal(2,t^3 + t + 1)
+            sage: P = K.ideal(2, t^3 + t + 1)
             sage: E.local_data(P).kodaira_symbol()
             II
         """
@@ -1142,17 +1141,17 @@ def check_prime(K, P):
 
     .. NOTE::
 
-        If `P` is not a prime and does not generate a prime, a ``TypeError``
+        If `P` is not a prime and does not generate a prime, a :class:`TypeError`
         is raised.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.ell_local_data import check_prime
-        sage: check_prime(QQ,3)
+        sage: check_prime(QQ, 3)
         3
-        sage: check_prime(QQ,QQ(3))
+        sage: check_prime(QQ, QQ(3))
         3
-        sage: check_prime(QQ,ZZ.ideal(31))
+        sage: check_prime(QQ, ZZ.ideal(31))
         31
 
         sage: # needs sage.rings.number_field
@@ -1160,11 +1159,11 @@ def check_prime(K, P):
         sage: K.<a> = NumberField(x^2 - 5)
         sage: check_prime(K, a)
         Fractional ideal (a)
-        sage: check_prime(K,a+1)
+        sage: check_prime(K, a + 1)
         Fractional ideal (a + 1)
-        sage: [check_prime(K,P) for P in K.primes_above(31)]
+        sage: [check_prime(K, P) for P in K.primes_above(31)]
         [Fractional ideal (5/2*a + 1/2), Fractional ideal (5/2*a - 1/2)]
-        sage: L.<b> = NumberField(x^2+3)
+        sage: L.<b> = NumberField(x^2 + 3)
         sage: check_prime(K, L.ideal(5))
         Traceback (most recent call last):
         ...
@@ -1197,7 +1196,7 @@ def check_prime(K, P):
     if not isinstance(K, NumberField):
         raise TypeError("%s is not a number field" % (K,))
 
-    if is_NumberFieldFractionalIdeal(P) or P in K:
+    if isinstance(P, NumberFieldFractionalIdeal) or P in K:
         # if P is an ideal, making sure it is a fractional ideal of K
         P = K.fractional_ideal(P)
         if P.is_prime():

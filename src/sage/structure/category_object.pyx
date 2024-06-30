@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 r"""
 Base class for objects of a category
@@ -63,12 +64,14 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.dynamic_class import DynamicMetaclass
 
 
-cpdef inline check_default_category(default_category, category) noexcept:
-    ## The resulting category is guaranteed to be
-    ## a sub-category of the default.
+cpdef inline check_default_category(default_category, category):
+    """
+    The resulting category is guaranteed to be
+    a sub-category of the default.
+    """
     if category is None:
         return default_category
-    return default_category.join([default_category,category])
+    return default_category.join([default_category, category])
 
 
 cdef class CategoryObject(SageObject):
@@ -212,6 +215,7 @@ cdef class CategoryObject(SageObject):
             sage: ZZ.categories()
             [Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces,
              Category of Dedekind domains,
@@ -220,7 +224,7 @@ cdef class CategoryObject(SageObject):
              Category of unique factorization domains,
              Category of gcd domains,
              Category of integral domains,
-             Category of domains,
+             Category of domains, ...
              Category of commutative rings, ...
              Category of monoids, ...,
              Category of commutative additive groups, ...,
@@ -848,7 +852,7 @@ cdef class CategoryObject(SageObject):
         """
         return self.getattr_from_category(name)
 
-    cdef getattr_from_category(self, name) noexcept:
+    cdef getattr_from_category(self, name):
         # Lookup a method or attribute from the category abstract classes.
         # See __getattr__ above for documentation.
         try:
@@ -913,7 +917,7 @@ cdef class CategoryObject(SageObject):
         """
         return dir_with_other_class(self, self.category().parent_class)
 
-cpdef normalize_names(Py_ssize_t ngens, names) noexcept:
+cpdef normalize_names(Py_ssize_t ngens, names):
     r"""
     Return a tuple of strings of variable names of length ngens given
     the input names.

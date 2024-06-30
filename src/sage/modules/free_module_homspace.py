@@ -5,7 +5,7 @@ EXAMPLES:
 
 We create `\mathrm{End}(\ZZ^2)` and compute a basis. ::
 
-    sage: M = FreeModule(IntegerRing(),2)
+    sage: M = FreeModule(IntegerRing(), 2)
     sage: E = End(M)
     sage: B = E.basis()
     sage: len(B)
@@ -14,22 +14,22 @@ We create `\mathrm{End}(\ZZ^2)` and compute a basis. ::
     Free module morphism defined by the matrix
     [1 0]
     [0 0]
-    Domain: Ambient free module of rank 2 over the principal ideal domain ...
+    Domain:   Ambient free module of rank 2 over the principal ideal domain ...
     Codomain: Ambient free module of rank 2 over the principal ideal domain ...
 
 We create `\mathrm{Hom}(\ZZ^3, \ZZ^2)` and compute a basis. ::
 
-    sage: V3 = FreeModule(IntegerRing(),3)
-    sage: V2 = FreeModule(IntegerRing(),2)
-    sage: H = Hom(V3,V2)
+    sage: V3 = FreeModule(IntegerRing(), 3)
+    sage: V2 = FreeModule(IntegerRing(), 2)
+    sage: H = Hom(V3, V2)
     sage: H
-    Set of Morphisms from Ambient free module of rank 3 over
-     the principal ideal domain Integer Ring
-     to Ambient free module of rank 2
-     over the principal ideal domain Integer Ring
-     in Category of finite dimensional modules with basis over
-     (Dedekind domains and euclidean domains
-      and infinite enumerated sets and metric spaces)
+    Set of Morphisms
+     from Ambient free module of rank 3 over the principal ideal domain Integer Ring
+       to Ambient free module of rank 2 over the principal ideal domain Integer Ring
+       in Category of finite dimensional modules with basis over
+          (Dedekind domains and euclidean domains
+           and noetherian rings
+           and infinite enumerated sets and metric spaces)
     sage: B = H.basis()
     sage: len(B)
     6
@@ -76,7 +76,7 @@ See :issue:`13321`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.categories.homset
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -97,6 +97,10 @@ def is_FreeModuleHomspace(x):
         sage: type(H)
         <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
         sage: sage.modules.free_module_homspace.is_FreeModuleHomspace(H)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeModuleHomspace is deprecated;
+        use 'isinstance(..., FreeModuleHomspace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
 
         sage: K = Hom(QQ^3, ZZ^2)
@@ -120,6 +124,8 @@ def is_FreeModuleHomspace(x):
         sage: sage.modules.free_module_homspace.is_FreeModuleHomspace('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FreeModuleHomspace is deprecated; use 'isinstance(..., FreeModuleHomspace)' instead")
     return isinstance(x, FreeModuleHomspace)
 
 
@@ -168,10 +174,10 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             [0 0 0]
             [0 0 0]
             [0 0 0]
-            Domain: Free module of degree 3 and rank 3 over Integer Ring
-            Echelon ...
+            Domain:   Free module of degree 3 and rank 3 over Integer Ring
+                      Echelon ...
             Codomain: Free module of degree 3 and rank 3 over Integer Ring
-            Echelon ...
+                      Echelon ...
 
         The following tests the bug fixed in :issue:`31818`. If there is no
         coercion between base rings, one can only define the zero morphism,
@@ -189,14 +195,14 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             Free module morphism defined by the matrix
             [0 0]
             [0 0]
-            Domain: Vector space of dimension 2 over Rational Field
+            Domain:   Vector space of dimension 2 over Rational Field
             Codomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
             sage: [h(v) for v in V.gens()]
             [(0, 0), (0, 0)]
         """
         from . import free_module_morphism
         side = kwds.get("side", "left")
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             # Compute the matrix of the morphism that sends the
             # generators of the domain to the elements of A.
             C = self.codomain()
@@ -237,7 +243,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             Free module morphism defined by the matrix
             [0 0 0]
             [0 0 0]
-            Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
+            Domain:   Ambient free module of rank 2 over the principal ideal domain Integer Ring
             Codomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
             sage: f(E.an_element())
             (0, 0, 0)
@@ -248,7 +254,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             [0 0]
             [0 0]
             [0 0]
-            Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
+            Domain:   Ambient free module of rank 2 over the principal ideal domain Integer Ring
             Codomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
 
 
@@ -260,7 +266,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             Free module morphism defined by the matrix
             [0 0 0]
             [0 0 0]
-            Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
+            Domain:   Ambient free module of rank 2 over the principal ideal domain Integer Ring
             Codomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
         """
         return self(lambda x: self.codomain().zero(), side=side)
@@ -311,24 +317,24 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             sage: H = Hom(ZZ^2, ZZ^1)
             sage: H.basis()
             (Free module morphism defined by the matrix
-            [1]
-            [0]
-            Domain: Ambient free module of rank 2 over the principal ideal domain ...
-            Codomain: Ambient free module of rank 1 over the principal ideal domain ...,
-            Free module morphism defined by the matrix
-            [0]
-            [1]
-            Domain: Ambient free module of rank 2 over the principal ideal domain ...
-            Codomain: Ambient free module of rank 1 over the principal ideal domain ...)
+              [1]
+              [0]
+              Domain:   Ambient free module of rank 2 over the principal ideal domain ...
+              Codomain: Ambient free module of rank 1 over the principal ideal domain ...,
+             Free module morphism defined by the matrix
+              [0]
+              [1]
+              Domain:   Ambient free module of rank 2 over the principal ideal domain ...
+              Codomain: Ambient free module of rank 1 over the principal ideal domain ...)
             sage: H.basis("right")
             (Free module morphism defined as left-multiplication by the matrix
-             [1 0]
-             Domain: Ambient free module of rank 2 over the principal ideal domain ...
-             Codomain: Ambient free module of rank 1 over the principal ideal domain ...,
+              [1 0]
+              Domain:   Ambient free module of rank 2 over the principal ideal domain ...
+              Codomain: Ambient free module of rank 1 over the principal ideal domain ...,
              Free module morphism defined as left-multiplication by the matrix
-             [0 1]
-             Domain: Ambient free module of rank 2 over the principal ideal domain ...
-             Codomain: Ambient free module of rank 1 over the principal ideal domain ...)
+              [0 1]
+              Domain:   Ambient free module of rank 2 over the principal ideal domain ...
+              Codomain: Ambient free module of rank 1 over the principal ideal domain ...)
         """
         M = self._matrix_space(side)
         B = M.basis()
@@ -353,7 +359,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             [0 0 1 0 0]
             [0 0 0 1 0]
             [0 0 0 0 1]
-            Domain: Ambient free module of rank 5 over the principal ideal domain ...
+            Domain:   Ambient free module of rank 5 over the principal ideal domain ...
             Codomain: Ambient free module of rank 5 over the principal ideal domain ...
         """
         if self.is_endomorphism_set():

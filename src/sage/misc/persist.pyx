@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -75,7 +76,7 @@ already_pickled = { }
 already_unpickled = { }
 
 
-cdef _normalize_filename(s) noexcept:
+cdef _normalize_filename(s):
     """
     Append the .sobj extension to a filename if it doesn't already have it.
     """
@@ -339,6 +340,7 @@ def dumps(obj, compress=True):
 
 # This is used below, and also by explain_pickle.py
 unpickle_override = {}
+
 
 def register_unpickle_override(module, name, callable, call_name=None):
     r"""
@@ -806,14 +808,14 @@ class SagePickler(_BasePickler):
 
         INPUT:
 
-        - ``obj`` - the object to pickle.
+        - ``obj`` -- the object to pickle.
 
-        - ``kwargs`` - keyword arguments passed to the
+        - ``kwargs`` -- keyword arguments passed to the
           :class:`sage.misc.persist.SagePickler` constructor.
 
         OUTPUT:
 
-        - ``pickle`` - the pickled object as ``bytes``.
+        - ``pickle`` -- the pickled object as ``bytes``.
 
         EXAMPLES::
 
@@ -892,14 +894,14 @@ class SageUnpickler(_BaseUnpickler):
 
         INPUT:
 
-        - ``data`` - the pickle data as ``bytes``.
+        - ``data`` -- the pickle data as ``bytes``.
 
-        - ``kwargs`` - keyword arguments passed to the
+        - ``kwargs`` -- keyword arguments passed to the
           :class:`sage.misc.persist.SageUnpickler` constructor.
 
         OUTPUT:
 
-        - ``obj`` - the object that was serialized to the given pickle data.
+        - ``obj`` -- the object that was serialized to the given pickle data.
 
 
         EXAMPLES::
@@ -998,6 +1000,7 @@ def loads(s, compress=True, **kwargs):
 
 
 cdef bint make_pickle_jar = 'SAGE_PICKLE_JAR' in os.environ
+
 
 def picklejar(obj, dir=None):
     """

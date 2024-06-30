@@ -33,7 +33,6 @@ from sage.misc.randstate cimport current_randstate, randstate
 from sage.stats.time_series cimport TimeSeries
 
 
-
 cdef double random_normal(double mean, double std, randstate rstate) noexcept:
     r"""
     Return a floating point number chosen from the normal distribution
@@ -283,7 +282,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         """
         return self.c0._length
 
-    cpdef is_fixed(self, i=None) noexcept:
+    cpdef is_fixed(self, i=None):
         r"""
         Return whether or not this :class:`GaussianMixtureDistribution` is
         fixed when using Baum-Welch to update the corresponding HMM.
@@ -370,7 +369,6 @@ cdef class GaussianMixtureDistribution(Distribution):
                 self.fixed[j] = 0
         else:
             self.fixed[i] = 0
-
 
     def __repr__(self):
         r"""
@@ -524,6 +522,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             raise IndexError("index out of range")
         mu = self.param._values[3*m+1]
         return self.c0._values[m]*exp((x-mu)*(x-mu)*self.c1._values[m])
+
 
 def unpickle_gaussian_mixture_distribution_v1(TimeSeries c0, TimeSeries c1,
                                               TimeSeries param, IntList fixed):

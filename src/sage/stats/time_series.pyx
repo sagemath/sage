@@ -567,7 +567,6 @@ cdef class TimeSeries:
             memcpy(v._values + i*T._length, T._values, sizeof(double)*T._length)
         return v
 
-
     def autoregressive_fit(self,M):
         r"""
         This method fits the time series to an autoregressive process
@@ -892,7 +891,7 @@ cdef class TimeSeries:
             t._values[i] = self._values[i*k]
         return t
 
-    cpdef rescale(self, double s) noexcept:
+    cpdef rescale(self, double s):
         r"""
         Change ``self`` by multiplying every value in the series by ``s``.
 
@@ -1268,7 +1267,6 @@ cdef class TimeSeries:
         for i from 0 <= i < self._length:
             s *= self._values[i]
         return s
-
 
     def mean(self):
         r"""
@@ -2514,7 +2512,7 @@ cdef class TimeSeries:
         return y
 
 
-cdef new_time_series(Py_ssize_t length) noexcept:
+cdef new_time_series(Py_ssize_t length):
     r"""
     Return a new uninitialized time series of the given length.
     The entries of the time series are garbage.

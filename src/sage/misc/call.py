@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Attribute and method calling
 """
@@ -17,7 +18,9 @@ Attribute and method calling
 #############################################
 # Operators
 #############################################
-class AttrCallObject():
+
+
+class AttrCallObject:
     def __init__(self, name, args, kwds):
         """
         TESTS::
@@ -148,10 +151,10 @@ def attrcall(name, *args, **kwds):
 
     INPUT:
 
-    -  ``name`` - a string of the name of the method you
+    -  ``name`` -- a string of the name of the method you
        want to call
 
-    -  ``args, kwds`` - arguments and keywords to be passed
+    -  ``args, kwds`` -- arguments and keywords to be passed
        to the method
 
     EXAMPLES::

@@ -145,7 +145,7 @@ from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.rings.rational cimport Rational
 from sage.libs.pari.all import pari_gen
 from sage.interfaces.abc import GpElement
-from sage.rings.finite_rings.integer_mod import is_IntegerMod
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 
@@ -233,7 +233,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
-        elif is_IntegerMod(x):
+        elif isinstance(x, IntegerMod_abstract):
             if (<Integer>x.modulus())._is_power_of(<Integer>parent.prime()):
                 x = x.lift()
             else:
@@ -419,7 +419,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         holder.x = self.value
         return make_ZZpXFMElement, (self.parent(), holder)
 
-    cdef pAdicZZpXFMElement _new_c(self) noexcept:
+    cdef pAdicZZpXFMElement _new_c(self):
         """
         Return a new element with the same parent as ``self``.
 
@@ -438,7 +438,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ans.prime_pow = self.prime_pow
         return ans
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         First compare valuations, then compare the values.
 
@@ -508,7 +508,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cdef pAdicZZpXFMElement _lshift_c(self, long n) noexcept:
+    cdef pAdicZZpXFMElement _lshift_c(self, long n):
         """
         Multiply ``self`` by the uniformizer raised to the power ``n``.
 
@@ -569,7 +569,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             return ans
         return self._lshift_c(mpz_get_si((<Integer>shift).value))
 
-    cdef pAdicZZpXFMElement _rshift_c(self, long n) noexcept:
+    cdef pAdicZZpXFMElement _rshift_c(self, long n):
         """
         Divide ``self`` by the uniformizer raised to the power ``n``.
 
@@ -660,7 +660,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             return ans
         return self._rshift_c(mpz_get_si((<Integer>shift).value))
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         Returns ``-self``.
 
@@ -751,7 +751,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sig_off()
         return ans
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Return ``self`` + ``right``.
 
@@ -770,7 +770,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ZZ_pX_add(ans.value, self.value, (<pAdicZZpXFMElement>right).value)
         return ans
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Return the product of ``self`` and ``right``.
 
@@ -794,7 +794,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ZZ_pX_MulMod_pre(ans.value, self.value, (<pAdicZZpXFMElement>right).value, self.prime_pow.get_top_modulus()[0])
         return ans
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Return the difference of ``self`` and ``right``.
 
@@ -817,7 +817,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ZZ_pX_sub(ans.value, self.value, (<pAdicZZpXFMElement>right).value)
         return ans
 
-    cpdef _div_(self, _right) noexcept:
+    cpdef _div_(self, _right):
         """
         Returns the quotient of ``self`` by ``right``.
 
@@ -1601,7 +1601,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         mpz_set_ui(ans.value, self.prime_pow.ram_prec_cap - self.valuation_c())
         return ans
 
-    cpdef pAdicZZpXFMElement unit_part(self) noexcept:
+    cpdef pAdicZZpXFMElement unit_part(self):
         """
         Return the unit part of ``self``, ie
         ``self / uniformizer^(self.valuation())``
@@ -1673,7 +1673,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             else:
                 return index + valuation * self.prime_pow.e
 
-    cdef ext_p_list(self, bint pos) noexcept:
+    cdef ext_p_list(self, bint pos):
         r"""
         Return a list giving a series representation of ``self``.
 

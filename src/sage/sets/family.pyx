@@ -49,13 +49,10 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.call import AttrCallObject
-from sage.misc.lazy_import import LazyImport
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.sets.non_negative_integers import NonNegativeIntegers
-
-CombinatorialClass = LazyImport('sage.combinat.combinat', 'CombinatorialClass')
 
 
 def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=False, name=None):
@@ -539,7 +536,6 @@ cdef class AbstractFamily(Parent):
         return Family({self[k]: k for k in self.keys()})
 
 
-
 cdef class FiniteFamily(AbstractFamily):
     r"""
     A :class:`FiniteFamily` is an associative container which models a finite
@@ -935,7 +931,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
             hidden_function = unpickle_function(hidden_function)
         self.__init__(d['dictionary'], d['hidden_keys'], hidden_function)
         self.hidden_dictionary = d['hidden_dictionary']
-        # Old pickles from before trac #22955 may not have a 'keys'
+        # Old pickles from before Issue #22955 may not have a 'keys'
         if 'keys' in d:
             self._keys = d['keys']
         else:
@@ -971,7 +967,7 @@ class LazyFamily(AbstractFamily):
             category = FiniteEnumeratedSets()
         elif set in InfiniteEnumeratedSets():
             category = InfiniteEnumeratedSets()
-        elif isinstance(set, (list, tuple, range, CombinatorialClass)):
+        elif isinstance(set, (list, tuple, range)):
             category = FiniteEnumeratedSets()
         else:
             category = EnumeratedSets()

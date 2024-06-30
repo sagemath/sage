@@ -30,7 +30,6 @@ cdef extern from "gsl/gsl_histogram.h":
   int gsl_histogram_set_ranges_uniform (gsl_histogram * h, double xmin, double xmax)
 
 
-
   int gsl_histogram_memcpy(gsl_histogram * dest,  gsl_histogram * source)
 
   gsl_histogram * gsl_histogram_clone( gsl_histogram * source)

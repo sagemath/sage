@@ -70,7 +70,6 @@ AUTHORS:
 - Chris Wuthrich (2008): add scaling and reference to eclib
 
 - John Cremona (2016): reworked eclib interface
-
 """
 
 #*****************************************************************************

@@ -53,7 +53,6 @@ AUTHORS:
 - David Kohel
 
 - Iftikhar Burhanuddin
-
 """
 
 # ****************************************************************************
@@ -69,6 +68,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import kronecker, next_prime
+from sage.categories.fields import Fields
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.lazy_import import lazy_import
 from sage.modular.arithgroup.all import Gamma0
@@ -333,7 +333,7 @@ def supersingular_j(FF):
 
     - Iftikhar Burhanuddin -- burhanud@usc.edu
     """
-    if not FF.is_field() or not FF.is_finite():
+    if FF not in Fields().Finite():
         raise ValueError("%s is not a finite field" % FF)
     prime = FF.characteristic()
     if not Integer(prime).is_prime():
@@ -417,7 +417,7 @@ class SupersingularModule(HeckeModule_free_module):
         HeckeModule_free_module.__init__(self, base_ring,
                                          prime * level, weight=2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of self.
 
@@ -429,7 +429,7 @@ class SupersingularModule(HeckeModule_free_module):
         return "Module of supersingular points on X_0(%s)/F_%s over %s" % (
             self.__level, self.__prime, self.base_ring())
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         r"""
         Compare ``self`` to ``other``.
 
@@ -675,7 +675,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         dim = dimension_supersingular_module(prime, level)
 
-        pos = int(0)
+        pos = 0
         # using list to keep track of explored nodes using pos
         ss_points = [jinv]
 
@@ -697,7 +697,7 @@ class SupersingularModule(HeckeModule_free_module):
                 # root finding (??)
                 neighbors = Phi2_quad(X, ss_points[j_prev], ss_points[pos]).roots()
 
-            for (xj, ej) in neighbors:
+            for xj, ej in neighbors:
                 if xj not in ss_points_dic:
                     j = len(ss_points)
                     ss_points += [xj]
@@ -710,7 +710,7 @@ class SupersingularModule(HeckeModule_free_module):
             if pos != 0:
                 # also record the root from j_prev
                 T2_matrix[pos, j_prev] += 1
-            pos += int(1)
+            pos += 1
 
         self.__hecke_matrices[2] = T2_matrix
         return (ss_points, ss_points_dic)
@@ -836,7 +836,7 @@ class SupersingularModule(HeckeModule_free_module):
         Fp2 = self.__finite_field
         h = len(SS)
         R = self.base_ring()
-        T_L = MatrixSpace(R, h)(0)
+        T_L = MatrixSpace(R, h)(0)  # mutable
         S, X = Fp2['x'].objgen()
 
         for i in range(len(SS)):

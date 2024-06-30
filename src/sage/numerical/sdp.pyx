@@ -220,7 +220,6 @@ AUTHORS:
 - Ingolfur Edvardsson (2014/08): added extension for exact computation
 
 - Dima Pasechnik      (2014-)    : supervision, minor fixes, duality
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
@@ -234,9 +233,9 @@ AUTHORS:
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
-from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
-from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix
+from sage.numerical.linear_functions import LinearFunction, LinearConstraint
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix
 
 
 cdef class SemidefiniteProgram(SageObject):
@@ -517,8 +516,6 @@ cdef class SemidefiniteProgram(SageObject):
             Variables:
                x_0,  x_1
         """
-
-
         if not name and self._first_variable_names:
             name = self._first_variable_names.pop(0)
 
@@ -675,7 +672,7 @@ cdef class SemidefiniteProgram(SageObject):
             if l[-1][0] == -1:
                 last_i,last_value = l.pop()
             else:
-                last_value = Matrix.zero( l[0][1].dimensions()[0],l[0][1].dimensions()[1]  )
+                last_value = matrix.zero( l[0][1].dimensions()[0],l[0][1].dimensions()[1]  )
             l.reverse()
             for j, c in l:
                 if c == 0:
@@ -898,10 +895,10 @@ cdef class SemidefiniteProgram(SageObject):
         if linear_function is 0:
             return
 
-        from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint
-        from sage.numerical.linear_tensor import is_LinearTensor
+        from sage.numerical.linear_tensor_constraints import LinearTensorConstraint
+        from sage.numerical.linear_tensor import LinearTensor
 
-        if is_LinearTensorConstraint(linear_function) or is_LinearConstraint(linear_function):
+        if isinstance(linear_function, LinearTensorConstraint) or isinstance(linear_function, LinearConstraint):
             c = linear_function
             if c.is_equation():
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
@@ -909,7 +906,7 @@ cdef class SemidefiniteProgram(SageObject):
             else:
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
 
-        elif is_LinearFunction(linear_function) or is_LinearTensor(linear_function):
+        elif isinstance(linear_function, LinearFunction) or isinstance(linear_function, LinearTensor):
             l = sorted(linear_function.dict().items())
             self._backend.add_linear_constraint(l, name)
 
@@ -960,8 +957,7 @@ cdef class SemidefiniteProgram(SageObject):
         self._backend.solve()
         return self._backend.get_objective_value()
 
-
-    cpdef dual_variable(self, int i, sparse=False) noexcept:
+    cpdef dual_variable(self, int i, sparse=False):
         """
         The `i`-th dual variable.
 
@@ -1013,7 +1009,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.dual_variable(i, sparse=sparse)
 
-    cpdef slack(self, int i, sparse=False) noexcept:
+    cpdef slack(self, int i, sparse=False):
         """
         Slack of the `i`-th constraint
 
@@ -1109,7 +1105,7 @@ cdef class SemidefiniteProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef sum(self, L) noexcept:
+    cpdef sum(self, L):
         r"""
         Efficiently computes the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements.
@@ -1206,6 +1202,7 @@ class SDPSolverException(RuntimeError):
     """
     pass
 
+
 cdef class SDPVariable(Element):
     r"""
     ``SDPVariable`` is a variable used by the class
@@ -1249,7 +1246,6 @@ cdef class SDPVariable(Element):
         self._p = sdp
         self._name = name
 
-
     def __getitem__(self, i):
         r"""
         Return the symbolic variable corresponding to the key.
@@ -1276,10 +1272,9 @@ cdef class SDPVariable(Element):
         self._dict[i] = v
         return v
 
-
     def _repr_(self):
         r"""
-        Returns a representation of self.
+        Return a representation of ``self``.
 
         EXAMPLES::
 
@@ -1332,7 +1327,7 @@ cdef class SDPVariable(Element):
         """
         return self._dict.values()
 
-    cdef _matrix_rmul_impl(self, m) noexcept:
+    cdef _matrix_rmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the right.
         """
@@ -1346,7 +1341,7 @@ cdef class SDPVariable(Element):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cdef _matrix_lmul_impl(self, m) noexcept:
+    cdef _matrix_lmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the left.
         """
@@ -1360,7 +1355,7 @@ cdef class SDPVariable(Element):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cpdef _acted_upon_(self, mat, bint self_on_left) noexcept:
+    cpdef _acted_upon_(self, mat, bint self_on_left):
         """
         Act with matrices on SDPVariables.
 
@@ -1374,8 +1369,8 @@ cdef class SDPVariable(Element):
             sage: m * v
             (1.0, 3.0)*x_0 + (2.0, 4.0)*x_1
         """
-        from sage.structure.element import is_Matrix
-        if is_Matrix(mat):
+        from sage.structure.element import Matrix
+        if isinstance(mat, Matrix):
             return self._matrix_rmul_impl(mat) if self_on_left else self._matrix_lmul_impl(mat)
 
 

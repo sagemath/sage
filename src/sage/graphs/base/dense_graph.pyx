@@ -97,6 +97,16 @@ from ``CGraph`` (for explanation, refer to the documentation there)::
 It also contains the following variables::
 
         cdef binary_matrix_t edges
+
+.. NOTE::
+
+    As the edges are stored as the adjacency matrix of the graph, enumerating
+    the edges of the graph has complexity `O(n^2)` and enumerating the neighbors
+    of a vertex has complexity `O(n)` (where `n` in the size of the bitset
+    active_vertices).
+    So, the class ``DenseGraph`` should be used for graphs such that the number
+    of edges is close to the square of the number of vertices.
+
 """
 
 # ****************************************************************************
@@ -195,7 +205,7 @@ cdef class DenseGraph(CGraph):
         sig_free(self.out_degrees)
         bitset_free(self.active_vertices)
 
-    cpdef realloc(self, int total_verts) noexcept:
+    cpdef realloc(self, int total_verts):
         """
         Reallocate the number of vertices to use, without actually adding any.
 
@@ -290,7 +300,7 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- non-negative integers
+        - ``u``, ``v`` -- non-negative integers
 
         """
         if unlikely(l):
@@ -306,7 +316,7 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- non-negative integers, must be in self
 
         - ``l`` -- a positive integer label, or zero for no label, or ``-1`` for any label
 
@@ -339,7 +349,7 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- non-negative integers, must be in self
 
         """
         self._del_arc_unsafe(u, v)
@@ -360,9 +370,10 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- integers from 0, ..., n-1, where n is the number of vertices
-            arc_labels -- must be a pointer to an (allocated) integer array
-            size -- the length of the array
+        - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
+          number of vertices
+        - ``labels`` -- must be a pointer to an (allocated) integer array
+        - ``size`` -- the length of the array
 
         OUTPUT:
 
@@ -642,7 +653,7 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         INPUT:
 
-        - ``u, v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         EXAMPLES::
 
@@ -683,7 +694,7 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         INPUT:
 
-        - ``u, v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         - ``l`` -- the edge label (ignored)
 
@@ -739,7 +750,7 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         INPUT:
 
-        - ``u, v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         - ``l`` -- the edge label
 

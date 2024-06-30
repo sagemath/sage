@@ -212,7 +212,7 @@ Check that :issue:`8237` is fixed::
 #                     2009 Mike Hansen <mhansen@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###############################################################################
 
 import math
@@ -391,7 +391,7 @@ class Constant():
 
         INPUT:
 
-        - ``SR`` - a symbolic ring parent
+        - ``SR`` -- a symbolic ring parent
 
         EXAMPLES::
 
@@ -612,7 +612,6 @@ class Pi(Constant):
 
 
 pi = Pi().expression()
-
 """
 The formal square root of -1.
 

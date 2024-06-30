@@ -17,7 +17,6 @@ AUTHORS:
 - Robert Bradshaw
 - John Cremona
 - William Stein
-
 """
 
 # ****************************************************************************
@@ -65,7 +64,8 @@ def hilbert_class_polynomial(D, algorithm=None):
 
     ALGORITHM:
 
-    - If ``algorithm`` = "arb" (default): Use Arb's implementation which uses complex interval arithmetic.
+    - If ``algorithm`` = "arb" (default): Use FLINT's implementation inherited
+      from Arb which uses complex interval arithmetic.
 
     - If ``algorithm`` = "sage": Use complex approximations to the roots.
 

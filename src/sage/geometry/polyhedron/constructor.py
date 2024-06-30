@@ -297,8 +297,6 @@ AUTHORS:
 import sage.geometry.abc
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_double import RDF
-from sage.rings.real_mpfr import RR
 
 from .misc import _make_listlist, _common_length_of
 
@@ -505,9 +503,9 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: p.add_constraint(x >= -1)
         sage: p.add_constraint(y <= 1)
         sage: p.add_constraint(y >= -1)
-        sage: Polyhedron(o)
+        sage: Polyhedron(p, base_ring=ZZ)
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
-        sage: Polyhedron(o, base_ring=QQ)
+        sage: Polyhedron(p)
         A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
 
         sage: # needs sage.combinat
@@ -743,6 +741,14 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         except ImportError:
             SR = None
         if base_ring is not SR and not base_ring.is_exact():
+            try:
+                from sage.rings.real_double import RDF
+            except ImportError:
+                RDF = None
+            try:
+                from sage.rings.real_mpfr import RR
+            except ImportError:
+                RR = None
             # TODO: remove this hack?
             if base_ring is RR:
                 base_ring = RDF

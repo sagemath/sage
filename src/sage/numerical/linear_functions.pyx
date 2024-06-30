@@ -114,7 +114,7 @@ from sage.misc.cachefunc import cached_function
 #
 #*****************************************************************************
 
-cpdef is_LinearFunction(x) noexcept:
+cpdef is_LinearFunction(x):
     """
     Test whether ``x`` is a linear function
 
@@ -132,10 +132,18 @@ cpdef is_LinearFunction(x) noexcept:
         sage: x = p.new_variable()
         sage: from sage.numerical.linear_functions import is_LinearFunction
         sage: is_LinearFunction(x[0] - 2*x[2])
+        doctest:warning...
+        DeprecationWarning: The function is_LinearFunction is deprecated;
+        use 'isinstance(..., LinearFunction)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_LinearFunction('a string')
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_LinearFunction is deprecated; "
+                       "use 'isinstance(..., LinearFunction)' instead.")
     return isinstance(x, LinearFunction)
 
 
@@ -158,17 +166,26 @@ def is_LinearConstraint(x):
         sage: ieq = (x[0] <= x[1])
         sage: from sage.numerical.linear_functions import is_LinearConstraint
         sage: is_LinearConstraint(ieq)
+        doctest:warning...
+        DeprecationWarning: The function is_LinearConstraint is deprecated;
+        use 'isinstance(..., LinearConstraint)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_LinearConstraint('a string')
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_LinearConstraint is deprecated; "
+                       "use 'isinstance(..., LinearConstraint)' instead.")
     return isinstance(x, LinearConstraint)
 
-#*****************************************************************************
+
+# ****************************************************************************
 #
 # Factory functions for the parents to ensure uniqueness
 #
-#*****************************************************************************
+# ****************************************************************************
 
 @cached_function
 def LinearFunctionsParent(base_ring):
@@ -663,7 +680,7 @@ cdef class LinearFunctionsParent_class(Parent):
         """
         return 'Linear functions over ' + str(self.base_ring())
 
-    cpdef _element_constructor_(self, x) noexcept:
+    cpdef _element_constructor_(self, x):
         """
         Construct a :class:`LinearFunction` from ``x``.
 
@@ -689,11 +706,11 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: LF_QQ(f) is f
             False
         """
-        if is_LinearFunction(x):
+        if isinstance(x, LinearFunction):
             return LinearFunction(self, (<LinearFunction>x)._f)
         return LinearFunction(self, x)
 
-    cpdef _coerce_map_from_(self, R) noexcept:
+    cpdef _coerce_map_from_(self, R):
         """
         Allow coercion of scalars into linear functions.
 
@@ -802,7 +819,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         else:
             self._f = {-1: R(f)}
 
-    cpdef iteritems(self) noexcept:
+    cpdef iteritems(self):
         """
         Iterate over the index, coefficient pairs.
 
@@ -890,7 +907,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             ...
             ValueError: x is from a different linear functions module
         """
-        if is_LinearFunction(x):
+        if isinstance(x, LinearFunction):
             if self.parent() != x.parent():
                 raise ValueError('x is from a different linear functions module')
             if len((<LinearFunction>x)._f) != 1:
@@ -905,7 +922,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         except KeyError:
             return self.parent().base_ring().zero()
 
-    cpdef _add_(self, b) noexcept:
+    cpdef _add_(self, b):
         r"""
         Defining the + operator
 
@@ -922,7 +939,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P(e)
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         Defining the - operator (opposite).
 
@@ -936,7 +953,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P({id: -coeff for id, coeff in self._f.iteritems()})
 
-    cpdef _sub_(self, b) noexcept:
+    cpdef _sub_(self, b):
         r"""
         Defining the - operator (subtraction).
 
@@ -955,7 +972,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P(e)
 
-    cpdef _lmul_(self, Element b) noexcept:
+    cpdef _lmul_(self, Element b):
         r"""
         Multiplication by scalars
 
@@ -971,7 +988,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P(dict([(id,b*coeff) for (id, coeff) in self._f.iteritems()]))
 
-    cpdef _acted_upon_(self, x, bint self_on_left) noexcept:
+    cpdef _acted_upon_(self, x, bint self_on_left):
         """
         Act with scalars that do not have a natural coercion into
         ``self.base_ring()``
@@ -1130,7 +1147,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         else:
             return t
 
-    cpdef is_zero(self) noexcept:
+    cpdef is_zero(self):
         """
         Test whether ``self`` is zero.
 
@@ -1150,7 +1167,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
                 return False
         return True
 
-    cpdef equals(LinearFunction left, LinearFunction right) noexcept:
+    cpdef equals(LinearFunction left, LinearFunction right):
         """
         Logically compare ``left`` and ``right``.
 
@@ -1267,7 +1284,7 @@ cdef class LinearConstraintsParent_class(Parent):
         """
         return 'Linear constraints over ' + str(self.linear_functions_parent().base_ring())
 
-    cpdef _element_constructor_(self, left, right=None, equality=False) noexcept:
+    cpdef _element_constructor_(self, left, right=None, equality=False):
         """
         Construct a :class:`LinearConstraint`.
 
@@ -1318,7 +1335,7 @@ cdef class LinearConstraintsParent_class(Parent):
             sage: LC_QQ(inequality) is inequality
             False
         """
-        if right is None and is_LinearConstraint(left):
+        if right is None and isinstance(left, LinearConstraint):
             if (left.parent() is self) and (left.is_equation() == equality):
                 return left
             else:
@@ -1332,7 +1349,7 @@ cdef class LinearConstraintsParent_class(Parent):
         else:
             return LinearConstraint(self, [left, right], equality=equality)
 
-    cpdef _coerce_map_from_(self, R) noexcept:
+    cpdef _coerce_map_from_(self, R):
         """
         Allow coercion of scalars into linear functions.
 
@@ -1432,7 +1449,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         LF = parent.linear_functions_parent()
         self.constraints = [ LF(term) for term in terms ]
 
-    cpdef equals(LinearConstraint left, LinearConstraint right) noexcept:
+    cpdef equals(LinearConstraint left, LinearConstraint right):
         """
         Compare ``left`` and ``right``.
 

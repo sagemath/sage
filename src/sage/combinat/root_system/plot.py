@@ -1412,7 +1412,7 @@ class PlotOptions:
         # TODO: we currently convert lines into rays, which simplify a
         # bit the calculation of the intersection. But it would be
         # nice to benefit from the new ``lines`` option of Polyhedra
-        rays = list(rays) + [ray for ray in lines] + [-ray for ray in lines]
+        rays = list(rays) + list(lines) + [-ray for ray in lines]
 
         # Compute the intersection at level 1, if needed
         if self.level:

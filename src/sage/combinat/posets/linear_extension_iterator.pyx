@@ -153,7 +153,7 @@ def _linear_extension_gen(_D, list _le, list _a, list _b, list _is_plus, Py_ssiz
         sage: from sage.combinat.posets.linear_extension_iterator import _linear_extension_prepare, _linear_extension_gen
         sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
         sage: le, a, b = _linear_extension_prepare(D)
-        sage: [e for e in _linear_extension_gen(D, le, a, b, [True], len(a)-1)]
+        sage: [e for e in _linear_extension_gen(D, le, a, b, [True], len(a)-1)]         # needs sage.modules
         [[0, 2, 1, 3, 4]]
 
     """
@@ -264,7 +264,7 @@ def linear_extension_iterator(D):
 
         sage: from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
         sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
-        sage: list(linear_extension_iterator(D))
+        sage: list(linear_extension_iterator(D))                                        # needs sage.modules
         [[0, 1, 2, 3, 4],
          [0, 2, 1, 3, 4],
          [0, 2, 1, 4, 3],
@@ -272,11 +272,11 @@ def linear_extension_iterator(D):
          [0, 1, 2, 4, 3]]
 
         sage: D = posets.BooleanLattice(3)._hasse_diagram
-        sage: len(list(linear_extension_iterator(D)))
+        sage: len(list(linear_extension_iterator(D)))                                   # needs sage.modules
         48
 
         sage: D = posets.AntichainPoset(9)._hasse_diagram
-        sage: len(list(linear_extension_iterator(D))) == factorial(9)           # long time
+        sage: len(list(linear_extension_iterator(D))) == factorial(9)   # long time, needs sage.modules
         True
     """
     _le, _a, _b = _linear_extension_prepare(D)

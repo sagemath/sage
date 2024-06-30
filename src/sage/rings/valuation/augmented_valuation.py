@@ -141,7 +141,6 @@ REFERENCES:
 
 Augmentations are described originally in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Chapter 4 of [Rüt2014]_.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
@@ -589,7 +588,7 @@ class AugmentedValuation_base(InductiveValuation):
             sage: R.<x> = K[]
             sage: v = GaussValuation(R, K.valuation(2))
             sage: w = v.augmentation(x^2 + x + 1, 1)
-            sage: w.restriction(QQ['x'])                                                # needs sage.lins.singular
+            sage: w.restriction(QQ['x'])                                                # needs sage.libs.singular
             [ Gauss valuation induced by 2-adic valuation, v(x^2 + x + 1) = 1 ]
         """
         if ring.is_subring(self.domain()):

@@ -5,7 +5,7 @@
 Install from Source Code
 ========================
 
-Building Sage from the :wikipedia:`source code <Source_code>` has the major
+Building Sage from the source code has the major
 advantage that your install will be optimized for your particular computer and
 should therefore offer better performance and compatibility than a binary
 install.
@@ -170,7 +170,7 @@ animations, Sage needs to use one of the packages :ref:`FFmpeg
    .. literalinclude:: void-recommended.txt
 
 In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
+be available from your OS, cf. the growing list of such packages on :issue:`27330`,
 install:
 
 .. tab:: Debian/Ubuntu
@@ -264,24 +264,10 @@ WSL prerequisites
 Ubuntu on Windows Subsystem for Linux (WSL) prerequisite installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Sage can be installed onto Linux running on Windows Subsystem for Linux (WSL). These instructions describe a fresh install of Ubuntu 20.10, but other distributions or installation methods should work too, though have not been tested.
-
-- Enable hardware-assisted virtualization in the EFI or BIOS of your system. Refer to your system (or motherboard) maker's documentation for instructions on how to do this.
-
-- Set up WSL by following the `official WSL setup guide <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be sure to do the steps to install WSL2 and set it as default.
-
-- Go to the Microsoft Store and install Ubuntu.
-
-- Start Ubuntu from the start menu. Update all packages to the latest version.
-
-- Reboot the all running WSL instances one of the following ways:
-
-  - Open Windows Services and restart the LxssManager service.
-  - Open the Command Prompt or Powershell and enter this command::
-
-      wsl --shutdown
-
-- `Upgrade to the Ubuntu 20.10 <https://linuxconfig.org/how-to-upgrade-ubuntu-to-20-10>`_. This step will not be necessary once Ubuntu 20.10 is available in the Microsoft Store.
+Refer to :ref:`installation-guide-windows` for installing Ubuntu on
+Windows Subsystem for Linux (WSL). These instructions describe a fresh
+install of Ubuntu, the default distribution in WSL, but other
+distributions or installation methods should work too.
 
 From this point on, follow the instructions in the :ref:`sec-installation-from-sources-linux-recommended-installation` section.
 It is strongly recommended to put the Sage source files in the Linux file system, for example, in the ``/home/username/sage`` directory, and not in the Windows file system (e.g. ``/mnt/c/...``).
@@ -387,9 +373,49 @@ Installation steps
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
 
+#. If you wish to prepare for having to build Sage in an environment
+   without sufficient Internet connectivity:
+
+   - After running ``configure``, you can use ``make download`` to force
+     downloading packages before building. After this, the packages
+     are in the subdirectory ``upstream``.
+
+   - Alternatively, instead of cloning the git repository, you
+     can download a self-contained release tarball for any
+     stable release from the Sage project's
+     `GitHub Releases <https://github.com/sagemath/sage/releases>`_.
+     Use the file named ``sage-x.y.tar.gz`` (1.25 GB as of Sage 10.2)
+     in the Release Assets, which contains a prepopulated subdirectory
+     ``upstream``.
+
+     After downloading the source tarball ``sage-x.y.tar.gz`` into
+     a directory ``~/sage/``::
+
+       $ cd ~/sage/
+       $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
+
+     This creates the subdirectory ``sage-x.y``. Now change into it::
+
+       $ cd sage-x.y/  # adapt x.y
+
+     .. note::
+
+        On Windows, it is crucial that you unpack the source tree from the
+        WSL `bash` using the WSL `tar` utility and not using other
+        Windows tools (including mingw).
+
+        This is because the Sage source tree contains symbolic links, and the
+        build will not work if Windows line endings rather than UNIX
+        line endings are used.
+
+   - The Sage mirrors also provide such self-contained tarballs
+     for all `stable releases <https://www.sagemath.org/download-source.html>`_
+     and additionally for all `development releases
+     <https://www.sagemath.org/download-latest.html>`_.
+
 #. Additional remarks:
    You do not need to be logged in as root, since no files are
-   changed outside of the :file:`sage-x.y` directory.
+   changed outside of the :file:`SAGE_ROOT` directory.
    In fact, **it is inadvisable to build Sage as root**, as the root account
    should only be used when absolutely necessary and mistyped commands can have
    serious consequences if you are logged in as root.
@@ -502,14 +528,14 @@ Installation steps
    There are different possibilities to make using Sage a little easier:
 
    - Make a symbolic link from :file:`/usr/local/bin/sage` (or another
-     directory in your :envvar:`PATH`) to :file:`$SAGE_ROOT/sage`::
+     directory in your :envvar:`PATH`) to :sage_root:`sage`::
 
-         $ ln -s /path/to/sage-x.y/sage /usr/local/bin/sage
+         $ ln -s /path/to/sage_root/sage /usr/local/bin/sage
 
      Now simply typing ``sage`` from any directory should be sufficient to run
      Sage.
 
-   - Copy :file:`$SAGE_ROOT/sage` to a location in your :envvar:`PATH`.
+   - Copy :sage_root:`sage` to a location in your :envvar:`PATH`.
      If you do this, make sure you edit the line:
 
      .. CODE-BLOCK:: bash
@@ -547,7 +573,7 @@ Installation steps
      right clicking the mouse on the icon).
 
    - On Linux and macOS systems, you can make an alias to
-     :file:`$SAGE_ROOT/sage`.
+     :sage_root:`sage`.
      For example, put something similar to the following line in your
      :file:`.bashrc` file:
 
@@ -576,8 +602,9 @@ Make targets
 ------------
 
 To build Sage from scratch, you would typically execute ``make`` in Sage's home
-directory to build Sage and its :wikipedia:`HTML <HTML>`
-documentation.
+directory to build Sage and its documentation in HTML format, suitable for
+viewing in a web browser.
+
 The ``make`` command is pretty smart, so if your build of Sage is interrupted,
 then running ``make`` again should cause it to pick up where it left off.
 The ``make`` command can also be given options, which control what is built and
@@ -751,7 +778,7 @@ Sage-specific environment variables controlling the build process
   the nearest mirrors.
 
   This sequence of operations is defined by the files in the directory
-  :file:`$SAGE_ROOT/.upstream.d`.
+  :sage_root:`.upstream.d`.
 
 .. envvar:: SAGE_NUM_THREADS
 
@@ -940,11 +967,19 @@ Environment variables controlling the documentation build
 
   The value of this variable is passed as an
   argument to ``sage --docbuild all html`` or ``sage --docbuild all pdf`` when
-  you run ``make``, ``make doc``, or ``make doc-pdf``.  For example, you can
-  add ``--no-plot`` to this variable to avoid building the graphics coming from
-  the ``.. PLOT`` directive within the documentation, or you can add
-  ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
-  manual. Run ``sage --docbuild help`` to see the full list of options.
+  you run ``make``, ``make doc``, or ``make doc-pdf``.  For example:
+
+  - add ``--no-plot`` to this variable to avoid building the graphics coming from
+    the ``.. PLOT`` directive within the documentation,
+
+  - add ``--no-preparsed-examples`` to only show the original Sage code of
+    "EXAMPLES" blocks, suppressing the tab with the preparsed, plain Python
+    version, or
+
+  - add ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
+    manual.
+
+  Run ``sage --docbuild help`` to see the full list of options.
 
 .. envvar:: SAGE_SPKG_INSTALL_DOCS
 
@@ -1016,7 +1051,7 @@ Environment variables dealing with specific Sage packages
 .. envvar:: OPENBLAS_CONFIGURE
 
   Adds additional configuration flags for
-  the OpenBLAS package that gets added to the ``make`` command. (see :trac:`23272`)
+  the OpenBLAS package that gets added to the ``make`` command. (see :issue:`23272`)
 
 .. envvar:: PARI_CONFIGURE
 
@@ -1090,12 +1125,12 @@ see a list, execute ``sage.env.[TAB]`` while running Sage.
 
     Variables dealing with valgrind and friends:
 
-    - :envvar:`SAGE_TIMEOUT_VALGRIND` - used for Sage's doctesting: the
+    - :envvar:`SAGE_TIMEOUT_VALGRIND` -- used for Sage's doctesting: the
       number of seconds to allow a doctest before timing it out, if tests
       are run using ``??``.  If this isn't set, the default is 1024*1024
       seconds.
 
-    - :envvar:`SAGE_VALGRIND` - trigger black magic in Python.
+    - :envvar:`SAGE_VALGRIND` -- trigger black magic in Python.
 
     - :envvar:`SAGE_MEMCHECK_FLAGS`, :envvar:`SAGE_MASSIF_FLAGS`,
       :envvar:`SAGE_CACHEGRIND_FLAGS`, :envvar:`SAGE_OMEGA_FLAGS` - flags
@@ -1139,3 +1174,143 @@ a single copy of Sage in a multi-user computer network.
    the installation by yourself::
 
        $ sudo chown -R root SAGE_LOCAL
+
+
+Upgrading the system and upgrading Sage
+---------------------------------------
+
+Caveats when upgrading system packages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When Sage has been installed from source, it will make use of various system
+packages; in particular, it will link to shared libraries provided by
+the system.
+
+The system's package manager does not keep track of the applications that
+make use of the shared libraries.  Therefore indiscriminate upgrades of
+system packages can break a Sage installation.
+
+This can always be fixed by a full rebuild::
+
+  $ make distclean && make build
+
+But this time-consuming step can often be avoided by just reinstalling a
+few packages. The command ``make -j list-broken-packages`` assists with
+this::
+
+  $ make -j list-broken-packages
+  make --no-print-directory auditwheel_or_delocate-no-deps
+  ...
+  # Checking .../local/var/lib/sage/installed/bliss-0.73+debian-1+sage-2016-08-02.p0
+  ...
+  Checking shared library file '.../local/lib/libumfpack.dylib'
+  Checking shared library file '.../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib'
+  Error during installcheck of 'suitesparse': .../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib
+  ...
+  Uninstall broken packages by typing:
+
+      make lcalc-SAGE_LOCAL-uninstall;
+      make ratpoints-SAGE_LOCAL-uninstall;
+      make r-SAGE_LOCAL-uninstall;
+      make suitesparse-SAGE_LOCAL-uninstall;
+
+After running the suggested commands, run::
+
+  $ make build
+
+
+Upgrading Sage using a separate git worktree
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When you have a working installation of Sage built from source and wish to
+try out a new version, we strongly recommend to use a separate
+`git worktree <https://git-scm.com/docs/git-worktree>`_, so that you
+can keep using your existing installation when something goes wrong.
+
+Start from the directory created when you used ``git clone``, perhaps
+``~/sage/sage/``. Let's verify that this is indeed a git repository by
+looking at the hidden ``.git`` subdirectory. It will looks like this,
+but the exact contents can vary::
+
+  [alice@localhost sage]$ ls .git
+  COMMIT_EDITMSG HEAD           branches       description    gitk.cache
+  index          logs           packed-refs    FETCH_HEAD     ORIG_HEAD
+  config         hooks          info           objects        refs
+
+Good. Now let's see what worktrees already exist::
+
+  [alice@localhost sage]$ git worktree list
+  /home/alice/sage/sage                     c0ffeefe10 [master]
+
+We see just one line, the directory created when you used ``git clone``.
+We will call this the "main worktree" from now on. Next to the directory,
+you can see the abbreviated commit sha and the name of the branch that
+we're on (``master``).
+
+To try out a new version of Sage, let's fetch it first from the main
+repository::
+
+  [alice@localhost sage]$ git fetch upstream 10.3.beta8
+  From https://github.com/sagemath/sage
+   * tag                     10.3.beta8 -> FETCH_HEAD
+
+Now let's create a new worktree. We need a name for it; it should
+start with ``worktree-`` but can be anything after that. Experience
+shows that worktrees are often repurposed later, and because a
+directory containing a Sage installation cannot be moved without
+breaking the installation in it, it may be a good idea to choose
+a memorable name without much meaning::
+
+  [alice@localhost sage]$ git worktree add worktree-purple FETCH_HEAD
+  Preparing worktree (detached HEAD 30b3d78fac)
+  Updating files: 100% (11191/11191), done.
+  HEAD is now at 30b3d78fac Updated SageMath version to 10.3.beta8
+
+We now have a subdirectory ``worktree-purple``. This is a
+"linked worktree"::
+
+  [alice@localhost sage]$ git worktree list
+  /home/alice/sage/sage                     c0ffeefe10 [master]
+  /home/alice/sage/sage/worktree-purple     30b3d78fac (detached HEAD)
+  [alice@localhost sage]$ cd worktree-purple
+  [alice@localhost worktree-purple]$ cat VERSION.txt
+  SageMath version 10.3.beta8, Release Date: 2024-02-13
+
+All worktrees created in this way share the same repository,
+so they have access to all branches::
+
+  [alice@localhost worktree-purple]$ git --no-pager branch -v
+  * (no branch) 30b3d78fac Updated SageMath version to 10.3.beta8
+  + master      2a9a4267f9 Updated SageMath version to 10.2
+
+In fact, ``.git`` here is not a directory, just a hidden
+file::
+
+  [alice@localhost worktree-purple]$ ls -l .git
+  -rw-r--r--  1 alice  staff  59 Feb 20 18:16 .git
+
+In the new worktree, we now build Sage from scratch. This
+is completely independent of and will not disrupt your
+existing working installation in the main worktree.
+
+We will refer again to the step-by-step instructions
+from the file
+`README.md <https://github.com/sagemath/sage/#readme>`_.
+Our worktree ``worktree-purple`` is the ``SAGE_ROOT``
+for this purpose.
+
+One thing that we can share between worktrees without
+worry is the directory ``upstream``, where Sage caches
+downloaded archives of packages. To have the new worktree
+share it with the main worktree, let's create a symbolic
+link. This is an optional step that will avoid
+re-downloading files that you already have::
+
+  [alice@localhost worktree-purple]$ ln -s ../upstream/ .
+
+Now let's build Sage, starting with the step::
+
+  [alice@localhost worktree-purple]$ make configure
+
+Refer to the file `README.md <https://github.com/sagemath/sage/#readme>`_
+for the following steps.

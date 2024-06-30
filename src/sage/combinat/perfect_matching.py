@@ -61,10 +61,12 @@ from sage.sets.set import Set
 from sage.structure.list_clone import ClonableArray
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
-from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.set_partition import SetPartition, SetPartitions_set
 from sage.combinat.combinat_cython import perfect_matchings_iterator
 from sage.rings.infinity import infinity
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class PerfectMatching(SetPartition):

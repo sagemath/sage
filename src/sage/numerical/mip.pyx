@@ -234,7 +234,7 @@ AUTHORS:
 # ****************************************************************************
 
 from copy import copy
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.rings.integer_ring import ZZ
 
 
@@ -715,7 +715,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         INPUT:
 
-        - ``binary, integer, real`` -- boolean. Set one of these
+        - ``binary``, ``integer``, ``real`` -- boolean. Set one of these
           arguments to ``True`` to ensure that the variable gets the
           corresponding type.
 
@@ -1899,7 +1899,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``name`` -- A name for the constraint.
 
-        - ``return_indices`` -- boolean (optional, default False),
+        - ``return_indices`` -- boolean (default: ``False``),
           whether to return the indices of the added constraints.
 
         OUTPUT:
@@ -2134,14 +2134,14 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.solve()
             6.0
         """
-        from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
-        from sage.numerical.linear_tensor import is_LinearTensor
-        from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint
-        if is_LinearFunction(linear_function) or is_LinearTensor(linear_function):
+        from sage.numerical.linear_functions import LinearFunction, LinearConstraint
+        from sage.numerical.linear_tensor import LinearTensor
+        from sage.numerical.linear_tensor_constraints import LinearTensorConstraint
+        if isinstance(linear_function, LinearFunction) or isinstance(linear_function, LinearTensor):
             # Find the parent for the coefficients
-            if is_LinearFunction(linear_function):
+            if isinstance(linear_function, LinearFunction):
                 M = linear_function.parent().base_ring()
-            elif is_LinearTensor(linear_function):
+            elif isinstance(linear_function, LinearTensor):
                 if not linear_function.parent().is_vector_space():
                     raise ValueError('the linear function must be vector-valued')
                 M = linear_function.parent().free_module()
@@ -2164,14 +2164,14 @@ cdef class MixedIntegerLinearProgram(SageObject):
             except KeyError:
                 pass
             # Send to backend
-            if is_LinearFunction(linear_function):
+            if isinstance(linear_function, LinearFunction):
                 if self._check_redundant and self._is_redundant_constraint(constraint, min, max):
                     if return_indices:
                         return []
                     return
                 nrows_before = self._backend.nrows()
                 self._backend.add_linear_constraint(constraint.items(), min, max, name)
-            elif is_LinearTensor(linear_function):
+            elif isinstance(linear_function, LinearTensor):
                 nrows_before = self._backend.nrows()
                 self._backend.add_linear_constraint_vector(M.degree(), constraint.items(), min, max, name)
             else:
@@ -2179,7 +2179,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             if return_indices:
                 return list(range(nrows_before, self._backend.nrows()))
             return
-        elif is_LinearConstraint(linear_function):
+        elif isinstance(linear_function, LinearConstraint):
             if not(min is None and max is None):
                 raise ValueError('min and max must not be specified for (in)equalities')
             relation = linear_function
@@ -2200,7 +2200,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
                 if new_indices is not None:
                     row_indices.extend(new_indices)
             return row_indices
-        elif is_LinearTensorConstraint(linear_function):
+        elif isinstance(linear_function, LinearTensorConstraint):
             if not(min is None and max is None):
                 raise ValueError('min and max must not be specified for (in)equalities')
             relation = linear_function
@@ -2852,7 +2852,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
               The command ::
 
-                  sage: p = MixedIntegerLinearProgram(solver="CPLEX") # optional - CPLEX
+                  sage: p = MixedIntegerLinearProgram(solver="CPLEX")   # optional - CPLEX
                   sage: p.solver_parameter("CPX_PARAM_TILIM", 60)       # optional - CPLEX
 
               works as intended.
@@ -2883,7 +2883,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef sum(self, L) noexcept:
+    cpdef sum(self, L):
         r"""
         Efficiently computes the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements
@@ -3656,15 +3656,15 @@ cdef class MIPVariable(FiniteFamily):
             (1, 2/3)*x_0 + (1/2, 3/4)*x_1
         """
         if isinstance(left, MIPVariable):
-            if not is_Matrix(right):
+            if not isinstance(right, Matrix):
                 return NotImplemented
             return (<MIPVariable> left)._matrix_rmul_impl(right)
         else:
-            if not is_Matrix(left):
+            if not isinstance(left, Matrix):
                 return NotImplemented
             return (<MIPVariable> right)._matrix_lmul_impl(left)
 
-    cdef _matrix_rmul_impl(self, m) noexcept:
+    cdef _matrix_rmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the right.
         """
@@ -3678,7 +3678,7 @@ cdef class MIPVariable(FiniteFamily):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cdef _matrix_lmul_impl(self, m) noexcept:
+    cdef _matrix_lmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the left.
         """

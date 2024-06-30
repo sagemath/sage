@@ -1,10 +1,10 @@
-mathics_scanner: Character Tables and Tokenizer for Mathics and the Wolfram Language.
-=====================================================================================
+mathics_scanner: Character Tables and Tokenizer for Mathics and the Wolfram Language
+====================================================================================
 
 Description
 -----------
 
-Character Tables and Tokenizer for Mathics and the Wolfram Language.
+Character Tables and Tokenizer for Mathics and the Wolfram Language
 
 License
 -------

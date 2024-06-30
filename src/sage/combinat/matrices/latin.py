@@ -41,8 +41,8 @@ This file contains
 #. some named latin squares (back circulant, forward circulant, abelian
    `2`-group);
 
-#. functions is\_partial\_latin\_square and is\_latin\_square to test
-   if a LatinSquare object satisfies the definition of a latin square
+#. methods :meth:`is_partial_latin_square` and :meth:`is_latin_square` to test
+   if a :class:`LatinSquare` object satisfies the definition of a latin square
    or partial latin square, respectively;
 
 #. tests for completion and unique completion (these use the C++
@@ -57,7 +57,7 @@ This file contains
 
 #. a few examples of `\tau_i` representations of bitrades constructed
    from the action of a group on itself by right multiplication,
-   functions for converting to a pair of LatinSquare objects.
+   functions for converting to a pair of :class:`LatinSquare` objects.
 
 EXAMPLES::
 
@@ -113,7 +113,6 @@ TESTS::
     sage: L = elementary_abelian_2group(3)
     sage: L == loads(dumps(L))
     True
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>,
@@ -625,7 +624,7 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` - LatinSquare
+        -  ``self`` -- LatinSquare
 
         EXAMPLES::
 
@@ -742,11 +741,11 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` - LatinSquare
+        -  ``self`` -- LatinSquare
 
-        -  ``r`` - int; row of the latin square
+        -  ``r`` -- int; row of the latin square
 
-        -  ``c`` - int; column of the latin square
+        -  ``c`` -- int; column of the latin square
 
         EXAMPLES::
 
@@ -789,12 +788,12 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` - LatinSquare
+        -  ``self`` -- LatinSquare
 
         OUTPUT:
 
-        - ``[r, c]`` - cell such that self[r, c] is empty, or returns
-          None if self is a (full) latin square.
+        - ``[r, c]`` -- cell such that ``self[r, c]`` is empty, or returns
+          ``None`` if ``self`` is a (full) latin square
 
         EXAMPLES::
 
@@ -1598,9 +1597,9 @@ def beta1(rce, T1, T2):
     INPUT:
 
 
-    -  ``rce`` - tuple (or list) (r, c, e) in T1
+    -  ``rce`` -- tuple (or list) (r, c, e) in T1
 
-    -  ``T1, T2`` - latin bitrade
+    -  ``T1, T2`` -- latin bitrade
 
 
     OUTPUT: (x, c, e) in T2.
@@ -1638,9 +1637,9 @@ def beta2(rce, T1, T2):
 
     INPUT:
 
-    -  ``rce`` - tuple (or list) (r, c, e) in T1
+    -  ``rce`` -- tuple (or list) (r, c, e) in T1
 
-    -  ``T1, T2`` - latin bitrade
+    -  ``T1, T2`` -- latin bitrade
 
 
     OUTPUT:
@@ -1681,9 +1680,9 @@ def beta3(rce, T1, T2):
     INPUT:
 
 
-    -  ``rce`` - tuple (or list) (r, c, e) in T1
+    -  ``rce`` -- tuple (or list) (r, c, e) in T1
 
-    -  ``T1, T2`` - latin bitrade
+    -  ``T1, T2`` -- latin bitrade
 
 
     OUTPUT:

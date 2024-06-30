@@ -6,7 +6,6 @@ CVXOPT Backend
 AUTHORS:
 
 - Ingolfur Edvardsson (2014-05): initial implementation
-
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
@@ -93,7 +92,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             self.set_sense(-1)
 
-    cpdef __copy__(self) noexcept:
+    cpdef __copy__(self):
         # Added a second inequality to this doctest,
         # because otherwise CVXOPT complains: ValueError: Rank(A) < p or Rank([G; A]) < n
         """
@@ -142,19 +141,19 @@ cdef class CVXOPTBackend(GenericBackend):
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is integer (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integer (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         OUTPUT: The index of the newly created variable
 
@@ -205,7 +204,7 @@ cdef class CVXOPTBackend(GenericBackend):
         self.col_name_var.append(name)
         return len(self.objective_function) - 1
 
-    cpdef set_variable_type(self, int variable, int vtype) noexcept:
+    cpdef set_variable_type(self, int variable, int vtype):
         """
         Set the type of a variable.
 
@@ -224,7 +223,7 @@ cdef class CVXOPTBackend(GenericBackend):
         if vtype != -1:
             raise ValueError('This backend does not handle integer variables ! Read the doc !')
 
-    cpdef set_sense(self, int sense) noexcept:
+    cpdef set_sense(self, int sense):
         """
         Set the direction (maximization/minimization).
 
@@ -250,7 +249,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             self.is_maximize = 0
 
-    cpdef objective_coefficient(self, int variable, coeff=None) noexcept:
+    cpdef objective_coefficient(self, int variable, coeff=None):
         """
         Set or get the coefficient of a variable in the objective
         function
@@ -278,7 +277,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.objective_function[variable]
 
-    cpdef set_objective(self, list coeff, d = 0.0) noexcept:
+    cpdef set_objective(self, list coeff, d = 0.0):
         """
         Set the objective function.
 
@@ -303,13 +302,13 @@ cdef class CVXOPTBackend(GenericBackend):
             self.objective_function[i] = coeff[i]
         obj_constant_term = d
 
-    cpdef set_verbosity(self, int level) noexcept:
+    cpdef set_verbosity(self, int level):
         """
         Does not apply for the cvxopt solver
         """
         pass
 
-    cpdef add_col(self, indices, coeffs) noexcept:
+    cpdef add_col(self, indices, coeffs):
         """
         Add a column.
 
@@ -357,7 +356,7 @@ cdef class CVXOPTBackend(GenericBackend):
         self.objective_function.append(0)
         self.col_name_var.append(None)
 
-    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None) noexcept:
+    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
         """
         Add a linear constraint.
 
@@ -367,11 +366,11 @@ cdef class CVXOPTBackend(GenericBackend):
           is a variable index (integer) and ``v`` is a value (real
           value).
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``name`` - an optional name for this row (default: ``None``)
+        - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLES::
 
@@ -497,10 +496,10 @@ cdef class CVXOPTBackend(GenericBackend):
         from cvxopt import matrix, solvers
         h = []
 
-        #for the equation bounds
+        # for the equation bounds
         for eq_index in range(self.nrows()):
             h.append(self.row_upper_bound[eq_index])
-            #upper bound is already in G
+            # upper bound is already in G
             if self.row_lower_bound[eq_index] is not None:
                 h.append(-1 * self.row_lower_bound[eq_index])
                 for cindex in range(len(self.G_matrix)):
@@ -509,9 +508,7 @@ cdef class CVXOPTBackend(GenericBackend):
                     else:
                         self.G_matrix[cindex].append(0)
 
-
-
-        #for the upper bounds (if there are any)
+        # for the upper bounds (if there are any)
         for i in range(len(self.col_upper_bound)):
             if self.col_upper_bound[i] is not None:
                 h.append(self.col_upper_bound[i])
@@ -563,8 +560,7 @@ cdef class CVXOPTBackend(GenericBackend):
             raise MIPSolverException("CVXOPT: Terminated early due to numerical difficulties or because the maximum number of iterations was reached.")
         return 0
 
-
-    cpdef get_objective_value(self) noexcept:
+    cpdef get_objective_value(self):
         """
         Return the value of the objective function.
 
@@ -596,7 +592,7 @@ cdef class CVXOPTBackend(GenericBackend):
             i+=1
         return sum
 
-    cpdef get_variable_value(self, int variable) noexcept:
+    cpdef get_variable_value(self, int variable):
         """
         Return the value of a variable given by the solver.
 
@@ -659,7 +655,6 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         return len(self.row_upper_bound)
 
-
     cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
@@ -679,7 +674,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return 0
 
-    cpdef problem_name(self, name=None) noexcept:
+    cpdef problem_name(self, name=None):
         """
         Return or define the problem's name
 
@@ -702,8 +697,7 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.prob_name
         self.prob_name = name
 
-
-    cpdef row(self, int i) noexcept:
+    cpdef row(self, int i):
         """
         Return a row
 
@@ -740,8 +734,7 @@ cdef class CVXOPTBackend(GenericBackend):
             index += 1
         return (idx, coeff)
 
-
-    cpdef row_bounds(self, int index) noexcept:
+    cpdef row_bounds(self, int index):
         """
         Return the bounds of a specific constraint.
 
@@ -769,7 +762,7 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         return (self.row_lower_bound[index], self.row_upper_bound[index])
 
-    cpdef col_bounds(self, int index) noexcept:
+    cpdef col_bounds(self, int index):
         """
         Return the bounds of a specific variable.
 
@@ -880,7 +873,7 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         return True
 
-    cpdef row_name(self, int index) noexcept:
+    cpdef row_name(self, int index):
         """
         Return the ``index`` th row name
 
@@ -900,7 +893,7 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.row_name_var[index]
         return "constraint_" + repr(index)
 
-    cpdef col_name(self, int index) noexcept:
+    cpdef col_name(self, int index):
         """
         Return the ``index`` th col name
 
@@ -924,7 +917,7 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.col_name_var[index]
         return "x_" + repr(index)
 
-    cpdef variable_upper_bound(self, int index, value = False) noexcept:
+    cpdef variable_upper_bound(self, int index, value = False):
         """
         Return or define the upper bound on a variable
 
@@ -953,7 +946,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = False) noexcept:
+    cpdef variable_lower_bound(self, int index, value = False):
         """
         Return or define the lower bound on a variable
 
@@ -982,7 +975,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.col_lower_bound[index]
 
-    cpdef solver_parameter(self, name, value = None) noexcept:
+    cpdef solver_parameter(self, name, value = None):
         """
         Return or define a solver parameter
 

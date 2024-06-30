@@ -12,7 +12,6 @@ AUTHORS:
 - David Harvey: doctests
 
 - Julian Rueth: fixes for exp() and log(), implemented gcd, xgcd
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed@math.harvard.edu>
@@ -43,7 +42,7 @@ from sage.structure.richcmp cimport rich_to_bool
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
 
 cdef class pAdicGenericElement(LocalGenericElement):
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         First compare valuations, then compare normalized
         residue of unit part.
@@ -354,7 +353,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             raise ZeroDivisionError("cannot divide by zero")
         return self._floordiv_(right)
 
-    cpdef _floordiv_(self, right) noexcept:
+    cpdef _floordiv_(self, right):
         """
         Implements floor division.
 
@@ -465,7 +464,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         return ~self.parent().fraction_field()(self, relprec = self.precision_relative())
 
-    cpdef _mod_(self, right) noexcept:
+    cpdef _mod_(self, right):
         """
         If self is in a field, returns 0.  If in a ring, returns a
         p-adic integer such that
@@ -595,7 +594,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             return Integer(1)
         else:
             return infinity
-
 
     def artin_hasse_exp(self, prec=None, algorithm=None):
         r"""
@@ -968,7 +966,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             y *= b - y.log(algorithm=log_algorithm)
 
         return R(y)
-
 
     def minimal_polynomial(self, name='x', base=None):
         """
@@ -2115,7 +2112,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         raise NotImplementedError
 
-    cpdef val_unit(self) noexcept:
+    cpdef val_unit(self):
         r"""
         Return ``(self.valuation(), self.unit_part())``. To be overridden in
         derived classes.
@@ -2971,7 +2968,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             retval = R(retval)
         return retval.add_bigoh(aprec)
 
-
     def _exp_generic(self, aprec):
         r"""
         Compute the exponential power series of this element, using Horner's
@@ -3159,7 +3155,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
                 a *= 1+b
                 l += (1+b).log(aprec, algorithm=log_algorithm)
         return a
-
 
     def exp(self, aprec=None, algorithm=None):
         r"""
@@ -3392,7 +3387,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             raise ValueError("algorithm must be 'generic', 'binary_splitting', 'newton' or None")
         return ans.add_bigoh(aprec)
 
-
     def square_root(self, extend=True, all=False, algorithm=None):
         r"""
         Return the square root of this `p`-adic number.
@@ -3594,7 +3588,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             return []
         else:
             raise ValueError("element is not a square")
-
 
     def nth_root(self, n, all=False):
         """
@@ -3986,7 +3979,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         return x, infinity
 
-
     def __abs__(self):
         """
         Return the `p`-adic absolute value of ``self``.
@@ -4022,7 +4014,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         return self.abs()
 
-    cpdef abs(self, prec=None) noexcept:
+    cpdef abs(self, prec=None):
         """
         Return the `p`-adic absolute value of ``self``.
 
@@ -4344,7 +4336,9 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
 
 # Artin-Hasse exponential
-_AHE_coefficients_cache = { }
+_AHE_coefficients_cache = {}
+
+
 def _AHE_coefficients(p, N, prec):
     r"""
     Compute the first ``N`` coefficients of the ``p``-adic
@@ -4466,8 +4460,8 @@ def _findprec(c_1, c_2, c_3, p):
 
     INPUT:
 
-    - `c_1`, `c_2`, `c_3` - positive integers
-    - `p` - prime
+    - `c_1`, `c_2`, `c_3` -- positive integers
+    - `p` -- prime
 
     OUTPUT:
 
@@ -4515,7 +4509,8 @@ def _compute_g(p, n, prec, terms):
         g[i+1] = -(g[i]/(v-v**2)).integral()
     return [x.truncate(terms) for x in g]
 
-cpdef dwork_mahler_coeffs(R, int bd=20) noexcept:
+
+cpdef dwork_mahler_coeffs(R, int bd=20):
     r"""
     Compute Dwork's formula for Mahler coefficients of `p`-adic Gamma.
 
@@ -4563,7 +4558,7 @@ cpdef dwork_mahler_coeffs(R, int bd=20) noexcept:
                 v.append(R(x << i))
     return v
 
-cpdef evaluate_dwork_mahler(v, x, long long p, int bd, long long a) noexcept:
+cpdef evaluate_dwork_mahler(v, x, long long p, int bd, long long a):
     """
     Evaluate Dwork's Mahler series for `p`-adic Gamma.
 
@@ -4607,7 +4602,7 @@ cdef long long evaluate_dwork_mahler_long(array.array v, long long x, long long 
         s = s % q
     return -s
 
-cpdef gauss_table(long long p, int f, int prec, bint use_longs) noexcept:
+cpdef gauss_table(long long p, int f, int prec, bint use_longs):
     r"""
     Compute a table of Gauss sums using the Gross-Koblitz formula.
 
@@ -4617,9 +4612,9 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs) noexcept:
 
     INPUT:
 
-    - ``p`` - prime
-    - ``f``, ``prec`` - positive integers
-    - ``use_longs`` - boolean; if ``True``, computations are done in C ``long long``
+    - ``p`` -- prime
+    - ``f``, ``prec`` -- positive integers
+    - ``use_longs`` -- boolean; if ``True``, computations are done in C ``long long``
         integers rather than Sage `p`-adics, and the results are returned
         as a Python array rather than a list.
 

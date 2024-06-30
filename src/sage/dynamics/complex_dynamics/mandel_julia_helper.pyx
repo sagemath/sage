@@ -8,7 +8,6 @@ This is the helper file providing functionality for mandel_julia.py.
 AUTHORS:
 
 - Ben Barros
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 BEN BARROS <bbarros@slu.edu>
@@ -35,7 +34,7 @@ from sage.ext.fast_callable import fast_callable
 from sage.calculus.all import symbolic_expression
 from sage.symbolic.ring import SR
 from sage.calculus.var import var
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.categories.function_fields import FunctionFields
 from cypari2.handle_error import PariError
 from math import sqrt
@@ -59,9 +58,10 @@ def _color_to_RGB(color):
         color = [int(255.0 * k) for k in Color(color)]
     return tuple(color)
 
+
 cpdef fast_mandelbrot_plot(double x_center, double y_center,
  double image_width, long max_iteration, long pixel_count,
- long level_sep, long color_num, base_color) noexcept:
+ long level_sep, long color_num, base_color):
     r"""
     Plots the Mandelbrot set in the complex plane for the map `Q_c(z) = z^2 + c`.
 
@@ -179,7 +179,7 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
 
 
 cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
- long pixel_count=500, double image_width=4, long prec=300) noexcept:
+ long pixel_count=500, double image_width=4, long prec=300):
     r"""
     Return a list of points that approximate the external ray for a given angle.
 
@@ -187,24 +187,24 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
 
     - ``theta`` -- double, angle between 0 and 1 inclusive.
 
-    - ``D`` -- long (optional - default: ``25``) depth of the approximation.
+    - ``D`` -- long (default: ``25``) depth of the approximation.
      As ``D`` increases, the external ray gets closer to the boundary of the
      Mandelbrot set.
 
-    - ``S`` -- long (optional - default: ``10``) sharpness of the approximation.
+    - ``S`` -- long (default: ``10``) sharpness of the approximation.
      Adjusts the number of points used to approximate the external ray (number
      of points is equal to ``S*D``).
 
-    - ``R`` -- long (optional - default: ``100``) radial parameter. If ``R`` is
+    - ``R`` -- long (default: ``100``) radial parameter. If ``R`` is
      sufficiently large, the external ray reaches enough close to infinity.
 
-    - ``pixel_count`` -- long (optional - default: ``500``) side length of image
+    - ``pixel_count`` -- long (default: ``500``) side length of image
      in number of pixels.
 
-    - ``image_width`` -- double (optional - default: ``4``) width of the image
+    - ``image_width`` -- double (default: ``4``) width of the image
      in the complex plane.
 
-    - ``prec`` -- long (optional - default: ``300``) specifies the bits of
+    - ``prec`` -- long (default: ``300``) specifies the bits of
      precision used by the Complex Field when using Newton's method to compute
      points on the external ray.
 
@@ -290,7 +290,7 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
     return c_list
 
 cpdef convert_to_pixels(point_list, double x_0, double y_0, double width,
- long number_of_pixels) noexcept:
+ long number_of_pixels):
     r"""
     Converts cartesian coordinates to pixels within a specified window.
 
@@ -334,7 +334,7 @@ cpdef convert_to_pixels(point_list, double x_0, double y_0, double width,
         pixel_list.append((x_pixel, y_pixel))
     return pixel_list
 
-cpdef get_line(start, end) noexcept:
+cpdef get_line(start, end):
     r"""
     Produces a list of pixel coordinates approximating a line from a starting
     point to an ending point using the Bresenham's Line Algorithm.
@@ -421,7 +421,7 @@ cpdef get_line(start, end) noexcept:
 cpdef fast_julia_plot(double c_real, double c_imag,
   double x_center=0, double y_center=0, double image_width=4,
   long max_iteration=500, long pixel_count=500, long level_sep=2,
-  long color_num=40, base_color=[50, 50, 50]) noexcept:
+  long color_num=40, base_color=[50, 50, 50]):
     r"""
     Plots the Julia set for a given `c` value in the complex plane for the map `Q_c(z) = z^2 + c`.
 
@@ -432,28 +432,28 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
       set.
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center
+    - ``x_center`` -- double (default: ``0.0``), Real part of center
       point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of
+    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
       center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image
+    - ``image_width`` -- double (default: ``4.0``), width of image
       in the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of
+    - ``max_iteration`` -- long (default: ``500``), maximum number of
       iterations the map ``Q_c(z)``.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
+    - ``pixel_count`` -- long (default: ``500``), side length of
       image in number of pixels.
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations
+    - ``level_sep`` -- long (default: ``2``), number of iterations
       between each color level.
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used
+    - ``color_num`` -- long (default: ``40``), number of colors used
       to plot image.
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``), color
       used to determine the coloring of set.
 
     OUTPUT:
@@ -540,7 +540,7 @@ cpdef fast_julia_plot(double c_real, double c_imag,
 cpdef julia_helper(double c_real, double c_imag, double x_center=0,
  double y_center=0, double image_width=4, long max_iteration=500,
  long pixel_count=500, long level_sep=2, long color_num=40,
- base_color=[50, 50, 50], point_color=[255, 0, 0]) noexcept:
+ base_color=[50, 50, 50], point_color=[255, 0, 0]):
     r"""
     Helper function that returns the image of a Julia set for a given
     `c` value side by side with the Mandelbrot set with a point denoting
@@ -553,31 +553,31 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
     - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
       set.
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center
+    - ``x_center`` -- double (default: ``0.0``), Real part of center
       point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of
+    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
       center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image in
+    - ``image_width`` -- double (default: ``4.0``), width of image in
       the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of
+    - ``max_iteration`` -- long (default: ``500``), maximum number of
       iterations the map ``Q_c(z)``.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
+    - ``pixel_count`` -- long (default: ``500``), side length of
       image in number of pixels.
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations
+    - ``level_sep`` -- long (default: ``2``), number of iterations
       between each color level.
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used
+    - ``color_num`` -- long (default: ``40``), number of colors used
       to plot image.
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``), color
       used to determine the coloring of set.
 
-    - ``point_color`` -- RGB color (optional - default: ``[255, 0, 0]``), color
+    - ``point_color`` -- RGB color (default: ``[255, 0, 0]``), color
       of the point `c` in the Mandelbrot set.
 
     OUTPUT:
@@ -631,7 +631,7 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
 
 cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
  double y_center=0, image_width=4, int max_iteration=50, int pixel_count=500,
- int level_sep=1, int color_num=30, base_color=Color('red')) noexcept:
+ int level_sep=1, int color_num=30, base_color=Color('red')):
     r"""
     Plots the Mandelbrot set in the complex plane for a family of polynomial maps.
 
@@ -709,14 +709,14 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     P = f.parent()
 
     if P.base_ring() is CC:
-        if is_FractionField(P):
+        if isinstance(P, FractionField_generic):
             raise NotImplementedError("coefficients must be polynomials in the parameter")
         gen_list = list(P.gens())
         parameter = gen_list.pop(gen_list.index(parameter))
         variable = gen_list.pop()
 
     elif P.base_ring().base_ring() is CC:
-        if is_FractionField(P.base_ring()):
+        if isinstance(P.base_ring(), FractionField_generic):
             raise NotImplementedError("coefficients must be polynomials in the parameter")
         phi = P.flattening_morphism()
         f = phi(f)
@@ -934,7 +934,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
 
 cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
  int max_iteration=50, int pixel_count=500, int level_sep=1, int color_num=30,
- base_color=[50,50,50]) noexcept:
+ base_color=[50,50,50]):
     r"""
     Plots Julia sets for general polynomials.
 

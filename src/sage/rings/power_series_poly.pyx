@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Power Series Methods
 
@@ -490,7 +489,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, -self.__f,
                                          self._prec, check=False)
 
-    cpdef _add_(self, right_m) noexcept:
+    cpdef _add_(self, right_m):
         """
         EXAMPLES::
 
@@ -522,7 +521,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f + right.__f,
                                 self.common_prec_c(right), check=True)
 
-    cpdef _sub_(self, right_m) noexcept:
+    cpdef _sub_(self, right_m):
         """
         Return the difference of two power series.
 
@@ -537,7 +536,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f - right.__f,
                                 self.common_prec_c(right), check=True)
 
-    cpdef _mul_(self, right_r) noexcept:
+    cpdef _mul_(self, right_r):
         """
         Return the product of two power series.
 
@@ -553,7 +552,7 @@ cdef class PowerSeries_poly(PowerSeries):
                                 prec=prec,
                                 check=True)  # check, since truncation may be needed
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         """
         Multiply ``self`` on the right by a scalar.
 
@@ -566,7 +565,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return PowerSeries_poly(self._parent, self.__f * c, self._prec, check=False)
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         """
         Multiply ``self`` on the left by a scalar.
 
@@ -750,7 +749,7 @@ cdef class PowerSeries_poly(PowerSeries):
         else:
             return self.__f.truncate(prec)
 
-    cdef _inplace_truncate(self, long prec) noexcept:
+    cdef _inplace_truncate(self, long prec):
         """
         Truncate ``self`` to precision ``prec`` in place.
 
@@ -864,7 +863,6 @@ cdef class PowerSeries_poly(PowerSeries):
                                     self.prec(), check=False)
             except AttributeError:
                 raise ValueError('cannot differentiate with respect to {}'.format(var))
-
 
         # compute formal derivative with respect to generator
         return PowerSeries_poly(self._parent, self.__f._derivative(),
@@ -1247,11 +1245,12 @@ def make_powerseries_poly_v0(parent, f, prec, is_gen):
     """
     return PowerSeries_poly(parent, f, prec, 0, is_gen)
 
+
 cdef class BaseRingFloorDivAction(Action):
     """
     The floor division action of the base ring on a formal power series.
     """
-    cpdef _act_(self, g, x) noexcept:
+    cpdef _act_(self, g, x):
         r"""
         Let ``g`` act on ``x`` under ``self``.
 

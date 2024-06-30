@@ -28,12 +28,12 @@ provide a method
   new Hom-set class does not use ``MyScheme._morphism`` then you
   do not have to provide it.
 
-Note that points on schemes are morphisms `Spec(K)\to X`, too. But we
-typically use a different notation, so they are implemented in a
-different derived class. For this, you should implement a method
+Note that points on schemes are morphisms `\mathrm{Spec}(K)\to X`, too. But we
+typically use a different notation, so they are implemented in a different
+derived class. For this, you should implement a method
 
-* ``MyScheme._point(*args, **kwds)`` returning a point, that is,
-  a morphism `Spec(K)\to X`. Your point class should derive from
+* ``MyScheme._point(*args, **kwds)`` returning a point, that is, a morphism
+  `\mathrm{Spec}(K)\to X`. Your point class should derive from
   :class:`SchemeMorphism_point`.
 
 Optionally, you can also provide a special Hom-set for the points, for
@@ -82,7 +82,7 @@ from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 from sage.categories.homset import Homset, Hom, End
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.categories.map import FormalCompositeMap, Map
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_attribute
@@ -774,7 +774,7 @@ class SchemeMorphism_spec(SchemeMorphism):
 
     - ``phi`` -- a ring morphism with matching domain and codomain.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     EXAMPLES::
@@ -947,7 +947,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
     - ``polys`` -- a list/tuple/iterable of polynomials defining the
       scheme morphism.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     EXAMPLES:
@@ -1253,7 +1253,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         INPUT:
 
-        - ``i``-- integer
+        - ``i`` -- integer
 
         OUTPUT:
 
@@ -1643,7 +1643,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             if phi is None:
                 raise ValueError("either the dictionary or the specialization must be provided")
         else:
-            if is_FractionField(self[0].parent()):
+            if isinstance(self[0].parent(), FractionField_generic):
                 from sage.rings.polynomial.flatten import FractionSpecializationMorphism
                 phi = FractionSpecializationMorphism(self[0].parent(), D)
             else:
@@ -1790,11 +1790,11 @@ class SchemeMorphism_polynomial_id(SchemeMorphism_id, SchemeMorphism_polynomial)
 ############################################################################
 
 class SchemeMorphism_point(SchemeMorphism):
-    """
+    r"""
     Base class for rational points on schemes.
 
     Recall that the `K`-rational points of a scheme `X` over `k` can
-    be identified with the set of morphisms `Spec(K) \to X`. In Sage,
+    be identified with the set of morphisms `\mathrm{Spec}(K) \to X`. In Sage,
     the rational points are implemented by such scheme morphisms.
 
     EXAMPLES::

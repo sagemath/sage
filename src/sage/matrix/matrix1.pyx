@@ -291,9 +291,9 @@ cdef class Matrix(Matrix0):
             sage: a._mathematica_init_()                                                # needs sage.symbolic
             '{{Pi, Sin[x]}, {Cos[x], Exp[-1]}}'
         """
-        return '{' + ', '.join([v._mathematica_init_() for v in self.rows()]) + '}'
+        return '{' + ', '.join(v._mathematica_init_() for v in self.rows()) + '}'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return a string that evaluates in the given Magma session to this
         matrix.
@@ -479,10 +479,9 @@ cdef class Matrix(Matrix0):
         entries = [list(row) for row in self]
         return macaulay2(self.base_ring()).matrix(entries)
 
-
     def _scilab_init_(self):
         """
-        Returns a string defining a Scilab representation of self.
+        Return a string defining a Scilab representation of ``self``.
 
         EXAMPLES::
 
@@ -678,7 +677,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``dtype`` - The desired data-type for the array. If not given,
+        - ``dtype`` -- The desired data-type for the array. If not given,
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
 
@@ -854,7 +853,7 @@ cdef class Matrix(Matrix0):
     #############################################################################################
     # rows, columns, sparse_rows, sparse_columns, dense_rows, dense_columns, row, column
     #############################################################################################
-    cpdef row_ambient_module(self, base_ring=None, sparse=None) noexcept:
+    cpdef row_ambient_module(self, base_ring=None, sparse=None):
         r"""
         Return the free module that contains the rows of the matrix.
 
@@ -911,7 +910,7 @@ cdef class Matrix(Matrix0):
         deprecation(32984, 'the method _row_ambient_module is deprecated use row_ambient_module (without underscore) instead')
         return self.row_ambient_module(base_ring)
 
-    cpdef column_ambient_module(self, base_ring=None, sparse=None) noexcept:
+    cpdef column_ambient_module(self, base_ring=None, sparse=None):
         r"""
         Return the free module that contains the columns of the matrix.
 
@@ -974,7 +973,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy of the list
+        - ``copy`` -- (default: ``True``) if True, return a copy of the list
           of columns which is safe to change.
 
         If ``self`` is a sparse matrix, columns are returned as sparse vectors,
@@ -1030,7 +1029,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy of the list
+        - ``copy`` -- (default: ``True``) if True, return a copy of the list
           of rows which is safe to change.
 
         If ``self`` is a sparse matrix, rows are returned as sparse vectors,
@@ -1086,14 +1085,14 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
           modify it safely
 
         EXAMPLES:
 
         An example over the integers::
 
-            sage: a = matrix(3,3,range(9)); a
+            sage: a = matrix(3, 3, range(9)); a
             [0 1 2]
             [3 4 5]
             [6 7 8]
@@ -1102,7 +1101,7 @@ cdef class Matrix(Matrix0):
 
         We do an example over a polynomial ring::
 
-            sage: R.<x> = QQ[ ]
+            sage: R.<x> = QQ[]
             sage: a = matrix(R, 2, [x,x^2, 2/3*x,1+x^5]); a
             [      x     x^2]
             [  2/3*x x^5 + 1]
@@ -1119,7 +1118,7 @@ cdef class Matrix(Matrix0):
 
         Check that the returned rows are immutable as per :issue:`14874`::
 
-            sage: m = Mat(ZZ,3,3)(range(9))
+            sage: m = Mat(ZZ, 3, 3)(range(9))
             sage: v = m.dense_columns()
             sage: [x.is_mutable() for x in v]
             [False, False, False]
@@ -1149,7 +1148,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
           modify it safely (note that the individual vectors in the copy
           should not be modified since they are mutable!)
 
@@ -1173,7 +1172,7 @@ cdef class Matrix(Matrix0):
 
         Check that the returned rows are immutable as per :issue:`14874`::
 
-            sage: m = Mat(ZZ,3,3)(range(9))
+            sage: m = Mat(ZZ, 3, 3)(range(9))
             sage: v = m.dense_rows()
             sage: [x.is_mutable() for x in v]
             [False, False, False]
@@ -1204,12 +1203,12 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
            modify it safely
 
         EXAMPLES::
 
-            sage: a = matrix(2,3,range(6)); a
+            sage: a = matrix(2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
             sage: v = a.sparse_columns(); v
@@ -1229,7 +1228,7 @@ cdef class Matrix(Matrix0):
 
         Check that the returned columns are immutable as per :issue:`14874`::
 
-            sage: m = Mat(ZZ,3,3,sparse=True)(range(9))
+            sage: m = Mat(ZZ, 3, 3, sparse=True)(range(9))
             sage: v = m.sparse_columns()
             sage: [x.is_mutable() for x in v]
             [False, False, False]
@@ -1280,12 +1279,12 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
            modify it safely
 
         EXAMPLES::
 
-            sage: m = Mat(ZZ,3,3,sparse=True)(range(9)); m
+            sage: m = Mat(ZZ, 3, 3, sparse=True)(range(9)); m
             [0 1 2]
             [3 4 5]
             [6 7 8]
@@ -1311,7 +1310,7 @@ cdef class Matrix(Matrix0):
 
         Check that the returned rows are immutable as per :issue:`14874`::
 
-            sage: m = Mat(ZZ,3,3,sparse=True)(range(9))
+            sage: m = Mat(ZZ, 3, 3, sparse=True)(range(9))
             sage: v = m.sparse_rows()
             sage: [x.is_mutable() for x in v]
             [False, False, False]
@@ -1365,9 +1364,9 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``i`` - integer
+        - ``i`` -- integer
 
-        - ``from_list`` - bool (default: False); if true, returns the
+        - ``from_list`` -- bool (default: ``False``); if true, returns the
           ``i``'th element of ``self.columns()`` (see :func:`columns()`),
           which may be faster, but requires building a list of all
           columns the first time it is called after an entry of the
@@ -1376,7 +1375,7 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: a = matrix(2,3,range(6)); a
+            sage: a = matrix(2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
             sage: a.column(1)
@@ -1390,7 +1389,7 @@ cdef class Matrix(Matrix0):
 
         TESTS::
 
-            sage: a = matrix(2,3,range(6)); a
+            sage: a = matrix(2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
             sage: a.column(3)
@@ -1425,9 +1424,9 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``i`` - integer
+        - ``i`` -- integer
 
-        - ``from_list`` - bool (default: False); if true, returns the
+        - ``from_list`` -- bool (default: ``False``); if true, returns the
           ``i``'th element of ``self.rows()`` (see :func:`rows`), which
           may be faster, but requires building a list of all rows the
           first time it is called after an entry of the matrix is
@@ -1435,7 +1434,7 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: a = matrix(2,3,range(6)); a
+            sage: a = matrix(2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
             sage: a.row(0)
@@ -1447,7 +1446,7 @@ cdef class Matrix(Matrix0):
 
         TESTS::
 
-            sage: a = matrix(2,3,range(6)); a
+            sage: a = matrix(2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
             sage: a.row(2)
@@ -1487,10 +1486,10 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``bottom`` - a matrix, vector or free module element, whose
+        - ``bottom`` -- a matrix, vector or free module element, whose
           dimensions are compatible with ``self``.
 
-        - ``subdivide`` - default: ``False`` - request the resulting
+        - ``subdivide`` -- (default: ``False``); request the resulting
           matrix to have a new subdivision, separating ``self`` from ``bottom``.
 
         OUTPUT:
@@ -1747,7 +1746,7 @@ cdef class Matrix(Matrix0):
             Z._subdivide_on_stack(self, other)
         return Z
 
-    cdef _stack_impl(self, bottom) noexcept:
+    cdef _stack_impl(self, bottom):
         """
         Implementation of :meth:`stack`.
 
@@ -1777,10 +1776,10 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``right`` - a matrix, vector or free module element, whose
+        - ``right`` -- a matrix, vector or free module element, whose
           dimensions are compatible with ``self``.
 
-        - ``subdivide`` - default: ``False`` - request the resulting
+        - ``subdivide`` -- (default: ``False``); request the resulting
           matrix to have a new subdivision, separating ``self`` from
           ``right``.
 
@@ -1925,7 +1924,7 @@ cdef class Matrix(Matrix0):
             sage: D = A.augment(B)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: y is not a constant polynomial
 
             sage: E = A.change_ring(R)
             sage: F = E.augment(B); F
@@ -1982,7 +1981,7 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: M = MatrixSpace(Integers(8), 3, 3)
             sage: A = M(range(9)); A
             [0 1 2]
             [3 4 5]
@@ -2011,8 +2010,8 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        * ``dcols`` - list of indices of columns to be deleted from self.
-        * ``check`` - checks whether any index in ``dcols`` is out of range. Defaults to ``True``.
+        * ``dcols`` -- list of indices of columns to be deleted from self.
+        * ``check`` -- checks whether any index in ``dcols`` is out of range. Defaults to ``True``.
 
         .. SEEALSO::
 
@@ -2021,7 +2020,7 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: A = Matrix(3,4,range(12)); A
+            sage: A = Matrix(3, 4, range(12)); A
             [ 0  1  2  3]
             [ 4  5  6  7]
             [ 8  9 10 11]
@@ -2080,7 +2079,7 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: M = MatrixSpace(Integers(8), 3, 3)
             sage: A = M(range(9)); A
             [0 1 2]
             [3 4 5]
@@ -2118,7 +2117,7 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: A = Matrix(4,3,range(12)); A
+            sage: A = Matrix(4, 3, range(12)); A
             [ 0  1  2]
             [ 3  4  5]
             [ 6  7  8]
@@ -2176,7 +2175,7 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: M = MatrixSpace(Integers(8), 3, 3)
             sage: A = M(range(9)); A
             [0 1 2]
             [3 4 5]
@@ -2196,7 +2195,7 @@ cdef class Matrix(Matrix0):
         For example here we take from row 1 columns 2 then 0 twice, and do
         this 3 times::
 
-            sage: A.matrix_from_rows_and_columns([1,1,1],[2,0,0])
+            sage: A.matrix_from_rows_and_columns([1,1,1], [2,0,0])
             [5 3 3]
             [5 3 3]
             [5 3 3]
@@ -2236,10 +2235,10 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``row``, ``col`` - index of the starting row and column.
+        - ``row``, ``col`` -- index of the starting row and column.
           Indices start at zero.
 
-        - ``nrows``, ``ncols`` - (optional) number of rows and columns to
+        - ``nrows``, ``ncols`` -- (optional) number of rows and columns to
           take. If not provided, take all rows below and all columns to
           the right of the starting entry.
 
@@ -2292,9 +2291,9 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``row`` - index of row to be set.
+        - ``row`` -- index of row to be set.
 
-        - ``v`` - a list or vector of the new entries.
+        - ``v`` -- a list or vector of the new entries.
 
         OUTPUT:
 
@@ -2365,9 +2364,9 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``col`` - index of column to be set.
+        - ``col`` -- index of column to be set.
 
-        - ``v`` - a list or vector of the new entries.
+        - ``v`` -- a list or vector of the new entries.
 
         OUTPUT:
 
@@ -2416,7 +2415,8 @@ cdef class Matrix(Matrix0):
             sage: A.set_column(0, [1/4, 1]); A
             Traceback (most recent call last):
             ...
-            TypeError: Cannot set column with Rational Field elements over Integer Ring, use change_ring first.
+            TypeError: Cannot set column with Rational Field elements
+            over Integer Ring, use change_ring first.
         """
         if len(v) != self._nrows:
             msg = "list of new entries must be of length {0} (not {1})"
@@ -2662,10 +2662,10 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``nrows``, ``ncols`` - (optional) number of rows and columns in
+        - ``nrows``, ``ncols`` -- (optional) number of rows and columns in
           returned matrix space.
 
-        - ``sparse`` - whether the returned matrix space uses sparse or
+        - ``sparse`` -- whether the returned matrix space uses sparse or
           dense matrices.
 
         EXAMPLES::
@@ -2683,9 +2683,11 @@ cdef class Matrix(Matrix0):
             sage: M = MatrixSpace(QQ, 3, implementation='generic')
             sage: m = M.an_element()
             sage: m.matrix_space()
-            Full MatrixSpace of 3 by 3 dense matrices over Rational Field (using Matrix_generic_dense)
+            Full MatrixSpace of 3 by 3 dense matrices over Rational Field
+             (using Matrix_generic_dense)
             sage: m.matrix_space(nrows=2, ncols=12)
-            Full MatrixSpace of 2 by 12 dense matrices over Rational Field (using Matrix_generic_dense)
+            Full MatrixSpace of 2 by 12 dense matrices over Rational Field
+             (using Matrix_generic_dense)
             sage: m.matrix_space(nrows=2, sparse=True)
             Full MatrixSpace of 2 by 3 sparse matrices over Rational Field
         """
@@ -2719,10 +2721,10 @@ cdef class Matrix(Matrix0):
 
         These three variables get sent to :func:`matrix_space`:
 
-        - ``nrows``, ``ncols`` - number of rows and columns in returned
+        - ``nrows``, ``ncols`` -- number of rows and columns in returned
           matrix. If not specified, defaults to ``None`` and will give a
           matrix of the same size as self.
-        - ``sparse`` - whether returned matrix is sparse or not. Defaults
+        - ``sparse`` -- whether returned matrix is sparse or not. Defaults
           to same value as self.
 
         The remaining three variables (``coerce``, ``entries``, and
@@ -2757,16 +2759,19 @@ cdef class Matrix(Matrix0):
             [0.000000000000000 0.000000000000000 0.000000000000000]
             [0.000000000000000 0.000000000000000 0.000000000000000]
             sage: A.new_matrix().parent()
-            Full MatrixSpace of 2 by 3 dense matrices over Real Field with 53 bits of precision
+            Full MatrixSpace of 2 by 3 dense matrices
+             over Real Field with 53 bits of precision
 
         ::
 
             sage: M = MatrixSpace(ZZ, 2, 3, implementation='generic')
             sage: m = M.an_element()
             sage: m.new_matrix().parent()
-            Full MatrixSpace of 2 by 3 dense matrices over Integer Ring (using Matrix_generic_dense)
+            Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
+             (using Matrix_generic_dense)
             sage: m.new_matrix(3,3).parent()
-            Full MatrixSpace of 3 by 3 dense matrices over Integer Ring (using Matrix_generic_dense)
+            Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
+             (using Matrix_generic_dense)
             sage: m.new_matrix(3,3, sparse=True).parent()
             Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
         """

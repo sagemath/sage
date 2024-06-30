@@ -2,13 +2,13 @@ r"""
 Set of homomorphisms between two schemes
 
 For schemes `X` and `Y`, this module implements the set of morphisms
-`Hom(X,Y)`. This is done by :class:`SchemeHomset_generic`.
+`\mathrm{Hom}(X,Y)`. This is done by :class:`SchemeHomset_generic`.
 
-As a special case, the Hom-sets can also represent the points of a
-scheme. Recall that the `K`-rational points of a scheme `X` over `k`
-can be identified with the set of morphisms `Spec(K) \to X`. In Sage
-the rational points are implemented by such scheme morphisms. This is
-done by :class:`SchemeHomset_points` and its subclasses.
+As a special case, the Hom-sets can also represent the points of a scheme.
+Recall that the `K`-rational points of a scheme `X` over `k` can be identified
+with the set of morphisms `\mathrm{Spec}(K) \to X`. In Sage the rational points
+are implemented by such scheme morphisms. This is done by
+:class:`SchemeHomset_points` and its subclasses.
 
 .. note::
 
@@ -67,12 +67,17 @@ def is_SchemeHomset(H):
           Defn: Identity map
         sage: from sage.schemes.generic.homset import is_SchemeHomset
         sage: is_SchemeHomset(f)
+        doctest:warning...
+        DeprecationWarning: The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: is_SchemeHomset(f.parent())
         True
         sage: is_SchemeHomset('a string')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.")
     return isinstance(H, SchemeHomset_generic)
 
 
@@ -164,7 +169,7 @@ class SchemeHomsetFactory(UniqueFactory):
         if base is None:
             from sage.structure.element import coercion_model
             base = coercion_model.common_parent(X.base_ring(), Y.base_ring())
-        if is_AffineScheme(base):
+        if isinstance(base, AffineScheme):
             base_spec = base
             base_ring = base.coordinate_ring()
         elif base in _CommRings:
@@ -237,7 +242,7 @@ class SchemeHomset_generic(HomsetWithBase):
     - ``category`` -- a category (optional). The category of the
       Hom-set.
 
-    - ``check`` -- boolean (optional, default: ``True``). Whether to
+    - ``check`` -- boolean (default: ``True``). Whether to
       check the defining data for consistency.
 
     EXAMPLES::
@@ -327,7 +332,7 @@ class SchemeHomset_generic(HomsetWithBase):
         """
         X = self.domain()
         Y = self.codomain()
-        if is_AffineScheme(Y) and Y.coordinate_ring() == X.base_ring():
+        if isinstance(Y, AffineScheme) and Y.coordinate_ring() == X.base_ring():
             return SchemeMorphism_structure_map(self)
         raise NotImplementedError
 
@@ -407,12 +412,12 @@ class SchemeHomset_generic(HomsetWithBase):
 # *******************************************************************
 
 class SchemeHomset_points(SchemeHomset_generic):
-    """
+    r"""
     Set of rational points of the scheme.
 
-    Recall that the `K`-rational points of a scheme `X` over `k` can
-    be identified with the set of morphisms `Spec(K) \to X`. In Sage,
-    the rational points are implemented by such scheme morphisms.
+    Recall that the `K`-rational points of a scheme `X` over `k` can be
+    identified with the set of morphisms `\mathrm{Spec}(K) \to X`. In Sage, the
+    rational points are implemented by such scheme morphisms.
 
     If a scheme has a finite number of points, then the homset is
     supposed to implement the Python iterator interface. See
@@ -444,7 +449,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: SchemeHomset_points(Spec(QQ), AffineSpace(ZZ,2))
             Set of rational points of Affine Space of dimension 2 over Rational Field
         """
-        if check and not is_AffineScheme(X):
+        if check and not isinstance(X, AffineScheme):
             raise ValueError('The domain must be an affine scheme.')
         SchemeHomset_generic.__init__(self, X, Y, category=category, check=check, base=base)
 
@@ -656,16 +661,16 @@ class SchemeHomset_points(SchemeHomset_generic):
         """
         if len(v) == 1:
             v = v[0]
-        return self.codomain()._point(self, v, **kwds)
+        return self.extended_codomain()._point(self, v, **kwds)
 
     def extended_codomain(self):
-        """
+        r"""
         Return the codomain with extended base, if necessary.
 
         OUTPUT:
 
         The codomain scheme, with its base ring extended to the
-        codomain. That is, the codomain is of the form `Spec(R)` and
+        codomain. That is, the codomain is of the form `\mathrm{Spec}(R)` and
         the base ring of the domain is extended to `R`.
 
         EXAMPLES::
@@ -693,6 +698,12 @@ class SchemeHomset_points(SchemeHomset_generic):
         self._extended_codomain = X
         return X
 
+    def zero(self):
+        """
+        Return the identity of the codomain with extended base, if necessary.
+        """
+        return self.extended_codomain().zero()
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -710,8 +721,8 @@ class SchemeHomset_points(SchemeHomset_generic):
         return 'Set of rational points of '+str(self.extended_codomain())
 
     def value_ring(self):
-        """
-        Return `R` for a point Hom-set `X(Spec(R))`.
+        r"""
+        Return `R` for a point Hom-set `X(\mathrm{Spec}(R))`.
 
         OUTPUT:
 
@@ -724,7 +735,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             Rational Field
         """
         dom = self.domain()
-        if not is_AffineScheme(dom):
+        if not isinstance(dom, AffineScheme):
             raise ValueError("value rings are defined for affine domains only")
         return dom.coordinate_ring()
 

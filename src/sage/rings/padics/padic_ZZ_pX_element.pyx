@@ -41,7 +41,7 @@ from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
-from sage.rings.finite_rings.integer_mod import is_IntegerMod
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.padics.padic_printing cimport pAdicPrinter_class
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ext
 from sage.rings.rational_field import QQ
@@ -228,7 +228,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         else:
             raise ValueError("context must be a power of the appropriate prime")
 
-    cdef ext_p_list_precs(self, bint pos, long prec) noexcept:
+    cdef ext_p_list_precs(self, bint pos, long prec):
         """
         Returns a list giving a series representation of ``self``.
 
@@ -567,6 +567,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         if shift != 0:
             raise NotImplementedError
 
+
 def _test_preprocess_list(R, L):
     r"""
     Given a list of elements convertible to ``ntl_ZZ_p``s, find the
@@ -623,7 +624,7 @@ def _test_preprocess_list(R, L):
     return preprocess_list(R(0), L)
 
 
-cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
+cdef preprocess_list(pAdicZZpXElement elt, L):
     """
     See the documentation for :func:`_test_preprocess_list`.
     """
@@ -664,7 +665,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
                 L[i] = ntl_ZZ_p(L[i]*pshift_m, ctx)
             elif isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime):
                 L[i] = ntl_ZZ_p((L[i] >> min_val).lift(), ctx)
-            elif is_IntegerMod(L[i]):
+            elif isinstance(L[i], IntegerMod_abstract):
                 L[i] = ntl_ZZ_p(L[i].lift()*pshift_m, ctx)
             elif (L[i].modulus_context() is not ctx) or min_val != zero:
                 L[i] = ntl_ZZ_p(L[i].lift()*pshift_z, ctx)
@@ -682,7 +683,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
                 L[i] = ntl_ZZ_p(L[i]//pshift_m, ctx)
             elif isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime):
                 L[i] = ntl_ZZ_p((L[i] >> min_val).lift(), ctx)
-            elif is_IntegerMod(L[i]):
+            elif isinstance(L[i], IntegerMod_abstract):
                 L[i] = ntl_ZZ_p(L[i].lift()//pshift_m, ctx)
             elif (L[i].modulus_context() is not ctx) or min_val != zero:
                 ZZ_div(tmp, (<ntl_ZZ>L[i].lift()).x, pshift_z.x)
@@ -693,9 +694,10 @@ cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
         for i from 0 <= i < len(L):
             if isinstance(L[i], (ntl_ZZ, Integer, Rational, int)):
                 L[i] = ntl_ZZ_p(L[i], ctx)
-            elif (isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime)) or is_IntegerMod(L[i]) or (L[i].modulus_context() is not ctx):
+            elif (isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime)) or isinstance(L[i], IntegerMod_abstract) or (L[i].modulus_context() is not ctx):
                 L[i] = ntl_ZZ_p(L[i].lift(), ctx)
     return L, min_val, ctx
+
 
 def _find_val_aprec_test(R, L):
     r"""
@@ -738,7 +740,8 @@ def _find_val_aprec_test(R, L):
     """
     return find_val_aprec(R.prime_pow, L)
 
-cdef find_val_aprec(PowComputer_ext pp, L) noexcept:
+
+cdef find_val_aprec(PowComputer_ext pp, L):
     r"""
     Given a list ``L``, finds the minimum valuation, minimum absolute
     precision and minimum common type of the elements.
@@ -770,6 +773,7 @@ cdef find_val_aprec(PowComputer_ext pp, L) noexcept:
         if cur_type < total_type:
             total_type = cur_type
     return min_val, min_aprec, total_type
+
 
 def _test_get_val_prec(R, a):
     """
@@ -843,7 +847,8 @@ def _test_get_val_prec(R, a):
     """
     return get_val_prec(R.prime_pow, a)
 
-cdef get_val_prec(PowComputer_ext pp, a) noexcept:
+
+cdef get_val_prec(PowComputer_ext pp, a):
     r"""
     Return valuation, absolute precision and type of an input element.
 
@@ -887,7 +892,7 @@ cdef get_val_prec(PowComputer_ext pp, a) noexcept:
     cdef mpz_t leftover
     cdef long long_val
     cdef Integer Integer_val
-    if is_IntegerMod(a):
+    if isinstance(a, IntegerMod_abstract):
         mpz_init(leftover)
         long_val = mpz_remove(leftover, (<Integer>a.modulus()).value, pp.prime.value)
         if long_val > 0 and mpz_cmp_ui(leftover, 1) == 0:

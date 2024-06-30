@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Specific category classes
 
@@ -31,6 +32,8 @@ lazy_import('sage.categories.chain_complexes', 'ChainComplexes',
 #############################################################
 # Category of elements of some object
 #############################################################
+
+
 class Elements(Category):
     """
     The category of all elements of a given parent.
@@ -226,7 +229,8 @@ class Category_over_base(CategoryWithParameters):
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
             Join of Category of Dedekind domains
-             and  Category of euclidean domains
+             and Category of euclidean domains
+             and Category of noetherian rings
              and Category of infinite enumerated sets
              and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')
@@ -325,6 +329,8 @@ class Category_over_base(CategoryWithParameters):
 #############################################################
 # Category of objects over some base ring
 #############################################################
+
+
 class AbelianCategory(Category):
     def is_abelian(self):
         """
@@ -336,6 +342,7 @@ class AbelianCategory(Category):
             True
         """
         return True
+
 
 class Category_over_base_ring(Category_over_base):
     def __init__(self, base, name=None):
@@ -567,8 +574,10 @@ class Category_in_ambient(Category):
 #    def construction(self):
 #        return (self.__class__, self.__ambient)
 
+
 class Category_module(AbelianCategory, Category_over_base_ring):
     pass
+
 
 class Category_ideal(Category_in_ambient):
 

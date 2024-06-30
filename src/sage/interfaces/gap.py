@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Interface to GAP
 
@@ -10,13 +9,13 @@ computer; this should be the case, since GAP is included with Sage.
 The interface offers three pieces of functionality:
 
 
-#. ``gap_console()`` - A function that dumps you into
+#. ``gap_console()`` -- A function that dumps you into
    an interactive command-line GAP session.
 
-#. ``gap(expr)`` - Evaluation of arbitrary GAP
+#. ``gap(expr)`` -- Evaluation of arbitrary GAP
    expressions, with the result returned as a string.
 
-#. ``gap.new(expr)`` - Creation of a Sage object that
+#. ``gap.new(expr)`` -- Creation of a Sage object that
    wraps a GAP object. This provides a Pythonic interface to GAP. For
    example, if ``f=gap.new(10)``, then
    ``f.Factors()`` returns the prime factorization of
@@ -462,15 +461,15 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``s`` - string containing GAP code.
+        -  ``s`` -- string containing GAP code.
 
-        -  ``newlines`` - bool (default: True); if False,
+        -  ``newlines`` -- bool (default: ``True``); if False,
            remove all backslash-newlines inserted by the GAP output
            formatter.
 
-        -  ``strip`` - ignored
+        -  ``strip`` -- ignored
 
-        -  ``split_lines`` -- bool (default: True); if True then each
+        -  ``split_lines`` -- bool (default: ``True``); if True then each
            line is evaluated separately.  If False, then the whole
            block of code is evaluated all at once.
 
@@ -645,6 +644,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         TESTS::
 
+            sage: from sage.interfaces.gap import gap
             sage: gap._eval_line('2+2;')
             '4'
 
@@ -1125,6 +1125,7 @@ class Gap(Gap_generic):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.gap import gap
             sage: gap.__reduce__()
             (<function reduce_load_GAP at 0x...>, ())
             sage: f, args = _
@@ -1562,16 +1563,10 @@ class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
 
             sage: s = gap("[[1,2], [3/4, 5/6]]")
             sage: latex(s)
-            \left(\begin{array}{rr} 1&2\\ 3/4&\frac{5}{6}\\ \end{array}\right)
+            \left[\left[1, 2\right], \left[\frac{3}{4}, \frac{5}{6}\right]\right]
         """
-        P = self._check_valid()
-        try:
-            s = P.eval('LaTeXObj(%s)' % self.name())
-            s = s.replace('\\\\', '\\').replace('"', '')
-            s = s.replace('%\\n', ' ')
-            return s
-        except RuntimeError:
-            return str(self)
+        from sage.misc.latex import latex
+        return latex(self._sage_())
 
     @cached_method
     def _tab_completion(self):

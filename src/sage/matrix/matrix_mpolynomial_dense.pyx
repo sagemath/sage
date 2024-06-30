@@ -9,23 +9,22 @@ AUTHOR:
 * Martin Albrecht <malb@informatik.uni-bremen.de>
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
+from sage.categories.fields import Fields
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
-from sage.libs.singular.function import singular_function, lib
-
-from cysignals.signals cimport sig_on, sig_off
+from sage.libs.singular.function import singular_function
 
 
 cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
@@ -460,7 +459,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        ``i`` -- an integer
+        - ``i`` -- an integer
 
         OUTPUT:
 
@@ -517,7 +516,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
     def determinant(self, algorithm=None):
         """
-        Return the determinant of this matrix
+        Return the determinant of this matrix.
 
         INPUT:
 
@@ -605,7 +604,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         else:
             R = self._base_ring
 
-            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring().is_field():
+            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring() in Fields():
                 singular_det = singular_function("det")
                 d = singular_det(self)
 

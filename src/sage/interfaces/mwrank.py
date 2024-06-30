@@ -30,7 +30,7 @@ def Mwrank(options="", server=None, server_tmpdir=None):
 
     INPUT:
 
-    -  ``options`` - string; passed when starting mwrank.
+    -  ``options`` -- string; passed when starting mwrank.
        The format is::
 
        -h       help            prints this info and quits
@@ -154,7 +154,7 @@ class Mwrank_class(Expect):
         """
         INPUT:
 
-        -  ``options`` - string; passed when starting mwrank.
+        -  ``options`` -- string; passed when starting mwrank.
            The format is::
 
            -h       help            prints this info and quits
@@ -281,7 +281,7 @@ class Mwrank_class(Expect):
 
         INPUT:
 
-        - ``s`` (str) - a Sage object which when converted to a string
+        - ``s`` (str) -- a Sage object which when converted to a string
           gives valid input to ``mwrank``.  The conversion is done by
           :meth:`validate_mwrank_input`.  Possible formats are:
 

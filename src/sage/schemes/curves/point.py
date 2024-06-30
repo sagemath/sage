@@ -23,7 +23,6 @@ or on affine curves::
 AUTHORS:
 
 - Grayson Jorgenson (2016-6): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -451,7 +450,7 @@ class IntegralAffineCurvePoint_finite_field(IntegralAffineCurvePoint):
 
 class IntegralAffinePlaneCurvePoint(IntegralAffineCurvePoint, AffinePlaneCurvePoint_field):
     """
-    Point of an integral affine plane curve over a finite field.
+    Point of an integral affine plane curve.
     """
     pass
 

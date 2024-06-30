@@ -206,18 +206,17 @@ from collections.abc import Hashable, Iterable, Container
 from copy import copy
 from warnings import warn
 
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.combinat.posets.posets', 'FinitePoset')
 from sage.arith.misc import GCD as gcd
 from sage.arith.functions import lcm
-from sage.combinat.posets.posets import FinitePoset
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.polyhedron.base import is_Polyhedron
-from sage.geometry.hasse_diagram import lattice_from_incidences
-from sage.geometry.toric_lattice import (ToricLattice, is_ToricLattice,
-                                         is_ToricLatticeQuotient)
-from sage.geometry.toric_plotter import ToricPlotter, label_list
+lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
+from sage.geometry.toric_lattice import (ToricLattice, ToricLattice_generic,
+                                         ToricLattice_quotient)
+lazy_import('sage.geometry.toric_plotter', ['ToricPlotter', 'label_list'])
 from sage.geometry.relative_interior import RelativeInterior
-from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import column_matrix
@@ -230,11 +229,10 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.all import SageObject, parent
 from sage.structure.richcmp import richcmp_method, richcmp
-from sage.geometry.integral_points import parallelotope_points
+lazy_import('sage.geometry.integral_points', 'parallelotope_points')
 from sage.geometry.convex_set import ConvexSet_closed
 import sage.geometry.abc
 
-from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Constraint_System',
                     'Linear_Expression', 'Poly_Con_Relation'],
@@ -259,6 +257,9 @@ def is_Cone(x):
 
         sage: from sage.geometry.cone import is_Cone
         sage: is_Cone(1)
+        doctest:warning...
+        DeprecationWarning: is_Cone is deprecated, use isinstance instead
+        See https://github.com/sagemath/sage/issues/34307 for details.
         False
         sage: quadrant = Cone([(1,0), (0,1)])
         sage: quadrant
@@ -266,6 +267,8 @@ def is_Cone(x):
         sage: is_Cone(quadrant)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_Cone is deprecated, use isinstance instead")
     return isinstance(x, ConvexRationalPolyhedralCone)
 
 
@@ -439,7 +442,7 @@ def Cone(rays, lattice=None, check=True, normalize=True):
         0-d cone in 2-d lattice N
     """
     # Cone from Polyhedron
-    if is_Polyhedron(rays):
+    if isinstance(rays, sage.geometry.abc.Polyhedron):
         polyhedron = rays
         if lattice is None:
             lattice = ToricLattice(polyhedron.ambient_dim())
@@ -467,7 +470,7 @@ def Cone(rays, lattice=None, check=True, normalize=True):
     if not check or not rays:
         return ConvexRationalPolyhedralCone(rays, lattice)
     # Any set of rays forms a cone, but we want to keep only generators
-    if is_ToricLatticeQuotient(lattice):
+    if isinstance(lattice, ToricLattice_quotient):
         gs = Generator_System(
                         PPL_point(Linear_Expression(lattice(0).vector(), 0)))
         for r in rays:
@@ -616,17 +619,28 @@ def _ambient_space_point(body, data):
     p = try_base_extend(ZZ)
     if p is not None:
         return p
-    if is_ToricLattice(parent(data)):
+    if isinstance(parent(data), ToricLattice_generic):
         raise TypeError("the point %s and %s have incompatible "
                         "lattices" % (data, body))
 
     # If we don't have a lattice element, try successively
     # less-desirable ambient spaces until (as a last resort) we
     # attempt a numerical representation.
-    from sage.rings.qqbar import AA
-    from sage.rings.real_mpfr import RR
+    rings = [QQ]
+    try:
+        from sage.rings.qqbar import AA
+    except ImportError:
+        pass
+    else:
+        rings.append(AA)
+    try:
+        from sage.rings.real_mpfr import RR
+    except ImportError:
+        pass
+    else:
+        rings.append(RR)
 
-    for ring in [QQ, AA, RR]:
+    for ring in rings:
         p = try_base_extend(ring)
         if p is not None:
             return p
@@ -716,7 +730,7 @@ def normalize_rays(rays, lattice):
     if rays:
         if lattice is None:
             ray_parent = parent(rays[0])
-            lattice = (ray_parent if is_ToricLattice(ray_parent)
+            lattice = (ray_parent if isinstance(ray_parent, ToricLattice_generic)
                                   else ToricLattice(len(rays[0])))
         if lattice.base_ring() is not ZZ:
             raise TypeError("lattice must be a free module over ZZ")
@@ -1099,7 +1113,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         EXAMPLES::
 
             sage: quadrant = Cone([(1,0), (0,1)])
-            sage: quadrant.plot()                                                       # needs sage.plot
+            sage: quadrant.plot()                                                       # needs sage.plot sage.symbolic
             Graphics object consisting of 9 graphics primitives
         """
         tp = ToricPlotter(options, self.lattice().degree(), self.rays())
@@ -1894,7 +1908,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N+N(0, 1)
             in 2-d lattice N+N
         """
-        assert is_Cone(other)
+        assert isinstance(other, sage.geometry.abc.ConvexRationalPolyhedralCone)
         rc = super().cartesian_product(other, lattice)
         return ConvexRationalPolyhedralCone(rc.rays(), rc.lattice())
 
@@ -1952,7 +1966,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: c2 is c3
             False
         """
-        if is_Cone(right):
+        if isinstance(right, sage.geometry.abc.ConvexRationalPolyhedralCone):
             # We don't care about particular type of right in this case
             return richcmp((self.lattice(), self.rays()),
                            (right.lattice(), right.rays()), op)
@@ -2002,7 +2016,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         result = "%d-d" % self.dim()
         if self.ambient() is self:
             result += " cone in"
-            if is_ToricLattice(self.lattice()):
+            if isinstance(self.lattice(), ToricLattice_generic):
                 result += " %s" % self.lattice()
             else:
                 result += " %d-d lattice" % self.lattice_dim()
@@ -2413,7 +2427,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             ValueError: 2-d cone in 3-d lattice N is not a face
             of 3-d cone in 3-d lattice N!
         """
-        assert is_Cone(cone)
+        assert isinstance(cone, sage.geometry.abc.ConvexRationalPolyhedralCone)
         if cone.ambient() is self:
             return cone
         if self.is_strictly_convex():
@@ -2614,6 +2628,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             else:
                 # Get face lattice as a sublattice of the ambient one
                 allowed_indices = frozenset(self._ambient_ray_indices)
+                from sage.graphs.digraph import DiGraph
                 L = DiGraph()
                 origin = \
                     self._ambient._face_lattice_function().bottom()
@@ -2935,7 +2950,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         L = self._ambient._face_lattice_function()
         H = L.hasse_diagram()
         return self._sort_faces(
-            f for f in H.neighbors_out(L(self)) if is_Cone(f))
+            f for f in H.neighbors_out(L(self)) if isinstance(f, sage.geometry.abc.ConvexRationalPolyhedralCone))
 
     def facets(self):
         r"""
@@ -3010,7 +3025,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         INPUT:
 
-        - ``other`` - :class:`cone <ConvexRationalPolyhedralCone>`.
+        - ``other`` -- :class:`cone <ConvexRationalPolyhedralCone>`.
 
         OUTPUT:
 
@@ -3095,7 +3110,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         INPUT:
 
-        - ``other`` - cone.
+        - ``other`` -- cone.
 
         OUTPUT:
 
@@ -3225,7 +3240,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         INPUT:
 
-        - ``other`` - cone.
+        - ``other`` -- cone.
 
         OUTPUT:
 
@@ -3266,11 +3281,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         We check that :issue:`18613` is fixed::
 
+            sage: # needs sage.graphs sage.groups
             sage: K = cones.trivial(0)
-            sage: K.is_isomorphic(K)                                                    # needs sage.graphs
+            sage: K.is_isomorphic(K)
             True
             sage: K = cones.trivial(1)
-            sage: K.is_isomorphic(K)                                                    # needs sage.graphs
+            sage: K.is_isomorphic(K)
             True
             sage: K = cones.trivial(2)
             sage: K.is_isomorphic(K)
@@ -3494,7 +3510,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         EXAMPLES::
 
             sage: quadrant = Cone([(1,0), (0,1)])
-            sage: quadrant.plot()                                                       # needs sage.plot
+            sage: quadrant.plot()                                                       # needs sage.plot sage.symbolic
             Graphics object consisting of 9 graphics primitives
         """
         # What to do with 3-d cones in 5-d? Use some projection method?
@@ -3657,7 +3673,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # for sublattices. But it seems to be the most natural choice
         # for names. If many subcones land in the same lattice -
         # that's just how it goes.
-        if is_ToricLattice(L):
+        if isinstance(L, ToricLattice_generic):
             S = ToricLattice(Q.dimension(), L._name, L._dual_name,
                              L._latex_name, L._latex_dual_name)
         else:
@@ -6193,6 +6209,201 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         return [ -cp for cp in self.cross_positive_operators_gens() ]
 
+    def max_angle(self, other=None, exact=True, epsilon=0):
+        r"""
+        Return the maximal angle between ``self`` and ``other``.
+
+        The maximal angle between two closed convex cones is the
+        unique largest angle formed by any two unit-norm vectors in
+        those cones. In pathological cases, this computation can fail.
+
+        If it fails when ``exact`` is ``True`` and if each of the
+        cones :meth:`is_strictly_convex`, then a second attempt will
+        be made using inexact arithmetic. (This sometimes avoids the
+        problem noted in [Or2024]_). If the computation fails when the
+        cones are not strictly convex or when ``exact`` is ``False``,
+        a :class:`ValueError` is raised.
+
+        INPUT:
+
+        - ``other`` -- (default: ``None``) a rational, polyhedral
+          convex cone
+
+        - ``exact`` -- (default: ``True``) whether or not to use exact
+          rational arithmetic instead of floating point computations;
+          beware that ``True`` is not guaranteed to avoid floating
+          point computations if the algorithm runs into trouble in
+          rational arithmetic
+
+        - ``epsilon`` -- (default: ``0``) the tolerance to use when
+          making comparisons
+
+        .. WARNING::
+
+            Using inexact arithmetic (``exact=False``) is faster, but
+            this computation is only known to be stable when both of
+            the cones are strictly convex (or when one of them is the
+            entire space, but the maximal angle is obviously `\pi` in
+            that case).
+
+        OUTPUT:
+
+        A triple `\left( \theta_{\max}, u, v \right)`
+        containing:
+
+        - the maximal angle `\theta_{\max}` between ``self`` and
+          ``other``
+
+        - a vector `u` in ``self`` that achieves the maximal angle
+
+        - a vector `v` in ``other`` that achieves the maximal angle
+
+        If ``other`` is ``None`` (the default), then the maximal angle
+        within this cone (between this cone and itself) is returned.
+
+        If an eigenspace of dimension greater than one is encountered
+        and if the corresponding angle cannot be ruled out as a
+        maximum, the behavior of this function depends on
+        ``exact``:
+
+        - If ``exact`` is ``True`` and if both ``self`` and ``other``
+          are strictly convex, then the algorithm will fall back to
+          inexact arithmetic. In that case, the returned angle and
+          vectors will be over :class:`sage.rings.real_double.RDF`.
+
+        - If ``exact`` is ``False`` or if either cone is not strictly
+          convex, then a :class:`ValueError` is raised to indicate
+          that we have failed; i.e. we cannot say with certainty what
+          the maximal angle is.
+
+        REFERENCES:
+
+        - [IS2005]_
+        - [SS2016]_
+        - [Or2020]_
+        - [Or2024]_
+
+        ALGORITHM:
+
+        Algorithm 3 in [Or2020]_ is used. If a potentially-maximal
+        angle corresponds to an eigenspace of dimension two or more,
+        we sometimes fall back to inexact arithmetic which has the
+        effect of perturbing the cones. That this will not affect the
+        answer too much is one conclusion of [Or2024]_.
+
+        EXAMPLES:
+
+        The maximal angle in a single ray is zero::
+
+            sage: K = random_cone(min_rays=1, max_rays=1, max_ambient_dim=5)
+            sage: K.max_angle()[0]
+            0
+
+        The maximal angle in the nonnegative octant is `\pi/2`::
+
+            sage: K = cones.nonnegative_orthant(3)
+            sage: K.max_angle()[0]
+            1/2*pi
+
+        The maximal angle between the nonnegative quintant and the
+        Schur cone of dimension 5 is about `0.8524 \pi`. The same
+        result can be obtained faster using inexact arithmetic, but
+        only confidently so because we already know the answer::
+
+            sage: # long time
+            sage: P = cones.nonnegative_orthant(5)
+            sage: Q = cones.schur(5)
+            sage: actual = P.max_angle(Q)[0]
+            sage: expected = 0.8524*pi
+            sage: bool( (actual - expected).abs() < 0.0001 )
+            True
+            sage: actual = P.max_angle(Q,exact=False)[0]
+            sage: bool( (actual - expected).abs() < 0.0001 )
+            True
+
+        The maximal angle within the Schur cone is known explicitly
+        via Gourion and Seeger's Proposition 2 [GS2010]_::
+
+            sage: n = 3
+            sage: K = cones.schur(n)
+            sage: bool(K.max_angle()[0] == ((n-1)/n)*pi)
+            True
+
+        Sage can't prove that the actual and expected results are
+        equal in the next two cases without a little nudge in the
+        right direction, and, moreover, it's crashy about it::
+
+            sage: n = 4
+            sage: K = cones.schur(n)
+            sage: actual = K.max_angle()[0].simplify()._sympy_()._sage_()
+            sage: expected = ((n-1)/n)*pi
+            sage: bool( actual == expected )
+            True
+            sage: n = 5
+            sage: K = cones.schur(n)
+            sage: actual = K.max_angle()[0].simplify()._sympy_()._sage_()
+            sage: expected = ((n-1)/n)*pi
+            sage: bool( actual == expected )
+            True
+
+        When there's a unit norm vector in ``self`` whose negation is
+        in ``other``, they form a maximal angle of `\pi`::
+
+            sage: P = Cone([(5,1), (1,-1)])
+            sage: Q = Cone([(-1,0), (-1,0)])
+            sage: P.max_angle(Q)[0]
+            pi
+
+        TESTS:
+
+        When ``self`` and ``-other`` have nontrivial intersection, we
+        expect the maximal angle to be `\pi`::
+
+            sage: # long time
+            sage: from sage.geometry.cone_critical_angles import (
+            ....:   _random_admissible_cone )
+            sage: n = ZZ.random_element(1,3)
+            sage: P = _random_admissible_cone(ambient_dim=n)
+            sage: Q = _random_admissible_cone(ambient_dim=n)
+            sage: expected = P.intersection(-Q).is_trivial()
+            sage: actual = bool(P.max_angle(Q)[0] != pi)
+            sage: actual == expected
+            True
+
+        In particular, this should happen when either cone is the full
+        space::
+
+            sage: from sage.geometry.cone_critical_angles import (
+            ....:   _random_admissible_cone )
+            sage: n = ZZ.random_element(1,5)
+            sage: P = _random_admissible_cone(ambient_dim=n)
+            sage: Q = cones.trivial(n, P.dual().lattice()).dual()
+            sage: Q.is_full_space()
+            True
+            sage: P.max_angle(Q)[0]
+            pi
+            sage: Q.max_angle(P)[0]
+            pi
+        """
+        # We do the argument checking here, in the public cone method,
+        # because the error message should say something like "this
+        # cone" and not reference the argument of a function the user
+        # has never heard of in some internal module.
+        if self.is_trivial():
+            raise ValueError("cone should not be trivial")
+
+        if other is None:
+            other = self
+        else:
+            if (other.lattice_dim() != self.lattice_dim()):
+                raise ValueError("lattice dimensions of self and other "
+                                 "must agree")
+            if other.is_trivial():
+                raise ValueError("other cone cannot be trivial")
+
+        from sage.geometry.cone_critical_angles import max_angle
+        return max_angle(self, other, exact, epsilon)
+
 
 def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 min_rays=0, max_rays=None, strictly_convex=None, solid=None):
@@ -6387,9 +6598,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     It's hard to test the output of a random process, but we can at
     least make sure that we get a cone back::
 
-        sage: from sage.geometry.cone import is_Cone
         sage: K = random_cone(max_ambient_dim=6, max_rays=10)
-        sage: is_Cone(K)
+        sage: isinstance(K, sage.geometry.abc.ConvexRationalPolyhedralCone)
         True
 
     The upper/lower bounds are respected::

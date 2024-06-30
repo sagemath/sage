@@ -572,7 +572,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``x`` - multivariate polynomial (a generator of the parent
+        - ``x`` -- multivariate polynomial (a generator of the parent
           of ``self``). If ``x`` is not specified (or is None), return
           the total degree, which is the maximum degree of any
           monomial. Note that a weighted term ordering alters the
@@ -668,10 +668,21 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R.<x,y> = GF(3037000453)[]                                            # needs sage.rings.finite_rings
             sage: R.zero().degree(x)
             -1
+
+        Ensure that :issue:`37603` is fixed::
+
+            sage: R.<x,y,z> = PolynomialRing(QQbar)
+            sage: f = 3*x^2 - 2*y + 7*x^2*y^2 + 5
+            sage: type(f.degree())
+            <class 'sage.rings.integer.Integer'>
+            sage: type(f.degree(x))
+            <class 'sage.rings.integer.Integer'>
+            sage: type(f.degree(x)) == type(f.degree(y)) == type(f.degree(z))
+            True
         """
         if x is None:
             if std_grading or not self.parent().term_order().is_weighted_degree_order():
-                return self.element().degree(None)
+                return Integer(self.element().degree(None))
             return self.weighted_degree(self.parent().term_order().weights())
         if isinstance(x, MPolynomial):
             if not x.parent() is self.parent():
@@ -683,7 +694,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 raise TypeError("x must be one of the generators of the parent")
         else:
             raise TypeError("x must be one of the generators of the parent")
-        return self.element().degree(x.element())
+        return Integer(self.element().degree(x.element()))
 
     def total_degree(self):
         """
@@ -712,6 +723,16 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = z^9 + 10*x^4 + y^8*x^2
             sage: f.total_degree()
             10
+
+        TESTS:
+
+        Ensure that :issue:`37603` is fixed::
+             sage: R.<x,y,z> = QQbar[]
+             sage: f = 2*x*y^3*z^2
+             sage: f.total_degree()
+             6
+             sage: type(f.total_degree())
+             <class 'sage.rings.integer.Integer'>
         """
         return self.degree()
 
@@ -727,7 +748,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``mon`` - a monomial
+        -  ``mon`` -- a monomial
 
 
         OUTPUT: coefficient in base ring
@@ -914,7 +935,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``degrees`` - Can be any of:
+        -  ``degrees`` -- Can be any of:
 
            -  a dictionary of degree restrictions
 
@@ -1283,7 +1304,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``var`` - an integer indicating which variable to
+        -  ``var`` -- an integer indicating which variable to
            use to homogenize (0 <= var < parent(self).ngens())
 
 
@@ -1400,9 +1421,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``fixed`` - (optional) dictionary of inputs
+        -  ``fixed`` -- (optional) dictionary of inputs
 
-        -  ``**kwds`` - named parameters
+        -  ``**kwds`` -- named parameters
 
 
         OUTPUT: new :class:`MPolynomial`
@@ -1522,7 +1543,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``R`` - (default: None) :class:`PolynomialRing`
+        -  ``R`` -- (default: None) :class:`PolynomialRing`
 
 
         If this polynomial is not in at most one variable, then a
@@ -2003,7 +2024,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``proof`` - insist on provably correct results (default: ``True``
+        - ``proof`` -- insist on provably correct results (default: ``True``
           unless explicitly disabled for the ``"polynomial"`` subsystem with
           :class:`sage.structure.proof.proof.WithProof`.)
 
@@ -2371,7 +2392,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``I`` - a list of polynomials or an ideal
+        -  ``I`` -- a list of polynomials or an ideal
 
         EXAMPLES::
 

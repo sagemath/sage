@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Lazy imports
 
@@ -79,7 +80,7 @@ except ImportError:
     FeatureNotPresentError = ()
 
 
-cdef inline obj(x) noexcept:
+cdef inline obj(x):
     if type(x) is LazyImport:
         return (<LazyImport>x).get_object()
     else:
@@ -92,7 +93,7 @@ cdef bint startup_guard = True
 cdef bint finish_startup_called = False
 
 
-cpdef finish_startup() noexcept:
+cpdef finish_startup():
     """
     Finish the startup phase.
 
@@ -113,7 +114,7 @@ cpdef finish_startup() noexcept:
     finish_startup_called = True
 
 
-cpdef ensure_startup_finished() noexcept:
+cpdef ensure_startup_finished():
     """
     Make sure that the startup phase is finished.
 
@@ -147,7 +148,7 @@ cpdef bint is_during_startup() noexcept:
     return startup_guard
 
 
-cpdef test_fake_startup() noexcept:
+cpdef test_fake_startup():
     """
     For testing purposes only.
 
@@ -216,7 +217,7 @@ cdef class LazyImport():
         self._deprecation = deprecation
         self._feature = feature
 
-    cdef inline get_object(self) noexcept:
+    cdef inline get_object(self):
         """
         Faster, Cython-only partially-inlined version of ``_get_object``.
         """
@@ -224,7 +225,7 @@ cdef class LazyImport():
             return self._object
         return self._get_object()
 
-    cpdef _get_object(self) noexcept:
+    cpdef _get_object(self):
         """
         Return the wrapped object, importing it if necessary.
 
@@ -1076,7 +1077,8 @@ def lazy_import(module, names, as_=None, *,
         ....:             deprecation=14275)
         sage: my_Qp(5)                                                                  # needs sage.rings.padics
         doctest:...: DeprecationWarning:
-        Importing my_Qp from here is deprecated; please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
+        Importing my_Qp from here is deprecated;
+        please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
         See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
 
@@ -1096,10 +1098,12 @@ def lazy_import(module, names, as_=None, *,
         ....:             feature=PythonModule('ppl', spkg='pplpy', type='standard'))
         sage: equation                                                                  # needs pplpy
         <cyfunction equation at ...>
-        sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz
-        sage: NmzListConeProperties  # optional - pynormaliz
+        sage: lazy_import('PyNormaliz', 'NmzListConeProperties',
+        ....:             feature=PythonModule('PyNormaliz', spkg='pynormaliz'))
+        sage: NmzListConeProperties                             # optional - pynormaliz
         <built-in function NmzListConeProperties>
-        sage: lazy_import('foo', 'not_there', feature=PythonModule('foo', spkg='non-existing-package'))
+        sage: lazy_import('foo', 'not_there',
+        ....:             feature=PythonModule('foo', spkg='non-existing-package'))
         sage: not_there
         Failed lazy import:
         foo is not available.
@@ -1117,6 +1121,11 @@ def lazy_import(module, names, as_=None, *,
     if namespace is None:
         namespace = inspect.currentframe().f_locals
     if "*" in names:
+        from sage.misc.superseded import deprecation_cython
+
+        deprecation_cython(37433,
+                           'lazy_import of * is deprecated; provide the names to be imported explicitly')
+
         ix = names.index("*")
         all = get_star_imports(module)
         names[ix:ix+1] = all
@@ -1126,6 +1135,7 @@ def lazy_import(module, names, as_=None, *,
 
 
 star_imports = None
+
 
 def save_cache_file():
     """
@@ -1148,6 +1158,7 @@ def save_cache_file():
     os.makedirs(cache_dir, exist_ok=True)
     with atomic_write(cache_file, binary=True) as f:
         pickle.dump(star_imports, f)
+
 
 def get_star_imports(module_name):
     """
