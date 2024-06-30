@@ -593,19 +593,15 @@ class EisensteinSubmodule_eps(EisensteinSubmodule_params):
 
 def cyclotomic_restriction(L, K):
     r"""
-    Given two cyclotomic fields L and K, compute the compositum
-    M of K and L, and return a function and the index [M:K]. The
-    function is a map that acts as follows (here `M = Q(\zeta_m)`):
+    Given two cyclotomic fields `L` and `K`, compute the compositum
+    `M` of `K` and `L`, and return a function `f` and the index `[M:K]`.
 
-    INPUT:
+    The function `f` is a map that acts as follows (here `M =\QQ(\zeta_m)`):
 
-    - ``L``, ``K`` -- element alpha in L
-
-    OUTPUT:
-
-    a polynomial `f(x)` in `K[x]` such that `f(\zeta_m) = \alpha`,
-    where we view alpha as living in `M`. (Note that `\zeta_m`
-    generates `M`, not `L`.)
+        INPUT: element alpha in `L`
+        OUTPUT: a polynomial `f(x)` in `K[x]` such that `f(\zeta_m) = \alpha`,
+                where we view alpha as living in `M`. (Note that `\zeta_m`
+                generates `M`, not `L`.)
 
     EXAMPLES::
 
@@ -634,16 +630,6 @@ def cyclotomic_restriction(L, K):
             r"""
             Function returned by cyclotomic restriction.
 
-            INPUT:
-
-            - ``x`` -- element alpha in L
-
-            OUTPUT:
-
-            A polynomial `f(x)` in `K[x]` such that `f(\zeta_m) = \alpha`,
-            where we view alpha as living in `M`. (Note that `\zeta_m`
-            generates `M`, not `L`.)
-
             EXAMPLES::
 
                 sage: L = CyclotomicField(12)
@@ -661,16 +647,11 @@ def cyclotomic_restriction(L, K):
 
 def cyclotomic_restriction_tower(L, K):
     """
-    Suppose L/K is an extension of cyclotomic fields and L=Q(zeta_m).
+    Suppose `L/K` is an extension of cyclotomic fields and `L=Q(\zeta_m)`.
     This function computes a map with the following property:
 
-    INPUT:
-
-    - ``L``, ``K`` -- an element alpha in L
-
-    OUTPUT:
-
-    a polynomial `f(x)` in `K[x]` such that `f(zeta_m) = alpha`.
+        INPUT: element alpha in `L`
+        OUTPUT: a polynomial `f(x)` in `K[x]` such that `f(\zeta_m) = alpha`
 
     EXAMPLES::
 
@@ -694,14 +675,6 @@ def cyclotomic_restriction_tower(L, K):
     def z(a):
         """
         Function returned by cyclotomic_restriction_tower.
-
-        INPUT:
-
-        - ``a`` -- element alpha in L
-
-        OUTPUT:
-
-        a polynomial `f(x)` in `K[x]` such that `f(zeta_m) = alpha`.
 
         EXAMPLES::
 
