@@ -1,4 +1,4 @@
-readline zlib bzip2 $(BLAS)
+readline zlib bzip2 $(BLAS) | coinbrew
 
 ----------
 All lines of this file are ignored except the first.
