@@ -65,9 +65,7 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Make sure that all "standard-pre" jobs can start simultaneously,
-      # so that runners are available by the time that "default" starts.
-      max_parallel: 50
+      max_parallel: 15
 
   standard:
     if: ${{ success() || failure() }}
@@ -86,9 +84,7 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Reduce from 30 to 20 because it runs in parallel with 'standard-sitepackages'
-      # and 'minimal-pre' below
-      max_parallel: 20
+      max_parallel: 12
 
   standard-sitepackages:
     if: ${{ success() || failure() }}
@@ -140,9 +136,7 @@ jobs:
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Reduced from 30 because it may run in parallel with 'standard' and 'standard-sitepackages' above.
-      # Calibrated for clogging the job pipeline until the "default" job has finished.
-      max_parallel: 24
+      max_parallel: 10
 
   minimal:
     if: ${{ success() || failure() }}
@@ -161,7 +155,7 @@ jobs:
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      max_parallel: 24
+      max_parallel: 10
 
   maximal-pre:
     if: ${{ success() || failure() }}
@@ -176,6 +170,7 @@ jobs:
       tox_packages_factors: >-
           ["maximal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 10
 
   optional-0-o:
     if: ${{ success() || failure() }}
@@ -191,7 +186,7 @@ jobs:
       docker_targets: "with-targets-optional"
       # [0-9a-o] excludes _, in particular package _develop
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-9a-o]))'
-
+      max_parallel: 10
 
   optional-p-z:
     if: ${{ success() || failure() }}
@@ -207,6 +202,7 @@ jobs:
       docker_targets: "with-targets-optional"
       # [0-9a-o] excludes _, in particular package _develop
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
+      max_parallel: 10
 
   experimental-0-o:
     if: ${{ success() || failure() }}
@@ -221,6 +217,7 @@ jobs:
           ["maximal"]
       docker_targets: "with-targets-optional"
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-9a-o]))'
+      max_parallel: 10
 
   experimental-p-z:
     if: ${{ success() || failure() }}
@@ -235,3 +232,4 @@ jobs:
           ["maximal"]
       docker_targets: "with-targets-optional"
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
+      max_parallel: 10
