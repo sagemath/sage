@@ -682,7 +682,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         INPUT:
 
         - ``n`` -- integer
-        - ``verbose`` -- boolean (default: ``False``); a boolean to control if log
+        - ``verbose`` -- boolean (default: ``False``); controls whether log
           messages should be emitted
 
         OUTPUT:

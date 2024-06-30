@@ -321,7 +321,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``weight`` -- (int, Integer)
+        - ``weight`` -- integer
 
         OUTPUT: a quasimodular forms space of the given weight
 

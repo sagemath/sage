@@ -5221,9 +5221,9 @@ cdef class Expression(Expression_abc):
 
         - ``full`` -- boolean (default: ``False``); to enhance user control
           of simplification, this function expands only one level at a time
-           by default, expanding sums of angles or multiple angles. To obtain
-           full expansion into sines and cosines immediately, set the optional
-           parameter full to ``True``.
+          by default, expanding sums of angles or multiple angles. To obtain
+          full expansion into sines and cosines immediately, set the optional
+          parameter full to ``True``.
 
         - ``half_angles`` -- boolean (default: ``False``); if ``True``, causes
           half-angles to be simplified away
@@ -9980,7 +9980,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``normalize`` -- boolean (default: ``True``); a boolean
+        - ``normalize`` -- boolean (default: ``True``)
 
         If ``normalize`` is ``True``, the expression is first normalized to
         have it as a fraction before getting the numerator.

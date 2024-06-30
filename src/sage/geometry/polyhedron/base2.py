@@ -700,7 +700,7 @@ class Polyhedron_base2(Polyhedron_base1):
         The following keyword arguments are passed to
         :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`:
 
-        - ``split`` -- boolean (default: ``False``); a boolean or list
+        - ``split`` -- boolean (default: ``False``) or list
 
           - ``split=False`` computes the generating function directly,
             without any splitting.

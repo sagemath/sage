@@ -2864,17 +2864,15 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         Calls ``self.possible_periods()`` modulo all primes of good reduction
         in range ``prime_bound``. Return the intersection of those lists.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        - ``**kwds`` -- keywords:
+        - ``prime_bound`` -- (default: ``[1, 20]``) a list or tuple of
+          two positive integers or an integer for the upper bound
 
-          - ``prime_bound`` -- (default: ``[1, 20]``) a list or tuple of
-            two positive integers or an integer for the upper bound
+        - ``bad_primes`` -- (optional) a list or tuple of integer primes,
+          the primes of bad reduction
 
-          - ``bad_primes`` -- (optional) a list or tuple of integer primes,
-            the primes of bad reduction
-
-          - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
+        - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
 
         OUTPUT: list of positive integers
 
@@ -4219,24 +4217,22 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         base field or over the minimal extension of the base field that
         contains the critical points.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        - ``**kwds`` -- keywords:
+        - ``badprimes`` -- (optional) a list of primes of bad reduction
 
-          - ``badprimes`` -- (optional) a list of primes of bad reduction
+        - ``N`` -- (default: 10) positive integer; number of terms of
+          the series to use in the local green functions
 
-          - ``N`` -- (default: 10) positive integer; number of terms of
-            the series to use in the local green functions
+        - ``prec`` -- (default: 100) positive integer, float point
+          or `p`-adic precision
 
-          - ``prec`` -- (default: 100) positive integer, float point
-            or `p`-adic precision
+        - ``error_bound`` -- (optional) a positive real number
 
-          - ``error_bound`` -- (optional) a positive real number
-
-          - ``use_algebraic_closure`` -- boolean (default: ``True``); if
-            ``True``, uses the algebraic closure. If ``False``, uses the
-            smallest extension of the base field containing all the critical
-            points.
+        - ``use_algebraic_closure`` -- boolean (default: ``True``); if
+          ``True``, uses the algebraic closure. If ``False``, uses the
+          smallest extension of the base field containing all the critical
+          points.
 
         OUTPUT: real number
 
@@ -6003,39 +5999,37 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         Implemented by Rebecca Lauren Miller as part of GSOC 2016.
         Minimal height added by Ben Hutz July 2018.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        - ``**kwds`` -- keywords:
+        - ``prec`` -- integer (default: 300); desired precision
 
-          - ``prec`` -- (default: 300) integer, desired precision
+        - ``return_conjuagtion`` -- boolean (default: ``True``); return
+          an element of `SL(2, \ZZ)`
 
-          - ``return_conjuagtion`` -- boolean (default: ``True``); return
-            an element of `SL(2, \ZZ)`
+        - ``error_limit`` -- (default: 0.000001) a real number, sets
+          the error tolerance
 
-          - ``error_limit`` -- (default: 0.000001) a real number, sets
-            the error tolerance
+        - ``smallest_coeffs`` -- boolean (default: ``True``); whether to find the
+          model with smallest coefficients
 
-          - ``smallest_coeffs`` -- boolean (default: ``True``); whether to find the
-            model with smallest coefficients
+        - ``dynatomic`` -- boolean (default: ``True``); to use formal periodic points
 
-          - ``dynatomic`` -- boolean (default: ``True``); to use formal periodic points
+        - ``start_n`` -- positive integer (default: 1); first period to try to find
+          appropriate binary form
 
-          - ``start_n`` -- positive integer (default: 1); first period to try to find
-            appropriate binary form
+        - ``emb`` -- (optional) embedding of based field into CC
 
-          - ``emb`` -- (optional) embedding of based field into CC
+        - ``algorithm`` -- (optional) which algorithm to use to find all
+          minimal models. Can be one of the following:
 
-          - ``algorithm`` -- (optional) which algorithm to use to find all
-            minimal models. Can be one of the following:
+          * ``'BM'`` -- Bruin-Molnar algorithm [BM2012]_
+          * ``'HS'`` -- Hutz-Stoll algorithm [HS2018]_
 
-            * ``'BM'`` -- Bruin-Molnar algorithm [BM2012]_
-            * ``'HS'`` -- Hutz-Stoll algorithm [HS2018]_
+        - ``check_minimal`` -- boolean (default: ``True``); whether to check
+          if this map is a minimal model
 
-          - ``check_minimal`` -- (default: ``True``), boolean, whether to check
-            if this map is a minimal model
-
-          - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
-            model with smallest coefficients
+        - ``smallest_coeffs`` -- boolean (default: ``True``); whether to find the
+          model with smallest coefficients
 
         OUTPUT:
 
@@ -7075,34 +7069,32 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         See [Hutz2015]_.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        - ``**kwds`` -- keywords:
+        - ``R`` -- (default: domain of dynamical system) the base ring
+          over which the periodic points of the dynamical system are found
 
-          - ``R`` -- (default: domain of dynamical system) the base ring
-            over which the periodic points of the dynamical system are found
+        - ``prime_bound`` -- (default: ``[1,20]``) a pair (list or tuple)
+          of positive integers that represent the limits of primes to use
+          in the reduction step or an integer that represents the upper bound
 
-          - ``prime_bound`` -- (default: ``[1,20]``) a pair (list or tuple)
-            of positive integers that represent the limits of primes to use
-            in the reduction step or an integer that represents the upper bound
+        - ``lifting_prime`` -- (default: 23) a prime integer; argument that
+          specifies modulo which prime to try and perform the lifting
 
-          - ``lifting_prime`` -- (default: 23) a prime integer; argument that
-            specifies modulo which prime to try and perform the lifting
+        - ``period_degree_bounds`` -- (default: ``[4,4]``) a pair of positive integers
+          (max period, max degree) for which the dynatomic polynomial should be solved for
 
-          - ``period_degree_bounds`` -- (default: ``[4,4]``) a pair of positive integers
-            (max period, max degree) for which the dynatomic polynomial should be solved for
+        - ``algorithm`` -- (optional) specifies which algorithm to use;
+          current options are `dynatomic` and `lifting`; defaults to solving the
+          dynatomic for low periods and degrees and lifts for everything else
 
-          - ``algorithm`` -- (optional) specifies which algorithm to use;
-            current options are `dynatomic` and `lifting`; defaults to solving the
-            dynatomic for low periods and degrees and lifts for everything else
+        - ``periods`` -- (optional) a list of positive integers that is
+          the list of possible periods
 
-          - ``periods`` -- (optional) a list of positive integers that is
-            the list of possible periods
+        - ``bad_primes`` -- (optional) a list or tuple of integer primes;
+          the primes of bad reduction
 
-          - ``bad_primes`` -- (optional) a list or tuple of integer primes;
-            the primes of bad reduction
-
-          - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
+        - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
 
         OUTPUT: list of rational points in projective space
 
@@ -7436,35 +7428,33 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         - Determines the rational preperiodic points from the rational
           periodic points by determining rational preimages.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        - ``**kwds`` -- keywords:
+        - ``R`` -- (default: domain of dynamical system) the base ring
+          over which the periodic points of the dynamical system are found
 
-          - ``R`` -- (default: domain of dynamical system) the base ring
-            over which the periodic points of the dynamical system are found
+        - ``prime_bound`` -- (default: ``[1, 20]``) a pair (list or tuple)
+          of positive integers that represent the limits of primes to use
+          in the reduction step or an integer that represents the upper bound
 
-          - ``prime_bound`` -- (default: ``[1, 20]``) a pair (list or tuple)
-            of positive integers that represent the limits of primes to use
-            in the reduction step or an integer that represents the upper bound
+        - ``lifting_prime`` -- (default: 23) a prime integer; specifies
+          modulo which prime to try and perform the lifting
 
-          - ``lifting_prime`` -- (default: 23) a prime integer; specifies
-            modulo which prime to try and perform the lifting
+        - ``periods`` -- (optional) a list of positive integers that is
+          the list of possible periods
 
-          - ``periods`` -- (optional) a list of positive integers that is
-            the list of possible periods
+        - ``bad_primes`` -- (optional) a list or tuple of integer primes;
+          the primes of bad reduction
 
-          - ``bad_primes`` -- (optional) a list or tuple of integer primes;
-            the primes of bad reduction
+        - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
 
-          - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
+        - ``period_degree_bounds`` -- (default: ``[4,4]``) a pair of positive integers
+          (max period, max degree) for which the dynatomic polynomial should be solved
+          for when in dimension 1
 
-          - ``period_degree_bounds`` -- (default: ``[4,4]``) a pair of positive integers
-            (max period, max degree) for which the dynatomic polynomial should be solved
-            for when in dimension 1
-
-          - ``algorithm`` -- (optional) specifies which algorithm to use;
-            current options are `dynatomic` and `lifting`; defaults to solving the
-            dynatomic for low periods and degrees and lifts for everything else
+        - ``algorithm`` -- (optional) specifies which algorithm to use;
+          current options are `dynatomic` and `lifting`; defaults to solving the
+          dynatomic for low periods and degrees and lifts for everything else
 
         OUTPUT: list of rational points in projective space
 
@@ -7606,24 +7596,22 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         - Determines the rational preperiodic points from the rational
           periodic points by determining rational preimages.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        - ``**kwds`` -- keywords:
+        - ``prime_bound`` -- (default: ``[1, 20]``) a pair (list or tuple)
+          of positive integers that represent the limits of primes to use
+          in the reduction step or an integer that represents the upper bound
 
-          - ``prime_bound`` -- (default: ``[1, 20]``) a pair (list or tuple)
-            of positive integers that represent the limits of primes to use
-            in the reduction step or an integer that represents the upper bound
+        - ``lifting_prime`` -- (default: 23) a prime integer; specifies
+          modulo which prime to try and perform the lifting
 
-          - ``lifting_prime`` -- (default: 23) a prime integer; specifies
-            modulo which prime to try and perform the lifting
+        - ``periods`` -- (optional) a list of positive integers that is
+          the list of possible periods
 
-          - ``periods`` -- (optional) a list of positive integers that is
-            the list of possible periods
+        - ``bad_primes`` -- (optional) a list or tuple of integer primes;
+          the primes of bad reduction
 
-          - ``bad_primes`` -- (optional) a list or tuple of integer primes;
-            the primes of bad reduction
-
-          - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
+        - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
 
         OUTPUT:
 
@@ -9304,12 +9292,10 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
         r"""
         Return a list of all periodic points over a finite field.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        - ``**kwds`` -- keywords:
-
-          - ``R`` -- (default: base ring of dynamical system) the base ring
-            over which the periodic points of the dynamical system are found
+        - ``R`` -- (default: base ring of dynamical system) the base ring
+          over which the periodic points of the dynamical system are found
 
         OUTPUT: list of elements which are periodic
 

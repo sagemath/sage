@@ -1093,8 +1093,8 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``as_polyhedron`` -- (or ``as_convex_set``) boolean or the default
-          ``None``
+        - ``as_polyhedron``, ``as_convex_set`` -- boolean or the default
+          ``None``; one of the two to be set
 
         - ``as_affine_map`` -- boolean (default: ``False``); control the output
 

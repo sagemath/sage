@@ -987,8 +987,8 @@ class FreeGradedModule(CombinatorialFreeModule):
         - ``top_dim`` -- stop the computation at this degree. Ignored,
           for compatibility with
           :meth:`sage.modules.fp_graded.module.FPModule.resolution`.
-        - ``verbose`` -- boolean (default: ``False``); a boolean to control if
-          log messages should be emitted
+        - ``verbose`` -- boolean (default: ``False``); controls whether log
+          messages should be emitted
 
         OUTPUT:
 
