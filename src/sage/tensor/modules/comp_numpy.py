@@ -304,27 +304,99 @@ class ComponentNumpy(SageObject):
             ind = self._check_indices(indices)
             self._comp[ind] = value
 
+    def _broadcast(self, other):
+        s_shape = self._shape
+        o_shape = other._shape
+        N1 = len(s_shape)
+        N2 = len(o_shape)
+        N = max(N1, N2)
+        shape = [0] * N
+
+        i = N - 1
+        while i >= 0:
+            n1 = N1 - N + i
+            d1 = s_shape[n1] if n1 >= 0 else 1
+            n2 = N2 - N + i
+            d2 = o_shape[n2] if n2 >= 0 else 1
+            if d1 == 1:
+                shape[i] = d2
+            elif d2 == 1:
+                shape[i] = d1
+            elif d1 == d2:
+                shape[i] = d1
+            else:
+                raise ValueError("Shapes cannot be broadcasted")
+            i -= 1
+
+        frame = tuple(set(self._frame + other._frame))
+        output_formatter = None
+        if self._output_formatter == other._output_formatter: # output formatter is None if self and other had diff output formatter
+            output_formatter = self._output_formatter
+
+        return ComponentNumpy(self._ring, frame, len(shape), shape, output_formatter=output_formatter)
+
+## Arithmetic Operators
+
     def __pos__(self):
         return self.copy()
 
     def __neg__(self):
         neg_com = self._new_instance()
-        neg_com._comp = - np.copy(self._comp)
-    
+        neg_com._comp = (- np.copy(self._comp))
+
     def __add__(self, other):
         if isinstance(other, (int, Integer)) and other == 0:
             return +self
-        if not isinstance(other, (Components, ComponentNumpy)):
-            raise TypeError("the second argument for the addition must be " +
-                            "an instance of Components")
-        if isinstance(other, CompWithSym):
+        if isinstance(other, CompWithSymNumpy):
             return other + self     # to deal properly with symmetries
-        if other._frame != self._frame:
-            raise ValueError("the two sets of components are not defined on " +
-                             "the same frame")
-        if other._nid != self._nid:
-            raise ValueError("the two sets of components do not have the " +
-                             "same number of indices")
-        if other._sindex != self._sindex:
-            raise ValueError("the two sets of components do not have the " +
-                             "same starting index")
+        if self._shape != other._shape: # use tensor broadcasting
+            ret = self._broadcast(other)
+        else:
+            ret = self.copy()
+        ret._comp = self._comp + other._comp
+        return ret
+
+    def __sub__(self, other):
+        if isinstance(other, (int, Integer)) and other == 0:
+            return +self
+        return self + (-other)
+
+    def __mul__(self, other):
+        if self._shape != other._shape: # use tensor broadcasting
+            ret = self._broadcast(other)
+        else:
+            ret = self.copy()
+        ret._comp = self._comp * other._comp
+        return ret
+
+    def __truediv__(self, other):
+        if self._shape == other._shape:
+            ret = self._broadcast(other)
+        else:
+            ret = self.copy()
+        ret._comp = self._comp / other._comp
+        return ret
+
+    def __floordiv__(self, other):
+        if self._shape == other._shape:
+            ret = self._broadcast(other)
+        else:
+            ret = self.copy()
+        ret._comp = self._comp // other._comp
+        return ret
+
+    def __mod__(self, other):
+        if self._shape == other._shape:
+            ret = self._broadcast(other)
+        else:
+            ret = self.copy()
+        ret._comp = self._comp % other._comp
+        return ret
+
+    def __pow__(self, other):
+        if self._shape == other._shape:
+            ret = self._broadcast(other)
+        else:
+            ret = self.copy()
+        ret._comp = self._comp ** other._comp
+        return ret
