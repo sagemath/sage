@@ -2129,7 +2129,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         characteristic, and is an element of the field which is zero
         if and only if the curve is supersingular.  Over a field of
         characteristic zero, where the Hasse invariant is undefined,
-        a ``ValueError`` is raised.
+        a :class:`ValueError` is raised.
 
         EXAMPLES::
 

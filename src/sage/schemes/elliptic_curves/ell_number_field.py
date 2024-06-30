@@ -1628,7 +1628,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: Emin.non_minimal_primes()
             []
 
-        If the model is not globally integral, a ``ValueError`` is
+        If the model is not globally integral, a :class:`ValueError` is
         raised::
 
             sage: E = EllipticCurve([0, 0, 0, 1/2, 1/3])

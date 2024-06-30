@@ -840,7 +840,7 @@ def _semistable_reducible_primes(E, verbose=False):
     A list of primes, which contains all primes `l` unramified in
     `K/\mathbb{QQ}`, such that `E` is semistable at all primes lying
     over `l`, and the Galois image at `l` is reducible. If `E` has CM
-    defined over its ground field, a ``ValueError`` is raised.
+    defined over its ground field, a :class:`ValueError` is raised.
 
     EXAMPLES::
 
