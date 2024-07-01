@@ -1,3 +1,5 @@
+# Tensor Component Backend using numpy.ndarray
+
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
 from sage.tensor.modules.comp import Components
@@ -7,13 +9,21 @@ import numpy as np
 class ComponentNumpy(SageObject):
     def __init__(self, ring, frame, nb_indices, shape=None, start_index=0,
                  output_formatter=None):
+        r"""
+        TESTS::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: ComponentNumpy(ZZ, [1,2,3], 2)
+            2-indices numpy components w.r.t. (1, 2, 3)
+
+        """
         self._ring = ring
-        self._frame = tuple(frame) if all(isinstance(i, (list, tuple)) for i in frame)\
-              else (frame,) * nb_indices
+        self._frame = tuple(frame) if all(isinstance(i, (list, tuple)) for i in frame) \
+                                    else (tuple(frame),)
         self._nid = nb_indices
         self._shape = (len(self._frame[0]),) * nb_indices if shape is None else tuple(shape)
-        self._sindex = tuple(start_index) if isinstance(start_index, (list, tuple))\
-              else (start_index,) * nb_indices
+        self._sindex = tuple(start_index) if isinstance(start_index, (list, tuple)) \
+                                            else (start_index,) * nb_indices
         self._output_formatter = output_formatter
         self._comp = np.zeros(shape=self._shape, dtype=np.float64)
 
@@ -26,30 +36,23 @@ class ComponentNumpy(SageObject):
             sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
             sage: c = ComponentNumpy(ZZ, [1,2,3], 2)
             sage: c._repr_()
-            '2-indices components w.r.t. [1, 2, 3]'
+            '2-indices numpy components w.r.t. (1, 2, 3)'
 
-            sage: from sage.tensor.modules.comp import CompWithSym
-            sage: CompWithSym(ZZ, [1,2,3], 4, sym=(0,1))
-            4-indices components w.r.t. [1, 2, 3],
-             with symmetry on the index positions (0, 1)
-            sage: CompWithSym(ZZ, [1,2,3], 4, sym=(0,1), antisym=(2,3))
-            4-indices components w.r.t. [1, 2, 3],
-             with symmetry on the index positions (0, 1),
-             with antisymmetry on the index positions (2, 3)
-
-            sage: from sage.tensor.modules.comp import CompFullySym
-            sage: CompFullySym(ZZ, (1,2,3), 4)
-            Fully symmetric 4-indices components w.r.t. (1, 2, 3)
-
-            sage: from sage.tensor.modules.comp import CompFullyAntiSym
-            sage: CompFullyAntiSym(ZZ, (1,2,3), 4)
-            Fully antisymmetric 4-indices components w.r.t. (1, 2, 3)
         """
         description = str()
-        if all(self._shape[0] == dim for dim in self._shape):
-            description += "{}-shaped".format(self._shape)
-        description += " numpy"
-        description += " components w.r.t. " + str(self._frame)
+        if not all(self._shape[0] == dim for dim in self._shape):
+            description += "{}-shaped ".format(self._shape)
+        description += str(self._nid)
+        if self._nid == 1:
+            description += "-index "
+        else:
+            description += "-indices "
+        description += "numpy components w.r.t. "
+        if len(self._frame) == 1:
+            description += str(self._frame[0])
+        else:
+            description += str(self._frame)
+
         return description
 
     def _new_instance(self):
@@ -65,7 +68,7 @@ class ComponentNumpy(SageObject):
             sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
             sage: c = ComponentNumpy(ZZ, [1,2,3], 2)
             sage: c._new_instance()
-            2-indices components w.r.t. [1, 2, 3]
+            2-indices numpy components w.r.t. (1, 2, 3)
 
         """
         return self.__class__(self._ring, self._frame, self._nid, self._shape,
@@ -79,18 +82,14 @@ class ComponentNumpy(SageObject):
 
         Copy of a set of components with a single index::
 
-            sage: from sage.tensor.modules.comp import Components
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
             sage: V = VectorSpace(QQ,3)
             sage: a = ComponentNumpy(QQ, V.basis(), 1)
             sage: a[:] = -2, 1, 5
             sage: b = a.copy() ; b
-            1-index components w.r.t. [
-            (1, 0, 0),
-            (0, 1, 0),
-            (0, 0, 1)
-            ]
+            1-index numpy components w.r.t. ((1, 0, 0), (0, 1, 0), (0, 0, 1))
             sage: b[:]
-            [-2, 1, 5]
+            array([-2.,  1.,  5.])
             sage: b == a
             True
             sage: b is a  # b is a distinct object
@@ -185,26 +184,39 @@ class ComponentNumpy(SageObject):
         EXAMPLES::
 
             sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
-            sage: c = ComponentNumpy(ZZ, [1,2,3], 2)
+            sage: c = ComponentNumpy(ZZ, [1,2,3], 2, start_index=[1,2])
             sage: c[1,2]    # unset components are zero
-            0
+            0.0
             sage: c.__getitem__((1,2))
-            0
+            0.0
             sage: c.__getitem__([1,2])
-            0
+            0.0
             sage: c[1,2] = -4
             sage: c[1,2]
-            -4
+            -4.0
             sage: c.__getitem__((1,2))
-            -4
+            -4.0
             sage: c[:]
-            [ 0  0  0]
-            [ 0  0 -4]
-            [ 0  0  0]
+            array([[-4.,  0.,  0.],
+                   [ 0.,  0.,  0.],
+                   [ 0.,  0.,  0.]])
             sage: c.__getitem__(slice(None))
-            [ 0  0  0]
-            [ 0  0 -4]
-            [ 0  0  0]
+            array([[-4.,  0.,  0.],
+                   [ 0.,  0.,  0.],
+                   [ 0.,  0.,  0.]])
+            sage: c = ComponentNumpy(ZZ, [1,2,3], 2, start_index=[1,2])
+            sage: c[1,2] = 4; c[3,2] = 2
+            sage: c[:]
+            array([[4., 0., 0.],
+                  [0., 0., 0.],
+                  [2., 0., 0.]])
+            sage: c[1:4:2]
+            array([[4., 0., 0.],
+                  [2., 0., 0.]])
+            sage: c[1:5]
+            Traceback (most recent call last):
+            ...
+            IndexError: [start:stop] not in range [1,4]
 
         """
         no_format = self._output_formatter is None
@@ -223,16 +235,29 @@ class ComponentNumpy(SageObject):
                 indices = args
             elif isinstance(args[0], slice):
                 indices = args[0]
-                if len(args) == 2:
-                    format_type = args[1]
             elif len(args) == self._nid:
                 indices = args
             else:
                 format_type = args[-1]
                 indices = args[:-1]
         if isinstance(indices, slice):
-            indices = slice(indices.start - self._sindex[0], indices.stop - self._sindex[0])
-            return self._comp[indices] # to be implemented ## output formatter
+            start, stop = indices.start, indices.stop
+            range_start, range_end = self._sindex[0], self._sindex[0] + self._shape[0]
+
+            if indices.start is not None:
+                start = indices.start - range_start
+            else:
+                start = 0
+            if indices.stop is not None:
+                stop = indices.stop - range_start
+            else:
+                stop = range_end - range_start
+            if not ((0 <= start <= range_end - range_start - 1) and
+                    (0 <= stop <= range_end - range_start)):
+                raise IndexError("[start:stop] not in range [{},{}]"
+                                 .format(range_start, range_end))
+
+            return self._comp[slice(start, stop, indices.step)]
         else:
             ind = self._check_indices(indices)
             elem = self._comp[ind]
@@ -258,26 +283,35 @@ class ComponentNumpy(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.tensor.modules.comp import Components
-            sage: c = Components(ZZ, [1,2,3], 2)
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: c = ComponentNumpy(ZZ, [1,2,3], 2)
             sage: c.__setitem__((0,1), -4)
             sage: c[:]
-            [ 0 -4  0]
-            [ 0  0  0]
-            [ 0  0  0]
+            array([[ 0., -4.,  0.],
+                   [ 0.,  0.,  0.],
+                   [ 0.,  0.,  0.]])
             sage: c[0,1] = -4
             sage: c[:]
-            [ 0 -4  0]
-            [ 0  0  0]
-            [ 0  0  0]
+            array([[ 0., -4.,  0.],
+                   [ 0.,  0.,  0.],
+                   [ 0.,  0.,  0.]])
             sage: c.__setitem__(slice(None), [[0, 1, 2], [3, 4, 5], [6, 7, 8]])
             sage: c[:]
-            [0 1 2]
-            [3 4 5]
-            [6 7 8]
-
+            array([[0., 1., 2.],
+                  [3., 4., 5.],
+                  [6., 7., 8.]])
+            sage: c = ComponentNumpy(ZZ, [1,2,3], 2, start_index=[1,2])
+            sage: c.__setitem__(slice(None), [[0, 1, 2], [3, 4, 5], [6, 7, 8]])
+            sage: c[1:4:2] = [[2, 1, 0], [5, 4, 3]]
+            sage: c[:]
+            array([[2., 1., 0.],
+                   [3., 4., 5.],
+                   [5., 4., 3.]])
+            sage: c[2:5] = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+            Traceback (most recent call last):
+            ...
+            IndexError: [start:stop] not in range [1,4]
         """
-        format_type = None # default value, possibly redefined below
         if isinstance(args, list):  # case of [[...]] syntax
             if isinstance(args[0], slice):
                 indices = args[0]
@@ -291,20 +325,58 @@ class ComponentNumpy(SageObject):
                 indices = args
             elif isinstance(args[0], slice):
                 indices = args[0]
-                if len(args) == 2:
-                    format_type = args[1]
             elif len(args) == self._nid:
                 indices = args
-            else:
-                format_type = args[-1]
-                indices = args[:-1]
+
         if isinstance(indices, slice):
-            self._set_list(indices, format_type, value) # to be implemented ## _setlist
+            start, stop = indices.start, indices.stop
+            range_start, range_end = self._sindex[0], self._sindex[0] + self._shape[0]
+
+            if indices.start is not None:
+                start = indices.start - range_start
+            else:
+                start = 0
+            if indices.stop is not None:
+                stop = indices.stop - range_start
+            else:
+                stop = range_end - range_start
+            if not ((0 <= start <= range_end - range_start - 1) and
+                    (0 <= stop <= range_end - range_start)):
+                raise IndexError("[start:stop] not in range [{},{}]"
+                    .format(range_start, range_end))
+
+            self._comp[start:stop:indices.step] = value
         else:
             ind = self._check_indices(indices)
             self._comp[ind] = value
 
     def _broadcast(self, other):
+        r"""
+        broadcast self with other
+
+        INPUT:
+
+        - ``other`` -- components, on the same frame as ``self``
+
+        OUTPUT:
+
+        - the broadcasted component of ``self`` by ``other``
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: c_1 = ComponentNumpy(ZZ, [1,2,3], 2)
+            sage: c_2 = ComponentNumpy(ZZ, [1,2,3], 3, (1,3,3))
+            sage: c_1._broadcast(c_2)
+            (1, 3, 3)-shaped 3-indices numpy components w.r.t. (1, 2, 3)
+            sage: c_2._broadcast(c_1)
+            (1, 3, 3)-shaped 3-indices numpy components w.r.t. (1, 2, 3)
+            sage: c_2 = ComponentNumpy(ZZ, [1,2,3], 3, (1,2,3))
+            sage: c_1._broadcast(c_2)
+            Traceback (most recent call last):
+            ...
+            ValueError: Shapes (3, 3), (1, 2, 3) cannot be broadcasted
+        """
         s_shape = self._shape
         o_shape = other._shape
         N1 = len(s_shape)
@@ -325,7 +397,8 @@ class ComponentNumpy(SageObject):
             elif d1 == d2:
                 shape[i] = d1
             else:
-                raise ValueError("Shapes cannot be broadcasted")
+                raise ValueError("Shapes {}, {} cannot be broadcasted"
+                                 .format(self._shape, other._shape))
             i -= 1
 
         frame = tuple(set(self._frame + other._frame))
@@ -338,17 +411,89 @@ class ComponentNumpy(SageObject):
 ## Arithmetic Operators
 
     def __pos__(self):
+        r"""
+        Unary plus operator.
+
+        OUTPUT:
+
+        - an exact copy of ``self``
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: c = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: c[:] = 5, 0, -4
+            sage: a = c.__pos__() ; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([ 5.,  0., -4.])
+            sage: a == +c
+            True
+            sage: a == c
+            True
+
+        """
         return self.copy()
 
     def __neg__(self):
+        r"""
+        Unary minus operator.
+
+        OUTPUT:
+
+        - the opposite of the components represented by ``self``
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: c = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: c[:] = 5, 0, -4
+            sage: a = c.__neg__() ; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([-5., -0.,  4.])
+            sage: a == -c
+            True
+
+        """
         neg_com = self._new_instance()
         neg_com._comp = (- np.copy(self._comp))
+        return neg_com
 
     def __add__(self, other):
+        r"""
+        Component addition.
+
+        INPUT:
+
+        - ``other`` -- components of the same number of indices and defined
+          on the same frame as ``self``
+
+        OUTPUT:
+
+        - components resulting from the addition of ``self`` and ``other``
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: b = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: b[:] = 4, 5, 6
+            sage: s = a.__add__(b) ; s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([5., 5., 3.])
+            sage: s == a+b
+            True
+        """
         if isinstance(other, (int, Integer)) and other == 0:
             return +self
-        if isinstance(other, CompWithSymNumpy):
-            return other + self     # to deal properly with symmetries
+        if not isinstance(other, (Components, ComponentNumpy)):
+            raise TypeError("the second argument for the addition must be a " +
+                            "an instance of Components")
+        # if isinstance(other, CompWithSymNumpy):
+        #     return other + self     # to deal properly with symmetries
         if self._shape != other._shape: # use tensor broadcasting
             ret = self._broadcast(other)
         else:
@@ -356,47 +501,347 @@ class ComponentNumpy(SageObject):
         ret._comp = self._comp + other._comp
         return ret
 
+    def __radd__(self, other):
+        r"""
+        Reflected addition (addition on the right to `other``)
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: b = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: b[:] = 4, 5, 6
+            sage: s = a.__radd__(b) ; s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([5., 5., 3.])
+            sage: s == a+b
+            True
+            sage: s = 0 + a ; s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s == a
+            True
+
+        """
+        return self + other
+
     def __sub__(self, other):
+        r"""
+        Component subtraction.
+
+        INPUT:
+
+        - ``other`` -- components, of the same type as ``self``
+
+        OUTPUT:
+
+        - components resulting from the subtraction of ``other`` from ``self``
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: b = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: b[:] = 4, 5, 6
+            sage: s = a.__sub__(b) ; s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([-3., -5., -9.])
+            sage: s == a - b
+            True
+
+        """
         if isinstance(other, (int, Integer)) and other == 0:
             return +self
         return self + (-other)
 
+    def __rsub__(self, other):
+        r"""
+        Reflected subtraction (subtraction from ``other``).
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: b = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: b[:] = 4, 5, 6
+            sage: s = a.__rsub__(b) ; s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([3., 5., 9.])
+            sage: s == b - a
+            True
+            sage: s = 0 - a ; s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([-1., -0.,  3.])
+            sage: s == -a
+            True
+
+        """
+        return (-self) + other
+
     def __mul__(self, other):
-        if self._shape != other._shape: # use tensor broadcasting
-            ret = self._broadcast(other)
-        else:
+        r"""
+        Component tensor product.
+
+        INPUT:
+
+        - ``other`` -- components, on the same frame as ``self``
+
+        OUTPUT:
+
+        - the tensor product of ``self`` by ``other``
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: s = a.__mul__(3); s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([  3.,   0., -9.])
+            sage: b = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: b[:] = 4, 5, 6
+            sage: s = a.__mul__(b) ; s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([  4.,   0., -18.])
+            sage: s == a*b
+            True
+            sage: t = b*a
+            sage: t == s
+            True
+
+        """
+        if isinstance(other, (int, Integer)):
             ret = self.copy()
-        ret._comp = self._comp * other._comp
+            ret._comp = self._comp * other
+        else:
+            if self._shape == other._shape:
+                ret = self.copy()
+            else:
+                ret = self._broadcast(other)
+            ret._comp = self._comp * other._comp
         return ret
 
+    def __rmul__(self, other):
+        r"""
+        Reflected multiplication (multiplication on the left by ``other``).
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: s = a.__rmul__(2) ; s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([ 2.,  0., -6.])
+            sage: s == 2*a
+            True
+            sage: a.__rmul__(0) == 0
+            True
+
+        """
+        return self * other
+
     def __truediv__(self, other):
-        if self._shape == other._shape:
-            ret = self._broadcast(other)
-        else:
+        r"""
+        Division (by a scalar).
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: s = a.__truediv__(3) ; s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([ 0.33333333,  0.        , -1.        ])
+            sage: s == a/3
+            True
+            sage: 3*s == a
+            True
+
+        """
+        if isinstance(other, (int, Integer)):
             ret = self.copy()
-        ret._comp = self._comp / other._comp
+            ret._comp = self._comp / other
+        else:
+            if self._shape == other._shape:
+                ret = self.copy()
+            else:
+                ret = self._broadcast(other)
+            ret._comp = self._comp / other._comp
         return ret
 
     def __floordiv__(self, other):
-        if self._shape == other._shape:
-            ret = self._broadcast(other)
-        else:
+        r"""
+        Evaluates self_i // other_i for each element of Component
+        ``self`` with the respective element of ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 2, 0, -3
+            sage: s = a.__floordiv__(2); s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([ 1.,  0., -2.])
+            sage: b = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: b[:] = 1, 4, -2
+            sage: s = a.__floordiv__(b); s[:]
+            array([2., 0., 1.])
+
+        """
+        if isinstance(other, (int, Integer)):
             ret = self.copy()
-        ret._comp = self._comp // other._comp
+            ret._comp = self._comp // other
+        else:
+            if self._shape == other._shape:
+                ret = self.copy()
+            else:
+                ret = self._broadcast(other)
+            ret._comp = self._comp // other._comp
         return ret
 
     def __mod__(self, other):
-        if self._shape == other._shape:
-            ret = self._broadcast(other)
-        else:
+        r"""
+        Evaluates self_i % other_i for each element of Component
+        ``self`` with the respective element of ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 1, 2, -3
+            sage: s = a.__mod__(2); s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([1., 0., 1.])
+            sage: b = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: b[:] = 1, 4, -2
+            sage: s = a.__mod__(b); s[:]
+            array([ 0.,  2., -1.])
+
+        """
+        if isinstance(other, (int, Integer)):
             ret = self.copy()
-        ret._comp = self._comp % other._comp
+            ret._comp = self._comp % other
+        else:
+            if self._shape == other._shape:
+                ret = self.copy()
+            else:
+                ret = self._broadcast(other)
+            ret._comp = self._comp % other._comp
         return ret
 
     def __pow__(self, other):
-        if self._shape == other._shape:
-            ret = self._broadcast(other)
+        r"""
+        Evaluates self_i ^ other_i for each element of Component
+        ``self`` with the respective element of ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 3, 0, -3
+            sage: s = a.__pow__(2); s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([9., 0., 9.])
+            sage: b = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: b[:] = -1, 4, -2
+            sage: s = a.__pow__(b); s[:]
+            array([0.33333333, 0.        , 0.11111111])
+
+        """
+        if isinstance(other, (int, Integer)):
+            ret = self.copy()
+            ret._comp = self._comp ** other
+        else:
+            if self._shape == other._shape:
+                ret = self.copy()
+            else:
+                ret = self._broadcast(other)
+            ret._comp = self._comp ** other._comp
+        return ret
+
+    def __abs__(self):
+        r"""
+        Evaluates |self_i| for each element of Component ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 3, 0, -3
+            sage: s = a.__abs__(); s
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: s[:]
+            array([3., 0., 3.])
+
+        """
+        if np.all(self._comp >= 0):
+            return self.copy()
         else:
             ret = self.copy()
-        ret._comp = self._comp ** other._comp
-        return ret
+            ret._comp = np.absolute(ret._comp)
+            return ret
+
+# Comparison Operators
+
+    def __eq__(self, other):
+        r"""
+        Comparison (equality) operator.
+
+        INPUT:
+
+        - ``other`` -- a set of components or 0
+
+        OUTPUT:
+
+        - ``True`` if ``self`` is equal to ``other``,  or ``False`` otherwise
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: c = ComponentNumpy(ZZ, [1,2,3], 2)
+            sage: c.__eq__(0)  # uninitialized components are zero
+            True
+            sage: c[0,1], c[1,2] = 5, -4
+            sage: c.__eq__(0)
+            False
+            sage: c1 = ComponentNumpy(ZZ, [1,2,3], 2)
+            sage: c1[0,1] = 5
+            sage: c.__eq__(c1)
+            False
+            sage: c1[1,2] = -4
+            sage: c.__eq__(c1)
+            True
+            sage: v = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: c.__eq__(v)
+            False
+
+        """
+        if isinstance(other, (int, Integer)): # other is 0
+            if other == 0:
+                return np.all(self._comp == 0)
+            else:
+                raise TypeError("cannot compare a set of components to a number")
+        else: # other is another Components
+            if set(other._frame) != set(self._frame):
+                return False
+            if other._nid != self._nid:
+                return False
+            if other._sindex != self._sindex:
+                return False
+            if other._output_formatter != self._output_formatter:
+                return False
+            return np.all(other._comp == self._comp)

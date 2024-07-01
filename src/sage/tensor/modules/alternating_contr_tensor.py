@@ -38,7 +38,7 @@ REFERENCES:
 #******************************************************************************
 
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
-from sage.tensor.modules.comp import get_components_class
+from sage.tensor.modules.comp import get_components_class, CompFullyAntiSym
 
 class AlternatingContrTensor(FreeModuleTensor):
     r"""

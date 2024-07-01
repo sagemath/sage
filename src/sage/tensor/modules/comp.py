@@ -282,7 +282,7 @@ def get_components_class(sym=None, implementation=None) -> type:
         except ImportError:
             pass
         if sym is None:
-            return comp_numpy.ComponentsNumpy
+            return comp_numpy.ComponentNumpy
         elif sym == "sym":
             return comp_numpy.CompNumpyWithSym
         elif sym == "fullysym":
