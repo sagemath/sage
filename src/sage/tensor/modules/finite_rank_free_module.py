@@ -2389,7 +2389,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             return self.element_class(self, name=name,
                     latex_name=latex_name, implementation=implementation)
         return self.exterior_power(degree).element_class(self, degree,
-                                       name=name, latex_name=latex_name, 
+                                       name=name, latex_name=latex_name,
                                        implementation=implementation)
 
     def alternating_form(self, degree, name=None, latex_name=None, implementation=None):
