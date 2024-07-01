@@ -82,7 +82,7 @@ from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 from sage.categories.homset import Homset, Hom, End
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.categories.map import FormalCompositeMap, Map
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_attribute
@@ -1643,7 +1643,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             if phi is None:
                 raise ValueError("either the dictionary or the specialization must be provided")
         else:
-            if is_FractionField(self[0].parent()):
+            if isinstance(self[0].parent(), FractionField_generic):
                 from sage.rings.polynomial.flatten import FractionSpecializationMorphism
                 phi = FractionSpecializationMorphism(self[0].parent(), D)
             else:

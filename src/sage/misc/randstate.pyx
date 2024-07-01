@@ -753,7 +753,6 @@ cdef class randstate:
         except KeyError:
             prev = None
 
-
         if prev is not self:
             if self._gp_saved_seeds is not None and gp in self._gp_saved_seeds:
                 seed = self._gp_saved_seeds[gp]
@@ -969,6 +968,7 @@ cpdef int random() noexcept:
     """
     return gmp_urandomb_ui(_current_randstate.gmp_state, 31)
 
+
 def initial_seed():
     r"""
     Returns the initial seed used to create the current :class:`randstate`.
@@ -990,6 +990,7 @@ def initial_seed():
     """
     return _current_randstate._seed
 
+
 def benchmark_libc():
     r"""
     This function was used to test whether moving from libc to GMP's
@@ -1008,6 +1009,7 @@ def benchmark_libc():
     for i from 0 <= i < 100000:
         c_libc_random()
 
+
 def benchmark_mt():
     r"""
     This function was used to test whether moving from libc to GMP's
@@ -1025,6 +1027,7 @@ def benchmark_mt():
     cdef randstate rstate = _current_randstate
     for i from 0 <= i < 100000:
         gmp_urandomb_ui(rstate.gmp_state, 32)
+
 
 cpdef int _doctest_libc_random() noexcept:
     r"""

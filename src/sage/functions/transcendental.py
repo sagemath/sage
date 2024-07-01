@@ -28,10 +28,10 @@ lazy_import('sage.functions.other', 'factorial')
 
 lazy_import('sage.combinat.combinat', 'bernoulli_polynomial')
 lazy_import('sage.rings.cc', 'CC')
-lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'is_ComplexNumber'])
+lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'ComplexNumber'])
 lazy_import('sage.rings.polynomial.polynomial_real_mpfr_dense', 'PolynomialRealDense')
 lazy_import('sage.rings.real_double', 'RDF')
-lazy_import('sage.rings.real_mpfr', ['RR', 'RealField', 'is_RealNumber'])
+lazy_import('sage.rings.real_mpfr', ['RR', 'RealField', 'RealNumber'])
 
 lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
 lazy_import('mpmath', 'zeta', as_='_mpmath_zeta')
@@ -452,7 +452,7 @@ def zeta_symmetric(s):
     - I copied the definition of xi from
       http://web.viu.ca/pughg/RiemannZeta/RiemannZetaLong.html
     """
-    if not (is_ComplexNumber(s) or is_RealNumber(s)):
+    if not (isinstance(s, ComplexNumber) or isinstance(s, RealNumber)):
         s = ComplexField()(s)
 
     R = s.parent()
@@ -544,7 +544,7 @@ class DickmanRho(BuiltinFunction):
             sage: dickman_rho(0)                                                        # needs sage.symbolic
             1.00000000000000
         """
-        if not is_RealNumber(x):
+        if not isinstance(x, RealNumber):
             try:
                 x = RR(x)
             except (TypeError, ValueError):

@@ -29,7 +29,6 @@ include 'decl.pxi'
 from cpython.object cimport Py_EQ, Py_NE
 from sage.cpython.string cimport char_to_str
 from sage.rings.integer cimport Integer
-from sage.libs.ntl.convert cimport PyLong_to_ZZ
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
