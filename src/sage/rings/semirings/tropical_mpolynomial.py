@@ -50,24 +50,24 @@ polynomial in two variables when the min-plus or max-plus algebra is used:
     sage: R = PolynomialRing(T, 'a,b')
     sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
     sage: p1 = R(dict1)
-    sage: p1.tropical_hypersurface()
+    sage: p1.tropical_variety()
     Tropical curve of 3*a*b + 0*a + (-1)*b are 
     [[(t1 - 1, t1), [t1 >= -3], 1]
     [(t1, -3), [t1 <= -4], 1]
     [(-4, t1), [t1 <= -3], 1]]
-    sage: plot(p1.tropical_hypersurface())
+    sage: plot(p1.tropical_variety())
     sage: p1.plot3d()
 
     sage: T = TropicalSemiring(QQ, use_min=False)
     sage: R = PolynomialRing(T, 'a,b')
     sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
     sage: p1 = R(dict1)
-    sage: p1.tropical_hypersurface()
+    sage: p1.tropical_variety()
     Tropical curve of 3*a*b + 0*a + (-1)*b are 
     [[(t1 - 1, t1), [t1 <= -3], 1]
     [(t1, -3), [t1 >= -4], 1]
     [(-4, t1), [t1 >= -3], 1]]
-    sage: plot(p1.tropical_hypersurface())
+    sage: plot(p1.tropical_variety())
     sage: p1.plot3d()
 
 TESTS:
@@ -121,7 +121,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         OUTPUT: A Graphics3d Object
 
-        EXAMPLE:
+        EXAMPLES:
 
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R = PolynomialRing(T, 'x,y')
@@ -147,28 +147,27 @@ class TropicalMPolynomial(MPolynomial_polydict):
         """
         from sage.arith.srange import srange
 
-        if len(self.parent().variable_names()) == 2:
-            axes = self.tropical_hypersurface()._axes()
-            xmin, xmax = axes[0][0], axes[0][1]
-            ymin, ymax = axes[1][0], axes[1][1]
-            step = 0.5
-            x_point = srange(xmin-1, xmax+1+step, step)
-            y_point = srange(ymin-1, ymax+1+step, step)
-            res = []
-            T = self.parent().base()
-            for x in x_point:
-                for y in y_point:
-                    val = self(T(x),T(y)).lift()
-                    res.append([x,y,val])
-            return list_plot3d(res, point_list=True)
-        else:
-            raise NotImplementedError("Can only plot the graph of tropical" \
+        if len(self.parent().variable_names()) != 2:
+            raise NotImplementedError("can only plot the graph of tropical" \
                                 " multivariate polynomial in two variables")
+        axes = self.tropical_variety()._axes()
+        xmin, xmax = axes[0][0], axes[0][1]
+        ymin, ymax = axes[1][0], axes[1][1]
+        step = 0.5
+        x_point = srange(xmin-1, xmax+1+step, step)
+        y_point = srange(ymin-1, ymax+1+step, step)
+        res = []
+        T = self.parent().base()
+        for x in x_point:
+            for y in y_point:
+                val = self(T(x),T(y)).lift()
+                res.append([x,y,val])
+        return list_plot3d(res, point_list=True)    
 
-    def tropical_hypersurface(self):
+    def tropical_variety(self):
         r"""
         Return tropical roots of ``self``. In multivariate case, the roots
-        can be represented by a tropical hypersurface. For 2 dimensions,
+        can be represented by a tropical variety. For 2 dimensions,
         it is also called a tropical curve
 
         OUTPUT:
@@ -187,7 +186,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: dict1 = {(0,0):0, (1,0):0, (0,1):0}
             sage: p1 = R(dict1); p1
             0*x + 0*y + 0
-            sage: p1.tropical_hypersurface()
+            sage: p1.tropical_variety()
             Tropical curve of 0*x + 0*y + 0 are 
             [[(0, t1), [t1 <= 0], 1]
             [(t1, 0), [t1 <= 0], 1]
@@ -200,7 +199,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: dict2 = {(0,0):0, (1,0):0, (0,2):0}
             sage: p2 = R(c2) + R(dict2); p2
             (-1)*x^2 + 0*x + 0*y^2 + 0
-            sage: p2.tropical_hypersurface()
+            sage: p2.tropical_variety()
             Tropical curve of (-1)*x^2 + 0*x + 0*y^2 + 0 are 
             [[(0, t1), [t1 <= 0], 1]
             [(t1, 0), [t1 <= 0], 2]
@@ -216,87 +215,17 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: S.<x,y,z> = QQ[]
             sage: p1 = R(x*y + (-1/2)*x*z + 4*z^2); p1
             1*x*y + (-1/2)*x*z + 4*z^2
-            sage: p1.tropical_hypersurface()
+            sage: p1.tropical_variety()
             Tropical hypersurface of 1*x*y + (-1/2)*x*z + 4*z^2 are 
             [[(t1, t2 - 3/2, t2), [t1 - 9/2 <= t2], 1]
             [(2*t1 - t2 + 3, t2, t1), [t2 + 3/2 <= t1], 1]
             [(t1 + 9/2, t2, t1), [t1 <= t2 + 3/2], 1]]
 
         """
-        from sage.symbolic.relation import solve
-        from itertools import combinations
-        from sage.arith.misc import gcd
-
-        tropical_roots = []
-        variables = []
-        for name in self.parent().variable_names():
-            variables.append(SR.var(name))
-
-        # convert each term to its linear function
-        linear_eq = {}
-        for key in self.dict():
-            eq = 0
-            for i,e in enumerate(key):
-                eq += variables[i]*e
-            eq += self.dict()[key].lift()
-            linear_eq[key] = eq
-
-        # checking for all possible combinations of two terms
-        for keys in combinations(self.dict(), 2):
-            sol = solve(linear_eq[keys[0]]==linear_eq[keys[1]], variables)
-            
-            # parametric solution of the chosen two terms
-            final_sol = []
-            for s in sol[0]:
-                final_sol.append(s.right())
-            xy_interval = []
-            xy_interval.append(tuple(final_sol))
-            
-            # comparing with other terms
-            min_max = linear_eq[keys[0]]
-            for i,v in enumerate(variables):
-                min_max = min_max.subs(v==final_sol[i])
-            all_sol_compare = []
-            no_solution = False
-            for compare in self.dict():
-                if compare not in keys:
-                    temp_compare = linear_eq[compare]
-                    for i, v in enumerate(variables):
-                        temp_compare = temp_compare.subs(v==final_sol[i])
-                    if self.parent().base()._use_min:
-                        sol_compare = solve(min_max < temp_compare, variables)
-                    else:
-                        sol_compare = solve(min_max > temp_compare, variables)
-                    if sol_compare: # if there is solution
-                        if isinstance(sol_compare[0], list):
-                            if sol_compare[0]:
-                                all_sol_compare.append(sol_compare[0][0])
-                        else: # solution is unbounded on one side
-                            all_sol_compare.append(sol_compare[0])
-                    else:
-                        no_solution = True
-                        break
-
-            # solve the condition for parameter
-            if not no_solution:
-                parameter = set()
-                for sol in all_sol_compare:
-                    parameter = parameter.union(set(sol.variables()))
-                parameter_solution = solve(all_sol_compare, list(parameter))
-                if parameter_solution:
-                    xy_interval.append(parameter_solution[0])
-                    # calculate order
-                    index_diff = []
-                    for i in range(len(keys[0])):
-                        index_diff.append(abs(keys[0][i]-keys[1][i]))
-                    order = gcd(index_diff)
-                    xy_interval.append(order)
-                    tropical_roots.append(xy_interval)
-
         if self.parent().ngens() == 2:
-            return TropicalCurve(self, tropical_roots)
+            return TropicalCurve(self)
         else:
-            return TropicalVariety(self, tropical_roots)
+            return TropicalVariety(self)
 
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
@@ -319,6 +248,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
+        self._ngens = n
         order = TermOrder(order, n)
         self._term_order = order
         
@@ -348,6 +278,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         return C(self, new_dict)
     
     def _repr_(self):
+        if self._ngens == 0:
+            return (f"Multivariate Tropical Polynomial Semiring in no variables"
+            f" over {self.base_ring().base_ring()}")
         return (f"Multivariate Tropical Polynomial Semiring in {', '.join(self.variable_names())}"
             f" over {self.base_ring().base_ring()}")
     
@@ -359,32 +292,33 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         """
         Return a random polynomial
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import \
-            PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
         return self(R.random_element(degree=degree, terms=terms, choose_degree=choose_degree, 
                                      *args, **kwargs))
     
-    @cached_method
     def gen(self, n=0):
         """
         Return the indeterminate generator of this polynomial ring.
         """
-        term = [0 for _ in range(len(self.variable_names()))]
-        term[n] = 1
-        return self.element_class(self, {tuple(term):self.base()(0)})
+        return self.gens()[n]
     
+    @cached_method
     def gens(self):
         """
         Return a tuple whose entries are the generators for this
         object, in order.
         """
-        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
-        return self._gens
+        gens = []
+        for i in range(self.ngens()):
+            exponent = [0] * self.ngens()
+            exponent[i] = 1
+            gens.append(self({tuple(exponent):self.base()(0)}))
+        return tuple(gens)
     
     def ngens(self):
         """
-        Return the number of generators of this polynomial ring.
+        Return the number of generators of this polynomial semiring.
         """
-        return len(self.variable_names())
+        return self._ngens
         

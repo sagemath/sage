@@ -85,12 +85,82 @@ import operator
 
 class TropicalVariety(SageObject):
     
-    def __init__(self, poly, equations):
+    def __init__(self, poly):
+        from sage.symbolic.relation import solve
+        from itertools import combinations
+        from sage.arith.misc import gcd
+
+        tropical_roots = []
+        variables = []
+        for name in poly.parent().variable_names():
+            variables.append(SR.var(name))
+
+        # convert each term to its linear function
+        linear_eq = {}
+        for key in poly.dict():
+            eq = 0
+            for i,e in enumerate(key):
+                eq += variables[i]*e
+            eq += poly.dict()[key].lift()
+            linear_eq[key] = eq
+
+        # checking for all possible combinations of two terms
+        for keys in combinations(poly.dict(), 2):
+            sol = solve(linear_eq[keys[0]]==linear_eq[keys[1]], variables)
+            
+            # parametric solution of the chosen two terms
+            final_sol = []
+            for s in sol[0]:
+                final_sol.append(s.right())
+            xy_interval = []
+            xy_interval.append(tuple(final_sol))
+            
+            # comparing with other terms
+            min_max = linear_eq[keys[0]]
+            for i,v in enumerate(variables):
+                min_max = min_max.subs(v==final_sol[i])
+            all_sol_compare = []
+            no_solution = False
+            for compare in poly.dict():
+                if compare not in keys:
+                    temp_compare = linear_eq[compare]
+                    for i, v in enumerate(variables):
+                        temp_compare = temp_compare.subs(v==final_sol[i])
+                    if poly.parent().base()._use_min:
+                        sol_compare = solve(min_max < temp_compare, variables)
+                    else:
+                        sol_compare = solve(min_max > temp_compare, variables)
+                    if sol_compare: # if there is solution
+                        if isinstance(sol_compare[0], list):
+                            if sol_compare[0]:
+                                all_sol_compare.append(sol_compare[0][0])
+                        else: # solution is unbounded on one side
+                            all_sol_compare.append(sol_compare[0])
+                    else:
+                        no_solution = True
+                        break
+
+            # solve the condition for parameter
+            if not no_solution:
+                parameter = set()
+                for sol in all_sol_compare:
+                    parameter = parameter.union(set(sol.variables()))
+                parameter_solution = solve(all_sol_compare, list(parameter))
+                if parameter_solution:
+                    xy_interval.append(parameter_solution[0])
+                    # calculate order
+                    index_diff = []
+                    for i in range(len(keys[0])):
+                        index_diff.append(abs(keys[0][i]-keys[1][i]))
+                    order = gcd(index_diff)
+                    xy_interval.append(order)
+                    tropical_roots.append(xy_interval)
+
         self.poly = poly
         self._hypersurface = []
-        dim_param = len(equations[0][0]) - 1
+        dim_param = len(tropical_roots[0][0]) - 1
         vars = [SR.var('t{}'.format(i)) for i in range(1, dim_param+1)]
-        for arg in equations:
+        for arg in tropical_roots:
             if not isinstance(arg, list):
                 raise ValueError("Input must be a list")
             else:
@@ -141,8 +211,8 @@ class TropicalCurve(TropicalVariety):
 
     """
 
-    def __init__(self, poly, equations):
-        TropicalVariety.__init__(self, poly, equations)        
+    def __init__(self, poly):
+        TropicalVariety.__init__(self, poly)        
     
     def _axes(self):
         """
@@ -168,7 +238,7 @@ class TropicalCurve(TropicalVariety):
         
         return [[xmin, xmax], [ymin, ymax]]
     
-    def vertex(self):
+    def vertices(self):
         r"""
         Return all vertex of ``self``, which is the point where three or 
         more line segments intersect
