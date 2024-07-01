@@ -492,7 +492,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)
@@ -563,7 +563,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)
@@ -634,7 +634,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)
@@ -705,7 +705,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)
@@ -776,7 +776,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)
@@ -847,7 +847,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)
@@ -918,7 +918,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)
@@ -989,7 +989,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)
@@ -1060,7 +1060,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)
@@ -1131,7 +1131,7 @@ cdef class ntl_mat_ZZ():
 
         INPUT:
 
-        - ``U`` -- (optional) permutation matrix (see LLL, default: ``None``)
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
         - ``delta`` -- reduction parameter (default: 0.99)
         - ``BlockSize`` -- see above (default: 10)
         - ``prune`` -- see above (default: 0)

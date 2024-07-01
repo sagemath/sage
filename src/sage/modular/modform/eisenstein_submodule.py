@@ -600,8 +600,8 @@ def cyclotomic_restriction(L, K):
 
         INPUT: element alpha in `L`
         OUTPUT: a polynomial `f(x)` in `K[x]` such that `f(\zeta_m) = \alpha`,
-                where we view alpha as living in `M`. (Note that `\zeta_m`
-                generates `M`, not `L`.)
+        where we view alpha as living in `M`. (Note that `\zeta_m` generates
+        `M`, not `L`.)
 
     EXAMPLES::
 
@@ -646,7 +646,7 @@ def cyclotomic_restriction(L, K):
 
 
 def cyclotomic_restriction_tower(L, K):
-    """
+    r"""
     Suppose `L/K` is an extension of cyclotomic fields and `L=Q(\zeta_m)`.
     This function computes a map with the following property:
 

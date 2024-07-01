@@ -3194,7 +3194,7 @@ class GenusSymbol_global_ring:
 
         INPUT:
 
-        - ``backend`` -- (default: ``'sage'``) or ``'magma'``
+        - ``backend`` -- ``'sage'`` (default) or ``'magma'``
 
         OUTPUT: a rational number
 

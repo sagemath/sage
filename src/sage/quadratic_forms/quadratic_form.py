@@ -362,9 +362,9 @@ class QuadraticForm(SageObject):
         count_congruence_solutions__bad_type_II
 
     # Routines to be called by the user to compute local densities
-    lazy_import("sage.quadratic_forms.quadratic_form__local_density_interfaces", [
-        "local_density",
-        "local_primitive_density"
+    lazy_import('sage.quadratic_forms.quadratic_form__local_density_interfaces', [
+        'local_density',
+        'local_primitive_density'
     ])
 
     # Routines for computing with ternary forms
@@ -401,8 +401,8 @@ class QuadraticForm(SageObject):
         theta_by_cholesky
 
     # Routines to compute the product of all local densities
-    lazy_import("sage.quadratic_forms.quadratic_form__siegel_product", [
-        "siegel_product"
+    lazy_import('sage.quadratic_forms.quadratic_form__siegel_product', [
+        'siegel_product'
     ])
 
     # Routines to compute p-neighbors
@@ -421,50 +421,50 @@ class QuadraticForm(SageObject):
         minkowski_reduction, \
         minkowski_reduction_for_4vars__SP
     # Wrappers for Conway-Sloane genus routines (in ./genera/)
-    lazy_import("sage.quadratic_forms.quadratic_form__genus", [
-        "global_genus_symbol",
-        "local_genus_symbol",
-        "CS_genus_symbol_list"
+    lazy_import('sage.quadratic_forms.quadratic_form__genus', [
+        'global_genus_symbol',
+        'local_genus_symbol',
+        'CS_genus_symbol_list'
     ])
 
     # Routines to compute local masses for ZZ.
-    lazy_import("sage.quadratic_forms.quadratic_form__mass", [
-        "shimura_mass__maximal",
-        "GHY_mass__maximal"
+    lazy_import('sage.quadratic_forms.quadratic_form__mass', [
+        'shimura_mass__maximal',
+        'GHY_mass__maximal'
     ])
-    lazy_import("sage.quadratic_forms.quadratic_form__mass__Siegel_densities", [
-        "mass__by_Siegel_densities",
-        "Pall_mass_density_at_odd_prime",
-        "Watson_mass_at_2",
-        "Kitaoka_mass_at_2",
-        "mass_at_two_by_counting_mod_power"
+    lazy_import('sage.quadratic_forms.quadratic_form__mass__Siegel_densities', [
+        'mass__by_Siegel_densities',
+        'Pall_mass_density_at_odd_prime',
+        'Watson_mass_at_2',
+        'Kitaoka_mass_at_2',
+        'mass_at_two_by_counting_mod_power'
     ])
-    lazy_import("sage.quadratic_forms.quadratic_form__mass__Conway_Sloane_masses", [
-        "parity",
-        "is_even",
-        "is_odd",
-        "conway_species_list_at_odd_prime",
-        "conway_species_list_at_2",
-        "conway_octane_of_this_unimodular_Jordan_block_at_2",
-        "conway_diagonal_factor",
-        "conway_cross_product_doubled_power",
-        "conway_type_factor",
-        "conway_p_mass",
-        "conway_standard_p_mass",
-        "conway_standard_mass",
-        "conway_mass"
+    lazy_import('sage.quadratic_forms.quadratic_form__mass__Conway_Sloane_masses', [
+        'parity',
+        'is_even',
+        'is_odd',
+        'conway_species_list_at_odd_prime',
+        'conway_species_list_at_2',
+        'conway_octane_of_this_unimodular_Jordan_block_at_2',
+        'conway_diagonal_factor',
+        'conway_cross_product_doubled_power',
+        'conway_type_factor',
+        'conway_p_mass',
+        'conway_standard_p_mass',
+        'conway_standard_mass',
+        'conway_mass'
         #            conway_generic_mass, \
         #            conway_p_mass_adjustment
     ])
 
     # Routines to check local representability of numbers
-    lazy_import("sage.quadratic_forms.quadratic_form__local_representation_conditions", [
-        "local_representation_conditions",
-        "is_locally_universal_at_prime",
-        "is_locally_universal_at_all_primes",
-        "is_locally_universal_at_all_places",
-        "is_locally_represented_number_at_place",
-        "is_locally_represented_number"
+    lazy_import('sage.quadratic_forms.quadratic_form__local_representation_conditions', [
+        'local_representation_conditions',
+        'is_locally_universal_at_prime',
+        'is_locally_universal_at_all_primes',
+        'is_locally_universal_at_all_places',
+        'is_locally_represented_number_at_place',
+        'is_locally_represented_number'
     ])
 
     # Routines to make a split local covering of the given quadratic form.
@@ -475,15 +475,15 @@ class QuadraticForm(SageObject):
         split_local_cover
 
     # Routines to make automorphisms of the given quadratic form.
-    lazy_import("sage.quadratic_forms.quadratic_form__automorphisms", [
-        "basis_of_short_vectors",
-        "short_vector_list_up_to_length",
-        "short_primitive_vector_list_up_to_length",
-        "_compute_automorphisms",
-        "automorphism_group",
-        "automorphisms",
-        "number_of_automorphisms",
-        "set_number_of_automorphisms"
+    lazy_import('sage.quadratic_forms.quadratic_form__automorphisms', [
+        'basis_of_short_vectors',
+        'short_vector_list_up_to_length',
+        'short_primitive_vector_list_up_to_length',
+        '_compute_automorphisms',
+        'automorphism_group',
+        'automorphisms',
+        'number_of_automorphisms',
+        'set_number_of_automorphisms'
     ])
 
     # Routines to test the local and global equivalence/isometry of two quadratic forms.
@@ -494,13 +494,13 @@ class QuadraticForm(SageObject):
         is_rationally_isometric
 
     # Routines for solving equations of the form Q(x) = c.
-    lazy_import("sage.quadratic_forms.qfsolve", [
-        "solve"
+    lazy_import('sage.quadratic_forms.qfsolve', [
+        'solve'
     ])
 
     # Genus
-    lazy_import("sage.quadratic_forms.genera.genus",
-                "_genera_staticmethod", as_='genera')
+    lazy_import('sage.quadratic_forms.genera.genus',
+                '_genera_staticmethod', as_='genera')
 
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
