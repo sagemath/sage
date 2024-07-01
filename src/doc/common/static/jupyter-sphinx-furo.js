@@ -75,21 +75,26 @@ async function fetchVersions() {
         let text = await response.text();
         let lines = text.split('\n');
 
-        let url = window.location.origin;
-        let start_index = url.indexOf('doc-') + 4;
-        let end_index = url.indexOf('--');
-        let version_string = url.substring(start_index, end_index);
-        let current_version
-
-        // Consult the comment in .github/workflows/doc-publish.yml
-        if (/^pr-\d+$/.test(version_string)) {
-            current_version = version_string.replace(/-/g, ' ');
-        } else if (version_string === 'release') {
-            current_version = 'latest';
-        } else if (version_string === 'develop') {
-            current_version = 'develop';
+        if (window.location.protocol == 'file:') {
+            current_version = 'local'
+            url = window.location.href
         } else {
-            current_version = version_string.replace(/-/g, '.');
+            let url = window.location.origin;
+            let start_index = url.indexOf('doc-') + 4;
+            let end_index = url.indexOf('--');
+            let version_string = url.substring(start_index, end_index);
+            let current_version
+
+            // Consult the comment in .github/workflows/doc-publish.yml
+            if (/^pr-\d+$/.test(version_string)) {
+                current_version = version_string.replace(/-/g, ' ');
+            } else if (version_string === 'release') {
+                current_version = 'latest';
+            } else if (version_string === 'develop') {
+                current_version = 'develop';
+            } else {
+                current_version = version_string.replace(/-/g, '.');
+            }
         }
         versionMap[current_version] = url
 
@@ -118,7 +123,6 @@ async function fetchVersions() {
             option.text = ver;
             menu.add(option);
         });
-        menu.style.display = 'block';
     } else {
         menu.style.display = 'none';
     }
@@ -126,11 +130,9 @@ async function fetchVersions() {
     let urlParams = new URLSearchParams(window.location.search);
     let version = urlParams.get("ver");
     // Check if the version exists in the map and redirect
-    if (version in versionMap) {
+    if (version && version in versionMap) {
         let targetUrl = versionMap[version];
         window.location.href = targetUrl + window.location.pathname;
-    } else {
-        console.error("Version not found in versions.txt.");
     }
 }
 
