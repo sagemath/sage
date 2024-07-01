@@ -222,15 +222,15 @@ class TropicalCurve(TropicalVariety):
         value of x-axis and the second inner list represent value of y-axis
 
         """
-        xmin = xmax = list(self.vertex())[0][0]
-        for vertice in self.vertex():
+        xmin = xmax = list(self.vertices())[0][0]
+        for vertice in self.vertices():
             if vertice[0] < xmin:
                 xmin = vertice[0]
             elif vertice[0] > xmax:
                 xmax = vertice[0]
         
-        ymin = ymax = list(self.vertex())[0][1]
-        for vertice in self.vertex():
+        ymin = ymax = list(self.vertices())[0][1]
+        for vertice in self.vertices():
             if vertice[1] < ymin:
                 ymin = vertice[1]
             elif vertice[1] > ymax:
@@ -240,13 +240,13 @@ class TropicalCurve(TropicalVariety):
     
     def vertices(self):
         r"""
-        Return all vertex of ``self``, which is the point where three or 
+        Return all vertices of ``self``, which is the point where three or 
         more line segments intersect
 
         OUTPUT: A set of `(x,y)` points
 
         """
-        vertex = set()
+        vertices = set()
         for i, component in enumerate(self._hypersurface):
             parametric_function = component[0]
             var = component[1][0].variables()[0]
@@ -256,12 +256,12 @@ class TropicalCurve(TropicalVariety):
             if lower != -infinity:
                 x = parametric_function[0].subs(var==lower)
                 y = parametric_function[1].subs(var==lower)
-                vertex.add((x,y))
+                vertices.add((x,y))
             if upper != infinity:
                 x = parametric_function[0].subs(var==upper)
                 y = parametric_function[1].subs(var==upper)
-                vertex.add((x,y))
-        return vertex
+                vertices.add((x,y))
+        return vertices
     
     def _parameter_intervals(self):
         r"""
