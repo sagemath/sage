@@ -1633,7 +1633,7 @@ class Components(SageObject):
         if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind in other._comp]
+            ind_list = list(other._comp)
             ind_step = max(1, int(len(ind_list)/nproc/2))
             local_list = lol(ind_list, ind_step)
             # list of input parameters
@@ -1864,7 +1864,7 @@ class Components(SageObject):
                 if nproc != 1:
                     # Parallel computation
                     lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                    ind_list = [ind for ind in result.non_redundant_index_generator()]
+                    ind_list = list(result.non_redundant_index_generator())
                     ind_step = max(1, int(len(ind_list)/nproc))
                     local_list = lol(ind_list, ind_step)
                     # list of input parameters:
@@ -1895,7 +1895,7 @@ class Components(SageObject):
         if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind  in self._comp]
+            ind_list = list(self._comp)
             ind_step = max(1, int(len(ind_list)/nproc))
             local_list = lol(ind_list, ind_step)
             # list of input parameters:
@@ -2392,7 +2392,7 @@ class Components(SageObject):
             # parallel computation
             nproc = Parallelism().get('tensor')
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind in res.non_redundant_index_generator()]
+            ind_list = list(res.non_redundant_index_generator())
             ind_step = max(1, int(len(ind_list)/nproc/2))
             local_list = lol(ind_list, ind_step)
 
@@ -3595,7 +3595,7 @@ class CompWithSym(Components):
                     # Parallel computation
                     lol = lambda lst, sz: [lst[i:i+sz] for i in
                                            range(0, len(lst), sz)]
-                    ind_list = [ind for ind in other._comp]
+                    ind_list = list(other._comp)
                     ind_step = max(1, int(len(ind_list)/nproc/2))
                     local_list = lol(ind_list, ind_step)
                     # list of input parameters
@@ -3649,7 +3649,7 @@ class CompWithSym(Components):
         if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind in result.non_redundant_index_generator()]
+            ind_list = list(result.non_redundant_index_generator())
             ind_step = max(1, int(len(ind_list)/nproc/2))
             local_list = lol(ind_list, ind_step)
             # definition of the list of input parameters
@@ -3755,7 +3755,7 @@ class CompWithSym(Components):
         if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind in self._comp]
+            ind_list = list(self._comp)
             ind_step = max(1, int(len(ind_list)/nproc))
             local_list = lol(ind_list, ind_step)
             # list of input parameters:
@@ -4079,7 +4079,7 @@ class CompWithSym(Components):
                         if ind[isym[k-1]] == imax:
                             return
                         ind[pos] = ind[isym[k-1]] + 1
-            if not any([pos in isym for isym in sym]) and not any([pos in isym for isym in antisym]):
+            if not any(pos in isym for isym in sym) and not any(pos in isym for isym in antisym):
                 sym.append([pos]) # treat non-symmetrized indices as being symmetrized with themselves
         while True:
             yield tuple(ind)
@@ -5125,7 +5125,7 @@ class CompFullySym(CompWithSym):
                 # parallel sum
                 lol = lambda lst, sz: [lst[i:i+sz] for i
                                        in range(0, len(lst), sz)]
-                ind_list = [ind for ind in other._comp]
+                ind_list = list(other._comp)
                 ind_step = max(1, int(len(ind_list)/nproc/2))
                 local_list = lol(ind_list, ind_step)
                 # definition of the list of input parameters
@@ -5423,7 +5423,7 @@ class CompFullyAntiSym(CompWithSym):
             if nproc != 1:
                 # Parallel computation
                 lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                ind_list = [ind for ind in other._comp]
+                ind_list = list(other._comp)
                 ind_step = max(1, int(len(ind_list)/nproc/2))
                 local_list = lol(ind_list, ind_step)
                 # list of input parameters

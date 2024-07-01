@@ -573,9 +573,8 @@ class GaloisGroup_v2(GaloisGroup_perm):
         """
         if self._gc_numbering:
             # PARI computes all the elements of self anyway, so we might as well store them
-            return sorted([self(x, check=False) for x in self._pari_data[5]])
-        else:
-            return sorted(list(self.iteration()))
+            return sorted(self(x, check=False) for x in self._pari_data[5])
+        return sorted(self.iteration())
 
     @lazy_attribute
     def _gens(self):
