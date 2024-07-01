@@ -98,6 +98,7 @@ the number of edges or vertices.
 __append_to_doc(
     ["Balaban10Cage",
      "Balaban11Cage",
+     "BicornGraph",
      "BidiakisCube",
      "BiggsSmithGraph",
      "BlanusaFirstSnarkGraph",
@@ -113,6 +114,7 @@ __append_to_doc(
      "cocliques_HoffmannSingleton",
      "ConwaySmith_for_3S7",
      "CoxeterGraph",
+     "CubeplexGraph",
      "DesarguesGraph",
      "DejterGraph",
      "distance_3_doubly_truncated_Golay_code_graph",
@@ -172,6 +174,7 @@ __append_to_doc(
      "MeredithGraph",
      "MoebiusKantorGraph",
      "MoserSpindle",
+     "MurtyGraph",
      "NauruGraph",
      "PappusGraph",
      "PoussinGraph",
@@ -188,12 +191,14 @@ __append_to_doc(
      "SzekeresSnarkGraph",
      "ThomsenGraph",
      "TietzeGraph",
+     "TricornGraph",
      "TruncatedIcosidodecahedralGraph",
      "TruncatedTetrahedralGraph",
      "TruncatedWittGraph",
      "Tutte12Cage",
      "TutteCoxeterGraph",
      "TutteGraph",
+     "TwinplexGraph",
      "U42Graph216",
      "U42Graph540",
      "WagnerGraph",
@@ -2516,6 +2521,7 @@ class GraphGenerators:
     from .generators import smallgraphs, distance_regular
     Balaban10Cage = staticmethod(smallgraphs.Balaban10Cage)
     Balaban11Cage = staticmethod(smallgraphs.Balaban11Cage)
+    BicornGraph = staticmethod(smallgraphs.BicornGraph)
     BidiakisCube = staticmethod(smallgraphs.BidiakisCube)
     BiggsSmithGraph = staticmethod(smallgraphs.BiggsSmithGraph)
     BlanusaFirstSnarkGraph = staticmethod(smallgraphs.BlanusaFirstSnarkGraph)
@@ -2531,6 +2537,7 @@ class GraphGenerators:
     cocliques_HoffmannSingleton = staticmethod(distance_regular.cocliques_HoffmannSingleton)
     ConwaySmith_for_3S7 = staticmethod(distance_regular.ConwaySmith_for_3S7)
     CoxeterGraph = staticmethod(smallgraphs.CoxeterGraph)
+    CubeplexGraph = staticmethod(smallgraphs.CubeplexGraph)
     DejterGraph = staticmethod(smallgraphs.DejterGraph)
     DesarguesGraph = staticmethod(smallgraphs.DesarguesGraph)
     distance_3_doubly_truncated_Golay_code_graph = staticmethod(distance_regular.distance_3_doubly_truncated_Golay_code_graph)
@@ -2591,6 +2598,7 @@ class GraphGenerators:
     MeredithGraph = staticmethod(smallgraphs.MeredithGraph)
     MoebiusKantorGraph = staticmethod(smallgraphs.MoebiusKantorGraph)
     MoserSpindle = staticmethod(smallgraphs.MoserSpindle)
+    MurtyGraph = staticmethod(smallgraphs.MurtyGraph)
     NauruGraph = staticmethod(smallgraphs.NauruGraph)
     PappusGraph = staticmethod(smallgraphs.PappusGraph)
     PoussinGraph = staticmethod(smallgraphs.PoussinGraph)
@@ -2607,12 +2615,14 @@ class GraphGenerators:
     SzekeresSnarkGraph = staticmethod(smallgraphs.SzekeresSnarkGraph)
     ThomsenGraph = staticmethod(smallgraphs.ThomsenGraph)
     TietzeGraph = staticmethod(smallgraphs.TietzeGraph)
+    TricornGraph = staticmethod(smallgraphs.TricornGraph)
     Tutte12Cage = staticmethod(smallgraphs.Tutte12Cage)
     TruncatedIcosidodecahedralGraph = staticmethod(smallgraphs.TruncatedIcosidodecahedralGraph)
     TruncatedTetrahedralGraph = staticmethod(smallgraphs.TruncatedTetrahedralGraph)
     TruncatedWittGraph = staticmethod(distance_regular.TruncatedWittGraph)
     TutteCoxeterGraph = staticmethod(smallgraphs.TutteCoxeterGraph)
     TutteGraph = staticmethod(smallgraphs.TutteGraph)
+    TwinplexGraph = staticmethod(smallgraphs.TwinplexGraph)
     U42Graph216 = staticmethod(smallgraphs.U42Graph216)
     U42Graph540 = staticmethod(smallgraphs.U42Graph540)
     WagnerGraph = staticmethod(smallgraphs.WagnerGraph)

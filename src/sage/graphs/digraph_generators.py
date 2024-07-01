@@ -27,6 +27,7 @@ build by typing ``digraphs.`` in Sage and then hitting :kbd:`Tab`.
     :meth:`~DiGraphGenerators.GeneralizedDeBruijn` | Return the generalized de Bruijn digraph of order `n` and degree `d`.
     :meth:`~DiGraphGenerators.ImaseItoh`           | Return the digraph of Imase and Itoh of order `n` and degree `d`.
     :meth:`~DiGraphGenerators.Kautz`               | Return the Kautz digraph of degree `d` and diameter `D`.
+    :meth:`~DiGraphGenerators.KohTindellDiGraph`   | Return the KohTindell digraph.
     :meth:`~DiGraphGenerators.nauty_directg`       | Return an iterator yielding digraphs using nauty's ``directg`` program.
     :meth:`~DiGraphGenerators.Paley`               | Return a Paley digraph on `q` vertices.
     :meth:`~DiGraphGenerators.Path`                | Return a directed path on `n` vertices.
@@ -48,6 +49,7 @@ AUTHORS:
 - Emily A. Kirkman (2006)
 - Michael C. Yurko (2009)
 - David Coudert    (2012)
+- Janmenjaya Panda (2024)
 
 Functions and methods
 ---------------------
@@ -57,6 +59,7 @@ Functions and methods
 #                              and Emily A. Kirkman
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
 #           Copyright (C) 2012 David Coudert <david.coudert@inria.fr>
+#           Copyright (C) 2024 Janmenjaya Panda <janmenjaya.panda.22@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -107,6 +110,9 @@ class DiGraphGenerators:
                     - RandomTournament
                     - TransitiveTournament
                     - tournaments_nauty
+
+                Named Graphs:
+                    - KohTindellDiGraph
 
 
     ORDERLY GENERATION: digraphs(vertices, property=lambda x: True,
@@ -1675,6 +1681,12 @@ class DiGraphGenerators:
         G._circle_embedding(list(range(n)))
 
         return G
+
+    def KohTindellDiGraph():
+        r"""
+        Return the KohTindell digraph.
+        """
+        raise NotImplementedError()
 
 # ##############################################################################
 #   DiGraph Iterators
