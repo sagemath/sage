@@ -89,22 +89,20 @@ neccessarily means it can be factored into its linear factors::
 Every tropical polynomial `p(x)` have a corresponding unique tropical 
 polynomial `\bar{p}(x)` with the same roots which can be factored. Therefore
 this two polynomial determine the same function. We call `\bar{p}(x)` the
-conjugate of `p(x)`. The conjugate can be a convex or cancave function::
+tropical polynomial reducible form of `p(x)`::
 
-    sage: p1.convex_conjugate()
+    sage: p1.tropical_reducible()
     0*y^3 + 2*y^2 + 4*y + 1
-    sage: p1.concave_conjugate()
-    0*y^3 + -3*y^2 + -1*y + 1
-    sage: p1.convex_conjugate().factor()
-    (0) * (0*y + -3) * (0*y + 2)^2
-    
-Because we are using max-plus algebra, then we can check that the induced 
-tropical polynomial function of `p(x)` and its convex conjugate is equal::
+    sage: p2.tropical_reducible()
+    1*y^2 + 2*y + 3
+
+Check that the induced tropical polynomial function of `p(x)` and its reducible 
+form are really equal::
 
     sage: p1.piecewise_function()
     piecewise(x|-->1 on (-oo, -3], x|-->x + 4 on (-3, 2), x|-->3*x on 
     [2, +oo); x)
-    sage: p1.convex_conjugate().piecewise_function()
+    sage: p1.tropical_reducible().piecewise_function()
     piecewise(x|-->1 on (-oo, -3], x|-->x + 4 on (-3, 2), x|-->3*x on 
     (2, +oo); x)
 
@@ -147,6 +145,7 @@ from sage.symbolic.ring import SR
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.semirings import Semirings
+from sage.categories.sets_cat import Sets
 
 from sage.rings.polynomial.polynomial_element_generic import \
 Polynomial_generic_sparse
@@ -226,15 +225,11 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             
         return sorted(tropical_roots)
     
-    def _conjugate(self, use_min):
+    def tropical_reducible(self):
         r"""
-        Return the tropical polynomial which has the same roots as ``self``
+        Return the tropical polynomial which has the same roots as ``self`` but
+        which can be reduced to its linear factors
 
-        INPUT:
-
-        - ``use_min`` -- bool. If `True` then the base tropical semiring
-        will use a min-plus algebra. Otherwise it use a max-plus algebra
-        
         OUTPUT: TropicalPolynomial
 
         EXAMPLES:
@@ -242,95 +237,18 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R = PolynomialRing(T, x)
             sage: p1 = R([5,4,1,0,2,4,3]); p1
-            sage: p1._conjugate(True)
-            3*x^6 + 2*x^5 + 1*x^4 + 0*x^3 + 1*x^2 + 3*x + 5
-            sage: p1._conjugate(False)
-            3*x^6 + 5*x^5 + 7*x^4 + 8*x^3 + 7*x^2 + 6*x + 5   
+            sage: p1.tropical_reducible()
+            3*x^6 + 2*x^5 + 1*x^4 + 0*x^3 + 1*x^2 + 3*x + 5 
 
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import \
-            PolynomialRing
-        
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         roots = self.roots()
-        T = TropicalSemiring(self.parent().base().base_ring(), use_min=use_min)
-        R = PolynomialRing(T, self.parent().variable_name())
+        R = self.parent()
         poly = R(self.dict()[self.degree()].lift())
         for root in roots:
             linear = R([root, 0])
             poly *= linear
         return poly
-
-    def convex_conjugate(self):
-        r"""
-        Return the tropical polynomial which has the same roots as ``self``, 
-        which can be factored and the function is convex
-
-        OUTPUT: TropicalPolynomial
-
-        EXAMPLES:
-
-            sage: T = TropicalSemiring(QQ, use_min=True)
-            sage: R = PolynomialRing(T, x)
-            sage: p1 = R([5,3,0])
-            sage: p1.factor()
-            (0) * (0*x^2 + 3*x + 5)
-            sage: p1.is_convex()
-            False
-            sage: p1.convex_conjugate()
-            0*x^2 + 5/2*x + 5
-            sage: p1.convex_conjugate().factor()
-            (0) * (0*x + 5/2)^2
-            sage: p1.convex_conjugate().is_convex()
-            True
-
-        """
-        return self._conjugate(False)
-
-    def concave_conjugate(self):
-        r"""
-        Return the tropical polynomial which has the same roots as ``self``, 
-        which can be factored and the function is concave
-
-        OUTPUT: TropicalPolynomial
-
-        EXAMPLES:
-
-            sage: T = TropicalSemiring(QQ, use_min=False)
-            sage: R = PolynomialRing(T, x)
-            sage: p1 = R([4,0,2])
-            sage: p1.factor()
-            (2) * (0*x^2 + -2*x + 2)
-            sage: p1.is_concave()
-            False
-            sage: p1.concave_conjugate()
-            2*x^2 + 3*x + 4
-            sage: p1.concave_conjugate().factor()
-            (2) * (0*x + 1)^2
-            sage: p1.concave_conjugate().is_concave()
-            True
-
-        """
-        return self._conjugate(True)     
-
-    def is_convex(self):
-        """
-        Return "True" if the induced function of the tropical polynomial
-        is convex
-        """
-        if len(self.dict()) == 1:
-            return True
-        
-        return not self.parent().base()._use_min
-    
-    def is_concave(self):
-        """
-        Return "True" if the induced function of the tropical polynomial
-        is concave
-        """
-        if len(self.dict()) == 1:
-            return True
-        
-        return self.parent().base()._use_min
     
     def factor(self):
         r"""
@@ -578,13 +496,12 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             Univariate Tropical Polynomial Semiring in x over Rational Field
             sage: (x + T(1)*x^2) * R(3)
             4*x^2 + 3*x
-            sage: category(R)
-            Category of semirings
+            sage: TestSuite(R).run()
 
         """
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
-        Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
+        Parent.__init__(self, base=base_semiring, names=names, category=Sets())
 
     Element = TropicalPolynomial
 
@@ -603,37 +520,36 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return (f"Univariate Tropical Polynomial Semiring in {self.variable_name()}"
             f" over {self.base_ring().base_ring()}")
 
-    @cached_method
+    
     def gen(self, n=0):
         """
         Return the indeterminate generator of this polynomial ring.
         """
         if n != 0:
             raise IndexError("generator n not defined")
-        term = [0, self.base()(0)]
-        return self.element_class(self, term, is_gen=True)
+        return self.gens()[n]
     
+    @cached_method
     def gens(self):
         """
         Return a tuple whose entries are the generators for this
         object, in order.
         """
-        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
-        return self._gens
+        return tuple([self([None,0])])
     
     def ngens(self):
         """
         Return the number of generators of this polynomial ring, which is 1
         since it is a univariate polynomial ring.
         """
-        return 1
+        from sage.rings.integer_ring import ZZ
+        return ZZ.one()
 
     def random_element(self, degree=(-1, 2), monic=False, *args, **kwds):
         """
         Return a random polynomial
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import \
-            PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
         return self(R.random_element(degree=degree, monic=monic, *args, **kwds))
     
@@ -715,7 +631,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         if len(all_slope) == 1: # constant polynomial
             return self(points[0][1])
         
-        result = self()
+        result = self.zero()
         for root, ord in roots.items():
             result *= self([root,0])**ord
         test_value = result(self.base()(points[0][0]))
