@@ -10,6 +10,7 @@
 #
 # Do not edit manually
 dev doc-release--sagemath.netlify.app
+10.5 doc-10-5--sagemath.netlify.app
 10.4 doc-10-4--sagemath.netlify.app
 10.3 doc-10-3--sagemath.netlify.app
 10.2 doc-10-2--sagemath.netlify.app
