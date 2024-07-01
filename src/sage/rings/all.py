@@ -171,4 +171,3 @@ from sage.rings import numbers_abc
 
 # Dirichlet series rings
 from sage.rings.dirichlet_series_ring import DirichletSeriesRing
-
