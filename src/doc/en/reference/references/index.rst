@@ -857,6 +857,8 @@ REFERENCES:
 .. [BrHu2019] Petter Brändén, June Huh. *Lorentzian polynomials*.
               Ann. Math. (2) 192, No. 3, 821-891 (2020).
               :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
+        
+.. [Bru2013] Erwan Brugalle. *Tropical Curves*. 2013.
 
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
               Palindromic Complexity of Infinite Words,
@@ -2606,6 +2608,10 @@ REFERENCES:
 .. [FH2015] \J. A. de Faria, B. Hutz. *Combinatorics of Cycle Lengths on
             Wehler K3 Surfaces over finite fields*. New Zealand Journal
             of Mathematics 45 (2015), 19–31.
+
+.. [Fil2017] Ivana Filipan, *An Invitation to Combinatorial Tropical Geometry*.
+             Conference: 1st Croatian Combinatorial Days. 2017.
+             :doi:`10.5592/CO/CCD.2016.05`.
 
 .. [FIV2012] \H. Fournier, A. Ismail, and A. Vigneron. *Computing the Gromov
              hyperbolicity of a discrete metric space*. 2012.
