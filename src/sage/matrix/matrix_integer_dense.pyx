@@ -1870,7 +1870,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         .. NOTE::
 
            If 'ntl' is chosen for a non square matrix this function
-           raises a ValueError.
+           raises a :exc:`ValueError`.
 
         Special cases: 0 or 1 rows::
 

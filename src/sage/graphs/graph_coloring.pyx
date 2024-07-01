@@ -1794,7 +1794,7 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
         to each color a list of edges (meant as an argument to the
         ``edge_colors`` keyword of the ``plot`` method).
 
-      - If ``hex_colors = False`` (default: value), returns a list of graphs
+      - If ``hex_colors = False`` (default value), returns a list of graphs
         corresponding to each color class.
 
     - ``value_only`` -- boolean (default: ``False``):
@@ -1992,7 +1992,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
         to each color a list of edges (meant as an argument to the
         ``edge_colors`` keyword of the ``plot`` method).
 
-      - If ``hex_colors = False`` (default: value), returns a list of graphs
+      - If ``hex_colors = False`` (default value), returns a list of graphs
         corresponding to each color class.
 
     - ``value_only`` -- boolean (default: ``False``):

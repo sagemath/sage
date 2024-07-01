@@ -12954,7 +12954,7 @@ class _FSMTapeCache_(SageObject):
 
         INPUT:
 
-        - ``track_number`` -- integer or ``None`` (default); If ``None``,
+        - ``track_number`` -- integer or ``None`` (default); if ``None``,
           then ``True`` is returned if all tracks are finished
 
         OUTPUT: boolean

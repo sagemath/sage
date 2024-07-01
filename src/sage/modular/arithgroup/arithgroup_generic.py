@@ -1142,7 +1142,7 @@ class ArithmeticSubgroup(Group):
         cases where one can prove solely via Riemann-Roch theory that there
         aren't any cusp forms (i.e. when the number of regular cusps is
         strictly greater than the degree of the canonical divisor). Otherwise a
-        NotImplementedError is raised.
+        :exc:`NotImplementedError` is raised.
 
         EXAMPLES::
 
@@ -1175,7 +1175,7 @@ class ArithmeticSubgroup(Group):
         where one can prove solely via Riemann-Roch theory that there aren't
         any cusp forms (i.e. when the number of regular cusps is strictly
         greater than the degree of the canonical divisor). Otherwise a
-        NotImplementedError is raised.
+        :exc:`NotImplementedError` is raised.
 
         EXAMPLES::
 

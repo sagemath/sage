@@ -2683,8 +2683,8 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
     This function is a helper to check that the inversion of trivial matrices
     (of size 0x0, nx0, 0xn or 1x1) is handled consistently by the various
     implementation of matrices. The coherency is checked through a bunch of
-    assertions. If an inconsistency is found, an AssertionError is raised
-    which should make clear what is the problem.
+    assertions. If an inconsistency is found, an :exc:`AssertionError` is
+    raised which should make clear what is the problem.
 
     INPUT:
 

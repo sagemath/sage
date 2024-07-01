@@ -930,14 +930,14 @@ class HeckeModule_free_module(HeckeModule_generic):
         - ``anemic`` -- boolean (default: ``True``); if ``True``, use only
           Hecke operators of index coprime to the level
 
-        - ``bound`` -- integer or ``None`` (default: ``None``); If ``None``,
+        - ``bound`` -- integer or ``None`` (default: ``None``); if ``None``,
           use all Hecke operators up to the Sturm bound, and hence obtain the
           same result as one would obtain by using every element of the Hecke
           ring. If a fixed integer, decompose using only Hecke operators
           `T_p`, with `p` prime, up to bound.
-        - ``sort_by_basis`` -- boolean (default: ``False``); if ``True`` the resulting
-          decomposition will be sorted as if it was free modules, ignoring the
-          Hecke module structure. This will save a lot of time.
+        - ``sort_by_basis`` -- boolean (default: ``False``); if ``True`` the
+          resulting decomposition will be sorted as if it was free modules,
+          ignoring the Hecke module structure. This will save a lot of time.
 
         OUTPUT: list of subspaces of ``self``
 

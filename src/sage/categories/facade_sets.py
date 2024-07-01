@@ -111,7 +111,7 @@ class FacadeSets(CategoryWithAxiom):
             This default implementation assumes that ``self`` has
             an attribute ``_facade_for``, typically initialized by
             :meth:`Parent.__init__`. If the attribute is not present, the method
-            raises a NotImplementedError.
+            raises a :exc:`NotImplementedError`.
 
             EXAMPLES::
 

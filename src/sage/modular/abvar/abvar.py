@@ -2695,7 +2695,7 @@ class ModularAbelianVariety_abstract(Parent):
         Return the matrix of the Hecke operator `T_n` acting on
         the integral homology of this modular abelian variety, if the
         modular abelian variety is stable under `T_n`. Otherwise,
-        raise an ArithmeticError.
+        raise an :exc:`ArithmeticError`.
 
         EXAMPLES::
 
@@ -2716,7 +2716,7 @@ class ModularAbelianVariety_abstract(Parent):
         Return the matrix of the Hecke operator `T_n` acting on
         the rational homology `H_1(A,\QQ)` of this modular
         abelian variety, if this action is defined. Otherwise, raise an
-        ArithmeticError.
+        :exc:`ArithmeticError`.
 
         EXAMPLES::
 

@@ -3421,7 +3421,7 @@ cdef class Matrix(Matrix1):
         elements of ``self``.
 
         If there is no denominator function for the base field, or no LCM
-        function for the denominators, raise a TypeError.
+        function for the denominators, raise a :exc:`TypeError`.
 
         EXAMPLES::
 

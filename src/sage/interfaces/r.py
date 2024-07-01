@@ -836,7 +836,7 @@ class R(ExtraTabCompletion, Interface):
         """
         Load the library library_name into the R interpreter.
 
-        This function raises an ImportError if the given library
+        This function raises an :exc:`ImportError` if the given library
         is not known.
 
         INPUT:

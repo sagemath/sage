@@ -3974,8 +3974,8 @@ class DiGraph(GenericGraph):
         contains all vertices of the digraph.
 
         If no spanning out branching rooted at ``source`` exist, raises
-        ValueError or return non spanning out branching rooted at ``source``,
-        depending on the value of ``spanning``.
+        :exc:`ValueError` or return non spanning out branching rooted at
+        ``source``, depending on the value of ``spanning``.
 
         INPUT:
 
@@ -4190,8 +4190,8 @@ class DiGraph(GenericGraph):
         contains all vertices of the digraph.
 
         If no spanning in branching rooted at ``source`` exist, raises
-        ValueError or return non spanning in branching rooted at ``source``,
-        depending on the value of ``spanning``.
+        :exc:`ValueError` or return non spanning in branching rooted at
+        ``source``, depending on the value of ``spanning``.
 
         INPUT:
 

@@ -421,7 +421,7 @@ cdef class ntl_ZZ_pEX():
         function returns (q, r).
 
         If p is not prime or the modulus is not irreducible, this function may raise a
-        RuntimeError due to division by a noninvertible element of ZZ_p.
+        :exc:`RuntimeError` due to division by a noninvertible element of ZZ_p.
 
         EXAMPLES::
 

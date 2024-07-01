@@ -2136,7 +2136,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         TESTS:
 
-        Check that ValueError and empty complex are treated properly::
+        Check that :exc:`ValueError` and empty complex are treated properly::
 
             sage: p = Polyhedron(vertices=[[1]])
             sage: pc = PolyhedralComplex([p])

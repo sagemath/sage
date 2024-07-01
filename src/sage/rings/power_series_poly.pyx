@@ -174,19 +174,19 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __call__(self, *x, **kwds):
         """
-        Evaluate the series at x=a.
+        Evaluate the series at `x=a`.
 
         INPUT:
 
-        -  ``x``:
+        - ``x``:
 
-           - a tuple of elements the first of which can be meaningfully
-             substituted in ``self``, with the remainder used for substitution
-             in the coefficients of ``self``.
+          - a tuple of elements the first of which can be meaningfully
+            substituted in ``self``, with the remainder used for substitution
+            in the coefficients of ``self``.
 
-           - a dictionary for kwds:value pairs. If the variable name of
-             self is a keyword it is substituted for.  Other keywords
-             are used for substitution in the coefficients of self.
+          - a dictionary for kwds:value pairs. If the variable name of
+            ``self`` is a keyword it is substituted for.  Other keywords
+            are used for substitution in the coefficients of ``self``.
 
         OUTPUT: the value of ``self`` after substitution
 
@@ -675,7 +675,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: u*v
             1 + O(t^12)
 
-        If we try a non-zero, non-unit constant term, we end up in
+        If we try a nonzero, non-unit constant term, we end up in
         the fraction field, i.e. the Laurent series ring::
 
             sage: R.<t> = PowerSeriesRing(ZZ)
@@ -700,7 +700,6 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: must be an integral domain
-
         """
         if self.is_one():
             return self
@@ -765,7 +764,7 @@ cdef class PowerSeries_poly(PowerSeries):
     def truncate_powerseries(self, long prec):
         r"""
         Given input ``prec`` = `n`, returns the power series of degree
-        `< n` which is equivalent to self modulo `x^n`.
+        `< n` which is equivalent to ``self`` modulo `x^n`.
 
         EXAMPLES::
 

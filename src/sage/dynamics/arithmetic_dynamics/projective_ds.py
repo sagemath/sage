@@ -5464,7 +5464,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           and ``chow=True``.
 
         As we do not want to check which case we are in beforehand, we throw a
-        ValueError if the computed polynomial does not have the correct degree.
+        :exc:`ValueError` if the computed polynomial does not have the correct
+        degree.
 
         INPUT:
 

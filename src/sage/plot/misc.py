@@ -325,7 +325,7 @@ def get_matplotlib_linestyle(linestyle, return_type):
     'dotted', 'dashdot' ).
 
     If linestyle is none of these allowed options, the function raises
-    a ValueError.
+    a :exc:`ValueError`.
 
     INPUT:
 

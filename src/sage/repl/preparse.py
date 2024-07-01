@@ -396,7 +396,7 @@ class QuoteStack:
         """
         Remove and return the frame that was most recently added to the stack.
 
-        Raise an IndexError if the stack is empty.
+        Raise an :exc:`IndexError` if the stack is empty.
 
         EXAMPLES::
 

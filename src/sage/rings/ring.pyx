@@ -358,7 +358,6 @@ cdef class Ring(ParentWithGens):
             Monoid of ideals of Quotient of Free Associative Unital Algebra
              on 3 generators (x, y, z) over Integer Ring
              by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
-
         """
         if self._ideal_monoid is not None:
             return self._ideal_monoid
@@ -376,7 +375,7 @@ cdef class Ring(ParentWithGens):
 
         - ``*x`` -- list or tuple of generators (or several input arguments)
 
-        - ``coerce`` -- bool (default: ``True``); this must be a keyword
+        - ``coerce`` -- boolean (default: ``True``); this must be a keyword
           argument. Only set it to ``False`` if you are certain that each
           generator is already in the ring.
 
@@ -502,7 +501,6 @@ cdef class Ring(ParentWithGens):
             Right Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
             sage: A * [A.1 + A.2, A.1^2] * A
             Twosided Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
-
         """
         if isinstance(self, Ring):
             if self.is_commutative():
@@ -599,7 +597,6 @@ cdef class Ring(ParentWithGens):
             sage: L.<a> = K.extension(a^2-3)
             sage: L.ideal(a)
             Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
-
         """
         if self._zero_ideal is None:
             I = Ring.ideal(self, [self.zero()], coerce=False)
@@ -661,15 +658,15 @@ cdef class Ring(ParentWithGens):
 
         INPUT:
 
-        - ``proof`` -- (default: ``True``) Determines what to do in unknown
-          cases
+        - ``proof`` -- boolean (default: ``True``); determines what to do in
+          unknown cases
 
         ALGORITHM:
 
         If the parameter ``proof`` is set to ``True``, the returned value is
         correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns True if it can establish that self is
-        a field and False otherwise.
+        to ``False``, the method returns ``True`` if it can establish that
+        ``self`` is a field and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -820,9 +817,9 @@ cdef class Ring(ParentWithGens):
 
         - ``n`` -- positive integer
 
-        - ``all`` -- bool (default: ``False``); whether to return
-          a list of all primitive `n`-th roots of unity. If True, raise a ``ValueError``
-          if ``self`` is not an integral domain.
+        - ``all`` -- boolean (default: ``False``); whether to return
+          a list of all primitive `n`-th roots of unity. If ``True``, raise a
+          ``ValueError`` if ``self`` is not an integral domain.
 
         OUTPUT: element of ``self`` of finite order
 
@@ -1207,11 +1204,12 @@ cdef class CommutativeRing(Ring):
 
     def extension(self, poly, name=None, names=None, **kwds):
         """
-        Algebraically extends self by taking the quotient ``self[x] / (f(x))``.
+        Algebraically extends ``self`` by taking the quotient
+        ``self[x] / (f(x))``.
 
         INPUT:
 
-        - ``poly`` -- A polynomial whose coefficients are coercible into
+        - ``poly`` -- a polynomial whose coefficients are coercible into
           ``self``
 
         - ``name`` -- (optional) name for the root of `f`
@@ -1278,7 +1276,7 @@ cdef class IntegralDomain(CommutativeRing):
 
         INPUT:
 
-         - ``category`` (default: ``None``) -- a category, or ``None``
+         - ``category`` -- (default: ``None``) a category, or ``None``
 
         This method is used by all the abstract subclasses of
         :class:`IntegralDomain`, like :class:`NoetherianRing`,

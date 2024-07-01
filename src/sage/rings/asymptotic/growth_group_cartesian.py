@@ -100,7 +100,7 @@ class CartesianProductFactory(UniqueFactory):
 
     INPUT:
 
-    - ``growth_groups`` -- a tuple (or other iterable) of growth groups.
+    - ``growth_groups`` -- tuple (or other iterable) of growth groups
 
     - ``order`` -- (default: ``None``) if specified, then this order
       is taken for comparing two Cartesian product elements. If ``order`` is
@@ -355,7 +355,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         INPUT:
 
-        - ``element`` -- a tuple.
+        - ``element`` -- tuple
 
         OUTPUT: an element
 
@@ -392,8 +392,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
     def _element_constructor_(self, data):
         r"""
-        Converts the given object to an element of this Cartesian
-        product.
+        Convert the given object to an element of this Cartesian product.
 
         EXAMPLES::
 
@@ -517,10 +516,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         A short (shorter than :meth:`._repr_`) representation string
         for this Cartesian product of growth groups.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: string
 
         EXAMPLES::
@@ -541,7 +536,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         INPUT:
 
-        - ``factors`` -- a tuple or other iterable.
+        - ``factors`` -- tuple or other iterable
 
         OUTPUT: an element of this Cartesian product
 
@@ -606,9 +601,9 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         INPUT:
 
-        - ``factor`` -- a growth group (a factor of this Cartesian product).
+        - ``factor`` -- a growth group (a factor of this Cartesian product)
 
-        - ``element`` -- an element of ``factor``.
+        - ``element`` -- an element of ``factor``
 
         OUTPUT: an element of this Cartesian product
 
@@ -628,7 +623,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         INPUT:
 
-        - ``S`` -- a parent.
+        - ``S`` -- a parent
 
         OUTPUT: boolean
 
@@ -843,10 +838,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         r"""
         Return a tuple containing monomial generators of this growth group.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: a tuple containing elements of this growth group
 
         .. NOTE::
@@ -901,8 +892,8 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``latex`` -- (default: ``False``) a boolean. If set, then
-              LaTeX-output is returned.
+            - ``latex`` -- boolean (default: ``False``); if set, then
+              LaTeX-output is returned
 
             OUTPUT: string
 
@@ -951,7 +942,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``exponent`` -- a number.
+            - ``exponent`` -- a number
 
             OUTPUT: a growth element
 
@@ -976,10 +967,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             r"""
             Return the atomic factors of this growth element. An atomic factor
             cannot be split further and is not the identity (`1`).
-
-            INPUT:
-
-            Nothing.
 
             OUTPUT: a tuple of growth elements
 
@@ -1029,13 +1016,14 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``base`` -- the base of the logarithm. If ``None``
-              (default value) is used, the natural logarithm is taken.
+            - ``base`` -- the base of the logarithm; if ``None``
+              (default value) is used, the natural logarithm is taken
 
-            - ``locals`` -- a dictionary which may contain the following keys and values:
+            - ``locals`` -- dictionary which may contain the following keys and
+              values:
 
-              - ``'log'`` -- value: a function. If not used, then the usual
-                :class:`log <sage.functions.log.Function_log>` is taken.
+              - ``'log'`` -- value: a function; if not used, then the usual
+                :class:`log <sage.functions.log.Function_log>` is taken
 
             OUTPUT:
 
@@ -1079,12 +1067,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         def _rpow_element_(self, base):
             r"""
-            Return an element which is the power of ``base`` to this
-            element.
+            Return an element which is the power of ``base`` to this element.
 
             INPUT:
 
-            - ``base`` -- an element.
+            - ``base`` -- an element
 
             OUTPUT: a growth element
 
@@ -1119,10 +1106,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         def exp(self):
             r"""
             The exponential of this element.
-
-            INPUT:
-
-            Nothing.
 
             OUTPUT: a growth element
 
@@ -1186,9 +1169,8 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``rules`` -- a dictionary.
-              The neutral element of the group is replaced by the value
-              to key ``'_one_'``.
+            - ``rules`` -- dictionary; the neutral element of the group is
+              replaced by the value to key ``'_one_'``
 
             OUTPUT: an object
 
@@ -1232,11 +1214,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``var`` -- a string denoting the variable
+            - ``var`` -- string denoting the variable
 
             - ``zeta`` -- a number
 
-            - ``precision`` -- an integer
+            - ``precision`` -- integer
 
             OUTPUT:
 

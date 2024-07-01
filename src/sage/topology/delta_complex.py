@@ -1428,7 +1428,7 @@ class DeltaComplex(GenericCellComplex):
 
         - ``idx`` -- integer (default: -1); index specifying which simplex to
           examine
-        - ``dim`` -- integer (default = dimension of complex); dimension of simplex
+        - ``dim`` -- integer (default: dimension of complex); dimension of simplex
           to consider
 
         OUTPUT: boolean; whether the boundary of the simplex has any

@@ -131,7 +131,7 @@ class MSymbol(SageObject):
       that `\langle c\rangle + \langle d\rangle + N = R`, where `R` is the
       corresponding ring of integers
 
-    - ``check`` -- boolean (default: ``True``); If ``check=False`` the
+    - ``check`` -- boolean (default: ``True``); if ``check=False`` the
       constructor does not check the condition
       `\langle c\rangle + \langle d\rangle + N = R`
 

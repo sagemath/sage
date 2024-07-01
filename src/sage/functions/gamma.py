@@ -979,7 +979,7 @@ class Function_beta(GinacFunction):
 
         GiNaC is used to compute `\operatorname{B}(p,q)`.  However, complex inputs
         are not yet handled in general.  When GiNaC raises an error on
-        such inputs, we raise a NotImplementedError.
+        such inputs, we raise a :exc:`NotImplementedError`.
 
         If either input is 1, GiNaC returns the reciprocal of the
         other.  In other cases, GiNaC uses one of the following

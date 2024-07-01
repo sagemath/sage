@@ -322,8 +322,8 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         Try to coerce to ``self`` by calling a special underscore method.
 
-        If no such method is defined, raises an AttributeError instead of a
-        TypeError.
+        If no such method is defined, raises an :exc:`AttributeError` instead
+        of a :exc:`TypeError`.
         """
         s = '_%s_' % self.name()
         if s == '_maxima_lib_':
@@ -853,7 +853,7 @@ class InterfaceElement(Element):
         By default, if ``self`` is a string, then the representation of
         that string is returned (not the string itself). Otherwise,
         it is attempted to return the corresponding Sage object.
-        If this fails with a NotImplementedError, the string
+        If this fails with a :exc:`NotImplementedError`, the string
         representation of ``self`` is returned instead.
 
         EXAMPLES::

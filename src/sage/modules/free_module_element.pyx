@@ -2149,7 +2149,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def __pow__(self, n, dummy):
         """
-        Raises a NotImplementedError, since powering doesn't make
+        Raises a :exc:`NotImplementedError`, since powering doesn't make
         sense for vectors.
 
         EXAMPLES::

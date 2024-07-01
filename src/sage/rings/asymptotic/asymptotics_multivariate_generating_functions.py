@@ -235,7 +235,7 @@ class FractionWithFactoredDenominator(RingElement):
 
     - ``numerator`` -- an element `p`; this can be of any ring from which
       parent's base has coercion in
-    - ``denominator_factored`` -- a list of the form
+    - ``denominator_factored`` -- list of the form
       `[(q_1, e_1), \ldots, (q_n, e_n)]`, where the `q_1, \ldots, q_n` are
       distinct irreducible elements of `R` and the `e_i` are positive
       integers
@@ -563,7 +563,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         - ``other`` -- an instance of :class:`FractionWithFactoredDenominator`
 
-        OUTPUT: ``True`` or ``False``
+        OUTPUT: boolean
 
         It can be assumed that ``self`` and ``other`` have the same parent.
 
@@ -1512,20 +1512,19 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``p`` -- a dictionary with keys that can be coerced to equal
+        - ``p`` -- dictionary with keys that can be coerced to equal
           ``self.denominator_ring.gens()``
-        - ``alpha`` -- a tuple of length ``self.dimension()`` of
-          positive integers or, if `p` is a smooth point,
-          possibly of symbolic variables
-        - ``N`` -- a positive integer
+        - ``alpha`` -- tuple of length ``self.dimension()`` of positive
+          integers or, if `p` is a smooth point, possibly of symbolic variables
+        - ``N`` -- positive integer
         - ``asy_var`` -- (default: ``None``) a symbolic variable for the
-          asymptotic expansion; if ``none`` is given, then
-          ``var('r')`` will be assigned
-        - ``numerical`` -- (default: 0) a natural number;
-          if ``numerical`` is greater than 0, then return a numerical
-          approximation of `F_{r \alpha}` with ``numerical`` digits of
-          precision; otherwise return exact values
-        - ``verbose`` -- (default: ``False``) print the current state of
+          asymptotic expansion; if ``none`` is given, then ``var('r')`` will be
+          assigned
+        - ``numerical`` -- (default: 0) a natural number; if ``numerical`` is
+          greater than 0, then return a numerical approximation of
+          `F_{r \alpha}` with ``numerical`` digits of precision; otherwise
+          return exact values
+        - ``verbose`` -- boolean (default: ``False``); print the current state of
           the algorithm
 
         OUTPUT:
@@ -1647,25 +1646,24 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``p`` -- a dictionary with keys that can be coerced to equal
+        - ``p`` -- dictionary with keys that can be coerced to equal
           ``self.denominator_ring.gens()``
-        - ``alpha`` -- a tuple of length ``d = self.dimension()`` of
-          positive integers or, if `p` is a smooth point,
-          possibly of symbolic variables
-        - ``N`` -- a positive integer
-        - ``asy_var`` -- (optional; default: ``None``) a symbolic variable;
-          the variable of the asymptotic expansion,
-          if none is given, ``var('r')`` will be assigned
-        - ``coordinate`` -- (optional; default: ``None``) an integer in
-          `\{0, \ldots, d-1\}` indicating a convenient coordinate to base
-          the asymptotic calculations on; if ``None`` is assigned, then
-          choose ``coordinate=d-1``
-        - ``numerical`` -- (optional; default: 0) a natural number;
-          if numerical is greater than 0, then return a numerical approximation
-          of the Maclaurin ray coefficients of ``self`` with ``numerical``
-          digits of precision; otherwise return exact values
-        - ``verbose`` -- (default: ``False``) print the current state of
-          the algorithm
+        - ``alpha`` -- tuple of length ``d = self.dimension()`` of positive
+          integers or, if `p` is a smooth point, possibly of symbolic variables
+        - ``N`` -- positive integer
+        - ``asy_var`` -- (default: ``None``) a symbolic variable; the variable
+          of the asymptotic expansion, if none is given, ``var('r')`` will be
+          assigned
+        - ``coordinate`` -- (default: ``None``) an integer in
+          `\{0, \ldots, d-1\}` indicating a convenient coordinate to base the
+          asymptotic calculations on; if ``None`` is assigned, then choose
+          ``coordinate=d-1``
+        - ``numerical`` -- (default: 0) a natural number; if numerical is
+          greater than 0, then return a numerical approximation of the
+          Maclaurin ray coefficients of ``self`` with ``numerical`` digits of
+          precision; otherwise return exact values
+        - ``verbose`` -- boolean (default: ``False``); print the current state
+          of the algorithm
 
         OUTPUT: the asymptotic expansion
 
@@ -2023,24 +2021,23 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``p`` -- a dictionary with keys that can be coerced to equal
+        - ``p`` -- dictionary with keys that can be coerced to equal
           ``self.denominator_ring.gens()``
-        - ``alpha`` -- a tuple of length ``d = self.dimension()`` of
-          positive integers or, if `p` is a smooth point,
-          possibly of symbolic variables
-        - ``N`` -- a positive integer
-        - ``asy_var`` -- (optional; default: ``None``) a symbolic variable;
-          the variable of the asymptotic expansion,
-          if none is given, ``var('r')`` will be assigned
-        - ``coordinate`` -- (optional; default: ``None``) an integer in
-          `\{0, \ldots, d-1\}` indicating a convenient coordinate to base
-          the asymptotic calculations on; if ``None`` is assigned, then
-          choose ``coordinate=d-1``
-        - ``numerical`` -- (optional; default: 0) a natural number;
-          if numerical is greater than 0, then return a numerical approximation
-          of the Maclaurin ray coefficients of ``self`` with ``numerical``
-          digits of precision; otherwise return exact values
-        - ``verbose`` -- (default: ``False``) print the current state of
+        - ``alpha`` -- tuple of length ``d = self.dimension()`` of positive
+          integers or, if `p` is a smooth point, possibly of symbolic variables
+        - ``N`` -- positive integer
+        - ``asy_var`` -- (default: ``None``) a symbolic variable; the variable
+          of the asymptotic expansion, if none is given, ``var('r')`` will be
+          assigned
+        - ``coordinate`` -- (default: ``None``) an integer in
+          `\{0, \ldots, d-1\}` indicating a convenient coordinate to base the
+          asymptotic calculations on; if ``None`` is assigned, then choose
+          ``coordinate=d-1``
+        - ``numerical`` -- (default: 0) a natural number; if numerical is
+          greater than 0, then return a numerical approximation of the
+          Maclaurin ray coefficients of ``self`` with ``numerical`` digits of
+          precision. Otherwise return exact values.
+        - ``verbose`` -- boolean (default: ``False``); print the current state of
           the algorithm
 
         OUTPUT: the asymptotic expansion
@@ -2323,9 +2320,9 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``p`` -- a dictionary with keys that can be coerced to equal
+        - ``p`` -- dictionary with keys that can be coerced to equal
           ``self.denominator_ring.gens()``
-        - ``alpha`` -- a list of rationals
+        - ``alpha`` -- list of rationals
 
         OUTPUT:
 
@@ -2392,7 +2389,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``p`` -- (optional; default: ``None``) a dictionary whose keys are
+        - ``p`` -- (default: ``None``) a dictionary whose keys are
           the generators of ``self.denominator_ring``
 
         OUTPUT: list
@@ -2440,7 +2437,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``p`` -- (optional; default: ``None``) a dictionary whose keys
+        - ``p`` -- (default: ``None``) a dictionary whose keys
           are the generators of ``self.denominator_ring``
 
         OUTPUT: list
@@ -2483,11 +2480,11 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``p`` -- a dictionary with keys that can be coerced to equal
+        - ``p`` -- dictionary with keys that can be coerced to equal
           ``self.denominator_ring.gens()`` and values in a field
-        - ``coordinate`` -- (optional; default: ``None``) a natural number
+        - ``coordinate`` -- (default: ``None``) a natural number
 
-        OUTPUT: a list of vectors
+        OUTPUT: list of vectors
 
         This list of vectors generate the critical cone of ``p`` and
         the cone itself, which is ``None`` if the values of ``p`` don't lie in
@@ -2538,7 +2535,7 @@ class FractionWithFactoredDenominator(RingElement):
 
     def is_convenient_multiple_point(self, p):
         r"""
-        Tests if ``p`` is a convenient multiple point of ``self``.
+        Test if ``p`` is a convenient multiple point of ``self``.
 
         In case ``p`` is a convenient multiple point, ``verdict = True`` and
         ``comment`` is a string stating which variables it's convenient to use.
@@ -2549,7 +2546,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``p`` -- a dictionary with keys that can be coerced to equal
+        - ``p`` -- dictionary with keys that can be coerced to equal
           ``self.denominator_ring.gens()``
 
         OUTPUT:
@@ -2666,7 +2663,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``alpha`` -- a tuple of positive integers and/or symbolic entries
+        - ``alpha`` -- tuple of positive integers and/or symbolic entries
           of length ``self.denominator_ring.ngens()``
 
         OUTPUT: an ideal
@@ -2729,11 +2726,11 @@ class FractionWithFactoredDenominator(RingElement):
 
         INPUT:
 
-        - ``multi_indices`` -- a list of tuples of positive integers, where
+        - ``multi_indices`` -- list of tuples of positive integers, where
           each tuple has length ``self.dimension()``
-        - ``numerical`` -- (optional; default: 0) a natural number; if
-          positive, return numerical approximations of coefficients with
-          ``numerical`` digits of accuracy
+        - ``numerical`` -- (default: 0) a natural number; if positive, return
+          numerical approximations of coefficients with ``numerical`` digits of
+          accuracy
 
         OUTPUT:
 
@@ -2832,12 +2829,12 @@ class FractionWithFactoredDenominator(RingElement):
 
         - ``approx`` -- an individual or list of symbolic expressions in
           one variable
-        - ``alpha`` -- a list of positive integers of length
+        - ``alpha`` -- list of positive integers of length
           ``self.denominator_ring.ngens()``
-        - ``interval`` -- a list of positive integers
-        - ``exp_scale`` -- (optional; default: 1) a number
+        - ``interval`` -- list of positive integers
+        - ``exp_scale`` -- (default: 1) a number
 
-        OUTPUT: a list of tuples with properties described below
+        OUTPUT: list of tuples with properties described below
 
         This outputs a list whose entries are a tuple
         ``(r*alpha, a_r, b_r, err_r)`` for ``r`` in ``interval``.
@@ -2907,7 +2904,7 @@ class FractionWithFactoredDenominator(RingElement):
 
     def _add_(left, right):
         r"""
-        Returns the sum of ``left`` with ``right``.
+        Return the sum of ``left`` with ``right``.
 
         INPUT:
 
@@ -2932,7 +2929,7 @@ class FractionWithFactoredDenominator(RingElement):
 
     def _mul_(left, right):
         r"""
-        Returns the product of ``left`` with ``right``.
+        Return the product of ``left`` with ``right``.
 
         INPUT:
 
@@ -3050,7 +3047,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
 
     def base_ring(self):
         r"""
-        Returns the base ring.
+        Return the base ring.
 
         OUTPUT: a ring
 
@@ -3070,7 +3067,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, *args, **kwargs):
         r"""
-        Returns an element of this ring.
+        Return an element of this ring.
 
         See :class:`FractionWithFactoredDenominator` for details.
 
@@ -3193,7 +3190,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
 
     def _coerce_map_from_(self, P):
         r"""
-        Checks if there is a coercion from the given parent.
+        Check if there is a coercion from the given parent.
 
         INPUT:
 
@@ -3247,9 +3244,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
 
     def _an_element_(self):
         r"""
-        Returns an element.
-
-        OUTPUT: an element
+        Return an element.
 
         TESTS::
 
@@ -3550,21 +3545,21 @@ def diff_prod(f_derivs, u, g, X, interval, end, uderivs, atc):
 
     INPUT:
 
-    - ``f_derivs`` -- a dictionary whose keys are all tuples of the form
+    - ``f_derivs`` -- dictionary whose keys are all tuples of the form
       ``s + end``, where ``s`` is a sequence of variables from ``X`` whose
       length lies in ``interval``, and whose values are the derivatives
       of a function `f` evaluated at `c`
     - ``u`` -- a callable symbolic function
     - ``g`` -- an expression or callable symbolic function
-    - ``X`` -- a list of symbolic variables
-    - ``interval`` -- a list of positive integers
+    - ``X`` -- list of symbolic variables
+    - ``interval`` -- list of positive integers
       Call the first and last values `n` and `nn`, respectively
     - ``end`` -- a possibly empty list of repetitions of the
       variable ``z``, where ``z`` is the last element of ``X``
-    - ``uderivs`` -- a dictionary whose keys are the symbolic
+    - ``uderivs`` -- dictionary whose keys are the symbolic
       derivatives of order 0 to order `n-1` of ``u`` evaluated at `c`
       and whose values are the corresponding derivatives evaluated at `c`
-    - ``atc`` -- a dictionary whose keys are the keys of `c` and all
+    - ``atc`` -- dictionary whose keys are the keys of `c` and all
       the symbolic derivatives of order 0 to order `nn` of ``g``
       evaluated `c` and whose values are the corresponding
       derivatives evaluated at `c`
@@ -3640,7 +3635,7 @@ def permutation_sign(s, u):
     INPUT:
 
     - ``s`` -- a sublist of ``u``
-    - ``u`` -- a list
+    - ``u`` -- list
 
     OUTPUT:
 
@@ -3684,7 +3679,7 @@ def subs_all(f, sub, simplify=False):
     - ``f`` -- an individual or list of symbolic expressions
       or dictionaries
     - ``sub`` -- an individual or list of dictionaries
-    - ``simplify`` -- (default: ``False``) boolean; set to ``True`` to
+    - ``simplify`` -- boolean (default: ``False``); set to ``True`` to
       simplify the result
 
     OUTPUT:
@@ -3767,9 +3762,9 @@ def diff_all(f, V, n, ending=[], sub=None, sub_final=None,
     INPUT:
 
     - ``f`` -- an individual or list of `\mathcal{C}^{n+1}` functions
-    - ``V`` -- a list of variables occurring in `f`
+    - ``V`` -- list of variables occurring in `f`
     - ``n`` -- a natural number
-    - ``ending`` -- a list of variables in `V`
+    - ``ending`` -- list of variables in `V`
     - ``sub`` -- an individual or list of dictionaries
     - ``sub_final`` -- an individual or list of dictionaries
     - ``rekey`` -- a callable symbolic function in `V` or list thereof
@@ -3913,8 +3908,8 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
 
     - ``A`` -- a single or length ``r`` list of symbolic functions in the
       variables ``V``
-    - ``B`` -- a symbolic function in the variables ``V``.
-    - ``AB_derivs`` -- a dictionary whose keys are the (symbolic)
+    - ``B`` -- a symbolic function in the variables ``V``
+    - ``AB_derivs`` -- dictionary whose keys are the (symbolic)
       derivatives of ``A[0], ..., A[r-1]`` up to order ``2 * N-2`` and
       the (symbolic) derivatives of ``B`` up to order ``2 * N``;
       the values of the dictionary are complex numbers that are
@@ -4005,8 +4000,8 @@ def diff_seq(V, s):
 
     INPUT:
 
-    - ``V`` -- a list
-    - ``s`` -- a list of tuples of natural numbers in the interval
+    - ``V`` -- list
+    - ``s`` -- list of tuples of natural numbers in the interval
       ``range(len(V))``
 
     OUTPUT:
@@ -4048,8 +4043,8 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
 
     INPUT:
 
-    - ``A``, ``B`` -- Symbolic functions in the variable ``x``
-    - ``AB_derivs`` -- a dictionary whose keys are the (symbolic)
+    - ``A``, ``B`` -- symbolic functions in the variable ``x``
+    - ``AB_derivs`` -- dictionary whose keys are the (symbolic)
       derivatives of ``A`` up to order ``2 * N`` if ``v`` is even or
       ``N`` if ``v`` is odd and the (symbolic) derivatives of ``B``
       up to order ``2 * N + v`` if ``v`` is even or ``N + v``
@@ -4110,7 +4105,7 @@ def direction(v, coordinate=None):
     INPUT:
 
     - ``v`` -- a vector
-    - ``coordinate`` -- (optional; default: ``None``) an index for ``v``
+    - ``coordinate`` -- (default: ``None``) an index for ``v``
 
     EXAMPLES::
 

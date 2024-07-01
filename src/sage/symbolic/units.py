@@ -1275,7 +1275,7 @@ def convert(expr, target):
         sage: sage.symbolic.units.convert(units.mass.kilogram, units.mass.pound)
         100000000/45359237*pound
 
-    Raises ValueError if expr and target are not convertible::
+    Raises :exc:`ValueError` if expr and target are not convertible::
 
         sage: sage.symbolic.units.convert(units.mass.kilogram, units.length.foot)
         Traceback (most recent call last):
@@ -1420,7 +1420,7 @@ def convert_temperature(expr, target):
         sage: t.convert()
         273.150000000000*kelvin
 
-    Raises ValueError when either input is not a unit of temperature::
+    Raises :exc:`ValueError` when either input is not a unit of temperature::
 
         sage: t.convert(units.length.foot)
         Traceback (most recent call last):

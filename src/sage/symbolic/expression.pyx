@@ -12001,7 +12001,7 @@ cdef class Expression(Expression_abc):
             sage: a - a.convert()
             0
 
-        Raises ValueError if ``self`` and ``target`` are not convertible::
+        Raises :exc:`ValueError` if ``self`` and ``target`` are not convertible::
 
             sage: units.mass.kilogram.convert(units.length.foot)
             Traceback (most recent call last):

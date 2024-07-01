@@ -575,7 +575,7 @@ class Simplex(SageObject):
 
         - ``right`` -- the other simplex (the right-hand factor)
 
-        - ``rename_vertices`` -- boolean (default: ``True``); If this is ``True``,
+        - ``rename_vertices`` -- boolean (default: ``True``); if this is ``True``,
           the vertices in the join will be renamed by this formula: vertex "v"
           in the left-hand factor --> vertex "Lv" in the join, vertex "w" in
           the right-hand factor --> vertex "Rw" in the join.  If this is

@@ -788,10 +788,9 @@ class ECM(SageObject):
 
         OUTPUT:
 
-        The integer as a Sage integer.  This function raises a
-        ValueError if the two conditions listed above are not both
-        satisfied.  It is here because GMP-ECM silently ignores all
-        digits of input after the 4095th!
+        The integer as a Sage integer. This function raises a :exc:`ValueError`
+        if the two conditions listed above are not both satisfied. It is here
+        because GMP-ECM silently ignores all digits of input after the 4095th!
 
         EXAMPLES::
 

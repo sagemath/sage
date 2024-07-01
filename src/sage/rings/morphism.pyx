@@ -648,7 +648,6 @@ cdef class RingHomomorphism(RingMap):
 
             sage: isinstance(f, sage.rings.morphism.RingHomomorphism)                   # needs sage.rings.padics
             True
-
         """
         from sage.rings.homset import RingHomset_generic
         if not isinstance(parent, RingHomset_generic):
@@ -663,7 +662,6 @@ cdef class RingHomomorphism(RingMap):
 
             sage: ZZ.hom(Zp(3))._repr_type()                                            # needs sage.rings.padics
             'Ring'
-
         """
         return "Ring"
 
@@ -689,7 +687,6 @@ cdef class RingHomomorphism(RingMap):
               From: Ring of integers modulo 3
               To:   Integer Ring
               Defn: Choice of lifting map
-
         """
         if lift.domain() != self.codomain():
             raise TypeError("lift must have correct domain")
@@ -886,7 +883,7 @@ cdef class RingHomomorphism(RingMap):
 
     def pushforward(self, I):
         """
-        Returns the pushforward of the ideal `I` under this ring
+        Return the pushforward of the ideal `I` under this ring
         homomorphism.
 
         EXAMPLES::
@@ -1052,7 +1049,7 @@ cdef class RingHomomorphism(RingMap):
               or is_QuotientRing(B) or is_PolynomialQuotientRing(B)):
             graph_I = graph + from_B(I)
         else:
-            # non-zero fractional ideals of number fields not yet supported
+            # nonzero fractional ideals of number fields not yet supported
             raise NotImplementedError("inverse image not implemented "
                                       "for ideals in %s" % B)
         if is_QuotientRing(Q):
@@ -2619,10 +2616,10 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
     INPUT:
 
-    -  ``parent`` -- a ring homset ``Hom(R,S)``
+    - ``parent`` -- a ring homset ``Hom(R,S)``
 
-    -  ``phi`` -- a ring homomorphism ``C --> S``, where ``C`` is the
-       domain of ``R.cover()``
+    - ``phi`` -- a ring homomorphism ``C --> S``, where ``C`` is the
+      domain of ``R.cover()``
 
     OUTPUT: a ring homomorphism
 
@@ -2710,7 +2707,6 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
             False
             sage: psi(a) == phi(a)
             True
-
         """
         self.phi = _slots['phi']
         RingHomomorphism._update_slots(self, _slots)
@@ -2862,9 +2858,9 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         """
         INPUT:
 
-        -  ``domain`` -- a ring
+        - ``domain`` -- a ring
 
-        -  ``n`` -- a nonnegative integer (default: 1)
+        - ``n`` -- nonnegative integer (default: 1)
 
         OUTPUT:
 
@@ -3059,7 +3055,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
     def _composition(self, right):
         """
-        Return self o right.
+        Return ``self`` o ``right``.
 
         EXAMPLES::
 

@@ -38,7 +38,7 @@ def repr_short_to_parent(s):
 
     INPUT:
 
-    - ``s`` -- a string, short representation of a parent.
+    - ``s`` -- string; short representation of a parent
 
     OUTPUT: a parent
 
@@ -106,7 +106,7 @@ def parent_to_repr_short(P):
 
     INPUT:
 
-    - ``P`` -- a parent.
+    - ``P`` -- a parent
 
     OUTPUT: string
 
@@ -194,14 +194,14 @@ def split_str_by_op(string, op, strip_parentheses=True):
 
     INPUT:
 
-    - ``string`` -- a string.
+    - ``string`` -- string
 
-    - ``op`` -- a string. This is used by
+    - ``op`` -- string; this is used by
       :python:`str.split <library/stdtypes.html#str.split>`.
       Thus, if this is ``None``, then any whitespace string is a
       separator and empty strings are removed from the result.
 
-    - ``strip_parentheses`` -- (default: ``True``) a boolean.
+    - ``strip_parentheses`` -- boolean (default: ``True``)
 
     OUTPUT: a tuple of strings
 
@@ -303,14 +303,14 @@ def repr_op(left, op, right=None, latex=False):
 
     INPUT:
 
-    - ``left`` -- an element.
+    - ``left`` -- an element
 
-    - ``op`` -- a string.
+    - ``op`` -- string
 
-    - ``right`` -- an element.
+    - ``right`` -- an element
 
-    - ``latex`` -- (default: ``False``) a boolean. If set, then
-      LaTeX-output is returned.
+    - ``latex`` -- boolean (default: ``False``); if set, then
+      LaTeX-output is returned
 
     OUTPUT: string
 
@@ -360,9 +360,9 @@ def combine_exceptions(e, *f):
 
     INPUT:
 
-    - ``e`` -- an exception.
+    - ``e`` -- an exception
 
-    - ``*f`` -- exceptions.
+    - ``*f`` -- exceptions
 
     OUTPUT: an exception
 
@@ -406,10 +406,9 @@ def substitute_raise_exception(element, e):
 
     INPUT:
 
-    - ``element`` -- an element.
+    - ``element`` -- an element
 
-    - ``e`` -- an exception which is included in the raised error
-      message.
+    - ``e`` -- an exception which is included in the raised error message
 
     OUTPUT: raise an exception of the same type as ``e``
 
@@ -433,9 +432,9 @@ def bidirectional_merge_overlapping(A, B, key=None):
 
     INPUT:
 
-    - ``A`` -- a list or tuple (type has to coincide with type of ``B``).
+    - ``A`` -- list or tuple (type has to coincide with type of ``B``)
 
-    - ``B`` -- a list or tuple (type has to coincide with type of ``A``).
+    - ``B`` -- list or tuple (type has to coincide with type of ``A``)
 
     - ``key`` -- (default: ``None``) a function. If ``None``, then the
       identity is used.  This ``key``-function applied on an element
@@ -566,9 +565,9 @@ def bidirectional_merge_sorted(A, B, key=None):
 
     INPUT:
 
-    - ``A`` -- a list or tuple (type has to coincide with type of ``B``).
+    - ``A`` -- list or tuple (type has to coincide with type of ``B``)
 
-    - ``B`` -- a list or tuple (type has to coincide with type of ``A``).
+    - ``B`` -- list or tuple (type has to coincide with type of ``A``)
 
     - ``key`` -- (default: ``None``) a function. If ``None``, then the
       identity is used.  This ``key``-function applied on an element
@@ -703,9 +702,9 @@ def log_string(element, base=None):
 
     INPUT:
 
-    - ``element`` -- an object.
+    - ``element`` -- an object
 
-    - ``base`` -- an object or ``None``.
+    - ``base`` -- an object or ``None``
 
     OUTPUT: string
 
@@ -774,9 +773,10 @@ class NotImplementedOZero(NotImplementedError):
         r"""
         INPUT:
 
-        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing` or ``None``.
+        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing`
+          or ``None``
 
-        - ``var`` -- (default: ``None``) a string.
+        - ``var`` -- (default: ``None``) a string
 
         Either ``asymptotic_ring`` or ``var`` has to be specified.
 
@@ -837,9 +837,10 @@ class NotImplementedBZero(NotImplementedError):
         r"""
         INPUT:
 
-        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing` or ``None``.
+        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing`
+          or ``None``
 
-        - ``var`` -- (default: ``None``) a string.
+        - ``var`` -- (default: ``None``) string
 
         Either ``asymptotic_ring`` or ``var`` has to be specified.
 
@@ -906,15 +907,15 @@ def transform_category(category,
 
     INPUT:
 
-    - ``category`` -- a category.
+    - ``category`` -- a category
 
-    - ``subcategory_mapping`` -- a list (or other iterable) of triples
+    - ``subcategory_mapping`` -- list (or other iterable) of triples
       ``(from, to, mandatory)``, where
 
       - ``from`` and ``to`` are categories and
       - ``mandatory`` is a boolean.
 
-    - ``axiom_mapping`` -- a list (or other iterable) of triples
+    - ``axiom_mapping`` -- list (or other iterable) of triples
       ``(from, to, mandatory)``, where
 
       - ``from`` and ``to`` are strings describing axioms and

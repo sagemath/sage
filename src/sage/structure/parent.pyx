@@ -1292,8 +1292,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         from ``self`` to ``codomain``; otherwise return ``False``.
 
         If determining whether or not a homomorphism is valid has not
-        been implemented for this ring, then a NotImplementedError exception
-        is raised.
+        been implemented for this ring, then a :exc:`NotImplementedError`
+        exception is raised.
         """
         raise NotImplementedError("Verification of correctness of homomorphisms from %s not yet implemented." % self)
 

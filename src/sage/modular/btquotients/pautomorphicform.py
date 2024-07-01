@@ -587,8 +587,8 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         INPUT:
 
         - ``z`` -- an element in the quadratic unramified extension of
-          `\QQ_p` that is not contained in `\QQ_p` (default: ``None``); If ``z
-          = None`` then a function encoding the derivative is returned.
+          `\QQ_p` that is not contained in `\QQ_p` (default: ``None``); if
+          ``z = None`` then a function encoding the derivative is returned.
 
         - ``level`` -- integer; how fine of a mesh should the Riemann
           sum use

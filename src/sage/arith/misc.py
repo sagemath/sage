@@ -1248,7 +1248,7 @@ def next_prime(n, proof=None):
 def previous_prime(n):
     """
     The largest prime < n. The result is provably correct. If n <= 1,
-    this function raises a ValueError.
+    this function raises a :exc:`ValueError`.
 
     EXAMPLES::
 
@@ -2299,7 +2299,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
     lowest terms such that the reduction of `x/y` modulo `m` is equal to `a` and
     the absolute values of `x` and `y` are both `\le \sqrt{m/2}`. If such `x/y`
     exists, that pair is unique and this function returns it. If no
-    such pair exists, this function raises ZeroDivisionError.
+    such pair exists, this function raises :exc:`ZeroDivisionError`.
 
     An efficient algorithm for computing rational reconstruction is
     very similar to the extended Euclidean algorithm. For more details,

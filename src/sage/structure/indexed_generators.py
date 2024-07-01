@@ -26,7 +26,7 @@ class IndexedGenerators():
       indexed by 'a' would be printed as ``x['a']``.
 
     - ``latex_prefix`` -- string or ``None``, prefix used in the `\LaTeX`
-      representation of elements (default: ``None``); If this is
+      representation of elements (default: ``None``); if this is
       anything except the empty string, it prints the index as a
       subscript.  If this is ``None``, it uses the setting for ``prefix``,
       so if ``prefix`` is set to "B", then a monomial indexed by 'a'

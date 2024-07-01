@@ -361,7 +361,8 @@ class Constellation_class(Element):
 
     def _check(self):
         r"""
-        Check that the constellation is valid and if not raise ValueError.
+        Check that the constellation is valid and if not raise
+        :exc:`ValueError`.
 
         TESTS::
 

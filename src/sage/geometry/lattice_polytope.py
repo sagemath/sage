@@ -47,9 +47,9 @@ function.
    compilation time, i.e., the maximum dimension of polytopes, the
    maximum number of points, etc. These limitations may lead to errors
    during calls to different functions of these module.  Currently, a
-   ValueError exception will be raised if the output of ``poly.x`` or
-   ``nef.x`` is empty or contains the exclamation mark. The error message
-   will contain the exact command that caused an error, the
+   :exc:`ValueError` exception will be raised if the output of ``poly.x``
+   or ``nef.x`` is empty or contains the exclamation mark. The error
+   message will contain the exact command that caused an error, the
    description and vertices of the polytope, and the obtained output.
 
 Data obtained from PALP and some other data is cached and most
@@ -5170,7 +5170,7 @@ def _read_nef_x_partitions(data):
     as a sequence of integers.
 
     If there are no nef-partitions, returns the empty sequence. If the
-    string is empty or EOF is reached, raises ValueError.
+    string is empty or EOF is reached, raises :exc:`ValueError`.
 
     TESTS::
 
@@ -5806,7 +5806,7 @@ def skip_palp_matrix(data, n=1):
     - ``n`` -- (default: 1) integer, specifies how many
       blocks should be skipped
 
-    If EOF is reached during the process, raises ValueError exception.
+    If EOF is reached during the process, raises :exc:`ValueError` exception.
 
     EXAMPLES: We create a file with vertices of the square and the cube,
     but read only the second set::

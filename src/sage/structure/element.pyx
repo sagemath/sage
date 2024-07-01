@@ -3080,7 +3080,7 @@ cdef class CommutativeRingElement(RingElement):
 
         If ``x`` has different parent than ``self``, they are first coerced to a
         common parent if possible. If this coercion fails, it returns a
-        TypeError. This fixes :issue:`5759`. ::
+        :exc:`TypeError`. This fixes :issue:`5759`. ::
 
             sage: Zmod(2)(0).divides(Zmod(2)(0))
             True
@@ -3246,11 +3246,10 @@ cdef class CommutativeRingElement(RingElement):
 
         .. NOTE::
 
-            This is the is_square implementation for general
-            commutative ring elements. It's implementation is to raise
-            a NotImplementedError. The function definition is here to
-            show what functionality is expected and provide a general
-            framework.
+            This is the is_square implementation for general commutative ring
+            elements. It's implementation is to raise a
+            :exc:`NotImplementedError`. The function definition is here to show
+            what functionality is expected and provide a general framework.
         """
         raise NotImplementedError("is_square() not implemented for elements of %s" % self.parent())
 

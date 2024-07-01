@@ -342,9 +342,9 @@ class Lisp(Expect):
 
     def _equality_symbol(self):
         """
-        We raise a NotImplementedError when _equality_symbol is called since
-        equality testing in Lisp does not use infix notation and cannot be
-        done the same way as in the other interfaces.
+        We raise a :exc:`NotImplementedError` when ``_equality_symbol`` is
+        called since equality testing in Lisp does not use infix notation and
+        cannot be done the same way as in the other interfaces.
 
         EXAMPLES::
 

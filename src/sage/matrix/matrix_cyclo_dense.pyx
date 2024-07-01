@@ -1792,7 +1792,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         Find the echelon form of ``self`` mod the primes dividing p. Return
         the rational matrix representing this lift. If the pivots of the
         reductions mod the primes over p are different, then no such lift
-        exists, and we raise a ValueError. If this happens, then the
+        exists, and we raise a :exc:`ValueError`. If this happens, then the
         denominator of the echelon form of ``self`` is divisible by p. (Note
         that the converse need not be true.)
 

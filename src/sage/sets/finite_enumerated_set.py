@@ -197,8 +197,8 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     def first(self):
         r"""
-        Return the first element of the enumeration or raise an EmptySetError if
-        the set is empty.
+        Return the first element of the enumeration or raise an
+        :exc:`EmptySetError` if the set is empty.
 
         EXAMPLES::
 

@@ -1041,7 +1041,8 @@ def level1_UpGj(p, klist, m, extra_data=False):
 def is_valid_weight_list(klist, p):
     r"""
     This function checks that ``klist`` is a nonempty list of integers all of
-    which are congruent modulo `(p-1)`. Otherwise, it will raise a ValueError.
+    which are congruent modulo `(p-1)`. Otherwise, it will raise a
+    :exc:`ValueError`.
 
     INPUT:
 

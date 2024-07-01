@@ -350,8 +350,8 @@ class Sage(ExtraTabCompletion, Expect):
         """
         Clear the variable named var.
 
-        Note that the exact format of the NameError for a cleared variable
-        is slightly platform dependent, see :issue:`10539`.
+        Note that the exact format of the :exc:`NameError` for a cleared
+        variable is slightly platform dependent, see :issue:`10539`.
 
         EXAMPLES::
 

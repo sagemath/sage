@@ -17,11 +17,11 @@ Besides an abstract base term :class:`GenericTerm`, this module
 implements the following types of terms:
 
 - :class:`OTerm` -- `O`-terms at infinity, see
-  :wikipedia:`Big_O_notation`.
+  :wikipedia:`Big_O_notation`
 - :class:`TermWithCoefficient` -- abstract base class for
-  asymptotic terms with coefficients.
+  asymptotic terms with coefficients
 - :class:`ExactTerm` -- this class represents a growth element
-  multiplied with some non-zero coefficient from a coefficient ring.
+  multiplied with some nonzero coefficient from a coefficient ring
 
 A characteristic property of asymptotic terms is that some terms are
 able to "absorb" other terms (see
@@ -252,9 +252,9 @@ def absorption(left, right):
 
     INPUT:
 
-    - ``left`` -- an asymptotic term.
+    - ``left`` -- an asymptotic term
 
-    - ``right`` -- an asymptotic term.
+    - ``right`` -- an asymptotic term
 
     OUTPUT: an asymptotic term or ``None``
 
@@ -296,9 +296,9 @@ def can_absorb(left, right):
 
     INPUT:
 
-    - ``left`` -- an asymptotic term.
+    - ``left`` -- an asymptotic term
 
-    - ``right`` -- an asymptotic term.
+    - ``right`` -- an asymptotic term
 
     OUTPUT: boolean
 
@@ -328,9 +328,9 @@ class GenericTerm(MultiplicativeGroupElement):
 
     INPUT:
 
-    - ``parent`` -- the parent of the asymptotic term.
+    - ``parent`` -- the parent of the asymptotic term
 
-    - ``growth`` -- an asymptotic growth element.
+    - ``growth`` -- an asymptotic growth element
 
     EXAMPLES::
 
@@ -391,10 +391,6 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         Return a construction of this term.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT:
 
         A pair ``(cls, kwds)`` such that ``cls(**kwds)`` equals this term.
@@ -428,7 +424,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``other`` -- an asymptotic term.
+        - ``other`` -- an asymptotic term
 
         OUTPUT: a :class:`GenericTerm`
 
@@ -492,7 +488,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``exponent`` -- an element.
+        - ``exponent`` -- an element
 
         OUTPUT:
 
@@ -524,7 +520,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``exponent`` -- an element.
+        - ``exponent`` -- an element
 
         OUTPUT: a term
 
@@ -576,10 +572,10 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``exponent`` -- an element.
+        - ``exponent`` -- an element
 
         - ``new_coefficient`` -- if not ``None`` this is passed on to the
-          construction of the element (in particular, not taken to any power).
+          construction of the element (in particular, not taken to any power)
 
         OUTPUT: a term
 
@@ -623,7 +619,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``other`` -- an asymptotic term.
+        - ``other`` -- an asymptotic term
 
         OUTPUT: boolean
 
@@ -658,10 +654,10 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``other`` -- an asymptotic term.
+        - ``other`` -- an asymptotic term
 
-        - ``check`` -- a boolean. If ``check`` is ``True`` (default),
-          then ``can_absorb`` is called before absorption.
+        - ``check`` -- boolean; if ``True`` (default), then ``can_absorb``
+          is called before absorption
 
         OUTPUT:
 
@@ -755,7 +751,7 @@ class GenericTerm(MultiplicativeGroupElement):
         INPUT:
 
         - ``other`` -- an asymptotic term from the same parent as
-          this element.
+          this element
 
         OUTPUT: an asymptotic term or ``None``
 
@@ -807,7 +803,7 @@ class GenericTerm(MultiplicativeGroupElement):
         - ``base`` -- the base of the logarithm. If ``None``
           (default value) is used, the natural logarithm is taken.
 
-        - ``locals`` -- a dictionary which may contain the following keys and values:
+        - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
@@ -861,7 +857,7 @@ class GenericTerm(MultiplicativeGroupElement):
         - ``base`` -- the base of the logarithm. If ``None``
           (default value) is used, the natural logarithm is taken.
 
-        - ``locals`` -- a dictionary which may contain the following keys and values:
+        - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
@@ -1000,7 +996,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``other`` -- an asymptotic term.
+        - ``other`` -- an asymptotic term
 
         OUTPUT: boolean
 
@@ -1053,10 +1049,6 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         Return whether this term is an (exact) constant.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: boolean
 
         .. NOTE::
@@ -1106,10 +1098,6 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         Return whether this generic term is of order `o(1)`.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: boolean
 
         EXAMPLES::
@@ -1143,7 +1131,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``base`` -- an element or ``'e'``.
+        - ``base`` -- an element or ``'e'``
 
         OUTPUT: a term
 
@@ -1168,10 +1156,6 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         A representation string for this generic term.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: string
 
         EXAMPLES::
@@ -1193,7 +1177,7 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         A LaTeX-representation string for this generic term.
 
-        OUTPUT: a NotImplementedError is raised
+        OUTPUT: a :exc:`NotImplementedError` is raised
 
         TESTS::
 
@@ -1216,7 +1200,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``rules`` -- a dictionary.
+        - ``rules`` -- dictionary
 
         OUTPUT:
 
@@ -1295,11 +1279,11 @@ class GenericTerm(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``var`` -- a string denoting the variable
+        - ``var`` -- string denoting the variable
 
         - ``zeta`` -- a number
 
-        - ``precision`` -- an integer
+        - ``precision`` -- integer
 
         OUTPUT:
 
@@ -1332,12 +1316,12 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
     INPUT:
 
     - ``growth_group`` -- a growth group (i.e. an instance of
-      :class:`~sage.rings.asymptotic.growth_group.GenericGrowthGroup`).
+      :class:`~sage.rings.asymptotic.growth_group.GenericGrowthGroup`)
 
     - ``coefficient_ring`` -- a ring which contains the (maybe implicit)
-      coefficients of the elements.
+      coefficients of the elements
 
-    - ``category`` -- The category of the parent can be specified
+    - ``category`` -- the category of the parent can be specified
       in order to broaden the base structure. It has to be a subcategory
       of ``Join of Category of Monoids and Category of posets``. This
       is also the default category if ``None`` is specified.
@@ -1502,10 +1486,9 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``type`` -- 'O' or 'exact', or an instance of an existing
-          term monoid.
-          See :class:`~sage.rings.asymptotic.term_monoid.TermMonoidFactory`
-          for more details.
+        - ``type`` -- 'O' or 'exact', or an instance of an existing term monoid.
+          See :class:`~sage.rings.asymptotic.term_monoid.TermMonoidFactory` for
+          more details.
 
         OUTPUT:
 
@@ -1569,9 +1552,9 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``growth_group`` -- (default: ``None``) the new growth group.
+        - ``growth_group`` -- (default: ``None``) the new growth group
 
-        - ``coefficient_ring`` -- (default: ``None``) the new coefficient ring.
+        - ``coefficient_ring`` -- (default: ``None``) the new coefficient ring
 
         OUTPUT: a term monoid
 
@@ -1609,10 +1592,6 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         r"""
         A representation string for this generic term monoid.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: string
 
         EXAMPLES::
@@ -1635,7 +1614,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``S`` -- a parent.
+        - ``S`` -- a parent
 
         OUTPUT: boolean
 
@@ -1692,12 +1671,12 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         INPUT:
 
         - ``data`` -- a growth element or an object representing the
-          element to be initialized.
+          element to be initialized
 
-        - ``coefficient`` -- (default: ``None``)
-          an element of the coefficient ring.
+        - ``coefficient`` -- (default: ``None``) an element of the coefficient
+          ring
 
-        - ``**kwds`` -- keyword arguments passed on to the term.
+        - ``**kwds`` -- keyword arguments passed on to the term
 
         OUTPUT: an element of this term monoid
 
@@ -1865,7 +1844,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``kwds_construction`` -- a dictionary representing
+        - ``kwds_construction`` -- dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
@@ -1925,7 +1904,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``kwds_construction`` -- a dictionary representing
+        - ``kwds_construction`` -- dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
@@ -1987,10 +1966,6 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         r"""
         Return the default keyword arguments for the construction of a term.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: a dictionary
 
         TESTS::
@@ -2015,7 +1990,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``kwds_construction`` -- a dictionary representing
+        - ``kwds_construction`` -- dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
@@ -2063,7 +2038,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         - ``construction`` -- a pair ``(cls, kwds_construction)``
 
-        - ``kwds_overrides`` -- a dictionary
+        - ``kwds_overrides`` -- dictionary
 
         OUTPUT: a term
 
@@ -2139,7 +2114,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``growth`` and ``coefficient`` -- the element data.
+        - ``growth`` and ``coefficient`` -- the element data
 
         OUTPUT: an element
 
@@ -2172,7 +2147,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``data`` -- an element.
+        - ``data`` -- an element
 
         OUTPUT:
 
@@ -2253,7 +2228,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``data`` -- an object.
+        - ``data`` -- an object
 
         OUTPUT: a tuple
 
@@ -2287,10 +2262,6 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         r"""
         Return an element of this term monoid.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: an element of this term monoid
 
         EXAMPLES::
@@ -2312,10 +2283,6 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         See :class:`TestSuite` for a typical use case.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: an iterator
 
         EXAMPLES::
@@ -2335,9 +2302,9 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``left`` -- an element.
+        - ``left`` -- an element
 
-        - ``right`` -- an element.
+        - ``right`` -- an element
 
         OUTPUT: boolean
 
@@ -2366,9 +2333,9 @@ class OTerm(GenericTerm):
 
     INPUT:
 
-    - ``parent`` -- the parent of the asymptotic term.
+    - ``parent`` -- the parent of the asymptotic term
 
-    - ``growth`` -- a growth element.
+    - ``growth`` -- a growth element
 
     EXAMPLES::
 
@@ -2407,8 +2374,8 @@ class OTerm(GenericTerm):
 
         INPUT:
 
-        - ``latex`` -- (default: ``False``) a boolean. If set, then
-          LaTeX-output is returned.
+        - ``latex`` -- boolean (default: ``False``); if set, then
+          LaTeX-output is returned
 
         OUTPUT: string
 
@@ -2485,7 +2452,7 @@ class OTerm(GenericTerm):
 
         INPUT:
 
-        - ``exponent`` -- an element.
+        - ``exponent`` -- an element
 
         OUTPUT: an :class:`OTerm`
 
@@ -2515,7 +2482,7 @@ class OTerm(GenericTerm):
 
         INPUT:
 
-        - ``other`` -- an asymptotic term.
+        - ``other`` -- an asymptotic term
 
         OUTPUT: boolean
 
@@ -2546,11 +2513,9 @@ class OTerm(GenericTerm):
 
         INPUT:
 
-        - ``other`` -- an asymptotic `O`-term.
+        - ``other`` -- an asymptotic `O`-term
 
-        OUTPUT:
-
-        An asymptotic `O`-term.
+        OUTPUT: an asymptotic `O`-term
 
         .. NOTE::
 
@@ -2592,7 +2557,7 @@ class OTerm(GenericTerm):
         - ``base`` -- the base of the logarithm. If ``None``
           (default value) is used, the natural logarithm is taken.
 
-        - ``locals`` -- a dictionary which may contain the following keys and values:
+        - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
@@ -2630,10 +2595,6 @@ class OTerm(GenericTerm):
     def is_little_o_of_one(self):
         r"""
         Return whether this O-term is of order `o(1)`.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: boolean
 
@@ -2679,7 +2640,7 @@ class OTerm(GenericTerm):
 
         INPUT:
 
-        - ``base`` -- an element or ``'e'``.
+        - ``base`` -- an element or ``'e'``
 
         OUTPUT: a term
 
@@ -2734,7 +2695,7 @@ class OTerm(GenericTerm):
 
         INPUT:
 
-        - ``rules`` -- a dictionary.
+        - ``rules`` -- dictionary
 
         OUTPUT: an object
 
@@ -2833,11 +2794,11 @@ class OTerm(GenericTerm):
 
         INPUT:
 
-        - ``var`` -- a string denoting the variable
+        - ``var`` -- string denoting the variable
 
         - ``zeta`` -- a number
 
-        - ``precision`` -- an integer
+        - ``precision`` -- integer
 
         OUTPUT:
 
@@ -2866,9 +2827,9 @@ class OTermMonoid(GenericTermMonoid):
 
     INPUT:
 
-    - ``growth_group`` -- a growth group.
+    - ``growth_group`` -- a growth group
 
-    - ``category`` -- The category of the parent can be specified
+    - ``category`` -- the category of the parent can be specified
       in order to broaden the base structure. It has to be a subcategory
       of ``Join of Category of monoids and Category of posets``. This
       is also the default category if ``None`` is specified.
@@ -2906,7 +2867,7 @@ class OTermMonoid(GenericTermMonoid):
 
         INPUT:
 
-        - ``kwds_construction`` -- a dictionary representing
+        - ``kwds_construction`` -- dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
@@ -2958,7 +2919,7 @@ class OTermMonoid(GenericTermMonoid):
 
         INPUT:
 
-        - ``S`` -- a parent.
+        - ``S`` -- a parent
 
         OUTPUT: ``True`` or ``None``
 
@@ -3012,10 +2973,6 @@ class OTermMonoid(GenericTermMonoid):
         r"""
         A representation string for this `O`-term monoid.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: string
 
         EXAMPLES::
@@ -3037,12 +2994,11 @@ class TermWithCoefficient(GenericTerm):
 
     INPUT:
 
-    - ``parent`` -- the parent of the asymptotic term.
+    - ``parent`` -- the parent of the asymptotic term
 
-    - ``growth`` -- an asymptotic growth element of
-      the parent's growth group.
+    - ``growth`` -- an asymptotic growth element of the parent's growth group
 
-    - ``coefficient`` -- an element of the parent's coefficient ring.
+    - ``coefficient`` -- an element of the parent's coefficient ring
 
     EXAMPLES::
 
@@ -3120,10 +3076,6 @@ class TermWithCoefficient(GenericTerm):
         r"""
         Return a construction of this term.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT:
 
         A pair ``(cls, kwds)`` such that ``cls(**kwds)`` equals this term.
@@ -3157,10 +3109,6 @@ class TermWithCoefficient(GenericTerm):
         r"""
         A representation string for this term with coefficient.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: string
 
         EXAMPLES::
@@ -3183,8 +3131,8 @@ class TermWithCoefficient(GenericTerm):
 
         INPUT:
 
-        - ``latex`` -- (default: ``False``) a boolean. If set, then
-          LaTeX-output is returned.
+        - ``latex`` -- boolean (default: ``False``); if set, then
+          LaTeX-output is returned
 
         OUTPUT: string
 
@@ -3234,7 +3182,7 @@ class TermWithCoefficient(GenericTerm):
 
         INPUT:
 
-        - ``other`` -- an asymptotic term.
+        - ``other`` -- an asymptotic term
 
         OUTPUT:
 
@@ -3281,7 +3229,7 @@ class TermWithCoefficient(GenericTerm):
 
         INPUT:
 
-        - ``exponent`` -- an element.
+        - ``exponent`` -- an element
 
         OUTPUT: a term
 
@@ -3333,7 +3281,7 @@ class TermWithCoefficient(GenericTerm):
         - ``base`` -- the base of the logarithm. If ``None``
           (default value) is used, the natural logarithm is taken.
 
-        - ``locals`` -- a dictionary which may contain the following keys and values:
+        - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
@@ -3421,15 +3369,15 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
 
     INPUT:
 
-    - ``growth_group`` -- a growth group.
+    - ``growth_group`` -- a growth group
 
-    - ``category`` -- The category of the parent can be specified
+    - ``category`` -- the category of the parent can be specified
       in order to broaden the base structure. It has to be a subcategory
       of ``Join of Category of monoids and Category of posets``. This
       is also the default category if ``None`` is specified.
 
     - ``coefficient_ring`` -- the ring which contains the
-      coefficients of the elements.
+      coefficients of the elements
 
     EXAMPLES::
 
@@ -3458,10 +3406,6 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
         r"""
         A representation string for this TermWithCoefficient Monoid.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: string
 
         EXAMPLES::
@@ -3485,7 +3429,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
 
         INPUT:
 
-        - ``kwds_construction`` -- a dictionary representing
+        - ``kwds_construction`` -- dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
@@ -3540,10 +3484,6 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
         r"""
         Return the default keyword arguments for the construction of a term.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: a dictionary
 
         TESTS::
@@ -3571,7 +3511,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
 
         INPUT:
 
-        - ``kwds_construction`` -- a dictionary representing
+        - ``kwds_construction`` -- dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
@@ -3606,10 +3546,6 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
         r"""
         Return an element of this term with coefficient monoid.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: an element of this term monoid
 
         EXAMPLES::
@@ -3633,10 +3569,6 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
         Return some elements of this term with coefficient monoid.
 
         See :class:`TestSuite` for a typical use case.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: an iterator
 
@@ -3664,12 +3596,11 @@ class ExactTerm(TermWithCoefficient):
 
     INPUT:
 
-    - ``parent`` -- the parent of the asymptotic term.
+    - ``parent`` -- the parent of the asymptotic term
 
-    - ``growth`` -- an asymptotic growth element from
-      ``parent.growth_group``.
+    - ``growth`` -- an asymptotic growth element from ``parent.growth_group``
 
-    - ``coefficient`` -- an element from ``parent.coefficient_ring``.
+    - ``coefficient`` -- an element from ``parent.coefficient_ring``
 
     EXAMPLES::
 
@@ -3728,8 +3659,8 @@ class ExactTerm(TermWithCoefficient):
 
         INPUT:
 
-        - ``latex`` -- (default: ``False``) a boolean. If set, then
-          LaTeX-output is returned.
+        - ``latex`` -- boolean (default: ``False``); if set, then
+          LaTeX-output is returned
 
         OUTPUT: string
 
@@ -3836,7 +3767,7 @@ class ExactTerm(TermWithCoefficient):
 
         INPUT:
 
-        - ``exponent`` -- an element.
+        - ``exponent`` -- an element
 
         OUTPUT: an :class:`ExactTerm`
 
@@ -3862,7 +3793,7 @@ class ExactTerm(TermWithCoefficient):
 
         INPUT:
 
-        - ``other`` -- an asymptotic term.
+        - ``other`` -- an asymptotic term
 
         OUTPUT: boolean
 
@@ -3896,7 +3827,7 @@ class ExactTerm(TermWithCoefficient):
 
         INPUT:
 
-        - ``other`` -- an exact term.
+        - ``other`` -- an exact term
 
         OUTPUT: an exact term or ``None``
 
@@ -3948,7 +3879,7 @@ class ExactTerm(TermWithCoefficient):
           (default value) is used, the natural logarithm is taken.
 
 
-        - ``locals`` -- a dictionary which may contain the following keys and values:
+        - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
@@ -3991,10 +3922,6 @@ class ExactTerm(TermWithCoefficient):
         r"""
         Return whether this term is an (exact) constant.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: boolean
 
         .. NOTE::
@@ -4021,10 +3948,6 @@ class ExactTerm(TermWithCoefficient):
     def is_little_o_of_one(self):
         r"""
         Return whether this exact term is of order `o(1)`.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: boolean
 
@@ -4094,7 +4017,7 @@ class ExactTerm(TermWithCoefficient):
 
         INPUT:
 
-        - ``base`` -- an element or ``'e'``.
+        - ``base`` -- an element or ``'e'``
 
         OUTPUT: a term
 
@@ -4150,7 +4073,7 @@ class ExactTerm(TermWithCoefficient):
 
         INPUT:
 
-        - ``rules`` -- a dictionary.
+        - ``rules`` -- dictionary
 
         OUTPUT: an object
 
@@ -4229,11 +4152,11 @@ class ExactTerm(TermWithCoefficient):
 
         INPUT:
 
-        - ``var`` -- a string denoting the variable
+        - ``var`` -- string denoting the variable
 
         - ``zeta`` -- a number
 
-        - ``precision`` -- an integer
+        - ``precision`` -- integer
 
         OUTPUT:
 
@@ -4268,15 +4191,15 @@ class ExactTermMonoid(TermWithCoefficientMonoid):
 
     INPUT:
 
-    - ``growth_group`` -- a growth group.
+    - ``growth_group`` -- a growth group
 
-    - ``category`` -- The category of the parent can be specified
+    - ``category`` -- the category of the parent can be specified
       in order to broaden the base structure. It has to be a subcategory
       of ``Join of Category of monoids and Category of posets``. This
       is also the default category if ``None`` is specified.
 
     - ``coefficient_ring`` -- the ring which contains the coefficients of
-      the elements.
+      the elements
 
     EXAMPLES::
 
@@ -4316,7 +4239,7 @@ class ExactTermMonoid(TermWithCoefficientMonoid):
 
         INPUT:
 
-        - ``kwds_construction`` -- a dictionary representing
+        - ``kwds_construction`` -- dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
@@ -4360,10 +4283,6 @@ class ExactTermMonoid(TermWithCoefficientMonoid):
     def _repr_(self):
         r"""
         A representation string for this exact term monoid.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: string
 
@@ -4433,7 +4352,6 @@ class BTerm(TermWithCoefficient):
 
         sage: T(x^3*y^2, coefficient=42, valid_from={'x': 10, 'y': 20})
         B(42*x^3*y^2, x >= 10, y >= 20)
-
     """
     def __init__(self, parent, growth, valid_from, **kwds):
         r"""
@@ -4506,10 +4424,6 @@ class BTerm(TermWithCoefficient):
         r"""
         Return a construction of this term.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT:
 
         A pair ``(cls, kwds)`` such that ``cls(**kwds)`` equals this term.
@@ -4545,10 +4459,6 @@ class BTerm(TermWithCoefficient):
     def _repr_(self, latex=False):
         r"""
         A representation string for this B-term.
-
-        INPUT:
-
-        Nothing
 
         OUTPUT: string
 
@@ -4756,10 +4666,10 @@ class BTermMonoid(TermWithCoefficientMonoid):
     - ``coefficient_ring`` -- the ring which contains the
       coefficients of the elements
 
-    - ``category`` -- The category of the parent can be specified
+    - ``category`` -- the category of the parent can be specified
       in order to broaden the base structure. It has to be a subcategory
       of ``Join of Category of monoids and Category of posets``. This
-      is also the default category if ``None`` is specified
+      is also the default category if ``None`` is specified.
 
     EXAMPLES::
 
@@ -4783,10 +4693,6 @@ class BTermMonoid(TermWithCoefficientMonoid):
         r"""
         A representation string for this B term monoid.
 
-        INPUT:
-
-        Nothing
-
         OUTPUT: string
 
         EXAMPLES::
@@ -4803,10 +4709,6 @@ class BTermMonoid(TermWithCoefficientMonoid):
     def _default_kwds_construction_(self):
         r"""
         Return the default keyword arguments for the construction of a term.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: a dictionary
 
@@ -4843,7 +4745,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
 
         INPUT:
 
-        - ``kwds_construction`` -- a dictionary representing
+        - ``kwds_construction`` -- dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
@@ -4962,10 +4864,6 @@ class BTermMonoid(TermWithCoefficientMonoid):
         r"""
         Return an element of this B-term monoid.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: an element of this term monoid
 
         EXAMPLES::
@@ -4988,10 +4886,6 @@ class BTermMonoid(TermWithCoefficientMonoid):
         Return some elements of this B-term monoid.
 
         See :class:`TestSuite` for a typical use case.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: an iterator
 
@@ -5044,18 +4938,17 @@ class TermMonoidFactory(UniqueRepresentation, UniqueFactory):
 
     INPUT:
 
-    - ``term_monoid`` -- the kind of terms held in the new term monoid.
+    - ``term_monoid`` -- the kind of terms held in the new term monoid
       Either a string ``'exact'``, ``'O'`` (capital letter ``O``) or
       ``'B'`` or an existing instance of a term
       monoid.
 
-    - ``growth_group`` -- a growth group or
-      a string describing a growth group.
+    - ``growth_group`` -- a growth group or a string describing a growth group
 
-    - ``coefficient_ring`` -- a ring.
+    - ``coefficient_ring`` -- a ring
 
     - ``asymptotic_ring`` -- if specified, then ``growth_group`` and
-      ``coefficient_ring`` are taken from this asymptotic ring.
+      ``coefficient_ring`` are taken from this asymptotic ring
 
     OUTPUT: an asymptotic term monoid
 

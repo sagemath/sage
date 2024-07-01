@@ -465,7 +465,7 @@ class Magma(ExtraTabCompletion, Expect):
     def __getattr__(self, attrname):
         """
         Return a formal wrapper around a Magma function, or raise an
-        AttributeError if attrname starts with an underscore.
+        :exc:`AttributeError` if attrname starts with an underscore.
 
         INPUT:
 
@@ -795,8 +795,8 @@ class Magma(ExtraTabCompletion, Expect):
         """
         Try to coerce to ``self`` by calling a special underscore method.
 
-        If no such method is defined, raises an AttributeError instead of a
-        TypeError.
+        If no such method is defined, raises an :exc:`AttributeError` instead
+        of a :exc:`TypeError`.
 
         EXAMPLES::
 

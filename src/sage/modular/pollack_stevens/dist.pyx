@@ -64,7 +64,7 @@ def get_dist_classes(p, prec_cap, base, symk, implementation):
 
     - ``symk`` -- an element of Symk
 
-    - ``implementation`` -- string; If not None, override the
+    - ``implementation`` -- string; if not None, override the
       automatic choice of implementation. May be 'long' or 'vector',
       otherwise raise a :class:`NotImplementedError`
 
