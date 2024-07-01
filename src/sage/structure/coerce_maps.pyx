@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Coerce maps
 """
@@ -555,6 +556,7 @@ cpdef Element _ccall_test_function(codomain, x):
         -24
     """
     return codomain(x*x*x-x)
+
 
 def test_CCallableConvertMap(domain, name=None):
     """

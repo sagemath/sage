@@ -102,7 +102,7 @@ class RationalFunctionField(FunctionField):
         sage: R.<x> = FunctionField(QQ)
         sage: L.<y> = R[]
         sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # needs sage.rings.function_field
-        sage: (y/x).divisor()                                                           # needs sage.modules sage.rings.function_field
+        sage: (y/x).divisor()                                                           # needs sage.rings.function_field
         - Place (x, y - 1)
          - Place (x, y + 1)
          + Place (x^2 + 1, y)
@@ -112,15 +112,13 @@ class RationalFunctionField(FunctionField):
         sage: NF.<i> = NumberField(z^2 + 1)
         sage: R.<x> = FunctionField(NF)
         sage: L.<y> = R[]
-        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # needs sage.modules sage.rings.function_field
-
-        sage: (x/y*x.differential()).divisor()                                          # needs sage.modules sage.rings.function_field sage.rings.number_field
+        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # needs sage.rings.function_field
+        sage: (x/y*x.differential()).divisor()                                          # needs sage.rings.function_field
         -2*Place (1/x, 1/x*y - 1)
          - 2*Place (1/x, 1/x*y + 1)
          + Place (x, y - 1)
          + Place (x, y + 1)
-
-        sage: (x/y).divisor()                                                           # needs sage.modules sage.rings.function_field sage.rings.number_field
+        sage: (x/y).divisor()                                                           # needs sage.rings.function_field
         - Place (x - i, y)
          + Place (x, y - 1)
          + Place (x, y + 1)
@@ -134,7 +132,6 @@ class RationalFunctionField(FunctionField):
         Initialize.
 
         EXAMPLES::
-
 
             sage: K.<t> = FunctionField(CC); K                                          # needs sage.rings.real_mpfr
             Rational function field in t over Complex Field with 53 bits of precision

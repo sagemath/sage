@@ -19,7 +19,7 @@ from sage.modular.modsym.p1list import lift_to_sl2z, P1List
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 
-from .congroup_gamma1 import is_Gamma1
+from .congroup_gamma1 import Gamma1_class
 from .congroup_gammaH import GammaH_class
 from .congroup_generic import CongruenceSubgroup
 
@@ -32,12 +32,17 @@ def is_Gamma0(x):
 
         sage: from sage.modular.arithgroup.all import is_Gamma0
         sage: is_Gamma0(SL2Z)
+        doctest:warning...
+        DeprecationWarning: The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_Gamma0(Gamma0(13))
         True
         sage: is_Gamma0(Gamma1(6))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.")
     return isinstance(x, Gamma0_class)
 
 
@@ -280,9 +285,9 @@ class Gamma0_class(GammaH_class):
         """
         if right.level() == 1:
             return True
-        if is_Gamma0(right):
+        if isinstance(right, Gamma0_class):
             return self.level() % right.level() == 0
-        if is_Gamma1(right):
+        if isinstance(right, Gamma1_class):
             if right.level() >= 3:
                 return False
             elif right.level() == 2:

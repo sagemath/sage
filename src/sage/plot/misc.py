@@ -52,11 +52,11 @@ def setup_for_eval_on_grid(funcs,
     OUTPUT:
 
 
-    - ``fast_funcs`` - if only one function passed, then a fast
+    - ``fast_funcs`` -- if only one function passed, then a fast
       callable function.  If funcs is a list or tuple, then a tuple
       of fast callable functions is returned.
 
-    - ``range_specs`` - a list of range_specs: for each range, a
+    - ``range_specs`` -- a list of range_specs: for each range, a
       tuple is returned of the form (range_min, range_max,
       range_step) such that ``srange(range_min, range_max,
       range_step, include_endpoint=True)`` gives the correct points
@@ -331,7 +331,7 @@ def get_matplotlib_linestyle(linestyle, return_type):
 
     INPUT:
 
-    - ``linestyle`` - The style of the line, which is one of
+    - ``linestyle`` -- The style of the line, which is one of
        - ``"-"`` or ``"solid"``
        - ``"--"`` or ``"dashed"``
        - ``"-."`` or ``"dash dot"``
@@ -351,7 +351,7 @@ def get_matplotlib_linestyle(linestyle, return_type):
        If ``linestyle`` is ``None`` (of type NoneType), then we return it
        back unmodified.
 
-    - ``return_type`` - The type of linestyle that should be output. This
+    - ``return_type`` -- The type of linestyle that should be output. This
       argument takes only two values - ``"long"`` or ``"short"``.
 
     EXAMPLES:

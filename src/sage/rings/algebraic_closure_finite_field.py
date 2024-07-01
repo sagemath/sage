@@ -52,7 +52,6 @@ AUTHORS:
 - Peter Bruin (August 2013): initial version
 
 - Vincent Delecroix (November 2013): additional methods
-
 """
 
 from sage.misc.abstract_method import abstract_method

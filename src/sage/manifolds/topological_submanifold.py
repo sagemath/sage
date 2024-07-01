@@ -30,7 +30,6 @@ AUTHORS:
 REFERENCES:
 
 - \J. M. Lee:  *Introduction to Smooth Manifolds* [Lee2013]_
-
 """
 
 

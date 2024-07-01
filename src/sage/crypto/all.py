@@ -10,13 +10,14 @@ lazy_import('sage.crypto.classical', ['AffineCryptosystem',
                                       'ShiftCryptosystem',
                                       'TranspositionCryptosystem',
                                       'VigenereCryptosystem',
-                                     ])
+                                      ])
 
 lazy_import('sage.crypto.stream', ['LFSRCryptosystem',
                                    'ShrinkingGeneratorCryptosystem',
-                                  ])
+                                   ])
 
 lazy_import('sage.crypto.lfsr', ['lfsr_sequence',
                                  'lfsr_autocorrelation',
                                  'lfsr_connection_polynomial',
-                                ])
+                                 ])
+del lazy_import

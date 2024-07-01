@@ -189,7 +189,6 @@ do not show up when using tab-completion. ::
     5765224
 
 
-
 LiE's help can be accessed through lie.help('functionname') where
 functionname is the function you want to receive help for. ::
 
@@ -202,7 +201,6 @@ functionname is the function you want to receive help for. ::
       the order of the coordinates of root- and weight vectors used in LiE.
 
 This can also be accessed with lie.functionname? .
-
 
 
 With the exception of groups, all LiE data types can be converted into
@@ -271,8 +269,6 @@ translation of that program into Python / Sage. ::
     4
     sage: eval_pol(a, b2)
     18
-
-
 
 AUTHORS:
 

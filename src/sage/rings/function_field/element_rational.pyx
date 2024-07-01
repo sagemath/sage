@@ -74,10 +74,11 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: K.<t> = FunctionField(GF(7))
             sage: t.element()
             t
-            sage: type(t.element())                                                     # needs sage.rings.finite_rings
+            sage: type(t.element())                                                     # needs sage.libs.ntl
             <... 'sage.rings.fraction_field_FpT.FpTElement'>
 
-            sage: K.<t> = FunctionField(GF(131101))                                     # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(131101))
             sage: t.element()
             t
             sage: type(t.element())
@@ -392,9 +393,9 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             True
             sage: f.is_nth_power(3)                                                     # needs sage.modules
             False
-            sage: (f^3).is_nth_power(3)
+            sage: (f^3).is_nth_power(3)                                                 # needs sage.modules
             True
-            sage: (f^9).is_nth_power(-9)
+            sage: (f^9).is_nth_power(-9)                                                # needs sage.modules
             True
         """
         if n == 1:
@@ -437,7 +438,6 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(3))
             sage: f = (x+1)/(x+2)
             sage: f.nth_root(1)
@@ -446,9 +446,9 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             Traceback (most recent call last):
             ...
             ValueError: element is not an n-th power
-            sage: (f^3).nth_root(3)
+            sage: (f^3).nth_root(3)                                                     # needs sage.modules
             (x + 1)/(x + 2)
-            sage: (f^9).nth_root(-9)
+            sage: (f^9).nth_root(-9)                                                    # needs sage.modules
             (x + 2)/(x + 1)
         """
         if n == 0:

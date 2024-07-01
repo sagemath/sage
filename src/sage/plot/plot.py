@@ -7,29 +7,29 @@ rendering is done using the matplotlib Python library.
 
 The following graphics primitives are supported:
 
--  :func:`~sage.plot.arrow.arrow` - an arrow from a min point to a max point.
+-  :func:`~sage.plot.arrow.arrow` -- an arrow from a min point to a max point.
 
--  :func:`~sage.plot.circle.circle` - a circle with given radius
+-  :func:`~sage.plot.circle.circle` -- a circle with given radius
 
--  :func:`~sage.plot.ellipse.ellipse` - an ellipse with given radii
+-  :func:`~sage.plot.ellipse.ellipse` -- an ellipse with given radii
    and angle
 
--  :func:`~sage.plot.arc.arc` - an arc of a circle or an ellipse
+-  :func:`~sage.plot.arc.arc` -- an arc of a circle or an ellipse
 
--  :func:`~sage.plot.disk.disk` - a filled disk (i.e. a sector or wedge of a circle)
+-  :func:`~sage.plot.disk.disk` -- a filled disk (i.e. a sector or wedge of a circle)
 
--  :func:`~sage.plot.line.line` - a line determined by a sequence of points (this need not
+-  :func:`~sage.plot.line.line` -- a line determined by a sequence of points (this need not
    be straight!)
 
--  :func:`~sage.plot.point.point` - a point
+-  :func:`~sage.plot.point.point` -- a point
 
--  :func:`~sage.plot.text.text` - some text
+-  :func:`~sage.plot.text.text` -- some text
 
--  :func:`~sage.plot.polygon.polygon` - a filled polygon
+-  :func:`~sage.plot.polygon.polygon` -- a filled polygon
 
 The following plotting functions are supported:
 
--  :func:`plot` - plot of a function or other Sage object (e.g., elliptic
+-  :func:`plot` -- plot of a function or other Sage object (e.g., elliptic
    curve).
 
 -  :func:`parametric_plot`
@@ -951,7 +951,7 @@ def plot(funcs, *args, **kwds):
 
     COLOR OPTIONS:
 
-    - ``color`` - (Default: 'blue') One of:
+    - ``color`` -- (Default: 'blue') One of:
 
       - an RGB tuple (r,g,b) with each of r,g,b between 0 and 1.
 
@@ -966,10 +966,10 @@ def plot(funcs, *args, **kwds):
       - 'automatic' -- maps to default ('blue') if `X` is a single Sage object; and
         maps to a fixed sequence of regularly spaced colors if `X` is a list.
 
-    - ``legend_color`` - the color of the text for `X` (or each item in `X`) in the legend.
+    - ``legend_color`` -- the color of the text for `X` (or each item in `X`) in the legend.
         Default color is 'black'. Options are as in ``color`` above, except that the choice 'automatic' maps to 'black' if `X` is a single Sage object.
 
-    - ``fillcolor`` - The color of the fill for the plot of `X` (or each item in `X`).
+    - ``fillcolor`` -- The color of the fill for the plot of `X` (or each item in `X`).
         Default color is 'gray' if `X` is a single Sage object or if ``color`` is a single color. Otherwise, options are as in ``color`` above.
 
     APPEARANCE OPTIONS:
@@ -992,7 +992,7 @@ def plot(funcs, *args, **kwds):
 
     Any MATPLOTLIB line option may also be passed in.  E.g.,
 
-    - ``linestyle`` - (default: "-") The style of the line, which is one of
+    - ``linestyle`` -- (default: "-") The style of the line, which is one of
 
       - ``"-"`` or ``"solid"``
       - ``"--"`` or ``"dashed"``
@@ -1015,7 +1015,7 @@ def plot(funcs, *args, **kwds):
       taken from the strings above) or a dictionary (with keys in ``range(len(X))``
       and values taken from the strings above).
 
-    - ``marker``  - The style of the markers, which is one of
+    - ``marker``  -- The style of the markers, which is one of
 
       - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
       - ``","`` (pixel), ``"."`` (point)
@@ -1034,20 +1034,20 @@ def plot(funcs, *args, **kwds):
         - ``style`` -- ``0`` (regular polygon), ``1`` (star shape), ``2`` (asterisk), ``3`` (circle)
         - ``angle`` -- the angular rotation in degrees
 
-    - ``markersize`` - the size of the marker in points
+    - ``markersize`` -- the size of the marker in points
 
     - ``markeredgecolor`` -- the color of the marker edge
 
     - ``markerfacecolor`` -- the color of the marker face
 
-    - ``markeredgewidth`` - the size of the marker edge in points
+    - ``markeredgewidth`` -- the size of the marker edge in points
 
-    - ``exclude`` - (Default: None) values which are excluded from the plot range.
+    - ``exclude`` -- (Default: None) values which are excluded from the plot range.
       Either a list of real numbers, or an equation in one variable.
 
     FILLING OPTIONS:
 
-    - ``fill`` - (default: ``False``) One of:
+    - ``fill`` -- (default: ``False``) One of:
 
       - "axis" or ``True``: Fill the area between the function and the x-axis.
 
@@ -1066,12 +1066,12 @@ def plot(funcs, *args, **kwds):
         the j-th function in the list.  (But if ``d[i] == j``: Fill the area
         between the i-th function in the list and the horizontal line y = j.)
 
-    - ``fillalpha`` - (default: `0.5`) How transparent the fill is.
+    - ``fillalpha`` -- (default: `0.5`) How transparent the fill is.
       A number between 0 and 1.
 
     MATPLOTLIB STYLE SHEET OPTION:
 
-    - ``stylesheet`` - (Default: classic) Support for loading a full matplotlib style sheet.
+    - ``stylesheet`` -- (Default: classic) Support for loading a full matplotlib style sheet.
       Any style sheet listed in ``matplotlib.pyplot.style.available`` is acceptable. If a
       non-existing style is provided the default classic is applied.
 
@@ -2026,8 +2026,8 @@ def plot(funcs, *args, **kwds):
     original_opts = kwds.pop('__original_opts', {})
     do_show = kwds.pop('show',False)
 
-    from sage.structure.element import is_Vector
-    if kwds.get('parametric',False) and is_Vector(funcs):
+    from sage.structure.element import Vector
+    if kwds.get('parametric',False) and isinstance(funcs, Vector):
         funcs = tuple(funcs)
 
     if hasattr(funcs, 'plot'):
@@ -2097,7 +2097,7 @@ def _plot(funcs, xrange, parametric=False,
 
     The following option is deprecated in favor of ``legend_label``:
 
-    - ``label`` - (default: '') a string for the label
+    - ``label`` -- (default: '') a string for the label
 
     All other usual plot options are also accepted, and a number
     are required (see the example below) which are normally passed
@@ -3580,7 +3580,7 @@ def graphics_array(array, nrows=None, ncols=None):
       :class:`~sage.plot.graphics.Graphics` elements or a
       single list of :class:`~sage.plot.graphics.Graphics` elements
 
-    - ``nrows, ncols`` -- (optional) integers. If both are given then
+    - ``nrows``, ``ncols`` -- (optional) integers. If both are given then
       the input array is flattened and turned into an ``nrows`` x
       ``ncols`` array, with blank graphics objects padded at the end,
       if necessary. If only one is specified, the other is chosen
@@ -3861,7 +3861,7 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
 
     - ``f`` -- a function of one variable
 
-    - ``p1, p2`` -- two points to refine between
+    - ``p1``, ``p2`` -- two points to refine between
 
     - ``adaptive_recursion`` -- (default: `5`); how many
       levels of recursion to go before giving up when doing adaptive
@@ -3975,7 +3975,7 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01,
 
     - ``f`` -- a function of one variable
 
-    - ``p1, p2`` -- two points to refine between
+    - ``p1``, ``p2`` -- two points to refine between
 
     - ``plot_points`` -- (default: `5`); the minimal number of plot points. (Note
       however that in any actual plot a number is passed to this, with default
