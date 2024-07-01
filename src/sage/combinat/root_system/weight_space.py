@@ -515,9 +515,9 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             return sum( (self[i]*c for (i,c) in lambdacheck), zero)
 
     def is_dominant(self):
-        """
-        Checks whether an element in the weight space lies in the positive cone spanned
-        by the basis elements (fundamental weights).
+        r"""
+        Checks whether an element in the weight space lies in the positive
+        cone spanned by the basis elements (fundamental weights).
 
         EXAMPLES::
 
@@ -530,9 +530,9 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             sage: w.is_dominant()
             False
 
-        In the extended affine weight lattice, 'delta' is orthogonal to
+        In the extended affine weight lattice, ``'delta'`` is orthogonal to
         the positive coroots, so adding or subtracting it should not
-        affect dominance ::
+        affect dominance::
 
             sage: P = RootSystem(['A',2,1]).weight_lattice(extended=true)
             sage: Lambda = P.fundamental_weights()
@@ -540,9 +540,43 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             sage: w = Lambda[1] - delta                                                 # needs sage.graphs
             sage: w.is_dominant()                                                       # needs sage.graphs
             True
-
         """
-        return all(self.coefficient(i) >= 0 for i in self.parent().index_set())
+        index_set = set(self.parent().index_set())
+        return all(c >= 0 for i, c in self._monomial_coefficients.items() if i in index_set)
+
+    def is_dominant_weight(self):
+        r"""
+        Checks whether an element in the weight space lies in the positive
+        `\ZZ`-lattice cone spanned by the basis elements (fundamental weights).
+
+        EXAMPLES::
+
+            sage: W = RootSystem(['A',3]).weight_space()
+            sage: Lambda = W.basis()
+            sage: w = Lambda[1] + Lambda[3]
+            sage: w.is_dominant_weight()
+            True
+            sage: w = Lambda[1] + 2/3*Lambda[3]
+            sage: w.is_dominant_weight()
+            False
+            sage: w = Lambda[1] - Lambda[2]
+            sage: w.is_dominant_weight()
+            False
+
+        In the extended affine weight lattice, ``'delta'`` is orthogonal to
+        the positive coroots, so adding or subtracting it should not
+        affect dominance::
+
+            sage: P = RootSystem(['A',2,1]).weight_lattice(extended=true)
+            sage: Lambda = P.fundamental_weights()
+            sage: delta = P.null_root()                                                 # needs sage.graphs
+            sage: w = Lambda[1] - delta                                                 # needs sage.graphs
+            sage: w.is_dominant_weight()                                                # needs sage.graphs
+            True
+        """
+        index_set = set(self.parent().index_set())
+        from sage.rings.integer_ring import ZZ
+        return all(c in ZZ and c >= 0 for i, c in self._monomial_coefficients.items() if i in index_set)
 
     def to_ambient(self):
         r"""
@@ -579,6 +613,28 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             2*Lambda[1] + 2*Lambda[2]
         """
         return self
+
+    @cached_method
+    def _to_root_vector(self):
+        r"""
+        Helper method to express ``self`` as a linear combination
+        of simple roots.
+
+        OUTPUT:
+
+        A vector with entries in `\QQ` representing ``self`` as a linear
+        combination of simple roots.
+
+        EXAMPLES::
+
+            sage: P = RootSystem(['A',3]).weight_lattice()
+            sage: La = P.fundamental_weights()
+            sage: [al._to_root_vector() for al in P.simple_roots()]
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+            sage: (La[1] + La[2])._to_root_vector()
+            (5/4, 3/2, 3/4)
+        """
+        return self.parent()._inverse_cartan_matrix * self.to_vector()
 
 
 WeightSpace.Element = WeightSpaceElement
