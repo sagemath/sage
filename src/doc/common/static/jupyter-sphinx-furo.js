@@ -75,15 +75,16 @@ async function fetchVersions() {
         let text = await response.text();
         let lines = text.split('\n');
 
+        let url = window.location.origin;
+        let current_version
+
         if (window.location.protocol == 'file:') {
-            current_version = 'local'
-            url = window.location.href
+            current_version = 'local';
+            url = window.location.href;
         } else {
-            let url = window.location.origin;
             let start_index = url.indexOf('doc-') + 4;
             let end_index = url.indexOf('--');
             let version_string = url.substring(start_index, end_index);
-            let current_version
 
             // Consult the comment in .github/workflows/doc-publish.yml
             if (/^pr-\d+$/.test(version_string)) {
@@ -140,11 +141,11 @@ fetchVersions()
 
 // Function to change the version based on versions menu selection
 function changeVersion() {
-    let selectedVersion = document.getElementById("versions-menu").value;
-    if (selectedVersion) {
+    let selected_version = document.getElementById("versions-menu").value;
+    if (selected_version) {
        // Check if the version exists in the map and redirect
-        if (selectedVersion in versionMap) {
-            let targetUrl = versionMap[selectedVersion];
+        if (selected_version in versionMap) {
+            let targetUrl = versionMap[selected_version];
             window.location.href = targetUrl + window.location.pathname;
         } else {
             console.error("Version not found in versions.txt.");
