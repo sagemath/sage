@@ -839,7 +839,7 @@ class Qepcad:
         self._cell_cache = {}
 
         if verbose:
-            logfile = sys.stdout
+            logfile = sys.stdout.buffer
 
         varlist = None
         if vars is not None:
