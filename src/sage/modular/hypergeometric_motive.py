@@ -1495,7 +1495,7 @@ class HypergeometricData:
 
             Using instead :class:`UniversalCyclotomicfield`, this is much
             slower than the `p`-adic version :meth:`padic_H_value`.
-            
+
             Unlike in :meth:`padic_H_value`, tame and wild primes are not supported.
 
         EXAMPLES:
