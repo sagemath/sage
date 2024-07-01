@@ -7,6 +7,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
 #                              and Emily A. Kirkman
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
+#           Copyright (C) 2024 Janmenjaya Panda <janmenjaya.panda.22@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -1052,6 +1053,13 @@ def Balaban11Cage(embedding=1):
         raise ValueError("the value of embedding must be 1, 2, or 3")
 
 
+def BicornGraph():
+    r"""
+    Return the Bicorn graph.
+    """
+    raise NotImplementedError()
+
+
 def BidiakisCube():
     r"""
     Return the Bidiakis cube.
@@ -1898,6 +1906,13 @@ def CoxeterGraph():
     g.name("Coxeter Graph")
 
     return g
+
+
+def CubeplexGraph():
+    r"""
+    Return the Cubeplex graph.
+    """
+    raise NotImplementedError()
 
 
 def DejterGraph():
@@ -3817,6 +3832,13 @@ def MoserSpindle():
     return Graph(edge_dict, pos=pos_dict, name="Moser spindle")
 
 
+def MurtyGraph():
+    r"""
+    Return the Murty graph.
+    """
+    raise NotImplementedError()
+
+
 def NauruGraph(embedding=2):
     """
     Return the Nauru Graph.
@@ -4376,6 +4398,13 @@ def TietzeGraph():
     return g
 
 
+def TricornGraph():
+    r"""
+    Return the Tricorn graph.
+    """
+    raise NotImplementedError()
+
+
 def TruncatedIcosidodecahedralGraph():
     r"""
     Return the truncated icosidodecahedron.
@@ -4573,6 +4602,13 @@ def TutteGraph():
     g._pos[0] = (0,0)
 
     return g
+
+
+def TwinplexGraph():
+    r"""
+    Return the Twinplex graph.
+    """
+    raise NotImplementedError()
 
 
 def WagnerGraph():
