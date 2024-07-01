@@ -109,17 +109,18 @@ async function fetchVersions() {
         console.error("Failed to fetch versions.txt file:", error);
     }
 
+    let menu = document.getElementById("versions-menu");
+
     if (Object.keys(versionMap).length > 0) {
-        // Populate the versions menu
-        let dropdown = document.getElementById("versions-menu");
         Object.keys(versionMap).forEach(ver => {
             let option = document.createElement("option");
             option.value = ver;
             option.text = ver;
-            dropdown.add(option);
+            menu.add(option);
         });
+        menu.style.display = 'block';
     } else {
-        document.getElementById('versions-menu').style.display = 'none';
+        menu.style.display = 'none';
     }
 
     let urlParams = new URLSearchParams(window.location.search);
