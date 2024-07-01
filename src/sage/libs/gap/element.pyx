@@ -1518,20 +1518,24 @@ cdef class GapElement_Integer(GapElement):
         cdef mpz_t output
         if ring is None:
             ring = ZZ
-        if self.is_C_int():
-            return ring(GAP_ValueInt(self.value))
-        else:
-            # gap integers are stored as a mp_limb_t
-            size = GAP_SizeInt(self.value) # count limbs and extract sign
-            if size > 0:
-                c_sign = 1
-                c_size = size
-            else: # Must have size < 0, or else self.value == 0 and self.is_C_int() == True
-                c_sign = -1
-                c_size = -size
-            x = GAP_AddrInt(self.value) # pointer to limbs
-            mpz_roinit_n(output, <mp_limb_t *>x, c_size)
-            return ring(c_sign*mpz_get_pylong(output))
+        try:
+            GAP_Enter()
+            if self.is_C_int():
+                return ring(GAP_ValueInt(self.value))
+            else:
+                # gap integers are stored as a mp_limb_t
+                size = GAP_SizeInt(self.value) # count limbs and extract sign
+                if size > 0:
+                    c_sign = 1
+                    c_size = size
+                else: # Must have size < 0, or else self.value == 0 and self.is_C_int() == True
+                    c_sign = -1
+                    c_size = -size
+                x = GAP_AddrInt(self.value) # pointer to limbs
+                mpz_roinit_n(output, <mp_limb_t *>x, c_size)
+                return ring(c_sign*mpz_get_pylong(output))
+        finally:
+            GAP_Leave()
 
     _integer_ = sage
 
