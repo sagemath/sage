@@ -455,6 +455,11 @@ class WebsiteBuilder(DocBuilder):
         shutil.copy2(os.path.join(SAGE_DOC_SRC, self.lang, 'website', 'root_index.html'),
                      root_index_file)
 
+        # The file versions.txt is used by src/doc/common/static/jupyter-sphinx-furo.js
+        # for doc version selector
+        from sage.env import SAGE_DOC
+        shutil.copy2(os.path.join(SAGE_DOC_SRC, 'versions.txt'), SAGE_DOC)
+
     def pdf(self):
         """
         Build the website hosting pdf docs.
