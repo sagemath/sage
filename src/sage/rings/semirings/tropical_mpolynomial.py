@@ -141,7 +141,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1.plot3d()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Can only plot the graph of tropical 
+            NotImplementedError: can only plot the graph of tropical 
             multivariate polynomial in two variables 
 
         """
@@ -172,9 +172,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         OUTPUT:
 
-        - tropical_roots -- TropicalCurve object. This object is 
-        displayed as list of lists, where the inner list is of the form
-        [parametric equation, condition of parameter, order]
+        TropicalCurve object. This object is displayed as list of lists, where
+        the inner list is of the form [equation, condition of parameter, order]
         
         EXAMPLES:
 

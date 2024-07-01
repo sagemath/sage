@@ -404,10 +404,9 @@ class Polynomial_generic_sparse(Polynomial):
                 else:
                     var = ""
                 s += "%s%s" % (x,var)
-        if not isinstance(self.parent().base(), TropicalSemiring):
-            s = s.replace(" + -", " - ")
-            s = s.replace(" 1*"," ")
-            s = s.replace(" -1*", " -")
+        s = s.replace(" + -", " - ")
+        s = s.replace(" 1*"," ")
+        s = s.replace(" -1*", " -")
         if s == " ":
             return "0"
         return s[1:]

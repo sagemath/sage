@@ -76,9 +76,9 @@ REFERENCES:
 # ****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.rings.rational_field import QQ
 from sage.plot.graphics import Graphics
 from sage.plot.plot import parametric_plot
+from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
 from sage.symbolic.ring import SR
 import operator
@@ -201,7 +201,7 @@ class TropicalVariety(SageObject):
     
     def _repr_(self):
         components = "\n".join([f"{row}" for row in self._hypersurface])
-        return (f"Tropical hypersurface of {self.poly} are \n[{components}]")
+        return (f"Tropical variety of {self.poly} are \n[{components}]")
 
 class TropicalCurve(TropicalVariety):
     r""""

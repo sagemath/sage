@@ -471,8 +471,26 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             raise ValueError(f"xmin = {xmin} should be less than xmax = {xmax}")
         else:
             return plot(f, xmin=xmin, xmax=xmax)
+        
+    def _repr_(self):
+        r"""
+        
+        EXAMPLES:
 
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x')
+            sage: R([0,-1,1])
+            1*x^2 + -1*x + 0
 
+        """
+        s = super()._repr()
+        if s[0] == 'x':
+            s = "1*" + s
+        s = s.replace(" - ", " + -")
+        s = s.replace(" + x", " + 1*x")
+        s = s.replace(" -", " -1*")
+        return s
+    
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     """
     Semiring structure of tropical polynomials in one variable
