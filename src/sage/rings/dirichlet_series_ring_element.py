@@ -2,7 +2,7 @@
 Dirichlet Series
 
 Sage provides an implementation of dense and sparse fixed-precision Dirichlet series
-over any Sage base ring. 
+over any Sage base ring.
 
 AUTHORS:
 
@@ -25,7 +25,7 @@ from sage.structure.element import parent, CommutativeAlgebraElement
 class DirichletSeries_generic(CommutativeAlgebraElement):
     """
     Abstract base class for Dirichlet series.
-    
+
     EXAMPLES::
 
         sage: R = DirichletSeriesRing(ZZ, 8)
@@ -41,7 +41,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
     def __init__(self, parent, data=None):
         """
         Construct a Dirichlet series.
-    
+
         The coefficients can be specified as a list, a dict, or a callable.
 
         EXAMPLES::
@@ -121,13 +121,13 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             return self.data[n]
         except KeyError:
             return self.base_ring().zero()
-        
+
     def __iter__(self):
         """
         Return an iterator over coefficients.
 
         EXAMPLES::
-        
+
             sage: R = DirichletSeriesRing(ZZ, 10)
             sage: f = R([1, 2, 3])
             sage: list(f)
@@ -140,7 +140,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         Return a string representation.
 
         EXAMPLES::
-        
+
             sage: R = DirichletSeriesRing(ZZ, 10)
             sage: f = R([1, 2, 3])
             sage: f
@@ -155,18 +155,18 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
                 x = repr(self[i])
                 if x != "0":
                     if not atomic_repr and i > 1 and (x.find("+") != -1 or x.find("-") != -1):
-                        x = "(%s)"%x
+                        x = "(%s)" % x
                     if i > 1:
-                        var = "*%s^-s"%(i)
+                        var = "*%s^-s" % (i)
                     else:
                         var = ""
-                    ans += "%s%s + "%(x,var)
+                    ans += "%s%s + " % (x,var)
         ans = ans.replace(" + -", " - ")
         ans = ans.replace(" 1*", " ")
-        ans = ans.replace(" -1*", " -")       
+        ans = ans.replace(" -1*", " -")
         ans += "O({}^-s)".format(prec)
         return ans
-        
+
     def _add_(self, other):
         """
         Add two formal Dirichlet series.
@@ -180,7 +180,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             2 + 4*2^-s + 3*3^-s + 4*4^-s + O(8^-s)
         """
         raise NotImplementedError
-        
+
     def _sub_(self, other):
         """
         Subtract two formal Dirichlet series.
@@ -194,7 +194,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             3*3^-s - 4*4^-s + O(8^-s)
         """
         raise NotImplementedError
-        
+
     def _mul_(self, other):
         """
         Multiply two formal Dirichlet series.
@@ -221,11 +221,11 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
     def _div_(self, other):
         """
         Implement division of Dirichlet series.
-        
+
         The constant coefficient of ``other`` is required to be a unit.
 
         EXAMPLES::
-        
+
             sage: R = DirichletSeriesRing(ZZ, 10)
             sage: f = R([1, 2, 3])
             sage: 1/f
@@ -247,9 +247,9 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
     def coefficients(self):
         """
         Return a dictionary of coefficients.
-        
+
         EXAMPLES::
-        
+
             sage: R = DirichletSeriesRing(ZZ, 10)
             sage: f = R([1,2]) * R([1,3])
             sage: f.coefficients()
@@ -266,21 +266,21 @@ class DirichletSeries_dense(DirichletSeries_generic):
         zero = base_ring(0)
         self.data = [zero for _ in range(parent.precision())]
         DirichletSeries_generic.__init__(self, parent, data)
-                    
+
     def coefficients(self):
         return {i: j for i,j in enumerate(self.data) if j}
 
     def _add_(self, other):
         parent = self.parent()
         return parent([self[i] + other[i] for i in range(1, len(self.data))])
-        
+
     def _sub_(self, other):
         parent = self.parent()
         return parent([self[i] - other[i] for i in range(1, len(self.data))])
-        
+
     def _mul_(self, other):
         return self.dense_times_generic(other)
-        
+
     def dense_times_generic(self, other):
         """
         Multiply a dense Dirichlet series by a generic Dirichlet series.
@@ -299,7 +299,7 @@ class DirichletSeries_sparse(DirichletSeries_generic):
     def __init__(self, parent, data=None):
         self.data = {}
         DirichletSeries_generic.__init__(self, parent, data)
-                    
+
     def coefficients(self):
         return {i: j for i,j in self.data.items() if j}
 
@@ -310,7 +310,7 @@ class DirichletSeries_sparse(DirichletSeries_generic):
         for i,j in other.data.items():
             out[i] = out[i] + j if i in out else j
         return parent(out)
-        
+
     def _sub_(self, other):
         parent = self.parent()
         base_ring = self.base_ring()
@@ -318,7 +318,7 @@ class DirichletSeries_sparse(DirichletSeries_generic):
         for i,j in other.data.items():
             out[i] = out[i] - j if i in out else -j
         return parent(out)
-        
+
     def _mul_(self, other):
         parent = self.parent()
         base_ring = self.base_ring()
@@ -337,7 +337,7 @@ class DirichletSeriesIterator:
         Initialize this iterator.
 
         EXAMPLES::
-        
+
             sage: R = DirichletSeriesRing(ZZ, 10)
             sage: f = R([1, 2, 3])
             sage: list(f)
@@ -347,13 +347,13 @@ class DirichletSeriesIterator:
         self._coeffs = x.coefficients()
         self._precision = x.parent().precision()
         self._index = 1
-        
+
     def __next__(self):
         """
         Step this iterator forward.
 
         EXAMPLES::
-        
+
             sage: R = DirichletSeriesRing(ZZ, 10)
             sage: f = R([1, 2, 3])
             sage: list(f)

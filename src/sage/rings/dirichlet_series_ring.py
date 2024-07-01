@@ -7,7 +7,7 @@ from sage.rings.dirichlet_series_ring_element import DirichletSeries_dense, Diri
 class DirichletSeriesRing(CommutativeRing, Parent):
     """
     A ring of Dirichlet series over a base ring, truncated to a fixed precision.
-    
+
     EXAMPLES::
 
         sage: R = DirichletSeriesRing(ZZ, 10)
@@ -21,7 +21,7 @@ class DirichletSeriesRing(CommutativeRing, Parent):
     def __init__(self, base_ring, precision, sparse=True):
         """
         Create a Dirichlet series ring.
-        
+
         EXAMPLES::
 
             sage: R = DirichletSeriesRing(ZZ, 10, sparse=False)
@@ -38,13 +38,13 @@ class DirichletSeriesRing(CommutativeRing, Parent):
         Parent.__init__(self, base_ring, names=None, category=base_ring.category())
         self.__precision = precision
         self.__is_sparse = sparse
-        
+
     def is_sparse(self):
         """
         Return `True` if this ring uses sparse internal representation.
- 
+
         EXAMPLES::
-        
+
             sage: R = DirichletSeriesRing(ZZ, 10, sparse=False)
             sage: S = DirichletSeriesRing(ZZ, 10, sparse=True)
             sage: R.is_sparse()
@@ -53,7 +53,7 @@ class DirichletSeriesRing(CommutativeRing, Parent):
             True
         """
         return self.__is_sparse
-        
+
     def precision(self):
         """
         Return the specified precision for this ring.
@@ -65,13 +65,13 @@ class DirichletSeriesRing(CommutativeRing, Parent):
             10
         """
         return self.__precision
-        
+
     def _coerce_map_from_(self, S):
         """
         Implement coercion.
 
         EXAMPLES::
-        
+
             sage: R = DirichletSeriesRing(ZZ, 10, sparse=False)
             sage: S = DirichletSeriesRing(ZZ, 10, sparse=True)
             sage: R.has_coerce_map_from(ZZ)
@@ -100,6 +100,5 @@ class DirichletSeriesRing(CommutativeRing, Parent):
              sage: R.euler_product({p: 1-T for p in prime_range(25)})
              1 + 2^-s + 3^-s + 4^-s + 5^-s + 6^-s + 7^-s + 8^-s + 9^-s + O(10^-s)
         """
-        return prod(1 / self({p**i: j for i, j in Lpoly[p].dict().items()}) 
+        return prod(1 / self({p**i: j for i, j in Lpoly[p].dict().items()})
             for p in prime_range(self.precision()))
-
