@@ -36,8 +36,6 @@ import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
-from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
-from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomialSemiring
 
 from sage.misc.cachefunc import weak_cached_function
 import sage.misc.weak_dict
@@ -625,11 +623,14 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R.<x,y> = PolynomialRing(RIF,2)
         sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
     """
+    from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
+    from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomialSemiring
+
+    if base_ring not in Rings() and not isinstance(base_ring, TropicalSemiring):
+        raise TypeError("base_ring {!r} must be a ring".format(base_ring))
     is_tropical = False
     if isinstance(base_ring, TropicalSemiring):
         is_tropical = True
-    elif base_ring not in Rings():
-        raise TypeError("base_ring {!r} must be a ring".format(base_ring))
 
     n = -1  # Unknown number of variables
     names = None  # Unknown variable names
@@ -723,7 +724,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     if multivariate or len(names) != 1:
         if is_tropical:
-            return TropicalMPolynomialSemiring(base_ring, n, names, **kwds)
+            return TropicalMPolynomialSemiring(base_ring, len(names), names, **kwds)
         else:
             return _multi_variate(base_ring, names, **kwds)
     else:
