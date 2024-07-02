@@ -208,7 +208,7 @@ def _lex_order_common(G, algo, reverse, tree, initial_vertex):
         lexicographic_label.pop(u)
         sigma.append(u)
         l += -1 if decr else 1
-        for v in G.neighbor_iterator(u): # graphs are considered undirected
+        for v in G.neighbor_iterator(u):  # graphs are considered undirected
             if v in lexicographic_label:
                 if right:
                     lexicographic_label[v].append(l)

@@ -147,7 +147,7 @@ cdef void extended_lex_BFS(
     if sigma_inv == NULL:
         sigma_inv = new vector[int]()
     cdef vector[size_t] part_of = vector[size_t](n, 0)
-    cdef vector[size_t] part_len # only used if xslice_len != NULL (see below)
+    cdef vector[size_t] part_len  # only used if xslice_len != NULL (see below)
     cdef vector[size_t] part_head = vector[size_t](max_nparts)
     cdef vector[size_t] subpart = vector[size_t](max_nparts)
     cdef size_t p, part_of_i, nparts, old_nparts
@@ -160,7 +160,7 @@ cdef void extended_lex_BFS(
     deref(sigma_inv).resize(cg.active_vertices.size)
     if pred != NULL:
         deref(pred).clear()
-        deref(pred).resize(n, -1) # initialize pred[i] to -1 for 0 <= i < n
+        deref(pred).resize(n, -1)  # initialize pred[i] to -1 for 0 <= i < n
     if xslice_len != NULL:
         deref(xslice_len).resize(n)
         part_len.resize(max_nparts)
@@ -212,19 +212,19 @@ cdef void extended_lex_BFS(
         nneighbors = cg.out_neighbors_unsafe (v_int, neighbors.data(), max_degree)
         for k in range(nneighbors):
             u_int = neighbors[k]
-            j = deref(sigma_inv)[u_int] # get the position of u
+            j = deref(sigma_inv)[u_int]  # get the position of u
             if j <= i:
-                continue # already taken care of
+                continue  # already taken care of
 
             if lex_label != NULL:
                 deref(lex_label)[j].push_back (v_int)
 
-            p = part_of[j] # get the part of u
-            l = part_head[p] # get the beginning of the part containing u
+            p = part_of[j]  # get the part of u
+            l = part_head[p]  # get the beginning of the part containing u
 
             # if not last and next elem belongs in the same part (ie #part >= 2)
             if l < n - 1 and part_of[l + 1] == p:
-                if l != j: # not already first elem of the part
+                if l != j:  # not already first elem of the part
                     # Place u at the position of the head of the part
                     t_int = sigma[l]
                     deref(sigma_inv)[t_int], deref(sigma_inv)[u_int] = j, l
@@ -233,7 +233,7 @@ cdef void extended_lex_BFS(
                         swap[vector[int]](deref(lex_label)[j],
                                           deref(lex_label)[l])
                     j = l
-                part_head[p] += 1 # move the head of the part to next elem
+                part_head[p] += 1  # move the head of the part to next elem
 
             # if part p was not already cut in two during this iteration, we
             # create a new part using subpart
@@ -307,9 +307,9 @@ def slice_decomposition(G, initial_vertex=None):
     ``view``::
 
         sage: from sage.graphs.graph_latex import check_tkz_graph
-        sage: check_tkz_graph() # random - depends on Tex installation
-        sage: view(G) # not tested
-        sage: latex(G) # to obtain the corresponding LaTeX code
+        sage: check_tkz_graph()  # random - depends on Tex installation
+        sage: view(G)  # not tested
+        sage: latex(G)  # to obtain the corresponding LaTeX code
         \begin{tikzpicture}
         ...
         \end{tikzpicture}
@@ -391,10 +391,10 @@ cdef class SliceDecomposition(SageObject):
             sage: SD1 == SD2
             False
             sage: SD3 = graphs.CompleteGraph(3).slice_decomposition()
-            sage: SD1 == SD3 # same lexBFS but different slice for 1
+            sage: SD1 == SD3  # same lexBFS but different slice for 1
             False
             sage: SD4 = Graph([(0,1), (0,2)]).slice_decomposition()
-            sage: SD3 == SD4 # same lexBFS and slices but different active edges
+            sage: SD3 == SD4  # same lexBFS and slices but different active edges
             False
         """
         if not isinstance(other, type(self)):
@@ -767,9 +767,9 @@ cdef class SliceDecomposition(SageObject):
             True
             sage: ('a', 'c') in SD.active_edges('a')
             True
-            sage: ('c', 'd') in SD.active_edges('a') # c and d in the same slice
+            sage: ('c', 'd') in SD.active_edges('a')  # c and d in same slice
             False
-            sage: ('a', 'u') in SD.active_edges('a') # u not in x-slice of a
+            sage: ('a', 'u') in SD.active_edges('a')  # u not in x-slice of a
             False
 
         The set of active edges of every vertex is a partition of the edges::
@@ -857,12 +857,12 @@ cdef class SliceDecomposition(SageObject):
 
         The graph can have loops or multiple edges but they are ignored::
 
-            sage: G = graphs.CubeConnectedCycle(2) # multiple edges
+            sage: G = graphs.CubeConnectedCycle(2)  # multiple edges
             sage: SD = G.slice_decomposition()
             sage: SD.underlying_graph() == G.to_simple(immutable=True)
             True
 
-            sage: G = graphs.CubeConnectedCycle(1) # loops
+            sage: G = graphs.CubeConnectedCycle(1)  # loops
             sage: SD = G.slice_decomposition()
             sage: SD.underlying_graph() == G.to_simple(immutable=True)
             True
@@ -908,7 +908,7 @@ cdef class SliceDecomposition(SageObject):
         TESTS:
 
             sage: from sage.graphs.graph_latex import check_tkz_graph
-            sage: check_tkz_graph() # random - depends on Tex installation
+            sage: check_tkz_graph()  # random - depends on Tex installation
             sage: G = graphs.PetersenGraph(); SD = G.slice_decomposition()
             sage: latex(SD)
             \begin{tikzpicture}
@@ -944,7 +944,7 @@ cdef class SliceDecomposition(SageObject):
                      r"tail anchor=center,head anchor=north,"
                      r"nodes={draw,rectangle,inner xsep=0.2em},edges={thick}]")
         lines.append("{")
-        bo, bc = "{", "}" # to write { and } if f-strings
+        bo, bc = "{", "}"  # to write { and } if f-strings
         # Create the nodes and leaves of the slice decomposition tree
         for i in range(len(self.sigma)):
             l = self.xslice_len[i]
