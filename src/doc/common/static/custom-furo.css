@@ -43,21 +43,31 @@ a.pdf:hover {
 }
 
 #versions-menu {
-  display: block;
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  padding: 5px;
+  display: inline-block;
   font-size: small;
   opacity: 1;
-  background-color: white;
-  color: blue;
+  border: none;
+  background-color: transparent;
+  color: var(--color-sidebar-link-text--top-level);;
+}
+
+#versions-menu:focus {
+  outline: none;
+}
+
+.select-wrapper {
+  display: block;
+  text-align: center;
+}
+
+.select-wrapper::before {
+  content: "switch to";
+  font-size: small;
 }
 
 body[data-theme="dark"] {
   #versions-menu {
     background-color: black;
-    color: white;
   }
 }
 
@@ -65,7 +75,6 @@ body[data-theme="dark"] {
   body[data-theme="auto"] {  /* the same styles with body[data-theme="dark"] */
     #versions-menu {
       background-color: black;
-      color: white;
     }
   }
 }
