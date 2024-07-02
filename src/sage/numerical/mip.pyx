@@ -1401,7 +1401,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         Return the value of a variable component in the backend as an integer.
 
         The value is rounded to an integer, and if the difference to the
-        original value is greater than ``tolerance``, raise a ``RuntimeError``.
+        original value is greater than ``tolerance``, raise a :exc:`RuntimeError`.
 
         INPUT:
 
@@ -1444,10 +1444,10 @@ cdef class MixedIntegerLinearProgram(SageObject):
         Return the value of a variable component in the backend as a boolean.
 
         The value is rounded to an integer, and if the difference to the
-        original value is greater than ``tolerance``, raise a ``RuntimeError``.
+        original value is greater than ``tolerance``, raise a :exc:`RuntimeError`.
 
         If the rounded value is anything other than 0 or 1, also a
-        ``RuntimeError`` is raised.
+        :exc:`RuntimeError` is raised.
 
         INPUT:
 
@@ -1548,7 +1548,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
           :meth:`base_ring` is an exact ring).  Required if ``convert`` is not
           ``None`` and any integer conversion is to be done.  If the variable
           value differs from the nearest integer by more than ``tolerance``,
-          raise a ``RuntimeError``.
+          raise a :exc:`RuntimeError`.
 
         OUTPUT:
 
@@ -2866,7 +2866,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
     cpdef sum(self, L):
         r"""
-        Efficiently computes the sum of a sequence of
+        Efficiently compute the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements
 
         INPUT:

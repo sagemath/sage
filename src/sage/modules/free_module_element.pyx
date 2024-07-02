@@ -1891,7 +1891,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
-        Cython function to get the `i`'th entry of this vector.
+        Cython function to get the `i`-th entry of this vector.
 
         Used as building block for a generic ``__getitem__``.
         """
@@ -1952,7 +1952,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     cdef int set_unsafe(self, Py_ssize_t i, value) except -1:
         """
-        Cython function to set the `i`'th entry of this vector to
+        Cython function to set the `i`-th entry of this vector to
         ``value``.
 
         Used as building block for a generic ``__setitem__``.
@@ -3136,7 +3136,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def element(self):
         """
-        Simply returns ``self``.  This is useful, since for many objects,
+        Simply return ``self``.  This is useful, since for many objects,
         ``self.element()`` returns a vector corresponding to ``self``.
 
         EXAMPLES::

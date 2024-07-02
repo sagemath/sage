@@ -502,7 +502,7 @@ class QuiverRepFactory(UniqueFactory):
     - ``basis`` -- list; a nonempty list of paths in the quiver ``Q``.
       Entries that do not represent valid paths are ignored and duplicate
       paths are deleted.  There must be at least one valid path in the list
-      or a :class:`ValueError` is raised.  The closure of this list under right
+      or a :exc:`ValueError` is raised.  The closure of this list under right
       multiplication forms the basis of the resulting representation.
 
     The third option is the ``dual paths`` option which creates the dual of
@@ -516,7 +516,7 @@ class QuiverRepFactory(UniqueFactory):
     - ``basis`` -- list; a nonempty list of paths in the quiver ``Q``.
       Entries that do not represent valid paths are ignored and duplicate
       paths are deleted.  There must be at least one valid path in the list
-      or a :class:`ValueError` is raised.  The closure of this list under left
+      or a :exc:`ValueError` is raised.  The closure of this list under left
       multiplication of edges forms the basis of  the resulting representation.
 
     Using the second and third options requires that the following keyword be

@@ -45,7 +45,7 @@ class QuiverHomSpace(Homset):
     .. NOTE::
 
         The quivers of the domain and codomain must be equal or a
-        :class:`ValueError` is raised.
+        :exc:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -563,7 +563,7 @@ class QuiverHomSpace(Homset):
 
         INPUT:
 
-        - ``basis`` -- bool. If ``False``, then only the module is
+        - ``basis`` -- boolean; if ``False``, then only the module is
           returned.  If ``True``, then a tuple is returned.  The first
           element is the QuiverRep and the second element is a
           dictionary which associates to each vertex a list.  The

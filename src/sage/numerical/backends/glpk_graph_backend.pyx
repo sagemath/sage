@@ -1242,10 +1242,10 @@ cdef class GLPKGraphBackend():
 
         .. NOTE::
 
-            * If the source or sink vertex does not exist, an ``IndexError`` is
+            * If the source or sink vertex does not exist, an :exc:`IndexError` is
               raised.
 
-            * If the source and sink are identical, a ``ValueError`` is raised.
+            * If the source and sink are identical, a :exc:`ValueError` is raised.
 
             * This method raises ``MIPSolverException`` exceptions when the
               solution cannot be computed for any reason (none exists, or the

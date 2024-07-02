@@ -285,7 +285,7 @@ class InterfaceMagic():
 
             RAISES:
 
-            ``SyntaxError`` if a line is specified; Interfaces have no
+            :exc:`SyntaxError` if a line is specified; Interfaces have no
             options.
             """
             if line:

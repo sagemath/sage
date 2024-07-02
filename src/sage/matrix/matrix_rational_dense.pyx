@@ -694,7 +694,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [ -13/22 307/440   -1/10   -9/88]
             [  15/22  -37/88       0    7/88]
 
-        On singular matrices this method raises a ``ZeroDivisionError``::
+        On singular matrices this method raises a :exc:`ZeroDivisionError`::
 
             sage: a = matrix(QQ, 2)
             sage: a.inverse(algorithm='flint')
@@ -798,7 +798,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sage: m.determinant(algorithm='integer')
             1/266716800000
 
-        On non-square matrices, the method raises a ``ValueError``::
+        On non-square matrices, the method raises a :exc:`ValueError`::
 
             sage: matrix(QQ, 2, 3).determinant(algorithm='flint')
             Traceback (most recent call last):

@@ -461,7 +461,7 @@ class OverconvergentModularFormsSpace(Module):
         Return the base extension of ``self`` to the given base ring.
 
         There must be a canonical map to this ring from the current
-        base ring, otherwise a :class:`TypeError` will be raised.
+        base ring, otherwise a :exc:`TypeError` will be raised.
 
         EXAMPLES::
 

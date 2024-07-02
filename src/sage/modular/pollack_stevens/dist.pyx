@@ -64,9 +64,9 @@ def get_dist_classes(p, prec_cap, base, symk, implementation):
 
     - ``symk`` -- an element of Symk
 
-    - ``implementation`` -- string; if not None, override the
+    - ``implementation`` -- string; if not ``None``, override the
       automatic choice of implementation. May be 'long' or 'vector',
-      otherwise raise a :class:`NotImplementedError`
+      otherwise raise a :exc:`NotImplementedError`.
 
     OUTPUT:
 
@@ -285,9 +285,9 @@ cdef class Dist(ModuleElement):
     def find_scalar(self, _other, p, M=None, check=True):
         r"""
         Return an ``alpha`` with ``other = self * alpha``, or raises
-        a :class:`ValueError`.
+        a :exc:`ValueError`.
 
-        It will also raise a :class:`ValueError` if this distribution is zero.
+        It will also raise a :exc:`ValueError` if this distribution is zero.
 
         INPUT:
 
@@ -407,9 +407,9 @@ cdef class Dist(ModuleElement):
     def find_scalar_from_zeroth_moment(self, _other, p, M=None, check=True):
         r"""
         Return an ``alpha`` with ``other = self * alpha`` using only
-        the zeroth moment, or raises a :class:`ValueError`.
+        the zeroth moment, or raises a :exc:`ValueError`.
 
-        It will also raise a :class:`ValueError` if the zeroth moment of the
+        It will also raise a :exc:`ValueError` if the zeroth moment of the
         distribution is zero.
 
         INPUT:
@@ -838,7 +838,7 @@ cdef class Dist_vector(Dist):
             sage: QQ(d)
             4/3
 
-        We get a :class:`TypeError` if there is more than 1 moment::
+        We get a :exc:`TypeError` if there is more than 1 moment::
 
             sage: D = Symk(1); d = D([1,2]); d
             (1, 2)

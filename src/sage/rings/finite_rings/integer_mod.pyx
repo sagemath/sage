@@ -479,7 +479,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         Coerce this element to the ring `Z/(modulus)`.
 
         If the new ``modulus`` does not divide the current modulus,
-        an ``ArithmeticError`` is raised.
+        an :exc:`ArithmeticError` is raised.
 
         EXAMPLES::
 

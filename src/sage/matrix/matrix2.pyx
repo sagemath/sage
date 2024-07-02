@@ -242,7 +242,7 @@ cdef class Matrix(Matrix1):
           some solvers will return solutions over a larger ring than the
           base ring of the inputs (a typical case are rational solutions
           for integer linear systems). When set to ``False``, a solution
-          over the base ring is returned, with a :class:`ValueError`
+          over the base ring is returned, with a :exc:`ValueError`
           being raised if none exists.
 
         - ``check`` -- boolean (default: ``True``); verify the answer
@@ -476,7 +476,7 @@ cdef class Matrix(Matrix1):
           some solvers will return solutions over a larger ring than the
           base ring of the inputs (a typical case are rational solutions
           for integer linear systems). When set to ``False``, a solution
-          over the base ring is returned, with a :class:`ValueError`
+          over the base ring is returned, with a :exc:`ValueError`
           being raised if none exists.
 
         - ``check`` -- boolean (default: ``True``); verify the answer
@@ -554,7 +554,7 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: matrix equation has no solutions
 
-        A :class:`ValueError` is raised if the input is invalid::
+        A :exc:`ValueError` is raised if the input is invalid::
 
             sage: A = matrix(QQ, 4,2, [0, -1, 1, 0, -2, 2, 1, 0])
             sage: B = matrix(QQ, 2,2, [1, 0, 1, -1])
@@ -1246,7 +1246,7 @@ cdef class Matrix(Matrix1):
           of elements of the base rings of ``self`` and ``right``
           is defined, once Sage's coercion model is applied.  If
           the matrices have different sizes, or if multiplication
-          of individual entries cannot be achieved, a ``TypeError``
+          of individual entries cannot be achieved, a :exc:`TypeError`
           will result.
 
         OUTPUT:
@@ -6281,7 +6281,7 @@ cdef class Matrix(Matrix1):
           the irreducible factors of the characteristic polynomial,
           even for linear factors.
 
-        - ``algebraic_multiplicity`` -- boolean (default: ``False``);;
+        - ``algebraic_multiplicity`` -- boolean (default: ``False``);
           whether to include the algebraic multiplicity of each eigenvalue
           in the output.  See the discussion below.
 
@@ -7712,7 +7712,7 @@ cdef class Matrix(Matrix1):
         be a ring (not a field).
 
         Right now this *only* works over ZZ and some principal ideal domains;
-        otherwise a ``NotImplementedError`` is raised. In the special case of
+        otherwise a :exc:`NotImplementedError` is raised. In the special case of
         sparse matrices over ZZ it makes them dense, gets the echelon form of
         the dense matrix, then sets ``self`` equal to the result.
 
@@ -12252,7 +12252,7 @@ cdef class Matrix(Matrix1):
         provide a transformation.  But Jordan form will require that
         the eigenvalues of the matrix can be represented within Sage,
         requiring the existence of the appropriate extension field.
-        When this is not possible, a ``RuntimeError`` is raised, as
+        When this is not possible, a :exc:`RuntimeError` is raised, as
         demonstrated in an example below.
 
         EXAMPLES:
@@ -12354,7 +12354,7 @@ cdef class Matrix(Matrix1):
         eigenvalues of the matrix, which may not lie in the field
         used for entries of the matrix.  In this unfortunate case,
         the computation of the transformation may fail with a
-        ``RuntimeError``, EVEN when the matrices are similar.  This
+        :exc:`RuntimeError`, EVEN when the matrices are similar.  This
         is not the case for matrices over the integers, rationals
         or algebraic numbers, since the computations are done in
         the algebraically closed field of algebraic numbers.
@@ -12535,7 +12535,7 @@ cdef class Matrix(Matrix1):
         Returns a pair (F, C) such that the rows of C form a symplectic
         basis for ``self`` and ``F = C \* self \* C.transpose()``.
 
-        Raises a :class:`ValueError` if not over a field, or ``self`` is not
+        Raises a :exc:`ValueError` if not over a field, or ``self`` is not
         anti-symmetric, or ``self`` is not alternating.
 
         Anti-symmetric means that `M = -M^t`. Alternating means
@@ -12972,7 +12972,7 @@ cdef class Matrix(Matrix1):
 
         where `L^\ast` is the conjugate-transpose. If the matrix is
         not positive-definite (for example, if it is not Hermitian)
-        then a ``ValueError`` results.
+        then a :exc:`ValueError` results.
 
         If possible, the output matrix will be over the fraction field
         of the base ring of the input matrix. If that fraction field
@@ -13940,7 +13940,7 @@ cdef class Matrix(Matrix1):
         the conjugate-transpose.
 
         If any leading principal submatrix is singular, then the
-        computation cannot be performed and a ``ValueError`` results.
+        computation cannot be performed and a :exc:`ValueError` results.
 
         Results are cached, and hence are immutable.  Caching
         eliminates redundant computations across
@@ -14203,7 +14203,7 @@ cdef class Matrix(Matrix1):
 
         If any leading principal submatrix (a square submatrix
         in the upper-left corner) is singular then this method will
-        fail with a ``ValueError``.
+        fail with a :exc:`ValueError`.
 
         ALGORITHM:
 
@@ -14666,7 +14666,7 @@ cdef class Matrix(Matrix1):
 
         With ``classical=True``, the permutation matrix `P` is always
         an identity matrix and the diagonal blocks are always
-        one-by-one. A ``ValueError`` is raised if the matrix has no
+        one-by-one. A :exc:`ValueError` is raised if the matrix has no
         classical `LDL^{T}` factorization.
 
         ALGORITHM:
@@ -18252,7 +18252,7 @@ cdef class Matrix(Matrix1):
             [ 0 -1]
             [ 1  0]
 
-        However, it might fail for others, either raising a ``ValueError``::
+        However, it might fail for others, either raising a :exc:`ValueError`::
 
             sage: Matrix(ZZ, 1, 1, [0]).LLL_gram()                                      # needs sage.libs.pari
             Traceback (most recent call last):

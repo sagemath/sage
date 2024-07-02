@@ -1097,7 +1097,7 @@ cdef class SemidefiniteProgram(SageObject):
 
     cpdef sum(self, L):
         r"""
-        Efficiently computes the sum of a sequence of
+        Efficiently compute the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements.
 
         INPUT:
@@ -1397,7 +1397,7 @@ cdef class SDPVariableParent(Parent):
         OUTPUT:
 
         This is required for the coercion framework. We raise a
-        ``TypeError`` to abort search for any coercion to another
+        :exc:`TypeError` to abort search for any coercion to another
         parent for binary operations. The only interesting operations
         involving :class:`SDPVariable` elements are actions by
         matrices.

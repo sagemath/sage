@@ -52,7 +52,7 @@ class SageTimeitResult:
         sage: SageTimeitResult(stats)                                                   # needs sage.symbolic
         7 loops, best of 13: 3.1416 ns per loop
 
-    If the third argument is not a Python integer, a ``TypeError`` is raised::
+    If the third argument is not a Python integer, a :exc:`TypeError` is raised::
 
         sage: SageTimeitResult( (1, 2, 3, 4, 's') )
         <repr(<sage.misc.sage_timeit.SageTimeitResult at 0x...>) failed: TypeError: * wants int>

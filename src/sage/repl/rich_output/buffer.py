@@ -189,7 +189,7 @@ class OutputBuffer(SageObject):
 
         OUTPUT:
 
-        String. Unicode in Python 2.x. Raises a ``UnicodeEncodeError``
+        String. Unicode in Python 2.x. Raises a :exc:`UnicodeEncodeError`
         if the data is not valid utf-8.
 
         EXAMPLES::

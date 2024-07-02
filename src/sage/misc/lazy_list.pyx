@@ -612,10 +612,10 @@ cdef class lazy_list_generic():
         r"""
         Return the element at position ``i``.
 
-        If the index is not an integer, then raise a ``TypeError``.  If the
-        argument is negative then raise a ``ValueError``.  Finally, if the
+        If the index is not an integer, then raise a :exc:`TypeError`.  If the
+        argument is negative then raise a :exc:`ValueError`.  Finally, if the
         argument is beyond the size of that lazy list it raises a
-        ``IndexError``.
+        :exc:`IndexError`.
 
         EXAMPLES::
 
@@ -1087,7 +1087,7 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
           The update function should take as input a list and make it longer
           (using either the methods ``append`` or ``extend``). If after a call
           to the update function the list of values is shorter a
-          ``RuntimeError`` will occurr. If no value is added then the lazy list
+          :exc:`RuntimeError` will occurr. If no value is added then the lazy list
           is considered finite.
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that

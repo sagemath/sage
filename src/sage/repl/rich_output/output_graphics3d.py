@@ -212,7 +212,7 @@ class OutputSceneWavefront(OutputBase):
 
         OUTPUT:
 
-        This method returns nothing. A ``ValueError`` is raised if
+        This method returns nothing. A :exc:`ValueError` is raised if
         ``filename`` is not just a plain filename but contains a
         directory (relative or absolute).
 

@@ -538,7 +538,7 @@ def f(%s):
 def cython_import(filename, **kwds):
     """
     Compile a file containing Cython code, then import and return the
-    module.  Raises an ``ImportError`` if anything goes wrong.
+    module.  Raises an :exc:`ImportError` if anything goes wrong.
 
     INPUT:
 
@@ -572,7 +572,7 @@ def cython_import_all(filename, globals, **kwds):
 
         from module import *
 
-    Raises an ``ImportError`` exception if anything goes wrong.
+    Raises an :exc:`ImportError` exception if anything goes wrong.
 
     INPUT:
 

@@ -1057,7 +1057,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         r"""
         Return a pair ``(a, d)`` so that ``d * b = m * a``.
 
-        If there is no solution a ``ValueError`` is raised.
+        If there is no solution a :exc:`ValueError` is raised.
 
         INPUT:
 

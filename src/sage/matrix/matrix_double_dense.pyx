@@ -3273,7 +3273,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         where `L^\ast` is the conjugate-transpose in the complex case,
         and just the transpose in the real case.  If the matrix fails
         to be positive definite (perhaps because it is not symmetric
-        or Hermitian), then this function raises a ``ValueError``.
+        or Hermitian), then this function raises a :exc:`ValueError`.
 
         IMPLEMENTATION:
 
@@ -3282,7 +3282,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         method and the :meth:`is_positive_definite` method compute and
         cache both the Cholesky decomposition and the
         positive-definiteness.  So the :meth:`is_positive_definite`
-        method or catching a ``ValueError`` from the :meth:`cholesky`
+        method or catching a :exc:`ValueError` from the :meth:`cholesky`
         method are equally expensive computationally and if the
         decomposition exists, it is cached as a side-effect of either
         routine.
@@ -3461,7 +3461,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         method and the :meth:`cholesky` method compute and
         cache both the Cholesky decomposition and the
         positive-definiteness.  So the :meth:`is_positive_definite`
-        method or catching a ``ValueError`` from the :meth:`cholesky`
+        method or catching a :exc:`ValueError` from the :meth:`cholesky`
         method are equally expensive computationally and if the
         decomposition exists, it is cached as a side-effect of either
         routine.

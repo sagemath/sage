@@ -1889,7 +1889,7 @@ class FunctionField_simple(FunctionField_polymod):
         ideal.
 
         If an element not in the valuation ring is applied to the map, an
-        exception ``TypeError`` is raised.
+        exception :exc:`TypeError` is raised.
 
         EXAMPLES::
 

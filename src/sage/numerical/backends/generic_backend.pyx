@@ -3,7 +3,7 @@ Generic Backend for LP solvers
 
 This class only lists the methods that should be defined by any
 interface with a LP Solver. All these methods immediately raise
-:class:`NotImplementedError` exceptions when called, and are obviously
+:exc:`NotImplementedError` exceptions when called, and are obviously
 meant to be replaced by the solver-specific method. This file can also
 be used as a template to create a new interface : one would only need
 to replace the occurrences of ``"Nonexistent_LP_solver"`` by the
@@ -1603,7 +1603,7 @@ def default_mip_solver(solver=None):
 
     This function returns the current default solver's name if ``solver = None``
     (default). Otherwise, it sets the default solver to the one given. If this
-    solver does not exist, or is not available, a :class:`ValueError` exception is
+    solver does not exist, or is not available, a :exc:`ValueError` exception is
     raised.
 
     EXAMPLES::

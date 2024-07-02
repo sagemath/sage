@@ -342,7 +342,7 @@ def walk_packages(path=None, prefix='', onerror=None):
     - ``onerror`` -- a function which gets called with one argument (the
       name of the package which was being imported) if any exception
       occurs while trying to import a package.  If ``None``, ignore
-      :class:`ImportError` but propagate all other exceptions.
+      :exc:`ImportError` but propagate all other exceptions.
 
     EXAMPLES::
 

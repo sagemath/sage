@@ -85,7 +85,7 @@ cdef file_and_fd(x, int* fd):
     If ``x`` is a file, return ``x`` and set ``*fd`` to its file
     descriptor. If ``x`` is an integer, return ``None`` and set
     ``*fd`` to ``x``. Otherwise, set ``*fd = -1`` and raise a
-    ``TypeError``.
+    :exc:`TypeError`.
     """
     fd[0] = -1
     try:

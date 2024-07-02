@@ -68,7 +68,7 @@ user_globals = None
 
 def _check():
     """
-    Raise ``RuntimeError`` if ``user_globals`` has not been initialized.
+    Raise :exc:`RuntimeError` if ``user_globals`` has not been initialized.
 
     EXAMPLES::
 
@@ -166,7 +166,7 @@ def get_global(name):
     """
     Return the value of global variable ``name``.
 
-    Raise :class:`NameError` if there is no such global variable.
+    Raise :exc:`NameError` if there is no such global variable.
 
     INPUT:
 

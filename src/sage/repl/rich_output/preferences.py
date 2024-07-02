@@ -204,7 +204,7 @@ class Property(property):
 
         OUTPUT:
 
-        This method does not return anything. A ``ValueError`` is
+        This method does not return anything. A :exc:`ValueError` is
         raised if the given ``value`` is not one of the allowed
         values.
 

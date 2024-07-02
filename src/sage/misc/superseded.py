@@ -39,7 +39,7 @@ def _check_issue_number(issue_number):
 
     OUTPUT:
 
-    This function returns nothing. A :class:`ValueError` or :class:`TypeError`
+    This function returns nothing. A :exc:`ValueError` or :exc:`TypeError`
     is raised if the argument cannot be a valid issue number.
 
     EXAMPLES::

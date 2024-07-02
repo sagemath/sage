@@ -403,7 +403,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef check_bounds(self, Py_ssize_t i, Py_ssize_t j):
         """
         This function gets called when you're about to access the i,j entry
-        of this matrix. If i, j are out of range, an :class:`IndexError` is
+        of this matrix. If i, j are out of range, an :exc:`IndexError` is
         raised.
         """
         if i < 0 or i >= self._nrows or j < 0 or j >= self._ncols:
@@ -413,7 +413,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         This function gets called when you're about to change this matrix.
 
-        If ``self`` is immutable, a :class:`ValueError` is raised, since you should
+        If ``self`` is immutable, a :exc:`ValueError` is raised, since you should
         never change a mutable matrix.
 
         If ``self`` is mutable, the cache of results about ``self`` is deleted.
@@ -426,10 +426,10 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef check_bounds_and_mutability(self, Py_ssize_t i, Py_ssize_t j):
         """
         This function gets called when you're about to set the i,j entry of
-        this matrix. If i or j is out of range, an :class:`IndexError`
+        this matrix. If i or j is out of range, an :exc:`IndexError`
         exception is raised.
 
-        If ``self`` is immutable, a :class:`ValueError` is raised, since you should
+        If ``self`` is immutable, a :exc:`ValueError` is raised, since you should
         never change a mutable matrix.
 
         If ``self`` is mutable, the cache of results about ``self`` is deleted.
@@ -4957,7 +4957,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: a.nonzero_positions_in_column(1)
             [0, 1]
 
-        You will get an ``IndexError`` if you select an invalid column::
+        You will get an :exc:`IndexError` if you select an invalid column::
 
             sage: a.nonzero_positions_in_column(2)
             Traceback (most recent call last):
@@ -5727,8 +5727,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         Return the inverse of this matrix, as a matrix over the fraction
         field.
 
-        Raises a ``ZeroDivisionError`` if the matrix has zero
-        determinant, and raises an ``ArithmeticError``, if the
+        Raises a :exc:`ZeroDivisionError` if the matrix has zero
+        determinant, and raises an :exc:`ArithmeticError`, if the
         inverse doesn't exist because the matrix is nonsquare. Also, note,
         e.g., that the inverse of a matrix over `\ZZ` is
         always a matrix defined over `\QQ` (even if the
@@ -5907,7 +5907,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Return the inverse of this matrix in the same matrix space.
 
         The matrix must be invertible on the base ring. Otherwise, an
-        ``ArithmeticError`` is raised.
+        :exc:`ArithmeticError` is raised.
 
         The computation goes through the matrix of cofactors and avoids
         division. In particular the base ring does not need to have a

@@ -1060,7 +1060,7 @@ cdef class ReductionMap(Map):
         field.
 
         If ``x`` doesn't map because it has negative valuation, then a
-        ``ZeroDivisionError`` exception is raised.
+        :exc:`ZeroDivisionError` exception is raised.
 
         EXAMPLES::
 

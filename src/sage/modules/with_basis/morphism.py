@@ -815,7 +815,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         Return the section (partial inverse) of ``self``.
 
         This returns a partial triangular morphism which is a section of
-        ``self``. The section morphism raises a :class:`ValueError` if
+        ``self``. The section morphism raises a :exc:`ValueError` if
         asked to apply on an element which is not in the image of ``self``.
 
         EXAMPLES::

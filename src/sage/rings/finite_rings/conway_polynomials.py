@@ -24,7 +24,7 @@ def conway_polynomial(p, n):
     Return the Conway polynomial of degree `n` over ``GF(p)``.
 
     If the requested polynomial is not known, this function raises a
-    ``RuntimeError`` exception.
+    :exc:`RuntimeError` exception.
 
     INPUT:
 

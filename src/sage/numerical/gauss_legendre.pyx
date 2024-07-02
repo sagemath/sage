@@ -301,7 +301,7 @@ def integrate_vector_N(f, prec, N=3):
         The nodes and weights are calculated in the real field with ``prec``
         bits of precision. If the vector space in which ``f`` takes values
         is over a field which is incompatible with this field (e.g. a finite
-        field) then a :class:`TypeError` occurs.
+        field) then a :exc:`TypeError` occurs.
     """
     # We use nodes_uncached, because caching takes up memory, and numerics in
     # Bruin-DisneyHogg-Gao suggest that caching provides little benefit in the

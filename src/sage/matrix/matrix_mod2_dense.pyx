@@ -477,7 +477,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def row(self, Py_ssize_t i, from_list=False):
         """
-        Return the ``i``'th row of this matrix as a vector.
+        Return the ``i``-th row of this matrix as a vector.
 
         This row is a dense vector if and only if the matrix is a dense
         matrix.
@@ -487,7 +487,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         - ``i`` -- integer
 
         - ``from_list`` -- boolean (default: ``False``); if ``True``,
-          returns the ``i``'th element of ``self.rows()`` (see
+          returns the ``i``-th element of ``self.rows()`` (see
           :func:`rows`), which may be faster, but requires building a
           list of all rows the first time it is called after an entry
           of the matrix is changed.
@@ -924,7 +924,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         Invert ``self`` using the 'Method of the Four Russians'
         inversion.
 
-        If ``self`` is not invertible a ``ZeroDivisionError`` is
+        If ``self`` is not invertible a :exc:`ZeroDivisionError` is
         raised.
 
         EXAMPLES::

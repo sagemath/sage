@@ -831,7 +831,7 @@ def _grep_first_pair_of_parentheses(s):
 
     Parentheses between single or double quotation marks do not
     count. If no matching pair of parentheses can be found, a
-    ``SyntaxError`` is raised.
+    :exc:`SyntaxError` is raised.
 
     EXAMPLES::
 

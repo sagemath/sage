@@ -800,7 +800,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: type(T)
             <class 'sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule_with_category'>
 
-        Check the :class:`ValueError`::
+        Check the :exc:`ValueError`::
 
             sage: T = M.twisted_invariant_module(G, "ichigo", action_on_basis=action)
             Traceback (most recent call last):

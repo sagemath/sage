@@ -477,7 +477,7 @@ def style(new_style=None):
 
     - a string with current style (same as ``new_style`` if it was given)
 
-    If the input is not recognized as a valid style, a ``ValueError`` exception
+    If the input is not recognized as a valid style, a :exc:`ValueError` exception
     is raised.
 
     Currently supported styles are:

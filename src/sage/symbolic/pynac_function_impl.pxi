@@ -66,7 +66,7 @@ cpdef unsigned find_registered_function(name, int nargs) except -1:
     r"""
     Look up a function registered with Pynac (GiNaC).
 
-    Raise a ``ValueError`` if the function is not registered.
+    Raise a :exc:`ValueError` if the function is not registered.
 
     OUTPUT: serial number of the function, for use in :func:`call_registered_function`
 

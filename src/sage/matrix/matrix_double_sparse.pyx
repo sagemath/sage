@@ -110,7 +110,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         where `L^\ast` is the conjugate-transpose. If the matrix is
         not positive-definite (for example, if it is not Hermitian)
-        then a ``ValueError`` results.
+        then a :exc:`ValueError` results.
 
         ALGORITHM:
 

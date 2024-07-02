@@ -842,10 +842,10 @@ cdef class P1List():
 
     def lift_to_sl2z(self, int i):
         r"""
-        Lift the `i`'th element of this P1list to an element of
+        Lift the `i`-th element of this P1list to an element of
         `SL(2,\ZZ)`.
 
-        If the `i`'th element is `(c,d)`, this function computes and
+        If the `i`-th element is `(c,d)`, this function computes and
         returns a list `[a,b, c',d']` that defines a 2x2 matrix
         with determinant 1 and integer entries, such that `c=c'` (mod
         `N`) and `d=d'` (mod `N`).
@@ -885,7 +885,7 @@ cdef class P1List():
     def apply_I(self, int i):
         r"""
         Return the index of the result of applying the matrix
-        `I=[-1,0;0,1]` to the `i`'th element of this P1List.
+        `I=[-1,0;0,1]` to the `i`-th element of this P1List.
 
         INPUT:
 
@@ -917,7 +917,7 @@ cdef class P1List():
     def apply_S(self, int i):
         r"""
         Return the index of the result of applying the matrix
-        `S=[0,-1;1,0]` to the `i`'th element of this P1List.
+        `S=[0,-1;1,0]` to the `i`-th element of this P1List.
 
         INPUT:
 
@@ -949,7 +949,7 @@ cdef class P1List():
     def apply_T(self, int i):
         r"""
         Return the index of the result of applying the matrix
-        `T=[0,1;-1,-1]` to the `i`'th element of this P1List.
+        `T=[0,1;-1,-1]` to the `i`-th element of this P1List.
 
         INPUT:
 
@@ -1344,7 +1344,7 @@ def lift_to_sl2z(c, d, N):
         sage: lift_to_sl2z(2,3,6000000)
         [1, 1, 2, 3]
 
-    You will get a :class:`ValueError` exception if the input is invalid.
+    You will get a :exc:`ValueError` exception if the input is invalid.
     Note that here gcd(15,6,24)=3::
 
         sage: lift_to_sl2z(15,6,24)

@@ -1873,7 +1873,7 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
         [0 0 0 0 0]
         [0 0 0 0 0]
 
-    We test further corner cases. A ``ValueError`` is raised if the number
+    We test further corner cases. A :exc:`ValueError` is raised if the number
     of bytes in the pickle does not comply with either the old or the new
     pickle format (we test several code paths here)::
 

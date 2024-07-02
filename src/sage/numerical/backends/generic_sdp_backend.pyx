@@ -3,7 +3,7 @@ Generic Backend for SDP solvers
 
 This class only lists the methods that should be defined by any
 interface with a SDP Solver. All these methods immediately raise
-``NotImplementedError`` exceptions when called, and are obviously
+:exc:`NotImplementedError` exceptions when called, and are obviously
 meant to be replaced by the solver-specific method. This file can also
 be used as a template to create a new interface : one would only need
 to replace the occurrences of ``"Nonexistent_SDP_solver"`` by the
@@ -640,7 +640,7 @@ def default_sdp_solver(solver=None):
     This function returns the current default solver (a string or a
     class) if ``solver = None`` (default). Otherwise, it sets the
     default solver to the one given. If this solver does not exist, or
-    is not available, a ``ValueError`` exception is raised.
+    is not available, a :exc:`ValueError` exception is raised.
 
     EXAMPLES::
 

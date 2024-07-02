@@ -423,7 +423,7 @@ class ModularAbelianVariety_abstract(Parent):
     def __radd__(self, other):
         """
         Return ``other`` + ``self`` when ``other`` is 0. Otherwise raise a
-        ``TypeError``.
+        :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -530,7 +530,7 @@ class ModularAbelianVariety_abstract(Parent):
         the newform abelian variety `A_f`.
 
         If this abelian variety is not
-        simple, this raises a :class:`ValueError`.
+        simple, this raises a :exc:`ValueError`.
 
         INPUT:
 
@@ -586,7 +586,7 @@ class ModularAbelianVariety_abstract(Parent):
         abelian variety `A_f`.
 
         If this abelian variety is not simple, this raises
-        a :class:`ValueError`.
+        a :exc:`ValueError`.
 
         OUTPUT: string
 
@@ -618,14 +618,14 @@ class ModularAbelianVariety_abstract(Parent):
         Return an elliptic curve isogenous to ``self``.
 
         If ``self`` is not dimension 1
-        with rational base ring, this raises a :class:`ValueError`.
+        with rational base ring, this raises a :exc:`ValueError`.
 
         The elliptic curve is found by looking it up in the
         CremonaDatabase.  The CremonaDatabase contains all curves up
         to some large conductor.  If a curve is not found in the
-        CremonaDatabase, a :class:`RuntimeError` will be raised. In
+        CremonaDatabase, a :exc:`RuntimeError` will be raised. In
         practice, only the most committed users will see this
-        :class:`RuntimeError`.
+        :exc:`RuntimeError`.
 
         OUTPUT: an elliptic curve isogenous to ``self``
 
@@ -694,7 +694,7 @@ class ModularAbelianVariety_abstract(Parent):
         attached to a newform.
 
         If ``self`` is not simple (so that no such
-        isogeny exists), this raises a :class:`ValueError`.
+        isogeny exists), this raises a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -740,7 +740,7 @@ class ModularAbelianVariety_abstract(Parent):
         Given ``self`` and ``other``, if both are simple, and correspond to the
         same newform with the same congruence subgroup, return an isogeny.
 
-        Otherwise, this raises a :class:`ValueError`.
+        Otherwise, this raises a :exc:`ValueError`.
 
         INPUT:
 
@@ -2591,7 +2591,7 @@ class ModularAbelianVariety_abstract(Parent):
         """
         Return the `n`-th Hecke operator on the modular abelian
         variety, if this makes sense [[elaborate]]. Otherwise raise a
-        ``ValueError``.
+        :exc:`ValueError`.
 
         EXAMPLES: We compute `T_2` on `J_0(37)`.
 
@@ -2629,7 +2629,7 @@ class ModularAbelianVariety_abstract(Parent):
     def hecke_polynomial(self, n, var='x'):
         r"""
         Return the characteristic polynomial of the `n`-th Hecke
-        operator `T_n` acting on ``self``. Raises an ``ArithmeticError``
+        operator `T_n` acting on ``self``. Raises an :exc:`ArithmeticError`
         if ``self`` is not Hecke equivariant.
 
         INPUT:
@@ -3151,7 +3151,7 @@ class ModularAbelianVariety_abstract(Parent):
         degeneracy maps. In particular, the label ends in a pair `(t,N)`, where
         `N` is the ambient level and `t` is an integer that divides the
         quotient of `N` by the newform level. This function returns the tuple
-        `(t,N)`, or raises a :class:`ValueError` if ``self`` is not simple.
+        `(t,N)`, or raises a :exc:`ValueError` if ``self`` is not simple.
 
         .. note::
 
@@ -3202,7 +3202,7 @@ class ModularAbelianVariety_abstract(Parent):
         simple abelian varieties that ``self`` is in.
 
         If ``self`` is not simple,
-        this raises a :class:`ValueError` exception.
+        this raises a :exc:`ValueError` exception.
 
         INPUT:
 
@@ -3216,7 +3216,7 @@ class ModularAbelianVariety_abstract(Parent):
             True
 
         Of course, `J_0(33)` is not simple, so this function
-        raises a :class:`ValueError`::
+        raises a :exc:`ValueError`::
 
             sage: J0(33).isogeny_number()
             Traceback (most recent call last):
@@ -4135,7 +4135,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         """
         Return space of modular symbols (with given sign) associated to
         this modular abelian variety, if it can be found by cutting down
-        using Hecke operators. Otherwise raise a :class:`RuntimeError`
+        using Hecke operators. Otherwise raise a :exc:`RuntimeError`
         exception.
 
         EXAMPLES::

@@ -729,10 +729,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         on that univariate polynomial, and 3) converts back to a matrix of
         polynomials.
 
-        Raises a ``ZeroDivisionError`` if the constant matrix of ``self`` is
+        Raises a :exc:`ZeroDivisionError` if the constant matrix of ``self`` is
         not invertible (i.e. has zero determinant); raises an
-        ``ArithmeticError`` if ``self`` is nonsquare; and raises a
-        ``ValueError`` if the precision ``d`` is not positive.
+        :exc:`ArithmeticError` if ``self`` is nonsquare; and raises a
+        :exc:`ValueError` if the precision ``d`` is not positive.
 
         INPUT:
 
@@ -818,7 +818,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         matrix `X` such that `X A = B \bmod x^d`. If `B` is a vector then `X`
         is a vector, and if `B` is a matrix then `X` is a matrix.
 
-        Raises ``ValueError`` if ``d`` is not strictly positive, or if there is
+        Raises :exc:`ValueError` if ``d`` is not strictly positive, or if there is
         a dimension mismatch between `A` and `B`, or if there is no solution to
         the given matrix equation at the specified precision.
 
@@ -966,7 +966,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         matrix `X` such that `A X = B \bmod x^d`. If `B` is a vector then `X`
         is a vector, and if `B` is a matrix then `X` is a matrix.
 
-        Raises ``ValueError`` if ``d`` is not strictly positive, or if there is
+        Raises :exc:`ValueError` if ``d`` is not strictly positive, or if there is
         a dimension mismatch between `A` and `B`, or if there is no solution to
         the given matrix equation at the specified precision.
 
@@ -2739,7 +2739,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         remainder, or it does satisfy this degree constraint, and then this `R`
         can be returned as a remainder along with the quotient `Q`.
 
-        A ``ValueError`` is raised if the dimensions of ``self`` and `B` are
+        A :exc:`ValueError` is raised if the dimensions of ``self`` and `B` are
         not conformal, or if there exists no quotient and remainder.
 
         EXAMPLES:
@@ -2974,7 +2974,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         implies the existence of a quotient and remainder as described above,
         and such a quotient and remainder is returned by the method. Or this
         matrix equation has no solution and this method fails: this raises
-        ``ValueError``; however this is not a proof that there is no valid
+        :exc:`ValueError`; however this is not a proof that there is no valid
         division with remainder (see the last example below).
 
         EXAMPLES::
@@ -3124,7 +3124,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         since `P` and `B` have the same row space (or column space, if
         ``row_wise`` is ``False``).
 
-        A ``ValueError`` is raised if the dimensions of the shifts and/or of
+        A :exc:`ValueError` is raised if the dimensions of the shifts and/or of
         the matrices are not conformal.
 
         INPUT:

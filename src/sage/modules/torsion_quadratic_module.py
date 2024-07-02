@@ -540,7 +540,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         r"""
         Return the genus defined by ``self`` and the ``signature_pair``.
 
-        If no such genus exists, raise a :class:`ValueError`.
+        If no such genus exists, raise a :exc:`ValueError`.
 
         REFERENCES:
 

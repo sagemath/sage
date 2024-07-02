@@ -376,7 +376,7 @@ class DisplayManager(SageObject):
 
         OUTPUT:
 
-        This method returns nothing. A ``RuntimeError`` is raised if
+        This method returns nothing. A :exc:`RuntimeError` is raised if
         ``backend_class`` is not the type of the current backend.
 
         EXAMPLES::

@@ -228,7 +228,7 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             'Number Field in a with defining polynomial x^3 + 2 with a = -1.259921049894873?' and
             'Number Field in a with defining polynomial x^3 + 2 with a = 0.6299605249474365? + 1.091123635971722?*I'
 
-        The following was fixed to raise a ``TypeError`` in :issue:`15331`::
+        The following was fixed to raise a :exc:`TypeError` in :issue:`15331`::
 
             sage: L.<i> = NumberField(x^2 + 1)
             sage: K = NumberField(L(i/2+3).minpoly(), names=('i0',), embedding=L(i/2+3))

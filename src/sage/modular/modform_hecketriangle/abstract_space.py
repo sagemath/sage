@@ -612,7 +612,7 @@ class FormsSpace_abstract(FormsRing_abstract):
     def homogeneous_part(self, k, ep):
         r"""
         Since ``self`` already is a homogeneous component return ``self``
-        unless the degree differs in which case a :class:`ValueError` is raised.
+        unless the degree differs in which case a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -831,7 +831,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
     def Faber_pol(self, m, order_1=ZZ(0), fix_d=False, d_num_prec=None):
         r"""
-        Return the ``m``'th Faber polynomial of ``self``.
+        Return the ``m``-th Faber polynomial of ``self``.
 
         Namely a polynomial ``P(q)`` such that ``P(J_inv)*F_simple(order_1)``
         has a Fourier expansion of the form ``q^m + O(q^(order_inf + 1))``.
@@ -981,7 +981,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         r"""
         If ``n=infinity`` a non-trivial order of ``-1`` can be specified through the
         parameter ``order_1`` (default: 0). Otherwise it is ignored.
-        Return the `m`'th Faber polynomial of ``self``
+        Return the `m`-th Faber polynomial of ``self``
         with a different normalization based on ``j_inv``
         instead of ``J_inv``.
 
@@ -2510,7 +2510,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
     def gen(self, k=0):
         r"""
-        Return the ``k``'th basis element of ``self``
+        Return the ``k``-th basis element of ``self``
         if possible (default: ``k=0``).
 
         EXAMPLES::

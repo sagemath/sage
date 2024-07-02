@@ -360,7 +360,7 @@ class PSModularSymbolElement(ModuleElement):
         OUTPUT:
 
         - a prime or ``None``.  If ``allow_none`` is ``False`` then a
-          :class:`ValueError` will be raised rather than returning ``None``
+          :exc:`ValueError` will be raised rather than returning ``None``
           if no prime can be determined.
 
         EXAMPLES::

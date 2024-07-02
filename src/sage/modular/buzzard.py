@@ -73,7 +73,7 @@ def gp():
 
 def buzzard_tpslopes(p, N, kmax):
     r"""
-    Return a vector of length kmax, whose `k`'th entry
+    Return a vector of length kmax, whose `k`-th entry
     (`0 \leq k \leq k_{max}`) is the conjectural sequence
     of valuations of eigenvalues of `T_p` on forms of level
     `N`, weight `k`, and trivial character.

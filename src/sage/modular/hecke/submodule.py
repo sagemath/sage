@@ -458,7 +458,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         In general this will not be possible, e.g., if this space is
         not Hecke equivariant, possibly if it is not cuspidal, or if
         the characteristic is not 0. In all these cases we raise a
-        :class:`RuntimeError` exception.
+        :exc:`RuntimeError` exception.
 
         If ``use_star`` is ``True`` (which is the default), we also use the +/-
         eigenspaces for the star operator to find the dual free module of ``self``.

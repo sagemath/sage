@@ -221,7 +221,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
         In the last case, the parameter ``check`` controls whether or
         not to check that this element really does lie in the
         appropriate algebra. At present, setting ``check=True`` raises
-        a :class:`NotImplementedError` unless x is a scalar (or a diagonal
+        a :exc:`NotImplementedError` unless x is a scalar (or a diagonal
         matrix).
 
         EXAMPLES::

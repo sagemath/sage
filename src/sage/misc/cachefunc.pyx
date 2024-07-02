@@ -1011,7 +1011,7 @@ cdef class CachedFunction():
     def cached(self, *args, **kwds):
         """
         Return the result from the cache if available. If the value is
-        not cached, raise ``KeyError``.
+        not cached, raise :exc:`KeyError`.
 
         EXAMPLES::
 
@@ -1962,7 +1962,7 @@ cdef class CachedMethodCaller(CachedFunction):
     def cached(self, *args, **kwds):
         """
         Return the result from the cache if available. If the value is
-        not cached, raise ``KeyError``.
+        not cached, raise :exc:`KeyError`.
 
         EXAMPLES::
 

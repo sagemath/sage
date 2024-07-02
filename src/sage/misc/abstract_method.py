@@ -49,7 +49,7 @@ def abstract_method(f=None, optional=False):
         sage: A.my_method
         <abstract method my_method at ...>
 
-    The current policy is that a :class:`NotImplementedError` is raised
+    The current policy is that a :exc:`NotImplementedError` is raised
     when accessing the method through an instance, even before the
     method is called::
 

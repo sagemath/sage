@@ -627,7 +627,7 @@ cdef class sized_iter:
     - ``length`` -- (optional) the required length; if this is not
       given, then ``len(iterable)`` will be used
 
-    If the iterable does not have the given length, a ``ValueError`` is
+    If the iterable does not have the given length, a :exc:`ValueError` is
     raised during iteration.
 
     EXAMPLES::

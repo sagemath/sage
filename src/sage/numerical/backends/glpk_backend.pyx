@@ -2829,7 +2829,7 @@ cdef class GLPKBackend(GenericBackend):
         .. NOTE::
 
             The basis factorization must exist and the variable with
-            index ``k`` must be basic. Otherwise, a ``ValueError`` is
+            index ``k`` must be basic. Otherwise, a :exc:`ValueError` is
             be raised.
 
         INPUT:
@@ -2927,7 +2927,7 @@ cdef class GLPKBackend(GenericBackend):
         .. NOTE::
 
             The basis factorization must exist and the variable with
-            index ``k`` must not be basic. Otherwise, a ``ValueError`` is
+            index ``k`` must not be basic. Otherwise, a :exc:`ValueError` is
             be raised.
 
         INPUT:

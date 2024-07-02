@@ -144,7 +144,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         - ``method`` -- if ``method=None`` (default) the current default
           representation method is returned. Otherwise the default method is
           set to ``method``. If ``method`` is not available a
-          :class:`ValueError` is raised. Possible methods are:
+          :exc:`ValueError` is raised. Possible methods are:
 
           - ``default``: use the usual representation method for matrix group
             elements
@@ -758,7 +758,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         OUTPUT:
 
         The corresponding embedding if it was found.
-        Otherwise a :class:`ValueError` is raised.
+        Otherwise a :exc:`ValueError` is raised.
 
         EXAMPLES::
 

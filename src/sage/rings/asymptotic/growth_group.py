@@ -637,7 +637,7 @@ class PartialConversionValueError(ValueError):
     """
     def __init__(self, element, *args, **kwds):
         r"""
-        See :class:`PartialConversionValueError` for more information.
+        See :exc:`PartialConversionValueError` for more information.
 
         TESTS::
 
@@ -663,7 +663,7 @@ class PartialConversionElement(SageObject):
     - ``raw_element`` -- an object
 
     A :class:`PartialConversionElement` is an element ``growth_group(raw_element)``
-    which usually appears in conjunction with :class:`PartialConversionValueError`.
+    which usually appears in conjunction with :exc:`PartialConversionValueError`.
     In this case, it was to possible to create that element, although
     the conversion went partially well in the sense that a ``raw_element``
     (e.g. an exponent for :class:`MonomialGrowthElement` or a base for
@@ -2690,7 +2690,7 @@ class DecreasingGrowthElementError(ValueError):
     """
     def __init__(self, element, *args, **kwds):
         r"""
-        See :class:`DecreasingGrowthElementError` for more information.
+        See :exc:`DecreasingGrowthElementError` for more information.
 
         TESTS::
 

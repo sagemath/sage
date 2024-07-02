@@ -1188,7 +1188,7 @@ minpoly = minimal_polynomial
 def multiplicative_order(x):
     r"""
     Return the multiplicative order of ``x``, if ``x`` is a unit, or
-    raise :class:`ArithmeticError` otherwise.
+    raise :exc:`ArithmeticError` otherwise.
 
     EXAMPLES::
 

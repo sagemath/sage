@@ -884,7 +884,7 @@ def containing_block(code, idx, delimiters=['()', '[]', '{}'], require_delim=Tru
       closing delimiter.
 
     - ``require_delim`` -- boolean (default: ``True``); whether to raise
-      a ``SyntaxError`` if delimiters are present. If the delimiters are
+      a :exc:`SyntaxError` if delimiters are present. If the delimiters are
       unbalanced, an error will be raised in any case.
 
     OUTPUT:
@@ -892,7 +892,7 @@ def containing_block(code, idx, delimiters=['()', '[]', '{}'], require_delim=Tru
     - a 2-tuple ``(a,b)`` of integers, such that ``code[a:b]`` is
       delimited by balanced delimiters, ``a<=idx<b``, and ``a``
       is maximal and ``b`` is minimal with that property. If that
-      does not exist, a ``SyntaxError`` is raised.
+      does not exist, a :exc:`SyntaxError` is raised.
 
     - If ``require_delim`` is false and ``a,b`` as above can not be
       found, then ``0, len(code)`` is returned.

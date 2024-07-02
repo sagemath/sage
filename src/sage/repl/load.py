@@ -141,7 +141,7 @@ def load(filename, globals, attach=False):
         sage: z
         -7
 
-    If the file is not a Cython, Python, or Sage file, a :class:`ValueError`
+    If the file is not a Cython, Python, or Sage file, a :exc:`ValueError`
     is raised::
 
         sage: sage.repl.load.load(tmp_filename(ext='.foo'), globals())

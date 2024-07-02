@@ -541,7 +541,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         Return the Hecke module corresponding to ``self`` at the given level, which
         should be either a divisor or a multiple of the level of ``self``.
 
-        This raises :class:`NotImplementedError`, and should be overridden in
+        This raises :exc:`NotImplementedError`, and should be overridden in
         derived classes.
 
         EXAMPLES::

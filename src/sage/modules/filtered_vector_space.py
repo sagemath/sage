@@ -774,7 +774,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         RAISES:
 
-        :class:`NotImplementedError`: The field does not have an
+        :exc:`NotImplementedError`: The field does not have an
         abbreviated name defined.
 
         EXAMPLES::

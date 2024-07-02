@@ -8083,7 +8083,7 @@ class NumberField_absolute(NumberField_generic):
         in a common field, or there is an embedding of ``x.parent()``
         into ``self`` or the other way around.  If no compatible
         embeddings are found and `x` is not in ``QQ``, then raise
-        ``TypeError``.  This guarantees that these conversions respect
+        :exc:`TypeError`.  This guarantees that these conversions respect
         the field operations and conversions between several fields
         commute.
 

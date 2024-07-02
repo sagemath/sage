@@ -221,7 +221,7 @@ class TriangleFactory:
 
 class TrianglePlot:
     """
-    Recursively plots a function of two variables by building squares of 4 triangles, checking at
+    Recursively plot a function of two variables by building squares of 4 triangles, checking at
     every stage whether or not each square should be split into four more squares.  This way,
     more planar areas get fewer triangles, and areas with higher curvature get more triangles.
     """

@@ -459,7 +459,7 @@ cdef class WeakValueDictionary(dict):
 
         TESTS:
 
-        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a :exc:`TypeError` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -533,7 +533,7 @@ cdef class WeakValueDictionary(dict):
             sage: list(D.items())
             [(2, Integer Ring)]
 
-        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a :exc:`TypeError` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -579,7 +579,7 @@ cdef class WeakValueDictionary(dict):
 
         TESTS:
 
-        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a :exc:`TypeError` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -617,7 +617,7 @@ cdef class WeakValueDictionary(dict):
             (1, Integer Ring)
 
         Now, the dictionary is empty, and hence the next attempt to pop an
-        item will fail with a ``KeyError``::
+        item will fail with a :exc:`KeyError`::
 
             sage: D.popitem()
             Traceback (most recent call last):
@@ -655,7 +655,7 @@ cdef class WeakValueDictionary(dict):
 
         TESTS:
 
-        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a :exc:`TypeError` is
         raised for unhashable objects::
 
             sage: # needs sage.libs.pari
@@ -695,7 +695,7 @@ cdef class WeakValueDictionary(dict):
             sage: D[int(10)]
             Integer Ring
 
-        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a :exc:`TypeError` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -738,7 +738,7 @@ cdef class WeakValueDictionary(dict):
             sage: 3 in D
             False
 
-        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a :exc:`TypeError` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()

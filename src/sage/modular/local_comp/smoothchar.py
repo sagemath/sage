@@ -1312,7 +1312,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
           ring coercible to it), specifying values on the quotients returned by
           :meth:`quotient_gens`
 
-        A :class:`ValueError` will be raised if `x^t \ne \chi(\alpha^t)`, where `t`
+        A :exc:`ValueError` will be raised if `x^t \ne \chi(\alpha^t)`, where `t`
         is the smallest integer such that `\alpha^t` is congruent modulo
         `p^{\rm level}` to an element of `\QQ_p`.
 

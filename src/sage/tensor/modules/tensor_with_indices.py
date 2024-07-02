@@ -224,7 +224,7 @@ class TensorWithIndices(SageObject):
         a^μξ
 
     Conventions are checked and non acceptable indices raise
-    :class:`ValueError`, for instance::
+    :exc:`ValueError`, for instance::
 
         sage: a['([..])']  # nested symmetries
         Traceback (most recent call last):
@@ -256,7 +256,7 @@ class TensorWithIndices(SageObject):
         indices.
 
         Parse ``indices`` checking usual conventions on repeating indices,
-        wildcard, balanced parentheses/brackets and raises a :class:`ValueError`
+        wildcard, balanced parentheses/brackets and raises a :exc:`ValueError`
         if not. Return a couple contravariant/covariant indices.
 
         INPUT:

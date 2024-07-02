@@ -964,7 +964,7 @@ def unit_derivations_expr(v):
         sage: sage.symbolic.units.unit_derivations_expr('electric_potential')
         length^2*mass/(current*time^3)
 
-    If the unit name is unknown, a :class:`KeyError` is raised::
+    If the unit name is unknown, a :exc:`KeyError` is raised::
 
         sage: sage.symbolic.units.unit_derivations_expr('invalid')
         Traceback (most recent call last):

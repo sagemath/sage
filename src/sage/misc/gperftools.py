@@ -195,7 +195,7 @@ class Profiler(SageObject):
         OUTPUT:
 
         String. The name of the gperftools ``pprof`` utility. A
-        ``OSError`` is raised if it cannot be found.
+        :exc:`OSError` is raised if it cannot be found.
 
         EXAMPLES::
 

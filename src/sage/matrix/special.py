@@ -264,7 +264,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         An upper bound on the absolute value of the entries may be set
         when the ``algorithm`` is ``echelonizable`` or ``unimodular``.
         In these cases it is possible for this constructor to fail with
-        a :class:`ValueError`.  If you *must* have this routine return
+        a :exc:`ValueError`.  If you *must* have this routine return
         successfully, do not set ``upper_bound``.  This behavior can
         be partially controlled by a ``max_tries`` keyword.
 
@@ -1560,7 +1560,7 @@ def _determine_block_matrix_grid(sub_matrices):
     Non-zero scalars are considered to be square matrices of any size,
     and zeroes are considered to be zero matrices of any size.
 
-    A :class:`ValueError` is raised if there is insufficient or
+    A :exc:`ValueError` is raised if there is insufficient or
     conflicting information.
 
     TESTS::
@@ -1639,7 +1639,7 @@ def _determine_block_matrix_rows(sub_matrices):
     Non-zero scalars are considered to be square matrices of any size,
     and zeroes are considered to be zero matrices of any size.
 
-    A ``ValueError`` is raised if there is insufficient or
+    A :exc:`ValueError` is raised if there is insufficient or
     conflicting information.
 
     TESTS::
@@ -2599,7 +2599,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
     .. warning::
 
         When ``upper_bound`` is set, it is possible for this constructor to
-        fail with a ``ValueError``.  This may happen when the ``upper_bound``,
+        fail with a :exc:`ValueError`.  This may happen when the ``upper_bound``,
         ``rank`` and/or matrix dimensions are all so small that it becomes
         infeasible or unlikely to create the requested matrix.  If you *must*
         have this routine return successfully, do not set ``upper_bound``.
@@ -2959,7 +2959,7 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
     .. warning::
 
         When ``upper_bound`` is set, it is possible for this constructor to
-        fail with a ``ValueError``.  This may happen when the ``upper_bound``,
+        fail with a :exc:`ValueError`.  This may happen when the ``upper_bound``,
         ``rank`` and/or matrix dimensions are all so small that it becomes
         infeasible or unlikely to create the requested matrix.  If you *must*
         have this routine return successfully, do not set ``upper_bound``.

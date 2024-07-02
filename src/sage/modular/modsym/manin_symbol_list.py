@@ -332,7 +332,7 @@ class ManinSymbolList(Parent):
 
         OUTPUT:
 
-        :class:`ManinSymbol` -- the `i`'th Manin symbol in the list.
+        :class:`ManinSymbol` -- the `i`-th Manin symbol in the list.
 
         EXAMPLES::
 
@@ -464,7 +464,7 @@ class ManinSymbolList_group(ManinSymbolList):
         OUTPUT:
 
         ``(k, s)`` where k is the index of the symbol obtained by acting on the
-        `j`'th symbol with `S`, and `s` is the parity of the `j`'th symbol
+        `j`-th symbol with `S`, and `s` is the parity of the `j`-th symbol
         (a Python ``int``, either 1 or -1).
 
         EXAMPLES::
@@ -519,7 +519,7 @@ class ManinSymbolList_group(ManinSymbolList):
         OUTPUT:
 
         ``(k, s)`` where k is the index of the symbol obtained by acting on the
-        `j`'th symbol with `I`, and `s` is the parity of the `j`'th symbol
+        `j`-th symbol with `I`, and `s` is the parity of the `j`-th symbol
         (a Python ``int``, either 1 or -1)
 
         EXAMPLES::
@@ -1032,8 +1032,8 @@ class ManinSymbolList_character(ManinSymbolList):
         OUTPUT:
 
         ``(k, s)`` where `k` is the index of the symbol obtained by acting
-        on the `j`'th symbol with `S`, and `s` is the parity of the
-        `j`'th symbol.
+        on the `j`-th symbol with `S`, and `s` is the parity of the
+        `j`-th symbol.
 
         EXAMPLES::
 
@@ -1083,8 +1083,8 @@ class ManinSymbolList_character(ManinSymbolList):
         OUTPUT:
 
         ``(k, s)`` where `k` is the index of the symbol obtained by acting
-        on the `j`'th symbol with `I`, and `s` is the parity of the
-        `j`'th symbol.
+        on the `j`-th symbol with `I`, and `s` is the parity of the
+        `j`-th symbol.
 
         EXAMPLES::
 

@@ -335,7 +335,7 @@ class xmrange_iter:
         """
         Return the cardinality of this iterator as an int.
 
-        This raises a :class:`TypeError` if the cardinality does not fit
+        This raises a :exc:`TypeError` if the cardinality does not fit
         into a Python int.
 
         EXAMPLES::

@@ -2377,7 +2377,7 @@ def init_pynac_I():
         sage: symbolic_I^2
         -1
 
-    Note that conversions to real fields will give :class:`TypeError`::
+    Note that conversions to real fields will give :exc:`TypeError`::
 
         sage: float(symbolic_I)
         Traceback (most recent call last):
