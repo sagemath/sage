@@ -307,8 +307,7 @@ def _is_valid_lex_BFS_order(G, L):
     return True
 
 
-def lex_BFS(
-        G, reverse=False, tree=False, initial_vertex=None, algorithm="fast"):
+def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast"):
     r"""
     Perform a lexicographic breadth first search (LexBFS) on the graph.
 
