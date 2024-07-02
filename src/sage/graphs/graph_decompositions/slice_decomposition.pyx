@@ -295,7 +295,7 @@ def slice_decomposition(G, initial_vertex=None):
 
         sage: G = graphs.PetersenGraph()
         sage: SD = G.slice_decomposition(); SD
-        [0[1[4[5]]][2[6]][3][9][7][8]]
+        [0[1[4[5]]] [2[6]] [3] [9] [7] [8]]
 
     The graph can have loops or multiple edges but they are ignored::
 
@@ -890,6 +890,18 @@ cdef class SliceDecomposition(SageObject):
         return self._underlying_graph
 
     def _repr_(self):
+        r"""
+        Return a string representation of a ``SliceDecomposition`` object.
+
+        TESTS:
+
+            sage: G = graphs.PetersenGraph(); SD = G.slice_decomposition()
+            sage: repr(SD)
+            '[0[1[4[5]]] [2[6]] [3] [9] [7] [8]]'
+            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz',inplace=False)
+            sage: SD = G.slice_decomposition(initial_vertex='x'); repr(SD)
+            '[x[a[b[c[d]] [e[f]]] [g]] [u[y[z]]] [v[w]]]'
+        """
         def inner_repr(idx):
             l = self.xslice_len[idx]
             S = []
@@ -900,7 +912,7 @@ cdef class SliceDecomposition(SageObject):
                     S.append(inner_repr(j))
                     j += lj
                 assert j == idx + l, "slice decomposition is ill-formed"
-            return f'{self.sigma[idx]}' + ''.join(f'[{s}]' for s in S)
+            return f'{self.sigma[idx]}' + ' '.join(f'[{s}]' for s in S)
         return f'[{inner_repr(0)}]'
 
     def _latex_(self):
