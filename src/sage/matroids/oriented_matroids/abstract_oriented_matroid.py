@@ -120,7 +120,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         if hasattr(self, "_circuits"):
             return self._circuits
-        raise NotImplementedError("Circuits not implemented")
+        raise NotImplementedError("circuits not implemented")
 
     def cocircuits(self):
         """
@@ -128,7 +128,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         if hasattr(self, "_cocircuits"):
             return self._cocircuits
-        raise NotImplementedError("Cocircuits not implemented")
+        raise NotImplementedError("cocircuits not implemented")
 
     def vectors(self):
         """
@@ -136,7 +136,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         if hasattr(self, "_vectors"):
             return self._vectors
-        raise NotImplementedError("Vectors not implemented")
+        raise NotImplementedError("vectors not implemented")
         pass
 
     def covectors(self):
@@ -145,7 +145,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         if hasattr(self, "_covectors"):
             return self._covectors
-        raise NotImplementedError("Covectors not implemented")
+        raise NotImplementedError("covectors not implemented")
 
     def convert_to(self, new_type=None):
         '''
@@ -160,21 +160,21 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
             sage: M.convert_to()
             Traceback (most recent call last):
             ...
-            TypeError: Must be given a type to convert to
+            TypeError: must be given a type to convert to
         '''
         from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
         if new_type is None:
-            raise TypeError("Must be given a type to convert to")
+            raise TypeError("must be given a type to convert to")
         elif new_type in AbstractOrientedMatroid.keys:
             if hasattr(self, new_type + 's'):
                 els = getattr(self, new_type + 's')()
             else:
-                raise NotImplementedError("No %ss() method found in oriented matroid" % (new_type,))
+                raise NotImplementedError("no %ss() method found in oriented matroid" % (new_type,))
             return OrientedMatroid(els,
                                    key=new_type,
                                    groundset=self.groundset())
         else:
-            raise NotImplementedError("Type %s not implemented" % (new_type,))
+            raise NotImplementedError("type %s not implemented" % (new_type,))
 
     def dual(self):
         """
@@ -473,7 +473,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         gs = set(self.groundset()).difference(set(self.loops()))
         if e not in gs or f not in gs:
             raise ValueError(
-                "Elements must be in groundset and must not be loops")
+                "elements must be in groundset and must not be loops")
         for i in self.elements():
             if i(e) == 0 and i(f) != 0:
                 return False
