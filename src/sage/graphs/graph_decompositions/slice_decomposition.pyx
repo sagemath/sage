@@ -142,6 +142,15 @@ cdef void extended_lex_BFS(
     To see how it can be used, see the code of the lex_BFS method (in
     traversals.pyx) or of the class SliceDecomposition in this module.
 
+    TESTS:
+
+    Indirect doctests::
+
+        sage: G = graphs.HouseGraph()
+        sage: G.slice_decomposition()
+        [0[1[2]] [3] [4]]
+        sage: G.lex_BFS(algorithm="fast")
+        [0, 1, 2, 3, 4]
     """
     cdef int n = <int> cg.num_verts
     # Variables for the partition refinement algorithm
@@ -814,12 +823,28 @@ cdef class SliceDecomposition(SageObject):
     def _slice(self, size_t idx):
         r"""
         This method is for internal use only
+
+        TESTS:
+
+        Indirect doctests::
+
+            sage: SD = graphs.HouseGraph().slice_decomposition()
+            sage: SD.slice(1)
+            [1, 2]
         """
         return list(self.sigma[idx:idx+self.xslice_len[idx]])
 
     def _xslice_sequence(self, size_t idx):
         r"""
         This method is for internal use only
+
+        TESTS:
+
+        Indirect doctests::
+
+            sage: SD = graphs.HouseGraph().slice_decomposition()
+            sage: SD.xslice_sequence(0)
+            [[0], [1, 2], [3], [4]]
         """
         cdef size_t l = self.xslice_len[idx]
         cdef size_t j = idx + 1
@@ -836,12 +861,28 @@ cdef class SliceDecomposition(SageObject):
     def _xslice_lex_label(self, size_t idx):
         r"""
         This method is for internal use only
+
+        TESTS:
+
+        Indirect doctests::
+
+            sage: SD = graphs.HouseGraph().slice_decomposition()
+            sage: SD.lexicographic_label(3)
+            [1, 2]
         """
         return list(self.lex_label[idx])
 
     def _xslice_active_edges(self, size_t idx):
         r"""
         This method is for internal use only
+
+        TESTS:
+
+        Indirect doctests::
+
+            sage: SD = graphs.HouseGraph().slice_decomposition()
+            sage: SD.active_edges(0)
+            [(0, 1), (0, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
         """
         cdef size_t l = self.xslice_len[idx]
         cdef size_t llv_prefix = len(self.lex_label[idx])
