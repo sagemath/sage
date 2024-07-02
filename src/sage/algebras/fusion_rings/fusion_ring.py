@@ -53,7 +53,7 @@ class FusionRing(WeylCharacterRing):
     The cyclotomic order is an integer `N` such that all computations
     will return elements of the cyclotomic field of `N`-th roots of unity.
     Normally you will never need to change this but consider changing it
-    if :meth:`root_of_unity` raises a :class:`ValueError`.
+    if :meth:`root_of_unity` raises a :exc:`ValueError`.
 
     This algebra has a basis (sometimes called *primary fields* but here
     called *simple objects*) indexed by the weights of level `\leq k`.

@@ -203,7 +203,7 @@ cdef class ParentWithGens(ParentWithBase):
         sends ``self.gens()`` to the entries of ``im_gens``
         and induces the map ``base_map`` on the base ring.
 
-        This raises a :class:`TypeError` if there is no such homomorphism.
+        This raises a :exc:`TypeError` if there is no such homomorphism.
 
         INPUT:
 
@@ -272,7 +272,7 @@ cdef class ParentWithGens(ParentWithBase):
               To:   Finite Field of size 5
 
         There might not be a natural morphism, in which case a
-        :class:`TypeError` exception is raised.
+        :exc:`TypeError` exception is raised.
 
         ::
 

@@ -102,7 +102,7 @@ class InfiniteEnumeratedSets(CategoryWithAxiom):
 
             * :meth:`.cardinality` is supposed to return ``infinity``
 
-            * :meth:`.list` is supposed to raise a :class:`NotImplementedError`.
+            * :meth:`.list` is supposed to raise a :exc:`NotImplementedError`.
 
             EXAMPLES::
 

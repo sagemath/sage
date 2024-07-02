@@ -380,7 +380,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
         - ``el`` -- an element of ``self``
 
-        If ``el`` is not an element of ``self``, a :class:`ValueError`
+        If ``el`` is not an element of ``self``, a :exc:`ValueError`
         is raised.
 
         TESTS::

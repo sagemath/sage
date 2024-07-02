@@ -1466,7 +1466,7 @@ cdef class TimeSeries:
                  {\sum_{t=0}^{n-1}   (x_t - \mu)^2}.
 
         Note that the variance must be nonzero or you will get a
-        :class:`ZeroDivisionError`.
+        :exc:`ZeroDivisionError`.
 
         INPUT:
 
@@ -1669,7 +1669,7 @@ cdef class TimeSeries:
         r"""
         Return the smallest value in this time series.
 
-        If this series has length 0, we raise a :class:`ValueError`.
+        If this series has length 0, we raise a :exc:`ValueError`.
 
         INPUT:
 
@@ -1707,7 +1707,7 @@ cdef class TimeSeries:
     def max(self, bint index=False):
         r"""
         Return the largest value in this time series. If this series
-        has length 0 we raise a :class:`ValueError`.
+        has length 0 we raise a :exc:`ValueError`.
 
         INPUT:
 

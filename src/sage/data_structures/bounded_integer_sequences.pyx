@@ -444,7 +444,7 @@ cdef class BoundedIntegerSequence:
 
     INPUT:
 
-    - ``bound`` -- nonnegative integer. When zero, a :class:`ValueError`
+    - ``bound`` -- nonnegative integer. When zero, a :exc:`ValueError`
       will be raised. Otherwise, the given bound is replaced by the
       power of two that is at least the given bound.
     - ``data`` -- list of integers

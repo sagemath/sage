@@ -457,7 +457,7 @@ cdef inline bint bitset_remove(fused_bitset_t bits, mp_bitcnt_t n) except -1:
     """
     Remove ``n`` from ``bits``.
 
-    This raises a :class:`KeyError` if ``n`` is not contained in ``bits``.
+    This raises a :exc:`KeyError` if ``n`` is not contained in ``bits``.
     """
     if not bitset_in(bits, n):
         raise KeyError(n)
@@ -562,7 +562,7 @@ cdef inline long bitset_pop(fused_bitset_t a) except -1:
     """
     Remove and return an arbitrary element from the set.
 
-    This raises a :class:`KeyError` if the set is empty.
+    This raises a :exc:`KeyError` if the set is empty.
     """
     cdef long i = bitset_first(a)
     if i == -1:

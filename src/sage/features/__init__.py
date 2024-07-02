@@ -229,7 +229,7 @@ class Feature(TrivialUniqueRepresentation):
 
     def require(self):
         r"""
-        Raise a :class:`FeatureNotPresentError` if the feature is not present.
+        Raise a :exc:`FeatureNotPresentError` if the feature is not present.
 
         EXAMPLES::
 
@@ -601,7 +601,7 @@ class FileFeature(Feature):
         True
 
     To work with the file described by the feature, use the method :meth:`absolute_filename`.
-    A :class:`FeatureNotPresentError` is raised if the file cannot be found::
+    A :exc:`FeatureNotPresentError` is raised if the file cannot be found::
 
         sage: Executable(name='does-not-exist', executable='does-not-exist-xxxxyxyyxyy').absolute_filename()
         Traceback (most recent call last):
@@ -733,7 +733,7 @@ class Executable(FileFeature):
             sage: Executable(name='sh', executable='sh').absolute_filename()
             '/...bin/sh'
 
-        A :class:`FeatureNotPresentError` is raised if the file cannot be found::
+        A :exc:`FeatureNotPresentError` is raised if the file cannot be found::
 
             sage: Executable(name='does-not-exist', executable='does-not-exist-xxxxyxyyxyy').absolute_filename()
             Traceback (most recent call last):
@@ -816,7 +816,7 @@ class StaticFile(FileFeature):
             sage: feature.absolute_filename() == file_path
             True
 
-        A :class:`FeatureNotPresentError` is raised if the file cannot be found::
+        A :exc:`FeatureNotPresentError` is raised if the file cannot be found::
 
             sage: from sage.features import StaticFile
             sage: StaticFile(name='no_such_file', filename='KaT1aihu',\

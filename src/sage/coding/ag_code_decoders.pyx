@@ -1464,7 +1464,7 @@ cdef class Decoder_K():
         - ``detect_Q_polynomial`` -- boolean; if ``True``, a Q-polynomial is
           detected for fast decoding
 
-        If decoding fails for some reason, ``DecodingError`` is raised. The
+        If decoding fails for some reason, :exc:`DecodingError` is raised. The
         message contained in the exception indicates the type of the decoding
         failure.
 

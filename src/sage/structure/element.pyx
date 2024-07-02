@@ -1247,7 +1247,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_add_`` calls the
         Python method ``self._add_`` if it exists. This method may be
         defined in the ``ElementMethods`` of the category of the parent.
-        If the method is not found, a ``TypeError`` is raised
+        If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -1359,7 +1359,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_sub_`` calls the
         Python method ``self._sub_`` if it exists. This method may be
         defined in the ``ElementMethods`` of the category of the parent.
-        If the method is not found, a ``TypeError`` is raised
+        If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -1413,7 +1413,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_neg_`` calls the
         Python method ``self._neg_`` if it exists. This method may be
         defined in the ``ElementMethods`` of the category of the parent.
-        If the method is not found, a ``TypeError`` is raised
+        If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -1527,7 +1527,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_mul_`` calls the
         Python method ``self._mul_`` if it exists. This method may be
         defined in the ``ElementMethods`` of the category of the parent.
-        If the method is not found, a ``TypeError`` is raised
+        If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -1640,7 +1640,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_matmul_`` calls the
         Python method ``self._matmul_`` if it exists. This method may
         be defined in the ``ElementMethods`` of the category of the
-        parent. If the method is not found, a ``TypeError`` is raised
+        parent. If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -1743,7 +1743,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_div_`` calls the
         Python method ``self._div_`` if it exists. This method may be
         defined in the ``ElementMethods`` of the category of the parent.
-        If the method is not found, a ``TypeError`` is raised
+        If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -1843,7 +1843,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_floordiv_`` calls the
         Python method ``self._floordiv_`` if it exists. This method may be
         defined in the ``ElementMethods`` of the category of the parent.
-        If the method is not found, a ``TypeError`` is raised
+        If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -1943,7 +1943,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_mod_`` calls the
         Python method ``self._mod_`` if it exists. This method may be
         defined in the ``ElementMethods`` of the category of the parent.
-        If the method is not found, a ``TypeError`` is raised
+        If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -2070,7 +2070,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_pow_`` calls the
         Python method ``self._pow_`` if it exists. This method may be
         defined in the ``ElementMethods`` of the category of the parent.
-        If the method is not found, a ``TypeError`` is raised
+        If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -2100,7 +2100,7 @@ cdef class Element(SageObject):
         This default Cython implementation of ``_pow_int`` calls the
         Python method ``self._pow_int`` if it exists. This method may be
         defined in the ``ElementMethods`` of the category of the parent.
-        If the method is not found, a ``TypeError`` is raised
+        If the method is not found, a :exc:`TypeError` is raised
         indicating that the operation is not supported.
 
         See :ref:`element_arithmetic`.
@@ -2715,7 +2715,7 @@ cdef class RingElement(ModuleElement):
             sage: 2r^(1/2)                                                              # needs sage.symbolic
             sqrt(2)
 
-        Exponent overflow should throw an :class:`OverflowError` (:issue:`2956`)::
+        Exponent overflow should throw an :exc:`OverflowError` (:issue:`2956`)::
 
             sage: K.<x,y> = AA[]                                                        # needs sage.rings.number_field
             sage: x^(2^64 + 12345)                                                      # needs sage.rings.number_field
@@ -2842,7 +2842,7 @@ cdef class RingElement(ModuleElement):
     def multiplicative_order(self):
         r"""
         Return the multiplicative order of ``self``, if ``self`` is a unit,
-        or raise ``ArithmeticError`` otherwise.
+        or raise :exc:`ArithmeticError` otherwise.
         """
         if not self.is_unit():
             raise ArithmeticError("self (=%s) must be a unit to have a multiplicative order.")

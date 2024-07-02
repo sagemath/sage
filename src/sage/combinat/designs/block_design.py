@@ -693,9 +693,9 @@ def projective_plane(n, check=True, existence=False):
     `n^2+n+1` points. For more information on finite projective planes, see the
     :wikipedia:`Projective_plane#Finite_projective_planes`.
 
-    If no construction is possible, then the function raises a :class:`EmptySetError`,
+    If no construction is possible, then the function raises a :exc:`EmptySetError`,
     whereas if no construction is available, the function raises a
-    :class:`NotImplementedError`.
+    :exc:`NotImplementedError`.
 
     INPUT:
 

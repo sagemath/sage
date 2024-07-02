@@ -212,7 +212,7 @@ class FacadeSets(CategoryWithAxiom):
             For each parent ``self`` is a facade for, this default
             implementation tries the method ``an_element`` until it finds an
             element in ``self``. If none is found, this raises a
-            :class:`NotImplementedError`.
+            :exc:`NotImplementedError`.
 
             EXAMPLES::
 

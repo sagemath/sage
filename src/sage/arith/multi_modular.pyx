@@ -184,7 +184,7 @@ cdef class MultiModularBasis_base():
     cdef mod_int _new_random_prime(self, set known_primes) except 1:
         """
         Choose a new random prime for inclusion in the list of moduli,
-        or raise a :class:`RuntimeError` if there are no more primes.
+        or raise a :exc:`RuntimeError` if there are no more primes.
 
         INPUT:
 

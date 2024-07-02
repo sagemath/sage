@@ -565,7 +565,7 @@ class Category(UniqueRepresentation, SageObject):
     def __call__(self, x, *args, **opts):
         """
         Construct an object in this category from the data in ``x``,
-        or throw :class:`TypeError` or :class:`NotImplementedError`.
+        or throw :exc:`TypeError` or :exc:`NotImplementedError`.
 
         If ``x`` is readily in ``self`` it is returned unchanged.
         Categories wishing to extend this minimal behavior should
@@ -583,7 +583,7 @@ class Category(UniqueRepresentation, SageObject):
     def _call_(self, x):
         """
         Construct an object in this category from the data in ``x``,
-        or throw :class:`NotImplementedError`.
+        or throw :exc:`NotImplementedError`.
 
         EXAMPLES::
 

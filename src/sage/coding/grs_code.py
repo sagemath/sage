@@ -11,7 +11,7 @@ finite field `F`, the corresponding Reed-Solomon code (RS code) of dimension
     \{ (f(\alpha_1), \ldots, f(\alpha_n))  \mid  f \in F[x], \deg f < k \}
 
 An RS code is often called "classical" if `\alpha_i = \alpha^{i-1}` and `\alpha`
-is a primitive `n`'th root of unity.
+is a primitive `n`-th root of unity.
 
 More generally, given also `n` "column multipliers" `\beta_1, \dots, \beta_n`,
 the corresponding Generalized Reed-Solomon code (GRS code) of dimension `k` is
@@ -503,7 +503,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
     @cached_method
     def weight_distribution(self):
         r"""
-        Return the list whose `i`'th entry is the number of words of weight `i`
+        Return the list whose `i`-th entry is the number of words of weight `i`
         in ``self``.
 
         Computing the weight distribution for a GRS code is very fast. Note that
@@ -579,7 +579,7 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
 
     A classical `[n,k]` Reed-Solomon code over `\GF{q}` with `1 \le k \le n` and
     `n | (q-1)` is a Reed-Solomon code whose evaluation points are the
-    consecutive powers of a primitive `n`'th root of unity `\alpha`, i.e.
+    consecutive powers of a primitive `n`-th root of unity `\alpha`, i.e.
     `\alpha_i = \alpha^{i-1}`, where `\alpha_1, \ldots, \alpha_n` are the
     evaluation points. A classical Reed-Solomon codes has all column multipliers
     equal `1`.
@@ -600,7 +600,7 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
 
     - ``dimension`` -- the dimension of the resulting code
 
-    - ``primitive_root`` -- (default: ``None``) a primitive `n`'th root of unity
+    - ``primitive_root`` -- (default: ``None``) a primitive `n`-th root of unity
       to use for constructing the classical Reed-Solomon code; if not supplied,
       one will be computed and can be recovered as ``C.evaluation_points()[1]``
       where `C` is the code returned by this method
@@ -623,12 +623,12 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
         sage: C = codes.ReedSolomonCode(GF(64,'a'), 9, 4); C
         [9, 4, 6] Reed-Solomon Code over GF(64)
 
-    The primitive `n`'th root of unity can be recovered as the 2nd evaluation point of the code::
+    The primitive `n`-th root of unity can be recovered as the 2nd evaluation point of the code::
 
         sage: alpha = C.evaluation_points()[1]; alpha
         a^5 + a^4 + a^2 + a
 
-    We can also supply a different primitive `n`'th root of unity::
+    We can also supply a different primitive `n`-th root of unity::
 
         sage: beta = alpha^2; beta
         a^4 + a

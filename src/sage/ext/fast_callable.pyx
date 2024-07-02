@@ -2672,7 +2672,7 @@ class FastCallableFloatWrapper:
 
         An instance of :class:`FastCallableFloatWrapper` that can be
         called just like ``ff``, but that always returns a :class:`float`
-        if no error is raised. A :class:`ValueError` is raised if the
+        if no error is raised. A :exc:`ValueError` is raised if the
         imaginary part of the result exceeds ``imag_tol``.
 
         EXAMPLES:
@@ -2703,7 +2703,7 @@ class FastCallableFloatWrapper:
 
         TESTS:
 
-        Evaluation either returns a :class:`float`, or raises a :class:`ValueError`::
+        Evaluation either returns a :class:`float`, or raises a :exc:`ValueError`::
 
             sage: # needs sage.symbolic
             sage: from sage.ext.fast_callable import FastCallableFloatWrapper

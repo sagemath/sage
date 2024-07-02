@@ -862,7 +862,7 @@ If you know what you are doing, you can set check=False to skip this warning."""
 
         ``None`` if this method finds a proof that there
         exists an upper bound on the length. Otherwise a
-        :class:`ValueError` is raised.
+        :exc:`ValueError` is raised.
 
         EXAMPLES::
 

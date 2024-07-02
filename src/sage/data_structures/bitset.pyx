@@ -72,7 +72,7 @@ cdef class FrozenBitset:
 
       - ``string`` -- if a nonempty string, then the bitset is initialized by
         including an element if the index of the string is ``1``. If the
-        string is empty, then raise a :class:`ValueError`.
+        string is empty, then raise a :exc:`ValueError`.
 
       - ``iterable`` -- if an iterable, then it is assumed to contain a list of
         nonnegative integers and those integers are placed in the set
@@ -1791,7 +1791,7 @@ cdef class Bitset(FrozenBitset):
         """
         Update the bitset by removing ``n``.
 
-        This raises a :class:`KeyError` if ``n`` is not contained
+        This raises a :exc:`KeyError` if ``n`` is not contained
         in the bitset.
 
         EXAMPLES::
@@ -1866,7 +1866,7 @@ cdef class Bitset(FrozenBitset):
         """
         Remove and return an arbitrary element from the set.
 
-        This raises a :class:`KeyError` if the set is empty.
+        This raises a :exc:`KeyError` if the set is empty.
 
         EXAMPLES::
 

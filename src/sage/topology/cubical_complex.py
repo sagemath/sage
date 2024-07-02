@@ -109,7 +109,7 @@ class Cube(SageObject):
     Each cube is stored in a standard form: a tuple of tuples, with a
     nondegenerate interval ``[j,j]`` represented by ``(j,j)``, not
     ``(j,)``.  (This is so that for any interval ``I``, ``I[1]`` will
-    produce a value, not an :class:`IndexError`.)
+    produce a value, not an :exc:`IndexError`.)
 
     EXAMPLES::
 

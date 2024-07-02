@@ -1345,7 +1345,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         .. NOTE::
 
-            When using GAP, this raises a :class:`NotImplementedError` if
+            When using GAP, this raises a :exc:`NotImplementedError` if
             the base field of the code has size greater than 256 due
             to limitations in GAP.
 

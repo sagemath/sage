@@ -499,7 +499,7 @@ def QuadraticResidueCode(n,F):
     A quadratic residue code (or QR code) is a cyclic code whose
     generator polynomial is the product of the polynomials
     `x-\alpha^i` (`\alpha` is a primitive
-    `n`'th root of unity; `i` ranges over the set of
+    `n`-th root of unity; `i` ranges over the set of
     quadratic residues modulo `n`).
 
     See :class:`QuadraticResidueCodeEvenPair` and

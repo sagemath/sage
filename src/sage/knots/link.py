@@ -4082,7 +4082,7 @@ class Link(SageObject):
         (that is: ``m`` is suppressed).
 
         If it is not possible to determine a unique result
-        a :class:`NotImplementedError`
+        a :exc:`NotImplementedError`
         will be raised. To avoid this you can set ``unique`` to ``False``. You
         will get a list of matching candidates instead.
 

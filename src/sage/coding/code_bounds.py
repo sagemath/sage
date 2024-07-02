@@ -190,7 +190,7 @@ def _check_n_q_d(n, q, d, field_based=True):
     More precisely, this checks that the parameters are positive
     integers, that `q` is a prime power for codes over a field, or,
     more generally, that `q` is of size at least 2, and that `n >= d`.
-    This raises a :class:`ValueError` otherwise.
+    This raises a :exc:`ValueError` otherwise.
 
     TESTS::
 

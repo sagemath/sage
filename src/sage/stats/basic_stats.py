@@ -368,7 +368,7 @@ def median(v):
 
     If `v` is empty, we define the median to be NaN, which is
     consistent with NumPy (note that R returns NULL).
-    If `v` is comprised of strings, :class:`TypeError` occurs.
+    If `v` is comprised of strings, :exc:`TypeError` occurs.
     For elements other than numbers, the median is a result of :func:`sorted`.
 
     This function is deprecated.  Use :func:`numpy.median` or :func:`numpy.nanmedian`

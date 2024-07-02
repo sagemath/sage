@@ -1345,7 +1345,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         Return the unique homomorphism from ``self`` to ``codomain`` that
         sends ``self.gens()`` to the entries of ``im_gens``.
 
-        This raises a :class:`TypeError` if there is no such homomorphism.
+        This raises a :exc:`TypeError` if there is no such homomorphism.
 
         INPUT:
 
@@ -1409,7 +1409,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               To:   Finite Field of size 5
 
         There might not be a natural morphism, in which case a
-        ``TypeError`` is raised::
+        :exc:`TypeError` is raised::
 
             sage: QQ.hom(ZZ)
             Traceback (most recent call last):
@@ -2766,7 +2766,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         This is used both for illustration and testing purposes. If
         the set ``self`` is empty, :meth:`an_element` raises the
-        exception :class:`EmptySetError`.
+        exception :exc:`EmptySetError`.
 
         This calls :meth:`_an_element_` (which see), and caches the
         result. Parent are thus encouraged to override :meth:`_an_element_`.
@@ -2778,7 +2778,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: ZZ[['t']].an_element()
             t
 
-        In case the set is empty, an :class:`EmptySetError` is raised::
+        In case the set is empty, an :exc:`EmptySetError` is raised::
 
             sage: Set([]).an_element()
             Traceback (most recent call last):

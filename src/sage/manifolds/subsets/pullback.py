@@ -501,7 +501,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
           instance of :class:`RealSet`; if ``map`` is a :class:`Chart`, the
           relative interior of a polyhedron
 
-        For other inputs, a :class:`NotImplementedError` will be raised.
+        For other inputs, a :exc:`NotImplementedError` will be raised.
 
         OUTPUT:
 

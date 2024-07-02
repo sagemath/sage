@@ -414,7 +414,7 @@ cdef class IntList:
     def min(self, bint index=False):
         """
         Return the smallest value in this integer list.  If this
-        series has length 0 we raise a :class:`ValueError`.
+        series has length 0 we raise a :exc:`ValueError`.
 
         INPUT:
 
@@ -452,7 +452,7 @@ cdef class IntList:
     def max(self, bint index=False):
         """
         Return the largest value in this time series. If this series
-        has length 0 we raise a :class:`ValueError`
+        has length 0 we raise a :exc:`ValueError`
 
         INPUT:
 

@@ -811,7 +811,7 @@ class Fields(CategoryWithAxiom):
                 1/2
 
             Trying to invert the zero element typically raises a
-            :class:`ZeroDivisionError`::
+            :exc:`ZeroDivisionError`::
 
                 sage: QQ(0).inverse_of_unit()
                 Traceback (most recent call last):

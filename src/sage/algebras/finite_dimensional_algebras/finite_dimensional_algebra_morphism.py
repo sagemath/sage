@@ -29,7 +29,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
     - ``f`` -- matrix of the underlying `k`-linear map
 
     - ``unitary`` -- boolean (default: ``True``); if ``True`` and ``check``
-      is also ``True``, raise a :class:`ValueError` unless ``A`` and ``B`` are
+      is also ``True``, raise a :exc:`ValueError` unless ``A`` and ``B`` are
       unitary and ``f`` respects unit elements
 
     - ``check`` -- boolean (default: ``True``); check whether the given

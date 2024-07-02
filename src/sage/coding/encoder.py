@@ -127,7 +127,7 @@ class Encoder(SageObject):
         .. NOTE::
 
             :meth:`encode` might be a partial function over ``self``'s :meth:`message_space`.
-            One should use the exception :class:`EncodingError` to catch attempts
+            One should use the exception :exc:`EncodingError` to catch attempts
             to encode words that are outside of the message space.
 
         One can use the following shortcut to encode a word with an encoder ``E``::

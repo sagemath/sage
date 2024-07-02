@@ -411,7 +411,7 @@ class HighestWeightCrystals(Category_singleton):
             The sole purpose of this method is to construct the homset as a
             :class:`~sage.categories.highest_weight_crystals.HighestWeightCrystalHomset`.
             If ``category`` is specified and is not a subcategory of
-            :class:`HighestWeightCrystals`, a :class:`TypeError` is raised
+            :class:`HighestWeightCrystals`, a :exc:`TypeError` is raised
             instead
 
             This method is not meant to be called directly. Please use

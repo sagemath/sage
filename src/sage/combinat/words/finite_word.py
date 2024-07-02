@@ -307,7 +307,7 @@ class FiniteWord_class(Word_class):
 
         Otherwise it will attempt to convert ``other`` to the domain of ``self``.
         If that fails, it will attempt to convert ``self`` to the domain of
-        ``other``. If both attempts fail, it raises a :class:`TypeError`
+        ``other``. If both attempts fail, it raises a :exc:`TypeError`
         to signal failure.
 
         EXAMPLES::

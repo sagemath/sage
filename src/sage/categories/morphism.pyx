@@ -685,7 +685,7 @@ cdef class SetMorphism(Morphism):
 
     cpdef bint _eq_c_impl(self, Element other) noexcept:
         """
-        Equality test
+        Equality test.
 
         EXAMPLES::
 

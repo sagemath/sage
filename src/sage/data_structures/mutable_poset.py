@@ -2201,19 +2201,19 @@ class MutablePoset(SageObject):
         - ``key`` -- the key of an object
 
         - ``raise_key_error`` -- boolean (default: ``True``); switch raising
-          :class:`KeyError` on and off
+          :exc:`KeyError` on and off
 
         OUTPUT: nothing
 
         If the element is not a member and ``raise_key_error`` is set
-        (default), raise a :class:`KeyError`.
+        (default), raise a :exc:`KeyError`.
 
         .. NOTE::
 
             As with Python's ``set``, the methods :meth:`remove`
             and :meth:`discard` only differ in their behavior when an
             element is not contained in the poset: :meth:`remove`
-            raises a :class:`KeyError` whereas :meth:`discard` does not
+            raises a :exc:`KeyError` whereas :meth:`discard` does not
             raise any exception.
 
             This default behavior can be overridden with the
@@ -2379,19 +2379,19 @@ class MutablePoset(SageObject):
         - ``key`` -- the key of an object
 
         - ``raise_key_error`` -- boolean (default: ``False``); switch raising
-          :class:`KeyError` on and off
+          :exc:`KeyError` on and off
 
         OUTPUT: nothing
 
         If the element is not a member and ``raise_key_error`` is set
-        (not default), raise a :class:`KeyError`.
+        (not default), raise a :exc:`KeyError`.
 
         .. NOTE::
 
             As with Python's ``set``, the methods :meth:`remove`
             and :meth:`discard` only differ in their behavior when an
             element is not contained in the poset: :meth:`remove`
-            raises a :class:`KeyError` whereas :meth:`discard` does not
+            raises a :exc:`KeyError` whereas :meth:`discard` does not
             raise any exception.
 
             This default behavior can be overridden with the

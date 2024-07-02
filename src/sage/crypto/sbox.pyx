@@ -417,7 +417,7 @@ cdef class SBox(SageObject):
             sage: all([x == id(x) for x in k])
             True
 
-        Some examples for inputs that throw an :class:`TypeError`::
+        Some examples for inputs that throw an :exc:`TypeError`::
 
             sage: S([1]*10^6)
             Traceback (most recent call last):
@@ -1063,7 +1063,7 @@ cdef class SBox(SageObject):
         field is of degree ``m``.
 
         If the output length does not match the input length then a
-        :class:`TypeError` is raised.
+        :exc:`TypeError` is raised.
 
         INPUT:
 
@@ -1797,7 +1797,7 @@ cdef class SBox(SageObject):
         Return the inverse of this S-Box.
 
         Note that the S-Box must be invertible, otherwise it will raise
-        a :class:`TypeError`.
+        a :exc:`TypeError`.
 
         EXAMPLES::
 

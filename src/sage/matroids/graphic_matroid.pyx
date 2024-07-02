@@ -812,7 +812,7 @@ cdef class GraphicMatroid(Matroid):
         - ``X`` -- an iterable container of groundset elements
 
         OUTPUT: ``frozenset`` instance containing a subset of ``X``;
-        a :class:`ValueError` is raised if the set contains no circuit
+        a :exc:`ValueError` is raised if the set contains no circuit
 
         EXAMPLES::
 

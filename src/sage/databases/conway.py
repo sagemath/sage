@@ -173,7 +173,7 @@ class ConwayPolynomials(Mapping):
     def polynomial(self, p, n):
         """
         Return the Conway polynomial of degree ``n`` over ``GF(p)``,
-        or raise a :class:`RuntimeError` if this polynomial is not in the
+        or raise a :exc:`RuntimeError` if this polynomial is not in the
         database.
 
         .. NOTE::

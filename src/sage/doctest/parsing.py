@@ -146,7 +146,7 @@ def parse_optional_tags(
 
     - ``string`` -- string
 
-    - ``return_string_sans_tags`` -- boolean (default: ``False``);; whether to
+    - ``return_string_sans_tags`` -- boolean (default: ``False``); whether to
       additionally return ``string`` with the optional tags removed but other
       comments kept and a boolean ``is_persistent``
 

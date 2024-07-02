@@ -71,7 +71,7 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
       should end with a newline
 
     - ``timeout`` -- if the program produces no output for ``timeout``
-      seconds, a :class:`RuntimeError` is raised
+      seconds, a :exc:`RuntimeError` is raised
 
     - ``pydebug_ignore_warnings`` -- boolean. Set the PYTHONWARNINGS environment variable to ignore
       Python warnings when on a Python debug build (`--with-pydebug`, e.g. from building with

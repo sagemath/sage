@@ -31,9 +31,9 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
     r"""
     Given a Python object ``x`` cast it quickly to a C long.
 
-    A :class:`TypeError` is raised if the input cannot be converted to
+    A :exc:`TypeError` is raised if the input cannot be converted to
     an integer or
-    an :class:`OverflowError` is raised if it does not fit into a C long.
+    an :exc:`OverflowError` is raised if it does not fit into a C long.
 
     TESTS:
 
@@ -106,7 +106,7 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
 
     - ``ERR_TYPE`` -- ``x`` is not an integer type of any kind
 
-    - ``ERR_INDEX`` -- ``x`` implements ``__index__`` but a :class:`TypeError`
+    - ``ERR_INDEX`` -- ``x`` implements ``__index__`` but a :exc:`TypeError`
       was raised calling ``__index__()``
 
     - Other exceptions in ``__index__`` are simply propagated. This is

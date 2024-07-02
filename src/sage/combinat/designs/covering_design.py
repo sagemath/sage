@@ -509,7 +509,7 @@ def best_known_covering_design_www(v, k, t, verbose=False):
         2  3  6
         2  4  5
 
-    A :class:`ValueError` is raised if the ``(v, k, t)`` parameters are not
+    A :exc:`ValueError` is raised if the ``(v, k, t)`` parameters are not
     found in the database.
     """
     v = int(v)

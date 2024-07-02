@@ -962,10 +962,10 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
     If the minimal polynomial could not be found, two distinct kinds of
     errors are raised. If no reasonable candidate was found with the
-    given ``bits``/``degree`` parameters, a :class:`ValueError` will be
+    given ``bits``/``degree`` parameters, a :exc:`ValueError` will be
     raised. If a reasonable candidate was found but (perhaps due to
     limits in the underlying symbolic package) was unable to be proved
-    correct, a :class:`NotImplementedError` will be raised.
+    correct, a :exc:`NotImplementedError` will be raised.
 
     ALGORITHM: Two distinct algorithms are used, depending on the
     algorithm parameter. By default, the numerical algorithm is
@@ -987,8 +987,8 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     vanishing. If this fails, and ``epsilon`` is nonzero,
     return `f` if and only if
     `f(\mathtt{self}) < \mathtt{epsilon}`.
-    Otherwise raise a :class:`ValueError` (if no suitable
-    candidate was found) or a :class:`NotImplementedError` (if a
+    Otherwise raise a :exc:`ValueError` (if no suitable
+    candidate was found) or a :exc:`NotImplementedError` (if a
     likely candidate was found but could not be proved correct).
 
     EXAMPLES: First some simple examples::

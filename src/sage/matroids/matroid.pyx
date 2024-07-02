@@ -659,7 +659,7 @@ cdef class Matroid(SageObject):
         OUTPUT:
 
         ``frozenset`` instance containing a subset of the groundset.
-        A :class:`ValueError` is raised if the set contains no circuit.
+        A :exc:`ValueError` is raised if the set contains no circuit.
 
         EXAMPLES::
 
@@ -793,7 +793,7 @@ cdef class Matroid(SageObject):
         OUTPUT:
 
         ``frozenset`` instance containing a subset of the groundset.
-        A :class:`ValueError` is raised if the set contains no cocircuit.
+        A :exc:`ValueError` is raised if the set contains no cocircuit.
 
         EXAMPLES::
 

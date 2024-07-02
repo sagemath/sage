@@ -946,7 +946,7 @@ class MiniCremonaDatabase(SQLDatabase):
         Return the elliptic curve in the database of with minimal ``ainvs``
         if it exists.
 
-        This raises a :class:`RuntimeError` exception otherwise.
+        This raises a :exc:`RuntimeError` exception otherwise.
 
         INPUT:
 

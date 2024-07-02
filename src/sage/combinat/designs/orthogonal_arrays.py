@@ -185,7 +185,7 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
         Unknown
 
     If you ask for a transversal design that Sage is not able to build then an
-    ``EmptySetError`` or a :class:`NotImplementedError` is raised::
+    :exc:`EmptySetError` or a :exc:`NotImplementedError` is raised::
 
         sage: designs.transversal_design(47, 100)
         Traceback (most recent call last):
@@ -2103,8 +2103,8 @@ class OAMainFunctions:
         6
 
     If you ask for an orthogonal array that does not exist, then you will
-    either obtain an ``EmptySetError`` (if it knows that such an orthogonal
-    array does not exist) or a :class:`NotImplementedError`::
+    either obtain an :exc:`EmptySetError` (if it knows that such an orthogonal
+    array does not exist) or a :exc:`NotImplementedError`::
 
         sage: designs.orthogonal_arrays.build(4,2)
         Traceback (most recent call last):

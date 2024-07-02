@@ -1061,7 +1061,7 @@ class Sets(Category_singleton):
 
             This is used both for illustration and testing purposes. If the
             set ``self`` is empty, :meth:`an_element` should raise the exception
-            :class:`EmptySetError`.
+            :exc:`EmptySetError`.
 
             This default implementation calls :meth:`_an_element_` and
             caches the result. Any parent should implement either
@@ -1823,7 +1823,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
             .. NOTE::
 
                 This is an optional method. A default implementation
-                raising :class:`NotImplementedError` could be provided instead.
+                raising :exc:`NotImplementedError` could be provided instead.
             """
 
         def is_injective(self):

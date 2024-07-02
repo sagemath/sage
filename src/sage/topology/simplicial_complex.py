@@ -1280,7 +1280,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         If ``simplex`` is a simplex in this complex, return it.
 
-        Otherwise, this raises a :class:`ValueError`.
+        Otherwise, this raises a :exc:`ValueError`.
 
         EXAMPLES::
 

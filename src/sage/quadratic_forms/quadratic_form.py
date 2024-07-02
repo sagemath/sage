@@ -1202,7 +1202,7 @@ class QuadraticForm(SageObject):
             Q(x) = x^t\cdot A\cdot x,
 
         defined over the base ring of `Q`.  If this is not possible,
-        then a :class:`TypeError` is raised.
+        then a :exc:`TypeError` is raised.
 
         EXAMPLES::
 

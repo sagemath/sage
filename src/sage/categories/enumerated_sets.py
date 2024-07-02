@@ -48,11 +48,11 @@ class EnumeratedSets(CategoryWithAxiom):
        - ``iter(S)`` -- an iterator for the elements of the set;
 
        - ``S.list()`` -- a fresh list of the elements of the set, when
-         possible; raises a :class:`NotImplementedError` if the list is
+         possible; raises a :exc:`NotImplementedError` if the list is
          predictably too large to be expanded in memory.
 
        - ``S.tuple()`` -- a tuple of the elements of the set, when
-         possible; raises a :class:`NotImplementedError` if the tuple is
+         possible; raises a :exc:`NotImplementedError` if the tuple is
          predictably too large to be expanded in memory.
 
        - ``S.unrank(n)`` -- the  ``n``-th element of the set when ``n`` is a sage
@@ -183,7 +183,7 @@ class EnumeratedSets(CategoryWithAxiom):
             the methods of the first column are defined using  ``__iter__``
 
             If none of these are provided, this raises
-            a :class:`NotImplementedError`.
+            a :exc:`NotImplementedError`.
 
             EXAMPLES:
 
@@ -928,7 +928,7 @@ class EnumeratedSets(CategoryWithAxiom):
             the probability is uniform.
 
             This is a generic implementation from the category
-            ``EnumeratedSets()``. It raises a :class:`NotImplementedError`
+            ``EnumeratedSets()``. It raises a :exc:`NotImplementedError`
             since one does not know whether the set is finite.
 
             EXAMPLES::

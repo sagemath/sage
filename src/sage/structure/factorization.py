@@ -228,7 +228,7 @@ class Factorization(SageObject):
         INPUT:
 
         - ``x`` -- list of pairs (p, e) with e an integer
-          otherwise a :class:`TypeError` is raised
+          otherwise a :exc:`TypeError` is raised
 
         - ``unit`` -- (default: 1) the unit part of the factorization
 
@@ -556,7 +556,7 @@ class Factorization(SageObject):
             sage: F.base_change(P).universe()
             Univariate Polynomial Ring in x over Integer Ring
 
-        This method will return a :class:`TypeError` if the coercion is not
+        This method will return a :exc:`TypeError` if the coercion is not
         possible::
 
             sage: g = x^2 - 1
@@ -1037,7 +1037,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        product.  A :class:`TypeError` is raised if this is impossible.
+        product.  A :exc:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1274,7 +1274,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        gcd.  A :class:`TypeError` is raised if this is impossible.
+        gcd.  A :exc:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1316,7 +1316,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        lcm.  A :class:`TypeError` is raised if this is impossible.
+        lcm.  A :exc:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1375,7 +1375,7 @@ class Factorization(SageObject):
         Return the factorization of the radical of the value of ``self``.
 
         First, check that all exponents in the factorization are
-        positive, raise :class:`ValueError` otherwise.  If all exponents are
+        positive, raise :exc:`ValueError` otherwise.  If all exponents are
         positive, return ``self`` with all exponents set to 1 and with the
         unit set to 1.
 
@@ -1400,7 +1400,7 @@ class Factorization(SageObject):
         Return the product of the prime factors in ``self``.
 
         First, check that all exponents in the factorization are
-        positive, raise :class:`ValueError` otherwise.  If all exponents are
+        positive, raise :exc:`ValueError` otherwise.  If all exponents are
         positive, return the product of the prime factors in ``self``.
         This should be functionally equivalent to
         ``self.radical().value()``.

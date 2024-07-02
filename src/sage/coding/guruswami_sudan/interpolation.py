@@ -162,8 +162,8 @@ def _interpolation_matrix_problem(points, tau, parameters, wy):
 
     This linear system is returned as a matrix ``M`` and a list of monomials ``monomials``,
     where a vector in the right nullspace of ``M`` corresponds to an
-    interpolation polynomial `Q`, by mapping the `t`'th element of such a vector
-    to the coefficient to `x^iy^j`, where `(i,j)` is the `t`'th element of ``monomials``.
+    interpolation polynomial `Q`, by mapping the `t`-th element of such a vector
+    to the coefficient to `x^iy^j`, where `(i,j)` is the `t`-th element of ``monomials``.
 
     INPUT:
 
@@ -296,7 +296,7 @@ def lee_osullivan_module(points, parameters, wy):
     The module is constructed in the following way: Let `R(x)` be the Lagrange
     interpolation polynomial through the sought interpolation points `(x_i,
     y_i)`, i.e. `R(x_i) = y_i`. Let `G(x) = \prod_{i=1}^n (x-x_i)`. Then the
-    `i`'th row of the basis matrix of the module is the coefficient-vector of
+    `i`-th row of the basis matrix of the module is the coefficient-vector of
     the following polynomial in `\GF{q}[x][y]`:
 
         `P_i(x,y) = G(x)^{[i-s]} (y - R(x))^{i - [i-s]} y^{[i-s]}` ,

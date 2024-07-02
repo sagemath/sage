@@ -49,7 +49,7 @@ class FunctionFields(Category):
     def _call_(self, x):
         r"""
         Construct an object in this category from the data in ``x``,
-        or throw a ``TypeError``.
+        or throw a :exc:`TypeError`.
 
         EXAMPLES::
 

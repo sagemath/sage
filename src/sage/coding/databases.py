@@ -147,8 +147,8 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
         <BLANKLINE>
         last modified: 2002-03-20
 
-    This function raises an :class:`IOError` if an error occurs downloading data or
-    parsing it. It raises a :class:`ValueError` if the ``q`` input is invalid.
+    This function raises an :exc:`IOError` if an error occurs downloading data or
+    parsing it. It raises a :exc:`ValueError` if the ``q`` input is invalid.
 
     AUTHORS:
 

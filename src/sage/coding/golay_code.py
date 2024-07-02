@@ -238,7 +238,7 @@ class GolayCode(AbstractLinearCode):
 
     def weight_distribution(self):
         r"""
-        Return the list whose `i`'th entry is the number of words of weight `i`
+        Return the list whose `i`-th entry is the number of words of weight `i`
         in ``self``.
 
         The weight distribution of all Golay codes are known, and are thus returned

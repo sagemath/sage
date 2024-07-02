@@ -31,7 +31,7 @@ If there is a coercion (see below) from one of the parents to the other,
 the operation is always performed in the codomain of that coercion. Otherwise
 a reasonable attempt to create a new parent with coercion maps from both
 original parents is made. The results of these discoveries are cached.
-On failure, a :class:`TypeError` is always raised.
+On failure, a :exc:`TypeError` is always raised.
 
 Some arithmetic operations (such as multiplication) can indicate an action
 rather than arithmetic in a common parent. For example::
@@ -695,7 +695,7 @@ cdef class CoercionModel:
 
     cpdef _record_exception(self):
         r"""
-        Pushes the last exception that occurred onto the stack for later reference,
+        Push the last exception that occurred onto the stack for later reference,
         for internal use.
 
         If the stack has not yet been flagged as cleared, we clear it now (rather
@@ -1038,7 +1038,7 @@ cdef class CoercionModel:
         OUTPUT:
 
         A :class:`Parent` into which each input should coerce, or raises a
-        :class:`TypeError` if no such :class:`Parent` can be found.
+        :exc:`TypeError` if no such :class:`Parent` can be found.
 
         EXAMPLES::
 
@@ -1139,7 +1139,7 @@ cdef class CoercionModel:
         corresponding to ``op``, and failing that, it tries to coerce `x` and `y`
         into a common parent and calls ``op`` on them.
 
-        If it cannot make sense of the operation, a :class:`TypeError` is raised.
+        If it cannot make sense of the operation, a :exc:`TypeError` is raised.
 
         INPUT:
 

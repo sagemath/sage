@@ -445,7 +445,7 @@ def is_rationally_isometric(self, other, return_matrix=False):
         ...
         NotImplementedError: this only tests regular forms
 
-    Forms must have the same base ring otherwise a :class:`TypeError` is raised::
+    Forms must have the same base ring otherwise a :exc:`TypeError` is raised::
 
         sage: # needs sage.rings.number_field
         sage: K1.<a> = QuadraticField(5)

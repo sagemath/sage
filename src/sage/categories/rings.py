@@ -499,7 +499,7 @@ class Rings(CategoryWithAxiom):
             The sole purpose of this method is to construct the homset
             as a :class:`~sage.rings.homset.RingHomset`. If
             ``category`` is specified and is not a subcategory of
-            :class:`Rings() <Rings>`, a :class:`TypeError` is raised instead
+            :class:`Rings() <Rings>`, a :exc:`TypeError` is raised instead
 
             This method is not meant to be called directly. Please use
             :func:`sage.categories.homset.Hom` instead.
@@ -1514,7 +1514,7 @@ class Rings(CategoryWithAxiom):
         def _divide_if_possible(self, y):
             """
             Divide ``self`` by ``y`` if possible and raise a
-            :class:`ValueError` otherwise.
+            :exc:`ValueError` otherwise.
 
             EXAMPLES::
 

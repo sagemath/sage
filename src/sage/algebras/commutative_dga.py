@@ -2436,7 +2436,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         ALGORITHM:
 
-        Reduce a basis of the `n`'th cohomology modulo all the degree `n`
+        Reduce a basis of the `n`-th cohomology modulo all the degree `n`
         products of the lower degree cohomologies.
 
         EXAMPLES::
