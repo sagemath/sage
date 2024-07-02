@@ -609,24 +609,24 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
                 return ret
             cm = get_coercion_model()
             L = self.parent()._g
-            if self_on_left:
-                if cm.discover_action(L, x.parent(), mul):
-                    ret = x.parent().zero()
+            X = x.parent()
+            action = X.get_action(L, self_on_left=not self_on_left)
+            if action:
+                assert action.actor() is L
+                ret = X.zero()
+                if self_on_left:
                     for mon, coeff in self._monomial_coefficients.items():
                         term = coeff * x
                         for k, exp in reversed(mon._sorted_items()):
                             for _ in range(exp):
                                 term = L.monomial(k) * term
                         ret += term
-                    return ret
-            else:
-                if cm.discover_action(x.parent(), L, mul):
-                    ret = x.parent().zero()
+                else:
                     for mon, coeff in self._monomial_coefficients.items():
-                        term = coeff * x
+                        term = x * coeff
                         for k, exp in reversed(mon._sorted_items()):
                             for _ in range(exp):
                                 term = term * L.monomial(k)
                         ret += term
-                    return ret
+                return ret
             return None
