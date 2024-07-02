@@ -38,7 +38,7 @@ LexBFS and LexUP) or prepended (for LexDFS and LexDOWN) to the lexicographic
 labels of all neighbors of the selected vertex that are left in the graph.
 
 The time complexity of the algorithm is `O(mn)` for ``SparseGraph`` and
-`O(max(mn, n^2))` for ``DenseGraph``, where `n` is the number of vertices
+`O(\max\{mn, n^2\})` for ``DenseGraph``, where `n` is the number of vertices
 and `m` is the number of edges.
 
 See [CK2008]_ and [Mil2017]_ for more details on the algorithm and graphs
