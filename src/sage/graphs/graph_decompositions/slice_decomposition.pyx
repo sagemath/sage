@@ -134,7 +134,7 @@ cdef void extended_lex_BFS(
     adjacency list of vertices (by using, for example, a static sparse graph)
     to force the computed LexBFS order to respect a previous one.
 
-    EXAMPLES:
+    EXAMPLES::
 
     To see how it can be used, see the code of the lex_BFS method (in
     traversals.pyx) or of the class SliceDecomposition in this module.
@@ -285,7 +285,7 @@ def slice_decomposition(G, initial_vertex=None):
     implementation follows that complexity for ``SparseGraph``. For
     ``DenseGraph``, the complexity is `O(n^2)`.
 
-    EXAMPLES:
+    EXAMPLES::
 
     Slice decomposition of the Petersen Graph::
 
@@ -440,7 +440,7 @@ cdef class SliceDecomposition(SageObject):
 
         This method can also be called via :meth:`xslice_data`.
 
-        EXAMPLES:
+        EXAMPLES::
 
         ::
 
@@ -522,7 +522,7 @@ cdef class SliceDecomposition(SageObject):
         r"""
         Return the lexBFS order corresponding to the slice decomposition.
 
-        EXAMPLES:
+        EXAMPLES::
 
         ::
 
@@ -584,7 +584,7 @@ cdef class SliceDecomposition(SageObject):
 
         A list of vertices
 
-        EXAMPLES:
+        EXAMPLES::
 
         ::
 
@@ -637,7 +637,7 @@ cdef class SliceDecomposition(SageObject):
 
         A list of list corresponding to the x-slice sequence of ``v``.
 
-        EXAMPLES:
+        EXAMPLES::
 
         ::
 
@@ -713,7 +713,7 @@ cdef class SliceDecomposition(SageObject):
 
         A list of vertices.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz',inplace=False)
             sage: SD = G.slice_decomposition(initial_vertex='x')
@@ -755,7 +755,7 @@ cdef class SliceDecomposition(SageObject):
 
         A list of edges
 
-        EXAMPLES:
+        EXAMPLES::
 
         ::
 
@@ -846,7 +846,7 @@ cdef class SliceDecomposition(SageObject):
         decomposition, the underlying graph corresponds to ``G.to_simple()``,
         *i.e.*, it is the input graph without loops and multiple edges.
 
-        EXAMPLES:
+        EXAMPLES::
 
         ::
 
