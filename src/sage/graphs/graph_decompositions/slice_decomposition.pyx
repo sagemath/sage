@@ -34,9 +34,10 @@ cdef void extended_lex_BFS(
         vector[vector[int]] *lex_label) except *:
     r"""
     Perform a extended lexicographic breadth first search (LexBFS) on the
-    undirected graph `G`. In addition to computing a LexBFS ordering, the
-    extended LexBFS algorithm can be used to compute the slice decomposition of
-    the graph.
+    undirected graph `G`.
+
+    In addition to computing a LexBFS ordering, the extended LexBFS algorithm
+    can be used to compute the slice decomposition of the graph.
 
     This function implements the `O(n+m)` time algorithm proposed in [HMPV2000]_
     and [TCHP2008]_.
