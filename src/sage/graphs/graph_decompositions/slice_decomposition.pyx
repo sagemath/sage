@@ -260,6 +260,7 @@ cdef void extended_lex_BFS(
     if need_to_delete_sigma_inv:
         del sigma_inv
 
+
 def slice_decomposition(G, initial_vertex=None):
     r"""
     Compute a slice decomposition of the simple undirected graph
@@ -324,7 +325,6 @@ def slice_decomposition(G, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: Graph must be undirected
-
     """
     return SliceDecomposition(G, initial_vertex=initial_vertex)
 
@@ -564,7 +564,6 @@ cdef class SliceDecomposition(SageObject):
             sage: SD = G.slice_decomposition()
             sage: all(SD[v] == SD.xslice_data(v) for v in G)
             True
-
         """
         return self[v]
 
