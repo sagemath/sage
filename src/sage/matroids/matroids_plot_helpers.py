@@ -171,12 +171,13 @@ def it(M, B1, nB1, lps):
             # loop over L1,L2,L3
             cc = interval*j
             pts[i[j-1]] = (cc*pt1[0]+(1-cc)*pt2[0], cc*pt1[1]+(1-cc)*pt2[1])
-    trilines = [list(set(x)) for x in lines if len(x) >= 3]
+    trilines = [set(x) for x in lines if len(x) >= 3]
     set_lps = set(lps)
     curvedlines = [list(sx.difference(set_lps))
                    for x in M.flats(2) if (sx := set(x)) not in trilines
                    and len(list(x)) >= 3]
     nontripts = [i for i in nB1 if i not in pts]
+    trilines = [list(s) for s in trilines]
     return pts, trilines, nontripts, curvedlines
 
 
