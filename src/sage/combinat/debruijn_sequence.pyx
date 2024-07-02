@@ -263,7 +263,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         TESTS:
 
         Setting ``n`` or ``k`` to anything under 1 will return
-        a :class:`ValueError`::
+        a :exc:`ValueError`::
 
             sage: DeBruijnSequences(3, 0).an_element()
             Traceback (most recent call last):
@@ -271,7 +271,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
             ValueError: k and n cannot be under 1
 
         Setting ``n`` or ``k`` to any type except an integer will return a
-        :class:`TypeError`::
+        :exc:`TypeError`::
 
             sage: DeBruijnSequences(2.5, 3).an_element()
             Traceback (most recent call last):

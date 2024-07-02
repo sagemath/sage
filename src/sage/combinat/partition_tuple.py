@@ -816,7 +816,7 @@ class PartitionTuple(CombinatorialElement):
 
     def pp(self):
         r"""
-        Pretty prints this partition tuple. See :meth:`diagram`.
+        Pretty print this partition tuple. See :meth:`diagram`.
 
         EXAMPLES::
 

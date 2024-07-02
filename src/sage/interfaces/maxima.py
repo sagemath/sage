@@ -35,7 +35,7 @@ This is the interface used by the maxima object::
     <class 'sage.interfaces.maxima.Maxima'>
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Maxima, a :class:`RuntimeError` exception is raised.
+anything from Maxima, a :exc:`RuntimeError` exception is raised.
 
 EXAMPLES: We evaluate a very simple expression in Maxima.
 

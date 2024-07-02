@@ -672,7 +672,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         OUTPUT:
 
         A `\ZZ`-vector that translates ``self`` to
-        ``translated_polyhedron``. A ``ValueError`` is raised if
+        ``translated_polyhedron``. A :exc:`ValueError` is raised if
         ``translated_polyhedron`` is not a translation of ``self``,
         this can be used to check that two polyhedra are not
         translates of each other.

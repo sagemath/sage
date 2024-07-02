@@ -202,7 +202,7 @@ def find_isomorphism(fan1, fan2, check=False):
     OUTPUT:
 
     A fan isomorphism. If the fans are not isomorphic, a
-    :class:`FanNotIsomorphicError` is raised.
+    :exc:`FanNotIsomorphicError` is raised.
 
     EXAMPLES::
 

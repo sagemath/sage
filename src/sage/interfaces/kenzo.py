@@ -145,7 +145,7 @@ def MooreSpace(m, n):
     r"""
     Return the Moore space `M(m, n)` as a Kenzo simplicial set.
 
-    The Moore space `M(m, n)` is the space whose `n`'th homology group
+    The Moore space `M(m, n)` is the space whose `n`-th homology group
     is isomorphic to the cyclic group of order `m`, and the rest of the
     homology groups are trivial.
 
@@ -265,7 +265,7 @@ class KenzoSpectralSequence(KenzoObject):
 
     def group(self, p, i, j):
         r"""
-        Return the ``i,j``'th group of the ``p`` page.
+        Return the ``i,j``-th group of the ``p`` page.
 
         INPUT:
 
@@ -294,7 +294,7 @@ class KenzoSpectralSequence(KenzoObject):
     def matrix(self, p, i, j):
         r"""
         Return the matrix that determines the differential from the
-        ``i,j``'th group of the ``p``'th page.
+        ``i,j``-th group of the ``p``-th page.
 
         INPUT:
 

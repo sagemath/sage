@@ -2616,7 +2616,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         Return an isomorphic permutation group.
 
-        OUTPUT: this raises a :class:`ValueError` error since braid groups
+        OUTPUT: this raises a :exc:`ValueError` error since braid groups
         are infinite
 
         TESTS::

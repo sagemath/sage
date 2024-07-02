@@ -202,7 +202,7 @@ class RegularSequence(RecognizableSeries):
         - ``allow_degenerated_sequence`` -- boolean (default: ``False``); if
           set, then there will be no check if the input is a degenerated
           sequence (see :meth:`is_degenerated`). Otherwise the input is checked
-          and a :class:`DegeneratedSequenceError` is raised if such a sequence
+          and a :exc:`DegeneratedSequenceError` is raised if such a sequence
           is detected.
 
         EXAMPLES::
@@ -493,7 +493,7 @@ class RegularSequence(RecognizableSeries):
         - ``allow_degenerated_sequence`` -- boolean (default: ``False``); if
           set, then there will be no check if the transposed sequence is a
           degenerated sequence (see :meth:`is_degenerated`). Otherwise the
-          transposed sequence is checked and a :class:`DegeneratedSequenceError`
+          transposed sequence is checked and a :exc:`DegeneratedSequenceError`
           is raised if such a sequence is detected.
 
         OUTPUT: a :class:`RegularSequence`

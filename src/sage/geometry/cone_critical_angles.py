@@ -136,7 +136,7 @@ def _random_admissible_cone(ambient_dim):
     A "random" nontrivial closed convex cone in a lattice of dimension
     ``ambient_dim``.
 
-    A :class:`ValueError` is raised if ``ambient_dim`` is not
+    A :exc:`ValueError` is raised if ``ambient_dim`` is not
     positive.
 
     EXAMPLES:

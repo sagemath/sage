@@ -180,7 +180,7 @@ class Expect(Interface):
         """
         Changes the server and the command to use for this interface.
 
-        This raises a :class:`RuntimeError` if the interface is already started.
+        This raises a :exc:`RuntimeError` if the interface is already started.
 
         INPUT:
 
@@ -821,7 +821,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` -- boolean (default: ``True``);
           if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          :class:`EOFError` occurred.
+          :exc:`EOFError` occurred.
 
         TESTS::
 
@@ -922,7 +922,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` -- boolean (default: ``True``);
           if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          :class:`EOFError` occurred.
+          :exc:`EOFError` occurred.
 
         TESTS::
 

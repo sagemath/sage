@@ -3286,7 +3286,7 @@ class Graph(GenericGraph):
         OUTPUT:
 
         A DiGraph representing the orientation if it exists.
-        A :class:`ValueError` exception is raised otherwise.
+        A :exc:`ValueError` exception is raised otherwise.
 
         ALGORITHM:
 
@@ -4980,7 +4980,7 @@ class Graph(GenericGraph):
 
         - ``induced`` -- boolean (default: ``False``); if ``True``, returns an
           induced minor isomorphic to `H` if it exists, and raises a
-          :class:`ValueError` otherwise.
+          :exc:`ValueError` otherwise.
 
         OUTPUT:
 

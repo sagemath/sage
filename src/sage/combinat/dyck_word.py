@@ -126,7 +126,7 @@ def replace_parens(x):
     - If ``x`` is a closing parenthesis, replace ``x`` with the
       constant ``close_symbol``.
 
-    - Raise a :class:`ValueError` if ``x`` is neither an opening nor a
+    - Raise a :exc:`ValueError` if ``x`` is neither an opening nor a
       closing parenthesis.
 
     .. SEEALSO:: :func:`replace_symbols`
@@ -170,7 +170,7 @@ def replace_symbols(x):
     - If ``x`` is ``close_symbol``, replace ``x`` with ``')'``.
 
     - If ``x`` is neither ``open_symbol`` nor ``close_symbol``, a
-      :class:`ValueError` is raised.
+      :exc:`ValueError` is raised.
 
     .. SEEALSO:: :func:`replace_parens`
 

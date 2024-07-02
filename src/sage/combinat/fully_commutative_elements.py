@@ -803,7 +803,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         True
 
     Attempting to create an element from an input that is not the reduced word
-    of a fully commutative element throws a :class:`ValueError`::
+    of a fully commutative element throws a :exc:`ValueError`::
 
         sage: FC([1,2,1])
         Traceback (most recent call last):

@@ -1890,7 +1890,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a :class:`ValueError` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 

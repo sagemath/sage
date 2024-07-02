@@ -3236,7 +3236,7 @@ class DiGraph(GenericGraph):
         """
         Return a topological sort of the digraph if it is acyclic.
 
-        If the digraph contains a directed cycle, a :class:`TypeError`
+        If the digraph contains a directed cycle, a :exc:`TypeError`
         is raised. As topological sorts are not necessarily unique,
         different implementations may yield different results.
 
@@ -3318,7 +3318,7 @@ class DiGraph(GenericGraph):
         Return an iterator over all topological sorts of the digraph if
         it is acyclic.
 
-        If the digraph contains a directed cycle, a :class:`TypeError`
+        If the digraph contains a directed cycle, a :exc:`TypeError`
         is raised.
 
         A topological sort is an ordering of the vertices of the digraph such

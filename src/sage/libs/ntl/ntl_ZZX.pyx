@@ -997,7 +997,7 @@ cdef class ntl_ZZX():
             sage: f.trace_list()
             [5, 0, -6, 0, 10]
 
-        The input polynomial must be monic or a :class:`ValueError` is raised::
+        The input polynomial must be monic or a :exc:`ValueError` is raised::
 
             sage: f = ntl.ZZX([1,2,0,3,0,2])
             sage: f.trace_list()

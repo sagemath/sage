@@ -390,7 +390,7 @@ cdef class ntl_ZZ_pEX():
         function returns r.
 
         If p is not prime or the modulus is not irreducible, this
-        function may raise a :class:`RuntimeError` due to division by
+        function may raise a :exc:`RuntimeError` due to division by
         a noninvertible element of ZZ_p.
 
         EXAMPLES::
@@ -1079,7 +1079,7 @@ cdef class ntl_ZZ_pEX():
     #        sage: f.trace_list()
     #        [5, 0, 14, 0, 10]
     #
-    #    The input polynomial must be monic or a :class:`ValueError` is raised::
+    #    The input polynomial must be monic or a :exc:`ValueError` is raised::
     #
     #        sage: c=ntl.ZZ_pContext(ntl.ZZ(20))
     #        sage: f = c.ZZ_pX([1,2,0,3,0,2]

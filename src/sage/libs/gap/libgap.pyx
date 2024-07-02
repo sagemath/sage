@@ -72,7 +72,7 @@ corresponding Sage datatype:
 
 #. GAP booleans ``true`` / ``false`` to Sage booleans ``True`` /
    ``False``. The third GAP boolean value ``fail`` raises a
-   ``ValueError``.
+   :exc:`ValueError`.
 
 #. GAP integers to Sage integers.
 
@@ -134,7 +134,7 @@ convert the entries into Sage objects, you should use the
 
 Now ``rec['a']`` is a Sage integer. We have not implemented the
 conversion of the GAP symmetric group to the Sage symmetric group yet,
-so you end up with a ``NotImplementedError`` exception object. The
+so you end up with a :exc:`NotImplementedError` exception object. The
 exception is returned and not raised so that you can work with the
 partial result.
 
@@ -406,7 +406,7 @@ class Gap(Parent):
 
     def load_package(self, pkg):
         """
-        If loading fails, raise a :class:`RuntimeError` exception.
+        If loading fails, raise a :exc:`RuntimeError` exception.
 
         TESTS::
 
@@ -516,7 +516,7 @@ class Gap(Parent):
         OUTPUT:
 
         A :class:`~sage.libs.gap.element.GapElement` wrapping the GAP
-        output. A ``ValueError`` is raised if there is no such
+        output. A :exc:`ValueError` is raised if there is no such
         variable in GAP.
 
         EXAMPLES::
@@ -667,7 +667,7 @@ class Gap(Parent):
 
         OUTPUT:
 
-        A :class:`GapElement`. A ``AttributeError`` is raised
+        A :class:`GapElement`. A :exc:`AttributeError` is raised
         if there is no such function or global variable.
 
         EXAMPLES::

@@ -311,7 +311,7 @@ class PQ:
 
     def reverse(self):
         r"""
-        Recursively reverses ``self`` and its children.
+        Recursively reverse ``self`` and its children.
 
         EXAMPLES::
 
@@ -401,7 +401,7 @@ class PQ:
 
     def __repr__(self):
         r"""
-        Succintly represents ``self``.
+        Succintly represent ``self``.
 
         EXAMPLES::
 
@@ -556,7 +556,7 @@ class P(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a :class:`ValueError` exception.
+        raises a :exc:`ValueError` exception.
 
         EXAMPLES:
 
@@ -835,7 +835,7 @@ class Q(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a :class:`ValueError` exception.
+        raises a :exc:`ValueError` exception.
 
         EXAMPLES:
 

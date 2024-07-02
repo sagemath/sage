@@ -110,7 +110,7 @@ class QmodnZ_Element(AdditiveGroupElement):
         Lift to `\Z`.
 
         This is the smallest nonnegative integer reducing to this element,
-        or a :class:`ValueError` if none exists.
+        or a :exc:`ValueError` if none exists.
 
         TESTS::
 

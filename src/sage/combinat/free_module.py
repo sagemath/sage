@@ -720,7 +720,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         The following originally used to yield ``p[[2]] # p[[2]]``, and if
         there was no natural coercion between ``s`` and ``p``, this would
-        raise a :class:`NotImplementedError`.
+        raise a :exc:`NotImplementedError`.
         Since :issue:`15305`, this takes the
         coercion between ``s`` and ``p`` and lifts it to the tensor product. ::
 

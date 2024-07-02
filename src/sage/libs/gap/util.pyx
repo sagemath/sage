@@ -431,7 +431,7 @@ cdef void error_handler() noexcept with gil:
     """
     The libgap error handler.
 
-    If an error occurred, we raise a ``GAPError``; when the original
+    If an error occurred, we raise a :exc:`GAPError`; when the original
     ``GAP_EvalString`` returns, this exception will be seen.
 
     TODO: We should probably prevent re-entering this function if we

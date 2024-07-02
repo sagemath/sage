@@ -406,7 +406,7 @@ cdef class GapElement(RingElement):
         sage: libgap(0)
         0
 
-    If Gap finds an error while evaluating, a :class:`GAPError`
+    If Gap finds an error while evaluating, a :exc:`GAPError`
     exception is raised::
 
         sage: libgap.eval('1/0')
@@ -414,7 +414,7 @@ cdef class GapElement(RingElement):
         ...
         GAPError: Error, Rational operations: <divisor> must not be zero
 
-    Also, a ``GAPError`` is raised if the input is not a simple expression::
+    Also, a :exc:`GAPError` is raised if the input is not a simple expression::
 
         sage: libgap.eval('1; 2; 3')
         Traceback (most recent call last):
@@ -812,7 +812,7 @@ cdef class GapElement(RingElement):
 
         OUTPUT:
 
-        This method returns nothing. A ``ValueError`` is raised if
+        This method returns nothing. A :exc:`ValueError` is raised if
         :meth:`_set_compare_by_id` has not been called on this libgap
         object.
 
@@ -851,7 +851,7 @@ cdef class GapElement(RingElement):
         OUTPUT:
 
         Boolean, depending on the comparison of ``self`` and
-        ``other``.  Raises a ``ValueError`` if GAP does not support
+        ``other``.  Raises a :exc:`ValueError` if GAP does not support
         comparison of ``self`` and ``other``, unless
         :meth:`_set_compare_by_id` was called on both ``self`` and
         ``other``.
@@ -870,7 +870,7 @@ cdef class GapElement(RingElement):
             True
 
         GAP does not have a comparison function for two ``FreeGroup``
-        objects. LibGAP signals this by raising a ``ValueError`` ::
+        objects. LibGAP signals this by raising a :exc:`ValueError` ::
 
             sage: F1 = libgap.FreeGroup(['a'])
             sage: F2 = libgap.FreeGroup(['a'])
@@ -2193,7 +2193,7 @@ cdef class GapElement_Boolean(GapElement):
 
         A Python boolean if the values is either true or false. GAP
         booleans can have the third value ``Fail``, in which case a
-        ``ValueError`` is raised.
+        :exc:`ValueError` is raised.
 
         EXAMPLES::
 

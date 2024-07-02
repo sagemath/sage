@@ -2338,7 +2338,7 @@ class PermutationGroup_generic(FiniteGroup):
         OUTPUT:
 
         A positive integer, following GAP's conventions. A
-        :class:`ValueError` is raised if the group is not primitive.
+        :exc:`ValueError` is raised if the group is not primitive.
 
         EXAMPLES::
 

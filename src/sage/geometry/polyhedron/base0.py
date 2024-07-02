@@ -1092,7 +1092,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         OUTPUT:
 
         A matrix over ``base_ring`` whose columns are the coordinates
-        of the vertices. A ``TypeError`` is raised if the coordinates
+        of the vertices. A :exc:`TypeError` is raised if the coordinates
         cannot be converted to ``base_ring``.
 
         .. WARNING::

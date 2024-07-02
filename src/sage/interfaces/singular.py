@@ -582,7 +582,7 @@ class Singular(ExtraTabCompletion, Expect):
         - ``x`` -- string (of code)
 
         - ``allow_semicolon`` -- (default: ``False``) if ``False`` then
-          raise a :class:`TypeError` if the input line contains a semicolon
+          raise a :exc:`TypeError` if the input line contains a semicolon
 
         - ``strip`` -- ignored
 

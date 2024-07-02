@@ -132,7 +132,7 @@ class PerfectMatching(SetPartition):
         The function checks that the given list or permutation is
         a valid perfect matching (i.e. a list of pairs with pairwise
         disjoint elements or a fix point free involution) and raises
-        a :class:`ValueError` otherwise::
+        a :exc:`ValueError` otherwise::
 
             sage: PerfectMatching([(1, 2, 3), (4, 5)])
             Traceback (most recent call last):

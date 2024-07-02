@@ -90,7 +90,7 @@ def validate_mwrank_input(s):
     OUTPUT:
 
     For valid input, a string of the form '[a1,a2,a3,a4,a6]'.
-    For invalid input a :class:`ValueError` is raised.
+    For invalid input a :exc:`ValueError` is raised.
 
     EXAMPLES:
 
@@ -293,7 +293,7 @@ class Mwrank_class(Expect):
 
         .. NOTE::
 
-           If a :class:`RuntimeError` exception is raised, then the mwrank
+           If a :exc:`RuntimeError` exception is raised, then the mwrank
            interface is restarted and the command is retried once.
 
         EXAMPLES::

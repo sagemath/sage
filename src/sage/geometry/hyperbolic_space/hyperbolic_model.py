@@ -257,7 +257,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
     def point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
-        model, do nothing.  Otherwise, raise a :class:`ValueError`.
+        model, do nothing.  Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -293,7 +293,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
     def bdry_point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
-        model, do nothing; otherwise raise a :class:`ValueError`.
+        model, do nothing; otherwise raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -333,7 +333,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         Test whether an isometry ``A`` is in the model.
 
         If the isometry is in the model, do nothing. Otherwise, raise
-        a :class:`ValueError`.
+        a :exc:`ValueError`.
 
         EXAMPLES::
 

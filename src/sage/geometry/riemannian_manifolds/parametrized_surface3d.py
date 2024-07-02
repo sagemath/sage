@@ -1571,7 +1571,7 @@ class ParametrizedSurface3D(SageObject):
 
     def parallel_translation_numerical(self,curve,t,v0,tinterval):
         r"""
-        Numerically solves the equations for parallel translation of a vector
+        Numerically solve the equations for parallel translation of a vector
         along a curve on the surface.  Explicitly, the equations for parallel
         translation are given by
         `\frac{d u^i}{dt} + u^j \frac{d c^k}{dt} \Gamma^i_{jk} = 0`,

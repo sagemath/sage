@@ -720,7 +720,7 @@ def _unrecognized_option(option):
 
     - ``option`` -- string
 
-    OUTPUT: none, a :class:`KeyError` exception is raised
+    OUTPUT: none, a :exc:`KeyError` exception is raised
 
     TESTS::
 

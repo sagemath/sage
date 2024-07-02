@@ -299,7 +299,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
     # is wrong from our point of view.
     cpdef _dot_product_(self, Vector right):
         """
-        Raise a :class:`TypeError` exception.
+        Raise a :exc:`TypeError` exception.
 
         Dot product is not defined on toric lattices (there are actions of
         dual lattices on each other instead).
@@ -308,7 +308,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
         - ``right`` -- vector
 
-        OUTPUT: :class:`TypeError` exception is raised
+        OUTPUT: :exc:`TypeError` exception is raised
 
         TESTS::
 

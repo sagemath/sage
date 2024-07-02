@@ -486,7 +486,7 @@ class HyperbolicIsometry(Morphism):
     def translation_length(self):
         r"""
         For hyperbolic elements, return the translation length;
-        otherwise, raise a :class:`ValueError`.
+        otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -509,7 +509,7 @@ class HyperbolicIsometry(Morphism):
     def axis(self):
         r"""
         For a hyperbolic isometry, return the axis of the
-        transformation; otherwise raise a :class:`ValueError`.
+        transformation; otherwise raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -588,7 +588,7 @@ class HyperbolicIsometry(Morphism):
     def repelling_fixed_point(self):
         r"""
         For a hyperbolic isometry, return the attracting fixed point;
-        otherwise raise a :class:`ValueError`.
+        otherwise raise a :exc:`ValueError`.
 
         OUTPUT: a hyperbolic point
 
@@ -605,7 +605,7 @@ class HyperbolicIsometry(Morphism):
     def attracting_fixed_point(self):
         r"""
         For a hyperbolic isometry, return the attracting fixed point;
-        otherwise raise a :class:`ValueError`.
+        otherwise raise a :exc:`ValueError`.
 
         OUTPUT: a hyperbolic point
 
@@ -726,7 +726,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
     def translation_length(self): #UHP
         r"""
         For hyperbolic elements, return the translation length;
-        otherwise, raise a :class:`ValueError`.
+        otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -836,7 +836,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         r"""
         Return the repelling fixed point.
 
-        Otherwise, this raises a :class:`ValueError`.
+        Otherwise, this raises a :exc:`ValueError`.
 
         OUTPUT: a hyperbolic point
 
@@ -860,7 +860,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         r"""
         Return the attracting fixed point.
 
-        Otherwise, this raises a :class:`ValueError`.
+        Otherwise, this raises a :exc:`ValueError`.
 
         OUTPUT: a hyperbolic point
 

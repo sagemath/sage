@@ -87,7 +87,7 @@ def _common_length_of(l1, l2=None, l3=None):
     """
     The arguments are containers or ``None``. The function applies
     ``len()`` to each element, and returns the common length. If the
-    length differs, ``ValueError`` is raised. Used to check arguments.
+    length differs, :exc:`ValueError` is raised. Used to check arguments.
 
     OUTPUT:
 

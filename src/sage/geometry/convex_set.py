@@ -702,7 +702,7 @@ class ConvexSet_base(SageObject, Set_base):
         r"""
         Return a point of ``self``.
 
-        If ``self`` is empty, an :class:`EmptySetError` will be raised.
+        If ``self`` is empty, an :exc:`EmptySetError` will be raised.
 
         The default implementation delegates to :meth:`_some_elements_`.
 

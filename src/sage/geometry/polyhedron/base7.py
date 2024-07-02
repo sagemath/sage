@@ -64,7 +64,7 @@ class Polyhedron_base7(Polyhedron_base6):
         The mass is taken with respect to the induced Lebesgue measure,
         see :meth:`volume`.
 
-        If the polyhedron is not compact, a ``NotImplementedError`` is
+        If the polyhedron is not compact, a :exc:`NotImplementedError` is
         raised.
 
         INPUT:

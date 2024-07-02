@@ -724,7 +724,7 @@ cdef class PointCollection(SageObject):
           at this position
 
         OUTPUT: an integer if ``point`` is in ``self[start:stop]``, otherwise a
-        :class:`ValueError` exception is raised
+        :exc:`ValueError` exception is raised
 
         EXAMPLES::
 

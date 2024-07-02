@@ -137,7 +137,7 @@ class MatrixGroup_base(Group):
         - ``*args`` -- (optional) other representations of ``x``,
           depending on the group implementation. Ignored by default
 
-        OUTPUT: a :class:`TypeError` must be raised if ``x`` is invalid
+        OUTPUT: a :exc:`TypeError` must be raised if ``x`` is invalid
 
         EXAMPLES::
 

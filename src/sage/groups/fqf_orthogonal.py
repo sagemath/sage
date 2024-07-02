@@ -498,7 +498,7 @@ def _isom_fqf(A, B=None):
     OUTPUT: list of generators of the orthogonal group of A
 
     If ``B`` is given, this returns instead a single isometry of `A` and `B`
-    or raises a :class:`ValueError` if `A` and `B` are not isometric.
+    or raises a :exc:`ValueError` if `A` and `B` are not isometric.
 
     EXAMPLES::
 

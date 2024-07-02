@@ -404,7 +404,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         A :class:`~sage.geometry.triangulation.base.Point` if a
         distinguished star central point has been fixed.
-        :class:`ValueError` exception is raised otherwise.
+        :exc:`ValueError` exception is raised otherwise.
 
         EXAMPLES::
 
@@ -735,7 +735,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         OUTPUT:
 
         A :class:`~sage.geometry.triangulation.element.Triangulation`
-        satisfying all restrictions imposed. This raises a :class:`ValueError`
+        satisfying all restrictions imposed. This raises a :exc:`ValueError`
         if no such triangulation exists.
 
         EXAMPLES::
@@ -1039,7 +1039,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         OUTPUT:
 
         A :class:`~sage.geometry.triangulation.element.Triangulation`
-        satisfying all restrictions imposed. This raises a :class:`ValueError`
+        satisfying all restrictions imposed. This raises a :exc:`ValueError`
         if no such triangulation exists.
 
         EXAMPLES::

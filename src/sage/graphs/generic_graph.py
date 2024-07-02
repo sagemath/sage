@@ -1983,7 +1983,7 @@ class GenericGraph(GenericGraph_pyx):
             a matrix, where the module's basis is indexed by the vertices.
 
           If the vertices are not comparable, the keyword ``vertices`` must be
-          used to specify an ordering, or a :class:`TypeError` exception will
+          used to specify an ordering, or a :exc:`TypeError` exception will
           be raised.
 
         - ``base_ring`` -- a ring (default: ``ZZ``); the base ring of the matrix
@@ -2603,7 +2603,7 @@ class GenericGraph(GenericGraph_pyx):
             a matrix, where the module's basis is indexed by the vertices.
 
           If the vertices are not comparable, the keyword ``vertices`` must be
-          used to specify an ordering, or a :class:`TypeError` exception will
+          used to specify an ordering, or a :exc:`TypeError` exception will
           be raised.
 
         - ``default_weight`` -- (default: ``None``) specifies the weight to
@@ -2807,7 +2807,7 @@ class GenericGraph(GenericGraph_pyx):
             a matrix, where the module's basis is indexed by the vertices.
 
           If the vertices are not comparable, the keyword ``vertices`` must be
-          used to specify an ordering, or a :class:`TypeError` exception will
+          used to specify an ordering, or a :exc:`TypeError` exception will
           be raised.
 
         Note that any additional keywords will be passed on to either the
@@ -3104,7 +3104,7 @@ class GenericGraph(GenericGraph_pyx):
           ``_embedding``
 
         - ``boolean`` -- boolean (default: ``True``); whether to return a
-          boolean answer or raise a :class:`ValueError` exception
+          boolean answer or raise a :exc:`ValueError` exception
           if the embedding is invalid
 
         EXAMPLES::
@@ -3613,7 +3613,7 @@ class GenericGraph(GenericGraph_pyx):
         .. WARNING::
 
             ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            :class:`TypeError` might be raised when working with non-comparable
+            :exc:`TypeError` might be raised when working with non-comparable
             objects.
 
         EXAMPLES:
@@ -9595,7 +9595,7 @@ class GenericGraph(GenericGraph_pyx):
         OUTPUT:
 
         If using the ``'tsp'`` algorithm, returns a Hamiltonian cycle/circuit if
-        it exists; otherwise, raises a ``EmptySetError`` exception. If using the
+        it exists; otherwise, raises a :exc:`EmptySetError` exception. If using the
         ``'backtrack'`` algorithm, returns a pair ``(B, P)``. If ``B`` is
         ``True`` then ``P`` is a Hamiltonian cycle and if ``B`` is ``False``,
         ``P`` is a longest path found by the algorithm. Observe that if ``B`` is
@@ -19359,7 +19359,7 @@ class GenericGraph(GenericGraph_pyx):
         .. WARNING::
 
             ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            :class:`TypeError` might be raised when working with non-comparable
+            :exc:`TypeError` might be raised when working with non-comparable
             objects.
 
         - ``immutable`` -- boolean (default: ``Non``); whether to create a
@@ -23791,7 +23791,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS:
 
-        We get a :class:`KeyError` when given an invalid partition (:issue:`6087`)::
+        We get a :exc:`KeyError` when given an invalid partition (:issue:`6087`)::
 
             sage: g = graphs.CubeGraph(3)
             sage: g.relabel()

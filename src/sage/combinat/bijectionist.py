@@ -1071,7 +1071,7 @@ class Bijectionist(SageObject):
 
         This has to be called whenever ``self._P`` was modified.
 
-        It raises a :class:`ValueError`, if the restrictions on a
+        It raises a :exc:`ValueError`, if the restrictions on a
         block are contradictory.
 
         TESTS::

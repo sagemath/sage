@@ -47,7 +47,7 @@ EXAMPLES::
 
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Giac, a :class:`RuntimeError` exception is raised.
+anything from Giac, a :exc:`RuntimeError` exception is raised.
 
 Tutorial
 --------

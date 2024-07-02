@@ -43,7 +43,7 @@ AUTHORS:
    clisp.
 
 If the string "error" (case insensitive) occurs in the output of
-anything from axiom, a :class:`RuntimeError` exception is raised.
+anything from axiom, a :exc:`RuntimeError` exception is raised.
 
 EXAMPLES: We evaluate a very simple expression in axiom.
 

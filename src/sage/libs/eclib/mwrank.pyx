@@ -679,7 +679,7 @@ cdef class _mw:
 
         INPUT:
 
-        - ``point`` -- tuple or list of 3 integers; an ``ArithmeticError`` is
+        - ``point`` -- tuple or list of 3 integers; an :exc:`ArithmeticError` is
           raised if the point is not on the curve
 
         - ``saturation_bound`` -- integer (default: 0); saturate at primes up
@@ -1260,7 +1260,7 @@ cdef class _two_descent:
 
         .. NOTE::
 
-            You must call ``saturate()`` first, or a ``RunTimeError``
+            You must call ``saturate()`` first, or a :exc:`RunTimeError`
             will be raised.
 
         OUTPUT:

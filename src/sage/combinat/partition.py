@@ -3218,7 +3218,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT: integer or a :class:`ValueError`
+        OUTPUT: integer or a :exc:`ValueError`
 
         EXAMPLES::
 
@@ -3308,7 +3308,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT: integer or a :class:`ValueError`
+        OUTPUT: integer or a :exc:`ValueError`
 
         EXAMPLES::
 
@@ -6439,7 +6439,7 @@ class Partitions(UniqueRepresentation, Parent):
         r"""
         Return ``self`` if no arguments are given.
 
-        Otherwise, it raises a :class:`ValueError`.
+        Otherwise, it raises a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -9260,7 +9260,7 @@ def number_of_partitions(n, algorithm='default'):
         sage: len(v)
         7
 
-    The input must be a nonnegative integer or a :class:`ValueError` is raised.
+    The input must be a nonnegative integer or a :exc:`ValueError` is raised.
 
     ::
 

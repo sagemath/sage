@@ -380,7 +380,7 @@ class Polyhedron_base(Polyhedron_base7):
         OUTPUT:
 
         The center of the polyhedron. All rays and lines are
-        ignored. Raises a ``ZeroDivisionError`` for the empty
+        ignored. Raises a :exc:`ZeroDivisionError` for the empty
         polytope.
 
         EXAMPLES::

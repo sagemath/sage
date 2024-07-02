@@ -37,7 +37,7 @@ def _int_or_half_int(k):
 
     OUTPUT:
 
-    If ``k`` is not in `1/2 \ZZ`, then this raises a :class:`ValueError`.
+    If ``k`` is not in `1/2 \ZZ`, then this raises a :exc:`ValueError`.
     Otherwise, we return the pair:
 
     - boolean; ``True`` if ``k`` is an integer and ``False`` if a half integer

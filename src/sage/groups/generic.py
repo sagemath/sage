@@ -398,7 +398,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     OUTPUT:
 
     An integer `n` such that `a^n = b` (or `na = b`).  If no
-    such `n` exists, this function raises a :class:`ValueError` exception.
+    such `n` exists, this function raises a :exc:`ValueError` exception.
 
     .. NOTE::
 
@@ -570,7 +570,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
         ...
         ValueError: for Pollard rho algorithm the order of the group must be prime
 
-    If it fails to find a suitable logarithm, it raises a :class:`ValueError`::
+    If it fails to find a suitable logarithm, it raises a :exc:`ValueError`::
 
         sage: I = IntegerModRing(171980)
         sage: discrete_log_rho(I(31002), I(15501))                                      # needs sage.libs.pari
@@ -717,7 +717,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     assuming that ``ord`` is a multiple of the order of the base `b`.
     If ``ord`` is not specified, an attempt is made to compute it.
 
-    If no such `n` exists, this function raises a :class:`ValueError` exception.
+    If no such `n` exists, this function raises a :exc:`ValueError` exception.
 
     .. WARNING::
 

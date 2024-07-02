@@ -611,7 +611,7 @@ def BarbellGraph(n1, n2):
 
     OUTPUT:
 
-    A barbell graph of order `2*n_1 + n_2`. A :class:`ValueError` is
+    A barbell graph of order `2*n_1 + n_2`. A :exc:`ValueError` is
     returned if `n_1 < 2` or `n_2 < 0`.
 
     PLOTTING:
@@ -946,7 +946,7 @@ def BubbleSortGraph(n):
     OUTPUT:
 
     The bubble sort graph `B(n)` on `n` symbols. If `n < 1`, a
-    :class:`ValueError` is returned.
+    :exc:`ValueError` is returned.
 
     EXAMPLES::
 

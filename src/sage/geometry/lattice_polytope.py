@@ -4930,7 +4930,7 @@ class NefPartition(SageObject, Hashable):
             Since a nef-partition induces a partition on the set of boundary
             lattice points of `\Delta^\circ`, the value of `j` is well-defined
             for all `i` but the one that corresponds to the origin, in which
-            case this method will raise a :class:`ValueError` exception.
+            case this method will raise a :exc:`ValueError` exception.
             (The origin always belongs to all `\nabla_j`.)
 
         See :class:`nef-partition <NefPartition>` class documentation for

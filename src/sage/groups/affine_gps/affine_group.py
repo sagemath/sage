@@ -230,7 +230,7 @@ class AffineGroup(UniqueRepresentation, Group):
         """
         Verify that ``A``, ``b`` define an affine group element.
 
-        This raises a :class:`TypeError` if the input does not define
+        This raises a :exc:`TypeError` if the input does not define
         a valid group element.
 
         This is called from the group element constructor and can be

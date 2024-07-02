@@ -2709,7 +2709,7 @@ class HyperplaneArrangementElement(Element):
 
         OUTPUT:
 
-        A polyhedron. A :class:`ValueError` is raised if the point is not
+        A polyhedron. A :exc:`ValueError` is raised if the point is not
         interior to a region, that is, sits on a hyperplane.
 
         EXAMPLES::

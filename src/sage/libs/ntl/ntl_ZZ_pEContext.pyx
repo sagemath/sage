@@ -111,7 +111,7 @@ cdef class ntl_ZZ_pEContext_class():
 
     def restore(self):
         """
-        Manually sets the global NTL modulus to be ``self``.
+        Manually set the global NTL modulus to be ``self``.
 
         This should be done automatically by all of the NTL wrapper classes.
 

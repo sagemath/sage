@@ -59,7 +59,7 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
     A parent class for polyhedra over the given base ring if the
     backend supports it. If not, the parent base ring can be larger
     (for example, `\QQ` instead of `\ZZ`). If there is no
-    implementation at all, a ``ValueError`` is raised.
+    implementation at all, a :exc:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -824,7 +824,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         OUTPUT:
 
-        Either `\ZZ`, `\QQ`, or `RDF`. Raises :class:`TypeError` if
+        Either `\ZZ`, `\QQ`, or `RDF`. Raises :exc:`TypeError` if
         ``other`` is not a suitable input.
 
         .. NOTE::

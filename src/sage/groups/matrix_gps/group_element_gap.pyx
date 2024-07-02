@@ -318,7 +318,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         OUTPUT:
 
         A factorization object that contains information about the
-        order of factors and the exponents. A :class:`ValueError` is raised
+        order of factors and the exponents. A :exc:`ValueError` is raised
         if the group element cannot be written as a word in ``gens``.
 
         ALGORITHM:

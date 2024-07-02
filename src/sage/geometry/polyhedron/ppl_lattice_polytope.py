@@ -127,7 +127,7 @@ def LatticePolytope_PPL(*args):
         sage: LatticePolytope_PPL(P)                                                    # needs pplpy
         A 0-dimensional lattice polytope in ZZ^2 with 1 vertex
 
-    A ``TypeError`` is raised if the arguments do not specify a lattice polytope::
+    A :exc:`TypeError` is raised if the arguments do not specify a lattice polytope::
 
         sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
         sage: LatticePolytope_PPL((0,0), (1/2,1))                                       # needs pplpy
@@ -336,7 +336,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 

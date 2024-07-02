@@ -69,7 +69,7 @@ def rank_from_list(l):
         sage: r('c')
         2
 
-    For non elements a :class:`ValueError` is raised, as with the usual
+    For non elements a :exc:`ValueError` is raised, as with the usual
     ``index`` method of lists::
 
         sage: r('blah')

@@ -5,7 +5,7 @@ This module implements :class:`GenericGraphBackend` (the base class for
 backends).
 
 Any graph backend must redefine the following methods (for which
-:class:`GenericGraphBackend` raises a :class:`NotImplementedError`)
+:class:`GenericGraphBackend` raises a :exc:`NotImplementedError`)
 
 .. csv-table::
     :class: contentstable

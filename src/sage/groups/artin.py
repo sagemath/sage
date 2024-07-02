@@ -530,7 +530,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return an isomorphic permutation group.
 
-        This raises a :class:`ValueError` error since Artin groups are
+        This raises a :exc:`ValueError` error since Artin groups are
         infinite and have no corresponding permutation group.
 
         EXAMPLES::

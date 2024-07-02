@@ -37,7 +37,7 @@ EXAMPLES::
     (x-y)*(x^4+x^3*y+x^2*y^2+x*y^3+y^4)
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Maple, a :class:`RuntimeError` exception is raised.
+anything from Maple, a :exc:`RuntimeError` exception is raised.
 
 Tutorial
 --------

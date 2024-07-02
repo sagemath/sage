@@ -945,7 +945,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         A Sage
         :func:`~sage.groups.perm_gps.permgroup.PermutationGroup`. If
         the number of cosets exceeds the given ``limit``, a
-        :class:`ValueError` is returned.
+        :exc:`ValueError` is returned.
 
         EXAMPLES::
 

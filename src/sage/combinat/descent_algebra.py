@@ -743,7 +743,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         def one_basis(self):
             """
             The element `1` is not (generally) a basis vector in the `I`
-            basis, thus this raises a :class:`TypeError`.
+            basis, thus this raises a :exc:`TypeError`.
 
             EXAMPLES::
 

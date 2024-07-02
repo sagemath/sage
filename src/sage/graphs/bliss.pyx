@@ -397,7 +397,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider
       edge labels. The edge labels are assumed to be hashable and
-      sortable. If this is not the case (ie a :class:`TypeError` is
+      sortable. If this is not the case (ie a :exc:`TypeError` is
       raised), the algorithm will consider the string representations
       of the labels instead of the labels.
 

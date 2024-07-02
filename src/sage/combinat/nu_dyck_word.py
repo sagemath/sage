@@ -93,7 +93,7 @@ def replace_dyck_char(x):
     - If ``x`` is a closing character, replace ``x`` with the
       constant ``ndw_close_symbol``.
 
-    - Raise a :class:`ValueError` if ``x`` is neither an opening nor a
+    - Raise a :exc:`ValueError` if ``x`` is neither an opening nor a
       closing character.
 
     .. SEEALSO:: :func:`replace_dyck_symbol`
@@ -139,7 +139,7 @@ def replace_dyck_symbol(x, open_char='N', close_char='E') -> str:
     - If ``x`` is ``ndw_close_symbol``, replace ``x`` with ``close_char``.
 
     - If ``x`` is neither ``ndw_open_symbol`` nor ``ndw_close_symbol``, a
-      :class:`ValueError` is raised.
+      :exc:`ValueError` is raised.
 
     .. SEEALSO:: :func:`replace_dyck_char`
 

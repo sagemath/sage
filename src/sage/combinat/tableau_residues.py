@@ -269,7 +269,7 @@ class ResidueSequence(ClonableArray,
 
     def check(self):
         r"""
-        Raise a :class:`ValueError` if ``self`` is not a residue sequence.
+        Raise a :exc:`ValueError` if ``self`` is not a residue sequence.
 
         EXAMPLES::
 

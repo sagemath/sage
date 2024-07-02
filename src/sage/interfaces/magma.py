@@ -1858,7 +1858,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         .. note::
 
            If the input ``attrname`` starts with an underscore, an
-           :class:`AttributeError` is raised so that the actual
+           :exc:`AttributeError` is raised so that the actual
            Python _ method/value can be accessed.
 
         EXAMPLES::

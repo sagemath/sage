@@ -1126,7 +1126,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         r"""
         Return an element of ``self``.
 
-        Raises an :class:`EmptySetError` when ``self`` is empty.
+        Raises an :exc:`EmptySetError` when ``self`` is empty.
 
         EXAMPLES::
 

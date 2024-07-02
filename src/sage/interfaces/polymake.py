@@ -640,7 +640,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             4: objects/PointConfiguration/properties/Triangulation and volume/TRIANGULATION
             5: objects/Polytope/properties/Triangulation and volume/TRIANGULATION
 
-        If an unknown help topic is requested, a :class:`PolymakeError`
+        If an unknown help topic is requested, a :exc:`PolymakeError`
         results::
 
             sage: polymake.help('Triangulation')      # optional - jupymake
@@ -1923,7 +1923,7 @@ class PolymakeJuPyMake(PolymakeAbstract):
             sage: set_verbose(0)
 
         If polymake raises an error, the polymake *interface* raises
-        a :class:`PolymakeError`::
+        a :exc:`PolymakeError`::
 
             sage: polymake.eval('FOOBAR(3);')       # optional - jupymake
             Traceback (most recent call last):

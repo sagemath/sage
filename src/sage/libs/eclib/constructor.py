@@ -46,7 +46,7 @@ def CremonaModularSymbols(level, sign=0, cuspidal=False, verbose=0):
         sage: M
         Cremona Modular Symbols space of dimension 7 for Gamma_0(43) of weight 2 with sign 0
 
-    The input must be valid or a :class:`ValueError` is raised::
+    The input must be valid or a :exc:`ValueError` is raised::
 
         sage: M = CremonaModularSymbols(-1)
         Traceback (most recent call last):

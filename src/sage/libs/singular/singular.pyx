@@ -1708,7 +1708,7 @@ from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 
 cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     """
-    Raise an ``OverflowError`` if e is > max degree per variable.
+    Raise an :exc:`OverflowError` if e is > max degree per variable.
 
     INPUT:
 

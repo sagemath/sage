@@ -291,7 +291,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         - ``g`` -- defines element
 
         - ``parent`` -- defines parent group (``g`` must be in
-          parent if specified, or a :class:`TypeError` is raised)
+          parent if specified, or a :exc:`TypeError` is raised)
 
         - ``check`` -- boolean (default: ``True``); if ``False`` assumes ``g``
           is a gap element in parent (if specified)

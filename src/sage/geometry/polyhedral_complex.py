@@ -165,7 +165,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     - ``face_to_face_check`` -- boolean (default: ``False``);
       if ``True``, then the constructor checks whether the cells
-      are face-to-face, and it raises a :class:`ValueError` if they are not
+      are face-to-face, and it raises a :exc:`ValueError` if they are not
 
     - ``is_mutable`` and ``is_immutable`` -- boolean (default: ``True`` and
       ``False`` respectively); set ``is_mutable=False`` or ``is_immutable=True``
@@ -971,7 +971,7 @@ class PolyhedralComplex(GenericCellComplex):
     def __call__(self, x):
         """
         If ``x`` is a polyhedron in this complex, return it.
-        Otherwise, raise a :class:`ValueError`.
+        Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -1079,7 +1079,7 @@ class PolyhedralComplex(GenericCellComplex):
         Return the 1-skeleton of this polyhedral complex, as a graph.
 
         The vertices of the graph are of type ``vector``. This raises
-        a :class:`NotImplementedError` if the polyhedral complex is unbounded.
+        a :exc:`NotImplementedError` if the polyhedral complex is unbounded.
 
         .. WARNING::
 

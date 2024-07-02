@@ -114,7 +114,7 @@ class Polyhedron_base2(Polyhedron_base1):
         - ``envelope`` -- boolean (default: ``False``); if the
           polyhedron has non-integral vertices, this option decides
           whether to return a strictly larger lattice polytope or
-          raise a ``ValueError``. This option has no effect if the
+          raise a :exc:`ValueError`. This option has no effect if the
           polyhedron has already integral vertices.
 
         OUTPUT:
@@ -126,11 +126,11 @@ class Polyhedron_base2(Polyhedron_base1):
         but has at least one non-integral vertex, a strictly larger
         lattice polytope is returned.
 
-        If the polyhedron is not compact, a ``NotImplementedError`` is
+        If the polyhedron is not compact, a :exc:`NotImplementedError` is
         raised.
 
         If the polyhedron is not integral and ``envelope=False``, a
-        ``ValueError`` is raised.
+        :exc:`ValueError` is raised.
 
         ALGORITHM:
 
@@ -204,7 +204,7 @@ class Polyhedron_base2(Polyhedron_base1):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -397,7 +397,7 @@ class Polyhedron_base2(Polyhedron_base1):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -531,12 +531,12 @@ class Polyhedron_base2(Polyhedron_base1):
         However, so long as :meth:`integral_points_count` does not need to
         enumerate all integral points, neither does this method. Hence it can
         be significantly faster. If the polyhedron is not compact, a
-        ``ValueError`` is raised.
+        :exc:`ValueError` is raised.
 
         INPUT:
 
         - ``index`` -- integer; the index of the integral point to be found. If
-          this is not in [0, ``self.integral_point_count()``), an ``IndexError``
+          this is not in [0, ``self.integral_point_count()``), an :exc:`IndexError`
           is raised.
 
         - ``**kwds`` -- optional keyword parameters that are passed to
@@ -631,7 +631,7 @@ class Polyhedron_base2(Polyhedron_base1):
         OUTPUT:
 
         The integral point in the polyhedron chosen uniformly at random. If the
-        polyhedron is not compact, a ``ValueError`` is raised. If the
+        polyhedron is not compact, a :exc:`ValueError` is raised. If the
         polyhedron does not contain any integral points, an
         :class:`~sage.categories.sets_cat.EmptySetError` is raised.
 

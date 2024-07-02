@@ -591,7 +591,7 @@ Now we want to divide `13` by `3`::
     ...
     ValueError: Invalid input sequence.
 
-The raised :class:`ValueError` means `13` is not divisible by `3`.
+The raised :exc:`ValueError` means `13` is not divisible by `3`.
 
 .. _finite_state_machine_gray_code_example:
 
@@ -2064,7 +2064,7 @@ class FSMState(SageObject):
 
         OUTPUT: boolean
 
-        A :class:`ValueError` is raised when ``self`` is not in an epsilon
+        A :exc:`ValueError` is raised when ``self`` is not in an epsilon
         cycle.
 
         TESTS::
@@ -2463,7 +2463,7 @@ def duplicate_transition_raise_error(old_transition, new_transition):
     Alternative function for handling duplicate transitions in finite
     state machines.
 
-    This implementation raises a :class:`ValueError`.
+    This implementation raises a :exc:`ValueError`.
 
     See the documentation of the ``on_duplicate_transition`` parameter
     of :class:`FiniteStateMachine`.
@@ -2475,7 +2475,7 @@ def duplicate_transition_raise_error(old_transition, new_transition):
     - ``new_transition`` -- a transition, identical to ``old_transition``,
       which is to be inserted into the finite state machine
 
-    OUTPUT: nothing. A :class:`ValueError` is raised
+    OUTPUT: nothing. A :exc:`ValueError` is raised
 
     EXAMPLES::
 
@@ -2734,7 +2734,7 @@ class FiniteStateMachine(SageObject):
         non-deterministic).
 
         If the transition does not exist, the function should raise a
-        :class:`LookupError` or return an empty list.
+        :exc:`LookupError` or return an empty list.
 
         When constructing a finite state machine in this way, some
         initial states and an input alphabet have to be specified.
@@ -5345,7 +5345,7 @@ class FiniteStateMachine(SageObject):
 
         OUTPUT: the state of the finite state machine corresponding to ``state``
 
-        If no state is found, then a :class:`LookupError` is thrown.
+        If no state is found, then a :exc:`LookupError` is thrown.
 
         EXAMPLES::
 
@@ -5389,7 +5389,7 @@ class FiniteStateMachine(SageObject):
         OUTPUT: the transition of the finite state machine corresponding
         to ``transition``
 
-        If no transition is found, then a :class:`LookupError` is thrown.
+        If no transition is found, then a :exc:`LookupError` is thrown.
 
         EXAMPLES::
 
@@ -7411,7 +7411,7 @@ class FiniteStateMachine(SageObject):
           for `j\in\{1, \ldots, d\}` and returns a pair ``(word_in, word_out)``
           which is the label of the transition `A=(A_1, \ldots, A_d)` to `B=(B_1,
           \ldots, B_d)`. If there is no transition from `A` to `B`,
-          then ``function`` should raise a :class:`LookupError`.
+          then ``function`` should raise a :exc:`LookupError`.
 
         - ``new_input_alphabet`` -- (optional) the new input alphabet
           as a list
@@ -7426,7 +7426,7 @@ class FiniteStateMachine(SageObject):
           the corresponding state in the new finite state machine. By
           default, the final output is the empty word if both final
           outputs of the constituent states are empty; otherwise, a
-          :class:`ValueError` is raised.
+          :exc:`ValueError` is raised.
 
         - ``new_class`` -- class of the new finite state machine. By
           default (``None``), the class of ``self`` is used
@@ -12397,7 +12397,7 @@ class Transducer(FiniteStateMachine):
         - ``full_output`` -- boolean (default: ``True``); if set,
           then the full output is given, otherwise only the generated
           output (the third entry below only). If the input is not
-          accepted, a :class:`ValueError` is raised.
+          accepted, a :exc:`ValueError` is raised.
 
         - ``always_include_output`` -- if set (not by default), always
           include the output. This is inconsequential for a
