@@ -1137,7 +1137,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         Return a string that evaluates to the GAP representation of
         this element.
 
-        A ``NotImplementedError`` is raised if
+        A :exc:`NotImplementedError` is raised if
         ``self.parent().modulus()`` is not a Conway polynomial, as
         the isomorphism of finite fields is not implemented yet.
 
@@ -1237,7 +1237,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         OUTPUT:
 
         Integer `x` such that `a^x = b`, if it exists.
-        Raises a ``ValueError`` exception if no such `x` exists.
+        Raises a :exc:`ValueError` exception if no such `x` exists.
 
         ALGORITHM: :pari:`fflog`
 

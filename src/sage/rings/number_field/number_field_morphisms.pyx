@@ -68,7 +68,7 @@ cdef class NumberFieldEmbedding(Morphism):
 
         INPUT:
 
-        - ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
         OUTPUT: the given dictionary, with the generator image added
 
@@ -97,7 +97,7 @@ cdef class NumberFieldEmbedding(Morphism):
 
         INPUT:
 
-        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- dictionary providing values for the c(p)def slots of ``self``
 
         EXAMPLES::
 
@@ -189,7 +189,6 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
           From: Number Field in i with defining polynomial x^2 + 1 with i = I
           To:   Number Field in i with defining polynomial x^2 + 1 with i = -I
           Defn: i -> -i
-
     """
     cdef readonly ambient_field
 
@@ -237,7 +236,6 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             Traceback (most recent call last):
             ...
             TypeError: No embedding available for Number Field in i with defining polynomial x^2 + 1
-
         """
         if ambient_field is None:
             if K.coerce_embedding() is None:
@@ -486,7 +484,6 @@ def root_from_approx(f, a):
         Traceback (most recent call last):
         ...
         ValueError: sqrt(3) is not a root of x^2 - 2
-
     """
     P = a.parent()
     if P.is_exact() and not f(a):
@@ -632,7 +629,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
 
         INPUT:
 
-        - ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
         OUTPUT: the given dictionary, with _gen_image and ratio added
 
@@ -661,7 +658,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
 
         INPUT:
 
-        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- dictionary providing values for the c(p)def slots of ``self``
 
         EXAMPLES::
 

@@ -177,7 +177,7 @@ def gale_ryser_theorem(p1, p2, algorithm='gale',
 
     * Construct the `m \times n` matrix `B` from `r` by defining
       the `i`-th row of `B` to be the vector whose first `r_i`
-      entries are `1`, and the remainder are 0's, `1 \leq i \leq m`.
+      entries are `1`, and the remainder are 0s, `1 \leq i \leq m`.
       This maximal matrix `B` with row sum `r` and ones left
       justified has column sum `r^{*}`.
 

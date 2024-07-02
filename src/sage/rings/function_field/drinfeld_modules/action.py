@@ -85,7 +85,9 @@ class DrinfeldModuleAction(Action):
         """
         Initialize ``self``.
 
-        INPUT: the Drinfeld module
+        INPUT:
+
+        - ``drinfeld_module`` -- the Drinfeld module
 
         TESTS::
 

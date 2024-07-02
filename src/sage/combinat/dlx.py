@@ -55,7 +55,7 @@ class DLXMatrix:
         described by Knuth.
 
         Consider a matrix M with entries of 0 and 1, and compute a subset
-        of the rows of this matrix which sum to the vector of all 1's.
+        of the rows of this matrix which sum to the vector of all 1s.
 
         The dancing links algorithm works particularly well for sparse
         matrices, so the input is a list of lists of the form: (note the

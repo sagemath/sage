@@ -261,7 +261,8 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
 
         INPUT:
 
-        - ``norm_bound`` -- (positive integer) upper bound on the norm of primes tested.
+        - ``norm_bound`` -- (positive integer) upper bound on the norm of
+          primes tested
 
         EXAMPLES::
 

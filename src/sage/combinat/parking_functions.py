@@ -132,7 +132,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
     - ``area_sequence`` -- (default: ``None``) an area sequence of a Dyck path
 
-    - ``labelled_dyck_word`` -- (default: ``None``) a Dyck word with 1's
+    - ``labelled_dyck_word`` -- (default: ``None``) a Dyck word with 1s
       replaced by labelling
 
     OUTPUT: a parking function

@@ -2431,7 +2431,7 @@ class OTerm(GenericTerm):
 
         OUTPUT:
 
-        A :class:`ZeroDivisionError` since `O`-terms cannot be inverted.
+        A :exc:`ZeroDivisionError` since `O`-terms cannot be inverted.
 
         TESTS::
 

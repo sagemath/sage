@@ -242,7 +242,7 @@ class GenericCellComplex(SageObject):
 
     def f_vector(self):
         """
-        The `f`-vector of this cell complex: a list whose n-th
+        The `f`-vector of this cell complex: a list whose `n`-th
         item is the number of `(n-1)`-cells.  Note that, like all
         lists in Sage, this is indexed starting at 0: the 0th element
         in this list is the number of `(-1)`-cells (which is 1: the

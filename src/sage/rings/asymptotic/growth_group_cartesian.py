@@ -1080,7 +1080,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 The parent of the result can be different from the parent
                 of this element.
 
-            A ``ValueError`` is raised if the calculation is not possible
+            A :exc:`ValueError` is raised if the calculation is not possible
             within this method. (Then the calling method should take care
             of the calculation.)
 

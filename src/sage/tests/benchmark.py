@@ -1177,7 +1177,7 @@ class Factorial(Benchmark):
 class Fibonacci(Benchmark):
     def __init__(self, n):
         self.__n = n
-        self.repr_str = "Compute the %`s`-th Fibonacci number" % self.__n
+        self.repr_str = "Compute the %s-th Fibonacci number" % self.__n
 
     def sage(self):
         """

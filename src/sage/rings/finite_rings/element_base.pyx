@@ -829,9 +829,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         - ``n`` -- integer `\geq 1`
 
-        - ``extend`` -- boolean (default: ``False``); if ``True``, return an `n`-th
-          root in an extension ring, if necessary. Otherwise, raise a
-          ValueError if the root is not in the base ring.  Warning:
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return an
+          `n`-th root in an extension ring, if necessary. Otherwise, raise a
+          :exc:`ValueError` if the root is not in the base ring.  Warning:
           this option is not implemented!
 
         - ``all`` -- boolean (default: ``False``); if ``True``, return all `n`-th
@@ -846,8 +846,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         If ``self`` has an `n`-th root, returns one (if ``all`` is ``False``) or a
         list of all of them (if ``all`` is ``True``).
-        Otherwise, raises a ``ValueError`` (if ``extend`` is ``False``)
-        or a ``NotImplementedError`` (if ``extend`` is ``True``).
+        Otherwise, raises a :exc:`ValueError` (if ``extend`` is ``False``)
+        or a :exc:`NotImplementedError` (if ``extend`` is ``True``).
 
         .. warning::
 

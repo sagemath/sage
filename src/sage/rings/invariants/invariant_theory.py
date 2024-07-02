@@ -4265,7 +4265,7 @@ class InvariantTheoryFactory():
             (0, 1, -1, 0)
 
         For binary cubics, there is no class implemented yet, so ``as_form=True``
-        will yield an ``NotImplementedError``::
+        will yield a :exc:`NotImplementedError`::
 
             sage: invariant_theory.binary_form_from_invariants(3, [discriminant])
             Traceback (most recent call last):

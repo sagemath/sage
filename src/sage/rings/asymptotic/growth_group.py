@@ -1425,7 +1425,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         - ``base`` -- an element
 
-        OUTPUT: nothing since a ``ValueError`` is raised in this generic method
+        OUTPUT: nothing since a :exc:`ValueError` is raised in this generic method
 
         TESTS::
 
@@ -3028,7 +3028,7 @@ class MonomialGrowthElement(GenericGrowthElement):
             The parent of the result can be different from the parent
             of this element.
 
-        A ``ValueError`` is raised if the calculation is not possible
+        A :exc:`ValueError` is raised if the calculation is not possible
         within this method. (Then the calling method should take care
         of the calculation.)
 

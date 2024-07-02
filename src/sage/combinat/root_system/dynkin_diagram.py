@@ -160,7 +160,7 @@ def DynkinDiagram(*args, **kwds):
 
     TESTS:
 
-    Check that :issue:`15277` is fixed by not having edges from 0's::
+    Check that :issue:`15277` is fixed by not having edges from 0s::
 
         sage: CM = CartanMatrix([[2,-1,0,0],[-3,2,-2,-2],[0,-1,2,-1],[0,-1,-1,2]])
         sage: CM
