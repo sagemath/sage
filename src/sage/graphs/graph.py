@@ -8209,7 +8209,7 @@ class Graph(GenericGraph):
         if not self.order():
             D = None
         elif self.order() == 1:
-            D = create_normal_node(self.vertices(sort=False)[0])
+            D = create_normal_node(next(self.vertex_iterator()))
         else:
             D = habib_maurer_algorithm(self)
 
