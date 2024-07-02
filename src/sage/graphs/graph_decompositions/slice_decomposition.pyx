@@ -412,6 +412,21 @@ cdef class SliceDecomposition(SageObject):
                 and self.xslice_len == sd.xslice_len
 
     def __hash__(self):
+        r"""
+        Compute a hash of a ``SliceDecomposition`` object.
+
+        TESTS:
+
+            sage: P3 = graphs.PathGraph(3)
+            sage: hash(P3.slice_decomposition(initial_vertex=0))
+            -7313201005658437102
+            sage: hash(P3.slice_decomposition(initial_vertex=2))
+            1181676064626878036
+            sage: hash(graphs.CompleteGraph(3).slice_decomposition())
+            6162668211142297415
+            sage: hash(Graph([(0,1), (0,2)]).slice_decomposition())
+            2898184589667302557
+        """
         return hash((tuple(self.sigma_inv.items()),
                      tuple(self.lex_label.items()),
                      tuple(self.xslice_len)))
