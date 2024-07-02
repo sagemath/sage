@@ -108,7 +108,14 @@ function changeVersion() {
     let selected_url = select_element.value;
     if (selected_url) {
         if (window.location.protocol == 'file:') {
-             window.location.href = selected_url + 'html/en/index.html';
+            let pathname = window.location.pathname;
+            let cutoff_point = pathname.indexOf('doc/sage');
+            if (cutoff_point !== -1) {
+                pathname = pathname.substring(cutoff_point + 8);
+                window.location.href = selected_url + pathname;
+            } else {
+                window.location.href = selected_url + 'html/en/index.html';
+            }
         } else {
             window.location.href = selected_url + window.location.pathname;
         }
