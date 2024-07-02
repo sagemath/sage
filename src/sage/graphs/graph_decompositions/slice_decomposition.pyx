@@ -565,7 +565,7 @@ cdef class SliceDecomposition(SageObject):
         """
         return self[v]
 
-    def slice (self, v):
+    def slice(self, v):
         r"""
         Return the slice of the vertex `v`.
 
