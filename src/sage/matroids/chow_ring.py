@@ -4,15 +4,63 @@ from sage.rings.quotient_ring_element import QuotientRingElement
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 import sage.misc.latex as latex
 
-#chow rings class needs to be written properly
-#gens of chow ring ideal must be debugged
-#gb must be a poly sequence
-#commented and documented
-#use is_groebner()
-#matroids - try all of them
+r"""
+Chow rings of matroids
+
+AUTHORS:
+
+- Travis Scrimshaw 
+- Shriya M
+
+These are the classes of Chow rings for matroids. It also takes in
+a parameter boolean ``augmented`` which creates the augmented Chow
+ring if given ``True``.
+
+
+REFERENCES
+
+- :arxiv:`2309.14312`
+- :arxiv:`2111.00393`
+"""
+#*****************************************************************************
+#       Copyright (C) 2024 Travis Scrimshaw
+#                     2024 Shriya M
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#
+#    This code is distributed in the hope that it will be useful, but
+#    WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    General Public License for more details.
+#
+#  The full text of the GPL is available at:
+#
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 
 class ChowRing(QuotientRing_nc):
+    r"""
+    The class of Chow ring, a multi-polynomial quotient ring. 
+    Base class - ``QuotientRing_nc``.
+
+    INPUT:
+
+
+    - `M` -- a matroid.
+    - `R` -- a ring.
+    - ``augmented`` -- a Boolean value. When ``True``, it returns the augmented Chow
+    ring. If ``False``, it returns the Chow ring
+
+    OUTPUT: Chow ring of matroid `M`.
+
+    EXAMPLES::
+
+        sage: M1 = matroids.catalog.P8pp()
+        sage: ch = ChowRing(M=M1, R=QQ, augmented=False)
+        sage: ch
+        Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning circuits
+    """
     def __init__(self, R, M, augmented):
         self._matroid = M
         self._augmented = augmented
@@ -20,7 +68,7 @@ class ChowRing(QuotientRing_nc):
             self._ideal = AugmentedChowRingIdeal(M, R)
         else:
             self._ideal = ChowRingIdeal(M, R) #check method to get ring
-        QuotientRing_nc.__init__(self, R=self._ideal.poly_ring, I=self._ideal, names=self.poly_ring.variable_names(), category=GradedAlgebrasWithBasis(R))
+        QuotientRing_nc.__init__(self, R=self._ideal.poly_ring, I=self._ideal, names=self._ideal.poly_ring.variable_names(), category=GradedAlgebrasWithBasis(R))
 
     def _repr_(self):
         return "Chow ring of {}".format(self._matroid)    
