@@ -905,6 +905,9 @@ cdef class SliceDecomposition(SageObject):
 
     def _latex_(self):
         r"""
+        Return a string to render, using `\LaTeX`, the slice decomposition as a
+        tree.
+
         TESTS:
 
             sage: from sage.graphs.graph_latex import check_tkz_graph
