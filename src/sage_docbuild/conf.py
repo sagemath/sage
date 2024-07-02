@@ -354,7 +354,7 @@ def set_intersphinx_mappings(app, config):
     for directory in os.listdir(os.path.join(invpath)):
         if directory == 'jupyter_execute':
             # This directory is created by jupyter-sphinx extension for
-            # internal use and should be ignored here. See trac #33507.
+            # internal use and should be ignored here. See Issue #33507.
             continue
         if os.path.isdir(os.path.join(invpath, directory)):
             src = os.path.join(refpath, directory)
@@ -442,7 +442,9 @@ html_theme_options = {
 }
 
 if not version.split('.')[-1].isnumeric():  # develop version
-    ver = f'<a href="https://livedoc--sagemath.netlify.app/html/en/index.html">{version}</a>'
+    # This URL is hardcoded in the file .github/workflows/doc-publish.yml.
+    # See NETLIFY_ALIAS of the "Deploy to Netlify" step.
+    ver = f'<a href="https://doc-develop--sagemath.netlify.app/html/en/index.html">{version}</a>'
     github_ref = os.environ.get('GITHUB_REF', '')
     if github_ref:
         match = re.search(r'refs/pull/(\d+)/merge', github_ref)
@@ -471,6 +473,7 @@ html_sidebars = {
     "**": [
         "sidebar/scroll-start.html",
         "sidebar/brand.html",
+        "sidebar/version-selector.html",
         "sidebar/search.html",
         "sidebar/home.html",
         "sidebar/navigation.html",
@@ -631,7 +634,7 @@ latex_elements['preamble'] = r"""
 \let\textLaTeX\LaTeX
 \AtBeginDocument{\renewcommand*{\LaTeX}{\hbox{\textLaTeX}}}
 
-% Workaround for a LaTeX bug -- see trac #31397 and
+% Workaround for a LaTeX bug -- see Issue #31397 and
 % https://tex.stackexchange.com/questions/583391/mactex-2020-error-with-report-hyperref-mathbf-in-chapter.
 \makeatletter
 \pdfstringdefDisableCommands{%
@@ -677,7 +680,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
     path2 = os.path.join(SAGE_DOC, 'html', 'en')
     relpath = os.path.relpath(path2, path1)
     context['release'] = release
-    context['documentation_title'] = 'Sage {}'.format(release) + ' Documentation'
+    context['documentation_title'] = f'Version {release} Documentation '
     context['documentation_root'] = os.path.join(relpath, 'index.html')
     if 'website' in path1:
         context['title'] = 'Documentation'
@@ -686,7 +689,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
     if 'reference' in path1 and not path1.endswith('reference'):
         path2 = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         relpath = os.path.relpath(path2, path1)
-        context['reference_title'] = 'Sage {}'.format(release) + ' Reference Manual'
+        context['reference_title'] = f'Version {release} Reference Manual'
         context['reference_root'] = os.path.join(relpath, 'index.html')
         context['refsub'] = True
         if pagename.startswith('sage/'):
