@@ -379,6 +379,8 @@ cdef class SliceDecomposition(SageObject):
 
     def __eq__(self, other):
         """
+        Return whether ``self`` and ``other`` are equal.
+
         TESTS:
 
             sage: G = graphs.PetersenGraph()
