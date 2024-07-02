@@ -60,11 +60,6 @@ a.pdf:hover {
   text-align: center;
 }
 
-.select-wrapper::before {
-  content: "switch to";
-  font-size: small;
-}
-
 body[data-theme="dark"] {
   #versions-menu {
     background-color: black;

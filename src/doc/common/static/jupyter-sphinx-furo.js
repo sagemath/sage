@@ -62,82 +62,37 @@ observer2.observe(document.getElementsByClassName("content")[0], { childList: tr
 // Version selector
 //
 
-var versionMap = {};
-
-async function fetchVersions() {
+function fetchVersions() {
     try {
-        // For the origin of this site, see .github/workflows/doc-publish.yml
-        let versions_file = "https://doc-release--sagemath.netlify.app/html/en/versions.txt";
-        let response = await fetch(versions_file);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        let text = await response.text();
-        let lines = text.split('\n');
+        let menu = document.getElementById('versions-menu');
 
-        let url = window.location.origin;
-        let current_version
-
-        if (window.location.protocol == 'file:') {
-            current_version = 'local';
-            url = window.location.href;
-        } else {
-            let start_index = url.indexOf('doc-') + 4;
-            let end_index = url.indexOf('--');
-            let version_string = url.substring(start_index, end_index);
-
-            // Consult the comment in .github/workflows/doc-publish.yml
-            if (/^pr-\d+$/.test(version_string)) {
-                current_version = version_string.replace(/-/g, ' ');
-            } else if (version_string === 'release') {
-                current_version = 'latest';
-            } else if (version_string === 'develop') {
-                current_version = 'develop';
-            } else {
-                current_version = version_string.replace(/-/g, '.');
-            }
-        }
-        versionMap[current_version] = url
-
-        if (current_version != 'develop') {
-            versionMap['develop'] = "https://doc-develop--sagemath.netlify.app";
-        }
-
-        // Parse the versions.txt file
-        lines.forEach(line => {
-            if (!line.startsWith('#')) { // Ignore the comment line
-                let [ver, url] = line.split(' ');
-                if (ver && url) {
-                    if (!url.startsWith("https://")) {
-                        url = "https://" + url;
-                    }
-                    versionMap[ver] = url;
+        // For the origin of the this site, see .github/workflows/doc-publish.yml
+        fetch('https://doc-release--sagemath-test.netlify.app/html/en/versions.txt')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
                 }
-            }
-        });
+                return response.text();
+            })
+            .then(text => {
+                const lines = text.split('\n');
+                lines.forEach(line => {
+                    if (!line.startsWith('#')) { // Ignore the comment line
+                        let [ver, url] = line.split(' ');
+                        if (ver && url) {
+                            if (!url.startsWith('https://')) {
+                                url = 'https://' + url;
+                            }
+                            let option = document.createElement('option');
+                            option.value = url;
+                            option.text = ver;
+                            menu.add(option);
+                        }
+                    }
+                });
+            });
     } catch (error) {
         console.error("Failed to fetch versions.txt file:", error);
-    }
-
-    let menu = document.getElementById("versions-menu");
-
-    if (Object.keys(versionMap).length > 0) {
-        Object.keys(versionMap).forEach(ver => {
-            let option = document.createElement("option");
-            option.value = ver;
-            option.text = ver;
-            menu.add(option);
-        });
-    } else {
-        menu.style.display = 'none';
-    }
-
-    let urlParams = new URLSearchParams(window.location.search);
-    let version = urlParams.get("ver");
-    // Check if the version exists in the map and redirect
-    if (version && version in versionMap) {
-        let targetUrl = versionMap[version];
-        window.location.href = targetUrl + window.location.pathname;
     }
 }
 
@@ -145,14 +100,14 @@ fetchVersions()
 
 // Function to change the version based on versions menu selection
 function changeVersion() {
-    let selected_version = document.getElementById("versions-menu").value;
-    if (selected_version) {
-       // Check if the version exists in the map and redirect
-        if (selected_version in versionMap) {
-            let targetUrl = versionMap[selected_version];
-            window.location.href = targetUrl + window.location.pathname;
+    let select_element = document.getElementById("versions-menu");
+    let selected_ver = select_element.options[select_element.selectedIndex].text;
+    let selected_url = select_element.value;
+    if (selected_url) {
+        if (window.location.protocol == 'file:') {
+             window.location.href = selected_url + 'html/en/index.html';
         } else {
-            console.error("Version not found in versions.txt.");
+            window.location.href = selected_url + window.location.pathname;
         }
     }
 }
