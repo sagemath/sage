@@ -42,6 +42,11 @@ a.pdf:hover {
   z-index: 100;
 }
 
+.select-wrapper {
+  display: block;
+  text-align: center;
+}
+
 #versions-menu {
   display: inline-block;
   font-size: small;
@@ -55,21 +60,16 @@ a.pdf:hover {
   outline: none;
 }
 
-.select-wrapper {
-  display: block;
-  text-align: center;
-}
-
 body[data-theme="dark"] {
   #versions-menu {
-    background-color: black;
+    background-color: transparent;
   }
 }
 
 @media (prefers-color-scheme: dark) {
   body[data-theme="auto"] {  /* the same styles with body[data-theme="dark"] */
     #versions-menu {
-      background-color: black;
+      background-color: transparent;
     }
   }
 }
