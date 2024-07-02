@@ -61,7 +61,9 @@ cdef void extended_lex_BFS(
         * sigma[deref(sigma_inv)[v_int]] = v_int
         * deref(sigma_inv)[sigma[i]] = i
 
-    - ``initial_v_int`` -- the first vertex to consider, can be -1.
+    - ``initial_v_int`` -- the first vertex to consider. It can be `-1`; in this
+      case the first active vertex (corresponding to the first bit set in
+      ``cg.active_vertices``) will be taken as first vertex.
 
     - ``pred`` -- a pointer to a vector of int to store the predecessor of a
       vertex in the LexBFS traversal. ``pred`` can be ``NULL`` if the caller
