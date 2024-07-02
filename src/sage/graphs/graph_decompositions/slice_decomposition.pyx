@@ -289,7 +289,7 @@ def slice_decomposition(G, initial_vertex=None):
     implementation follows that complexity for ``SparseGraph``. For
     ``DenseGraph``, the complexity is `O(n^2)`.
 
-    EXAMPLES::
+    EXAMPLES:
 
     Slice decomposition of the Petersen Graph::
 
@@ -443,7 +443,7 @@ cdef class SliceDecomposition(SageObject):
 
         This method can also be called via :meth:`xslice_data`.
 
-        EXAMPLES::
+        EXAMPLES:
 
         ::
 
@@ -527,8 +527,6 @@ cdef class SliceDecomposition(SageObject):
 
         EXAMPLES::
 
-        ::
-
             sage: from sage.graphs.traversals import _is_valid_lex_BFS_order
             sage: G = graphs.PetersenGraph(); SD = G.slice_decomposition()
             sage: SD.lexBFS_order()
@@ -586,7 +584,7 @@ cdef class SliceDecomposition(SageObject):
 
         A list of vertices
 
-        EXAMPLES::
+        EXAMPLES:
 
         ::
 
@@ -639,7 +637,7 @@ cdef class SliceDecomposition(SageObject):
 
         A list of list corresponding to the x-slice sequence of ``v``.
 
-        EXAMPLES::
+        EXAMPLES:
 
         ::
 
@@ -757,7 +755,7 @@ cdef class SliceDecomposition(SageObject):
 
         A list of edges
 
-        EXAMPLES::
+        EXAMPLES:
 
         ::
 
@@ -848,7 +846,7 @@ cdef class SliceDecomposition(SageObject):
         decomposition, the underlying graph corresponds to ``G.to_simple()``,
         *i.e.*, it is the input graph without loops and multiple edges.
 
-        EXAMPLES::
+        EXAMPLES:
 
         ::
 
