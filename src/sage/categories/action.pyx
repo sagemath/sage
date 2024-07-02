@@ -85,7 +85,7 @@ cdef class Action(Functor):
 
     - ``S`` -- a parent or Python type
 
-    - ``is_left`` -- (boolean, default: ``True``) whether elements of
+    - ``is_left`` -- boolean (default: ``True``); whether elements of
       ``G`` are on the left
 
     - ``op`` -- (default: ``None``) operation. This is not used by
@@ -200,9 +200,9 @@ cdef class Action(Functor):
 
         INPUT:
 
-        - ``g`` -- an object with parent ``self.G``.
+        - ``g`` -- an object with parent ``self.G``
 
-        - ``x`` -- an object with parent ``self.US()``.
+        - ``x`` -- an object with parent ``self.US()``
 
         .. WARNING::
 

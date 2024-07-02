@@ -228,7 +228,6 @@ class TangentSpace(FiniteRankFreeModule):
 
         :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`
         for more documentation.
-
     """
     Element = TangentVector
 
@@ -246,7 +245,6 @@ class TangentSpace(FiniteRankFreeModule):
             Tangent space at Point p on the 2-dimensional differentiable
              manifold M
             sage: TestSuite(Tp).run()
-
         """
         manif = point._manifold
         name = "T_{} {}".format(point._name, manif._name)
@@ -342,7 +340,6 @@ class TangentSpace(FiniteRankFreeModule):
             sage: Tp
             Tangent space at Point p on the
              2-dimensional differentiable manifold M
-
         """
         return "Tangent space at {}".format(self._point)
 
@@ -361,7 +358,6 @@ class TangentSpace(FiniteRankFreeModule):
              manifold M
             sage: Tp._an_element_().display()
             ∂/∂x + 2 ∂/∂y
-
         """
         resu = self.element_class(self)
         if self._def_basis is not None:
@@ -390,7 +386,6 @@ class TangentSpace(FiniteRankFreeModule):
 
             sage: dim(Tp)
             2
-
         """
         # The dimension is the rank of self as a free module:
         return self._rank
@@ -411,6 +406,5 @@ class TangentSpace(FiniteRankFreeModule):
             Point p on the 2-dimensional differentiable manifold M
             sage: Tp.base_point() is p
             True
-
         """
         return self._point

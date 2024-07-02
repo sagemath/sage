@@ -262,7 +262,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` -- a prime number
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         The answer is cached.
 
@@ -313,7 +313,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` -- a prime number
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -710,7 +710,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p``  a prime number
 
-        OUTPUT: A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1246,7 +1246,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` another prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1279,7 +1279,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1316,7 +1316,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1346,7 +1346,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1374,7 +1374,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1399,7 +1399,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1423,7 +1423,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1449,7 +1449,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

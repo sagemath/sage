@@ -8,7 +8,7 @@ from sage.misc.temporary_file import tmp_filename
 
 def test_write_to_file():
     """
-    Test that libgap can write to files
+    Test that libgap can write to files.
 
     See :issue:`16502`, :issue:`15833`.
 

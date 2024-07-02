@@ -121,9 +121,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         - ``depth`` -- an integer or :mod:`Infinity <sage.rings.infinity>`.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 

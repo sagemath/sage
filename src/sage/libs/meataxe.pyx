@@ -41,7 +41,7 @@ cdef Matrix_t *rawMatrix(int Field, list entries) except NULL:
 
     INPUT:
 
-    - ``Field`` -- Integer, the field size
+    - ``Field`` -- integer; the field size
     - ``entries`` -- list of lists, the entries of the matrix, also
       defining the matrix dimensions. It is *not* tested that all rows
       in ``entries`` have the same length, and it is assumed that both

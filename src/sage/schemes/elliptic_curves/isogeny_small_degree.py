@@ -2633,9 +2633,7 @@ def isogenies_prime_degree(E, l, minimal_models=True):
       set to ``False``.  Ignored except over number fields other than
       `QQ`.
 
-    OUTPUT:
-
-    A list of all separable isogenies of degree `l` with domain ``E``.
+    OUTPUT: a list of all separable isogenies of degree `l` with domain ``E``
 
     EXAMPLES::
 

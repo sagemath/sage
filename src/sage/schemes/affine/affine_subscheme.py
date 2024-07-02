@@ -350,7 +350,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         - ``P`` -- a point in the intersection of this subscheme with ``X``.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -439,9 +439,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         - ``P`` -- a point on this subscheme.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

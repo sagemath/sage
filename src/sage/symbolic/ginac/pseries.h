@@ -29,7 +29,7 @@
 namespace GiNaC {
 
 /** This class holds a extended truncated power series (positive and negative
- *  integer powers). It consists of expression coefficients (only non-zero
+ *  integer powers). It consists of expression coefficients (only nonzero
  *  coefficients are stored), an expansion variable and an expansion point.
  *  Other classes must provide members to convert into this type. */
 class pseries : public basic

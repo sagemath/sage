@@ -17,9 +17,9 @@ AUTHORS:
 FUNCTIONS:
 
 - ``FormalSums(ring)`` -- create the module of formal finite sums with
-  coefficients in the given ring.
+  coefficients in the given ring
 
-- ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum.
+- ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum
 
 EXAMPLES::
 
@@ -90,10 +90,9 @@ class FormalSum(ModuleElement):
 
         - ``x`` -- object
         - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
-        - ``check`` -- bool (default: ``True``) if ``False``, might not coerce
-          coefficients into base ring, which can speed
-          up constructing a formal sum.
-        - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
+        - ``check`` -- boolean (default: ``True``); if ``False``, might not coerce
+          coefficients into base ring, which can speed up constructing a formal sum
+        - ``reduce`` -- boolean (default: ``True``); if ``False``, do not
           combine common terms
 
         .. WARNING::
@@ -342,7 +341,6 @@ class FormalSums(UniqueRepresentation, Module):
     TESTS::
 
         sage: TestSuite(FormalSums(QQ)).run()
-
     """
     Element = FormalSum
 
@@ -371,15 +369,15 @@ class FormalSums(UniqueRepresentation, Module):
 
     def _element_constructor_(self, x, check=True, reduce=True):
         """
-        Make a formal sum in self from x.
+        Make a formal sum in ``self`` from x.
 
         INPUT:
 
         - ``x`` -- formal sum, list or number
 
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
-        - ``reduce`` -- bool (default: ``True``); whether to combine terms
+        - ``reduce`` -- boolean (default: ``True``); whether to combine terms
 
         EXAMPLES::
 
@@ -402,7 +400,7 @@ class FormalSums(UniqueRepresentation, Module):
 
     def _coerce_map_from_(self, X):
         r"""
-        Return whether there is a coercion from ``X``
+        Return whether there is a coercion from ``X``.
 
         EXAMPLES::
 

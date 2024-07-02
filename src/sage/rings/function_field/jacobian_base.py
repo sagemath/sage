@@ -238,7 +238,7 @@ class JacobianGroupFunctor(ConstructionFunctor):
 
     def merge(self, other):
         """
-        Return the functor merging ``self`` and ``other``
+        Return the functor merging ``self`` and ``other``.
 
         INPUT:
 
@@ -549,7 +549,7 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -633,7 +633,7 @@ class Jacobian_base(Parent):
 
     def __call__(self, x):
         """
-        Return the point of ``self`` constructed from ``x``
+        Return the point of ``self`` constructed from ``x``.
 
         It is assumed that ``self`` and ``x`` are points of the Jacobians
         attached to the same function field.
@@ -776,7 +776,7 @@ class Jacobian_base(Parent):
 
         INPUT:
 
-        - ``place`` -- a rational place of the function field.
+        - ``place`` -- a rational place of the function field
 
         The base place `B` is used to map a rational place `P` of the function
         field to the point of the Jacobian defined by the divisor `P - B`.

@@ -258,7 +258,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         ``reduce=False`` it is your responsibility to pass valid input
         data ``arg``.
 
-    OUTPUT: A :class:`sage.schemes.toric.divisor.ToricDivisor_generic`.
+    OUTPUT: a :class:`sage.schemes.toric.divisor.ToricDivisor_generic`
 
     EXAMPLES::
 
@@ -478,9 +478,7 @@ class ToricDivisor_generic(Divisor_generic):
         - ``x`` -- one of the homogeneous coordinates, either given by
           the variable or its index.
 
-        OUTPUT:
-
-        The coefficient of ``x``.
+        OUTPUT: the coefficient of ``x``
 
         EXAMPLES::
 
@@ -517,7 +515,7 @@ class ToricDivisor_generic(Divisor_generic):
         - ``point`` -- either an integer, interpreted as the index of a ray of
           `\Sigma`, or a point of the lattice `N`.
 
-        OUTPUT: An integer or a rational number.
+        OUTPUT: an integer or a rational number
 
         EXAMPLES::
 
@@ -1049,9 +1047,7 @@ class ToricDivisor_generic(Divisor_generic):
         Return the polyhedron `P_D\subset M` associated to a toric
         divisor `D`.
 
-        OUTPUT:
-
-        `P_D` as an instance of :class:`~sage.geometry.polyhedron.base.Polyhedron_base`.
+        OUTPUT: `P_D` as an instance of :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
 
         EXAMPLES::
 
@@ -1135,7 +1131,7 @@ class ToricDivisor_generic(Divisor_generic):
         the line bundle (or reflexive sheaf) associated to the
         divisor.
 
-        OUTPUT: A :class:`tuple` of points of lattice `M`.
+        OUTPUT: a :class:`tuple` of points of lattice `M`
 
         EXAMPLES::
 
@@ -1313,7 +1309,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         - `m` -- a point in ``self.scheme().fan().dual_lattice()``.
 
-        OUTPUT: A :class:`simplicial complex <sage.topology.simplicial_complex.SimplicialComplex>`.
+        OUTPUT: a :class:`simplicial complex <sage.topology.simplicial_complex.SimplicialComplex>`
 
         EXAMPLES::
 
@@ -1349,7 +1345,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         - ``cplx`` -- simplicial complex.
 
-        OUTPUT: An integer vector.
+        OUTPUT: an integer vector
 
         EXAMPLES::
 
@@ -1668,9 +1664,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         Implementation note: :meth:`__classcall__` sets the default
         value for ``base_ring``.
 
-        OUTPUT:
-
-        Divisor group of the toric variety.
+        OUTPUT: divisor group of the toric variety
 
         EXAMPLES::
 
@@ -1694,7 +1688,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT: A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -1708,9 +1702,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         """
         Return a string representation of the toric divisor group.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 

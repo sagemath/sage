@@ -319,7 +319,9 @@ cdef int proj_normalise(llong N, llong u, llong  v,
 
     - ``v`` -- an integer (the second coordinate of (u:v))
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns (in a pointer)
+    OUTPUT:
+
+    If `\gcd(u,v,N) = 1`, then returns (in a pointer)
 
     - ``uu`` -- an integer
 
@@ -1214,7 +1216,7 @@ cdef class ModularSymbolNumerical:
 
         - ``unitary`` -- a boolean (int)
 
-        OUTPUT: a rational.
+        OUTPUT: a rational
 
         EXAMPLES::
 
@@ -1661,9 +1663,7 @@ cdef class ModularSymbolNumerical:
 
         - ``eps`` -- a positive real number, the maximal allowed error
 
-        OUTPUT:
-
-        two integers `T` and `b`
+        OUTPUT: two integers `T` and `b`
 
         If `T` would be larger than `2^31`, the value (-1,-1) is
         returned instead.
@@ -2484,7 +2484,7 @@ cdef class ModularSymbolNumerical:
           the computation, 1 do use them, 2 (default) decide if it is
           meaningful to do so.
 
-        OUTPUT: a rational number.
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -3713,7 +3713,7 @@ def _test_against_table(range_of_conductors, other_implementation="sage", list_o
 
     - ``verb`` -- if ``True`` (default) prints the values
 
-    OUTPUT: Boolean. If ``False`` the function also prints information.
+    OUTPUT: boolean; if ``False`` the function also prints information
 
     EXAMPLES::
 

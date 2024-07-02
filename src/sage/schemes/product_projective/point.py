@@ -133,7 +133,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Return a string representation of this point.
 
-        OUTPUT: String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -153,9 +153,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         - ``other`` -- another point
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -228,7 +226,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Iterate over the coordinates of the point.
 
-        OUTPUT: An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -262,7 +260,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         """
         Compute the hash value of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -304,7 +302,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Remove common factors (componentwise) from the coordinates of this point (including `-1`).
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -407,7 +405,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         - ``embedding`` -- field embedding from the base ring of this point to ``R``.
 
-        OUTPUT: :class:`ProductProjectiveSpaces_point`.
+        OUTPUT: :class:`ProductProjectiveSpaces_point`
 
         EXAMPLES::
 
@@ -434,7 +432,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -489,7 +487,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -526,7 +524,7 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
 
         - ``X`` -- a subscheme in the same ambient space as the codomain of this point.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -549,7 +547,7 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
         This uses the subscheme implementation of multiplicity. This point must be a point
         on a subscheme of a product of projective spaces.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

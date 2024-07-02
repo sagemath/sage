@@ -34,9 +34,7 @@ def DivisorGroup(scheme, base_ring=None):
       coefficient ring of the divisors. Not to be confused with the
       base ring of the scheme!
 
-    OUTPUT:
-
-    An instance of ``DivisorGroup_generic``.
+    OUTPUT: an instance of ``DivisorGroup_generic``
 
     EXAMPLES::
 
@@ -66,9 +64,7 @@ def is_DivisorGroup(x):
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    ``True`` or ``False``.
+    OUTPUT: ``True`` or ``False``
 
     EXAMPLES::
 

@@ -40,7 +40,6 @@ class EuclideanDomains(Category_singleton):
     TESTS::
 
         sage: TestSuite(EuclideanDomains()).run()
-
     """
     def super_categories(self):
         """
@@ -60,7 +59,6 @@ class EuclideanDomains(Category_singleton):
 
                 sage: Parent(QQ,category=EuclideanDomains()).is_euclidean_domain()
                 True
-
             """
             return True
 
@@ -71,7 +69,7 @@ class EuclideanDomains(Category_singleton):
 
             INPUT:
 
-            - ``elts`` -- A sequence of elements of ``self``.
+            - ``elts`` -- a sequence of elements of ``self``
 
             OUTPUT:
 
@@ -213,7 +211,7 @@ class EuclideanDomains(Category_singleton):
 
             OUTPUT:
 
-            For non-zero elements, a natural number. For the zero element, this
+            For nonzero elements, a natural number. For the zero element, this
             might raise an exception or produce some other output, depending on
             the implementation.
 
@@ -257,15 +255,13 @@ class EuclideanDomains(Category_singleton):
         def quo_rem(self, other):
             r"""
             Return the quotient and remainder of the division of this element
-            by the non-zero element ``other``.
+            by the nonzero element ``other``.
 
             INPUT:
 
             - ``other`` -- an element in the same euclidean domain
 
-            OUTPUT:
-
-            a pair of elements
+            OUTPUT: a pair of elements
 
             EXAMPLES::
 

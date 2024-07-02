@@ -101,7 +101,6 @@ cdef class WithEqualityById:
         True
         sage: a is d
         False
-
     """
     def __hash__(self):
         """
@@ -226,7 +225,6 @@ cdef class FastHashable_class:
             sage: H = FastHashable_class(123)
             sage: hash(H)   # indirect doctest
             123
-
         """
         return self._hash
 

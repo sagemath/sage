@@ -116,11 +116,9 @@ def is_LinearTensor(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -159,11 +157,10 @@ def LinearTensorParent(free_module_parent, linear_functions_parent):
 
     INPUT:
 
-    - ``free_module_parent`` -- module. A free module, like vector or
-      matrix space.
+    - ``free_module_parent`` -- a free module, like vector or matrix space
 
-    - ``linear_functions_parent`` -- linear functions. The linear
-      functions parent.
+    - ``linear_functions_parent`` -- linear functions; the linear functions
+      parent
 
     OUTPUT:
 
@@ -204,9 +201,7 @@ class LinearTensorParent_class(Parent):
         You should use :func:`LinearTensorParent` to construct
         instances of this class.
 
-    INPUT/OUTPUT:
-
-    See :func:`LinearTensorParent`
+    INPUT/OUTPUT: see :func:`LinearTensorParent`
 
     EXAMPLES::
 
@@ -218,11 +213,9 @@ class LinearTensorParent_class(Parent):
 
     def __init__(self, free_module, linear_functions):
         """
-        The Python constructor
+        The Python constructor.
 
-        INPUT/OUTPUT:
-
-        See :func:`LinearTensorParent`
+        INPUT/OUTPUT: see :func:`LinearTensorParent`
 
         TESTS::
 
@@ -325,11 +318,9 @@ class LinearTensorParent_class(Parent):
 
     def _repr_(self):
         """
-        Return a string representation
+        Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -342,9 +333,7 @@ class LinearTensorParent_class(Parent):
         """
         Convert ``m`` to a constant free module element.
 
-        OUTPUT:
-
-        A :meth:`free_module` element.
+        OUTPUT: a :meth:`free_module` element
 
         EXAMPLES::
 
@@ -441,11 +430,9 @@ class LinearTensorParent_class(Parent):
 
         INPUT:
 
-        - ``R`` -- a ring.
+        - ``R`` -- a ring
 
-        OUTPUT:
-
-        Boolean. Whether there is a coercion map.
+        OUTPUT: boolean; whether there is a coercion map
 
         EXAMPLES::
 
@@ -470,11 +457,9 @@ class LinearTensorParent_class(Parent):
 
     def _an_element_(self):
         """
-        Returns an element
+        Return an element.
 
-        OUTPUT:
-
-        A linear function tensored with a free module.
+        OUTPUT: a linear function tensored with a free module
 
         EXAMPLES::
 

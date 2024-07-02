@@ -60,7 +60,7 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
     manifold `U` with values on a differentiable manifold `M`, via a
     differentiable map `U \rightarrow M`.
 
-    Given two non-negative integers `k` and `l` and a differentiable map
+    Given two nonnegative integers `k` and `l` and a differentiable map
 
     .. MATH::
 
@@ -234,7 +234,6 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
         sage: T11.tensor_factors()
         [Module X(M) of vector fields on the 2-dimensional differentiable manifold M,
         Module Omega^1(M) of 1-forms on the 2-dimensional differentiable manifold M]
-
     """
     Element = TensorField
 
@@ -266,7 +265,6 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
         In the above test suite, ``_test_elements`` is skipped because of the
         ``_test_pickling`` error of the elements (to be fixed in
         :class:`~sage.manifolds.differentiable.tensorfield.TensorField`)
-
         """
         domain = vector_field_module._domain
         dest_map = vector_field_module._dest_map
@@ -318,7 +316,6 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
              + (-y + 3) ∂/∂y⊗∂/∂y
             sage: T20(0) is T20.zero()
             True
-
         """
         try:
             if comp.is_trivial_zero():
@@ -411,7 +408,6 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
             sage: T31._an_element_()
             Tensor field of type (3,1) on the 2-dimensional differentiable
              manifold M
-
         """
         resu = self.element_class(self._vmodule, self._tensor_type)
         for oc in self._domain.open_covers(trivial=False):
@@ -445,7 +441,6 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
             sage: T11 = M.tensor_field_module((1,1))
             sage: T11._coerce_map_from_(M.automorphism_field_group())
             True
-
         """
         from sage.manifolds.differentiable.diff_form_module import \
                                                           DiffFormModule
@@ -489,7 +484,6 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
             sage: T13  # indirect doctest
             Module T^(1,3)(M) of type-(1,3) tensors fields on the 2-dimensional
              differentiable manifold M
-
         """
         description = "Module "
         if self._name is not None:
@@ -516,7 +510,6 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
             '\\mathcal{T}^{(1,3)}\\left(M\\right)'
             sage: latex(T13)  # indirect doctest
             \mathcal{T}^{(1,3)}\left(M\right)
-
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
@@ -545,7 +538,6 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
             sage: T13.base_module().base_ring()
             Algebra of differentiable scalar fields on the 2-dimensional
              differentiable manifold M
-
         """
         return self._vmodule
 
@@ -553,10 +545,8 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
         r"""
         Return the tensor type of ``self``.
 
-        OUTPUT:
-
-        - pair `(k,l)` of non-negative integers such that the tensor fields
-          belonging to this module are of type `(k,l)`
+        OUTPUT: pair `(k,l)` of nonnegative integers such that the tensor
+        fields belonging to this module are of type `(k,l)`
 
         EXAMPLES::
 
@@ -567,7 +557,6 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
             sage: T20 = M.tensor_field_module((2,0))
             sage: T20.tensor_type()
             (2, 0)
-
         """
         return self._tensor_type
 
@@ -604,7 +593,7 @@ class TensorFieldFreeModule(TensorFreeModule):
     differentiable manifold `U` with values on a parallelizable manifold `M`,
     via a differentiable map `U \rightarrow M`.
 
-    Given two non-negative integers `k` and `l` and a differentiable map
+    Given two nonnegative integers `k` and `l` and a differentiable map
 
     .. MATH::
 
@@ -739,7 +728,6 @@ class TensorFieldFreeModule(TensorFreeModule):
         [1 0 0]
         [0 1 0]
         [0 0 1]
-
     """
     Element = TensorFieldParal
 
@@ -760,7 +748,6 @@ class TensorFieldFreeModule(TensorFreeModule):
             sage: T12 is M.tensor_field_module((1,2))
             True
             sage: TestSuite(T12).run()
-
         """
         domain = vector_field_module._domain
         dest_map = vector_field_module._dest_map
@@ -808,7 +795,6 @@ class TensorFieldFreeModule(TensorFreeModule):
              + 3 ∂/∂y⊗dy⊗dy
             sage: T12(0) is T12.zero()
             True
-
         """
         try:
             if comp.is_trivial_zero():
@@ -913,7 +899,6 @@ class TensorFieldFreeModule(TensorFreeModule):
             sage: T11 = M.tensor_field_module((1,1))
             sage: T11._coerce_map_from_(M.automorphism_field_group())
             True
-
         """
         from sage.manifolds.differentiable.diff_form_module import \
                                                       DiffFormFreeModule
@@ -958,7 +943,6 @@ class TensorFieldFreeModule(TensorFreeModule):
             sage: T12  # indirect doctest
             Free module T^(1,2)(M) of type-(1,2) tensors fields on the
              2-dimensional differentiable manifold M
-
         """
         description = "Free module "
         if self._name is not None:

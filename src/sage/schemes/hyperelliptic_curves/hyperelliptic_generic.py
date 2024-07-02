@@ -374,9 +374,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
           (possibly empty) list of all points; if ``False``, return
           just one point, or raise a :class:`ValueError` if there are none.
 
-        OUTPUT:
-
-        A point or list of up to two points on this curve.
+        OUTPUT: a point or list of up to two points on this curve
 
         .. SEEALSO::
 

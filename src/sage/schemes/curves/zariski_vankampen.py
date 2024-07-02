@@ -82,9 +82,7 @@ def braid_from_piecewise(strands):
       is a number between 0 and 1, and ``c1`` and ``c2`` are rationals
       or algebraic reals.
 
-    OUTPUT:
-
-    The braid formed by the piecewise linear strands.
+    OUTPUT: the braid formed by the piecewise linear strands
 
     EXAMPLES::
 
@@ -180,9 +178,7 @@ def discrim(pols) -> tuple:
     - ``pols`` -- a list or tuple of polynomials in two variables with
       coefficients in a number field with a fixed embedding in `\QQbar`.
 
-    OUTPUT:
-
-    A tuple with the roots of the discriminant in `\QQbar`.
+    OUTPUT: a tuple with the roots of the discriminant in `\QQbar`
 
     EXAMPLES::
 
@@ -623,9 +619,7 @@ def fieldI(field):
 
     - ``field`` -- a number field with an embedding in `\QQbar`.
 
-    OUTPUT:
-
-    The extension ``F`` of ``field`` containing  ``I`` with  an embedding in `\QQbar`.
+    OUTPUT: the extension ``F`` of ``field`` containing  ``I`` with  an embedding in `\QQbar`
 
     EXAMPLES::
 
@@ -837,9 +831,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
     - ``precision`` -- a dictionary (default: `{}`) which assigns a number
       precision bits to each element of ``glist``
 
-    OUTPUT:
-
-    A braid.
+    OUTPUT: a braid
 
     EXAMPLES::
 
@@ -966,7 +958,7 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}) -> list:
       the vertices of ``dual_graph`` to fix regions associated with
       vertical lines
 
-    OUTPUT: A geometric basis and a dictionary.
+    OUTPUT: a geometric basis and a dictionary
 
     The geometric basis is formed by a list of sequences of paths. Each path is a
     ist of vertices, that form a closed path in ``G``, based at ``p``, that goes

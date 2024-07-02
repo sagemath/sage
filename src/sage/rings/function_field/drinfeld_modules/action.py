@@ -85,7 +85,9 @@ class DrinfeldModuleAction(Action):
         """
         Initialize ``self``.
 
-        INPUT: the Drinfeld module
+        INPUT:
+
+        - ``drinfeld_module`` -- the Drinfeld module
 
         TESTS::
 
@@ -142,7 +144,7 @@ class DrinfeldModuleAction(Action):
         r"""
         Return a LaTeX representation of the action.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -162,7 +164,7 @@ class DrinfeldModuleAction(Action):
         r"""
         Return a string representation of the action.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 

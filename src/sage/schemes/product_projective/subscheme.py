@@ -72,9 +72,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         - ``PP`` -- (default: ``None``) ambient image projective space;
           this is constructed if it is not given.
 
-        OUTPUT:
-
-        Hom from this subscheme to the appropriate subscheme of projective space
+        OUTPUT: hom from this subscheme to the appropriate subscheme of projective space
 
         EXAMPLES::
 
@@ -186,7 +184,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         r"""
         Return the dimension of the algebraic subscheme.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -347,7 +345,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         - ``P`` -- a point in the intersection of this subscheme with ``X``.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES:
 
@@ -418,7 +416,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         - ``P`` -- a point on this subscheme.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

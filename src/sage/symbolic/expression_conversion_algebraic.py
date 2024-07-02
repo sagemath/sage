@@ -264,8 +264,8 @@ class AlgebraicConverter(Converter):
 
 def algebraic(ex, field):
     """
-    Returns the symbolic expression *ex* as a element of the algebraic
-    field *field*.
+    Return the symbolic expression ``ex`` as a element of the algebraic
+    field ``field``.
 
     EXAMPLES::
 

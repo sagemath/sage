@@ -46,7 +46,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     INPUT:
 
     - ``data`` -- see :class:`Link` for the allowable inputs
-    - ``check`` -- optional, default ``True``. If ``True``, make sure
+    - ``check`` -- boolean (default: ``True``); if ``True``, make sure
       that the data define a knot, not a link
 
     EXAMPLES:
@@ -146,14 +146,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     def _unicode_art_(self):
         """
         Return unicode art for the knot.
-
-        INPUT:
-
-        - a knot
-
-        OUTPUT:
-
-        - unicode art for the knot
 
         EXAMPLES::
 
@@ -401,9 +393,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         - ``other`` -- a knot
 
-        OUTPUT:
-
-        A knot equivalent to the connected sum of ``self`` and ``other``.
+        OUTPUT: a knot equivalent to the connected sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -542,11 +532,9 @@ class Knots(Singleton, Parent):
 
         INPUT:
 
-        - a signed Gauss code
+        - ``gauss`` -- a signed Gauss code
 
-        OUTPUT:
-
-        - a knot
+        OUTPUT: a knot
 
         EXAMPLES::
 
@@ -578,11 +566,10 @@ class Knots(Singleton, Parent):
 
         INPUT:
 
-        a list of signed even numbers, the Dowker-Thistlethwaite code of a knot
+        - ``code`` -- list of signed even numbers; the Dowker-Thistlethwaite
+          code of a knot
 
-        OUTPUT:
-
-        a knot
+        OUTPUT: a knot
 
         .. WARNING::
 
@@ -630,11 +617,9 @@ class Knots(Singleton, Parent):
         INPUT:
 
         - ``n`` -- the crossing number
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        the knot `K_{n,k}` in the Rolfsen table
+        OUTPUT: the knot `K_{n,k}` in the Rolfsen table
 
         EXAMPLES::
 

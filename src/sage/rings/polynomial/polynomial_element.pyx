@@ -339,7 +339,7 @@ cdef class Polynomial(CommutativePolynomial):
            point
 
 
-        OUTPUT: returns a graphic object.
+        OUTPUT: returns a graphic object
 
         EXAMPLES::
 
@@ -455,9 +455,7 @@ cdef class Polynomial(CommutativePolynomial):
             are used **from left to right** to evaluate the coefficients.
         - ``**kwds`` -- variable name-value pairs.
 
-        OUTPUT:
-
-        The value of the polynomial at the point specified by the arguments.
+        OUTPUT: the value of the polynomial at the point specified by the arguments
 
         ALGORITHM:
 
@@ -3293,7 +3291,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         -  ``value`` -- value to set the n-th coefficient to
 
-        OUTPUT: an :class:`IndexError` is always raised.
+        OUTPUT: an :class:`IndexError` is always raised
 
         EXAMPLES::
 
@@ -3490,7 +3488,7 @@ cdef class Polynomial(CommutativePolynomial):
            self)
 
 
-        OUTPUT: Polynomial - The product self\*right.
+        OUTPUT: polynomial - The product self\*right.
 
         ALGORITHM: Based on a paper by R. Fateman
 
@@ -3560,9 +3558,7 @@ cdef class Polynomial(CommutativePolynomial):
             is of degree less that K_threshold then the classic quadratic
             polynomial is used.
 
-        OUTPUT:
-
-        The product ``self * right``.
+        OUTPUT: the product ``self * right``
 
         ALGORITHM:
 
@@ -6350,7 +6346,7 @@ cdef class Polynomial(CommutativePolynomial):
         - ``prec`` -- desired floating point precision (default:
           default :class:`RealField` precision).
 
-        OUTPUT: a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -6435,7 +6431,7 @@ cdef class Polynomial(CommutativePolynomial):
         - ``prec`` -- desired floating point precision (default:
           default :class:`RealField` precision).
 
-        OUTPUT: a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -6485,7 +6481,7 @@ cdef class Polynomial(CommutativePolynomial):
         - ``prec`` -- desired floating point precision (default:
           default :class:`RealField` precision).
 
-        OUTPUT: a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -6658,7 +6654,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         - ``m`` -- a monomial
 
-        OUTPUT: Coefficient in base ring.
+        OUTPUT: coefficient in base ring
 
         EXAMPLES::
 
@@ -6746,7 +6742,7 @@ cdef class Polynomial(CommutativePolynomial):
         -  ``x0`` -- an initial guess `x_0`.
 
 
-        OUTPUT: A list of numbers hopefully approximating a root of
+        OUTPUT: a list of numbers hopefully approximating a root of
         `f(x)=0`.
 
         If one of the iterates is a critical point of `f`, a
@@ -7874,7 +7870,7 @@ cdef class Polynomial(CommutativePolynomial):
         leading coefficient of ``self``, and the roots of ``self`` are
         `r_1, \ldots, r_n`.
 
-        OUTPUT: An element of the base ring of the polynomial ring.
+        OUTPUT: an element of the base ring of the polynomial ring
 
         ALGORITHM:
 
@@ -12765,7 +12761,7 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
         - ``secure`` -- a boolean (default: ``False``)
 
-        OUTPUT: The degree of ``self``.
+        OUTPUT: the degree of ``self``
 
         If ``secure`` is ``True`` and the degree of this polynomial
         is not determined (because the leading coefficient is

@@ -1177,9 +1177,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         - ``exp`` -- Exponent
 
-        OUTPUT:
-
-        Polynomial; this polynomial raised to the power of ``exp``
+        OUTPUT: polynomial; this polynomial raised to the power of ``exp``
 
         EXAMPLES::
 
@@ -2257,7 +2255,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         -  ``p`` -- Prime number
 
-        OUTPUT: Factorization of this polynomial  modulo `p`
+        OUTPUT: factorization of this polynomial  modulo `p`
 
         EXAMPLES::
 
@@ -2466,7 +2464,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         The discriminant of constant polynomials is defined to be 0.
 
-        OUTPUT: Discriminant, an element of the base ring of the polynomial ring
+        OUTPUT: discriminant, an element of the base ring of the polynomial ring
 
         .. NOTE::
 

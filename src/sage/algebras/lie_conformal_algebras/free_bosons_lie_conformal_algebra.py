@@ -43,16 +43,16 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
 
     INPUT:
 
-    - ``R`` -- a commutative ring.
-    - ``ngens`` -- a positive Integer (default ``1``); the number of
+    - ``R`` -- a commutative ring
+    - ``ngens`` -- a positive Integer (default: `1`); the number of
       non-central generators of this Lie conformal algebra.
-    - ``gram_matrix``: a symmetric square matrix with coefficients
+    - ``gram_matrix`` -- a symmetric square matrix with coefficients
       in ``R`` (default: ``identity_matrix(ngens)``); the Gram
       matrix of the inner product
-    - ``names`` -- a tuple of ``str``; alternative names for the
+    - ``names`` -- tuple of strings; alternative names for the
       generators
     - ``index_set`` -- an enumerated set; alternative indexing set
-      for the generators.
+      for the generators
 
     OUTPUT:
 
@@ -102,7 +102,7 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

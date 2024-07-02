@@ -286,7 +286,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             Finite family {'x': bar(U['x']), 'y': bar(U['y']), 'z': bar(U['z'])}
         """
         G = self._A.algebra_generators()
-        return Family(G.keys(), lambda x: self(G[x]), name="generator")
+        return Family(G.keys(), lambda x: self(G[x]), name='generator')
 
     def degree_on_basis(self, x):
         """

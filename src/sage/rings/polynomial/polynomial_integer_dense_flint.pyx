@@ -1658,7 +1658,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         - ``p`` -- prime
 
-        OUTPUT: factorization of ``self`` reduced modulo `p`.
+        OUTPUT: factorization of ``self`` reduced modulo `p`
 
         EXAMPLES::
 
@@ -1698,7 +1698,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         - ``prec`` -- integer; the precision
 
-        OUTPUT: factorization of ``self`` over the completion at `p`.
+        OUTPUT: factorization of ``self`` over the completion at `p`
 
         EXAMPLES::
 

@@ -218,7 +218,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
     def __init__(self, power_series):
         """
-        Initialization
+        Initialization.
 
         EXAMPLES::
 
@@ -284,8 +284,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     def base_extend(self, R):
         """
         Return the Laurent series ring over R in the same variable as
-        self, assuming there is a canonical coerce map from the base ring
-        of self to R.
+        ``self``, assuming there is a canonical coerce map from the base ring
+        of ``self`` to R.
 
         EXAMPLES::
 
@@ -405,7 +405,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         - ``n`` -- (default: 0) multiply the result by `t^n`
 
         - ``prec`` -- (default: ``infinity``) the precision of the series
-            as an integer.
+            as an integer
 
         EXAMPLES::
 

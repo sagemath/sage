@@ -67,7 +67,6 @@ class Groupoid(CategoryWithParameters):
 
             sage: Groupoid(DihedralGroup(3)).parent_class is Groupoid(ZZ).parent_class
             True
-
         """
         return None
 
@@ -83,7 +82,7 @@ class Groupoid(CategoryWithParameters):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class.
+        Return an instance of this class.
 
         EXAMPLES::
 

@@ -137,7 +137,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
         Id = ∂/∂x⊗dx + ∂/∂y⊗dy
         sage: e.display(eV)
         Id = ∂/∂u⊗du + ∂/∂v⊗dv
-
     """
 
     Element = AutomorphismField
@@ -166,7 +165,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
         ``_test_elements`` does not pass due to the failure
         of ``_test_pickling`` in
         :class:`sage.manifolds.differentiable.tensorfield.TensorField`.
-
         """
         if not isinstance(vector_field_module, VectorFieldModule):
             raise TypeError("{} is not a module of vector fields".format(
@@ -181,9 +179,7 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
         r"""
         Construct a field of tangent-space automorphisms.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismField`
+        OUTPUT: :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismField`
 
         TESTS::
 
@@ -204,7 +200,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
              differentiable manifold M
             sage: a.display(c_xy.frame())
             a = (x^2 + 1) ∂/∂x⊗dx + (y^2 + 1) ∂/∂y⊗dy
-
         """
         if hasattr(comp, 'is_trivial_zero'):
             if (comp - 1).is_trivial_zero():
@@ -225,9 +220,7 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
         r"""
         Construct some specific field of tangent-space automorphisms.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismField`
+        OUTPUT: :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismField`
 
         TESTS::
 
@@ -249,7 +242,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
             2 ∂/∂u⊗du + 2 ∂/∂v⊗dv
             sage: a == G.an_element()  # indirect doctest
             True
-
         """
         resu = self.element_class(self._vmodule)
         for dom in resu.domain().subsets():
@@ -302,7 +294,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
             sage: G.one().restrict(V)[:]
             [1 0]
             [0 1]
-
         """
         # Specific initializations for the field of identity maps:
         resu = self._element_constructor_(name='Id', latex_name=r'\mathrm{Id}')
@@ -335,7 +326,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
             sage: G  # indirect doctest
             General linear group of the Module X(M) of vector fields on the
              2-dimensional differentiable manifold M
-
         """
         return "General linear group of the {}".format(self._vmodule)
 
@@ -351,7 +341,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
             \mathrm{GL}\left( \mathfrak{X}\left(M\right) \right)
             sage: latex(G)  # indirect doctest
             \mathrm{GL}\left( \mathfrak{X}\left(M\right) \right)
-
         """
         from sage.misc.latex import latex
         return r"\mathrm{GL}\left(" + latex(self._vmodule) + r"\right)"
@@ -361,9 +350,7 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
         Return the vector-field module of which ``self`` is the general
         linear group.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.vectorfield_module.VectorFieldModule`
+        OUTPUT: :class:`~sage.manifolds.differentiable.vectorfield_module.VectorFieldModule`
 
         EXAMPLES:
 
@@ -386,7 +373,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
              manifold M
             sage: G.base_module() is M.vector_field_module()
             True
-
         """
         return self._vmodule
 
@@ -587,7 +573,6 @@ class AutomorphismFieldParalGroup(FreeModuleLinearGroup):
     TESTS::
 
         sage: TestSuite(G).run()
-
     """
 
     Element = AutomorphismFieldParal
@@ -606,7 +591,6 @@ class AutomorphismFieldParalGroup(FreeModuleLinearGroup):
             General linear group of the Free module X(M) of vector fields on
              the 2-dimensional differentiable manifold M
             sage: TestSuite(G).run()
-
         """
         if not isinstance(vector_field_module, VectorFieldFreeModule):
             raise TypeError("{} is not a free module of vector fields".format(

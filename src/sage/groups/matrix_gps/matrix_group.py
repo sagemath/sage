@@ -134,10 +134,10 @@ class MatrixGroup_base(Group):
         - ``x`` -- a Sage matrix in the correct matrix space (degree
           and base ring)
 
-        - ``*args`` -- optional other representations of ``x``,
+        - ``*args`` -- (optional) other representations of ``x``,
           depending on the group implementation. Ignored by default
 
-        OUTPUT: a :class:`TypeError` must be raised if ``x`` is invalid
+        OUTPUT: a :exc:`TypeError` must be raised if ``x`` is invalid
 
         EXAMPLES::
 
@@ -189,7 +189,7 @@ class MatrixGroup_base(Group):
 
         INPUT:
 
-        - ``generators`` -- a list/tuple/iterable of group elements of ``self``
+        - ``generators`` -- list/tuple/iterable of group elements of ``self``
         - ``check`` -- boolean (default: ``True``); whether to check that each
           matrix is invertible
 
@@ -596,12 +596,12 @@ class MatrixGroup_generic(MatrixGroup_base):
             True
             sage: SL(2, ZZ).is_trivial()
             False
-            sage: CoxeterGroup(['B',3], implementation="matrix").is_trivial()
+            sage: CoxeterGroup(['B',3], implementation='matrix').is_trivial()
             False
 
         TESTS::
 
-            sage: CoxeterGroup(['A',0], implementation="matrix").is_trivial()
+            sage: CoxeterGroup(['A',0], implementation='matrix').is_trivial()
             True
             sage: MatrixGroup([matrix(SR, [[1,x], [0,1]])]).is_trivial()
             False

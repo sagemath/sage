@@ -18,7 +18,7 @@ methods elsewhere.
 
 class TallListFormatter():
     """
-    Special representation for lists with tall entries (e.g. matrices)
+    Special representation for lists with tall entries (e.g. matrices).
 
     .. automethod:: __call__
     """
@@ -28,7 +28,7 @@ class TallListFormatter():
 
     def _tall_list_row(self, running_lines, last_row=False):
         """
-        Helper for :meth:`_check_tall_list_and_format`
+        Helper for :meth:`_check_tall_list_and_format`.
 
         This helper function processes and outputs the contents of the
         running_lines array.
@@ -64,7 +64,7 @@ class TallListFormatter():
 
         INPUT:
 
-        - ``the_list`` -- The list (or a tuple).
+        - ``the_list`` -- the list (or a tuple)
 
         OUTPUT:
 
@@ -144,11 +144,9 @@ class TallListFormatter():
 
         INPUT:
 
-        - ``the_list`` -- list or tuple.
+        - ``the_list`` -- list or tuple
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

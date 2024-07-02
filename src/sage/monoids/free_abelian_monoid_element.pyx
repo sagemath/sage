@@ -47,7 +47,7 @@ def is_FreeAbelianMonoidElement(x):
 
     INPUT:
 
-    - ``x`` -- an object.
+    - ``x`` -- an object
 
     OUTPUT:
 

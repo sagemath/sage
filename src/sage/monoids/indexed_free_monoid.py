@@ -205,7 +205,7 @@ class IndexedMonoidElement(MonoidElement):
 
     def _richcmp_(self, other, op):
         r"""
-        Comparisons
+        Comparisons.
 
         TESTS::
 
@@ -271,7 +271,7 @@ class IndexedMonoidElement(MonoidElement):
     def support(self):
         """
         Return a list of the objects indexing ``self`` with
-        non-zero exponents.
+        nonzero exponents.
 
         EXAMPLES::
 

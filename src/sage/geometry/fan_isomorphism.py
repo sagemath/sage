@@ -29,7 +29,7 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
     OUTPUT:
 
@@ -69,7 +69,7 @@ def fan_isomorphism_generator(fan1, fan2):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
     OUTPUT:
 
@@ -193,16 +193,16 @@ def find_isomorphism(fan1, fan2, check=False):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
-    - ``check`` -- boolean (default: ``False``). Passed to the fan
+    - ``check`` -- boolean (default: ``False``); passed to the fan
       morphism constructor, see
-      :func:`~sage.geometry.fan_morphism.FanMorphism`.
+      :func:`~sage.geometry.fan_morphism.FanMorphism`
 
     OUTPUT:
 
     A fan isomorphism. If the fans are not isomorphic, a
-    :class:`FanNotIsomorphicError` is raised.
+    :exc:`FanNotIsomorphicError` is raised.
 
     EXAMPLES::
 
@@ -251,7 +251,7 @@ def fan_2d_cyclically_ordered_rays(fan):
 
     INPUT:
 
-    - ``fan`` -- a 2-dimensional fan.
+    - ``fan`` -- a 2-dimensional fan
 
     OUTPUT:
 
@@ -302,7 +302,7 @@ def fan_2d_echelon_forms(fan):
 
     INPUT:
 
-    - ``fan`` -- a fan.
+    - ``fan`` -- a fan
 
     OUTPUT:
 
@@ -373,7 +373,7 @@ def fan_2d_echelon_form(fan):
 
     INPUT:
 
-    - ``fan`` -- a fan.
+    - ``fan`` -- a fan
 
     OUTPUT:
 

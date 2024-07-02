@@ -160,7 +160,7 @@ def Discriminant(polynomial, variables=None):
     See :func:`WeierstrassForm` for how to specify the input
     polynomial(s) and variables.
 
-    OUTPUT: The discriminant of the elliptic curve.
+    OUTPUT: the discriminant of the elliptic curve
 
     EXAMPLES::
 
@@ -825,9 +825,7 @@ def _partial_discriminant(quadric, y0, y1=None):
     - ``y_0``, ``y_1`` -- the variables of the quadric. The ``y_1``
       variable can be omitted if the quadric is inhomogeneous.
 
-    OUTPUT:
-
-    A plane quartic in ``x0``, ``x1``.
+    OUTPUT: a plane quartic in ``x0``, ``x1``
 
     EXAMPLES::
 

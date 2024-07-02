@@ -1348,9 +1348,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         - ``t`` -- a monomial
 
-        OUTPUT:
-
-        a list of monomials
+        OUTPUT: a list of monomials
 
         EXAMPLES::
 
@@ -1887,9 +1885,7 @@ cdef class NCPolynomial_plural(RingElement):
           self) If x is not specified (or is ``None``), return the total
           degree, which is the maximum degree of any monomial.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2027,9 +2023,7 @@ cdef class NCPolynomial_plural(RingElement):
                 - a list of degree restrictions (with None in the unrestricted variables)
                 - a monomial (very fast, but not as flexible)
 
-        OUTPUT:
-
-        element of the parent of this element.
+        OUTPUT: element of the parent of this element
 
         .. NOTE::
 
@@ -2147,9 +2141,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         - ``mon`` -- a monomial
 
-        OUTPUT:
-
-        coefficient in base ring
+        OUTPUT: coefficient in base ring
 
         .. SEEALSO::
 

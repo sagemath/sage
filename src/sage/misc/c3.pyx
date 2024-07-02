@@ -45,10 +45,10 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     INPUT:
 
     - ``start`` -- an object; the returned list is built upon data
-      provided by certain attributes of ``start``.
-    - ``bases`` -- a string; the name of an attribute of ``start``
-      providing a list of objects.
-    - ``attribute`` -- a string; the name of an attribute of the
+      provided by certain attributes of ``start``
+    - ``bases`` -- string; the name of an attribute of ``start``
+      providing a list of objects
+    - ``attribute`` -- string; the name of an attribute of the
       objects provided in ``getattr(start,bases)``. That attribute is
       supposed to provide a list.
 

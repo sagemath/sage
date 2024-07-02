@@ -280,9 +280,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         - ``right`` -- a map on affine space
 
-        OUTPUT:
-
-        ``True`` if the two affine maps define the same map.
+        OUTPUT: ``True`` if the two affine maps define the same map
 
         EXAMPLES::
 
@@ -318,9 +316,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         - ``right`` -- a map on affine space
 
-        OUTPUT:
-
-        ``True`` if the two affine maps define the same map.
+        OUTPUT: ``True`` if the two affine maps define the same map
 
         EXAMPLES::
 
@@ -699,7 +695,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1058,7 +1054,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
         morphism from the Weil restriction of the domain to the Weil restriction
         of the codomain.
 
-        OUTPUT: Scheme morphism on the Weil restrictions of the domain
+        OUTPUT: scheme morphism on the Weil restrictions of the domain
                 and codomain of the map.
 
         EXAMPLES::

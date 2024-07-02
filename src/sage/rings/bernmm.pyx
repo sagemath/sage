@@ -46,7 +46,7 @@ def bernmm_bern_rat(long k, int num_threads = 1):
 
     INPUT:
 
-    - ``k`` -- non-negative integer
+    - ``k`` -- nonnegative integer
     - ``num_threads`` -- integer `\geq 1`, number of threads to use
 
     COMPLEXITY:
@@ -85,7 +85,7 @@ def bernmm_bern_rat(long k, int num_threads = 1):
     cdef Rational x
 
     if k < 0:
-        raise ValueError("k must be non-negative")
+        raise ValueError("k must be nonnegative")
 
     x = Rational()
     sig_on()
@@ -104,7 +104,7 @@ def bernmm_bern_modp(long p, long k):
     INPUT:
 
     - ``p`` -- a prime
-    - ``k`` -- non-negative integer
+    - ``k`` -- nonnegative integer
 
     COMPLEXITY:
 
@@ -147,7 +147,7 @@ def bernmm_bern_modp(long p, long k):
     cdef long x
 
     if k < 0:
-        raise ValueError("k must be non-negative")
+        raise ValueError("k must be nonnegative")
 
     sig_on()
     x = bern_modp(p, k)

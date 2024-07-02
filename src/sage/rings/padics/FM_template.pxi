@@ -468,9 +468,7 @@ cdef class FMElement(pAdicTemplateElement):
 
         - ``absprec`` -- an integer or infinity
 
-        OUTPUT:
-
-        a new element truncated modulo `\pi^{\mbox{absprec}}`.
+        OUTPUT: a new element truncated modulo `\pi^{\mbox{absprec}}`
 
         EXAMPLES::
 

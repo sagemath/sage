@@ -68,7 +68,7 @@ def matrix(*args, **kwds):
     - ``ncols`` -- the number of columns in the matrix, or a finite or
       enumerated family of arbitrary objects that index the columns of the matrix
 
-    - ``entries`` -- see examples below.
+    - ``entries`` -- see examples below
 
     If any of ``nrows``, ``ncols``, ``row_keys``, ``column_keys`` is
     given as keyword argument, then none of these may be given as
@@ -90,9 +90,8 @@ def matrix(*args, **kwds):
       matrix. This determines ``base_ring``, ``nrows``, ``row_keys``,
       ``ncols``, ``column_keys``, and ``sparse``.
 
-    - ``immutable`` -- (boolean) make the matrix immutable. By default,
-      the output matrix is mutable.
-
+    - ``immutable`` -- (boolean) make the matrix immutable; by default,
+      the output matrix is mutable
 
     OUTPUT: a matrix or, more generally, a homomorphism between free
     modules

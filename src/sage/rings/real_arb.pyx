@@ -1138,9 +1138,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         r"""
         Return the relative accuracy of exact elements measured in bits.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1524,9 +1522,7 @@ cdef class RealBall(RingElement):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1571,9 +1567,7 @@ cdef class RealBall(RingElement):
         """
         Return a :mod:`real interval <sage.rings.real_mpfi>` containing this ball.
 
-        OUTPUT:
-
-        A :class:`~sage.rings.real_mpfi.RealIntervalFieldElement`.
+        OUTPUT: a :class:`~sage.rings.real_mpfi.RealIntervalFieldElement`
 
         EXAMPLES::
 
@@ -1874,9 +1868,7 @@ cdef class RealBall(RingElement):
           make sure that the returned lower bound is positive, raising
           an error if the ball contains zero.
 
-        OUTPUT:
-
-        A ball with zero radius
+        OUTPUT: a ball with zero radius
 
         EXAMPLES::
 
@@ -1910,9 +1902,7 @@ cdef class RealBall(RingElement):
         """
         Return an upper bound for the absolute value of this ball.
 
-        OUTPUT:
-
-        A ball with zero radius
+        OUTPUT: a ball with zero radius
 
         EXAMPLES::
 
@@ -1940,9 +1930,7 @@ cdef class RealBall(RingElement):
           not affect its value!), see
           :meth:`sage.rings.real_mpfi.RealIntervalFieldElement.upper`
 
-        OUTPUT:
-
-        A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1968,9 +1956,7 @@ cdef class RealBall(RingElement):
           not affect its value!), see
           :meth:`sage.rings.real_mpfi.RealIntervalFieldElement.lower`
 
-        OUTPUT:
-
-        A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1994,9 +1980,7 @@ cdef class RealBall(RingElement):
           floating-point numbers (does not affect their values!), see
           :meth:`sage.rings.real_mpfi.RealIntervalFieldElement.upper`
 
-        OUTPUT:
-
-        A pair of real numbers.
+        OUTPUT: a pair of real numbers
 
         EXAMPLES::
 
@@ -2157,9 +2141,7 @@ cdef class RealBall(RingElement):
         - ``ampl`` -- A real ball (or an object that can be coerced to a real
           ball).
 
-        OUTPUT:
-
-        A new real ball.
+        OUTPUT: a new real ball
 
         EXAMPLES::
 

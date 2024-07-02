@@ -83,11 +83,11 @@ cdef class FiniteZZsubmodule_iterator:
 
     INPUT:
 
-        - ``basis``  -- the elements `(g_0, \ldots, g_n)`
-        - ``order`` (optional) -- the additive_orders `m_i` of `g_i`.
-        - ``coset_rep`` (optional) -- an element of g,
-          if one aims to compute a coset of the `\ZZ`-submodule `M`.
-        - ``immutable`` (optional; default: ``False``)  -- set it to
+        - ``basis`` -- the elements `(g_0, \ldots, g_n)`
+        - ``order`` -- (optional) the additive_orders `m_i` of `g_i`
+        - ``coset_rep`` -- (optional) an element of `g`,
+          if one aims to compute a coset of the `\ZZ`-submodule `M`
+        - ``immutable`` -- boolean (default: ``False``); set it to
           ``True`` to return immutable elements. Setting this to
           ``True`` makes sense if the elements are vectors. See
           :class:`FiniteFieldsubspace_iterator` for examples.
@@ -106,7 +106,7 @@ cdef class FiniteZZsubmodule_iterator:
 
     def __init__(self, basis, order=None, coset_rep=None, immutable=False):
         """
-        see :class:`FiniteZZsubmodule_iterator`
+        See :class:`FiniteZZsubmodule_iterator`.
 
         EXAMPLES::
 
@@ -227,17 +227,17 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
 
     INPUT:
 
-        - ``basis`` -- a list of vectors or a matrix with elements over
+        - ``basis`` -- list of vectors or a matrix with elements over
           a finite field. If a matrix is provided then it is not checked
           whether the matrix is full ranked. Similarly, if a list of
           vectors is provided, then the linear independence of the vectors
           is not checked.
 
-        - ``coset_rep`` (optional) -- a vector in the same ambient space,
-          if one aims to compute a coset of the vector space given by ``basis``.
+        - ``coset_rep`` -- (optional) a vector in the same ambient space,
+          if one aims to compute a coset of the vector space given by ``basis``
 
-        - ``immutable`` (optional; default: ``False``)  -- set it to
-          ``True`` to return immutable vectors.
+        - ``immutable`` -- boolean (default: ``False``); set it to
+          ``True`` to return immutable vectors
 
     EXAMPLES::
 
@@ -260,12 +260,11 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
         sage: c = next(iter)
         sage: c.is_immutable()
         True
-
     """
 
     def __init__(self, basis, coset_rep=None, immutable=False):
         """
-        see :class:`FiniteFieldsubspace_iterator`
+        See :class:`FiniteFieldsubspace_iterator`.
 
         EXAMPLES::
 
@@ -311,18 +310,18 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
 
     INPUT:
 
-        - ``basis`` -- a list of vectors or a matrix with elements over
+        - ``basis`` -- list of vectors or a matrix with elements over
           a finite field. If a matrix is provided then it is not checked
           whether the matrix is full ranked. Similarly, if a list of
           vectors is provided, then the linear independence of the vectors
           is not checked.
 
-        - ``normalize`` (optional; default: ``False``) -- boolean which
-          indicates if the returned vectors should be normalized, i.e. the
-          first nonzero coordinate is equal to 1.
+        - ``normalize`` -- boolean (default: ``False``); whether the returned
+          vectors should be normalized, i.e. the first nonzero coordinate is
+          equal to 1
 
-        - ``immutable`` (optional; default: ``False``)  -- set it to
-          ``True`` to return immutable vectors.
+        - ``immutable`` -- boolean (default: ``False``); set it to
+          ``True`` to return immutable vectors
 
     EXAMPLES::
 
@@ -355,7 +354,7 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
 
     def __init__(self, basis, normalize=False, immutable=False):
         """
-        see :class:`FiniteFieldsubspace_projPoint_iterator`
+        See :class:`FiniteFieldsubspace_projPoint_iterator`.
 
         EXAMPLES::
 

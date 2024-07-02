@@ -88,7 +88,7 @@ def IntegralLattice(data, basis=None):
         :class:`CartanMatrix` (see also
         :mod:`Cartan types <sage.combinat.root_system.cartan_type>`)
         -- for a root lattice
-      * the string ``"U"`` or ``"H"`` -- for hyperbolic lattices
+      * the string ``'U'`` or ``'H'`` -- for hyperbolic lattices
 
     - ``basis`` -- (optional) a matrix whose rows form a basis of the
       lattice,  or a list of module elements forming a basis
@@ -140,16 +140,16 @@ def IntegralLattice(data, basis=None):
         [ 2 -1]
         [-1  2]
 
-    We use ``"U"`` or ``"H"`` for defining a hyperbolic lattice::
+    We use ``'U'`` or ``'H'`` for defining a hyperbolic lattice::
 
-        sage: L1 = IntegralLattice("U")
+        sage: L1 = IntegralLattice('U')
         sage: L1
         Lattice of degree 2 and rank 2 over Integer Ring
         Standard basis
         Inner product matrix:
         [0 1]
         [1 0]
-        sage: L1 == IntegralLattice("H")
+        sage: L1 == IntegralLattice('H')
         True
 
     We can construct root lattices by specifying their type
@@ -263,8 +263,8 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
 
     INPUT:
 
-    - ``Lattices`` -- a list of lattices ``[L_1,...,L_n]``
-    - ``return_embeddings`` -- (default: ``False``) a boolean
+    - ``Lattices`` -- list of lattices ``[L_1,...,L_n]``
+    - ``return_embeddings`` -- boolean (default: ``False``)
 
     OUTPUT:
 
@@ -373,12 +373,11 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
 
     INPUT:
 
-    - ``Lattices`` -- a list of lattices `[L_1,...,L_n]`
-    - ``glue`` -- a list where the elements are lists in the form `[g_1,...,g_n]`;
+    - ``Lattices`` -- list of lattices `[L_1,...,L_n]`
+    - ``glue`` -- list where the elements are lists in the form `[g_1,...,g_n]`;
       here `g_i` is an element of the discriminant group of `L_i`and
       the overlattice is spanned by the additional ``[sum(g) for g in glue]``
-    - ``return_embeddings`` -- (default: ``False``) a boolean
-
+    - ``return_embeddings`` -- boolean (default: ``False``)
 
     OUTPUT:
 
@@ -629,7 +628,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
     INPUT:
 
     - ``ambient`` -- an ambient free quadratic module
-    - ``basis`` -- a list of elements of ambient or a matrix
+    - ``basis`` -- list of elements of ambient or a matrix
     - ``inner_product_matrix`` -- a symmetric matrix over the rationals
 
     EXAMPLES::
@@ -751,7 +750,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
     @cached_method
     def dual_lattice(self):
         r"""
-        Return the dual lattice as a :class:`FreeQuadraticModule`
+        Return the dual lattice as a :class:`FreeQuadraticModule`.
 
         Let `L` be a lattice. Its dual lattice is
 
@@ -781,7 +780,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         INPUT:
 
-        - ``s`` -- an integer (default: 0)
+        - ``s`` -- integer (default: 0)
 
         OUTPUT:
 
@@ -974,7 +973,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         INPUT:
 
-        - ``basis`` -- A list of elements of this lattice.
+        - ``basis`` -- list of elements of this lattice
 
         EXAMPLES::
 
@@ -1010,7 +1009,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         INPUT:
 
-        - ``gens`` -- a list of elements or a rational matrix
+        - ``gens`` -- list of elements or a rational matrix
 
         EXAMPLES::
 
@@ -1032,9 +1031,9 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         INPUT:
 
-        - ``p`` -- (default:``None``) if given return an overlattice
+        - ``p`` -- (default: ``None``) if given return an overlattice
           `M` of this lattice `L` that is maximal at `p` and the
-          completions `M_q = L_q` are equal for all primes `q \neq p`.
+          completions `M_q = L_q` are equal for all primes `q \neq p`
 
         If `p` is `2` or ``None``, then the lattice must be even.
 
@@ -1055,7 +1054,6 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice(matrix.diagonal([2,4,4,8]))
             sage: L.maximal_overlattice().is_even()
             True
-
         """
         # this code is somewhat slow but it works
         # it might speed up things to use the algorithms given in
@@ -1162,9 +1160,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         INPUT:
 
-        - ``gens`` -- a list of matrices (default:``None``)
-        - ``is_finite`` -- bool (default: ``None``) If set to ``True``,
-          then the group is placed in the category of finite groups. Sage does not check this.
+        - ``gens`` -- list of matrices (default: ``None``)
+        - ``is_finite`` -- boolean (default: ``None``); if set to ``True``,
+          then the group is placed in the category of finite groups. Sage does
+          not check this.
 
         OUTPUT:
 
@@ -1335,8 +1334,8 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         INPUT:
 
         - ``other`` -- an integral lattice
-        - ``discard_basis`` -- a boolean (default: ``False``). If ``True``, then the lattice
-          returned is equipped with the standard basis.
+        - ``discard_basis`` -- boolean (default: ``False``); if ``True``, then
+          the lattice returned is equipped with the standard basis
 
         EXAMPLES::
 
@@ -1503,13 +1502,11 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
         - further keyword arguments are passed on to
-          :meth:`sage.quadratic_forms.short_vector_list_up_to_length`.
+          :meth:`sage.quadratic_forms.short_vector_list_up_to_length`
 
-        OUTPUT:
-
-        - a list `L` where ``L[k]`` is the list of vectors of lengths `k`
+        OUTPUT: list `L` where ``L[k]`` is the list of vectors of lengths `k`
 
         EXAMPLES::
 
@@ -1536,10 +1533,9 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         INPUT:
 
-        - ``s`` -- a nonzero integer
-        - ``discard_basis`` -- a boolean (default: ``False``).
-          If ``True``, then the lattice returned is equipped
-          with the standard basis.
+        - ``s`` -- nonzero integer
+        - ``discard_basis`` -- boolean (default: ``False``); if ``True``, then
+          the lattice returned is equipped with the standard basis
 
         EXAMPLES::
 
@@ -1576,7 +1572,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         except TypeError:
             raise ValueError("the scaling factor must be an element of the base ring.")
         if s == 0:
-            raise ValueError("the scaling factor must be non zero")
+            raise ValueError("the scaling factor must be nonzero")
         if discard_basis:
             return IntegralLattice(s * self.gram_matrix())
         else:

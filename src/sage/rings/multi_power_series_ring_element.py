@@ -223,20 +223,22 @@ class MPowerSeries(PowerSeries):
 
     INPUT:
 
-    - ``parent`` -- A multivariate power series.
+    - ``parent`` -- a multivariate power series
 
-    - ``x`` -- The element (default: 0).  This can be another
+    - ``x`` -- the element (default: 0).  This can be another
       :class:`MPowerSeries` object, or an element of one of the following:
 
       - the background univariate power series ring
       - the foreground polynomial ring
       - a ring that coerces to one of the above two
 
-    - ``prec`` -- (default: ``infinity``) The precision
+    - ``prec`` -- (default: ``infinity``) the precision
 
-    - ``is_gen`` -- (default: ``False``) Is this element one of the generators?
+    - ``is_gen`` -- boolean (default: ``False``); whether this element is one
+      of the generators
 
-    - ``check`` -- (default: ``False``) Needed by univariate power series class
+    - ``check`` -- boolean (default: ``False``); needed by univariate power
+      series class
 
     EXAMPLES:
 
@@ -346,7 +348,6 @@ class MPowerSeries(PowerSeries):
             sage: b = B(d) # test coercion from univariate power series ring
             sage: b in B
             True
-
         """
         PowerSeries.__init__(self, parent, prec, is_gen=is_gen)
         self._PowerSeries__is_gen = is_gen
@@ -634,7 +635,7 @@ class MPowerSeries(PowerSeries):
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
-        Returns the image of this series under the map that sends the
+        Return the image of this series under the map that sends the
         generators to ``im_gens``. This is used internally for computing
         homomorphisms.
 
@@ -1410,7 +1411,7 @@ class MPowerSeries(PowerSeries):
             if self._bg_value == 0:
                 return infinity
 
-            # at this stage, self is probably a non-zero
+            # at this stage, self is probably a nonzero
             # element of the base ring
             for a in range(len(self._bg_value.list())):
                 if self._bg_value.list()[a] != 0:
@@ -1620,7 +1621,7 @@ class MPowerSeries(PowerSeries):
         .. warning:: Coefficient division.
 
             If the base ring is not a field (e.g. `ZZ`), or if it has a
-            non-zero characteristic, (e.g. `ZZ/3ZZ`), integration is not
+            nonzero characteristic, (e.g. `ZZ/3ZZ`), integration is not
             always possible while staying with the same base ring. In the
             first case, Sage will report that it has not been able to
             coerce some coefficient to the base ring::
@@ -1644,7 +1645,7 @@ class MPowerSeries(PowerSeries):
                 sage: f.integral(b)
                 b^2 + O(a, b)^6
 
-            In non-zero characteristic, Sage will report that a zero division
+            In nonzero characteristic, Sage will report that a zero division
             occurred ::
 
                 sage: T.<a,b> = PowerSeriesRing(Zmod(3), 2)
@@ -1719,7 +1720,7 @@ class MPowerSeries(PowerSeries):
 
     def ogf(self):
         """
-        Method from univariate power series not yet implemented
+        Method from univariate power series not yet implemented.
 
         TESTS::
 
@@ -1734,7 +1735,7 @@ class MPowerSeries(PowerSeries):
 
     def egf(self):
         """
-        Method from univariate power series not yet implemented
+        Method from univariate power series not yet implemented.
 
         TESTS::
 
@@ -1749,7 +1750,7 @@ class MPowerSeries(PowerSeries):
 
     def __pari__(self):
         """
-        Method from univariate power series not yet implemented
+        Method from univariate power series not yet implemented.
 
         TESTS::
 
@@ -1882,8 +1883,8 @@ class MPowerSeries(PowerSeries):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
         OUTPUT:
 
@@ -1977,8 +1978,8 @@ class MPowerSeries(PowerSeries):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
         OUTPUT:
 
@@ -2033,14 +2034,14 @@ class MPowerSeries(PowerSeries):
             sage: a.log(prec=10)
             Traceback (most recent call last):
             ...
-            ValueError: Can only take formal power series for non-zero constant term.
+            ValueError: Can only take formal power series for nonzero constant term.
         """
         R = self.parent()
         Rbg = R._bg_power_series_ring
 
         c = self.constant_coefficient()
         if c.is_zero():
-            raise ValueError('Can only take formal power series for non-zero constant term.')
+            raise ValueError('Can only take formal power series for nonzero constant term.')
         if c.is_one():
             log_c = self.base_ring().zero()
         else:

@@ -181,7 +181,7 @@ class DoublyLinkedList:
 
 def _monomial_exponent_to_lower_factorial(me, x):
     r"""
-    Converts a tuple of exponents to the monomial obtained by replacing
+    Convert a tuple of exponents to the monomial obtained by replacing
     each me[i] with `x_i*(x_i - 1)*\cdots*(x_i - a_i + 1)`
 
     EXAMPLES::
@@ -211,7 +211,7 @@ def _monomial_exponent_to_lower_factorial(me, x):
 
 def umbral_operation(poly):
     r"""
-    Returns the umbral operation `\downarrow` applied to poly.
+    Return the umbral operation `\downarrow` applied to poly.
 
     The umbral operation replaces each instance of
     `x_i^{a_i}` with

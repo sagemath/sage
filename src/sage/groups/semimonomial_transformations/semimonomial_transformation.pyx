@@ -235,7 +235,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
     def __repr__(self):
         """
-        String representation of `self`.
+        String representation of ``self``.
 
         EXAMPLES::
 

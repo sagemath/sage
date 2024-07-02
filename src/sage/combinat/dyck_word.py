@@ -126,7 +126,7 @@ def replace_parens(x):
     - If ``x`` is a closing parenthesis, replace ``x`` with the
       constant ``close_symbol``.
 
-    - Raise a :class:`ValueError` if ``x`` is neither an opening nor a
+    - Raise a :exc:`ValueError` if ``x`` is neither an opening nor a
       closing parenthesis.
 
     .. SEEALSO:: :func:`replace_symbols`
@@ -161,7 +161,7 @@ def replace_symbols(x):
 
     INPUT:
 
-    - ``x`` -- either ``open_symbol`` or ``close_symbol``.
+    - ``x`` -- either ``open_symbol`` or ``close_symbol``
 
     OUTPUT:
 
@@ -170,7 +170,7 @@ def replace_symbols(x):
     - If ``x`` is ``close_symbol``, replace ``x`` with ``')'``.
 
     - If ``x`` is neither ``open_symbol`` nor ``close_symbol``, a
-      :class:`ValueError` is raised.
+      :exc:`ValueError` is raised.
 
     .. SEEALSO:: :func:`replace_parens`
 
@@ -363,28 +363,28 @@ class DyckWord(CombinatorialElement):
 
         The default values are set in the ``__init__`` function.
 
-        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
+        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package
 
-        - ``diagonal`` -- (default: ``False``) boolean value to draw the
-          diagonal or not.
+        - ``diagonal`` -- boolean (default: ``False``); value to draw the
+          diagonal or not
 
         - ``line width`` -- (default: 2*``tikz_scale``) value representing the
-          line width.
+          line width
 
-        - ``color`` -- (default: black) the line color.
+        - ``color`` -- (default: black) the line color
 
-        - ``bounce path`` -- (default: ``False``) boolean value to indicate
-          if the bounce path should be drawn.
+        - ``bounce path`` -- boolean (default: ``False``); value to indicate
+          if the bounce path should be drawn
 
-        - ``peaks`` -- (default: ``False``) boolean value to indicate if the
-          peaks should be displayed.
+        - ``peaks`` -- boolean (default: ``False``); value to indicate if the
+          peaks should be displayed
 
-        - ``valleys`` -- (default: ``False``) boolean value to indicate if the
-          valleys should be displayed.
+        - ``valleys`` -- boolean (default: ``False``); value to indicate if the
+          valleys should be displayed
 
         INPUT:
 
-        - ``D`` -- a dictionary with a list of latex parameters to change
+        - ``D`` -- dictionary with a list of latex parameters to change
 
         EXAMPLES::
 
@@ -406,24 +406,24 @@ class DyckWord(CombinatorialElement):
 
         The default values are set using the options.
 
-        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
+        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package
 
-        - ``diagonal`` -- (default: ``False``) boolean value to draw the
-          diagonal or not.
+        - ``diagonal`` -- boolean (default: ``False``); value to draw the
+          diagonal or not
 
-        - ``line width`` -- (default: 2*``tikz_scale``) value representing the
-          line width.
+        - ``line width`` -- (default: ``2*tikz_scale``) value representing the
+          line width
 
-        - ``color`` -- (default: black) the line color.
+        - ``color`` -- (default: black) the line color
 
-        - ``bounce path`` -- (default: ``False``) boolean value to indicate
-          if the bounce path should be drawn.
+        - ``bounce path`` -- boolean (default: ``False``); value to indicate
+          if the bounce path should be drawn
 
-        - ``peaks`` -- (default: ``False``) boolean value to indicate if the
-          peaks should be displayed.
+        - ``peaks`` -- boolean (default: ``False``); value to indicate if the
+          peaks should be displayed
 
-        - ``valleys`` -- (default: ``False``) boolean value to indicate if the
-          valleys should be displayed.
+        - ``valleys`` -- boolean (default: ``False``); value to indicate if the
+          valleys should be displayed
 
         EXAMPLES::
 
@@ -616,7 +616,7 @@ class DyckWord(CombinatorialElement):
 
         INPUT:
 
-        - ``unicode`` -- boolean (default ``False``) whether to use unicode
+        - ``unicode`` -- boolean (default: ``False``); whether to use unicode
 
         EXAMPLES::
 
@@ -674,11 +674,11 @@ class DyckWord(CombinatorialElement):
             south-east steps.
 
         - ``labelling`` -- (if type is "N-E") a list of labels assigned to
-          the up steps in ``self``.
+          the up steps in ``self``
 
-        - ``underpath`` -- (if type is "N-E", default:``True``) If ``True``,
+        - ``underpath`` -- (if type is "N-E", default:``True``) if ``True``,
           the labelling is shown under the path; otherwise, it is shown to
-          the right of the path.
+          the right of the path
 
         EXAMPLES::
 
@@ -1215,7 +1215,6 @@ class DyckWord(CombinatorialElement):
 
             sage: DyckWord([1,0,1,0]).ascent_prime_decomposition()
             [[], [1, 0], [], [1, 0], []]
-
         """
         n = self.length()
         H = self.heights()
@@ -1287,9 +1286,7 @@ class DyckWord(CombinatorialElement):
         r"""
         Return the length of the initial run of ``self``.
 
-        OUTPUT:
-
-        - a non--negative integer indicating the length of the initial rise
+        OUTPUT: nonnegative integer indicating the length of the initial rise
 
         EXAMPLES::
 
@@ -1497,9 +1494,7 @@ class DyckWord(CombinatorialElement):
         Note that these abscissae are precisely the entries of
         :meth:`returns_to_zero` divided by `2`.
 
-        OUTPUT:
-
-        - a list of integers indicating where the path touches the diagonal
+        OUTPUT: list of integers indicating where the path touches the diagonal
 
         EXAMPLES::
 
@@ -1521,9 +1516,7 @@ class DyckWord(CombinatorialElement):
 
         This assumes ``self`` to be a complete Dyck word.
 
-        OUTPUT:
-
-        - a composition of length equal to the length of the Dyck word.
+        OUTPUT: a composition of length equal to the length of the Dyck word
 
         EXAMPLES::
 
@@ -1547,9 +1540,7 @@ class DyckWord(CombinatorialElement):
         r"""
         Return the number of touches of ``self`` at the main diagonal.
 
-        OUTPUT:
-
-        - a non--negative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1673,7 +1664,7 @@ class DyckWord(CombinatorialElement):
         return resu
 
     @combinatorial_map(name="to binary trees: up step, left tree, down step, right tree")
-    def to_binary_tree(self, usemap="1L0R"):
+    def to_binary_tree(self, usemap='1L0R'):
         r"""
         Return a binary tree recursively constructed from the Dyck path
         ``self`` by the map ``usemap``. The default ``usemap`` is ``'1L0R'``
@@ -1686,7 +1677,7 @@ class DyckWord(CombinatorialElement):
 
         INPUT:
 
-        - ``usemap`` -- a string, either ``'1L0R'``, ``'1R0L'``, ``'L1R0'``,
+        - ``usemap`` -- string, either ``'1L0R'``, ``'1R0L'``, ``'L1R0'``,
           ``'R1L0'``
 
         Other valid ``usemap`` are ``'1R0L'``, ``'L1R0'``, and ``'R1L0'``.
@@ -2057,7 +2048,7 @@ class DyckWord_complete(DyckWord):
         - ``q`` -- (default: ``q = R('q')``) a parameter for the generating
           function power
 
-        - ``R`` -- (default : ``R = QQ['q','t'].fraction_field()``) the base
+        - ``R`` -- (default: ``R = QQ['q','t'].fraction_field()``) the base
           ring to do the calculations over
 
         OUTPUT:
@@ -2324,13 +2315,13 @@ class DyckWord_complete(DyckWord):
             | x  . .
             |  . . .
 
-            sage: D.to_permutation(map="Bandlow-Killpatrick")
+            sage: D.to_permutation(map='Bandlow-Killpatrick')
             [3, 4, 2, 1]
-            sage: D.to_permutation(map="Stump")
+            sage: D.to_permutation(map='Stump')
             [4, 2, 3, 1]
-            sage: D.to_permutation(map="Knuth")
+            sage: D.to_permutation(map='Knuth')
             [1, 2, 4, 3]
-            sage: D.to_permutation(map="Krattenthaler")
+            sage: D.to_permutation(map='Krattenthaler')
             [2, 1, 3, 4]
 
         TESTS::
@@ -2737,7 +2728,7 @@ class DyckWord_complete(DyckWord):
         INPUT:
 
         - ``tunnel_type`` -- (default: ``'centered'``) can be one of the
-          following: ``'left'``, ``'right'``, ``'centered'``, or ``'all'``.
+          following: ``'left'``, ``'right'``, ``'centered'``, or ``'all'``
 
         EXAMPLES::
 
@@ -3021,7 +3012,6 @@ class DyckWord_complete(DyckWord):
             []
             sage: DyckWord([1,0]).bounce_path()
             [1, 0]
-
         """
         area_seq = self.to_area_sequence()
         i = len(area_seq) - 1
@@ -3338,7 +3328,7 @@ class DyckWords(UniqueRepresentation, Parent):
              _| x
             | x  .
             |  . .
-            sage: DyckWords.options(diagram_style="line")
+            sage: DyckWords.options(diagram_style='line')
             sage: D
              /\/\
             /    \
@@ -3346,18 +3336,18 @@ class DyckWords(UniqueRepresentation, Parent):
         """
         NAME = 'DyckWords'
         module = 'sage.combinat.dyck_word'
-        display = dict(default="list",
+        display = dict(default='list',
             description='Specifies how Dyck words should be printed',
             values=dict(list='displayed as a list',
                         lattice='displayed on the lattice defined by ``diagram_style``'),
             case_sensitive=False)
-        ascii_art = dict(default="path",
+        ascii_art = dict(default='path',
             description='Specifies how the ascii art of Dyck words should be printed',
             values=dict(path="Using the path string",
                         pretty_output="Using pretty printing"),
-            alias=dict(pretty_print="pretty_output", path_string="path"),
+            alias=dict(pretty_print='pretty_output', path_string='path'),
             case_sensitive=False)
-        diagram_style = dict(default="grid",
+        diagram_style = dict(default='grid',
             values=dict(grid='printing as paths on a grid using N and E steps',
                         line='printing as paths on a line using NE and SE steps',),
             alias={'N-E': 'grid', 'NE-SE': 'line'},
@@ -3372,7 +3362,7 @@ class DyckWords(UniqueRepresentation, Parent):
             description='The default value for the line width as a '
                         'multiple of the tikz scale when latexed',
             checker=lambda x: True)  # More trouble than it's worth to check
-        latex_color = dict(default="black",
+        latex_color = dict(default='black',
             description='The default value for the color when latexed',
             checker=lambda x: isinstance(x, str))
         latex_bounce_path = dict(default=False,
@@ -3878,8 +3868,8 @@ class CompleteDyckWords(DyckWords):
 
         INPUT:
 
-        - ``code`` -- a list of integers satisfying ``code[0] == 0``
-          and ``0 <= code[i+1] <= code[i]+1``.
+        - ``code`` -- list of integers satisfying ``code[0] == 0``
+          and ``0 <= code[i+1] <= code[i]+1``
 
         EXAMPLES::
 
@@ -4130,7 +4120,7 @@ class CompleteDyckWords_size(CompleteDyckWords, DyckWords_size):
         Return a random complete Dyck word of semilength `n`.
 
         The algorithm is based on a classical combinatorial fact. One
-        chooses at random a word with `n` 0's and `n+1` 1's. One then
+        chooses at random a word with `n` 0s and `n+1` 1s. One then
         considers every 1 as an ascending step and every 0 as a
         descending step, and one finds the lowest point of the path
         (with respect to a slightly tilted slope). One then cuts the

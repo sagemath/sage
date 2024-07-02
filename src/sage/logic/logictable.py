@@ -130,7 +130,7 @@ class Truthtable:
 
     - ``t`` -- a 2-D array containing the table values
 
-    - ``vo`` -- a list of the variables in the expression in order,
+    - ``vo`` -- list of the variables in the expression in order,
       with each variable occurring only once
     """
     def __init__(self, t, vo):
@@ -163,9 +163,7 @@ class Truthtable:
         r"""
         Return a latex representation of the calling table object.
 
-        OUTPUT:
-
-        The latex representation of the table.
+        OUTPUT: the latex representation of the table
 
         EXAMPLES:
 
@@ -203,9 +201,7 @@ class Truthtable:
         r"""
         Return a string representation of the calling table object.
 
-        OUTPUT:
-
-        The table as a 2-D string array.
+        OUTPUT: the table as a 2-D string array
 
         EXAMPLES:
 
@@ -260,9 +256,7 @@ class Truthtable:
         r"""
         Return a list representation of the calling table object.
 
-        OUTPUT:
-
-        A list representation of the table.
+        OUTPUT: list representation of the table
 
         EXAMPLES:
 
@@ -272,7 +266,6 @@ class Truthtable:
             sage: s = propcalc.formula("man->monkey&human")
             sage: s.truthtable().get_table_list()
              [['man', 'monkey', 'human'], [False, False, False, True], [False, False, True, True], [False, True, False, True], [False, True, True, True], [True, False, False, False], [True, False, True, False], [True, True, False, False], [True, True, True, True]]
-
         """
         t = self.__table[:]
         t.insert(0, self.__vars_order)

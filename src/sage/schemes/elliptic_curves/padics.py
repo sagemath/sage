@@ -251,7 +251,7 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
     - ``check_hypotheses`` -- boolean, whether to check
       that this is a curve for which the p-adic height makes sense
 
-    OUTPUT: The `p`-adic cyclotomic regulator of this curve, to the
+    OUTPUT: the `p`-adic cyclotomic regulator of this curve, to the
     requested precision.
 
     If the rank is 0, we output 1.
@@ -361,7 +361,7 @@ def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=
     - ``check_hypotheses`` -- boolean, whether to check
       that this is a curve for which the p-adic height makes sense
 
-    OUTPUT: The `p`-adic cyclotomic height pairing matrix of this curve
+    OUTPUT: the `p`-adic cyclotomic height pairing matrix of this curve
     to the given precision.
 
     AUTHORS:
@@ -438,9 +438,11 @@ def _multiply_point(E, R, P, m):
       `\ZZ/L\ZZ` for some positive odd integer
       `L`).
 
-    - ``m`` -- an integer, = 1
+    - ``m`` -- an integer (default: 1)
 
-    OUTPUT: A triple `(a', b', d')` such that if the point
+    OUTPUT:
+
+    A triple `(a', b', d')` such that if the point
     `mP` has coordinates `(a/d^2, b/d^3)`, then we have
     `a' \equiv a`, `b' \equiv \pm b`,
     `d' \equiv \pm d` all in `R` (i.e. modulo
@@ -676,7 +678,9 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
     - ``check_hypotheses`` -- boolean, whether to check
       that this is a curve for which the p-adic height makes sense
 
-    OUTPUT: A function that accepts two parameters:
+    OUTPUT:
+
+    A function that accepts two parameters:
 
     - a `\QQ`-rational point on the curve whose height should be computed
 
@@ -882,7 +886,9 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
     - ``check_hypotheses`` -- boolean, whether to check
       that this is a curve for which the p-adic height makes sense
 
-    OUTPUT: A function that accepts two parameters:
+    OUTPUT:
+
+    A function that accepts two parameters:
 
     - a `\QQ`-rational point on the curve whose height should be computed
 
@@ -1038,8 +1044,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
       that this is a curve for which the p-adic sigma function makes
       sense
 
-    OUTPUT: A power series `t + \cdots` with coefficients in
-    `\ZZ_p`.
+    OUTPUT: a power series `t + \cdots` with coefficients in `\ZZ_p`
 
     The output series will be truncated at `O(t^{N+1})`, and
     the coefficient of `t^n` for `n \geq 1` will be
@@ -1256,8 +1261,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
       that this is a curve for which the p-adic sigma function makes
       sense
 
-    OUTPUT: A power series `t + \cdots` with coefficients in
-    `\ZZ_p`.
+    OUTPUT: a power series `t + \cdots` with coefficients in `\ZZ_p`
 
     The coefficient of `t^j` for `j \geq 1` will be
     correct to precision `O(p^{N - 2 + (3 - j)(lamb + 1)})`.

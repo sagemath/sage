@@ -82,9 +82,10 @@ class Profiler:
     def __init__(self, systems=[], verbose=False):
         """
         INPUT:
-            systems -- a list of interfaces to other system which implements a cputime
-                       method. The cputimes of all provided systems will be added
-                       to the cputime of Sage itself.
+
+        - ``systems`` -- list of interfaces to other system which implements a
+          cputime method. The cputimes of all provided systems will be added
+          to the cputime of Sage itself.
         """
         systems = [e.cputime for e in systems]
         self._cputime_functions = [cputime] + list(systems)
@@ -152,7 +153,7 @@ class Profiler:
 
     def print_last(self):
         """
-        Prints the last profiler step
+        Print the last profiler step.
         """
         if not self._checkpoints:
             return ""

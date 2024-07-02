@@ -7,20 +7,20 @@ evaluation and Maxima, GiNaC, Pynac for symbolics.
 
 The main objects which are exported from this module are:
 
- * :meth:`bessel_J(n, x) <Function_Bessel_J>` -- The Bessel J function
- * :meth:`bessel_Y(n, x) <Function_Bessel_Y>` -- The Bessel Y function
- * :meth:`bessel_I(n, x) <Function_Bessel_I>` -- The Bessel I function
- * :meth:`bessel_K(n, x) <Function_Bessel_K>` -- The Bessel K function
- * :meth:`Bessel(...) <Bessel>`   -- A factory function for producing Bessel functions of
+ * :meth:`bessel_J(n, x) <Function_Bessel_J>` -- the Bessel J function
+ * :meth:`bessel_Y(n, x) <Function_Bessel_Y>` -- the Bessel Y function
+ * :meth:`bessel_I(n, x) <Function_Bessel_I>` -- the Bessel I function
+ * :meth:`bessel_K(n, x) <Function_Bessel_K>` -- the Bessel K function
+ * :meth:`Bessel(...) <Bessel>` -- a factory function for producing Bessel functions of
    various kinds and orders
- * :meth:`hankel1(nu, z) <Function_Hankel1>`  -- The Hankel function of the first kind
- * :meth:`hankel2(nu, z) <Function_Hankel2>`  -- The Hankel function of the second kind
- * :meth:`struve_H(nu, z) <Function_Struve_H>`  -- The Struve function
- * :meth:`struve_L(nu, z) <Function_Struve_L>`  -- The modified Struve function
- * :meth:`spherical_bessel_J(n, z) <SphericalBesselJ>` -- The Spherical Bessel J function
- * :meth:`spherical_bessel_Y(n, z) <SphericalBesselY>` -- The Spherical Bessel J function
- * :meth:`spherical_hankel1(n, z) <SphericalHankel1>` -- The Spherical Hankel function of the first kind
- * :meth:`spherical_hankel2(n, z) <SphericalHankel2>` -- The Spherical Hankel function of the second kind
+ * :meth:`hankel1(nu, z) <Function_Hankel1>` -- the Hankel function of the first kind
+ * :meth:`hankel2(nu, z) <Function_Hankel2>` -- the Hankel function of the second kind
+ * :meth:`struve_H(nu, z) <Function_Struve_H>` -- the Struve function
+ * :meth:`struve_L(nu, z) <Function_Struve_L>` -- the modified Struve function
+ * :meth:`spherical_bessel_J(n, z) <SphericalBesselJ>` -- the Spherical Bessel J function
+ * :meth:`spherical_bessel_Y(n, z) <SphericalBesselY>` -- the Spherical Bessel J function
+ * :meth:`spherical_hankel1(n, z) <SphericalHankel1>` -- the Spherical Hankel function of the first kind
+ * :meth:`spherical_hankel2(n, z) <SphericalHankel2>` -- the Spherical Hankel function of the second kind
 
 -  Bessel functions, first defined by the Swiss mathematician
    Daniel Bernoulli and named after Friedrich Bessel, are canonical
@@ -435,7 +435,6 @@ class Function_Bessel_J(BuiltinFunction):
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative with respect to order
-
         """
         if diff_param == 1:
             return (bessel_J(n - 1, x) - bessel_J(n + 1, x)) / Integer(2)
@@ -1203,7 +1202,6 @@ def Bessel(*args, **kwds):
         sage: G += plot(Bessel(1, 'J'), 0, 15, color='black', linestyle='dotted')
         sage: G += plot(Bessel(1, 'Y'), 0, 15, color='black', linestyle='dotted')
         sage: show(G, ymin=-1, ymax=1)
-
     """
     # Determine the order and type of function from the arguments and keywords.
     # These are recorded in local variables: _type, _order, _system, _nargs.
@@ -1476,7 +1474,7 @@ struve_L = Function_Struve_L()
 
 class Function_Hankel1(BuiltinFunction):
     r"""
-    The Hankel function of the first kind
+    The Hankel function of the first kind.
 
     DEFINITION:
 
@@ -1563,7 +1561,7 @@ hankel1 = Function_Hankel1()
 
 class Function_Hankel2(BuiltinFunction):
     r"""
-    The Hankel function of the second kind
+    The Hankel function of the second kind.
 
     DEFINITION:
 
@@ -1650,7 +1648,7 @@ hankel2 = Function_Hankel2()
 
 class SphericalBesselJ(BuiltinFunction):
     r"""
-    The spherical Bessel function of the first kind
+    The spherical Bessel function of the first kind.
 
     DEFINITION:
 
@@ -1752,7 +1750,7 @@ spherical_bessel_J = SphericalBesselJ()
 
 class SphericalBesselY(BuiltinFunction):
     r"""
-    The spherical Bessel function of the second kind
+    The spherical Bessel function of the second kind.
 
     DEFINITION:
 
@@ -1853,7 +1851,7 @@ spherical_bessel_Y = SphericalBesselY()
 
 class SphericalHankel1(BuiltinFunction):
     r"""
-    The spherical Hankel function of the first kind
+    The spherical Hankel function of the first kind.
 
     DEFINITION:
 
@@ -1951,7 +1949,7 @@ spherical_hankel1 = SphericalHankel1()
 
 class SphericalHankel2(BuiltinFunction):
     r"""
-    The spherical Hankel function of the second kind
+    The spherical Hankel function of the second kind.
 
     DEFINITION:
 

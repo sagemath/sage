@@ -36,7 +36,7 @@ cdef class CallableDict(dict):
         sage: d('zwei')
         2
 
-    In case the input is not in the dictionary, a :class:`ValueError`
+    In case the input is not in the dictionary, a :exc:`ValueError`
     is raised, for consistency with the function call syntax::
 
         sage: d[1]
@@ -56,7 +56,7 @@ cdef class CallableDict(dict):
 
         - ``x`` -- any hashable object
 
-        A :class:`ValueError` is raised if ``x`` is not in ``self``.
+        A :exc:`ValueError` is raised if ``x`` is not in ``self``.
 
         TESTS::
 

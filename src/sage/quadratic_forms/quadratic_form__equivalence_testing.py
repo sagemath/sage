@@ -32,7 +32,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
 
     - ``self``, ``other`` -- positive definite integral quadratic forms
 
-    - ``return_matrix`` -- (boolean, default ``False``) return
+    - ``return_matrix`` -- boolean (default: ``False``); return
       the transformation matrix instead of a boolean
 
     OUTPUT:
@@ -307,8 +307,9 @@ def is_rationally_isometric(self, other, return_matrix=False):
 
     - ``other`` -- a quadratic form over a number field
 
-    - ``return_matrix`` -- (boolean, default ``False``) return
-      the transformation matrix instead of a boolean; this is currently only implemented for forms over ``QQ``
+    - ``return_matrix`` -- boolean (default: ``False``); return
+      the transformation matrix instead of a boolean; this is currently
+      only implemented for forms over ``QQ``
 
     OUTPUT:
 
@@ -444,7 +445,7 @@ def is_rationally_isometric(self, other, return_matrix=False):
         ...
         NotImplementedError: this only tests regular forms
 
-    Forms must have the same base ring otherwise a :class:`TypeError` is raised::
+    Forms must have the same base ring otherwise a :exc:`TypeError` is raised::
 
         sage: # needs sage.rings.number_field
         sage: K1.<a> = QuadraticField(5)
@@ -659,11 +660,9 @@ def _gram_schmidt(m, fixed_vector_index, inner_product):
     - ``fixed_vector_index`` -- any vectors preceding the vector (i.e. to its left)
         at this index are not changed.
     - ``inner_product`` -- a function that takes two vector arguments and returns a scalar,
-        representing an inner product.
+        representing an inner product
 
-    OUTPUT:
-
-    - A matrix consisting of orthogonal columns with respect to the given inner product
+    OUTPUT: a matrix consisting of orthogonal columns with respect to the given inner product
 
     EXAMPLES::
 

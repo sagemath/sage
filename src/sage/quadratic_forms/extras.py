@@ -13,7 +13,7 @@ def is_triangular_number(n, return_value=False):
     Return whether ``n`` is a triangular number.
 
     A *triangular number* is a number of the form `k(k+1)/2` for some
-    non-negative integer `n`. See :wikipedia:`Triangular_number`. The sequence
+    nonnegative integer `n`. See :wikipedia:`Triangular_number`. The sequence
     of triangular number is references as A000217 in the Online encyclopedia of
     integer sequences (OEIS).
 
@@ -22,11 +22,11 @@ def is_triangular_number(n, return_value=False):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    - ``return_value`` -- a boolean set to ``False`` by default. If set to
+    - ``return_value`` -- boolean (default: ``False``); if set to
       ``True`` the function returns a pair made of a boolean and the value `v`
-      such that `v(v+1)/2 = n`.
+      such that `v(v+1)/2 = n`
 
     EXAMPLES::
 
@@ -85,11 +85,9 @@ def extend_to_primitive(A_input):
 
     INPUT:
 
-    a matrix, or a list of length n vectors (in the same space)
+    - ``A_input`` -- a matrix or a list of length n vectors (in the same space)
 
-    OUTPUT:
-
-    a square matrix, or a list of n vectors (resp.)
+    OUTPUT: a square matrix or a list of n vectors (resp.)
 
     EXAMPLES::
 

@@ -914,7 +914,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         r"""
         Return indices of points of :meth:`Delta_polar` used for coordinates.
 
-        OUTPUT: :class:`tuple` of integers.
+        OUTPUT: :class:`tuple` of integers
 
         EXAMPLES::
 
@@ -1510,7 +1510,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         r"""
         Return the class of ``self`` in the ambient space cohomology ring.
 
-        OUTPUT: A :class:`cohomology class <sage.schemes.generic.toric_variety.CohomologyClass>`.
+        OUTPUT: a :class:`cohomology class <sage.schemes.generic.toric_variety.CohomologyClass>`
 
         EXAMPLES::
 
@@ -1536,7 +1536,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         r"""
         Return the nef-partition associated to ``self``.
 
-        OUTPUT: A :class:`nef-partition <sage.geometry.lattice_polytope.NefPartition>`.
+        OUTPUT: a :class:`nef-partition <sage.geometry.lattice_polytope.NefPartition>`.
 
         EXAMPLES::
 

@@ -927,9 +927,7 @@ class Lseries_ell(SageObject):
           sum computations can be done on curves for which the conductor
           has been precomputed.
 
-        OUTPUT:
-
-        A ``LFunctionZeroSum_EllipticCurve`` instance.
+        OUTPUT: a ``LFunctionZeroSum_EllipticCurve`` instance
 
         EXAMPLES::
 

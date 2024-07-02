@@ -61,11 +61,9 @@ def acyclic_orientations(G):
 
     INPUT:
 
-    - ``G`` -- an undirected graph.
+    - ``G`` -- an undirected graph
 
-    OUTPUT:
-
-    - An iterator over all acyclic orientations of the input graph.
+    OUTPUT: an iterator over all acyclic orientations of the input graph
 
     .. NOTE::
 
@@ -125,7 +123,6 @@ def acyclic_orientations(G):
 
         sage: len(list(Graph([(0, 1), (1, 2), (2, 0)]).acyclic_orientations()))
         6
-
     """
     if not G.size():
         # A graph without edge cannot be oriented
@@ -326,11 +323,9 @@ def strong_orientations_iterator(G):
 
     INPUT:
 
-    - ``G`` -- an undirected graph.
+    - ``G`` -- an undirected graph
 
-    OUTPUT:
-
-    - an iterator which will produce all strong orientations of this graph.
+    OUTPUT: an iterator which will produce all strong orientations of this graph
 
     .. NOTE::
 
@@ -447,17 +442,15 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
 
     INPUT:
 
-    - ``Dg`` -- the mixed graph. The undirected edges are doubly oriented.
+    - ``Dg`` -- the mixed graph. The undirected edges are doubly oriented
 
     - ``V`` -- the set of vertices
 
     - ``E`` -- the set of undirected edges (they are oriented in both ways);
-      No labels are allowed.
+      no labels are allowed
 
-    OUTPUT:
-
-    - an iterator which will produce all strong orientations of the input
-      partially directed graph.
+    OUTPUT: an iterator which will produce all strong orientations of the input
+    partially directed graph
 
     EXAMPLES::
 
@@ -524,7 +517,7 @@ def random_orientation(G):
 
     INPUT:
 
-    - ``G`` -- a Graph.
+    - ``G`` -- a Graph
 
     EXAMPLES::
 

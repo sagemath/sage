@@ -265,9 +265,7 @@ def _split_dict_(D, indices, group_by=None):
     - ``group_by`` -- a tuple or list of nonnegative integers.
       If this is ``None`` (default), then no grouping is done.
 
-    OUTPUT:
-
-    A dictionary.
+    OUTPUT: a dictionary
 
     TESTS::
 
@@ -349,9 +347,7 @@ def _split_laurent_polynomial_dict_(P, M, d):
       to their coefficients. This is the dictionary corresponding to
       an element of ``M``.
 
-    OUTPUT:
-
-    A dictionary corresponding to an element of ``P``.
+    OUTPUT: a dictionary corresponding to an element of ``P``
 
     TESTS::
 

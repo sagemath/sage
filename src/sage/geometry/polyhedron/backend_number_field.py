@@ -26,16 +26,16 @@ from .base_number_field import Polyhedron_base_number_field
 
 class Polyhedron_number_field(Polyhedron_field, Polyhedron_base_number_field):
     r"""
-    Polyhedra whose data can be converted to number field elements
+    Polyhedra whose data can be converted to number field elements.
 
     All computations are done internally using a fixed real embedded number field,
     which is determined automatically.
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -97,8 +97,8 @@ class Polyhedron_number_field(Polyhedron_field, Polyhedron_base_number_field):
         INPUT:
 
         - ``vertices`` -- list of points. Each point can be specified
-           as any iterable container of
-           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
+          as any iterable container of
+          :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
         - ``rays`` -- list of rays. Each ray can be specified as any
           iterable container of
@@ -108,8 +108,8 @@ class Polyhedron_number_field(Polyhedron_field, Polyhedron_base_number_field):
           any iterable container of
           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
         EXAMPLES::
 
@@ -150,8 +150,8 @@ class Polyhedron_number_field(Polyhedron_field, Polyhedron_base_number_field):
           as any iterable container of
           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
         TESTS::
 

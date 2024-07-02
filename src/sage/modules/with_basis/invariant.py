@@ -257,7 +257,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
         # Give the intersection of kernels of the map `s*x-x` to determine when
         # `s*x = x` for all generators `s` of `S`
-        basis = M.annihilator_basis(S.gens(), action=_invariant_map, side="left")
+        basis = M.annihilator_basis(S.gens(), action=_invariant_map, side='left')
 
         super().__init__(Family(basis),
                          support_order=M._compute_support_order(basis),
@@ -800,7 +800,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: type(T)
             <class 'sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule_with_category'>
 
-        Check the :class:`ValueError`::
+        Check the :exc:`ValueError`::
 
             sage: T = M.twisted_invariant_module(G, "ichigo", action_on_basis=action)
             Traceback (most recent call last):
@@ -905,7 +905,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
         basis = M.annihilator_basis(M.basis(),
                                     action=proj_difference,
-                                    side="left")
+                                    side='left')
 
         super().__init__(Family(basis),
                          support_order=M._compute_support_order(basis),

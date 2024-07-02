@@ -405,9 +405,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         - ``fixed`` -- (optional) ``dict`` with ``{variable: value}`` pairs
         - ``**kwargs`` -- named parameters
 
-        OUTPUT:
-
-        the resulting substitution
+        OUTPUT: the resulting substitution
 
         EXAMPLES::
 
@@ -1069,9 +1067,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
           progress of computation is printed, since reduction of huge polynomials may take
           a long time.
 
-        OUTPUT:
-
-        Symmetrical reduction of ``self`` with respect to ``I``, possibly with tail reduction.
+        OUTPUT: symmetrical reduction of ``self`` with respect to ``I``, possibly with tail reduction
 
         THEORY:
 
@@ -1145,9 +1141,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         - ``k`` -- an integer.
 
-        OUTPUT:
-
-        Replace `v_n` with `v_{n\cdot k}` for all generators `v_\ast` occurring in self.
+        OUTPUT: replace `v_n` with `v_{n\cdot k}` for all generators `v_\ast` occurring in self
 
         EXAMPLES::
 

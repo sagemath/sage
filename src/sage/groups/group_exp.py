@@ -71,7 +71,7 @@ class GroupExp(Functor):
 
         sage: L = RootSystem(['A',2]).ambient_space()
         sage: EL = E(L)
-        sage: W = L.weyl_group(prefix="s")
+        sage: W = L.weyl_group(prefix='s')
         sage: s2 = W.simple_reflection(2)
         sage: def my_action(mu):
         ....:     return s2.action(mu)
@@ -86,7 +86,6 @@ class GroupExp(Functor):
         (2, 3, 2)
         sage: y.parent()
         Multiplicative form of Ambient space of the Root system of type ['A', 2]
-
     """
     def __init__(self):
         r"""
@@ -192,7 +191,6 @@ class GroupExpElement(ElementWrapper, MultiplicativeGroupElement):
         Multiplicative form of Vector space of dimension 2 over Rational Field
         sage: EG(vector(QQ,(1,-3)))==z
         True
-
     """
     def __init__(self, parent, x):
         r"""
@@ -245,7 +243,7 @@ class GroupExp_Class(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - `G` -- a commutative additive group
+    - ``G`` -- a commutative additive group
 
     OUTPUT: the multiplicative form of `G`
 

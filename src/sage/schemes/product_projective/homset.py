@@ -49,9 +49,7 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
 
         - ``v`` -- anything that determines a scheme morphism in the Hom-set.
 
-        OUTPUT:
-
-        The scheme morphism determined by ``v``.
+        OUTPUT: the scheme morphism determined by ``v``
 
         EXAMPLES::
 
@@ -98,7 +96,7 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
         - ``algorithm`` -- either ``'sieve'`` or ``'enumerate'`` algorithms can be used over `\QQ`. If
           not specified, ``'enumerate'`` is used only for small height bounds.
 
-        OUTPUT: A list of rational points of the projective scheme.
+        OUTPUT: a list of rational points of the projective scheme
 
         EXAMPLES::
 

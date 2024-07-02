@@ -68,7 +68,7 @@ def is_ProductProjectiveSpaces(x):
     This is an ambient space defined by `\mathbb{P}^n_R \times \cdots \times \mathbb{P}^m_R`,
     where `R` is a ring and `n,\ldots, m\geq 0` are integers.
 
-    OUTPUT: Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -342,7 +342,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         - ``right`` -- a product of projective spaces
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -364,7 +364,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         - ``other`` -- a product of projective spaces
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -397,7 +397,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT: ``m`` -- integer.
 
-        OUTPUT: product of projective spaces.
+        OUTPUT: product of projective spaces
 
         EXAMPLES::
 
@@ -565,7 +565,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Returns the number of components of this space.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -582,7 +582,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         This is the number of variables in the coordinate ring of the
         projective space.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -628,7 +628,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         - ``polynomial`` -- a polynomial in the coordinate_ring
 
-        OUTPUT: A tuple of integers, one for each projective space component. A
+        OUTPUT: a tuple of integers, one for each projective space component. A
         :class:`ValueError` is raised if the polynomial is not multihomogeneous.
 
         EXAMPLES::
@@ -814,9 +814,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         This is used both for illustration and testing purposes.
 
-        OUTPUT:
-
-        A point in the this projective space.
+        OUTPUT: a point in the this projective space
 
         EXAMPLES::
 
@@ -836,9 +834,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         - ``X`` -- a list or tuple of equations
 
-        OUTPUT:
-
-        :class:`AlgebraicScheme_subscheme_projective_cartesian_product`.
+        OUTPUT: :class:`AlgebraicScheme_subscheme_projective_cartesian_product`
 
         EXAMPLES::
 

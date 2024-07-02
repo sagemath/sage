@@ -62,7 +62,7 @@ from sage.arith.misc import binomial
 
 def random_error_vector(n, F, error_positions):
     r"""
-    Return a vector of length ``n`` over ``F`` filled with random non-zero coefficients
+    Return a vector of length ``n`` over ``F`` filled with random nonzero coefficients
     at the positions given by ``error_positions``.
 
     .. NOTE::
@@ -75,11 +75,9 @@ def random_error_vector(n, F, error_positions):
 
     - ``F`` -- the field over which the vector is defined
 
-    - ``error_positions`` -- the non-zero positions of the vector
+    - ``error_positions`` -- the nonzero positions of the vector
 
-    OUTPUT:
-
-    - a vector of ``F``
+    OUTPUT: a vector of ``F``
 
     AUTHORS:
 
@@ -109,11 +107,9 @@ def format_interval(t):
 
     INPUT:
 
-    - ``t`` -- a list or a tuple
+    - ``t`` -- list or a tuple
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: string
 
     TESTS::
 
@@ -125,7 +121,6 @@ def format_interval(t):
         sage: t = (2, 10)
         sage: format_interval(t)
         'between 2 and 10'
-
     """
     return str(t[0]) if t[0] == t[1] else 'between %s and %s' % (t[0], t[1])
 
@@ -155,7 +150,7 @@ class Channel(SageObject):
 
     def __init__(self, input_space, output_space):
         r"""
-        Initializes parameters for a Channel object.
+        Initialize parameters for a Channel object.
 
         This is a private method, which should be called by the constructor
         of every encoder, as it automatically initializes the mandatory
@@ -204,9 +199,7 @@ class Channel(SageObject):
 
         - ``message`` -- a vector
 
-        OUTPUT:
-
-        - a vector of the output space of ``self``
+        OUTPUT: a vector of the output space of ``self``
 
         EXAMPLES::
 
@@ -255,7 +248,6 @@ class Channel(SageObject):
             sage: Chan = channels.StaticErrorRateChannel(GF(59)^6, n_err)
             sage: Chan.input_space()
             Vector space of dimension 6 over Finite Field of size 59
-
         """
         return self._input_space
 
@@ -395,9 +387,7 @@ class StaticErrorRateChannel(Channel):
 
         - ``message`` -- a vector
 
-        OUTPUT:
-
-        - a vector of the output space
+        OUTPUT: a vector of the output space
 
         EXAMPLES::
 
@@ -490,8 +480,6 @@ class ErrorErasureChannel(Channel):
 
     def __init__(self, space, number_errors, number_erasures):
         r"""
-
-
         TESTS:
 
         If the sum of number of errors and number of erasures
@@ -579,9 +567,7 @@ class ErrorErasureChannel(Channel):
 
         - ``message`` -- a vector
 
-        OUTPUT:
-
-        - a couple of vectors, namely:
+        OUTPUT: a couple of vectors, namely:
 
           - the transmitted message, which is ``message`` with erroneous and
             erased positions
@@ -666,10 +652,10 @@ class QarySymmetricChannel(Channel):
 
     INPUT:
 
-    - ``space`` -- the input and output space of the channel. It has to be
-      `\GF{q}^n` for some finite field `\GF{q}`.
+    - ``space`` -- the input and output space of the channel; it has to be
+      `\GF{q}^n` for some finite field `\GF{q}`
 
-    - ``epsilon`` -- the transmission error probability of the individual elements.
+    - ``epsilon`` -- the transmission error probability of the individual elements
 
     EXAMPLES:
 
@@ -798,7 +784,7 @@ class QarySymmetricChannel(Channel):
 
         INPUT:
 
-        - ``t`` -- an integer
+        - ``t`` -- integer
 
         EXAMPLES::
 
@@ -818,7 +804,7 @@ class QarySymmetricChannel(Channel):
 
         INPUT:
 
-        - ``t`` -- an integer
+        - ``t`` -- integer
 
         EXAMPLES::
 

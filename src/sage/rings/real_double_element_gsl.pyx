@@ -17,11 +17,11 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
     def nth_root(self, int n):
         """
-        Return the `n^{th}` root of ``self``.
+        Return the `n`-th root of ``self``.
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -502,7 +502,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         the interval `(-\pi, \pi]`.
 
         Specifically, it is the unique `x \in (-\pi, \pi]` such
-        that ```self`` `= x + 2\pi n` for some `n \in \ZZ`.
+        that ``self`` `= x + 2\pi n` for some `n \in \ZZ`.
 
         EXAMPLES::
 
@@ -546,7 +546,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
     def hypot(self, other):
         r"""
-        Computes the value `\sqrt{s^2 + o^2}` where `s` is ``self`` and `o`
+        Compute the value `\sqrt{s^2 + o^2}` where `s` is ``self`` and `o`
         is ``other`` in such a way as to avoid overflow.
 
         EXAMPLES::

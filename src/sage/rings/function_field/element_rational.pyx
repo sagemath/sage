@@ -61,7 +61,6 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: K.<a> = FunctionField(QQ)
             sage: ((a+1)/(a-1)).__pari__()                                              # needs sage.libs.pari
             (a + 1)/(a - 1)
-
         """
         return self.element().__pari__()
 
@@ -146,7 +145,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
     cpdef _richcmp_(self, other, int op):
         """
-        Compare the element with the other element with respect to ``op``
+        Compare the element with the other element with respect to ``op``.
 
         INPUT:
 
@@ -213,7 +212,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
     cpdef _mul_(self, right):
         """
-        Multiply the element with the other element
+        Multiply the element with the other element.
 
         INPUT:
 
@@ -231,7 +230,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
     cpdef _div_(self, right):
         """
-        Divide the element with the other element
+        Divide the element with the other element.
 
         INPUT:
 
@@ -367,7 +366,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -419,7 +418,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 

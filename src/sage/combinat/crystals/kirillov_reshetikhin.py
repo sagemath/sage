@@ -164,7 +164,7 @@ def KirillovReshetikhinCrystal(cartan_type, r, s, model='KN'):
 
     - ``r`` -- a label of finite Dynkin diagram
 
-    - ``s`` -- a positive integer
+    - ``s`` -- positive integer
 
     - ``model`` -- (default: ``'KN'``) can be one of the following:
 
@@ -434,7 +434,7 @@ class KirillovReshetikhinGenericCrystal(AffineCrystalFromClassical):
 
     def __init__(self, cartan_type, r, s, dual=None):
         r"""
-        Initializes a generic Kirillov-Reshetikhin crystal.
+        Initialize a generic Kirillov-Reshetikhin crystal.
 
         TESTS::
 
@@ -930,8 +930,8 @@ class KR_type_vertical(KirillovReshetikhinCrystalFromPromotion):
         return aut[i]
 
     def promotion_on_highest_weight_vector(self, b):
-        """
-        Calculates promotion on a `{2,3,...,n}` highest weight vector ``b``.
+        r"""
+        Calculate promotion on a `{2, 3, \ldots, n}` highest weight vector `b`.
 
         EXAMPLES::
 
@@ -1885,7 +1885,7 @@ class KR_type_box(KirillovReshetikhinGenericCrystal, AffineCrystalFromClassical)
 
     def __init__(self, cartan_type, r, s):
         r"""
-        Initializes a Kirillov-Reshetikhin crystal ``self``.
+        Initialize a Kirillov-Reshetikhin crystal ``self``.
 
         TESTS::
 
@@ -1982,7 +1982,7 @@ class KR_type_box(KirillovReshetikhinGenericCrystal, AffineCrystalFromClassical)
 
     def similarity_factor(self):
         r"""
-        Sets the similarity factor used to map to the ambient crystal.
+        Set the similarity factor used to map to the ambient crystal.
 
         EXAMPLES::
 
@@ -2272,7 +2272,7 @@ class KR_type_Bn(KirillovReshetikhinGenericCrystal):
 
     def similarity_factor(self):
         r"""
-        Sets the similarity factor used to map to the ambient crystal.
+        Set the similarity factor used to map to the ambient crystal.
 
         EXAMPLES::
 
@@ -2288,7 +2288,7 @@ class KR_type_Bn(KirillovReshetikhinGenericCrystal):
     @cached_method
     def to_ambient_crystal(self):
         r"""
-        Return a map from self to the ambient crystal of type `A_{2n-1}^{(2)}`.
+        Return a map from ``self`` to the ambient crystal of type `A_{2n-1}^{(2)}`.
 
         EXAMPLES::
 
@@ -2371,7 +2371,6 @@ class KR_type_BnElement(KirillovReshetikhinGenericCrystalElement):
             sage: K=crystals.KirillovReshetikhin(['B',3,1],3,1)
             sage: b = K.module_generators[0]
             sage: b.f(0) # indirect doctest
-
         """
         b = self.parent().to_ambient_crystal()(self).f_string([0,0])
         if b is None:
@@ -2732,7 +2731,6 @@ class KR_type_Dn_twisted(KirillovReshetikhinGenericCrystal):
             sage: hw = [ b for b in T if all(b.epsilon(i)==0 for i in [2,3]) ]
             sage: all(K.from_pm_diagram_to_highest_weight_vector(K.from_highest_weight_vector_to_pm_diagram(b)) == b for b in hw)
             True
-
         """
         n = self.cartan_type().rank() - 1
         s = self.s()
@@ -3822,7 +3820,7 @@ class PMDiagram(CombinatorialObject):
 
     def inner_shape(self):
         """
-        Return the inner shape of the pm diagram
+        Return the inner shape of the pm diagram.
 
         EXAMPLES::
 
@@ -3845,7 +3843,7 @@ class PMDiagram(CombinatorialObject):
 
     def outer_shape(self):
         r"""
-        Return the outer shape of the `\pm` diagram
+        Return the outer shape of the `\pm` diagram.
 
         EXAMPLES::
 
@@ -3871,7 +3869,8 @@ class PMDiagram(CombinatorialObject):
 
     def intermediate_shape(self):
         """
-        Return the intermediate shape of the pm diagram (inner shape plus positions of plusses)
+        Return the intermediate shape of the pm diagram (inner shape plus
+        positions of plusses).
 
         EXAMPLES::
 
@@ -3957,7 +3956,7 @@ class PMDiagram(CombinatorialObject):
 
 def partitions_in_box(r, s):
     """
-    Returns all partitions in a box of width s and height r.
+    Return all partitions in a box of width s and height r.
 
     EXAMPLES::
 
@@ -3970,7 +3969,7 @@ def partitions_in_box(r, s):
 
 def vertical_dominoes_removed(r, s):
     """
-    Returns all partitions obtained from a rectangle of width s and height r by removing
+    Return all partitions obtained from a rectangle of width s and height r by removing
     vertical dominoes.
 
     EXAMPLES::
@@ -3987,7 +3986,7 @@ def vertical_dominoes_removed(r, s):
 
 def horizontal_dominoes_removed(r, s):
     """
-    Returns all partitions obtained from a rectangle of width s and height r by removing
+    Return all partitions obtained from a rectangle of width s and height r by removing
     horizontal dominoes.
 
     EXAMPLES::
@@ -4091,7 +4090,7 @@ class CrystalDiagramAutomorphism(CrystalMorphism):
       weight elements
     - ``index_set`` -- (default: the empty set) the index set
     - ``automorphism`` -- (default: the identity) the twisting automorphism
-    - ``cache`` -- (default: ``True``) cache the result
+    - ``cache`` -- boolean (default: ``True``); cache the result
     """
 
     def __init__(self, C, on_hw, index_set=None, automorphism=None, cache=True):

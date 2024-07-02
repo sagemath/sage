@@ -36,9 +36,7 @@ def is_Scheme(x):
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    Boolean. Whether ``x`` derives from :class:`Scheme`.
+    OUTPUT: boolean. Whether ``x`` derives from :class:`Scheme`
 
     EXAMPLES::
 
@@ -203,9 +201,7 @@ class Scheme(Parent):
         """
         Call syntax for schemes.
 
-        INPUT/OUTPUT:
-
-        The arguments must be one of the following:
+        INPUT/OUTPUT: the arguments must be one of the following:
 
         - a ring or a scheme `S`. Output will be the set `X(S)` of
           `S`-valued points on `X`.
@@ -320,9 +316,7 @@ class Scheme(Parent):
         - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT:
-
-        A point of the scheme.
+        OUTPUT: a point of the scheme
 
         EXAMPLES::
 
@@ -400,9 +394,7 @@ class Scheme(Parent):
         """
         Return the base ring of the scheme self.
 
-        OUTPUT:
-
-        A commutative ring.
+        OUTPUT: a commutative ring
 
         EXAMPLES::
 
@@ -429,9 +421,7 @@ class Scheme(Parent):
         """
         Return the base scheme.
 
-        OUTPUT:
-
-        A scheme.
+        OUTPUT: a scheme
 
         EXAMPLES::
 
@@ -460,9 +450,7 @@ class Scheme(Parent):
         Return the structure morphism from ``self`` to its base
         scheme.
 
-        OUTPUT:
-
-        A scheme morphism.
+        OUTPUT: a scheme morphism
 
         EXAMPLES::
 
@@ -523,9 +511,7 @@ class Scheme(Parent):
         """
         Return the absolute dimension of this scheme.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -549,9 +535,7 @@ class Scheme(Parent):
         """
         Return the relative dimension of this scheme over its base.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -569,9 +553,7 @@ class Scheme(Parent):
         """
         Return the identity morphism.
 
-        OUTPUT:
-
-        The identity morphism of the scheme ``self``.
+        OUTPUT: the identity morphism of the scheme ``self``
 
         EXAMPLES::
 
@@ -598,9 +580,7 @@ class Scheme(Parent):
         - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT:
-
-        The scheme morphism from ``self`` to ``Y`` defined by ``x``.
+        OUTPUT: the scheme morphism from ``self`` to ``Y`` defined by ``x``
 
         EXAMPLES::
 
@@ -632,9 +612,7 @@ class Scheme(Parent):
         - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency.
 
-        OUTPUT:
-
-        The set of morphisms from ``self`` to ``Y``.
+        OUTPUT: the set of morphisms from ``self`` to ``Y``
 
         EXAMPLES::
 
@@ -704,7 +682,7 @@ class Scheme(Parent):
 
         Derived classes should override this method.
 
-        OUTPUT: rational function in one variable.
+        OUTPUT: rational function in one variable
 
         EXAMPLES::
 
@@ -730,9 +708,7 @@ class Scheme(Parent):
 
         - ``t`` -- the variable which the series should be returned
 
-        OUTPUT:
-
-        A power series approximating the zeta function of ``self``
+        OUTPUT: a power series approximating the zeta function of ``self``
 
         EXAMPLES::
 
@@ -906,9 +882,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -926,9 +900,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -944,9 +916,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Construct a scheme-valued or topological point of ``self``.
 
-        INPUT/OUTPUT:
-
-        The argument ``x`` must be one of the following:
+        INPUT/OUTPUT: the argument ``x`` must be one of the following:
 
         - a prime ideal of the coordinate ring; the output will
           be the corresponding point of `X`
@@ -1054,9 +1024,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         r"""
         Return an element of the spectrum of the ring.
 
-        OUTPUT:
-
-        A point of the affine scheme ``self``.
+        OUTPUT: a point of the affine scheme ``self``
 
         EXAMPLES::
 
@@ -1074,9 +1042,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Return the underlying ring of this scheme.
 
-        OUTPUT:
-
-        A commutative ring.
+        OUTPUT: a commutative ring
 
         EXAMPLES::
 
@@ -1102,9 +1068,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Return the absolute dimension of this scheme.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1122,9 +1086,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Return the relative dimension of this scheme over its base.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1188,9 +1150,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT:
-
-        The scheme morphism from ``self`` to ``Y`` defined by ``x``.
+        OUTPUT: the scheme morphism from ``self`` to ``Y`` defined by ``x``
 
         EXAMPLES:
 

@@ -133,7 +133,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         2
         sage: M1.is_valid()
         False
-
     """
     def __init__(self, M=None, groundset=None, bases=None, nonbases=None, rank=None):
         """
@@ -845,7 +844,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``other`` -- BasisMatroid
+        - ``other`` -- basisMatroid
         - ``morphism`` -- dictionary with sends each element of the
           groundset of this matroid to a distinct element of the groundset
           of ``other``

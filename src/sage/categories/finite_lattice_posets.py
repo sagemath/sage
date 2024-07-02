@@ -36,7 +36,6 @@ class FiniteLatticePosets(CategoryWithAxiom):
         sage: C is FiniteLatticePosets().Finite()
         True
         sage: TestSuite(C).run()
-
     """
 
     class ParentMethods:

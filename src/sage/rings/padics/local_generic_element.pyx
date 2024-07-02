@@ -737,9 +737,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
           the default is ``"pari"`` if the ground field is `Q_p`, ``"sage"``
           otherwise.
 
-        OUTPUT:
-
-        The square root or the list of all square roots of this element.
+        OUTPUT: the square root or the list of all square roots of this element
 
         .. NOTE::
 

@@ -108,9 +108,7 @@ def _minimal_vanishing_polynomial(R, eval_pts):
 
     - ``eval_pts`` -- a list of evaluation points
 
-    OUTPUT:
-
-    The minimal vanishing polynomial.
+    OUTPUT: the minimal vanishing polynomial
 
     EXAMPLES::
 
@@ -269,9 +267,7 @@ class SkewPolynomialRing(OrePolynomialRing):
           independent over the fixed field of the twisting morphism of
           the associated skew polynomial ring
 
-        OUTPUT:
-
-        The minimal vanishing polynomial.
+        OUTPUT: the minimal vanishing polynomial
 
         EXAMPLES::
 
@@ -323,9 +319,7 @@ class SkewPolynomialRing(OrePolynomialRing):
           elements of the base ring of ``self``; the `x_i` should be linearly
           independent over the fixed field of ``self.twisting_morphism()``
 
-        OUTPUT:
-
-        The Lagrange polynomial.
+        OUTPUT: the Lagrange polynomial
 
         EXAMPLES::
 

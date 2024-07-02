@@ -227,7 +227,7 @@ class Jacobian_generic(Scheme):
 
         - ``R`` -- a field. The new base ring.
 
-        OUTPUT: The Jacobian over the ring `R`.
+        OUTPUT: the Jacobian over the ring `R`
 
         EXAMPLES::
 
@@ -250,7 +250,7 @@ class Jacobian_generic(Scheme):
 
         - ``R`` -- a field. The new base field.
 
-        OUTPUT: The Jacobian over the ring `R`.
+        OUTPUT: the Jacobian over the ring `R`
 
         EXAMPLES::
 

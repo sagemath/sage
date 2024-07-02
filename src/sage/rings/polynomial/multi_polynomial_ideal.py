@@ -3963,9 +3963,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         - ``other`` -- a polynomial ideal
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -5684,9 +5682,7 @@ class MPolynomialIdeal_quotient(MPolynomialIdeal):
 
         - ``other`` -- an ideal in a quotient of a polynomial ring
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         TESTS::
 

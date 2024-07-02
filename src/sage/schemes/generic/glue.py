@@ -22,7 +22,7 @@ class GluedScheme(scheme.Scheme):
     -  ``g`` -- open immersion from `U` to a scheme `Y`
 
 
-    OUTPUT: The scheme obtained by gluing `X` and `Y` along the open set
+    OUTPUT: the scheme obtained by gluing `X` and `Y` along the open set
     `U`.
 
     .. NOTE::

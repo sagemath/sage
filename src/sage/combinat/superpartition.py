@@ -121,7 +121,7 @@ class SuperPartition(ClonableArray,
     @staticmethod
     def __classcall_private__(cls, lst):
         r"""
-        Construct a superpartition in the correct parent
+        Construct a superpartition in the correct parent.
 
         EXAMPLES::
 
@@ -323,7 +323,7 @@ class SuperPartition(ClonableArray,
             sage: SuperPartition([[2,1,0],[3,3]]).to_composition()
             [2, 1, 0, 3, 3]
             sage: SuperPartition([[2,1,0],[3,3]]).to_composition().parent()
-            Compositions of non-negative integers
+            Compositions of nonnegative integers
         """
         return Composition(self[0] + self[1])
 
@@ -332,9 +332,7 @@ class SuperPartition(ClonableArray,
         Concatenate and sort the antisymmetric and symmetric parts
         to a partition.
 
-        OUTPUT:
-
-        - a partition
+        OUTPUT: a partition
 
         EXAMPLES::
 
@@ -351,9 +349,7 @@ class SuperPartition(ClonableArray,
         r"""
         The antisymmetric part as a list of strictly decreasing integers.
 
-        OUTPUT:
-
-        - a list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -370,9 +366,7 @@ class SuperPartition(ClonableArray,
         r"""
         The symmetric part as a list of weakly decreasing integers.
 
-        OUTPUT:
-
-        - a list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -392,9 +386,7 @@ class SuperPartition(ClonableArray,
         The *bosonic degree* is the sum of the sizes of the
         antisymmetric and symmetric parts.
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -413,9 +405,7 @@ class SuperPartition(ClonableArray,
 
         The *fermionic degree* is the length of the antisymmetric part.
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -433,9 +423,7 @@ class SuperPartition(ClonableArray,
         Return the bidegree of ``self``, which is a pair consisting
         of the bosonic and fermionic degree.
 
-        OUTPUT:
-
-        - a tuple of two integers
+        OUTPUT: a tuple of two integers
 
         EXAMPLES::
 
@@ -451,9 +439,7 @@ class SuperPartition(ClonableArray,
         Return the length of ``self``, which is the sum of the
         lengths of the antisymmetric and symmetric part.
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -468,9 +454,7 @@ class SuperPartition(ClonableArray,
         r"""
         Return the length of the partition of the symmetric part.
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -485,9 +469,7 @@ class SuperPartition(ClonableArray,
         r"""
         A concatenated partition with an extra cell for each antisymmetric part
 
-        OUTPUT:
-
-        - a partition
+        OUTPUT: a partition
 
         EXAMPLES::
 
@@ -512,11 +494,9 @@ class SuperPartition(ClonableArray,
         INPUT:
 
         - ``shape`` -- a partition or list of integers
-        - ``corners`` -- a list of removable cells of ``shape``
+        - ``corners`` -- list of removable cells of ``shape``
 
-        OUTPUT:
-
-        - a :class:`SuperPartition`
+        OUTPUT: a :class:`SuperPartition`
 
         EXAMPLES::
 
@@ -541,9 +521,7 @@ class SuperPartition(ClonableArray,
         and a list of removable cells of the partition indicating the
         location of the circled cells
 
-        OUTPUT:
-
-        - a list consisting of a partition and a list of pairs of integers
+        OUTPUT: list consisting of a partition and a list of pairs of integers
 
         EXAMPLES::
 
@@ -566,9 +544,7 @@ class SuperPartition(ClonableArray,
         The *conjugate* of a super partition is defined by conjugating
         the circled diagram.
 
-        OUTPUT:
-
-        - a :class:`SuperPartition`
+        OUTPUT: a :class:`SuperPartition`
 
         EXAMPLES::
 
@@ -588,9 +564,7 @@ class SuperPartition(ClonableArray,
         Return the centralizer size of a permutation of cycle
         type symmetric part of ``self``.
 
-        OUTPUT:
-
-        - a positive integer
+        OUTPUT: a positive integer
 
         EXAMPLES::
 
@@ -608,9 +582,7 @@ class SuperPartition(ClonableArray,
         Return the sign of a permutation of cycle type the
         symmetric part of ``self``.
 
-        OUTPUT:
-
-        - either `1` or `-1`
+        OUTPUT: either `1` or `-1`
 
         EXAMPLES::
 
@@ -659,9 +631,7 @@ class SuperPartition(ClonableArray,
 
         - ``h`` -- number of cells in the horizontal strip
 
-        OUTPUT:
-
-        - a list of super partitions
+        OUTPUT: list of super partitions
 
         EXAMPLES::
 
@@ -707,9 +677,7 @@ class SuperPartition(ClonableArray,
 
         - ``h`` -- number of cells in the horizontal strip
 
-        OUTPUT:
-
-        - a list of super partitions
+        OUTPUT: list of super partitions
 
         EXAMPLES::
 
@@ -783,7 +751,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``n`` -- an integer (optional: default ``None``)
+    - ``n`` -- integer (default: ``None``)
     - ``m`` -- if ``n`` is specified, an integer (optional: default ``None``)
 
     Super partitions are the indexing set for symmetric functions
@@ -901,7 +869,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
         """,
         NAME = 'SuperPartition'
         module = 'sage.combinat.superpartition'
-        display = dict(default="default",
+        display = dict(default='default',
                        description="Specifies how the super partitions should "
                                    "be printed",
                        values=dict(list="the super partitions are displayed in "

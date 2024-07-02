@@ -116,17 +116,15 @@ class ToricPlotter(SageObject):
 
     - ``all_options`` -- a :class:`dictionary <dict>`, containing any of the
       options related to toric objects (see :func:`options`) and any other
-      options that will be passed to lower level plotting functions;
+      options that will be passed to lower level plotting functions
 
-    - ``dimension`` -- an integer (1, 2, or 3), dimension of toric objects to
-      be plotted;
+    - ``dimension`` -- integer (1, 2, or 3); dimension of toric objects to
+      be plotted
 
-    - ``generators`` -- (optional) a list of ray generators, see examples for
-      a detailed explanation of this argument.
+    - ``generators`` -- (optional) a list of ray generators; see examples for
+      a detailed explanation of this argument
 
-    OUTPUT:
-
-    - a toric plotter.
+    OUTPUT: a toric plotter
 
     EXAMPLES:
 
@@ -248,11 +246,9 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other``, ``False`` otherwise.
+        OUTPUT: ``True`` if ``self`` is equal to ``other``, ``False`` otherwise
 
         TESTS::
 
@@ -273,9 +269,7 @@ class ToricPlotter(SageObject):
         that were not specified by the user, based on the other options. See
         :class:`ToricPlotter` for a detailed example.
 
-        OUTPUT:
-
-        - none.
+        OUTPUT: none
 
         TESTS::
 
@@ -325,15 +319,13 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``points`` -- a list of points;
+        - ``points`` -- list of points
 
-        - ``force`` -- boolean (default: ``False``). by default, only bounds
+        - ``force`` -- boolean (default: ``False``); by default, only bounds
           that were not set before will be chosen to include ``points``. Use
           ``force=True`` if you don't mind increasing existing bounding box.
 
-        OUTPUT:
-
-        - none.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -382,9 +374,7 @@ class ToricPlotter(SageObject):
         Ray generators must be specified during construction or using
         :meth:`set_rays` before calling this method.
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -429,13 +419,11 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``labels`` -- a string or a list of strings;
+        - ``labels`` -- string or list of strings
 
-        - ``positions`` -- a list of points.
+        - ``positions`` -- list of points
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -466,9 +454,7 @@ class ToricPlotter(SageObject):
         r"""
         Plot the lattice (i.e. its points in the cut-off bounds of ``self``).
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -508,11 +494,9 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``points`` -- a list of points.
+        - ``points`` -- list of points
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -535,9 +519,7 @@ class ToricPlotter(SageObject):
         Ray generators must be specified during construction or using
         :meth:`set_rays` before calling this method.
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -556,9 +538,7 @@ class ToricPlotter(SageObject):
         Ray generators must be specified during construction or using
         :meth:`set_rays` before calling this method.
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -595,11 +575,9 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``walls`` -- a list of 2-d cones.
+        - ``walls`` -- list of 2-d cones
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -692,11 +670,9 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``generators`` -- a list of primitive non-zero ray generators.
+        - ``generators`` -- list of primitive nonzero ray generators
 
-        OUTPUT:
-
-        - none.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -742,11 +718,9 @@ def _unrecognized_option(option):
 
     INPUT:
 
-    - ``option`` -- a string.
+    - ``option`` -- string
 
-    OUTPUT:
-
-    - none, a :class:`KeyError` exception is raised.
+    OUTPUT: none, a :exc:`KeyError` exception is raised
 
     TESTS::
 
@@ -770,11 +744,9 @@ def color_list(color, n):
     - ``color`` -- anything specifying a :class:`Color`, a list of such
       specifications, or the string "rainbow";
 
-    - ``n`` -- an integer.
+    - ``n`` -- integer
 
-    OUTPUT:
-
-    - a list of ``n`` colors.
+    OUTPUT: list of ``n`` colors
 
     If ``color`` specified a single color, it is repeated ``n`` times. If it
     was a list of ``n`` colors, it is returned without changes. If it was
@@ -822,19 +794,17 @@ def label_list(label, n, math_mode, index_set=None):
 
     INPUT:
 
-    - ``label`` -- ``None``, a string, or a list of string;
+    - ``label`` -- ``None``, a string, or a list of string
 
-    - ``n`` -- an integer;
+    - ``n`` -- integer
 
-    - ``math_mode`` -- boolean, if ``True``, will produce LaTeX expressions
-      for labels;
+    - ``math_mode`` -- boolean; if ``True``, will produce LaTeX expressions
+      for labels
 
-    - ``index_set`` -- a list of integers (default: ``range(n)``) that will be
-      used as subscripts for labels.
+    - ``index_set`` -- list of integers (default: ``range(n)``) that will be
+      used as subscripts for labels
 
-    OUTPUT:
-
-    - a list of ``n`` labels.
+    OUTPUT: list of ``n`` labels
 
     If ``label`` was a list of ``n`` entries, it is returned without changes.
     If ``label`` is ``None``, a list of ``n`` ``None``'s is returned. If
@@ -886,7 +856,7 @@ def options(option=None, **kwds):
 
     OR:
 
-    - ``option`` -- a string, name of the option whose value you wish to get;
+    - ``option`` -- string, name of the option whose value you wish to get;
 
     OR:
 
@@ -973,31 +943,31 @@ def options(option=None, **kwds):
     - ``wall_alpha`` -- a number between 0 and 1, the alpha-value for walls
       (determining their transparency);
 
-    - ``point_size`` -- an integer, the size of lattice points;
+    - ``point_size`` -- integer; the size of lattice points
 
-    - ``ray_thickness`` -- an integer, the thickness of rays;
+    - ``ray_thickness`` -- integer; the thickness of rays
 
-    - ``generator_thickness`` -- an integer, the thickness of generators;
+    - ``generator_thickness`` -- integer; the thickness of generators
 
-    - ``font_size`` -- an integer, the size of font used for labels;
+    - ``font_size`` -- integer; the size of font used for labels
 
-    - ``ray_label`` -- a string or a list of strings used for ray labels; use
-      ``None`` to hide labels;
+    - ``ray_label`` -- string or list of strings used for ray labels; use
+      ``None`` to hide labels
 
-    - ``wall_label`` -- a string or a list of strings used for wall labels; use
-      ``None`` to hide labels;
+    - ``wall_label`` -- string or list of strings used for wall labels; use
+      ``None`` to hide labels
 
     - ``radius`` -- a positive number, the radius of the cut-off region for
-      "round" mode;
+      "round" mode
 
     - ``xmin``, ``xmax``, ``ymin``, ``ymax``, ``zmin``, ``zmax`` -- numbers
       determining the cut-off region for "box" mode. Note that you cannot
       exclude the origin - if you try to do so, bounds will be automatically
-      expanded to include it;
+      expanded to include it.
 
     - ``lattice_filter`` -- a callable, taking as an argument a lattice point
       and returning ``True`` if this point should be included on the plot
-      (useful, e.g. for plotting sublattices);
+      (useful, e.g. for plotting sublattices)
 
     - ``wall_zorder``, ``ray_zorder``, ``generator_zorder``, ``point_zorder``,
       ``label_zorder`` -- integers, z-orders for different classes of objects.
@@ -1022,12 +992,12 @@ def options(option=None, **kwds):
     The following line will make all subsequent toric plotting commands to draw
     "rainbows" from walls::
 
-        sage: toric_plotter.options(wall_color="rainbow")
+        sage: toric_plotter.options(wall_color='rainbow')
 
     If you prefer a less colorful output (e.g. if you need black-and-white
     illustrations for a paper), you can use something like this::
 
-        sage: toric_plotter.options(wall_color="grey")
+        sage: toric_plotter.options(wall_color='grey')
     """
     global _options
     if option is None and not kwds:
@@ -1052,9 +1022,7 @@ def reset_options():
     r"""
     Reset options for plots of toric geometry objects.
 
-    OUTPUT:
-
-    - none.
+    OUTPUT: none
 
     EXAMPLES::
 
@@ -1096,14 +1064,12 @@ def sector(ray1, ray2, **extra_options):
     INPUT:
 
     - ``ray1``, ``ray2`` -- rays in 2- or 3-dimensional space of the same
-      length;
+      length
 
-    - ``extra_options`` -- a dictionary of options that should be passed to
-      lower level plotting functions.
+    - ``extra_options`` -- dictionary of options that should be passed to
+      lower level plotting functions
 
-    OUTPUT:
-
-    - a plot.
+    OUTPUT: a plot
 
     EXAMPLES::
 

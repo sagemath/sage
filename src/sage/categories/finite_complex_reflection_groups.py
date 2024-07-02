@@ -731,8 +731,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``in_unitary_group`` -- (default: ``False``) if ``True``,
-              the reflection length is computed in the unitary group
+            - ``in_unitary_group`` -- boolean (default: ``False``); if
+              ``True``, the reflection length is computed in the unitary group
               which is the dimension of the move space of ``self``
 
             EXAMPLES::
@@ -838,14 +838,14 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                   Otherwise, the standard Coxeter element is used as unique
                   maximal element.
 
-                - ``in_unitary_group`` (default:``True``) determines the
+                - ``in_unitary_group`` -- (default: ``True``) determines the
                   length function used to compute the order.
                   For real groups, both possible orders coincide, and for
                   complex non-real groups, the order in the unitary group
                   is much faster to compute.
 
-                - ``return_lengths`` (default:``False``) whether or not
-                  to also return the lengths of the elements.
+                - ``return_lengths`` -- (default: ``False``) whether or not
+                  to also return the lengths of the elements
 
                 EXAMPLES::
 
@@ -920,8 +920,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                   of ``self`` is given, it is used as the underlying set (only
                   cover relations are checked).
 
-                - ``in_unitary_group`` -- (default: ``False``) if ``False``, the
-                  relation is given by `\sigma \leq \tau` if
+                - ``in_unitary_group`` -- boolean (default: ``False``); if
+                  ``False``, the relation is given by `\sigma \leq \tau` if
                   `l_R(\sigma) + l_R(\sigma^{-1}\tau) = l_R(\tau)`;
                   if ``True``, the relation is given by `\sigma \leq \tau` if
                   `\dim(\mathrm{Fix}(\sigma)) + \dim(\mathrm{Fix}(\sigma^{-1}\tau))
@@ -980,7 +980,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             def generalized_noncrossing_partitions(self, m, c=None, positive=False):
                 r"""
-                Return the set of all chains of length ``m`` in the
+                Return the set of all chains of length `m` in the
                 noncrossing partition lattice of ``self``, see
                 :meth:`noncrossing_partition_lattice`.
 
@@ -990,11 +990,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 INPUT:
 
-                - ``c`` -- (default: ``None``) if an element ``c`` in ``self``
+                - ``c`` -- (default: ``None``) if an element `c` in ``self``
                   is given, it is used as the maximal element in the interval
 
-                - ``positive`` -- (default: ``False``) if ``True``, only those
-                  generalized noncrossing partitions of full support are returned
+                - ``positive`` -- boolean (default: ``False``); if ``True``,
+                  only those generalized noncrossing partitions of full support
+                  are returned
 
                 EXAMPLES::
 
@@ -1067,8 +1068,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 INPUT:
 
-                - ``in_unitary_group`` -- (default: ``False``) if ``False``,
-                  the relation is given by ``\sigma \leq \tau`` if
+                - ``in_unitary_group`` -- boolean (default: ``False``); if
+                  ``False``, the relation is given by ``\sigma \leq \tau`` if
                   `l_R(\sigma) + l_R(\sigma^{-1}\tau) = l_R(\tau)`
                   If ``True``, the relation is given by `\sigma \leq \tau` if
                   `\dim(\mathrm{Fix}(\sigma)) + \dim(\mathrm{Fix}(\sigma^{-1}\tau))
@@ -1332,7 +1333,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     INPUT:
 
-                    - ``polynomial`` -- optional boolean (default ``False``)
+                    - ``polynomial`` -- boolean (default: ``False``);
                       if ``True``, return instead the `q`-analogue as a
                       polynomial in `q`
 
@@ -1388,12 +1389,11 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     INPUT:
 
-                    - ``positive`` -- optional boolean (default ``False``)
-                      if ``True``, return instead the positive Fuss-Catalan
-                      number
-                    - ``polynomial`` -- optional boolean (default ``False``)
-                      if ``True``, return instead the `q`-analogue as a
-                      polynomial in `q`
+                    - ``positive`` -- boolean (default: ``False``); if
+                      ``True``, return instead the positive Fuss-Catalan number
+                    - ``polynomial`` -- boolean (default: ``False``); if
+                      ``True``, return instead the `q`-analogue as a polynomial
+                      in `q`
 
                     See [Ar2006]_ for further information.
 
@@ -1465,12 +1465,11 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     INPUT:
 
-                    - ``positive`` -- optional boolean (default ``False``)
-                      if ``True``, return instead the positive Catalan
-                      number
-                    - ``polynomial`` -- optional boolean (default ``False``)
-                      if ``True``, return instead the `q`-analogue as a
-                      polynomial in `q`
+                    - ``positive`` -- boolean (default: ``False``); if
+                      ``True``, return instead the positive Catalan number
+                    - ``polynomial`` -- boolean (default: ``False``); if
+                      ``True``, return instead the `q`-analogue as a polynomial
+                      in `q`
 
                     .. NOTE::
 

@@ -278,7 +278,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
         the equivalent point on the Weil restriction of its
         codomain.
 
-        OUTPUT: Scheme point on the Weil restriction of the codomain of this point.
+        OUTPUT: scheme point on the Weil restriction of the codomain of this point
 
         EXAMPLES::
 
@@ -347,7 +347,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
         - ``X`` -- a subscheme in the same ambient space as that of the codomain of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -384,7 +384,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
         Uses the subscheme multiplicity implementation. This point must be a point on an
         affine subscheme.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -432,7 +432,7 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
         r"""
         Returns the integer hash of the point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

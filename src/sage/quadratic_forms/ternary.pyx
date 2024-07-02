@@ -27,7 +27,7 @@ def red_mfact(a, b):
 
     - ``a``, ``b`` -- integers
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -594,7 +594,6 @@ def _find_zeros_mod_p_odd(long long a, long long b, long long c, long long r, lo
         (0, 32, 1)
         sage: Q((0, 32, 1))
         2018
-
     """
 
     cdef long long a_i

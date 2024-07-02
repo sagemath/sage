@@ -133,12 +133,12 @@ cdef class PuiseuxSeries(AlgebraElement):
 
     - ``parent`` -- the parent ring
 
-    - ``f``  -- one of the following types of inputs:
+    - ``f`` -- one of the following types of inputs:
 
       * instance of :class:`PuiseuxSeries`
       * instance that can be coerced into the Laurent series ring of the parent
 
-    - ``e`` -- integer (default: 1) the ramification index
+    - ``e`` -- integer (default: 1); the ramification index
 
     EXAMPLES::
 

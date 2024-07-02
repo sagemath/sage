@@ -307,16 +307,13 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         """
         Define ``self`` to be equal to the combinatorial species ``x``.
 
-        This is
-        used to define combinatorial species recursively. All of the real
-        work is done by calling the .set() method for each of the series
-        associated to self.
+        This is used to define combinatorial species recursively. All of the
+        real work is done by calling the ``.set()`` method for each of the
+        series associated to ``self``.
 
-        EXAMPLES: The species of linear orders L can be recursively defined
+        EXAMPLES: The species of linear orders `L` can be recursively defined
         by `L = 1 + X*L` where 1 represents the empty set species
-        and X represents the singleton species.
-
-        ::
+        and `X` represents the singleton species::
 
             sage: X = species.SingletonSpecies()
             sage: E = species.EmptySetSpecies()
@@ -421,7 +418,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
     def _add_to_digraph(self, d):
         """
-        Adds this species as a vertex to the digraph d along with any
+        Add this species as a vertex to the digraph d along with any
         'children' of this species.
 
         Note that to avoid infinite recursion, we just return if this
@@ -454,7 +451,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
     def _equation(self, var_mapping):
         """
-        Returns the right hand side of an algebraic equation satisfied by
+        Return the right hand side of an algebraic equation satisfied by
         this species. This is a utility function called by the
         algebraic_equation_system method.
 

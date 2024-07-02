@@ -39,7 +39,7 @@ class Convert(Executable):
             sage: isinstance(Convert(), Convert)
             True
         """
-        Executable.__init__(self, "convert", executable="convert")
+        Executable.__init__(self, "convert", executable='convert')
 
     def is_functional(self):
         r"""
@@ -50,7 +50,6 @@ class Convert(Executable):
             sage: from sage.features.imagemagick import Convert
             sage: Convert().is_functional()   # optional - imagemagick
             FeatureTestResult('convert', True)
-
         """
         # Create the content of 1-pixel png file
         content = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x00\x00\x00\x00:~\x9bU\x00\x00\x00\nIDATx\x9cc`\x00\x00\x00\x02\x00\x01H\xaf\xa4q\x00\x00\x00\x00IEND\xaeB`\x82'
@@ -92,7 +91,7 @@ class Convert(Executable):
         # If an error occurred, return False
         if result.returncode:
             return FeatureTestResult(self, False, reason='Running command "{}" '
-                        'returned non-zero exit status "{}" with stderr '
+                        'returned nonzero exit status "{}" with stderr '
                         '"{}" and stdout "{}".'.format(result.args,
                                                        result.returncode,
                                                        result.stderr.strip(),
@@ -128,8 +127,8 @@ class ImageMagick(JoinFeature):
         """
         JoinFeature.__init__(self, "imagemagick",
                              [Convert()],
-                             spkg="imagemagick",
-                             url="https://www.imagemagick.org/")
+                             spkg='imagemagick',
+                             url='https://www.imagemagick.org/')
 
 def all_features():
     return [ImageMagick()]

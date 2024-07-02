@@ -1165,8 +1165,8 @@ def specht_module_spanning_set(D, SGA=None):
 
     INPUT:
 
-    - ``D`` -- a list of cells ``(r,c)`` for row ``r`` and column ``c``
-    - ``SGA`` -- optional; a symmetric group algebra
+    - ``D`` -- list of cells ``(r,c)`` for row ``r`` and column ``c``
+    - ``SGA`` -- (optional) a symmetric group algebra
 
     EXAMPLES::
 

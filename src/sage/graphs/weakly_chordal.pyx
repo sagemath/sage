@@ -10,9 +10,9 @@ contains the following functions:
     :widths: 30, 70
     :delim: |
 
-    :meth:`~sage.graphs.weakly_chordal.is_long_hole_free` | Tests whether ``g`` contains an induced cycle of length at least 5.
-    :meth:`~sage.graphs.weakly_chordal.is_long_antihole_free` | Tests whether ``g`` contains an induced anticycle of length at least 5.
-    :meth:`~sage.graphs.weakly_chordal.is_weakly_chordal` | Tests whether ``g`` is weakly chordal.
+    :meth:`~sage.graphs.weakly_chordal.is_long_hole_free` | Test whether ``g`` contains an induced cycle of length at least 5.
+    :meth:`~sage.graphs.weakly_chordal.is_long_antihole_free` | Test whether ``g`` contains an induced anticycle of length at least 5.
+    :meth:`~sage.graphs.weakly_chordal.is_weakly_chordal` | Test whether ``g`` is weakly chordal.
 
 Author:
 
@@ -136,7 +136,7 @@ cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
 
 def is_long_hole_free(g, certificate=False):
     r"""
-    Tests whether ``g`` contains an induced cycle of length at least 5.
+    Test whether ``g`` contains an induced cycle of length at least 5.
 
     INPUT:
 
@@ -364,7 +364,7 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
 
 def is_long_antihole_free(g, certificate=False):
     r"""
-    Tests whether the given graph contains an induced subgraph that is
+    Test whether the given graph contains an induced subgraph that is
     isomorphic to the complement of a cycle of length at least 5.
 
     INPUT:
@@ -508,12 +508,12 @@ def is_long_antihole_free(g, certificate=False):
 
 def is_weakly_chordal(g, certificate=False):
     r"""
-    Tests whether the given graph is weakly chordal, i.e., the graph and its
+    Test whether the given graph is weakly chordal, i.e., the graph and its
     complement have no induced cycle of length at least 5.
 
     INPUT:
 
-    - ``certificate`` -- Boolean value (default: ``False``) whether to
+    - ``certificate`` -- boolean (default: ``False``); whether to
       return a certificate. If ``certificate = False``, return ``True`` or
       ``False`` according to the graph. If ``certificate = True``, return
 
@@ -548,7 +548,6 @@ def is_weakly_chordal(g, certificate=False):
 
         sage: graphs.EmptyGraph().is_weakly_chordal()
         True
-
     """
     if g.order() < 5:
         return (True, []) if certificate else True

@@ -56,7 +56,7 @@ from sage.rings.integer import Integer
 
 class Sympow(SageObject):
     r"""
-    Watkins Symmetric Power `L`-function Calculator
+    Watkins Symmetric Power `L`-function Calculator.
 
     Type ``sympow.[tab]`` for a list of useful commands
     that are implemented using the command line interface, but return
@@ -100,20 +100,13 @@ class Sympow(SageObject):
 
         INPUT:
 
+        - ``E`` -- elliptic curve
 
-        -  ``E`` -- elliptic curve
+        - ``n`` -- even integer
 
-        -  ``n`` -- even integer
+        - ``prec`` -- integer
 
-        -  ``prec`` -- integer
-
-
-        OUTPUT:
-
-
-        -  ``string`` -- real number to prec digits of precision
-           as a string.
-
+        OUTPUT: real number to prec digits of precision as a string
 
         .. note::
 
@@ -156,24 +149,22 @@ class Sympow(SageObject):
 
     def Lderivs(self, E, n, prec, d):
         r"""
-        Return `0^{th}` to `d^{th}` derivatives of
+        Return `0`-th to `d`-th derivatives of
         `L(\mathrm{Sym}^{(n)}(E,s)` to prec digits of precision, where
         `s` is the right edge if `n` is even and the center
         if `n` is odd.
 
         INPUT:
 
+        - ``E`` -- elliptic curve
 
-        -  ``E`` -- elliptic curve
+        - ``n`` -- integer (even or odd)
 
-        -  ``n`` -- integer (even or odd)
+        - ``prec`` -- integer
 
-        -  ``prec`` -- integer
+        - ``d`` -- integer
 
-        -  ``d`` -- integer
-
-
-        OUTPUT: a string, exactly as output by sympow
+        OUTPUT: string, exactly as output by sympow
 
         .. note::
 
@@ -207,15 +198,11 @@ class Sympow(SageObject):
 
         INPUT:
 
-
-        -  ``E`` -- elliptic curve over Q
-
+        - ``E`` -- elliptic curve over Q
 
         OUTPUT:
 
-
-        -  ``integer`` -- modular degree
-
+        - ``integer`` -- modular degree
 
         EXAMPLES: We compute the modular degrees of the lowest known
         conductor curves of the first few ranks::
@@ -246,16 +233,13 @@ class Sympow(SageObject):
 
         INPUT:
 
-
-        -  ``E`` -- elliptic curve over Q
-
+        - ``E`` -- elliptic curve over Q
 
         OUTPUT:
 
+        - ``integer`` -- analytic rank
 
-        -  ``integer`` -- analytic rank
-
-        -  ``string`` -- leading coefficient (as string)
+        - ``string`` -- leading coefficient (as string)
 
 
         .. note::
@@ -303,7 +287,7 @@ class Sympow(SageObject):
 
     def new_data(self, n):
         """
-        Pre-compute data files needed for computation of n-th symmetric
+        Pre-compute data files needed for computation of `n`-th symmetric
         powers.
         """
         print(self('-new_data %s' % n))
@@ -376,11 +360,11 @@ will add the data for the 2nd derivative and 3rd symmetric power,
 
      sympow('-new_data 6d0h')
 
-will add the data for the 0th derivative of the 6th Hecke power, and
+will add the data for the `0`-th derivative of the `6`-th Hecke power, and
 
      sympow('-new_data 4c')
 
-will add data for the 4th symmetric power for curves with CM
+will add data for the `4`-th symmetric power for curves with CM
 (these need to be done separately for powers divisible by 4).
 
 The mesh files are stored in binary form, and thus endian-ness is a

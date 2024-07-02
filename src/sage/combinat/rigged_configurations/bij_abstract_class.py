@@ -52,7 +52,7 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``parent`` -- The parent of tensor product of KR tableaux
+        - ``parent`` -- the parent of tensor product of KR tableaux
 
         EXAMPLES::
 
@@ -99,9 +99,9 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``tp_krt`` -- A tensor product of KR tableaux
+        - ``tp_krt`` -- a tensor product of KR tableaux
 
-        - ``verbose`` -- (Default: ``False``) Display each step in the
+        - ``verbose`` -- (default: ``False``) display each step in the
           bijection
 
         EXAMPLES::
@@ -177,7 +177,7 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``val`` -- The value we are adding
+        - ``val`` -- the value we are adding
 
         TESTS::
 
@@ -210,7 +210,7 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``a`` -- The index of the partition to update
+        - ``a`` -- the index of the partition to update
 
         TESTS::
 
@@ -250,7 +250,7 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``a`` -- The index of the partition to update
+        - ``a`` -- the index of the partition to update
 
         TESTS::
 
@@ -308,7 +308,7 @@ class RCToKRTBijectionAbstract:
 
         INPUT:
 
-        - ``RC_element`` -- The rigged configuration
+        - ``RC_element`` -- the rigged configuration
 
         EXAMPLES::
 
@@ -361,9 +361,9 @@ class RCToKRTBijectionAbstract:
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) display each step in the
+        - ``verbose`` -- boolean (default: ``False``); display each step in the
           bijection
-        - ``build_graph`` -- (default: ``False``) build the graph of each
+        - ``build_graph`` -- boolean (default: ``False``); build the graph of each
           step of the bijection
 
         EXAMPLES::
@@ -440,9 +440,9 @@ class RCToKRTBijectionAbstract:
             self._graph.pop(0)  # Remove the dummy at the start
             from sage.graphs.digraph import DiGraph
             from sage.graphs.dot2tex_utils import have_dot2tex
-            self._graph = DiGraph(self._graph, format="list_of_edges")
+            self._graph = DiGraph(self._graph, format='list_of_edges')
             if have_dot2tex():
-                self._graph.set_latex_options(format="dot2tex", edge_labels=True)
+                self._graph.set_latex_options(format='dot2tex', edge_labels=True)
         return self.KRT(pathlist=ret_crystal_path)
 
     @abstract_method
@@ -471,7 +471,7 @@ class RCToKRTBijectionAbstract:
 
         INPUT:
 
-        - ``a`` -- The index of the partition to update
+        - ``a`` -- the index of the partition to update
 
         TESTS::
 
@@ -513,9 +513,9 @@ class RCToKRTBijectionAbstract:
 
         INPUT:
 
-        - ``partition`` -- The partition to look in
+        - ``partition`` -- the partition to look in
 
-        - ``last_size`` -- The last size found
+        - ``last_size`` -- the last size found
 
         TESTS::
 

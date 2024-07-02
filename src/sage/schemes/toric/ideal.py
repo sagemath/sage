@@ -250,7 +250,7 @@ class ToricIdeal(MPolynomialIdeal):
         """
         Return the defining matrix.
 
-        OUTPUT: An integer matrix.
+        OUTPUT: an integer matrix
 
         EXAMPLES::
 
@@ -266,7 +266,7 @@ class ToricIdeal(MPolynomialIdeal):
         """
         Return the kernel of the defining matrix.
 
-        OUTPUT: The kernel of ``self.A()``.
+        OUTPUT: the kernel of ``self.A()``.
 
         EXAMPLES::
 
@@ -286,7 +286,7 @@ class ToricIdeal(MPolynomialIdeal):
         r"""
         Return the number of variables of the ambient polynomial ring.
 
-        OUTPUT: An integer. The number of columns of the defining matrix
+        OUTPUT: an integer. The number of columns of the defining matrix
         :meth:`A`.
 
         EXAMPLES::
@@ -307,9 +307,7 @@ class ToricIdeal(MPolynomialIdeal):
         - ``term_order`` -- string. The order of the variables, for
           example ``'neglex'`` and ``'degrevlex'``.
 
-        OUTPUT:
-
-        A polynomial ring with the given term order.
+        OUTPUT: a polynomial ring with the given term order
 
         .. NOTE::
 
@@ -342,9 +340,7 @@ class ToricIdeal(MPolynomialIdeal):
 
         - ``ring`` -- the ambient ring of the ideal.
 
-        OUTPUT:
-
-        A subideal of the toric ideal in the polynomial ring ``ring``.
+        OUTPUT: a subideal of the toric ideal in the polynomial ring ``ring``
 
         EXAMPLES::
 

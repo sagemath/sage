@@ -23,7 +23,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     - ``ct`` -- a Cartan type
 
-    - ``marked_nodes`` -- a list of marked nodes
+    - ``marked_nodes`` -- list of marked nodes
 
     EXAMPLES:
 
@@ -233,7 +233,7 @@ class CartanType(cartan_type.CartanType_decorator):
             return self.options('marked_node_str')
         return 'O'
 
-    def _latex_draw_node(self, x, y, label, position="below=4pt", fill='white'):
+    def _latex_draw_node(self, x, y, label, position='below=4pt', fill='white'):
         r"""
         Draw (possibly marked [crossed out]) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .
@@ -357,7 +357,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dual(self):
         """
-        Implements
+        Implement
         :meth:`sage.combinat.root_system.cartan_type.CartanType_abstract.dual`,
         using that taking the dual and marking nodes are commuting operations.
 
@@ -614,7 +614,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         sage: TestSuite(L).run()
     """
 
-    def _latex_draw_node(self, x, y, label, position="below=4pt"):
+    def _latex_draw_node(self, x, y, label, position='below=4pt'):
         r"""
         Draw the possibly marked (crossed out) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .

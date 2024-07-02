@@ -25,9 +25,7 @@ def TangentBundle(X):
 
     - ``X`` -- a toric variety. The base space of the bundle.
 
-    OUTPUT:
-
-    The tangent bundle as a Klyachko bundle.
+    OUTPUT: the tangent bundle as a Klyachko bundle
 
     EXAMPLES::
 
@@ -57,9 +55,7 @@ def CotangentBundle(X):
 
     - ``X`` -- a toric variety. The base space of the bundle.
 
-    OUTPUT:
-
-    The cotangent bundle as a Klyachko bundle.
+    OUTPUT: the cotangent bundle as a Klyachko bundle
 
     EXAMPLES::
 
@@ -81,9 +77,7 @@ def TrivialBundle(X, rank=1):
 
     - ``rank`` -- the rank of the bundle.
 
-    OUTPUT:
-
-    The trivial bundle as a Klyachko bundle.
+    OUTPUT: the trivial bundle as a Klyachko bundle
 
     EXAMPLES::
 
@@ -162,9 +156,7 @@ class SheafLibrary:
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -182,9 +174,7 @@ class SheafLibrary:
         - ``rank`` -- integer (optional; default: `1`). The rank of
           the bundle.
 
-        OUTPUT:
-
-        The trivial bundle as a Klyachko bundle.
+        OUTPUT: the trivial bundle as a Klyachko bundle
 
         EXAMPLES::
 
@@ -223,9 +213,7 @@ class SheafLibrary:
         r"""
         Return the tangent bundle of the toric variety.
 
-        OUTPUT:
-
-        The tangent bundle as a Klyachko bundle.
+        OUTPUT: the tangent bundle as a Klyachko bundle
 
         EXAMPLES::
 
@@ -238,9 +226,7 @@ class SheafLibrary:
         r"""
         Return the cotangent bundle of the toric variety.
 
-        OUTPUT:
-
-        The cotangent bundle as a Klyachko bundle.
+        OUTPUT: the cotangent bundle as a Klyachko bundle
 
         EXAMPLES::
 
@@ -301,9 +287,7 @@ class SheafLibrary:
         By abuse of notation, you can usually use the divisor `D`
         interchangeably with the line bundle `O(D)`.
 
-        OUTPUT:
-
-        A toric divisor.
+        OUTPUT: a toric divisor
 
         EXAMPLES::
 

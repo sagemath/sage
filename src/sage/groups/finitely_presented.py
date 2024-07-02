@@ -319,7 +319,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
 
         INPUT:
 
-        - ``*values`` -- a list/tuple/iterable of the same length as
+        - ``*values`` -- list/tuple/iterable of the same length as
           the number of generators
 
         - ``check=True`` -- boolean keyword (default: ``True``); whether to
@@ -509,7 +509,7 @@ class RewritingSystem:
 
     def free_group(self):
         """
-        The free group after which the rewriting system is defined
+        The free group after which the rewriting system is defined.
 
         EXAMPLES::
 
@@ -945,7 +945,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         A Sage
         :func:`~sage.groups.perm_gps.permgroup.PermutationGroup`. If
         the number of cosets exceeds the given ``limit``, a
-        :class:`ValueError` is returned.
+        :exc:`ValueError` is returned.
 
         EXAMPLES::
 
@@ -1003,10 +1003,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         - ``H`` -- a finitely presented group
 
-        - ``reduced`` -- (default: ``False``) boolean; if ``True``, then
+        - ``reduced`` -- boolean (default: ``False``); if ``True``, then
           attempt to reduce the presentation of the product group
 
-        - ``new_names`` -- (default: ``True``) boolean; If ``True``, then
+        - ``new_names`` -- boolean (default: ``True``); if ``True``, then
           lexicographical variable names are assigned to the generators of
           the group to be returned. If ``False``, the group to be returned
           keeps the generator names of the two groups forming the direct
@@ -1115,23 +1115,23 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``H`` -- Finitely presented group which is implicitly acted on
+        - ``H`` -- finitely presented group which is implicitly acted on
           by ``self`` and can be naturally embedded as a normal subgroup
-          of the semidirect product.
+          of the semidirect product
 
-        - ``hom`` -- Homomorphism from ``self`` to the automorphism group
+        - ``hom`` -- homomorphism from ``self`` to the automorphism group
           of ``H``. Given as a pair, with generators of ``self`` in the
           first slot and the images of the corresponding generators in the
           second. These images must be automorphisms of ``H``, given again
           as a pair of generators and images.
 
-        - ``check`` -- Boolean (default ``True``). If ``False`` the defining
+        - ``check`` -- boolean (default: ``True``); if ``False`` the defining
           homomorphism and automorphism images are not tested for validity.
           This test can be costly with large groups, so it can be bypassed
           if the user is confident that his morphisms are valid.
 
-        - ``reduced`` -- Boolean (default ``False``). If ``True`` then the
-          method attempts to reduce the presentation of the output group.
+        - ``reduced`` -- boolean (default: ``False``); if ``True`` then the
+          method attempts to reduce the presentation of the output group
 
         OUTPUT:
 
@@ -1375,17 +1375,17 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``ring`` -- (default: ``QQ``); the base ring for
+        - ``ring`` -- (default: ``QQ``) the base ring for
           the group algebra of ``self``
 
         OUTPUT:
 
         - ``ab`` -- the abelianization  of ``self`` as a finitely presented group
-          with a minimal number `n` of generators.
-        -  ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``.
-        - ``ideal`` -- a list of generators of an ideal ``I`` in ``R`` such that ``R/I``
+          with a minimal number `n` of generators
+        - ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``
+        - ``ideal`` -- list of generators of an ideal ``I`` in ``R`` such that ``R/I``
           is the group algebra of the abelianization over ``ring``
-        - ``image`` -- a list  with the images of the generators of ``self`` in ``R/I``
+        - ``image`` -- list  with the images of the generators of ``self`` in ``R/I``
 
         EXAMPLES::
 
@@ -1736,7 +1736,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         INPUT:
 
         - ``ring`` -- (default: ``QQ``) the base ring of the group algebra
-        - ``groebner`` -- boolean (default: ``False``); If set to
+        - ``groebner`` -- boolean (default: ``False``); if set to
           ``True`` the minimal associated primes of the ideals and their
           groebner bases are computed; ignored if the base ring
           is not a field

@@ -81,7 +81,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT: A point of the subscheme.
+        OUTPUT: a point of the subscheme
 
         EXAMPLES::
 
@@ -161,9 +161,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         """
         Return the dimension of the projective algebraic subscheme.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -295,9 +293,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``point`` -- a point of the algebraic subscheme.
 
-        OUTPUT:
-
-        Integer. The index of the patch. See :meth:`affine_patch`.
+        OUTPUT: integer. The index of the patch. See :meth:`affine_patch`
 
         EXAMPLES::
 
@@ -797,9 +793,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``check`` -- Boolean, if ``False`` no input checking is done
 
-        OUTPUT:
-
-        a subscheme in the domain of ``f``
+        OUTPUT: a subscheme in the domain of ``f``
 
         EXAMPLES::
 
@@ -1023,7 +1017,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         If `P(t) = a_{m}t^m + \ldots + a_{0}` is the Hilbert
         polynomial of this subscheme, then the degree is `a_{m} m!`.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1059,7 +1053,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``P`` -- a point in the intersection of this subscheme with ``X``.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1127,9 +1121,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``P`` -- a point on this subscheme.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1302,7 +1294,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         writing `R` as a polynomial in Plucker coordinates (i.e. bracket polynomials).
         [DS1994]_.
 
-        OUTPUT: a homogeneous polynomial.
+        OUTPUT: a homogeneous polynomial
 
         EXAMPLES::
 

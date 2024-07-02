@@ -19,7 +19,7 @@ from sage.categories.semigroups import Semigroups
 class HTrivialSemigroups(CategoryWithAxiom):
     def Finite_extra_super_categories(self):
         r"""
-        Implement the fact that a finite `H`-trivial is aperiodic
+        Implement the fact that a finite `H`-trivial is aperiodic.
 
         EXAMPLES::
 

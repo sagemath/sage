@@ -379,9 +379,7 @@ class AugmentedValuation_base(InductiveValuation):
 
         - ``s`` -- a rational number in the value group of this valuation
 
-        OUTPUT:
-
-        An element in the domain of this valuation
+        OUTPUT: an element in the domain of this valuation
 
         EXAMPLES::
 
@@ -470,9 +468,7 @@ class AugmentedValuation_base(InductiveValuation):
         r"""
         Return the minimal polynomial of the residue field extension of this valuation.
 
-        OUTPUT:
-
-        A polynomial in the residue ring of the base valuation
+        OUTPUT: a polynomial in the residue ring of the base valuation
 
         EXAMPLES::
 
@@ -1061,9 +1057,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
 
         We simply undo the steps performed in :meth:`reduce`.
 
-        OUTPUT:
-
-        A polynomial in the domain of the valuation with reduction ``F``
+        OUTPUT: a polynomial in the domain of the valuation with reduction ``F``
 
         EXAMPLES::
 

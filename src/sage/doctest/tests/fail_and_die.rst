@@ -1,4 +1,4 @@
-The ``NameError`` raised on the second line should be displayed, even
+The :exc:`NameError` raised on the second line should be displayed, even
 if we crash immediately afterwards::
 
     sage: import time, signal

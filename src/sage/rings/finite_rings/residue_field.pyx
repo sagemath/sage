@@ -205,17 +205,15 @@ class ResidueFieldFactory(UniqueFactory):
 
     INPUT:
 
-    - ``p`` -- a prime ideal of an order in a number field.
+    - ``p`` -- a prime ideal of an order in a number field
 
-    - ``names`` -- the variable name for the finite field created.
-      Defaults to the name of the number field variable but with
-      bar placed after it.
+    - ``names`` -- the variable name for the finite field created;
+      defaults to the name of the number field variable but with
+      bar placed after it
 
-    - ``check`` -- whether or not to check if `p` is prime.
+    - ``check`` -- whether or not to check if `p` is prime
 
-    OUTPUT:
-
-    The residue field at the prime `p`.
+    OUTPUT: the residue field at the prime `p`
 
     EXAMPLES::
 
@@ -588,7 +586,6 @@ class ResidueField_generic(Field):
             Residue field of Integers modulo 17
             sage: F(CyclotomicField(49))
             Residue field in zbar of Fractional ideal (17)
-
         """
         return AlgebraicExtensionFunctor([self.polynomial()], [self.variable_name()], [None], residue=self.p), self.p.ring()
 
@@ -683,7 +680,7 @@ class ResidueField_generic(Field):
 
     def _coerce_map_from_(self, R):
         """
-        Returns ``True`` if there is a coercion map from ``R`` to ``self``.
+        Return ``True`` if there is a coercion map from ``R`` to ``self``.
 
         EXAMPLES::
 
@@ -716,7 +713,7 @@ class ResidueField_generic(Field):
 
     def __repr__(self):
         """
-        Returns a string describing this residue field.
+        Return a string describing this residue field.
 
         EXAMPLES::
 
@@ -742,7 +739,7 @@ class ResidueField_generic(Field):
 
     def lift(self, x):
         """
-        Returns a lift of ``x`` to the Order, returning a "polynomial" in the
+        Return a lift of ``x`` to the Order, returning a "polynomial" in the
         generator with coefficients between 0 and `p-1`.
 
         EXAMPLES::
@@ -822,7 +819,7 @@ class ResidueField_generic(Field):
 
     def lift_map(self):
         """
-        Returns the standard map from this residue field up to the ring of
+        Return the standard map from this residue field up to the ring of
         integers lifting the canonical projection.
 
         EXAMPLES::
@@ -864,7 +861,7 @@ class ResidueField_generic(Field):
 
     def _richcmp_(self, x, op):
         """
-        Compares two residue fields: they are equal iff the primes
+        Compare two residue fields: they are equal iff the primes
         defining them are equal and they have the same variable name.
 
         EXAMPLES::
@@ -925,7 +922,7 @@ cdef class ReductionMap(Map):
     A reduction map from a (subset) of a number field or function field to
     this residue class field.
 
-    It will be defined on those elements of the field with non-negative
+    It will be defined on those elements of the field with nonnegative
     valuation at the specified prime.
 
     EXAMPLES::
@@ -1063,7 +1060,7 @@ cdef class ReductionMap(Map):
         field.
 
         If ``x`` doesn't map because it has negative valuation, then a
-        ``ZeroDivisionError`` exception is raised.
+        :exc:`ZeroDivisionError` exception is raised.
 
         EXAMPLES::
 
@@ -1178,7 +1175,7 @@ cdef class ReductionMap(Map):
 
     def section(self):
         """
-        Computes a section of the map, namely a map that lifts elements of the
+        Compute a section of the map, namely a map that lifts elements of the
         residue field to elements of the field.
 
         EXAMPLES::
@@ -1267,11 +1264,11 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         INPUT:
 
-        - ``k`` -- The residue field that is the codomain of this morphism
+        - ``k`` -- the residue field that is the codomain of this morphism
 
-        - ``p`` -- The prime ideal defining this residue field
+        - ``p`` -- the prime ideal defining this residue field
 
-        - ``im_gen`` -- The image of the generator of the number field
+        - ``im_gen`` -- the image of the generator of the number field
 
         EXAMPLES:
 
@@ -1414,7 +1411,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
     def section(self):
         """
-        Computes a section of the map, namely a map that lifts elements of
+        Compute a section of the map, namely a map that lifts elements of
         the residue field to elements of the ring of integers.
 
         EXAMPLES::
@@ -1461,7 +1458,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
     def lift(self, x):
         """
-        Returns a lift of ``x`` to the Order, returning a "polynomial" in
+        Return a lift of ``x`` to the Order, returning a "polynomial" in
         the generator with coefficients between 0 and `p-1`.
 
         EXAMPLES::
@@ -1730,7 +1727,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
 
         INPUT:
 
-        - ``p`` -- A prime ideal of a number field
+        - ``p`` -- a prime ideal of a number field
 
         - ``name`` -- the name of the generator of this extension
 
@@ -1780,7 +1777,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
 
         INPUT:
 
-           - ``x`` -- something to cast in to ``self``.
+           - ``x`` -- something to cast in to ``self``
 
         EXAMPLES::
 

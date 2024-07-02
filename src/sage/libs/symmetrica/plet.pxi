@@ -3,9 +3,6 @@ cdef extern from 'symmetrica/def.h':
     INT schur_schur_plet(OP p1, OP p2, OP res)
 
 def plethysm_symmetrica(outer, inner):
-    """
-    """
-
     cdef OP couter = callocobject(), cinner = callocobject(), cresult = callocobject()
 
     _op_schur(outer, couter)
@@ -25,9 +22,6 @@ def plethysm_symmetrica(outer, inner):
 
 
 def schur_schur_plet_symmetrica(outer, inner):
-    """
-    """
-
     cdef OP couter = callocobject(), cinner = callocobject(), cresult = callocobject()
 
     _op_partition(outer, couter)

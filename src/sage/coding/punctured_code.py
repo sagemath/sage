@@ -35,7 +35,7 @@ def _puncture(v, points):
 
     - ``v`` -- a vector or a list of vectors
 
-    - ``points`` -- a set of integers, or an integer
+    - ``points`` -- set of integers, or an integer
 
     EXAMPLES::
 
@@ -65,9 +65,9 @@ def _insert_punctured_positions(l, punctured_points, value=None):
 
     INPUT:
 
-    - ``l`` -- a list
+    - ``l`` -- list
 
-    - ``punctured_points`` -- a set of integers
+    - ``punctured_points`` -- set of integers
 
     - ``value`` -- (default: ``None``) an element to insert in every position
       given in``punctured_points``.  If it is let to ``None``, a random value
@@ -98,11 +98,12 @@ class PuncturedCode(AbstractLinearCode):
     r"""
     Representation of a punctured code.
 
-    - ``C`` -- A linear code
+    - ``C`` -- a linear code
 
-    - ``positions`` -- the positions where ``C`` will be punctured. It can be either an integer
-      if one need to puncture only one position, a list or a set of positions to puncture.
-      If the same position is passed several times, it will be considered only once.
+    - ``positions`` -- the positions where ``C`` will be punctured. It can be
+      either an integer if one need to puncture only one position, a list or a
+      set of positions to puncture. If the same position is passed several
+      times, it will be considered only once.
 
     EXAMPLES::
 
@@ -151,7 +152,7 @@ class PuncturedCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between two Punctured codes.
+        Test equality between two Punctured codes.
 
         EXAMPLES::
 
@@ -246,7 +247,7 @@ class PuncturedCode(AbstractLinearCode):
         INPUT:
 
         - ``agrs``, ``kwds`` -- extra positional arguments passed to
-          :meth:`sage.modules.free_module.random_element`.
+          :meth:`sage.modules.free_module.random_element`
 
         EXAMPLES::
 
@@ -262,23 +263,22 @@ class PuncturedCode(AbstractLinearCode):
 
     def encode(self, m, original_encode=False, encoder_name=None, **kwargs):
         r"""
-        Transforms an element of the message space into an element of the code.
+        Transform an element of the message space into an element of the code.
 
         INPUT:
 
-        - ``m`` -- a vector of the message space of the code.
+        - ``m`` -- a vector of the message space of the code
 
-        - ``original_encode`` -- (default: ``False``) if this is set to ``True``,
-          ``m`` will be encoded using an Encoder of ``self``'s :meth:`original_code`.
-          This allow to avoid the computation of a generator matrix for ``self``.
+        - ``original_encode`` -- boolean (default: ``False``); if this is set
+          to ``True``, ``m`` will be encoded using an Encoder of ``self``'s
+          :meth:`original_code`. This allow to avoid the computation of a
+          generator matrix for ``self``.
 
-        - ``encoder_name`` -- (default: ``None``) Name of the encoder which will be used
+        - ``encoder_name`` -- (default: ``None``) name of the encoder which will be used
           to encode ``word``. The default encoder of ``self`` will be used if
-          default value is kept
+          default value is kept.
 
-        OUTPUT:
-
-        - an element of ``self``
+        OUTPUT: an element of ``self``
 
         EXAMPLES::
 
@@ -346,7 +346,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -437,7 +437,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder
+    - ``code`` -- the associated code of this encoder
 
     - ``strategy`` -- (default: ``None``) the strategy used to decode.
       The available strategies are:
@@ -480,7 +480,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
         sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'a').list()[:15], 7)
         sage: Cp = codes.PuncturedCode(C, 3)
-        sage: D = codes.decoders.PuncturedCodeOriginalCodeDecoder(Cp, strategy="try-all")
+        sage: D = codes.decoders.PuncturedCodeOriginalCodeDecoder(Cp, strategy='try-all')
         sage: "error-erasure" in D.decoder_type()
         False
 
@@ -491,7 +491,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         sage: Cp = codes.PuncturedCode(C, 3)
         sage: Dor = C.decoder("Gao")
         sage: D = codes.decoders.PuncturedCodeOriginalCodeDecoder(Cp, original_decoder=Dor,
-        ....:                                                     strategy="error-erasure")
+        ....:                                                     strategy='error-erasure')
         sage: D.original_decoder() == Dor
         True
     """
@@ -579,7 +579,6 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
             sage: D = codes.decoders.PuncturedCodeOriginalCodeDecoder(Cp)
             sage: D
             Decoder of Puncturing of [15, 7, 9] Reed-Solomon Code over GF(16) on position(s) [3] through Error-Erasure decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
-
         """
         return "Decoder of %s through %s" % (self.code(), self.original_decoder())
 

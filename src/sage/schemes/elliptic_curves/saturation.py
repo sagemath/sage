@@ -66,9 +66,7 @@ def reduce_mod_q(x, amodq):
       ideal `Q=(q,\alpha-a)` of `K=\QQ(\alpha)`, where `a \bmod q` =
       ``amodq``.
 
-    OUTPUT:
-
-    The image of ``x`` in the residue field of `K` at the prime `Q`.
+    OUTPUT: the image of ``x`` in the residue field of `K` at the prime `Q`
 
     EXAMPLES::
 

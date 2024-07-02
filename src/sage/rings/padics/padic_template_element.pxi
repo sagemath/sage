@@ -778,9 +778,7 @@ cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowCompute
 
     - ``prime_pow`` -- the Powcomputer for the ring.
 
-    OUTPUT:
-
-    an Integer congruent to the given exponent
+    OUTPUT: an Integer congruent to the given exponent
 
     """
     cdef Integer right, p = prime_pow.prime
@@ -823,9 +821,7 @@ cdef long padic_pow_helper(celement result, celement base, long base_val, long b
 
     - ``prime_pow`` -- the Powcomputer for the ring.
 
-    OUTPUT:
-
-    the precision of the result
+    OUTPUT: the precision of the result
 
     EXAMPLES::
 

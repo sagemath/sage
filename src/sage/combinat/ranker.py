@@ -22,15 +22,13 @@ from sage.categories.enumerated_sets import EnumeratedSets
 
 def from_list(l):
     """
-    Returns a ranker from the list l.
+    Return a ranker from the list l.
 
     INPUT:
 
-    -  ``l`` -- a list
+    - ``l`` -- list
 
-    OUTPUT:
-
-    - ``[rank, unrank]`` -- functions
+    OUTPUT: ``[rank, unrank]`` -- functions
 
     EXAMPLES::
 
@@ -71,7 +69,7 @@ def rank_from_list(l):
         sage: r('c')
         2
 
-    For non elements a :class:`ValueError` is raised, as with the usual
+    For non elements a :exc:`ValueError` is raised, as with the usual
     ``index`` method of lists::
 
         sage: r('blah')
@@ -109,7 +107,7 @@ def rank_from_list(l):
 
 def unrank_from_list(l):
     """
-    Returns an unrank function from a list.
+    Return an unrank function from a list.
 
     EXAMPLES::
 
@@ -127,7 +125,7 @@ def unrank_from_list(l):
 
 def on_fly():
     """
-    Returns a pair of enumeration functions rank / unrank.
+    Return a pair of enumeration functions rank / unrank.
 
     rank assigns on the fly an integer, starting from 0, to any object
     passed as argument. The object should be hashable. unrank is the
@@ -182,7 +180,7 @@ def unrank(L, i):
 
     INPUT:
 
-    - ``L`` -- a list, tuple, finite enumerated set, ...
+    - ``L`` -- list, tuple, finite enumerated set, etc.
     - ``i`` -- an int or :class:`Integer`
 
     The purpose of this utility is to give a uniform idiom to recover

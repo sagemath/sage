@@ -398,7 +398,7 @@ class VermaModule(CombinatorialFreeModule):
 
         - there is a coercion from ``R`` into the base ring;
         - ``R`` is a Verma module over the same Lie algebra and
-          there is a non-zero Verma module morphism from ``R``
+          there is a nonzero Verma module morphism from ``R``
           into ``self``.
 
         EXAMPLES::
@@ -590,7 +590,7 @@ class VermaModule(CombinatorialFreeModule):
         The sole purpose of this method is to construct the homset as a
         :class:`~sage.algebras.lie_algebras.verma_module.VermaModuleHomset`.
         If ``category`` is specified and is not a subcategory of
-        ``self.category()``, a :class:`TypeError` is raised instead.
+        ``self.category()``, a :exc:`TypeError` is raised instead.
 
         This method is not meant to be called directly. Please use
         :func:`sage.categories.homset.Hom` instead.
@@ -907,7 +907,7 @@ class VermaModuleMorphism(Morphism):
         INPUT:
 
         - ``self``, ``right`` -- maps
-        - homset -- a homset
+        - ``homset`` -- a homset
 
         ASSUMPTION:
 

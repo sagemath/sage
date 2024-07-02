@@ -183,7 +183,7 @@ class TypeSpace(SageObject):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -272,7 +272,7 @@ class TypeSpace(SageObject):
 
     def eigensymbol_subspace(self):
         r"""
-        Return the subspace of self corresponding to the plus eigensymbols of
+        Return the subspace of ``self`` corresponding to the plus eigensymbols of
         `f` and its Galois conjugates (as a subspace of the vector space
         returned by :meth:`~free_module`).
 
@@ -331,7 +331,7 @@ class TypeSpace(SageObject):
     @cached_method
     def is_minimal(self):
         r"""
-        Return True if there exists a newform `g` of level strictly smaller
+        Return ``True`` if there exists a newform `g` of level strictly smaller
         than `N`, and a Dirichlet character `\chi` of `p`-power conductor, such
         that `f = g \otimes \chi` where `f` is the form of which this is the
         type space. To find such a form, use :meth:`~minimal_twist`.
@@ -735,7 +735,6 @@ class TypeSpace(SageObject):
             sage: T._unif_ramified()
             [-1  0]
             [ 0 -1]
-
         """
         p = self.prime()
         k = self.form().weight()

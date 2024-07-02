@@ -34,9 +34,9 @@ class FriCAS(Executable):
             sage: isinstance(FriCAS(), FriCAS)
             True
         """
-        Executable.__init__(self, name="fricas", spkg="fricas",
-                            executable="fricas",
-                            url="https://fricas.github.io")
+        Executable.__init__(self, name='fricas', spkg='fricas',
+                            executable='fricas',
+                            url='https://fricas.github.io')
 
     def is_functional(self):
         r"""

@@ -98,7 +98,8 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
 
         - ``top_dim`` -- (optional) stop the computation at this degree; if
           not specified, this is determined using :meth:`profile`
-        - ``verbose`` -- (default: ``False``) whether log messages are printed
+        - ``verbose`` -- boolean (default: ``False``); whether log messages are
+          printed
 
         EXAMPLES::
 
@@ -131,9 +132,10 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
 
         - ``top_dim`` -- (optional) stop the computation at this degree; if
           not specified, this is determined using :meth:`profile`
-        - ``verbose`` -- (default: ``False``) whether log messages are printed
+        - ``verbose`` -- boolean (default: ``False``); whether log messages are
+          printed
 
-        OUTPUT: An injective homomorphism into the domain ``self`` which is
+        OUTPUT: an injective homomorphism into the domain ``self`` which is
         onto the kernel of this homomorphism.
 
         EXAMPLES::
@@ -176,7 +178,8 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) whether log messages are printed
+        - ``verbose`` -- boolean (default: ``False``); whether log messages are
+          printed
 
         OUTPUT:
 
@@ -221,7 +224,8 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
 
         - ``top_dim`` -- integer (optional); used by this function to stop the
           computation at the given degree
-        - ``verbose`` -- (default: ``False``) whether log messages are printed
+        - ``verbose`` -- boolean (default: ``False``); whether log messages are
+          printed
 
         OUTPUT:
 
@@ -263,7 +267,6 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
 
             sage: g.is_zero()
             True
-
         """
         return self._action(FPModuleMorphism.image, top_dim=top_dim, verbose=verbose)
 
@@ -275,9 +278,10 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
 
         - ``top_dim`` -- (optional) stop the computation at this degree; if
           not specified, this is determined using :meth:`profile`
-        - ``verbose`` -- (default: ``False``) whether log messages are printed
+        - ``verbose`` -- boolean (default: ``False``); whether log messages are
+          printed
 
-        OUTPUT: A homomorphism `j: F \rightarrow D` where `D` is the domain of
+        OUTPUT: a homomorphism `j: F \rightarrow D` where `D` is the domain of
         this homomorphism, `F` is free and such that `\ker(self) = \operatorname{im}(j)`.
 
         TESTS::
@@ -322,9 +326,10 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
 
         - ``top_dim`` -- (optional) stop the computation at this degree; if
           not specified, this is determined using :meth:`profile`
-        - ``verbose`` -- (default: ``False``) whether log messages are printed
+        - ``verbose`` -- boolean (default: ``False``); whether log messages are
+          printed
 
-        OUTPUT: A homomorphism `j: F \rightarrow C` where `C` is the codomain
+        OUTPUT: a homomorphism `j: F \rightarrow C` where `C` is the codomain
         of this homomorphism, `F` is free, and
         `\operatorname{im}(self) = \operatorname{im}(j)`.
 

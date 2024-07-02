@@ -811,7 +811,7 @@ class Func_chebyshev_T(ChebyshevFunction):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         - ``x`` -- a value to evaluate the polynomial at (this can be
           any ring element)
@@ -852,7 +852,7 @@ class Func_chebyshev_T(ChebyshevFunction):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         - ``x`` -- a value to evaluate the polynomial at (this can be
           any ring element)
@@ -1035,7 +1035,7 @@ class Func_chebyshev_U(ChebyshevFunction):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         - ``x`` -- a value to evaluate the polynomial at (this can be
           any ring element)
@@ -1072,7 +1072,7 @@ class Func_chebyshev_U(ChebyshevFunction):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         - ``x`` -- a value to evaluate the polynomial at (this can be
           any ring element)
@@ -1612,7 +1612,7 @@ class Func_assoc_legendre_P(BuiltinFunction):
 
     EXAMPLES:
 
-    We give the first Ferrers functions for non-negative integers
+    We give the first Ferrers functions for nonnegative integers
     `n` and `m` in the interval `-1<x<1`::
 
         sage: for n in range(4):                                                        # needs sage.symbolic
@@ -1629,7 +1629,7 @@ class Func_assoc_legendre_P(BuiltinFunction):
         P_3^2(x) = -15*(x^2 - 1)*x
         P_3^3(x) = -15*(-x^2 + 1)^(3/2)
 
-    These expressions for non-negative integers are computed by the
+    These expressions for nonnegative integers are computed by the
     Rodrigues-type given in :meth:`eval_gen_poly`. Negative values for `n` are
     obtained by the following identity:
 
@@ -1637,7 +1637,7 @@ class Func_assoc_legendre_P(BuiltinFunction):
 
         P^{m}_{-n}(x) = P^{m}_{n-1}(x).
 
-    For `n` being a non-negative integer, negative values for `m` are
+    For `n` being a nonnegative integer, negative values for `m` are
     obtained by
 
     .. MATH::
@@ -1691,7 +1691,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
     REFERENCES:
 
     - [DLMF-Legendre]_
-
     """
     def __init__(self):
         r"""
@@ -1782,7 +1781,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
             legendre_P(m, x)
             sage: gen_legendre_P(2, 0, 4) == legendre_P(2, 4)                           # needs sage.symbolic
             True
-
         """
         if m == 0:
             # https://dlmf.nist.gov/14.7#E1
@@ -1814,9 +1812,8 @@ class Func_assoc_legendre_P(BuiltinFunction):
             1/2*sqrt(-x^2 + 1)*x
             sage: gen_legendre_P._eval_int_ord_deg_(-2, -1, x)                          # needs sage.symbolic
             1/2*sqrt(-x^2 + 1)
-
         """
-        # use connection formulas to fall back on non-negative n and m:
+        # use connection formulas to fall back on nonnegative n and m:
         if n < 0:
             # https://dlmf.nist.gov/14.9#E5
             return self._eval_int_ord_deg_(-n-1, m, x)
@@ -1840,7 +1837,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
             14.316525844904028532 - 12.785049615515157033*I
             sage: gen_legendre_P(2/3, 1, 0.)                                            # needs mpmath
             -0.773063511309286
-
         """
         return _mpmath_utils_call(_mpmath_legenp, n, m, x, parent=parent)
 
@@ -1857,8 +1853,8 @@ class Func_assoc_legendre_P(BuiltinFunction):
 
         INPUT:
 
-        - ``n`` -- an integer degree
-        - ``m`` -- an integer order
+        - ``n`` -- integer degree
+        - ``m`` -- integer order
         - ``x`` -- either an integer or a non-numerical symbolic expression
 
         EXAMPLES::
@@ -1903,7 +1899,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
             Traceback (most recent call last):
             ...
             NotImplementedError: Derivative w.r.t. to the index is not supported.
-
         """
         diff_param = kwds['diff_param']
         if diff_param == 0:
@@ -2749,7 +2744,7 @@ class Func_krawtchouk(OrthogonalFunction):
             sage: TestSuite(krawtchouk(k, x, n, p)).run()                               # needs sage.symbolic
             sage: TestSuite(krawtchouk(3, x, n, p)).run()                               # needs sage.symbolic
         """
-        super().__init__(name="krawtchouk", nargs=4, latex_name="K")
+        super().__init__(name='krawtchouk', nargs=4, latex_name='K')
 
     def eval_formula(self, k, x, n, p):
         r"""
@@ -2862,7 +2857,7 @@ class Func_meixner(OrthogonalFunction):
             sage: TestSuite(meixner(3, x, b, c)).run()                                  # needs sage.symbolic
             sage: TestSuite(meixner(n, x, b, c)).run()                                  # needs sage.symbolic
         """
-        super().__init__(name="meixner", nargs=4, latex_name="M")
+        super().__init__(name='meixner', nargs=4, latex_name='M')
 
     def eval_formula(self, n, x, b, c):
         r"""
@@ -3010,9 +3005,9 @@ class Func_hahn(OrthogonalFunction):
             sage: k, x, a, b, n = var('k,x,a,b,n')                                      # needs sage.symbolic
             sage: TestSuite(hahn).run()
             sage: TestSuite(hahn(3, x, a, b, n)).run()                                  # needs sage.symbolic
-            sage: TestSuite(hahn(k, x, a, b, n)).run(skip="_test_category")             # needs sage.symbolic
+            sage: TestSuite(hahn(k, x, a, b, n)).run(skip='_test_category')             # needs sage.symbolic
         """
-        super().__init__(name="hahn", nargs=5, latex_name="Q")
+        super().__init__(name='hahn', nargs=5, latex_name='Q')
 
     def eval_formula(self, k, x, a, b, n):
         r"""

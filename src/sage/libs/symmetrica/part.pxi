@@ -8,10 +8,9 @@ cdef extern from 'symmetrica/def.h':
 
 def strict_to_odd_part_symmetrica(part):
     """
-    implements the bijection between strict partitions
+    Implement the bijection between strict partitions
     and partitions with odd parts. input is a VECTOR type partition, the
     result is a partition of the same weight with only odd parts.
-
     """
 
     #Make sure that the partition is strict
@@ -39,7 +38,7 @@ def strict_to_odd_part_symmetrica(part):
 
 def odd_to_strict_part_symmetrica(part):
     """
-    implements the bijection between partitions with odd parts
+    Implement the bijection between partitions with odd parts
     and strict partitions. input is a VECTOR type partition, the
     result is a partition of the same weight with different parts.
     """
@@ -70,12 +69,11 @@ def odd_to_strict_part_symmetrica(part):
 
 def q_core_symmetrica(part, d):
     """
-    computes the q-core of a PARTITION object
+    Compute the q-core of a PARTITION object
     part. This is the remaining partition (=res) after
     removing of all hooks of length d (= INTEGER object).
     The result may be an empty object, if the whole
     partition disappears.
-
     """
 
 
@@ -102,7 +100,7 @@ def q_core_symmetrica(part, d):
 
 def gupta_nm_symmetrica(n, m):
     """
-    this routine computes the number of partitions
+    This routine computes the number of partitions
     of n with maximal part m. The result is erg. The
     input n,m must be INTEGER objects. The result is
     freed first to an empty object. The result must
@@ -133,7 +131,7 @@ def gupta_nm_symmetrica(n, m):
 
 def gupta_tafel_symmetrica(max):
     """
-    it computes the table of the above values. The entry
+    It computes the table of the above values. The entry
     n,m is the result of gupta_nm. mat is freed first.
     max must be an INTEGER object, it is the maximum
     weight for the partitions. max must be different from

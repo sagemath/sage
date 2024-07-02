@@ -21,7 +21,7 @@ def local_density(self, p, m):
     INPUT:
 
     - ``p`` -- a prime number > 0
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     OUTPUT: a rational number
 
@@ -67,7 +67,7 @@ def local_density(self, p, m):
 
 def local_primitive_density(self, p, m):
     """
-    Return the local primitive density -- should be called by the user. =)
+    Return the local primitive density -- should be called by the user.
 
     NOTE: This screens for imprimitive forms, and puts the
     quadratic form in local normal form, which is a *requirement* of
@@ -76,7 +76,7 @@ def local_primitive_density(self, p, m):
     INPUT:
 
     - ``p`` -- a prime number > 0
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     OUTPUT: a rational number
 

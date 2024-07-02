@@ -132,7 +132,7 @@ cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]) noexcept:
 
 def two_squares_pyx(uint32_t n):
     r"""
-    Return a pair of non-negative integers ``(i,j)`` such that `i^2 + j^2 = n`.
+    Return a pair of nonnegative integers ``(i,j)`` such that `i^2 + j^2 = n`.
 
     If ``n`` is not a sum of two squares, a ``ValueError`` is raised. The input
     must be lesser than `2^{32}=4294967296`, otherwise an ``OverflowError`` is
@@ -270,7 +270,7 @@ def three_squares_pyx(uint32_t n):
 
 def four_squares_pyx(uint32_t n):
     r"""
-    Return a 4-tuple of non-negative integers ``(i,j,k,l)`` such that `i^2 + j^2
+    Return a 4-tuple of nonnegative integers ``(i,j,k,l)`` such that `i^2 + j^2
     + k^2 + l^2 = n` and `i \leq j \leq k \leq l`.
 
     The input must be lesser than `2^{32}=4294967296`, otherwise an

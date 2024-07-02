@@ -62,7 +62,7 @@ class Elements(Category):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 
@@ -147,7 +147,7 @@ class Elements(Category):
 #############################################################
 class Category_over_base(CategoryWithParameters):
     r"""
-    A base class for categories over some base object
+    A base class for categories over some base object.
 
     INPUT:
 
@@ -253,7 +253,7 @@ class Category_over_base(CategoryWithParameters):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 
@@ -386,7 +386,7 @@ class Category_over_base_ring(Category_over_base):
         OUTPUT:
 
         A boolean if it is certain that ``C`` is (or is not) a
-        subcategory of self. :obj:`~sage.misc.unknown.Unknown`
+        subcategory of ``self``. :obj:`~sage.misc.unknown.Unknown`
         otherwise.
 
         EXAMPLES:
@@ -514,7 +514,6 @@ class Category_over_base_ring(Category_over_base):
 
             sage: QQ['x'] in Algebras(Fields()) # todo: not implemented
             True
-
         """
         try:
             # The issubclass test handles extension types or when the

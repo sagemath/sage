@@ -293,9 +293,7 @@ class SchemeHomset_generic(HomsetWithBase):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -632,9 +630,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         - ``v`` -- anything that determines a scheme morphism in the
           Hom-set.
 
-        OUTPUT:
-
-        The scheme morphism determined by ``v``.
+        OUTPUT: the scheme morphism determined by ``v``
 
         EXAMPLES::
 
@@ -708,9 +704,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -724,9 +718,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         r"""
         Return `R` for a point Hom-set `X(\mathrm{Spec}(R))`.
 
-        OUTPUT:
-
-        A commutative ring.
+        OUTPUT: a commutative ring
 
         EXAMPLES::
 
@@ -743,9 +735,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         """
         Return the number of points.
 
-        OUTPUT:
-
-        An integer or infinity.
+        OUTPUT: an integer or infinity
 
         EXAMPLES::
 
@@ -767,9 +757,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         """
         Return a tuple containing all points.
 
-        OUTPUT:
-
-        A tuple containing all points of the toric variety.
+        OUTPUT: a tuple containing all points of the toric variety
 
         EXAMPLES::
 

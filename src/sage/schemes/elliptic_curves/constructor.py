@@ -507,7 +507,7 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
     - ``f`` -- a inhomogeneous cubic polynomial in long Weierstrass
       form.
 
-    OUTPUT: The elliptic curve defined by it.
+    OUTPUT: the elliptic curve defined by it
 
     EXAMPLES::
 
@@ -1251,9 +1251,7 @@ def tangent_at_smooth_point(C,P):
 
     - ``P`` -- a 3-tuple `(x,y,z)` defining a projective point on `C`.
 
-    OUTPUT:
-
-    The linear form defining the tangent at `P` to `C`.
+    OUTPUT: the linear form defining the tangent at `P` to `C`
 
     EXAMPLES::
 
@@ -1364,9 +1362,7 @@ def projective_point(p):
 
     - ``P``, ``Q`` -- list/tuple of projective coordinates.
 
-    OUTPUT:
-
-    List of projective coordinates.
+    OUTPUT: list of projective coordinates
 
     EXAMPLES::
 
@@ -1398,7 +1394,7 @@ def are_projectively_equivalent(P, Q, base_ring):
 
     - ``base_ring`` -- the base ring.
 
-    OUTPUT: A boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 

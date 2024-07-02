@@ -81,7 +81,6 @@ class Benchmark:
         sage.tests.benchmark.Benchmark instance
           System      min         avg         max         trials          cpu or wall
         * python ...
-
     """
     def run(self, systems=None, timeout=60, trials=1, sort=False, optional=False):
         """
@@ -90,15 +89,14 @@ class Benchmark:
 
         INPUT:
 
-        - systems -- optional list of strings of which systems to run tests on;
+        - ``systems`` -- (optional) list of strings of which systems to run tests on;
           if ``None``, runs the standard systems
-        - timeout -- optional integer (default 60); how long (in seconds)
+        - ``timeout`` -- integer (default: 60); how long (in seconds)
           to run each test for
-        - trials -- optional integer (default 1); number of trials
-        - sort -- optional boolean (default ``False``); whether to sort
-          system names
-        - optional -- optional boolean (default ``False``);
-          if systems is ``None``, whether to test optional systems
+        - ``trials`` -- integer (default: 1); number of trials
+        - ``sort`` -- boolean (default: ``False``); whether to sort system names
+        - ``optional`` -- boolean (default: ``False``); if systems is ``None``,
+          whether to test optional systems
 
         EXAMPLES::
 
@@ -108,7 +106,6 @@ class Benchmark:
               System      min         avg         max         trials          cpu or wall
             * sage        ...
             * gp          ...
-
         """
         if sort:
             systems.sort()
@@ -219,7 +216,6 @@ class Divpoly(Benchmark):
             sage: B = Divpoly(3)
             sage: isinstance(B.magma(), float) # optional - magma
             True
-
         """
         n = self.__n
         t = magma.cputime()
@@ -278,7 +274,6 @@ class PolySquare(Benchmark):
             sage: B = PolySquare(3, QQ)
             sage: isinstance(B.maple()[1], float) # optional - maple
             True
-
         """
         R = self.__R
         if not (R == ZZ or R == QQ):
@@ -312,7 +307,6 @@ class MPolynomialPower(Benchmark):
             sage: B = MPolynomialPower()
             sage: isinstance(B.sage()[1], float)
             True
-
         """
         R = PolynomialRing(self.base, self.nvars, 'x')
         z = sum(R.gens())
@@ -335,7 +329,6 @@ class MPolynomialPower(Benchmark):
             sage: B = MPolynomialPower()
             sage: isinstance(B.macaulay2()[1], float) # optional - macaulay2
             True
-
         """
         R = PolynomialRing(self.base, self.nvars, 'x')
         z = macaulay2(sum(R.gens()))
@@ -353,7 +346,6 @@ class MPolynomialPower(Benchmark):
             sage: B = MPolynomialPower()
             sage: isinstance(B.maxima()[1], float)
             True
-
         """
         R = PolynomialRing(self.base, self.nvars, 'x')
         z = maxima(str(sum(R.gens())))
@@ -371,7 +363,6 @@ class MPolynomialPower(Benchmark):
             sage: B = MPolynomialPower()
             sage: isinstance(B.maple()[1], float)  # optional - maple
             True
-
         """
         R = PolynomialRing(self.base, self.nvars, 'x')
         z = maple(str(sum(R.gens())))
@@ -389,7 +380,6 @@ class MPolynomialPower(Benchmark):
             sage: B = MPolynomialPower()
             sage: isinstance(B.mathematica()[1], float) # optional - mathematica
             True
-
         """
         R = PolynomialRing(self.base, self.nvars, 'x')
         z = mathematica(str(sum(R.gens())))
@@ -416,7 +406,6 @@ class MPolynomialPower(Benchmark):
             sage: B = MPolynomialPower()
             sage: isinstance(B.magma(), float) # optional - magma
             True
-
         """
         R = magma.PolynomialRing(self.base, self.nvars)
         z = R.gen(1)
@@ -488,7 +477,6 @@ class MPolynomialMult(Benchmark):
             sage: B = MPolynomialMult()
             sage: isinstance(B.mathematica()[1], float) # optional - mathematica
             True
-
         """
         R = PolynomialRing(self.base, self.nvars, 'x')
         k = self.nvars // 2
@@ -517,7 +505,6 @@ class MPolynomialMult(Benchmark):
             sage: B = MPolynomialMult()
             sage: isinstance(B.sage()[1], float)
             True
-
         """
         R = PolynomialRing(self.base, self.nvars, 'x')
         k = self.nvars // 2
@@ -563,7 +550,6 @@ class MPolynomialMult(Benchmark):
             sage: B = MPolynomialMult()
             sage: isinstance(B.magma(), float) # optional - magma
             True
-
         """
         R = magma.PolynomialRing(self.base, self.nvars)
         z0 = R.gen(1)
@@ -717,7 +703,6 @@ class MPolynomialMult2(Benchmark):
             sage: B = MPolynomialMult2()
             sage: isinstance(B.sage()[1], float)
             True
-
         """
         R = PolynomialRing(self.base, self.nvars, 'x')
         k = self.nvars // 2
@@ -787,7 +772,6 @@ class CharPolyTp(Benchmark):
             sage: B = CharPolyTp()
             sage: isinstance(B.sage(), float)
             True
-
         """
         m = self.matrix()
         t = cputime()
@@ -804,7 +788,6 @@ class CharPolyTp(Benchmark):
             sage: B = CharPolyTp()
             sage: isinstance(B.gp(), float)
             True
-
         """
         m = gp(self.matrix())
         gp.eval('gettime')
@@ -821,7 +804,6 @@ class CharPolyTp(Benchmark):
             sage: B = CharPolyTp()
             sage: isinstance(B.pari(), float)
             True
-
         """
         m = pari(self.matrix())
         t = cputime()
@@ -838,7 +820,6 @@ class CharPolyTp(Benchmark):
             sage: B = CharPolyTp()
             sage: isinstance(B.magma(), float) # optional - magma
             True
-
         """
         m = magma(self.matrix())
         t = magma.cputime()
@@ -928,7 +909,6 @@ class SquareInts(Benchmark):
             sage: B = SquareInts()
             sage: isinstance(B.sage(), float)
             True
-
         """
         n = Integer(self.base)**self.__ndigits
         t = cputime()
@@ -993,7 +973,6 @@ class SquareInts(Benchmark):
             sage: B = SquareInts()
             sage: isinstance(B.python(), float)
             True
-
         """
         n = self.base**self.__ndigits
         t = cputime()
@@ -1143,7 +1122,6 @@ class Factorial(Benchmark):
             sage: B = Factorial(10)
             sage: isinstance(B.sage(), float)
             True
-
         """
         t = cputime()
         factorial(self.__n)
@@ -1174,7 +1152,6 @@ class Factorial(Benchmark):
             sage: B = Factorial(10)
             sage: isinstance(B.maple()[1], float) # optional - maple
             True
-
         """
         n = maple(self.__n)
         t = walltime()
@@ -1212,7 +1189,6 @@ class Fibonacci(Benchmark):
             sage: B = Fibonacci(10)
             sage: isinstance(B.sage(), float)
             True
-
         """
         t = cputime()
         fibonacci(self.__n)
@@ -1464,7 +1440,6 @@ class ModularSymbols1(Benchmark):
             sage: B = ModularSymbols1(11)
             sage: isinstance(B.sage(), float)
             True
-
         """
         t = cputime()
         ModularSymbols(self.__N, self.__k)
@@ -1601,7 +1576,6 @@ class EllipticCurvePointMul(Benchmark):
             sage: B = EllipticCurvePointMul(11)
             sage: isinstance(B.magma(), float) # optional - magma
             True
-
         """
         E = magma.EllipticCurve('[0, 0, 1, -1, 0]')
         P = E('[0,0]')
@@ -1659,7 +1633,6 @@ class EllipticCurveMW(Benchmark):
             sage: B = EllipticCurveMW([1,2,3,4,5])
             sage: isinstance(B.sage()[1], float)
             True
-
         """
         E = EllipticCurve(self.ainvs)
         t = walltime()
@@ -1676,7 +1649,6 @@ class EllipticCurveMW(Benchmark):
             sage: B = EllipticCurveMW([1,2,3,4,5])
             sage: isinstance(B.magma(), float) # optional - magma
             True
-
         """
         E = magma.EllipticCurve(str(self.ainvs))
         t = magma.cputime()
@@ -1883,7 +1855,7 @@ def mpoly():
 
 def mpoly_all(include_maple=False):
     """
-    Runs benchmarks for multipoly arithmetic on all systems (except
+    Run benchmarks for multipoly arithmetic on all systems (except
     Maxima, since it is very very slow).  You must have mathematica,
     maple, and magma.
 
@@ -1903,7 +1875,6 @@ def mpoly_all(include_maple=False):
         ...System      min         avg         max         trials          cpu or wall
         ...
         * sage...
-
     """
     systems = ['sage', 'magma', 'mathematica', 'macaulay2']
     if include_maple:

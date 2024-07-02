@@ -146,9 +146,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         """
         Return the dimension of this Jacobian.
 
-        OUTPUT:
-
-        Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -193,9 +191,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         - ``self`` -- The Jacobian.
 
-        OUTPUT:
-
-        The boolean ``False``; this will be updated by other methods.
+        OUTPUT: the boolean ``False``; this will be updated by other methods
 
         EXAMPLES:
 
@@ -224,9 +220,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         - ``self`` -- The Jacobian.
 
-        OUTPUT:
-
-        The boolean ``False``; this will be updated by other methods.
+        OUTPUT: the boolean ``False``; this will be updated by other methods
 
         EXAMPLES:
 

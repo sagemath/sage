@@ -446,7 +446,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         Not defined unless this point is a type IV point created by using
         a univariate function to compute centers.
 
-        OUTPUT: A univariate function.
+        OUTPUT: a univariate function
 
         EXAMPLES::
 
@@ -474,7 +474,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         Not defined unless this point is a type IV point created by using
         a univariate function to compute radii.
 
-        OUTPUT: A univariate function.
+        OUTPUT: a univariate function
 
         EXAMPLES::
 
@@ -502,7 +502,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         This integer is the number of disks used in the approximation of the type IV point.
         Not defined for type I, II, or III points.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -614,7 +614,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         - ``basepoint`` -- (default = Infinity) A point of the
           same Berkovich space as this point.
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -689,7 +689,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         - ``other`` -- A point of the same Berkovich space as this point.
 
-        OUTPUT: A finite or infinite real number.
+        OUTPUT: a finite or infinite real number
 
         EXAMPLES::
 
@@ -740,7 +740,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         - ``other`` -- A point of the same Berkovich space as this point.
         - ``basepoint`` -- A point of the same Berkovich space as this point.
 
-        OUTPUT: A finite or infinite real number.
+        OUTPUT: a finite or infinite real number
 
         EXAMPLES::
 
@@ -786,7 +786,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         - ``other`` -- A point of the same Berkovich space as this point.
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -849,7 +849,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         - ``other`` -- A point of the same Berkovich space as this point.
         - ``basepoint`` -- A point of the same Berkovich space as this point.
 
-        OUTPUT: A finite or infinite real number.
+        OUTPUT: a finite or infinite real number
 
         EXAMPLES::
 
@@ -891,7 +891,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         - ``other`` -- A point of the same Berkovich space as this point.
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -929,7 +929,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         - ``other`` -- A point of the same Berkovich space as this point.
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -958,7 +958,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         Return the center of the corresponding disk (or sequence of disks)
         in `\CC_p`.
 
-        OUTPUT: An element of the ``base`` of the parent Berkovich space.
+        OUTPUT: an element of the ``base`` of the parent Berkovich space
 
         EXAMPLES::
 
@@ -990,7 +990,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         r"""
         Return the type of this point of Berkovich space over `\CC_p`.
 
-        OUTPUT: An integer between 1 and 4 inclusive.
+        OUTPUT: an integer between 1 and 4 inclusive
 
         EXAMPLES::
 
@@ -1009,7 +1009,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         """
         The residue characteristic of the parent.
 
-        OUTPUT: A prime integer.
+        OUTPUT: a prime integer
 
         EXAMPLES::
 
@@ -1560,7 +1560,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         - ``basepoint`` -- (default: Infinity) A point of the same
           Berkovich space as this point or Infinity.
 
-        OUTPUT: A point of the same Berkovich space.
+        OUTPUT: a point of the same Berkovich space
 
         EXAMPLES::
 
@@ -1637,7 +1637,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         then the image under the involution map is not defined. To avoid
         this error, increase precision.
 
-        OUTPUT: A point of the same Berkovich space.
+        OUTPUT: a point of the same Berkovich space
 
         EXAMPLES:
 
@@ -1912,7 +1912,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
         """
         Return the corresponding affine point after dehomogenizing at infinity.
 
-        OUTPUT: A point of affine Berkovich space.
+        OUTPUT: a point of affine Berkovich space
 
         EXAMPLES::
 
@@ -2243,7 +2243,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
         - ``basepoint`` -- (default: Infinity) A point of the same
           Berkovich space as this point, or infinity.
 
-        OUTPUT: A point of the same Berkovich space.
+        OUTPUT: a point of the same Berkovich space
 
         EXAMPLES::
 
@@ -2401,7 +2401,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
         then the image under the involution map is not defined. To avoid
         this error, increase precision.
 
-        OUTPUT: A point of the same Berkovich space.
+        OUTPUT: a point of the same Berkovich space
 
         EXAMPLES:
 

@@ -125,7 +125,7 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
 
         - ``other`` -- a polynomial with the same parent as ``self``.
 
-        OUTPUT: The monic gcd of ``self`` and ``other``.
+        OUTPUT: the monic gcd of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -260,9 +260,7 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         - ``other`` -- a polynomial with the same parent as ``self``.
 
-        OUTPUT:
-
-        The monic gcd of ``self`` and ``other``.
+        OUTPUT: the monic gcd of ``self`` and ``other``
 
         See :meth:`Polynomial_absolute_number_field_dense.gcd` for
         more details.

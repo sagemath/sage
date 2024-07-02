@@ -237,9 +237,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         - ```prec`` -- a ``long``, the required precision
 
-        OUTPUT:
-
-        A polynomial ``b`` such that ``a*b`` is one modulo `π^\mathrm{prec}`
+        OUTPUT: a polynomial ``b`` such that ``a*b`` is one modulo `π^\mathrm{prec}`
 
         EXAMPLES::
 
@@ -285,9 +283,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         - ``r`` -- an integer with 0 <= r < e
 
-        OUTPUT:
-
-        A reduced polynomial in π
+        OUTPUT: a reduced polynomial in π
 
         EXAMPLES::
 
@@ -318,9 +314,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         - ``r`` -- a non-negative integer
 
-        OUTPUT:
-
-        A reduced polynomial in π
+        OUTPUT: a reduced polynomial in π
 
         EXAMPLES::
 
@@ -352,9 +346,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         - ``r`` -- a non-negative integer
 
-        OUTPUT:
-
-        A reduced polynomial in π
+        OUTPUT: a reduced polynomial in π
 
         EXAMPLES::
 

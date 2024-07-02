@@ -41,8 +41,7 @@ def cputime(t=0, subprocesses=False):
       from an earlier call with ``subprocesses=True``, then
       ``subprocesses=True`` is assumed.
 
-    - subprocesses -- (optional), include subprocesses (default:
-      ``False``)
+    - ``subprocesses`` -- boolean (default: ``False``); include subprocesses
 
     OUTPUT:
 
@@ -229,13 +228,9 @@ def walltime(t=0):
 
     INPUT:
 
+    - ``t`` -- (optional) float, time in CPU seconds
 
-    -  ``t`` -- (optional) float, time in CPU seconds
-
-    OUTPUT:
-
-    -  ``float`` -- time in seconds
-
+    OUTPUT: ``float`` -- time in seconds
 
     EXAMPLES::
 

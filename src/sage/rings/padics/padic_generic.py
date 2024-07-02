@@ -230,9 +230,7 @@ class pAdicGeneric(LocalGeneric):
         r"""
         Return the prime, ie the characteristic of the residue field.
 
-        OUTPUT:
-
-        The characteristic of the residue field.
+        OUTPUT: the characteristic of the residue field
 
         EXAMPLES::
 
@@ -275,9 +273,7 @@ class pAdicGeneric(LocalGeneric):
         r"""
         Return the prime, i.e., the characteristic of the residue field.
 
-        OUTPUT:
-
-        The characteristic of the residue field.
+        OUTPUT: the characteristic of the residue field
 
         EXAMPLES::
 

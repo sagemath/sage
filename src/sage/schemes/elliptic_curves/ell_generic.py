@@ -2957,9 +2957,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         - ``complete_cube`` -- boolean (default: ``True``); for
           meaning, see below.
 
-        OUTPUT:
-
-        An elliptic curve.
+        OUTPUT: an elliptic curve
 
         If ``complete_cube=True``: Return a model of the form
         `y^2 = x^3 + a*x + b` for this curve. The characteristic

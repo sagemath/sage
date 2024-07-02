@@ -1012,7 +1012,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         - ``p`` -- prime
 
-        OUTPUT: factorization of ``self`` reduced modulo `p`.
+        OUTPUT: factorization of ``self`` reduced modulo `p`
 
         EXAMPLES::
 

@@ -556,7 +556,6 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: A = AlternatingSignMatrix([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
             sage: fpl = FullyPackedLoop(A)
             sage: TestSuite(fpl).run()
-
         """
         if isinstance(generator, AlternatingSignMatrix):
             self._six_vertex_model = generator.to_six_vertex_model()
@@ -604,7 +603,6 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
              -- +    +    + -- +
                      |         |
                      |         |
-
         """
         # List are in the order of URDL
         # One set of rules for how to draw around even vertex, one set of rules for odd vertex
@@ -750,7 +748,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``link``, ``loop`` -- (boolean, default ``True``) whether to plot the links
+        - ``link``, ``loop`` -- boolean (default: ``True``); whether to plot the links
           or the loops
 
         - ``color``, ``link_color``, ``loop_color`` -- (optional, a string or a
@@ -762,7 +760,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         - ``color_map``, ``link_color_map``, ``loop_color_map`` -- (string,
           optional) a name of a matplotlib color map for the link or the loop
 
-        - ``link_color_randomize`` -- (boolean, default ``False``) when
+        - ``link_color_randomize`` -- boolean (default: ``False``); when
           ``link_colors`` or ``link_color_map`` is specified it randomizes
           its order. Setting this option to ``True`` makes it unlikely to
           have two neighboring links with the same color.

@@ -31,9 +31,8 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
 
     - ``known_factor`` -- the list of coefficients of the known factor
 
-    OUTPUT:
-
-    A list of integers corresponding to the characteristic polynomial of the Frobenius action.
+    OUTPUT: a list of integers corresponding to the characteristic polynomial
+    of the Frobenius action
 
     EXAMPLES::
 

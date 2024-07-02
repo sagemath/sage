@@ -19,7 +19,7 @@ from sage.sets.positive_integers import PositiveIntegers
 
 class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
     r"""
-    An example of a poset: finite sets ordered by inclusion
+    An example of a poset: finite sets ordered by inclusion.
 
     This class provides a minimal implementation of a poset
 
@@ -80,7 +80,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
 
     def le(self, x, y):
         r"""
-        Returns whether `x` is a subset of `y`
+        Return whether `x` is a subset of `y`.
 
         EXAMPLES::
 
@@ -96,7 +96,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of this poset
+        Return an element of this poset.
 
         EXAMPLES::
 
@@ -113,7 +113,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
 
 class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
     r"""
-    An example of a facade poset: the positive integers ordered by divisibility
+    An example of a facade poset: the positive integers ordered by divisibility.
 
     This class provides a minimal implementation of a facade poset
 
@@ -163,7 +163,7 @@ class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
 
     def le(self, x, y):
         r"""
-        Returns whether `x` is divisible by `y`
+        Return whether `x` is divisible by `y`.
 
         EXAMPLES::
 

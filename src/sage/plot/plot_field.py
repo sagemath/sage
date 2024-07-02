@@ -62,7 +62,6 @@ class PlotField(GraphicPrimitive):
             sage: x,y = var('x,y')
             sage: P = plot_vector_field((sin(x),cos(y)), (x,-3,3), (y,-3,3))
             sage: Q = loads(dumps(P))
-
         """
         self.xpos_array = xpos_array
         self.ypos_array = ypos_array
@@ -72,7 +71,7 @@ class PlotField(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
@@ -88,7 +87,7 @@ class PlotField(GraphicPrimitive):
 
     def _allowed_options(self):
         """
-        Returns a dictionary with allowed options for PlotField.
+        Return a dictionary with allowed options for PlotField.
 
         EXAMPLES::
 
@@ -137,7 +136,6 @@ class PlotField(GraphicPrimitive):
                 zorder         The layer level in which to draw
             <BLANKLINE>
             20
-
         """
         return "PlotField defined by a {} x {} vector grid".format(
                self._options['plot_points'], self._options['plot_points'])

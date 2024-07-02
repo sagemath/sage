@@ -1755,9 +1755,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
           only works over finite fields. When ``None`` is given, a
           suitable algorithm is chosen automatically.
 
-        OUTPUT:
-
-        An `n`'th root of unity in the base field of the curve.
+        OUTPUT: an `n`'th root of unity in the base field of the curve
 
         EXAMPLES::
 
@@ -2768,9 +2766,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         - ``p`` -- a prime number
 
-        OUTPUT:
-
-        The point reduced to be a point on the elliptic curve modulo `p`.
+        OUTPUT: the point reduced to be a point on the elliptic curve modulo `p`
 
         EXAMPLES::
 

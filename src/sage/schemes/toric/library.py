@@ -206,7 +206,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -245,7 +245,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -289,7 +289,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -320,7 +320,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -351,7 +351,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -382,7 +382,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -413,7 +413,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -446,7 +446,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -477,7 +477,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -510,7 +510,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -558,7 +558,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -587,7 +587,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -619,7 +619,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -664,7 +664,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -695,7 +695,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -726,7 +726,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -757,7 +757,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -793,7 +793,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -828,7 +828,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -863,7 +863,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         .. NOTE::
@@ -963,7 +963,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -999,7 +999,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -1030,7 +1030,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -1062,7 +1062,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -1094,7 +1094,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -1126,7 +1126,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -1158,7 +1158,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -1189,7 +1189,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`CPR-Fano toric variety
+        OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -1314,7 +1314,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT: A :class:`toric variety
+        OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::

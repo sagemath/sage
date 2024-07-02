@@ -181,9 +181,7 @@ class baseWI:
 
         - ``EorP`` -- either an elliptic curve, or a point on an elliptic curve.
 
-        OUTPUT:
-
-        The transformed curve or point.
+        OUTPUT: the transformed curve or point
 
         EXAMPLES::
 

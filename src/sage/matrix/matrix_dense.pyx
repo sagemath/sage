@@ -5,7 +5,7 @@ TESTS::
 
     sage: R.<a,b> = QQ[]
     sage: m = matrix(R,2,[0,a,b,b^2])
-    sage: TestSuite(m).run(skip="_test_minpoly")
+    sage: TestSuite(m).run(skip='_test_minpoly')
 """
 
 cimport sage.matrix.matrix as matrix
@@ -97,7 +97,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
     def transpose(self):
         """
-        Returns the transpose of self, without changing self.
+        Return the transpose of ``self``, without changing ``self``.
 
         EXAMPLES: We create a matrix, compute its transpose, and note that
         the original matrix is not changed.
@@ -147,7 +147,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
     def antitranspose(self):
         """
-        Returns the antitranspose of self, without changing self.
+        Return the antitranspose of ``self``, without changing ``self``.
 
         EXAMPLES::
 
@@ -220,7 +220,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
     def _elementwise_product(self, right):
         r"""
-        Returns the elementwise product of two dense
+        Return the elementwise product of two dense
         matrices with identical base rings.
 
         This routine assumes that ``self`` and ``right``

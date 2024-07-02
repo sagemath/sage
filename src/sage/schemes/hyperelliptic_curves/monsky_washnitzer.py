@@ -3448,9 +3448,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         - R -- An (optional) base ring in which to cast the coefficients
 
-        OUTPUT:
-
-        The raw coefficients of `A` where ``self`` is `A dx/2y`.
+        OUTPUT: the raw coefficients of `A` where ``self`` is `A dx/2y`
 
         EXAMPLES::
 
@@ -3477,9 +3475,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         - `P`, `Q` -- two points on the underlying curve
 
-        OUTPUT:
-
-        `\int_P^Q \text{self}`
+        OUTPUT: `\int_P^Q \text{self}`
 
         EXAMPLES::
 
@@ -3577,9 +3573,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         - ``R`` -- ring of coefficients
 
-        OUTPUT:
-
-        ``self`` with the coefficient ring changed to `R`.
+        OUTPUT: ``self`` with the coefficient ring changed to `R`
 
         EXAMPLES::
 

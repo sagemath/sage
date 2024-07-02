@@ -13,10 +13,11 @@ Number field elements (abstract base class)
 
 cdef class NumberFieldElement_base(FieldElement):
     r"""
-    Abstract base class for :class:`~sage.rings.number_field.number_field_element.NumberFieldElement`
+    Abstract base class for
+    :class:`~sage.rings.number_field.number_field_element.NumberFieldElement`.
 
-    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
-    instantiated.
+    This class is defined for the purpose of :func:`isinstance` tests.
+    It should not be instantiated.
 
     EXAMPLES::
 

@@ -1024,7 +1024,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         - ``prec`` -- desired floating point precision (default:
           default :class:`RealField` precision).
 
-        OUTPUT: a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1104,7 +1104,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
-        OUTPUT: a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1154,7 +1154,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         - ``prec`` -- desired floating point precision (default:
           default :class:`RealField` precision).
 
-        OUTPUT: a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1217,9 +1217,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         - ``as_ETuples`` -- (default: ``True``): return the list of
           exponents as a list of ETuples
 
-        OUTPUT:
-
-        The list of exponents as a list of ETuples or tuples.
+        OUTPUT: the list of exponents as a list of ETuples or tuples
 
         EXAMPLES::
 

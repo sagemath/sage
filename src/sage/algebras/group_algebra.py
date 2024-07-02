@@ -51,8 +51,8 @@ def GroupAlgebra(G, R=IntegerRing()):
 
     INPUT:
 
-    - `G` -- a group
-    - `R` -- (default: `\ZZ`) a ring
+    - ``G`` -- a group
+    - ``R`` -- (default: `\ZZ`) a ring
 
     EXAMPLES:
 

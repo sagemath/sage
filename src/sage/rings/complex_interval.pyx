@@ -208,7 +208,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             return self.imag()
         raise IndexError("i must be between 0 and 1.")
 
-    def __reduce__( self ):
+    def __reduce__(self):
         """
         Pickling support.
 
@@ -271,7 +271,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         INPUT:
 
         - ``parent`` -- :class:`~sage.rings.real_mpfr.RealField_class`,
-          target parent.
+          target parent
 
         EXAMPLES::
 
@@ -532,7 +532,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
     def overlaps(self, ComplexIntervalFieldElement other):
         """
-        Return ``True`` if ``self`` and other are intervals with at least
+        Return ``True`` if ``self`` and ``other`` are intervals with at least
         one value in common.
 
         EXAMPLES::
@@ -854,19 +854,19 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         Note that ``x^2`` is not the same as ``x*x``::
 
             sage: a = CIF(RIF(-1,1))
-            sage: print((a^2).str(style="brackets"))
+            sage: print((a^2).str(style='brackets'))
             [0.0000000000000000 .. 1.0000000000000000]
-            sage: print((a*a).str(style="brackets"))
+            sage: print((a*a).str(style='brackets'))
             [-1.0000000000000000 .. 1.0000000000000000]
             sage: a = CIF(0, RIF(-1,1))
-            sage: print((a^2).str(style="brackets"))
+            sage: print((a^2).str(style='brackets'))
             [-1.0000000000000000 .. -0.0000000000000000]
-            sage: print((a*a).str(style="brackets"))
+            sage: print((a*a).str(style='brackets'))
             [-1.0000000000000000 .. 1.0000000000000000]
             sage: a = CIF(RIF(-1,1), RIF(-1,1))
-            sage: print((a^2).str(style="brackets"))
+            sage: print((a^2).str(style='brackets'))
             [-1.0000000000000000 .. 1.0000000000000000] + [-2.0000000000000000 .. 2.0000000000000000]*I
-            sage: print((a*a).str(style="brackets"))
+            sage: print((a*a).str(style='brackets'))
             [-2.0000000000000000 .. 2.0000000000000000] + [-2.0000000000000000 .. 2.0000000000000000]*I
 
         We can take very high powers::
@@ -876,7 +876,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: s = RealField(27, rnd="RNDZ")(1/2)^(1/3)
             sage: a = CIF(RIF(-s/2,s/2), RIF(-s, s))
             sage: r = a^(10^10000)
-            sage: print(r.str(style="brackets"))
+            sage: print(r.str(style='brackets'))
             [-2.107553304e1028 .. 2.107553304e1028] + [-2.107553304e1028 .. 2.107553304e1028]*I
 
         TESTS::
@@ -1718,8 +1718,8 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         INPUT:
 
-        - ``all`` -- bool (default: ``False``); if ``True``, return a list
-          of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a list
+          of all square roots
 
         EXAMPLES::
 
@@ -2010,16 +2010,16 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
 
     INPUT:
 
-    - ``s_real`` -- a string that defines a real number (or something whose
+    - ``s_real`` -- string that defines a real number (or something whose
       string representation defines a number)
 
-    - ``s_imag`` -- a string that defines a real number (or something whose
+    - ``s_imag`` -- string that defines a real number (or something whose
       string representation defines a number)
 
-    - ``pad`` -- an integer at least 0.
+    - ``pad`` -- integer at least 0
 
     - ``min_prec`` -- number will have at least this many bits of precision,
-      no matter what.
+      no matter what
 
     EXAMPLES::
 
@@ -2054,7 +2054,6 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
         ....:         assert c_CIFE(0,s).imag()-1 != 0
         ....:     except TypeError:
         ....:         pass
-
     """
     if s_imag is None:
         s_imag = 0

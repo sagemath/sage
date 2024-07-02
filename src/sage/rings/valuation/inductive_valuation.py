@@ -1371,9 +1371,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         - ``f`` -- a non-zero polynomial which is not an equivalence unit
 
-        OUTPUT:
-
-        A factorization which has `e` as its unit and `a` as its unique factor.
+        OUTPUT: a factorization which has `e` as its unit and `a` as its unique factor
 
         ALGORITHM:
 

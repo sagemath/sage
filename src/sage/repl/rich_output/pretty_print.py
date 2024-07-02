@@ -84,15 +84,15 @@ class SequencePrettyPrinter(SageObject):
 
     def is_homogeneous(self, common_type):
         """
-        Return whether the pretty print items are homogeneous
+        Return whether the pretty print items are homogeneous.
 
         INPUT:
 
-        - ``common_type`` -- a type.
+        - ``common_type`` -- a type
 
         OUTPUT:
 
-        Boolean. Whether all items to be pretty printed are of said
+        boolean; whether all items to be pretty printed are of said
         type.
 
         EXAMPLES::
@@ -108,11 +108,9 @@ class SequencePrettyPrinter(SageObject):
 
     def _concatenate_graphs(self):
         """
-        Plot multiple graphs into a single plot
+        Plot multiple graphs into a single plot.
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
@@ -128,11 +126,9 @@ class SequencePrettyPrinter(SageObject):
 
     def _concatenate_graphics(self):
         """
-        Combine multiple graphics objects into one graphics array
+        Combine multiple graphics objects into one graphics array.
 
-        OUTPUT:
-
-        A graphics array.
+        OUTPUT: a graphics array
 
         EXAMPLES::
 
@@ -210,8 +206,8 @@ def pretty_print(*args, **kwds):
 
     INPUT:
 
-    - ``*args`` -- any number of positional arguments. The objects to
-      pretty print.
+    - ``*args`` -- any number of positional arguments; the objects to
+      pretty print
 
     - ``**kwds`` -- optional keyword arguments that are passed to the
       rich representation. Examples include:
@@ -224,7 +220,7 @@ def pretty_print(*args, **kwds):
 
         - ``fontsize`` -- positive integer
 
-        - ``frame`` -- (default: ``False``) draw a MATLAB-like frame around
+        - ``frame`` -- boolean (default: ``False``); draw a MATLAB-like frame around
           the image
 
     EXAMPLES::

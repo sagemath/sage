@@ -89,9 +89,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         This is only possible if the Laurent polynomial is constant.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         TESTS::
 
@@ -136,9 +134,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         This is only possible if the Laurent polynomial is constant.
 
-        OUTPUT:
-
-        A rational.
+        OUTPUT: a rational
 
         TESTS::
 

@@ -619,9 +619,7 @@ class LocalGeneric(CommutativeRing):
 
         - ``self`` -- a p-adic ring.
 
-        OUTPUT:
-
-        The characteristic of the residue field.
+        OUTPUT: the characteristic of the residue field
 
         EXAMPLES::
 
@@ -642,9 +640,7 @@ class LocalGeneric(CommutativeRing):
           underlying exact  defining polynomial rather than the one with coefficients
           in the base ring.
 
-        OUTPUT:
-
-        The defining polynomial of this ring as an extension over its ground ring
+        OUTPUT: the defining polynomial of this ring as an extension over its ground ring
 
         EXAMPLES::
 
@@ -675,9 +671,7 @@ class LocalGeneric(CommutativeRing):
 
         - ``self`` -- a local ring
 
-        OUTPUT:
-
-        The ground ring of ``self``, i.e., itself.
+        OUTPUT: the ground ring of ``self``, i.e., itself
 
         EXAMPLES::
 
@@ -700,9 +694,7 @@ class LocalGeneric(CommutativeRing):
 
         - ``self`` -- a `p`-adic ring
 
-        OUTPUT:
-
-        The ground ring of the tower for ``self``, i.e., itself.
+        OUTPUT: the ground ring of the tower for ``self``, i.e., itself
 
         EXAMPLES::
 
@@ -1061,7 +1053,8 @@ class LocalGeneric(CommutativeRing):
 
     def uniformiser_pow(self, n):
         r"""
-        Return the `n`th power of the uniformiser of ``self`` (as an element of ``self``).
+        Return the `n`-th power of the uniformiser of ``self`` (as an element
+        of ``self``).
 
         EXAMPLES::
 

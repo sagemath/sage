@@ -37,7 +37,7 @@ def berlekamp_massey(a):
 
     INPUT:
 
-    -  ``a`` -- a list of even length of elements of a field (or domain)
+    - ``a`` -- list of even length of elements of a field (or domain)
 
     OUTPUT:
 

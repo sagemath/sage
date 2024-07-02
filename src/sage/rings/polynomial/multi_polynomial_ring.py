@@ -561,7 +561,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         -  ``coeff`` -- divide coefficients as well (default:
            False).
 
-        OUTPUT: monomial.
+        OUTPUT: monomial
 
         EXAMPLES::
 
@@ -654,7 +654,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         -  ``g`` -- monomial.
 
-        OUTPUT: monomial.
+        OUTPUT: monomial
 
         EXAMPLES::
 
@@ -765,7 +765,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         - ``b`` -- monomial
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -806,7 +806,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         -  ``g`` -- monomial.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -855,7 +855,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         -  ``t`` -- a monomial.
 
-        OUTPUT: a list of monomials.
+        OUTPUT: a list of monomials
 
         EXAMPLES::
 

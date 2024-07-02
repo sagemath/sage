@@ -90,7 +90,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
     - ``M`` -- matroid (default: ``None``)
     - ``groundset`` -- groundset of a matroid (default: ``None``)
-    - ``circuit_closures`` -- dict (default: ``None``); the collection of
+    - ``circuit_closures`` -- dictionary (default: ``None``); the collection of
       circuit closures of a matroid presented as a dictionary whose keys are
       ranks, and whose values are sets of circuit closures of the specified rank
 

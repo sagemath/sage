@@ -248,8 +248,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         - ``d`` -- (default: 1) a nonzero element of the polynomial ring
 
-        - ``check`` -- boolean (default: ``True``); if ``True``, compute the real
-          denominator of the vectors, possibly different from ``d``.
+        - ``check`` -- boolean (default: ``True``); if ``True``, compute the
+          real denominator of the vectors, possibly different from ``d``
 
         EXAMPLES::
 
@@ -617,7 +617,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
             Use Kummer's theorem to shortcut this code if possible, like as
             done in :meth:`FunctionFieldMaximalOrder_global.decomposition()`
-
         """
         from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
         from sage.matrix.constructor import matrix
@@ -680,7 +679,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
                 # not be in pO. To ensure that beta*P is in pO, multiplying
                 # beta by each of P's generators must produce a vector whose
                 # elements are multiples of p. We can ensure that all this
-                # occurs by constructing a matrix in k, and finding a non-zero
+                # occurs by constructing a matrix in k, and finding a nonzero
                 # vector in the kernel of the matrix.
 
                 m = []

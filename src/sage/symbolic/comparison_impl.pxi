@@ -52,7 +52,7 @@ cpdef int print_order(lhs, rhs) except -2:
     INPUT:
 
     - ``lhs``, ``rhs`` -- two symbolic expressions or something that
-      can be converted to one.
+      can be converted to one
 
     OUTPUT:
 
@@ -95,7 +95,7 @@ class _print_key():
         INPUT:
 
         - ``ex`` -- symbolic expression or something that can be
-          converted into one.
+          converted into one
 
         EXAMPLES::
 
@@ -114,11 +114,9 @@ class _print_key():
 
         INPUT:
 
-        - ``other`` -- another :class:`_print_key` instance.
+        - ``other`` -- another :class:`_print_key` instance
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -137,16 +135,14 @@ class _print_key():
 
 cpdef print_sorted(expressions):
     """
-    Sort a list in print order
+    Sort a list in print order.
 
     INPUT:
 
-    - ``expressions`` -- a list/tuple/iterable of symbolic
-      expressions, or something that can be converted to one.
+    - ``expressions`` -- list/tuple/iterable of symbolic
+      expressions, or something that can be converted to one
 
-    OUTPUT:
-
-    The list sorted by :meth:`print_order`.
+    OUTPUT: the list sorted by :meth:`print_order`
 
     EXAMPLES::
 
@@ -166,7 +162,7 @@ class _math_key():
         INPUT:
 
         - ``ex`` -- symbolic expression or something that can be
-          converted into one.
+          converted into one
 
         EXAMPLES::
 
@@ -185,11 +181,11 @@ class _math_key():
 
         INPUT:
 
-        - ``other`` -- another :class:`_print_key` instance.
+        - ``other`` -- another :class:`_print_key` instance
 
         OUTPUT:
 
-        Boolean. A ``ValueError`` is raised if we do not know how to
+        Boolean. A :exc:`ValueError` is raised if we do not know how to
         perform the comparison.
 
         EXAMPLES::
@@ -221,18 +217,18 @@ class _math_key():
 
 cpdef math_sorted(expressions):
     """
-    Sort a list of symbolic numbers in the "Mathematics" order
+    Sort a list of symbolic numbers in the "Mathematics" order.
 
     INPUT:
 
-    - ``expressions`` -- a list/tuple/iterable of symbolic
-      expressions, or something that can be converted to one.
+    - ``expressions`` -- list/tuple/iterable of symbolic
+      expressions, or something that can be converted to one
 
     OUTPUT:
 
     The list sorted by ascending (real) value. If an entry does not
     define a real value (or plus/minus infinity), or if the comparison
-    is not known, a ``ValueError`` is raised.
+    is not known, a :exc:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -250,7 +246,7 @@ cpdef int mixed_order(lhs, rhs) except -2:
     INPUT:
 
     - ``lhs``, ``rhs`` -- two symbolic expressions or something that
-      can be converted to one.
+      can be converted to one
 
     OUTPUT:
 
@@ -285,7 +281,6 @@ cpdef int mixed_order(lhs, rhs) except -2:
         1
         sage: mixed_order(log2, 0)
         1
-
     """
     if lhs is rhs:
         return 0
@@ -318,7 +313,7 @@ class _mixed_key():
         INPUT:
 
         - ``ex`` -- symbolic expression or something that can be
-          converted into one.
+          converted into one
 
         EXAMPLES::
 
@@ -337,11 +332,11 @@ class _mixed_key():
 
         INPUT:
 
-        - ``other`` -- another :class:`_mixed_key` instance.
+        - ``other`` -- another :class:`_mixed_key` instance
 
         OUTPUT:
 
-        Boolean. A ``ValueError`` is raised if we do not know how to
+        Boolean. A :exc:`ValueError` is raised if we do not know how to
         perform the comparison.
 
         EXAMPLES::
@@ -411,12 +406,12 @@ class _mixed_key():
 
 cpdef mixed_sorted(expressions):
     """
-    Sort a list of symbolic numbers in the "Mixed" order
+    Sort a list of symbolic numbers in the "Mixed" order.
 
     INPUT:
 
-    - ``expressions`` -- a list/tuple/iterable of symbolic
-      expressions, or something that can be converted to one.
+    - ``expressions`` -- list/tuple/iterable of symbolic
+      expressions, or something that can be converted to one
 
     OUTPUT:
 
@@ -424,7 +419,7 @@ cpdef mixed_sorted(expressions):
     and the expressions with variables according to print order.
     If an entry does not
     define a real value (or plus/minus infinity), or if the comparison
-    is not known, a ``ValueError`` is raised.
+    is not known, a :exc:`ValueError` is raised.
 
     EXAMPLES::
 

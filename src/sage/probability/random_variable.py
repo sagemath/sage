@@ -93,8 +93,8 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
         INPUT:
 
-        - X -- a probability space
-        - f -- a dictionary such that X[x] = value for x in X
+        - ``X`` -- a probability space
+        - ``f`` -- dictionary such that X[x] = value for x in X
           is the discrete function on X
         """
         if not isinstance(X, DiscreteProbabilitySpace):
@@ -134,7 +134,7 @@ class DiscreteRandomVariable(RandomVariable_generic):
     def expectation(self):
         r"""
         The expectation of the discrete random variable, namely
-        `\sum_{x \in S} p(x) X[x]`, where `X` = self and
+        `\sum_{x \in S} p(x) X[x]`, where `X` = ``self`` and
         `S` is the probability space of `X`.
         """
         E = 0
@@ -197,8 +197,8 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
     def covariance(self, other):
         r"""
-        The covariance of the discrete random variable X = self with Y =
-        other.
+        The covariance of the discrete random variable X = ``self`` with Y =
+        ``other``.
 
         Let `S` be the probability space of `X` = self,
         with probability function `p`, and `E(X)` be the
@@ -220,8 +220,8 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
     def translation_covariance(self, other, map):
         r"""
-        The covariance of the probability space X = self with image of Y =
-        other under the given map of the probability space.
+        The covariance of the probability space X = ``self`` with image of Y =
+        ``other`` under the given map of the probability space.
 
         Let `S` be the probability space of `X` = self,
         with probability function `p`, and `E(X)` be the
@@ -259,23 +259,23 @@ class DiscreteRandomVariable(RandomVariable_generic):
     def translation_standard_deviation(self, map):
         r"""
         The standard deviation of the translated discrete random variable
-        `X \circ e`, where `X` = self and `e` =
+        `X \circ e`, where `X` = ``self`` and `e` =
         map.
 
-        Let `S` be the probability space of `X` = self,
+        Let `S` be the probability space of `X` = ``self``,
         with probability function `p`, and `E(X)` be the
         expectation of `X`. Then the standard deviation of
         `X` is defined to be
 
         .. MATH::
 
-                     \sigma(X) = \sqrt{ \sum_{x \in S} p(x) (X(x) - E(x))^2}
+            \sigma(X) = \sqrt{ \sum_{x \in S} p(x) (X(x) - E(x))^2}
         """
         return sqrt(self.translation_variance(map))
 
     def correlation(self, other):
         """
-        The correlation of the probability space X = self with Y = other.
+        The correlation of the probability space X = ``self`` with Y = ``other``.
         """
         cov = self.covariance(other)
         sigX = self.standard_deviation()
@@ -286,8 +286,8 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
     def translation_correlation(self, other, map):
         """
-        The correlation of the probability space X = self with image of Y =
-        other under map.
+        The correlation of the probability space X = ``self`` with image of Y =
+        ``other`` under map.
         """
         cov = self.translation_covariance(other, map)
         sigX = self.standard_deviation()

@@ -2219,7 +2219,7 @@ class CategoryWithAxiom(Category):
         INPUT:
 
         - ``base_category`` -- a category
-        - ``axioms`` -- a list or iterable of strings
+        - ``axioms`` -- list or iterable of strings
 
         EXAMPLES::
 

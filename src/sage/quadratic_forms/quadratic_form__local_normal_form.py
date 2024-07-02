@@ -143,7 +143,7 @@ def local_normal_form(self, p):
         else:
             min_val = valuation(Q[min_i, min_j], p)
 
-        # Error if we still haven't seen non-zero coefficients!
+        # Error if we still haven't seen nonzero coefficients!
         if min_val == Infinity:
             raise RuntimeError("the original matrix is degenerate")
 
@@ -368,7 +368,7 @@ def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
     - ``self`` -- a quadratic form over `\ZZ`, which has integer Gram matrix if `p = 2`
     - ``p`` -- a prime number > 0
 
-    OUTPUT: a list of `p`-unimodular quadratic forms
+    OUTPUT: list of `p`-unimodular quadratic forms
 
     EXAMPLES::
 

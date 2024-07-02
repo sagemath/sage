@@ -209,9 +209,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         - ``right`` -- a point on projective space
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -386,7 +384,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         equal hash values. If the base ring is not an integral domain,
         return the hash of the parent.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -494,7 +492,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         - ``t`` -- a ring element.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -539,7 +537,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         .. WARNING:: The gcd will depend on the base ring.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1181,7 +1179,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         """
         Computes the hash value of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1197,7 +1195,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         r"""
         Normalizes the point so that the last non-zero coordinate is `1`.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1292,7 +1290,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         r"""
         scales by the least common multiple of the denominators.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1341,7 +1339,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
         - ``X`` -- a subscheme in the same ambient space as that of the codomain of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1380,7 +1378,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         Uses the subscheme multiplicity implementation. This point must be a point on
         a projective subscheme.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1433,7 +1431,7 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
         r"""
         Returns the integer hash of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

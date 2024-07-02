@@ -28,8 +28,8 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
     - ``basis`` -- list of elements of the function field
 
-    - ``check`` -- (default: ``True``) if ``True``, check whether the module
-      that ``basis`` generates forms an order
+    - ``check`` -- boolean (default: ``True``); if ``True``, check whether the
+      module that ``basis`` generates forms an order
 
     EXAMPLES::
 

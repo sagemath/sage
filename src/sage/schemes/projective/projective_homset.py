@@ -317,7 +317,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        OUTPUT: A list of points in the ambient space.
+        OUTPUT: a list of points in the ambient space
 
         .. WARNING::
 
@@ -626,9 +626,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         - ``v`` -- anything that determines a scheme morphism in the
           Hom-set.
 
-        OUTPUT:
-
-        The scheme morphism determined by ``v``.
+        OUTPUT: the scheme morphism determined by ``v``
 
         EXAMPLES::
 
@@ -653,9 +651,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         """
         Return a string representation of this homset.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

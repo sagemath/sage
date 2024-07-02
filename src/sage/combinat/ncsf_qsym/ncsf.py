@@ -78,7 +78,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
     We use the Sage standard renaming idiom to get shorter outputs::
 
-        sage: NCSF.rename("NCSF")
+        sage: NCSF.rename('NCSF')
         sage: NCSF
         NCSF
 
@@ -101,9 +101,9 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
     The basis itself is accessible through::
 
         sage: Psi.basis()
-        Lazy family (Term map from Compositions of non-negative integers...
+        Lazy family (Term map from Compositions of nonnegative integers...
         sage: Psi.basis().keys()
-        Compositions of non-negative integers
+        Compositions of nonnegative integers
 
     To construct an element one can therefore do::
 
@@ -398,7 +398,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         sage: TestSuite(Phi).run()
         sage: TestSuite(Psi).run()
         sage: TestSuite(complete).run()
-
     """
 
     def __init__(self, R):
@@ -455,7 +454,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
     def a_realization(self):
         r"""
-        Gives a realization of the algebra of non-commutative symmetric functions. This
+        Give a realization of the algebra of non-commutative symmetric functions. This
         particular realization is the complete basis of non-commutative symmetric functions.
 
         OUTPUT:
@@ -509,9 +508,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             Return the super categories of the category of bases of the
             non-commutative symmetric functions.
 
-            OUTPUT:
-
-            - list
+            OUTPUT: list
 
             TESTS::
 
@@ -519,7 +516,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: N.Bases().super_categories()
                 [Category of bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the Rational Field,
                  Category of realizations of graded modules with internal product over Rational Field]
-
             """
             R = self.base().base_ring()
             from .generic_basis_code import GradedModulesWithInternalProduct
@@ -778,7 +774,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -1677,9 +1673,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 r"""
                 Return the commutative image of a non-commutative symmetric function.
 
-                OUTPUT:
-
-                - The commutative image of ``self``. This will be a symmetric function.
+                OUTPUT: the commutative image of ``self``; this will be a symmetric function
 
                 EXAMPLES::
 
@@ -1919,20 +1913,18 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             def expand(self, n, alphabet='x'):
                 r"""
                 Expand the noncommutative symmetric function into an
-                element of a free algebra in ``n`` indeterminates of
+                element of a free algebra in `n` indeterminates of
                 an alphabet, which by default is ``'x'``.
 
                 INPUT:
 
-                - ``n`` -- a nonnegative integer; the number of variables
+                - ``n`` -- nonnegative integer; the number of variables
                   in the expansion
-                - ``alphabet`` -- (default: ``'x'``); the alphabet in
+                - ``alphabet`` -- (default: ``'x'``) the alphabet in
                   which ``self`` is to be expanded
 
-                OUTPUT:
-
-                - An expansion of ``self`` into the ``n`` variables
-                  specified by ``alphabet``.
+                OUTPUT: an expansion of ``self`` into the `n` variables
+                specified by ``alphabet``
 
                 EXAMPLES::
 
@@ -1959,7 +1951,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 One can use a different set of variables by adding an optional
                 argument ``alphabet=...``::
 
-                    sage: L[3].expand(4, alphabet="y")
+                    sage: L[3].expand(4, alphabet='y')
                     y2*y1*y0 + y3*y1*y0 + y3*y2*y0 + y3*y2*y1
 
                 TESTS::
@@ -2025,16 +2017,13 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             Return the super categories of the category of multiplicative
             bases of the non-commutative symmetric functions.
 
-            OUTPUT:
-
-            - list
+            OUTPUT: list
 
             TESTS::
 
                 sage: N = NonCommutativeSymmetricFunctions(QQ)
                 sage: N.MultiplicativeBases().super_categories()
                 [Category of bases of Non-Commutative Symmetric Functions over the Rational Field]
-
             """
             return [self.base().Bases()]
 
@@ -2046,9 +2035,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 Return the algebra generators of a given multiplicative basis of
                 non-commutative symmetric functions.
 
-                OUTPUT:
-
-                - The family of generators of the multiplicative basis ``self``.
+                OUTPUT: the family of generators of the multiplicative basis ``self``
 
                 EXAMPLES::
 
@@ -2101,8 +2088,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 - ``on_generators`` -- a function defined on the index set of
                   the generators (that is, on the positive integers)
-                - ``anti`` -- a boolean; defaults to ``False``
-                - ``category`` -- a category; defaults to ``None``
+                - ``anti`` -- boolean (default: ``False``)
+                - ``category`` -- a category (default: ``None``)
 
                 OUTPUT:
 
@@ -2300,9 +2287,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             bases of group-like elements of the non-commutative symmetric
             functions.
 
-            OUTPUT:
-
-            - list
+            OUTPUT: list
 
             TESTS::
 
@@ -2348,17 +2333,15 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             # @cached_method?
             def coproduct_on_generators(self, i):
                 r"""
-                Return the image of the `i^{th}` generator of the algebra under
+                Return the image of the `i`-th generator of the algebra under
                 the coproduct.
 
                 INPUT:
 
-                - ``i`` -- a positive integer
+                - ``i`` -- positive integer
 
-                OUTPUT:
-
-                - The result of applying the coproduct to the `i^{th}`
-                  generator of ``self``.
+                OUTPUT: the result of applying the coproduct to the `i`-th
+                generator of ``self``
 
                 EXAMPLES::
 
@@ -2423,9 +2406,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             bases of primitive elements of the non-commutative symmetric
             functions.
 
-            OUTPUT:
-
-            - list
+            OUTPUT: list
 
             TESTS::
 
@@ -2445,13 +2426,13 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``i`` -- a positive integer
+                - ``i`` -- positive integer
 
                 OUTPUT:
 
-                - The image of the `i`-th generator of the multiplicative
-                  basis ``self`` under the antipode of the algebra of
-                  non-commutative symmetric functions.
+                The image of the `i`-th generator of the multiplicative basis
+                ``self`` under the antipode of the algebra of non-commutative
+                symmetric functions.
 
                 EXAMPLES::
 
@@ -2472,17 +2453,15 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             def coproduct_on_generators(self, i):
                 r"""
-                Return the image of the `i^{th}` generator of the
+                Return the image of the `i`-th generator of the
                 multiplicative basis ``self`` under the coproduct.
 
                 INPUT:
 
-                - ``i`` -- a positive integer
+                - ``i`` -- positive integer
 
-                OUTPUT:
-
-                - The result of applying the coproduct to the
-                  `i^{th}` generator of ``self``.
+                OUTPUT: the result of applying the coproduct to the
+                `i`-th generator of ``self``
 
                 EXAMPLES::
 
@@ -2584,9 +2563,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             Return the dual basis to the ribbon basis of the non-commutative symmetric
             functions. This is the Fundamental basis of the quasi-symmetric functions.
 
-            OUTPUT:
-
-            - The fundamental basis of the quasi-symmetric functions.
+            OUTPUT: the fundamental basis of the quasi-symmetric functions
 
             EXAMPLES::
 
@@ -2605,9 +2582,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``I``, ``J`` -- compositions
 
-            OUTPUT:
-
-            - The product of the ribbon functions indexed by ``I`` and ``J``.
+            OUTPUT: the product of the ribbon functions indexed by ``I`` and ``J``
 
             EXAMPLES::
 
@@ -2774,7 +2749,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -2982,9 +2957,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             Return the dual basis to the complete basis of non-commutative symmetric
             functions. This is the Monomial basis of quasi-symmetric functions.
 
-            OUTPUT:
-
-            - The Monomial basis of quasi-symmetric functions.
+            OUTPUT: the Monomial basis of quasi-symmetric functions
 
             EXAMPLES::
 
@@ -3027,7 +3000,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
         def to_symmetric_function_on_basis(self, I):
             r"""
-            The commutative image of a complete element
+            The commutative image of a complete element.
 
             The commutative image of a basis element is obtained by sorting
             the indexing composition of the basis element and the output
@@ -3350,7 +3323,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -3677,12 +3650,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
-            OUTPUT:
-
-            - The expansion of the complete generator indexed by ``n`` into the
-              Psi basis.
+            OUTPUT: the expansion of the complete generator indexed by ``n``
+            into the Psi basis
 
             TESTS::
 
@@ -3717,12 +3688,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
-            OUTPUT:
-
-            - The expansion of the `\Psi` function indexed by ``n`` in the
-              complete basis.
+            OUTPUT: the expansion of the `\Psi` function indexed by ``n`` in
+            the complete basis
 
             TESTS::
 
@@ -3991,7 +3960,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -4111,7 +4080,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 True
                 sage: all(Phi(S(Phi[comp])) == Phi[comp] for comp in Compositions(5))
                 True
-
             """
             CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
                                              prefix='Phi', bracket=False,
@@ -4124,12 +4092,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
-            OUTPUT:
-
-            - The expansion of the complete function indexed by ``n`` in the
-              `\Phi` basis.
+            OUTPUT: the expansion of the complete function indexed by ``n`` in
+            the `\Phi` basis
 
             TESTS::
 
@@ -4154,12 +4120,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
-            OUTPUT:
-
-            - The expansion of the `\Phi` function indexed by ``n`` in the
-              complete basis.
+            OUTPUT: the expansion of the `\Phi` function indexed by ``n`` in
+            the complete basis
 
             TESTS::
 
@@ -4252,7 +4216,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -4510,7 +4474,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 True
                 sage: all(nM(S(nM[comp])) == nM[comp] for comp in Compositions(5))
                 True
-
             """
             CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
                                              prefix='nM', bracket=False,
@@ -4672,7 +4635,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 True
                 sage: all(I(S(I[comp])) == I[comp] for comp in Compositions(5))
                 True
-
             """
             CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
                                              prefix='I', bracket=False,
@@ -4710,7 +4672,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``alpha`` -- a list
+            - ``alpha`` -- list
 
             OUTPUT:
 
@@ -4804,9 +4766,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             The basis returned is the dualImmaculate basis of QSym.
 
-            OUTPUT:
-
-            - The dualImmaculate basis of the quasi-symmetric functions.
+            OUTPUT: the dualImmaculate basis of the quasi-symmetric functions
 
             EXAMPLES::
 
@@ -4869,7 +4829,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     sage: S(elt).bernstein_creation_operator(1) == S(elt.bernstein_creation_operator(1))
                     True
 
-                Check on non-positive values of `n`::
+                Check on nonpositive values of `n`::
 
                     sage: I[2,2,2].bernstein_creation_operator(-1)
                     I[1, 1, 1, 2] + I[1, 1, 2, 1] + I[1, 2, 1, 1] - I[1, 2, 2]
@@ -4998,11 +4958,9 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- an integer
+            - ``n`` -- integer
 
-            OUTPUT:
-
-            - a pair of a square matrix and the ordered list of compositions
+            OUTPUT: a pair of a square matrix and the ordered list of compositions
 
             EXAMPLES::
 
@@ -5037,9 +4995,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``comp`` -- a composition
 
-            OUTPUT:
-
-            - a quasi-symmetric function in the complete basis
+            OUTPUT: a quasi-symmetric function in the complete basis
 
             EXAMPLES::
 
@@ -5094,9 +5050,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Quasisymmetric_Schur`
             basis of QSym.
 
-            OUTPUT:
-
-            - the Quasisymmetric-Schur basis of the quasi-symmetric functions
+            OUTPUT: the Quasisymmetric-Schur basis of the quasi-symmetric functions
 
             EXAMPLES::
 
@@ -5114,7 +5068,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
         def to_symmetric_function_on_basis(self, I):
             r"""
-            The commutative image of a dual quasi-symmetric Schur element
+            The commutative image of a dual quasi-symmetric Schur element.
 
             The commutative image of a basis element is obtained by sorting
             the indexing composition of the basis element.
@@ -5233,9 +5187,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``comp`` -- a composition
 
-            OUTPUT:
-
-            - a quasi-symmetric function in the complete basis
+            OUTPUT: a quasi-symmetric function in the complete basis
 
             EXAMPLES::
 
@@ -5283,9 +5235,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Quasisymmetric_Schur`
             basis of QSym.
 
-            OUTPUT:
-
-            - the Young Quasisymmetric-Schur basis of quasi-symmetric functions
+            OUTPUT: the Young Quasisymmetric-Schur basis of quasi-symmetric functions
 
             EXAMPLES::
 
@@ -5425,7 +5375,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 
@@ -5601,7 +5551,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 

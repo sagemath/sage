@@ -495,7 +495,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT: ``m`` -- integer.
 
-        OUTPUT: product of projective spaces.
+        OUTPUT: product of projective spaces
 
         EXAMPLES::
 
@@ -522,7 +522,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``right`` -- a projective space, product of projective spaces, or subscheme.
 
-        OUTPUT: a product of projective spaces or subscheme.
+        OUTPUT: a product of projective spaces or subscheme
 
         EXAMPLES::
 
@@ -786,7 +786,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT: A point of this projective space.
+        OUTPUT: a point of this projective space
 
         EXAMPLES::
 
@@ -1305,7 +1305,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         This is used both for illustration and testing purposes.
 
-        OUTPUT: a point in this projective space.
+        OUTPUT: a point in this projective space
 
         EXAMPLES::
 
@@ -1333,7 +1333,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``m`` -- an integer.
 
-        OUTPUT: a dynamical system on this projective space.
+        OUTPUT: a dynamical system on this projective space
 
         EXAMPLES::
 
@@ -1578,7 +1578,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
           that the last nonzero entry in the last row is 1. If the base ring is a ring, then
           the matrix is normalized so that the entries are elements of the base ring.
 
-        OUTPUT: Transformation matrix - element of PGL.
+        OUTPUT: transformation matrix - element of PGL.
 
         ALGORITHM:
 
@@ -1794,7 +1794,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``plane_1``, ``plane_2`` -- hyperplanes of this projective space
 
-        OUTPUT: An element of PGL
+        OUTPUT: an element of PGL
 
         EXAMPLES::
 
@@ -2130,7 +2130,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         - ``dim`` -- the dimension of the associated scheme.
 
-        OUTPUT: a projective subscheme.
+        OUTPUT: a projective subscheme
 
         EXAMPLES::
 

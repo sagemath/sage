@@ -179,7 +179,7 @@ cdef class UniqueFactory(SageObject):
         ....:
 
     Now we can create a factory instance. It is supposed to be found under the
-    name ``"F"`` in the ``"__main__"`` module. Note that in an interactive
+    name ``'F'`` in the ``__main__`` module. Note that in an interactive
     session, ``F`` would automatically be in the ``__main__`` module. Hence,
     the second and third of the following four lines are only needed in
     doctests.  ::
@@ -237,7 +237,7 @@ cdef class UniqueFactory(SageObject):
     only considered an "extra argument" that does not count for the key.
     ::
 
-        sage: c is F(1, impl='C') is F(1, impl="D") is F(1)                             # needs sage.misc.cython
+        sage: c is F(1, impl='C') is F(1, impl='D') is F(1)                             # needs sage.misc.cython
         True
 
     However, pickling and unpickling does not use the cache. This is because
@@ -292,9 +292,9 @@ cdef class UniqueFactory(SageObject):
         """
         INPUT:
 
-        - ``name`` -- string. A name in the global namespace referring
-          to self or a fully qualified path name to self, which is
-          used to locate the factory on unpickling.
+        - ``name`` -- string; a name in the global namespace referring to
+          ``self`` or a fully qualified path name to ``self``, which is used to
+          locate the factory on unpickling
 
         EXAMPLES::
 
@@ -374,7 +374,7 @@ cdef class UniqueFactory(SageObject):
 
     cpdef get_object(self, version, key, extra_args):
         """
-        Returns the object corresponding to ``key``, creating it with
+        Return the object corresponding to ``key``, creating it with
         ``extra_args`` if necessary (for example, it isn't in the cache
         or it is unpickling from an older version of Sage).
 
@@ -403,7 +403,6 @@ cdef class UniqueFactory(SageObject):
             Making object (1 + O(2^20), 'c')
             sage: d is test_factory.get_object(3.0, (K(1), 'c'), {})                    # needs sage.rings.padics
             True
-
         """
         cache_key = key
         try:
@@ -715,7 +714,6 @@ def generic_factory_unpickle(factory, *args):
         False
         sage: loads(dumps(b)) is b
         True
-
     """
     cdef UniqueFactory F
     if factory is not None:

@@ -444,7 +444,7 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
 
     - ``G`` -- a graph
 
-    - ``M`` -- a dictionary of dictionaries
+    - ``M`` -- dictionary of dictionaries
 
     - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
       whether to consider the graph as having loops, multiple edges, or weights
@@ -541,7 +541,7 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
 
     - ``G`` -- a :class:`Graph` or :class:`DiGraph`
 
-    - ``D`` -- a dictionary of lists
+    - ``D`` -- dictionary of lists
 
     - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
       whether to consider the graph as having loops, multiple edges, or weights
