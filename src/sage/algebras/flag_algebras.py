@@ -705,7 +705,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         import time
         
         from csdpy import solve_sdp
-        import numpy as np
         from tqdm import tqdm
         import sys
         
@@ -738,13 +737,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                        ftype.size())//2, ftype)) for ftype in ftypes]
         constraints = len(self.generate_flags(target_size))
         
-        alg = FlagAlgebra(QQ, self)
-        
         one_vector = target_element.ftype().project()<<(target_size - target_element.ftype().size())
         constraints_flags.extend([one_vector, one_vector*(-1)])
         constraints_vals.extend([1, -1])
 
-        block_sizes.extend([-constraints, -2*len(constraints_vals)])
+        block_sizes.extend([-constraints, -len(constraints_vals)])
         block_num = len(block_sizes)
         mat_inds = []
         mat_vals = []
