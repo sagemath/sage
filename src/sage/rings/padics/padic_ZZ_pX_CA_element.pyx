@@ -185,7 +185,7 @@ from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.libs.pari.all import pari_gen
 from sage.interfaces.abc import GpElement
-from sage.rings.finite_rings.integer_mod import is_IntegerMod
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
 from sage.rings.padics.precision_error import PrecisionError
@@ -339,7 +339,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
-        elif is_IntegerMod(x):
+        elif isinstance(x, IntegerMod_abstract):
             mpz_init(tmp)
             ctx_prec = mpz_remove(tmp, (<Integer>x.modulus()).value, self.prime_pow.prime.value)
             if mpz_cmp_ui(tmp, 1) == 0:

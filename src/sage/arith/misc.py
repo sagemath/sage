@@ -3748,9 +3748,9 @@ def binomial(x, m, **kwds):
     Some floating point cases -- see :issue:`7562`, :issue:`9633`, and
     :issue:`12448`::
 
-        sage: binomial(1., 3)
+        sage: binomial(1., 3)                                                           # needs sage.rings.real_mpfr
         0.000000000000000
-        sage: binomial(-2., 3)
+        sage: binomial(-2., 3)                                                          # needs sage.rings.real_mpfr
         -4.00000000000000
         sage: binomial(0.5r, 5)
         0.02734375
