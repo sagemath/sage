@@ -8,7 +8,6 @@ AUTHOR:
 Based in code of Gonzalo Tornaria
 
 The form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot yz + s\cdot xz + t\cdot xy` is stored as a tuple ``(a, b, c, r, s, t)`` of integers.
-
 """
 
 # ****************************************************************************
@@ -43,7 +42,7 @@ from sage.quadratic_forms.ternary import (_basic_lemma,
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygens
-from sage.structure.element import is_Vector, is_Matrix
+from sage.structure.element import Vector, Matrix
 from sage.structure.sage_object import SageObject
 
 
@@ -226,7 +225,7 @@ class TernaryQF(SageObject):
             [5 0 7]
             [12 -13 -16]
         """
-        if is_Matrix(v):
+        if isinstance(v, Matrix):
             # Check that v has 3 rows
             if v.nrows() != 3:
                 raise TypeError("the matrix must have 3 rows")
@@ -237,7 +236,7 @@ class TernaryQF(SageObject):
                                   M[1, 2], M[0, 2], M[0, 1]])
             else:
                 return QuadraticForm(ZZ, v.transpose() * self.matrix() * v)
-        elif (is_Vector(v) or isinstance(v, (list, tuple))):
+        elif (isinstance(v, Vector) or isinstance(v, (list, tuple))):
             # Check that v has length 3
             if len(v) != 3:
                 raise TypeError("your vector needs to have length 3")

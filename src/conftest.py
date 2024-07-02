@@ -1,5 +1,4 @@
 # pyright: strict
-
 """Configuration and fixtures for pytest.
 
 This file configures pytest and provides some global fixtures.

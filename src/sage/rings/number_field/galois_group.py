@@ -6,7 +6,6 @@ AUTHORS:
 
 - William Stein (2004, 2005): initial version
 - David Loeffler (2009): rewrote to give explicit homomorphism groups
-
 """
 
 from sage.structure.sage_object import SageObject

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Fast binary operations for basic types
 """

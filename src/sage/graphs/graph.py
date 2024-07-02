@@ -1040,7 +1040,7 @@ class Graph(GenericGraph):
         """
         GenericGraph.__init__(self)
 
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
         if sparse is False:
             if data_structure != "sparse":
@@ -1079,7 +1079,7 @@ class Graph(GenericGraph):
                 format = 'sparse6'
             else:
                 format = 'graph6'
-        if format is None and is_Matrix(data):
+        if format is None and isinstance(data, Matrix):
             if data.is_symmetric():
                 format = 'adjacency_matrix'
             else:
@@ -3047,7 +3047,8 @@ class Graph(GenericGraph):
         .. NOTE::
 
             - This method assumes the graph is connected.
-            - This algorithm works in O(m).
+            - This time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)`
+              for ``DenseGraph`` .
 
         .. SEEALSO::
 

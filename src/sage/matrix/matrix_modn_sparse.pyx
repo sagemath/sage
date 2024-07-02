@@ -470,9 +470,8 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
                 sig_off()
                 start_row = start_row + 1
 
-
-        self.cache('pivots',tuple(pivots))
-        self.cache('in_echelon_form',True)
+        self.cache('pivots', tuple(pivots))
+        self.cache('in_echelon_form', True)
 
     def _nonzero_positions_by_row(self, copy=True):
         """
@@ -618,7 +617,6 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
                 set_entry(&A.rows[k], row.positions[j], row.entries[j])
             k += 1
         return A
-
 
     def matrix_from_columns(self, cols):
         """

@@ -127,5 +127,4 @@ to the command ``show()`` on any three-dimensional graphic.
 -  :class:`~sage.plot.plot3d.tachyon.Texture` -- stores texture information
 
 -  :func:`~sage.plot.plot3d.tachyon.tostr` -- converts vector information to a space-separated string
-
 """

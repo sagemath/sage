@@ -710,7 +710,7 @@ class QuiverRepFactory(UniqueFactory):
             # Note that the first space is assigned to key[3] and the first
             # vertex is 1 so the space assigned to vertex v is key[2 + v]
             from sage.matrix.constructor import Matrix
-            from sage.categories.morphism import is_Morphism
+            from sage.categories.morphism import Morphism
             for x in P._sorted_edges:
                 if x in maps:
                     e = maps[x]
@@ -724,7 +724,7 @@ class QuiverRepFactory(UniqueFactory):
                 # If a morphism is specified take it's matrix.  Create one if
                 # needed.  Otherwise assume the Matrix function can convert the
                 # object to a Matrix.
-                if is_Morphism(e):
+                if isinstance(e, Morphism):
                     if hasattr(e, 'matrix'):
                         key.append(e.matrix())
                     else:

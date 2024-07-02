@@ -26,7 +26,6 @@ AUTHORS:
 - Kiran Kedlaya (2016)
 
 - Dean Bisogno (2017): Fixed Hasse-Witt computation
-
 """
 # ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -1780,8 +1779,6 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         OUTPUT:
 
         - ``N`` : The matrix `N = M M^p \dots M^{p^{g-1}}` where `M = c_{pi-j}`, and `f(x)^{(p-1)/2} = \sum c_i x^i`
-
-
 
         Reference-N. Yui. On the Jacobian varieties of hyperelliptic curves over fields of characteristic `p > 2`.
 

@@ -125,7 +125,6 @@ REFERENCES:
     as permutation groups - the construction is too slow - unless (for
     small values or the parameter) they are made using explicit
     generators.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -4944,14 +4943,13 @@ class PermutationGroup_generic(FiniteGroup):
 
     from sage.groups.generic import structure_description
 
-    def sign_representation(self, base_ring=None, side="twosided"):
+    def sign_representation(self, base_ring=None):
         r"""
         Return the sign representation of ``self`` over ``base_ring``.
 
         INPUT:
 
         - ``base_ring`` -- (optional) the base ring; the default is `\ZZ`
-        - ``side`` -- ignored
 
         EXAMPLES::
 

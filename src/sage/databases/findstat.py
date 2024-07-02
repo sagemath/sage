@@ -188,7 +188,6 @@ AUTHORS:
 
 - Martin Rubey (2015): initial version
 - Martin Rubey (2020): rewrite, adapt to new FindStat API
-
 """
 # ****************************************************************************
 #       Copyright (C) 2015 Martin Rubey <martin.rubey@tuwien.ac.at>,

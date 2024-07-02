@@ -50,7 +50,6 @@ test.spyx
 AUTHORS:
 
 - Jeroen Demeyer (2010-11-20): initial version (:issue:`10300`)
-
 """
 from subprocess import Popen, PIPE
 import os
