@@ -115,7 +115,7 @@ envsubst <"$SAGE_ROOT/CITATION.cff.in" >"$SAGE_ROOT/CITATION.cff"
 # Update src/doc/versions.txt file storing the URLs of the docs for the recent stable releases
 if [[ $SAGE_VERSION =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
     file_path="$SAGE_ROOT/src/doc/en/website/versions.txt"
-    # Extract the most recent version line from versions.txt; the first line is a comment
+    # Extract the most recent version line from versions.txt
     line_number=$(grep -n '^[0-9]' "$file_path" | head -n 1 | cut -d: -f1)
     version_line=$(sed -n "${line_number}p" "$file_path")
     domain=${version_line#*--}

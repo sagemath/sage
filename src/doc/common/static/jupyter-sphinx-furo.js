@@ -99,6 +99,10 @@ async function fetchVersions() {
         }
         versionMap[current_version] = url
 
+        if (current_version != 'develop') {
+            versionMap['develop'] = "https://doc-develop--sagemath.netlify.app";
+        }
+
         // Parse the versions.txt file
         lines.forEach(line => {
             if (!line.startsWith('#')) { // Ignore the comment line
