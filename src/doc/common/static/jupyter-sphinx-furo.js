@@ -90,9 +90,12 @@ function fetchVersions() {
                         }
                     }
                 });
+            })
+            .catch(error => {
+                console.log('Failed to fetch versions.txt file.');
             });
     } catch (error) {
-        console.error("Failed to fetch versions.txt file:", error);
+        console.log('Failed to fetch versions.txt file.');
     }
 }
 
