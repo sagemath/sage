@@ -513,7 +513,7 @@ cdef class SliceDecomposition(SageObject):
         if v not in self.sigma_inv:
             raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
-        i = self.sigma_inv[v]
+        cdef size_t i = self.sigma_inv[v]
         return {'pivot': v,
                 'slice': self._slice(i),
                 'sequence': self._xslice_sequence(i),
@@ -621,7 +621,7 @@ cdef class SliceDecomposition(SageObject):
         if v not in self.sigma_inv:
             raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
-        i = self.sigma_inv[v]
+        cdef size_t i = self.sigma_inv[v]
         return self._slice(i)
 
     def xslice_sequence(self, v):
@@ -693,7 +693,7 @@ cdef class SliceDecomposition(SageObject):
         if v not in self.sigma_inv:
             raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
-        i = self.sigma_inv[v]
+        cdef size_t i = self.sigma_inv[v]
         return self._xslice_sequence(i)
 
     def lexicographic_label(self, v):
@@ -735,7 +735,7 @@ cdef class SliceDecomposition(SageObject):
         if v not in self.sigma_inv:
             raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
-        i = self.sigma_inv[v]
+        cdef size_t i = self.sigma_inv[v]
         return self._xslice_lex_label(i)
 
     def active_edges(self, v):
@@ -791,22 +791,24 @@ cdef class SliceDecomposition(SageObject):
         if v not in self.sigma_inv:
             raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
-        i = self.sigma_inv[v]
+        cdef size_t i = self.sigma_inv[v]
         return self._xslice_active_edges(i)
 
-    def _slice(self, idx):
+    def _slice(self, size_t idx):
         r"""
         This method is for internal use only
         """
         return list(self.sigma[idx:idx+self.xslice_len[idx]])
 
-    def _xslice_sequence(self, idx):
+    def _xslice_sequence(self, size_t idx):
         r"""
         This method is for internal use only
         """
-        l = self.xslice_len[idx]
+        cdef size_t l = self.xslice_len[idx]
+        cdef size_t j = idx + 1
+        cdef size_t lj
+
         S = [ [self.sigma[idx]] ]
-        j = idx + 1
         while j < idx + l:
             lj = self.xslice_len[j]
             S.append(list(self.sigma[j:j+lj]))
@@ -814,20 +816,22 @@ cdef class SliceDecomposition(SageObject):
         assert j == idx + l, "slice decomposition is ill-formed"
         return S
 
-    def _xslice_lex_label(self, idx):
+    def _xslice_lex_label(self, size_t idx):
         r"""
         This method is for internal use only
         """
         return list(self.lex_label[idx])
 
-    def _xslice_active_edges(self, idx):
+    def _xslice_active_edges(self, size_t idx):
         r"""
         This method is for internal use only
         """
-        l = self.xslice_len[idx]
-        llv_prefix = len(self.lex_label[idx])
+        cdef size_t l = self.xslice_len[idx]
+        cdef size_t llv_prefix = len(self.lex_label[idx])
+        cdef size_t j = idx + 1
+        cdef size_t lj
+
         A = []
-        j = idx + 1
         while j < idx + l:
             lj = self.xslice_len[j]
             llj = self.lex_label[j]
