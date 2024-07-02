@@ -1,5 +1,4 @@
 # pyright: strict
-
 """Configuration and fixtures for pytest.
 
 This file configures pytest and provides some global fixtures.
@@ -89,6 +88,7 @@ class SageDoctestModule(DoctestModule):
                     self.path,
                     mode=ImportMode.importlib,
                     root=self.config.rootpath,
+                    consider_namespace_packages=True,
                 )
             except ImportError:
                 if self.config.getvalue("doctest_ignore_import_errors"):
@@ -97,7 +97,7 @@ class SageDoctestModule(DoctestModule):
                     raise
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
-        optionflags = get_optionflags(self)
+        optionflags = get_optionflags(self.config)
         runner = _get_runner(
             verbose=False,
             optionflags=optionflags,

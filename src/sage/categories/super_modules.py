@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Super modules
 """
@@ -22,6 +23,7 @@ axiom_whitelist = frozenset(["Facade", "Finite", "Infinite",
                              "AdditiveCommutative", "AdditiveAssociative",
                              "AdditiveInverse", "AdditiveUnital",
                              "NoZeroDivisors", "Distributive"])
+
 
 class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_ring):
     @classmethod
@@ -82,6 +84,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
             Category of super algebras with basis over Rational Field
         """
         return "super {}".format(self.base_category()._repr_object_names())
+
 
 class SuperModules(SuperModulesCategory):
     r"""

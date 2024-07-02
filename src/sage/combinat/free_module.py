@@ -39,17 +39,17 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     INPUT:
 
-    - ``R`` - base ring
+    - ``R`` -- base ring
 
-    - ``basis_keys`` - list, tuple, family, set, etc. defining the
+    - ``basis_keys`` -- list, tuple, family, set, etc. defining the
       indexing set for the basis of this module
 
-    - ``element_class`` - the class of which elements of this module
-      should be instances (optional, default None, in which case the
+    - ``element_class`` -- the class of which elements of this module
+      should be instances (default: None, in which case the
       elements are instances of
       :class:`~sage.modules.with_basis.indexed_element.IndexedFreeModuleElement`)
 
-    - ``category`` - the category in which this module lies (optional,
+    - ``category`` -- the category in which this module lies (optional,
       default None, in which case use the "category of modules with
       basis" over the base ring ``R``); this should be a subcategory
       of :class:`ModulesWithBasis`

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Magmas and Additive Magmas
 """
@@ -14,6 +15,7 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.magmas import Magmas
+
 
 class MagmasAndAdditiveMagmas(Category_singleton):
     """

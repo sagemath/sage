@@ -2,6 +2,7 @@ cd src
 
 export CFLAGS="-g $CFLAGS"
 
+cp "$SAGE_ROOT"/config/config.* config/
 # We explicitly disable X, fontconfig, and support of various formats/libraries.
 # We only need png.
 # see https://github.com/libgd/libgd/blob/master/configure.ac

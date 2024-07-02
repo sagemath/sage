@@ -1488,6 +1488,7 @@ def cos_sin_fixed(Integer x, int prec, pi2=None):
     mpfr_clear(sf)
     return cv, sv
 
+
 DEF MAX_LOG_INT_CACHE = 2000
 
 cdef mpz_t log_int_cache[MAX_LOG_INT_CACHE+1]
@@ -1976,7 +1977,6 @@ cdef mpz_t ACRE[MAX_PARAMS]
 cdef mpz_t ACIM[MAX_PARAMS]
 cdef mpz_t BCRE[MAX_PARAMS]
 cdef mpz_t BCIM[MAX_PARAMS]
-
 
 
 cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,

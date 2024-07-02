@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Complete Discrete Valuation Rings (CDVR) and Fields (CDVF)
 """
@@ -169,6 +170,7 @@ class CompleteDiscreteValuationRings(Category_singleton):
                 True
 
             """
+
 
 class CompleteDiscreteValuationFields(Category_singleton):
     """

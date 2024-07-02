@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # distutils: libraries = M4RI_LIBRARIES GDLIB_LIBRARIES LIBPNG_LIBRARIES ZLIB_LIBRARIES
 # distutils: library_dirs = M4RI_LIBDIR GDLIB_LIBDIR LIBPNG_LIBDIR ZLIB_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR GDLIB_INCDIR LIBPNG_INCDIR ZLIB_INCDIR
@@ -344,7 +343,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         else:
             return self._zero
 
-
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
             *, unicode=False, shape=None, character_art=False,
             left_border=None, right_border=None,
@@ -486,9 +484,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``i`` - integer
+        - ``i`` -- integer
 
-        - ``from_list`` - bool (default: ``False``); if ``True``,
+        - ``from_list`` -- bool (default: ``False``); if ``True``,
           returns the ``i``'th element of ``self.rows()`` (see
           :func:`rows`), which may be faster, but requires building a
           list of all rows the first time it is called after an entry
@@ -526,6 +524,45 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if self._ncols:
             mzd_submatrix(z._entries, self._entries, i, 0, i+1, self._ncols)
         return z
+
+    def columns(self, copy=True):
+        """
+        Return list of the columns of self.
+
+        INPUT:
+
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
+          modify it safely
+
+        EXAMPLES:
+
+        An example with a small 3x3 matrix::
+
+            sage: M2 = Matrix(GF(2), [[1, 0, 0], [0, 1, 0], [0, 1, 1]])
+            sage: M2.columns()
+            [(1, 0, 0), (0, 1, 1), (0, 0, 1)]
+        """
+        x = self.fetch('columns')
+        if x is not None:
+            if copy: return list(x)
+            return x
+        cdef Py_ssize_t i
+
+        # Note: due to the way M4ri represents values, extracting rows
+        #       is fast, but columns are slow. Therefore we transpose
+        #       then take rows. For more information, see the issue
+        #       https://github.com/sagemath/sage/issues/38150
+        C = self.transpose().rows()
+
+        # Make the vectors immutable since we are caching them
+        for x in C:
+            x.set_immutable()
+
+        # cache result
+        self.cache('columns', C)
+        if copy:
+            return list(C)
+        return C
 
     ########################################################################
     # LEVEL 2 functionality
@@ -810,8 +847,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``right`` - a matrix of matching dimensions.
-        - ``cutoff`` - matrix dimension where M4RM should be used
+        - ``right`` -- a matrix of matching dimensions.
+        - ``cutoff`` -- matrix dimension where M4RM should be used
           instead of Strassen (default: let M4RI decide)
 
         EXAMPLES::
@@ -1022,7 +1059,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         - k --  the parameter 'k' of the M4RI algorithm. It MUST be between 1
           and 16 (inclusive). If it is not specified it will be calculated as
           3/4 * log_2( min(nrows, ncols) ) as suggested in the M4RI paper.
-        - reduced -- return reduced row echelon form (default:True)
+        - reduced -- return reduced row echelon form (default: ``True``)
 
         EXAMPLES::
 
@@ -1104,7 +1141,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             self.cache('rank', r)
             self.cache('pivots', tuple(self._pivots()))
 
-
         elif algorithm == 'pluq':
 
             self.check_mutability()
@@ -1171,9 +1207,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        -  ``density`` - float; proportion (roughly) to be considered for
+        -  ``density`` -- float; proportion (roughly) to be considered for
            changes
-        -  ``nonzero`` - Bool (default: ``False``); whether the new entries
+        -  ``nonzero`` -- Bool (default: ``False``); whether the new entries
            are forced to be non-zero
 
         OUTPUT:
@@ -1340,8 +1376,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             True
         """
         mzd_col_swap(self._entries, col1, col2)
-
-
 
     def _magma_init_(self, magma):
         """
@@ -1819,7 +1853,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - approx -- return floating point approximation (default: False)
+        - approx -- return floating point approximation (default: ``False``)
 
         EXAMPLES::
 
@@ -1854,7 +1888,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``algorithm`` - either "ple" or "m4ri"
+        - ``algorithm`` -- either "ple" or "m4ri"
 
         EXAMPLES::
 
@@ -1895,7 +1929,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
+        - ``kwds`` -- these are provided for consistency with other versions
           of this method.  Here they are ignored as there is no optional
           behavior available.
 
@@ -2074,7 +2108,6 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
     if gdImageSX(im) != c or gdImageSY(im) != r:
         raise TypeError("Pickled data dimension doesn't match.")
 
-
     for i from 0 <= i < r:
         for j from 0 <= j < c:
             mzd_write_bit(A._entries, i, j, 1-gdImageGetPixel(im, j, i))
@@ -2140,14 +2173,15 @@ def from_png(filename):
     gdImageDestroy(im)
     return A
 
+
 def to_png(Matrix_mod2_dense A, filename):
     """
     Saves the matrix ``A`` to filename as a 1-bit PNG image.
 
     INPUT:
 
-    - ``A`` - a matrix over GF(2)
-    - ``filename`` - a string for a file in a writable position
+    - ``A`` -- a matrix over GF(2)
+    - ``filename`` -- a string for a file in a writable position
 
     EXAMPLES::
 
@@ -2183,6 +2217,7 @@ def to_png(Matrix_mod2_dense A, filename):
     gdImagePng(im, out)
     gdImageDestroy(im)
     fclose(out)
+
 
 def pluq(Matrix_mod2_dense A, algorithm="standard", int param=0):
     """
@@ -2239,13 +2274,14 @@ def pluq(Matrix_mod2_dense A, algorithm="standard", int param=0):
         _mzd_pluq_naive(B._entries, p, q)
         sig_off()
     else:
-        raise ValueError("Algorithm '%s' unknown."%algorithm)
+        raise ValueError("Algorithm '%s' unknown." % algorithm)
 
     P = [p.values[i] for i in range(A.nrows())]
     Q = [q.values[i] for i in range(A.ncols())]
     mzp_free(p)
     mzp_free(q)
-    return B,P,Q
+    return B, P, Q
+
 
 def ple(Matrix_mod2_dense A, algorithm="standard", int param=0):
     """

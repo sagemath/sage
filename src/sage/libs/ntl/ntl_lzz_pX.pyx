@@ -4,7 +4,6 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 ntl_lzz_pX.pyx
 
@@ -749,7 +748,6 @@ cdef class ntl_zz_pX():
             zz_pX_InvTrunc(y.x, self.x, m)
             sig_off()
         return y
-
 
     def is_zero(self):
         """

@@ -253,9 +253,9 @@ def strassen_echelon(MatrixWindow A, cutoff):
 
     INPUT:
 
-    -  ``A`` - matrix window
+    -  ``A`` -- matrix window
 
-    -  ``cutoff`` - size at which algorithm reverts to
+    -  ``cutoff`` -- size at which algorithm reverts to
        naive Gaussian elimination and multiplication must be at least 1.
 
     OUTPUT: The list of pivot columns
@@ -472,10 +472,10 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
     return pivots
 
 
-
 ################################
 # lots of room for optimization....
-# eventually, should I just pass these around rather than lists of ints for pivots?
+# eventually, should I just pass these around
+# rather than lists of ints for pivots?
 # would need new from_cols
 class int_range:
     r"""
@@ -492,16 +492,16 @@ class int_range:
 
     It can be one of the following:
 
-    - ``indices`` - integer, start of the unique interval
-    - ``range`` - integer, length of the unique interval
+    - ``indices`` -- integer, start of the unique interval
+    - ``range`` -- integer, length of the unique interval
 
     OR
 
-    - ``indices`` - list of integers, the integers to wrap into intervals
+    - ``indices`` -- list of integers, the integers to wrap into intervals
 
     OR
 
-    - ``indices`` - None (default), shortcut for an empty list
+    - ``indices`` -- None (default), shortcut for an empty list
 
     OUTPUT:
 
@@ -695,7 +695,7 @@ class int_range:
 
         INPUT:
 
-        - ``right`` - an instance of ``int_range``
+        - ``right`` -- an instance of ``int_range``
 
         OUTPUT:
 
@@ -725,7 +725,7 @@ class int_range:
 
         INPUT:
 
-        - ``right`` - an instance of ``int_range``.
+        - ``right`` -- an instance of ``int_range``.
 
         OUTPUT:
 
@@ -757,7 +757,7 @@ class int_range:
 
         INPUT:
 
-        - ``right`` - an instance of ``int_range``.
+        - ``right`` -- an instance of ``int_range``.
 
         OUTPUT:
 
@@ -784,10 +784,10 @@ def test(n, m, R, c=2):
     r"""
     INPUT:
 
-    - ``n`` - integer
-    - ``m`` - integer
-    - ``R`` - ring
-    - ``c`` - integer (optional, default:2)
+    - ``n`` -- integer
+    - ``m`` -- integer
+    - ``R`` -- ring
+    - ``c`` -- integer (default:2)
 
     EXAMPLES::
 

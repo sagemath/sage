@@ -50,15 +50,15 @@ def get_basis_name(basis, p, generic=None):
 
     INPUT:
 
-    - ``basis`` - string
+    - ``basis`` -- string
 
-    - ``p`` - positive prime number
+    - ``p`` -- positive prime number
 
-    - ``generic`` - boolean, optional, default to 'None'
+    - ``generic`` -- boolean, optional, default to 'None'
 
     OUTPUT:
 
-    - ``basis_name`` - string
+    - ``basis_name`` -- string
 
     Specify the names of the implemented bases.  The input is
     converted to lower-case, then processed to return the canonical
@@ -192,14 +192,14 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
 
     INPUT:
 
-    - ``profile`` - when `p=2`, a tuple or list of numbers; when `p`
+    - ``profile`` -- when `p=2`, a tuple or list of numbers; when `p`
       is odd, a pair of such lists
 
-    - ``truncation_type`` - either 0 or `\infty`
+    - ``truncation_type`` -- either 0 or `\infty`
 
-    - `p` - prime number, optional, default 2
+    - `p` -- prime number, optional, default 2
 
-    - `generic` - boolean, optional, default None
+    - `generic` -- boolean, optional, default None
 
     OUTPUT: True if the profile function is valid, False otherwise.
 
@@ -305,11 +305,11 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
 
     INPUT:
 
-    - ``profile`` - a profile function in form specified below
-    - ``precision`` - integer or ``None``, optional, default ``None``
-    - ``truncation_type`` - 0 or `\infty` or 'auto', optional, default 'auto'
-    - `p` - prime, optional, default 2
-    - `generic` - boolean, optional, default ``None``
+    - ``profile`` -- a profile function in form specified below
+    - ``precision`` -- integer or ``None``, optional, default ``None``
+    - ``truncation_type`` -- 0 or `\infty` or 'auto', optional, default 'auto'
+    - `p` -- prime, optional, default 2
+    - `generic` -- boolean, optional, default ``None``
 
     OUTPUT:
 
@@ -332,7 +332,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     - a function from positive integers to non-negative integers (and
       `\infty`), e.g., ``lambda n: n+2``.  This corresponds to the
       list ``[3, 4, 5, ...]``.
-    - ``None`` or ``Infinity`` - use this for the profile function for
+    - ``None`` or ``Infinity`` -- use this for the profile function for
       the whole Steenrod algebra.  This corresponds to the list
       ``[Infinity, Infinity, Infinity, ...]``
 
@@ -364,7 +364,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
       ``(lambda n: n+2, lambda n: 1)``.  This corresponds to the
       pair ``([3, 4, 5, ...], [1, 1, 1, ...])``.
 
-    - ``None`` or ``Infinity`` - use this for the profile function for
+    - ``None`` or ``Infinity`` -- use this for the profile function for
       the whole Steenrod algebra.  This corresponds to the pair
       ``([Infinity, Infinity, Infinity, ...], [2, 2, 2, ...])``.
 
@@ -567,6 +567,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
 ######################################################
 # string representations for elements
 
+
 def milnor_mono_to_string(mono, latex=False, generic=False):
     """
     String representation of element of the Milnor basis.
@@ -575,16 +576,16 @@ def milnor_mono_to_string(mono, latex=False, generic=False):
 
     INPUT:
 
-    - ``mono`` - if `generic=False`, tuple of non-negative integers (a,b,c,...);
+    - ``mono`` -- if `generic=False`, tuple of non-negative integers (a,b,c,...);
       if `generic=True`, pair of tuples of non-negative integers ((e0, e1, e2,
       ...), (r1, r2, ...))
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
-    - ``generic`` - whether to format generically, or for the prime 2 (default)
+    - ``generic`` -- whether to format generically, or for the prime 2 (default)
 
-    OUTPUT: ``rep`` - string
+    OUTPUT: ``rep`` -- string
 
     This returns a string like ``Sq(a,b,c,...)`` when `generic=False`, or a string
     like ``Q_e0 Q_e1 Q_e2 ... P(r1, r2, ...)`` when `generic=True`.
@@ -649,16 +650,16 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
 
     INPUT:
 
-    - ``mono`` - tuple of positive integers (a,b,c,...)  when `generic=False`,
+    - ``mono`` -- tuple of positive integers (a,b,c,...)  when `generic=False`,
       or tuple (e0, n1, e1, n2, ...) when `generic=True`, where each ei is 0 or
       1, and each ni is positive
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
-    - ``generic`` - whether to format generically, or for the prime 2 (default)
+    - ``generic`` -- whether to format generically, or for the prime 2 (default)
 
-    OUTPUT: ``rep`` - string
+    OUTPUT: ``rep`` -- string
 
     This returns a string like ``Sq^{a} Sq^{b} Sq^{c} ...`` when
     `generic=False`, or a string like
@@ -720,6 +721,7 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
                 index += 1
         return string.strip(" ")
 
+
 def wood_mono_to_string(mono, latex=False):
     """
     String representation of element of Wood's Y and Z bases.
@@ -728,14 +730,14 @@ def wood_mono_to_string(mono, latex=False):
 
     INPUT:
 
-    - ``mono`` - tuple of pairs of non-negative integers (s,t)
+    - ``mono`` -- tuple of pairs of non-negative integers (s,t)
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form
+    ``string`` -- concatenation of strings of the form
     ``Sq^{2^s (2^{t+1}-1)}`` for each pair (s,t)
 
     EXAMPLES::
@@ -764,6 +766,7 @@ def wood_mono_to_string(mono, latex=False):
                 str(2**s * (2**(t+1)-1)) + "} "
         return string.strip(" ")
 
+
 def wall_mono_to_string(mono, latex=False):
     """
     String representation of element of Wall's basis.
@@ -772,15 +775,15 @@ def wall_mono_to_string(mono, latex=False):
 
     INPUT:
 
-    - ``mono`` - tuple of pairs of non-negative integers (m,k) with `m
+    - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
       >= k`
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
     OUTPUT:
 
-    ``string`` - concatenation of strings ``Q^{m}_{k}`` for each pair (m,k)
+    ``string`` -- concatenation of strings ``Q^{m}_{k}`` for each pair (m,k)
 
     EXAMPLES::
 
@@ -804,6 +807,7 @@ def wall_mono_to_string(mono, latex=False):
                 + str(k) + "} "
         return string.strip(" ")
 
+
 def wall_long_mono_to_string(mono, latex=False):
     """
     Alternate string representation of element of Wall's basis.
@@ -812,15 +816,15 @@ def wall_long_mono_to_string(mono, latex=False):
 
     INPUT:
 
-    - ``mono`` - tuple of pairs of non-negative integers (m,k) with `m
+    - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
       >= k`
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``Sq^(2^m)``
+    ``string`` -- concatenation of strings of the form ``Sq^(2^m)``
 
     EXAMPLES::
 
@@ -848,6 +852,7 @@ def wall_long_mono_to_string(mono, latex=False):
                 string = string + sq + "^{" + str(2**i) + "} "
         return string.strip(" ")
 
+
 def arnonA_mono_to_string(mono, latex=False, p=2):
     """
     String representation of element of Arnon's A basis.
@@ -856,15 +861,15 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
 
     INPUT:
 
-    -  ``mono`` - tuple of pairs of non-negative integers
+    -  ``mono`` -- tuple of pairs of non-negative integers
        (m,k) with `m >= k`
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``X^{m}_{k}``
+    ``string`` -- concatenation of strings of the form ``X^{m}_{k}``
     for each pair (m,k)
 
     EXAMPLES::
@@ -889,6 +894,7 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
                 + str(k) + "} "
         return string.strip(" ")
 
+
 def arnonA_long_mono_to_string(mono, latex=False, p=2):
     """
     Alternate string representation of element of Arnon's A basis.
@@ -897,15 +903,15 @@ def arnonA_long_mono_to_string(mono, latex=False, p=2):
 
     INPUT:
 
-    - ``mono`` - tuple of pairs of non-negative integers (m,k) with `m
+    - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
       >= k`
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``Sq(2^m)``
+    ``string`` -- concatenation of strings of the form ``Sq(2^m)``
 
     EXAMPLES::
 
@@ -933,6 +939,7 @@ def arnonA_long_mono_to_string(mono, latex=False, p=2):
                 string = string + sq + "^{" + str(2**i) + "} "
         return string.strip(" ")
 
+
 def pst_mono_to_string(mono, latex=False, generic=False):
     r"""
     String representation of element of a `P^s_t`-basis.
@@ -941,17 +948,17 @@ def pst_mono_to_string(mono, latex=False, generic=False):
 
     INPUT:
 
-    - ``mono`` - tuple of pairs of integers (s,t) with `s >= 0`, `t >
+    - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
-    - ``generic`` - whether to format generically, or for the prime 2 (default)
+    - ``generic`` -- whether to format generically, or for the prime 2 (default)
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``P^{s}_{t}``
+    ``string`` -- concatenation of strings of the form ``P^{s}_{t}``
     for each pair (s,t)
 
     EXAMPLES::
@@ -995,6 +1002,7 @@ def pst_mono_to_string(mono, latex=False, generic=False):
                         + str(t) + "})^" + pow + " "
         return string.strip(" ")
 
+
 def comm_mono_to_string(mono, latex=False, generic=False):
     r"""
     String representation of element of a commutator basis.
@@ -1003,17 +1011,17 @@ def comm_mono_to_string(mono, latex=False, generic=False):
 
     INPUT:
 
-    - ``mono`` - tuple of pairs of integers (s,t) with `s >= 0`, `t >
+    - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
-    - ``generic`` - whether to format generically, or for the prime 2 (default)
+    - ``generic`` -- whether to format generically, or for the prime 2 (default)
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``c_{s,t}``
+    ``string`` -- concatenation of strings of the form ``c_{s,t}``
     for each pair (s,t)
 
     EXAMPLES::
@@ -1056,6 +1064,7 @@ def comm_mono_to_string(mono, latex=False, generic=False):
                 string = string + " "
         return string.strip(" ")
 
+
 def comm_long_mono_to_string(mono, p, latex=False, generic=False):
     r"""
     Alternate string representation of element of a commutator basis.
@@ -1065,17 +1074,17 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
 
     INPUT:
 
-    - ``mono`` - tuple of pairs of integers (s,t) with `s >= 0`, `t >
+    - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` - boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: ``False``), if true, output
       LaTeX string
 
-    - ``generic`` - whether to format generically, or for the prime 2 (default)
+    - ``generic`` -- whether to format generically, or for the prime 2 (default)
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``s_{2^s... 2^(s+t-1)}``
+    ``string`` -- concatenation of strings of the form ``s_{2^s... 2^(s+t-1)}``
     for each pair (s,t)
 
     EXAMPLES::
@@ -1128,6 +1137,7 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
 
 # miscellany:
 
+
 def convert_perm(m):
     """
     Convert tuple m of non-negative integers to a permutation in
@@ -1135,11 +1145,11 @@ def convert_perm(m):
 
     INPUT:
 
-    - ``m`` - tuple of non-negative integers with no repetitions
+    - ``m`` -- tuple of non-negative integers with no repetitions
 
     OUTPUT:
 
-    ``list`` - conversion of ``m`` to a permutation of the set
+    ``list`` -- conversion of ``m`` to a permutation of the set
     1,2,...,len(m)
 
     If ``m=(3,7,4)``, then one can view ``m`` as representing the

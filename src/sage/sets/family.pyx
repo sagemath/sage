@@ -49,7 +49,6 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.call import AttrCallObject
-from sage.misc.lazy_import import LazyImport
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
@@ -535,7 +534,6 @@ cdef class AbstractFamily(Parent):
             Finite family {3: 0, 4: 1, 7: 2}
         """
         return Family({self[k]: k for k in self.keys()})
-
 
 
 cdef class FiniteFamily(AbstractFamily):

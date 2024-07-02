@@ -34,8 +34,8 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.rational_field import QQ
-from sage.structure.element import Element, is_InfinityElement
-from sage.structure.element import is_Matrix
+from sage.structure.element import Element, InfinityElement
+from sage.structure.element import Matrix
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 
@@ -173,7 +173,7 @@ class Cusp(Element):
             elif isinstance(a, Rational):
                 self.__a = a.numer()
                 self.__b = a.denom()
-            elif (is_InfinityElement(a) or
+            elif (isinstance(a, InfinityElement) or
                   (isinstance(a, pari_gen) and a.type() == 't_INFINITY')):
                 self.__a = ZZ.one()
                 self.__b = ZZ.zero()
@@ -205,8 +205,8 @@ class Cusp(Element):
                     raise TypeError("unable to convert %r to a cusp" % a)
             return
 
-        if is_InfinityElement(b):
-            if is_InfinityElement(a) or (isinstance(a, Cusp) and a.is_infinity()):
+        if isinstance(b, InfinityElement):
+            if isinstance(a, InfinityElement) or (isinstance(a, Cusp) and a.is_infinity()):
                 raise TypeError("unable to convert (%r, %r) to a cusp" % (a, b))
             self.__a = ZZ.zero()
             self.__b = ZZ.one()
@@ -220,7 +220,7 @@ class Cusp(Element):
 
         if isinstance(a, (Integer, Rational)):
             r = a / ZZ(b)
-        elif is_InfinityElement(a):
+        elif isinstance(a, InfinityElement):
             self.__a = ZZ.one()
             self.__b = ZZ.zero()
             return
@@ -476,19 +476,19 @@ class Cusp(Element):
         INPUT:
 
 
-        -  ``other`` - Cusp
+        -  ``other`` -- Cusp
 
-        -  ``N`` - an integer (specifies the group
+        -  ``N`` -- an integer (specifies the group
            Gamma_0(N))
 
-        -  ``transformation`` - None (default) or either the string 'matrix' or 'corner'. If 'matrix',
+        -  ``transformation`` -- None (default) or either the string 'matrix' or 'corner'. If 'matrix',
            it also returns a matrix in Gamma_0(N) that sends self to other. The matrix is chosen such that the lower left entry is as small as possible in absolute value. If 'corner' (or True for backwards compatibility), it returns only the upper left entry of such a matrix.
 
 
         OUTPUT:
 
 
-        -  a boolean - True if self and other are equivalent
+        -  a boolean -- True if self and other are equivalent
 
         -  a matrix or an integer- returned only if transformation is 'matrix' or 'corner', respectively.
 
@@ -657,18 +657,18 @@ class Cusp(Element):
         INPUT:
 
 
-        -  ``other`` - Cusp
+        -  ``other`` -- Cusp
 
-        -  ``N`` - an integer (specifies the group
+        -  ``N`` -- an integer (specifies the group
            Gamma_1(N))
 
 
         OUTPUT:
 
 
-        -  ``bool`` - True if self and other are equivalent
+        -  ``bool`` -- True if self and other are equivalent
 
-        -  ``int`` - 0, 1 or -1, gives further information
+        -  ``int`` -- 0, 1 or -1, gives further information
            about the equivalence: If the two cusps are u1/v1 and u2/v2, then
            they are equivalent if and only if v1 = v2 (mod N) and u1 = u2 (mod
            gcd(v1,N)) or v1 = -v2 (mod N) and u1 = -u2 (mod gcd(v1,N)) The
@@ -726,17 +726,17 @@ class Cusp(Element):
         INPUT:
 
 
-        -  ``other`` - Cusp
+        -  ``other`` -- Cusp
 
-        -  ``G`` - a congruence subgroup Gamma_H(N)
+        -  ``G`` -- a congruence subgroup Gamma_H(N)
 
 
         OUTPUT:
 
 
-        -  ``bool`` - True if self and other are equivalent
+        -  ``bool`` -- True if self and other are equivalent
 
-        -  ``int`` - -1, 0, 1; extra info
+        -  ``int`` -- -1, 0, 1; extra info
 
 
         EXAMPLES::
@@ -782,10 +782,10 @@ class Cusp(Element):
             sage: G.dimension_cusp_forms(2)
             0
         """
-        from sage.modular.arithgroup.all import is_GammaH
+        from sage.modular.arithgroup.all import GammaH_class
         if not isinstance(other, Cusp):
             other = Cusp(other)
-        if not is_GammaH(G):
+        if not isinstance(G, GammaH_class):
             raise TypeError("G must be a group GammaH(N).")
 
         H = G._list_of_elements_in_H()
@@ -836,7 +836,7 @@ class Cusp(Element):
             Set P^1(QQ) of all cusps
         """
         if not self_on_left:
-            if (is_Matrix(g) and g.base_ring() is ZZ
+            if (isinstance(g, Matrix) and g.base_ring() is ZZ
                     and g.ncols() == 2 == g.nrows()):
                 a, b, c, d = g.list()
                 return Cusp(a * self.__a + b * self.__b,
