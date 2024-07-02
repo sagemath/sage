@@ -298,17 +298,6 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         els.append(1)
         return LatticePoset((els, rels), cover_relations=False, facade=facade)
 
-#             P = self.face_poset()
-#             rels = P.relations()
-#             els = [1]
-#             for i in P:
-#                 els.append(i.element)
-#                 rels.append([i.element, 1])
-#
-#             return LatticePoset((els,rels),
-#                                 cover_relations=False,
-#                                 facade=facade)
-
     def topes(self):
         r"""
         Return the topes.
@@ -416,15 +405,25 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
 
             \mathcal{C} / A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C} \text{ and} A \subseteq X^0 \right\}
 
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A); M
+            Hyperplane arrangement oriented matroid of rank 2
+            sage: R = M.restriction(M.groundset()[1]); R
+            Covector oriented matroid of rank 1
+            sage: R.elements()
+            [+:
+             -:
+             0: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0,
+             +: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+             -:
+             0: ,
+             +:
+             -: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+             0: ]
         """
-        # sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-        # sage: A = hyperplane_arrangements.braid(3)
-        # sage: M = OrientedMatroid(A); M
-        # Covector Oriented Matroid of rank 3
-        # sage: R = M.restriction(M.groundset()[1]); R
-        # Covector Oriented Matroid of rank 2
-        # sage: R.elements()
-        # [(0,0), (1,1), (-1,-1)]
         if change_set in self.groundset():
             change_set = set([change_set])
         else:
