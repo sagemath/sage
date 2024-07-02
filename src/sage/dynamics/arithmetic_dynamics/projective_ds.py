@@ -111,6 +111,8 @@ from sage.schemes.projective.projective_morphism import (
 from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
+
 
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
@@ -6838,6 +6840,121 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r_lattes_cases = [[2, 2, 2, 2], [3, 3, 3], [2, 4, 4], [2, 3, 6]]
         r_vals = sorted([val for val in r.values() if val != 1])
         return r_vals in r_lattes_cases
+    
+    def Lattes_to_curve(f,return_conjugation = False):
+        r"""
+        Finds a Short Weierstrass Model Elliptic curve of self
+        
+        self assumed to be Lattes map and not in charateristic 2 or 3
+
+        INPUT: `return_conjugation`` -- (default: ``False``) if ``True``, then
+        return the conjugation that moves self to a map that comes from a 
+        Short Weierstrass Model Elliptic curve
+
+        OUTPUT: a Short Weierstrass Model Elliptic curve which is isogenous to
+        the Elliptic curve of f, If ``return_conjugation`` is ``True`` 
+        then also returns conjugation as a matrix
+
+        EXAMPLES:
+
+        sage: f = P.Lattes_map(EllipticCurve([0, 0, 0, 10, 2]), 2)
+        sage: Lattes_to_curve(f)
+        Elliptic Curve defined by y^2 = x^3 + 10*x + 2 over Rational Field
+
+        ::
+
+        sage: M = matrix(QQ,2,2,[[1,2],[-1,2]])
+        sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
+        sage: F = F.conjugate(M)
+        sage: Lattes_to_curve(F,return_conjugation = True)
+        (
+        Elliptic Curve defined by y^2 = x^3 - 35/16*x + 111/32 over Rational Field,
+
+        [-1/8 -7/4]
+        [ 1/2   -1]
+        )
+
+        ::
+
+        sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
+        sage: L.<i> = CyclotomicField(4)
+        sage: M = Matrix([[i, 0], [0, -i]])
+        sage: f.conjugate(M)
+        sage: Lattes_to_curve(f,True)
+        (
+        Elliptic Curve defined by y^2 = x^3 + 47/48*x + 1529/864 over Rational Field,
+
+        [   1 5/12]
+        [   0    1]
+        )
+
+        """
+    #Must be NumberField and not QQbar to allow x^(n^2) to be calculated
+        from sage.rings.qqbar import QQbar
+        if f.base_ring() not in NumberFields() and f.base_ring() not in QQbar:
+                raise NotImplementedError("Base ring must be a number field")
+
+    #The Complex case is hard to implement and needs to be done later
+        if sqrt(f.degree()) != int(sqrt(f.degree())):
+            raise NotImplementedError("Map is not Lattes or is Complex Lattes")
+
+    
+        d = f.degree()
+        n = int(sqrt(f.degree()))
+
+    #Creating a Symbolic Lattes map f_sym from a short Elliptic curve
+        R = PolynomialRing(QQ,6,"a,b,u,v,w,t")
+        a,b,u,v,w,t = R.gens()
+        E_sym = EllipticCurve([a,b])
+        P = ProjectiveSpace(QQ,1,"x,y")
+        x,y = P.gens()
+        f_sym = P.Lattes_map(E_sym, n)
+
+    # Conjugating f_sym map to have the right form so we can solve for the conjugating matrix later
+        m=matrix(R,2,[u,v,t,w])
+        f_sym = f_sym.conjugate(m)
+        f_sym.scale_by(u*w - v*t)
+        F_sym = f_sym.dehomogenize(1)
+
+    #extracting the base variables to do term by term matching
+        P = ProjectiveSpace(QQ,1,"x,y")
+        x,y = P.gens()
+        f.scale_by(1/f[0].coefficient(x^(n^2)))
+        F = f.dehomogenize(1)
+        x = F[0].parent().gen(0)
+        z = F_sym[0].parent().gen(0)
+
+    #Creating a set of equations, eq, from term by term matching
+        eq = [u*w-t*v - 1] # setting determinant equal to 1 to receive affine transformations only
+        for j in range(2):
+            if j == 0:
+                g = F[0].numerator()
+                g_sym = F_sym[0].numerator()
+            else:
+                g = F[0].denominator()
+                g_sym = F_sym[0].denominator()
+            for i in range(d+1):
+                eq += [g.coefficient({x:i}) - g_sym.coefficient({z:i})]
+
+    #Solving the equations
+        I = R.ideal(eq)
+        pts = I.variety()
+        assert(len(pts)==1)
+        a = pts[0]['a']
+        b = pts[0]['b']
+        u = pts[0]['u']
+        v = pts[0]['v']
+        t = pts[0]['t']
+        w = pts[0]['w']
+
+    #creating our end products
+        E = EllipticCurve([a,b])
+        
+        if return_conjugation == True:
+            M = matrix(QQ,2,2,[u,v,t,w])
+            return (E , M)
+        else:
+            return E
 
 
 class DynamicalSystem_projective_field(DynamicalSystem_projective,
