@@ -67,7 +67,7 @@ function fetchVersions() {
         let menu = document.getElementById('versions-menu');
 
         // For the origin of the this site, see .github/workflows/doc-publish.yml
-        fetch('https://doc-release--sagemath-test.netlify.app/html/en/versions.txt')
+        fetch('https://doc-release--sagemath.netlify.app/html/en/versions.txt')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);
