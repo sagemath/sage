@@ -905,8 +905,14 @@ cdef class SliceDecomposition(SageObject):
         Return the underlying graph corresponding to the slice decomposition.
 
         If `G` was the graph given as parameter to compute the slice
-        decomposition, the underlying graph corresponds to ``G.to_simple()``,
-        *i.e.*, it is the input graph without loops and multiple edges.
+        decomposition, the underlying graph corresponds to ``G.to_simple()``
+        where labels are ignored, *i.e.*, it is the input graph without loops,
+        multiple edges and labels.
+
+        .. NOTE::
+
+            This method is mostly defined to test the computation of
+            lexicographic labels and actives edges.
 
         EXAMPLES:
 
