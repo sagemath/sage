@@ -180,10 +180,7 @@ class MPolynomial_element(MPolynomial):
             K = self.parent().base_ring()
         y = K.zero()
         for m, c in self.element().dict().items():
-            if set(m) == {0}:
-                y += c
-            else:
-                y += c * prod(v ** e for v, e in zip(x, m) if e)      
+            y += c * K.prod(v ** e for v, e in zip(x, m) if e)      
         return y
 
     def _richcmp_(self, right, op):

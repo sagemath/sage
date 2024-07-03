@@ -628,9 +628,6 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     if base_ring not in Rings() and not isinstance(base_ring, TropicalSemiring):
         raise TypeError("base_ring {!r} must be a ring".format(base_ring))
-    is_tropical = False
-    if isinstance(base_ring, TropicalSemiring):
-        is_tropical = True
 
     n = -1  # Unknown number of variables
     names = None  # Unknown variable names
@@ -723,12 +720,12 @@ def PolynomialRing(base_ring, *args, **kwds):
             raise TypeError("variable names specified twice inconsistently: %r and %r" % (names, kwnames))
 
     if multivariate or len(names) != 1:
-        if is_tropical:
+        if isinstance(base_ring, TropicalSemiring):
             return TropicalMPolynomialSemiring(base_ring, len(names), names, **kwds)
         else:
             return _multi_variate(base_ring, names, **kwds)
     else:
-        if is_tropical:
+        if isinstance(base_ring, TropicalSemiring):
             return TropicalPolynomialSemiring(base_ring, names)
         else:
             return _single_variate(base_ring, names, **kwds)

@@ -1,5 +1,5 @@
 r"""
-Multivariate Tropical Polynomial Semirings
+Multivariate Tropical Polynomial Semirings.
 
 This module provides the implementation of parent and element class for 
 multivariate tropical polynomials. When working with multivariate case, the
@@ -12,65 +12,60 @@ AUTHORS:
 
 EXAMPLES:
 
-Construct multivariate tropical polynomial semirings::
+Construct a multivariate tropical polynomial semiring in two variables::
 
     sage: T = TropicalSemiring(QQ, use_min=False)
-    sage: R = PolynomialRing(T, 'a,b')
-    sage: R
-    Multivarite Tropical Polynomial Semiring in a, b over Rational Field
+    sage: R.<a,b> = PolynomialRing(T); R
+    Multivariate Tropical Polynomial Semiring in a, b over Rational Field
     
-Create an element by inputting a dictionary::
+Define some multivariate tropical polynomials::
 
-    sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
-    sage: p1 = R(dict1); p1
+    sage: p1 = R(3)*a*b + a + R(-1)*b
     3*a*b + 0*a + (-1)*b
-
-We can also create an element by converting from classical polynomial::
-
-    sage: S.<a,b> = QQ[]
-    sage: f = a + b + a*b
-    sage: p2 = R(f); p2
+    sage: p2 = R(1)*a + R(1)*b + R(1)*a*b; p2
     1*a*b + 1*a + 1*b
 
-Some basic arithmetic operations::
+Some basic arithmetic operations for tropical polynomials::
 
     sage: p1 + p2
     3*a*b + 1*a + 1*b
     sage: p1 * p2
     4*a^2*b^2 + 4*a^2*b + 1*a^2 + 4*a*b^2 + 1*a*b + 0*b^2
+    sage: p2^2
+    2*a^2*b^2 + 2*a^2*b + 2*a*b^2 + 2*a^2 + 2*a*b + 2*b^2
     sage: T(2) * p1
     5*a*b + 2*a + 1*b
     sage: p1(T(1),T(2))
     6
 
-Let's look at the different result for tropical curve and graph of tropical
-polynomial in two variables when the min-plus or max-plus algebra is used:
+Let's look at the different result for tropical curve and 3d graph of tropical
+polynomial in two variables when the min-plus or max-plus algebra is used::
 
     sage: T = TropicalSemiring(QQ, use_min=True)
-    sage: R = PolynomialRing(T, 'a,b')
-    sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
-    sage: p1 = R(dict1)
+    sage: R.<a,b> = PolynomialRing(T)
+    sage: p1 = R(3)*a*b + a + R(-1)*b
     sage: p1.tropical_variety()
     Tropical curve of 3*a*b + 0*a + (-1)*b are 
-    [[(t1 - 1, t1), [t1 >= -3], 1]
-    [(t1, -3), [t1 <= -4], 1]
-    [(-4, t1), [t1 <= -3], 1]]
+    [[(t1, -3), [t1 <= -4], 1]
+    [(-4, t1), [t1 <= -3], 1]
+    [(t1 - 1, t1), [t1 >= -3], 1]]
     sage: plot(p1.tropical_variety())
     sage: p1.plot3d()
 
     sage: T = TropicalSemiring(QQ, use_min=False)
-    sage: R = PolynomialRing(T, 'a,b')
-    sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
-    sage: p1 = R(dict1)
+    sage: R.<a,b> = PolynomialRing(T)
+    sage: p1 = R(3)*a*b + a + R(-1)*b
     sage: p1.tropical_variety()
     Tropical curve of 3*a*b + 0*a + (-1)*b are 
-    [[(t1 - 1, t1), [t1 <= -3], 1]
-    [(t1, -3), [t1 >= -4], 1]
-    [(-4, t1), [t1 >= -3], 1]]
+    [[(t1, -3), [t1 >= -4], 1]
+    [(-4, t1), [t1 >= -3], 1]
+    [(t1 - 1, t1), [t1 <= -3], 1]]
     sage: plot(p1.tropical_variety())
     sage: p1.plot3d()
 
 TESTS:
+
+There is no subtraction defined for tropical polynomials::
 
     sage: -p1
     Traceback (most recent call last):
@@ -100,12 +95,11 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.plot.plot3d.list_plot3d import list_plot3d
 from sage.symbolic.ring import SR
-from sage.categories.semirings import Semirings
+from sage.categories.sets_cat import Sets
 
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
-# from sage.rings.polynomial.polydict import ETuple
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
 from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalVariety
 
@@ -117,32 +111,28 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
     def plot3d(self):
         """
-        Return the 3d plot of ``self``
+        Return the 3d plot of ``self``.
 
-        OUTPUT: A Graphics3d Object
+        OUTPUT: A Graphics3d Object.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
-            sage: R = PolynomialRing(T, 'x,y')
-            sage: S.<x,y> = QQ[]
-            sage: c1 = 3+2*x+2*y+3*x*y
-            sage: dict1 = {(2,0):0, (0,2):0}
-            sage: p1 = R(c1) + R(dict1); p1
-            0*x^2 + 3*x*y + 2*x + 0*y^2 + 2*y + 3
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(3)+R(2)*x+R(2)*y+R(3)*x*y; p1
+            3*x*y + 2*x + 2*y + 3
             sage: p1.plot3d()
 
-        TESTS:
+        TESTS::
 
-            sage: T = TropicalSemiring(QQ, use_min=True)
-            sage: R = PolynomialRing(T, 'x,y,z')
-            sage: S.<x,y,z> = QQ[]
-            sage: p1 = R(x*y*z)
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x*y*z + x
             sage: p1.plot3d()
             Traceback (most recent call last):
             ...
             NotImplementedError: can only plot the graph of tropical 
-            multivariate polynomial in two variables 
+            multivariate polynomial in two variables
 
         """
         from sage.arith.srange import srange
@@ -167,13 +157,10 @@ class TropicalMPolynomial(MPolynomial_polydict):
     def tropical_variety(self):
         r"""
         Return tropical roots of ``self``. In multivariate case, the roots
-        can be represented by a tropical variety. For 2 dimensions,
-        it is also called a tropical curve
+        can be represented by a tropical variety. For 2 dimensions, it is 
+        also called a tropical curve.
 
-        OUTPUT:
-
-        TropicalCurve object. This object is displayed as list of lists, where
-        the inner list is of the form [equation, condition of parameter, order]
+        OUTPUT: ``TropicalVariety`` object.
         
         EXAMPLES:
 
@@ -181,42 +168,38 @@ class TropicalMPolynomial(MPolynomial_polydict):
         variables::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
-            sage: R = PolynomialRing(T, 'x,y')
-            sage: dict1 = {(0,0):0, (1,0):0, (0,1):0}
-            sage: p1 = R(dict1); p1
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = x + y + R(0); p1
             0*x + 0*y + 0
             sage: p1.tropical_variety()
             Tropical curve of 0*x + 0*y + 0 are 
-            [[(0, t1), [t1 <= 0], 1]
-            [(t1, 0), [t1 <= 0], 1]
-            [(t1, t1), [t1 >= 0], 1]]
+            [[(t1, t1), [t1 >= 0], 1]
+            [(0, t1), [t1 <= 0], 1]
+            [(t1, 0), [t1 <= 0], 1]]
 
         ::
 
-            sage: S.<x,y> = QQ[]
-            sage: c2 = -1*x^2
-            sage: dict2 = {(0,0):0, (1,0):0, (0,2):0}
-            sage: p2 = R(c2) + R(dict2); p2
-            (-1)*x^2 + 0*x + 0*y^2 + 0
+            sage: T = TropicalSemiring(QQ, use_min=True)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p2 = R(-1)*x^2 + x + y^2 + R(0); p2
+            (-1)*x^2 + 0*y^2 + 0*x + 0
             sage: p2.tropical_variety()
             Tropical curve of (-1)*x^2 + 0*x + 0*y^2 + 0 are 
-            [[(0, t1), [t1 <= 0], 1]
-            [(t1, 0), [t1 <= 0], 2]
-            [(2*t1, t1), [0 <= t1, t1 <= (1/2)], 1]
-            [(1, t1), [t1 <= (1/2)], 1]
-            [(t1 + 1/2, t1), [(1/2) <= t1], 2]]
+            Tropical curve of (-1)*x^2 + 0*y^2 + 0*x + 0 are 
+            [[(t1 + 1/2, t1), [t1 <= 0], 2]
+            [(1/2, t1), [t1 >= 0], 2]
+            [(t1, 0), [(1/2) <= t1], 2]]
 
         We can also find tropical hypersurface for any tropical polynomials 
-        in `n\geq 2` variables:
+        in `n\geq 2` variables::
 
-            sage: T = TropicalSemiring(QQ, use_min=True)
-            sage: R = PolynomialRing(T, 'x,y,z')
-            sage: S.<x,y,z> = QQ[]
-            sage: p1 = R(x*y + (-1/2)*x*z + 4*z^2); p1
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = R(1)*x*y + R(-1/2)*x*z + R(4)*z^2; p1
             1*x*y + (-1/2)*x*z + 4*z^2
             sage: p1.tropical_variety()
             Tropical hypersurface of 1*x*y + (-1/2)*x*z + 4*z^2 are 
-            [[(t1, t2 - 3/2, t2), [t1 - 9/2 <= t2], 1]
+            [[(t1, t2 - 3/2, t2), [t1 <= t2 + 9/2], 1]
             [(2*t1 - t2 + 3, t2, t1), [t2 + 3/2 <= t1], 1]
             [(t1 + 9/2, t2, t1), [t1 <= t2 + 3/2], 1]]
 
@@ -229,7 +212,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     """
-    Semiring structure of tropical polynomials in multiple variables
+    Semiring structure of tropical polynomials in multiple variables.
     """
 
     def __init__(self, base_semiring, n, names, order='degrevlex'):
@@ -238,7 +221,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R.<x,y,z> = PolynomialRing(T)
-            sage: T(1)*x*y*z + x
+            sage: R.gens()
+            (0*x, 0*y, 0*z)
+            sage: R(1)*x*y*z + x
             1*x*y*z + 0*x
             sage: (x+y+z)^2
             0*x^2 + 0*x*y + 0*y^2 + 0*x*z + 0*y*z + 0*z^2
@@ -246,7 +231,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         """
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
-        Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
+        Parent.__init__(self, base=base_semiring, names=names, category=Sets())
         self._ngens = n
         order = TermOrder(order, n)
         self._term_order = order
@@ -260,6 +245,18 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         INPUT:
 
         - ``x`` -- dict or MPolynomial
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x,y')
+            sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
+            sage: p1 = R(dict1); p1
+            3*x*y + 0*x + (-1)*y
+            sage: S.<x,y> = PolynomialRing(QQ)
+            sage: f = -x*y + 1
+            sage: R(f)
+            (-1)*x*y + 1
 
         """
         C = self.element_class
@@ -289,7 +286,15 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     def random_element(self, degree=2, terms=None, choose_degree=False,
                        *args, **kwargs):
         """
-        Return a random polynomial
+        Return a random multivariate tropical polynomial.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<a,b> = PolynomialRing(T)
+            sage: f = R.random_element(); f
+            1/9*a^2 + 1/13*a*b + 1/107*b^2 + 1*a
+
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
@@ -298,15 +303,15 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     
     def gen(self, n=0):
         """
-        Return the indeterminate generator of this polynomial ring.
+        Return the indeterminate generator of this polynomial semiring.
         """
         return self.gens()[n]
     
     @cached_method
     def gens(self):
         """
-        Return a tuple whose entries are the generators for this
-        object, in order.
+        Return a tuple whose entries are the generators for this object, 
+        in order.
         """
         gens = []
         for i in range(self.ngens()):
