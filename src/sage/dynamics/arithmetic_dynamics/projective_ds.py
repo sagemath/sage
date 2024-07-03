@@ -6854,16 +6854,18 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         EXAMPLES:
 
+        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: f = P.Lattes_map(EllipticCurve([0, 0, 0, 10, 2]), 2)
         sage: Lattes_to_curve(f)
         Elliptic Curve defined by y^2 = x^3 + 10*x + 2 over Rational Field
 
         ::
 
+        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: M = matrix(QQ,2,2,[[1,2],[-1,2]])
         sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
-        sage: F = F.conjugate(M)
-        sage: Lattes_to_curve(F,return_conjugation = True)
+        sage: f = f.conjugate(M)
+        sage: Lattes_to_curve(f,return_conjugation = True)
         (
         Elliptic Curve defined by y^2 = x^3 - 35/16*x + 111/32 over Rational Field,
 
@@ -6873,6 +6875,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
+        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
         sage: L.<i> = CyclotomicField(4)
         sage: M = Matrix([[i, 0], [0, -i]])
@@ -6947,7 +6950,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
     #creating our end products
         E = EllipticCurve([a,b])
         
-        if return_conjugation == True:
+        if return_conjugation:
             M = matrix(QQ,2,2,[u,v,t,w])
             return (E , M)
         else:
