@@ -520,7 +520,7 @@ class DIMACS(SatSolver):
             assert L[-1] == "0", "last digit of solution line must be zero (not {})".format(L[-1])
             return (None,) + tuple(int(e) > 0 for e in L[:-1])
         else:
-            raise ValueError("When parsing the output, no line starts with letter v or s")
+            raise ValueError("When parsing the output(={}), no line starts with letter v or s".format(self._output))
 
 class RSat(DIMACS):
     """
