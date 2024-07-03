@@ -865,3 +865,57 @@ class ComponentNumpy(SageObject):
     def __imatmul__(self, other):
         return self @ other
 
+    # This function can be implemented after the product of basis is implemented
+    # def khatri_rao_product(self, *args):
+    #     if not all(isinstance(args, ComponentNumpy)):
+    #         raise TypeError('arguments for khatri_rao_product must be an instance of ComponentNumpy')
+    #     if self._nid != 2 or any(args._nid != 2):
+    #         raise ValueError('invalid dimension, dimension of input component must be 2 given')
+    #     col = self._shape[1]
+    #     if any(args._shape[1] != col):
+    #         raise ValueError('given component must have the same number of columns as self')
+
+    #     from functools import reduce
+    #     import operator
+    #     array = [arg._comp for arg in args]
+    #     rows = reduce(operator.mul, [arg._shape[0] for arg in args], self._shape[0])
+    #     ret = self._new_instance(self._ring, , 2, (rows, self._shape[1]))
+    #     matrix = ComponentNumpy._khatri_rao_product(self._comp, *array)
+    #     ret._comp = matrix
+    #     return ret
+    
+    def _khatri_rao_product(*args):
+        cols = args[0].shape[1]
+        rows = np.prod([arg.shape[0] for arg in args])
+        ret = np.zeros((rows, cols))
+        for i in range(cols):
+            temp = args[0][:, i]
+            for matrix in args[1:]:
+                temp = np.einsum('i,j->ij', temp, matrix[:, i]).ravel()
+            ret[:, i] = temp
+        return ret
+
+    def _svd(self, matrix, rank=None):
+        import scipy
+        dim_1, dim_2 = self._shape
+        if dim_1 <= dim_2:
+            mdim = dim_1
+        else:
+            mdim = dim_2
+        if rank is None or rank >= mdim:
+            U, S, V = scipy.linalg.svd(matrix)
+            U, S, V = U[:, :rank], S[:rank], V[:rank, :]
+            return U, S, V
+        else:
+            if dim_1 < dim_2:
+                S, U = scipy.sparse.linalg.eigsh(np.dot(matrix, matrix.T), k=rank, which='LM')
+                S = np.sqrt(S)
+                V = np.dot(matrix.T, U * 1 / S[None, :])
+            else:
+                S, V = scipy.sparse.linalg.eigsh(np.dot(matrix.T, matrix), k=rank, which='LM')
+                S = np.sqrt(S)
+                U = np.dot(matrix, V) * 1 / S[None, :]
+
+            U, S, V = U[:, ::-1], S[::-1], V[:, ::-1]
+            return U, S, V.T
+    
