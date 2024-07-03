@@ -55,7 +55,7 @@ def verify_bernoulli_mod_p(data):
 
     - ``data`` -- list; same format as output of :func:`bernoulli_mod_p` function
 
-    OUTPUT: bool; ``True`` if checksum passed
+    OUTPUT: boolean; ``True`` if checksum passed
 
     EXAMPLES::
 

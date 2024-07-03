@@ -20,7 +20,7 @@ where `O^*_{K,S}` is the group of `S`-units of `K` and `Cl_{K,S}` the
 `S`-class group.  When `m=p` is prime, `K(S,p)` is a
 finite-dimensional vector space over `GF(p)`.  Its generators come
 from three sources: units (modulo `p`-th powers); generators of the
-`p`-th powers of ideals which are not principal but whose `p`'the
+`p`-th powers of ideals which are not principal but whose `p`-th
 powers are principal; and generators coming from the prime ideals in
 `S`.
 
@@ -80,12 +80,12 @@ def _ideal_generator(I):
 def _coords_in_C_p(I, C, p):
     r"""
     Return coordinates of the ideal ``I`` with respect to a basis of
-    the ``p``-torsion of the ideal class group ``C``.
+    the `p`-torsion of the ideal class group ``C``.
 
     INPUT:
 
     - ``I`` -- ideal; a fractional ideal of a number field ``K``, whose
-      ``p``-th power is principal
+      `p`-th power is principal
 
     - ``C`` -- (class group) the ideal class group of ``K``
 
@@ -133,7 +133,7 @@ def _coords_in_C_p(I, C, p):
 def _coords_in_C_mod_p(I,C,p):
     r"""
     Return coordinates of the ideal ``I`` with respect to a basis of
-    the ``p``-cotorsion of the ideal class group ``C``.
+    the `p`-cotorsion of the ideal class group ``C``.
 
     INPUT:
 
@@ -183,12 +183,12 @@ def _coords_in_C_mod_p(I,C,p):
 
 def _root_ideal(I, C, p):
     r"""
-    Return a ``p``-th root of an ideal with respect to the class group.
+    Return a `p`-th root of an ideal with respect to the class group.
 
     INPUT:
 
     - ``I`` -- ideal; a fractional ideal of a number field ``K``,
-      whose ideal class is a ``p``-th power
+      whose ideal class is a `p`-th power
 
     - ``C`` -- (class group) the ideal class group of ``K``
 
@@ -233,7 +233,7 @@ def _root_ideal(I, C, p):
 def coords_in_U_mod_p(u, U, p):
     r"""
     Return coordinates of a unit ``u`` with respect to a basis of the
-    ``p``-cotorsion `U/U^p` of the unit group ``U``.
+    `p`-cotorsion `U/U^p` of the unit group ``U``.
 
     INPUT:
 
@@ -280,7 +280,7 @@ def coords_in_U_mod_p(u, U, p):
 def basis_for_p_cokernel(S, C, p):
     r"""
     Return a basis for the group of ideals supported on ``S`` (mod
-    ``p``'th-powers) whose class in the class group ``C`` is a ``p``-th power,
+    `p`-th-powers) whose class in the class group ``C`` is a `p`-th power,
     together with a function which takes the ``S``-exponents of such an
     ideal and returns its coordinates on this basis.
 
@@ -297,8 +297,8 @@ def basis_for_p_cokernel(S, C, p):
     (tuple) (``b``, ``f``) where
 
     - ``b`` is a list of ideals which is a basis for the group of
-      ideals supported on ``S`` (modulo ``p``'th powers) whose ideal
-      class is a ``p``'th power;
+      ideals supported on ``S`` (modulo `p`-th powers) whose ideal
+      class is a `p`-th power;
 
     - ``f`` is a function which takes such an ideal and returns its
       coordinates with respect to this basis.
@@ -416,7 +416,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
       does not represent an element of `K(S,p)` and an error is
       raised.
 
-    - set `I_S` to be the group of ideals spanned by `S` mod `p`'th
+    - set `I_S` to be the group of ideals spanned by `S` mod `p`-th
       powers, and `I_{S,p}` the subgroup of `I_S` which maps to `0` in
       `C/C^p`.
 

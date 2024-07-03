@@ -2261,15 +2261,15 @@ cdef class ComplexDoubleElement(FieldElement):
         this is a multi-valued function, and the algorithm used
         affects the value returned, as follows:
 
-        - ``'pari'`` -- Call the :pari:`agm` function from the pari library.
+        - ``'pari'``: Call the :pari:`agm` function from the pari library.
 
-        - ``'optimal'`` -- Use the AGM sequence such that at each stage
+        - ``'optimal'``: Use the AGM sequence such that at each stage
           `(a,b)` is replaced by `(a_1,b_1)=((a+b)/2,\pm\sqrt{ab})`
           where the sign is chosen so that `|a_1-b_1| \leq |a_1+b_1|`, or
           equivalently `\Re(b_1/a_1) \geq 0`.  The resulting limit is
           maximal among all possible values.
 
-        - ``'principal'`` -- Use the AGM sequence such that at each stage
+        - ``'principal'``: Use the AGM sequence such that at each stage
           `(a,b)` is replaced by `(a_1,b_1)=((a+b)/2,\pm\sqrt{ab})`
           where the sign is chosen so that `\Re(b_1/a_1) \geq 0` (the
           so-called principal branch of the square root).

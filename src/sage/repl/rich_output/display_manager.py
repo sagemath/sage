@@ -661,7 +661,7 @@ class DisplayManager(SageObject):
           passed to the save function
 
         - ``file_extension`` -- string starting with ``'.'``; the file
-          extension of the graphics file. T
+          extension of the graphics file
 
         - ``output_container`` -- subclass of
           :class:`sage.repl.rich_output.output_basic.OutputBase`. The

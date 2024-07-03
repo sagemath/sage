@@ -754,7 +754,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
 
           - ``'sy'`` -- (default) use the Shimoyama-Yokoyama
             algorithm
@@ -866,7 +866,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
 
           - ``'sy'`` -- (default) use the Shimoyama-Yokoyama
             algorithm
@@ -940,7 +940,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
 
           - ``'sy'`` -- (default) use the Shimoyama-Yokoyama algorithm
 

@@ -1176,7 +1176,7 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
         INPUT:
 
         - ``sequence`` -- list of integers
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
           - ``'sage'`` -- the default is to use Sage's matrix kernel function
           - ``'pari'`` -- use Pari's implementation of LLL
           - ``'bm'`` -- use Sage's Berlekamp-Massey algorithm

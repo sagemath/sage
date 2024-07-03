@@ -1883,8 +1883,8 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
       dual: each problem is of course dual to its own dual, this flag is mostly
       for internal use and affects default variable names only
 
-    - ``objective_name`` -- string or a symbolic expression for the
-      objective used in dictionaries, default depends on :func:`style`
+    - ``objective_name`` -- string or symbolic expression for the
+      objective used in dictionaries (default: depends on :func:`style`)
 
     - ``objective_constant_term`` -- (default: 0) a constant term of the
       objective
@@ -2083,8 +2083,8 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
 
         INPUT:
 
-        - ``objective_name`` -- string or a symbolic expression for the
-          objective used in dictionaries, default depends on :func:`style`
+        - ``objective_name`` -- string or symbolic expression for the
+          objective used in dictionaries (default: depends on :func:`style`)
 
         OUTPUT: an :class:`LP problem in standard form <InteractiveLPProblemStandardForm>`
 

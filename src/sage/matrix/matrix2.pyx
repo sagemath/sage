@@ -2151,7 +2151,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
             - ``'df'`` -- generic O(n^4) division-free algorithm
             - ``'hessenberg'`` -- use the Hessenberg form of the matrix
 
@@ -3082,7 +3082,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
         - ``var`` -- a variable name (default: ``'x'``)
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
             - ``'df'`` -- generic `O(n^4)` division-free algorithm
             - ``'hessenberg'`` -- use the Hessenberg form of the matrix
 

@@ -11580,7 +11580,7 @@ cdef class Expression(Expression_abc):
 
         - ``self`` -- expression to be simplified
 
-        - ``algorithm`` -- (default: ``'products'``) optional, governs which
+        - ``algorithm`` -- (default: ``'products'``) governs which
           expression is expanded. Possible values are
 
           - ``'nothing'`` (no expansion),
@@ -12260,7 +12260,7 @@ cdef class Expression(Expression_abc):
           all roots be explicit rather than implicit. Not used
           when solving an inequality.
 
-        - ``to_poly_solve`` -- boolean (default: ``False``); or string; use
+        - ``to_poly_solve`` -- boolean (default: ``False``) or string; use
           Maxima's ``to_poly_solver`` package to search for more possible
           solutions, but possibly encounter approximate solutions.
           This keyword is incompatible with ``multiplicities=True``
@@ -12621,7 +12621,7 @@ cdef class Expression(Expression_abc):
 
         - ``b`` -- real number; right endpoint of interval on which to minimize
 
-        - ``var`` -- variable (default: first variable in self); the
+        - ``var`` -- variable (default: first variable in ``self``); the
           variable in ``self`` to maximize over
 
         - ``tol`` -- positive real (default: 1.48e-08); the convergence

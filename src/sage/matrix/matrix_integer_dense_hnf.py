@@ -100,7 +100,7 @@ def det_given_divisor(A, d, proof=True, stabilize=2):
     - ``proof`` -- boolean (default: ``True``); compute det modulo enough primes
       so that the determinant is computed provably correctly (via the
       Hadamard bound).  It would be VERY hard for ``det()`` to fail even
-      with proof=False.
+      when ``proof`` is ``False``.
     - ``stabilize`` -- integer (default: 2); if proof = False, then compute
       the determinant modulo `p` until ``stabilize`` successive modulo
       determinant computations stabilize.

@@ -624,7 +624,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         - ``prec`` -- integer
 
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
 
           - ``'default'`` -- (default) decide which algorithm to
             use based on heuristics

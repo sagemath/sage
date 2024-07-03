@@ -3021,7 +3021,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``base`` -- (optional, complex ball or number) -- if ``None``, return
+        - ``base`` -- (optional) complex ball or number; if ``None``, return
           the principal branch of the natural logarithm ``ln(self)``,
           otherwise, return the general logarithm ``ln(self)/ln(base)``
 

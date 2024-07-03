@@ -751,11 +751,9 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         - ``link``, ``loop`` -- boolean (default: ``True``); whether to plot the links
           or the loops
 
-        - ``color``, ``link_color``, ``loop_color`` -- (optional, a string or a
-          RGB triple)
+        - ``color``, ``link_color``, ``loop_color`` -- (optional) string or RGB triple
 
-        - ``colors``, ``link_colors``, ``loop_colors`` -- (optional, list) a list of
-          colors
+        - ``colors``, ``link_colors``, ``loop_colors`` -- (optional) list of colors
 
         - ``color_map``, ``link_color_map``, ``loop_color_map`` -- (string,
           optional) a name of a matplotlib color map for the link or the loop

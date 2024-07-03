@@ -760,7 +760,7 @@ class RationalField(Singleton, number_field_base.NumberField):
           embedding of `\QQ` or as `-1`
         - ``b`` -- a nonzero rational number which is a non-square locally
           at every prime in ``S``
-        - ``check`` -- ``bool`` -- boolean (default: ``True``); perform additional checks on
+        - ``check`` -- boolean (default: ``True``); perform additional checks on
           input and confirm the output
 
         OUTPUT:

@@ -322,10 +322,10 @@ class FunctionField_polymod(FunctionField):
 
         INPUT:
 
-        - ``names`` -- string or a tuple of up to two strings (default:
-          ``None``), the name of the generator of the field, and the name of
-          the generator of the underlying rational function field (if a tuple);
-          if not given, then the names are chosen automatically.
+        - ``names`` -- string or tuple of up to two strings (default:
+          ``None``); the name of the generator of the field, and the name of
+          the generator of the underlying rational function field (if a tuple).
+          If not given, then the names are chosen automatically.
 
         OUTPUT:
 
@@ -1574,9 +1574,9 @@ class FunctionField_polymod(FunctionField):
 
         INPUT:
 
-        - ``name`` -- string or a tuple consisting of a strings, the names of
+        - ``name`` -- string or tuple consisting of a strings; the names of
           the new variables starting with a generator of this field and going
-          down to the rational function field.
+          down to the rational function field
 
         OUTPUT:
 

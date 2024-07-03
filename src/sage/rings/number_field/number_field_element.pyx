@@ -4897,7 +4897,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
     The current relative number field element implementation
     does everything in terms of absolute polynomials.
 
-    All conversions from relative polynomials, lists, vectors, etc.,
+    All conversions from relative polynomials, lists, vectors, etc.
     should happen in the parent.
     """
     def __init__(self, parent, f):

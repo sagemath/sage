@@ -3082,7 +3082,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``algorithm`` -- (optional) string; can be one of the following:
 
-        - ``check_primes`` -- (optional) boolean: this signals whether to
+        - ``check_primes`` -- (optional) boolean; this signals whether to
             check whether each element in ``prime_list`` is a prime
 
           * ``'BM'`` -- the Bruin-Molnar algorithm [BM2012]_

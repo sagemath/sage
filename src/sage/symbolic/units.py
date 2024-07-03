@@ -947,8 +947,9 @@ def vars_in_str(s):
 
 def unit_derivations_expr(v):
     """
-    Given derived units name, returns the corresponding units expression. For
-    example, given ``'acceleration'`` output the symbolic expression
+    Given derived units name, returns the corresponding units expression.
+
+    For example, given ``'acceleration'`` output the symbolic expression
     ``length/time^2``.
 
     INPUT:

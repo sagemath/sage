@@ -70,7 +70,7 @@ class ClusterSeed(SageObject):
 
       * :class:`QuiverMutationType`
 
-      * :class:`str` -- a string representing a :class:`QuiverMutationType`
+      * :class:`str` -- string representing a :class:`QuiverMutationType`
         or a common quiver type (see Examples)
 
       * :class:`ClusterQuiver`

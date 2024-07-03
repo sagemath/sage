@@ -2660,9 +2660,9 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         - ``flag`` -- integer (default: 1); when ``flag==2``, it also
           computes the generators of the group `(O_K/I)^*`, which
-          takes more time. By default ``flag==1`` (no generators are
+          takes more time. By default ``flag`` is 1 (no generators are
           computed). In both cases the special PARI structure ``bid``
-          is computed as well.  If ``flag==0`` (deprecated) it computes
+          is computed as well.  If ``flag`` is 0 (deprecated) it computes
           only the group structure of `(O_K/I)^*` (with generators)
           and not the special ``bid`` structure.
 

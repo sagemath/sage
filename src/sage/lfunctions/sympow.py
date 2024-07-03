@@ -244,8 +244,7 @@ class Sympow(SageObject):
 
         .. note::
 
-           The analytic rank is *not* computed provably correctly in
-           general.
+           The analytic rank is *not* computed provably correctly in general.
 
         .. note::
 

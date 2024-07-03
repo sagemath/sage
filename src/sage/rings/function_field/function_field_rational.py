@@ -498,7 +498,8 @@ class RationalFunctionField(FunctionField):
 
         - ``basis`` -- (ignored) a basis for the vector space
 
-        - ``map`` -- (default: ``True``), whether to return maps to and from the vector space
+        - ``map`` -- (default: ``True``) whether to return maps to and from the
+          vector space
 
         OUTPUT:
 
@@ -788,7 +789,7 @@ class RationalFunctionField(FunctionField):
 
         INPUT:
 
-        - ``name`` -- string or a tuple consisting of a single string, the
+        - ``name`` -- string or tuple consisting of a single string; the
           name of the new variable
 
         OUTPUT:

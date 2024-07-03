@@ -642,7 +642,9 @@ cdef class BooleanFunction(SageObject):
         INPUT:
 
         - ``x`` -- either:
+
           - a list: then all elements are evaluated as booleans
+
           - an integer: then we consider its binary representation
 
         EXAMPLES::

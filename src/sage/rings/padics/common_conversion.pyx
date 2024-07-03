@@ -362,7 +362,7 @@ cdef inline long cconv_mpq_t_shared(mpz_t out, mpq_t x, long prec, bint absolute
 
 cdef inline int cconv_mpq_t_out_shared(mpq_t out, mpz_t x, long valshift, long prec, PowComputer_class prime_pow) except -1:
     """
-    Convert the underlying `p`-adic element into a rational
+    Convert the underlying `p`-adic element into a rational.
 
     - ``out`` -- gives a rational approximating the input. Currently uses
       rational reconstruction but may change in the future to use a more naive

@@ -2201,7 +2201,7 @@ class LinearCode(AbstractLinearCode):
 
     - ``generator`` -- a generator matrix over a finite field (``G`` can be
       defined over a finite ring but the matrices over that ring must have
-      certain attributes, such as ``rank``); or a code over a finite field
+      certain attributes, such as ``rank``) or a code over a finite field
 
     - ``d`` -- (default: ``None``) the minimum distance of the code
 

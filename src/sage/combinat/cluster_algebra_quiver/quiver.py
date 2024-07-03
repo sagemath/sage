@@ -69,7 +69,7 @@ class ClusterQuiver(SageObject):
     - ``data`` -- can be any of the following::
 
       * :class:`QuiverMutationType`
-      * :class:`str` -- a string representing a :class:`QuiverMutationType` or a common quiver type (see Examples)
+      * :class:`str` -- string representing a :class:`QuiverMutationType` or a common quiver type (see Examples)
       * :class:`ClusterQuiver`
       * :class:`Matrix` -- a skew-symmetrizable matrix
       * :class:`DiGraph` -- must be the input data for a quiver

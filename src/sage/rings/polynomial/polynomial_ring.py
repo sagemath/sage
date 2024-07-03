@@ -1716,9 +1716,8 @@ class PolynomialRing_general(Ring):
         INPUT: Pass exactly one of:
 
 
-        - ``max_degree`` -- an int; the iterator will generate
-          all monic polynomials which have degree less than or equal to
-           ``max_degree``
+        - ``max_degree`` -- an int; the iterator will generate all monic
+          polynomials which have degree less than or equal to ``max_degree``
 
         - ``of_degree`` -- an int; the iterator will generate
           all monic polynomials which have degree ``of_degree``

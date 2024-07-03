@@ -3858,7 +3858,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
 
           - ``'pari'`` -- (default) use the PARI library
 

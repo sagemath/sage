@@ -68,7 +68,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
     - ``twisting_map`` -- either an endomorphism of the base ring, or
       a (twisted) derivation of it
 
-    - ``names`` -- string or a list of strings
+    - ``names`` -- string or list of strings
 
     - ``sparse`` -- boolean (default: ``False``); currently not supported
 

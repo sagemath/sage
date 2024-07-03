@@ -106,8 +106,8 @@ def read_distribution(src_file):
 
     OUTPUT:
 
-    - a string, the name of the distribution package (``PKG``); or the empty
-      string if no directive was found.
+    A string, the name of the distribution package (``PKG``), or the empty
+    string if no directive was found.
 
     EXAMPLES::
 

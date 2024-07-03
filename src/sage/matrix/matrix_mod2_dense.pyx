@@ -1048,7 +1048,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         INPUT:
 
         - ``self`` -- a mutable matrix
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
 
           - ``'heuristic'`` -- uses M4RI and PLUQ (default)
           - ``'m4ri'`` -- uses M4RI
@@ -2223,7 +2223,7 @@ def pluq(Matrix_mod2_dense A, algorithm='standard', int param=0):
     INPUT:
 
     - ``A`` -- matrix
-    - ``algorithm`` -- string:
+    - ``algorithm`` -- string; one of
 
       * ``'standard'`` asymptotically fast (default)
       * ``'mmpf'`` M4RI inspired
@@ -2287,7 +2287,7 @@ def ple(Matrix_mod2_dense A, algorithm='standard', int param=0):
     INPUT:
 
     - ``A`` -- matrix
-    - ``algorithm`` -- string:
+    - ``algorithm`` -- string; one of
 
       - ``'standard'`` asymptotically fast (default)
       - ``'russian'`` M4RI inspired

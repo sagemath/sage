@@ -235,7 +235,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
 
     - ``polynomial`` -- a polynomial over `\QQ` or a number field, or a list
       of such polynomials
-    - ``names`` (or ``name``) -- a string or a list of strings, the names of
+    - ``names`` (or ``name``) -- string or list of strings, the names of
       the generators
     - ``check`` -- boolean (default: ``True``); do type checking and
       irreducibility checking
@@ -1049,7 +1049,7 @@ class CyclotomicFieldFactory(UniqueFactory):
 
     - ``names`` -- name of generator (default: ``zetan``)
 
-    - ``bracket`` -- defines the brackets in the case of ``n==0``, and
+    - ``bracket`` -- defines the brackets in the case of `n=0`, and
       is ignored otherwise. Can be any even length string, with ``'()'`` being
       the default.
 
@@ -4539,8 +4539,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        - ``proof`` -- if ``True`` then compute the class group provably
-          correctly (default); call :func:`number_field_proof` to change this
+        - ``proof`` -- if ``True`` (default), then compute the class group
+          provably correctly; call :func:`number_field_proof` to change this
           default globally
 
         - ``names`` -- names of the generators of this class group
@@ -4768,9 +4768,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``proof`` -- if ``False``, assume the GRH in computing the class group
 
-        OUTPUT: ``units`` -- list of generators of the unit group
+        OUTPUT:
 
-        - ``clgp_gens`` -- list of generators of the `S`-class group
+        - ``units``: a list of generators of the unit group
+
+        - ``clgp_gens`` -- a list of generators of the `S`-class group.
           Each generator is represented as a pair ``(gen, order)``,
           where ``gen`` is a fractional ideal of ``self`` and ``order`` is
           its order in the `S`-class group.
@@ -6985,7 +6987,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``others`` -- either ``'positive'`` (default), in which case the
           element will have nonnegative valuation at all other primes of
           ``self``, or ``'negative'``, in which case the element will have
-          nonpositive valuation at all other primes of ``self``.
+          nonpositive valuation at all other primes of ``self``
 
         .. note::
 

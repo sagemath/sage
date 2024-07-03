@@ -236,7 +236,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     The following (meaningless) example illustrates how to customize
     the result of the reduction::
 
-        sage: BarFoo = dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (3,)))
+        sage: BarFoo = dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (3,)))
         sage: type(BarFoo).__reduce__(BarFoo)
         (<class 'str'>, (3,))
         sage: loads(dumps(BarFoo))
@@ -253,9 +253,9 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
 
     and the result depends on the reduction::
 
-        sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (3,))) is BarFoo
+        sage: dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (3,))) is BarFoo
         True
-        sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (2,))) is BarFoo
+        sage: dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (2,))) is BarFoo
         False
 
     With ``cache=False``, a new class is created each time::
@@ -272,14 +272,14 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     With ``cache="ignore_reduction"``, the class does not depend on
     the reduction::
 
-        sage: BarFoo = dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (3,)), cache='ignore_reduction')
-        sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (2,)), cache='ignore_reduction') is BarFoo
+        sage: BarFoo = dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (3,)), cache='ignore_reduction')
+        sage: dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (2,)), cache='ignore_reduction') is BarFoo
         True
 
     In particular, the reduction used is that provided upon creating the
     first class::
 
-        sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (2,)), cache='ignore_reduction')._reduction
+        sage: dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (2,)), cache='ignore_reduction')._reduction
         (<class 'str'>, (3,))
 
     .. WARNING::

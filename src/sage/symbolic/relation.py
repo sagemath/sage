@@ -611,7 +611,7 @@ def solve(f, *args, **kwds):
       all roots be explicit rather than implicit. Not used
       when solving inequalities.
 
-    - ``to_poly_solve`` -- boolean (default: ``False``); or string; use
+    - ``to_poly_solve`` -- boolean (default: ``False``) or string; use
       Maxima's ``to_poly_solver`` package to search for more possible
       solutions, but possibly encounter approximate solutions.
       This keyword is incompatible with ``multiplicities=True``
