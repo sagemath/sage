@@ -845,3 +845,23 @@ class ComponentNumpy(SageObject):
             if other._output_formatter != self._output_formatter:
                 return False
             return np.all(other._comp == self._comp)
+
+## In-place Operators
+
+    def __iadd__(self, other):
+        return self + other
+    def __isub__(self, other):
+        return self - other
+    def __imul__(self, other):
+        return self * other
+    def __itruediv__(self, other):
+        return self / other
+    def __ifloordiv__(self, other):
+        return self // other
+    def __ipow__(self, other):
+        return self ** other
+    def __imod__(self, other):
+        return self % other
+    def __imatmul__(self, other):
+        return self @ other
+
