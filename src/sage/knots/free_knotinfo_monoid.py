@@ -162,7 +162,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
 
             sage: F = DatabaseKnotInfo()
             sage: F.hide()
-            sage: FreeKnotInfoMonoid(7)
+            sage: FreeKnotInfoMonoid(7)  # indirect doctest
             Traceback (most recent call last):
             ...
             sage.features.FeatureNotPresentError: database_knotinfo is not available.
@@ -247,9 +247,31 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
         r"""
         Return a matching item from the list in ``elems`` if it exists.
         Elsewise return ``None``. This is a helper method for .meth:`from_knot`.
+
+        INPUT:
+
+        - ``knot`` -- an instance of :class:`~sage.knots.knot.Knot`
+        - ``elems`` -- a tuple of elements of ``self``
+
+        EXAMPLES::
+
+            sage: from sage.knots.free_knotinfo_monoid import FreeKnotInfoMonoid
+            sage: FKIM =  FreeKnotInfoMonoid()
+            sage: FKIM.inject_variables(select=3)
+            Defining K3_1
+            Defining K3_1m
+            sage: elems = (K3_1, K3_1m)
+            sage: K = Knots().from_table(3, 1)
+            sage: FKIM._check_elements(K, elems)
+            KnotInfo['K3_1m']
+            sage: K = Knots().from_table(4, 1)
+            sage: FKIM._check_elements(K, elems) is None
+            True
         """
         for e in elems:
             k = e.as_knot()
+            if knot.pd_code() == k.pd_code():
+                return e
             if knot._markov_move_cmp(k.braid()):
                 return e
         return None
