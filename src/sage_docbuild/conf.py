@@ -461,7 +461,7 @@ if is_develop_version or is_for_github_pr:  # condition for announcement banner
         ver += f' built with GitHub PR <a href="{pr_url}">#{pr_number}</a>' \
                f' on <a href="{pr_commit}">{pr_sha[:7]}</a>' \
                f' [<a href="/changes.html">changes</a>]'
-    banner = f'This is documentation of Sage version {ver} for development purpose.'
+    banner = f'This is documentation for Sage version {ver} for development purpose.'
     html_theme_options.update({ "announcement": banner })
 
 # The name of the Pygments (syntax highlighting) style to use. This
