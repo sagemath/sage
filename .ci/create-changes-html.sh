@@ -8,8 +8,6 @@ fi
 BASE_DOC_COMMIT="$1"
 DOC_REPOSITORY="$2"
 
-# Wipe out chronic diffs between old doc and new doc
-(cd $DOC_REPOSITORY && find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
 # Create CHANGES.html
 echo '<html>' > CHANGES.html
 echo '<head>' >> CHANGES.html
