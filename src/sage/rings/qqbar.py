@@ -1350,7 +1350,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
     def zeta(self, n=2):
         r"""
         Return an `n`-th root of unity in this field. This will raise a
-        ``ValueError`` if `n \ne \{1, 2\}` since no such root exists.
+        :exc:`ValueError` if `n \ne \{1, 2\}` since no such root exists.
 
         INPUT:
 
@@ -1848,7 +1848,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
     @cached_method
     def zeta(self, n=4):
         r"""
-        Return a primitive `n`'th root of unity, specifically `\exp(2*\pi*i/n)`.
+        Return a primitive `n`-th root of unity, specifically `\exp(2*\pi*i/n)`.
 
         INPUT:
 
@@ -2199,9 +2199,9 @@ def tail_prec_seq():
 
 def rational_exact_root(r, d):
     r"""
-    Check whether the rational `r` is an exact `d`'th power.
+    Check whether the rational `r` is an exact `d`-th power.
 
-    If so, this returns the `d`'th root of `r`; otherwise, this returns ``None``.
+    If so, this returns the `d`-th root of `r`; otherwise, this returns ``None``.
 
     EXAMPLES::
 
@@ -5081,7 +5081,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
         r"""
         Given a ``RealField``, compute a good approximation to ``self`` in
         that field. Works only if the imaginary component of ``self`` is
-        exactly zero; otherwise it raises a ``ValueError``.
+        exactly zero; otherwise it raises a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -5100,7 +5100,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
         r"""
         Compute a good float approximation to ``self``. Works only if the
         imaginary component of ``self`` is exactly zero; otherwise it
-        raises a ``ValueError``.
+        raises a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -6294,10 +6294,10 @@ class AlgebraicNumberPowQQAction(Action):
 
     .. NOTE::
 
-        To compute ``x ^ (a/b)``, we take the `b`'th root of `x`; then
-        we take that to the `a`'th power. If `x` is a negative algebraic
-        real and `b` is odd, take the real `b`'th root; otherwise take
-        the principal `b`'th root.
+        To compute ``x ^ (a/b)``, we take the `b`-th root of `x`; then
+        we take that to the `a`-th power. If `x` is a negative algebraic
+        real and `b` is odd, take the real `b`-th root; otherwise take
+        the principal `b`-th root.
 
     EXAMPLES:
 

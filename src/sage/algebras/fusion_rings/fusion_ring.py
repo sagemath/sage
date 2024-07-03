@@ -46,7 +46,7 @@ class FusionRing(WeylCharacterRing):
     - ``fusion_labels`` -- (default: ``None``) either a tuple of strings to use as labels of the
       basis of simple objects, or a string from which the labels will be
       constructed
-    - ``inject_variables`` -- (default: ``False``): use with ``fusion_labels``.
+    - ``inject_variables`` -- (default: ``False``) use with ``fusion_labels``.
       If ``inject_variables`` is ``True``, the fusion labels will be variables
       that can be accessed from the command line
 
@@ -387,7 +387,7 @@ class FusionRing(WeylCharacterRing):
 
         INPUT:
 
-        - ``max_strands`` -- (default: 6): maximum number of braid group strands
+        - ``max_strands`` -- (default: 6) maximum number of braid group strands
         - ``anyon`` -- (optional) run this test on this particular simple object
 
         Create a braid group representation using :meth:`get_braid_generators`

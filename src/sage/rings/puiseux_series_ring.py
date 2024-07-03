@@ -204,7 +204,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
         If the base ring is a field, then Puiseux series are already a field.
         If the base ring is a domain, then the Puiseux series over its fraction
-        field is returned. Otherwise, raise a :class:`ValueError`.
+        field is returned. Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 

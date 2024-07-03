@@ -185,23 +185,21 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
 
     INPUT:
 
+    - ``base_ring`` -- a commutative ring
 
-    -  ``base_ring`` -- a commutative ring
-
-    -  ``name``, ``names`` -- name(s) of the indeterminate
+    - ``name``, ``names`` -- name(s) of the indeterminate
 
     - ``default_prec`` -- the default precision used if an exact object must
-       be changed to an approximate object in order to do an arithmetic
-       operation.  If left as ``None``, it will be set to the global
-       default (20) in the univariate case, and 12 in the multivariate case.
+      be changed to an approximate object in order to do an arithmetic
+      operation.  If left as ``None``, it will be set to the global
+      default (20) in the univariate case, and 12 in the multivariate case.
 
-    -  ``sparse`` -- (default: ``False``) whether power series
-       are represented as sparse objects.
+    - ``sparse`` -- boolean (default: ``False``); whether power series
+      are represented as sparse objects
 
     - ``order`` -- (default: ``negdeglex``) term ordering, for multivariate case
 
     - ``num_gens`` -- number of generators, for multivariate case
-
 
     There is a unique power series ring over each base ring with given
     variable name. Two power series over the same base ring with
@@ -490,19 +488,17 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
     def __init__(self, base_ring, name=None, default_prec=None, sparse=False,
                  implementation=None, category=None):
         """
-        Initializes a power series ring.
+        Initialize a power series ring.
 
         INPUT:
 
+        - ``base_ring`` -- a commutative ring
 
-        -  ``base_ring`` -- a commutative ring
+        - ``name`` -- name of the indeterminate
 
-        -  ``name`` -- name of the indeterminate
+        - ``default_prec`` -- the default precision
 
-        -  ``default_prec`` -- the default precision
-
-        -  ``sparse`` -- whether or not power series are
-           sparse
+        - ``sparse`` -- whether or not power series are sparse
 
         - ``implementation`` -- either ``'poly'``, ``'mpoly'``, or
           ``'pari'``. Other values (for example ``'NTL'``) are passed to
@@ -540,14 +536,13 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             Category of complete discrete valuation rings
             sage: TestSuite(R).run()
 
-        It is checked that the default precision is non-negative
+        It is checked that the default precision is nonnegative
         (see :issue:`19409`)::
 
             sage: PowerSeriesRing(ZZ, 'x', default_prec=-5)
             Traceback (most recent call last):
             ...
-            ValueError: default_prec (= -5) must be non-negative
-
+            ValueError: default_prec (= -5) must be nonnegative
         """
         if implementation is None:
             try:
@@ -571,7 +566,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             from sage.misc.defaults import series_precision
             default_prec = series_precision()
         elif default_prec < 0:
-            raise ValueError("default_prec (= %s) must be non-negative"
+            raise ValueError("default_prec (= %s) must be nonnegative"
                              % default_prec)
 
         if implementation == 'poly':
@@ -724,14 +719,12 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         INPUT:
 
+        - ``f`` -- object, e.g., a power series ring element
 
-        -  ``f`` -- object, e.g., a power series ring element
+        - ``prec`` -- (default: infinity) truncation precision for coercion
 
-        -  ``prec`` -- (default: infinity); truncation precision
-           for coercion
-
-        -  ``check`` -- bool (default: ``True``), whether to verify
-           that the coefficients, etc., coerce in correctly.
+        - ``check`` -- boolean (default: ``True``); whether to verify
+          that the coefficients, etc., coerce in correctly
 
         EXAMPLES::
 
@@ -789,7 +782,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: R(ex)
             1 + euler_gamma*y + (1/2*euler_gamma^2 + 1/12*pi^2)*y^2 + O(y^3)
 
-        Laurent series with non-negative valuation are accepted (see
+        Laurent series with nonnegative valuation are accepted (see
         :issue:`6431`)::
 
             sage: L.<q> = LaurentSeriesRing(QQ)
@@ -801,13 +794,13 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             ...
             TypeError: self is not a power series
 
-        It is checked that the precision is non-negative
+        It is checked that the precision is nonnegative
         (see :issue:`19409`)::
 
             sage: PowerSeriesRing(ZZ, 'x')(1, prec=-5)
             Traceback (most recent call last):
             ...
-            ValueError: prec (= -5) must be non-negative
+            ValueError: prec (= -5) must be nonnegative
 
         From lazy series::
 
@@ -821,7 +814,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         if prec is not infinity:
             prec = integer.Integer(prec)
             if prec < 0:
-                raise ValueError("prec (= %s) must be non-negative" % prec)
+                raise ValueError("prec (= %s) must be nonnegative" % prec)
         if isinstance(f, power_series_ring_element.PowerSeries) and f.parent() is self:
             if prec >= f.prec():
                 return f
@@ -875,7 +868,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: c, S = R.construction()
             sage: R == c(S)
             True
-
         """
         from sage.categories.pushout import CompletionFunctor
         if self.is_sparse():
@@ -886,19 +878,19 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def _coerce_impl(self, x):
         """
-        Return canonical coercion of x into self.
+        Return canonical coercion of x into ``self``.
 
-        Rings that canonically coerce to this power series ring R:
+        Rings that canonically coerce to this power series ring `R`:
 
-        - R itself
+        - `R` itself
 
         - Any power series ring in the same variable whose base ring
-          canonically coerces to the base ring of R.
+          canonically coerces to the base ring of `R`
 
         - Any ring that canonically coerces to the polynomial ring
-          over the base ring of R.
+          over the base ring of `R`
 
-        - Any ring that canonically coerces to the base ring of R
+        - Any ring that canonically coerces to the base ring of `R`
 
         EXAMPLES::
 
@@ -1138,17 +1130,17 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         INPUT:
 
-        -  ``prec`` -- Integer specifying precision of output (default:
-           default precision of ``self``)
+        - ``prec`` -- integer specifying precision of output (default:
+          default precision of ``self``)
 
-        -  ``*args``, ``**kwds`` -- Passed on to the ``random_element`` method for
-           the base ring
+        - ``*args``, ``**kwds`` -- passed on to the ``random_element`` method for
+          the base ring
 
         OUTPUT:
 
-        -  Power series with precision ``prec`` whose coefficients are
-           random elements from the base ring, randomized subject to the
-           arguments ``*args`` and ``**kwds``
+        Power series with precision ``prec`` whose coefficients are
+        random elements from the base ring, randomized subject to the
+        arguments ``*args`` and ``**kwds``.
 
         ALGORITHM:
 
@@ -1192,7 +1184,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             1/87 - 3/70*v - 3/44*v^2 + O(v^3)
             sage: SR.random_element(3, max=10, min=-10)  # random
             2.85948321262904 - 9.73071330911226*v - 6.60414378519265*v^2 + O(v^3)
-
         """
         if prec is None:
             prec = self.default_prec()

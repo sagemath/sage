@@ -326,7 +326,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     - ``vmax`` -- the maximum value (values above this are set to this value)
 
-    - ``flip_y`` -- boolean (default: ``True``);  If ``False``, the first row of the
+    - ``flip_y`` -- boolean (default: ``True``); if ``False``, the first row of the
       matrix is on the bottom of the graph.  Otherwise, the first row is on the
       top of the graph.
 

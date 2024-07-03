@@ -87,9 +87,9 @@ cdef class qAdicFixedModElement(FMElement):
 
         INPUT:
 
-        - ``use_smallest_mode`` -- if True, use reps between -p/2 and p/2 instead.
-        - ``return_list`` -- if True, return a list of coefficients (as integers).
-            For use in printing.
+        - ``use_smallest_mode`` -- if ``True``, use reps between -p/2 and p/2 instead
+        - ``return_list`` -- if ``True``, return a list of coefficients (as integers);
+          for use in printing
 
         EXAMPLES::
 

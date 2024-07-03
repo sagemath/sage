@@ -12076,7 +12076,7 @@ cdef class Expression(Expression_abc):
         - ``multiplicities`` -- boolean (default: ``True``); when ``True``, return
           multiplicities
 
-        - ``ring`` -- a ring (default: ``None``): if not ``None``, convert
+        - ``ring`` -- a ring (default: ``None``); if not ``None``, convert
           ``self`` to a polynomial over ``ring`` and find roots over ``ring``
 
         OUTPUT:

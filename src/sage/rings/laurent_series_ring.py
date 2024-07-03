@@ -304,7 +304,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         If the base ring is a field, then Laurent series are already a field.
         If the base ring is a domain, then the Laurent series over its fraction
-        field is returned. Otherwise, raise a ``ValueError``.
+        field is returned. Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 

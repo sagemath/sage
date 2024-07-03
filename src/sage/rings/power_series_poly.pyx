@@ -409,7 +409,7 @@ cdef class PowerSeries_poly(PowerSeries):
         Return the ``n``-th coefficient of ``self``.
 
         This returns 0 for negative coefficients and raises an
-        ``IndexError`` if trying to access beyond known coefficients.
+        :exc:`IndexError` if trying to access beyond known coefficients.
 
         If ``n`` is a slice object ``[:k]``, this will return a power
         series of the same precision, whose coefficients are the same

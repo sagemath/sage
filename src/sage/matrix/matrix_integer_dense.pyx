@@ -3977,7 +3977,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``self`` -- an invertible matrix
 
-        - ``use_nullspace`` -- (default: ``False``): whether to
+        - ``use_nullspace`` -- boolean (default: ``False``); whether to
           use nullspace algorithm, which is slower, but doesn't require
           checking that the matrix is invertible as a precondition
 

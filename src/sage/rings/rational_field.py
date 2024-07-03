@@ -294,7 +294,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         Return the number of elements in ``self``.
 
-        Since this does not have a size, this throws a ``TypeError``.
+        Since this does not have a size, this throws a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -1439,7 +1439,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: fromQS2((0,1,1))
             -7
 
-        The map ``fromQS2`` is only well-defined modulo `p`'th powers
+        The map ``fromQS2`` is only well-defined modulo `p`-th powers
         (in this case, modulo squares)::
 
             sage: toQS2(-5/7)                                                           # needs sage.modules sage.rings.number_field

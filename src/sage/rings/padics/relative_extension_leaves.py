@@ -35,7 +35,7 @@ class pAdicRelativeBaseringInjection(Morphism):
     INPUT:
 
     - ``R`` -- an unramified `p`-adic ring or field
-    - ``S`` -- an eisenstein extension of ``R``.
+    - ``S`` -- an eisenstein extension of ``R``
 
     EXAMPLES::
 

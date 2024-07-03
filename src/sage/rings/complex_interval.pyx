@@ -973,13 +973,13 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
     def _interface_init_(self, I=None):
         """
-        Raise a ``TypeError``.
+        Raise a :exc:`TypeError`.
 
         This function would return the string representation of ``self``
         that makes sense as a default representation of a complex
         interval in other computer algebra systems. But, most other
         computer algebra systems do not support interval arithmetic,
-        so instead we just raise a ``TypeError``.
+        so instead we just raise a :exc:`TypeError`.
 
         Define the appropriate ``_cas_init_`` function if there is a
         computer algebra system you would like to support.
@@ -992,7 +992,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             ...
             TypeError
 
-        Here a conversion to Maxima happens, which results in a ``TypeError``::
+        Here a conversion to Maxima happens, which results in a :exc:`TypeError`::
 
             sage: a = CIF(2.3)
             sage: maxima(a)                                                             # needs sage.symbolic
@@ -1435,7 +1435,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
     def multiplicative_order(self):
         """
         Return the multiplicative order of this complex number, if known,
-        or raise a ``NotImplementedError``.
+        or raise a :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -1478,7 +1478,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         The argument (angle) of the complex number, normalized
         so that `-\pi < \theta.lower() \leq \pi`.
 
-        We raise a ``ValueError`` if the interval strictly contains 0,
+        We raise a :exc:`ValueError` if the interval strictly contains 0,
         or if the interval contains only 0.
 
         .. WARNING::

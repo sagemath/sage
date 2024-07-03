@@ -18,7 +18,7 @@ hyperplane arrangements includes the following:
   (default: black)
 
 - ``label_fontsize`` -- size for hyperplane_label font (default:
-  ``14``);  This does not work for 3d plots
+  ``14``); this does not work for 3d plots
 
 - ``label_offsets`` -- amount be which labels are offset from
   h.point() for each hyperplane h.  The format is different for each

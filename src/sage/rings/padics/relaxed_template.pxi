@@ -112,7 +112,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``p`` -- a prime, which is compared with the parent of this element.
+        - ``p`` -- a prime, which is compared with the parent of this element
 
         EXAMPLES::
 
@@ -135,8 +135,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``i`` -- a positive integer
-
+        - ``i`` -- positive integer
         """
         pass
 
@@ -152,8 +151,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``i`` -- an integer
-
+        - ``i`` -- integer
         """
         pass
 
@@ -165,10 +163,10 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         - ``slice`` -- a ``celement`` to store the slice
 
-        - ``start`` -- a positive integer, the starting position of the slice
+        - ``start`` -- positive integer; the starting position of the slice
           in relative precision
 
-        - ``length`` -- a positive integer, the length of the slice
+        - ``length`` -- positive integer; the length of the slice
 
         .. NOTE::
 
@@ -202,7 +200,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -225,16 +223,15 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
-        - ``halt`` -- an integer; the absolute precision after which the
+        - ``halt`` -- integer; the absolute precision after which the
           computation is abandoned if the first significant digit has not
           been found yet
 
         OUTPUT:
 
         An error code (see :meth:`_next_c` for details).
-
         """
         if self._valuation >= maxordp:
             return 0
@@ -274,7 +271,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -330,14 +327,14 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``n`` -- an integer or ``None`` (default ``None``); if
-          given, return the corresponding entries in the expansion.
+        - ``n`` -- integer or ``None`` (default: ``None``); if
+          given, return the corresponding entries in the expansion
 
         - ``lift_mode`` -- ``'simple'``, ``'smallest'`` or
           ``'teichmuller'`` (default: ``'simple'``)
 
         - ``start_val`` -- start at this valuation rather than the
-          default (`0` or the valuation of this element).
+          default (`0` or the valuation of this element)
 
         OUTPUT:
 
@@ -349,7 +346,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         EXAMPLES::
 
-            sage: R = ZpER(7, print_mode="digits")
+            sage: R = ZpER(7, print_mode='digits')
             sage: a = R(1/2021); a
             ...23615224635636163463
 
@@ -441,7 +438,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``n`` -- an integer or a slice
+        - ``n`` -- integer or a slice
 
         EXAMPLES::
 
@@ -488,13 +485,13 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``start`` -- an integer or ``None`` (default: ``None``),
+        - ``start`` -- integer or ``None`` (default: ``None``);
           the first position of the slice
 
-        - ``stop`` -- an integer or ``None`` (default: ``None``),
+        - ``stop`` -- integer or ``None`` (default: ``None``);
           the first position not included in the slice
 
-        - ``bound`` -- a boolean (default: ``False``); whether the
+        - ``bound`` -- boolean (default: ``False``); whether the
           precision on the output should be bounded or unbounded
 
         EXAMPLES::
@@ -592,7 +589,6 @@ cdef class RelaxedElement(pAdicGenericElement):
 
             sage: b[:15]   # indirect doctest
             1 + 5 + 3*5^3 + 3*5^4 + 5^5 + 4*5^6 + 4*5^7 + 2*5^8 + 3*5^9 + 2*5^10 + 5^11 + 5^12 + 5^13 + O(5^15)
-
         """
         # This code should be integrated to the p-adic printer
         if self._valuation <= -maxordp:
@@ -632,11 +628,10 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         - ``right`` -- the second element involved in the comparison
 
-        - ``prec`` -- an integer, the precision at which the equality is checked
+        - ``prec`` -- integer; the precision at which the equality is checked
 
-        - ``permissive`` -- a boolean; if ``True``, be silent if the precision
-          on one input is less than ``prec``; otherwise, raise an error
-
+        - ``permissive`` -- boolean; if ``True``, be silent if the precision
+          on one input is less than ``prec``. Otherwise, raise an error.
         """
         cdef int error
         cdef long i
@@ -668,7 +663,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         - ``right`` -- a relaxed `p`-adic number
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         EXAMPLES::
 
@@ -696,11 +691,11 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         - ``right`` -- a relaxed `p`-adic number
 
-        - ``prec`` -- an integer or ``None`` (default: ``None``); if
-          given, compare the two elements at this precision; otherwise
-          use the default halting precision of the parent
+        - ``prec`` -- integer or ``None`` (default: ``None``); if
+          given, compare the two elements at this precision. Otherwise
+          use the default halting precision of the parent.
 
-        - ``secure`` -- a boolean (default: ``False`` if ``prec`` is given,
+        - ``secure`` -- boolean (default: ``False`` if ``prec`` is given,
           ``True`` otherwise); when the elements cannot be distinguished
           at the given precision, raise an error if ``secure`` is ``True``,
           return ``True`` otherwise.
@@ -856,7 +851,6 @@ cdef class RelaxedElement(pAdicGenericElement):
             O(5^20)
             sage: b._is_exact_zero()
             False
-
         """
         return self._valuation >= maxordp
 
@@ -867,7 +861,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         EXAMPLES::
 
-            sage: R = ZpER(5, print_mode="digits")
+            sage: R = ZpER(5, print_mode='digits')
             sage: a = R(20/21)
 
         Computations have not started yet; hence we are not able
@@ -1052,10 +1046,10 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (default: ``None``);
+        - ``prec`` -- integer or ``None`` (default: ``None``);
           if ``None``, use the default precision of the parent
 
-        - ``permissive`` -- a boolean (default: ``False`` if ``prec``
+        - ``permissive`` -- boolean (default: ``False`` if ``prec``
           is given, ``True`` otherwise); if ``False``, raise an error
           if the precision of this element is not sufficient
 
@@ -1121,7 +1115,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or infinity
+        - ``absprec`` -- integer or infinity
 
         EXAMPLES::
 
@@ -1154,16 +1148,16 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (default: ``None``);
+        - ``prec`` -- integer or ``None`` (default: ``None``);
           if ``None``, use the default precision of the parent
 
-        - ``halt`` -- an integer or a boolean (default: ``True``);
+        - ``halt`` -- integer or boolean (default: ``True``);
           the absolute precision after which the computation is abandoned
-          if the first significant digit has not been found yet;
-          if ``True``, the default halting precision of the parent is used;
-          if ``False``, the computation is never abandoned
+          if the first significant digit has not been found yet.
+          If ``True``, the default halting precision of the parent is used.
+          If ``False``, the computation is never abandoned.
 
-        - ``permissive`` -- a boolean (default: ``False`` if ``prec``
+        - ``permissive`` -- boolean (default: ``False`` if ``prec``
           is given, ``True`` otherwise); if ``False``, raise an error
           if the precision of this element is not sufficient
 
@@ -1252,7 +1246,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or ``None`` (default: ``None``), the
+        - ``absprec`` -- integer or ``None`` (default: ``None``); the
           absolute precision of the result. If ``None``, the default
           precision of the parent is used.
 
@@ -1323,9 +1317,9 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``halt`` -- an integer; if given, allow to increase the
+        - ``halt`` -- integer; if given, allow to increase the
           absolute precision on this element up to ``halt`` in order
-          to get a better lower bound.
+          to get a better lower bound
         """
         cdef int error = 0
         while not error and self._precrel == 0 and self._valuation < halt:
@@ -1338,16 +1332,16 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``halt`` -- an integer or a boolean (default: ``True``);
+        - ``halt`` -- integer or boolean (default: ``True``);
           the absolute precision after which the computation is abandoned
-          if the first significant digit has not been found yet;
-          if ``True``, the default halting precision of the parent is used;
-          if ``False``, the computation is never abandoned
+          if the first significant digit has not been found yet.
+          If ``True``, the default halting precision of the parent is used.
+          If ``False``, the computation is never abandoned.
 
-        - ``secure`` -- a boolean (default: the value given at the creation
+        - ``secure`` -- boolean (default: the value given at the creation
           of the parent); when the valuation cannot be determined for sure,
           raise an error if ``secure`` is ``True``, return the best known
-          lower bound on the valuation otherwise.
+          lower bound on the valuation otherwise
 
         EXAMPLES::
 
@@ -1442,11 +1436,11 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``halt`` -- an integer or a boolean (default: ``True``);
+        - ``halt`` -- integer or boolean (default: ``True``);
           the absolute precision after which the computation is abandoned
-          if the first significant digit has not been found yet;
-          if ``True``, the default halting precision of the parent is used;
-          if ``False``, the computation is never abandoned
+          if the first significant digit has not been found yet.
+          If ``True``, the default halting precision of the parent is used.
+          If ``False``, the computation is never abandoned.
 
         EXAMPLES::
 
@@ -1474,7 +1468,6 @@ cdef class RelaxedElement(pAdicGenericElement):
             ValueError: unit part of 0 not defined
 
         See :meth:`valuation` for more details on the parameter ``halt``.
-
         """
         val = self.valuation(halt)
         if self._valuation >= self._precbound:
@@ -1487,11 +1480,11 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``halt`` -- an integer or a boolean (default: ``True``);
+        - ``halt`` -- integer or boolean (default: ``True``);
           the absolute precision after which the computation is abandoned
-          if the first significant digit has not been found yet;
-          if ``True``, the default halting precision of the parent is used;
-          if ``False``, the computation is never abandoned
+          if the first significant digit has not been found yet.
+          If ``True``, the default halting precision of the parent is used.
+          If ``False``, the computation is never abandoned.
 
         EXAMPLES::
 
@@ -1520,7 +1513,6 @@ cdef class RelaxedElement(pAdicGenericElement):
             ValueError: unit part of 0 not defined
 
         See :meth:`valuation` for more details on the parameter ``halt``.
-
         """
         val = self.valuation(halt)
         if self._valuation >= self._precbound:
@@ -1534,13 +1526,13 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- a non-negative integer (default: ``1``)
+        - ``absprec`` -- nonnegative integer (default: `1`)
 
-        - ``field`` -- boolean (default ``True``); when ``absprec`` is ``1``,
-          whether to return an element of GF(p) or Zmod(p).
+        - ``field`` -- boolean (default: ``True``); when ``absprec`` is ``1``,
+          whether to return an element of GF(p) or Zmod(p)
 
-        - ``check_prec`` -- boolean (default ``True``); whether to raise an error
-          if this element has insufficient precision to determine the reduction.
+        - ``check_prec`` -- boolean (default: ``True``); whether to raise an error
+          if this element has insufficient precision to determine the reduction
 
         EXAMPLES::
 
@@ -1559,7 +1551,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             sage: b.residue()
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue
+            ValueError: element must have nonnegative valuation in order to compute residue
         """
         if absprec >= maxordp:
             raise OverflowError
@@ -1568,7 +1560,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         error = self._jump_c(absprec)
         raise_error(error, not check_prec)
         if self._valuation < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue")
+            raise ValueError("element must have nonnegative valuation in order to compute residue")
         cdef celement digits
         cdef Integer ans
         if absprec <= self._valuation:
@@ -1588,7 +1580,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or ``None`` (default: ``None``); if ``None``,
+        - ``absprec`` -- integer or ``None`` (default: ``None``); if ``None``,
           the absolute precision of this element is used
 
         EXAMPLES::
@@ -1880,7 +1872,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             sage: b
             2 + 3 + 3^2 + 3^3 + 3^4 + ...
 
-        A ``ZeroDivisionError`` is raised if an element has no inverse in the
+        A :exc:`ZeroDivisionError` is raised if an element has no inverse in the
         ring::
 
             sage: R(3).inverse_of_unit()
@@ -1986,7 +1978,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
     def _test_pickling(self, **options):
         r"""
-        Checks that this object can be pickled and unpickled properly.
+        Check that this object can be pickled and unpickled properly.
 
         TESTS::
 
@@ -2103,9 +2095,9 @@ cdef class RelaxedElementWithDigits(RelaxedElement):
 
         - ``slice`` -- a ``celement`` to store the slice
 
-        - ``start`` -- an integer, the start position of the slice
+        - ``start`` -- integer; the start position of the slice
 
-        - ``length`` -- an integer, the length of the slice
+        - ``length`` -- integer; the length of the slice
 
         .. NOTE::
 
@@ -2131,7 +2123,6 @@ cdef class RelaxedElement_zero(RelaxedElement):
         sage: R = ZpER(7)
         sage: a = R.zero()
         sage: TestSuite(a).run()
-
     """
     def __init__(self, parent):
         r"""
@@ -2191,9 +2182,9 @@ cdef class RelaxedElement_zero(RelaxedElement):
 
         - ``slice`` -- a ``celement`` to store the slice
 
-        - ``start`` -- an integer, the start position of the slice
+        - ``start`` -- integer; the start position of the slice
 
-        - ``length`` -- an integer, the length of the slice
+        - ``length`` -- integer; the length of the slice
         """
         element_init(slice)
 
@@ -2203,7 +2194,7 @@ cdef class RelaxedElement_zero(RelaxedElement):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -2234,7 +2225,6 @@ cdef class RelaxedElement_one(RelaxedElementWithDigits):
         sage: R = ZpER(7)
         sage: a = R.one()
         sage: TestSuite(a).run()
-
     """
     def __init__(self, parent):
         r"""
@@ -2279,7 +2269,7 @@ cdef class RelaxedElement_one(RelaxedElementWithDigits):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -2325,7 +2315,7 @@ cdef class RelaxedElement_bound(RelaxedElement):
 
         - ``x`` -- a relaxed `p`-adics, the element to bound
 
-        - ``precbound`` -- an integer or ``None`` (default: ``None``),
+        - ``precbound`` -- integer or ``None`` (default: ``None``);
           the bound on the precision
 
         .. NOTE::
@@ -2387,10 +2377,10 @@ cdef class RelaxedElement_bound(RelaxedElement):
 
         - ``slice`` -- a ``celement`` to store the slice
 
-        - ``start`` -- a positive integer, the starting position of the slice
+        - ``start`` -- positive integer; the starting position of the slice
           in relative precision
 
-        - ``length`` -- a positive integer, the length of the slice
+        - ``length`` -- positive integer; the length of the slice
 
         .. NOTE::
 
@@ -2406,7 +2396,7 @@ cdef class RelaxedElement_bound(RelaxedElement):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -2464,10 +2454,10 @@ cdef class RelaxedElement_value(RelaxedElementWithDigits):
 
         - ``value`` -- the value in the exact subring
 
-        - ``shift`` -- an integer (default: `0`), the position at which
+        - ``shift`` -- integer (default: `0`); the position at which
           the given value is written
 
-        - ``precbound`` -- an integer or ``None`` (default: ``None``),
+        - ``precbound`` -- integer or ``None`` (default: ``None``);
           the bound on the precision
 
         TESTS::
@@ -2512,7 +2502,7 @@ cdef class RelaxedElement_value(RelaxedElementWithDigits):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -2580,15 +2570,15 @@ cdef class RelaxedElement_random(RelaxedElementWithDigits):
 
         - ``parent`` -- the parent of this element
 
-        - ``valuation`` -- an integer or ``None``, the position from which
+        - ``valuation`` -- integer or ``None``; the position from which
           random digits are picked;
           if ``None``, it is randomly chosen if the parent is a field and
           set to `0` otherwise
 
-        - ``precbound`` -- an integer or ``None`` (default: ``None``),
+        - ``precbound`` -- integer or ``None`` (default: ``None``);
           the bound on the precision
 
-        - ``seed`` -- an integer or ``None`` (default: ``None``), the
+        - ``seed`` -- integer or ``None`` (default: ``None``); the
           seed of the random generator
 
         .. NOTE::
@@ -2626,7 +2616,7 @@ cdef class RelaxedElement_random(RelaxedElementWithDigits):
 
         TESTS::
 
-            sage: R = ZpER(5, print_mode="digits")
+            sage: R = ZpER(5, print_mode='digits')
             sage: a = R.random_element()
             sage: a   # random
             ...32220241412003314311
@@ -2694,13 +2684,13 @@ cdef class RelaxedElement_slice(RelaxedElement):
         - ``x`` -- a relaxed `p`-adic element, the element from which the
           slice is extracted
 
-        - ``start`` -- an integer, the position of the first digit of `x`
+        - ``start`` -- integer; the position of the first digit of `x`
           in the slice
 
-        - ``stop`` -- an integer, the position of the first digit of `x`
+        - ``stop`` -- integer; the position of the first digit of `x`
           after the slice
 
-        - ``shift`` -- an integer such that ``self[i] = x[i+shift]``
+        - ``shift`` -- integer such that ``self[i] = x[i+shift]``
 
         .. NOTE::
 
@@ -2737,7 +2727,7 @@ cdef class RelaxedElement_slice(RelaxedElement):
 
         TESTS::
 
-            sage: R = ZpER(5, print_mode="digits")
+            sage: R = ZpER(5, print_mode='digits')
             sage: x = R(20/21)
             sage: y = x.slice(3, 6)
             sage: y == loads(dumps(y))  # indirect doctest
@@ -2771,9 +2761,9 @@ cdef class RelaxedElement_slice(RelaxedElement):
 
         - ``slice`` -- a ``celement`` to store the slice
 
-        - ``start`` -- an integer, the start position of the slice
+        - ``start`` -- integer; the start position of the slice
 
-        - ``length`` -- an integer, the length of the slice
+        - ``length`` -- integer; the length of the slice
 
         .. NOTE::
 
@@ -2793,7 +2783,7 @@ cdef class RelaxedElement_slice(RelaxedElement):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -2900,7 +2890,7 @@ cdef class RelaxedElement_add(RelaxedElementWithDigits):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -3007,7 +2997,7 @@ cdef class RelaxedElement_sub(RelaxedElementWithDigits):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -3250,7 +3240,6 @@ cdef class RelaxedElement_muldigit(RelaxedElementWithDigits):
           digit is the first factor
 
         - ``y`` -- a relaxed `p`-adic element, the second factor
-
         """
         RelaxedElement.__init__(self, parent)
         self._x = <cdigit_ptr>x._inverse
@@ -3323,9 +3312,9 @@ cdef class RelaxedElement_div(RelaxedElementWithDigits):
 
         - ``denom`` -- a relaxed `p`-adic element, the divisor
 
-        - ``minval`` -- an integer, the minimal valuation allowed for this element
+        - ``minval`` -- integer; the minimal valuation allowed for this element
 
-        - ``precbound`` -- an integer or ``None`` (default: ``None``),
+        - ``precbound`` -- integer or ``None`` (default: ``None``);
           the bound on the precision
 
         TESTS::
@@ -3538,7 +3527,6 @@ cdef class RelaxedElement_sqrt(RelaxedElementWithDigits):
         .. NOTE::
 
             This code does not work for nontrivial extensions of `\QQ_2`.
-
         """
         cdef RelaxedElement x = self._x
         cdef long maxprec
@@ -3652,7 +3640,7 @@ cdef class RelaxedElement_teichmuller(RelaxedElementWithDigits):
         - ``parent`` -- the parent of this element
 
         - ``xbar`` -- an element in the exact subring, which is congruent
-          to this Teichmüller modulo this uniformizer.
+          to this Teichmüller modulo this uniformizer
 
         TESTS::
 
@@ -3715,7 +3703,7 @@ cdef class RelaxedElement_teichmuller(RelaxedElementWithDigits):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -3779,10 +3767,10 @@ cdef class RelaxedElement_unknown(RelaxedElementWithDigits):
 
         - ``parent`` -- the parent of this element
 
-        - ``valuation`` -- an integer, a lower bound on the valuation of
+        - ``valuation`` -- integer; a lower bound on the valuation of
           this number
 
-        - ``digits`` -- a list or ``None`` (default: ``None``), the first
+        - ``digits`` -- list or ``None`` (default: ``None``); the first
           significant digits of this number
 
         TESTS::
@@ -3985,7 +3973,6 @@ cdef class RelaxedElement_zeroone(RelaxedElementWithDigits):
         - ``parent`` -- the parent of this element
 
         - ``valuation`` -- the valuation of this number
-
         """
         RelaxedElement.__init__(self, parent)
         self._valuation = valuation
@@ -4009,7 +3996,7 @@ cdef class RelaxedElement_zeroone(RelaxedElementWithDigits):
 
         INPUT:
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
         OUTPUT:
 
@@ -4059,9 +4046,9 @@ cdef class ExpansionIter():
 
         - ``mode`` -- either ``simple_mode``, ``smallest_mode`` or ``teichmuller_mode``
 
-        - ``start`` -- an integer, the position where the expansion starts
+        - ``start`` -- integer; the position where the expansion starts
 
-        - ``stop`` -- an integer, the position where the expansion stops
+        - ``stop`` -- integer; the position where the expansion stops
 
         TESTS::
 

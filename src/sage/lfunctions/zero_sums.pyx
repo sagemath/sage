@@ -778,7 +778,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         INPUT:
 
-        - ``Delta`` -- positive real number (default: 1) parameter denoting the
+        - ``Delta`` -- positive real number (default: 1); parameter denoting the
           tightness of the zero sum
 
         - ``tau`` -- real parameter (default: 0) denoting the offset of the sum
@@ -788,7 +788,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
           be 1 (assuming GRH, the zero is simple); otherwise the limit will
           be 0.
 
-        - ``num_terms`` -- positive integer (default: ``None``): the number of
+        - ``num_terms`` -- positive integer (default: ``None``); the number of
           terms computed in the truncated Dirichlet series for the L-function
           attached to ``self``. If left at ``None``, this is set to
           `\ceil(e^{2 \pi \Delta})`, the same number of terms used in the other

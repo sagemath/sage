@@ -32,9 +32,9 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         INPUT:
 
-        -  ``domain`` -- an unramified p-adic field
+        - ``domain`` -- an unramified p-adic field
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         .. NOTE::
 
@@ -240,7 +240,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     def _composition(self, right):
         """
-        Return self o right.
+        Return ``self`` o ``right``.
 
         EXAMPLES::
 
@@ -328,7 +328,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     cpdef _richcmp_(left, right, int op):
         """
-        Compare ``left`` and ``right``
+        Compare ``left`` and ``right``.
 
         EXAMPLES::
 
@@ -338,7 +338,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
             sage: F == G
             True
-
         """
         if left is right:
             return rich_to_bool(op, 0)

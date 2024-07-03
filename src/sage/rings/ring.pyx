@@ -256,7 +256,7 @@ cdef class Ring(ParentWithGens):
     def __len__(self):
         r"""
         Return the cardinality of this ring if it is finite, else raise
-        a ``NotImplementedError``.
+        a :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -728,7 +728,7 @@ cdef class Ring(ParentWithGens):
         Return ``True`` if the canonical map from ``self`` to ``other`` is
         injective.
 
-        Raises a ``NotImplementedError`` if not known.
+        Raises a :exc:`NotImplementedError` if not known.
 
         EXAMPLES::
 
@@ -811,7 +811,7 @@ cdef class Ring(ParentWithGens):
     def zeta(self, n=2, all=False):
         """
         Return a primitive ``n``-th root of unity in ``self`` if there
-        is one, or raise a ``ValueError`` otherwise.
+        is one, or raise a :exc:`ValueError` otherwise.
 
         INPUT:
 
@@ -819,7 +819,7 @@ cdef class Ring(ParentWithGens):
 
         - ``all`` -- boolean (default: ``False``); whether to return
           a list of all primitive `n`-th roots of unity. If ``True``, raise a
-          ``ValueError`` if ``self`` is not an integral domain.
+          :exc:`ValueError` if ``self`` is not an integral domain.
 
         OUTPUT: element of ``self`` of finite order
 
@@ -927,9 +927,9 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        The following example returns a ``NotImplementedError`` since the
+        The following example returns a :exc:`NotImplementedError` since the
         generic ring class ``__call__`` function returns a
-        ``NotImplementedError``. Note that
+        :exc:`NotImplementedError`. Note that
         ``sage.rings.ring.Ring.random_element`` performs a call in the generic
         ring class by a random integer::
 
@@ -1204,7 +1204,7 @@ cdef class CommutativeRing(Ring):
 
     def extension(self, poly, name=None, names=None, **kwds):
         """
-        Algebraically extends ``self`` by taking the quotient
+        Algebraically extend ``self`` by taking the quotient
         ``self[x] / (f(x))``.
 
         INPUT:
@@ -1313,7 +1313,7 @@ cdef class IntegralDomain(CommutativeRing):
         fractions; otherwise return ``False``.
 
         When no algorithm is implemented for this, then this
-        function raises a ``NotImplementedError``.
+        function raises a :exc:`NotImplementedError`.
 
         Note that ``is_integrally_closed`` has a naive implementation
         in fields. For every field `F`, `F` is its own field of fractions,

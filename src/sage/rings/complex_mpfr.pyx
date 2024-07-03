@@ -889,7 +889,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
     cdef ComplexNumber _new(self):
         """
-        Quickly creates a new initialized complex number with the same
+        Quickly create a new initialized complex number with the same
         parent as ``self``.
         """
         cdef ComplexNumber x
@@ -2003,7 +2003,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
     def multiplicative_order(self):
         """
         Return the multiplicative order of this complex number, if known,
-        or raise a :class:`NotImplementedError`.
+        or raise a :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -2328,7 +2328,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         INPUT:
 
         - ``self`` -- element of the upper half plane (if not,
-          raises a :class:`ValueError`)
+          raises a :exc:`ValueError`)
 
         - ``omit_frac`` -- -- boolean (default: ``False``); if ``True``,
           omit the `e^{\pi i z / 12}` factor

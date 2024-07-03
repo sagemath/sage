@@ -497,7 +497,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
     def __cinit__(FiniteField_ntl_gf2eElement self, parent=None ):
         """
-        Restores the cache and constructs the underlying NTL element.
+        Restore the cache and construct the underlying NTL element.
 
         EXAMPLES::
 

@@ -22119,7 +22119,7 @@ class GenericGraph(GenericGraph_pyx):
           dictionary of options for this edge
 
         - ``rankdir`` -- ``'left'``, ``'right'``, ``'up'``, or ``'down'``
-          (default: ``'down'``, for consistency with ``graphviz``): the
+          (default: ``'down'``, for consistency with ``graphviz``); the
           preferred ranking direction for acyclic layouts; see the ``rankdir``
           option of ``graphviz``.
 

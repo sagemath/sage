@@ -3719,7 +3719,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         Return the left key tableau of ``self``.
 
         The left key tableau of a tableau `T` is the key tableau whose entries
-        are weakly lesser than the corresponding entries in `T`, and whose column
+        are weakly less than the corresponding entries in `T`, and whose column
         reading word is subject to certain conditions. See [LS1990]_ for the full definition.
 
         ALGORITHM:

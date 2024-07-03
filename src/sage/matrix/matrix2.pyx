@@ -5621,9 +5621,9 @@ cdef class Matrix(Matrix1):
 
         - ``self`` -- a matrix
 
-        - ``algorithm`` -- 'spin' (default): algorithm involves
-          iterating the action of ``self`` on a vector. 'kernel': naively just
-          compute `ker(f_i(A))` for each factor `f_i`.
+        - ``algorithm`` -- string (default: ``'spin'``); ``'spin'``: involves
+          iterating the action of ``self`` on a vector. ``'kernel'``: naively
+          just compute `ker(f_i(A))` for each factor `f_i`.
 
         - ``dual`` -- boolean (default: ``False``); if True, also
           returns the corresponding decomposition of V under the action of

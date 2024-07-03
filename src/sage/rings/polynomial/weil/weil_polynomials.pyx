@@ -424,7 +424,7 @@ class WeilPolynomials():
     - ``node_limit`` -- integer (default: ``None``)
 
         If set, imposes an upper bound on the number of terminal nodes during the search
-        (will raise a ``RuntimeError`` if exceeded).
+        (will raise a :exc:`RuntimeError` if exceeded).
 
     - ``parallel`` -- boolean (default: ``False``); whether to use multiple processes
 

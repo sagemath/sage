@@ -321,7 +321,7 @@ def contour_plot(f, xrange, yrange, **options):
       - ``colorbar_format`` -- a format string, this is used to format
         the colorbar labels
 
-      - ``colorbar_spacing`` -- string (default: ``'proportional'``);  If
+      - ``colorbar_spacing`` -- string (default: ``'proportional'``); if
         'proportional', make the contour divisions proportional to
         values.  If 'uniform', space the colorbar divisions uniformly,
         without regard for numeric values.

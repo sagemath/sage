@@ -716,7 +716,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def __setstate__(self, state):
         r"""
-        Restores the state of pickled polytope.
+        Restore the state of pickled polytope.
 
         TESTS::
 

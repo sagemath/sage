@@ -1620,7 +1620,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
             (x - 2) * (x - 2*E(3)) * (x - 2*E(3)^2)
 
         In most situations, the factorization will fail with a
-        :class:`NotImplementedError`::
+        :exc:`NotImplementedError`::
 
             sage: (x^3 - 2).factor()
             Traceback (most recent call last):

@@ -1180,7 +1180,7 @@ class ModularForm_abstract(ModuleElement):
         - ``embedding`` -- embedding of the coefficient field into `\RR` or
           `\CC`, or an integer `i` (interpreted as the `i`-th embedding)
           (default: 0)
-        - ``prec`` -- integer (default: 53): precision in bits
+        - ``prec`` -- integer (default: 53); precision in bits
 
         EXAMPLES::
 

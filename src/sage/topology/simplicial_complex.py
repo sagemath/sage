@@ -4732,7 +4732,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``certificate`` -- boolean (default: ``False``);  If ``True``,
+        - ``certificate`` -- boolean (default: ``False``); if ``True``,
           and ``self`` is partitionable, then return a list of pairs `(R,F)`
           that form a partitioning.
 

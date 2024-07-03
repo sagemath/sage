@@ -454,7 +454,7 @@ cdef class PowerSeries_pari(PowerSeries):
         same precision, whose coefficients are the same as ``self``
         for those indices in the slice, and 0 otherwise.
 
-        Returns 0 for negative coefficients.  Raises an ``IndexError``
+        Returns 0 for negative coefficients.  Raises an :exc:`IndexError`
         if trying to access beyond known coefficients.
 
         EXAMPLES::

@@ -1391,7 +1391,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         False
 
     We additionally provide two other methods of performing comparisons.
-    The first is raising a ``ValueError`` and the second uses a check
+    The first is raising a :exc:`ValueError` and the second uses a check
     up to a (user set) finite precision. These behaviors are set using the
     options ``secure`` and ``halting_precision``. In particular,
     this applies to series that are not specified by a finite number
@@ -1399,7 +1399,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
     Equality checking will depend on the coefficients which have
     already been computed. If this information is not enough to
     check that two series are different, then if ``L.options.secure``
-    is set to ``True``, then we raise a ``ValueError``::
+    is set to ``True``, then we raise a :exc:`ValueError`::
 
         sage: L.options.secure = True
         sage: f = 1 / (z + z^2); f

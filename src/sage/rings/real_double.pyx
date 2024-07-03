@@ -92,7 +92,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         sage: RDF(2/3)
         0.6666666666666666
 
-    A ``TypeError`` is raised if the coercion doesn't make sense::
+    A :exc:`TypeError` is raised if the coercion doesn't make sense::
 
         sage: RDF(QQ['x'].0)
         Traceback (most recent call last):
@@ -572,7 +572,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
     def zeta(self, n=2):
         """
         Return an `n`-th root of unity in the real field, if one
-        exists, or raise a ``ValueError`` otherwise.
+        exists, or raise a :exc:`ValueError` otherwise.
 
         EXAMPLES::
 
@@ -1802,8 +1802,8 @@ cdef class RealDoubleElement(FieldElement):
         INPUT:
 
         - ``extend`` -- boolean (default: ``True``); if ``True``, return a
-          square root in a complex field if necessary if ``self`` is negative;
-           otherwise raise a ``ValueError``.
+          square root in a complex field if necessary if ``self`` is negative.
+          Otherwise raise a :exc:`ValueError`.
 
         - ``all`` -- boolean (default: ``False``); if ``True``, return a
           list of all square roots

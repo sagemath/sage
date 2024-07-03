@@ -601,10 +601,10 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``); if "True",
+        - ``extend`` -- boolean (default: ``True``); if ``True``,
           return a square root in an extension ring, if necessary.
-          Otherwise, raise a :class:`ValueError` if the root is not in
-          the ring
+          Otherwise, raise a :exc:`ValueError` if the root is not in
+          the ring.
 
         - ``all`` -- boolean (default: ``False``); if ``True``,
           return all square roots of this element, instead of just one

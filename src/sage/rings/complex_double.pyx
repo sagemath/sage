@@ -300,7 +300,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             sage: CDF(mpc('2.0+1.0j'))
             2.0 + 1.0*I
 
-        A ``TypeError`` is raised if the coercion doesn't make sense::
+        A :exc:`TypeError` is raised if the coercion doesn't make sense::
 
             sage: CDF(QQ['x'].0)
             Traceback (most recent call last):
@@ -377,7 +377,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
     cpdef _coerce_map_from_(self, S):
         """
         Return the canonical coerce of `x` into the complex double field, if
-        it is defined, otherwise raise a ``TypeError``.
+        it is defined, otherwise raise a :exc:`TypeError`.
 
         The rings that canonically coerce to the complex double field are:
 
@@ -846,7 +846,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
         - ``n`` -- integer (either 0 or 1)
 
-        Raises an ``IndexError`` if ``n`` is not 0 or 1.
+        Raises an :exc:`IndexError` if ``n`` is not 0 or 1.
 
         EXAMPLES::
 

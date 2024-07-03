@@ -2228,7 +2228,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         INPUT:
 
         - ``self`` -- element of the upper half plane (if not,
-          raises a ``ValueError``)
+          raises a :exc:`ValueError`)
 
         - ``omit_frac`` -- -- boolean (default: ``False``); if ``True``,
           omit the `e^{\pi i z / 12}` factor

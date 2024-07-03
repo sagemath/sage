@@ -228,7 +228,7 @@ def bernoulli_mod_p_single(long p, long k):
     r"""
     Return the Bernoulli number `B_k` mod `p`.
 
-    If `B_k` is not `p`-integral, an :class:`ArithmeticError` is raised.
+    If `B_k` is not `p`-integral, an :exc:`ArithmeticError` is raised.
 
     INPUT:
 

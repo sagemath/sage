@@ -4282,7 +4282,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        - ``important`` -- boolean (default: ``True``);  If ``False``,
+        - ``important`` -- boolean (default: ``True``); if ``False``,
           raise a :exc:`RuntimeError` if we need to do a difficult
           discriminant factorization.  This is useful when an integral
           basis is not strictly required, such as for factoring
