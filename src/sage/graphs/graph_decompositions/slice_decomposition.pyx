@@ -8,6 +8,10 @@ This module implements an extended lexBFS algorithm for computing the slice
 decomposition of undirected graphs and the class :class:`~SliceDecomposition` to
 represent such decompositions.
 
+A formal definition of slice decompositions can be found in Section 3.2 of
+[TCHP2008]_ and a description of the extended lexBFS algorithm is given in
+Section 3.3 of [TCHP2008]_.
+
 AUTHORS:
 
 - Cyril Bouvier (2024-06-25): initial version
@@ -351,7 +355,35 @@ cdef class SliceDecomposition(SageObject):
         - ``initial_vertex`` -- (default: ``None``); the first vertex to
           consider.
 
-        See :meth:`~slice_decomposition` for more details.
+        .. SEEALSO::
+
+            * :meth:`~slice_decomposition` -- compute a slice decomposition of
+              the simple undirected graph
+            * Section 3.2 of [TCHP2008]_ for a formal definition.
+
+        EXAMPLES:
+
+        The constructor of the :class:`~SliceDecomposition` class is called by
+        the :meth:`~slice_decomposition` method of undirected graphs::
+
+            sage: from sage.graphs.graph_decompositions.slice_decomposition import SliceDecomposition
+            sage: G = graphs.PetersenGraph()
+            sage: SliceDecomposition(G) == G.slice_decomposition()
+            True
+
+        The vertex appearing first in the slice decomposition can be specified::
+
+            sage: from sage.graphs.graph_decompositions.slice_decomposition import SliceDecomposition
+            sage: SliceDecomposition(graphs.PetersenGraph(), initial_vertex=3)
+            [3[2[4[8]]] [1[7]] [0] [9] [6] [5]]
+
+        Slice decompositions are not defined for directed graphs::
+
+            sage: from sage.graphs.graph_decompositions.slice_decomposition import SliceDecomposition
+            sage: SliceDecomposition(DiGraph())
+            Traceback (most recent call last):
+            ...
+            ValueError: Graph must be undirected
 
         .. automethod:: __getitem__
         """
