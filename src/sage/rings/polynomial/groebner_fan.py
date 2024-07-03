@@ -104,7 +104,7 @@ def prefix_check(str_list):
 
 def max_degree(list_of_polys):
     """
-    Compute the maximum degree of a list of polynomials
+    Compute the maximum degree of a list of polynomials.
 
     EXAMPLES::
 
@@ -124,8 +124,7 @@ def _cone_parse(fan_dict_cone):
 
     INPUT:
 
-    -  ``fan_dict_cone`` -- the value of a fan_dict with
-       key 'CONES'
+    - ``fan_dict_cone`` -- the value of a ``fan_dict`` with key 'CONES'
 
     EXAMPLES::
 
@@ -290,8 +289,7 @@ class PolyhedralFan(SageObject):
 
         INPUT:
 
-        -  ``gfan_polyhedral_fan`` -- output from gfan of a
-           polyhedral fan.
+        - ``gfan_polyhedral_fan`` -- output from gfan of a polyhedral fan
 
         EXAMPLES::
 
@@ -494,7 +492,7 @@ class PolyhedralFan(SageObject):
 
     def to_RationalPolyhedralFan(self):
         """
-        Converts to the RationalPolyhedralFan class, which is more actively
+        Convert to the RationalPolyhedralFan class, which is more actively
         maintained.  While the information in each class is essentially the
         same, the methods and implementation are different.
 
@@ -520,7 +518,6 @@ class PolyhedralFan(SageObject):
             [ 1  0  0  0  0  1 -2]
             [ 0  1  0  0  1  0 -2]
             [ 0  0  1  1  0  0 -2]
-
         """
         try:
             return self._fan
@@ -656,12 +653,11 @@ class TropicalPrevariety(PolyhedralFan):
 
         INPUT:
 
-        - ``gfan_polyhedral_fan`` -- output from ``gfan`` of a
-          polyhedral fan.
-        - ``polynomial_system`` -- a list of polynomials
+        - ``gfan_polyhedral_fan`` -- output from ``gfan`` of a polyhedral fan
+        - ``polynomial_system`` -- list of polynomials
         - ``poly_ring`` -- the polynomial ring of the list of polynomials
-        - ``parameters`` (optional) -- a list of variables to be considered
-           as parameters
+        - ``parameters`` -- (optional) list of variables to be considered
+          as parameters
 
         EXAMPLES::
 
@@ -725,7 +721,7 @@ class TropicalPrevariety(PolyhedralFan):
 
 def ring_to_gfan_format(input_ring):
     """
-    Converts a ring to gfan's format.
+    Convert a ring to gfan's format.
 
     EXAMPLES::
 
@@ -785,17 +781,17 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``I`` -- ideal in a multivariate polynomial ring
+        - ``I`` -- ideal in a multivariate polynomial ring
 
-        -  ``is_groebner_basis`` -- bool (default ``False``). if
-           ``True``, then I.gens() must be a Groebner basis with respect to the
-           standard degree lexicographic term order.
+        - ``is_groebner_basis`` -- boolean (default: ``False``); if
+          ``True``, then I.gens() must be a Groebner basis with respect to the
+          standard degree lexicographic term order
 
-        -  ``symmetry`` -- default: ``None``; if not ``None``, describes
-           symmetries of the ideal
+        - ``symmetry`` -- (default: ``None``) if not ``None``, describes
+          symmetries of the ideal
 
-        -  ``verbose`` -- default: ``False``; if ``True``, printout
-           useful info during computations
+        - ``verbose`` -- (default: ``False``) if ``True``, printout
+          useful info during computations
 
         EXAMPLES::
 
@@ -817,7 +813,6 @@ class GroebnerFan(SageObject):
             sage: RPF = PF.to_RationalPolyhedralFan()
             sage: RPF.Stanley_Reisner_ideal(PolynomialRing(QQ,4,'A, B, C, D'))
             Ideal (A*B, A*C, B*C*D) of Multivariate Polynomial Ring in A, B, C, D over Rational Field
-
         """
         self.__is_groebner_basis = is_groebner_basis
         self.__symmetry = symmetry
@@ -844,7 +839,7 @@ class GroebnerFan(SageObject):
 
     def _repr_(self):
         """
-        Describes the Groebner fan and its corresponding ideal.
+        Describe the Groebner fan and its corresponding ideal.
 
         EXAMPLES::
 
@@ -858,7 +853,7 @@ class GroebnerFan(SageObject):
 
     def __eq__(self, right):
         """
-        Tests equality of Groebner fan objects.
+        Test equality of Groebner fan objects.
 
         EXAMPLES::
 
@@ -885,8 +880,6 @@ class GroebnerFan(SageObject):
 
     def _gfan_maps(self):
         """
-        INPUT: none
-
         OUTPUT:
 
         - map from Sage ring to ``gfan`` ring
@@ -1114,9 +1107,9 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        - ``cmd`` -- string (default:``'bases'``), GFan command
-        - ``I`` -- ideal (default:``None``)
-        - ``format`` -- bool (default:``None``), deprecated
+        - ``cmd`` -- string (default: ``'bases'``); GFan command
+        - ``I`` -- ideal (default: ``None``)
+        - ``format`` -- boolean (default: ``None``); deprecated
 
         EXAMPLES::
 
@@ -1157,7 +1150,7 @@ class GroebnerFan(SageObject):
 
     def __getitem__(self, i):
         """
-        Get a reduced groebner basis
+        Get a reduced groebner basis.
 
         EXAMPLES::
 
@@ -1242,29 +1235,27 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``file`` -- a filename if you prefer the output
-           saved to a file. This will be in xfig format.
+        - ``file`` -- a filename if you prefer the output
+          saved to a file; this will be in xfig format
 
-        -  ``shift`` -- shift the positions of the variables in
-           the drawing. For example, with shift=1, the corners will be b
-           (right), c (left), and d (top). The shifting is done modulo the
-           number of variables in the polynomial ring. The default is 0.
+        - ``shift`` -- shift the positions of the variables in
+          the drawing. For example, with shift=1, the corners will be b
+          (right), c (left), and d (top). The shifting is done modulo the
+          number of variables in the polynomial ring. The default is 0.
 
-        -  ``larger`` -- bool (default: ``False``); if ``True``, make
-           the triangle larger so that the shape of the Groebner region
-           appears. Affects the xfig file but probably not the sage graphics
-           (?)
+        - ``larger`` -- boolean (default: ``False``); if ``True``, make
+          the triangle larger so that the shape of the Groebner region
+          appears. Affects the xfig file but probably not the sage graphics (?).
 
-        -  ``rgbcolor`` -- This will not affect the saved xfig
-           file, only the sage graphics produced.
+        - ``rgbcolor`` -- this will not affect the saved xfig
+          file, only the sage graphics produced
 
-        -  ``polyfill`` -- Whether or not to fill the cones with
-           a color determined by the highest degree in each reduced Groebner
-           basis for that cone.
+        - ``polyfill`` -- whether or not to fill the cones with
+          a color determined by the highest degree in each reduced Groebner
+          basis for that cone
 
-        -  ``scale_colors`` -- if True, this will normalize
-           color values to try to maximize the range
-
+        - ``scale_colors`` -- if ``True``, this will normalize
+          color values to try to maximize the range
 
         EXAMPLES::
 
@@ -1281,7 +1272,7 @@ class GroebnerFan(SageObject):
         TESTS:
 
         Testing the case where the number of generators is < 3. Currently,
-        this should raise a :class:`NotImplementedError`.
+        this should raise a :exc:`NotImplementedError`.
 
         ::
 
@@ -1367,13 +1358,13 @@ class GroebnerFan(SageObject):
 
     def _embed_tetra(self, fpoint):
         """
-        Takes a 4-d vector and projects it onto the plane perpendicular to
+        Take a 4-d vector and projects it onto the plane perpendicular to
         (1,1,1,1). Stretches by a factor of 2 as well, since this is only
         for graphical display purposes.
 
         INPUT:
 
-        -  ``fpoint`` -- a list of four numbers
+        - ``fpoint`` -- list of four numbers
 
         EXAMPLES::
 
@@ -1402,7 +1393,7 @@ class GroebnerFan(SageObject):
 
         OUTPUT:
 
-        - ``edges`` -- a list of edges in 3d; each list item is a pair of
+        - ``edges`` -- list of edges in 3d; each list item is a pair of
           points
 
         EXAMPLES::
@@ -1457,11 +1448,11 @@ class GroebnerFan(SageObject):
         TESTS:
 
         Now test the case where the number of generators is not 4. Currently,
-        this should raise a :class:`NotImplementedError` error.
+        this should raise a :exc:`NotImplementedError` error.
 
         ::
 
-            sage: P.<a,b,c> = PolynomialRing(QQ, 3, order="lex")
+            sage: P.<a,b,c> = PolynomialRing(QQ, 3, order='lex')
             sage: sage.rings.ideal.Katsura(P, 3).groebner_fan().render3d()              # needs sage.plot
             Traceback (most recent call last):
             ...
@@ -1608,10 +1599,10 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``check`` -- bool (default: ``True``); if True raises a
-           ValueError exception if this ideal does not define a tropical curve
-           (i.e., the condition that R/I has dimension equal to 1 + the
-           dimension of the homogeneity space is not satisfied).
+        - ``check`` -- boolean (default: ``True``); if ``True`` raises a
+          :exc:`ValueError` exception if this ideal does not define a tropical
+          curve (i.e., the condition that R/I has dimension equal to 1 + the
+          dimension of the homogeneity space is not satisfied)
 
         EXAMPLES::
 
@@ -1672,9 +1663,9 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        - ``parameters`` (optional) -- a list of variables to be
+        - ``parameters`` -- (optional) list of variables to be
           considered as parameters
-        - ``symmetry_generators`` (optional) -- generators of the symmetry group
+        - ``symmetry_generators`` -- (optional) generators of the symmetry group
 
         OUTPUT: a TropicalPrevariety object
 
@@ -1776,12 +1767,11 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``groebner_fan`` -- a GroebnerFan object from an
-           ideal
+        - ``groebner_fan`` -- a GroebnerFan object from an ideal
 
-        -  ``gens`` -- the generators of the ideal
+        - ``gens`` -- the generators of the ideal
 
-        -  ``gfan_gens`` -- the generators as a gfan string
+        - ``gfan_gens`` -- the generators as a gfan string
 
         EXAMPLES::
 
@@ -1888,9 +1878,9 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``restrict`` -- bool (default: ``False``); if True, add
-           an inequality for each coordinate, so that the cone is restricted
-           to the positive orthant.
+        - ``restrict`` -- boolean (default: ``False``); if ``True``, add
+          an inequality for each coordinate, so that the cone is restricted
+          to the positive orthant
 
         OUTPUT: tuple of integer vectors
 

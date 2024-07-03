@@ -79,7 +79,7 @@ class FlatteningMorphism(Morphism):
     """
     def __init__(self, domain):
         """
-        The Python constructor
+        The Python constructor.
 
         EXAMPLES::
 
@@ -285,7 +285,7 @@ class FlatteningMorphism(Morphism):
 
 class UnflatteningMorphism(Morphism):
     r"""
-    Inverses for :class:`FlatteningMorphism`
+    Inverses for :class:`FlatteningMorphism`.
 
     EXAMPLES::
 
@@ -313,7 +313,7 @@ class UnflatteningMorphism(Morphism):
 
     def __init__(self, domain, codomain):
         """
-        The Python constructor
+        The Python constructor.
 
         EXAMPLES::
 
@@ -416,7 +416,7 @@ class UnflatteningMorphism(Morphism):
 
 class SpecializationMorphism(Morphism):
     r"""
-    Morphisms to specialize parameters in (stacked) polynomial rings
+    Morphisms to specialize parameters in (stacked) polynomial rings.
 
     EXAMPLES::
 
@@ -463,7 +463,7 @@ class SpecializationMorphism(Morphism):
 
     def __init__(self, domain, D):
         """
-        The Python constructor
+        The Python constructor.
 
         EXAMPLES::
 
@@ -664,7 +664,7 @@ class FractionSpecializationMorphism(Morphism):
     """
     def __init__(self, domain, D):
         """
-        Initialize the morphism with a domain and dictionary of specializations
+        Initialize the morphism with a domain and dictionary of specializations.
 
         EXAMPLES::
 
@@ -687,7 +687,7 @@ class FractionSpecializationMorphism(Morphism):
 
     def _call_(self, p):
         """
-        Evaluate a fraction specialization morphism
+        Evaluate a fraction specialization morphism.
 
         EXAMPLES::
 
@@ -700,7 +700,6 @@ class FractionSpecializationMorphism(Morphism):
             (3*x + 2*y)/(-2*z)
             sage: spec.parent()
             Fraction Field of Multivariate Polynomial Ring in x, y, z over Rational Field
-
         """
         if not isinstance(p, FractionFieldElement):
             raise TypeError("p must be a fraction field element")

@@ -353,7 +353,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
         - ``ncols`` -- number of columns
 
-        - ``sparse`` -- (boolean) sparseness
+        - ``sparse`` -- boolean
 
         EXAMPLES::
 

@@ -111,9 +111,9 @@ def from_fast_pickable(l, r):
 
     INPUT:
 
-    See OUTPUT of :func:`to_fast_pickable`
+    See OUTPUT of :func:`to_fast_pickable`.
 
-    OUTPUT: a list of Boolean polynomials
+    OUTPUT: list of Boolean polynomials
 
     EXAMPLES::
 
@@ -264,7 +264,8 @@ def groebner_basis_first_finished(I, *l):
     INPUT:
 
     - ``I`` -- ideal
-    - ``l`` -- keyword dictionaries, which will be keyword arguments to groebner_basis.
+    - ``l`` -- keyword dictionaries, which will be keyword arguments to
+      ``groebner_basis``
 
     OUTPUT:
 

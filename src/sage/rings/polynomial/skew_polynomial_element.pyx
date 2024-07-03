@@ -134,7 +134,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         INPUT:
 
-        - ``exp`` -- an integer
+        - ``exp`` -- integer
 
         - ``modulus`` -- a skew polynomial in the same ring as ``self``
 
@@ -384,7 +384,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         INPUT:
 
-        - `n` -- an integer, the power of conjugation
+        - ``n`` -- integer; the power of conjugation
 
         EXAMPLES::
 

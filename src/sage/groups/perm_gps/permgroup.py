@@ -3725,7 +3725,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``return_group`` -- (boolean) If ``True``, a regular
+        - ``return_group`` -- boolean; if ``True``, a regular
           subgroup is returned if there is one, and ``None`` if there isn't.
           When ``return_group=False`` (default), only a boolean indicating
           whether such a group exists is returned instead.
@@ -3772,7 +3772,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``representative`` -- (boolean) whether to return all possible block
+        - ``representative`` -- boolean; whether to return all possible block
           systems of imprimitivity or only one of their representatives (the
           block can be obtained from its representative set `S` by computing the
           orbit of `S` under ``self``).

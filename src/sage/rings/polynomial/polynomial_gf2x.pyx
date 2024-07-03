@@ -277,7 +277,6 @@ cdef class Polynomial_GF2X(Polynomial_template):
             False
             sage: f.is_irreducible.cache
             False
-
         """
         return 0 != GF2X_IterIrredTest(self.x)
 

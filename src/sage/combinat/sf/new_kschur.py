@@ -819,7 +819,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
 
             - ``zee`` -- an optional function on partitions giving
               the value for the scalar product between `p_{\mu}` and `p_{\mu}`
-              (default: is to use the standard :meth:`~sage.combinat.sf.sfa.zee` function)
+              (default: use the standard :meth:`~sage.combinat.sf.sfa.zee` function)
 
             .. SEEALSO:: :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`
 

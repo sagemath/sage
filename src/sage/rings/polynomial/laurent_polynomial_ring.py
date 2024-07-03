@@ -95,14 +95,14 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     INPUT:
 
     - ``base_ring`` -- a commutative ring
-    - ``name`` -- a string
-    - ``names`` -- a list or tuple of names, or a comma separated string
-    - ``n`` -- a positive integer
-    - ``sparse`` -- bool (default: ``False``), whether or not elements are sparse
+    - ``name`` -- string
+    - ``names`` -- list or tuple of names, or a comma separated string
+    - ``n`` -- positive integer
+    - ``sparse`` -- boolean (default: ``False``); whether or not elements are sparse
     - ``order`` -- string or
       :class:`~sage.rings.polynomial.term_order.TermOrder`, e.g.,
 
-      - ``'degrevlex'`` (default) -- degree reverse lexicographic
+      - ``'degrevlex'`` -- default; degree reverse lexicographic
       - ``'lex'`` -- lexicographic
       - ``'deglex'`` -- degree lexicographic
       - ``TermOrder('deglex',3) + TermOrder('deglex',3)`` -- block ordering
@@ -135,7 +135,6 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: variable names cannot be changed after object creation.
-
 
     EXAMPLES:
 
@@ -258,12 +257,12 @@ def _split_dict_(D, indices, group_by=None):
 
     INPUT:
 
-    - ``D`` -- a dictionary.
+    - ``D`` -- dictionary
 
-    - ``indices`` -- a tuple or list of nonnegative integers.
+    - ``indices`` -- tuple or list of nonnegative integers
 
-    - ``group_by`` -- a tuple or list of nonnegative integers.
-      If this is ``None`` (default), then no grouping is done.
+    - ``group_by`` -- tuple or list of nonnegative integers;
+      if this is ``None`` (default), then no grouping is done
 
     OUTPUT: a dictionary
 
@@ -339,11 +338,11 @@ def _split_laurent_polynomial_dict_(P, M, d):
 
     INPUT:
 
-    - ``P`` -- the parent to which we want to convert.
+    - ``P`` -- the parent to which we want to convert
 
-    - ``M`` -- the parent from which we want to convert.
+    - ``M`` -- the parent from which we want to convert
 
-    - ``d`` -- a dictionary mapping tuples (representing the exponents)
+    - ``d`` -- dictionary mapping tuples (representing the exponents)
       to their coefficients. This is the dictionary corresponding to
       an element of ``M``.
 

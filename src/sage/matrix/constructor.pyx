@@ -76,7 +76,7 @@ def matrix(*args, **kwds):
 
     Keyword-only arguments:
 
-    - ``sparse`` -- (boolean) create a sparse matrix. This defaults to
+    - ``sparse`` -- boolean; create a sparse matrix. This defaults to
       ``True`` when the entries are given as a dictionary, otherwise
       defaults to ``False``.
 
@@ -90,8 +90,8 @@ def matrix(*args, **kwds):
       matrix. This determines ``base_ring``, ``nrows``, ``row_keys``,
       ``ncols``, ``column_keys``, and ``sparse``.
 
-    - ``immutable`` -- (boolean) make the matrix immutable; by default,
-      the output matrix is mutable
+    - ``immutable`` -- boolean; make the matrix immutable. By default,
+      the output matrix is mutable.
 
     OUTPUT: a matrix or, more generally, a homomorphism between free
     modules

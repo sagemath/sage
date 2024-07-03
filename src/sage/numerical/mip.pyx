@@ -3242,7 +3242,7 @@ cdef class MIPVariable(FiniteFamily):
           underlying linear program
 
         - ``vtype`` -- integer; defines the type of the variables
-          (default: is ``REAL``, i.e., ``vtype=-1``)
+          (default: ``REAL``, i.e., ``vtype=-1``)
 
         - ``name`` -- a name for the ``MIPVariable``
 

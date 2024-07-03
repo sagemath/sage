@@ -88,20 +88,20 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
         INPUT:
 
         - ``parent`` -- the polynomial ring in which to construct the
-          element.
+          element
 
-        - ``x`` -- (default: None) an object representing the
+        - ``x`` -- (default: ``None``) an object representing the
           polynomial, e.g. a list of coefficients.  See
           :meth:`sage.rings.polynomial.polynomial_element_generic.Polynomial_generic_dense_field.__init__`
           for more details.
 
-        - ``check`` -- boolean (default: ``True``) if True, make sure that
-          the coefficients of the polynomial are in the base ring.
+        - ``check`` -- boolean (default: ``True``); if ``True``, make sure that
+          the coefficients of the polynomial are in the base ring
 
-        - ``is_gen`` -- boolean (default: ``False``) if True, `x` is the
-          distinguished generator of the polynomial ring.
+        - ``is_gen`` -- boolean (default: ``False``); if ``True``, `x` is the
+          distinguished generator of the polynomial ring
 
-        - ``construct`` -- (default: ``False``) boolean, unused.
+        - ``construct`` -- boolean (default: ``False``); unused
 
         EXAMPLES::
 
@@ -123,7 +123,7 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
 
         INPUT:
 
-        - ``other`` -- a polynomial with the same parent as ``self``.
+        - ``other`` -- a polynomial with the same parent as ``self``
 
         OUTPUT: the monic gcd of ``self`` and ``other``
 
@@ -222,20 +222,20 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
         INPUT:
 
         - ``parent`` -- polynomial ring in which to construct the
-          element.
+          element
 
         - ``x`` -- (default: ``None``) an object representing the
           polynomial, e.g. a list of coefficients. See
           :meth:`sage.rings.polynomial.polynomial_element_generic.Polynomial_generic_dense_field.__init__`
           for more details.
 
-        - ``check`` -- boolean (default: ``True``) if ``True``, make sure that
-          the coefficients of the polynomial are in the base ring.
+        - ``check`` -- boolean (default: ``True``); if ``True``, make sure that
+          the coefficients of the polynomial are in the base ring
 
-        - ``is_gen`` -- boolean (default: ``False``) if ``True``, ``x`` is the
-          distinguished generator of the polynomial ring.
+        - ``is_gen`` -- boolean (default: ``False``); if ``True``, ``x`` is the
+          distinguished generator of the polynomial ring
 
-        - ``construct`` -- (default: ``False``) boolean, unused.
+        - ``construct`` -- boolean (default: ``False``); unused
 
         EXAMPLES::
 
@@ -258,7 +258,7 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         INPUT:
 
-        - ``other`` -- a polynomial with the same parent as ``self``.
+        - ``other`` -- a polynomial with the same parent as ``self``
 
         OUTPUT: the monic gcd of ``self`` and ``other``
 

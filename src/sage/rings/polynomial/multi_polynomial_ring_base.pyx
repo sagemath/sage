@@ -120,7 +120,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
     @cached_method
     def flattening_morphism(self):
         r"""
-        Return the flattening morphism of this polynomial ring
+        Return the flattening morphism of this polynomial ring.
 
         EXAMPLES::
 
@@ -143,7 +143,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
     def construction(self):
         """
-        Returns a functor ``F`` and base ring ``R`` such that ``F(R) == self``.
+        Return a functor ``F`` and base ring ``R`` such that ``F(R) == self``.
 
         EXAMPLES::
 
@@ -156,7 +156,6 @@ cdef class MPolynomialRing_base(CommutativeRing):
             True
             sage: F(R) == ZZ['x']['y']
             False
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.categories.pushout import MultiPolynomialFunctor
@@ -317,7 +316,6 @@ cdef class MPolynomialRing_base(CommutativeRing):
             order for the subring
             sage: R.remove_var(x,y,z, order='degrevlex')
             Multivariate Polynomial Ring in u, v over Integer Ring
-
         """
         vars = list(self.variable_names())
         for v in var:
@@ -341,7 +339,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        - ``x`` -- a variable of ``self``.
+        - ``x`` -- a variable of ``self``
 
         EXAMPLES::
 
@@ -558,7 +556,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
     cdef _coerce_c_impl(self, x):
         """
         Return the canonical coercion of x to this multivariate
-        polynomial ring, if one is defined, or raise a TypeError.
+        polynomial ring, if one is defined, or raise a :exc:`TypeError`.
 
         The rings that canonically coerce to this polynomial ring are:
 
@@ -786,8 +784,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        - ``gap`` -- (optional GAP instance) Interface to which the
-          string is addressed.
+        - ``gap`` -- (optional GAP instance) interface to which the
+          string is addressed
 
         NOTE:
 
@@ -933,8 +931,6 @@ cdef class MPolynomialRing_base(CommutativeRing):
         raise NotImplementedError
 
     def __reduce__(self):
-        """
-        """
         base_ring = self.base_ring()
         n = self.ngens()
         names = self.variable_names()
@@ -986,12 +982,12 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
     def _to_monomial(self, i, n, d):
         """
-        Given an index i, a number of variables n and a degree d return
-        the i-th monomial of degree d in n variables.
+        Given an index ``i``, a number of variables `n` and a degree `d` return
+        the ``i``-th monomial of degree `d` in `n` variables.
 
         INPUT:
 
-        - ``i`` -- index: 0 <= i < binom(n+d-1,n-1)
+        - ``i`` -- index; ``0 <= i < binom(n+d-1,n-1)``
         - ``n`` -- number of variables
         - ``d`` -- degree
 
@@ -1136,7 +1132,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
           silently reduced to the maximum number of available terms.
 
         - ``choose_degree`` -- choose degrees of monomials randomly first
-          rather than monomials uniformly random.
+          rather than monomials uniformly random
 
         - ``**kwargs`` -- passed to the random element generator of the base
           ring
@@ -1410,18 +1406,18 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
     def _macaulay_resultant_getS(self, mon_deg_tuple, dlist):
         r"""
-        In the Macaulay resultant algorithm the list of all monomials of the total degree is partitioned into sets `S_i`.
-        This function returns the index `i` for the set `S_i` for the given monomial.
+        In the Macaulay resultant algorithm the list of all monomials of the
+        total degree is partitioned into sets `S_i`.
+        This function returns the index `i` for the set `S_i` for the given
+        monomial.
 
         INPUT:
 
-        - ``mon_deg_tuple`` -- a list representing a monomial of a degree `d`
-        - ``dlist`` -- a list of degrees ``d_i`` of the polynomials in
+        - ``mon_deg_tuple`` -- list representing a monomial of a degree `d`
+        - ``dlist`` -- list of degrees ``d_i`` of the polynomials in
           question, where ``d = sum(dlist) - len(dlist) + 1``
 
-        OUTPUT:
-
-        - the index `i` such that the input monomial is in `S_i`
+        OUTPUT: the index `i` such that the input monomial is in `S_i`
 
         EXAMPLES::
 
@@ -1451,7 +1447,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
         INPUT:
 
         - ``mon_degs`` -- a monomial represented by a vector of degrees
-        - ``dlist`` -- a list of degrees with respect to which we check
+        - ``dlist`` -- list of degrees with respect to which we check
           reducedness
 
         OUTPUT: boolean
@@ -1481,7 +1477,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        - ``dlist`` -- a list of degrees.
+        - ``dlist`` -- list of degrees
 
         OUTPUT:
 
@@ -1543,18 +1539,16 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        - ``args`` -- a list of `n` homogeneous polynomials in `n` variables.
+        - ``args`` -- list of `n` homogeneous polynomials in `n` variables
           works when ``args[0]`` is the list of polynomials,
           or ``args`` is itself the list of polynomials
 
         kwds:
 
         - ``sparse`` -- boolean (default: ``False``); if ``True``, the function
-          creates sparse matrices.
+          creates sparse matrices
 
-        OUTPUT:
-
-        - the Macaulay resultant, an element of the base ring of ``self``
+        OUTPUT: the Macaulay resultant, an element of the base ring of ``self``
 
         .. TODO::
 
@@ -1669,7 +1663,6 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: RH = fh.parent()
             sage: f.resultant(g) == RH.macaulay_resultant([fh, gh])                     # needs sage.modules
             True
-
         """
         from sage.matrix.constructor import matrix
         from sage.matrix.constructor import zero_matrix

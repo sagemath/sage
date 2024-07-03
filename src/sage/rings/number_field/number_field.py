@@ -8916,7 +8916,7 @@ class NumberField_absolute(NumberField_generic):
 
         - ``gens`` -- list of elements in this number field; if no generators
           are given, just returns the cardinality of this number field
-           (`\infty`) for consistency.
+          (`\infty`) for consistency.
 
         - ``check_is_integral`` -- boolean (default: ``True``); whether to
           check that each generator is integral

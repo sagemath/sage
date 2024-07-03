@@ -105,9 +105,9 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
 
     - ``ncols`` -- number of columns
 
-    - ``sparse`` -- (boolean) whether the matrix class should be sparse
+    - ``sparse`` -- boolean; whether the matrix class should be sparse
 
-    - ``implementation`` -- (``None`` or string or a matrix class) a possible
+    - ``implementation`` -- ``None`` or string or a matrix class; a possible
       implementation. See the documentation of the constructor of :class:`MatrixSpace`.
 
     EXAMPLES::
@@ -446,17 +446,17 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     - ``base_ring`` -- a ring
 
-    - ``nrows`` or ``row_keys`` -- (nonnegative integer) the number of rows, or
+    - ``nrows`` or ``row_keys`` -- nonnegative integer; the number of rows, or
       a finite family of arbitrary objects that index the rows of the matrix
 
-    - ``ncols`` or ``column_keys`` -- (nonnegative integer, default ``nrows``)
+    - ``ncols`` or ``column_keys`` -- nonnegative integer (default: ``nrows``);
       the number of columns, or a finite family of arbitrary objects that index
       the columns of the matrix
 
     - ``sparse`` -- boolean (default: ``False``); whether or not matrices
       are given a sparse representation
 
-    - ``implementation`` -- (optional, a string or a matrix class) a possible
+    - ``implementation`` -- (optional)  string or matrix class; a possible
       implementation. Depending on the base ring, the string can be
 
       - ``'generic'`` -- on any base rings
@@ -791,15 +791,15 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         - ``base_ring``
 
-        - ``nrows`` -- (positive integer) the number of rows
+        - ``nrows`` -- positive integer; the number of rows
 
-        - ``ncols`` -- (positive integer, default nrows) the number of
+        - ``ncols`` -- positive integer (default: ``nrows``); the number of
           columns
 
         - ``sparse`` -- boolean (default: ``False``); whether or not matrices
           are given a sparse representation
 
-        - ``implementation`` -- (optional, a string or a matrix class) a possible
+        - ``implementation`` -- (optional) string or matrix class; a possible
           implementation. Depending on the base ring the string can be
 
            - ``'generic'`` -- on any base rings
