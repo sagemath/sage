@@ -422,7 +422,7 @@ cdef class SliceDecomposition(SageObject):
         """
         Return whether ``self`` and ``other`` are equal.
 
-        TESTS:
+        TESTS::
 
             sage: G = graphs.PetersenGraph()
             sage: SD = G.slice_decomposition()
@@ -456,7 +456,7 @@ cdef class SliceDecomposition(SageObject):
         r"""
         Compute a hash of a ``SliceDecomposition`` object.
 
-        TESTS:
+        TESTS::
 
             sage: P3 = graphs.PathGraph(3)
             sage: hash(P3.slice_decomposition(initial_vertex=0))
@@ -549,7 +549,7 @@ cdef class SliceDecomposition(SageObject):
             sage: SD.xslice_data('u')['lexicographic_label']
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 
-        TESTS:
+        TESTS::
 
             sage: G = graphs.RandomGNP(15, 0.3)
             sage: SD = G.slice_decomposition()
@@ -592,7 +592,7 @@ cdef class SliceDecomposition(SageObject):
             sage: _is_valid_lex_BFS_order(G, SD.lexBFS_order())
             True
 
-        TESTS:
+        TESTS::
 
             sage: from sage.graphs.traversals import _is_valid_lex_BFS_order
             sage: for _ in range(5):
@@ -614,7 +614,7 @@ cdef class SliceDecomposition(SageObject):
 
         This method is a wrapper around :meth:`SliceDecomposition.__getitem__`
 
-        TESTS:
+        TESTS::
 
             sage: G = graphs.RandomGNP(15, 0.3)
             sage: SD = G.slice_decomposition()
@@ -669,7 +669,7 @@ cdef class SliceDecomposition(SageObject):
             sage: SD.slice('x') == SD.lexBFS_order()
             True
 
-        TESTS:
+        TESTS::
 
             sage: SD.slice('Michael')
             Traceback (most recent call last):
@@ -740,7 +740,7 @@ cdef class SliceDecomposition(SageObject):
             True
             True
 
-        TESTS:
+        TESTS::
 
             sage: SD = graphs.PetersenGraph().slice_decomposition()
             sage: SD.xslice_sequence('Terry')
@@ -782,7 +782,7 @@ cdef class SliceDecomposition(SageObject):
             ....:   == {v for v in G.neighbors('f') if pos(v) < pos('f')}
             True
 
-        TESTS:
+        TESTS::
 
             sage: SD = graphs.PetersenGraph().slice_decomposition()
             sage: SD.lexicographic_label('Eric')
@@ -838,7 +838,7 @@ cdef class SliceDecomposition(SageObject):
             ....:   and all(G.has_edge(u, w) for v in G for u, w in SD.active_edges(v))
             True
 
-        TESTS:
+        TESTS::
 
             sage: SD = graphs.PetersenGraph().slice_decomposition()
             sage: SD.active_edges('Graham')
@@ -967,7 +967,7 @@ cdef class SliceDecomposition(SageObject):
             sage: SD.underlying_graph() == G.to_simple(immutable=True)
             True
 
-        TESTS:
+        TESTS::
 
             sage: for _ in range(5):
             ....:   G = graphs.RandomGNP(15, 0.3)
@@ -993,7 +993,7 @@ cdef class SliceDecomposition(SageObject):
         r"""
         Return a string representation of a ``SliceDecomposition`` object.
 
-        TESTS:
+        TESTS::
 
             sage: G = graphs.PetersenGraph(); SD = G.slice_decomposition()
             sage: repr(SD)
@@ -1020,7 +1020,7 @@ cdef class SliceDecomposition(SageObject):
         Return a string to render, using `\LaTeX`, the slice decomposition as a
         tree.
 
-        TESTS:
+        TESTS::
 
             sage: from sage.graphs.graph_latex import check_tkz_graph
             sage: check_tkz_graph()  # random - depends on Tex installation
