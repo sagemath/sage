@@ -399,7 +399,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         .. MATH::
 
             \mathcal{C} / A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C} \text{ and} A \subseteq X^0 \right\}
-            
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
