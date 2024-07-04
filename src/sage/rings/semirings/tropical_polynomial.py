@@ -11,7 +11,7 @@ of parent and element class for sparse tropical polynomials in one variable.
 
 AUTHORS:
 
-- Verrel Rievaldo Wijaya
+- Verrel Rievaldo Wijaya (2024-06): initial version
 
 EXAMPLES:
 
@@ -57,8 +57,8 @@ raise an error::
     sage: p1(T(3))
     9
     
-We can also find all the tropical roots of tropical polynomial counted
-with multiplicity::
+Additionally, we are able to find every tropical root of a tropical polynomial
+counted with multiplicity:
 
     sage: p1.roots()
     [-3, 2, 2]
@@ -83,17 +83,16 @@ tropical polynomial split form of `p(x)`::
     sage: p2.split_form()
     1*y^2 + 2*y + 3
 
-Check that the induced tropical polynomial function of `p(x)` and its split
-form are really equal::
+Every tropical polynomial induce a piecewise linear function that can be 
+invoked in the following way::
 
     sage: p1.piecewise_function()
     piecewise(x|-->1 on (-oo, -3], x|-->x + 4 on (-3, 2), x|-->3*x on 
     [2, +oo); x)
-    sage: p1.split_form().piecewise_function()
-    piecewise(x|-->1 on (-oo, -3], x|-->x + 4 on (-3, 2), x|-->3*x on 
-    (2, +oo); x)
+    sage: p2.piecewise_function()
+    piecewise(x|-->3 on (-oo, 1], x|-->2*x + 1 on (1, +oo); x)
 
-Plot the graph of some tropical polynomials::
+Plot the graph of previous tropical polynomials::
     sage: p1.plot()
     sage: plot(p2, xmin=-1, xmax=3)
 
@@ -106,6 +105,15 @@ semiring doesn't necessarily have additive inverse::
     Traceback (most recent call last):
     ...
     ArithmeticError: cannot negate any non-infinite element
+
+Division between tropical polynomials is also not defined::
+
+    sage: p1/p2
+    Traceback (most recent call last):
+    ...
+    TypeError: unsupported operand parent(s) for /: 'Univariate Tropical 
+    Polynomial Semiring in y over Rational Field' and 'Univariate Tropical 
+    Polynomial Semiring in y over Rational Field'
 
 REFERENCES:
 
@@ -129,15 +137,12 @@ from itertools import combinations
 from sage.misc.cachefunc import cached_method
 
 from sage.sets.real_set import RealSet
-from sage.symbolic.ring import SR
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.sets_cat import Sets
 
-from sage.rings.polynomial.polynomial_element_generic import \
-Polynomial_generic_sparse
+from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
-from sage.rings.polynomial.polynomial_element import Polynomial
 
 class TropicalPolynomial(Polynomial_generic_sparse):
     """
@@ -177,7 +182,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p3 = x^3
             sage: p3.roots()
             [+infinity, +infinity, +infinity]
-
         """
         tropical_roots = []
         if len(self.dict()) == 1:
@@ -187,7 +191,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             else:
                 return [self.parent().base_ring().zero()]*exponent
         
-        R = self.parent().base().base_ring()
         dict_root = {}
         dict_coeff = {i:c.lift() for i,c in self.dict().items()}
         for comb in combinations(dict_coeff, 2):
@@ -208,7 +211,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                             break
             if check_maks:
                 order = abs(index1-index2)
-                if root not in  dict_root:
+                if root not in dict_root:
                     dict_root[root] = order
                 else:
                     if order > dict_root[root]:
@@ -221,8 +224,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
     
     def split_form(self):
         r"""
-        Return the tropical polynomial which has the same roots as ``self`` but
-        which can be reduced to its linear factors.
+        Return the tropical polynomial which has the same roots as ``self`` 
+        but which can be reduced to its linear factors.
 
         OUTPUT: TropicalPolynomial object.
 
@@ -231,9 +234,32 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R.<x> = PolynomialRing(T)
             sage: p1 = R([5,4,1,0,2,4,3]); p1
+            3*x^6 + 4*x^5 + 2*x^4 + 0*x^3 + 1*x^2 + 4*x + 5
             sage: p1.split_form()
-            3*x^6 + 2*x^5 + 1*x^4 + 0*x^3 + 1*x^2 + 3*x + 5 
+            3*x^6 + 2*x^5 + 1*x^4 + 0*x^3 + 1*x^2 + 3*x + 5
+        
+        ::
 
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R.<x> = PolynomialRing(T)
+            sage: p1 = R([5,4,1,0,2,4,3])
+            sage: p1.split_form()
+            3*x^6 + 4*x^5 + 21/5*x^4 + 22/5*x^3 + 23/5*x^2 + 24/5*x + 5
+
+        TESTS:
+
+        We check that the roots and induced function of tropical polynomial 
+        and its split form is really the same::
+
+            sage: T = TropicalSemiring(QQ, use_min=True)
+            sage: R.<x> = PolynomialRing(T)
+            sage: p1 = R([5,4,1,0,2,4,3])
+            sage: p1.roots() == p1.split_form().roots()
+            True
+            sage: f = p1.piecewise_function()
+            sage: g = p1.split_form().piecewise_function()
+            sage: f-g
+            0
         """
         roots = self.roots()
         R = self.parent()
@@ -267,12 +293,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         TESTS:
 
-        Factorization of constant tropical polynomial::
-
             sage: p3 = R(3)
             sage: p3.factor()
             (3) * 0
-
         """
         from sage.structure.factorization import Factorization
 
@@ -323,21 +346,18 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p2.piecewise_function()
             3
 
-        A monomial will result in a linear function::
+        A monomial will resulted in a linear function::
 
             sage: p3 = R(1)*x^3
             sage: p3.piecewise_function()
             3*x + 1
-            
         """
         from sage.symbolic.ring import SR
         from sage.rings.infinity import infinity
         from sage.functions.piecewise import piecewise
 
         x = SR.var('x')
-        R = self.parent().base().base_ring()
         if self.roots() == []:
-            # f = R(str(self.dict()[0]))
             f = self.dict()[0].lift()
             return f
         
@@ -447,13 +467,12 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             ...
             ValueError: Expected 2 inputs for xmin and xmax, but got 1
         
-        The error also occured when ``xmin`` is greater or equal than ``xmax``::
+        The error occured when ``xmin`` is greater or equal than ``xmax``::
 
             sage: plot(p1, 5, 3)
             Traceback (most recent call last):
             ...
             ValueError: xmin = 5 should be less than xmax = 3
-
         """
         from sage.plot.plot import plot
         f = self.piecewise_function()

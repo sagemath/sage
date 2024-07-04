@@ -9,7 +9,7 @@ functionality to compute, visualize, and analyze tropical varieties.
 
 AUTHORS:
 
-- Verrel Rievaldo Wijaya
+- Verrel Rievaldo Wijaya (2024-06): initial version
 
 EXAMPLES:
 

@@ -62,6 +62,15 @@ Infinite Polynomial Rings
    sage/rings/polynomial/symmetric_ideal
    sage/rings/polynomial/symmetric_reduction
 
+Tropical Polynomials
+-------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/rings/semirings/tropical_polynomial
+   sage/rings/semirings/tropical_mpolynomial
+
 Boolean Polynomials
 -------------------
 

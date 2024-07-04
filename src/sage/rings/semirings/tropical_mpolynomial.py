@@ -8,7 +8,7 @@ surface in 3d, and a hypersurface in higher dimension.
 
 AUTHORS:
 
-- Verrel Rievaldo Wijaya
+- Verrel Rievaldo Wijaya (2024-06): initial version
 
 EXAMPLES:
 
@@ -67,7 +67,9 @@ TESTS:
 
 There is no subtraction defined for tropical polynomials::
 
-    sage: -p1
+    sage: T = TropicalSemiring(QQ)
+    sage: R.<a,b> = PolynomialRing(T)
+    sage: a - b
     Traceback (most recent call last):
     ...
     ArithmeticError: cannot negate any non-infinite element
@@ -164,8 +166,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         
         EXAMPLES:
 
-        Some examples of tropical curve for tropical polynomials in two 
-        variables::
+        Tropical curve for tropical polynomials in two variables::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R.<x,y> = PolynomialRing(T)
@@ -177,21 +178,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
             [(0, t1), [t1 <= 0], 1]
             [(t1, 0), [t1 <= 0], 1]]
 
-        ::
-
-            sage: T = TropicalSemiring(QQ, use_min=True)
-            sage: R.<x,y> = PolynomialRing(T)
-            sage: p2 = R(-1)*x^2 + x + y^2 + R(0); p2
-            (-1)*x^2 + 0*y^2 + 0*x + 0
-            sage: p2.tropical_variety()
-            Tropical curve of (-1)*x^2 + 0*x + 0*y^2 + 0 are 
-            Tropical curve of (-1)*x^2 + 0*y^2 + 0*x + 0 are 
-            [[(t1 + 1/2, t1), [t1 <= 0], 2]
-            [(1/2, t1), [t1 >= 0], 2]
-            [(t1, 0), [(1/2) <= t1], 2]]
-
-        We can also find tropical hypersurface for any tropical polynomials 
-        in `n\geq 2` variables::
+        Finding tropical hypersurface for tropical polynomials in more than
+        two variables::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
@@ -210,7 +198,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
     
     def _latex_(self):
         r"""
-        Return a nice topical polynomial latex representation.
+        Return a nice tropical polynomial latex representation.
 
         EXAMPLES::
 
