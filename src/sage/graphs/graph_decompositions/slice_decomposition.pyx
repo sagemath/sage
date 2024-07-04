@@ -337,7 +337,7 @@ def slice_decomposition(G, initial_vertex=None):
         sage: slice_decomposition(DiGraph())
         Traceback (most recent call last):
         ...
-        ValueError: Graph must be undirected
+        ValueError: parameter G must be an undirected graph
     """
     return SliceDecomposition(G, initial_vertex=initial_vertex)
 
@@ -383,12 +383,12 @@ cdef class SliceDecomposition(SageObject):
             sage: SliceDecomposition(DiGraph())
             Traceback (most recent call last):
             ...
-            ValueError: Graph must be undirected
+            ValueError: parameter G must be an undirected graph
 
         .. automethod:: __getitem__
         """
         if G.is_directed():
-            raise ValueError("Graph must be undirected")
+            raise ValueError("parameter G must be an undirected graph")
 
         if initial_vertex is not None and initial_vertex not in G:
             raise LookupError(f"vertex ({initial_vertex}) is not a vertex of the graph")
