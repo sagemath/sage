@@ -749,7 +749,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        - ``self, other`` -- modular abelian varieties
+        - ``self``, ``other`` -- modular abelian varieties
 
         OUTPUT: an isogeny
 

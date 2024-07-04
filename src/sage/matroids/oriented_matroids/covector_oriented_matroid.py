@@ -101,7 +101,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
             groundset = covectors[0].groundset()
             for X in covectors:
                 if X.groundset() != groundset:
-                    raise ValueError("Groundsets must be the same")
+                    raise ValueError("groundsets must be the same")
 
         self._covectors = covectors
         self._elements = covectors
@@ -136,13 +136,13 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
             sage: OrientedMatroid(C2, key='covector')
             Traceback (most recent call last):
             ...
-            ValueError: Every element needs an opposite
+            ValueError: every element needs an opposite
 
             sage: C3 = [[1,1], [-1,-1], [0,1], [1,0], [-1,0], [0,-1]]
             sage: OrientedMatroid(C3, key='covector')
             Traceback (most recent call last):
             ...
-            ValueError: Composition must be in vectors
+            ValueError: composition must be in vectors
 
 
             sage: C4 = [[0,0], [1,1], [-1,-1], [1,-1], [-1,1]]
@@ -160,11 +160,11 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
                 zero_found = True
             # Axiom 2: Make sure negative exists
             if -X not in covectors:
-                raise ValueError("Every element needs an opposite")
+                raise ValueError("every element needs an opposite")
             for Y in covectors:
                 # Axiom 3: Closed under composition
                 if X.composition(Y) not in covectors:
-                    raise ValueError("Composition must be in vectors")
+                    raise ValueError("composition must be in vectors")
                 # Axiom 4: Weak elimination axiom
                 E = X.separation_set(Y)
                 ze = set(self.groundset()).difference(E)
@@ -183,7 +183,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
                         raise ValueError("weak elimination failed")
 
         if not zero_found:
-            raise ValueError("All zero covector is required")
+            raise ValueError("all zero covector is required")
 
         return True
 

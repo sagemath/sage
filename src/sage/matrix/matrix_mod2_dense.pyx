@@ -343,7 +343,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         else:
             return self._zero
 
-
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
             *, unicode=False, shape=None, character_art=False,
             left_border=None, right_border=None,
@@ -525,6 +524,45 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if self._ncols:
             mzd_submatrix(z._entries, self._entries, i, 0, i+1, self._ncols)
         return z
+
+    def columns(self, copy=True):
+        """
+        Return list of the columns of self.
+
+        INPUT:
+
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
+          modify it safely
+
+        EXAMPLES:
+
+        An example with a small 3x3 matrix::
+
+            sage: M2 = Matrix(GF(2), [[1, 0, 0], [0, 1, 0], [0, 1, 1]])
+            sage: M2.columns()
+            [(1, 0, 0), (0, 1, 1), (0, 0, 1)]
+        """
+        x = self.fetch('columns')
+        if x is not None:
+            if copy: return list(x)
+            return x
+        cdef Py_ssize_t i
+
+        # Note: due to the way M4ri represents values, extracting rows
+        #       is fast, but columns are slow. Therefore we transpose
+        #       then take rows. For more information, see the issue
+        #       https://github.com/sagemath/sage/issues/38150
+        C = self.transpose().rows()
+
+        # Make the vectors immutable since we are caching them
+        for x in C:
+            x.set_immutable()
+
+        # cache result
+        self.cache('columns', C)
+        if copy:
+            return list(C)
+        return C
 
     ########################################################################
     # LEVEL 2 functionality
@@ -1103,7 +1141,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             self.cache('rank', r)
             self.cache('pivots', tuple(self._pivots()))
 
-
         elif algorithm == 'pluq':
 
             self.check_mutability()
@@ -1339,8 +1376,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             True
         """
         mzd_col_swap(self._entries, col1, col2)
-
-
 
     def _magma_init_(self, magma):
         """
@@ -2073,7 +2108,6 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
     if gdImageSX(im) != c or gdImageSY(im) != r:
         raise TypeError("Pickled data dimension doesn't match.")
 
-
     for i from 0 <= i < r:
         for j from 0 <= j < c:
             mzd_write_bit(A._entries, i, j, 1-gdImageGetPixel(im, j, i))
@@ -2139,6 +2173,7 @@ def from_png(filename):
     gdImageDestroy(im)
     return A
 
+
 def to_png(Matrix_mod2_dense A, filename):
     """
     Saves the matrix ``A`` to filename as a 1-bit PNG image.
@@ -2182,6 +2217,7 @@ def to_png(Matrix_mod2_dense A, filename):
     gdImagePng(im, out)
     gdImageDestroy(im)
     fclose(out)
+
 
 def pluq(Matrix_mod2_dense A, algorithm="standard", int param=0):
     """
@@ -2238,13 +2274,14 @@ def pluq(Matrix_mod2_dense A, algorithm="standard", int param=0):
         _mzd_pluq_naive(B._entries, p, q)
         sig_off()
     else:
-        raise ValueError("Algorithm '%s' unknown."%algorithm)
+        raise ValueError("Algorithm '%s' unknown." % algorithm)
 
     P = [p.values[i] for i in range(A.nrows())]
     Q = [q.values[i] for i in range(A.ncols())]
     mzp_free(p)
     mzp_free(q)
-    return B,P,Q
+    return B, P, Q
+
 
 def ple(Matrix_mod2_dense A, algorithm="standard", int param=0):
     """

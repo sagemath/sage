@@ -101,7 +101,7 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
             groundset = vectors[0].groundset()
             for X in vectors:
                 if X.groundset() != groundset:
-                    raise ValueError("Groundsets must be the same")
+                    raise ValueError("groundsets must be the same")
 
         self._vectors = vectors
         self._elements = vectors
@@ -122,13 +122,13 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
             sage: OrientedMatroid(V2, key='vector')
             Traceback (most recent call last):
             ...
-            ValueError: Every element needs an opposite
+            ValueError: every element needs an opposite
 
             sage: V3 = [[1,1],[-1,-1],[0,-1],[0,1],[-1,0],[1,0]]
             sage: OrientedMatroid(V3, key='vector')
             Traceback (most recent call last):
             ...
-            ValueError: Composition must be in vectors
+            ValueError: composition must be in vectors
 
             sage: V4 = [[1,1],[-1,-1]]
             sage: OrientedMatroid(V4, key='vector')
@@ -145,11 +145,11 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
                 zero_found = True
             # Axiom 2: Make sure negative exists
             if -X not in vectors:
-                raise ValueError("Every element needs an opposite")
+                raise ValueError("every element needs an opposite")
             for Y in vectors:
                 # Axiom 3: Closed under composition
                 if X.composition(Y) not in vectors:
-                    raise ValueError("Composition must be in vectors")
+                    raise ValueError("composition must be in vectors")
                 # Axiom 4: Vector elimination
                 E = X.positives().intersection(Y.negatives())
 
@@ -175,7 +175,7 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
                         raise ValueError("vector elimination failed")
 
         if not zero_found:
-            raise ValueError("Empty set is required")
+            raise ValueError("empty set is required")
 
         return True
 

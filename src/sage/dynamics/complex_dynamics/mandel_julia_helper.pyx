@@ -8,7 +8,6 @@ This is the helper file providing functionality for mandel_julia.py.
 AUTHORS:
 
 - Ben Barros
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 BEN BARROS <bbarros@slu.edu>
@@ -35,7 +34,7 @@ from sage.ext.fast_callable import fast_callable
 from sage.calculus.all import symbolic_expression
 from sage.symbolic.ring import SR
 from sage.calculus.var import var
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.categories.function_fields import FunctionFields
 from cypari2.handle_error import PariError
 from math import sqrt
@@ -710,14 +709,14 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     P = f.parent()
 
     if P.base_ring() is CC:
-        if is_FractionField(P):
+        if isinstance(P, FractionField_generic):
             raise NotImplementedError("coefficients must be polynomials in the parameter")
         gen_list = list(P.gens())
         parameter = gen_list.pop(gen_list.index(parameter))
         variable = gen_list.pop()
 
     elif P.base_ring().base_ring() is CC:
-        if is_FractionField(P.base_ring()):
+        if isinstance(P.base_ring(), FractionField_generic):
             raise NotImplementedError("coefficients must be polynomials in the parameter")
         phi = P.flattening_morphism()
         f = phi(f)

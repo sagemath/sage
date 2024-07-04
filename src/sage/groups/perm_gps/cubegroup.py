@@ -1339,7 +1339,7 @@ class RubiksCube(SageObject):
 
         - ``size`` -- The size of the cubie
         - ``gap`` -- The gap between cubies
-        - ``x,y,z`` -- The position of the cubie
+        - ``x``, ``y``, ``z`` -- The position of the cubie
         - ``colors`` -- The list of colors
         - ``stickers`` -- (Default ``True``) Boolean to display stickers
 

@@ -1307,10 +1307,7 @@ def rainbow(n, format='hex'):
 
     - Karl-Dieter Crisman (directly use :func:`hsv_to_rgb` for hues)
     """
-    R = []
-
-    for i in range(n):
-        R.append(tuple(map(float, hsv_to_rgb(i / n, 1, 1))))
+    R = [tuple(map(float, hsv_to_rgb(i / n, 1, 1))) for i in range(n)]
 
     if format == 'rgbtuple':
         return R

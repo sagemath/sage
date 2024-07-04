@@ -157,7 +157,6 @@ AUTHORS:
 - Simon King (2010-12): (:issue:`8800`) fixed a bug in ``denominator()``.
 
 - Simon King (2010-12), Peter Bruin (June 2014): (:issue:`10513`) new coercion model and category framework.
-
 """
 
 ###########################################################################
@@ -784,7 +783,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         return FreeModule(R, 0)
     else:
         x = gens[0]
-        if free_module_element.is_FreeModuleElement(x):
+        if isinstance(x, free_module_element.FreeModuleElement):
             M = x.parent()
         else:
             try:
@@ -3110,8 +3109,8 @@ class FreeModule_generic(Module_free_ambient):
             Domain: Vector space of dimension 2 over Rational Field
             Codomain: Vector space of dimension 2 over Rational Field
         """
-        from sage.structure.element import is_Matrix
-        if codomain is None and is_Matrix(im_gens):
+        from sage.structure.element import Matrix
+        if codomain is None and isinstance(im_gens, Matrix):
             side = kwds.get("side", "left")
             n = im_gens.nrows() if side == "right" else im_gens.ncols()
             from sage.categories.pushout import pushout
@@ -3280,8 +3279,8 @@ class FreeModule_generic(Module_free_ambient):
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
-        - ``*args, **kwds`` -- passed on to ``random_element()`` function
-           of base ring.
+        - ``*args``, ``**kwds`` -- passed on to the :func:`random_element`
+          function of the base ring.
 
         EXAMPLES::
 
@@ -3824,7 +3823,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             return sage.rings.infinity.infinity
 
         a = sage.matrix.matrix_space.MatrixSpace(self.base_field(), self.rank())(C).determinant()
-        if sage.rings.integer_ring.is_IntegerRing(self.base_ring()):
+        if isinstance(self.base_ring(), sage.rings.integer_ring.IntegerRing_class):
             return a.abs()
         elif isinstance(self.base_ring, sage.rings.abc.Order):
             return self.base_ring().ideal(a).norm()
@@ -5949,7 +5948,7 @@ class FreeModule_ambient(FreeModule_generic):
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
-        - ``*args, **kwds`` -- passed on to random_element function of base
+        - ``*args``, ``**kwds`` -- passed on to random_element function of base
            ring.
 
 
@@ -8267,10 +8266,10 @@ def element_class(R, is_sparse):
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
     """
     import sage.rings.integer_ring
-    if sage.rings.integer_ring.is_IntegerRing(R) and not is_sparse:
+    if isinstance(R, sage.rings.integer_ring.IntegerRing_class) and not is_sparse:
         from sage.modules.vector_integer_dense import Vector_integer_dense
         return Vector_integer_dense
-    elif sage.rings.rational_field.is_RationalField(R) and not is_sparse:
+    elif isinstance(R, sage.rings.rational_field.RationalField) and not is_sparse:
         from sage.modules.vector_rational_dense import Vector_rational_dense
         return Vector_rational_dense
     elif isinstance(R, sage.rings.abc.IntegerModRing) and not is_sparse:

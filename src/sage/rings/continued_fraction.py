@@ -1172,7 +1172,7 @@ class ContinuedFraction_base(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- integers
+        - ``a``, ``b``, ``c``, ``d`` -- integers
 
         - ``forward_value`` -- boolean (default: ``False``) whether the returned continued
           fraction is given the symbolic value of `(a x + b)/(cx + d)` and not only the

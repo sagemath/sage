@@ -102,7 +102,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         Return whether or not the arrangement is an oriented matroid.
         """
         if not self.arrangement().is_central():
-            raise ValueError("Hyperplane arrangements must be central to be an oriented matroid.")
+            raise ValueError("hyperplane arrangements must be central to be an oriented matroid")
 
         return True
 

@@ -37,7 +37,6 @@ AUTHORS:
 - Alejandra Alvarado, Angelos Koutsianas, Beth Malmskog, Christopher Rasmussen,
   David Roe, Christelle Vincent, Mckenzie West (2018-04-25 to 2018-11-09):
   original version
-
 """
 
 

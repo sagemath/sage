@@ -141,7 +141,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
         sage: OrientedMatroid([[0]],key='circuit')
         Traceback (most recent call last):
         ...
-        ValueError: Empty set not allowed
+        ValueError: empty set not allowed
 
     OUTPUT:
 
@@ -169,12 +169,12 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
     if isinstance(data, HyperplaneArrangementElement):
         if key != 'covector' and key is not None:
             raise ValueError(
-                'Hyperplane arrangements are currently only implemented using covector axioms')
+                'hyperplane arrangements are currently only implemented using covector axioms')
         key = 'real_hyperplane_arrangement'
     elif isinstance(data, PointConfiguration):
         if key != 'circuit' and key is not None:
             raise ValueError(
-                'Point configurations are currently only implemented using circuit axioms')
+                'point configurations are currently only implemented using circuit axioms')
         key = 'circuit'
         # PC circuits are given as (+, 0, -); and only half are given
         ci = [(C[0], C[2], C[1]) for C in data.circuits()]
@@ -183,7 +183,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
     elif isinstance(data, DiGraph):
         if key != 'circuit' and key is not None:
             raise ValueError(
-                'Digraphs are currently only implemented using circuit axioms')
+                'digraphs are currently only implemented using circuit axioms')
         key = 'circuit'
 
         # we need to add negative edges in order to do all simple cycles
@@ -191,9 +191,9 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
         edges = copy.copy(list(digraph.edges(sort=True)))
         groundset = []
         if len(edges) != len(set(edges)):
-            raise ValueError('Edge labels need to be unique')
+            raise ValueError('edge labels need to be unique')
         if None in digraph.edge_labels():
-            raise ValueError('Edge labels must be set for all edges')
+            raise ValueError('edge labels must be set for all edges')
 
         # Add minus edges to properly get cycles
         for e in edges:
@@ -218,7 +218,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
     elif isinstance(data, Matrix):
         if key != 'chirotope' and key is not None:
             raise ValueError(
-                'Matrices are currently only implemented using chirotope axioms')
+                'matrices are currently only implemented using chirotope axioms')
         key = 'chirotope'
 
     if key not in AbstractOrientedMatroid.keys:
@@ -259,12 +259,12 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
 
     if OM is None:
         raise NotImplementedError(
-            f"Oriented matroid of type {key} is not implemented")
+            f"oriented matroid of type {key} is not implemented")
 
     if OM.is_valid():
         return OM
 
-    raise ValueError("Oriented matroid is not valid")
+    raise ValueError("oriented matroid is not valid")
 
 
 def deep_tupler(obj):

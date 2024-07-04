@@ -104,7 +104,7 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
                 groundset = circuits[0].groundset()
                 for X in circuits:
                     if X.groundset() != groundset:
-                        raise ValueError("Groundsets must be the same")
+                        raise ValueError("groundsets must be the same")
 
         self._circuits = circuits
         self._elements = circuits
@@ -129,42 +129,42 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
             sage: OrientedMatroid(C2,key='circuit')
             Traceback (most recent call last):
             ...
-            ValueError: Only same/opposites can have same support
+            ValueError: only same/opposites can have same support
 
             sage: C3 = [((),()), ((1,4),(2,3)), ((2,3),(1,4))]
             sage: OrientedMatroid(C3,key='circuit',groundset=[1,2,3,4])
             Traceback (most recent call last):
             ...
-            ValueError: Empty set not allowed
+            ValueError: empty set not allowed
 
             sage: C4= [((1,),()), ((1,4),(2,3)), ((2,3),(1,4))]
             sage: OrientedMatroid(C4,key='circuit',groundset=[1,2,3,4])
             Traceback (most recent call last):
             ...
-            ValueError: Every element needs an opposite
+            ValueError: every element needs an opposite
 
             sage: C5 = [((1,),(3,),(2,)), ((1,2),(3,),(4,)),
             ....:       ((3,),(1,),(2,)), ((3,),(1,2),(4,))]
             sage: OrientedMatroid(C5,key='circuit')
             Traceback (most recent call last):
             ...
-            ValueError: Groundsets must be the same
+            ValueError: groundsets must be the same
         """
         circuits = self.circuits()
 
         for X in circuits:
             # Axiom 1: Make sure empty is not present
             if X.is_zero():
-                raise ValueError("Empty set not allowed")
+                raise ValueError("empty set not allowed")
             # Axiom 2: (symmetry) Make sure negative exists
             if -X not in circuits:
-                raise ValueError("Every element needs an opposite")
+                raise ValueError("every element needs an opposite")
             for Y in circuits:
                 # Axiom 3: (incomparability) supports must not be contained
                 if X.support().issubset(Y.support()):
                     if X != Y and X != -Y:
                         raise ValueError(
-                            "Only same/opposites can have same support")
+                            "only same/opposites can have same support")
                 # Axiom 4: Weak elimination
                 if X != -Y:
                     E = X.positives().intersection(Y.negatives())
@@ -180,7 +180,7 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
                             if Z.positives().issubset(p) and Z.negatives().issubset(n):
                                 found = True
                         if not found:
-                            raise ValueError("Weak elimination failed")
+                            raise ValueError("weak elimination failed")
 
         return True
 

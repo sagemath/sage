@@ -1,6 +1,7 @@
 r"""
 Abstract class for oriented matroids
 
+
 AUTHORS:
 
 - Aram Dermenjian (2019-07-12): Initial version
@@ -116,7 +117,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         if hasattr(self, "_circuits"):
             return self._circuits
-        raise NotImplementedError("Circuits not implemented")
+        raise NotImplementedError("circuits not implemented")
 
     def cocircuits(self):
         """
@@ -124,7 +125,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         if hasattr(self, "_cocircuits"):
             return self._cocircuits
-        raise NotImplementedError("Cocircuits not implemented")
+        raise NotImplementedError("cocircuits not implemented")
 
     def vectors(self):
         """
@@ -132,7 +133,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         if hasattr(self, "_vectors"):
             return self._vectors
-        raise NotImplementedError("Vectors not implemented")
+        raise NotImplementedError("vectors not implemented")
         pass
 
     def covectors(self):
@@ -141,7 +142,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         if hasattr(self, "_covectors"):
             return self._covectors
-        raise NotImplementedError("Covectors not implemented")
+        raise NotImplementedError("covectors not implemented")
 
     def convert_to(self, new_type=None):
         '''
@@ -156,21 +157,21 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
             sage: M.convert_to()
             Traceback (most recent call last):
             ...
-            TypeError: Must be given a type to convert to
+            TypeError: must be given a type to convert to
         '''
         from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
         if new_type is None:
-            raise TypeError("Must be given a type to convert to")
+            raise TypeError("must be given a type to convert to")
         elif new_type in AbstractOrientedMatroid.keys:
             if hasattr(self, new_type + 's'):
                 els = getattr(self, new_type + 's')()
             else:
-                raise NotImplementedError("No %ss() method found in oriented matroid" % (new_type,))
+                raise NotImplementedError("no %ss() method found in oriented matroid" % (new_type,))
             return OrientedMatroid(els,
                                    key=new_type,
                                    groundset=self.groundset())
         else:
-            raise NotImplementedError("Type %s not implemented" % (new_type,))
+            raise NotImplementedError("type %s not implemented" % (new_type,))
 
     def dual(self):
         """
@@ -293,17 +294,6 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         els.append(1)
         return LatticePoset((els, rels), cover_relations=False, facade=facade)
 
-#             P = self.face_poset()
-#             rels = P.relations()
-#             els = [1]
-#             for i in P:
-#                 els.append(i.element)
-#                 rels.append([i.element, 1])
-#
-#             return LatticePoset((els,rels),
-#                                 cover_relations=False,
-#                                 facade=facade)
-
     def topes(self):
         r"""
         Return the topes.
@@ -409,15 +399,26 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         .. MATH::
 
             \mathcal{C} / A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C} \text{ and} A \subseteq X^0 \right\}
+            
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A); M
+            Hyperplane arrangement oriented matroid of rank 2
+            sage: R = M.restriction(M.groundset()[1]); R
+            Covector oriented matroid of rank 1
+            sage: R.elements()
+            [+:
+             -:
+             0: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0,
+             +: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+             -:
+             0: ,
+             +:
+             -: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+             0: ]
         """
-        # sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-        # sage: A = hyperplane_arrangements.braid(3)
-        # sage: M = OrientedMatroid(A); M
-        # Covector Oriented Matroid of rank 3
-        # sage: R = M.restriction(M.groundset()[1]); R
-        # Covector Oriented Matroid of rank 2
-        # sage: R.elements()
-        # [(0,0), (1,1), (-1,-1)]
         if change_set in self.groundset():
             change_set = set([change_set])
         else:

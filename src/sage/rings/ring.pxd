@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.structure.parent_gens cimport ParentWithGens
 
 cpdef bint _is_Field(x) except -2

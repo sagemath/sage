@@ -40,7 +40,7 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
 
 from .constructor import ModularForms
-from .element import is_ModularFormElement, GradedModularFormElement
+from .element import ModularFormElement, GradedModularFormElement
 from .space import ModularFormsSpace
 
 
@@ -517,7 +517,7 @@ class ModularFormsRing(Parent):
             forms_dictionary = forms_datum
         elif isinstance(forms_datum, self.element_class):
             forms_dictionary = forms_datum._forms_dictionary
-        elif is_ModularFormElement(forms_datum):
+        elif isinstance(forms_datum, ModularFormElement):
             if self.group().is_subgroup(forms_datum.group()) and self.base_ring().has_coerce_map_from(forms_datum.base_ring()):
                 forms_dictionary = {forms_datum.weight(): forms_datum}
             else:

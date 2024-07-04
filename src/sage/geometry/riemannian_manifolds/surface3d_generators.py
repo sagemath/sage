@@ -4,7 +4,6 @@ Common parametrized surfaces in 3D.
 AUTHORS::
 
 - Joris Vankerschaver (2012-06-16)
-
 """
 #*****************************************************************************
 #       Copyright (C) 2010  Joris Vankerschaver <joris.vankerschaver@gmail.com>
@@ -110,7 +109,7 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``a, b`` -- surface parameters.
+        - ``a``, ``b`` -- surface parameters.
 
         - ``name`` -- string. Name of the surface.
 

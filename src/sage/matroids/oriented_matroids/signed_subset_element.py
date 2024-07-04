@@ -112,7 +112,7 @@ class SignedSubsetElement(Element):
         if positives is not None:
             if negatives is None:
                 raise ValueError(
-                    "If positives is set, negatives must be as well")
+                    "if positives is set, negatives must be as well")
 
             self._p = set(positives)
             self._n = set(negatives)
@@ -137,7 +137,7 @@ class SignedSubsetElement(Element):
             if data[0] in [-1, 0, 1, '+', '0', '-', '']:
                 if groundset is not None and len(data) != len(groundset):
                     raise ValueError(
-                        "Length of vector must be same number of elements as groundset")
+                        "length of vector must be same number of elements as ground set")
                 for i, j in enumerate(data):
                     label = i
                     if groundset is not None:
@@ -149,7 +149,7 @@ class SignedSubsetElement(Element):
                     elif j == 0 or j == '' or j == '0':
                         self._z.add(label)
                     else:
-                        raise ValueError("Must be tuple of -1, 0, 1")
+                        raise ValueError("must be tuple of -1, 0, 1")
 
             # If we have a tuple of tuples
             else:
@@ -176,7 +176,7 @@ class SignedSubsetElement(Element):
                 self._z = data['zeros']
         else:
             raise ValueError(
-                "Either positives and negatives are set or data is a tuple, OrientedMatroidELement or a dict")
+                "either positives and negatives are set or data is a tuple, OrientedMatroidELement or a dict")
 
         # Type fix
         self._p = set(self._p)
@@ -188,7 +188,7 @@ class SignedSubsetElement(Element):
             self._g = list(self._p.union(self._n).union(self._z))
         else:
             if not self.support().union(self.zeros()).issubset(groundset):
-                raise ValueError("Elements must appear in groundset")
+                raise ValueError("elements must appear in groundset")
 
             # Update the zeros with everything in the groundset
             if self._z is None:
@@ -197,7 +197,7 @@ class SignedSubsetElement(Element):
             # groundset should be everything
             if not set(groundset).issubset(self.support().union(self.zeros())):
                 raise ValueError(
-                    "Every element must be either positive, negative or zero")
+                    "every element must be either positive, negative or zero")
             self._g = groundset
 
         self._g = list(self._g)
@@ -215,7 +215,7 @@ class SignedSubsetElement(Element):
             return -1
         if var in self.zeros():
             return 0
-        raise ValueError("Not in groundset")
+        raise ValueError("not in groundset")
 
     def __hash__(self):
         """
@@ -543,7 +543,7 @@ class SignedSubsetElement(Element):
         """
         if getattr(self.parent(), 'face_lattice', None) is not None:
             raise TypeError(
-                "Topes are only implemented if .face_lattice() is implemented")
+                "topes are only implemented if .face_lattice() is implemented")
 
         return self in self.parent().topes()
 
@@ -560,7 +560,7 @@ class SignedSubsetElement(Element):
         and thus `T` is simplicial.
         """
         if not self.is_tope():
-            raise TypeError("Only topes can be simplicial")
+            raise TypeError("only topes can be simplicial")
 
         P = self.parent().face_lattice()
         I = P.interval(P.bottom(), self)

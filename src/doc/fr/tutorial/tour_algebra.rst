@@ -166,7 +166,6 @@ est modélisée par le système d'équations différentielles d'ordre 2
     m_2 x_2''+ k_2 (x_2-x_1) = 0,
 
 
-
 où :math:`m_{i}` est la masse de l'objet *i*, :math:`x_{i}` est
 l'élongation à partir du point d'équilibre de la masse  *i*, et
 :math:`k_{i}` est la constante de raideur du ressort *i*.

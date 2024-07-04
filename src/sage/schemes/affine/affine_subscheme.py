@@ -6,7 +6,6 @@ AUTHORS:
 - David Kohel, William Stein (2005): initial version
 
 - Ben Hutz (2013): affine subschemes
-
 """
 
 # ****************************************************************************

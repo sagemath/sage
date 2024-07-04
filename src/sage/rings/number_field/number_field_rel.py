@@ -62,7 +62,6 @@ AUTHORS:
 - Nick Alexander (2009-01): modernized coercion implementation
 - Robert Harron (2012-08): added is_CM_extension
 - Julian Rüth (2014-04): absolute number fields are unique parents
-
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2009 William Stein <wstein@gmail.com>
@@ -77,9 +76,10 @@ AUTHORS:
 
 import sage.libs.ntl.all as ntl
 
-from sage.categories.map import is_Map
+from sage.categories.map import Map
 from sage.structure.sequence import Sequence
 
+import sage.rings.abc
 import sage.structure.parent_gens
 
 from . import maps
@@ -93,12 +93,12 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from . import number_field_element
 import sage.rings.number_field.number_field_ideal_rel
-from .number_field_ideal import is_NumberFieldIdeal
+from .number_field_ideal import NumberFieldIdeal
 from .number_field import (NumberField, NumberField_generic,
     put_natural_embedding_first, proof_flag,
     is_NumberFieldHomsetCodomain)
 from sage.rings.number_field.number_field_base import NumberField as NumberField_base
-from sage.rings.number_field.order import (RelativeOrder, is_NumberFieldOrder,
+from sage.rings.number_field.order import (RelativeOrder,
                                            relative_order_from_ring_generators)
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
 from sage.libs.pari.all import pari_gen
@@ -122,6 +122,10 @@ def is_RelativeNumberField(x):
         sage: from sage.rings.number_field.number_field_rel import is_RelativeNumberField
         sage: x = polygen(ZZ, 'x')
         sage: is_RelativeNumberField(NumberField(x^2+1,'a'))
+        doctest:warning...
+        DeprecationWarning: The function is_RelativeNumberField is deprecated;
+        use 'isinstance(..., NumberField_relative)' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         False
         sage: k.<a> = NumberField(x^3 - 2)
         sage: l.<b> = k.extension(x^3 - 3); l
@@ -131,6 +135,10 @@ def is_RelativeNumberField(x):
         sage: is_RelativeNumberField(QQ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_RelativeNumberField is deprecated; "
+                "use 'isinstance(..., NumberField_relative)' instead.")
     return isinstance(x, NumberField_relative)
 
 
@@ -1013,9 +1021,9 @@ class NumberField_relative(NumberField_generic):
         """
         if R is int:
             return self._generic_coerce_map(R)
-        elif R in (ZZ, QQ, self.base_field()):
+        if R in (ZZ, QQ, self.base_field()):
             return self._generic_coerce_map(R)
-        if is_NumberFieldOrder(R) and R.number_field() is self:
+        if isinstance(R, sage.rings.abc.Order) and R.number_field() is self:
             return self._generic_coerce_map(R)
         mor = self.base_field()._internal_coerce_map_from(R)
         if mor is not None:
@@ -1310,7 +1318,7 @@ class NumberField_relative(NumberField_generic):
             Ring endomorphism of Number Field in z9 with defining polynomial x^6 + x^3 + 1
               Defn: z9 |--> z9^4
         """
-        if is_RelativeNumberField(other):
+        if isinstance(other, NumberField_relative):
             s_base_field = self.base_field()
             o_base_field = other.base_field()
             if base_isom is None:
@@ -2678,7 +2686,7 @@ class NumberField_relative(NumberField_generic):
         K = self.absolute_field('a')
         from_K, to_K = K.structure()
 
-        if is_Map(alpha):
+        if isinstance(alpha, Map):
             # alpha is an embedding of a subfield into self; compose to get an
             # embedding of a subfield into the absolute field
             beta = to_K * alpha
@@ -2722,7 +2730,7 @@ class NumberField_relative(NumberField_generic):
             sage: (P, 1) in K.factor(u)
             True
         """
-        if not is_NumberFieldIdeal(P):
+        if not isinstance(P, NumberFieldIdeal):
             P = self.ideal(P)
         if not P.is_maximal():
             raise ValueError("P (=%s) must be a nonzero prime." % P)

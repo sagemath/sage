@@ -157,11 +157,11 @@ playing strategy number `i` is given by the matrix/vector multiplication
 `(Ay)_i`, ie element in position `i` of the matrix/vector multiplication
 `Ay`) ::
 
-    sage: y = var('y')
+    sage: y = var('y')                                                                  # needs sage.symbolic
     sage: A = matrix([[1, -1], [-1, 1]])
-    sage: p = plot((A * vector([y, 1 - y]))[0], y, 0, 1, color='blue',
+    sage: p = plot((A * vector([y, 1 - y]))[0], y, 0, 1, color='blue',                  # needs sage.symbolic
     ....:          legend_label='$u_1(r_1, (y, 1-y))$', axes_labels=['$y$', ''])
-    sage: p += plot((A * vector([y, 1 - y]))[1], y, 0, 1, color='red',
+    sage: p += plot((A * vector([y, 1 - y]))[1], y, 0, 1, color='red',                  # needs sage.symbolic
     ....:           legend_label='$u_1(r_2, (y, 1-y))$'); p
     Graphics object consisting of 2 graphics primitives
 
@@ -622,7 +622,6 @@ AUTHORS:
 - James Campbell and Vince Knight (06-2014): Original version
 
 - Tobenna P. Igwe: Constant-sum game solvers
-
 """
 
 # ****************************************************************************
@@ -1389,9 +1388,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: example._is_complete()
             False
         """
-        results = []
-        for profile in self.utilities.values():
-            results.append(all(type(i) is not bool for i in profile))
+        results = (all(not isinstance(i, bool) for i in profile)
+                   for profile in self.utilities.values())
         return all(results)
 
     def obtain_nash(self, algorithm=False, maximization=True, solver=None):

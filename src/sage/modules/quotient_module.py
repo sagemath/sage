@@ -6,7 +6,6 @@ AUTHORS:
 - William Stein (2009): initial version
 
 - Kwankyu Lee (2022-05): added quotient module over domain
-
 """
 
 # ****************************************************************************

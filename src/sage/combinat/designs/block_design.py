@@ -107,7 +107,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
 
     INPUT:
 
-    - ``v,k,lmbda`` (integers)
+    - ``v``, ``k``, ``lmbda`` -- integers
 
     OUTPUT:
 

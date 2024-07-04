@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from cpython.number cimport PyNumber_TrueDivide
 from sage.structure.element cimport Element
 
