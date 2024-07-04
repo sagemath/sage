@@ -192,24 +192,25 @@ def _lex_order_common(G, algo, reverse, tree, initial_vertex):
     cdef bint right = algo in ("lex_BFS", "lex_UP")
     cdef bint decr = algo in ("lex_BFS", "lex_DOWN")
 
-    cdef size_t l = n if decr else -1
+    cdef size_t cur_label = n if decr else -1
+    cdef int label_incr = -1 if decr else 1
 
     # Perform the search
     lexicographic_label = {u: deque() for u in G}
     if initial_vertex is not None:
         # append or appendleft does not matter here, as the deque is empty
-        lexicographic_label[initial_vertex].append(l)
+        lexicographic_label[initial_vertex].append(cur_label)
     while lexicographic_label:
         u = max(lexicographic_label, key=lexicographic_label.get)
         lexicographic_label.pop(u)
         sigma.append(u)
-        l += -1 if decr else 1
+        cur_label += label_incr
         for v in G.neighbor_iterator(u):  # graphs are considered undirected
             if v in lexicographic_label:
                 if right:
-                    lexicographic_label[v].append(l)
+                    lexicographic_label[v].append(cur_label)
                 else:
-                    lexicographic_label[v].appendleft(l)
+                    lexicographic_label[v].appendleft(cur_label)
                 predecessor[v] = u
 
     if reverse:
