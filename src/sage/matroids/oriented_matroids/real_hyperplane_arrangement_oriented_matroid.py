@@ -49,7 +49,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         sage: M = OrientedMatroid(A); M
         Traceback (most recent call last):
         ...
-        ValueError: Hyperplane arrangements must be central to be an oriented matroid.
+        ValueError: hyperplane arrangements must be central to be an oriented matroid
         sage: G = Graph({1: [2,4], 2: [3,4]})
         sage: A = hyperplane_arrangements.graphical(G)
         sage: M = OrientedMatroid(A); M
