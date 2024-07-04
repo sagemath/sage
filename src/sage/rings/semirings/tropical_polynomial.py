@@ -1,5 +1,5 @@
 r"""
-Univariate Tropical Polynomial Semirings
+Univariate Tropical Polynomial Semirings.
 
 Tropical polynomial is a polynomial with coefficients from tropical semiring.
 Tropical polynomial induces a function which is piecewise-linear and each 
@@ -26,7 +26,7 @@ semiring and then inputting it to ``PolynomialRing`` constructor::
 
 One way to construct an element is to provide a list or tuple of coefficients.
 Another way to define element is to write a polynomial equation with each 
-coefficient converted to a semiring, like this:
+coefficient converted to a semiring, like this::
 
     sage: p1 = R([1,4,None,0]); p1
     0*y^3 + 4*y + 1
@@ -124,6 +124,7 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import re
 from itertools import combinations
 from sage.misc.cachefunc import cached_method
 
@@ -471,15 +472,18 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         
     def _repr_(self):
         r"""
+        Return a nice tropical polynomial string representation.
         
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x> = PolynomialRing(T)
-            sage: R([0,-1,1,1])
-            1*x^3 + 1*x^2 + -1*x + 0
-
+            sage: R([-3,-1,2,-1])
+            (-1)*x^3 + 2*x^2 + (-1)*x + (-3)
         """
+        def replace_negatives(match):
+            return f'({match.group(0)})'
+        
         s = super()._repr()
         var = self.parent().variable_name()
         if s[0] == var:
@@ -487,6 +491,33 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         s = s.replace(" - ", " + -")
         s = s.replace(" + "+var, " + 1*"+var)
         s = s.replace("-"+var, "-1*"+var)
+        s = re.sub(r'-\d+', replace_negatives, s)
+        return s
+    
+    def _latex_(self):
+        r"""
+        Return a nice topical polynomial latex representation.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x> = PolynomialRing(T)
+            sage: f = R([-3,-2,1])
+            sage: latex(f)
+            1 x^{2} \oplus \left(-2 \right) x \oplus \left(-3 \right)
+        """
+        def replace_negatives_latex(match):
+            return f'\left({match.group(0)}\\right)'
+        
+        s = super()._latex_()
+        var = self.parent().variable_name()
+        if s[0] == var:
+            s = "1 " + s
+        s = s.replace(" - ", " + -")
+        s = s.replace(" + "+var, " + 1 "+var)
+        s = s.replace("-"+var, "-1 "+var)
+        s = re.sub(r'-\d+', replace_negatives_latex, s)
+        s = s.replace("+", r'\oplus')
         return s
     
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
@@ -504,7 +535,6 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
     def __init__(self, base_semiring, names):
         """
-
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
@@ -514,7 +544,6 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: (x + T(1)*x^2) * R(3)
             4*x^2 + 3*x
             sage: TestSuite(R).run()
-
         """
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
@@ -533,7 +562,6 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: S.<x> = PolynomialRing(QQ)
             sage: R(x^2 - x + 1)
             1*x^2 + -1*x + 1
-
         """
         C = self.element_class
         if isinstance(x, (list, tuple)):
@@ -546,7 +574,6 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return (f"Univariate Tropical Polynomial Semiring in {self.variable_name()}"
             f" over {self.base_ring().base_ring()}")
 
-    
     def gen(self, n=0):
         """
         Return the indeterminate generator of this polynomial ring.
@@ -581,7 +608,6 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R = PolynomialRing(T, 'x')
             sage: f = R.random_element(); f
             7*x^2 + 2/3*x + 1/3
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
@@ -641,7 +667,6 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             ValueError: can not interpolate these points
-
         """
         points = sorted(points, key=lambda point: point[0])
         all_slope = [0]
@@ -673,3 +698,4 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         unit = self.base()(points[0][1]-test_value.lift())
         result *= unit
         return result
+    

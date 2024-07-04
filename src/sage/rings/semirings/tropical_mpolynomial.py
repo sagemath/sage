@@ -202,13 +202,28 @@ class TropicalMPolynomial(MPolynomial_polydict):
             [[(t1, t2 - 3/2, t2), [t1 <= t2 + 9/2], 1]
             [(2*t1 - t2 + 3, t2, t1), [t2 + 3/2 <= t1], 1]
             [(t1 + 9/2, t2, t1), [t1 <= t2 + 3/2], 1]]
-
         """
         if self.parent().ngens() == 2:
             return TropicalCurve(self)
         else:
             return TropicalVariety(self)
+    
+    def _latex_(self):
+        r"""
+        Return a nice topical polynomial latex representation.
 
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: f = x^2 +R(-3)* y + R(1)*z; f
+            0*x^2 + (-3)*y + 1*z
+            sage: latex(f)
+            0 x^{2} \oplus \left(-3\right) y \oplus 1 z
+        """
+        s = super()._latex_()
+        s = s.replace("+", r'\oplus')
+        return s
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     """
@@ -217,7 +232,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
     def __init__(self, base_semiring, n, names, order='degrevlex'):
         """
-        EXAMPLES:
+        EXAMPLES::
 
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R.<x,y,z> = PolynomialRing(T)
@@ -227,7 +242,6 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             1*x*y*z + 0*x
             sage: (x+y+z)^2
             0*x^2 + 0*x*y + 0*y^2 + 0*x*z + 0*y*z + 0*z^2
-
         """
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
@@ -257,7 +271,6 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: f = -x*y + 1
             sage: R(f)
             (-1)*x*y + 1
-
         """
         C = self.element_class
         new_dict = {}
@@ -294,7 +307,6 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.<a,b> = PolynomialRing(T)
             sage: f = R.random_element(); f
             1/9*a^2 + 1/13*a*b + 1/107*b^2 + 1*a
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
@@ -310,7 +322,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     @cached_method
     def gens(self):
         """
-        Return a tuple whose entries are the generators for this object, 
+        Return a tuple whose entries are the generators for this object,
         in order.
         """
         gens = []
