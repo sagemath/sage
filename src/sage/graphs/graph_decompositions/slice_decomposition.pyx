@@ -498,7 +498,6 @@ cdef class SliceDecomposition(SageObject):
         * ``"sequence"`` -- the x-slice sequence of `v` (see
           :meth:`~xslice_sequence`)
 
-
         This method can also be called via :meth:`xslice_data`.
 
         EXAMPLES:
@@ -604,7 +603,6 @@ cdef class SliceDecomposition(SageObject):
             True
             True
             True
-
         """
         return list(self.sigma)
 

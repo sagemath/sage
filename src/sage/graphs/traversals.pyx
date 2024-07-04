@@ -178,7 +178,6 @@ def _lex_order_common(G, algo, reverse, tree, initial_vertex):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError(f"'{initial_vertex}' is not a graph vertex")
