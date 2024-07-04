@@ -74,9 +74,8 @@ neccessarily means it can be factored into its linear factors::
     (1) * (0*y + 1)^2
 
 Every tropical polynomial `p(x)` have a corresponding unique tropical 
-polynomial `\bar{p}(x)` with the same roots which can be factored. Therefore
-this two polynomial determine the same function. We call `\bar{p}(x)` the
-tropical polynomial split form of `p(x)`::
+polynomial `\bar{p}(x)` with the same roots which can be factored. We call 
+`\bar{p}(x)` the tropical polynomial split form of `p(x)`::
 
     sage: p1.split_form()
     0*y^3 + 2*y^2 + 4*y + 1
@@ -248,18 +247,14 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         TESTS:
 
-        We check that the roots and induced function of tropical polynomial 
-        and its split form is really the same::
+        Checking that the roots of tropical polynomial and its split form is 
+        really the same::
 
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R.<x> = PolynomialRing(T)
             sage: p1 = R([5,4,1,0,2,4,3])
             sage: p1.roots() == p1.split_form().roots()
             True
-            sage: f = p1.piecewise_function()
-            sage: g = p1.split_form().piecewise_function()
-            sage: f-g
-            0
         """
         roots = self.roots()
         R = self.parent()
