@@ -1,6 +1,5 @@
 r"""
 Oriented matroid with vector axioms
--------------------------------------
 
 This implements an oriented matroid using the vector axioms.
 
@@ -31,7 +30,7 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
     matroid is any composition of circuits.
 
     This implements an oriented matroid using the vectors axioms. For this
-    let `\mathcal{V}` be a set of signed subsets and `E` a ground set. Then
+    let `\mathcal{V}` be a set of signed subsets and `E` a groundset. Then
     a pair `M = (E,\mathcal{V})` is an oriented matroid using the vector
     axioms if (see Theorem 3.7.5 and Corollary 3.7.9 in [BLSWZ1999]_):
 
@@ -136,7 +135,6 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
             Traceback (most recent call last):
             ...
             ValueError: vector elimination failed
-
         """
         vectors = self.vectors()
 
@@ -191,7 +189,6 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
             sage: V = [[1,1],[-1,-1],[0,0]]
             sage: M = OrientedMatroid(V, key='vector'); M
             Vector oriented matroid of rank 1
-
         """
         try:
             rep = f"Vector oriented matroid of rank {self.rank()}"
@@ -201,10 +198,10 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
 
     def matroid(self):
         r"""
-        Returns the underlying matroid.
+        Return the underlying matroid.
 
         Given an oriented matroid defined using vector, the *underlying
-        matroid* is the (circuit) matroid whose ground set is the ground set of
+        matroid* is the (circuit) matroid whose groundset is the groundset of
         the oriented matroid and the circuits are the set of supports of all
         the signed subsets.
 

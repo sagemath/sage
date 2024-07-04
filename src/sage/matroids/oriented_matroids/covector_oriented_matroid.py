@@ -1,6 +1,5 @@
 r"""
 Oriented matroid with covector axioms
----------------------------------------
 
 This implements an oriented matroid using the covector axioms.
 
@@ -31,7 +30,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
     matroid is any composition of cocircuits.
 
     This implements an oriented matroid using the covector axioms. For this
-    let `\mathcal{L}` be a set of covectors and `E` a ground set. Then
+    let `\mathcal{L}` be a set of covectors and `E` a groundset. Then
     a pair `M = (E,\mathcal{L})` is an oriented matroid using the covectors
     axioms if (see Theorem 4.1.1 in [BLSWZ1999]_):
 
@@ -58,8 +57,8 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         sage: M.groundset()
         ('e',)
 
-        sage: C = [ [1,1,1], [1,1,0],[1,1,-1],[1,0,-1],[1,-1,-1],[0,-1,-1],
-        ....: [-1,-1,-1],[0,1,1],[-1,1,1],[-1,0,1],[-1,-1,1],[-1,-1,0],[0,0,0]]
+        sage: C = [[1,1,1], [1,1,0], [1,1,-1], [1,0,-1], [1,-1,-1], [0,-1,-1],
+        ....:      [-1,-1,-1], [0,1,1], [-1,1,1], [-1,0,1], [-1,-1,1], [-1,-1,0], [0,0,0]]
         sage: M = OrientedMatroid(C, key='covector'); M
         Covector oriented matroid of rank 2
         sage: M.groundset()
@@ -83,8 +82,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         """
         if category is None:
             category = Sets()
-        return super().__classcall__(cls, data, groundset=groundset,
-                                     category=category)
+        return super().__classcall__(cls, data, groundset=groundset, category=category)
 
     def __init__(self, data, groundset=None, category=None):
         """
@@ -96,10 +94,8 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         covectors = []
         for d in data:
             # Ensure we're using the right type.
-            covectors.append(self.element_class(self,
-                                                data=d,
-                                                groundset=groundset))
-        # If our groundset is none, make sure the groundsets are the same for
+            covectors.append(self.element_class(self, data=d, groundset=groundset))
+        # If our groundset is None, make sure the groundsets are the same for
         # all elements
         if groundset is None and len(covectors) > 0:
             groundset = covectors[0].groundset()
@@ -136,20 +132,20 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
             sage: M
             Covector oriented matroid of rank 1
 
-            sage: C2 = [ [0,0],[1,1]]
+            sage: C2 = [[0,0], [1,1]]
             sage: OrientedMatroid(C2, key='covector')
             Traceback (most recent call last):
             ...
             ValueError: every element needs an opposite
 
-            sage: C3 = [[1,1],[-1,-1],[0,1],[1,0],[-1,0],[0,-1]]
+            sage: C3 = [[1,1], [-1,-1], [0,1], [1,0], [-1,0], [0,-1]]
             sage: OrientedMatroid(C3, key='covector')
             Traceback (most recent call last):
             ...
             ValueError: composition must be in vectors
 
 
-            sage: C4 = [ [0,0],[1,1],[-1,-1],[1,-1],[-1,1]]
+            sage: C4 = [[0,0], [1,1], [-1,-1], [1,-1], [-1,1]]
             sage: M = OrientedMatroid(C4, key='covector'); M
             Traceback (most recent call last):
             ...
@@ -197,7 +193,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
 
         Given a covector oriented matroid, the *underlying matroid* is the
         (flat) matroid whose collection of flats is given by the set of
-        zeroes of all signed vectors.
+        zeros of all signed vectors.
 
         *Note* that matroids as defined through flats are not defined in sage
         version 9.2 and therefore it must be translated to another one of the
@@ -209,15 +205,15 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [ [1,1,1], [1,1,0],[1,1,-1],[1,0,-1],[1,-1,-1],[0,-1,-1],
-            ....: [-1,-1,-1],[0,1,1],[-1,1,1],[-1,0,1],[-1,-1,1],[-1,-1,0],
-            ....: [0,0,0]]
+            sage: C = [[1,1,1], [1,1,0], [1,1,-1], [1,0,-1], [1,-1,-1], [0,-1,-1],
+            ....:      [-1,-1,-1], [0,1,1], [-1,1,1], [-1,0,1], [-1,-1,1], [-1,-1,0],
+            ....:      [0,0,0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: M.matroid()
             Matroid of rank 2 on 3 elements
         """
         from sage.matroids.constructor import Matroid
         from sage.combinat.posets.posets import Poset
-        flats = list(set([frozenset(X.zeroes()) for X in self.elements()]))
+        flats = list(set([frozenset(X.zeros()) for X in self.elements()]))
         rf = Poset((flats, lambda a, b: a.issubset(b))).rank_function()
         return Matroid(groundset=self.groundset(), rank_function=rf)

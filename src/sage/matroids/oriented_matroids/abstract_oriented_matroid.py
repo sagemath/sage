@@ -1,5 +1,6 @@
 r"""
-Abstract class for oriented matroids.
+Abstract class for oriented matroids
+
 
 AUTHORS:
 
@@ -35,9 +36,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         :class:`oriented_matroids.oriented_matroid.OrientedMatroid`
     """
 
-    """
-    List of all possible keys
-    """
+    # List of all possible keys
     keys = ['circuit', 'covector', 'vector', 'real_hyperplane_arrangement']
 
     Element = SignedSubsetElement
@@ -52,7 +51,6 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
 
             Changing the ``convention`` for tableaux also changes the
             ``convention`` for partitions.
-
         """
         NAME = 'OrientedMatroids'
         display = dict(default="set",
@@ -80,7 +78,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
 
     def groundset(self):
         """
-        Return the ground set of ``self``.
+        Return the groundset of ``self``.
 
         EXAMPLES::
 
@@ -88,7 +86,6 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
             sage: A = hyperplane_arrangements.braid(2)
             sage: M = OrientedMatroid(A); M.groundset()
             (Hyperplane t0 - t1 + 0,)
-
         """
         return self._groundset
 
@@ -231,7 +228,6 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
             sage: M = OrientedMatroid(D,key="circuit")
             sage: M.an_element() in M.circuits()
             True
-
         """
         from sage.misc.prandom import randint
         els = self.elements()
@@ -371,7 +367,6 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-
         """
         if change_set in self.groundset():
             change_set = set([change_set])
@@ -385,7 +380,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         for c in self.covectors():
             p = tuple(c.positives().difference(change_set))
             n = tuple(c.negatives().difference(change_set))
-            z = tuple(c.zeroes().difference(change_set))
+            z = tuple(c.zeros().difference(change_set))
             data.append((p, n, z))
         data = deep_tupler(data)
 
@@ -404,7 +399,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         .. MATH::
 
             \mathcal{C} / A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C} \text{ and} A \subseteq X^0 \right\}
-
+            
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -436,8 +431,8 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         for c in self.covectors():
             p = tuple(c.positives().difference(change_set))
             n = tuple(c.negatives().difference(change_set))
-            z = tuple(c.zeroes().difference(change_set))
-            if change_set.issubset(c.zeroes()):
+            z = tuple(c.zeros().difference(change_set))
+            if change_set.issubset(c.zeros()):
                 data.append((p, n, z))
         data = deep_tupler(data)
 
@@ -463,16 +458,16 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
 
     def are_parallel(self, e, f):
         r"""
-        Return whether two elements in ground set are parallel.
+        Return whether two elements in groundset are parallel.
 
-        Two elements in the ground set `e, f \in E` are parallel if they
+        Two elements in the groundset `e, f \in E` are parallel if they
         are not loops and for all `X \in \mathcal{C}`, `X(e) = 0`
         implies `X(f) = 0`. See Lemma 4.1.10 [BLSWZ1999]_ .
         """
         gs = set(self.groundset()).difference(set(self.loops()))
         if e not in gs or f not in gs:
             raise ValueError(
-                "elements must be in groundset and must not be loops")
+                "Elements must be in groundset and must not be loops")
         for i in self.elements():
             if i(e) == 0 and i(f) != 0:
                 return False

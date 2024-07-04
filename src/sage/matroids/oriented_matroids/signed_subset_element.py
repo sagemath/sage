@@ -1,5 +1,5 @@
 r"""
-Abstract class for oriented matroids.
+Abstract class for oriented matroids
 
 AUTHORS:
 
@@ -7,6 +7,7 @@ AUTHORS:
 - Elizabeth Flight (2023-08-01): Beta version
 - Tudor Tanasa (2023-08-01): Beta version
 """
+
 # *****************************************************************************
 #  Copyright (C) 2019 Aram Dermenjian <aram.dermenjian.math at gmail.com>
 #
@@ -16,13 +17,14 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 # ******************************************************************************
+
 from sage.structure.element import Element
 import copy
 
 
 class SignedSubsetElement(Element):
     r"""
-    Implements a basic signed subset element which is used for the
+    Implement a basic signed subset element which is used for the
     oriented matroids class.
 
     INPUT:
@@ -32,11 +34,11 @@ class SignedSubsetElement(Element):
     - ``data`` -- (default: ``None``) is a tuple with information. Can be
       given in one of the following formats:
 
-      - **as a vector** -- this is a tuple of pluses, minuses, and zeroes.
+      - **as a vector** -- this is a tuple of pluses, minuses, and zeros.
       - **as three tuples** -- the first tuple is the positives, the second
-        the negatives and the third the zeroes.
+        the negatives and the third the zeros.
       - **as a dict** -- the dictionary should have keys *positives*,
-        *negatives*, and *zeroes*.
+        *negatives*, and *zeros*.
     - ``groundset`` -- (default: ``None``) if not given will construct
        the groundset from the parent, or if none is created in the parent,
        using the elements found in the data.
@@ -44,14 +46,14 @@ class SignedSubsetElement(Element):
        a tuple of elements. Requires ``negatives`` to be set.
     - ``negatives`` -- (default: ``None``) alternative to ``data``. Should be
        a tuple of elements. Requires ``positives`` to be set.
-    - ``zeroes`` -- (default: ``None``) alternative to ``data``. Should be a
+    - ``zeros`` -- (default: ``None``) alternative to ``data``. Should be a
        tuple of elements. Requires ``positives`` and ``negatives`` to be set.
 
     EXAMPLES::
 
         sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
         sage: from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
-        sage: M = OrientedMatroid([[1],[-1]],key='circuit');
+        sage: M = OrientedMatroid([[1],[-1]], key='circuit');
         sage: SignedSubsetElement(M,data = (0,))
         +:
         -:
@@ -60,7 +62,7 @@ class SignedSubsetElement(Element):
         +: 0
         -:
         0:
-        sage: M = OrientedMatroid([[1],[-1]],key='circuit', groundset=['e'])
+        sage: M = OrientedMatroid([[1],[-1]], key='circuit', groundset=['e'])
         sage: SignedSubsetElement(M,data = (1,))
         +: e
         -:
@@ -69,7 +71,7 @@ class SignedSubsetElement(Element):
     Elements are also lazy loaded to return the sign of elements from the
     groundset::
 
-        sage: M = OrientedMatroid([[1],[-1]],key='circuit', groundset=['e'])
+        sage: M = OrientedMatroid([[1],[-1]], key='circuit', groundset=['e'])
         sage: C = M.elements(); C[0]
         +: e
         -:
@@ -84,8 +86,7 @@ class SignedSubsetElement(Element):
 
     """
 
-    def __init__(self, parent=None, data=None, groundset=None,
-                 positives=None, negatives=None, zeroes=None):
+    def __init__(self, parent=None, data=None, groundset=None, positives=None, negatives=None, zeros=None):
         """
         Initialize ``self``.
         """
@@ -97,8 +98,7 @@ class SignedSubsetElement(Element):
                 groundset = None
 
         # remove parent if data not present
-        if parent is None \
-                or (data is None and groundset is None and positives is None):
+        if parent is None or (data is None and groundset is None and positives is None):
             from sage.structure.parent import Parent
             data = parent
             parent = Parent()
@@ -116,20 +116,20 @@ class SignedSubsetElement(Element):
 
             self._p = set(positives)
             self._n = set(negatives)
-            if zeroes is None:
+            if zeros is None:
                 if groundset is None:
                     self._z = set([])
                 else:
                     gs = set(groundset)
                     self._z = gs.difference(self._p).difference(self._n)
             else:
-                self._z = set(zeroes)
+                self._z = set(zeros)
 
         # If we already have a signed subset element, use it's data
         elif isinstance(data, SignedSubsetElement):
             self._p = data.positives()
             self._n = data.negatives()
-            self._z = data.zeroes()
+            self._z = data.zeros()
 
         # If we have a tuple, use its information
         elif isinstance(data, tuple):
@@ -172,8 +172,8 @@ class SignedSubsetElement(Element):
                 self._n = data['negatives']
             if 'z' in data:
                 self._z = data['z']
-            if 'zeroes' in data:
-                self._z = data['zeroes']
+            if 'zeros' in data:
+                self._z = data['zeros']
         else:
             raise ValueError(
                 "either positives and negatives are set or data is a tuple, OrientedMatroidELement or a dict")
@@ -183,19 +183,19 @@ class SignedSubsetElement(Element):
         self._n = set(self._n)
         self._z = set(self._z)
 
-        # Setup the ground set if it's not set yet
+        # Setup the groundset if it's not set yet
         if groundset is None:
             self._g = list(self._p.union(self._n).union(self._z))
         else:
-            if not self.support().union(self.zeroes()).issubset(groundset):
+            if not self.support().union(self.zeros()).issubset(groundset):
                 raise ValueError("elements must appear in groundset")
 
-            # Update the zeroes with everything in the ground set
+            # Update the zeros with everything in the groundset
             if self._z is None:
                 self._z = set(groundset).difference(self.support())
 
-            # ground set should be everything
-            if not set(groundset).issubset(self.support().union(self.zeroes())):
+            # groundset should be everything
+            if not set(groundset).issubset(self.support().union(self.zeros())):
                 raise ValueError(
                     "every element must be either positive, negative or zero")
             self._g = groundset
@@ -213,7 +213,7 @@ class SignedSubsetElement(Element):
             return 1
         if var in self.negatives():
             return -1
-        if var in self.zeroes():
+        if var in self.zeros():
             return 0
         raise ValueError("not in groundset")
 
@@ -266,7 +266,7 @@ class SignedSubsetElement(Element):
 
     def __bool__(self):
         r"""
-        Returns whether an element is not considered a zero.
+        Return whether an element is not considered a zero.
 
         For an oriented matroid, we consider the empty set
         `\emptyset = (\emptyset,\emptyset)` to be a zero as
@@ -278,7 +278,7 @@ class SignedSubsetElement(Element):
 
     def __iter__(self):
         """
-        Returns an iter version of self.
+        Return an iter version of ``self``.
         """
         for e in self.groundset():
             yield self(e)
@@ -291,25 +291,23 @@ class SignedSubsetElement(Element):
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
-            sage: C = [ ((1,4),(2,3)) , ((2,3),(1,4)) ]
-            sage: M = OrientedMatroid(C,key='circuit')
-            sage: SignedSubsetElement(M,data = ((1,4),(2,3)))
+            sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
+            sage: M = OrientedMatroid(C, key='circuit')
+            sage: SignedSubsetElement(M, data=((1,4),(2,3)))
             +: 1,4
             -: 2,3
             0:
             sage: from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
             sage: AbstractOrientedMatroid.options.display = 'vector'
-            sage: SignedSubsetElement(M,data = ((1,4),(2,3)))
+            sage: SignedSubsetElement(M, data=((1,4),(2,3)))
             (1,-1,-1,1)
             sage: AbstractOrientedMatroid.options.display = 'set'
-
         """
-
         from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
         if AbstractOrientedMatroid.options.display == 'set':
             p = map(str, self.positives())
             n = map(str, self.negatives())
-            z = map(str, self.zeroes())
+            z = map(str, self.zeros())
             return "+: " + ','.join(p) + "\n" + \
                 "-: " + ','.join(n) + "\n" +\
                 "0: " + ','.join(z)
@@ -324,15 +322,14 @@ class SignedSubsetElement(Element):
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
-            sage: C = [ ((1,4),(2,3)) , ((2,3),(1,4)) ]
-            sage: M = OrientedMatroid(C,key='circuit')
-            sage: latex(SignedSubsetElement(M,data = ((1,4),(2,3))))
+            sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
+            sage: M = OrientedMatroid(C, key='circuit')
+            sage: latex(SignedSubsetElement(M, data=((1,4),(2,3))))
             \left( \left{1,4\right},\left{2,3\right} \right)
             sage: from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
             sage: AbstractOrientedMatroid.options.display = 'vector'
-            sage: latex(SignedSubsetElement(M,data = ((1,4),(2,3))))
+            sage: latex(SignedSubsetElement(M, data =((1,4),(2,3))))
             \left(1,-1,-1,1\right)
-
         """
         from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
         if AbstractOrientedMatroid.options.display == 'set':
@@ -348,13 +345,13 @@ class SignedSubsetElement(Element):
         """
         Return a copy of the element
         """
-        return SignedSubsetElement(parent=self.parent(), groundset=self.groundset(), positives=self.positives(), negatives=self.negatives(), zeroes=self.zeroes())
+        return SignedSubsetElement(parent=self.parent(), groundset=self.groundset(), positives=self.positives(), negatives=self.negatives(), zeros=self.zeros())
 
     def __deepcopy__(self):
         """
         Return a copy of the element
         """
-        return SignedSubsetElement(parent=self.parent(), groundset=self.groundset(), positives=self.positives(), negatives=self.negatives(), zeroes=self.zeroes())
+        return SignedSubsetElement(parent=self.parent(), groundset=self.groundset(), positives=self.positives(), negatives=self.negatives(), zeros=self.zeros())
 
     def to_list(self):
         """
@@ -373,7 +370,6 @@ class SignedSubsetElement(Element):
             sage: E = M.elements()[0]
             sage: E.positives()
             {0, 2}
-
         """
         return self._p
 
@@ -388,22 +384,20 @@ class SignedSubsetElement(Element):
             sage: E = M.elements()[0]
             sage: E.negatives()
             {1}
-
         """
         return self._n
 
-    def zeroes(self):
+    def zeros(self):
         r"""
-        Return the set of zeroes.
+        Return the set of zeros.
 
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: M = OrientedMatroid([[1,-1,0],[-1,1,0]], key='circuit')
             sage: E = M.elements()[0]
-            sage: E.zeroes()
+            sage: E.zeros()
             {2}
-
         """
         return self._z
 
@@ -418,13 +412,12 @@ class SignedSubsetElement(Element):
             sage: E = M.elements()[0]
             sage: E.support()
             {0, 1}
-
         """
         return self._p.union(self._n)
 
     def groundset(self):
         r"""
-        Return the ground set.
+        Return the groundset.
 
         EXAMPLES::
 
@@ -433,7 +426,6 @@ class SignedSubsetElement(Element):
             sage: E = M.elements()[0]
             sage: E.groundset()
             [0, 1, 2]
-
         """
         return self._g
 
@@ -459,7 +451,6 @@ class SignedSubsetElement(Element):
             (1)
             sage: E1.composition(E2) == E2.composition(E1)
             True
-
         """
         p = []
         n = []
@@ -480,14 +471,14 @@ class SignedSubsetElement(Element):
                     n.append(e)
                 else:
                     z.append(e)
-        return type(self)(self.parent(), positives=p, negatives=n, zeroes=z)
+        return type(self)(self.parent(), positives=p, negatives=n, zeros=z)
 
     def separation_set(self, other):
         r"""
         Return the separation set between two elements.
 
         The separation set of two elements `X` and `Y`
-        is given by `S(X,Y) = \left\{e \mid X(e) = -Y(e) \neq 0 \right\}`
+        is given by `S(X, Y) = \left\{e \mid X(e) = -Y(e) \neq 0 \right\}`
         """
         return self.positives().intersection(other.negatives()).union(self.negatives().intersection(other.positives()))
 
@@ -508,7 +499,7 @@ class SignedSubsetElement(Element):
         # ensure every elt is in the groundset
         for i in change_set:
             if i not in self.groundset():
-                raise ValueError(f"{i} is not in the ground set")
+                raise ValueError(f"{i} is not in the groundset")
 
         p = self.positives().difference(change_set).union(
             self.negatives().intersection(change_set))
