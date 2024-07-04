@@ -185,9 +185,6 @@ def _lex_order_common(G, algo, reverse, tree, initial_vertex):
     if algo not in ("lex_BFS", "lex_UP", "lex_DFS", "lex_DOWN"):
         raise ValueError(f"unknown algorithm '{algo}'")
 
-    if tree:
-        from sage.graphs.digraph import DiGraph
-
     cdef size_t n = G.order()
     cdef list sigma = []
     cdef dict predecessor = {}
@@ -219,6 +216,7 @@ def _lex_order_common(G, algo, reverse, tree, initial_vertex):
         sigma.reverse()
 
     if tree:
+        from sage.graphs.digraph import DiGraph
         edges = predecessor.items()
         g = DiGraph([G, edges], format='vertices_and_edges', sparse=True)
         return sigma, g
@@ -473,9 +471,6 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     if algorithm != "fast":
         raise ValueError(f"unknown algorithm '{algorithm}'")
 
-    if tree:
-        from sage.graphs.digraph import DiGraph
-
     cdef size_t n = G.order()
 
     # For algorithm "fast" we need to convert G to an undirected graph
@@ -509,6 +504,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         sigma.reverse()
 
     if tree:
+        from sage.graphs.digraph import DiGraph
         edges = predecessor.items()
         g = DiGraph([G, edges], format='vertices_and_edges', sparse=True)
         return sigma, g
