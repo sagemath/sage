@@ -6862,7 +6862,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-        sage: M = matrix(QQ,2,2,[[1,2],[-1,2]])
+        sage: M = matrix(QQ,2,2,[[1,2],[0,2]])
         sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
         sage: f = f.conjugate(M)
         sage: f.Lattes_to_curve(return_conjugation = True)
@@ -6875,32 +6875,45 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-        sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
+        sage: P.<x,y> = ProjectiveSpace(QQ,1)
+        sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 2, 2]), 2)
         sage: L.<i> = CyclotomicField(4)
-        sage: M = Matrix([[i, 0], [0, -i]])
-        sage: f.conjugate(M)
-        sage: f.Lattes_to_curve(True)
+        sage: M = Matrix([[i,i], [0, -i]])
+        sage: f = f.conjugate(M)
+        sage: f.Lattes_to_curve(true)
         (
-        Elliptic Curve defined by y^2 = x^3 + 47/48*x + 1529/864 over Rational Field,
+        Elliptic Curve defined by y^2 = x^3 + 95/48*x - 1169/864 over Rational Field,
 
-        [   1 5/12]
+        [   1 7/12]
         [   0    1]
         )
 
+        ::
+        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+        sage: M = matrix(QQ,2,2,[[1,3],[2,1]])
+        sage: E = EllipticCurve([1, 1, 1, 2, 3])
+        sage: f = P.Lattes_map(E, 3)
+        sage: f = f.conjugate(M)
+        sage: f.Lattes_to_curve(return_conjugation = True)
+        (
+        Elliptic Curve defined by y^2 = x^3 + 2971089832419908421490114560/672749994932560009201*x - 136859124978149365523025777492183402676224/17449402268886407318558803753801 over Rational Field,
+        
+        [                        1                     41/22]
+        [-2357947691/3228757749504 -2357947691/6457515499008]
+        )
+
         """
-    #Must be NumberField and not QQbar to allow x^(n^2) to be calculated
-        from sage.rings.qqbar import QQbar
-        if self.base_ring() not in NumberFields() and self.base_ring() not in QQbar:
+        if self.base_ring() not in NumberFields():
                 raise NotImplementedError("Base ring must be a number field")
 
     #The Complex case is hard to implement and needs to be done later
         if sqrt(self.degree()) != int(sqrt(self.degree())):
             raise NotImplementedError("Map is not Lattes or is Complex Lattes")
-
-    
+            
+        
+        
         d = self.degree()
-        n = int(sqrt(self.degree()))
+        n = int(sqrt(self.degree()))\
 
     #Creating a Symbolic Lattes map f_sym from a short Elliptic curve
         R = PolynomialRing(QQ,6,"a,b,u,v,w,t")
@@ -6909,7 +6922,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         P = ProjectiveSpace(R,1,"x,y")
         x,y = P.gens()
         f_sym = P.Lattes_map(E_sym, n)
-
+        
     # Conjugating f_sym map to have the right form so we can solve for the conjugating matrix later
         m=matrix(R,2,[u,v,t,w])
         f_sym = f_sym.conjugate(m)
@@ -6919,13 +6932,14 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
     #extracting the base variables to do term by term matching
         P = ProjectiveSpace(QQ,1,"x,y")
         x,y = P.gens()
-        self.scale_by(1/self[0].coefficient(x**(n**2)))
+        self.scale_by(1/self[0].lc())
         F = self.dehomogenize(1)
         x = F[0].parent().gen(0)
         z = F_sym[0].parent().gen(0)
 
     #Creating a set of equations, eq, from term by term matching
-        eq = [u*w-t*v - 1] # setting determinant equal to 1 to receive affine transformations only
+    #Scales conjugation matrix to have 1 in top left entry original solution wanted det=1 but proved too restrictive
+        eq = [u-1] 
         for j in range(2):
             if j == 0:
                 g = F[0].numerator()
