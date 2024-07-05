@@ -24,11 +24,10 @@ export SAGE_ROOT=/doesnotexist
 export SAGE_SRC=/doesnotexist
 export SAGE_SRC_ROOT=/doesnotexist
 export SAGE_DOC_SRC=/doesnotexist
-export SAGE_BUILD_DIR=/doesnotexist
 
-# We also poison all directories below SAGE_LOCAL.
+# We also poison all directories below SAGE_LOCAL
+# except for SAGE_SPKG_SCRIPTS, which is needed by sage-dist-helpers
 export SAGE_PKGCONFIG=/doesnotexist
-export SAGE_SPKG_SCRIPTS=/doesnotexist
 export SAGE_SHARE=/doesnotexist
 
 # However, we only unset SAGE_LOCAL and SAGE_PKG_CONFIG_PATH.
@@ -53,7 +52,7 @@ if [ "$SAGE_EDITABLE" = yes ]; then
 
     if [ "$SAGE_WHEELS" = yes ]; then
         # Additionally build a wheel (for use in other venvs)
-        cd $SAGE_PKGS/sagelib/src && time sdh_setup_bdist_wheel && sdh_store_wheel .
+        cd $SAGE_PKGS/sagelib/src && time sdh_build_and_store_wheel --no-build-isolation .
     fi
 else
     # Now implied: "$SAGE_WHEELS" = yes

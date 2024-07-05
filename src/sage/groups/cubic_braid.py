@@ -1557,7 +1557,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         if unitary:
             from sage.rings.finite_rings.finite_field_base import FiniteField
             from sage.groups.matrix_gps.unitary import GU
-            d, d = herm_form.dimensions()
+            _, d = herm_form.dimensions()
             if isinstance(domain, FiniteField):
                 base_group = GU(d, domain, var=domain.gen(), invariant_form=herm_form)
             else:
@@ -1568,7 +1568,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             from sage.groups.matrix_gps.finitely_generated import MatrixGroup
             matrix_group = MatrixGroup(gen_list, category=self.category())
 
-        # -------------------------------------------------------------------------------
+        # --------------------------------------------------------------------
         # check if there is a well defined group homomorphism to matrix_group
         # Register map from ``self`` to matrix_group.
         # Since GAP' check is very expansive (on time and memory), the check is performed
