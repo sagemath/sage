@@ -6850,7 +6850,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         OUTPUT: a Short Weierstrass Model Elliptic curve which is isogenous to
         the Elliptic curve of 'self', If ``return_conjugation`` is ``True`` 
-        then also returns conjugation as a matrix
+        then also returns conjugation of 'self' to short form as a matrix
 
         EXAMPLES:
 
@@ -6862,16 +6862,17 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-        sage: M = matrix(QQ,2,2,[[1,2],[0,2]])
+        sage: M = matrix(QQ,2,2,[[1,2],[-1,2]])
         sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
         sage: f = f.conjugate(M)
         sage: f.Lattes_to_curve(return_conjugation = True)
         (
-        Elliptic Curve defined by y^2 = x^3 - 35/16*x + 111/32 over Rational Field,
-
-        [-1/8 -7/4]
-        [ 1/2   -1]
+        Elliptic Curve defined by y^2 = x^3 + 2182587088896/282475249*x + 5889333996885639168/4747561509943 over Rational Field,
+        <BLANKLINE>
+        [           1         34/7]
+        [-2401/124416   2401/62208]
         )
+
 
         ::
 
@@ -6883,12 +6884,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         sage: f.Lattes_to_curve(true)
         (
         Elliptic Curve defined by y^2 = x^3 + 95/48*x - 1169/864 over Rational Field,
-
+        <BLANKLINE>
         [   1 7/12]
         [   0    1]
         )
 
         ::
+
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: M = matrix(QQ,2,2,[[1,3],[2,1]])
         sage: E = EllipticCurve([1, 1, 1, 2, 3])
@@ -6897,7 +6899,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         sage: f.Lattes_to_curve(return_conjugation = True)
         (
         Elliptic Curve defined by y^2 = x^3 + 2971089832419908421490114560/672749994932560009201*x - 136859124978149365523025777492183402676224/17449402268886407318558803753801 over Rational Field,
-        
+        <BLANKLINE>
         [                        1                     41/22]
         [-2357947691/3228757749504 -2357947691/6457515499008]
         )
