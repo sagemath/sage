@@ -98,7 +98,7 @@ when cast into the ring.::
     sage: type((a * b) / 5^3)
     <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
 
-The fixed modulus type is the leanest of the p-adic rings: it is
+The fixed modulus type is the leanest of the `p`-adic rings: it is
 basically just a wrapper around `\ZZ / p^n \ZZ`
 providing a unified interface with the rest of the `p`-adics.  This is
 the type you should use if your primary interest is in speed (though

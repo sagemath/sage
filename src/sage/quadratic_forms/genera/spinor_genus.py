@@ -37,7 +37,7 @@ class SpinorOperator(AbelianGroupElement_gap):
     A spinor operator seen as a tuple of square classes.
 
     For `2` the square class is represented as one of `1,3,5,7` and for
-    `p` odd it is `1` for a p-adic unit square and `-1` for a non-square.
+    `p` odd it is `1` for a `p`-adic unit square and `-1` for a non-square.
 
     EXAMPLES::
 

@@ -57,7 +57,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
     - ``dynamical_system`` -- a :class:`DynamicalSystem`
       over affine or projective space. If this input is not defined
-      over a p-adic field, then ``domain`` MUST be specified.
+      over a `p`-adic field, then ``domain`` MUST be specified.
 
     - ``domain`` -- (optional) affine or projective Berkovich space
       over `\CC_p`. ``domain`` must be specified if ``dynamical_system``
@@ -471,11 +471,11 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     - ``dynamical_system`` -- a :class:`DynamicalSystem_Projective`
       of relative dimension 1. If this input is not defined
-      over a p-adic field, then ``domain`` MUST be specified.
+      over a `p`-adic field, then ``domain`` MUST be specified.
 
     - ``domain`` -- (optional) projective Berkovich space
       over `\CC_p`. If the input to ``dynamical_system`` is
-      not defined over a p-adic field, ``domain``
+      not defined over a `p`-adic field, ``domain``
       must be specified.
 
     EXAMPLES:
@@ -616,7 +616,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
               Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
 
-        Normalize_coordinates may sometimes fail over p-adic fields::
+        Normalize_coordinates may sometimes fail over `p`-adic fields::
 
             sage: g = DynamicalSystem_Berkovich([2*x^2, x*y])
             sage: g.normalize_coordinates()  # not tested

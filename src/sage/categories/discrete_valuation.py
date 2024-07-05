@@ -97,7 +97,7 @@ class DiscreteValuationRings(Category_singleton):
                 sage: M.charpoly()
                 x^3 + (4 + 4*t^2 + 4*t^4 + O(t^25))*x^2 + (4*t + O(t^24))*x
 
-            Another example over the p-adics::
+            Another example over the `p`-adics::
 
                 sage: # needs sage.modules sage.rings.padics
                 sage: R = Zp(5, print_mode='digits', prec=5)
@@ -294,7 +294,7 @@ class DiscreteValuationFields(Category_singleton):
                 [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]
                 [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]
 
-            Another example over the p-adics::
+            Another example over the `p`-adics::
 
                 sage: # needs sage.modules sage.rings.padics
                 sage: K = Qp(5, print_mode='digits', prec=5)

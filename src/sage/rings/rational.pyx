@@ -2907,7 +2907,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         Return the trace from `\QQ` to `\QQ` of `x` (which is just `x`). This
         was added for compatibility with :class:`NumberFields`.
 
-        OUTPUT: ``Rational`` -- reference to self
+        OUTPUT: ``Rational`` -- reference to ``self``
 
         EXAMPLES::
 

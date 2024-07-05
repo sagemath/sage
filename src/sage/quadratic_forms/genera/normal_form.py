@@ -130,7 +130,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
     r"""
     Return the transformation to the `p`-adic normal form of a symmetric matrix.
 
-    Two ``p-adic`` quadratic forms are integrally equivalent if and only if
+    Two ```p`-adic`` quadratic forms are integrally equivalent if and only if
     their Gram matrices have the same normal form.
 
     Let `p` be odd and `u` be the smallest non-square modulo `p`.

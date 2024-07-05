@@ -1195,7 +1195,7 @@ Finite fields::
     sage: k(2).__pari__().fforder(o=4)
     4
 
-p-adic functions::
+`p`-adic functions::
 
     sage: # needs sage.rings.padics
     sage: K = Qp(11,5)

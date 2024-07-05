@@ -429,11 +429,11 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         - ``algorithm`` -- determines which algorithm to use, options are:
 
           - ``'pari'`` -- use the :pari:`matkerint` function from the PARI library
-          - ``'padic'`` -- use the p-adic algorithm from the IML library
+          - ``'padic'`` -- use the `p`-adic algorithm from the IML library
           - ``'default'`` -- use a heuristic to decide which of the two above
             routines is fastest.  This is the default value.
 
-        - ``proof`` -- this is passed to the p-adic IML algorithm
+        - ``proof`` -- this is passed to the `p`-adic IML algorithm
           If not specified, the global flag for linear algebra will be used
 
         OUTPUT:

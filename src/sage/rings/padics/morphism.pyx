@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.ntl
 """
-Frobenius endomorphisms on p-adic fields
+Frobenius endomorphisms on `p`-adic fields
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Xavier Caruso <xavier.caruso@normalesup.org>
@@ -26,13 +26,13 @@ from sage.rings.padics.padic_generic import pAdicGeneric
 
 cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
     """
-    A class implementing Frobenius endomorphisms on p-adic fields.
+    A class implementing Frobenius endomorphisms on `p`-adic fields.
     """
     def __init__ (self,domain,n=1):
         """
         INPUT:
 
-        - ``domain`` -- an unramified p-adic field
+        - ``domain`` -- an unramified `p`-adic field
 
         - ``n`` -- integer (default: 1)
 
@@ -267,7 +267,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
     def is_injective(self):
         """
         Return ``True`` since any power of the Frobenius endomorphism
-        over an unramified p-adic field is always injective.
+        over an unramified `p`-adic field is always injective.
 
         EXAMPLES::
 
@@ -281,7 +281,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
     def is_surjective(self):
         """
         Return ``True`` since any power of the Frobenius endomorphism
-        over an unramified p-adic field is always surjective.
+        over an unramified `p`-adic field is always surjective.
 
         EXAMPLES::
 

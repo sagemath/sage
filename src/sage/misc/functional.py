@@ -1089,8 +1089,8 @@ def log(*args, **kwds):
         sage: log(F(9), 3)
         2
 
-    The log function also works for p-adics (see documentation for
-    p-adics for more information)::
+    The log function also works for `p`-adics (see documentation for
+    `p`-adics for more information)::
 
         sage: R = Zp(5); R                                                              # needs sage.rings.padics
         5-adic Ring with capped relative precision 20

@@ -3,7 +3,7 @@
 """
 `p`-adic distributions spaces
 
-This module implements p-adic distributions, a `p`-adic Banach
+This module implements `p`-adic distributions, a `p`-adic Banach
 space dual to locally analytic functions on a disc.
 
 EXAMPLES::

@@ -1,7 +1,7 @@
 """
 Local Field Invariants
 
-This contains routines to compute local (p-adic) invariants of
+This contains routines to compute local (`p`-adic) invariants of
 quadratic forms over the rationals.
 """
 

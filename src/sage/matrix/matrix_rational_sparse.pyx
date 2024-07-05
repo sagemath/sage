@@ -474,7 +474,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         INPUT:
 
         - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-          algorithm; ignored by the p-adic algorithm
+          algorithm; ignored by the `p`-adic algorithm
 
         OUTPUT:
 
@@ -521,7 +521,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         INPUT:
 
         - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-          algorithm; ignored by the p-adic algorithm
+          algorithm; ignored by the `p`-adic algorithm
 
         OUTPUT: ``self`` is no in reduced row echelon form
 

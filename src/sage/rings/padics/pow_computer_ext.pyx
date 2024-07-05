@@ -8,7 +8,7 @@
 """
 PowComputer_ext
 
-The classes in this file are designed to be attached to p-adic parents
+The classes in this file are designed to be attached to `p`-adic parents
 and elements for Cython access to properties of the parent.
 
 In addition to storing the defining polynomial (as an NTL polynomial)
@@ -1062,9 +1062,9 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _capdiv_test(self, n):
         """
-        If ``n >= 0`` return ``ceil(n / self.e)``.
+        If n >= 0, return ceil(n / self.e).
 
-        If ``n < 0`` return ``ceil(-n / self.e)``.
+        If n < 0, return ceil(-n / self.e).
 
         EXAMPLES::
 
@@ -1110,8 +1110,8 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
         OUTPUT:
 
-        - ``1`` -- `x` should be set to zero
-        - ``0`` -- normal
+        - 1 -- `x` should be set to zero
+        - 0 -- normal
 
         EXAMPLES::
 
@@ -1217,7 +1217,7 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
     r"""
     This class only caches a context and modulus for p^prec_cap.
 
-    Designed for use with fixed modulus p-adic rings, in Eisenstein
+    Designed for use with fixed modulus `p`-adic rings, in Eisenstein
     and unramified extensions of `\ZZ_p`.
     """
 
@@ -1542,7 +1542,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
     This class caches contexts and moduli densely between 1 and cache_limit.  It requires cache_limit == prec_cap.
 
     It is intended for use with capped relative and capped absolute rings and fields, in Eisenstein and unramified
-    extensions of the base p-adic fields.
+    extensions of the base `p`-adic fields.
     """
 
     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):

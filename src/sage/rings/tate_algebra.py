@@ -820,8 +820,8 @@ class TateAlgebra_generic(Parent):
         """
         Return the pushout of this Tate algebra with ``R``.
 
-        This is only implemented when ``R`` is a p-adic ring or
-        a p-adic field.
+        This is only implemented when ``R`` is a `p`-adic ring or
+        a `p`-adic field.
 
         EXAMPLES::
 

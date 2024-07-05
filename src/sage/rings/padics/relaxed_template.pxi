@@ -1526,7 +1526,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- nonnegative integer (default: `1`)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
         - ``field`` -- boolean (default: ``True``); when ``absprec`` is ``1``,
           whether to return an element of GF(p) or Zmod(p)
@@ -2020,7 +2020,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
 cdef class RelaxedElement_abandon(RelaxedElement):
     r"""
-    A special class for relaxed p-adic with all digits unknown.
+    A special class for relaxed `p`-adic with all digits unknown.
 
     This class is used for setting temporary definition of
     some self-referent numbers.
@@ -2058,7 +2058,7 @@ cdef relaxedelement_abandon = RelaxedElement_abandon()
 
 cdef class RelaxedElementWithDigits(RelaxedElement):
     r"""
-    A generic class for relaxed p-adic elements that stores
+    A generic class for relaxed `p`-adic elements that stores
     the sequence of its digits.
     """
     def __cinit__(self):
@@ -2115,7 +2115,7 @@ cdef class RelaxedElementWithDigits(RelaxedElement):
 
 cdef class RelaxedElement_zero(RelaxedElement):
     r"""
-    A class for representation a relaxed p-adic number which is
+    A class for representation a relaxed `p`-adic number which is
     exactly zero.
 
     TESTS::
@@ -2217,7 +2217,7 @@ cdef class RelaxedElement_zero(RelaxedElement):
 
 cdef class RelaxedElement_one(RelaxedElementWithDigits):
     r"""
-    A class for representation a relaxed p-adic number which is
+    A class for representation a relaxed `p`-adic number which is
     exactly one.
 
     TESTS::
@@ -2295,8 +2295,8 @@ cdef class RelaxedElement_one(RelaxedElementWithDigits):
 
 cdef class RelaxedElement_bound(RelaxedElement):
     r"""
-    A class for p-adic relaxed elements which are defined by bounding the
-    precision of another p-adic relaxed element.
+    A class for `p`-adic relaxed elements which are defined by bounding the
+    precision of another `p`-adic relaxed element.
 
     TESTS::
 

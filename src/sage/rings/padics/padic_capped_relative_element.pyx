@@ -140,7 +140,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         sage: R(pari(R(0,5)))
         O(5^5)
 
-    .. TODO:: doctests for converting from other types of p-adic rings
+    .. TODO:: doctests for converting from other types of `p`-adic rings
     """
     def lift(self):
         r"""
@@ -255,7 +255,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         INPUT:
 
-        - ``absprec`` -- nonnegative integer (default: `1`)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
         - ``field`` -- boolean (default: ``None``); whether to return an element
           of `\GF{p}` or `\ZZ / p\ZZ`

@@ -186,7 +186,7 @@ class FloatingPointGeneric(LocalGeneric):
         Test the distributivity of `*` on `+` on (not necessarily
         all) elements of this set.
 
-        p-adic floating point rings only satisfy distributivity
+        `p`-adic floating point rings only satisfy distributivity
         up to a precision that depends on the elements.
 
         INPUT:
@@ -1220,7 +1220,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         OUTPUT:
 
-        A tuple (a, b, c) which satisfies ``a = b*f + c*g``. There
+        A tuple (a, b, c) which satisfies a = b*f + c*g. There
         is no guarantee that a, b, and c are minimal.
 
         .. WARNING::
@@ -1363,7 +1363,7 @@ class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
 
         INPUT:
 
-        - ``forbid_frac_field`` -- ignored, for compatibility with other p-adic types
+        - ``forbid_frac_field`` -- ignored, for compatibility with other `p`-adic types
 
         EXAMPLES::
 

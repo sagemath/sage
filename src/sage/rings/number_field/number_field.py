@@ -7376,7 +7376,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``S`` -- list of finite primes in this number field
         - ``prec`` -- precision used for computations in real, complex, and
-          p-adic fields (default: 106)
+          `p`-adic fields (default: 106)
         - ``include_exponents`` -- whether to include the exponent vectors in
           the returned value (default: ``True``)
         - ``include_bound`` -- whether to return the final computed bound

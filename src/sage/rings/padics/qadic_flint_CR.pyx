@@ -118,7 +118,7 @@ cdef class qAdicCappedRelativeElement(CRElement):
         Return the element with the same reduction mod p that can be expressed
         with coefficients between 0 and p-1.  The absolute precision will be maximal.
 
-        This method is used in printing and computing p-adic expansions.
+        This method is used in printing and computing `p`-adic expansions.
 
         INPUT:
 

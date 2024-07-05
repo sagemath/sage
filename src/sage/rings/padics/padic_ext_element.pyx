@@ -413,7 +413,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- nonnegative integer (default: `1`)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
         - ``field`` -- boolean (default: ``None``); for precision 1, whether to return
           an element of the residue field or a residue ring.  Currently unused.

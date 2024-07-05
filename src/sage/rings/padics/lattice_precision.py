@@ -402,7 +402,7 @@ class pRational:
         """
         Quotient with remainder.
 
-        Returns a pair `q`, `r` where `r` has the p-adic expansion of this element,
+        Returns a pair `q`, `r` where `r` has the `p`-adic expansion of this element,
         truncated at the valuation of other.
 
         EXAMPLES::

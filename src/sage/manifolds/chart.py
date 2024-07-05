@@ -1362,7 +1362,7 @@ class Chart(UniqueRepresentation, SageObject):
             sage: X.zero_function() is X.zero_function()
             True
 
-        Zero function on a p-adic manifold::
+        Zero function on a `p`-adic manifold::
 
             sage: # needs sage.rings.padics
             sage: M = Manifold(2, 'M', structure='topological', field=Qp(5)); M
@@ -1416,7 +1416,7 @@ class Chart(UniqueRepresentation, SageObject):
             sage: X.one_function() is X.one_function()
             True
 
-        One function on a p-adic manifold::
+        One function on a `p`-adic manifold::
 
             sage: # needs sage.rings.padics
             sage: M = Manifold(2, 'M', structure='topological', field=Qp(5)); M

@@ -556,7 +556,7 @@ class SmoothCharacterGroupGeneric(Parent):
     @abstract_method
     def _field_name(self):
         r"""
-        A string representing the name of the p-adic field of which this is the
+        A string representing the name of the `p`-adic field of which this is the
         character group. To be overridden by derived subclasses.
 
         EXAMPLES::
@@ -585,7 +585,7 @@ class SmoothCharacterGroupGeneric(Parent):
     def ideal(self, level):
         r"""
         Return the ``level``-th power of the maximal ideal of the ring of
-        integers of the p-adic field. Since we approximate by using number
+        integers of the `p`-adic field. Since we approximate by using number
         field arithmetic, what is actually returned is an ideal in a number
         field.
 

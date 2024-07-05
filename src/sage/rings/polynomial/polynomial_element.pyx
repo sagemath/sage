@@ -3540,12 +3540,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-          - ``self`` -- polynomial
-          - ``right`` -- polynomial (over same base ring as ``self``)
-          - ``K_threshold`` -- (optional) Integer. A threshold to fall back to
-            schoolbook algorithm. In the recursion, if one of the polynomials
-            is of degree less that K_threshold then the classic quadratic
-            polynomial is used.
+        - ``self`` -- polynomial
+        - ``right`` -- polynomial (over same base ring as ``self``)
+        - ``K_threshold`` -- (optional) Integer. A threshold to fall back to
+          schoolbook algorithm. In the recursion, if one of the polynomials
+          is of degree less that K_threshold then the classic quadratic
+          polynomial is used.
 
         OUTPUT: the product ``self * right``
 
@@ -6575,16 +6575,13 @@ cdef class Polynomial(CommutativePolynomial):
 
     def padded_list(self, n=None):
         """
-        Return list of coefficients of ``self`` up to (but not including)
-        `q^n`.
+        Return list of coefficients of ``self`` up to (but not including) `q^n`.
 
-        Includes 0s in the list on the right so that the list has length
-        `n`.
+        Includes 0s in the list on the right so that the list has length `n`.
 
         INPUT:
 
-        - ``n`` -- (default: ``None``) if given, an integer that
-          is at least 0
+        - ``n`` -- (default: ``None``) if given, an integer that is at least 0
 
         EXAMPLES::
 
@@ -6715,7 +6712,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``n`` -- integer (the number of iterations),
+        - ``n`` -- integer; the number of iterations
 
         - ``x0`` -- an initial guess `x_0`
 
@@ -8720,7 +8717,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: eq.roots(multiplicities=False)                                        # needs sage.libs.pari
             [3109038, 17207405]
 
-        Test that roots in fixed modulus p-adic fields work (:issue:`17598`)::
+        Test that roots in fixed modulus `p`-adic fields work (:issue:`17598`)::
 
             sage: len(cyclotomic_polynomial(3).roots(ZpFM(739, 566)))                   # needs sage.rings.padics
             2
@@ -10431,8 +10428,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``p`` -- (positive integer or +infinity) the degree
-          of the norm
+        - ``p`` -- positive integer or +infinity; the degree of the norm
 
         EXAMPLES::
 
@@ -11737,11 +11733,11 @@ cdef list do_karatsuba_different_size(list left, list right, Py_ssize_t K_thresh
 
     INPUT:
 
-        - `left` -- a list representing a polynomial
-        - `right` -- a list representing a polynomial
-        - `K_threshold` -- an Integer, a threshold to pass to the classical
-          quadratic algorithm. During Karatsuba recursion, if one of the lists
-          has length <= K_threshold the classical product is used instead.
+    - ``left`` -- list representing a polynomial
+    - ``right`` -- list representing a polynomial
+    - ``K_threshold`` -- an Integer, a threshold to pass to the classical
+      quadratic algorithm. During Karatsuba recursion, if one of the lists
+      has length <= K_threshold the classical product is used instead.
 
     TESTS:
 
@@ -11816,25 +11812,23 @@ cdef list do_karatsuba(list left, list right, Py_ssize_t K_threshold,Py_ssize_t 
     Core routine for Karatsuba multiplication. This function works for two
     polynomials of the same degree.
 
-    Input:
+    INPUT:
 
-        - left: a list containing a slice representing a polynomial
-        - right: a list containing the slice representing a polynomial with the
-          same length as left
-        - K_threshold: an integer. For lists of length <= K_threshold, the
-          quadratic polynomial multiplication is used.
-        - start_l: the index of left where the actual polynomial starts
-        - start_r: the index of right where the actual polynomial starts
-        - num_elts: the length of the polynomials.
+    - ``left`` -- list containing a slice representing a polynomial
+    - ``right`` -- list containing the slice representing a polynomial with the
+      same length as ``left``
+    - ``K_threshold`` -- integer; for lists of ``length <= K_threshold``, the
+      quadratic polynomial multiplication is used
+    - ``start_l`` -- the index of ``left`` where the actual polynomial starts
+    - ``start_r`` -- the index of ``right`` where the actual polynomial starts
+    - ``num_elts`` -- the length of the polynomials
 
     Thus, the actual polynomials we want to multiply are represented by the
-    slices: left[ start_l: start_l+num_elts ], right[ right_l: right_l+num_elts ].
+    slices: ``left[ start_l: start_l+num_elts ]``, ``right[ right_l: right_l+num_elts ]``.
     We use this representation in order to avoid creating slices of lists and
     create smaller lists.
 
-    Output:
-
-        - a list representing the product of the polynomials
+    OUTPUT: list representing the product of the polynomials
 
     Doctested indirectly in _mul_karatsuba
 

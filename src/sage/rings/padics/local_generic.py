@@ -41,7 +41,7 @@ class LocalGeneric(CommutativeRing):
             sage: R.precision_cap()
             20
 
-        In :issue:`14084`, the category framework has been implemented for p-adic rings::
+        In :issue:`14084`, the category framework has been implemented for `p`-adic rings::
 
             sage: TestSuite(R).run()                                                    # needs sage.geometry.polyhedron
             sage: K = Qp(7)
@@ -617,7 +617,7 @@ class LocalGeneric(CommutativeRing):
 
         INPUT:
 
-        - ``self`` -- a p-adic ring
+        - ``self`` -- a `p`-adic ring
 
         OUTPUT: the characteristic of the residue field
 
@@ -706,7 +706,7 @@ class LocalGeneric(CommutativeRing):
 
     def absolute_degree(self):
         r"""
-        Return the degree of this extension over the prime p-adic field/ring.
+        Return the degree of this extension over the prime `p`-adic field/ring.
 
         EXAMPLES::
 

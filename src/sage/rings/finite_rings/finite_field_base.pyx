@@ -1380,7 +1380,7 @@ cdef class FiniteField(Field):
 
     cpdef _convert_map_from_(self, R):
         """
-        Conversion from p-adic fields.
+        Conversion from `p`-adic fields.
 
         EXAMPLES::
 

@@ -1,9 +1,9 @@
 r"""
-The functions in this file are used in creating new p-adic elements.
+The functions in this file are used in creating new `p`-adic elements.
 
-When creating a p-adic element, the user can specify that the absolute
+When creating a `p`-adic element, the user can specify that the absolute
 precision be bounded and/or that the relative precision be bounded.
-Moreover, different p-adic parents impose their own bounds on the
+Moreover, different `p`-adic parents impose their own bounds on the
 relative or absolute precision of their elements.  The precision
 determines to what power of `p` the defining data will be reduced, but
 the valuation of the resulting element needs to be determined before
@@ -65,9 +65,9 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
 
     INPUT:
 
-    - ``x`` -- data defining a new p-adic element: a Python int, an
+    - ``x`` -- data defining a new `p`-adic element: a Python int, an
       Integer, Rational, an element of Zp or Qp with the same prime, a
-      PARI p-adic element, a list, a tuple, or an IntegerMod.
+      PARI `p`-adic element, a list, a tuple, or an IntegerMod.
 
     - a PowComputer associated to a `p`-adic ring, which determines
       the prime and the ramification degree.
@@ -176,9 +176,9 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
 
     INPUT:
 
-    - ``x`` -- data defining a new p-adic element: an Integer,
+    - ``x`` -- data defining a new `p`-adic element: an Integer,
       Rational, an element of Zp or Qp with the same prime, a PARI
-      p-adic element, a list, a tuple, or an IntegerMod.
+      `p`-adic element, a list, a tuple, or an IntegerMod.
     - ``prime_pow`` -- the PowComputer for the ring into which ``x``
       is being converted.  This is used to determine the prime and the
       ramification degree.
@@ -258,7 +258,7 @@ cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absol
     This function obtains values for absprec and relprec from a
     combination of positional and keyword arguments.
 
-    When creating a p-adic element, the user can pass in two arguments: ``absprec`` and ``relprec``.
+    When creating a `p`-adic element, the user can pass in two arguments: ``absprec`` and ``relprec``.
     In implementing morphisms to speed up conversion from Integers and Rationals,
     we need to determine ``absprec`` and ``relprec`` from the ``args`` and ``kwds`` arguments of
     ``_call_with_args``.  This function collects the code to do so.

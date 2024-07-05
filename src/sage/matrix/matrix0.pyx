@@ -5791,7 +5791,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [                              1  422550200076076467165567735125]
             [1267650600228229401496703205375  422550200076076467165567735126]
 
-        Matrices over p-adics. See :issue:`17272` ::
+        Matrices over `p`-adics. See :issue:`17272` ::
 
             sage: # needs sage.rings.padics
             sage: R = ZpCA(5, 5, print_mode='val-unit')

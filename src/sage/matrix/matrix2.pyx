@@ -637,7 +637,7 @@ cdef class Matrix(Matrix1):
             sage: A*X == B
             True
 
-        Solving a system over the p-adics::
+        Solving a system over the `p`-adics::
 
             sage: # needs sage.rings.padics
             sage: k = Qp(5, 4)
@@ -4973,7 +4973,7 @@ cdef class Matrix(Matrix1):
         For matrices over the integers, several options are possible.
         The basis can be an LLL-reduced basis or an echelon basis.
         The pivot basis isnot available.  A heuristic will decide whether
-        to use a p-adic algorithm from the IML library or an algorithm
+        to use a `p`-adic algorithm from the IML library or an algorithm
         from the PARI library.  Note how specifying the algorithm can
         mildly influence the LLL basis. ::
 
@@ -7891,7 +7891,7 @@ cdef class Matrix(Matrix1):
             [  1 y/x]
             [  0   0]
 
-        We check that the echelon form works for matrices over p-adics.
+        We check that the echelon form works for matrices over `p`-adics.
         See :issue:`17272`::
 
             sage: # needs sage.rings.padics

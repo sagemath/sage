@@ -2354,7 +2354,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
         In the next example, the precision on the coefficient is only lifted
         to ``O(2^10)`` because it is limited by the cap of the underlying
-        p-adic ring::
+        `p`-adic ring::
 
             sage: g.lift_to_precision(20)
             (1 + O(2^10))*x*y + (1 + O(2^10))*x + (1 + O(2^10))*y + O(2^20 * <x, y>)

@@ -87,7 +87,7 @@ lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
 _wscache = {}
 def WeightSpace_constructor(p, base_ring=None):
     r"""
-    Construct the p-adic weight space for the given prime p.
+    Construct the `p`-adic weight space for the given prime p.
 
     A `p`-adic weight
     is a continuous character `\ZZ_p^\times \to \CC_p^\times`.
@@ -300,7 +300,7 @@ class WeightSpace_class(Parent):
 
 class WeightCharacter(Element):
     r"""
-    Abstract base class representing an element of the p-adic weight space
+    Abstract base class representing an element of the `p`-adic weight space
     `Hom(\ZZ_p^\times, \CC_p^\times)`.
     """
 
@@ -424,7 +424,7 @@ class WeightCharacter(Element):
 
     def Lvalue(self):
         r"""
-        Return the value of the p-adic L-function of `\QQ`, which can be
+        Return the value of the `p`-adic L-function of `\QQ`, which can be
         regarded as a rigid-analytic function on weight space, evaluated at
         this character.
 
@@ -440,7 +440,7 @@ class WeightCharacter(Element):
 
     def one_over_Lvalue(self):
         r"""
-        Return the reciprocal of the p-adic L-function evaluated at this
+        Return the reciprocal of the `p`-adic L-function evaluated at this
         weight-character.
 
         If the weight-character is odd, then the L-function
@@ -526,7 +526,7 @@ class AlgebraicWeight(WeightCharacter):
             sage: kappa(13 + 4*29 + 11*29^2 + O(29^3))
             9 + 21*29 + 27*29^2 + O(29^3)
 
-        When the character chi is defined over a p-adic field, the results returned are inexact::
+        When the character chi is defined over a `p`-adic field, the results returned are inexact::
 
             sage: kappa = pAdicWeightSpace(29)(13, DirichletGroup(29, Qp(29)).0^14)
             sage: kappa(1)
@@ -648,7 +648,7 @@ class AlgebraicWeight(WeightCharacter):
 
     def Lvalue(self):
         r"""
-        Return the value of the p-adic L-function of `\QQ` evaluated at
+        Return the value of the `p`-adic L-function of `\QQ` evaluated at
         this weight-character.
 
         If the character is `x \mapsto x^k \chi(x)`
@@ -689,10 +689,10 @@ class ArbitraryWeight(WeightCharacter):
 
     def __init__(self, parent, w, t):
         r"""
-        Create the element of p-adic weight space in the given component
+        Create the element of `p`-adic weight space in the given component
         mapping 1 + p to w.
 
-        Here w must be an element of a p-adic field, with finite
+        Here w must be an element of a `p`-adic field, with finite
         precision.
 
         EXAMPLES::

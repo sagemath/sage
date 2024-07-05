@@ -1643,7 +1643,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
           the divisor `E_{mn}^{+}`. These must be indices of nonzero
           coordinates of the point ``P``
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
         OUTPUT: a real number
 
@@ -1743,7 +1743,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
           the divisor `E_{mn}^{+}`. These must be indices of nonzero
           coordinates of the point ``P``.
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
         OUTPUT: a real number
 
@@ -1834,7 +1834,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``badprimes`` -- (optional) list of integer primes (where the surface is degenerate)
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
         OUTPUT: a real number
 
@@ -1898,7 +1898,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``badprimes`` -- (optional) list of integer primes (where the surface is degenerate)
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
         OUTPUT: a real number
 
@@ -1960,7 +1960,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``badprimes`` -- (optional) list of integer primes (where the surface is degenerate)
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
         OUTPUT: a real number
 

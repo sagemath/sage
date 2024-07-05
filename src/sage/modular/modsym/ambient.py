@@ -2161,7 +2161,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
            - ``'pari'`` -- use pari for the HNF computation
 
-           - ``'padic'`` -- use p-adic algorithm (only good for
+           - ``'padic'`` -- use `p`-adic algorithm (only good for
               dense case)
 
 

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.ntl
 """
-p-adic Capped Relative Dense Polynomials
+`p`-adic Capped Relative Dense Polynomials
 """
 
 # ****************************************************************************
@@ -623,7 +623,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def rshift_coeffs(self, shift, no_list=False):
         """
-        Return a new polynomial whose coefficients are p-adically
+        Return a new polynomial whose coefficients are `p`-adically
         shifted to the right by ``shift``.
 
         .. NOTE::
@@ -668,7 +668,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def _unsafe_mutate(self, n, value):
         """
-        It's a really bad idea to use this function for p-adic
+        It's a really bad idea to use this function for `p`-adic
         polynomials.  There are speed issues, and it may not be
         bug-free currently.
         """
@@ -820,7 +820,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``self`` -- a p-adic polynomial
+        - ``self`` -- a `p`-adic polynomial
 
         - ``n`` -- ``None`` or integer (default: ``None``)
 
@@ -849,7 +849,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``self`` -- a p-adic polynomial
+        - ``self`` -- a `p`-adic polynomial
 
         - ``n`` -- ``None`` or integer (default: ``None``)
 
@@ -885,7 +885,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``self`` -- a p-adic polynomial
+        - ``self`` -- a `p`-adic polynomial
 
         - ``n`` -- ``None`` or integer (default: ``None``)
 
@@ -919,7 +919,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``self`` -- a p-adic polynomial
+        - ``self`` -- a `p`-adic polynomial
 
         - ``val_of_var`` -- ``None`` or a rational (default: ``None``)
 

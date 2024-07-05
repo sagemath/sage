@@ -1387,7 +1387,7 @@ class OverconvergentModularFormsSpace(Module):
             Uses the Hessenberg form of the Hecke matrix to compute
             the characteristic polynomial.  Because of the use of
             relative precision here this tends to give better
-            precision in the p-adic coefficients.
+            precision in the `p`-adic coefficients.
         """
         m = self.hecke_matrix(self.prime(), n, use_recurrence)
         A = PowerSeriesRing(self.base_ring(), 'T')

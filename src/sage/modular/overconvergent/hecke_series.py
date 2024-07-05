@@ -618,7 +618,7 @@ def compute_elldash(p, N, k0, n):
 def hecke_series_degree_bound(p, N, k, m):
     r"""
     Return the ``Wan bound`` on the degree of the characteristic series of the
-    Atkin operator on p-adic overconvergent modular forms of level
+    Atkin operator on `p`-adic overconvergent modular forms of level
     `\Gamma_0(N)` and weight `k` when reduced modulo `p^m`.
 
     This bound depends only upon `p, k \pmod{p-1}`, and `N`. It uses Lemma 3.1 in
@@ -1073,7 +1073,7 @@ def is_valid_weight_list(klist, p):
 def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     r"""
     Return the characteristic series modulo `p^m` of the Atkin operator `U_p`
-    acting upon the space of p-adic overconvergent modular forms of level
+    acting upon the space of `p`-adic overconvergent modular forms of level
     `\Gamma_0(N)` and weight ``klist``.
 
     The input ``klist`` may also be a list of weights congruent modulo `(p-1)`,
@@ -1085,7 +1085,7 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     If ``modformsring`` is ``True``, then for `N > 1` the algorithm computes at one
     step ``ModularFormsRing(N).generators()``. This will often be faster but
     the algorithm will default to ``modformsring=False`` if the generators
-    found are not p-adically integral. Note that ``modformsring`` is ignored
+    found are not `p`-adically integral. Note that ``modformsring`` is ignored
     for `N = 1` and the ring structure of modular forms is *always* used in
     this case.
 

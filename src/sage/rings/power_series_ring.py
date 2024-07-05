@@ -967,7 +967,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         .. note::
 
            There are no ring homomorphisms from the ring of all formal
-           power series to most rings, e.g, the p-adic field, since
+           power series to most rings, e.g, the `p`-adic field, since
            you can always (mathematically!) construct some power
            series that doesn't converge. Note that 0 is not a *ring*
            homomorphism.

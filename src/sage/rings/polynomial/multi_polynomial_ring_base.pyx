@@ -982,8 +982,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
     def _to_monomial(self, i, n, d):
         """
-        Given an index ``i``, a number of variables `n` and a degree `d` return
-        the ``i``-th monomial of degree `d` in `n` variables.
+        Given an index ``i``, a number of variables ``n`` and a degree ``d``
+        return the `i`-th monomial of degree `d` in `n` variables.
 
         INPUT:
 
@@ -1414,7 +1414,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
         INPUT:
 
         - ``mon_deg_tuple`` -- list representing a monomial of a degree `d`
-        - ``dlist`` -- list of degrees ``d_i`` of the polynomials in
+        - ``dlist`` -- list of degrees `d_i` of the polynomials in
           question, where ``d = sum(dlist) - len(dlist) + 1``
 
         OUTPUT: the index `i` such that the input monomial is in `S_i`

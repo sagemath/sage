@@ -53,9 +53,9 @@ element contains the following data:
 
   + ``prime_pow.deg`` -- the degree of the extension
 
-  + ``prime_pow.e`` -- The ramification index
+  + ``prime_pow.e`` -- the ramification index
 
-  + ``prime_pow.f`` -- The inertia degree
+  + ``prime_pow.f`` -- the inertia degree
 
   + ``prime_pow.prec_cap`` -- the unramified precision cap.  For
     Eisenstein extensions this is the smallest power of `p` that is
@@ -2898,7 +2898,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 #     def multiplicative_order(self, prec=None):
 #         """
 #         Return the multiplicative order of ``self``, ie the smallest
-#         positive n so that there is an exact p-adic element congruent
+#         positive `n` so that there is an exact `p`-adic element congruent
 #         to ``self`` modulo ``self``'s precision that is an `n`-th root of unity.
 
 #         Note: unlike the case for Qp and Zp, it is possible to have
@@ -2908,7 +2908,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
 #         INPUT:
 
-#         - self -- a p-adic element
+#         - self -- a `p`-adic element
 #         - ``prec`` -- integer
 
 #         OUTPUT: integer; the multiplicative order of ``self``

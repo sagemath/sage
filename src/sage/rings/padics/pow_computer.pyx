@@ -9,8 +9,8 @@ PowComputer
 
 A class for computing and caching powers of the same integer.
 
-This class is designed to be used as a field of p-adic rings and
-fields.  Since elements of p-adic rings and fields need to use powers
+This class is designed to be used as a field of `p`-adic rings and
+fields.  Since elements of `p`-adic rings and fields need to use powers
 of p over and over, this class precomputes and stores powers of p.
 There is no reason that the base has to be prime however.
 
@@ -78,9 +78,9 @@ cdef class PowComputer_class(SageObject):
 
         - ``cache_limit`` -- how high to cache powers of prime
 
-        - ``prec_cap`` -- data stored for p-adic elements using this
+        - ``prec_cap`` -- data stored for `p`-adic elements using this
           ``pow_computer`` (so they have C-level access to fields
-          common to all elements of the same parent).
+          common to all elements of the same parent)
 
         - ``ram_prec_cap`` -- prec_cap * e
 

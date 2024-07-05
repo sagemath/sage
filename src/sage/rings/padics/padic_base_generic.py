@@ -88,7 +88,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def _repr_(self, do_latex=False):
         r"""
-        Return a print representation of this p-adic ring or field.
+        Return a print representation of this `p`-adic ring or field.
 
         EXAMPLES::
 
@@ -145,7 +145,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         Return the rational field.
 
-        For compatibility with extensions of p-adics.
+        For compatibility with extensions of `p`-adics.
 
         EXAMPLES::
 

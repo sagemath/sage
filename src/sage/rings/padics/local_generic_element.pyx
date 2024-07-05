@@ -110,7 +110,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         TESTS:
 
-        Test that this works for all kinds of p-adic base elements::
+        Test that this works for all kinds of `p`-adic base elements::
 
             sage: ZpCA(3,5)(2).inverse_of_unit()
             2 + 3 + 3^2 + 3^3 + 3^4 + O(3^5)
@@ -918,7 +918,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         - ``other`` -- an element in the same ring
         - ``integral`` -- if ``True``, use integral-style remainders even when
           the parent is a field. Namely, the remainder will have no terms in
-          its p-adic expansion above the valuation of ``other``.
+          its `p`-adic expansion above the valuation of ``other``.
 
         EXAMPLES::
 

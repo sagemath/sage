@@ -1027,7 +1027,7 @@ cdef class PolyDict:
 
         The algorithm do not test whether a product of coefficients is zero
         or whether a final coefficient is zero because there is no reliable way
-        to do so in general (eg power series ring or p-adic rings).
+        to do so in general (eg power series ring or `p`-adic rings).
 
         EXAMPLES:
 

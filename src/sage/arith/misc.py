@@ -3757,7 +3757,7 @@ def binomial(x, m, **kwds):
         sage: binomial(n,2)                                                             # needs sage.symbolic
         1/2*(n - 1)*n
 
-    Test p-adic numbers::
+    Test `p`-adic numbers::
 
         sage: binomial(Qp(3)(-1/2),4) # p-adic number with valuation >= 0
         1 + 3 + 2*3^2 + 3^3 + 2*3^4 + 3^6 + 3^7 + 3^8 + 3^11 + 2*3^14 + 2*3^16 + 2*3^17 + 2*3^19 + O(3^20)

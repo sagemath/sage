@@ -246,7 +246,7 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: a.parent()
         Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
 
-    Conversion of p-adics::
+    Conversion of `p`-adics::
 
         sage: # needs sage.rings.padics
         sage: z = pari('569 + O(7^8)'); z

@@ -207,8 +207,8 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         OUTPUT:
 
-        - ``val`` -- if ``ctx`` is a context for `p^n`, returns `n`
-          Otherwise, raises an error
+        - ``val`` -- if ``ctx`` is a context for `p^n`, returns `n`.
+          Otherwise, raises an error.
 
         EXAMPLES::
 

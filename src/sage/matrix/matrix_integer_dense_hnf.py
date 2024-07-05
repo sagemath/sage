@@ -46,7 +46,7 @@ def max_det_prime(n):
 def det_from_modp_and_divisor(A, d, p, z_mod, moduli, z_so_far=ZZ(1), N_so_far=ZZ(1)):
     """
     This is used for internal purposes for computing determinants
-    quickly (with the hybrid p-adic / multimodular algorithm).
+    quickly (with the hybrid `p`-adic / multimodular algorithm).
 
     INPUT:
 
@@ -131,7 +131,7 @@ def det_given_divisor(A, d, proof=True, stabilize=2):
         0
 
     This still works, because we do not work modulo primes that divide
-    the determinant bound, which is found using a p-adic algorithm::
+    the determinant bound, which is found using a `p`-adic algorithm::
 
         sage: a.det(proof=False, stabilize=2)
         70368442188091
@@ -190,7 +190,7 @@ def det_given_divisor(A, d, proof=True, stabilize=2):
 
 def det_padic(A, proof=True, stabilize=2):
     """
-    Return the determinant of A, computed using a p-adic/multimodular
+    Return the determinant of A, computed using a `p`-adic/multimodular
     algorithm.
 
     INPUT:
@@ -1202,7 +1202,7 @@ def benchmark_magma_hnf(nrange, bits=4):
 def sanity_checks(times=50, n=8, m=5, proof=True, stabilize=2,
                   check_using_magma=True):
     """
-    Run random sanity checks on the modular p-adic HNF with tall and wide matrices
+    Run random sanity checks on the modular `p`-adic HNF with tall and wide matrices
     both dense and sparse.
 
     INPUT:

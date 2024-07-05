@@ -1781,7 +1781,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
           - ``'ntl'`` -- use NTL (only works for square matrices of
             full rank!)
 
-          - ``'padic'`` -- an asymptotically fast p-adic modular
+          - ``'padic'`` -- an asymptotically fast `p`-adic modular
             algorithm, If your matrix has large coefficients and is
             small, you may also want to try this.
 
@@ -1794,7 +1794,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
           - ``'pari4'`` -- use PARI with flag 4 (use heuristic LLL)
 
         - ``proof`` -- (default: ``True``) if proof=False certain
-          determinants are computed using a randomized hybrid p-adic
+          determinants are computed using a randomized hybrid `p`-adic
           multimodular strategy until it stabilizes twice (instead of up to
           the Hadamard bound). It is *incredibly* unlikely that one would
           ever get an incorrect result with proof=False.
@@ -2548,11 +2548,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
           - ``'flint'`` -- use the algorithm from the FLINT library
           - ``'pari'`` -- use the :pari:`matkerint` function from the PARI library
-          - ``'padic'`` -- use the p-adic algorithm from the IML library
+          - ``'padic'`` -- use the `p`-adic algorithm from the IML library
           - ``'default'`` -- use a heuristic to decide which of the three above
             routines is fastest.  This is the default value
 
-        - ``proof`` -- this is passed to the p-adic IML algorithm;
+        - ``proof`` -- this is passed to the `p`-adic IML algorithm;
           if not specified, the global flag for linear algebra will be used
 
         OUTPUT:
@@ -3654,7 +3654,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
           - ``'flint'`` -- let flint do the determinant
 
-          - ``'padic'`` -- uses a p-adic / multimodular
+          - ``'padic'`` -- uses a `p`-adic / multimodular
             algorithm that relies on code in IML and linbox
 
           - ``'linbox'`` -- calls linbox det (you *must* set
@@ -3676,7 +3676,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
           for this many CRT primes in a row. Ignored if proof is ``True``.
 
 
-        ALGORITHM: The p-adic algorithm works by first finding a random
+        ALGORITHM: The `p`-adic algorithm works by first finding a random
         vector v, then solving `Ax = v` and taking the denominator
         `d`. This gives a divisor of the determinant. Then we
         compute `\det(A)/d` using a multimodular algorithm and the
@@ -3990,7 +3990,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``d`` -- integer
 
-        ALGORITHM: Uses IML's p-adic nullspace function.
+        ALGORITHM: Uses IML's `p`-adic nullspace function.
 
         EXAMPLES::
 
@@ -5595,7 +5595,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        - ``singular`` -- singular interface instance (default:
+        - ``singular`` -- Singular interface instance (default:
           ``None``)
 
         EXAMPLES::

@@ -1725,7 +1725,7 @@ def Cyclic(R, n=None, homog=False, singular=None):
     - ``homog`` -- boolean (default: ``False``); if ``True`` a homogeneous
       ideal is returned using the last variable in the ideal
 
-    - ``singular`` -- singular instance to use
+    - ``singular`` -- Singular instance to use
 
     .. NOTE::
 
@@ -1790,7 +1790,7 @@ def Katsura(R, n=None, homog=False, singular=None):
     - ``homog`` -- boolean (default: ``False``); if ``True`` a homogeneous
       ideal is returned using the last variable in the ideal
 
-    - ``singular`` -- singular instance to use
+    - ``singular`` -- Singular instance to use
 
     EXAMPLES::
 

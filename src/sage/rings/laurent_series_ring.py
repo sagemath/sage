@@ -712,7 +712,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             False
         """
         # NOTE: There are no ring homomorphisms from the ring of
-        # all formal power series to most rings, e.g, the p-adic
+        # all formal power series to most rings, e.g, the `p`-adic
         # field, since you can always (mathematically!) construct
         # some power series that does not converge.
         # NOTE: The above claim is wrong when the base ring is Z.

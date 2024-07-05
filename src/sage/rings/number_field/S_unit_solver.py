@@ -1479,7 +1479,7 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
     - ``prime`` -- a prime ideal of a number field `K`
     - ``B0`` -- the initial bound
     - ``M`` -- list of elements of `K`, the `\mu_i`'s from Lemma IX.3 of [Sma1998]_
-    - ``M_logp`` -- the p-adic logarithm of elements in `M`
+    - ``M_logp`` -- the `p`-adic logarithm of elements in `M`
     - ``m0`` -- an element of `K`, this is `\mu_0` from Lemma IX.3 of [Sma1998]_
     - ``c3`` -- a positive real constant
     - ``prec`` -- the precision of the calculations (default: 106), i.e.,
@@ -1632,7 +1632,7 @@ def p_adic_LLL_bound(SUK, A, prec=106):
     - ``SUK`` -- a group of `S`-units
     - ``A`` -- list of all products of each potential `a`, `b` in the `S`-unit
       equation `ax + by + 1 = 0` with each root of unity of `K`
-    - ``prec`` -- precision for p-adic LLL calculations (default: 106)
+    - ``prec`` -- precision for `p`-adic LLL calculations (default: 106)
 
     OUTPUT:
 
@@ -2733,7 +2733,7 @@ def solve_S_unit_equation(K, S, prec=106, include_exponents=True, include_bound=
 
     - ``K`` -- a number field (an absolute extension of the rationals)
     - ``S`` -- list of finite primes of `K`
-    - ``prec`` -- precision used for computations in real, complex, and p-adic
+    - ``prec`` -- precision used for computations in real, complex, and `p`-adic
       fields (default: 106)
     - ``include_exponents`` -- whether to include the exponent vectors in the
       returned value (default: ``True``)

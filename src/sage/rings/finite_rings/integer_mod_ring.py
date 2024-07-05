@@ -1267,7 +1267,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
     def _convert_map_from_(self, other):
         """
-        Conversion from p-adic fields.
+        Conversion from `p`-adic fields.
 
         EXAMPLES::
 

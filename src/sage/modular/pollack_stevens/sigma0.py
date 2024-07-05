@@ -2,7 +2,7 @@ r"""
 The matrix monoid `\Sigma_0(N)`.
 
 This stands for a monoid of matrices over `\ZZ`, `\QQ`, `\ZZ_p`, or `\QQ_p`,
-depending on an integer `N \ge 1`. This class exists in order to act on p-adic
+depending on an integer `N \ge 1`. This class exists in order to act on `p`-adic
 distribution spaces.
 
 Over `\QQ` or `\ZZ`, it is the monoid of matrices `2\times2` matrices

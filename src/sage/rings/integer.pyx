@@ -574,7 +574,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             ...
             TypeError: Unable to coerce PARI x to an Integer
 
-        Test coercion of p-adic with negative valuation::
+        Test coercion of `p`-adic with negative valuation::
 
             sage: ZZ(pari(Qp(11)(11^-7)))                                               # needs sage.libs.pari sage.rings.padics
             Traceback (most recent call last):
@@ -4198,7 +4198,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     cpdef RingElement _valuation(Integer self, Integer p):
         r"""
-        Return the p-adic valuation of ``self``.
+        Return the `p`-adic valuation of ``self``.
 
         We do not require that p be prime, but it must be at least 2. For
         more documentation see ``valuation``
@@ -4223,7 +4223,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     cdef object _val_unit(Integer self, Integer p):
         r"""
-        Return a pair: the p-adic valuation of ``self``, and the p-adic unit
+        Return a pair: the `p`-adic valuation of ``self``, and the `p`-adic unit
         of ``self``.
 
         We do not require the p be prime, but it must be at least 2. For
@@ -4248,7 +4248,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def valuation(self, p):
         """
-        Return the p-adic valuation of ``self``.
+        Return the `p`-adic valuation of ``self``.
 
         INPUT:
 
@@ -4309,7 +4309,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def val_unit(self, p):
         r"""
-        Return a pair: the p-adic valuation of ``self``, and the p-adic unit
+        Return a pair: the `p`-adic valuation of ``self``, and th`p`-adicic unit
         of ``self``.
 
         INPUT:
@@ -4318,7 +4318,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         OUTPUT:
 
-        - ``v_p(self)`` -- the p-adic valuation of ``self``
+        - ``v_p(self)`` -- the `p`-adic valuation of ``self``
 
         - ``u_p(self)`` -- ``self`` / `p^{v_p(\mathrm{self})}`
 
@@ -6909,7 +6909,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         OUTPUT:
 
-        - ``x`` -- integer such that ``x*self = 1 (mod m)``, or
+        - ``x`` -- integer such that x * ``self`` = 1 (mod m), or
           raises :exc:`ZeroDivisionError`
 
         IMPLEMENTATION:
@@ -7165,7 +7165,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``length`` -- positive integer (default: `1`); integer represented
+        - ``length`` -- positive integer (default: 1); integer represented
           in ``length`` bytes
         - ``byteorder`` -- string (default: ``'big'``); determines the byte
           order of the output (can only be ``'big'`` or ``'little'``)

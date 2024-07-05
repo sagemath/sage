@@ -64,8 +64,8 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
     - ``parent`` -- a local ring or field
 
     - ``x`` -- data defining this element.  Various types are supported,
-      including ints, Integers, Rationals, PARI p-adics, integers mod `p^k`
-      and other Sage p-adics.
+      including ints, Integers, Rationals, PARI `p`-adics, integers mod `p^k`
+      and other Sage `p`-adics.
 
     - ``absprec`` -- a cap on the absolute precision of this element
 
@@ -173,8 +173,8 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``x`` -- an int, Integer, Rational, PARI p-adic, integer mod `p^k` or
-          Sage p-adic
+        - ``x`` -- an int, Integer, Rational, PARI `p`-adic, integer mod `p^k` or
+          Sage `p`-adic
 
         - ``val`` -- a long; the valuation of ``x``
 
@@ -196,7 +196,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
     cdef int _get_unit(self, celement value) except -1:
         """
-        Set ``value`` to the unit of this p-adic element.
+        Set ``value`` to the unit of this `p`-adic element.
         """
         raise NotImplementedError
 
@@ -609,7 +609,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
     def _ext_p_list(self, pos):
         """
-        Return the p-adic expansion of the unit part.  Used in printing.
+        Return the `p`-adic expansion of the unit part.  Used in printing.
 
         EXAMPLES::
 

@@ -102,7 +102,7 @@ def integer_mod_ring():
 
 def padic_field():
     """
-    Return a random p-adic field modulo n with p at most 10000
+    Return a random `p`-adic field modulo n with p at most 10000
     and precision between 10 and 100.
 
     EXAMPLES::

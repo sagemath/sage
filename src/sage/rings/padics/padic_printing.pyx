@@ -7,7 +7,7 @@
 """
 `p`-adic Printing
 
-This file contains code for printing p-adic elements.
+This file contains code for printing `p`-adic elements.
 
 It has been moved here to prevent code duplication and make finding
 the relevant code easier.
@@ -52,7 +52,7 @@ def pAdicPrinter(ring, options={}):
 
     INPUT:
 
-    - ``ring`` -- a p-adic ring or field
+    - ``ring`` -- a `p`-adic ring or field
 
     - ``options`` -- dictionary, with keys in ``'mode'``, ``'pos'``,
       ``'ram_name'``, ``'unram_name'``, ``'var_name'``, ``'max_ram_terms'``,
@@ -74,12 +74,12 @@ def pAdicPrinter(ring, options={}):
 
 class pAdicPrinterDefaults(SageObject):
     """
-    This class stores global defaults for p-adic printing.
+    This class stores global defaults for `p`-adic printing.
     """
     def __init__(self, mode = 'series', pos = True, max_ram_terms = -1, max_unram_terms = -1, max_terse_terms = -1, sep = "|", alphabet = None):
         r"""
         Instances of this class store global defaults used in
-        determining printing options during the creation of p-adic
+        determining printing options during the creation of `p`-adic
         rings and fields.  One instance stored in padic_printing
         stores the globally relevant default values.
 
@@ -273,7 +273,7 @@ class pAdicPrinterDefaults(SageObject):
 
     def alphabet(self, alphabet = None):
         r"""
-        Controls the alphabet used to translate p-adic digits into
+        Controls the alphabet used to translate `p`-adic digits into
         strings (so that no separator need be used in ``'digits'`` mode).
 
         ``alphabet`` should be passed in as a list or tuple.
@@ -301,7 +301,7 @@ _printer_defaults = pAdicPrinterDefaults()
 
 cdef class pAdicPrinter_class(SageObject):
     """
-    This class stores the printing options for a specific p-adic ring
+    This class stores the printing options for a specific `p`-adic ring
     or field, and uses these to compute the representations of
     elements.
     """
@@ -330,7 +330,7 @@ cdef class pAdicPrinter_class(SageObject):
 
           - ``'digits'`` -- used only for small primes and totally ramified
             extensions (or trivial extensions), elements are displayed as just
-            a string of p-adic digits, encoded using the 'alphabet' parameter
+            a string of `p`-adic digits, encoded using the 'alphabet' parameter
 
           - ``'bars'`` -- like ``'digits'``, but uses a separator in order to
             print a more canonical representation for each digit. This change
@@ -361,7 +361,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         - ``sep`` -- controls the separator used in ``'bars'`` mode
 
-        - ``alphabet`` -- controls the alphabet used to translate p-adic digits
+        - ``alphabet`` -- controls the alphabet used to translate `p`-adic digits
           into strings (so that no separator need be used in ``'digits'`` mode)
 
         - ``show_prec`` -- Specify how the precision is printed; it can be
@@ -511,7 +511,7 @@ cdef class pAdicPrinter_class(SageObject):
         (``max_unram_terms`` is irrelevant if the ring is totally ramified
         over the base, for example). This does not check if the rings are
         equal (to prevent infinite recursion in the comparison
-        functions of p-adic rings), but it does check if the primes
+        functions of `p`-adic rings), but it does check if the primes
         are the same (since the prime affects whether ``pos`` is
         relevant).
 
@@ -838,7 +838,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         INPUT:
 
-        - ``elt`` -- a p-adic element of the appropriate ring to print
+        - ``elt`` -- a `p`-adic element of the appropriate ring to print
 
         - ``do_latex`` -- whether to return a latex representation or
           a normal one

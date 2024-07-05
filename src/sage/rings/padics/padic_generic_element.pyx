@@ -217,7 +217,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         Quotient with remainder.
 
-        We choose the remainder to have the same p-adic expansion
+        We choose the remainder to have the same `p`-adic expansion
         as the numerator, but truncated at the valuation of the denominator.
 
         EXAMPLES::
@@ -292,7 +292,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         However, for elements of integer rings, there are many choices
         of definitions for a // b and a % b that satisfy this
-        equation.  Since p-adic rings in Sage come equipped with a
+        equation.  Since `p`-adic rings in Sage come equipped with a
         uniformizer pi, we can use the choice of uniformizer in our
         definitions.  Here are some other criteria we might ask for:
 
@@ -467,7 +467,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
     cpdef _mod_(self, right):
         """
         If ``self`` is in a field, returns 0.  If in a ring, returns a
-        p-adic integer such that
+        `p`-adic integer such that
 
         (1) a = (a // b) * b + a % b
 
@@ -483,7 +483,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         However, for elements of integer rings, there are many choices
         of definitions for a // b and a % b that satisfy this
-        equation.  Since p-adic rings in Sage come equipped with a
+        equation.  Since `p`-adic rings in Sage come equipped with a
         uniformizer pi, we can use the choice of uniformizer in our
         definitions.  Here are some other criteria we might ask for:
 
@@ -1174,7 +1174,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         INPUT:
 
-        - ``self`` -- a p-adic element
+        - ``self`` -- a `p`-adic element
         - ``n`` -- integer
 
         OUTPUT: polynomial; degree `n` polynomial approximately satisfied by ``self``
@@ -3989,7 +3989,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         INPUT:
 
-        - ``prec`` -- integer;  The precision of the real field in which
+        - ``prec`` -- integer; the precision of the real field in which
           the answer is returned.  If ``None``, returns a rational for
           absolutely unramified fields, or a real with 53 bits of
           precision for ramified fields.

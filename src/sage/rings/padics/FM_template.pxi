@@ -120,7 +120,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     cdef int _get_unit(self, celement value) except -1:
         """
-        Set ``value`` to the unit of this p-adic element.
+        Set ``value`` to the unit of this `p`-adic element.
         """
         cremove(value, self.value, self.prime_pow.ram_prec_cap, self.prime_pow)
 

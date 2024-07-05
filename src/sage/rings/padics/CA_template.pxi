@@ -134,7 +134,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef int _get_unit(self, celement value) except -1:
         """
-        Set ``value`` to the unit of this p-adic element.
+        Set ``value`` to the unit of this `p`-adic element.
         """
         cremove(value, self.value, self.absprec, self.prime_pow, True)
 

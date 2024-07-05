@@ -72,7 +72,7 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
 
     - ``factored`` -- boolean (default: ``False``)
 
-    - ``algorithm`` -- flag passed to p-adic Gamma function (default: ``'pari'``)
+    - ``algorithm`` -- flag passed to `p`-adic Gamma function (default: ``'pari'``)
 
     OUTPUT:
 
@@ -186,7 +186,7 @@ def max(*L):
 
 def precprint(prec_type, prec_cap, p):
     """
-    String describing the precision mode on a p-adic ring or field.
+    String describing the precision mode on a `p`-adic ring or field.
 
     EXAMPLES::
 

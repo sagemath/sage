@@ -16,11 +16,11 @@ For the parent class see padic_extension_leaves.pyx.
 The underlying implementation is through NTL's ``ZZ_pX`` class.  Each
 element contains the following data:
 
-- ``absprec`` -- long; An integer giving the precision to which this
+- ``absprec`` -- long; an integer giving the precision to which this
   element is defined.  This is the power of the uniformizer modulo
   which the element is well defined.
 
-- ``value`` -- ``ZZ_pX_c``; An ntl ``ZZ_pX`` storing the value.  The
+- ``value`` -- ``ZZ_pX_c``; an ntl ``ZZ_pX`` storing the value.  The
   variable `x` is the uniformizer in the case of Eisenstein extensions
   This ZZ_pX is created with global ntl modulus determined by absprec.
   Let `a` be absprec and `e` be the ramification index over
@@ -35,9 +35,9 @@ element contains the following data:
 
   + ``prime_pow.deg`` -- the degree of the extension
 
-  + ``prime_pow.e`` -- The ramification index
+  + ``prime_pow.e`` -- the ramification index
 
-  + ``prime_pow.f`` -- The inertia degree
+  + ``prime_pow.f`` -- the inertia degree
 
   + ``prime_pow.prec_cap`` -- the unramified precision cap.  For
     Eisenstein extensions this is the smallest power of p that is
@@ -2017,7 +2017,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 #     def multiplicative_order(self, prec=None):
 #         """
 #         Returns the multiplicative order of ``self``, ie the smallest
-#         positive n so that there is an exact p-adic element congruent
+#         positive `n` so that there is an exact `p`-adic element congruent
 #         to ``self`` modulo ``self``'s precision that is an `n`-th root of unity.
 
 #         Note: unlike the case for Qp and Zp, it is possible to have
@@ -2027,7 +2027,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
 #         INPUT:
 
-#         - self -- a p-adic element
+#         - self -- a `p`-adic element
 #         - ``prec`` -- integer
 
 #         OUTPUT: integer; the multiplicative order of self

@@ -3056,7 +3056,7 @@ class PolynomialRing_cdvf(PolynomialRing_cdvr, PolynomialRing_field):
 
 class PolynomialRing_dense_padic_ring_generic(PolynomialRing_cdvr):
     r"""
-    A class for dense polynomial ring over p-adic rings
+    A class for dense polynomial ring over `p`-adic rings
     """
     def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         PolynomialRing_cdvr.__init__(self, base_ring, sparse=False, name=name,
@@ -3085,7 +3085,7 @@ class PolynomialRing_dense_padic_ring_generic(PolynomialRing_cdvr):
 
 class PolynomialRing_dense_padic_field_generic(PolynomialRing_cdvf):
     r"""
-    A class for dense polynomial ring over p-adic fields
+    A class for dense polynomial ring over `p`-adic fields
     """
     def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         PolynomialRing_cdvf.__init__(self, base_ring, sparse=False, name=name,

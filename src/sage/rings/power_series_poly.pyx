@@ -232,7 +232,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f(2*u + u^3 + O(u^5))
             4*u^2 + u^3 + 4*u^4 + 5*u^5 + O(u^6)
 
-        As can a p-adic integer as long as the coefficient ring is compatible::
+        As can a `p`-adic integer as long as the coefficient ring is compatible::
 
             sage: f(100 + O(5^7))                                                       # needs sage.rings.padics
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)

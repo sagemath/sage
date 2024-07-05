@@ -1503,7 +1503,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'flint'``: use the flint library,
 
-          - ``'padic'``: an algorithm based on the IML p-adic solver,
+          - ``'padic'``: an algorithm based on the IML `p`-adic solver,
 
           - ``'multimodular'``: uses a multimodular algorithm the uses
             linbox modulo many primes (likely to be faster when coefficients
@@ -1700,7 +1700,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
     def _echelonize_padic(self):
         """
-        Echelonize ``self`` using a p-adic nullspace algorithm.
+        Echelonize ``self`` using a `p`-adic nullspace algorithm.
 
         EXAMPLES::
 

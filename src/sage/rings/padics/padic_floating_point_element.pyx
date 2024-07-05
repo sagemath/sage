@@ -244,7 +244,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         INPUT:
 
-        - ``absprec`` -- nonnegative integer (default: `1`)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
         - ``field`` -- boolean (default: ``None``); whether to return an
           element of `\GF{p}` or `\ZZ / p\ZZ`

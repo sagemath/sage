@@ -935,7 +935,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
           - a dictionary of degree restrictions
 
-          - a list of degree restrictions (with None in
+          - a list of degree restrictions (with ``None`` in
             the unrestricted variables)
 
           - a monomial (very fast, but not as flexible)

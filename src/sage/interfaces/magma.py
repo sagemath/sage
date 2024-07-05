@@ -2411,7 +2411,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
             sage: latex(magma('(-1/(2+x + O(x^3)))'))
             \frac{-1}{2}+\frac{1}{4}x-\frac{1}{8}x^{2}+O(x^{3})
 
-        p-adic Numbers::
+        `p`-adic Numbers::
 
             sage: latex(magma('pAdicField(7,4)!9333294394/49'))              # optional - magma
             4\cdot{}7^{-2} + 5\cdot{}7^{-1} + 5+ 6\cdot{}7^{1} + O(7^{2})

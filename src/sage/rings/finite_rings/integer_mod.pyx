@@ -1346,7 +1346,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
           `n`-th roots of ``self``, instead of just one
 
         - ``algorithm`` -- string (default: ``None``); the algorithm for the
-          prime modulus case. CRT and p-adic log techniques are used to reduce
+          prime modulus case. CRT and `p`-adic log techniques are used to reduce
           to this case. ``'Johnston'`` is the only currently supported option.
 
         - ``cunningham`` -- boolean (default: ``False``); in some cases,

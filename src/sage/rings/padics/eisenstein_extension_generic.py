@@ -97,7 +97,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
         INPUT:
 
-        - ``self`` -- a p-adic ring
+        - ``self`` -- a `p`-adic ring
 
         OUTPUT: the residue field
 

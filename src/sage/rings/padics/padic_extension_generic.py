@@ -444,7 +444,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def ground_ring_of_tower(self):
         """
-        Return the p-adic base ring of which this is ultimately an
+        Return the `p`-adic base ring of which this is ultimately an
         extension.
 
         Currently this function is identical to ``ground_ring()``, since
@@ -670,7 +670,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 # just stick with Map.
 class pAdicModuleIsomorphism(Map):
     r"""
-    A base class for various isomorphisms between p-adic rings/fields and free modules.
+    A base class for various isomorphisms between `p`-adic rings/fields and free modules.
 
     EXAMPLES::
 
@@ -730,7 +730,7 @@ class pAdicModuleIsomorphism(Map):
 
 class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
     """
-    The isomorphism from the underlying module of a one-step p-adic extension
+    The isomorphism from the underlying module of a one-step `p`-adic extension
     to the extension.
 
     EXAMPLES::
@@ -765,7 +765,7 @@ class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
 
 class MapOneStepToFreeModule(pAdicModuleIsomorphism):
     """
-    The isomorphism from a one-step p-adic extension to its underlying free module.
+    The isomorphism from a one-step `p`-adic extension to its underlying free module.
 
     EXAMPLES::
 
@@ -789,7 +789,7 @@ class MapOneStepToFreeModule(pAdicModuleIsomorphism):
 
 class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
     """
-    The isomorphism from the underlying module of a two-step p-adic extension
+    The isomorphism from the underlying module of a two-step `p`-adic extension
     to the extension.
 
     EXAMPLES::
@@ -836,7 +836,7 @@ class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
 
 class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
     """
-    The isomorphism from a two-step p-adic extension to its underlying free module.
+    The isomorphism from a two-step `p`-adic extension to its underlying free module.
 
     EXAMPLES::
 
@@ -863,12 +863,12 @@ class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
 
 class DefPolyConversion(Morphism):
     """
-    Conversion map between p-adic rings/fields with the same defining polynomial.
+    Conversion map between `p`-adic rings/fields with the same defining polynomial.
 
     INPUT:
 
-    - ``R`` -- a p-adic extension ring or field
-    - ``S`` -- a p-adic extension ring or field with the same defining polynomial
+    - ``R`` -- a `p`-adic extension ring or field
+    - ``S`` -- a `p`-adic extension ring or field with the same defining polynomial
 
     EXAMPLES::
 

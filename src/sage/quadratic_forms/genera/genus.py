@@ -1665,7 +1665,7 @@ class Genus_Symbol_p_adic_ring:
 
     def canonical_symbol(self):
         r"""
-        Return (and cache) the canonical p-adic genus symbol.  This is
+        Return (and cache) the canonical `p`-adic genus symbol.  This is
         only really affects the `2`-adic symbol, since when `p > 2` the
         symbol is already canonical.
 

@@ -264,7 +264,7 @@ class pAdicLatticeElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- nonnegative integer (default: `1`)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
         - ``field`` -- boolean (default: ``None``); whether to return an
           element of GF(p) or Zmod(p)
@@ -770,7 +770,7 @@ class pAdicLatticeElement(pAdicGenericElement):
     def lift_to_precision(self, prec=None, infer_precision=False):
         r"""
         Return another element of the same parent with absolute precision
-        at least ``prec``, congruent to this p-adic element modulo the
+        at least ``prec``, congruent to this `p`-adic element modulo the
         precision of this element.
 
         INPUT:

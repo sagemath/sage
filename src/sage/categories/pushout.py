@@ -3188,11 +3188,11 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
           cyclotomic field, rather than just a number field.
 
         - ``precs`` -- (optional) list of integers. If it is provided,
-          it is used to determine the precision of p-adic extensions.
+          it is used to determine the precision of `p`-adic extensions.
 
         - ``implementations`` -- (optional) list of strings.
           If it is provided, it is used to determine an implementation in the
-          p-adic case.
+          `p`-adic case.
 
         - ``residue`` -- (optional) prime ideal of an order in a number
           field, determining a residue field. If it is provided,

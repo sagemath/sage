@@ -2,7 +2,7 @@
 r"""
 `p`-adic Generic
 
-A generic superclass for all p-adic parents.
+A generic superclass for all `p`-adic parents.
 
 AUTHORS:
 
@@ -164,7 +164,7 @@ class pAdicGeneric(LocalGeneric):
         r"""
         Rich comparison of ``self`` with ``other``.
 
-        We consider two p-adic rings or fields to be equal if they are
+        We consider two `p`-adic rings or fields to be equal if they are
         equal mathematically, and also have the same precision cap and
         printing parameters.
 
@@ -609,7 +609,7 @@ class pAdicGeneric(LocalGeneric):
 
     def extension(self, modulus, prec=None, names=None, print_mode=None, implementation='FLINT', **kwds):
         r"""
-        Create an extension of this p-adic ring.
+        Create an extension of this `p`-adic ring.
 
         EXAMPLES::
 
@@ -1601,7 +1601,7 @@ class pAdicGeneric(LocalGeneric):
 
 class ResidueReductionMap(Morphism):
     r"""
-    Reduction map from a p-adic ring or field to its residue field or ring.
+    Reduction map from a `p`-adic ring or field to its residue field or ring.
 
     These maps must be created using the :meth:`_create_` method in order
     to support categories correctly.
@@ -1701,7 +1701,7 @@ class ResidueReductionMap(Morphism):
     def section(self):
         r"""
         Return the section from the residue ring or field
-        back to the p-adic ring or field.
+        back to the `p`-adic ring or field.
 
         EXAMPLES::
 
@@ -1745,7 +1745,7 @@ class ResidueReductionMap(Morphism):
 
 class ResidueLiftingMap(Morphism):
     r"""
-    Lifting map to a p-adic ring or field from its residue field or ring.
+    Lifting map to a `p`-adic ring or field from its residue field or ring.
 
     These maps must be created using the :meth:`_create_` method in order
     to support categories correctly.
@@ -1878,7 +1878,7 @@ class ResidueLiftingMap(Morphism):
 def local_print_mode(obj, print_options, pos=None, ram_name=None):
     r"""
     Context manager for safely temporarily changing the print_mode
-    of a p-adic ring/field.
+    of a `p`-adic ring/field.
 
     EXAMPLES::
 

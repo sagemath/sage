@@ -1515,7 +1515,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 #     def multiplicative_order(self):
 #         """
 #         Returns the multiplicative order of self, ie the smallest
-#         positive n so that there is an exact p-adic element congruent
+#         positive `n` so that there is an exact `p`-adic element congruent
 #         to self modulo ``self``'s precision that is an `n`-th root of unity.
 
 #         Note: unlike the case for Qp and Zp, it is possible to have
@@ -1525,7 +1525,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
 #         INPUT:
 
-#         - ``self`` -- a p-adic element
+#         - ``self`` -- a `p`-adic element
 #         - ``prec`` -- integer
 
 #         OUTPUT: integer; the multiplicative order of self

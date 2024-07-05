@@ -273,7 +273,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         INPUT:
 
-        - ``r`` -- integer with ``0 <= r < e``
+        - ``r`` -- integer with 0 <= r < e
 
         OUTPUT: a reduced polynomial in π
 
