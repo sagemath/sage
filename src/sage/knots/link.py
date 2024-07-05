@@ -1833,7 +1833,7 @@ class Link(SageObject):
         t = [Link(B(si)).number_of_components() for si in s]
         for i, j in enumerate(s):
             if not j:
-                s[i].append(-2)
+                j.append(-2)
         for i in s:
             q2 = max(abs(k) + 1 for k in i)
             q.append(q2)
