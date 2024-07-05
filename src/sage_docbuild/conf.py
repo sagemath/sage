@@ -681,7 +681,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
     path2 = os.path.join(SAGE_DOC, 'html', 'en')
     relpath = os.path.relpath(path2, path1)
     context['release'] = release
-    context['documentation_title'] = f'Version {release} Documentation '
+    context['documentation_title'] = f'Version {release} Documentation'
     context['documentation_root'] = os.path.join(relpath, 'index.html')
     if 'website' in path1:
         context['title'] = 'Documentation'
