@@ -103,19 +103,18 @@ from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
-from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalVariety
+from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalSurface, TropicalVariety
 
 class TropicalMPolynomial(MPolynomial_polydict):
     r"""
     Generic multivariate tropical polynomial.
-
     """
 
     def plot3d(self):
         """
         Return the 3d plot of ``self``.
 
-        OUTPUT: A Graphics3d Object.
+        OUTPUT: A Graphics3d object.
 
         EXAMPLES::
 
@@ -146,8 +145,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
         xmin, xmax = axes[0][0], axes[0][1]
         ymin, ymax = axes[1][0], axes[1][1]
         step = 0.5
-        x_point = srange(xmin-1, xmax+1+step, step)
-        y_point = srange(ymin-1, ymax+1+step, step)
+        x_point = srange(xmin, xmax+step, step)
+        y_point = srange(ymin, ymax+step, step)
         res = []
         T = self.parent().base()
         for x in x_point:
@@ -193,6 +192,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
         """
         if self.parent().ngens() == 2:
             return TropicalCurve(self)
+        elif self.parent().ngens() == 3:
+            return TropicalSurface(self)
         else:
             return TropicalVariety(self)
     

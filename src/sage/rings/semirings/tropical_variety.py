@@ -51,8 +51,8 @@ A tropical curve can consist of many rays or lines with different orders::
 
     sage: T = TropicalSemiring(QQ, use_min=False)
     sage: R.<x,y> = PolynomialRing(T)
-    sage: f = R(7) + T(4)*x + y + R(4)*x*y + R(3)*y^2 + R(-3)*x^2
-    sage: f.tropical_variety()
+    sage: p1 = R(7) + T(4)*x + y + R(4)*x*y + R(3)*y^2 + R(-3)*x^2
+    sage: p1.tropical_variety()
     Tropical curve of (-3)*x^2 + 4*x*y + 3*y^2 + 4*x + 0*y + 7 are 
     [[(3, t1), [t1 <= 0], 1]
     [(-t1 + 3, t1), [0 <= t1, t1 <= 2], 1]
@@ -61,7 +61,7 @@ A tropical curve can consist of many rays or lines with different orders::
     [(7, t1), [t1 <= 0], 1]
     [(t1 - 1, t1), [2 <= t1], 1]
     [(t1 + 7, t1), [0 <= t1], 1]]
-    sage: f.tropical_variety().plot()
+    sage: p1.tropical_variety().plot()
 
 If the tropical polynomial have `n>2` variables, then the result will be a
 tropical hypersurface embedded in a real space `\mathbb{R}^n`::
@@ -83,7 +83,7 @@ TESTS:
 The input to ``TropicalVariety`` should be a tropical polynomial::
 
     sage: R.<x,y> = QQ[]
-    sage: f = x + y
+    sage: p1 = x + y
     sage: TropicalVariety(f)                                                            # needs sage.rings.semirings.tropical_variety            
     Traceback (most recent call last):
     ...
@@ -107,6 +107,7 @@ REFERENCES:
 # ****************************************************************************
 
 import operator
+import random
 from sage.structure.sage_object import SageObject
 from sage.plot.graphics import Graphics
 from sage.plot.plot import parametric_plot
@@ -115,7 +116,7 @@ from sage.rings.infinity import infinity
 
 class TropicalVariety(SageObject):
     r"""
-    Represent a tropical hypersurface in `\mathbb{R}^n`.
+    Represent a tropical hypersurface in `\mathbb{R}^n, \ n\geq 2`.
     """
     
     def __init__(self, poly):
@@ -150,7 +151,7 @@ class TropicalVariety(SageObject):
             Tropical curve of 0*x + 0*y are 
             [[(t1, t1), [-Infinity < t1, t1 < +Infinity], 1]]
 
-        A basic ilustration of tropical hypersurface::
+        A basic ilustration of a tropical hypersurface in three dimensions::
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: (x+y+z).tropical_variety()
@@ -274,7 +275,8 @@ class TropicalVariety(SageObject):
                         expr = lhs <= rhs
                     new_param.append(expr)
                 arg.insert(1, new_param)
-            self._hypersurface.append(arg)   
+            self._hypersurface.append(arg)  
+        self.vars = vars
 
     def dimension(self):
         """
@@ -291,6 +293,137 @@ class TropicalVariety(SageObject):
     def _repr_(self):
         components = "\n".join([f"{row}" for row in self._hypersurface])
         return (f"Tropical hypersurface of {self._poly} are \n[{components}]")
+
+class TropicalSurface(TropicalVariety):
+    r""""
+    Represent a tropical surface in `\mathbb{R}^3`. The representation is in 
+    the form of list of lists, where the inner list represent each surface
+    of tropical roots.
+    """   
+
+    def _axes(self):
+        """
+        Set the default axes for ``self``. This default axes is used for plot.
+
+        OUTPUT: A list of two lists, where the first inner list represent
+        value of x-axis and the second inner list represent value of y-axis.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x + y + z + x^2 + R(1)
+            sage: p1.tropical_variety()._axes()
+            [[-1, 2], [-1, 2]]
+        """
+        from sage.symbolic.relation import solve
+
+        u_set = set()
+        v_set = set()
+        for comp in self._hypersurface:
+            list_expr = []
+            temp_u = set()
+            temp_v = set()
+            for expr in comp[1]:
+                if expr.lhs().is_numeric():
+                    if bool(expr.rhs()==self.vars[0]):
+                        temp_u.add(expr.lhs())
+                    else:
+                        temp_v.add(expr.lhs())
+                elif expr.rhs().is_numeric():
+                    if bool(expr.lhs()==self.vars[0]):
+                        temp_u.add(expr.rhs())
+                    else:
+                        temp_v.add(expr.rhs())
+                else:
+                    list_expr.append(expr)
+            if not temp_u:
+                temp_u.add(0)
+            if not temp_v:
+                temp_v.add(0)
+            for expr in list_expr:
+                for u in temp_u:
+                    sol = solve(expr.subs(self.vars[0]==u), self.vars[1])
+                    temp_v.add(sol[0][0].rhs())
+                for v in temp_v:
+                    sol = solve(expr.subs(self.vars[1]==v), self.vars[0])
+                    temp_u.add(sol[0][0].rhs())
+            u_set = u_set.union(temp_u)
+            v_set = v_set.union(temp_v)
+        return [[min(u_set)-1, max(u_set)+1], [min(v_set)-1, max(v_set)+1]]
+    
+    def plot(self, num_of_points=32, size=20, color='random'):
+        """
+        Return a 3d plot of ``self``.
+
+        OUTPUT: A Graphics3d object.
+
+        EXAMPLES:
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x + y + z + x^2 + R(1)
+            sage: p1.tropical_variety()
+            Tropical surface of 0*x^2 + 0*x + 0*y + 0*z + 1 are 
+            [[(t1, t1, t2), [t1 <= t2, 0 <= t1, t1 <= 1], 1]
+            [(t1, t2, t1), [0 <= t1, t1 <= min(1, t2), 0 <= t2], 1]
+            [(0, t1, t2), [0 <= t2, 0 <= t1], 1]
+            [(1, t1, t2), [1 <= t2, 1 <= t1], 1]
+            [(t1, t2, t2), [t2 <= min(1, t1, 2*t1)], 1]
+            [(1/2*t1, t1, t2), [t1 <= t2, t1 <= 0], 1]
+            [(t1, 1, t2), [1 <= t2, 1 <= t1], 1]
+            [(1/2*t1, t2, t1), [t1 <= min(0, t2)], 1]
+            [(t1, t2, 1), [1 <= t1, 1 <= t2], 1]]
+            sage: p1.tropical_variety().plot()
+        """
+        from sage.arith.srange import srange
+        from sage.plot.plot3d.shapes2 import point3d, text3d
+        
+        if color == 'random':
+            colors = []
+            for _ in range(self.number_of_components()):
+                # Generate a random color in RGB format
+                color = (random.random(), random.random(), random.random())
+                colors.append(color)
+        else:
+            colors = [color]*self.number_of_components()
+        
+        axes = self._axes()
+        step = num_of_points
+        du = (axes[0][1]-axes[0][0])/step
+        dv = (axes[1][1]-axes[1][0])/step
+        u_range = srange(axes[0][0], axes[0][1]+du, du)
+        v_range = srange(axes[1][0], axes[1][1]+dv, dv)
+        combined_plot = Graphics()
+        for i, comp in enumerate(self._hypersurface):
+            points = []
+            for u in u_range:
+                for v in v_range:
+                    checkpoint = True
+                    for exp in comp[1]: 
+                        final_exp = exp.subs(self.vars[0]==u, self.vars[1]==v)
+                        if bool(final_exp) == False:
+                            checkpoint = False
+                            break
+                    if checkpoint:
+                        x = comp[0][0].subs(self.vars[0]==u, self.vars[1]==v)
+                        y = comp[0][1].subs(self.vars[0]==u, self.vars[1]==v)
+                        z = comp[0][2].subs(self.vars[0]==u, self.vars[1]==v)
+                        points.append((x,y,z))
+            point_plot = point3d(points, size=size, color=colors[i])
+            order = comp[2]
+            if order > 1:
+                text_order = text3d(str(order), points[len(points)//2], 
+                                    fontweight='bold', fontsize='500%')
+                combined_plot += point_plot + text_order
+            else:
+                combined_plot += point_plot
+        
+        return combined_plot
+
+    def _repr_(self):
+        components = "\n".join([f"{row}" for row in self._hypersurface])
+        return (f"Tropical surface of {self._poly} are \n[{components}]")
 
 class TropicalCurve(TropicalVariety):
     r""""
