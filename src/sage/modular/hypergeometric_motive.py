@@ -1500,7 +1500,7 @@ class HypergeometricData:
 
         EXAMPLES:
 
-        With values in the ``UniversalCyclotomicField`` (slow)::
+        With values in the :class:`UniversalCyclotomicField` (slow)::
 
             sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
             sage: H = Hyp(alpha_beta=([1/2]*4, [0]*4))
@@ -1515,7 +1515,7 @@ class HypergeometricData:
             sage: [H.H_value(13,i,-1) for i in range(1,3)]  # not tested
             [-84, -1420]
 
-        With values in ``ComplexField``::
+        With values in :class:`ComplexField`::
 
             sage: [H.H_value(5,i,-1, ComplexField(60)) for i in range(1,3)]
             [-4, 276]
