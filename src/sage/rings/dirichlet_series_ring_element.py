@@ -260,6 +260,25 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         """
         raise NotImplementedError
 
+    def truncate(self, prec, new_parent=False):
+        """
+        Truncate to a specified precision.
+
+        By default, the result is returned in the same parent. If ``new_parent`` is True,
+        we instead create a new parent with the specified precision.
+
+        EXAMPLES::
+
+            sage: R = DirichletSeriesRing(ZZ, 10)
+            sage: f = R([1,2,3,4,5,6,7])
+            sage: f
+            1 + 2*2^-s + 3*3^-s + 4*4^-s + 5*5^-s + 6*6^-s + 7*7^-s + O(10^-s)
+            sage: f.truncate(5)
+            1 + 2*2^-s + 3*3^-s + 4*4^-s + O(10^-s)
+        """
+        parent = self.parent()
+        return parent({i: j for i,j in self.coefficients().items() if i < prec})
+
 class DirichletSeries_dense(DirichletSeries_generic):
     def __init__(self, parent, data=None):
         base_ring = parent.base_ring()
