@@ -61,10 +61,43 @@ class SubgroupStore():
         r"""
         Returns the set of computed group invariants
         associated with a subgroup H.
+
+        TESTS::
+
+            sage: G = SymmetricGroup(3)
+            sage: B = BurnsideRing(G)
+            sage: Z3 = CyclicPermutationGroup(3)
+            sage: B._indices._group_invariant(Z3)
+            3
         """
         return H.order()
 
     def _normalize(self, H):
+        r"""
+        Converts a subgroup into its canonical representative
+        by finding a representative of its conjugacy class, or
+        using the group itself if the conjugacy class didn't exist
+        before.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: H1 = PermutationGroup([(1,2),(3,4)])
+            sage: H2 = PermutationGroup([(1,3),(2,4)])
+            sage: P[H1]
+            PMD[(4, ((3,4), (1,2)))]
+            sage: P[H2]
+            PMD[(4, ((3,4), (1,2)))]    #indirect doctest
+
+            sage: G = SymmetricGroup(4)
+            sage: B = BurnsideRing(G)
+            sage: H1 = PermutationGroup([(1,2),(3,4)])
+            sage: H2 = PermutationGroup([(1,3),(2,4)])
+            sage: B[H1]
+            B[((3,4), (1,2))]
+            sage: B[H2]
+            B[((3,4), (1,2))]   #indirect doctest
+        """
         # H is of type self.element_class
         G = H.subgroup_of()
         p = self._group_invariant(H._C)
@@ -86,6 +119,18 @@ class SubgroupStore():
         r"""
         Takes a subgroup as input and returns its associated name, if any.
         Otherwise, the generators are returned. Returns a string.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: Z3 = CyclicPermutationGroup(3)
+            sage: P[Z3]
+            PMD[(3, ((1,2,3),))]
+            sage: P._indices.set_name(Z3, "C3")
+            sage: P[Z3]
+            C3
+            sage: P._indices.get_name(Z3)
+            'C3'
         """
         key = self.element_class(self, H)
         G = self._normalize(key)
@@ -95,6 +140,18 @@ class SubgroupStore():
     def set_name(self, H, name):
         r"""
         Takes a subgroup as input and sets its name.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: Z3 = CyclicPermutationGroup(3)
+            sage: P[Z3]
+            PMD[(3, ((1,2,3),))]
+            sage: P._indices.set_name(Z3, "C3")
+            sage: P[Z3]
+            C3
+            sage: P._indices.get_name(Z3)
+            'C3'
         """
         if not isinstance(name, str):
             raise ValueError("name must be a string")
@@ -105,6 +162,21 @@ class SubgroupStore():
     def unset_name(self, H):
         r"""
         Takes a subgroup as input and removes its name, if any.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: Z3 = CyclicPermutationGroup(3)
+            sage: P[Z3]
+            PMD[(3, ((1,2,3),))]
+            sage: P._indices.set_name(Z3, "C3")
+            sage: P[Z3]
+            C3
+            sage: P._indices.get_name(Z3)
+            'C3'
+            sage: P._indices.unset_name(Z3)
+            sage: P[Z3]
+            PMD[(3, ((1,2,3),))]
         """
         key = self.element_class(self, H)
         G = self._normalize(key)
@@ -126,6 +198,20 @@ class ConjugacyClassOfSubgroups(Element):
         self._C = C
 
     def subgroup_of(self):
+        r"""
+        Return the group which this conjugacy class of subgroups
+        belongs to.
+
+        TESTS::
+
+            sage: G = SymmetricGroup(3)
+            sage: from sage.rings.burnside import ConjugacyClassesOfSubgroups
+            sage: C = ConjugacyClassesOfSubgroups(G)
+            sage: Z3 = CyclicPermutationGroup(3)
+            sage: CZ3 = C(Z3)
+            sage: CZ3.subgroup_of()
+            Symmetric group of order 3! as a permutation group
+        """
         return self.parent()._G
 
     def __hash__(self):
@@ -144,6 +230,19 @@ class ConjugacyClassOfSubgroups(Element):
         return hash(self._C)
     
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        TESTS::
+
+            sage: G = SymmetricGroup(3)
+            sage: from sage.rings.burnside import ConjugacyClassesOfSubgroups
+            sage: C = ConjugacyClassesOfSubgroups(G)
+            sage: Z3 = CyclicPermutationGroup(3)
+            sage: CZ3 = C(Z3)
+            sage: CZ3
+            ((1,2,3),)
+        """
         name = self.parent()._names.get(self._C, None)
         return name if name else repr(self._C.gens())
 
@@ -188,14 +287,6 @@ class ConjugacyClassOfSubgroups(Element):
         """
         return (isinstance(other, ConjugacyClassOfSubgroups)
                 and _is_conjugate(self.subgroup_of(), self._C, other._C))
-
-    def __le__(self, other):
-        r"""
-        Return if this element is less than or equal to ``other``.
-        """
-        return (isinstance(other, ConjugacyClassOfSubgroups)
-                and (GAP_FAIL != libgap.ContainedConjugates(
-                self.subgroup_of(), other._C, self._C, True)))
 
     def __lt__(self, other):
         r"""
@@ -243,7 +334,7 @@ class ConjugacyClassesOfSubgroups(Parent, SubgroupStore):
 
     def __hash__(self):
         r"""
-        Return the hash of the representative of the conjugacy class.
+        Return the hash of the underlying group.
 
         TESTS::
 
@@ -267,7 +358,7 @@ class ConjugacyClassesOfSubgroups(Parent, SubgroupStore):
             sage: G = SymmetricGroup(4)
             sage: C = ConjugacyClassesOfSubgroups(G)
             sage: Z4 = CyclicPermutationGroup(4)
-            sage: C(Z4) #indirect doctest
+            sage: C(Z4)
             ((1,2,3,4),)
         """
         if x.is_subgroup(self._G):
@@ -322,31 +413,77 @@ class ConjugacyClassesOfSubgroups(Parent, SubgroupStore):
     Element = ConjugacyClassOfSubgroups
 
 class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
-    def __init__(self, parent, C):
+    def __init__(self, parent, n, C):
         r"""
         Initialize the conjugacy class of ``C`` in SymmetricGroup(n).
 
         TESTS::
 
-            sage: G = SymmetricGroup(4)
-            sage: B = BurnsideRing(G)
+            sage: P = PolynomialMolecularDecomposition()
             sage: Z4 = CyclicPermutationGroup(4)
-            sage: TestSuite(B(Z4)).run()
+            sage: TestSuite(P(Z4)).run()
         """
+        self._degree = n
         ConjugacyClassOfSubgroups.__init__(self, parent, C)
     
     def subgroup_of(self):
-        return SymmetricGroup(self.grade())
+        r"""
+        Return the symmetric group which this conjugacy class
+        of subgroups belongs to.
+
+        TESTS::
+
+            sage: from sage.rings.burnside import ConjugacyClassesOfSubgroups_SymmetricGroup
+            sage: C = ConjugacyClassesOfSubgroups_SymmetricGroup(3)
+            sage: Z3 = CyclicPermutationGroup(3)
+            sage: CZ3 = C(Z3)
+            sage: CZ3.subgroup_of()
+            Symmetric group of order 3! as a permutation group
+            sage: Z2 = CyclicPermutationGroup(2)
+            sage: CZ2 = C(Z2)
+            sage: CZ2.subgroup_of()
+            Symmetric group of order 3! as a permutation group
+        """
+        return SymmetricGroup(self._degree)
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: H = PermutationGroup([[(1,2),(5,6)],[(3,4)]])
+            sage: P._indices(H)
+            (6, ((3,4), (1,2)(5,6)))
+        """
         return f"({self.grade()}, {super()._repr_()})"
 
     def grade(self):
-        return self._C.degree()
+        r"""
+        Return the degree of this subgroup (which is the degree
+        of the symmetric group it is a subgroup of).
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: D2 = DiCyclicGroup(2)
+            sage: P._indices(D2).grade()
+            8
+        """
+        return self._degree
 
     def __hash__(self):
         r"""
         Return the hash of the representative of the conjugacy class.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: H1 = P(PermutationGroup([(1,2)],domain=[1,2,3]))
+            sage: H2 = P(PermutationGroup([(2,3)],domain=[1,2,3]))
+            sage: hash(H1) == hash(H2)
+            True
         """
         return hash((hash(SymmetricGroup(self.grade())), hash(self._C)))
 
@@ -355,6 +492,14 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
         Return if this element is equal to ``other``.
 
         Two elements compare equal if they are conjugate subgroups in the parent group.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: H1 = P(PermutationGroup([(1,2)],domain=[1,2,3]))
+            sage: H2 = P(PermutationGroup([(2,3)],domain=[1,2,3]))
+            sage: P[H1] == P[H2]
+            True
         """
         return (isinstance(other, ConjugacyClassOfSubgroups_SymmetricGroup)
                 and self.grade() == other.grade()
@@ -373,38 +518,130 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
         """
         return self != other and self <= other
 
-class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups):
+class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups, SubgroupStore):
     def __init__(self, n):
+        r"""
+        Initialize the set of conjugacy classes of SymmetricGroup(n).
+
+        INPUT:
+
+        ``n`` -- the degree of the symmetric group.
+
+        TESTS::
+
+            sage: from sage.rings.burnside import ConjugacyClassesOfSubgroups_SymmetricGroup
+            sage: C = ConjugacyClassesOfSubgroups_SymmetricGroup(4)
+            sage: TestSuite(C).run()
+        """
         ConjugacyClassesOfSubgroups.__init__(self, SymmetricGroup(n))
+
+    def _element_constructor_(self, x):
+        r"""
+        Construct the conjugacy class of subgroups containing ``x``.
+
+        TESTS::
+
+            sage: from sage.rings.burnside import ConjugacyClassesOfSubgroups_SymmetricGroup
+            sage: C = ConjugacyClassesOfSubgroups_SymmetricGroup(4)
+            sage: Z4 = CyclicPermutationGroup(4)
+            sage: C(Z4)
+            (4, ((1,2,3,4),))
+        """
+        if x.is_subgroup(self._G):
+            key = self.element_class(self, self._G.degree(), x)
+            return self._normalize(key)
+        raise ValueError(f"unable to convert {x} into {self}: not a subgroup of {self._G}")
 
     Element = ConjugacyClassOfSubgroups_SymmetricGroup
 
 class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Parent, SubgroupStore):
     def __init__(self):
+        r"""
+        Initialize the set of conjugacy classes of all symmetric groups.
+
+        This is a graded set graded by the non-negative integers. The homogeneous piece
+        with grade n is the set of conjugacy classes of subgroups of SymmetricGroup(n).
+
+        TESTS::
+
+            sage: from sage.rings.burnside import ConjugacyClassesOfSubgroups_SymmetricGroup_all
+            sage: C = ConjugacyClassesOfSubgroups_SymmetricGroup_all()
+            sage: TestSuite(C).run()
+        """
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, category=category)
         SubgroupStore.__init__(self)
 
     def _group_invariant(self, H):
+        r"""
+        Returns the set of computed group invariants
+        associated with a subgroup H.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: S3 = SymmetricGroup(3)
+            sage: P._indices._group_invariant(S3)
+            (6, 3)
+        """
         return (H.order(), H.degree())
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: P._indices
+            Conjugacy classes of subgroups of symmetric groups
+        """
         return "Conjugacy classes of subgroups of symmetric groups"
 
-    def subset(self, size):
-        return ConjugacyClassesOfSubgroups_SymmetricGroup(size)
+    def subset(self, n):
+        r"""
+        Returns the conjugacy classes of subgroups of SymmetricGroup(n).
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: P._indices.subset(3)
+            Conjugacy classes of subgroups of Symmetric group of order 3! as a permutation group
+        """
+        return ConjugacyClassesOfSubgroups_SymmetricGroup(n)
 
     def _element_constructor_(self, x):
         r"""
-        x is a subgroup of a symmetric group.
+        Construct the conjugacy class of subgroups containing ``x``.
+
+        TESTS::
+
+            sage: from sage.rings.burnside import ConjugacyClassesOfSubgroups_SymmetricGroup_all
+            sage: C = ConjugacyClassesOfSubgroups_SymmetricGroup()
+            sage: Z4 = CyclicPermutationGroup(4)
+            sage: C(Z4)
+            (4, ((1,2,3,4),))
+            sage: S3 = SymmetricGroup(3)
+            sage: C(S3)
+            (3, ((1,2,3), (1,2)))
         """
         G = SymmetricGroup(x.degree())
         if x.is_subgroup(G):
-            key = self.element_class(self, x)
+            key = self.element_class(self, x.degree(), x)
             return self._normalize(key)
         raise ValueError(f"unable to convert {x} into {self}: not a subgroup of {G}")
 
     def __iter__(self):
+        r"""
+        Return iterator over conjugacy classes of subgroups of symmetric groups.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: it = iter(P._indices)
+            sage: [next(it) for _ in range(1,7)]
+            [(0, ((),)), (1, ((),)), (2, ((),)), (2, ((1,2),)), (3, ((),)), (3, ((2,3),))]
+        """
         n = 0
         while True:
             yield from self.subset(n)
@@ -413,6 +650,19 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
     def __contains__(self, H):
         r"""
         Returns if H is a subgroup of a symmetric group.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: Z3 = CyclicPermutationGroup(3)
+            sage: Z3 in P._indices
+            True
+            sage: SH = PermutationGroup([[(1,3)]],domain=[1,3])
+            sage: SH in P._indices
+            False
+            sage: SH2 = PermutationGroup([[(1,3)]])
+            sage: SH2 in P._indices
+            True
         """
         return H in self.subset(H.degree())
 
@@ -633,17 +883,32 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
                                         prefix="PMD")
         self._print_options['names'] = self._indices._names
 
-    def __getitem__(self, x):
+    def __getitem__(self, H):
         r"""
-        Return the basis element indexed by ``x``.
+        Return the basis element indexed by ``H``.
+
+        ``H`` must be a subgroup of a symmetric group.
+
+        EXAMPLES::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: Z4 = CyclicPermutationGroup(4)
+            sage: P[Z4]
+            PMD[(4, ((1,2,3,4),))]
         """
-        return self._from_dict({self._indices(x): 1})
+        return self._from_dict({self._indices(H): 1})
 
     @cached_method
     def one_basis(self):
         r"""
-        Returns (0, S0), which indexes the one of this algebra,
+        Returns SymmetricGroup(0), which indexes the one of this algebra,
         as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+
+        EXAMPLES::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: P.one_basis()
+            (0, ((),))
         """
         return self._indices(SymmetricGroup(0))
 
@@ -655,6 +920,14 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
     # of subgroups of S_n.
 
     def product_on_basis(self, H, K):
+        r"""
+        Return the product of the basis elements indexed by ``H`` and ``K``.
+
+        Let `H` be a subgroup of `\mathfrak{G}_n` and `K` be a subgroup of `\mathfrak{G}_m`.
+        Then we define their Cauchy product as the subgroup of `\mathfrak{G}_{n+m}` given by
+        `H \ast K = \{h \dot k \vert h \in H_{\{1 \ldots n\}}, K_{\{n+1 \ldots n+m\}}\}` where
+        the subscripts denote the domains on which H and K act.
+        """        
         n, m = H.grade(), K.grade()
         # There is no way to create SymmetricGroup(0) using the
         # PermutationGroup constructor as used here, so a special
@@ -674,11 +947,29 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
                              + [H_extend.identity()], domain=range(1,n+m+1))
         return self._from_dict({self._indices(G): 1})
 
-    def degree_on_basis(self, x):
+    def degree_on_basis(self, H):
         r"""
-        x is an instance of ConjugacyClassOfSubgroups_SymmetricGroup.
+        Return the degree of the basis element indexed by ``H``.
+
+        H is an instance of ConjugacyClassOfSubgroups_SymmetricGroup.
+
+        EXAMPLES::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: Z4 = CyclicPermutationGroup(4)
+            sage: P.degree_on_basis(P._indices(Z4))
+            4
         """
-        return x.grade()
+        return H.grade()
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: P
+            Polynomial Molecular Decomposition
+        """
         return "Polynomial Molecular Decomposition"
