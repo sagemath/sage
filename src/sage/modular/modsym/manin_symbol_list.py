@@ -459,7 +459,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` -- (int) a symbol index
+        - ``j`` -- integer; a symbol index
 
         OUTPUT:
 
@@ -514,7 +514,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` -- (int) a symbol index
+        - ``j`` -- integer; a symbol index
 
         OUTPUT:
 
@@ -553,7 +553,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` -- (int) a symbol index
+        - ``j`` -- integer; a symbol index
 
         OUTPUT: see documentation for apply()
 
@@ -596,7 +596,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` -- (int) a symbol index
+        - ``j`` -- integer; a symbol index
 
         OUTPUT: see documentation for apply()
 
@@ -639,7 +639,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` -- (int) a symbol index
+        - ``j`` -- integer; a symbol index
 
         - ``m = [a, b, c, d]`` a list of 4 integers, which defines a 2x2 matrix
 

@@ -112,7 +112,7 @@ class ModularParameterization:
 
     def __eq__(self, other):
         r"""
-        Compares two modular parametrizations by simply comparing the elliptic curves.
+        Compare two modular parametrizations by simply comparing the elliptic curves.
 
         EXAMPLES::
 

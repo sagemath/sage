@@ -6,7 +6,7 @@ from sage.structure.sage_object import SageObject
 class _ProofPref(SageObject):
     """
     An object that holds global proof preferences.  For now these are merely
-    ``True``/``False`` flags for various parts of Sage that use probabilistic
+    boolean flags for various parts of Sage that use probabilistic
     algorithms.
 
     A ``True`` flag means that the subsystem (such as linear algebra or number

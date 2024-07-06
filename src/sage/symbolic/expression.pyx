@@ -3524,8 +3524,8 @@ cdef class Expression(Expression_abc):
         test this relation after casting into the domain.
 
         Because the interval fields never return false positives, we can be
-        assured that if ``True`` or False is returned (and proof is False) then
-        the answer is correct.
+        assured that if ``True`` or ``False`` is returned (and proof is
+        ``False``) then the answer is correct.
 
         INPUT:
 

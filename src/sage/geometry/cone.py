@@ -6346,29 +6346,29 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     INPUT:
 
-    * ``lattice`` -- (default: random) a ``ToricLattice`` object in
+    - ``lattice`` -- (default: random) a ``ToricLattice`` object in
       which the returned cone will live. By default a new lattice will
       be constructed with a randomly-chosen rank (subject to
       ``min_ambient_dim`` and ``max_ambient_dim``).
 
-    * ``min_ambient_dim`` -- (default: zero) a nonnegative integer
+    - ``min_ambient_dim`` -- (default: zero) a nonnegative integer
       representing the minimum dimension of the ambient lattice
 
-    * ``max_ambient_dim`` -- (default: random) a nonnegative integer
+    - ``max_ambient_dim`` -- (default: random) a nonnegative integer
       representing the maximum dimension of the ambient lattice
 
-    * ``min_rays`` -- (default: zero) a nonnegative integer representing
+    - ``min_rays`` -- (default: zero) a nonnegative integer representing
       the minimum number of generating rays of the cone
 
-    * ``max_rays`` -- (default: random) a nonnegative integer representing
+    - ``max_rays`` -- (default: random) a nonnegative integer representing
       the maximum number of generating rays of the cone
 
-    * ``strictly_convex`` -- (default: random) whether or not to make the
+    - ``strictly_convex`` -- (default: random) whether or not to make the
       returned cone strictly convex. Specify ``True`` for a strictly convex
       cone, ``False`` for a non-strictly-convex cone, or ``None`` if you
       don't care.
 
-    * ``solid`` -- (default: random) whether or not to make the returned
+    - ``solid`` -- (default: random) whether or not to make the returned
       cone solid. Specify ``True`` for a solid cone, ``False`` for a
       non-solid cone, or ``None`` if you don't care.
 

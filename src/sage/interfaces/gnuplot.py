@@ -149,7 +149,7 @@ class Gnuplot(SageObject):
         - ``range2`` -- string; range of values for another
           variable, e.g., ``'[v=-0.2:0.2]'``
 
-        - ``samples`` -- (int) number of sample points to use
+        - ``samples`` -- integer; number of sample points to use
 
         - ``title`` -- string; title of the graph
 

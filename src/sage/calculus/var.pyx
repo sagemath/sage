@@ -143,7 +143,7 @@ def function(s, **kwds):
       other systems, this is used by the interfaces internally during conversion
     - ``eval_func`` -- method used for automatic evaluation
     - ``evalf_func`` -- method used for numeric evaluation
-    - ``evalf_params_first`` -- bool to indicate if parameters should be
+    - ``evalf_params_first`` -- boolean to indicate if parameters should be
       evaluated numerically before calling the custom evalf function
     - ``conjugate_func`` -- method used for complex conjugation
     - ``real_part_func`` -- method used when taking real parts

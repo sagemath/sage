@@ -9032,7 +9032,7 @@ class NumberField_absolute(NumberField_generic):
 
         OUTPUT:
 
-        - `V` -- a vector space over the rational numbers
+        - ``V`` -- a vector space over the rational numbers
 
         - ``from_V`` -- an isomorphism from `V` to ``self`` (if requested)
 

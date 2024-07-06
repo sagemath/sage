@@ -45,10 +45,10 @@ class DyckPath(PathTableau):
 
     INPUT:
 
-    * a sequence of nonnegative integers
-    * a two row standard skew tableau
-    * a Dyck word
-    * a noncrossing perfect matching
+    - a sequence of nonnegative integers
+    - a two row standard skew tableau
+    - a Dyck word
+    - a noncrossing perfect matching
 
     EXAMPLES::
 

@@ -1038,7 +1038,7 @@ def primes(start=2, stop=None, proof=None):
     - ``stop`` -- integer (or infinity); upper (open) bound for the
       primes
 
-    - ``proof`` -- bool or ``None`` (default: ``None``); if ``True``, the
+    - ``proof`` -- boolean or ``None`` (default: ``None``); if ``True``, the
       function yields only proven primes.  If ``False``, the function uses a
       pseudo-primality test, which is much faster for really big numbers but
       does not provide a proof of primality. If ``None``, uses the global
@@ -1385,7 +1385,7 @@ def random_prime(n, proof=None, lbound=2):
 
     - ``n`` -- integer `\geq 2`
 
-    - ``proof`` -- bool or ``None`` (default: ``None``); if ``False``, the function uses a
+    - ``proof`` -- boolean or ``None`` (default: ``None``); if ``False``, the function uses a
       pseudo-primality test, which is much faster for really big numbers but
       does not provide a proof of primality. If ``None``, uses the global default
       (see :mod:`sage.structure.proof.proof`)

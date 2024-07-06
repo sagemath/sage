@@ -150,7 +150,7 @@ def kirkman_triple_system(v,existence=False):
 
     INPUT:
 
-    - `n` -- integer
+    - ``n`` -- integer
 
     - ``existence`` -- boolean (default: ``False``); whether to build the
       `KTS(n)` or only answer whether it exists
@@ -374,7 +374,7 @@ def v_4_1_rbibd(v,existence=False):
 
     INPUT:
 
-    - `n` -- integer
+    - ``n`` -- integer
 
     - ``existence`` -- boolean (default: ``False``); whether to build the
       design or only answer whether it exists

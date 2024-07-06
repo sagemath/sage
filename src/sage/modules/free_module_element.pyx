@@ -3174,7 +3174,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        * "p" - default: 2 - p value for the norm
+        - ``p`` -- (default: 2) p value for the norm
 
         EXAMPLES::
 

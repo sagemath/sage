@@ -5859,7 +5859,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``proof`` -- bool or None (default: ``None``, see
+        - ``proof`` -- boolean or ``None`` (default: ``None``, see
           ``proof.arithmetic`` or :mod:`sage.structure.proof`); note that the
           global Sage default is ``proof=True``
 

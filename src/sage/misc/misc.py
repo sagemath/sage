@@ -1030,7 +1030,7 @@ def increase_recursion_limit(increment):
 
     INPUT:
 
-    - `increment` -- increment to add to the current limit
+    - ``increment`` -- increment to add to the current limit
 
     EXAMPLES::
 

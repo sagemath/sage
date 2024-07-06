@@ -150,9 +150,8 @@ class PeriodLattice_ell(PeriodLattice):
 
         - ``E`` -- an elliptic curve
 
-        - ``embedding`` (default: ``None``) -- an embedding of the base
-          field `K` of ``E`` into a real or complex field.  If
-          ``None``:
+        - ``embedding`` -- (default: ``None``) an embedding of the base
+          field `K` of ``E`` into a real or complex field.  If ``None``:
 
           - use the built-in coercion to `\RR` for `K=\QQ`;
 
@@ -280,7 +279,7 @@ class PeriodLattice_ell(PeriodLattice):
 
     def __richcmp__(self, other, op):
         r"""
-        Comparison function for period lattices
+        Comparison function for period lattices.
 
         TESTS::
 
@@ -339,11 +338,11 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``P`` (point) -- a point on the elliptic curve associated
-          with this period lattice.
+        - ``P`` -- a point on the elliptic curve associated with this period
+          lattice
 
-        - ``prec`` (default: ``None``) -- precision in bits (default
-          precision if ``None``).
+        - ``prec`` -- (default: ``None``) precision in bits (default
+          precision if ``None``)
 
         OUTPUT:
 
@@ -400,13 +399,13 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (default: ``None``) -- precision in bits (default
-          precision if ``None``).
+        - ``prec`` -- (default: ``None``) precision in bits (default
+          precision if ``None``)
 
-        - ``algorithm`` (string, default ``'sage'``) -- choice of
+        - ``algorithm`` -- string (default: ``'sage'``); choice of
           implementation (for real embeddings only) between ``'sage'``
           (native Sage implementation) or ``'pari'`` (use the PARI
-          library: only available for real embeddings).
+          library: only available for real embeddings)
 
         OUTPUT:
 
@@ -485,13 +484,13 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (default: ``None``) -- precision in bits (default
-          precision if ``None``).
+        - ``prec`` -- (default: ``None``) precision in bits (default
+          precision if ``None``)
 
-        - ``algorithm`` (string, default ``'sage'``) -- choice of
+        - ``algorithm`` -- string (default: ``'sage'``); choice of
           implementation (for real embeddings only) between ``'sage'``
           (native Sage implementation) or ``'pari'`` (use the PARI
-          library: only available for real embeddings).
+          library: only available for real embeddings)
 
         OUTPUT:
 
@@ -523,13 +522,13 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (default: ``None``) -- precision in bits (default
-          precision if ``None``).
+        - ``prec`` -- (default: ``None``) precision in bits (default
+          precision if ``None``)
 
-        - ``algorithm`` (string, default ``'sage'``) -- choice of
+        - ``algorithm`` -- string (default: ``'sage'``); choice of
           implementation (for real embeddings only) between ``'sage'``
           (native Sage implementation) or ``'pari'`` (use the PARI
-          library: only available for real embeddings).
+          library: only available for real embeddings)
 
         OUTPUT:
 
@@ -580,13 +579,13 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (default: ``None``) -- precision in bits (default
-          precision if ``None``).
+        - ``prec`` -- (default: ``None``) precision in bits (default
+          precision if ``None``)
 
-        - ``algorithm`` (string, default 'sage') -- choice of
+        - ``algorithm`` -- string (default: ``'sage'``); choice of
           implementation (for real embeddings only) between 'sage'
           (native Sage implementation) or 'pari' (use the PARI
-          library: only available for real embeddings).
+          library: only available for real embeddings)
 
         OUTPUT:
 
@@ -637,13 +636,14 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - `prec` (int or ``None`` (default)) -- floating point
-          precision (in bits); if None, use the default precision.
+        - ``prec`` -- integer or ``None`` (default); floating point
+          precision (in bits). If ``None``, use the default precision.
 
-        - `algorithm` (string, default 'sage') -- choice of implementation between
-          - `pari`: use the PARI library
+        - ``algorithm`` string (default: ``'sage'``); choice of implementation between
 
-          - `sage`: use a native Sage implementation (with the same underlying algorithm).
+          - ``'pari'`` -- use the PARI library
+
+          - ``'sage'`` -- use a native Sage implementation (with the same underlying algorithm)
 
         OUTPUT:
 
@@ -710,17 +710,17 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (integer or ``None`` (default)) -- floating point precision (in bits); if ``None``,
-          use the default precision.
+        - ``prec`` -- integer or ``None`` (default); floating point precision
+          (in bits); if ``None``, use the default precision
 
-        - ``normalise`` (bool, default ``True``) -- whether to normalise the
-          basis after computation.
+        - ``normalise`` -- boolean (default: ``True``); whether to normalise the
+          basis after computation
 
         OUTPUT:
 
         (tuple of Complex) `(\omega_1,\omega_2)` where the lattice has
         the form `\ZZ\omega_1 + \ZZ\omega_2`.  If `normalise` is
-        `True`, the basis is normalised so that `(\omega_1/\omega_2)`
+        ``True``, the basis is normalised so that `(\omega_1/\omega_2)`
         is in the fundamental region of the upper half plane.
 
         EXAMPLES::
@@ -819,7 +819,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         .. NOTE::
 
-            Only defined for real lattices; a :class:`RuntimeError`
+            Only defined for real lattices; a :exc:`RuntimeError`
             is raised for non-real lattices.
 
         EXAMPLES::
@@ -854,17 +854,17 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (integer or ``None`` (default)) -- real precision in
+        - ``prec`` -- integer or ``None`` (default); real precision in
           bits (default real precision if ``None``)
 
-        - ``algorithm`` (string, default ``'sage'``) -- choice of
+        - ``algorithm`` -- string (default: ``'sage'``); choice of
           implementation (for real embeddings only) between ``'sage'``
           (native Sage implementation) or ``'pari'`` (use the PARI
-          library: only available for real embeddings).
+          library: only available for real embeddings)
 
         .. NOTE::
 
-            Only defined for real lattices; a :class:`RuntimeError`
+            Only defined for real lattices; a :exc:`RuntimeError`
             is raised for non-real lattices.
 
         EXAMPLES::
@@ -894,11 +894,11 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (int or ``None`` (default)) -- real precision in
+        - ``prec`` -- integer or ``None`` (default); real precision in
           bits (default real precision if ``None``)
 
-        - ``bsd_normalise`` (bool, default ``False``) -- flag to use
-          BSD normalisation in the complex case.
+        - ``bsd_normalise`` -- boolean (default: ``False``); flag to use
+          BSD normalisation in the complex case
 
         OUTPUT:
 
@@ -977,12 +977,12 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (int or ``None`` (default)) -- real precision in
-          bits (default real precision if ``None``).
+        - ``prec`` -- integer or ``None`` (default); real precision in
+          bits (default real precision if ``None``)
 
-        - ``normalised`` (bool, default ``False``) -- if ``True`` and the
+        - ``normalised`` -- boolean (default: ``False``); if ``True`` and the
           embedding is real, use the normalised basis (see
-          :meth:`normalised_basis`) instead of the default.
+          :meth:`normalised_basis`) instead of the default
 
         OUTPUT:
 
@@ -1046,8 +1046,8 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (int or ``None`` (default)) -- real precision in
-          bits (default real precision if ``None``).
+        - ``prec`` -- (int or ``None`` -- default); real precision in
+          bits (default real precision if ``None``)
 
         EXAMPLES::
 
@@ -1078,8 +1078,8 @@ class PeriodLattice_ell(PeriodLattice):
 
         - ``z`` -- a complex number
 
-        - ``prec`` (default: ``None``) -- real precision in bits
-            (default real precision if ``None``).
+        - ``prec`` -- (default: ``None``) real precision in bits
+            (default real precision if ``None``)
 
         - ``flag`` --
 
@@ -1179,14 +1179,14 @@ class PeriodLattice_ell(PeriodLattice):
 
     def coordinates(self, z, rounding=None):
         r"""
-        Return the coordinates of a complex number w.r.t. the lattice basis
+        Return the coordinates of a complex number w.r.t. the lattice basis.
 
         INPUT:
 
-        - ``z`` (complex) -- A complex number.
+        - ``z`` -- complex number
 
-        - ``rounding`` (default ``None``) -- whether and how to round the
-            output (see below).
+        - ``rounding`` -- (default: ``None``) whether and how to round the
+          output (see below)
 
         OUTPUT:
 
@@ -1256,11 +1256,11 @@ class PeriodLattice_ell(PeriodLattice):
 
     def reduce(self, z):
         r"""
-        Reduce a complex number modulo the lattice
+        Reduce a complex number modulo the lattice.
 
         INPUT:
 
-        - ``z`` (complex) -- A complex number.
+        - ``z`` -- complex number
 
         OUTPUT:
 
@@ -1335,11 +1335,11 @@ class PeriodLattice_ell(PeriodLattice):
           the embedded elliptic curve associated with this period
           lattice.
 
-        - ``prec`` (default: ``None``) -- real precision in bits
-          (default real precision if None).
+        - ``prec`` -- (default: ``None``) real precision in bits
+          (default real precision if ``None``)
 
-        - ``reduce`` (default: ``True``) -- if ``True``, the result
-          is reduced with respect to the period lattice basis.
+        - ``reduce`` -- boolean (default: ``True``); if ``True``, the result
+          is reduced with respect to the period lattice basis
 
         OUTPUT:
 
@@ -1535,14 +1535,14 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``P`` (point) -- A point on the elliptic curve associated
-          with this period lattice.
+        - ``P`` -- point on the elliptic curve associated with this period
+          lattice
 
-        - ``prec`` (default: ``None``) -- real precision in bits
-          (default real precision if ``None``).
+        - ``prec`` -- (default: ``None``) real precision in bits
+          (default real precision if ``None``)
 
-        - ``reduce`` (default: ``True``) -- if ``True``, the result
-          is reduced with respect to the period lattice basis.
+        - ``reduce`` -- boolean (default: ``True``); if ``True``, the result
+          is reduced with respect to the period lattice basis
 
         OUTPUT:
 
@@ -1730,9 +1730,9 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``z`` (complex) -- A complex number (viewed modulo this period lattice).
+        - ``z`` -- complex number (viewed modulo this period lattice)
 
-        - ``to_curve`` (bool, default ``True``):  see below.
+        - ``to_curve`` -- boolean (default: ``True``); see below
 
         OUTPUT:
 
@@ -1942,7 +1942,7 @@ def reduce_tau(tau):
 
     INPUT:
 
-    - ``tau`` (complex) -- a complex number with positive imaginary part
+    - ``tau`` -- complex number with positive imaginary part
 
     OUTPUT:
 
@@ -2037,7 +2037,7 @@ def extended_agm_iteration(a, b, c):
 
     INPUT:
 
-    - ``a``, ``b``, ``c`` (real or complex) -- three real or complex numbers.
+    - ``a``, ``b``, ``c`` -- three real or complex numbers
 
     OUTPUT:
 

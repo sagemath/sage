@@ -269,11 +269,11 @@ class Polynomial_padic(Polynomial):
 
         INPUT:
 
-        * ``names`` -- name of the generator of the extension
+        - ``names`` -- name of the generator of the extension
 
-        * ``check_irreducible`` -- check whether the polynomial is irreducible
+        - ``check_irreducible`` -- check whether the polynomial is irreducible
 
-        * ``kwds`` -- see :meth:`sage.rings.padics.padic_generic.pAdicGeneric.extension`
+        - ``kwds`` -- see :meth:`sage.rings.padics.padic_generic.pAdicGeneric.extension`
 
         EXAMPLES::
 

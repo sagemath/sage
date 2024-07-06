@@ -61,9 +61,9 @@ def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
 
     INPUT:
 
-    - `a` and `b` -- integers with `a \geq b`
+    - ``a``, ``b`` -- integers with `a \geq b`
 
-    - `i` and `j` -- nonnegative integers with `1 \geq \frac{j}{b} \geq
+    - ``i``, ``j`` -- nonnegative integers with `1 \geq \frac{j}{b} \geq
       \frac{i}{a} \geq 0`
 
     OUTPUT: list of paths
@@ -165,7 +165,7 @@ def GeneralizedTamariLattice(a, b, m=1):
 
     INPUT:
 
-    - `a` and `b` -- integers with `a \geq b`
+    - ``a``, ``b`` -- integers with `a \geq b`
 
     - ``m`` -- a nonnegative rational number such that `a \geq b m`
 

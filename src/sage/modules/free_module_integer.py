@@ -239,7 +239,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
           echelonized and the result will be used as the default basis of the
           constructed submodule
 
-        - `` echelonized_basis`` -- (default: ``None``) if not ``None``, must
+        - ``echelonized_basis`` -- (default: ``None``) if not ``None``, must
           be the echelonized basis spanning the same submodule as ``basis``
 
         - ``already_echelonized`` -- boolean (default: ``False``); if ``True``,

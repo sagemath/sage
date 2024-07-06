@@ -19,7 +19,7 @@ def q_bernoulli(m, p=None):
 
     - ``m`` -- nonnegative integer
 
-    - `p` -- (default: ``None``) an optional value for `q`
+    - ``p`` -- (default: ``None``) an optional value for `q`
 
     OUTPUT:
 

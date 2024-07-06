@@ -75,7 +75,7 @@ Arithmetic with a point over an extension of a finite field::
 
 Arithmetic over `\ZZ/N\ZZ` with composite `N` is supported.  When an
 operation tries to invert a non-invertible element, a
-:class:`ZeroDivisionError` is raised and a factorization of the modulus appears
+:exc:`ZeroDivisionError` is raised and a factorization of the modulus appears
 in the error message::
 
     sage: N = 1715761513
@@ -276,9 +276,9 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         INPUT:
 
-        - curve -- an elliptic curve
-        - v -- data determining a point (another point, the integer
-                 0, or a tuple of coordinates)
+        - ``curve`` -- an elliptic curve
+        - ``v`` -- data determining a point (another point, the integer
+          0, or a tuple of coordinates)
 
         EXAMPLES::
 
@@ -409,7 +409,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     def __pari__(self):
         r"""
-        Converts this point to PARI format.
+        Convert this point to PARI format.
 
         EXAMPLES::
 
@@ -455,7 +455,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         Return the order of this point on the elliptic curve.
 
         If the point is zero, returns 1, otherwise raise a
-        :class:`NotImplementedError`.
+        :exc:`NotImplementedError`.
 
         For curves over number fields and finite fields, see below.
 
@@ -511,7 +511,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         INPUT:
 
-        - ``n`` -- integer, or its :class:`~sage.structure.factorization.Factorization`
+        - ``n`` -- integer or its :class:`~sage.structure.factorization.Factorization`
 
         ALGORITHM:
 
@@ -635,11 +635,11 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     def has_infinite_order(self):
         """
-        Return True if this point has infinite additive order as an element
+        Return ``True`` if this point has infinite additive order as an element
         of the group of points on this curve.
 
         For fields other than number fields and finite fields, this is
-        NotImplemented unless self.is_zero().
+        NotImplemented unless ``self.is_zero()``.
 
         EXAMPLES::
 
@@ -667,7 +667,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         INPUT:
 
         - ``**args`` -- all arguments get passed directly onto the point
-          plotting function.
+          plotting function
 
         EXAMPLES::
 
@@ -686,7 +686,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     def _add_(self, right):
         """
-        Add self to right.
+        Add ``self`` to ``right``.
 
         EXAMPLES::
 
@@ -776,7 +776,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     def _sub_(self, right):
         """
-        Subtract right from  self.
+        Subtract ``right`` from  ``self``.
 
         EXAMPLES::
 
@@ -822,7 +822,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
     def xy(self):
         """
         Return the `x` and `y` coordinates of this point, as a 2-tuple.
-        If this is the point at infinity, a :class:`ZeroDivisionError` is raised.
+        If this is the point at infinity, a :exc:`ZeroDivisionError` is raised.
 
         EXAMPLES::
 
@@ -845,7 +845,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
     def x(self):
         """
         Return the `x` coordinate of this point, as an element of the base field.
-        If this is the point at infinity, a :class:`ZeroDivisionError` is raised.
+        If this is the point at infinity, a :exc:`ZeroDivisionError` is raised.
 
         EXAMPLES::
 
@@ -868,7 +868,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
     def y(self):
         """
         Return the `y` coordinate of this point, as an element of the base field.
-        If this is the point at infinity, a :class:`ZeroDivisionError` is raised.
+        If this is the point at infinity, a :exc:`ZeroDivisionError` is raised.
 
         EXAMPLES::
 
@@ -890,16 +890,16 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     def is_divisible_by(self, m):
         """
-        Return True if there exists a point `Q` defined over the same
-        field as self such that `mQ` == self.
+        Return ``True`` if there exists a point `Q` defined over the same
+        field as ``self`` such that `mQ` == ``self``.
 
         INPUT:
 
-        - ``m`` -- a positive integer.
+        - ``m`` -- positive integer
 
         OUTPUT:
 
-        (bool) -- True if there is a solution, else False.
+        boolean; ``True`` if there is a solution, else False.
 
         .. WARNING::
 
@@ -1014,21 +1014,19 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         r"""
         Return a list of all points `Q` such that `mQ=P` where `P` = ``self``.
 
-        Only points on the elliptic curve containing self and defined
+        Only points on the elliptic curve containing ``self`` and defined
         over the base field are included.
 
         INPUT:
 
-        - ``m`` -- a positive integer
+        - ``m`` -- positive integer
 
-        - ``poly_only`` -- bool (default: ``False``); if True return
+        - ``poly_only`` -- boolean (default: ``False``); if ``True`` return
           polynomial whose roots give all possible `x`-coordinates of
-          `m`-th roots of ``self``.
+          `m`-th roots of ``self``
 
-        OUTPUT:
-
-        (list) -- a (possibly empty) list of solutions `Q` to `mQ=P`,
-        where `P` = self.
+        OUTPUT: a (possibly empty) list of solutions `Q` to `mQ=P`,
+        where `P` = ``self``
 
         EXAMPLES:
 
@@ -1260,20 +1258,19 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     def _divide_out(self, p):
         r"""
-        Return `(Q,k)` where `p^kQ` == self and `Q` cannot be divided by `p`.
+        Return `(Q,k)` where `p^kQ` == ``self`` and `Q` cannot be divided by `p`.
 
         .. WARNING::
 
             It is up to the caller to make sure that this does not loop
             endlessly.  It is used in
             ``EllipticCurve_generic._p_primary_torsion_basis()``, when
-            self will always have (finite) order which is a power of `p`,
+            ``self`` will always have (finite) order which is a power of `p`,
             so that the order of `Q` increases by a factor of `p` at each
             stage.
 
             Since it will clearly be in danger of looping when
-            self.is_zero(), this case is caught, but otherwise caveat
-            user.
+            ``self.is_zero()``, this case is caught, but otherwise caveat user.
 
         EXAMPLES::
 
@@ -1483,17 +1480,17 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     def _line_(self, R, Q):
         r"""
-        Computes the value at `Q` of a straight line through points
-        self and `R`.
+        Compute the value at `Q` of a straight line through points
+        ``self`` and `R`.
 
         INPUT:
 
-        - ``R``, ``Q`` -- points on self.curve() with ``Q`` nonzero.
+        - ``R``, ``Q`` -- points on ``self.curve()`` with ``Q`` nonzero
 
         OUTPUT:
 
-        An element of the base field self.curve().base_field().
-        A ValueError is raised if ``Q`` is zero.
+        An element of the base field ``self.curve().base_field()``.
+        A :exc:`ValueError` is raised if ``Q`` is zero.`
 
         EXAMPLES::
 
@@ -1564,15 +1561,15 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         INPUT:
 
-        - ``Q`` -- a nonzero point on self.curve().
+        - ``Q`` -- a nonzero point on ``self.curve()``
 
-        - ``n`` -- a nonzero integer. If `n<0` then return `Q`
-                   evaluated at `1/(v_{nP}*f_{n,P})` (used in the ate pairing).
+        - ``n`` -- nonzero integer; if `n<0` then return `Q`
+          evaluated at `1/(v_{nP}*f_{n,P})` (used in the ate pairing)
 
         OUTPUT:
 
         An element in the base field ``self.curve().base_field()``.
-        A :class:`ValueError` is raised if `Q` is zero.
+        A :exc:`ValueError` is raised if `Q` is zero.
 
         EXAMPLES::
 
@@ -1745,17 +1742,17 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         INPUT:
 
-        - ``Q`` -- another point on the same curve as ``self``.
+        - ``Q`` -- another point on the same curve as ``self``
 
-        - ``n`` -- an integer `n` such that `nP = nQ = (0:1:0)`, where
-          `P` is ``self``.
+        - ``n`` -- integer `n` such that `nP = nQ = (0:1:0)`, where
+          `P` is ``self``
 
-        - ``algorithm`` (default: ``None``) -- choices are ``pari``
-          and ``sage``. PARI is usually significantly faster, but it
+        - ``algorithm`` -- (default: ``None``) choices are ``'pari'``
+          and ``'sage'``. PARI is usually significantly faster, but it
           only works over finite fields. When ``None`` is given, a
           suitable algorithm is chosen automatically.
 
-        OUTPUT: an `n`'th root of unity in the base field of the curve
+        OUTPUT: an `n`-th root of unity in the base field of the curve
 
         EXAMPLES::
 
@@ -1849,7 +1846,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         - For ``algorithm='sage'``:
           Implemented using Proposition 8 in [Mil2004]_.  The value 1 is
           returned for linearly dependent input points.  This condition
-          is caught via a :class:`ZeroDivisionError`, since the use of a
+          is caught via a :exc:`ZeroDivisionError`, since the use of a
           discrete logarithm test for linear dependence is much too slow
           for large `n`.
 
@@ -1935,21 +1932,21 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         INPUT:
 
-        - ``P=self`` -- Elliptic curve point having order n
+        - ``P=self`` -- elliptic curve point having order `n`
 
-        - ``Q`` -- Elliptic curve point on same curve as P (can be any order)
+        - ``Q`` -- elliptic curve point on same curve as `P` (can be any order)
 
-        - ``n`` -- positive integer: order of P
+        - ``n`` -- positive integer; order of `P`
 
-        - ``k`` -- positive integer: embedding degree
+        - ``k`` -- positive integer; embedding degree
 
-        - ``q`` -- positive integer: size of base field (the "big"
+        - ``q`` -- positive integer; size of base field (the "big"
           field is `GF(q^k)`. `q` needs to be set only if its value
           cannot be deduced.)
 
         OUTPUT:
 
-        An `n`'th root of unity in the base field ``self.curve().base_field()``
+        An `n`-th root of unity in the base field ``self.curve().base_field()``.
 
         EXAMPLES:
 
@@ -2127,18 +2124,18 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         INPUT:
 
-        - `P` (``=self``) -- a point of order `n`, in `ker(\pi-1)`, where
-          `\pi` is the `q`-Frobenius map (e.g., `P` is `q`-rational).
+        - ``P`` (``=self``) -- a point of order `n`, in `ker(\pi-1)`, where
+          `\pi` is the `q`-Frobenius map (e.g., `P` is `q`-rational)
 
         - ``Q`` -- a point of order `n` in `ker(\pi-q)`
 
-        - ``n`` -- the order of `P` and `Q`.
+        - ``n`` -- the order of `P` and `Q`
 
-        - ``k`` -- the embedding degree.
+        - ``k`` -- the embedding degree
 
-        - ``t`` -- the trace of Frobenius of the curve over `GF(q)`.
+        - ``t`` -- the trace of Frobenius of the curve over `GF(q)`
 
-        - ``q`` -- (default: None) the size of base field (the "big"
+        - ``q`` -- (default: ``None``) the size of base field (the "big"
           field is `GF(q^k)`). `q` needs to be set only if its value
           cannot be deduced.
 
@@ -2535,7 +2532,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     def has_infinite_order(self):
         r"""
-        Return True iff this point has infinite order on the elliptic curve.
+        Return ``True`` iff this point has infinite order on the elliptic curve.
 
         EXAMPLES::
 
@@ -2558,7 +2555,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     def is_on_identity_component(self, embedding=None):
         r"""
-        Return True iff this point is on the identity component of
+        Return ``True`` iff this point is on the identity component of
         its curve with respect to a given (real or complex) embedding.
 
         INPUT:
@@ -2572,8 +2569,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         OUTPUT:
 
-        (bool) -- ``True`` iff the point is on the identity component of
-        the curve.  (If the point is zero then the result is True.)
+        boolean; ``True`` iff the point is on the identity component of
+        the curve.  (If the point is zero then the result is ``True``.)
 
         EXAMPLES:
 
@@ -2636,7 +2633,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     def has_good_reduction(self, P=None):
         r"""
-        Returns True iff this point has good reduction modulo a prime.
+        Return ``True`` iff this point has good reduction modulo a prime.
 
         INPUT:
 
@@ -2645,9 +2642,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         OUTPUT:
 
-        (bool) If a prime `P` of the base field is specified, returns
-        True iff the point has good reduction at `P`; otherwise,
-        return true if the point has god reduction at all primes in
+        boolean; If a prime `P` of the base field is specified, returns
+        ``True`` iff the point has good reduction at `P`; otherwise,
+        return ``True`` if the point has god reduction at all primes in
         the support of the discriminant of this model.
 
         EXAMPLES::
@@ -2762,7 +2759,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        - ``self`` -- A point on an elliptic curve.
+        - ``self`` -- a point on an elliptic curve
 
         - ``p`` -- a prime number
 
@@ -2812,25 +2809,23 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        - ``self`` -- a point on an elliptic curve over a number field
-          `K`.
+        - ``self`` -- a point on an elliptic curve over a number field `K`
 
-        - ``precision`` -- positive integer, or None (default). The
-          precision in bits of the result. If None, the default real
+        - ``precision`` -- positive integer, or ``None`` (default). The
+          precision in bits of the result. If ``None``, the default real
           precision is used.
 
-        - ``normalised`` -- boolean. If True (default), the height is
-          normalised to be invariant under extension of `K`. If False,
-          return this normalised height multiplied by the degree of
-          `K`.
+        - ``normalised`` -- boolean. If ``True`` (default), the height is
+          normalised to be invariant under extension of `K`. If ``False``,
+          return this normalised height multiplied by the degree of `K`.
 
-        - ``algorithm`` -- string: either ``'pari'`` (default) or ``'sage'``.
+        - ``algorithm`` -- string; either ``'pari'`` (default) or ``'sage'``.
           If ``'pari'`` and the base field is `\QQ`, use the PARI library
           function; otherwise use the Sage implementation.
 
         OUTPUT:
 
-        The rational number 0, or a non-negative real number.
+        The rational number 0, or a nonnegative real number.
 
         There are two normalisations used in the literature, one of
         which is double the other. We use the larger of the two, which
@@ -3075,26 +3070,24 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     def archimedean_local_height(self, v=None, prec=None, weighted=False):
         """
-        Compute the local height of self at the archimedean place `v`.
+        Compute the local height of ``self`` at the archimedean place `v`.
 
         INPUT:
 
-        - ``self`` -- a point on an elliptic curve over a number field
-          `K`.
+        - ``self`` -- a point on an elliptic curve over a number field `K`
 
         - ``v`` -- a real or complex embedding of K, or None (default).
           If `v` is a real or complex embedding, return the local
-          height of self at `v`. If `v` is None, return the total
+          height of ``self`` at `v`. If `v` is None, return the total
           archimedean contribution to the global height.
 
-        - ``prec`` -- integer, or None (default). The precision of the
-          computation. If None, the precision is deduced from `v`.
+        - ``prec`` -- integer or ``None`` (default). The precision of the
+          computation. If ``None``, the precision is deduced from `v`
 
-        - ``weighted`` -- boolean. If False (default), the height is
-          normalised to be invariant under extension of `K`. If True,
+        - ``weighted`` -- boolean. If ``False`` (default), the height is
+          normalised to be invariant under extension of `K`. If ``True``,
           return this normalised height multiplied by the local degree
-          if `v` is a single place, or by the degree of `K` if `v` is
-          None.
+          if `v` is a single place, or by the degree of `K` if `v` is ``None``.
 
         OUTPUT:
 
@@ -3142,7 +3135,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.archimedean_local_height()
             1.98723816350773
 
-        Local heights of torsion points can be non-zero (unlike the
+        Local heights of torsion points can be nonzero (unlike the
         global height)::
 
             sage: # needs sage.rings.number_field
@@ -3314,22 +3307,20 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        - ``self`` -- a point on an elliptic curve over a number field
-          `K`.
+        - ``self`` -- a point on an elliptic curve over a number field `K`
 
         - ``v`` -- a non-archimedean place of `K`, or ``None`` (default).
           If `v` is a non-archimedean place, return the local height
-          of self at `v`. If `v` is ``None``, return the total
+          of ``self`` at `v`. If `v` is ``None``, return the total
           non-archimedean contribution to the global height.
 
-        - ``prec`` -- integer, or ``None`` (default). The precision of the
-          computation. If ``None``, the height is returned symbolically.
+        - ``prec`` -- integer; or ``None`` (default). The precision of the
+          computation. If ``None``, the height is returned symbolically
 
         - ``weighted`` -- boolean. If ``False`` (default), the height is
           normalised to be invariant under extension of `K`. If ``True``,
           return this normalised height multiplied by the local degree
-          if `v` is a single place, or by the degree of `K` if `v` is
-          None.
+          if `v` is a single place, or by the degree of `K` if `v` is ``None``.
 
         OUTPUT:
 
@@ -3378,7 +3369,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.non_archimedean_local_height()
             -log(3)
 
-        Local heights of torsion points can be non-zero (unlike the
+        Local heights of torsion points can be nonzero (unlike the
         global height)::
 
             sage: # needs sage.rings.number_field
@@ -3509,12 +3500,12 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        - ``embedding``: an embedding of the base field into `\RR` or `\CC`
+        - ``embedding`` -- an embedding of the base field into `\RR` or `\CC`
 
-        - ``precision``: a positive integer (default 100) setting the
+        - ``precision`` -- a positive integer (default: 100) setting the
           number of bits of precision for the computation
 
-        - ``algorithm``: either ``'pari'`` (default for real embeddings)
+        - ``algorithm`` -- either ``'pari'`` (default: for real embeddings)
           to use PARI's :pari:`ellpointtoz`, or ``'sage'`` for a native
           implementation.  Ignored for complex embeddings.
 
@@ -3713,12 +3704,14 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     def padic_elliptic_logarithm(self, p, absprec=20):
         r"""
-        Computes the `p`-adic elliptic logarithm of this point.
+        Compute the `p`-adic elliptic logarithm of this point.
 
         INPUT:
 
-        - ``p`` -- integer: a prime ``absprec`` -- integer (default: 20):
-          the initial `p`-adic absolute precision of the computation
+        - ``p`` -- integer; a prime
+
+        - ``absprec`` -- integer (default: 20); the initial `p`-adic absolute
+          precision of the computation
 
         OUTPUT:
 
@@ -3854,7 +3847,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
     """
     def _magma_init_(self, magma):
         """
-        Return a string representation of self that ``MAGMA`` can
+        Return a string representation of ``self`` that ``MAGMA`` can
         use for input.
 
         EXAMPLES::
@@ -3926,7 +3919,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         In other words, return an integer `x` such that `xP = Q` where
         `P` is ``base`` and `Q` is this point.
 
-        A :class:`ValueError` is raised if there is no solution.
+        A :exc:`ValueError` is raised if there is no solution.
 
         ALGORITHM:
 
@@ -3952,7 +3945,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        - ``base`` (point) -- another point on the same curve as ``self``.
+        - ``base`` -- another point on the same curve as ``self``
 
         OUTPUT:
 
@@ -4049,8 +4042,8 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        - ``Q`` (point) -- another point on the same curve as ``self``.
-        - ``p`` (integer) --  a prime equal to the order of the curve.
+        - ``Q`` -- point; another point on the same curve as ``self``
+        - ``p`` -- integer; a prime equal to the order of the curve
 
         OUTPUT:
 

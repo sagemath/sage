@@ -34,7 +34,7 @@ cdef extern from "transcendantal.c":
 
 cdef class PowComputer_(PowComputer_base):
     """
-    A PowComputer for a fixed-modulus padic ring.
+    A PowComputer for a fixed-modulus `p`-adic ring.
     """
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field):
         """

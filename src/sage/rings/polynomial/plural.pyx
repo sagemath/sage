@@ -2225,7 +2225,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        * "copy" -- ignored
+        - ``copy`` -- ignored
 
         EXAMPLES::
 

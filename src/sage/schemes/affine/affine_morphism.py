@@ -274,7 +274,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
     def __eq__(self, right):
         """
-        Tests the equality of two affine maps.
+        Test the equality of two affine maps.
 
         INPUT:
 
@@ -310,7 +310,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
     def __ne__(self, right):
         """
-        Tests the inequality of two affine maps.
+        Test the inequality of two affine maps.
 
         INPUT:
 
@@ -440,7 +440,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers; if ``n`` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: a morphism from the projective embedding of the domain of this map
@@ -634,9 +634,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         """
         Return this endomorphism as a :class:`DynamicalSystem_affine`.
 
-        OUTPUT:
-
-        - :class:`DynamicalSystem_affine`
+        OUTPUT: :class:`DynamicalSystem_affine`
 
         EXAMPLES::
 
@@ -693,7 +691,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
         OUTPUT: a real number
 
@@ -751,14 +749,12 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -807,14 +803,12 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -858,9 +852,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         The `(i, j)` entry of the Jacobian matrix is the partial derivative
         ``diff(functions[i], variables[j])``.
 
-        OUTPUT:
-
-        - matrix with coordinates in the coordinate ring of the map.
+        OUTPUT: matrix with coordinates in the coordinate ring of the map
 
         EXAMPLES::
 
@@ -1287,7 +1279,6 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: f = A2.hom([x*y, y, x], P2)
             sage: f.indeterminacy_points()                                              # needs sage.libs.singular
             [(0, 0)]
-
         """
         if F is None:
             fcn = self
@@ -1519,7 +1510,6 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
               y*z
             sage: L.dimension()                                                         # needs sage.libs.singular
             1
-
         """
         # homogenize using 0th affine patch both for domain and codomain
         h = self.homogenize(0)

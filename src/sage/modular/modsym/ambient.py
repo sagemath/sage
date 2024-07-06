@@ -1015,7 +1015,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         - ``M`` -- ModularSymbols; codomain (a space of modular symbols)
 
-        - ``H`` -- list; list of matrices in `M_2(\ZZ)`
+        - ``H`` -- list of matrices in `M_2(\ZZ)`
 
         - ``t`` -- integer (default: 1)
 
@@ -1499,9 +1499,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         """
         Return the rank of this modular symbols ambient space.
 
-        OUTPUT:
-
-        (int) The rank of this space of modular symbols.
+        OUTPUT: integer; the rank of this space of modular symbols
 
         EXAMPLES::
 

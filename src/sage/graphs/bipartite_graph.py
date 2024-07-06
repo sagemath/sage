@@ -758,10 +758,10 @@ class BipartiteGraph(Graph):
         - ``vertices`` -- sequence of vertices to add
 
         - ``left`` -- (default: ``False``) either ``True`` or sequence of same
-          length as ``vertices`` with ``True``/``False`` elements
+          length as ``vertices`` with boolean elements
 
         - ``right`` -- (default: ``False``) either ``True`` or sequence of the
-          same length as ``vertices`` with ``True``/``False`` elements
+          same length as ``vertices`` with boolean elements
 
         Only one of ``left`` and ``right`` keywords should be provided.  See
         the examples below.

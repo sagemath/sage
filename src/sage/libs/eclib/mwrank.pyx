@@ -85,9 +85,7 @@ def get_precision():
     Return the working floating point bit precision of mwrank, which is
     equal to the global NTL real number precision.
 
-    OUTPUT:
-
-    (int) The current precision in bits.
+    OUTPUT: integer; the current precision in bits
 
     See also :meth:`set_precision`.
 
@@ -1149,9 +1147,7 @@ cdef class _two_descent:
         """
         Return the success flag (after doing a 2-descent).
 
-        OUTPUT:
-
-        (bool) Flag indicating whether or not 2-descent was successful.
+        OUTPUT: boolean flag indicating whether or not 2-descent was successful
 
         EXAMPLES::
 
@@ -1178,9 +1174,7 @@ cdef class _two_descent:
         """
         Return the certainty flag (after doing a 2-descent).
 
-        OUTPUT:
-
-        (bool) ``True`` if the rank upper and lower bounds are equal.
+        OUTPUT: boolean; ``True`` if the rank upper and lower bounds are equal
 
         EXAMPLES::
 

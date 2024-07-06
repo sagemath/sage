@@ -1383,7 +1383,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        - `ftpdata` (string) -- the name of the directory in which the data is
+        - ``ftpdata`` -- string; the name of the directory in which the data is
 
         - ``largest_conductor`` -- integer (default: 0); if 0,
           then only include data up to that conductor

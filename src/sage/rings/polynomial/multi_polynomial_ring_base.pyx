@@ -364,14 +364,14 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        * ``bound`` -- either an integer bounding the total degree or a
+        - ``bound`` -- either an integer bounding the total degree or a
           list/tuple of integers bounding the degree of the variables
 
-        * ``points`` -- list/tuple containing the evaluation points
+        - ``points`` -- list/tuple containing the evaluation points
 
-        * ``values`` -- list/tuple containing the desired values at ``points``
+        - ``values`` -- list/tuple containing the desired values at ``points``
 
-        * ``function`` -- evaluable function in `n` variables, where `n` is the
+        - ``function`` -- evaluable function in `n` variables, where `n` is the
           number of variables of the polynomial ring
 
         OUTPUT:

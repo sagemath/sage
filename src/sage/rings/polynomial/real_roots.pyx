@@ -1971,7 +1971,7 @@ def bitsize_doctest(n):
 
 def degree_reduction_next_size(n):
     """
-    Given n (a polynomial degree), returns either a smaller integer or None.
+    Given n (a polynomial degree), returns either a smaller integer or ``None``.
     This defines the sequence of degrees followed by our degree reduction
     implementation.
 

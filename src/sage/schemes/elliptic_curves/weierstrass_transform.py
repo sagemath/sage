@@ -62,13 +62,13 @@ class WeierstrassTransformation(SchemeMorphism_polynomial):
         INPUT:
 
         - ``domain``, ``codomain`` -- two schemes, one of which is an
-          elliptic curve.
+          elliptic curve
 
         - ``defining_polynomials`` -- triplet of polynomials that
-          define the transformation.
+          define the transformation
 
         - ``post_multiplication`` -- a polynomial to homogeneously
-          rescale after substituting the defining polynomials.
+          rescale after substituting the defining polynomials
 
         EXAMPLES::
 

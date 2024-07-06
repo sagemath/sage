@@ -149,22 +149,22 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
 
     INPUT:
 
-    * ``G`` -- a graph
+    - ``G`` -- a graph
 
-    * ``n`` -- positive integer; the number of colors
+    - ``n`` -- positive integer; the number of colors
 
-    * ``count_only`` -- boolean (default: ``False``); when set to ``True``, it
+    - ``count_only`` -- boolean (default: ``False``); when set to ``True``, it
       returns 1 for each coloring and ignores other parameters
 
-    * ``hex_colors`` -- boolean (default: ``False``); when set to ``False``,
+    - ``hex_colors`` -- boolean (default: ``False``); when set to ``False``,
       colors are labeled [0, 1, ..., `n - 1`], otherwise the RGB Hex labeling
       is used
 
-    * ``vertex_color_dict`` -- boolean (default: ``False``); when set to
+    - ``vertex_color_dict`` -- boolean (default: ``False``); when set to
       ``True``, it returns a dictionary ``{vertex: color}``, otherwise it
       returns a dictionary ``{color: [list of vertices]}``
 
-    * ``color_classes`` -- boolean (default: ``False``); when set to ``True``,
+    - ``color_classes`` -- boolean (default: ``False``); when set to ``True``,
       the method returns only a list of the color classes and ignores parameters
       ``hex_colors`` and ``vertex_color_dict``
 

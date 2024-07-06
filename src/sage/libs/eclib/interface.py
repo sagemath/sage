@@ -1014,9 +1014,7 @@ class mwrank_MordellWeil(SageObject):
         """
         Return the rank of this subgroup of the Mordell-Weil group.
 
-        OUTPUT:
-
-        (int) The rank of this subgroup of the Mordell-Weil group.
+        OUTPUT: integer
 
         EXAMPLES::
 

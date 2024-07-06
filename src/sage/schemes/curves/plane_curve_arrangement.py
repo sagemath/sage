@@ -79,7 +79,7 @@ class PlaneCurveArrangementElement(Element):
 
         - ``parent`` -- the parent :class:`PlaneCurveArrangements`
 
-        - ``curves`` -- a tuple of curves
+        - ``curves`` -- tuple of curves
 
         EXAMPLES::
 
@@ -110,10 +110,6 @@ class PlaneCurveArrangementElement(Element):
         INPUT:
 
         - ``i`` -- integer
-
-        OUTPUT:
-
-        The `i`-th curve.
 
         EXAMPLES::
 
@@ -440,7 +436,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
 
         - ``parent`` -- the parent :class:`AffinePlaneCurveArrangements`
 
-        - ``curves`` -- a tuple of curves
+        - ``curves`` -- tuple of curves
 
         EXAMPLES::
 
@@ -787,7 +783,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
 
         - ``parent`` -- the parent :class:`ProjectivePlaneCurveArrangements`
 
-        - ``curves`` -- a tuple of curves
+        - ``curves`` -- tuple of curves
 
         EXAMPLES::
 
@@ -1047,7 +1043,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``base_ring`` -- a ring; the new base ring.
+        - ``base_ring`` -- a ring; the new base ring
 
         OUTPUT:
 
@@ -1164,7 +1160,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         Return the number of variables, i.e. 2 or 3, kept for completness.
 
-        OUTPUT: an integer, 2 or 3, depending if the arrangement is projective or affine
+        OUTPUT: integer, 2 or 3, depending if the arrangement is projective or affine
 
         EXAMPLES::
 

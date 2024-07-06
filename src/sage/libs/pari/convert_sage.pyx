@@ -86,7 +86,7 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     - a matrix if ``z`` is a matrix (type ``t_MAT``)
 
-    - a padic element (type ``t_PADIC``)
+    - a `p`-adic element (type ``t_PADIC``)
 
     - a :class:`~sage.rings.infinity.Infinity` if ``z`` is an infinity
       (type ``t_INF``)

@@ -1209,9 +1209,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``number`` -- (integer or ``None``, default: ``None``) the number of
+        - ``number`` -- integer or ``None`` (default); the number of
           terms returned (if less than the number of available terms). When set
-          to None, returns all the known terms.
+          to ``None``, returns all the known terms.
 
         OUTPUT: tuple of integers
 

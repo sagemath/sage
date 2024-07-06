@@ -6481,7 +6481,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
       echelonized and the result will be used as the default basis of the
       constructed submodule;
 
-    - `` echelonized_basis`` -- (default: ``None``) if not ``None``, must be
+    - ``echelonized_basis`` -- (default: ``None``) if not ``None``, must be
       the echelonized basis spanning the same submodule as ``basis``
 
     - ``already_echelonized`` -- boolean (default: ``False``); if ``True``,

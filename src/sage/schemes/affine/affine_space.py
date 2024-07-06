@@ -233,8 +233,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
     def ngens(self):
         """
-        Return the number of generators of self, i.e. the number of
-        variables in the coordinate ring of self.
+        Return the number of generators of ``self``, i.e. the number of
+        variables in the coordinate ring of ``self``.
 
         EXAMPLES::
 
@@ -247,8 +247,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
     def rational_points(self, F=None):
         """
-        Return the list of ``F``-rational points on the affine space self,
-        where ``F`` is a given finite field, or the base ring of self.
+        Return the list of ``F``-rational points on the affine space ``self``,
+        where ``F`` is a given finite field, or the base ring of ``self``.
 
         EXAMPLES::
 
@@ -485,7 +485,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
     def _check_satisfies_equations(self, v):
         """
         Return ``True`` if ``v`` defines a point on the scheme ``self``; raise a
-        :class:`TypeError` otherwise.
+        :exc:`TypeError` otherwise.
 
         EXAMPLES::
 
@@ -526,11 +526,9 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``m`` -- integer.
+        - ``m`` -- integer
 
-        OUTPUT:
-
-        - affine ambient space.
+        OUTPUT: affine ambient space
 
         EXAMPLES::
 
@@ -559,7 +557,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``right`` -- an affine space or subscheme.
+        - ``right`` -- an affine space or subscheme
 
         OUTPUT: an affine space.= or subscheme
 
@@ -621,7 +619,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``R`` -- commutative ring or morphism.
+        - ``R`` -- commutative ring or morphism
 
         OUTPUT: an affine space over ``R``
 
@@ -675,18 +673,16 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
     def _validate(self, polynomials):
         """
         If ``polynomials`` is a tuple of valid polynomial functions on the affine space,
-        return ``polynomials``, otherwise raise :class:`TypeError`.
+        return ``polynomials``, otherwise raise :exc:`TypeError`.
 
         Since this is an affine space, all polynomials are valid.
 
         INPUT:
 
         - ``polynomials`` -- tuple of polynomials in the coordinate ring of
-          this space.
+          this space
 
-        OUTPUT:
-
-        - tuple of polynomials in the coordinate ring of this space.
+        OUTPUT: tuple of polynomials in the coordinate ring of this space
 
         EXAMPLES::
 
@@ -703,15 +699,12 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
+        - ``i`` -- integer (default: dimension of self = last coordinate)
+          determines which projective embedding to compute. The embedding is
+          that which has a 1 in the `i`-th coordinate, numbered from 0.
 
-        -  ``i`` -- integer (default: dimension of self = last
-           coordinate) determines which projective embedding to compute. The
-           embedding is that which has a 1 in the i-th coordinate, numbered
-           from 0.
-
-        -  ``PP`` -- (default: None) ambient projective space, i.e.,
-           codomain of morphism; this is constructed if it is not
-           given.
+        - ``PP`` -- (default: ``None``) ambient projective space, i.e.,
+          codomain of morphism; this is constructed if it is not given.
 
         EXAMPLES::
 
@@ -800,7 +793,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        -  ``X`` -- a list or tuple of equations.
+        - ``X`` -- list or tuple of equations
 
         EXAMPLES::
 
@@ -874,13 +867,13 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer.
+        - ``n`` -- nonnegative integer
 
-        - ``kind`` -- ``first`` or ``second`` specifying which kind of chebyshev the user would like
-          to generate. Defaults to ``first``.
+        - ``kind`` -- ``'first'`` (default) or ``'second'`` specifying which
+          kind of Chebyshev the user would like to generate
 
-        - ``monic`` -- ``True`` or ``False`` specifying if the polynomial defining the system
-          should be monic or not. Defaults to ``False``.
+        - ``monic`` -- boolean (default: ``False``) specifying if the
+          polynomial defining the system should be monic or not
 
         OUTPUT: :class:`DynamicalSystem_affine`
 
@@ -912,7 +905,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.chebyshev_polynomial(-4, 'second')
             Traceback (most recent call last):
             ...
-            ValueError: first parameter 'n' must be a non-negative integer
+            ValueError: first parameter 'n' must be a nonnegative integer
 
         ::
 
@@ -942,7 +935,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             raise TypeError("affine space must be of dimension 1")
         n = ZZ(n)
         if n < 0:
-            raise ValueError("first parameter 'n' must be a non-negative integer")
+            raise ValueError("first parameter 'n' must be a nonnegative integer")
 
         from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
         from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
@@ -1030,19 +1023,15 @@ class AffineSpace_field(AffineSpace_generic):
         slightly larger than the bound may be returned. This can be controlled
         by lowering the tolerance.
 
-        INPUT:
-
-        kwds:
+        INPUT: keyword arguments:
 
         - ``bound`` -- a real number
 
-        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm algorithm-4
 
         - ``precision`` -- the precision to use for computing the elements of bounded height of number fields
 
-        OUTPUT:
-
-        - an iterator of points in self
+        OUTPUT: an iterator of points in self
 
         EXAMPLES::
 
@@ -1224,7 +1213,6 @@ class AffineSpace_field(AffineSpace_generic):
                     (x + 3, y + 3, z + 3)
             sage: psi * phi == A.translation(p, q)
             True
-
         """
         gens = self.gens()
 

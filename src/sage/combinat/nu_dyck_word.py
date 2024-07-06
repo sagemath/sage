@@ -706,7 +706,7 @@ class NuDyckWord(CombinatorialElement):
         - ``labelling`` -- (if style is "N-E") a list of labels assigned to
           the up steps in ``self``
 
-        - ``underpath`` -- (if style is "N-E", default: ``True``) If ``True``,
+        - ``underpath`` -- (if style is "N-E", default: ``True``) if ``True``,
           an ``x`` to show the boxes between `\nu` and the `\nu`-Dyck Path
 
         EXAMPLES::

@@ -295,7 +295,7 @@ cdef class ConvexityProperties:
 
         INPUT:
 
-        * ``vertices`` -- list of vertices
+        - ``vertices`` -- list of vertices
 
         EXAMPLES::
 
@@ -351,11 +351,11 @@ cdef class ConvexityProperties:
 
         INPUT:
 
-        * ``value_only`` -- boolean (default: ``True``); whether to return only
+        - ``value_only`` -- boolean (default: ``True``); whether to return only
           the hull number (default) or a minimum set whose convex hull is the
           whole graph
 
-        * ``verbose`` -- boolean (default: ``False``); whether to display
+        - ``verbose`` -- boolean (default: ``False``); whether to display
           information on the LP
 
         **COMPLEXITY:**
