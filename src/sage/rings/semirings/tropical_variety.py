@@ -33,6 +33,7 @@ graph is also called a tropical curve and we can visualize it like this::
     sage: tv1.vertices()
     {(-1, 1)}
     sage: plot(tv1)
+    Graphics object consisting of 3 graphics primitives
 
 A slightly different result will be obtained if we use min-plus algebra for
 the base tropical semiring::
@@ -46,6 +47,7 @@ the base tropical semiring::
     [(-1, t1), [t1 >= 1], 1]
     [(-t1, t1), [t1 <= 1], 1]]
     sage: tv1.plot()
+    Graphics object consisting of 3 graphics primitives
 
 A tropical curve can consist of many rays or lines with different orders::
 
@@ -62,6 +64,7 @@ A tropical curve can consist of many rays or lines with different orders::
     [(t1 - 1, t1), [2 <= t1], 1]
     [(t1 + 7, t1), [0 <= t1], 1]]
     sage: p1.tropical_variety().plot()
+    Graphics object consisting of 8 graphics primitives
 
 If the tropical polynomial have `n>2` variables, then the result will be a
 tropical hypersurface embedded in a real space `\mathbb{R}^n`::
@@ -70,7 +73,7 @@ tropical hypersurface embedded in a real space `\mathbb{R}^n`::
     sage: R.<a,x,y,z> = PolynomialRing(T)
     sage: p1 = x*y + R(-1/2)*x*z + R(4)*z^2 + a*x
     sage: p1.tropical_variety()
-    Tropical hypersurface of 1*a*x + 1*x*y + (-1/2)*x*z + 4*z^2 are 
+    Tropical hypersurface of 0*a*x + 0*x*y + (-1/2)*x*z + 4*z^2 are 
     [[(t1, t2, t3 - 1/2, t3), [t2 - 9/2 <= t3, t3 <= t1 + 1/2, t2 - 5 <= t1], 1]
     [(t1, 2*t2 - t3 + 4, t3, t2), [t3 + 1/2 <= t2, t3 <= t1], 1]
     [(t1, t2, t1, t3), [max(t1 + 1/2, 1/2*t1 + 1/2*t2 - 2) <= t3], 1]
@@ -151,11 +154,11 @@ class TropicalVariety(SageObject):
             Tropical curve of 0*x + 0*y are 
             [[(t1, t1), [-Infinity < t1, t1 < +Infinity], 1]]
 
-        A basic ilustration of a tropical hypersurface in three dimensions::
+        A basic ilustration of a tropical surface in three dimensions::
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: (x+y+z).tropical_variety()
-            Tropical hypersurface of 0*x + 0*y + 0*z are 
+            Tropical surface of 0*x + 0*y + 0*z are 
             [[(t1, t1, t2), [t1 <= t2], 1]
             [(t1, t2, t1), [t1 <= t2], 1]
             [(t1, t2, t2), [t2 <= t1], 1]]
@@ -375,6 +378,7 @@ class TropicalSurface(TropicalVariety):
             [(1/2*t1, t2, t1), [t1 <= min(0, t2)], 1]
             [(t1, t2, 1), [1 <= t1, 1 <= t2], 1]]
             sage: p1.tropical_variety().plot()
+            Graphics3d Object
         """
         from sage.arith.srange import srange
         from sage.plot.plot3d.shapes2 import point3d, text3d
@@ -566,10 +570,12 @@ class TropicalCurve(TropicalVariety):
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: (x).tropical_variety().plot()
+            Graphics object consisting of 0 graphics primitives
 
         A polynomial with only two terms will give one straight line::
 
             sage: (y+R(1)).tropical_variety().plot()
+            Graphics object consisting of 1 graphics primitive
 
         An intriguing and fascinating tropical curve can be obtained with a 
         more complex tropical polynomial::
@@ -582,9 +588,11 @@ class TropicalCurve(TropicalVariety):
             [(t1 + 1, t1), [-4 <= t1, t1 <= -2], 1]
             [(-t1 - 7, t1), [t1 <= -4], 1]]
             sage: p1.tropical_variety().plot()
+            Graphics object consisting of 4 graphics primitives
             sage: p2 = x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4 + \
             x*y^5 + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10)
-            sage: plot(p2.tropical_variety())    
+            sage: plot(p2.tropical_variety())
+            Graphics object consisting of 11 graphics primitives
         """
         from sage.plot.plot import plot
         from sage.plot.text import text

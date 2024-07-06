@@ -20,7 +20,7 @@ Construct a multivariate tropical polynomial semiring in two variables::
     
 Define some multivariate tropical polynomials::
 
-    sage: p1 = R(3)*a*b + a + R(-1)*b
+    sage: p1 = R(3)*a*b + a + R(-1)*b; p1
     3*a*b + 0*a + (-1)*b
     sage: p2 = R(1)*a + R(1)*b + R(1)*a*b; p2
     1*a*b + 1*a + 1*b
@@ -30,7 +30,7 @@ Some basic arithmetic operations for tropical polynomials::
     sage: p1 + p2
     3*a*b + 1*a + 1*b
     sage: p1 * p2
-    4*a^2*b^2 + 4*a^2*b + 1*a^2 + 4*a*b^2 + 1*a*b + 0*b^2
+    4*a^2*b^2 + 4*a^2*b + 4*a*b^2 + 1*a^2 + 1*a*b + 0*b^2
     sage: p2^2
     2*a^2*b^2 + 2*a^2*b + 2*a*b^2 + 2*a^2 + 2*a*b + 2*b^2
     sage: T(2) * p1
@@ -50,7 +50,9 @@ polynomial in two variables when the min-plus or max-plus algebra is used::
     [(-4, t1), [t1 <= -3], 1]
     [(t1 - 1, t1), [t1 >= -3], 1]]
     sage: plot(p1.tropical_variety())
+    Graphics object consisting of 3 graphics primitives
     sage: p1.plot3d()
+    Graphics3d Object
 
     sage: T = TropicalSemiring(QQ, use_min=False)
     sage: R.<a,b> = PolynomialRing(T)
@@ -61,7 +63,9 @@ polynomial in two variables when the min-plus or max-plus algebra is used::
     [(-4, t1), [t1 >= -3], 1]
     [(t1 - 1, t1), [t1 <= -3], 1]]
     sage: plot(p1.tropical_variety())
+    Graphics object consisting of 3 graphics primitives
     sage: p1.plot3d()
+    Graphics3d Object
 
 TESTS:
 
@@ -123,6 +127,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1 = R(3)+R(2)*x+R(2)*y+R(3)*x*y; p1
             3*x*y + 2*x + 2*y + 3
             sage: p1.plot3d()
+            Graphics3d Object
 
         TESTS::
 
@@ -185,7 +190,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1 = R(1)*x*y + R(-1/2)*x*z + R(4)*z^2; p1
             1*x*y + (-1/2)*x*z + 4*z^2
             sage: p1.tropical_variety()
-            Tropical hypersurface of 1*x*y + (-1/2)*x*z + 4*z^2 are 
+            Tropical surface of 1*x*y + (-1/2)*x*z + 4*z^2 are 
             [[(t1, t2 - 3/2, t2), [t1 <= t2 + 9/2], 1]
             [(2*t1 - t2 + 3, t2, t1), [t2 + 3/2 <= t1], 1]
             [(t1 + 9/2, t2, t1), [t1 <= t2 + 3/2], 1]]
@@ -196,23 +201,6 @@ class TropicalMPolynomial(MPolynomial_polydict):
             return TropicalSurface(self)
         else:
             return TropicalVariety(self)
-    
-    def _latex_(self):
-        r"""
-        Return a nice tropical polynomial latex representation.
-
-        EXAMPLES::
-
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<x,y,z> = PolynomialRing(T)
-            sage: f = x^2 +R(-3)* y + R(1)*z; f
-            0*x^2 + (-3)*y + 1*z
-            sage: latex(f)
-            0 x^{2} \oplus \left(-3\right) y \oplus 1 z
-        """
-        s = super()._latex_()
-        s = s.replace("+", r'\oplus')
-        return s
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     """
@@ -294,8 +282,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,b> = PolynomialRing(T)
-            sage: f = R.random_element(); f
-            1/9*a^2 + 1/13*a*b + 1/107*b^2 + 1*a
+            sage: f = R.random_element()
+            sage: f.parent() is R
+            True
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())

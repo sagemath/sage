@@ -20,7 +20,7 @@ semiring and then inputting it to ``PolynomialRing`` constructor::
 
     sage: T = TropicalSemiring(QQ, use_min=False)
     sage: R.<y> = PolynomialRing(T); R
-    Tropical Polynomial Semiring in y over Rational Field
+    Univariate Tropical Polynomial Semiring in y over Rational Field
     sage: R.0
     0*y
 
@@ -86,14 +86,15 @@ Every tropical polynomial induce a piecewise linear function that can be
 invoked in the following way::
 
     sage: p1.piecewise_function()
-    piecewise(x|-->1 on (-oo, -3], x|-->x + 4 on (-3, 2), x|-->3*x on 
-    [2, +oo); x)
+    piecewise(x|-->1 on (-oo, -3], x|-->x + 4 on (-3, 2), x|-->3*x on [2, +oo); x)
     sage: p2.piecewise_function()
     piecewise(x|-->3 on (-oo, 1], x|-->2*x + 1 on (1, +oo); x)
 
 Plot the graph of previous tropical polynomials::
     sage: p1.plot()
+    Graphics object consisting of 1 graphics primitive
     sage: plot(p2, xmin=-1, xmax=3)
+    Graphics object consisting of 1 graphics primitive
 
 TESTS:
 
@@ -392,7 +393,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 piecewise_linear = (interval, intercept+gradient*x)
                 domain.append(interval)
             elif i == len(unique_root):
-                if domain[0][0].upper_closed():
+                if domain[i-1][0].upper_closed():
                     interval = RealSet.unbounded_above_open(unique_root[i-1])
                 else:
                     interval = RealSet.unbounded_above_closed(unique_root[i-1])
@@ -440,6 +441,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p1.roots()
             [1/3, 1/3, 1/3]
             sage: p1.plot()
+            Graphics object consisting of 1 graphics primitive
 
         A different result will be obtained if the tropical semiring employs 
         a min-plus algebra. Rather, a graph of the piecewise linear concave 
@@ -451,6 +453,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p1.roots()
             [-2, 1, 2]
             sage: plot(p1, xmin=-4, xmax=4)
+            Graphics object consisting of 1 graphics primitive
         
         TESTS:
 
@@ -508,32 +511,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         s = re.sub(r'-\d+', replace_negatives, s)
         return s
     
-    def _latex_(self):
-        r"""
-        Return a nice topical polynomial latex representation.
-
-        EXAMPLES::
-
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<x> = PolynomialRing(T)
-            sage: f = R([-3,-2,1])
-            sage: latex(f)
-            1 x^{2} \oplus \left(-2 \right) x \oplus \left(-3 \right)
-        """
-        def replace_negatives_latex(match):
-            return f'\left({match.group(0)}\\right)'
-        
-        s = super()._latex_()
-        var = self.parent().variable_name()
-        if s[0] == var:
-            s = "1 " + s
-        s = s.replace(" - ", " + -")
-        s = s.replace(" + "+var, " + 1 "+var)
-        s = s.replace("-"+var, "-1 "+var)
-        s = re.sub(r'-\d+', replace_negatives_latex, s)
-        s = s.replace("+", r'\oplus')
-        return s
-    
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     """
     Semiring structure of tropical polynomials in one variable.
@@ -569,13 +546,18 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         """
         Convert ``x`` into this tropical polynomial semiring.
 
+        INPUT:
+
+        - ``x`` -- can be a list or tuple of coefficients. Can also be a
+          polynomial.
+
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
             sage: R = PolynomialRing(T, 'x')
             sage: S.<x> = PolynomialRing(QQ)
             sage: R(x^2 - x + 1)
-            1*x^2 + -1*x + 1
+            1*x^2 + (-1)*x + 1
         """
         C = self.element_class
         if isinstance(x, (list, tuple)):
@@ -599,8 +581,8 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     @cached_method
     def gens(self):
         """
-        Return a tuple whose entries are the generators for this
-        object, in order.
+        Return a tuple whose entries are the generators for this object, 
+        in order.
         """
         return tuple([self([None,0])])
     
@@ -614,14 +596,15 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
     def random_element(self, degree=(-1, 2), monic=False, *args, **kwds):
         """
-        Return a random tropical polynomial.
+        Return a random tropical polynomial of given degrees (bounds).
 
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
             sage: R = PolynomialRing(T, 'x')
-            sage: f = R.random_element(); f
-            7*x^2 + 2/3*x + 1/3
+            sage: f = R.random_element()
+            sage: f.parent() is R
+            True
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
@@ -647,6 +630,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: p1 = R.interpolation(points); p1
             1*x^2 + 2*x + 4
             sage: p1.plot()
+            Graphics object consisting of 1 graphics primitive
 
         ::
 
@@ -654,8 +638,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R = PolynomialRing(T,'x')
             sage: points = [(0,0),(1,1),(2,4)]
             sage: p1 = R.interpolation(points); p1
-            -2*x^3 + -1*x^2 + 0*x + 0
+            (-2)*x^3 + (-1)*x^2 + 0*x + 0
             sage: p1.plot()
+            Graphics object consisting of 1 graphics primitive
         
         TESTS:
 
@@ -705,7 +690,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         if len(all_slope) == 1: # constant polynomial
             return self(points[0][1])
         
-        result = self.zero()
+        result = self()
         for root, ord in roots.items():
             result *= self([root,0])**ord
         test_value = result(self.base()(points[0][0]))
