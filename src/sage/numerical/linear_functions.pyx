@@ -1425,7 +1425,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
         OUTPUT:
 
-        Boolean. Whether all terms of ``left`` and ``right`` are
+        boolean; whether all terms of ``left`` and ``right`` are
         equal. Note that this is stronger than mathematical
         equivalence of the relations.
 

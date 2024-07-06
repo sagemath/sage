@@ -232,7 +232,7 @@ class Dokchitser(SageObject):
     def gp(self):
         """
         Return the gp interpreter that is used to implement this Dokchitser
-        L-function.
+        `L`-function.
 
         EXAMPLES::
 
@@ -365,7 +365,7 @@ class Dokchitser(SageObject):
             4
 
         Verify that ``num_coeffs`` works with non-real spectral
-        parameters, e.g. for the L-function of the level 10 Maass form
+        parameters, e.g. for the `L`-function of the level 10 Maass form
         with eigenvalue 2.7341055592527126::
 
             sage: ev = 2.7341055592527126
@@ -409,8 +409,8 @@ class Dokchitser(SageObject):
             sage: pari_precode = 'tau(n)=(5*sigma(n,3)+7*sigma(n,5))*n/12 - 35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5))'
             sage: L.init_coeffs('tau(k)', pari_precode=pari_precode)
 
-        Evaluate the resulting L-function at a point, and compare with
-        the answer that one gets "by definition" (of L-function
+        Evaluate the resulting `L`-function at a point, and compare with
+        the answer that one gets "by definition" (of `L`-function
         attached to a modular form)::
 
             sage: L(14)

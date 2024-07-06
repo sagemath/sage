@@ -314,7 +314,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         INPUT:
 
-        - a matrix that represents an isometry in the appropriate model
+        - ``A`` -- a matrix that represents an isometry in the appropriate model
 
         OUTPUT: boolean
 

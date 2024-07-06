@@ -95,7 +95,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - a :class:`~sage.graphs.digraph.DiGraph`.
+        - ``Q`` -- a :class:`~sage.graphs.digraph.DiGraph`
 
         TESTS::
 
@@ -121,7 +121,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - a :class:`~sage.graphs.digraph.DiGraph`.
+        - ``Q`` -- a :class:`~sage.graphs.digraph.DiGraph`
 
         EXAMPLES:
 

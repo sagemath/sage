@@ -172,9 +172,11 @@ def shard_preorder_graph(runs):
 
     INPUT:
 
-    - a tuple of tuples, the runs of a permutation, or
+    - ``runs`` -- either
 
-    - a tuple of pairs `(i,j)`, each one standing for a run from `i` to `j`.
+      - a tuple of tuples, the runs of a permutation, or
+
+      - a tuple of pairs `(i,j)`, each one standing for a run from `i` to `j`
 
     OUTPUT: a directed graph, with vertices labelled by integers
 

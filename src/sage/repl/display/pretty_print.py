@@ -50,7 +50,7 @@ class SagePrettyPrinter(PrettyPrinter):
 
         OUTPUT:
 
-        Boolean. Whether we are currently pretty-printing an object at
+        boolean; whether we are currently pretty-printing an object at
         the outermost level (``True``), or whether the object is
         inside a container (``False``).
 

@@ -1169,7 +1169,7 @@ class ModularForm_abstract(ModuleElement):
 
         Only implemented for N = 1 at present. It is assumed that `f` has real
         coefficients. The norm is computed as a special value of the symmetric
-        square L-function, using the identity
+        square `L`-function, using the identity
 
         .. MATH::
 

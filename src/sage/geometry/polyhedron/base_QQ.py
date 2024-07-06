@@ -1153,7 +1153,7 @@ class Polyhedron_QQ(Polyhedron_base):
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT: boolean. Whether the ``Hstar`` series is effective
+        OUTPUT: boolean; whether the ``Hstar`` series is effective
 
         .. SEEALSO::
 
@@ -1228,7 +1228,7 @@ class Polyhedron_QQ(Polyhedron_base):
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT: boolean. Whether the ``Hstar`` series is effective
+        OUTPUT: boolean; whether the ``Hstar`` series is effective
 
         TESTS::
 

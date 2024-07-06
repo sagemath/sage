@@ -232,9 +232,9 @@ class Triangulation(Element):
           by the correspondence :meth:`PointConfiguration.simplex_to_int`. In the second
           case, a simplex is specified by listing the indices of the included points.
 
-        - ``check`` -- boolean. Whether to perform checks that the
+        - ``check`` -- boolean; whether to perform checks that the
           triangulation is, indeed, a triangulation of the point
-          configuration.
+          configuration
 
         NOTE:
 

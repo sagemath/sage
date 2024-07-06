@@ -398,7 +398,7 @@ def parse_lmfdb_label(label, numerical_class_code=False):
     or 37.b3, parse the label and return the conductor, isogeny class
     label, and number.
 
-    The LMFDB label (named after the L-functions and modular forms
+    The LMFDB label (named after the `L`-functions and modular forms
     database), is determined by the following two orders:
 
     - Isogeny classes with the same conductor are ordered

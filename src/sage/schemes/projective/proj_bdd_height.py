@@ -43,13 +43,11 @@ def ZZ_points_of_bounded_height(PS, dim, bound):
 
     - ``PS`` -- a projective space
 
-    - ``dim`` -- a positive integer
+    - ``dim`` -- positive integer
 
-    - ``bound`` -- a positive integer
+    - ``bound`` -- positive integer
 
-    OUTPUT:
-
-    - an iterator of points of bounded height
+    OUTPUT: an iterator of points of bounded height
 
     EXAMPLES::
 
@@ -98,16 +96,14 @@ def QQ_points_of_bounded_height(PS, dim, bound, normalize=False):
 
     - ``PS`` -- a projective space
 
-    - ``dim`` -- a positive integer
+    - ``dim`` -- positive integer
 
     - ``bound`` -- a real number
 
     - ``normalize`` -- boolean (default: ``False``); whether to
       normalize the coordinates of returned points
 
-    OUTPUT:
-
-    - an iterator of points of bounded height
+    OUTPUT: an iterator of points of bounded height
 
     EXAMPLES::
 
@@ -165,9 +161,7 @@ def IQ_points_of_bounded_height(PS, K, dim, bound):
 
     - ``bound`` -- a real number
 
-    OUTPUT:
-
-    - an iterator of points of bounded height
+    OUTPUT: an iterator of points of bounded height
 
     EXAMPLES:
 
@@ -241,15 +235,13 @@ def points_of_bounded_height(PS, K, dim, bound, prec=53):
 
     - ``K`` -- a number field
 
-    - ``dim`` -- a positive integer
+    - ``dim`` -- positive integer
 
     - ``bound`` -- a real number
 
     - ``prec`` -- (default: 53) a positive integer
 
-    OUTPUT:
-
-    - an iterator of points of bounded height
+    OUTPUT: an iterator of points of bounded height
 
     EXAMPLES::
 

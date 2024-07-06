@@ -632,7 +632,7 @@ class TateCurve(SageObject):
 
         The `p`-adic Birch and Swinnerton-Dyer conjecture predicts
         that this value appears in the formula for the leading term of
-        the `p`-adic L-function.
+        the `p`-adic `L`-function.
 
         INPUT:
 

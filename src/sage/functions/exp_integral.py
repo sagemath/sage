@@ -1429,7 +1429,7 @@ def exponential_integral_1(x, n=0):
     - ``n`` -- (default: 0) a nonnegative integer; if
       nonzero, then return a list of values ``E_1(x*m)`` for m =
       1,2,3,...,n. This is useful, e.g., when computing derivatives of
-      L-functions.
+      `L`-functions.
 
     OUTPUT:
 

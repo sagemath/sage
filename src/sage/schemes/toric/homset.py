@@ -176,11 +176,11 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
 
         INPUT:
 
-        - `x` -- anything that defines a morphism of toric
+        - ``x`` -- anything that defines a morphism of toric
           varieties. A matrix, fan morphism, or a list or tuple of
           homogeneous polynomials that define a morphism.
 
-        - ``check`` -- boolean (default: ``True``) passed onto
+        - ``check`` -- boolean (default: ``True``); passed onto
           functions called by this to be more careful about input
           argument type checking
 
@@ -489,7 +489,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
         r"""
         Return the number of points of the toric variety.
 
-        OUTPUT: an integer or infinity. The cardinality of the set of points
+        OUTPUT: integer or infinity; the cardinality of the set of points
 
         EXAMPLES::
 
@@ -628,7 +628,7 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
         """
         Return the number of points of the toric variety.
 
-        OUTPUT: an integer or infinity. The cardinality of the set of points
+        OUTPUT: integer or infinity; the cardinality of the set of points
 
         EXAMPLES::
 

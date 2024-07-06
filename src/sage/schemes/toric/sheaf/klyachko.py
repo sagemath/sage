@@ -57,11 +57,11 @@ import sage.geometry.abc
 
 def is_KlyachkoBundle(X):
     """
-    Test whether ``X`` is a Klyachko bundle
+    Test whether ``X`` is a Klyachko bundle.
 
     INPUT:
 
-    - ``X`` -- anything.
+    - ``X`` -- anything
 
     OUTPUT: boolean
 
@@ -81,11 +81,11 @@ def is_KlyachkoBundle(X):
 
 def Bundle(toric_variety, multi_filtration, check=True):
     r"""
-    Construct a Klyacho bundle
+    Construct a Klyacho bundle.
 
     INPUT:
 
-    - ``toric_variety`` -- a toric variety. The base space of the bundle.
+    - ``toric_variety`` -- a toric variety; the base space of the bundle
 
     - ``multi_filtration`` -- a multi-filtered vectors space with
       multiple filtrations being indexed by the one-dimensional cones
@@ -147,14 +147,14 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``toric_variety`` -- a toric variety. The base space of the bundle.
+        - ``toric_variety`` -- a toric variety; the base space of the bundle
 
         - ``multi_filtration`` -- a
           :func:`~sage.modules.multi_filtered_vector_space.MultiFilteredVectorSpace`
           with index set the rays of the fan.
 
-        - ``check`` -- boolean (default: ``True``). Whether to perform
-          consistency checks.
+        - ``check`` -- boolean (default: ``True``); whether to perform
+          consistency checks
 
         EXAMPLES::
 
@@ -262,7 +262,7 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``ray`` -- Integer, a `N`-lattice point, a one-dimensional
+        - ``ray`` -- integer; a `N`-lattice point, a one-dimensional
           cone, or ``None`` (default). Specifies a ray of the fan of
           the toric variety, either via its index or its generator.
 
@@ -309,11 +309,11 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the vector subspace ``E^\alpha(i)``.
 
-        - ``ray`` -- Integer, a `N`-lattice point, a one-dimensional
+        - ``ray`` -- integer; a `N`-lattice point, a one-dimensional
           cone, or ``None`` (default). Specifies a ray of the fan of
           the toric variety, either via its index or its generator.
 
-        - ``i`` -- integer. The filtration degree.
+        - ``i`` -- integer; the filtration degree
 
         OUTPUT:
 
@@ -335,9 +335,9 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``sigma`` -- a cone of the fan of the base toric variety.
+        - ``sigma`` -- a cone of the fan of the base toric variety
 
-        - ``i`` -- integer. The filtration degree.
+        - ``i`` -- integer; the filtration degree
 
         OUTPUT:
 
@@ -424,7 +424,7 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``sigma`` -- a cone of the fan of the base toric variety.
+        - ``sigma`` -- a cone of the fan of the base toric variety
 
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
@@ -463,7 +463,7 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``sigma`` -- a cone of the fan of the base toric variety.
+        - ``sigma`` -- a cone of the fan of the base toric variety
 
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
@@ -507,9 +507,9 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``sigma`` -- a cone of the fan of the base toric variety.
+        - ``sigma`` -- a cone of the fan of the base toric variety
 
-        - ``tau`` -- a cone of the fan containing ``sigma``.
+        - ``tau`` -- a cone of the fan containing ``sigma``
 
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
@@ -565,7 +565,7 @@ class KlyachkoBundle_class(SageObject):
 
     def cohomology_complex(self, m):
         r"""
-        Return the "cohomology complex" `C^*(m)`
+        Return the "cohomology complex" `C^*(m)`.
 
         See [Kly1990]_, equation 4.2.
 
@@ -634,16 +634,16 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``degree`` -- ``None`` (default) or an integer. The degree of
-          the cohomology group.
+        - ``degree`` -- ``None`` (default) or an integer; the degree of
+          the cohomology group
 
         - ``weight`` -- ``None`` (default) or a tuple of integers or a
           `M`-lattice point. A point in the dual lattice of the fan
           defining a torus character. The weight of the cohomology
           group.
 
-        - ``dim`` -- Boolean (default: ``False``). Whether to return
-          vector spaces or only their dimension.
+        - ``dim`` -- boolean (default: ``False``); whether to return
+          vector spaces or only their dimension
 
         OUTPUT:
 
@@ -710,7 +710,7 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
         OUTPUT: boolean
 
@@ -745,7 +745,7 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
         OUTPUT: boolean
 
@@ -769,7 +769,7 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``other`` -- a Klyachko bundle over the same base.
+        - ``other`` -- a Klyachko bundle over the same base
 
         OUTPUT: the direct sum as a new Klyachko bundle
 
@@ -799,7 +799,7 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``other`` -- a Klyachko bundle over the same base.
+        - ``other`` -- a Klyachko bundle over the same base
 
         OUTPUT: the tensor product as a new Klyachko bundle
 
@@ -825,7 +825,7 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer.
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -853,9 +853,9 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer.
+        - ``n`` -- integer
 
-        OUTPUT: the `n`-th symmetric power as a new Klyachko bundle.
+        OUTPUT: the `n`-th symmetric power as a new Klyachko bundle
 
         EXAMPLES::
 
@@ -895,8 +895,8 @@ class KlyachkoBundle_class(SageObject):
 
         INPUT:
 
-        - ``epsilon`` -- an element of the base ring. Scales the
-          random deformation.
+        - ``epsilon`` -- an element of the base ring; scales the
+          random deformation
 
         OUTPUT:
 

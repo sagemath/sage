@@ -1673,7 +1673,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - a scalar
+        - ``a`` -- a scalar
 
         EXAMPLES::
 

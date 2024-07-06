@@ -34,9 +34,9 @@ def is_Scheme(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT: boolean. Whether ``x`` derives from :class:`Scheme`
+    OUTPUT: boolean; whether ``x`` derives from :class:`Scheme`
 
     EXAMPLES::
 
@@ -66,8 +66,8 @@ class Scheme(Parent):
       the base scheme. If a commutative ring is passed, the spectrum
       of the ring will be used as base.
 
-    - ``category`` -- the category (optional). Will be automatically
-      constructed by default.
+    - ``category`` -- the category (optional); will be automatically
+      constructed by default
 
     EXAMPLES::
 
@@ -100,7 +100,6 @@ class Scheme(Parent):
             sage: RmodI = R.quotient(I)
             sage: X = Spec(RmodI)
             sage: TestSuite(X).run()                                                    # needs sage.libs.singular
-
         """
         from sage.schemes.generic.morphism import is_SchemeMorphism
         from sage.categories.map import Map
@@ -207,7 +206,7 @@ class Scheme(Parent):
           `S`-valued points on `X`.
 
         - If `S` is a list or tuple or just the coordinates, return a
-          point in `X(T)`, where `T` is the base scheme of self.
+          point in `X(T)`, where `T` is the base scheme of ``self``.
 
         EXAMPLES::
 
@@ -273,11 +272,9 @@ class Scheme(Parent):
 
         INPUT:
 
-        - ``S`` -- a commutative ring.
+        - ``S`` -- a commutative ring
 
-        OUTPUT:
-
-        The set of morphisms `\mathrm{Spec}(S) \to X`.
+        OUTPUT: the set of morphisms `\mathrm{Spec}(S) \to X`
 
         EXAMPLES::
 
@@ -374,7 +371,7 @@ class Scheme(Parent):
 
     def __truediv__(self, Y):
         """
-        Return the base extension of self to Y.
+        Return the base extension of ``self`` to Y.
 
         See :meth:`base_extend` for details.
 
@@ -392,7 +389,7 @@ class Scheme(Parent):
 
     def base_ring(self):
         """
-        Return the base ring of the scheme self.
+        Return the base ring of the scheme ``self``.
 
         OUTPUT: a commutative ring
 
@@ -491,7 +488,7 @@ class Scheme(Parent):
         OUTPUT:
 
         The global coordinate ring of this scheme, if
-        defined. Otherwise this raises a :class:`ValueError`.
+        defined. Otherwise this raises a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -610,7 +607,7 @@ class Scheme(Parent):
           Hom-set
 
         - ``check`` -- boolean (default: ``True``); whether
-          to check the defining data for consistency.
+          to check the defining data for consistency
 
         OUTPUT: the set of morphisms from ``self`` to ``Y``
 
@@ -642,7 +639,7 @@ class Scheme(Parent):
 
         INPUT:
 
-        - ``n`` -- integer.
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -769,7 +766,7 @@ class Scheme(Parent):
 
 def is_AffineScheme(x):
     """
-    Return True if `x` is an affine scheme.
+    Return ``True`` if `x` is an affine scheme.
 
     EXAMPLES::
 
@@ -812,7 +809,6 @@ class AffineScheme(UniqueRepresentation, Scheme):
 
         For affine spaces over a base ring and subschemes thereof, see
         :class:`sage.schemes.generic.algebraic_scheme.AffineSpace`.
-
     """
     def __init__(self, R, S=None, category=None):
         """

@@ -79,30 +79,26 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         basis calculation. For schemes or subschemes with dimension greater than 1
         points are determined through enumeration up to the specified bound.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        kwds:
+        - ``bound`` -- real number (default: 0); the bound for the coordinates
+          for subschemes with dimension at least 1
 
-        - ``bound`` -- real number (default: 0). The bound for the coordinates for
-          subschemes with dimension at least 1.
+        - ``precision`` -- integer (default: 53); the precision to use to
+          compute the elements of bounded height for number fields
 
-        - ``precision`` -- integer (default: 53). The precision to use to
-          compute the elements of bounded height for number fields.
+        - ``point_tolerance`` -- positive real number (default: `10^{-10}`);
+          for numerically inexact fields, two points are considered the same
+          if their coordinates are within tolerance
 
-        - ``point_tolerance`` -- positive real number (default: `10^{-10}`).
-          For numerically inexact fields, two points are considered the same
-          if their coordinates are within tolerance.
+        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`);
+          for numerically inexact fields, points are on the subscheme if they
+          satisfy the equations to within tolerance
 
-        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`).
-          For numerically inexact fields, points are on the subscheme if they
-          satisfy the equations to within tolerance.
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+          algorithm-4 for enumeration over number fields
 
-        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
-          for enumeration over number fields.
-
-        OUTPUT:
-
-        - a list of rational points of a projective scheme
+        OUTPUT: list of rational points of a projective scheme
 
         .. WARNING::
 
@@ -317,7 +313,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        OUTPUT: a list of points in the ambient space
+        OUTPUT: list of points in the ambient space
 
         .. WARNING::
 
@@ -486,8 +482,7 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
 
         INPUT:
 
-        - ``B`` -- integer (default: 0). The bound for the
-          coordinates.
+        - ``B`` -- integer (default: 0); the bound for the coordinates
 
         EXAMPLES::
 
@@ -623,8 +618,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         INPUT:
 
-        - ``v`` -- anything that determines a scheme morphism in the
-          Hom-set.
+        - ``v`` -- anything that determines a scheme morphism in the Hom-set
 
         OUTPUT: the scheme morphism determined by ``v``
 
@@ -672,7 +666,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         INPUT:
 
-        - ``R`` -- a ring.
+        - ``R`` -- a ring
 
         EXAMPLES::
 

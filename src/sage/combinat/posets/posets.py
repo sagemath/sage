@@ -3290,11 +3290,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         - ``elms`` -- list or other iterable containing some elements
           of the poset
 
-        - ``ordered`` -- a Boolean. If ``True``, then return ``True``
-          only if elements in ``elms`` are strictly increasing in the
-          poset; this makes no sense if ``elms`` is a set. If ``False``
-          (the default), then elements can be repeated and be in any
-          order.
+        - ``ordered`` -- boolean; if ``True``, then return ``True`` only if
+          elements in ``elms`` are strictly increasing in the poset. This makes
+          no sense if ``elms`` is a set. If ``False`` (the default), then
+          elements can be repeated and be in any order.
 
         EXAMPLES::
 

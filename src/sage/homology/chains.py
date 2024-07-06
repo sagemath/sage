@@ -292,10 +292,8 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
             """
             Test whether the chain is a boundary.
 
-            OUTPUT:
-
-            Boolean. Whether the chain is the :meth:`boundary` of a chain in one
-            degree higher.
+            OUTPUT: boolean; whether the chain is the :meth:`boundary` of a
+            chain in one degree higher
 
             EXAMPLES::
 

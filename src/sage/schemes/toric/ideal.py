@@ -147,24 +147,24 @@ class ToricIdeal(MPolynomialIdeal):
 
     INPUT:
 
-    - ``A`` -- integer matrix. The defining matrix of the toric ideal.
+    - ``A`` -- integer matrix; the defining matrix of the toric ideal
 
-    - ``names`` -- string (optional). Names for the variables. By
+    - ``names`` -- string (optional); names for the variables. By
       default, this is ``'z'`` and the variables will be named ``z0``,
       ``z1``, ...
 
-    - ``base_ring`` -- a ring (optional). Default: `\QQ`. The base
+    - ``base_ring`` -- a ring (default: `\QQ`); the base
       ring of the ideal. A toric ideal uses only coefficients `\pm 1`.
 
-    - ``polynomial_ring`` -- a polynomial ring (optional). The
-      polynomial ring to construct the ideal in.
+    - ``polynomial_ring`` -- a polynomial ring (optional); the
+      polynomial ring to construct the ideal in
 
       You may specify the ambient polynomial ring via the
       ``polynomial_ring`` parameter or via the ``names`` and
-      ``base_ring`` parameter. A :class:`ValueError` is raised if you
+      ``base_ring`` parameter. A :exc:`ValueError` is raised if you
       specify both.
 
-    - ``algorithm`` -- string (optional). The algorithm to use. For
+    - ``algorithm`` -- string (optional); the algorithm to use. For
       now, must be ``'HostenSturmfels'`` which is the algorithm
       proposed by Hosten and Sturmfels in [SH1995b]_.
 
@@ -250,7 +250,7 @@ class ToricIdeal(MPolynomialIdeal):
         """
         Return the defining matrix.
 
-        OUTPUT: an integer matrix
+        OUTPUT: integer matrix
 
         EXAMPLES::
 
@@ -286,8 +286,7 @@ class ToricIdeal(MPolynomialIdeal):
         r"""
         Return the number of variables of the ambient polynomial ring.
 
-        OUTPUT: an integer. The number of columns of the defining matrix
-        :meth:`A`.
+        OUTPUT: integer; the number of columns of the defining matrix :meth:`A`
 
         EXAMPLES::
 
@@ -304,8 +303,8 @@ class ToricIdeal(MPolynomialIdeal):
 
         INPUT:
 
-        - ``term_order`` -- string. The order of the variables, for
-          example ``'neglex'`` and ``'degrevlex'``.
+        - ``term_order`` -- string; the order of the variables, for
+          example ``'neglex'`` and ``'degrevlex'``
 
         OUTPUT: a polynomial ring with the given term order
 
@@ -338,7 +337,7 @@ class ToricIdeal(MPolynomialIdeal):
 
         INPUT:
 
-        - ``ring`` -- the ambient ring of the ideal.
+        - ``ring`` -- the ambient ring of the ideal
 
         OUTPUT: a subideal of the toric ideal in the polynomial ring ``ring``
 
@@ -366,15 +365,13 @@ class ToricIdeal(MPolynomialIdeal):
 
         INPUT:
 
-        - ``ring`` -- the ambient polynomial ring in neglex order.
+        - ``ring`` -- the ambient polynomial ring in neglex order
 
-        - ``ideal`` -- the ideal `J`.
+        - ``ideal`` -- the ideal `J`
 
-        - ``n`` -- Integer. The index of the next variable to divide by.
+        - ``n`` -- integer; the index of the next variable to divide by
 
-        OUTPUT:
-
-        The ideal quotient `(J:x_n^\infty)`.
+        OUTPUT: the ideal quotient `(J:x_n^\infty)`
 
         ALGORITHM:
 

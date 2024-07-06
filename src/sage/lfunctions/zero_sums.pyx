@@ -44,7 +44,7 @@ cdef NCPUS
 
 cdef class LFunctionZeroSum_abstract(SageObject):
     r"""
-    Abstract class for computing certain sums over zeros of a motivic L-function
+    Abstract class for computing certain sums over zeros of a motivic `L`-function
     without having to determine the zeros themselves.
     """
     cdef _pi            # Pi to 64 bits
@@ -789,7 +789,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
           be 0.
 
         - ``num_terms`` -- positive integer (default: ``None``); the number of
-          terms computed in the truncated Dirichlet series for the L-function
+          terms computed in the truncated Dirichlet series for the `L`-function
           attached to ``self``. If left at ``None``, this is set to
           `\ceil(e^{2 \pi \Delta})`, the same number of terms used in the other
           zero sum methods for this value of Delta.
@@ -890,7 +890,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
 cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
     r"""
-    Subclass for computing certain sums over zeros of an elliptic curve L-function
+    Subclass for computing certain sums over zeros of an elliptic curve `L`-function
     without having to determine the zeros themselves.
     """
     cdef _E     # The Elliptic curve attached to self
@@ -986,7 +986,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
     def cn(self, n):
         r"""
         Return the `n`-th Dirichlet coefficient of the logarithmic
-        derivative of the L-function attached to ``self``, shifted so that
+        derivative of the `L`-function attached to ``self``, shifted so that
         the critical line lies on the imaginary axis.
 
         The returned value is
@@ -1520,7 +1520,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
                                   bad_primes=None,
                                   ncpus=None):
         r"""
-        Return an upper bound for the analytic rank of the L-function
+        Return an upper bound for the analytic rank of the `L`-function
         `L_E(s)` attached to ``self``, conditional on the Generalized Riemann
         Hypothesis, via computing the zero sum `\sum_{\gamma} f(\Delta\gamma)`,
         where `\gamma` ranges over the imaginary parts of the zeros of `L(E,s)`

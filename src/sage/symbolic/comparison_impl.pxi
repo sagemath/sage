@@ -183,10 +183,8 @@ class _math_key():
 
         - ``other`` -- another :class:`_print_key` instance
 
-        OUTPUT:
-
-        Boolean. A :exc:`ValueError` is raised if we do not know how to
-        perform the comparison.
+        OUTPUT: boolean; a :exc:`ValueError` is raised if we do not know how to
+        perform the comparison
 
         EXAMPLES::
 
@@ -334,10 +332,8 @@ class _mixed_key():
 
         - ``other`` -- another :class:`_mixed_key` instance
 
-        OUTPUT:
-
-        Boolean. A :exc:`ValueError` is raised if we do not know how to
-        perform the comparison.
+        OUTPUT: boolean; a :exc:`ValueError` is raised if we do not know how to
+        perform the comparison
 
         EXAMPLES::
 

@@ -547,10 +547,8 @@ cdef class PointConfiguration_base(Parent):
         """
         Return whether the configuration is defined by affine points.
 
-        OUTPUT:
-
-        Boolean. If true, the homogeneous coordinates all have `1` as
-        their last entry.
+        OUTPUT: boolean; if true, the homogeneous coordinates all have `1` as
+        their last entry
 
         EXAMPLES::
 

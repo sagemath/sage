@@ -531,7 +531,7 @@ def hnf_square(A, proof):
     """
     INPUT:
 
-    - a nonsingular n x n matrix A over the integers.
+    - ``A`` -- a nonsingular n x n matrix over the integers
 
     OUTPUT: the Hermite normal form of A
 

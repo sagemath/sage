@@ -59,7 +59,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
     INPUT:
 
-    - ``parent`` -- hom-set Hom(M,N) to which the homomorphism belongs
+    - ``parent`` -- Hom-set Hom(M,N) to which the homomorphism belongs
     - ``matrix_rep`` -- matrix representation of the homomorphism with
       respect to the bases ``bases``; this entry can actually
       be any material from which a matrix of size rank(N)*rank(M) of
@@ -1281,7 +1281,7 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
 
     INPUT:
 
-    - ``parent`` -- hom-set Hom(M,M) to which the endomorphism belongs
+    - ``parent`` -- Hom-set Hom(M,M) to which the endomorphism belongs
     - ``matrix_rep`` -- matrix representation of the endomorphism with
       respect to the basis ``bases``; this entry can actually
       be any material from which a matrix of size rank(N)*rank(M) of

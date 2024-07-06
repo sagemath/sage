@@ -73,11 +73,9 @@ def is_ToricRationalDivisorClass(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    - ``True`` if ``x`` is a toric rational divisor class, ``False`` otherwise.
+    OUTPUT: ``True`` if ``x`` is a toric rational divisor class, ``False`` otherwise
 
     EXAMPLES::
 
@@ -106,9 +104,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
     - same as for
       :class:`~sage.modules.vector_rational_dense.Vector_rational_dense`.
 
-    OUTPUT:
-
-    - toric rational divisor class.
+    OUTPUT: toric rational divisor class
 
     TESTS::
 
@@ -204,15 +200,15 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
     cpdef _dot_product_(self, Vector right):
         r"""
-        Raise a :class:`TypeError` exception.
+        Raise a :exc:`TypeError` exception.
 
         Dot product is not defined on toric rational divisor classes.
 
         INPUT:
 
-        - ``right`` -- vector.
+        - ``right`` -- vector
 
-        OUTPUT: a :class:`TypeError` exception is raised
+        OUTPUT: a :exc:`TypeError` exception is raised
 
         TESTS::
 
@@ -232,9 +228,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -249,9 +243,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -292,17 +284,15 @@ def _ToricRationalDivisorClass_unpickle_v1(parent, entries,
 
     INPUT:
 
-    - ``parent`` -- rational divisor class group of a toric variety;
+    - ``parent`` -- rational divisor class group of a toric variety
 
-    - ``entries`` -- list of rationals specifying the divisor class;
+    - ``entries`` -- list of rationals specifying the divisor class
 
-    - ``degree`` -- integer, dimension of the ``parent``;
+    - ``degree`` -- integer; dimension of the ``parent``
 
-    - ``is_mutable`` -- boolean, whether the divisor class is mutable.
+    - ``is_mutable`` -- boolean, whether the divisor class is mutable
 
-    OUTPUT:
-
-    - :class:`toric rational divisor class <ToricRationalDivisorClass>`.
+    OUTPUT: :class:`toric rational divisor class <ToricRationalDivisorClass>`
 
     TESTS::
 

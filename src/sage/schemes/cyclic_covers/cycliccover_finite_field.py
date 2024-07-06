@@ -902,7 +902,6 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
     def _initialize_fat_vertical(self, s0, max_upper_target):
         """
         Initialise reduction matrices for vertical reductions for blocks from `s0` to `s0 + max_upper_target`.
-.
 
         TESTS::
 

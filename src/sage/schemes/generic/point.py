@@ -41,7 +41,7 @@ class SchemePoint(Element):
 
     def scheme(self):
         """
-        Return the scheme on which self is a point.
+        Return the scheme on which ``self`` is a point.
 
         EXAMPLES::
 

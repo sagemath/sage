@@ -4569,7 +4569,7 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
     r"""
     Compute a table of Gauss sums using the Gross-Koblitz formula.
 
-    This is used in the computation of L-functions of hypergeometric motives.
+    This is used in the computation of `L`-functions of hypergeometric motives.
     The Gross-Koblitz formula is used as in `sage.rings.padics.misc.gauss_sum`,
     but further unpacked for efficiency.
 

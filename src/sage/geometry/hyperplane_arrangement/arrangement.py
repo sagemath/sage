@@ -3029,10 +3029,8 @@ class HyperplaneArrangementElement(Element):
 
         - ``hyperplane`` -- a hyperplane
 
-        OUTPUT:
-
-        A boolean. Whether the hyperplane ``hyperplane`` separate the given
-        regions.
+        OUTPUT: boolean; whether the hyperplane ``hyperplane`` separate the
+        given regions
 
         EXAMPLES::
 

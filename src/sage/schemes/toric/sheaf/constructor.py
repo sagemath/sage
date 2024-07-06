@@ -23,7 +23,7 @@ def TangentBundle(X):
 
     INPUT:
 
-    - ``X`` -- a toric variety. The base space of the bundle.
+    - ``X`` -- a toric variety; the base space of the bundle
 
     OUTPUT: the tangent bundle as a Klyachko bundle
 
@@ -53,7 +53,7 @@ def CotangentBundle(X):
 
     INPUT:
 
-    - ``X`` -- a toric variety. The base space of the bundle.
+    - ``X`` -- a toric variety; the base space of the bundle
 
     OUTPUT: the cotangent bundle as a Klyachko bundle
 
@@ -73,9 +73,9 @@ def TrivialBundle(X, rank=1):
 
     INPUT:
 
-    - ``X`` -- a toric variety. The base space of the bundle.
+    - ``X`` -- a toric variety; the base space of the bundle
 
-    - ``rank`` -- the rank of the bundle.
+    - ``rank`` -- the rank of the bundle
 
     OUTPUT: the trivial bundle as a Klyachko bundle
 
@@ -104,9 +104,9 @@ def LineBundle(X, D):
 
     INPUT:
 
-    - ``X`` -- a toric variety. The base space of the bundle.
+    - ``X`` -- a toric variety; the base space of the bundle
 
-    - ``D`` -- a toric divisor.
+    - ``D`` -- a toric divisor
 
     OUTPUT:
 
@@ -171,8 +171,7 @@ class SheafLibrary:
 
         INPUT:
 
-        - ``rank`` -- integer (optional; default: `1`). The rank of
-          the bundle.
+        - ``rank`` -- integer (default: `1`); the rank of the bundle
 
         OUTPUT: the trivial bundle as a Klyachko bundle
 
@@ -192,7 +191,7 @@ class SheafLibrary:
 
         INPUT:
 
-        - ``divisor`` -- a toric divisor.
+        - ``divisor`` -- a toric divisor
 
         OUTPUT:
 

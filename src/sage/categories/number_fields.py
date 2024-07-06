@@ -146,10 +146,10 @@ class NumberFields(Category_singleton):
             OUTPUT: the zeta function of this number field
 
             If algorithm is ``'gp'``, this returns an interface to Tim
-            Dokchitser's gp script for computing with L-functions.
+            Dokchitser's gp script for computing with `L`-functions.
 
             If algorithm is ``'pari'``, this returns instead an interface to Pari's
-            own general implementation of L-functions.
+            own general implementation of `L`-functions.
 
             EXAMPLES::
 

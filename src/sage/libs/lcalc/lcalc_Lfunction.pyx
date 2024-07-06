@@ -55,7 +55,7 @@ cdef class Lfunction:
     def __init__(self, name, what_type_L, dirichlet_coefficient,
                  period, Q, OMEGA, gamma, lambd, pole, residue):
         """
-        Initialization of L-function objects.
+        Initialization of `L`-function objects.
         See derived class for details, this class is not supposed to be
         instantiated directly.
 
@@ -113,13 +113,13 @@ cdef class Lfunction:
 
     def __repr__(self):
         """
-        Return string representation of this L-function.
+        Return string representation of this `L`-function.
 
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
             sage: Lfunction_from_character(DirichletGroup(5)[1])
-            L-function with complex Dirichlet coefficients
+            `L`-function with complex Dirichlet coefficients
 
             sage: Lfunction_Zeta()
             The Riemann zeta function
@@ -128,7 +128,7 @@ cdef class Lfunction:
 
     def value(self, s, derivative=0):
         """
-        Compute the value of the L-function at ``s``.
+        Compute the value of the `L`-function at ``s``.
 
         INPUT:
 
@@ -184,7 +184,7 @@ cdef class Lfunction:
 
     def hardy_z_function(self, s):
         """
-        Compute the Hardy Z-function of the L-function at s.
+        Compute the Hardy Z-function of the `L`-function at s.
 
         INPUT:
 
@@ -227,7 +227,7 @@ cdef class Lfunction:
     def compute_rank(self):
         """
         Compute the analytic rank (the order of vanishing at the center) of
-        of the L-function.
+        of the `L`-function.
 
         EXAMPLES::
 
@@ -270,9 +270,9 @@ cdef class Lfunction:
         """
         Finds zeros on critical line between ``T1`` and ``T2`` using step size
         of stepsize. This function might miss zeros if step size is too
-        large. This function computes the zeros of the L-function by using
+        large. This function computes the zeros of the `L`-function by using
         change in signs of areal valued function whose zeros coincide with
-        the zeros of L-function.
+        the zeros of `L`-function.
 
         Use :meth:`find_zeros_via_N` for slower but more rigorous computation.
 
@@ -333,7 +333,7 @@ cdef class Lfunction:
         their imaginary parts. This function verifies that no zeros
         are missed, and that all values output are indeed zeros.
 
-        If this L-function is self-dual (if its Dirichlet coefficients
+        If this `L`-function is self-dual (if its Dirichlet coefficients
         are real, up to a tolerance of 1e-6), then only the zeros with
         positive imaginary parts are output. Their conjugates, which
         are also zeros, are not output.
@@ -346,7 +346,7 @@ cdef class Lfunction:
           size used to find zeros is refined. max_refine gives an upper limit
           on when lcalc should give up. Use default value unless you know
           what you are doing.
-        - ``rank`` -- integer (default: -1); analytic rank of the L-function.
+        - ``rank`` -- integer (default: -1); analytic rank of the `L`-function.
           If -1 is passed, then we attempt to compute it. (Use default if in
           doubt)
 
@@ -426,8 +426,8 @@ cdef class Lfunction:
 
 cdef class Lfunction_I(Lfunction):
     r"""
-    The ``Lfunction_I`` class is used to represent L-functions
-    with integer Dirichlet Coefficients. We assume that L-functions
+    The ``Lfunction_I`` class is used to represent `L`-functions
+    with integer Dirichlet Coefficients. We assume that `L`-functions
     satisfy the following functional equation.
 
     .. MATH::
@@ -448,7 +448,7 @@ cdef class Lfunction_I(Lfunction):
       are periodic and 0 otherwise
 
     - ``dirichlet_coefficient`` -- list of Dirichlet coefficients of the
-      L-function. Only first `M` coefficients are needed if they are periodic.
+      `L`-function. Only first `M` coefficients are needed if they are periodic.
 
     - ``period`` -- if the coefficients are periodic, this should be the
       period of the coefficients
@@ -461,20 +461,20 @@ cdef class Lfunction_I(Lfunction):
 
     - ``gamma`` -- list of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` -- list of the poles of L-function
+    - ``pole`` -- list of the poles of `L`-function
 
-    - ``residue`` -- list of the residues of the L-function
+    - ``residue`` -- list of the residues of the `L`-function
 
     .. NOTE::
 
-         If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
+         If an `L`-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
          by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
     """
 
     def __init__(self, name, what_type_L, dirichlet_coefficient,
                  period, Q, OMEGA, gamma, lambd, pole, residue):
         r"""
-        Initialize an L-function with integer coefficients.
+        Initialize an `L`-function with integer coefficients.
 
         EXAMPLES::
 
@@ -558,13 +558,13 @@ cdef class Lfunction_I(Lfunction):
         del_c_Lfunction_I(<c_Lfunction_I *>(self.thisptr))
 
 ##############################################################################
-# Lfunction_D: L-functions with double (real) Dirichlet Coefficients
+# Lfunction_D: `L`-functions with double (real) Dirichlet Coefficients
 ##############################################################################
 
 cdef class Lfunction_D(Lfunction):
     r"""
-    The ``Lfunction_D`` class is used to represent L-functions
-    with real Dirichlet coefficients. We assume that L-functions
+    The ``Lfunction_D`` class is used to represent `L`-functions
+    with real Dirichlet coefficients. We assume that `L`-functions
     satisfy the following functional equation.
 
     .. MATH::
@@ -585,7 +585,7 @@ cdef class Lfunction_D(Lfunction):
       periodic and 0 otherwise
 
     - ``dirichlet_coefficient`` -- list of Dirichlet coefficients of the
-      L-function. Only first `M` coefficients are needed if they are periodic.
+      `L`-function. Only first `M` coefficients are needed if they are periodic.
 
     - ``period`` -- if the coefficients are periodic, this should be the
       period of the coefficients
@@ -598,19 +598,19 @@ cdef class Lfunction_D(Lfunction):
 
     - ``gamma`` -- list of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` -- list of the poles of L-function
+    - ``pole`` -- list of the poles of `L`-function
 
-    - ``residue`` -- list of the residues of the L-function
+    - ``residue`` -- list of the residues of the `L`-function
 
     .. NOTE::
 
-        If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
+        If an `L`-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
         by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
     """
     def __init__(self, name, what_type_L, dirichlet_coefficient,
                  period, Q, OMEGA, gamma, lambd, pole, residue):
         r"""
-        Initialize an L-function with real coefficients.
+        Initialize an `L`-function with real coefficients.
 
         EXAMPLES::
 
@@ -700,8 +700,8 @@ cdef class Lfunction_D(Lfunction):
 
 cdef class Lfunction_C:
     r"""
-    The ``Lfunction_C`` class is used to represent L-functions
-    with complex Dirichlet Coefficients. We assume that L-functions
+    The ``Lfunction_C`` class is used to represent `L`-functions
+    with complex Dirichlet Coefficients. We assume that `L`-functions
     satisfy the following functional equation.
 
     .. MATH::
@@ -722,7 +722,7 @@ cdef class Lfunction_C:
       periodic and 0 otherwise
 
     - ``dirichlet_coefficient`` -- list of Dirichlet coefficients of the
-      L-function. Only first `M` coefficients are needed if they are periodic.
+      `L`-function. Only first `M` coefficients are needed if they are periodic.
 
     - ``period`` -- if the coefficients are periodic, this should be the
       period of the coefficients
@@ -735,20 +735,20 @@ cdef class Lfunction_C:
 
     - ``gamma`` -- list of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` -- list of the poles of L-function
+    - ``pole`` -- list of the poles of `L`-function
 
-    - ``residue`` -- list of the residues of the L-function
+    - ``residue`` -- list of the residues of the `L`-function
 
     .. NOTE::
 
-        If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
+        If an `L`-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
         by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
     """
 
     def __init__(self, name, what_type_L, dirichlet_coefficient,
                  period, Q, OMEGA, gamma, lambd, pole, residue):
         r"""
-        Initialize an L-function with complex coefficients.
+        Initialize an `L`-function with complex coefficients.
 
         EXAMPLES::
 
@@ -890,7 +890,7 @@ cdef class Lfunction_Zeta(Lfunction):
 def Lfunction_from_character(chi, type='complex'):
     """
     Given a primitive Dirichlet character, this function returns
-    an lcalc L-function object for the L-function of the character.
+    an lcalc `L`-function object for the `L`-function of the character.
 
     INPUT:
 
@@ -898,7 +898,7 @@ def Lfunction_from_character(chi, type='complex'):
     - ``use_type`` -- string (default: ``'complex'``); type used for the Dirichlet
       coefficients. This can be ``'int'``, ``'double'`` or ``'complex'``.
 
-    OUTPUT: L-function object for ``chi``
+    OUTPUT: `L`-function object for ``chi``
 
     EXAMPLES::
 
@@ -946,18 +946,18 @@ def Lfunction_from_character(chi, type='complex'):
 
 def Lfunction_from_elliptic_curve(E, number_of_coeffs=10000):
     """
-    Given an elliptic curve E, return an L-function object for
+    Given an elliptic curve E, return an `L`-function object for
     the function `L(s, E)`.
 
     INPUT:
 
     - ``E`` -- an elliptic curve
     - ``number_of_coeffs`` -- integer (default: 10000); the number of
-      coefficients to be used when constructing the L-function object. Right
+      coefficients to be used when constructing the `L`-function object. Right
       now this is fixed at object creation time, and is not automatically
       set intelligently.
 
-    OUTPUT: L-function object for ``L(s, E)``
+    OUTPUT: `L`-function object for ``L(s, E)``
 
     EXAMPLES::
 

@@ -49,7 +49,7 @@ class LCalc(SageObject):
     Type ``lcalc.[tab]`` for a list of useful commands that
     are implemented using the command line interface, but return
     objects that make sense in Sage. For each command the possible
-    inputs for the L-function are:
+    inputs for the `L`-function are:
 
 
     - ``"`` -- (default) the Riemann zeta function

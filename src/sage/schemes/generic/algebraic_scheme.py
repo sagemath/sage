@@ -140,11 +140,11 @@ def is_AlgebraicScheme(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT:
 
-    Boolean. Whether ``x`` is an algebraic scheme, that is, a
+    boolean; whether ``x`` is an algebraic scheme, that is, a
     subscheme of an ambient space over a ring defined by polynomial
     equations.
 
@@ -254,7 +254,7 @@ class AlgebraicScheme(scheme.Scheme):
 
     def is_projective(self):
         """
-        Return True if self is presented as a subscheme of an ambient
+        Return ``True`` if ``self`` is presented as a subscheme of an ambient
         projective space.
 
         OUTPUT: boolean
@@ -373,7 +373,7 @@ class AlgebraicScheme(scheme.Scheme):
           or neighborhood of a point then the embedding is the
           embedding into the original scheme.
 
-        * A :class:`NotImplementedError` is raised if the construction of
+        * A :exc:`NotImplementedError` is raised if the construction of
           the embedding morphism is not implemented yet.
 
         EXAMPLES::
@@ -467,7 +467,7 @@ class AlgebraicScheme(scheme.Scheme):
 
         OUTPUT:
 
-        A point of ``self``. This raises :class:`AttributeError` if there
+        A point of ``self``. This raises :exc:`AttributeError` if there
         is no distinguished point, depending on how ``self`` was constructed.
 
         EXAMPLES::
@@ -532,15 +532,13 @@ class AlgebraicScheme(scheme.Scheme):
 
     def _homset(self, *args, **kwds):
         """
-        Construct the Hom-set
+        Construct the Hom-set.
 
         INPUT:
 
         Same as :class:`sage.schemes.generic.homset.SchemeHomset_generic`.
 
-        OUTPUT:
-
-        The Hom-set of the ambient space.
+        OUTPUT: the Hom-set of the ambient space
 
         EXAMPLES::
 
@@ -624,7 +622,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
         INPUT:
 
-        - ``X``, ``Y`` -- two subschemes of the same ambient space.
+        - ``X``, ``Y`` -- two subschemes of the same ambient space
 
         TESTS::
 
@@ -720,7 +718,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
     def X(self):
         """
-        Return the scheme `X` such that self is represented as `X - Y`.
+        Return the scheme `X` such that ``self`` is represented as `X - Y`.
 
         EXAMPLES::
 
@@ -735,7 +733,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
     def Y(self):
         """
-        Return the scheme `Y` such that self is represented as `X - Y`.
+        Return the scheme `Y` such that ``self`` is represented as `X - Y`.
 
         EXAMPLES::
 
@@ -751,7 +749,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
     def _check_satisfies_equations(self, v):
         """
         Verify that the coordinates of v define a point on this scheme, or
-        raise a TypeError.
+        raise a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -830,16 +828,13 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         Return the set of rational points on this algebraic scheme
         over the field `F`.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        kwds:
+        - ``bound`` -- integer (default: 0); the bound for the coordinates for
+          subschemes with dimension at least 1
 
-        - ``bound`` -- integer (default: 0). The bound for the coordinates for
-          subschemes with dimension at least 1.
-
-        - ``F`` -- field (default: base ring). The field to compute
-          the rational points over.
-
+        - ``F`` -- field (default: base ring); the field to compute
+          the rational points over
 
         EXAMPLES::
 
@@ -894,16 +889,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     INPUT:
 
-    -  ``A`` -- ambient space (e.g. affine or projective `n`-space)
+    - ``A`` -- ambient space (e.g. affine or projective `n`-space)
 
-    -  ``polynomials`` -- single polynomial, ideal or iterable of defining
-       polynomials; in any case polynomials must belong to the coordinate
-       ring of the ambient space and define valid polynomial functions (e.g.
-       they should be homogeneous in the case of a projective space)
+    - ``polynomials`` -- single polynomial, ideal or iterable of defining
+      polynomials; in any case polynomials must belong to the coordinate
+      ring of the ambient space and define valid polynomial functions (e.g.
+      they should be homogeneous in the case of a projective space)
 
-    OUTPUT:
-
-    - algebraic scheme
+    OUTPUT: algebraic scheme
 
     EXAMPLES::
 
@@ -959,7 +952,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
     def _check_satisfies_equations(self, v):
         """
         Verify that the coordinates of v define a point on this scheme, or
-        raise a TypeError.
+        raise a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -1118,7 +1111,6 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: S.normalize_defining_polynomials()
             sage: S.defining_polynomials()
             (x^2 + 2*x*y, 3*x + 8*y)
-
         """
         BR = self.base_ring()
         if (BR == ZZ
@@ -1423,7 +1415,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     def union(self, other):
         """
-        Return the scheme-theoretic union of self and other in their common
+        Return the scheme-theoretic union of ``self`` and ``other`` in their common
         ambient space.
 
         EXAMPLES: We construct the union of a line and a tripled-point on
@@ -1470,7 +1462,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         """
         Return the Cartesian power of this space.
 
-        INPUT: ``m`` -- integer.
+        INPUT:
+
+        - ``m`` -- integer
 
         OUTPUT: subscheme of product of ambient spaces
 
@@ -1729,18 +1723,16 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         modulo primes is used. See the documentation in homset for the details of the
         sieving algorithm.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        kwds:
+        - ``bound`` -- integer (default: 0); the bound for the coordinates for
+          subschemes with dimension at least 1
 
-        - ``bound`` -- integer (default: 0). The bound for the coordinates for
-          subschemes with dimension at least 1.
-
-        - ``prec`` -- integer (default: 53). The precision to use to
-          compute the elements of bounded height for number fields.
+        - ``prec`` -- integer (default: 53); the precision to use to
+          compute the elements of bounded height for number fields
 
         - ``F`` -- field (default: base ring). The field to compute
-          the rational points over.
+          the rational points over
 
         - ``point_tolerance`` -- positive real number (default: 10^(-10)).
           For numerically inexact fields, two points are considered the same
@@ -1750,7 +1742,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+          algorithm-4
 
         OUTPUT: list of points in subscheme or ambient space
 
@@ -1843,15 +1836,13 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     def change_ring(self, R):
         r"""
-        Returns a new algebraic subscheme which is this subscheme coerced to ``R``.
+        Return a new algebraic subscheme which is this subscheme coerced to ``R``.
 
         INPUT:
 
-        - ``R`` -- ring or morphism.
+        - ``R`` -- ring or morphism
 
-        OUTPUT:
-
-        - A new algebraic subscheme which is this subscheme coerced to ``R``.
+        OUTPUT: a new algebraic subscheme which is this subscheme coerced to ``R``
 
         EXAMPLES::
 
@@ -1994,7 +1985,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         If the input and the output ideals are radical, this is
         equivalent to the statement about algebraic varieties above.
 
-        OUTPUT: affine subscheme - the Weil restriction of ``self``.
+        OUTPUT: affine subscheme; the Weil restriction of ``self``
 
         EXAMPLES::
 

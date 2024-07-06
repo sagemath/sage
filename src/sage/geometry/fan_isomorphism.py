@@ -31,9 +31,7 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
 
     - ``fan1``, ``fan2`` -- two fans
 
-    OUTPUT:
-
-    Boolean. ``False`` if the two fans cannot be isomorphic. ``True``
+    OUTPUT: boolean; ``False`` if the two fans cannot be isomorphic. ``True``
     if the two fans may be isomorphic.
 
     EXAMPLES::

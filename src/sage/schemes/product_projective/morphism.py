@@ -52,12 +52,12 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``parent`` -- Hom-set.
+        - ``parent`` -- Hom-set
 
-        - ``polys`` -- anything that defines a point in the class.
+        - ``polys`` -- anything that defines a point in the class
 
-        - ``check`` -- Boolean. Whether or not to perform input checks.
-          (Default: ``True``)
+        - ``check`` -- boolean; whether or not to perform input checks
+          (default: ``True``)
 
         EXAMPLES::
 
@@ -131,7 +131,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
         OUTPUT:
 
@@ -174,10 +174,10 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``P`` -- a point in the domain.
+        - ``P`` -- a point in the domain
 
-        - ``check`` -- Boolean; whether or not to perform the input checks
-          on the image point (Default: ``True``).
+        - ``check`` -- boolean (default: ``True``); whether or not to perform
+          the input checks on the image point
 
         OUTPUT: the image point in the codomain
 
@@ -239,16 +239,16 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
     def __eq__(self, right):
         """
-        Tests the equality of two product projective morphisms.
+        Test the equality of two product projective morphisms.
 
         INPUT:
 
-        - ``right`` -- a map on product of projective space.
+        - ``right`` -- a map on product of projective space
 
         OUTPUT:
 
-        - Boolean -- True if ``self`` and ``right`` define the same product projective
-          map. False otherwise.
+        boolean; ``True`` if ``self`` and ``right`` define the same product
+        projective map. ``False`` otherwise.
 
         EXAMPLES::
 
@@ -304,16 +304,16 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
     def __ne__(self, right):
         """
-        Tests the inequality of two prduct projective morphisms.
+        Test the inequality of two prduct projective morphisms.
 
         INPUT:
 
-        - ``right`` -- a map on product of projective space.
+        - ``right`` -- a map on product of projective space
 
         OUTPUT:
 
-        - Boolean -- True if ``self`` and ``right`` define different product
-          projective maps. False otherwise.
+        boolean; ``True`` if ``self`` and ``right`` define different product
+        projective maps. ``False`` otherwise.
 
         EXAMPLES::
 
@@ -406,9 +406,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         """
         Return this endomorphism as a :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`.
 
-        OUTPUT:
-
-        - :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`
+        OUTPUT: :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`
 
         EXAMPLES::
 
@@ -431,11 +429,9 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         .. TODO::
 
@@ -482,10 +478,10 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
         OUTPUT: a real number
 

@@ -1625,7 +1625,7 @@ class FindStatFunction(SageObject):
 
         INPUT:
 
-        - a string -- for statistics, this is the name of the
+        - ``value`` -- string; for statistics, this is the name of the
           statistic followed by its description on a separate line
 
         This information is used when submitting the statistic or map with
@@ -1719,7 +1719,7 @@ class FindStatFunction(SageObject):
 
         INPUT:
 
-        - a string -- each reference should be on a single line, and
+        - ``value`` -- string; each reference should be on a single line, and
           consist of one or more links to the same item
 
         FindStat will automatically resolve the links, if possible.
@@ -1769,7 +1769,8 @@ class FindStatFunction(SageObject):
 
         INPUT:
 
-        - a string -- SageMath code producing the values of the statistic or map
+        - ``value`` -- string; SageMath code producing the values of the
+          statistic or map
 
         Contributors are encouraged to submit code for statistics
         using :meth:`FindStatStatistic.set_code`.  Modifying the
@@ -2234,9 +2235,9 @@ class FindStatStatistic(Element,
 
         INPUT:
 
-        - a list of pairs of the form ``(object, value)`` where
+        - ``values`` -- list of pairs of the form ``(object, value)`` where
           ``object`` is a Sage object representing an element of the
-          appropriate collection and ``value`` is an integer.
+          appropriate collection and ``value`` is an integer
 
         This information is used when submitting the statistic with
         :meth:`submit`.
@@ -2299,7 +2300,7 @@ class FindStatStatistic(Element,
 
         INPUT:
 
-        - a string -- code producing the values of the statistic
+        - ``value`` -- string; code producing the values of the statistic
 
         Contributors are encouraged to submit SageMath code in the form::
 
@@ -3272,7 +3273,7 @@ class FindStatMap(Element,
 
         INPUT:
 
-        - a string -- the new name of the map
+        - ``value`` -- string; the new name of the map
 
         This information is used when submitting the map with
         :meth:`submit`.

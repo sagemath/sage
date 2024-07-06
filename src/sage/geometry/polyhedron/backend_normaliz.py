@@ -2437,7 +2437,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT: boolean. Whether the ``Hstar`` series is effective
+        OUTPUT: boolean; whether the ``Hstar`` series is effective
 
         EXAMPLES:
 

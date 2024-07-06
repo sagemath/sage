@@ -2906,10 +2906,8 @@ cdef class Expression(Expression_abc):
         request terminating series by setting the order to
         positive infinity.
 
-        OUTPUT:
-
-        Boolean. Whether ``self`` was constructed by :meth:`series`
-        and has no order term.
+        OUTPUT: boolean; whether ``self`` was constructed by :meth:`series`
+        and has no order term
 
         EXAMPLES::
 

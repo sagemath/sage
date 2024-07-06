@@ -256,10 +256,8 @@ class LinearTensorParent_class(Parent):
         """
         Return whether the free module is a vector space.
 
-        OUTPUT:
-
-        Boolean. Whether the :meth:`free_module` factor in the tensor
-        product is a vector space.
+        OUTPUT: boolean; whether the :meth:`free_module` factor in the tensor
+        product is a vector space
 
         EXAMPLES::
 
@@ -277,10 +275,8 @@ class LinearTensorParent_class(Parent):
         """
         Return whether the free module is a matrix space.
 
-        OUTPUT:
-
-        Boolean. Whether the :meth:`free_module` factor in the tensor
-        product is a matrix space.
+        OUTPUT: boolean; whether the :meth:`free_module` factor in the tensor
+        product is a matrix space
 
         EXAMPLES::
 

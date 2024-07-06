@@ -19,7 +19,7 @@ def to_fast_pickable(l):
 
     INPUT:
 
-    - a list of Boolean polynomials
+    - ``l`` -- a list of Boolean polynomials
 
     OUTPUT:
 

@@ -7830,7 +7830,7 @@ cdef class Matrix(Matrix1):
         - ``cutoff`` -- integer; only used if the Strassen algorithm
           is selected
 
-        - ``transformation`` -- boolean. Whether to also return the
+        - ``transformation`` -- boolean; whether to also return the
           transformation matrix. Some matrix backends do not provide
           this information, in which case this option is ignored.
 
@@ -8021,7 +8021,7 @@ cdef class Matrix(Matrix1):
 
         - ``cutoff`` -- integer; only used if the Strassen algorithm is selected
 
-        - ``transformation`` -- boolean. Whether to also return the
+        - ``transformation`` -- boolean; whether to also return the
           transformation matrix. Some matrix backends do not provide
           this information, in which case this option is ignored.
 

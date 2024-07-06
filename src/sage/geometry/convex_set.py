@@ -449,10 +449,8 @@ class ConvexSet_base(SageObject, Set_base):
         r"""
         Return whether ``self`` is full dimensional.
 
-        OUTPUT:
-
-        Boolean. Whether the polyhedron is not contained in any strict
-        affine subspace.
+        OUTPUT: boolean; whether the polyhedron is not contained in any strict
+        affine subspace
 
         EXAMPLES::
 

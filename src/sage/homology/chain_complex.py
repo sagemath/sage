@@ -516,10 +516,8 @@ class Chain_class(ModuleElement):
         """
         Return whether the chain is a cycle.
 
-        OUTPUT:
-
-        Boolean. Whether the elements of the chain are in the kernel
-        of the differentials.
+        OUTPUT: boolean; whether the elements of the chain are in the kernel
+        of the differentials
 
         EXAMPLES::
 
@@ -541,7 +539,7 @@ class Chain_class(ModuleElement):
 
         OUTPUT:
 
-        Boolean. Whether the elements of the chain are in the image of
+        boolean; whether the elements of the chain are in the image of
         the differentials.
 
         EXAMPLES::

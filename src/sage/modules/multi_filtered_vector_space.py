@@ -213,10 +213,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return whether the multi-filtration is constant.
 
-        OUTPUT:
-
-        Boolean. Whether the each filtration is constant, see
-        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_constant`.
+        OUTPUT: boolean; whether the each filtration is constant, see
+        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_constant`
 
         EXAMPLES::
 
@@ -238,10 +236,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         A filtration `\{F_d\}` in an ambient vector space `V` is
         exhaustive if `\cup F_d = V`. See also :meth:`is_separating`.
 
-        OUTPUT:
-
-        Boolean. Whether each filtration is constant, see
-        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_exhaustive`.
+        OUTPUT: boolean; whether each filtration is constant, see
+        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_exhaustive`
 
         EXAMPLES::
 
@@ -260,10 +256,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         A filtration `\{F_d\}` in an ambient vector space `V` is
         exhaustive if `\cap F_d = 0`. See also :meth:`is_exhaustive`.
 
-        OUTPUT:
-
-        Boolean. Whether each filtration is separating, see
-        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_separating`.
+        OUTPUT: boolean; whether each filtration is separating, see
+        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_separating`
 
         EXAMPLES::
 

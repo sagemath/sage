@@ -529,10 +529,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Return whether the lattice polytope is full dimensional.
 
-        OUTPUT:
-
-        Boolean. Whether the :meth:`affine_dimension` equals the
-        ambient space dimension.
+        OUTPUT: boolean; whether the :meth:`affine_dimension` equals the
+        ambient space dimension
 
         EXAMPLES::
 

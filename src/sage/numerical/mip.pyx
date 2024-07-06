@@ -2223,9 +2223,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         - ``min_bound``, ``max_bound`` -- base ring elements or
           ``None``; the lower and upper bound
 
-        OUTPUT:
-
-        Boolean. Whether the (normalized) constraint has already been added.
+        OUTPUT: boolean; whether the (normalized) constraint has already been added
 
         EXAMPLES::
 

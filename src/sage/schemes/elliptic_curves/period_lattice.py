@@ -1046,7 +1046,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` -- (int or ``None`` -- default); real precision in
+        - ``prec`` -- integer or ``None`` (default); real precision in
           bits (default real precision if ``None``)
 
         EXAMPLES::

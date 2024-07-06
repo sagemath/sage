@@ -4442,10 +4442,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         Test whether all vertices are labeled by integers.
 
-        OUTPUT:
-
-        Boolean. Whether all vertices are labeled by (not necessarily
-        consecutive) integers.
+        OUTPUT: boolean; whether all vertices are labeled by (not necessarily
+        consecutive) integers
 
         EXAMPLES::
 

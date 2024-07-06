@@ -422,10 +422,8 @@ class FormsBase(SageObject):
         """
         Return whether the forms were defined by homogeneous polynomials.
 
-        OUTPUT:
-
-        Boolean. Whether the user originally defined the form via
-        homogeneous variables.
+        OUTPUT: boolean; whether the user originally defined the form via
+        homogeneous variables
 
         EXAMPLES::
 

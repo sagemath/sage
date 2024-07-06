@@ -59,9 +59,9 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     INPUT:
 
-    - ``base_field`` -- The base field of the conic.
+    - ``base_field`` -- the base field of the conic
 
-    - ``names`` -- a list, tuple, or comma separated string
+    - ``names`` -- list, tuple, or comma separated string
       of three variable names specifying the names
       of the coordinate functions of the ambient
       space `\Bold{P}^3`. If not specified or read
@@ -89,9 +89,9 @@ def Conic(base_field, F=None, names=None, unique=True):
                    If ``F`` is a list of 5 points in the plane, then the output
                    is a conic through those points.
 
-    - ``unique`` -- Used only if ``F`` is a list of points in the plane.
-      If the conic through the points is not unique, then
-      raise :class:`ValueError` if and only if ``unique`` is ``True``
+    - ``unique`` -- used only if ``F`` is a list of points in the plane;
+      if the conic through the points is not unique, then
+      raise :exc:`ValueError` if and only if ``unique`` is ``True``
 
     OUTPUT: a plane projective conic curve defined by ``F`` over a field
 

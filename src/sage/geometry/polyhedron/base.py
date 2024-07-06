@@ -794,10 +794,8 @@ class Polyhedron_base(Polyhedron_base7):
 
         See :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.minkowski_sum`.
 
-        OUTPUT:
-
-        Boolean. Whether there exists another polyhedron `Z` such that
-        ``self`` can be written as `Y\oplus Z`.
+        OUTPUT: boolean; whether there exists another polyhedron `Z` such that
+        ``self`` can be written as `Y\oplus Z`
 
         EXAMPLES::
 

@@ -521,10 +521,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return whether the filtration is constant.
 
-        OUTPUT:
-
-        Boolean. Whether the filtered vector spaces are identical in
-        all degrees.
+        OUTPUT: boolean; whether the filtered vector spaces are identical in
+        all degrees
 
         EXAMPLES::
 

@@ -746,9 +746,9 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     def lfunction(self, prec=53, algorithm='pari'):
         """
-        Return the L-function of ``self``.
+        Return the `L`-function of ``self``.
 
-        The result is a wrapper around a PARI L-function or around
+        The result is a wrapper around a PARI `L`-function or around
         the ``lcalc`` program.
 
         INPUT:

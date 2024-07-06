@@ -557,7 +557,7 @@ def _jordan_odd_adic(G):
 
     INPUT:
 
-    - a symmetric matrix over `\ZZ_p` of type ``'fixed-mod'``
+    - ``G`` -- a symmetric matrix over `\ZZ_p` of type ``'fixed-mod'``
 
     OUTPUT:
 

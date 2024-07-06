@@ -566,7 +566,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     def scale_by(self, t):
         """
-        Scales each coordinate of this dynamical system by a factor of `t`.
+        Scale each coordinate of this dynamical system by a factor of `t`.
 
         INPUT:
 

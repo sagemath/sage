@@ -2642,7 +2642,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         OUTPUT:
 
-        boolean; If a prime `P` of the base field is specified, returns
+        boolean; if a prime `P` of the base field is specified, returns
         ``True`` iff the point has good reduction at `P`; otherwise,
         return ``True`` if the point has god reduction at all primes in
         the support of the discriminant of this model.

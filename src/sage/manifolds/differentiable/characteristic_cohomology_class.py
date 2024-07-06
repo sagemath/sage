@@ -1558,7 +1558,7 @@ class EulerAlgorithm(Singleton, Algorithm_generic):
 
         INPUT:
 
-        - a metric connection `\nabla`
+        - ``nab`` -- a metric connection `\nabla`
 
         OUTPUT: list containing the global characteristic Euler form
 

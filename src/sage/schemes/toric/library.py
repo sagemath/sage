@@ -197,14 +197,14 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``name`` -- string. One of the pre-defined names in the
-          ``toric_varieties_rays_cones`` data structure.
+        - ``name`` -- string; one of the pre-defined names in the
+          ``toric_varieties_rays_cones`` data structure
 
-        - ``coordinate_names`` -- A string describing the names of the
-          homogeneous coordinates of the toric variety.
+        - ``coordinate_names`` -- string describing the names of the
+          homogeneous coordinates of the toric variety
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -236,14 +236,14 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``name`` -- string. One of the pre-defined names in the
-          ``toric_varieties_rays_cones`` data structure.
+        - ``name`` -- string; one of the pre-defined names in the
+          ``toric_varieties_rays_cones`` data structure
 
-        - ``coordinate_names`` -- A string describing the names of the
-          homogeneous coordinates of the toric variety.
+        - ``coordinate_names`` -- string describing the names of the
+          homogeneous coordinates of the toric variety
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -281,13 +281,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -312,13 +311,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -343,13 +341,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -374,13 +371,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -405,13 +401,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -438,13 +433,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -469,13 +463,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -500,15 +493,14 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``n`` -- positive integer. The dimension of the projective space.
+        - ``n`` -- positive integer; the dimension of the projective space
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -550,13 +542,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -579,13 +570,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -609,15 +599,14 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``n`` -- positive integer. The dimension of the affine space.
+        - ``n`` -- positive integer; the dimension of the affine space
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -656,13 +645,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -687,13 +675,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -718,13 +705,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -749,13 +735,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -785,13 +770,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -820,13 +804,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -855,13 +838,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -898,16 +880,15 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``k`` -- integer. The case ``k=0`` is the same as
-          :meth:`Cube_face_fan`.
+        - ``k`` -- integer; the case ``k=0`` is the same as
+          :meth:`Cube_face_fan`
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT:
 
@@ -932,10 +913,10 @@ class ToricVarietyFactory(SageObject):
             k = ZZ(k)   # make sure that we got a "mathematical" integer
         except TypeError:
             raise TypeError("cube deformations X_k are defined only for "
-                            "non-negative integer k!\nGot: %s" % k)
+                            "nonnegative integer k!\nGot: %s" % k)
         if k < 0:
             raise ValueError("cube deformations X_k are defined only for "
-                             "non-negative k!\nGot: %s" % k)
+                             "nonnegative k!\nGot: %s" % k)
 
         def rays(kappa):
             return matrix([[1, 1, 2 * kappa + 1], [1, -1, 1],
@@ -955,13 +936,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -991,13 +971,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -1022,13 +1001,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -1054,13 +1032,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -1086,13 +1063,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -1118,13 +1094,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -1150,13 +1125,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -1181,13 +1155,12 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
@@ -1221,10 +1194,10 @@ class ToricVarietyFactory(SageObject):
 
         Two keyword arguments:
 
-        - ``base_ring`` -- a field (default: `\QQ`).
+        - ``base_ring`` -- a field (default: `\QQ`)
 
-        - ``names`` -- string or list (tuple) of strings (default 'z+'). See
-          :func:`~sage.schemes.toric.variety.normalize_names` for
+        - ``names`` -- string or list (tuple) of strings (default: ``'z+'``);
+          see :func:`~sage.schemes.toric.variety.normalize_names` for
           acceptable formats.
 
         OUTPUT:
@@ -1304,15 +1277,14 @@ class ToricVarietyFactory(SageObject):
 
         INPUT:
 
-        - ``n`` -- non-negative integer. The dimension of the algebraic torus.
+        - ``n`` -- nonnegative integer. The dimension of the algebraic torus
 
-        - ``names`` -- string. Names for the homogeneous
-          coordinates. See
-          :func:`~sage.schemes.toric.variety.normalize_names`
-          for acceptable formats.
+        - ``names`` -- string; names for the homogeneous coordinates. See
+          :func:`~sage.schemes.toric.variety.normalize_names` for acceptable
+          formats.
 
-        - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
-          the toric variety.
+        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
+          the toric variety
 
         OUTPUT: a :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
@@ -1340,7 +1312,7 @@ class ToricVarietyFactory(SageObject):
         except TypeError:
             raise TypeError('dimension of the torus must be an integer')
         if n < 0:
-            raise ValueError('dimension must be non-negative')
+            raise ValueError('dimension must be nonnegative')
         N = ToricLattice(n)
         fan = Fan([], lattice=N)
         return ToricVariety(fan, coordinate_names=names, base_field=base_ring)

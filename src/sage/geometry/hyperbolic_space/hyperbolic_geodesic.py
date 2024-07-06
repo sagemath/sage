@@ -2067,13 +2067,11 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
         INPUT:
 
-        - a list of three distinct elements
+        - ``p0``, ``p1``, ``p2`` -- a list of three distinct elements
           of `\mathbb{CP}^1` in affine coordinates; that is, each element
           must be a complex number, `\infty`, or symbolic.
 
-        OUTPUT:
-
-        - an element of `\GL(2,\CC)`
+        OUTPUT: an element of `\GL(2,\CC)`
 
         EXAMPLES::
 

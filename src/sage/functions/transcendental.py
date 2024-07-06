@@ -305,7 +305,7 @@ def hurwitz_zeta(s, x, **kwargs):
 
 
     When `x = 1`, this coincides with Riemann's zeta function.
-    The Dirichlet L-functions may be expressed as linear combinations
+    The Dirichlet `L`-functions may be expressed as linear combinations
     of Hurwitz zeta functions.
 
     EXAMPLES:

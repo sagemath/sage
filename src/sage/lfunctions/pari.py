@@ -1,7 +1,7 @@
 """
 `L`-functions from PARI
 
-This is a wrapper around the general PARI L-functions functionality.
+This is a wrapper around the general PARI `L`-functions functionality.
 
 AUTHORS:
 
@@ -63,7 +63,7 @@ class lfun_generic():
         sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[1])
         sage: lf.init_coeffs([1]*2000)
 
-    Now we can wrap this PARI L-function into one Sage L-function::
+    Now we can wrap this PARI `L`-function into one Sage `L`-function::
 
         sage: L = LFunction(lf); L
         L-series of conductor 1 and weight 1
@@ -131,8 +131,8 @@ class lfun_generic():
             sage: pari_coeffs = pari('k->vector(k,n,(5*sigma(n,3)+7*sigma(n,5))*n/12 - 35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5)))')
             sage: lf.init_coeffs(pari_coeffs)
 
-        Evaluate the resulting L-function at a point, and compare with
-        the answer that one gets "by definition" (of L-function
+        Evaluate the resulting `L`-function at a point, and compare with
+        the answer that one gets "by definition" (of `L`-function
         attached to a modular form)::
 
             sage: L = LFunction(lf)
@@ -182,7 +182,7 @@ class lfun_generic():
 
     def __pari__(self):
         """
-        Return the PARI L-function object.
+        Return the PARI `L`-function object.
 
         EXAMPLES::
 
@@ -205,7 +205,7 @@ class lfun_generic():
 
 def lfun_character(chi):
     """
-    Create the L-function of a primitive Dirichlet character.
+    Create the `L`-function of a primitive Dirichlet character.
 
     If the given character is not primitive, it is replaced by its
     associated primitive character.
@@ -254,7 +254,7 @@ def lfun_character(chi):
 
 def lfun_hgm(motif, t):
     """
-    Create the L-function of an hypergeometric motive.
+    Create the `L`-function of an hypergeometric motive.
 
     OUTPUT: one :pari:`lfun` object
 
@@ -274,7 +274,7 @@ def lfun_hgm(motif, t):
 
 def lfun_elliptic_curve(E):
     """
-    Create the L-function of an elliptic curve.
+    Create the `L`-function of an elliptic curve.
 
     OUTPUT: one :pari:`lfun` object
 
@@ -325,7 +325,7 @@ def lfun_number_field(K):
 
 def lfun_eta_quotient(scalings, exponents):
     """
-    Return the L-function of an eta-quotient.
+    Return the `L`-function of an eta-quotient.
 
     This uses :pari:`lfunetaquo`.
 
@@ -360,7 +360,7 @@ def lfun_eta_quotient(scalings, exponents):
 
 def lfun_delta():
     """
-    Return the L-function of Ramanujan's Delta modular form.
+    Return the `L`-function of Ramanujan's Delta modular form.
 
     EXAMPLES::
 
@@ -374,7 +374,7 @@ def lfun_delta():
 
 def lfun_quadratic_form(qf):
     """
-    Return the L-function of a positive definite quadratic form.
+    Return the `L`-function of a positive definite quadratic form.
 
     This uses :pari:`lfunqf`.
 
@@ -393,7 +393,7 @@ def lfun_quadratic_form(qf):
 
 def lfun_genus2(C):
     """
-    Return the L-function of a curve of genus 2.
+    Return the `L`-function of a curve of genus 2.
 
     INPUT:
 
@@ -436,7 +436,7 @@ def lfun_genus2(C):
 
 class LFunction(SageObject):
     r"""
-    Build the L-function from a PARI L-function.
+    Build the `L`-function from a PARI `L`-function.
 
     .. RUBRIC:: Rank 1 elliptic curve
 
@@ -507,7 +507,7 @@ class LFunction(SageObject):
     """
     def __init__(self, lfun, prec=None):
         """
-        Initialization of the L-function from a PARI L-function.
+        Initialization of the `L`-function from a PARI `L`-function.
 
         INPUT:
 
@@ -604,7 +604,7 @@ class LFunction(SageObject):
 
     def Lambda(self, s):
         """
-        Evaluate the completed L-function at s.
+        Evaluate the completed `L`-function at s.
 
         EXAMPLES::
 
@@ -645,7 +645,7 @@ class LFunction(SageObject):
 
     def derivative(self, s, D=1):
         """
-        Return the derivative of the L-function at point s and order D.
+        Return the derivative of the `L`-function at point s and order D.
 
         INPUT:
 
@@ -741,7 +741,7 @@ class LFunction(SageObject):
 
     def __call__(self, s):
         r"""
-        Return the value of the L-function at point ``s``.
+        Return the value of the `L`-function at point ``s``.
 
         INPUT:
 
