@@ -141,7 +141,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         """
         self._glist = []
         self._positions = []
-        #
+
         for ins in graphics_list:
             if isinstance(ins, Graphics):
                 self.append(ins)  # default position

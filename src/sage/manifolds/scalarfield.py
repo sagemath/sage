@@ -2179,7 +2179,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         else:
             field_name = str(field)
             field_latex_name = latex(field)
-        #
+
         result = FormattedExpansion()
         if self._name is None:
             symbol = ""
