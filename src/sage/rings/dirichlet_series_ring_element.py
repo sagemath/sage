@@ -275,8 +275,15 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             1 + 2*2^-s + 3*3^-s + 4*4^-s + 5*5^-s + 6*6^-s + 7*7^-s + O(10^-s)
             sage: f.truncate(5)
             1 + 2*2^-s + 3*3^-s + 4*4^-s + O(10^-s)
+            sage: g = f.truncate(5, new_parent=True); g
+            1 + 2*2^-s + 3*3^-s + 4*4^-s + O(5^-s)
+            sage: g.parent()
+            Dirichlet Series Ring over Integer Ring with fixed precision 5
         """
         parent = self.parent()
+        if new_parent:
+            from sage.rings.dirichlet_series_ring import DirichletSeriesRing
+            parent = DirichletSeriesRing(parent.base_ring(), prec, parent.is_sparse())
         return parent({i: j for i,j in self.coefficients().items() if i < prec})
 
 class DirichletSeries_dense(DirichletSeries_generic):
