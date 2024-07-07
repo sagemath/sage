@@ -1323,7 +1323,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         - ``value`` -- positive integer
         - ``multiple`` -- positive integer; mutually exclusive with ``value``
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         EXAMPLES:
 

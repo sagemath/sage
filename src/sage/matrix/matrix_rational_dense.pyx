@@ -2211,7 +2211,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
           then ``num_bound``, ``den_bound`` are ignored and numbers are chosen
           using the GMP function ``mpq_randomize_entry_recip_uniform``
 
-        OUTPUT: ``None``, the matrix is modified in-space
+        OUTPUT: none; the matrix is modified in-space
 
         EXAMPLES:
 

@@ -12455,11 +12455,9 @@ def put_natural_embedding_first(v):
 
     - ``v`` -- list of embeddings of a number field
 
-    OUTPUT: ``None``. The
-    list is altered in-place, so that, if possible, the first embedding
-    has been switched with one of the others, so that if there is an
-    embedding which preserves the generator names then it appears
-    first.
+    OUTPUT: none; the list is altered in-place, so that, if possible, the first
+    embedding has been switched with one of the others, so that if there is an
+    embedding which preserves the generator names then it appears first.
 
     EXAMPLES::
 

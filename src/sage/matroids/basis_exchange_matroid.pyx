@@ -199,7 +199,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
           label of `e`
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         .. NOTE::
 

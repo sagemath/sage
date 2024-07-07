@@ -157,7 +157,7 @@ def load_attach_path(path=None, replace=False):
       ``None``, whether to *replace* the search path instead of
       *appending* to it
 
-    OUTPUT: ``None`` or a *reference* to the current search paths
+    OUTPUT: none or a *reference* to the current search paths
 
     EXAMPLES:
 

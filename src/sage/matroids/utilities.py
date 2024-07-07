@@ -50,7 +50,7 @@ def setprint(X):
 
     - ``X`` -- any Python object
 
-    OUTPUT: ``None``. However, the function prints a nice representation of ``X``
+    OUTPUT: none; however, the function prints a nice representation of ``X``
 
     EXAMPLES:
 

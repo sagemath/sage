@@ -329,7 +329,7 @@ class Polyhedron_base2(Polyhedron_base1):
 
         .. NOTE::
 
-        The backend of ``self`` should be ``'normaliz'``.
+            The backend of ``self`` should be ``'normaliz'``.
 
         TESTS::
 

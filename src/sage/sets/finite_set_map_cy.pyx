@@ -189,7 +189,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
         - ``i``, ``j`` -- integers
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -247,7 +247,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
         - ``i``, ``j`` -- two ``object``'s
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         .. NOTE:: if you need speed, please use instead :meth:`_setimage`
 
@@ -513,7 +513,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
         - ``i``, ``j`` -- two ``object``'s
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         EXAMPLES::
 

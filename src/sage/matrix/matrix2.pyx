@@ -9080,7 +9080,7 @@ cdef class Matrix(Matrix1):
         - ``col_lines`` -- ``None``, an integer, or a list of
           integers (columns at which ``self`` must be split)
 
-        OUTPUT: ``None`` but changes ``self``
+        OUTPUT: none but changes ``self``
 
         .. NOTE::
 

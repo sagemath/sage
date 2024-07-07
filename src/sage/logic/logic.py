@@ -787,7 +787,7 @@ def tokenize(s, toks):
 
     - ``toks`` -- list; this will be populated with the tokens of ``s``
 
-    OUTPUT: ``None``; the tokens of ``s`` are placed in ``toks``
+    OUTPUT: none; the tokens of ``s`` are placed in ``toks``
 
     .. NOTE::
 

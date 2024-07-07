@@ -2331,7 +2331,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
 
         - ``label`` -- any Sage object
 
-        OUTPUT: ``None``, ``self`` is modified in place
+        OUTPUT: none, ``self`` is modified in place
 
         .. NOTE::
 
