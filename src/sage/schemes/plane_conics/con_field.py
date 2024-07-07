@@ -6,7 +6,6 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 - Nick Alexander (2008-01-08)
-
 """
 # *****************************************************************************
 #        Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
@@ -30,10 +29,10 @@ import sage.rings.abc
 
 from sage.modules.free_module_element import vector
 from sage.structure.sequence import Sequence
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
@@ -209,7 +208,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             [t^2   1   0]
         """
         a, b, c, d, e, f = self.coefficients()
-        return Matrix([[2 * a, b, c],
+        return matrix([[2 * a, b, c],
                        [b, 2 * d, e],
                        [c, e, 2 * f]])
 
@@ -305,7 +304,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
                 for j in range(i+1,3):
                     basis[j] = basis[j] - \
                                (basis[i]*A*basis[j].column())/l * basis[i]
-        T = Matrix(basis).transpose()
+        T = matrix(basis).transpose()
         return T.transpose()*A*T, T
 
     def diagonalization(self, names=None):
@@ -715,7 +714,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
               Defn: Defined on coordinates by sending (x : y : z) to (t*x + z : y : z)
 
         """
-        if is_Matrix(x):
+        if isinstance(x, Matrix):
             from .constructor import Conic
             y = x.inverse()
             A = y.transpose()*self.matrix()*y
@@ -992,7 +991,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: d.rational_point()                                                    # needs sage.libs.pari
             (-1 : 1 : 0)
         """
-        if is_Vector(v):
+        if isinstance(v, Vector):
             v = Sequence(v)
         p = super().point(v, check=check)
         if self._rational_point is None:
@@ -1241,11 +1240,11 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         a, b, c, d, e, f = self.coefficients()
         if self.base_ring().characteristic() == 2:
             if b == 0 and c == 0 and e == 0:
-                return Matrix([[a, 0, 0], [0, d, 0], [0, 0, f]])
+                return matrix([[a, 0, 0], [0, d, 0], [0, 0, f]])
             raise ValueError("The conic self (= %s) has no symmetric matrix "
                              "because the base field has characteristic 2" %
                              self)
-        return Matrix([[a, b / 2, c / 2],
+        return matrix([[a, b / 2, c / 2],
                        [b / 2, d, e / 2],
                        [c / 2, e / 2, f]])
 

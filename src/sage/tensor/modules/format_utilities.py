@@ -8,7 +8,6 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Joris Vankerschaver (2010): for the function :func:`is_atomic()`
 - Michael Jung (2020): extended usage of :func:`is_atomic()`
-
 """
 
 #******************************************************************************

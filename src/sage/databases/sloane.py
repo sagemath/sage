@@ -67,7 +67,6 @@ AUTHORS:
 
 - Thierry Monteil (2012-02-10): deprecated dead code and update related doc and
   tests.
-
 """
 
 # ****************************************************************************
@@ -184,14 +183,14 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        - ``oeis_url`` - string (default: "https://oeis.org...")
+        - ``oeis_url`` -- string (default: "https://oeis.org...")
           The URL of the stripped.gz encyclopedia file.
 
-        - ``names_url`` - string (default: "https://oeis.org...")
+        - ``names_url`` -- string (default: "https://oeis.org...")
           The URL of the names.gz encyclopedia file.  If you do not want to
           download this file, set names_url=None.
 
-        - ``overwrite`` - boolean (default: False) If the encyclopedia is
+        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
           already installed and overwrite=True, download and install the latest
           version over the installed one.
         """
@@ -227,12 +226,12 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        - ``stripped_file`` - string. The name of the stripped.gz OEIS file.
+        - ``stripped_file`` -- string. The name of the stripped.gz OEIS file.
 
-        - ``names_file`` - string.  The name of the names.gz OEIS file, or
+        - ``names_file`` -- string.  The name of the names.gz OEIS file, or
           None if the user does not want it installed.
 
-        - ``overwrite`` - boolean (default: False) If the encyclopedia is
+        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
           already installed and overwrite=True, install 'filename' over the
           old encyclopedia.
         """

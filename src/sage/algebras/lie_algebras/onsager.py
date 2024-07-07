@@ -25,6 +25,7 @@ from sage.sets.family import Family
 from sage.algebras.lie_algebras.lie_algebra_element import LieAlgebraElement
 from sage.algebras.lie_algebras.lie_algebra import LieAlgebraWithGenerators, InfinitelyGeneratedLieAlgebra
 
+
 class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
     r"""
     The Onsager (Lie) algebra.
@@ -318,6 +319,7 @@ class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
 
 #####################################################################
 ## q-Onsager algebra (the quantum group)
+
 
 class QuantumOnsagerAlgebra(CombinatorialFreeModule):
     r"""
@@ -922,6 +924,7 @@ class QuantumOnsagerAlgebra(CombinatorialFreeModule):
 
 #####################################################################
 ## ACE of the Onsager algebra
+
 
 class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
     r"""

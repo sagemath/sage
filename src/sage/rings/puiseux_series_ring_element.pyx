@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Puiseux Series Ring Element
 
@@ -336,8 +335,10 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         OUTPUT:
 
-        - ``g`` -- int; a ramification index common to self and right
-        - ``M, N`` -- int, int; scaling factors on self and right, respectively
+        - ``g`` -- integer; a ramification index common to ``self`` and
+          ``right``
+        - ``M``, ``N`` -- integers; scaling factors on ``self`` and ``right``,
+          respectively
 
         EXAMPLES::
 

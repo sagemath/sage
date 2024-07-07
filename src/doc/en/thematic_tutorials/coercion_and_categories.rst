@@ -91,7 +91,6 @@ elements. But some old stuff in Sage doesn't use it.  **Volunteers for
 refactoring are welcome!**
 
 
-
 The parent
 ----------
 
@@ -126,13 +125,10 @@ This base class provides a lot more methods than a general parent::
      '_zero_ideal',
      'algebraic_closure',
      'base_extend',
-     'derivation',
-     'derivation_module',
      'divides',
      'epsilon',
      'extension',
      'fraction_field',
-     'frobenius_endomorphism',
      'gen',
      'gens',
      'ideal',

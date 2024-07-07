@@ -29,9 +29,9 @@ dessen primärer Fokus Zahlentheorie ist. Es gibt zwei sehr verschiedene
 Schnittstellen, die Sie in Sage nutzen können:
 
 
--  ``gp`` - Der "**G** o **P** ARI" Interpreter und
+-  ``gp`` -- Der "**G** o **P** ARI" Interpreter und
 
--  ``pari`` - Die PARI-C-Bibliothek.
+-  ``pari`` -- Die PARI-C-Bibliothek.
 
 
 Die folgenden Zeilen zum Beispiel sind zwei Wege, genau das gleiche zu

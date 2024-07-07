@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Function fields
 """
@@ -14,6 +15,7 @@ Function fields
 from sage.categories.category import Category
 from sage.misc.cachefunc import cached_method
 from sage.categories.basic import Fields
+
 
 class FunctionFields(Category):
     r"""

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Cubic Hecke database
 
@@ -49,7 +48,6 @@ AUTHORS:
 
 - Sebastian Oehms (2020-05): initial version
 - Sebastian Oehms (2022-03): PyPi version and Markov trace functionality
-
 """
 
 ##############################################################################
@@ -238,7 +236,7 @@ class CubicHeckeDataBase(SageObject):
 
         INPUT:
 
-        ``section`` -- instance of enum :class:`CubicHeckeDataSection`
+        - ``section`` -- instance of enum :class:`CubicHeckeDataSection`
           to select the data to be read in
 
         OUTPUT:
@@ -1178,7 +1176,6 @@ template = """def %s(%snum_strands=3):
     data[2] = %s
     data[3] = %s
     return data[num_strands]
-
 """
 
 

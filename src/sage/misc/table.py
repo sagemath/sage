@@ -23,18 +23,18 @@ class table(SageObject):
 
     INPUT:
 
-    - ``rows`` (default ``None``) - a list of lists (or list of tuples,
+    - ``rows`` (default ``None``) -- a list of lists (or list of tuples,
       etc.), containing the data to be displayed.
-    - ``columns`` (default ``None``) - a list of lists (etc.), containing
+    - ``columns`` (default ``None``) -- a list of lists (etc.), containing
       the data to be displayed, but stored as columns. Set either ``rows``
       or ``columns``, but not both.
-    - ``header_row`` (default ``False``) - if ``True``, first row is
+    - ``header_row`` (default ``False``) -- if ``True``, first row is
       highlighted.
-    - ``header_column`` (default ``False``) - if ``True``, first column is
+    - ``header_column`` (default ``False``) -- if ``True``, first column is
       highlighted.
-    - ``frame`` (default ``False``) - if ``True``, put a box around each
+    - ``frame`` (default ``False``) -- if ``True``, put a box around each
       cell.
-    - ``align`` (default 'left') - the alignment of each entry: either
+    - ``align`` (default 'left') -- the alignment of each entry: either
       'left', 'center', or 'right'
 
     EXAMPLES::
@@ -314,10 +314,10 @@ class table(SageObject):
 
         INPUT:
 
-        - ``header_row`` - if True, first row is highlighted.
-        - ``header_column`` - if True, first column is highlighted.
-        - ``frame`` - if True, put a box around each cell.
-        - ``align`` - the alignment of each entry: either 'left',
+        - ``header_row`` -- if True, first row is highlighted.
+        - ``header_column`` -- if True, first column is highlighted.
+        - ``frame`` -- if True, put a box around each cell.
+        - ``align`` -- the alignment of each entry: either 'left',
           'center', or 'right'
 
         EXAMPLES::
@@ -782,7 +782,7 @@ class table(SageObject):
         - ``row`` -- a list with the same number of entries as each row
           of the table.
 
-        - ``header`` -- bool (default False). If True, treat this as a
+        - ``header`` -- bool (default: ``False``). If True, treat this as a
           header row, using ``<th>`` instead of ``<td>``.
 
         OUTPUT:

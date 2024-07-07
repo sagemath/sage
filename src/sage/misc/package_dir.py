@@ -253,7 +253,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     - ``path`` -- a directory name.
 
-    - ``distribution_filter`` -- (optional, default: ``None``)
+    - ``distribution_filter`` -- (default: ``None``)
       only consider ``all*.py`` files whose distribution (from a
       ``# sage_setup:`` ``distribution = PACKAGE`` directive in the source file)
       is an element of ``distribution_filter``.
@@ -273,14 +273,14 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
         sage: directory = os.path.join(sage.libs.__path__[0], 'mpfr'); directory
         '.../sage/libs/mpfr'
-        sage: is_package_or_sage_namespace_package_dir(directory)
+        sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
         True
 
     :mod:`sage` is designated to become an implicit namespace package::
 
         sage: directory = sage.__path__[0]; directory
         '.../sage'
-        sage: is_package_or_sage_namespace_package_dir(directory)
+        sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
         True
 
     Not a package::

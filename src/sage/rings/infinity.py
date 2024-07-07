@@ -1285,7 +1285,10 @@ class InfinityRing_class(Singleton, CommutativeRing):
             sage: QQbar(-2*i)*infinity                                                  # needs sage.rings.number_field sage.symbolic
             (-I)*Infinity
         """
-        from sage.symbolic.ring import SR
+        try:
+            from sage.symbolic.ring import SR
+        except ImportError:
+            return None
         if SR.has_coerce_map_from(other):
             return SR
 
@@ -1801,10 +1804,15 @@ def test_comparison(ring):
         ...
         AssertionError: testing -1000.0 in Symbolic Ring: id = ...
     """
-    from sage.symbolic.ring import SR
+
     from sage.rings.rational_field import QQ
-    elements = [-1e3, 99.9999, -SR(2).sqrt(), 0, 1,
-                3 ** (-QQ.one() / 3), SR.pi(), 100000]
+    elements = [-1e3, 99.9999, 0, 1, 100000]
+    try:
+        from sage.symbolic.ring import SR
+    except ImportError:
+        pass
+    else:
+        elements += [-SR(2).sqrt(), SR.pi(), 3 ** (-QQ.one() / 3)]
     elements.append(ring.an_element())
     elements.extend(ring.some_elements())
     for z in elements:

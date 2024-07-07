@@ -113,7 +113,7 @@ def identity(x: Any) -> Any:
 
 
 class _All:
-    """A special value for ``:*-members:`` that matches to any member."""
+    r"""A special value for :\*-members: that matches to any member."""
 
     def __contains__(self, item: Any) -> bool:
         return True

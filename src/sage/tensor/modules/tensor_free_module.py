@@ -46,7 +46,6 @@ REFERENCES:
 - \K. Conrad: *Tensor products* [Con2015]_
 - Chap. 21 (Exer. 4) of R. Godement: *Algebra* [God1968]_
 - Chap. 16 of S. Lang: *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

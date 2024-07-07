@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lie Groups
 """
@@ -13,6 +14,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.groups import Groups
 from sage.categories.manifolds import Manifolds
+
 
 class LieGroups(Category_over_base_ring):
     r"""

@@ -18,7 +18,6 @@ AUTHORS:
 - Marshall Hampton -- second version of interface to PHC
 
 - Marshall Hampton and Alex Jokela -- third version, path tracking
-
 """
 
 # ****************************************************************************

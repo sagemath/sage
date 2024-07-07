@@ -5,7 +5,6 @@ Hecke triangle groups
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -78,7 +77,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``n``   - ``infinity`` or an integer greater or equal to ``3``.
+        - ``n`` -- ``infinity`` or an integer greater or equal to ``3``.
 
         OUTPUT:
 

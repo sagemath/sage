@@ -156,7 +156,6 @@ convert output from PARI to Sage objects:
             return F, B
 
 
-
 .. _section-gap:
 
 GAP

@@ -278,7 +278,6 @@ We can also count backwards to flip the matrix upside down::
     [  6   8   3   4]
 
 
-
 We save and load a matrix::
 
     sage: A = matrix(Integers(8),3,range(9))

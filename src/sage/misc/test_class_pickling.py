@@ -33,6 +33,7 @@ def metaclass(name, bases):
     result.reduce_args = (name, bases)
     return result
 
+
 class Metaclass(type):
     """
     This metaclass illustrates the customization of how a class is pickled.

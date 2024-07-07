@@ -13,7 +13,6 @@ AUTHORS:
 - William Stein: initial version
 - Jeroen Demeyer (2015-01-20): converted ``database_odlyzko_zeta`` to new-style
   package
-
 """
 
 #*****************************************************************************

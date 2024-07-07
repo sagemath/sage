@@ -37,12 +37,20 @@ def is_FractionFieldElement(x):
         sage: from sage.rings.fraction_field_element import is_FractionFieldElement
         sage: R.<x> = ZZ[]
         sage: is_FractionFieldElement(x/2)
+        doctest:warning...
+        DeprecationWarning: The function is_FractionFieldElement is deprecated;
+        use 'isinstance(..., FractionFieldElement)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         False
         sage: is_FractionFieldElement(2/x)
         True
         sage: is_FractionFieldElement(1/3)
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_FractionFieldElement is deprecated; "
+                       "use 'isinstance(..., FractionFieldElement)' instead.")
     return isinstance(x, FractionFieldElement)
 
 
@@ -272,9 +280,9 @@ cdef class FractionFieldElement(FieldElement):
 
         OUTPUT:
 
-        -  ``bool`` - whether or not a square
+        -  ``bool`` -- whether or not a square
 
-        -  ``object`` - (optional) an actual square root if
+        -  ``object`` -- (optional) an actual square root if
            found, and None otherwise.
 
         EXAMPLES::
@@ -675,7 +683,7 @@ cdef class FractionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``right`` - ``RingElement`` to multiply with ``self``
+        - ``right`` -- ``RingElement`` to multiply with ``self``
 
         OUTPUT:
 

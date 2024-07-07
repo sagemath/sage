@@ -96,7 +96,6 @@ in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
     ....:     os.wait()
     ....: '''])
     sage: tmpdir.cleanup()
-
 """
 
 # ****************************************************************************
@@ -277,7 +276,7 @@ def stdout_to_string(s):
 
     INPUT:
 
-    - ``s`` - string; command to evaluate
+    - ``s`` -- string; command to evaluate
 
     OUTPUT: string
 
@@ -301,7 +300,7 @@ def max_to_string(s):
 
     INPUT:
 
-    - ``s`` - ECL object
+    - ``s`` -- ECL object
 
     OUTPUT: string
 
@@ -327,7 +326,7 @@ def parse_max_string(s):
 
     INPUT:
 
-    - ``s`` - string
+    - ``s`` -- string
 
     OUTPUT: ECL object
 
@@ -397,7 +396,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``x`` - object to coerce into self
+        - ``x`` -- object to coerce into self
 
         OUTPUT: Maxima element equivalent to ``x``
 
@@ -441,14 +440,14 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``line`` - string; text to evaluate
+        - ``line`` -- string; text to evaluate
 
-        - ``locals`` - None (ignored); this is used for compatibility with the
+        - ``locals`` -- None (ignored); this is used for compatibility with the
           Sage notebook's generic system interface.
 
-        - ``reformat`` - boolean; whether to strip output or not
+        - ``reformat`` -- boolean; whether to strip output or not
 
-        - ``**kwds`` - All other arguments are currently ignored.
+        - ``**kwds`` -- All other arguments are currently ignored.
 
         OUTPUT: string representing Maxima output
 
@@ -499,7 +498,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``cmd`` - string
+        - ``cmd`` -- string
 
         OUTPUT: ECL object
 
@@ -521,9 +520,9 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        -  ``var`` - string
+        -  ``var`` -- string
 
-        -  ``value`` - string
+        -  ``value`` -- string
 
         OUTPUT: none
 
@@ -545,7 +544,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
         OUTPUT: none
 
@@ -571,7 +570,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
         OUTPUT: string
 
@@ -591,9 +590,9 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``value`` - string or ECL object
+        - ``value`` -- string or ECL object
 
-        - ``name`` - string (default: None); name to use for the variable,
+        - ``name`` -- string (default: None); name to use for the variable,
           an automatically generated name is used if this is none
 
         OUTPUT:
@@ -1138,9 +1137,9 @@ class MaximaLibElement(MaximaAbstractElement):
 
         INPUT:
 
-        - ``vars`` - symbolic expressions
+        - ``vars`` -- symbolic expressions
 
-        - ``options`` - string (default="")
+        - ``options`` -- string (default="")
 
         OUTPUT: Maxima object
 
@@ -1167,7 +1166,7 @@ class MaximaLibElement(MaximaAbstractElement):
 
         INPUT:
 
-        - ``onscreen`` - boolean (default: True); whether to print or return
+        - ``onscreen`` -- boolean (default: ``True``); whether to print or return
 
         OUTPUT:
 
@@ -1278,9 +1277,9 @@ def sage_rat(x, y):
 
     INPUT:
 
-    - ``x`` - integer
+    - ``x`` -- integer
 
-    - ``y`` - integer
+    - ``y`` -- integer
 
     OUTPUT: rational
 
@@ -1321,7 +1320,7 @@ def mrat_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima MRAT expression
+    - ``expr`` -- ECL object; a Maxima MRAT expression
 
     OUTPUT: symbolic expression
 
@@ -1353,7 +1352,7 @@ def mqapply_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima MQAPPLY expression
+    - ``expr`` -- ECL object; a Maxima MQAPPLY expression
 
     OUTPUT: symbolic expression
 
@@ -1391,7 +1390,7 @@ def mdiff_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima %DERIVATIVE expression
+    - ``expr`` -- ECL object; a Maxima %DERIVATIVE expression
 
     OUTPUT: symbolic expression
 
@@ -1413,7 +1412,7 @@ def mlist_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima MLIST expression (i.e., a list)
+    - ``expr`` -- ECL object; a Maxima MLIST expression (i.e., a list)
 
     OUTPUT: a Python list of converted expressions.
 
@@ -1435,7 +1434,7 @@ def max_at_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima AT expression
+    - ``expr`` -- ECL object; a Maxima AT expression
 
     OUTPUT: symbolic expression
 
@@ -1471,7 +1470,7 @@ def dummy_integrate(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima %INTEGRATE expression
+    - ``expr`` -- ECL object; a Maxima %INTEGRATE expression
 
     OUTPUT: symbolic expression
 
@@ -1570,7 +1569,7 @@ def pyobject_to_max(obj):
 
     INPUT:
 
-    - ``expr`` - Python object
+    - ``expr`` -- Python object
 
     OUTPUT: ECL object
 
@@ -1609,7 +1608,7 @@ def sr_to_max(expr):
 
     INPUT:
 
-    - ``expr`` - symbolic expression
+    - ``expr`` -- symbolic expression
 
     OUTPUT: ECL object
 
@@ -1717,7 +1716,7 @@ def max_to_sr(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object
+    - ``expr`` -- ECL object
 
     OUTPUT: symbolic expression
 

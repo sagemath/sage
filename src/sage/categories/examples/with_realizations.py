@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Examples of parents endowed with multiple realizations
@@ -20,6 +21,7 @@ from sage.structure.parent import Parent
 from sage.sets.set import Set
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.subset import Subsets
+
 
 class SubsetAlgebra(UniqueRepresentation, Parent):
     r"""

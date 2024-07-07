@@ -45,7 +45,7 @@ function handlePrefersColorSchemeChange(e) {
 prefersDarkMode.addEventListener('change', handlePrefersColorSchemeChange);
 
 
-// Change the editor theme of a new CodeMirror cell.
+// Change the editor theme of a new CodeMirror cell
 const callback = function(mutationsList, observer) {
   for(const mutation of mutationsList) {
     if (mutation.type === 'childList') {
@@ -113,7 +113,8 @@ thebelab.on("status", function (evt, data) {
   }
 });
 
-// Activate Thebe when "Sage (live)" tab is clicked
+
+// Activate Thebe when "Sage Live" tab is clicked
 document.querySelectorAll('input[class="tab-input"]').forEach((elem) => {
     elem.addEventListener("click", function(event) {
         if (elem.nextElementSibling) {

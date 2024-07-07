@@ -275,7 +275,7 @@ class PseudolineArrangement:
 
             i = 0
             while crossings > 0:
-                if (seq[i] != [] and
+                if (seq[i] and
                     (seq[i][0] == 0 and
                      seq[i+1][0] == 1)):
 
@@ -290,7 +290,7 @@ class PseudolineArrangement:
                     seq[i].pop(0)
                     seq[i+1].pop(0)
 
-                    if i > 0 and seq[i-1] is not []:
+                    if i > 0 and seq[i - 1]:
                         i -= 1
                     else:
                         i += 1

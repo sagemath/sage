@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Base class for parent objects
 
@@ -148,12 +149,18 @@ def is_Parent(x):
 
         sage: from sage.structure.parent import is_Parent
         sage: is_Parent(2/3)
+        doctest:warning...
+        DeprecationWarning: the function is_Parent is deprecated;
+        use 'isinstance(..., Parent)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         False
         sage: is_Parent(ZZ)
         True
         sage: is_Parent(Primes())
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(37922, "the function is_Parent is deprecated; use 'isinstance(..., Parent)' instead")
     return isinstance(x, Parent)
 
 
@@ -2017,10 +2024,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         INPUT:
 
-        - ``v`` - A list (iterator) of parents with coercions into self. There
+        - ``v`` -- A list (iterator) of parents with coercions into self. There
           MUST be maps provided from each item in the list to self.
 
-        - ``S`` - the starting parent
+        - ``S`` -- the starting parent
 
         EXAMPLES:
 
@@ -2136,7 +2143,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
+            sage: Sym = SymmetricFunctions(R)
             sage: H = Sym.macdonald().H()
             sage: P = Sym.macdonald().P()
             sage: m = Sym.monomial()
@@ -2173,7 +2180,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
+            sage: Sym = SymmetricFunctions(R)
             sage: P = Sym.macdonald().P()
             sage: Ht = Sym.macdonald().Ht()
             sage: Ht._internal_coerce_map_from(P)

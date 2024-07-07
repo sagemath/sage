@@ -34,7 +34,6 @@ Download files from a given URL or from the Sage mirror network.
 """
 
 
-
 def make_parser():
     """
     The commandline argument parser for sage-download-file
@@ -46,7 +45,7 @@ def make_parser():
                         help='one of [DEBUG, INFO, ERROR, WARNING, CRITICAL]')
 
     parser.add_argument(
-        '--print-fastest-mirror', action='store_true', 
+        '--print-fastest-mirror', action='store_true',
         help='Print out the fastest mirror. All other arguments are ignored in that case.')
 
     parser.add_argument(
@@ -72,7 +71,7 @@ def make_parser():
         help="""Where to write the file. If the destination is not specified, a url
         will be downloaded and the content written to stdout and a
         tarball will be saved under {SAGE_DISTFILES}""".format(SAGE_DISTFILES=SAGE_DISTFILES))
-    
+
     parser.add_argument(
         '--no-check-certificate', action='store_true',
         help='Do not check SSL certificates for https connections')
@@ -122,7 +121,7 @@ def format_error(message):
     sys.stderr.write(message)
     sys.stderr.write(stars)
 
-                
+
 def run_safe():
     try:
         run()
@@ -132,6 +131,6 @@ def run_safe():
         finally:
             sys.exit(1)
 
-        
+
 if __name__ == '__main__':
     run_safe()

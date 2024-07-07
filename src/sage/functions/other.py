@@ -1591,7 +1591,7 @@ class Function_binomial(GinacFunction):
 
         INPUT:
 
-        -  ``x``, ``m`` - numbers or symbolic expressions. Either ``m``
+        -  ``x``, ``m`` -- numbers or symbolic expressions. Either ``m``
            or ``x-m`` must be an integer, else the output is symbolic.
 
         OUTPUT: number or symbolic expression (if input is symbolic)

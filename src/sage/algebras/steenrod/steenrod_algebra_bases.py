@@ -124,7 +124,7 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
 
     - ``n`` -- non-negative integer, the dimension
     - ``basis`` -- string, the basis from which to convert
-    - ``p`` -- positive prime number (optional, default 2)
+    - ``p`` -- positive prime number (default: 2)
 
     OUTPUT:
 
@@ -194,7 +194,7 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
 
     - ``basis`` -- string, the basis to which to convert
 
-    - ``p`` -- positive prime number (optional, default 2)
+    - ``p`` -- positive prime number (default: 2)
 
     OUTPUT:
 
@@ -264,16 +264,16 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     INPUT:
 
     - ``n`` -- non-negative integer
-    - ``basis`` -- string, which basis to use (optional, default: ``'milnor'``)
-    - ``p`` -- positive prime number (optional, default: 2)
-    - ``profile`` -- profile function (optional, default: ``None``).  This
+    - ``basis`` -- string, which basis to use (default: ``'milnor'``)
+    - ``p`` -- positive prime number (default: 2)
+    - ``profile`` -- profile function (default: ``None``).  This
       is just passed on to the functions :func:`milnor_basis` and
       :func:`pst_basis`.
     - ``truncation_type`` -- truncation type, either 0 or Infinity
-      (optional, default Infinity if no profile function is specified,
+      (default: Infinity if no profile function is specified,
       0 otherwise).  This is just passed on to the function
       :func:`milnor_basis`.
-    - ``generic`` -- boolean (optional, default: ``None``)
+    - ``generic`` -- boolean (default: ``None``)
 
     OUTPUT:
 
@@ -387,7 +387,7 @@ def restricted_partitions(n, l, no_repeats=False):
 
     - ``n`` -- non-negative integer
     - ``l`` -- list of positive integers
-    - ``no_repeats`` -- boolean (optional, default: ``False``), if ``True``,
+    - ``no_repeats`` -- boolean (default: ``False``), if ``True``,
       only return partitions with no repeated parts
 
     OUTPUT: iterator of lists
@@ -515,9 +515,9 @@ def milnor_basis(n, p=2, **kwds):
 
     - ``n`` -- non-negative integer
 
-    - ``p`` -- positive prime number (optional, default 2)
+    - ``p`` -- positive prime number (default: 2)
 
-    - ``profile`` - profile function (optional, default ``None``).
+    - ``profile`` -- profile function (default: ``None``).
       Together with ``truncation_type``, specify the profile function
       to be used; ``None`` means the profile function for the entire
       Steenrod algebra.  See
@@ -526,7 +526,7 @@ def milnor_basis(n, p=2, **kwds):
       for information on profile functions.
 
     - ``truncation_type`` -- truncation type, either 0 or Infinity
-      (optional, default Infinity if no profile function is specified,
+      (default: Infinity if no profile function is specified,
       0 otherwise)
 
     OUTPUT: tuple of mod `p` Milnor basis elements in dimension `n`
@@ -680,7 +680,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
 
     - ``n`` -- non-negative integer
     - ``bound`` -- positive integer (optional)
-    - ``prime`` -- positive prime number (optional, default 2)
+    - ``prime`` -- positive prime number (default: 2)
 
     OUTPUT: tuple of mod `p` Serre-Cartan basis elements in dimension `n`
 
@@ -767,7 +767,7 @@ def atomic_basis(n, basis, **kwds):
 
     - ``basis`` -- string, the name of the basis
 
-    - ``profile`` -- profile function (optional, default: ``None``).
+    - ``profile`` -- profile function (default: ``None``).
       Together with ``truncation_type``, specify the profile function
       to be used; ``None`` means the profile function for the entire
       Steenrod algebra.  See
@@ -775,7 +775,7 @@ def atomic_basis(n, basis, **kwds):
       :func:`SteenrodAlgebra` for information on profile functions.
 
     - ``truncation_type`` -- truncation type, either 0 or Infinity
-      (optional, default Infinity if no profile function is specified,
+      (default: Infinity if no profile function is specified,
       0 otherwise).
 
     OUTPUT: tuple of basis elements in dimension `n`
@@ -998,7 +998,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
 
     - ``p`` -- positive prime number
 
-    - ``profile`` -- profile function (optional, default: ``None``).
+    - ``profile`` -- profile function (default: ``None``).
       Together with ``truncation_type``, specify the profile function
       to be used; ``None`` means the profile function for the entire
       Steenrod algebra.  See
@@ -1006,7 +1006,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
       :func:`SteenrodAlgebra` for information on profile functions.
 
     - ``truncation_type`` -- truncation type, either 0 or Infinity
-      (optional, default Infinity if no profile function is specified,
+      (default: Infinity if no profile function is specified,
       0 otherwise).
 
     OUTPUT: tuple of basis elements in dimension `n`

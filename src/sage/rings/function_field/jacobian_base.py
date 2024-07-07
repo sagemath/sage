@@ -67,7 +67,6 @@ We can get the corresponding point in the Jacobian in a different model. ::
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
-
 """
 
 # ****************************************************************************

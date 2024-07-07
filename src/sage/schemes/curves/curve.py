@@ -19,7 +19,6 @@ EXAMPLES::
 AUTHORS:
 
 - William Stein (2005)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>

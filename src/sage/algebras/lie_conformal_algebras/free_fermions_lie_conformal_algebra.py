@@ -35,6 +35,7 @@ AUTHORS:
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
+
 class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
     The Free Fermions Super Lie conformal algebra.

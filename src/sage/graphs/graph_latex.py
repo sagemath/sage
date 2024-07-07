@@ -1714,34 +1714,34 @@ class GraphLatex(SageObject):
                 vl_color = {}
                 vl_placement = {}
             for u in vertex_list:
-                #
+
                 c = dvc
                 if u in vertex_colors:
                     c = cc.to_rgb(vertex_colors[u])
                 v_color[u] = c
-                #
+
                 c = dvfc
                 if u in vertex_fill_colors:
                     c = cc.to_rgb(vertex_fill_colors[u])
                 vf_color[u] = c
-                #
+
                 sh = dsh
                 if u in vertex_shapes:
                     sh = vertex_shapes[u]
                 v_shape[u] = sh
-                #
+
                 vs = dvs
                 if u in vertex_sizes:
                     vs = vertex_sizes[u]
                 v_size[u] = vs
-                #
+
                 if vertex_labels:
-                    #
+
                     c = dvlc
                     if u in vertex_label_colors:
                         c = cc.to_rgb(vertex_label_colors[u])
                     vl_color[u] = c
-                    #
+
                     vlp = dvlp
                     if u in vertex_label_placements:
                         vlp = vertex_label_placements[u]
@@ -1766,14 +1766,14 @@ class GraphLatex(SageObject):
             # We collect options for edges, default values and for-some-edges
             # information.  These are combined into dictionaries on a per-edge
             # basis, for all edges
-            #
+
             # Defaults
-            #
+
             dec = cc.to_rgb(self.get_option('edge_color'))
             if edge_fills:
                 defc = cc.to_rgb(self.get_option('edge_fill_color'))
             det = self.get_option('edge_thickness')
-            #
+
             if edge_labels:
                 edge_labels_math = self.get_option('edge_labels_math')
                 delc = cc.to_rgb(self.get_option('edge_label_color'))
@@ -1796,7 +1796,7 @@ class GraphLatex(SageObject):
             # an undirected graph in the "wrong" order, so we use a "reverse" to
             # test for this case.  Everything formed here conforms to the order
             # used in the graph.
-            #
+
             e_color = {}
             if edge_fills:
                 ef_color = {}
@@ -1809,7 +1809,7 @@ class GraphLatex(SageObject):
             for e in self._graph.edges(sort=False):
                 edge = (e[0], e[1])
                 reverse = (e[1], e[0])
-                #
+
                 c = dec
                 if edge in edge_colors or (not is_directed and reverse in edge_colors):
                     if edge in edge_colors:
@@ -1817,7 +1817,7 @@ class GraphLatex(SageObject):
                     else:
                         c = cc.to_rgb(edge_colors[reverse])
                 e_color[edge] = c
-                #
+
                 if edge_fills:
                     c = defc
                     if edge in edge_fill_colors or (not is_directed and reverse in edge_fill_colors):
@@ -1826,7 +1826,7 @@ class GraphLatex(SageObject):
                         else:
                             c = cc.to_rgb(edge_fill_colors[reverse])
                     ef_color[edge] = c
-                #
+
                 et = det
                 if edge in edge_thicknesses or (not is_directed and reverse in edge_thicknesses):
                     if edge in edge_thicknesses:
@@ -1834,7 +1834,7 @@ class GraphLatex(SageObject):
                     else:
                         et = edge_thicknesses[reverse]
                 e_thick[edge] = et
-                #
+
                 if edge_labels:
                     c = delc
                     if edge in edge_label_colors or (not is_directed and reverse in edge_label_colors):
@@ -1843,7 +1843,7 @@ class GraphLatex(SageObject):
                         else:
                             c = cc.to_rgb(edge_label_colors[reverse])
                     el_color[edge] = c
-                    #
+
                     els = dels
                     if edge in edge_label_slopes or (not is_directed and reverse in edge_label_slopes):
                         if edge in edge_label_slopes:
@@ -1851,7 +1851,7 @@ class GraphLatex(SageObject):
                         else:
                             els = edge_label_slopes[reverse]
                     el_slope[edge] = els
-                    #
+
                     elp = delp
                     if edge in edge_label_placements or (not is_directed and reverse in edge_label_placements):
                         if edge in edge_label_placements:

@@ -30,7 +30,7 @@ AUTHORS:
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 
@@ -181,7 +181,7 @@ def DynkinDiagram(*args, **kwds):
     if len(args) == 0:
         return DynkinDiagram_class()
     mat = args[0]
-    if is_Matrix(mat):
+    if isinstance(mat, Matrix):
         mat = CartanMatrix(*args)
     if isinstance(mat, CartanMatrix):
         if mat.cartan_type() is not mat:

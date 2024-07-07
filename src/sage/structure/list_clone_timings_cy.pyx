@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Cython Functions for Timing Clone Protocol
 """

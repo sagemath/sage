@@ -184,10 +184,10 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
         if len(self._weights) != len(x):
             return False
         s = 0
-        for i, val in enumerate(x):
-            if (not isinstance(val, (int, Integer))) and (val not in ZZ):
+        for i, xi in enumerate(x):
+            if not isinstance(xi, (int, Integer)) and xi not in ZZ:
                 return False
-            s += x[i] * self._weights[i]
+            s += xi * self._weights[i]
         return s == self._n
 
     def _recfun(self, n, l):

@@ -500,7 +500,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``reduce`` - a boolean (default True) indicating
+        -  ``reduce`` -- a boolean (default: ``True``) indicating
            whether or not to apply LLL-reduction to the calculated basis
 
         EXAMPLES::
@@ -576,7 +576,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``long_etas`` -  a list of EtaGroupElement objects (which
+        - ``long_etas`` --  a list of EtaGroupElement objects (which
           should all be of the same level)
 
         OUTPUT:
@@ -917,14 +917,14 @@ def eta_poly_relations(eta_elements, degree, labels=['x1', 'x2'],
 
     INPUT:
 
-    - ``eta_elements`` - (list): a list of EtaGroupElement objects.
+    - ``eta_elements`` -- (list): a list of EtaGroupElement objects.
       Not implemented unless this list has precisely two elements. degree
 
-    - ``degree`` - (integer): the maximal degree of polynomial to look for.
+    - ``degree`` -- (integer): the maximal degree of polynomial to look for.
 
-    - ``labels`` - (list of strings): labels to use for the polynomial returned.
+    - ``labels`` -- (list of strings): labels to use for the polynomial returned.
 
-    - ``verbose`` - (boolean, default ``False``): if ``True``, prints information as
+    - ``verbose`` -- (boolean, default ``False``): if ``True``, prints information as
       it goes.
 
     OUTPUT: a list of polynomials which is a Groebner basis for the

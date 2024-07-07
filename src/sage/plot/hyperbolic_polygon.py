@@ -137,17 +137,17 @@ def _winding_number(vertices, point):
 
     sides = []
     wn = 0
-    for i in range(0, len(vertices)-1):
-        if _intersects(vertices[i], vertices[i+1], point[1]):
-            sides.append([vertices[i], vertices[i + 1]])
+    sides = [[vertices[i], vertices[i + 1]] for i in range(len(vertices) - 1)
+             if _intersects(vertices[i], vertices[i + 1], point[1])]
+
     if _intersects(vertices[-1], vertices[0], point[1]):
         sides.append([vertices[-1], vertices[0]])
     for side in sides:
         if _is_left(point, side):
             if side[1][1] > side[0][1]:
-                wn = wn + 1
+                wn += 1
             if side[1][1] < side[0][1]:
-                wn = wn - 1
+                wn -= 1
     return wn
 
 
@@ -338,7 +338,7 @@ def hyperbolic_triangle(a, b, c, model="UHP", **options):
 
     INPUT:
 
-    - ``a, b, c`` -- complex numbers in the upper half complex plane
+    - ``a``, ``b``, ``c`` -- complex numbers in the upper half complex plane
 
     OPTIONS:
 

@@ -16,7 +16,6 @@ AUTHORS:
 - Nathann Cohen (2010-10)      : initial implementation
 - Risan (2012-02)              : extension for PPL backend
 - Ingolfur Edvardsson (2014-06): extension for CVXOPT backend
-
 """
 
 #*****************************************************************************
@@ -51,19 +50,19 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         OUTPUT: The index of the newly created variable
 
@@ -104,21 +103,21 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``n`` - the number of new variables (must be > 0)
+        - ``n`` -- the number of new variables (must be > 0)
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` - optional list of names (default: ``None``)
+        - ``names`` -- optional list of names (default: ``None``)
 
         OUTPUT: The index of the variable created last.
 
@@ -630,11 +629,11 @@ cdef class GenericBackend:
 
         - ``number`` (integer) -- the number of constraints to add.
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``names`` - an optional list of names (default: ``None``)
+        - ``names`` -- an optional list of names (default: ``None``)
 
         EXAMPLES::
 
@@ -809,7 +808,6 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-
     cpdef get_relative_objective_gap(self):
         r"""
         Return the relative objective gap of the best known solution.
@@ -844,7 +842,6 @@ cdef class GenericBackend:
             0.0
         """
         raise NotImplementedError()
-
 
     cpdef get_variable_value(self, int variable):
         """
@@ -1314,7 +1311,6 @@ cdef class GenericBackend:
         cp = copy(self)
         self._do_test_problem_data(tester, cp)
 
-
     def _test_copy_does_not_share_data(self, **options):
         """
         Test whether copy makes an independent copy of the backend.
@@ -1587,7 +1583,9 @@ cdef class GenericBackend:
         tester.assertAlmostEqual(p.get_variable_value(0), 0.666666666667)
         tester.assertAlmostEqual(p.get_variable_value(1), 0.333333333333)
 
+
 default_solver = None
+
 
 def default_mip_solver(solver=None):
     """

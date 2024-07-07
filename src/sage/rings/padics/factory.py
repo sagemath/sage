@@ -36,7 +36,7 @@ from sage.rings.infinity import Infinity
 from sage.structure.factorization import Factorization
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.element import is_Element
+from sage.structure.element import Element
 from .padic_base_leaves import (pAdicRingCappedRelative,
                                 pAdicRingCappedAbsolute,
                                 pAdicRingFixedMod,
@@ -1322,7 +1322,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
         sage: K0 is K1                                                                  # needs sage.libs.ntl
         True
     """
-    if is_Element(q):
+    if isinstance(q, Element):
         F = Integer(q).factor()
         if len(F) != 1:
             raise ValueError("q must be a prime power")

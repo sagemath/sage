@@ -500,38 +500,38 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
 
     INPUT:
 
-    - ``tailpoint`` - the starting point of the arrow
+    - ``tailpoint`` -- the starting point of the arrow
 
-    - ``headpoint`` - where the arrow is pointing to
+    - ``headpoint`` -- where the arrow is pointing to
 
-    - ``path`` - the list of points and control points (see bezier_path for
+    - ``path`` -- the list of points and control points (see bezier_path for
       detail) that the arrow will follow from source to destination
 
-    - ``head`` - 0, 1 or 2, whether to draw the head at the start (0), end (1)
+    - ``head`` -- 0, 1 or 2, whether to draw the head at the start (0), end (1)
       or both (2) of the path (using 0 will swap headpoint and tailpoint).
       This is ignored in 3D plotting.
 
-    - ``linestyle`` - (default: ``'solid'``) The style of the line, which is
+    - ``linestyle`` -- (default: ``'solid'``) The style of the line, which is
       one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
       or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
 
-    - ``width`` - (default: 2) the width of the arrow shaft, in points
+    - ``width`` -- (default: 2) the width of the arrow shaft, in points
 
-    - ``color`` - (default: (0,0,1)) the color of the arrow (as an RGB tuple or
+    - ``color`` -- (default: (0,0,1)) the color of the arrow (as an RGB tuple or
       a string)
 
-    - ``hue`` - the color of the arrow (as a number)
+    - ``hue`` -- the color of the arrow (as a number)
 
-    - ``arrowsize`` - the size of the arrowhead
+    - ``arrowsize`` -- the size of the arrowhead
 
-    - ``arrowshorten`` - the length in points to shorten the arrow (ignored if
+    - ``arrowshorten`` -- the length in points to shorten the arrow (ignored if
       using path parameter)
 
-    - ``legend_label`` - the label for this item in the legend
+    - ``legend_label`` -- the label for this item in the legend
 
-    - ``legend_color`` - the color for the legend label
+    - ``legend_color`` -- the color for the legend label
 
-    - ``zorder`` - the layer level to draw the arrow-- note that this is
+    - ``zorder`` -- the layer level to draw the arrow-- note that this is
       ignored in 3D plotting.
 
     EXAMPLES:

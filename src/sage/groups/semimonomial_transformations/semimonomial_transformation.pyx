@@ -90,6 +90,7 @@ def _inverse(f, R):
         g *= f
     return g
 
+
 cdef class SemimonomialTransformation(MultiplicativeGroupElement):
     r"""
     An element in the semimonomial group over a ring `R`. See

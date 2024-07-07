@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Verbosity System and Logging in SageMath
 
@@ -89,7 +90,7 @@ AUTHORS:
 Functions
 =========
 """
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2006, 2007 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 Gonzalo Tornaria
 #       Copyright (C) 2008 John H. Palmieri
@@ -102,7 +103,7 @@ Functions
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 import sys
 import os
@@ -119,16 +120,16 @@ def verbose(mesg="", t=0, level=1, caller_name=None):
     INPUT:
 
 
-    -  ``mesg`` - str, a message to print
+    -  ``mesg`` -- str, a message to print
 
-    -  ``t`` - int, optional, if included, will also print
+    -  ``t`` -- int, optional, if included, will also print
        cputime(t), - which is the time since time t. Thus t should have
        been obtained with t=cputime()
 
-    -  ``level`` - int, (default: 1) the verbosity level of
+    -  ``level`` -- int, (default: 1) the verbosity level of
        what we are printing
 
-    -  ``caller_name`` - string (default: None), the name
+    -  ``caller_name`` -- string (default: None), the name
        of the calling function; in most cases Python can deduce this, so
        it need not be provided.
 

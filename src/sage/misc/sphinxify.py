@@ -37,9 +37,9 @@ def sphinxify(docstring, format='html'):
 
     INPUT:
 
-    - ``docstring`` -- string -- a ReST-formatted docstring
+    - ``docstring`` -- string; a ReST-formatted docstring
 
-    - ``format`` -- string (optional, default 'html') -- either 'html' or
+    - ``format`` -- string (default: 'html'); either 'html' or
       'text'
 
     OUTPUT:
@@ -82,7 +82,7 @@ def sphinxify(docstring, format='html'):
     with open(rst_name, 'w') as filed:
         filed.write(docstring)
 
-    confdir = os.path.join(srcdir, 'en' , 'introspect')
+    confdir = os.path.join(srcdir, 'en', 'introspect')
     os.makedirs(confdir)
     with open(os.path.join(confdir, 'conf.py'), 'w') as filed:
         filed.write(r"""

@@ -222,12 +222,12 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         except ValueError:
             names = None
         if names:
-            terms = [("T^{{({0})}}{1}".format(k1, names[p._index_to_pos[k0]]), v) if k1 > 1
+            terms = [("T^{{({})}}{}".format(k1, names[p._index_to_pos[k0]]), v) if k1 > 1
                      else ("T{}".format(names[p._index_to_pos[k0]]), v) if k1 == 1
                      else ("{}".format(names[p._index_to_pos[k0]]), v)
                      for (k0, k1), v in self.monomial_coefficients().items()]
         else:
-            terms = [("T^{{({0})}}{1}".format(k1, latex(k0)), v) if k1 > 1
+            terms = [("T^{{({})}}{}".format(k1, latex(k0)), v) if k1 > 1
                      else ("T{}".format(latex(k0)), v) if k1 == 1
                      else ("{}".format(latex(k0)), v)
                      for (k0, k1), v in self.monomial_coefficients().items()]

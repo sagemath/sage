@@ -8,8 +8,6 @@ fi
 BASE_DOC_COMMIT="$1"
 DOC_REPOSITORY="$2"
 
-# Wipe out chronic diffs between old doc and new doc
-(cd $DOC_REPOSITORY && find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
 # Create CHANGES.html
 echo '<html>' > CHANGES.html
 echo '<head>' >> CHANGES.html
@@ -19,7 +17,9 @@ echo '<script>hljs.highlightAll();</script>' >> CHANGES.html
 cat >> CHANGES.html << EOF
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-const baseDocURL = 'https://sagemath.netlify.app'
+// This URL is hardcoded in the file .github/workflows/doc-publish.yml.
+// See NETLIFY_ALIAS of the "Deploy to Netlify" step.
+const baseDocURL = 'https://doc-develop--sagemath.netlify.app'
 const diffSite = 'https://pianomister.github.io/diffsite'
 const diffParagraphs = document.querySelectorAll('p.diff');
 diffParagraphs.forEach(paragraph => {
@@ -82,7 +82,7 @@ for block in diff_blocks:
         if content:
             with open(file_path, 'w') as file:
                 file.writelines(content)
-        path = 'html/' + doc
+        path = doc
         hunks = '&nbsp;'.join(f'<a href="{path}#hunk{i+1}" class="hunk" target="_blank">#{i + 1}</a>' for i in range(count))
         out_blocks.append(f'<p class="diff"><a href="{path}">{doc}</a>&nbsp;' + hunks + '&emsp;</p>'
                             + '\n<pre><code class="language-diff">'

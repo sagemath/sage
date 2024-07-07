@@ -24,6 +24,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.family import Family
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.structure.parent import Parent
+from sage.structure.element import parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -388,7 +389,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: S._an_element_()
             X
         """
-        return self.element_class(self, self.lie_algebra_generators()[0])
+        return self.lie_algebra_generators()[0]
 
     def _element_constructor_(self, x):
         """
@@ -425,14 +426,13 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: S([S(x), S(y)]) == S(L[x, y])
             True
         """
-        try:
-            P = x.parent()
-            if P is self:
-                return x
-            if P == self._ambient:
-                return self.retract(x)
-        except AttributeError:
-            pass
+        P = parent(x)
+        if P is self:
+            return x
+        if P == self._ambient:
+            return self.retract(x)
+        if isinstance(P, type(self)) and P._ambient == self._ambient:
+            return self.retract(x.value)
 
         if x in self.module():
             return self.from_vector(x)

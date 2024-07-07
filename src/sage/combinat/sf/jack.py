@@ -36,7 +36,7 @@ from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.arith.misc import gcd
 from sage.arith.functions import lcm
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.misc.misc_c import prod
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom, End
@@ -481,7 +481,7 @@ def normalize_coefficients(self, c):
         6/(t^2 + 3*t + 2)
     """
     BR = self.base_ring()
-    if is_FractionField(BR) and BR.base_ring() == QQ:
+    if isinstance(BR, FractionField_generic) and BR.base_ring() == QQ:
         denom = c.denominator()
         numer = c.numerator()
 

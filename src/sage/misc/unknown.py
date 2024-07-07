@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 The Unknown truth value
 
@@ -83,6 +84,7 @@ AUTHORS:
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import richcmp_method, rich_to_bool
 
+
 class UnknownError(TypeError):
     """
     Raised whenever :class:`Unknown` is used in a boolean operation.
@@ -95,6 +97,7 @@ class UnknownError(TypeError):
         UnknownError: Unknown does not evaluate in boolean context
     """
     pass
+
 
 @richcmp_method
 class UnknownClass(UniqueRepresentation):

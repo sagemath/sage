@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Factorizations
 
@@ -234,7 +235,7 @@ class Factorization(SageObject):
         - ``cr`` -- (default: ``False``); if ``True``, print the factorization
           with carriage returns between factors.
 
-        - ``sort`` - (default: ``True``); if ``True``, sort the factors by
+        - ``sort`` -- (default: ``True``); if ``True``, sort the factors by
           calling the sort function ``self.sort()`` after creating
           the factorization
 

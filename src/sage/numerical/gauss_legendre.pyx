@@ -38,18 +38,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-#as it turns out, computing the nodes can easily turn out to be more
-#expensive than computing the integrals. So it's worth optimizing this.
-#making the function into a cython routine helps a little bit. If we really
-#want to we can optimize this further, probably to a point where
-#we don't have to bother with node computation routines that have a better order
-#than this naive approach (which is quadratic)
+# as it turns out, computing the nodes can easily turn out to be more
+# expensive than computing the integrals. So it's worth optimizing this.
+# making the function into a cython routine helps a little bit. If we really
+# want to we can optimize this further, probably to a point where
+# we don't have to bother with node computation routines that have
+# a better order than this naive approach (which is quadratic)
 
 from sage.libs.mpfr cimport *
 import math
 from sage.rings.real_mpfr import RealField
 from sage.misc.cachefunc import cached_function
 from sage.rings.real_mpfr cimport RealNumber, RealField_class
+
 
 def nodes_uncached(degree, prec):
     r"""
@@ -160,6 +161,7 @@ def nodes_uncached(degree, prec):
     mpfr_clear(v)
     return nodes
 
+
 @cached_function
 def nodes(degree, prec):
     r"""
@@ -212,6 +214,7 @@ def nodes(degree, prec):
 
     """
     return nodes_uncached(degree, prec)
+
 
 def estimate_error(results, prec, epsilon):
     r"""
@@ -267,6 +270,7 @@ def estimate_error(results, prec, epsilon):
         e.append(D4.exp())
     return max(e)
 
+
 def integrate_vector_N(f, prec, N=3):
     r"""
     Integrate a one-argument vector-valued function numerically using Gauss-Legendre,
@@ -314,6 +318,7 @@ def integrate_vector_N(f, prec, N=3):
     for i in range(1,len(nodelist)):
         I += nodelist[i][1]*f(nodelist[i][0])
     return I
+
 
 def integrate_vector(f, prec, epsilon=None):
     r"""

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fast functions for the category framework
 
@@ -5,7 +6,6 @@ Fast functions for the category framework
 AUTHOR:
 
 - Simon King (initial version)
-
 """
 
 #*****************************************************************************

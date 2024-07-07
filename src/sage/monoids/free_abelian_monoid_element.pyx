@@ -54,6 +54,10 @@ def is_FreeAbelianMonoidElement(x):
     - ``True`` if ``x`` is an object of type ``FreeAbelianMonoidElement``;
       ``False`` otherwise.
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_FreeAbelianMonoidElement is deprecated; "
+                       "use 'isinstance(..., FreeAbelianMonoidElement)' instead.")
     return isinstance(x, FreeAbelianMonoidElement)
 
 

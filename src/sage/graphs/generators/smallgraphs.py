@@ -2925,8 +2925,8 @@ def GritsenkoGraph():
     r"""
     Return SRG(65, 32, 15, 16) constructed by Gritsenko.
 
-    We took the adjacency matrix from O.Gritsenko's [Gri2021]_ and extracted orbits
-    of the automorphism group on the edges.
+    We took the adjacency matrix from O. Gritsenko's [Gri2021]_ and extracted
+    orbits of the automorphism group on the edges.
 
     EXAMPLES::
 

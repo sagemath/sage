@@ -205,7 +205,7 @@ from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
+from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
 from sage.modular.dirichlet import trivial_character
 from sage.modular.etaproducts import EtaProduct
 from sage.modular.modform.element import ModularFormElement
@@ -278,7 +278,7 @@ def OverconvergentModularForms(prime, weight, radius, base_ring=QQ, prec=20, cha
         Space of 3-adic 1/2-overconvergent modular forms
          of weight-character (3, 3, [-1]) over Rational Field
     """
-    if is_Gamma0(prime) or is_Gamma1(prime):
+    if isinstance(prime, Gamma0_class) or isinstance(prime, Gamma1_class):
         prime = prime.level()
     else:
         prime = ZZ(prime)

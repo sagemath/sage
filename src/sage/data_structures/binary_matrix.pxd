@@ -13,7 +13,6 @@ A ``binary_matrix_t`` structure contains:
 
 - ``bitset_t * rows`` -- ``rows[i]`` points toward a block of type ``bitset_t``
   containing the bits of row `i`.
-
 """
 
 from sage.data_structures.bitset_base cimport *

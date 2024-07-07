@@ -224,7 +224,6 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             mpz_add(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-
     cpdef _sub_(self, right):
         cdef Vector_integer_dense z, r
         r = right

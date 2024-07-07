@@ -115,13 +115,15 @@ REFERENCES:
 from itertools import repeat
 from copy import copy
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.topology.simplicial_complex import SimplicialComplex, Simplex
 from sage.categories.simplicial_complexes import SimplicialComplexes
-from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.cone import Cone
 from sage.combinat.subword_complex_c import _flip_c, _construct_facets_c
+
+lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
+lazy_import('sage.geometry.cone', 'Cone')
 
 
 class SubwordComplexFacet(Simplex, Element):
@@ -1964,9 +1966,9 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
     - ``Q`` -- a word
     - ``w`` -- an element in the Coxeter group
     - ``side`` -- optional, either ``'negative'`` (default) or ``'positive'``
-    - ``n`` -- an integer (optional, defaults to the length of `Q`)
-    - ``pos`` -- an integer (optional, default 0)
-    - ``l`` -- an integer (optional, defaults to the length of `w`)
+    - ``n`` -- an integer (default: the length of `Q`)
+    - ``pos`` -- an integer (default: 0)
+    - ``l`` -- an integer (default: the length of `w`)
     - ``elems`` -- a list (optional)
 
     OUTPUT:

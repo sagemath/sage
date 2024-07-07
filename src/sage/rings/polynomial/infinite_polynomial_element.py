@@ -82,7 +82,6 @@ finite polynomial rings are merged with infinite polynomial rings::
     Infinite polynomial ring in b, c over Infinite polynomial ring in a over Integer Ring
     sage: 1/2*b_1*a[4] + c[3]
     1/2*a_4*b_1 + c_3
-
 """
 
 # ****************************************************************************
@@ -1144,7 +1143,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         INPUT:
 
-        ``k`` -- an integer.
+        - ``k`` -- an integer.
 
         OUTPUT:
 

@@ -148,7 +148,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
             k = valp(pari_tmp)
         else: # t_INT and t_FRAC were converted before this function
             raise TypeError("unsupported coercion from pari: only p-adics, integers and rationals allowed")
-    elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+    elif isinstance(x, sage.rings.finite_rings.integer_mod.IntegerMod_abstract):
         value = <Integer>x.lift()
         if mpz_sgn(value.value) == 0:
             return maxordp
@@ -221,7 +221,7 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
         pari_tmp = (<pari_gen>x).g
         # since get_ordp has been called typ(x.g) == t_PADIC
         k = valp(pari_tmp) + precp(pari_tmp)
-    elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+    elif isinstance(x, sage.rings.finite_rings.integer_mod.IntegerMod_abstract):
         k = mpz_remove(temp.value, (<Integer>x.modulus()).value, prime_pow.prime.value)
         if mpz_cmp_ui(temp.value, 1) != 0:
             raise TypeError("cannot coerce from the given integer mod ring (not a power of the same prime)")
@@ -411,7 +411,7 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
         x = x.sage()
     if isinstance(x, pAdicGenericElement) and x.parent().is_relaxed():
         x = x.lift(valshift + prec)
-    elif isinstance(x, pAdicGenericElement) or sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+    elif isinstance(x, pAdicGenericElement) or isinstance(x, sage.rings.finite_rings.integer_mod.IntegerMod_abstract):
         x = x.lift()
     if isinstance(x, Integer):
         if valshift > 0:

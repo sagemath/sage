@@ -18,7 +18,6 @@ manifold is the tensor bundle (see :class:`TensorBundle`)
 AUTHORS:
 
 - Michael Jung (2019) : initial version
-
 """
 
 #******************************************************************************

@@ -1377,9 +1377,9 @@ class SimplicialSetMorphism(Morphism):
 
         INPUT:
 
-        - ``base_ring`` -- must be a field (optional, default ``QQ``)
+        - ``base_ring`` -- must be a field (default: ``QQ``)
 
-        - ``cohomology`` -- boolean (optional, default ``False``). If
+        - ``cohomology`` -- boolean (default: ``False``). If
           ``True``, the map induced in cohomology rather than homology.
 
         EXAMPLES::

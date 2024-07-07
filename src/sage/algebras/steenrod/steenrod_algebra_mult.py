@@ -203,6 +203,7 @@ from sage.misc.cachefunc import cached_function
 
 # Milnor, p=2
 
+
 def milnor_multiplication(r,s):
     r"""
     Product of Milnor basis elements r and s at the prime 2.
@@ -316,6 +317,7 @@ def milnor_multiplication(r,s):
             i = i + 1
     return result
 
+
 def multinomial(list):
     r"""
     Multinomial coefficient of list, mod 2.
@@ -371,15 +373,16 @@ def multinomial(list):
 
 # Milnor, p odd
 
+
 def milnor_multiplication_odd(m1,m2,p):
     r"""
     Product of Milnor basis elements defined by m1 and m2 at the odd prime p.
 
     INPUT:
 
-    - m1 - pair of tuples (e,r), where e is an increasing tuple of
+    - m1 -- pair of tuples (e,r), where e is an increasing tuple of
       non-negative integers and r is a tuple of non-negative integers
-    - m2 - pair of tuples (f,s), same format as m1
+    - m2 -- pair of tuples (f,s), same format as m1
     - p -- odd prime number
 
     OUTPUT:
@@ -566,6 +569,7 @@ def milnor_multiplication_odd(m1,m2,p):
                     i = i + 1
     return result
 
+
 def multinomial_odd(list,p):
     r"""
     Multinomial coefficient of list, mod p.
@@ -634,13 +638,14 @@ def multinomial_odd(list,p):
 
 # Adem relations, Serre-Cartan basis, admissible sequences
 
+
 def binomial_mod2(n,k):
     r"""
     The binomial coefficient `\binom{n}{k}`, computed mod 2.
 
     INPUT:
 
-    - `n`, `k` - integers
+    - `n`, `k` -- integers
 
     OUTPUT:
 
@@ -665,14 +670,15 @@ def binomial_mod2(n,k):
     else:
         return 0
 
+
 def binomial_modp(n,k,p):
     r"""
     The binomial coefficient `\binom{n}{k}`, computed mod `p`.
 
     INPUT:
 
-    - `n`, `k` - integers
-    - `p` - prime number
+    - `n`, `k` -- integers
+    - `p` -- prime number
 
     OUTPUT:
 
@@ -690,6 +696,7 @@ def binomial_modp(n,k,p):
         return 0
     return multinomial_odd([n-k, k], p)
 
+
 @cached_function
 def adem(a, b, c=0, p=2, generic=None):
     r"""
@@ -697,10 +704,10 @@ def adem(a, b, c=0, p=2, generic=None):
 
     INPUT:
 
-    - `a`, `b`, `c` (optional) - nonnegative integers, corresponding
+    - `a`, `b`, `c` (optional) -- nonnegative integers, corresponding
       to either `P^a P^b` or (if `c` present) to `P^a \beta^b P^c`
-    - `p` - positive prime number (optional, default 2)
-    - `generic` - whether to use the generic Steenrod algebra, (default: depends on prime)
+    - `p` -- positive prime number (default: 2)
+    - `generic` -- whether to use the generic Steenrod algebra, (default: depends on prime)
 
     OUTPUT:
 
@@ -829,6 +836,7 @@ def adem(a, b, c=0, p=2, generic=None):
                     result[(0,A+B-j,1,j,0)] = coeff
     return result
 
+
 @cached_function
 def make_mono_admissible(mono, p=2, generic=None):
     r"""
@@ -846,9 +854,9 @@ def make_mono_admissible(mono, p=2, generic=None):
 
     INPUT:
 
-    - ``mono`` - a tuple of non-negative integers
-    - `p` - prime number, optional (default 2)
-    - `generic` - whether to use the generic Steenrod algebra, (default: depends on prime)
+    - ``mono`` -- a tuple of non-negative integers
+    - `p` -- prime number, optional (default 2)
+    - `generic` -- whether to use the generic Steenrod algebra, (default: depends on prime)
 
     OUTPUT:
 

@@ -484,7 +484,7 @@ class Sigma0_class(Parent):
 
         - ``x`` -- something that one can make into a matrix over the
           appropriate base ring
-        - ``check`` (boolean, default True) -- if True, then check that this
+        - ``check`` (boolean, default: ``True``) -- if True, then check that this
           matrix actually satisfies the conditions.
 
         EXAMPLES::

@@ -9,19 +9,19 @@ cpdef call_registered_function(unsigned serial,
 
     INPUT:
 
-    - ``serial`` - serial number of the function
+    - ``serial`` -- serial number of the function
 
-    - ``nargs`` - declared number of args (0 is variadic)
+    - ``nargs`` -- declared number of args (0 is variadic)
 
-    - ``args`` - a list of arguments to pass to the function;
+    - ``args`` -- a list of arguments to pass to the function;
       each must be an :class:`Expression`
 
-    - ``hold`` - whether to leave the call unevaluated
+    - ``hold`` -- whether to leave the call unevaluated
 
-    - ``allow_numeric_result`` - if ``True``, keep numeric results numeric;
+    - ``allow_numeric_result`` -- if ``True``, keep numeric results numeric;
       if ``False``, make all results symbolic expressions
 
-    - ``result_parent`` - an instance of :class:`SymbolicRing`
+    - ``result_parent`` -- an instance of :class:`SymbolicRing`
 
     EXAMPLES::
 

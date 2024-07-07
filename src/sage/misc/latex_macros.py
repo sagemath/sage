@@ -128,15 +128,15 @@ def convert_latex_macro_to_mathjax(macro):
     right_bracket = macro.find('[')
     if left_bracket >= 0:
         right_bracket = macro.find(']')
-        num_args = int(macro[left_bracket + 1 : right_bracket])
+        num_args = int(macro[left_bracket + 1: right_bracket])
     else:
         num_args = 0
     start_name = macro.find('{') + 1  # add one to go past the backslash
     end_name = macro.find('}')
-    name = macro[start_name + 1 : end_name]
+    name = macro[start_name + 1: end_name]
     start_defn = macro.find('{', end_name)
     end_defn = macro.rfind('}')
-    defn = macro[start_defn + 1 : end_defn]
+    defn = macro[start_defn + 1: end_defn]
     if num_args == 0:
         return name, defn
     else:
@@ -196,6 +196,7 @@ def sage_latex_macros():
         ['\\newcommand{\\ZZ}{\\Bold{Z}}', '\\newcommand{\\NN}{\\Bold{N}}', ...
     """
     return [produce_latex_macro(*x) for x in macros] + latex_macros + sage_configurable_latex_macros
+
 
 def sage_mathjax_macros():
     r"""

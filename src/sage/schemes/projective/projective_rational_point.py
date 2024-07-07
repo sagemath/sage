@@ -63,7 +63,7 @@ from sage.rings.real_mpfr import RR
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.misc_c import prod
 from sage.misc.mrange import xmrange
-from sage.schemes.generic.scheme import is_Scheme
+from sage.schemes.generic.scheme import Scheme
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
 from sage.matrix.constructor import matrix
@@ -76,9 +76,9 @@ def enum_projective_rational_field(X, B):
 
     INPUT:
 
-    - ``X`` -  a scheme or set of abstract rational points of a scheme.
+    - ``X`` --  a scheme or set of abstract rational points of a scheme.
 
-    - ``B`` -  a positive integer bound.
+    - ``B`` --  a positive integer bound.
 
     OUTPUT:
 
@@ -128,12 +128,12 @@ def enum_projective_rational_field(X, B):
 
     - John Cremona and Charlie Turner (06-2010)
     """
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if is_Scheme(X):
-        if not is_ProjectiveSpace(X.ambient_space()):
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProjectiveSpace_ring):
             raise TypeError("ambient space must be projective space over the rational field")
         X = X(X.base_ring())
-    elif not is_ProjectiveSpace(X.codomain().ambient_space()):
+    elif not isinstance(X.codomain().ambient_space(), ProjectiveSpace_ring):
         raise TypeError("codomain must be projective space over the rational field")
 
     n = X.codomain().ambient_space().ngens()
@@ -171,11 +171,11 @@ def enum_projective_number_field(X, **kwds):
 
     kwds:
 
-    - ``bound`` - a real number
+    - ``bound`` -- a real number
 
-    - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+    - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
-    - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
+    - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
 
     OUTPUT:
 
@@ -206,13 +206,13 @@ def enum_projective_number_field(X, **kwds):
     B = kwds.pop('bound')
     tol = kwds.pop('tolerance', 1e-2)
     prec = kwds.pop('precision', 53)
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if is_Scheme(X):
-        if (not is_ProjectiveSpace(X.ambient_space())):
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProjectiveSpace_ring):
             raise TypeError("ambient space must be projective space over a number field")
         X = X(X.base_ring())
     else:
-        if (not is_ProjectiveSpace(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProjectiveSpace_ring):
             raise TypeError("codomain must be projective space over a number field")
 
     R = X.codomain().ambient_space()
@@ -234,7 +234,7 @@ def enum_projective_finite_field(X):
 
     INPUT:
 
-    - ``X`` -  a scheme defined over a finite field or a set of abstract
+    - ``X`` --  a scheme defined over a finite field or a set of abstract
       rational points of such a scheme.
 
     OUTPUT:
@@ -287,12 +287,12 @@ def enum_projective_finite_field(X):
 
     - John Cremona and Charlie Turner (06-2010).
     """
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if is_Scheme(X):
-        if not is_ProjectiveSpace(X.ambient_space()):
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProjectiveSpace_ring):
             raise TypeError("ambient space must be projective space over a finite")
         X = X(X.base_ring())
-    elif not is_ProjectiveSpace(X.codomain().ambient_space()):
+    elif not isinstance(X.codomain().ambient_space(), ProjectiveSpace_ring):
         raise TypeError("codomain must be projective space over a finite field")
 
     n = X.codomain().ambient_space().ngens() - 1
@@ -331,9 +331,9 @@ def sieve(X, bound):
 
     INPUT:
 
-    - ``X`` - a scheme with ambient space defined over projective space
+    - ``X`` -- a scheme with ambient space defined over projective space
 
-    - ``bound`` - a positive integer bound
+    - ``bound`` -- a positive integer bound
 
     OUTPUT:
 

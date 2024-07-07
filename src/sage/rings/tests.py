@@ -239,17 +239,28 @@ def rings0():
     """
     from sage.rings.integer_ring import IntegerRing
     from sage.rings.rational_field import RationalField
+
     v = [(IntegerRing, 'ring of integers'),
          (RationalField, 'field of rational numbers'),
-         (integer_mod_ring, 'integers modulo n for n at most 50000'),
-         (prime_finite_field, 'a prime finite field with cardinality at most 10^20'),
-         (finite_field, 'finite field with degree at most 20 and prime at most 10^6'),
-         (small_finite_field, 'finite field with cardinality at most 2^16'),
-         (padic_field, 'a p-adic field'),
-         (quadratic_number_field, 'a quadratic number field'),
-         (absolute_number_field, 'an absolute number field of degree at most 10'),
-         (relative_number_field, 'a tower of at most 2 extensions each of degree at most 2')
-         ]
+         (integer_mod_ring, 'integers modulo n for n at most 50000')]
+    try:
+        v += [(prime_finite_field, 'a prime finite field with cardinality at most 10^20'),
+              (finite_field, 'finite field with degree at most 20 and prime at most 10^6'),
+              (small_finite_field, 'finite field with cardinality at most 2^16')]
+    except ImportError:
+        pass
+
+    try:
+        v += [(padic_field, 'a p-adic field')]
+    except ImportError:
+        pass
+
+    try:
+        v += [(quadratic_number_field, 'a quadratic number field'),
+              (absolute_number_field, 'an absolute number field of degree at most 10'),
+              (relative_number_field, 'a tower of at most 2 extensions each of degree at most 2')]
+    except ImportError:
+        pass
 
     return v
 
@@ -279,17 +290,25 @@ def rings1():
     X = random_rings(level=0)
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.rings.power_series_ring import PowerSeriesRing
-    from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
     from sage.rings.integer_ring import ZZ
+
     v = [(lambda: PolynomialRing(next(X), names='x'),
           'univariate polynomial ring over level 0 ring'),
          (lambda: PowerSeriesRing(next(X), names='x'),
-          'univariate power series ring over level 0 ring'),
-         (lambda: LaurentPolynomialRing(next(X), names='x'),
-          'univariate Laurent polynomial ring over level 0 ring'),
-         (lambda: PolynomialRing(next(X), abs(ZZ.random_element(x=2, y=10)),
-                                 names='x'),
-          'multivariate polynomial ring in between 2 and 10 variables over a level 0 ring')]
+          'univariate power series ring over level 0 ring')]
+
+    try:
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+    except ImportError:
+        pass
+    else:
+        v += [(lambda: LaurentPolynomialRing(next(X), names='x'),
+               'univariate Laurent polynomial ring over level 0 ring')]
+
+    v += [(lambda: PolynomialRing(next(X), abs(ZZ.random_element(x=2, y=10)),
+                                  names='x'),
+           'multivariate polynomial ring in between 2 and 10 variables over a level 0 ring')]
+
     return v
 
 
@@ -330,7 +349,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
       to run.
     - seed -- the random seed to use; if not specified, uses a truly
       random seed.
-    - print_seed -- If True (default False), prints the random seed chosen.
+    - print_seed -- If True (default: ``False``), prints the random seed chosen.
 
     EXAMPLES::
 

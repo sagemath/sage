@@ -185,7 +185,6 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
         return '\\verb"Section of "' + self._inverse._latex_()
 
 
-
 cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
     """
     A class implementing embeddings between finite fields.

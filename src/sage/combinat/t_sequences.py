@@ -28,7 +28,6 @@ The nonperiodic autocorrelation of a familiy of sequences `X=\{A_1, A_2, ..., A_
 AUTHORS:
 
 - Matteo Cati (2022-11-16): initial version
-
 """
 
 # ***************************************************************************
@@ -250,7 +249,7 @@ def turyn_sequences_smallcases(l, existence=False):
 
     - ``l`` -- integer, the length of the Turyn sequences.
 
-    - ``existence`` -- boolean (default False). If true, only return whether the
+    - ``existence`` -- boolean (default: ``False``). If true, only return whether the
       Turyn sequences are available for the given length.
 
     EXAMPLES:
@@ -707,7 +706,7 @@ def turyn_type_sequences_smallcases(n, existence=False):
 
     - ``n`` -- integer, the length of the Turyn type sequences.
 
-    - ``existence`` -- boolean (default False). If true, only return whether the
+    - ``existence`` -- boolean (default: ``False``). If true, only return whether the
       Turyn type sequences are available for the given length.
 
     EXAMPLES:
@@ -804,7 +803,7 @@ def base_sequences_smallcases(n, p, existence=False, check=True):
 
     - ``p`` -- integer, `n+p` will be the length of the first two base sequences.
 
-    - ``existence`` -- boolean (default False). If True, the function will only check whether the base
+    - ``existence`` -- boolean (default: ``False``). If True, the function will only check whether the base
       sequences can be constructed.
 
     - ``check`` -- boolean, if True (default) check that the resulting sequences are base sequences

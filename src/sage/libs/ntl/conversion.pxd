@@ -8,7 +8,6 @@ conventions for conversion functions
 - ``new_sage_XXX``   : create a new Sage object
 - ``set_ntl_XXX`` : set the entries of the ntl object
 - ``set_sage_XXX``   : set the entries of the Sage object
-
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht

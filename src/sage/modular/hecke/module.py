@@ -38,12 +38,18 @@ def is_HeckeModule(x):
 
         sage: from sage.modular.hecke.module import is_HeckeModule
         sage: is_HeckeModule(ModularForms(Gamma0(7), 4))
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeModule is deprecated;
+        use 'isinstance(..., HeckeModule_generic)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_HeckeModule(QQ^3)
         False
         sage: is_HeckeModule(J0(37).homology())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeModule is deprecated; use 'isinstance(..., HeckeModule_generic)' instead")
     return isinstance(x, HeckeModule_generic)
 
 
@@ -438,11 +444,11 @@ class HeckeModule_generic(Module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - an arbitrary space of modular symbols
+        -  ``ModularSymbols self`` -- an arbitrary space of modular symbols
 
         OUTPUT:
 
-        -  ``int`` - the level
+        -  ``int`` -- the level
 
         EXAMPLES::
 
@@ -652,7 +658,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: M._element_eigenvalue(M.0)
             1
         """
-        if not element.is_HeckeModuleElement(x):
+        if not isinstance(x, element.HeckeModuleElement):
             raise TypeError("x must be a Hecke module element.")
         if x not in self.ambient_hecke_module():
             raise ArithmeticError("x must be in the ambient Hecke module.")
@@ -924,21 +930,21 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``anemic`` - bool (default: True), if True, use only
+        -  ``anemic`` -- bool (default: ``True``), if True, use only
            Hecke operators of index coprime to the level.
 
-        -  ``bound`` - int or None, (default: None). If None,
+        -  ``bound`` -- int or None, (default: None). If None,
            use all Hecke operators up to the Sturm bound, and hence obtain the
            same result as one would obtain by using every element of the Hecke
            ring. If a fixed integer, decompose using only Hecke operators
            `T_p`, with `p` prime, up to bound.
-        -  ``sort_by_basis`` - bool (default: ``False``); If True the resulting
+        -  ``sort_by_basis`` -- bool (default: ``False``); If True the resulting
            decomposition will be sorted as if it was free modules, ignoring the
            Hecke module structure. This will save a lot of time.
 
         OUTPUT:
 
-        -  ``list`` - a list of subspaces of ``self``.
+        -  ``list`` -- a list of subspaces of ``self``.
 
         EXAMPLES::
 
@@ -1226,9 +1232,9 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``n`` - index of Hecke operator
+        -  ``n`` -- index of Hecke operator
 
-        -  ``name`` - print representation of generator of
+        -  ``name`` -- print representation of generator of
            eigenvalue field
 
         EXAMPLES::
@@ -1399,10 +1405,10 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - Hecke equivariant space of
+        -  ``ModularSymbols self`` -- Hecke equivariant space of
            modular symbols
 
-        -  ``int n`` - an integer at least 1.
+        -  ``int n`` -- an integer at least 1.
 
         EXAMPLES::
 
@@ -1485,7 +1491,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``n`` - integer
+        -  ``n`` -- integer
 
         OUTPUT: a polynomial
 
@@ -1672,9 +1678,9 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``n`` - number of eigenvalues
+        -  ``n`` -- number of eigenvalues
 
-        -  ``alpha`` - name of generate for eigenvalue field
+        -  ``alpha`` -- name of generate for eigenvalue field
 
         EXAMPLES:
 
@@ -1735,11 +1741,11 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``self`` - an arbitrary Hecke module
+        -  ``self`` -- an arbitrary Hecke module
 
         OUTPUT:
 
-        -  ``int`` - the weight
+        -  ``int`` -- the weight
 
         EXAMPLES::
 

@@ -138,7 +138,6 @@ REFERENCES:
 An overview of some computational tools relating to valuations on function
 fields can be found in Section 4.6 of [Rüt2014]_. Most of this was originally
 developed for number fields in [Mac1936I]_ and [Mac1936II]_.
-
 """
 
 # ****************************************************************************

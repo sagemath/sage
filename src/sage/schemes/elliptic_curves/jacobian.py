@@ -111,8 +111,8 @@ def Jacobian(X, **kwds):
         else:
             return Jacobian_of_equation(X, **kwds)
 
-    from sage.schemes.generic.scheme import is_Scheme
-    if is_Scheme(X) and X.dimension() == 1:
+    from sage.schemes.generic.scheme import Scheme
+    if isinstance(X, Scheme) and X.dimension() == 1:
         return Jacobian_of_curve(X, morphism=morphism, **kwds)
 
 

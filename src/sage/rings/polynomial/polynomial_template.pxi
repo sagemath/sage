@@ -24,8 +24,6 @@ from sage.libs.pari.all import pari_gen
 
 import operator
 
-from sage.interfaces.singular import singular as singular_default
-
 def make_element(parent, args):
     return parent(*args)
 
@@ -816,7 +814,7 @@ cdef class Polynomial_template(Polynomial):
         celement_truncate(&r.x, &self.x, n, (<Polynomial_template>self)._cparent)
         return r
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         r"""
         Return Singular representation of this polynomial
 
@@ -831,5 +829,8 @@ cdef class Polynomial_template(Polynomial):
             sage: singular(f)                                                           # needs sage.libs.singular
             3*x^2+2*x-2
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
+
         self.parent()._singular_(singular).set_ring()  # this is expensive
         return singular(self._singular_init_())

@@ -92,7 +92,7 @@ TESTS::
 from sage.arith.misc import divisors, gcd
 from sage.misc.misc_c import prod
 from sage.modular.abvar.torsion_point import TorsionPoint
-from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
+from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
 from sage.modular.dirichlet import DirichletGroup
 from sage.modules.module import Module
 from sage.rings.fast_arith import prime_range
@@ -116,7 +116,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
 
         EXAMPLES::
@@ -400,7 +400,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             return self._divisor_of_order
 
         # The Gamma0 case
-        if all(is_Gamma0(G) for G in A.groups()):
+        if all(isinstance(G, Gamma0_class) for G in A.groups()):
             self._divisor_of_order = A.rational_cuspidal_subgroup().order()
             return self._divisor_of_order
 
@@ -414,7 +414,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
 
         INPUT:
 
-        - ``proof`` -- a boolean (default: True)
+        - ``proof`` -- a boolean (default: ``True``)
 
         The computation of the rational torsion order of J1(p) is conjectural
         and will only be used if proof=False. See Section 6.2.3 of [CES2003]_.
@@ -477,7 +477,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             return self._multiple_of_order_proof_false
 
         # The Gamma0 and Gamma1 case
-        if all((is_Gamma0(G) or is_Gamma1(G) for G in A.groups())):
+        if all((isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class) for G in A.groups())):
             self._multiple_of_order = self.multiple_of_order_using_frobp()
             return self._multiple_of_order
 
@@ -497,7 +497,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         INPUT:
 
 
-        -  ``maxp`` - (default: None) If maxp is None (the
+        -  ``maxp`` -- (default: None) If maxp is None (the
            default), return gcd of best bound computed so far with bound
            obtained by computing GCD's of orders modulo p until this gcd
            stabilizes for 3 successive primes. If maxp is given, just use all
@@ -580,7 +580,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             T = ZZ(1)
             self.__multiple_of_order_using_frobp = T
             return T
-        if not all((is_Gamma0(G) or is_Gamma1(G) for G in A.groups())):
+        if not all((isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class) for G in A.groups())):
             raise NotImplementedError("torsion multiple only implemented for Gamma0 and Gamma1")
 
         bnd = ZZ(0)
@@ -594,7 +594,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             if (2*N) % p == 0:
                 continue
 
-            if (len(A.groups()) == 1 and is_Gamma0(A.groups()[0])):
+            if (len(A.groups()) == 1 and isinstance(A.groups()[0], Gamma0_class)):
                 f = A.hecke_polynomial(p)
                 b = ZZ(f(p+1))
             else:
@@ -604,7 +604,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
                 b = 1
                 for simple in D:
                     G = simple.newform_level()[1]
-                    if is_Gamma0(G):
+                    if isinstance(G, Gamma0_class):
                         f = simple.hecke_polynomial(p)
                         b *= ZZ(f(p+1))
                     else:
@@ -677,7 +677,7 @@ class QQbarTorsionSubgroup(Module):
         INPUT:
 
 
-        -  ``abvar`` - an abelian variety
+        -  ``abvar`` -- an abelian variety
 
 
         EXAMPLES::

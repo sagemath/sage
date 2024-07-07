@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.symbolic
 r"""
 Vector Bundles
@@ -14,6 +15,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.misc.cachefunc import cached_method
 from sage.categories.sets_cat import Sets
 from sage.categories.fields import Fields
+
 
 class VectorBundles(Category_over_base_ring):
     r"""

@@ -2,11 +2,11 @@
 
 from cypari2.stack cimport new_gen
 from cypari2.paridecl cimport *
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
-from sage.libs.mpfr.types cimport mpfr_t, mpfr_prec_t
+from sage.libs.mpfr.types cimport mpfr_prec_t
 from sage.rings.real_mpfr cimport RealField_class, RealField
 
 

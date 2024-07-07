@@ -104,7 +104,7 @@ coordinates where the codomain is not implemented as a toric variety::
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.integer_ring import ZZ
 
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.geometry.fan_morphism import FanMorphism
 
@@ -166,8 +166,8 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
                     to Rational polyhedral fan in 1-d lattice N.
         """
         SchemeHomset_generic.__init__(self, X, Y, category=category, check=check, base=base)
-        from sage.schemes.toric.variety import is_ToricVariety
-        if is_ToricVariety(X) and is_ToricVariety(Y):
+        from sage.schemes.toric.variety import ToricVariety_field
+        if isinstance(X, ToricVariety_field) and isinstance(Y, ToricVariety_field):
             self.register_conversion(MatrixSpace(ZZ, X.fan().dim(), Y.fan().dim()))
 
     def _element_constructor_(self, x, check=True):
@@ -255,7 +255,7 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
             assert x.codomain() is self.domain().coordinate_ring()
             return SchemeMorphism_polynomial_toric_variety(self, x.im_gens(), check=check)
 
-        if is_Matrix(x):
+        if isinstance(x, Matrix):
             x = FanMorphism(x, self.domain().fan(), self.codomain().fan())
         if isinstance(x, FanMorphism):
             if x.is_dominant():

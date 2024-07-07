@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fast methods via Cython
 
@@ -15,7 +16,6 @@ AUTHOR:
 
 - Simon King (2013-02): Original version
 - Simon King (2013-10): Add :class:`Singleton`
-
 """
 
 #*****************************************************************************

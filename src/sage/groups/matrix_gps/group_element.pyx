@@ -77,8 +77,6 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.structure.element cimport MultiplicativeGroupElement, Matrix
-from sage.structure.element import is_Matrix
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
 
@@ -156,7 +154,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         if convert:
             M = parent.matrix_space()(M)
         if check:
-            if not is_Matrix(M):
+            if not isinstance(M, Matrix):
                 raise TypeError('M must be a matrix')
             if M.parent() is not parent.matrix_space():
                 raise TypeError('M must be a in the matrix space of the group')

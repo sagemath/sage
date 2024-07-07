@@ -154,7 +154,7 @@ def scatter_plot(datalist, **options):
 
     - ``markersize`` -- default: 50
 
-    - ``marker``  - The style of the markers (default ``"o"``). See the
+    - ``marker``  -- The style of the markers (default ``"o"``). See the
       documentation of :func:`plot` for the full list of markers.
 
     - ``facecolor`` -- default: ``'#fec7b8'``

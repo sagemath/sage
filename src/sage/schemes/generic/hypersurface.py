@@ -34,6 +34,9 @@ def is_Hypersurface(self):
         sage: R.<x, y, z> = ZZ[]
         sage: H = ProjectiveHypersurface(x*z + y^2)
         sage: is_Hypersurface(H)
+        doctest:warning...
+        DeprecationWarning: The function is_Hypersurface is deprecated; use 'isinstance(..., (ProjectiveHypersurface, AffineHypersurface))' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
 
     ::
@@ -48,7 +51,10 @@ def is_Hypersurface(self):
         sage: is_Hypersurface(H)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_Hypersurface is deprecated; use 'isinstance(..., (ProjectiveHypersurface, AffineHypersurface))' instead.")
     return isinstance(self, (ProjectiveHypersurface, AffineHypersurface))
+
 
 class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):
     """

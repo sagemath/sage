@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Global options
 
@@ -263,7 +264,6 @@ the supplied options. For example, the generated documentation for the options
 
     - ``tip`` -- (default: ``10``)
       Reward for good service
-
 
 
     The END!

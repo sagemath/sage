@@ -65,7 +65,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
 
     INPUT:
 
-    - ``v,k`` (integers)
+    - ``v``, ``k`` (integers)
 
     - ``existence`` (boolean) -- instead of building the design, return:
 

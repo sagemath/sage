@@ -75,10 +75,15 @@ def is_DivisorGroup(x):
         sage: from sage.schemes.generic.divisor_group import is_DivisorGroup, DivisorGroup
         sage: Div = DivisorGroup(Spec(ZZ), base_ring=QQ)
         sage: is_DivisorGroup(Div)
+        doctest:warning...
+        DeprecationWarning: The function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_DivisorGroup('not a divisor')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead.")
     return isinstance(x, DivisorGroup_generic)
 
 
@@ -189,6 +194,36 @@ class DivisorGroup_generic(FormalSums):
             return Divisor_generic([], check=False, reduce=False, parent=self)
         else:
             return Divisor_generic([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
+
+    def _coerce_map_from_(self, other):
+        r"""
+        Return if there is a coercion map from ``other`` to ``self``.
+
+        There is a coercion from another divisor group if there is
+        a coercion map from the schemes and there is a coercion map from
+        the base rings.
+
+        TESTS::
+
+            sage: C = EllipticCurve([2, 1])
+            sage: E = EllipticCurve([1, 2])
+            sage: C.divisor_group()._coerce_map_from_(E.divisor_group())
+            False
+            sage: E.divisor_group()._coerce_map_from_(C.divisor_group())
+            False
+            sage: E.divisor_group()._coerce_map_from_(E.divisor_group())
+            True
+            sage: C.divisor_group()._coerce_map_from_(C.divisor_group())
+            True
+            sage: D = 1/2 * E.divisor(E(1, 2))
+            sage: D.parent()._coerce_map_from_(E.divisor_group())
+            True
+            sage: E.divisor_group()._coerce_map_from_(D.parent())
+            False
+        """
+        return (isinstance(other, DivisorGroup_generic)
+                and self.scheme().has_coerce_map_from(other.scheme())
+                and super()._coerce_map_from_(other))
 
     def scheme(self):
         r"""

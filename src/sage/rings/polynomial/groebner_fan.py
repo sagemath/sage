@@ -124,7 +124,7 @@ def _cone_parse(fan_dict_cone):
 
     INPUT:
 
-    -  ``fan_dict_cone`` - the value of a fan_dict with
+    -  ``fan_dict_cone`` -- the value of a fan_dict with
        key 'CONES'
 
     EXAMPLES::
@@ -290,7 +290,7 @@ class PolyhedralFan(SageObject):
 
         INPUT:
 
-        -  ``gfan_polyhedral_fan`` - output from gfan of a
+        -  ``gfan_polyhedral_fan`` -- output from gfan of a
            polyhedral fan.
 
         EXAMPLES::
@@ -1373,7 +1373,7 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``fpoint`` - a list of four numbers
+        -  ``fpoint`` -- a list of four numbers
 
         EXAMPLES::
 
@@ -1402,7 +1402,7 @@ class GroebnerFan(SageObject):
 
         OUTPUT:
 
-        - ``edges`` -- a list of edges in 3d - each list item is a pair of
+        - ``edges`` -- a list of edges in 3d; each list item is a pair of
           points
 
         EXAMPLES::
@@ -1608,7 +1608,7 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``check`` - bool (default: True); if True raises a
+        -  ``check`` -- bool (default: ``True``); if True raises a
            ValueError exception if this ideal does not define a tropical curve
            (i.e., the condition that R/I has dimension equal to 1 + the
            dimension of the homogeneity space is not satisfied).
@@ -1672,9 +1672,9 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        - ``parameters`` (optional) - a list of variables to be
+        - ``parameters`` (optional) -- a list of variables to be
           considered as parameters
-        - ``symmetry_generators`` (optional) - generators of the symmetry group
+        - ``symmetry_generators`` (optional) -- generators of the symmetry group
 
         OUTPUT: a TropicalPrevariety object
 
@@ -1776,12 +1776,12 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``groebner_fan`` - a GroebnerFan object from an
+        -  ``groebner_fan`` -- a GroebnerFan object from an
            ideal
 
-        -  ``gens`` - the generators of the ideal
+        -  ``gens`` -- the generators of the ideal
 
-        -  ``gfan_gens`` - the generators as a gfan string
+        -  ``gfan_gens`` -- the generators as a gfan string
 
         EXAMPLES::
 
@@ -1888,7 +1888,7 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``restrict`` - bool (default: False); if True, add
+        -  ``restrict`` -- bool (default: ``False``); if True, add
            an inequality for each coordinate, so that the cone is restricted
            to the positive orthant.
 

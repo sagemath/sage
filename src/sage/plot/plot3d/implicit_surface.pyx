@@ -849,18 +849,18 @@ cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
     """
     INPUT:
 
-    -  ``f`` - a (fast!) callable function
+    -  ``f`` -- a (fast!) callable function
 
-    -  ``xrange`` - a 2-tuple (x_min, x_max)
+    -  ``xrange`` -- a 2-tuple (x_min, x_max)
 
-    -  ``yrange`` - a 2-tuple (y_min, y_may)
+    -  ``yrange`` -- a 2-tuple (y_min, y_may)
 
-    -  ``zrange`` - a 2-tuple (z_min, z_maz)
+    -  ``zrange`` -- a 2-tuple (z_min, z_maz)
 
-    -  ``plot_points`` - a triple of integers indicating the number of
+    -  ``plot_points`` -- a triple of integers indicating the number of
        function evaluations in each direction.
 
-    -  ``cube_marchers`` - a list of cube marchers, one for each contour.
+    -  ``cube_marchers`` -- a list of cube marchers, one for each contour.
 
     OUTPUT:
 

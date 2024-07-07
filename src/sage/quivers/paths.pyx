@@ -159,7 +159,7 @@ cdef class QuiverPath(MonoidElement):
         """
         MonoidElement.__init__(self, parent=parent)
         self._start = start
-        self._end   = end
+        self._end = end
         biseq_init_list(self._path, path, parent._nb_arrows)
 
     def __reduce__(self):
@@ -194,10 +194,10 @@ cdef class QuiverPath(MonoidElement):
         if h == -1:
             return -2
         return h
-        ## bitset_hash is not a good hash either
-        ## We should consider using FNV-1a hash, see http://www.isthe.com/chongo/tech/comp/fnv/,
-        ## Or the hash defined in http://burtleburtle.net/bob/hash/doobs.html
-        ## Or http://www.azillionmonkeys.com/qed/hash.html
+        # bitset_hash is not a good hash either
+        # We should consider using FNV-1a hash, see http://www.isthe.com/chongo/tech/comp/fnv/,
+        # Or the hash defined in http://burtleburtle.net/bob/hash/doobs.html
+        # Or http://www.azillionmonkeys.com/qed/hash.html
 
     def _repr_(self):
         r"""
@@ -429,7 +429,7 @@ cdef class QuiverPath(MonoidElement):
                 init = self._end
             if start < stop:
                 end = E[biseq_getitem(self._path, stop-1)][1]
-            else: # the result will be a path of length 0
+            else:  # the result will be a path of length 0
                 end = init
             OUT = self._new_(init, end)
             biseq_init_slice(OUT._path, self._path, start, stop, step)
@@ -500,7 +500,7 @@ cdef class QuiverPath(MonoidElement):
         if self._end != right._start:
             return None
         cdef QuiverPath OUT = self._new_(self._start, right._end)
-        biseq_init_concat(OUT._path, self._path,right._path)
+        biseq_init_concat(OUT._path, self._path, right._path)
         return OUT
 
     cpdef _mod_(self, other):
@@ -771,7 +771,7 @@ cdef class QuiverPath(MonoidElement):
         cdef QuiverPath out = QuiverPath.__new__(Q.element_class)
         out._parent = Q
         out._start = self._end
-        out._end   = self._start
+        out._end = self._start
         sig_check()
         biseq_init(out._path, self._path.length, self._path.itembitsize)
         cdef mp_size_t l = self._path.length - 1

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Boolean functions
 
@@ -26,7 +25,6 @@ AUTHOR:
 - Rusydi H. Makarim (2016-07-09): add is_plateaued()
 - Yann Laigle-Chapuy (2010-02-26): add basic arithmetic
 - Yann Laigle-Chapuy (2009-08-28): first implementation
-
 """
 
 from cysignals.signals cimport sig_check
@@ -233,12 +231,12 @@ cdef class BooleanFunction(SageObject):
         Construct a Boolean Function.
         The input ``x`` can be either:
 
-        - an integer - the result is the zero function with ``x`` variables;
-        - a list - it is expected to be the truth table of the
+        - an integer -- the result is the zero function with ``x`` variables;
+        - a list -- it is expected to be the truth table of the
           result. Therefore it must be of length a power of 2, and its
           elements are interpreted as Booleans;
-        - a Boolean polynomial - the result is the corresponding Boolean function;
-        - a polynomial P over an extension of GF(2) - the result is
+        - a Boolean polynomial -- the result is the corresponding Boolean function;
+        - a polynomial P over an extension of GF(2) -- the result is
           the Boolean function with truth table ``( Tr(P(x)) for x in
           GF(2^k) )``
 
@@ -1184,12 +1182,12 @@ cdef class BooleanFunction(SageObject):
             ...
             TypeError: cannot compute is_linear_structure() using parameter X
         """
-        from sage.structure.element import is_Vector
+        from sage.structure.element import Vector
         nvars = self._nvariables
 
         if isinstance(val, (tuple, list)):
             i = ZZ(val, base=2)
-        elif is_Vector(val):
+        elif isinstance(val, Vector):
             if val.base_ring() != GF(2):
                 raise TypeError("base ring of input vector must be GF(2)")
             elif val.parent().dimension() != nvars:
@@ -1303,12 +1301,12 @@ cdef class BooleanFunction(SageObject):
             ...
             IndexError: index out of bound
         """
-        from sage.structure.element import is_Vector
+        from sage.structure.element import Vector
         nvars = self._nvariables
 
         if isinstance(u, (tuple, list)):
             v = ZZ(u, base=2)
-        elif is_Vector(u):
+        elif isinstance(u, Vector):
             if u.base_ring() != GF(2):
                 raise TypeError("base ring of input vector must be GF(2)")
             elif u.parent().dimension() != nvars:

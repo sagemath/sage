@@ -116,7 +116,7 @@ class Gamma_class(CongruenceSubgroup):
             sage: Gamma(3) == Gamma(3).as_permutation_group()                           # needs sage.groups
             True
         """
-        if is_Gamma(other):
+        if isinstance(other, Gamma_class):
             return richcmp(self.level(), other.level(), op)
         else:
             return NotImplemented
@@ -313,14 +313,16 @@ def is_Gamma(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import is_Gamma
-        sage: is_Gamma(Gamma0(13))
+        sage: from sage.modular.arithgroup.all import Gamma_class
+        sage: isinstance(Gamma0(13), Gamma_class)
         False
-        sage: is_Gamma(Gamma(4))
+        sage: isinstance(Gamma(4), Gamma_class)
         True
     """
-
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_Gamma is deprecated; use 'isinstance(..., Gamma_class)' instead.")
     return isinstance(x, Gamma_class)
+
 
 def _lift_pair(U,V,N):
     r"""

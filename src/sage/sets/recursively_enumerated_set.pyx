@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Recursively Enumerated Sets
 
@@ -311,7 +310,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
     - ``seeds`` -- list (or iterable) of hashable objects
     - ``successors`` -- function (or callable) returning a list (or iterable) of
       hashable objects
-    - ``structure`` -- string (optional, default: ``None``), structure of the
+    - ``structure`` -- string (default: ``None``), structure of the
       set, possible values are:
 
       - ``None`` -- nothing is known about the structure of the set.
@@ -323,14 +322,14 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
         ``y in successors(x)`` if and only if ``x in successors(y)``
 
     - ``enumeration`` -- ``'depth'``, ``'breadth'``, ``'naive'`` or ``None``
-      (optional, default: ``None``). The default enumeration for the
+      (default: ``None``). The default enumeration for the
       ``__iter__`` function.
-    - ``max_depth`` -- integer (optional, default: ``float("inf")``), limit
+    - ``max_depth`` -- integer (default: ``float("inf")``), limit
       the search to a certain depth, currently works only for breadth first
       search
-    - ``post_process`` -- (optional, default: ``None``), for forest only
-    - ``facade`` -- (optional, default: ``None``)
-    - ``category`` -- (optional, default: ``None``)
+    - ``post_process`` -- (default: ``None``), for forest only
+    - ``facade`` -- (default: ``None``)
+    - ``category`` -- (default: ``None``)
 
     EXAMPLES:
 
@@ -1489,6 +1488,7 @@ def _imap_and_filter_none(function, iterable):
         if x is not None:
             yield x
 
+
 def search_forest_iterator(roots, children, algorithm='depth'):
     r"""
     Return an iterator on the nodes of the forest having the given
@@ -1576,6 +1576,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
 
         yield node
         stack.append( iter(children(node)) )
+
 
 class RecursivelyEnumeratedSet_forest(Parent):
     r"""

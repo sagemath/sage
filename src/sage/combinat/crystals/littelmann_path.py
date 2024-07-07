@@ -28,6 +28,7 @@ AUTHORS:
 # ***************************************************************************
 
 from sage.misc.cachefunc import cached_in_parent_method, cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.parent import Parent
@@ -38,12 +39,13 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.loop_crystals import (RegularLoopCrystals,
                                            KirillovReshetikhinCrystals)
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.combinat.root_system.root_system import RootSystem
 from sage.arith.misc import integer_floor as floor
 from sage.misc.latex import latex
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
 class CrystalOfLSPaths(UniqueRepresentation, Parent):

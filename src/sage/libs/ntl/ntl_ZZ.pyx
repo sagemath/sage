@@ -473,6 +473,7 @@ def ntl_setSeed(x=None):
     ZZ_SetSeed(seed.x)
     sig_off()
 
+
 ntl_setSeed()
 
 

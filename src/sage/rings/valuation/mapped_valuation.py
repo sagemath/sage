@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Valuations which are implemented through a map to another valuation
 
@@ -22,7 +21,6 @@ through an infinite valuation on `K[x]` which maps `G` to infinity::
 AUTHORS:
 
 - Julian Rüth (2016-11-10): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>

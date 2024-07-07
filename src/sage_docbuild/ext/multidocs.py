@@ -17,7 +17,6 @@ More precisely this extension ensures the correct merging of
 - the list of python modules
 - the javascript index
 - the citations
-
 """
 import os
 import pickle

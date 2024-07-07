@@ -33,7 +33,7 @@ def _principal_part(mat):
 
     INPUT:
 
-    - ``mat`` - a matrix with at least as many rows as columns
+    - ``mat`` -- a matrix with at least as many rows as columns
 
     OUTPUT:
 
@@ -197,7 +197,7 @@ def _dg_canonical_form(dg, frozen=None):
 
     - ``dg`` -- a directed graph having edge labels (a, b) with a > 0
 
-    - ``frozen`` -- list (optional, default []) of frozen vertices
+    - ``frozen`` -- list (default: ``[]``) of frozen vertices
 
     OUTPUT:
 
@@ -387,7 +387,7 @@ def _digraph_to_dig6(dg, hashable=False):
     INPUT:
 
     - ``dg`` -- a digraph
-    - ``hashable`` -- (Boolean; optional; default:False) if ``True``, the edge labels are turned into a dict.
+    - ``hashable`` -- (Boolean; optional; default: ``False``) if ``True``, the edge labels are turned into a dict.
 
     EXAMPLES::
 

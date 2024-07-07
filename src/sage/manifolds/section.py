@@ -8,7 +8,6 @@ is devoted to sections on trivial parts of a vector bundle.
 AUTHORS:
 
 - Michael Jung (2019): initial version
-
 """
 
 #******************************************************************************

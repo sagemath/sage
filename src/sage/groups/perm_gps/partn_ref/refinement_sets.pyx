@@ -13,7 +13,6 @@ REFERENCE:
     [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
         Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
         533-583.
-
 """
 
 #*****************************************************************************
@@ -181,6 +180,7 @@ def set_stab_py(generators, sett, relab=False):
         return stab_gens, relabeling
     return stab_gens
 
+
 cdef aut_gp_and_can_lab *set_stab(StabilizerChain *supergroup, subset *sett, bint relab) noexcept:
     r"""
     Compute the set stabilizer of ``sett`` within ``supergroup``. (Note that
@@ -199,6 +199,7 @@ cdef aut_gp_and_can_lab *set_stab(StabilizerChain *supergroup, subset *sett, bin
     if output is NULL:
         return NULL
     return output
+
 
 def sets_isom_py(generators, set1, set2):
     r"""
@@ -423,6 +424,7 @@ def sets_isom_py(generators, set1, set2):
         output_py = False
     sig_free(isom)
     return output_py
+
 
 cdef int sets_isom(StabilizerChain *supergroup, subset *set1, subset *set2, int *isom) except -1:
     r"""

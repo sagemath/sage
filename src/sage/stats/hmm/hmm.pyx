@@ -36,7 +36,7 @@ from libc.math cimport log
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.stats.time_series cimport TimeSeries
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.randstate cimport current_randstate, randstate
 from cpython.object cimport PyObject_RichCompare
@@ -219,7 +219,6 @@ cdef class HiddenMarkovModel:
         cdef Py_ssize_t i
         return [self.generate_sequence(length, starting_state=starting_state)[0] for i in range(number)]
 
-
     #########################################################
     # Some internal functions used for various general
     # HMM algorithms.
@@ -357,7 +356,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         if self._emission_symbols is not None:
             self._emission_symbols_dict = dict([(y,x) for x,y in enumerate(emission_symbols)])
 
-        if not is_Matrix(B):
+        if not isinstance(B, Matrix):
             B = matrix(B)
         if B.nrows() != self.N:
             raise ValueError("number of rows of B must equal number of states")
@@ -434,7 +433,6 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         from sage.matrix.constructor import matrix
         from sage.rings.real_double import RDF
         return matrix(RDF, self.N, self.n_out, self.B.list())
-
 
     def __repr__(self):
         r"""
@@ -976,7 +974,6 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
         return state_sequence, log(mx)
 
-
     cpdef _viterbi_scale(self, IntList obs):
         r"""
         Used internally to compute the viterbi path with rescaling.
@@ -1178,7 +1175,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
         - ``alpha`` -- TimeSeries as output by the scaled forward algorithm
         - ``beta`` -- TimeSeries as output by the scaled backward algorithm
-        - ``obs ``-- IntList of observations
+        - ``obs `` -- IntList of observations
 
         OUTPUT:
 
@@ -1361,7 +1358,8 @@ def unpickle_discrete_hmm_v0(A, B, pi, emission_symbols, name):
         sage: sage.stats.hmm.hmm.unpickle_discrete_hmm_v0(m.transition_matrix(), m.emission_matrix(), m.initial_probabilities(), ['a','b'], 'test model')
         Discrete Hidden Markov Model with 2 States and 2 Emissions...
     """
-    return DiscreteHiddenMarkovModel(A,B,pi,emission_symbols,normalize=False)
+    return DiscreteHiddenMarkovModel(A, B, pi, emission_symbols, normalize=False)
+
 
 def unpickle_discrete_hmm_v1(A, B, pi, n_out, emission_symbols, emission_symbols_dict):
     r"""

@@ -238,7 +238,6 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
         sig_free(pos)
 
 
-
 cdef mpz_t mpz_set_tmp
 mpz_init(mpz_set_tmp)
 cdef int mpz_vector_set_entry_str(mpz_vector* v, Py_ssize_t n, char *x_str) except -1:

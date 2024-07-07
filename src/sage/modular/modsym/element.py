@@ -36,10 +36,18 @@ def is_ModularSymbolsElement(x) -> bool:
     EXAMPLES::
 
         sage: sage.modular.modsym.element.is_ModularSymbolsElement(ModularSymbols(11, 2).0)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularSymbolsElement is deprecated;
+        use 'isinstance(..., ModularSymbolsElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: sage.modular.modsym.element.is_ModularSymbolsElement(13)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ModularSymbolsElement is deprecated; "
+                "use 'isinstance(..., ModularSymbolsElement)' instead.")
     return isinstance(x, ModularSymbolsElement)
 
 
@@ -49,16 +57,16 @@ def set_modsym_print_mode(mode="manin"):
 
     INPUT:
 
-    -  ``mode`` - a string. The possibilities are as
+    -  ``mode`` -- a string. The possibilities are as
        follows:
 
-    -  ``'manin'`` - (the default) formal sums of Manin
+    -  ``'manin'`` -- (the default) formal sums of Manin
        symbols [P(X,Y),(u,v)]
 
-    -  ``'modular'`` - formal sums of Modular symbols
+    -  ``'modular'`` -- formal sums of Modular symbols
        P(X,Y)\*alpha,beta, where alpha and beta are cusps
 
-    -  ``'vector'`` - as vectors on the basis for the
+    -  ``'vector'`` -- as vectors on the basis for the
        ambient space
 
     OUTPUT: none

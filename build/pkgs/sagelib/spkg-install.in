@@ -24,11 +24,10 @@ export SAGE_ROOT=/doesnotexist
 export SAGE_SRC=/doesnotexist
 export SAGE_SRC_ROOT=/doesnotexist
 export SAGE_DOC_SRC=/doesnotexist
-export SAGE_BUILD_DIR=/doesnotexist
 
-# We also poison all directories below SAGE_LOCAL.
+# We also poison all directories below SAGE_LOCAL
+# except for SAGE_SPKG_SCRIPTS, which is needed by sage-dist-helpers
 export SAGE_PKGCONFIG=/doesnotexist
-export SAGE_SPKG_SCRIPTS=/doesnotexist
 export SAGE_SHARE=/doesnotexist
 
 # However, we only unset SAGE_LOCAL and SAGE_PKG_CONFIG_PATH.
@@ -43,37 +42,25 @@ unset SAGE_PKG_CONFIG_PATH
 
 SITEPACKAGESDIR=$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
 
-export SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS=""
-
+# Make sure that an installed old version of sagelib in which sage is an ordinary package
+# does not shadow the namespace package sage during the build.
+(cd "$SITEPACKAGESDIR" && rm -f sage/__init__.py)
 if [ "$SAGE_EDITABLE" = yes ]; then
-    # In an incremental build, we may need to uninstall old versions installed by distutils
-    # under the old distribution name "sage" (before #30912, which switched to setuptools
-    # and renamed the distribution to "sagemath-standard").  There is no clean way to uninstall
-    # them, so we just use rm.
-    (cd "$SITEPACKAGESDIR" && rm -rf sage sage-[1-9]*.egg-info sage-[1-9]*.dist-info)
     # Until https://github.com/sagemath/sage/issues/34209 switches us to PEP 660 editable wheels
     export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
     sdh_pip_editable_install .
 
     if [ "$SAGE_WHEELS" = yes ]; then
         # Additionally build a wheel (for use in other venvs)
-        cd $SAGE_PKGS/sagelib/src && time sdh_setup_bdist_wheel && sdh_store_wheel .
+        cd $SAGE_PKGS/sagelib/src && time sdh_build_and_store_wheel --no-build-isolation .
     fi
 else
-    # Make sure that an installed old version of sagelib in which sage is an ordinary package
-    # does not shadow the namespace package sage during the build.
-    (cd "$SITEPACKAGESDIR" && rm -f sage/__init__.py)
-    # Likewise, we should remove the egg-link that may have been installed previously.
+    # Now implied: "$SAGE_WHEELS" = yes
+    # We should remove the egg-link that may have been installed previously.
     (cd "$SITEPACKAGESDIR" && rm -f sagemath-standard.egg-link)
-
-    if [ "$SAGE_WHEELS" = yes ]; then
-        # Use --no-build-isolation to avoid rebuilds because of dependencies:
-        # Compiling sage/interfaces/sagespawn.pyx because it depends on /private/var/folders/38/wnh4gf1552g_crsjnv2vmmww0000gp/T/pip-build-env-609n5985/overlay/lib/python3.10/site-packages/Cython/Includes/posix/unistd.pxd
-        sdh_pip_install --no-build-isolation .
-    else
-        SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS+="mcqd,tdlib,coxeter3,sirocco,meataxe,bliss"
-        python3 -u setup.py --no-user-cfg build install || exit 1
-    fi
+    # Use --no-build-isolation to avoid rebuilds because of dependencies:
+    # Compiling sage/interfaces/sagespawn.pyx because it depends on /private/var/folders/38/wnh4gf1552g_crsjnv2vmmww0000gp/T/pip-build-env-609n5985/overlay/lib/python3.10/site-packages/Cython/Includes/posix/unistd.pxd
+    sdh_pip_install --no-build-isolation .
 fi
 
 # Remove (potentially invalid) star import caches.

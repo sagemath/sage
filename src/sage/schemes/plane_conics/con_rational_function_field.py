@@ -44,7 +44,7 @@ from sage.schemes.plane_conics.con_field import ProjectiveConic_field
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD as gcd
 from sage.modules.free_module_element import vector
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 
 class ProjectiveConic_rational_function_field(ProjectiveConic_field):
@@ -392,7 +392,7 @@ for function field of characteristic 2.")
 
         # remove squares
         for i, x in enumerate(coeff):
-            if is_FractionField(x.parent()):
+            if isinstance(x.parent(), FractionField_generic):
                 # go to base ring of fraction field
                 x = self.base().base()(x)
 

@@ -985,7 +985,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - ``partial`` - bool (default: ``False``) return only a partial normal form;
+        - ``partial`` -- bool (default: ``False``) return only a partial normal form;
           it is not unique but still useful to extract invariants
 
         OUTPUT:
@@ -1225,7 +1225,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - ``s`` - a rational number
+        - ``s`` -- a rational number
 
         EXAMPLES::
 
@@ -1309,9 +1309,9 @@ def _brown_indecomposable(q, p):
 
     INPUT:
 
-    - ``q`` - an indecomposable quadratic form represented by a
+    - ``q`` -- an indecomposable quadratic form represented by a
       rational `1 \times 1` or `2 \times 2` matrix
-    - ``p`` - a prime number
+    - ``p`` -- a prime number
 
     EXAMPLES::
 

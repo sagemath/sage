@@ -26,6 +26,3 @@ cdef class GaussianMixtureDistribution(Distribution):
     cpdef double prob(self, double x) noexcept
     cpdef double prob_m(self, double x, int m) noexcept
     cpdef is_fixed(self, i=?)
-
-
-

@@ -2715,6 +2715,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
 
         return ChainComplex(data, degree=1)
 
+
 @richcmp_method
 class ExteriorAlgebraIdeal(Ideal_nc):
     """

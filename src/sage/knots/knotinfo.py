@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Access to the KnotInfo database
 
@@ -211,7 +210,6 @@ REFERENCES:
 
 - `KnotInfo <https://knotinfo.math.indiana.edu/>`__
 - `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__
-
 
 
 AUTHORS:
@@ -544,7 +542,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -586,7 +584,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -629,7 +627,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -663,7 +661,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1017,7 +1015,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``positive`` -- boolean (optional, default False) whether to check
+        - ``positive`` -- boolean (default: ``False``) whether to check
           if ``self`` is positive or negative amphicheiral (see documentation
           of :meth:`symmetry_type`)
 
@@ -1351,7 +1349,7 @@ class KnotInfoBase(Enum):
 
         - ``var1`` -- (default: ``'a'``) the first variable
         - ``var2`` -- (default: ``'z'``) the second variable
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1619,7 +1617,7 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
         - ``laurent_poly`` -- boolean (default ``False``) see the note below
 
@@ -1709,7 +1707,7 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1954,7 +1952,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``use_item`` -- (optional, default ``self.items.pd_notation``)
+        - ``use_item`` -- (default: ``self.items.pd_notation``)
           instance of :class:`KnotInfoColumns` to choose the column
           that should be used to construct the link. Allowed values
           are:
@@ -2152,7 +2150,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``unique`` -- boolean (optional, default=``True``) if set to ``False``
+        - ``unique`` -- boolean (default: ``True``) if set to ``False``
           it is only checked if ``self`` is among the recovered items
 
         EXAMPLES::
@@ -2218,7 +2216,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``verbose`` -- boolean (optional, default ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``) to suppress
           the message printed on the invocation
 
         EXAMPLES::
@@ -2241,7 +2239,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default False) it only affects proper links.
+        - ``oriented`` -- boolean (default: ``False``) it only affects proper links.
           By default the items of the series will be again series of links
           collecting all orientation mutants of an unoriented name. To obtain
           the series of the individual links this keyword has to be set to
@@ -2404,21 +2402,21 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (optional, default ``False``) it only affects
+        - ``oriented`` -- boolean (default: ``False``) it only affects
           series of proper links. By default the list items of a series of proper
           links are again series of links collecting all orientation types of an
           unoriented name. To obtain the list of the individual links this
           keyword has to be set to ``True``
 
-        - ``comp`` (optional, default ``None``) if given an integer for this
+        - ``comp`` (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according number
           of components. This keyword implies ``oriented=True``
 
-        - ``det`` (optional, default ``None``) if given an integer for this
+        - ``det`` (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according value
           for its determinant. This keyword implies ``oriented=True``
 
-        - ``homfly`` (optional, default ``None``) if given a HOMFLY-PT polynomial
+        - ``homfly`` (default: ``None``) if given a HOMFLY-PT polynomial
           having ``normalization='vz'`` for this keyword the list is restriced to
           links having the according value for its HOMFLY-PT polynomial. This
           keyword implies ``oriented=True``
@@ -2496,16 +2494,16 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (optional, default ``False``) see the
+        - ``oriented`` -- boolean (default: ``False``) see the
           description for :meth:`list`
 
-        - ``comp`` (optional, default ``None``) see the description for
+        - ``comp`` (default: ``None``) see the description for
           :meth:`list`
 
-        - ``det`` (optional, default ``None``) see the description for
+        - ``det`` (default: ``None``) see the description for
           :meth:`list`
 
-        - ``homfly`` (optional, default ``None``) see the description for
+        - ``homfly`` (default: ``None``) see the description for
           :meth:`list`
 
         EXAMPLES::
@@ -2655,7 +2653,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``unique`` -- boolean (optional, default=``True``) see
+        - ``unique`` -- boolean (default: ``True``) see
           :meth:`KnotInfoBase.is_recoverable`
         - ``max_samples`` -- non negative integer or ``infinity`` (optional,
           default ``8``) limits the number of items to check (random sample).
@@ -2713,7 +2711,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``verbose`` -- boolean (optional, default ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``) to suppress
           the message printed on the invocation
 
         EXAMPLES::

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 An example of set factory
 =========================
@@ -23,8 +24,6 @@ where `(a, b)\in S`
     S^b := \{(x,y) \in S \mid y = b\},
 
     S_a^b := \{(x,y) \in S \mid x = a, y = b\}.
-
-
 """
 #*****************************************************************************
 #  Copyright (C) 2012 Florent Hivert <florent.hivert at lri.fr>

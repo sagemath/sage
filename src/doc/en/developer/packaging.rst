@@ -444,10 +444,6 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   arguments. If ``$SAGE_DESTDIR`` is not set then the command is run
   with ``$SAGE_SUDO``, if set.
 
-- ``sdh_setup_bdist_wheel [...]``: Runs ``setup.py bdist_wheel`` with
-  the given arguments, as well as additional default arguments used for
-  installing packages into Sage.
-
 - ``sdh_pip_install [...]``: The equivalent of running ``pip install``
   with the given arguments, as well as additional default arguments used for
   installing packages into Sage with pip. The last argument must be
@@ -568,7 +564,6 @@ pip for use in a separate process, like ``tox``, then this should be
 possible.
 
 
-
 .. _section-spkg-check:
 
 Self-tests
@@ -609,10 +604,6 @@ case the ``spkg-install.in`` script template might just consist of
 Where ``sdh_pip_install`` is a function provided by ``sage-dist-helpers`` that
 points to the correct ``pip`` for the Python used by Sage, and includes some
 default flags needed for correct installation into Sage.
-
-If ``pip`` will not work for a package but a command like ``python3 setup.py install``
-will, you may use ``sdh_setup_bdist_wheel``, followed by
-``sdh_store_and_pip_install_wheel .``.
 
 For ``spkg-check.in`` script templates, use ``python3`` rather
 than just ``python``.  The paths are set by the Sage build system
@@ -763,7 +754,6 @@ then we must declare this dependency.  Otherwise, various errors
 can occur when building or upgrading. When new versions of ``pip``
 packages add dependencies that happen to be Sage packages, there is a
 separate source of instability.
-
 
 
 .. _section-spkg-SPKG-txt:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 An element in an indexed free module
 
@@ -1035,6 +1034,7 @@ def _unpickle_element(C, d):
         -2*B[1] - 12*B[3]
     """
     return C._from_dict(d, coerce=False, remove_zeros=False)
+
 
 # Handle old CombinatorialFreeModuleElement pickles, see Issue #22632
 from sage.misc.persist import register_unpickle_override

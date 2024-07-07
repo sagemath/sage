@@ -6,7 +6,7 @@ Parametric plots
 from .parametric_surface import ParametricSurface
 from .shapes2 import line3d
 from sage.arith.srange import xsrange, srange
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.misc.decorators import rename_keyword
 
 
@@ -37,27 +37,27 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
 
     INPUT:
 
-    - ``f`` - a 3-tuple of functions or expressions, or vector of size 3
+    - ``f`` -- a 3-tuple of functions or expressions, or vector of size 3
 
-    - ``urange`` - a 2-tuple (u_min, u_max) or a 3-tuple
+    - ``urange`` -- a 2-tuple (u_min, u_max) or a 3-tuple
       (u, u_min, u_max)
 
-    - ``vrange`` - (optional - only used for surfaces) a
+    - ``vrange`` -- (optional, only used for surfaces) a
       2-tuple (v_min, v_max) or a 3-tuple (v, v_min, v_max)
 
-    - ``plot_points`` - (default: "automatic", which is
+    - ``plot_points`` -- (default: "automatic", which is
       75 for curves and [40,40] for surfaces) initial number of sample
       points in each parameter; an integer for a curve, and a pair of
       integers for a surface.
 
-    - ``boundary_style`` - (default: None, no boundary) a dict that describes
+    - ``boundary_style`` -- (default: None, no boundary) a dict that describes
       how to draw the boundaries of regions by giving options that are passed
       to the line3d command.
 
-    - ``mesh`` - bool (default: False) whether to display
+    - ``mesh`` -- bool (default: ``False``) whether to display
       mesh grid lines
 
-    - ``dots`` - bool (default: False) whether to display
+    - ``dots`` -- bool (default: ``False``) whether to display
       dots at mesh grid points
 
     .. note::
@@ -977,7 +977,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
     #   * Iterative refinement
 
     # color_function -- (default: "automatic") how to determine the color of curves and surfaces
-    # color_function_scaling -- (default: True) whether to scale the input to color_function
+    # color_function_scaling -- (default: ``True``) whether to scale the input to color_function
     # exclusions -- (default: "automatic") u points or (u,v) conditions to exclude.
     #         (E.g., exclusions could be a function e = lambda u, v: False if u < v else True
     # exclusions_style -- (default: None) what to draw at excluded points
@@ -988,7 +988,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
     # mesh_shading -- (default: None) how to shade regions between mesh divisions
     # plot_range -- (default: "automatic") range of values to include
 
-    if is_Vector(f):
+    if isinstance(f, Vector):
         f = tuple(f)
 
     if isinstance(f, (list, tuple)) and len(f) > 0 and isinstance(f[0], (list, tuple)):
@@ -1030,12 +1030,12 @@ def _parametric_plot3d_curve(f, urange, plot_points, **kwds):
 
     INPUT:
 
-    - ``f`` - a 3-tuple of functions or expressions, or vector of size 3
+    - ``f`` -- a 3-tuple of functions or expressions, or vector of size 3
 
-    - ``urange`` - a 2-tuple (u_min, u_max) or a 3-tuple
+    - ``urange`` -- a 2-tuple (u_min, u_max) or a 3-tuple
       (u, u_min, u_max)
 
-    - ``plot_points`` - (default: "automatic", which is 75) initial
+    - ``plot_points`` -- (default: "automatic", which is 75) initial
       number of sample points in each parameter; an integer.
 
     EXAMPLES:
@@ -1083,19 +1083,19 @@ def _parametric_plot3d_surface(f, urange, vrange, plot_points, boundary_style, *
 
     INPUT:
 
-    - ``f`` - a 3-tuple of functions or expressions, or vector of size 3
+    - ``f`` -- a 3-tuple of functions or expressions, or vector of size 3
 
-    - ``urange`` - a 2-tuple (u_min, u_max) or a 3-tuple
+    - ``urange`` -- a 2-tuple (u_min, u_max) or a 3-tuple
       (u, u_min, u_max)
 
-    - ``vrange`` - a 2-tuple (v_min, v_max) or a 3-tuple
+    - ``vrange`` -- a 2-tuple (v_min, v_max) or a 3-tuple
       (v, v_min, v_max)
 
-    - ``plot_points`` - (default: "automatic", which is [40,40]
+    - ``plot_points`` -- (default: "automatic", which is [40,40]
       for surfaces) initial number of sample points in each parameter;
       a pair of integers.
 
-    - ``boundary_style`` - (default: None, no boundary) a dict that describes
+    - ``boundary_style`` -- (default: None, no boundary) a dict that describes
       how to draw the boundaries of regions by giving options that are passed
       to the line3d command.
 

@@ -2964,7 +2964,8 @@ class SetPartitions_setparts(SetPartitions_set):
 
         TESTS::
 
-            sage: all((len(SetPartitions(size, part)) == SetPartitions(size, part).cardinality() for size in range(8) for part in Partitions(size)))
+            sage: all((len(SetPartitions(size, part)) == SetPartitions(size, part).cardinality()
+            ....:     for size in range(8) for part in Partitions(size)))
             True
             sage: sum((SetPartitions(13, p).cardinality()                               # needs sage.libs.flint
             ....:     for p in Partitions(13))) == SetPartitions(13).cardinality()

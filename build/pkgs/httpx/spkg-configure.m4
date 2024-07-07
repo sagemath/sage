@@ -1,0 +1,3 @@
+SAGE_SPKG_CONFIGURE([httpx], [
+  SAGE_PYTHON_PACKAGE_CHECK([httpx])
+])

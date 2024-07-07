@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.gap sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.libs.gap sage.modules sage.rings.finite_rings
 r"""
 Constructions of generator matrices using the GUAVA package for GAP
 
@@ -85,7 +85,7 @@ def RandomLinearCodeGuava(n, k, F):
 
     INPUT:
 
-    - ``n,k`` -- integers with `n>k>1`.
+    - ``n``, ``k`` -- integers with `n>k>1`.
 
     OUTPUT:
 

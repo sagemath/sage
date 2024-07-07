@@ -42,21 +42,22 @@ AUTHORS:
 
 from itertools import repeat, chain, product
 
+from sage.combinat.words.alphabet import Alphabet
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
-
-from sage.graphs.digraph import DiGraph
-from sage.graphs.graph import Graph
 from sage.monoids.free_monoid import FreeMonoid
 from sage.monoids.monoid import Monoid_class
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.infinity import infinity
-from sage.combinat.words.alphabet import Alphabet
 from sage.structure.element import MonoidElement
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.graphs.graph', 'Graph')
 
 
 class TraceMonoidElement(ElementWrapper, MonoidElement):
@@ -219,7 +220,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.dependence_graph()
+            sage: x.dependence_graph()                                                  # needs sage.graphs
             Digraph on 6 vertices
         """
         elements = self._flat_elements()
@@ -227,10 +228,8 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         graph = {}
 
         for i, e in enumerate(elements):
-            edges = []
-            for v in graph:
-                if (e, elements[v]) not in independence:
-                    edges.append((v, i))
+            edges = [(v, i) for v in graph
+                     if (e, elements[v]) not in independence]
             graph[i] = []
             for v1, v2 in edges:
                 graph[v1].append(v2)
@@ -265,7 +264,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.hasse_diagram()
+            sage: x.hasse_diagram()                                                     # needs sage.graphs
             Digraph on 6 vertices
 
         TESTS::
@@ -274,10 +273,10 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.hasse_diagram(algorithm='naive') == x.hasse_diagram(algorithm='min')
+            sage: x.hasse_diagram(algorithm='naive') == x.hasse_diagram(algorithm='min')            # needs sage.graphs
             True
             sage: y = b * a^3 * d * a * c * b^2
-            sage: y.hasse_diagram(algorithm='naive') == y.hasse_diagram(algorithm='min')
+            sage: y.hasse_diagram(algorithm='naive') == y.hasse_diagram(algorithm='min')            # needs sage.graphs
             True
         """
         if algorithm == "naive":
@@ -306,7 +305,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.min_hasse_diagram()
+            sage: x.min_hasse_diagram()                                                 # needs sage.graphs
             Digraph on 6 vertices
         """
         elements = self._flat_elements()
@@ -364,7 +363,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.naive_hasse_diagram()
+            sage: x.naive_hasse_diagram()                                               # needs sage.graphs
             Digraph on 6 vertices
         """
         d = self.dependence_graph()
@@ -484,7 +483,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
 
         sage: from sage.monoids.trace_monoid import TraceMonoid
         sage: M.<a,b,c> = TraceMonoid(I=(('a','c'), ('c','a')))
-        sage: M.number_of_words(3) == len(M.words(3))
+        sage: M.number_of_words(3) == len(M.words(3))                                   # needs sage.graphs
         True
     """
     Element = TraceMonoidElement
@@ -815,7 +814,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: F.<a,b,c> = FreeMonoid()
             sage: M.<ai,bi,ci> = TraceMonoid(F, I=((a,c), (c,a)))
-            sage: M.dependence_graph() == Graph({a:[a,b], b:[b], c:[c,b]})
+            sage: M.dependence_graph() == Graph({a:[a,b], b:[b], c:[c,b]})              # needs sage.graphs
             True
         """
         return Graph({frozenset((e1, e2)) if e1 != e2 else (e1, e2)
@@ -837,7 +836,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: F.<a,b,c> = FreeMonoid()
             sage: M.<ai,bi,ci> = TraceMonoid(F, I=((a,c), (c,a)))
-            sage: M.independence_graph() == Graph({a:[c], b:[], c:[]})
+            sage: M.independence_graph() == Graph({a:[c], b:[], c:[]})                  # needs sage.graphs
             True
         """
         verts = list(self._free_monoid.gens())
@@ -862,7 +861,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
-            sage: M.dependence_polynomial()
+            sage: M.dependence_polynomial()                                             # needs sage.graphs
             1/(2*t^2 - 4*t + 1)
         """
         if t is None:
@@ -890,7 +889,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
-            sage: M.number_of_words(3)
+            sage: M.number_of_words(3)                                                  # needs sage.graphs
             48
         """
         psr = PowerSeriesRing(ZZ, default_prec=length + 1)
@@ -930,10 +929,8 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
 
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: M.<a,b,c> = TraceMonoid(I=(('a','b'), ('b','a'), ('b', 'c'), ('c', 'b')))
-            sage: for i in range(10):
+            sage: for i in range(10):                                                   # needs sage.graphs
             ....:    assert len(M.words(i)) == M.number_of_words(i)
-            sage: True
-            True
         """
         if length < 0:
             raise ValueError("bad length of words; expected zero or positive number")

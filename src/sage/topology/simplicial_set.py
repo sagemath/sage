@@ -973,7 +973,7 @@ def AbstractSimplex(dim, degeneracies=(), underlying=None,
     - ``dim`` -- a non-negative integer, the dimension of the
       underlying non-degenerate simplex.
 
-    - ``degeneracies`` (optional, default ``None``) -- a list or tuple of
+    - ``degeneracies`` (default: ``None``) -- a list or tuple of
       non-negative integers, the degeneracies to be applied.
 
     - ``underlying`` (optional) -- a non-degenerate simplex to which
@@ -1469,7 +1469,7 @@ class SimplicialSet_arbitrary(Parent):
 
         - ``n`` -- the dimension
 
-        - ``subcomplex`` (optional, default ``None``) -- a subcomplex
+        - ``subcomplex`` (default: ``None``) -- a subcomplex
           of this cell complex. Return the cells which are in the
           quotient by this subcomplex.
 
@@ -1896,22 +1896,22 @@ class SimplicialSet_arbitrary(Parent):
           chain complex in those dimensions, setting the chain groups
           in all other dimensions to zero.
 
-        - ``base_ring`` (optional, default ``ZZ``) -- commutative ring
+        - ``base_ring`` (default: ``ZZ``) -- commutative ring
 
-        - ``augmented`` (optional, default ``False``) -- if ``True``,
+        - ``augmented`` (default: ``False``) -- if ``True``,
           return the augmented chain complex (that is, include a class
           in dimension `-1` corresponding to the empty cell).
 
-        - ``cochain`` (optional, default ``False``) -- if ``True``,
+        - ``cochain`` (default: ``False``) -- if ``True``,
           return the cochain complex (that is, the dual of the chain
           complex).
 
-        - ``verbose`` (optional, default ``False``) -- ignored.
+        - ``verbose`` (default: ``False``) -- ignored.
 
-        - ``subcomplex`` (optional, default ``None``) -- if present,
+        - ``subcomplex`` (default: ``None``) -- if present,
           compute the chain complex relative to this subcomplex.
 
-        - ``check`` (optional, default ``False``) -- If ``True``, make
+        - ``check`` (default: ``False``) -- If ``True``, make
           sure that the chain complex is actually a chain complex:
           the differentials are composable and their product is zero.
 
@@ -1959,13 +1959,13 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``dim`` (optional, default ``None`` -- If ``None``, then
+        - ``dim`` (default: ``None`` -- If ``None``, then
           return the homology in every dimension.  If ``dim`` is an
           integer or list, return the homology in the given
           dimensions.  (Actually, if ``dim`` is a list, return the
           homology in the range from ``min(dim)`` to ``max(dim)``.)
 
-        - ``base_ring`` (optional, default ``ZZ``) -- commutative
+        - ``base_ring`` (default: ``ZZ``) -- commutative
           ring, must be ``ZZ`` or a field.
 
         Other arguments are also allowed: see the documentation for
@@ -2037,13 +2037,13 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``dim`` (optional, default ``None`` -- If ``None``, then
+        - ``dim`` (default: ``None`` -- If ``None``, then
           return the homology in every dimension.  If ``dim`` is an
           integer or list, return the homology in the given
           dimensions.  (Actually, if ``dim`` is a list, return the
           homology in the range from ``min(dim)`` to ``max(dim)``.)
 
-        - ``base_ring`` (optional, default ``ZZ``) -- commutative
+        - ``base_ring`` (default: ``ZZ``) -- commutative
           ring, must be ``ZZ`` or a field.
 
         Other arguments are also allowed, the same as for the
@@ -2090,13 +2090,13 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``dim`` (optional, default ``None`` -- If ``None``, then
+        - ``dim`` (default: ``None`` -- If ``None``, then
           return the homology in every dimension.  If ``dim`` is an
           integer or list, return the homology in the given
           dimensions.  (Actually, if ``dim`` is a list, return the
           homology in the range from ``min(dim)`` to ``max(dim)``.)
 
-        - ``subcomplex`` (optional, default ``None``) -- a subcomplex
+        - ``subcomplex`` (default: ``None``) -- a subcomplex
            of this cell complex.  Compute the Betti numbers of the
            homology relative to this subcomplex.
 
@@ -2141,8 +2141,8 @@ class SimplicialSet_arbitrary(Parent):
         INPUT:
 
         - ``n`` -- integer
-        - ``base_ring`` -- ring (optional, default `\ZZ`)
-        - ``cochains`` -- boolean (optional, default ``False``); if
+        - ``base_ring`` -- ring (default: `\ZZ`)
+        - ``cochains`` -- boolean (default: ``False``); if
           ``True``, return cochains instead
 
         The only difference between chains and cochains is notation:
@@ -2898,7 +2898,7 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``n`` (optional, default 1) -- integer, suspend this many
+        - ``n`` (default: 1) -- integer, suspend this many
           times.
 
         If this simplicial set `X` is not pointed, return the
@@ -3151,22 +3151,22 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
     - ``data`` -- the data defining the simplicial set. See below for
       details.
 
-    - ``base_point`` (optional, default ``None``) -- 0-simplex in this
+    - ``base_point`` (default: ``None``) -- 0-simplex in this
       simplicial set, its base point
 
-    - ``name`` (optional, default ``None``) -- string, the name of the
+    - ``name`` (default: ``None``) -- string, the name of the
       simplicial set
 
-    - ``check`` (optional, default ``True``) -- boolean. If ``True``,
+    - ``check`` (default: ``True``) -- boolean. If ``True``,
       check the simplicial identity on the face maps when defining the
       simplicial set.
 
-    - ``category`` (optional, default ``None``) -- the category in
+    - ``category`` (default: ``None``) -- the category in
       which to define this simplicial set. The default is either
       finite simplicial sets or finite pointed simplicial sets,
       depending on whether a base point is defined.
 
-    - ``latex_name`` (optional, default ``None``) -- string, the LaTeX
+    - ``latex_name`` (default: ``None``) -- string, the LaTeX
       representation of the simplicial set.
 
     ``data`` should have one of the following forms: it could be a
@@ -3617,22 +3617,22 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
           chain complex in those dimensions, setting the chain groups
           in all other dimensions to zero.
 
-        - ``base_ring`` (optional, default ``ZZ``) -- commutative ring
+        - ``base_ring`` (default: ``ZZ``) -- commutative ring
 
-        - ``augmented`` (optional, default ``False``) -- if ``True``,
+        - ``augmented`` (default: ``False``) -- if ``True``,
           return the augmented chain complex (that is, include a class
           in dimension `-1` corresponding to the empty cell).
 
-        - ``cochain`` (optional, default ``False``) -- if ``True``,
+        - ``cochain`` (default: ``False``) -- if ``True``,
           return the cochain complex (that is, the dual of the chain
           complex).
 
-        - ``verbose`` (optional, default ``False``) -- ignored.
+        - ``verbose`` (default: ``False``) -- ignored.
 
-        - ``subcomplex`` (optional, default ``None``) -- if present,
+        - ``subcomplex`` (default: ``None``) -- if present,
           compute the chain complex relative to this subcomplex.
 
-        - ``check`` (optional, default ``False``) -- If ``True``, make
+        - ``check`` (default: ``False``) -- If ``True``, make
           sure that the chain complex is actually a chain complex:
           the differentials are composable and their product is zero.
 
@@ -3784,7 +3784,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``). Must be a field.
 
         Denote by `C` the chain complex associated to this simplicial

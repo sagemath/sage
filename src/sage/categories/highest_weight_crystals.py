@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Highest Weight Crystals
@@ -833,6 +834,7 @@ class HighestWeightCrystals(Category_singleton):
 ###############################################################################
 ## Morphisms
 
+
 class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
     r"""
     A virtual crystal morphism whose domain is a highest weight crystal.
@@ -948,6 +950,7 @@ class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
                 s += [j]*sf
             cur = cur.f_string(s)
         return cur
+
 
 class HighestWeightCrystalHomset(CrystalHomset):
     """

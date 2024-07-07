@@ -1113,8 +1113,8 @@ cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
     - A tuple of arrays, [``dr``, ``dtheta``], with each array 2 less in both
       dimensions than ``z_values``
 
-      - ``dr`` - the abs of the derivative of the function in the +r direction
-      - ``dtheta`` - the rate of accumulation of angle in the +theta direction
+      - ``dr`` -- the abs of the derivative of the function in the +r direction
+      - ``dtheta`` -- the rate of accumulation of angle in the +theta direction
 
     EXAMPLES:
 
@@ -1164,21 +1164,21 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
     - ``dtheta`` -- grid of floats, the theta derivative of ``z_values``.
       Used to determine precision.
 
-    - ``spokes`` -- integer - the number of equally spaced radial lines to plot.
+    - ``spokes`` -- integer; the number of equally spaced radial lines to plot.
 
-    - ``circles`` -- integer - the number of equally spaced circles about the
+    - ``circles`` -- integer; the number of equally spaced circles about the
       center to plot.
 
-    - ``rgbcolor`` -- float array - the red-green-blue color of the
+    - ``rgbcolor`` -- float array; the red-green-blue color of the
       lines of the spiderweb.
 
-    - ``thickness`` -- positive float - the thickness of the lines or points
+    - ``thickness`` -- positive float; the thickness of the lines or points
       in the spiderweb.
 
-    - ``withcolor`` -- boolean - If ``True`` the spiderweb will be overlaid
+    - ``withcolor`` -- boolean; If ``True`` the spiderweb will be overlaid
       on the basic color plot.
 
-    - ``min_mag`` -- float - The magnitude cutoff below which spiderweb
+    - ``min_mag`` -- float; The magnitude cutoff below which spiderweb
       points are not drawn. This only applies to multiply connected
       domains and is designed to prevent "fuzz" at the edge of the
       domain. Some complicated multiply connected domains (particularly
@@ -1382,10 +1382,10 @@ cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
 
     - ``t`` -- The boundary parameter, from 0 to 2*pi
 
-    - ``n`` -- integer - the number of terms to include.
+    - ``n`` -- integer; the number of terms to include.
       10 is fairly accurate, 20 is very accurate.
 
-    - ``epsilon`` -- float - the skew of the ellipse (0 is circular)
+    - ``epsilon`` -- float; the skew of the ellipse (0 is circular)
 
     OUTPUT:
 
@@ -1430,11 +1430,11 @@ cpdef cauchy_kernel(t, args):
 
     - ``args`` -- a tuple containing:
 
-      - ``epsilon`` -- float - the skew of the ellipse (0 is circular)
+      - ``epsilon`` -- float; the skew of the ellipse (0 is circular)
 
-      - ``z`` -- complex - the point to be mapped.
+      - ``z`` -- complex; the point to be mapped.
 
-      - ``n`` -- integer - the number of terms to include.
+      - ``n`` -- integer; the number of terms to include.
         10 is fairly accurate, 20 is very accurate.
 
       - ``part`` -- will return the real ('r'), imaginary ('i') or
@@ -1474,9 +1474,9 @@ cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
 
     INPUT:
 
-    - ``z`` -- complex - the point to be mapped.
+    - ``z`` -- complex; the point to be mapped.
 
-    - ``n`` -- integer - the number of terms to include.
+    - ``n`` -- integer; the number of terms to include.
       10 is fairly accurate, 20 is very accurate.
 
     TESTS:

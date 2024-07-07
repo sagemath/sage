@@ -176,7 +176,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        -  ``x`` - A CallableSymbolicExpression
+        -  ``x`` -- A CallableSymbolicExpression
 
         OUTPUT: A tuple of variables.
 

@@ -21,6 +21,7 @@ from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 
+
 def q_int(n, q=None):
     r"""
     Return the `q`-analog of the nonnegative integer `n`.
@@ -145,7 +146,7 @@ def q_binomial(n, k, q=None):
 
     INPUT:
 
-    - ``n, k`` -- the nonnegative integers `n` and `k` defined above
+    - ``n``, ``k`` -- the nonnegative integers `n` and `k` defined above
     - ``q`` -- (default: `q \in \ZZ[q, q^{-1}]`) the parameter `q`
       (should be invertible)
 

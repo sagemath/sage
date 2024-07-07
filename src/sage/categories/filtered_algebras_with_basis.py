@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Algebras With Basis
 
@@ -17,6 +18,7 @@ for these two notions.
 #******************************************************************************
 
 from sage.categories.filtered_modules import FilteredModulesCategory
+
 
 class FilteredAlgebrasWithBasis(FilteredModulesCategory):
     """

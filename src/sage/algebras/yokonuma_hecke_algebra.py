@@ -26,6 +26,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
 from sage.sets.family import Family
 
+
 class YokonumaHeckeAlgebra(CombinatorialFreeModule):
     r"""
     The Yokonuma-Hecke algebra `Y_{d,n}(q)`.

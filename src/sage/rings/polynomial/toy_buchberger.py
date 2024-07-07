@@ -140,7 +140,6 @@ AUTHORS:
 - Martin Albrecht (2007-05-24): initial version
 
 - Marshall Hampton (2009-07-08): some doctest additions
-
 """
 
 from sage.misc.verbose import get_verbose

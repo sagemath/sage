@@ -36,15 +36,15 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
 
     INPUT:
 
-    - ``k`` - an even positive integer
+    - ``k`` -- an even positive integer
 
-    - ``prec`` - (default: 10) a nonnegative integer
+    - ``prec`` -- (default: 10) a nonnegative integer
 
-    - ``K`` - (default: `\QQ`) a ring
+    - ``K`` -- (default: `\QQ`) a ring
 
-    - ``var`` - (default: ``'q'``) variable name to use for q-expansion
+    - ``var`` -- (default: ``'q'``) variable name to use for q-expansion
 
-    - ``normalization`` - (default: ``'linear'``) normalization to use. If this
+    - ``normalization`` -- (default: ``'linear'``) normalization to use. If this
       is ``'linear'``, then the series will be normalized so that the linear
       term is 1. If it is ``'constant'``, the series will be normalized to have
       constant term 1. If it is ``'integral'``, then the series will be
@@ -393,13 +393,13 @@ def eisenstein_series_lseries(weight, prec=53,
 
     INPUT:
 
-    - ``weight`` - even integer
+    - ``weight`` -- even integer
 
-    - ``prec`` - integer (bits precision)
+    - ``prec`` -- integer (bits precision)
 
-    - ``max_imaginary_part`` - real number
+    - ``max_imaginary_part`` -- real number
 
-    - ``max_asymp_coeffs`` - integer
+    - ``max_asymp_coeffs`` -- integer
 
     OUTPUT:
 

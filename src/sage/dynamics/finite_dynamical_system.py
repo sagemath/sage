@@ -70,7 +70,6 @@ dynamical systems:
 
     - Interact with sage.dynamics. This requires someone who
       knows the latter part of the Sage library well.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2018 Darij Grinberg <darijgrinberg@gmail.com>,

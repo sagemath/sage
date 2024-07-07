@@ -1223,7 +1223,6 @@ benutzen wir ``divisors()``::
     [1, 2, 3, 4, 6, 12, 13, 26, 39, 52, 78, 156]
 
 
-
 Weiterführende Links und Literatur
 ==================================
 

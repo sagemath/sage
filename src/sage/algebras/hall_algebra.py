@@ -493,6 +493,7 @@ class HallAlgebra(CombinatorialFreeModule):
                     ret += cx * cy * f(mx)
             return ret
 
+
 class HallAlgebraMonomials(CombinatorialFreeModule):
     r"""
     The classical Hall algebra given in terms of monomials in the

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Wrappers for Giac functions
 
@@ -132,10 +131,10 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
 
     INPUT:
 
-    - ``gens`` - an ideal (or a list) of polynomials over a prime field
+    - ``gens`` -- an ideal (or a list) of polynomials over a prime field
       of characteristic 0 or p<2^31
 
-    - ``proba_epsilon`` - (default: None) majoration of the probability
+    - ``proba_epsilon`` -- (default: None) majoration of the probability
        of a wrong answer when probabilistic algorithms are allowed.
 
         * if ``proba_epsilon`` is None, the value of
@@ -146,13 +145,13 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         * if ``proba_epsilon`` is 0, probabilistic algorithms are
           disabled.
 
-    - ``threads`` - (default: None) Maximal number of threads allowed
+    - ``threads`` -- (default: None) Maximal number of threads allowed
       for giac. If None, the global ``giacpy_sage.giacsettings.threads`` is
       considered.
 
-    - ``prot`` - (default: False) if True print detailled informations
+    - ``prot`` -- (default: ``False``) if True print detailled informations
 
-    - ``elim_variables`` - (default: None) a list of variables to eliminate
+    - ``elim_variables`` -- (default: None) a list of variables to eliminate
       from the ideal.
 
         * if ``elim_variables`` is None, a Groebner basis with respect to the

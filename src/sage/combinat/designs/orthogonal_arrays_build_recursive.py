@@ -49,8 +49,8 @@ def construction_3_3(k,n,m,i,explain_construction=False):
 
     INPUT:
 
-    - ``k,n,m,i`` (integers) such that the following designs are available:
-      `OA(k,n)`, `OA(k,m)`, `OA(k,m+1)`, `OA(k,r)`.
+    - ``k``, ``n``, ``m``, ``i`` (integers) such that the following designs are
+      available: `OA(k,n)`, `OA(k,m)`, `OA(k,m+1)`, `OA(k,r)`.
 
     - ``explain_construction`` (boolean) -- return a string describing
       the construction.
@@ -116,7 +116,8 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
 
     INPUT:
 
-    - ``k,n,m,r,s`` (integers) -- we assume that `s<n` and `1\leq r,s`
+    - ``k``, ``n``, ``m``, ``r``, ``s`` -- integers; we assume that `s<n` and
+      `1\leq r,s`
 
       The following designs must be available: `OA(k,n)`, `OA(k,m)`,
       `OA(k,m+1)`, `OA(k,m+2)`, `OA(k,s)`. Additionally, it requires either a
@@ -189,9 +190,9 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
 
     INPUT:
 
-    - ``k,n,m`` (integers)
+    - ``k``, ``n``, ``m`` (integers)
 
-    - ``r,s,t`` (integers) -- sizes of the three truncated groups,
+    - ``r``, ``s``, ``t`` (integers) -- sizes of the three truncated groups,
       such that `r\leq s` and `(q-r-1)(q-s) \geq (q-s-1)*(q-r)`.
 
     - ``explain_construction`` (boolean) -- return a string describing
@@ -282,8 +283,9 @@ def construction_3_6(k,n,m,i,explain_construction=False):
 
     INPUT:
 
-    - ``k,n,m,i`` (integers) -- `n` must be a prime power. The following designs
-      must be available: `OA(k+r,q)`, `OA(k,m)`, `OA(k,m+1)`, `OA(k,m+2)`.
+    - ``k``, ``n``, ``m``, ``i`` (integers) -- `n` must be a prime power. The
+      following designs must be available: `OA(k+r,q)`, `OA(k,m)`, `OA(k,m+1)`,
+      `OA(k,m+2)`.
 
     - ``explain_construction`` (boolean) -- return a string describing
       the construction.
@@ -471,7 +473,8 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
 
     INPUT:
 
-    - ``k,q,x`` -- integers such that `0<x<q` and such that Sage can build:
+    - ``k``, ``q``, ``x`` -- integers such that `0<x<q` and such that Sage can
+      build:
 
         - A projective plane of order `q`
         - `OA(k,q-x-1)-(q-x-1).OA(k,1)`
@@ -633,8 +636,9 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
 
     INPUT:
 
-    - ``k,n,m,a,b,c,d`` -- integers which must satisfy the constraints above. In
-      particular, `a+b+c\leq n+1` must hold. By default, `d=0`.
+    - ``k``, ``n``, ``m``, ``a``, ``b``, ``c``, ``d`` -- integers which must
+      satisfy the constraints above. In particular, `a+b+c\leq n+1` must hold.
+      By default, `d=0`.
 
     - ``complement`` (boolean) -- whether to complement the sets, i.e. follow
       the `n-a,n-b,n-c` variant described above.
@@ -773,7 +777,7 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
     INPUT:
 
-    - ``k,n,m`` (integers)
+    - ``k``, ``n``, ``m`` (integers)
 
     - ``explain_construction`` (boolean) -- return a string describing
       the construction.
@@ -945,7 +949,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
     INPUT:
 
-    - ``k,n1,n2,n3`` (integers)
+    - ``k``, ``n1``, ``n2``, ``n3`` (integers)
 
     - ``check`` -- (boolean) Whether to check that everything is going smoothly
       while the design is being built. It is disabled by default, as the
@@ -1022,7 +1026,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
         - ``OA1`` (an `OA(k,g_1)`
 
-        - ``k,g1,g2`` integers
+        - ``k``, ``g1``, ``g2`` -- integers
 
         - ``g1_parall`` -- list of `g_1`-parallel classes
 
@@ -1319,7 +1323,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
 
     INPUT:
 
-    - ``k,t,q,x`` (integers)
+    - ``k``, ``t``, ``q``, ``x`` (integers)
 
     - ``check`` -- (boolean) Whether to check that output is correct before
       returning it. Set to ``False`` by default.

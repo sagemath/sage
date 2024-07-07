@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Spaces of valuations
 
@@ -43,7 +42,6 @@ EXAMPLES::
 
         sage: v = valuations.TrivialPseudoValuation(QQ)
         sage: v._test_category()
-
 """
 # ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>

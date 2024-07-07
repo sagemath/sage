@@ -18,7 +18,6 @@ REFERENCES:
 
 - Chap. 10 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015, 2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -1084,5 +1083,5 @@ class FreeModuleBasis(Basis_abstract):
         # of changes of bases:
         fmodule._basis_changes[(self, the_new_basis)] = transf
         fmodule._basis_changes[(the_new_basis, self)] = inv_transf
-        #
+
         return the_new_basis

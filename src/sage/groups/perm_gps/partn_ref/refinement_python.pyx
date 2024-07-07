@@ -333,6 +333,7 @@ cdef class PythonPartitionStack:
                     cell = []
         return partition
 
+
 class PythonObjectWrapper:
     """
     Instances of this class wrap a Python object and the refinement functions.
@@ -368,6 +369,7 @@ class PythonObjectWrapper:
         self.rari_fn = rari_fn
         self.cs_fn = cs_fn
 
+
 cdef bint all_children_are_equivalent_python(PartitionStack *PS, void *S) noexcept:
     """
     Python conversion of all_children_are_equivalent function.
@@ -397,6 +399,7 @@ cdef int compare_structures_python(int *gamma_1, int *gamma_2, void *S1, void *S
     cdef list gamma_1_py = [gamma_1[i] for i from 0 <= i < degree]
     cdef list gamma_2_py = [gamma_2[i] for i from 0 <= i < degree]
     return S1_obj.cs_fn(gamma_1_py, gamma_2_py, S1_obj.obj, S2_obj.obj, degree)
+
 
 def aut_gp_and_can_lab_python(S, partition, n,
     all_children_are_equivalent,

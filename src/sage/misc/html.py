@@ -10,14 +10,14 @@ producing an HTML representation of any object. The produced HTML is
 renderable in a browser-based notebook with the help of MathJax.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 import re
 
@@ -166,7 +166,7 @@ class MathJaxExpr:
 
         INPUT:
 
-        - ``y`` - a string
+        - ``y`` -- a string
 
         Note that no error checking is done on the type of ``y``.
 
@@ -242,9 +242,9 @@ class MathJax:
 
         INPUT:
 
-        - ``x`` - a Sage object
+        - ``x`` -- a Sage object
 
-        - ``combine_all`` - boolean (Default: ``False``): If ``combine_all`` is
+        - ``combine_all`` -- boolean (Default: ``False``): If ``combine_all`` is
           ``True`` and the input is a tuple, then it does not return a tuple
           and instead returns a string with all the elements separated by
           a single space.
@@ -269,19 +269,19 @@ class MathJax:
 
         INPUT:
 
-        - ``x`` - a Sage object
+        - ``x`` -- a Sage object
 
-        -  ``globals`` - a globals dictionary
+        -  ``globals`` -- a globals dictionary
 
-        -  ``locals`` - extra local variables used when
+        -  ``locals`` -- extra local variables used when
            evaluating Sage code in ``x``.
 
-        - ``mode`` - string (optional, default ``'display'``):
+        - ``mode`` -- string (default: ``'display'``):
            ``'display'`` for displaymath, ``'inline'`` for inline
            math, or ``'plain'`` for just the LaTeX code without the
            surrounding html and script tags.
 
-        - ``combine_all`` - boolean (Default: ``False``): If ``combine_all`` is
+        - ``combine_all`` -- boolean (Default: ``False``): If ``combine_all`` is
           ``True`` and the input is a tuple, then it does not return a tuple
           and instead returns a string with all the elements separated by
           a single space.
@@ -586,7 +586,7 @@ def pretty_print_default(enable=True):
 
     INPUT:
 
-    -  ``enable`` -- bool (optional, default ``True``).  If ``True``, turn on
+    -  ``enable`` -- bool (default: ``True``).  If ``True``, turn on
        pretty printing; if ``False``, turn it off.
 
     EXAMPLES::

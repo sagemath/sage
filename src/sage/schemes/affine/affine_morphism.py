@@ -31,7 +31,6 @@ AUTHORS:
   for affine/projective
 
 - Kwankyu Lee (2020-02): added indeterminacy_locus() and image()
-
 """
 
 # ****************************************************************************

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 FindStat - the search engine for combinatorial statistics and maps
 
@@ -189,7 +188,6 @@ AUTHORS:
 
 - Martin Rubey (2015): initial version
 - Martin Rubey (2020): rewrite, adapt to new FindStat API
-
 """
 # ****************************************************************************
 #       Copyright (C) 2015 Martin Rubey <martin.rubey@tuwien.ac.at>,
@@ -2051,7 +2049,7 @@ class FindStatCombinatorialStatistic(SageObject):
           sequence. If this is chosen too big, the OEIS result may be
           corrupted.
 
-        - ``verbose`` (default:True) if true, some information about
+        - ``verbose`` (default: ``True``) if true, some information about
           the search are printed.
 
         OUTPUT:
@@ -3654,9 +3652,9 @@ class FindStatCompoundMap(Element, FindStatCombinatorialMap):
 
         - ``id`` -- a padded identifier
 
-        - ``domain``-- (optional), the domain of the compound map
+        - ``domain`` -- (optional), the domain of the compound map
 
-        - ``codomain``-- (optional), the codomain of the compound map
+        - ``codomain`` -- (optional), the codomain of the compound map
 
         - ``check`` -- whether to check that domains and codomains fit
 
@@ -3841,9 +3839,9 @@ class FindStatMatchingMap(FindStatCompoundMap):
 
         - ``quality``, the quality of the match, as provided by FindStat
 
-        - ``domain``-- (optional), the domain of the compound map
+        - ``domain`` -- (optional), the domain of the compound map
 
-        - ``codomain``-- (optional), the codomain of the compound map
+        - ``codomain`` -- (optional), the codomain of the compound map
 
         EXAMPLES::
 

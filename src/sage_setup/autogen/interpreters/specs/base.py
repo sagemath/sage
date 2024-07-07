@@ -126,7 +126,7 @@ class StackInterpreter(InterpreterSpec):
           value of the interpreter
         - implement_call_c -- True if the wrapper should have a fast cdef call_c
           method (that bypasses the Python call overhead)
-          (default True)
+          (default: ``True``)
 
         EXAMPLES::
 

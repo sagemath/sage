@@ -28,7 +28,6 @@ one forms is called *connection matrix of* `\nabla` *with respect to* `e`.
 AUTHORS:
 
 - Michael Jung (2019) : initial version
-
 """
 # ******************************************************************************
 #       Copyright (C) 2019 Michael Jung <micjung@uni-potsdam.de>

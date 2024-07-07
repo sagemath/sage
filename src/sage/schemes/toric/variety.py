@@ -226,7 +226,7 @@ space with a curve of `\ZZ_3`-orbifold singularities::
     sage: P4_11133 = toric_varieties.P4_11133()
     sage: P4_11133.is_smooth(), P4_11133.is_orbifold()
     (False, True)
-    sage: cone = P4_11133.fan(3)[8]
+    sage: cone = P4_11133.fan(3)[9]
     sage: cone.is_smooth(), cone.is_simplicial()
     (False, True)
     sage: HH = P4_11133.cohomology_ring();  HH
@@ -351,6 +351,9 @@ def is_ToricVariety(x):
 
         sage: from sage.schemes.toric.variety import is_ToricVariety
         sage: is_ToricVariety(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: fan = FaceFan(lattice_polytope.cross_polytope(2))
         sage: P = ToricVariety(fan)
@@ -361,6 +364,8 @@ def is_ToricVariety(x):
         sage: is_ToricVariety(ProjectiveSpace(2))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead.")
     return isinstance(x, ToricVariety_field)
 
 
@@ -1316,7 +1321,7 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``another`` - :class:`toric variety <ToricVariety_field>`.
+        - ``another`` -- :class:`toric variety <ToricVariety_field>`.
 
         OUTPUT:
 
@@ -1339,7 +1344,7 @@ class ToricVariety_field(AmbientSpace):
         """
         if self is another:
             return True
-        if not is_ToricVariety(another):
+        if not isinstance(another, ToricVariety_field):
             raise TypeError(
                 "only another toric variety can be checked for isomorphism; "
                 "got %s" % another)

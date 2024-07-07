@@ -61,7 +61,6 @@ AUTHORS:
 - Martin Albrecht (2010-01): clean up, support for attributes
 - Simon King (2011-04): include the documentation provided by Singular as a code block
 - Burcin Erocal, Michael Brickenstein, Oleksandr Motsak, Alexander Dreyer, Simon King (2011-09): plural support
-
 """
 
 #*****************************************************************************
@@ -343,8 +342,8 @@ cdef leftv* new_leftv(void *data, res_type) noexcept:
     """
     INPUT:
 
-    - ``data`` - some Singular data this interpreter object points to
-    - ``res_type`` - the type of that data
+    - ``data`` -- some Singular data this interpreter object points to
+    - ``res_type`` -- the type of that data
     """
     cdef leftv* res
     res = <leftv*>omAllocBin(sleftv_bin)
@@ -359,7 +358,7 @@ cdef free_leftv(leftv *args, ring *r = NULL):
 
     INPUT:
 
-    - ``args`` - a list of Singular arguments
+    - ``args`` -- a list of Singular arguments
     """
     args.CleanUp(r)
     omFreeBin(args, sleftv_bin)
@@ -393,6 +392,7 @@ def is_sage_wrapper_for_singular_ring(ring):
     if isinstance(ring, NCPolynomialRing_plural):
         return True
     return False
+
 
 cdef new_sage_polynomial(ring,  poly *p):
     if isinstance(ring, MPolynomialRing_libsingular):
@@ -496,9 +496,9 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``args`` - a list of Python objects
-        - ``ring`` - a multivariate polynomial ring
-        - ``attributes`` - an optional dictionary of Singular
+        - ``args`` -- a list of Python objects
+        - ``ring`` -- a multivariate polynomial ring
+        - ``attributes`` -- an optional dictionary of Singular
           attributes (default: ``None``)
 
         EXAMPLES::
@@ -673,8 +673,8 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``data`` - the raw data
-        - ``res_type`` - the type of the data
+        - ``data`` -- the raw data
+        - ``res_type`` -- the type of the data
         """
         return self._append_leftv( new_leftv(data, res_type) )
 
@@ -914,7 +914,7 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``to_convert`` - a Singular ``leftv``
+        - ``to_convert`` -- a Singular ``leftv``
 
         TESTS:
 
@@ -1159,13 +1159,11 @@ cdef class SingularFunction(SageObject):
     The base class for Singular functions either from the kernel or
     from the library.
     """
-
-
     def __init__(self, name):
         """
         INPUT:
 
-        - ``name`` - the name of the function
+        - ``name`` -- the name of the function
 
         EXAMPLES::
 
@@ -1462,7 +1460,6 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
     global currentVoice
     global myynest
     global error_messages
-
 
     cdef ring *si_ring
     if isinstance(R, MPolynomialRing_libsingular):
@@ -1856,6 +1853,7 @@ def list_of_functions(packages=False):
                     ph = IDNEXT(ph)
         h = IDNEXT(h)
     return l
+
 
 cdef inline RingWrap new_RingWrap(ring* r):
     cdef RingWrap ring_wrap_result = RingWrap.__new__(RingWrap)

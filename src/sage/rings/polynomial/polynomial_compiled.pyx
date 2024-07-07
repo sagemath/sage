@@ -268,7 +268,6 @@ cdef class CompiledPolynomialFunction:
             T = gaps.pop_max()
 
 
-
 ########################################################
 #
 #  Polynomial DAG Code
@@ -329,8 +328,6 @@ cdef class CompiledPolynomialFunction:
 #    nodummies: recursively evict dummies, replacing them
 #               with the non-dummy nodes that they
 #               reference.
-
-
 
 
 # These inline functions are called wherever a node gets
@@ -456,7 +453,6 @@ cdef class pow_pd(unary_pd):
 
     def __repr__(self):
         return "(%s^%s)" % (self.left, self.exponent)
-
 
 
 cdef class binary_pd(generic_pd):

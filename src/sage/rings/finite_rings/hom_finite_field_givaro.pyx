@@ -207,7 +207,6 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
         return make_FiniteField_givaroElement(self._codomain_cache, log)
 
 
-
 cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
     def __init__(self, domain, power=1):
         """

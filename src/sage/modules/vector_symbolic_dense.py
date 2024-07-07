@@ -42,7 +42,6 @@ Test pickling/unpickling::
     sage: u = vector(SR, [sin(x^2)])
     sage: loads(dumps(u)) == u
     True
-
 """
 
 # ****************************************************************************

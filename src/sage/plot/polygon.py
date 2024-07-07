@@ -191,7 +191,7 @@ class Polygon(GraphicPrimitive_xydata):
 
         INPUT:
 
-        -  ``z`` - optional 3D height above `xy`-plane, or a list of
+        -  ``z`` -- optional 3D height above `xy`-plane, or a list of
            heights corresponding to the list of 2D polygon points.
 
         EXAMPLES:

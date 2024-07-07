@@ -33,7 +33,6 @@ AUTHORS:
     Implementation of :meth:`exp_int` (from sage/functions/special.py).
     Implementation of :meth:`exponential_integral_1` (from
     sage/functions/transcendental.py).
-
 """
 
 # ****************************************************************************

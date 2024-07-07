@@ -92,7 +92,7 @@ REFERENCE:
 
 import sage.rings.abc
 from .ell_field import EllipticCurve_field
-from .ell_generic import is_EllipticCurve
+from .ell_generic import EllipticCurve_generic
 from .ell_point import EllipticCurvePoint_number_field
 from .constructor import EllipticCurve
 from sage.rings.integer_ring import ZZ
@@ -1789,7 +1789,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
           proof module is number_field, not elliptic_curves, since the
           functions that actually need the flag are in number fields.
 
-        - ``semi_global`` (boolean, default False) -- if there is no
+        - ``semi_global`` (boolean, default: ``False``) -- if there is no
           global minimal mode, return a semi-global minimal model
           (minimal at all but one prime) instead, if True; raise an
           error if False.  No effect if a global minimal model exists.
@@ -3066,7 +3066,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         - ``other`` -- another elliptic curve.
 
-        - ``proof`` (default True) -- If ``False``, the function will
+        - ``proof`` (default: ``True``) -- If ``False``, the function will
           return ``True`` whenever the two curves have the same
           conductor and are isogenous modulo `p` for all primes `p` of
           norm up to ``maxnorm``.  If ``True``, the function returns
@@ -3176,7 +3176,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EK.is_isogenous(EcK)      # long time (about 3.5 s)
             True
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True

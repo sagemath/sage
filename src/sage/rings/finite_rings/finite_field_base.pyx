@@ -14,7 +14,6 @@ AUTHORS:
 
 - Adrien Brochard, David Roe, Jeroen Demeyer, Julian Rueth, Niles Johnson,
   Peter Bruin, Travis Scrimshaw, Xavier Caruso: initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2009 David Roe <roed@math.harvard.edu>
@@ -276,7 +275,6 @@ cdef class FiniteField(Field):
             return "ZZ/%s" % self.order()
         return "GF(%s,Variable=>symbol %s)" % (self.order(),
                                                self.variable_name())
-
 
     def _sage_input_(self, sib, coerced):
         r"""
@@ -1115,7 +1113,6 @@ cdef class FiniteField(Field):
         """
         return self.order() - 1
 
-
     def random_element(self, *args, **kwds):
         r"""
         A random element of the finite field.  Passes arguments to
@@ -1260,7 +1257,7 @@ cdef class FiniteField(Field):
             return self.__vector_space
 
         from sage.modules.free_module import VectorSpace
-        from sage.categories.morphism import is_Morphism
+        from sage.categories.morphism import Morphism
 
         if base is None:
             base = self.prime_subfield()
@@ -1269,7 +1266,7 @@ cdef class FiniteField(Field):
                 self.__vector_space = VectorSpace(base, s)
             V = self.__vector_space
             inclusion_map = None
-        elif is_Morphism(base):
+        elif isinstance(base, Morphism):
             inclusion_map = base
             base = inclusion_map.domain()
             s = self.degree() // base.degree()
@@ -2162,6 +2159,7 @@ cdef class FiniteField(Field):
         python_int = int.from_bytes(input_bytes, byteorder=byteorder)
         return self.from_integer(python_int)
 
+
 def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
     r"""
     Used to unpickle extensions of finite fields. Now superseded (hence no
@@ -2176,6 +2174,7 @@ def unpickle_FiniteField_prm(_type, order, variable_name, kwargs):
     but kept around for backward compatibility.
     """
     return _type(order, variable_name, **kwargs)
+
 
 register_unpickle_override(
     'sage.rings.ring', 'unpickle_FiniteField_prm', unpickle_FiniteField_prm)

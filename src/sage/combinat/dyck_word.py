@@ -94,9 +94,12 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.words.word import Word
-from sage.combinat.alternating_sign_matrix import AlternatingSignMatrices
 from sage.combinat.set_partition import SetPartitions
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.combinat.alternating_sign_matrix', 'AlternatingSignMatrices')
+
 
 open_symbol = 1
 close_symbol = 0

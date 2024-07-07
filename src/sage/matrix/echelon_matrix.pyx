@@ -1,16 +1,17 @@
 r"""
 Echelon matrices over finite fields.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.matrix.matrix0 cimport Matrix
+
 
 def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, bint set_immutable=False):
     r"""

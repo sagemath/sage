@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Points
 
@@ -143,7 +142,7 @@ class Point(GraphicPrimitive_xydata):
         INPUT:
 
 
-        -  ``z`` - optional 3D height above `xy`-plane.  May be a list
+        -  ``z`` -- optional 3D height above `xy`-plane.  May be a list
            if self is a list of points.
 
         EXAMPLES:
@@ -323,7 +322,7 @@ def point(points, **kwds):
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
+    -  ``points`` -- either a single point (as a tuple), a list of
        points, a single complex number, or a list of complex numbers.
 
     For information regarding additional arguments, see either point2d?

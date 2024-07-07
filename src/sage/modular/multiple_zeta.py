@@ -1148,7 +1148,7 @@ class Multizetas(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``basis`` (optional) - either ``None`` or a function such that
+            - ``basis`` (optional) -- either ``None`` or a function such that
               ``basis(d)`` is a basis of the weight ``d`` multiple zeta values.
               If ``None``, the Hoffman basis is used.
 

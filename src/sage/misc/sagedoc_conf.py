@@ -19,6 +19,7 @@ from sphinx.ext.doctest import blankline_re
 # The reST default role (used for this markup: `text`) to use for all documents.
 default_role = 'math'
 
+
 def process_docstring_aliases(app, what, name, obj, options, docstringlines):
     """
     Change the docstrings for aliases to point to the original object.
@@ -26,6 +27,7 @@ def process_docstring_aliases(app, what, name, obj, options, docstringlines):
     basename = name.rpartition('.')[2]
     if hasattr(obj, '__name__') and obj.__name__ != basename:
         docstringlines[:] = ['See :obj:`%s`.' % name]
+
 
 def process_directives(app, what, name, obj, options, docstringlines):
     """
@@ -35,9 +37,10 @@ def process_directives(app, what, name, obj, options, docstringlines):
     if len(docstringlines) == 0:
         return
     first_line = docstringlines[0]
-    directives = [ d.lower() for d in first_line.split(',') ]
+    directives = [d.lower() for d in first_line.split(',')]
     if 'nodetex' in directives:
         docstringlines.pop(0)
+
 
 def process_docstring_cython(app, what, name, obj, options, docstringlines):
     """
@@ -48,9 +51,10 @@ def process_docstring_cython(app, what, name, obj, options, docstringlines):
 
     first_line = docstringlines[0]
     if first_line.startswith('File:') and '(starting at' in first_line:
-        #Remove the first two lines
+        # Remove the first two lines
         docstringlines.pop(0)
         docstringlines.pop(0)
+
 
 def process_docstring_module_title(app, what, name, obj, options, docstringlines):
     """
@@ -60,19 +64,20 @@ def process_docstring_module_title(app, what, name, obj, options, docstringlines
     if what != "module":
         return
 
-    #Remove any additional blank lines at the beginning
+    # Remove any additional blank lines at the beginning
     title_removed = False
     while len(docstringlines) > 1 and not title_removed:
         if docstringlines[0].strip() != "":
             title_removed = True
         docstringlines.pop(0)
 
-    #Remove any additional blank lines at the beginning
+    # Remove any additional blank lines at the beginning
     while len(docstringlines) > 1:
         if docstringlines[0].strip() == "":
             docstringlines.pop(0)
         else:
             break
+
 
 def process_dollars(app, what, name, obj, options, docstringlines):
     r"""
@@ -86,6 +91,7 @@ def process_dollars(app, what, name, obj, options, docstringlines):
         lines = s.split("\n")
         for i in range(len(lines)):
             docstringlines[i] = lines[i]
+
 
 def process_inherited(app, what, name, obj, options, docstringlines):
     """
@@ -110,6 +116,7 @@ def process_inherited(app, what, name, obj, options, docstringlines):
     for i in range(len(docstringlines)):
         docstringlines.pop()
 
+
 def skip_TESTS_block(app, what, name, obj, options, docstringlines):
     """
     Skip blocks labeled "TESTS:".
@@ -126,6 +133,7 @@ def skip_TESTS_block(app, what, name, obj, options, docstringlines):
         docstringlines[i] = lines[i]
     while len(docstringlines) > len(lines):
         del docstringlines[len(lines)]
+
 
 class SagemathTransform(Transform):
     """
@@ -147,6 +155,8 @@ class SagemathTransform(Transform):
                 node[:] = [nodes.Text(source)]
 
 # This is only used by sage.misc.sphinxify
+
+
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
     app.connect('autodoc-process-docstring', process_directives)

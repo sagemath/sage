@@ -74,7 +74,6 @@ has maximal order with :math:`\ZZ`-basis
     1, \frac{1}{2} a^{2} + \frac{1}{2} a,  a^{2}.
 
 
-
 ::
 
     sage: K.<a> = NumberField(x^4 + 2)

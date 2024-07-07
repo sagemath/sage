@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Continued fractions
 
@@ -1173,7 +1172,7 @@ class ContinuedFraction_base(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- integers
+        - ``a``, ``b``, ``c``, ``d`` -- integers
 
         - ``forward_value`` -- boolean (default: ``False``) whether the returned continued
           fraction is given the symbolic value of `(a x + b)/(cx + d)` and not only the
@@ -1313,9 +1312,9 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
         r"""
         INPUT:
 
-        - ``x1`` - a tuple of integers
+        - ``x1`` -- a tuple of integers
 
-        - ``x2`` - a tuple of integers
+        - ``x2`` -- a tuple of integers
 
         TESTS::
 
@@ -2060,13 +2059,13 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
+        - ``parent`` -- a parent
 
-        - ``w`` - an infinite list
+        - ``w`` -- an infinite list
 
-        - ``value`` - an optional known value
+        - ``value`` -- an optional known value
 
-        - ``check`` - whether the constructor checks the input (default is
+        - ``check`` -- whether the constructor checks the input (default is
           ``True``)
 
         TESTS::

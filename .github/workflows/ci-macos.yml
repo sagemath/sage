@@ -109,7 +109,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        os: [ macos-11, macos-12, macos-14 ]
+        os: [ macos-12, macos-13, macos-14 ]
         tox_system_factor: [macos-nobootstrap]
         tox_packages_factor: [minimal]
         xcode_version_factor: [default]

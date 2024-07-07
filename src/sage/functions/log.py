@@ -6,7 +6,6 @@ AUTHORS:
 - Yoora Yi Tenen (2012-11-16): Add documentation for :meth:`log()` (:issue:`12113`)
 
 - Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:issue:`18085`)
-
 """
 
 from sage.misc.functional import log as log

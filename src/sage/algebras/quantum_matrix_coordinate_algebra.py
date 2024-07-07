@@ -975,6 +975,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
                       if t != 'c' else T.monomial((I['c'], I['c'])) ** e
                       for t, e in x._sorted_items())
 
+
 def _generator_key(t):
     """
     Helper function to make ``'c'`` less that all other indices for

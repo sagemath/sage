@@ -195,7 +195,7 @@ class TorsionPoint(ModuleElement):
 
         INPUT:
 
-        - ``self, right`` -- elements of the same finite abelian
+        - ``self``, ``right`` -- elements of the same finite abelian
           variety subgroup.
 
         - ``op`` -- comparison operator (see :mod:`sage.structure.richcmp`)

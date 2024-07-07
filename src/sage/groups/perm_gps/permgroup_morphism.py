@@ -321,6 +321,14 @@ def is_PermutationGroupMorphism(f) -> bool:
         sage: H = DihedralGroup(4)
         sage: phi = PermutationGroupMorphism_im_gens(G, H, map(H, G.gens()))
         sage: is_PermutationGroupMorphism(phi)
+        doctest:warning...
+        DeprecationWarning: The function is_PermutationGroupMorphism is deprecated;
+        use 'isinstance(..., PermutationGroupMorphism)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_PermutationGroupMorphism is deprecated; "
+                "use 'isinstance(..., PermutationGroupMorphism)' instead.")
     return isinstance(f, PermutationGroupMorphism)

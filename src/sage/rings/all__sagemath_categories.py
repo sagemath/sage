@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # Ring base classes
 from sage.rings.ring import Ring
 # Ideals

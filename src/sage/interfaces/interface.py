@@ -638,6 +638,7 @@ class Interface(WithEqualityById, ParentWithBase):
         TESTS::
 
             sage: from sage.structure.parent_base import ParentWithBase
+            sage: from sage.interfaces.singular import singular
             sage: ParentWithBase.__getattribute__(singular, '_coerce_map_from_')
             <bound method Singular._coerce_map_from_ of Singular>
         """

@@ -1168,8 +1168,13 @@ def is_FSMState(S):
 
         sage: from sage.combinat.finite_state_machine import is_FSMState, FSMState
         sage: is_FSMState(FSMState('A'))
+        doctest:warning...
+        DeprecationWarning: The function is_FSMState is deprecated; use 'isinstance(..., FSMState)' instead.
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "The function is_FSMState is deprecated; use 'isinstance(..., FSMState)' instead.")
     return isinstance(S, FSMState)
 
 
@@ -1923,7 +1928,7 @@ class FSMState(SageObject):
             sage: A == B
             True
         """
-        if not is_FSMState(other):
+        if not isinstance(other, FSMState):
             return False
         return self.label() == other.label()
 
@@ -2177,8 +2182,13 @@ def is_FSMTransition(T):
 
         sage: from sage.combinat.finite_state_machine import is_FSMTransition, FSMTransition
         sage: is_FSMTransition(FSMTransition('A', 'B'))
+        doctest:warning...
+        DeprecationWarning: The function is_FSMTransition is deprecated; use 'isinstance(..., FSMTransition)' instead.
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "The function is_FSMTransition is deprecated; use 'isinstance(..., FSMTransition)' instead.")
     return isinstance(T, FSMTransition)
 
 
@@ -2241,11 +2251,11 @@ class FSMTransition(SageObject):
             sage: FSMTransition('A', 'B', 0, 1)
             Transition from 'A' to 'B': 0|1
         """
-        if is_FSMState(from_state):
+        if isinstance(from_state, FSMState):
             self.from_state = from_state
         else:
             self.from_state = FSMState(from_state)
-        if is_FSMState(to_state):
+        if isinstance(to_state, FSMState):
             self.to_state = to_state
         else:
             self.to_state = FSMState(to_state)
@@ -2438,7 +2448,7 @@ class FSMTransition(SageObject):
             sage: t1 == t2
             True
         """
-        if not is_FSMTransition(other):
+        if not isinstance(other, FSMTransition):
             return False
         return self.from_state == other.from_state \
             and self.to_state == other.to_state \
@@ -2494,12 +2504,17 @@ def is_FiniteStateMachine(FSM):
 
         sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine
         sage: is_FiniteStateMachine(FiniteStateMachine())
+        doctest:warning...
+        DeprecationWarning: The function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead.
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
         sage: is_FiniteStateMachine(Automaton())
         True
         sage: is_FiniteStateMachine(Transducer())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "The function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead.")
     return isinstance(FSM, FiniteStateMachine)
 
 
@@ -3094,7 +3109,7 @@ class FiniteStateMachine(SageObject):
 
         self._allow_composition_ = True
 
-        if is_FiniteStateMachine(data):
+        if isinstance(data, FiniteStateMachine):
             if initial_states is not None:
                 raise ValueError(
                     "initial_states cannot be specified when copying "
@@ -3163,7 +3178,7 @@ class FiniteStateMachine(SageObject):
                 if isinstance(iter_transitions, Mapping):
                     for (st, transition) in iter_transitions.items():
                         self.add_state(st)
-                        if is_FSMTransition(transition):
+                        if isinstance(transition, FSMTransition):
                             self.add_transition(transition)
                         elif isinstance(transition, Mapping):
                             self.add_transition(sf, st, **transition)
@@ -3176,7 +3191,7 @@ class FiniteStateMachine(SageObject):
                         if isinstance(transition, Iterable):
                             L = [sf]
                             L.extend(transition)
-                        elif is_FSMTransition(transition):
+                        elif isinstance(transition, FSMTransition):
                             L = transition
                         else:
                             L = [sf, transition]
@@ -3187,7 +3202,7 @@ class FiniteStateMachine(SageObject):
             # data is a something that is iterable,
             # items are transitions
             for transition in data:
-                if is_FSMTransition(transition):
+                if isinstance(transition, FSMTransition):
                     self.add_transition(transition)
                 elif isinstance(transition, Mapping):
                     self.add_transition(transition)
@@ -3598,7 +3613,7 @@ class FiniteStateMachine(SageObject):
             ...
             TypeError: Can only add finite state machine
         """
-        if is_FiniteStateMachine(other):
+        if isinstance(other, FiniteStateMachine):
             return self.disjoint_union(other)
         else:
             raise TypeError("Can only add finite state machine")
@@ -3628,7 +3643,7 @@ class FiniteStateMachine(SageObject):
             ...
             NotImplementedError
         """
-        if is_FiniteStateMachine(other):
+        if isinstance(other, FiniteStateMachine):
             return self.intersection(other)
 
     def __imul__(self, other):
@@ -3879,7 +3894,7 @@ class FiniteStateMachine(SageObject):
         """
         if not args:
             raise TypeError("Called with too few arguments.")
-        if is_FiniteStateMachine(args[0]):
+        if isinstance(args[0], FiniteStateMachine):
             return self.composition(*args, **kwargs)
         if isinstance(args[0], Iterable):
             if 'full_output' not in kwargs:
@@ -3969,7 +3984,7 @@ class FiniteStateMachine(SageObject):
             sage: F == G
             True
         """
-        if not is_FiniteStateMachine(other):
+        if not isinstance(other, FiniteStateMachine):
             return False
         if len(self._states_) != len(other._states_):
             return False
@@ -4052,9 +4067,9 @@ class FiniteStateMachine(SageObject):
             sage: FSMTransition('A', 'B', 0) in F
             True
         """
-        if is_FSMState(item):
+        if isinstance(item, FSMState):
             return self.has_state(item)
-        if is_FSMTransition(item):
+        if isinstance(item, FSMTransition):
             return self.has_transition(item)
         return False
 
@@ -4230,7 +4245,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        ``letter`` -- anything.
+        - ``letter`` -- anything.
 
         OUTPUT:
 
@@ -4260,7 +4275,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        ``word`` -- list of letters.
+        - ``word`` -- list of letters.
 
         OUTPUT:
 
@@ -4304,7 +4319,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        ``word`` -- list of letters
+        - ``word`` -- list of letters
 
         OUTPUT:
 
@@ -5527,7 +5542,7 @@ class FiniteStateMachine(SageObject):
                 return s.label()
             else:
                 return s
-        switch = is_FSMState(state)
+        switch = isinstance(state, FSMState)
 
         try:
             return self._states_dict_[what(state, switch)]
@@ -5566,7 +5581,7 @@ class FiniteStateMachine(SageObject):
             sage: id(t) == id(F.transition(('A', 'B', 0)))
             True
         """
-        if not is_FSMTransition(transition):
+        if not isinstance(transition, FSMTransition):
             transition = FSMTransition(*transition)
         for s in self.iter_transitions(transition.from_state):
             if s == transition:
@@ -5625,7 +5640,7 @@ class FiniteStateMachine(SageObject):
             ...
             TypeError: Transition is not an instance of FSMTransition.
         """
-        if is_FSMTransition(transition):
+        if isinstance(transition, FSMTransition):
             return transition in self.iter_transitions()
         raise TypeError("Transition is not an instance of FSMTransition.")
 
@@ -6510,7 +6525,7 @@ class FiniteStateMachine(SageObject):
         except LookupError:
             pass
         # at this point we know that we have a new state
-        if is_FSMState(state):
+        if isinstance(state, FSMState):
             s = state
         else:
             s = FSMState(state)
@@ -6610,7 +6625,7 @@ class FiniteStateMachine(SageObject):
         if len(args) + len(kwargs) == 1:
             if len(args) == 1:
                 d = args[0]
-                if is_FSMTransition(d):
+                if isinstance(d, FSMTransition):
                     return self._add_fsm_transition_(d)
             else:
                 d = next(iter(kwargs.values()))
@@ -7353,8 +7368,8 @@ class FiniteStateMachine(SageObject):
             ....:  if C(w)]
             [[0, 1]]
             sage: from sage.combinat.finite_state_machine import (
-            ....:     is_Automaton, is_Transducer)
-            sage: is_Automaton(C)
+            ....:     Automaton, Transducer)
+            sage: isinstance(C, Automaton)
             True
 
         Concatenation of two transducers::
@@ -7377,7 +7392,7 @@ class FiniteStateMachine(SageObject):
              ([0, 1], [1, 0]),
              ([1, 0], [2, 1]),
              ([1, 1], [2, 0])]
-            sage: is_Transducer(C)
+            sage: isinstance(C, Transducer)
             True
 
 
@@ -7446,10 +7461,10 @@ class FiniteStateMachine(SageObject):
             TypeError: A finite state machine can only be concatenated
             with a another finite state machine.
         """
-        if not is_FiniteStateMachine(other):
+        if not isinstance(other, FiniteStateMachine):
             raise TypeError('A finite state machine can only be concatenated '
                             'with a another finite state machine.')
-        if is_Automaton(other) != is_Automaton(self):
+        if isinstance(other, Automaton) != isinstance(self, Automaton):
             raise TypeError('Cannot concatenate finite state machines of '
                             'different types.')
 
@@ -7532,7 +7547,7 @@ class FiniteStateMachine(SageObject):
              Transition from 1 to 2: 1|-]
             sage: from sage.combinat.finite_state_machine import (
             ....:     is_Automaton, is_Transducer)
-            sage: is_Automaton(B)
+            sage: isinstance(B, Automaton)
             True
             sage: [w for w in ([], [0, 1], [0, 1, 0], [0, 1, 0, 1], [0, 1, 1, 1])
             ....:  if B(w)]
@@ -7550,7 +7565,7 @@ class FiniteStateMachine(SageObject):
             [Transition from 0 to 1: 0|1,
              Transition from 0 to 1: 1|0,
              Transition from 1 to 0: -|-]
-            sage: is_Transducer(S)
+            sage: isinstance(S, Transducer)
             True
             sage: for w in ([], [0], [1], [0, 0], [0, 1]):
             ....:     print("{} {}".format(w, S.process(w)))
@@ -7827,10 +7842,10 @@ class FiniteStateMachine(SageObject):
         if isinstance(other, Iterable):
             machines = [self]
             machines.extend(other)
-            if not all(is_FiniteStateMachine(m) for m in machines):
+            if not all(isinstance(m, FiniteStateMachine) for m in machines):
                 raise ValueError("other must be a finite state machine "
                                  "or a list of finite state machines.")
-        elif is_FiniteStateMachine(other):
+        elif isinstance(other, FiniteStateMachine):
             machines = [self, other]
         else:
             raise ValueError("other must be a finite state machine or "
@@ -8082,9 +8097,9 @@ class FiniteStateMachine(SageObject):
             ....:     is_Automaton, is_Transducer)
             sage: T = Transducer([(0, 0, 0, 0)], initial_states=[0])
             sage: A = Automaton([(0, 0, 0)], initial_states=[0])
-            sage: is_Transducer(T.composition(T, algorithm='direct'))
+            sage: isinstance(T.composition(T, algorithm='direct'), Transducer)
             True
-            sage: is_Transducer(T.composition(T, algorithm='explorative'))
+            sage: isinstance(T.composition(T, algorithm='explorative'), Transducer)
             True
             sage: T.composition(A, algorithm='direct')
             Traceback (most recent call last):
@@ -8102,9 +8117,9 @@ class FiniteStateMachine(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: Composition with automaton is not possible.
-            sage: is_Automaton(A.composition(T, algorithm='direct'))
+            sage: isinstance(A.composition(T, algorithm='direct'), Automaton)
             True
-            sage: is_Automaton(A.composition(T, algorithm='explorative'))
+            sage: isinstance(A.composition(T, algorithm='explorative'), Automaton)
             True
 
         Non-deterministic final output cannot be handled::
@@ -10926,12 +10941,20 @@ def is_Automaton(FSM):
 
         sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine, is_Automaton
         sage: is_Automaton(FiniteStateMachine())
+        doctest:warning...
+        DeprecationWarning: The function is_Automaton is deprecated; use 'isinstance(..., Automaton)' instead.
+        See https://github.com/sagemath/sage/issues/38032 for details.
         False
         sage: is_Automaton(Automaton())
         True
         sage: is_FiniteStateMachine(Automaton())
+        doctest:warning...
+        DeprecationWarning: The function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead.
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "The function is_Automaton is deprecated; use 'isinstance(..., Automaton)' instead.")
     return isinstance(FSM, Automaton)
 
 
@@ -11145,7 +11168,7 @@ class Automaton(FiniteStateMachine):
             sage: a1.remove_epsilon_transitions()  # not tested (since not implemented yet)
             sage: a1.intersection(a2)  # not tested
         """
-        if not is_Automaton(other):
+        if not isinstance(other, Automaton):
             raise TypeError(
                  "Only an automaton can be intersected with an automaton.")
 
@@ -12131,12 +12154,20 @@ def is_Transducer(FSM):
 
         sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine, is_Transducer
         sage: is_Transducer(FiniteStateMachine())
+        doctest:warning...
+        DeprecationWarning: The function is_Transducer is deprecated; use 'isinstance(..., Transducer)' instead.
+        See https://github.com/sagemath/sage/issues/38032 for details.
         False
         sage: is_Transducer(Transducer())
         True
         sage: is_FiniteStateMachine(Transducer())
+        doctest:warning...
+        DeprecationWarning: The function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead.
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "The function is_Transducer is deprecated; use 'isinstance(..., Transducer)' instead.")
     return isinstance(FSM, Transducer)
 
 
@@ -12345,7 +12376,7 @@ class Transducer(FiniteStateMachine):
            Transducers*, chapter in *Handbook of Finite State Based Models and
            Applications*, edited by Jiacun Wang, Chapman and Hall/CRC, 2012.
         """
-        if not is_Transducer(other):
+        if not isinstance(other, Transducer):
             raise TypeError(
                 "Only a transducer can be intersected with a transducer.")
 
@@ -12383,7 +12414,7 @@ class Transducer(FiniteStateMachine):
 
         INPUT:
 
-        - ``other`` - a finite state machine (if `d=2`) or a list (or
+        - ``other`` -- a finite state machine (if `d=2`) or a list (or
           other iterable) of `d-1` finite state machines
 
         - ``only_accessible_components`` -- If ``True`` (default), then
@@ -13874,8 +13905,13 @@ def is_FSMProcessIterator(PI):
 
         sage: from sage.combinat.finite_state_machine import is_FSMProcessIterator, FSMProcessIterator
         sage: is_FSMProcessIterator(FSMProcessIterator(FiniteStateMachine([[0, 0, 0, 0]], initial_states=[0]), []))
+        doctest:warning...
+        DeprecationWarning: The function is_FSMProcessIterator is deprecated; use 'isinstance(..., FSMProcessIterator)' instead.
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "The function is_FSMProcessIterator is deprecated; use 'isinstance(..., FSMProcessIterator)' instead.")
     return isinstance(PI, FSMProcessIterator)
 
 

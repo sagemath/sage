@@ -395,7 +395,7 @@ class Algebras(AlgebrasCategory):
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- "antidominant", "bar", or "dominant" (default: "antidominant")
 
             If `R` is the parent weight ring, the Demazure-Lusztig
@@ -604,7 +604,7 @@ class Algebras(AlgebrasCategory):
 
             - ``weight`` -- a classical weight `\lambda`
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
 
             See :meth:`demazure_lusztig_operators` for the details.
@@ -658,7 +658,7 @@ class Algebras(AlgebrasCategory):
 
             INPUT:
 
-            - ``q,q1,q2`` -- three elements of the ground ring
+            - ``q``, ``q1``, ``q2`` -- three elements of the ground ring
             - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
 
             Let `KL` be the group algebra of an affine weight lattice
@@ -978,7 +978,7 @@ class Algebras(AlgebrasCategory):
 
             - ``weight`` -- an element `\lambda` of the weight lattice
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
 
             .. SEEALSO:: :meth:`twisted_demazure_lusztig_operators`
@@ -1023,7 +1023,7 @@ class Algebras(AlgebrasCategory):
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
 
             .. WARNING::

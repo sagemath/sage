@@ -245,7 +245,7 @@ class SteenrodModuleMixin:
 
         # Print the degrees of the additive generators.
         ret = '%d %s' % (len(additive_generator_degrees),
-                         ' '.join(['%d' % x for x in additive_generator_degrees]))
+                         ' '.join('%d' % x for x in additive_generator_degrees))
 
         # A private function which transforms a vector in a given dimension
         # to a vector of global indices for the basis elements corresponding

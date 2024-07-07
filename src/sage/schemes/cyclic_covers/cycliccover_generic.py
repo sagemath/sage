@@ -27,9 +27,6 @@ EXAMPLES::
     Traceback (most recent call last):
     ...
     NotImplementedError: Weighted Projective Space is not implemented
-
-
-
 """
 
 # *****************************************************************************
@@ -51,13 +48,13 @@ class CyclicCover_generic(AffinePlaneCurve):
 
         INPUT:
 
-        - ``A`` - ambient affine space
+        - ``A`` -- ambient affine space
 
-        - ``r`` - degree of the cover
+        - ``r`` -- degree of the cover
 
-        -  ``f`` - univariate polynomial
+        -  ``f`` -- univariate polynomial
 
-        -  ``names``  (default: ``["x","y"]``) - names for the
+        -  ``names``  (default: ``["x","y"]``) -- names for the
            coordinate functions
 
         TESTS::
@@ -88,9 +85,6 @@ class CyclicCover_generic(AffinePlaneCurve):
             Traceback (most recent call last):
             ...
             NotImplementedError: Weighted Projective Space is not implemented
-
-
-
         """
         x, y = AA.gens()
         self._r = r

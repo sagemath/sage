@@ -129,7 +129,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2 + x + 1)
@@ -150,7 +150,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: to_R(e2).parent() is R
             True
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: I = O.ideal(x + 1)
@@ -171,20 +171,21 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: to_R(e2).parent() is R
             True
 
+            sage: # needs sage.modules sage.rings.number_field
             sage: F.<x> = FunctionField(QQ)
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2 + x + 1)
-            sage: R, fr_R, to_R = O._residue_field(I)                                               # needs sage.rings.number_field
-            sage: R                                                                                 # needs sage.rings.number_field
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
             Number Field in a with defining polynomial x^2 + x + 1
-            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # needs sage.rings.number_field
-            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # needs sage.rings.number_field
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
             True
-            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # needs sage.rings.number_field
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
             True
-            sage: to_R(e1).parent() is R                                                            # needs sage.rings.number_field
+            sage: to_R(e1).parent() is R
             True
-            sage: to_R(e2).parent() is R                                                            # needs sage.rings.number_field
+            sage: to_R(e2).parent() is R
             True
 
             sage: F.<x> = FunctionField(QQ)

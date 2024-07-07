@@ -147,15 +147,16 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .tri_plot import TrianglePlot
-from .index_face_set import IndexFaceSet
-from .shapes import arrow3d
-from .base import Graphics3dGroup
-from sage.plot.colors import rainbow
-from .texture import Texture
-
-from sage.functions.trig import cos, sin
+from sage.misc.lazy_import import lazy_import
 from sage.misc.sageinspect import sage_getargspec, is_function_or_cython_function
+from sage.plot.colors import rainbow
+from sage.plot.plot3d.base import Graphics3dGroup
+from sage.plot.plot3d.index_face_set import IndexFaceSet
+from sage.plot.plot3d.shapes import arrow3d
+from sage.plot.plot3d.texture import Texture
+from sage.plot.plot3d.tri_plot import TrianglePlot
+
+lazy_import("sage.functions.trig", ["cos", "sin"])
 
 
 class _Coordinates:
@@ -318,9 +319,9 @@ class _Coordinates:
 
         """
         from sage.structure.element import Expression
-        from sage.rings.real_mpfr import is_RealNumber
-        from sage.rings.integer import is_Integer
-        if params is not None and (isinstance(func, Expression) or is_RealNumber(func) or is_Integer(func)):
+        from sage.rings.real_mpfr import RealNumber
+        from sage.rings.integer import Integer
+        if params is not None and (isinstance(func, Expression) or isinstance(func, RealNumber) or isinstance(func, Integer)):
             return self.transform(**{
                 self.dep_var: func,
                 self.indep_vars[0]: params[0],
@@ -434,12 +435,12 @@ class _ArbitraryCoordinates(_Coordinates):
 
         INPUT:
 
-         - ``custom_trans`` - A 3-tuple of transformation
+         - ``custom_trans`` -- A 3-tuple of transformation
            functions.
 
-         - ``dep_var`` - The dependent (function) variable.
+         - ``dep_var`` -- The dependent (function) variable.
 
-         - ``indep_vars`` - a list of the two other independent
+         - ``indep_vars`` -- a list of the two other independent
            variables.
 
         EXAMPLES::
@@ -814,15 +815,15 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     -  ``vrange`` -- a 2-tuple (v_min, v_max) or a 3-tuple
        (v, v_min, v_max)
 
-    -  ``adaptive`` -- (default: False) whether to use
+    -  ``adaptive`` -- (default: ``False``) whether to use
        adaptive refinement to draw the plot (slower, but may look better).
        This option does NOT work in conjunction with a transformation
        (see below).
 
-    -  ``mesh`` -- bool (default: False) whether to display
+    -  ``mesh`` -- bool (default: ``False``) whether to display
        mesh grid lines
 
-    -  ``dots`` -- bool (default: False) whether to display
+    -  ``dots`` -- bool (default: ``False``) whether to display
        dots at mesh grid points
 
     -  ``plot_points`` -- (default: "automatic") initial number of sample
@@ -1146,7 +1147,7 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
 
     - ``grad_f`` -- gradient of f as a Python function
 
-    - ``color`` -- "automatic" - a rainbow of num_colors colors
+    - ``color`` -- "automatic"; a rainbow of num_colors colors
 
     - ``num_colors`` -- (default: 128) number of colors to use with default
        color

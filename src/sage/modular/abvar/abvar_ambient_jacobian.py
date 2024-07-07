@@ -19,7 +19,7 @@ from sage.rings.rational_field import QQ
 
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modform.constructor import Newforms
-from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
+from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
 from . import morphism
 
 
@@ -37,7 +37,7 @@ def ModAbVar_ambient_jacobian(group):
     INPUT:
 
 
-    -  ``group`` - a congruence subgroup.
+    -  ``group`` -- a congruence subgroup.
 
 
     OUTPUT: a modular abelian variety attached
@@ -256,13 +256,13 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         INPUT:
 
 
-        -  ``level`` - integer (multiple or divisor of level of
+        -  ``level`` -- integer (multiple or divisor of level of
            self)
 
-        -  ``t`` - divisor of quotient of level of self and
+        -  ``t`` -- divisor of quotient of level of self and
            level
 
-        -  ``check`` - bool (default: True); if True do some
+        -  ``check`` -- bool (default: ``True``); if True do some
            checks on the input
 
 
@@ -414,7 +414,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         if self.dimension() == 0:
             return []
         G = self.group()
-        if not (is_Gamma0(G) or is_Gamma1(G)):
+        if not (isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class)):
             return [S.newform(names=names) for S in self.decomposition()]
         Gtype = G.parent()
         N = G.level()

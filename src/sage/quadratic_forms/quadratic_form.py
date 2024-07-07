@@ -24,7 +24,7 @@ from copy import deepcopy
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
@@ -34,7 +34,7 @@ from sage.arith.misc import GCD
 from sage.arith.functions import lcm as LCM
 from sage.rings.ideal import Ideal
 from sage.rings.rational_field import QQ
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -554,7 +554,7 @@ class QuadraticForm(SageObject):
         # Deal with:  QuadraticForm(ring, matrix)
         matrix_init_flag = False
         if R in Rings():
-            if is_Matrix(n):
+            if isinstance(n, Matrix):
                 # Test if n is symmetric and has even diagonal
                 if not self._is_even_symmetric_matrix_(n, R):
                     raise TypeError("the matrix is not a symmetric with even diagonal defined over R")
@@ -564,7 +564,7 @@ class QuadraticForm(SageObject):
                 M_ring = R
                 matrix_init_flag = True
 
-        elif is_Matrix(R):
+        elif isinstance(R, Matrix):
             M = R
 
             # Test if R is symmetric and has even diagonal
@@ -1049,7 +1049,7 @@ class QuadraticForm(SageObject):
         # (In matrix notation: A^t * Q * A)
         n = self.dim()
 
-        if is_Matrix(v):
+        if isinstance(v, Matrix):
             # Check that v has the correct number of rows
             if v.nrows() != n:
                 raise TypeError(f"the matrix must have {n} rows")
@@ -1059,7 +1059,7 @@ class QuadraticForm(SageObject):
             Q2 = QuadraticForm(self.base_ring(), m)
             return QFEvaluateMatrix(self, v, Q2)
 
-        elif (is_Vector(v) or isinstance(v, (list, tuple))):
+        elif (isinstance(v, Vector) or isinstance(v, (list, tuple))):
             # Check the vector/tuple/list has the correct length
             if not (len(v) == n):
                 raise TypeError(f"your vector needs to have length {n}")
@@ -1103,7 +1103,7 @@ class QuadraticForm(SageObject):
             False
 
         """
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             raise TypeError("A is not a matrix.")
 
         ring_coerce_test = True

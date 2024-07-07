@@ -15,7 +15,6 @@ from a list of n rational quaternions.
 AUTHORS:
 
 - William Stein
-
 """
 
 # ****************************************************************************

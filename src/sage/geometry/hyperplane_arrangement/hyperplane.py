@@ -518,7 +518,7 @@ class Hyperplane(LinearExpression):
 
         INPUT:
 
-        - ``signed`` -- boolean (optional, default: ``True``); whether
+        - ``signed`` -- boolean (default: ``True``); whether
           to preserve the overall sign
 
         OUTPUT:

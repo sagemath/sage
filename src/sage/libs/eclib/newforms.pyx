@@ -138,7 +138,7 @@ cdef class ECModularSymbol:
          of this sign are available.  If 0, modular symbols of both
          signs are available but the construction is more expensive.
 
-        - ``nap`` - (int, default 1000): the number of ap of E to use
+        - ``nap`` -- (int, default 1000): the number of ap of E to use
          in determining the normalisation of the modular symbols.
          Note that eclib will increase this to 100*sqrt(N) if necessary.
 
@@ -245,12 +245,12 @@ cdef class ECModularSymbol:
 
         INPUT:
 
-        - ``r`` (rational) - a rational number
+        - ``r`` (rational) -- a rational number
 
-        - ``sign`` (int) - either +1, -1 or 0.  If the sign of the
+        - ``sign`` (int) -- either +1, -1 or 0.  If the sign of the
           space is +1, only sign +1 is allowed.  Default: self.sign, or +1 when self.sign=0.
 
-        - ``base_at_infinity`` (bool) - if True, evaluates
+        - ``base_at_infinity`` (bool) -- if True, evaluates
           {oo,r}. otherwise (default) evaluates {0,r}.
 
         OUTPUT:

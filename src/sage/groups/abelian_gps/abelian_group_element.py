@@ -57,11 +57,19 @@ def is_AbelianGroupElement(x):
 
         sage: from sage.groups.abelian_gps.abelian_group_element import is_AbelianGroupElement
         sage: is_AbelianGroupElement(3)
+        doctest:warning...
+        DeprecationWarning: The function is_AbelianGroupElement is deprecated;
+        use 'isinstance(..., AbelianGroupElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: F = AbelianGroup(5, [3,4,5,8,7], 'abcde')
         sage: is_AbelianGroupElement(F.0)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_AbelianGroupElement is deprecated; "
+                "use 'isinstance(..., AbelianGroupElement)' instead.")
     return isinstance(x, AbelianGroupElement)
 
 

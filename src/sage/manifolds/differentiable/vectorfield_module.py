@@ -24,7 +24,6 @@ REFERENCES:
 - [KN1963]_
 - [Lee2013]_
 - [ONe1983]_
-
 """
 
 # ******************************************************************************
@@ -2301,10 +2300,10 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             if isinstance(comp, CompWithSym):
                 resu._sym = comp._sym
                 resu._antisym = comp._antisym
-        #
+
         # 2/ Tensor components set to comp:
         resu._components[comp._frame] = comp
-        #
+
         return resu
 
     def sym_bilinear_form(self, name=None, latex_name=None):

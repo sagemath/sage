@@ -38,10 +38,15 @@ def is_ArithmeticSubgroup(x) -> bool:
 
         sage: from sage.modular.arithgroup.all import is_ArithmeticSubgroup
         sage: is_ArithmeticSubgroup(GL(2, GF(7)))
+        doctest:warning...
+        DeprecationWarning: The function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: is_ArithmeticSubgroup(Gamma0(4))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead.")
     return isinstance(x, ArithmeticSubgroup)
 
 
@@ -282,10 +287,10 @@ class ArithmeticSubgroup(Group):
 
         INPUT:
 
-        - ``G`` - intermediate subgroup (currently not implemented if different
+        - ``G`` -- intermediate subgroup (currently not implemented if different
           from SL(2,Z))
 
-        - ``on_right`` - boolean (default: True) - if True return right coset
+        - ``on_right`` -- boolean (default: ``True``); if True return right coset
           enumeration, if False return left one.
 
         This is *extremely* slow in general.
@@ -296,11 +301,11 @@ class ArithmeticSubgroup(Group):
 
         - a list of generators for the group
 
-        - ``l`` - list of integers that correspond to the action of the
+        - ``l`` -- list of integers that correspond to the action of the
           standard parabolic element [[1,1],[0,1]] of `SL(2,\ZZ)` on the cosets
           of self.
 
-        - ``s`` - list of integers that correspond to the action of the standard
+        - ``s`` -- list of integers that correspond to the action of the standard
           element of order `2` [[0,-1],[1,0]] on the cosets of self.
 
         EXAMPLES::
@@ -456,8 +461,8 @@ class ArithmeticSubgroup(Group):
         # Cheap trick: if self is a subgroup of something with no elliptic points,
         # then self has no elliptic points either.
 
-        from .all import Gamma0, is_CongruenceSubgroup
-        if is_CongruenceSubgroup(self):
+        from .all import Gamma0, CongruenceSubgroupBase
+        if isinstance(self, CongruenceSubgroupBase):
             if self.is_subgroup(Gamma0(self.level())) and Gamma0(self.level()).nu2() == 0:
                 return 0
 
@@ -496,8 +501,8 @@ class ArithmeticSubgroup(Group):
         # Cheap trick: if self is a subgroup of something with no elliptic points,
         # then self has no elliptic points either.
 
-        from .all import Gamma0, is_CongruenceSubgroup
-        if is_CongruenceSubgroup(self):
+        from .all import Gamma0, CongruenceSubgroupBase
+        if isinstance(self, CongruenceSubgroupBase):
             if self.is_subgroup(Gamma0(self.level())) and Gamma0(self.level()).nu3() == 0:
                 return 0
 
@@ -713,9 +718,9 @@ class ArithmeticSubgroup(Group):
         except (AttributeError, KeyError):
             self._cusp_list = {}
 
-        from .congroup_sl2z import is_SL2Z
+        from .congroup_sl2z import SL2Z_class
         if algorithm == 'default':
-            if is_SL2Z(self):
+            if isinstance(self, SL2Z_class):
                 s = [Cusp(1, 0)]
             else:
                 s = self._find_cusps()
@@ -1223,7 +1228,7 @@ class ArithmeticSubgroup(Group):
 
         INPUT:
 
-        - ``k`` - an integer (default 2).
+        - ``k`` -- an integer (default 2).
 
         EXAMPLES::
 
@@ -1305,7 +1310,7 @@ class ArithmeticSubgroup(Group):
 
         INPUT:
 
-        -  ``weight`` - an integer `\geq 2` (default: 2)
+        -  ``weight`` -- an integer `\geq 2` (default: 2)
 
         EXAMPLES::
 

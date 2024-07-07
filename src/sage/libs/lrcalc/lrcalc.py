@@ -176,7 +176,6 @@ AUTHORS:
 
 - Anne Schilling, Nicolas M. Thiéry, and Anders Buch (2011): fusion
   product, iterating through LR tableaux, finalization, documentation
-
 """
 # ****************************************************************************
 #  Copyright (C) 2010 Mike Hansen <mhansen@gmail.com>

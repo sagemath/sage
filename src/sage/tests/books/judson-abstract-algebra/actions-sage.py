@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -170,5 +169,4 @@ r"""
     sage: S = G.stabilizer(4)
     sage: S.orbits()
     ((1, 2, 3), (4,))
-
 """

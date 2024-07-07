@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Examples of monoids
 """
@@ -14,6 +15,7 @@ from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.monoids import Monoids
 from .semigroups import FreeSemigroup
 from sage.sets.family import Family
+
 
 class FreeMonoid(FreeSemigroup):
     r"""

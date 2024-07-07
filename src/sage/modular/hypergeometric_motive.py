@@ -47,7 +47,6 @@ REFERENCES:
 - [BeCoMe]_
 
 - [Watkins]_
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017--2024     Frédéric Chapoton
@@ -1338,7 +1337,7 @@ class HypergeometricData:
 
         - ``prec`` -- precision (optional)
 
-        - ``cache_p`` - a boolean
+        - ``cache_p`` -- a boolean
 
         OUTPUT:
 

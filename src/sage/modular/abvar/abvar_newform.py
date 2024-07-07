@@ -19,7 +19,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 from sage.modular.modform.element import Newform
-from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1, is_GammaH
+from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class, GammaH_class
 
 from .abvar import ModularAbelianVariety_modsym_abstract
 from . import homspace
@@ -134,11 +134,11 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
             '43b'
         """
         G = self.__f.group()
-        if is_Gamma0(G):
+        if isinstance(G, Gamma0_class):
             group = ''
-        elif is_Gamma1(G):
+        elif isinstance(G, Gamma1_class):
             group = 'G1'
-        elif is_GammaH(G):
+        elif isinstance(G, GammaH_class):
             group = 'GH[' + ','.join(str(z) for z in G._generators_for_H()) + ']'
         return '%s%s%s' % (self.level(), cremona_letter_code(self.factor_number()), group)
 

@@ -127,7 +127,6 @@ EXAMPLES:
 * Export a legacy Sage notebook as a Jupyter notebook:
 
       sage --notebook=export --ipynb=Output.ipynb admin:10
-
 """
 
 notebook_launcher = {

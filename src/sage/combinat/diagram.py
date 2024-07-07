@@ -29,16 +29,17 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.composition import Composition
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutations
-from sage.combinat.tableau import Tableau
-from sage.combinat.tiling import Polyomino
 from sage.combinat.skew_partition import SkewPartition
 from sage.combinat.skew_tableau import SkewTableaux
-from sage.matrix.matrix_dense import Matrix_dense
-from sage.matrix.matrix_sparse import Matrix_sparse
+from sage.combinat.tableau import Tableau
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.lazy_import import lazy_import
+from sage.structure.element import Matrix
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.combinat.tiling', 'Polyomino')
 
 
 class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
@@ -693,7 +694,7 @@ class Diagrams(UniqueRepresentation, Parent):
             return self.from_polyomino(cells)
         if isinstance(cells, Composition):
             return self.from_composition(cells)
-        if isinstance(cells, (Matrix_dense, Matrix_sparse)):
+        if isinstance(cells, Matrix):
             return self.from_zero_one_matrix(cells)
 
         return self.element_class(self, cells, n_rows, n_cols, check)

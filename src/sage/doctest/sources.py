@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Classes for sources of doctests
 
@@ -65,7 +66,7 @@ bitness_value = '64' if sys.maxsize > (1 << 32) else '32'
 find_prompt = re.compile(r"^(\s*)(>>>|sage:)(.*)")
 
 # For testing that enough doctests are created
-sagestart = re.compile(r"^\s*(>>> |sage: )\s*[^#\s]")
+sagestart = re.compile(r"^(\s*(>>> |sage: ))\s*[^#\s]")
 untested = re.compile("(not implemented|not tested)")
 
 # For parsing a PEP 0263 encoding declaration
@@ -331,9 +332,11 @@ class DocTestSource():
                             continue
                         else:
                             line = line[:bitness.start()] + "\n"
-                    if self.line_shift and sagestart.match(line):
-                        # We insert blank lines to make up for the removed lines
-                        doc.extend(["\n"]*self.line_shift)
+                    if self.line_shift and (m := sagestart.match(line)):
+                        # We insert empty doctest lines to make up for the removed lines
+                        indent_and_prompt = m.group(1)
+                        doc.extend([indent_and_prompt + "# inserted to compensate for removed conditional doctest output\n"]
+                                   * self.line_shift)
                         self.line_shift = 0
                     doc.append(line)
                     unparsed_doc = True
@@ -1346,7 +1349,7 @@ class TexSource(SourceLanguage):
 
         - ``line`` -- a string, one line of an input file
 
-        - ``check_skip`` -- boolean (default True), used internally in starting_docstring.
+        - ``check_skip`` -- boolean (default: ``True``), used internally in starting_docstring.
 
         OUTPUT:
 

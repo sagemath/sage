@@ -367,7 +367,7 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
       :class:`~sage.sets.disjoint_set.DisjointSet_of_hashables` encoding a
       forest
 
-    - ``by_weight`` - boolean (default: ``True``); if ``True``, the edges in
+    - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
       the graph are weighted; if ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes

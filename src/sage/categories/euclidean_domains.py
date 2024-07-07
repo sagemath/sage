@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Euclidean domains
 
@@ -7,7 +8,6 @@ AUTHORS:
 
 - Julian Rueth (2013-09-13): added euclidean degree, quotient remainder, and
   their tests
-
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
@@ -71,7 +71,7 @@ class EuclideanDomains(Category_singleton):
 
             INPUT:
 
-            - ``elts`` - A sequence of elements of ``self``.
+            - ``elts`` -- A sequence of elements of ``self``.
 
             OUTPUT:
 

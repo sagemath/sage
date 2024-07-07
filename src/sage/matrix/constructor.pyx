@@ -676,10 +676,10 @@ def matrix(*args, **kwds):
     return MatrixArgs(*args, **kwds).element(immutable=immutable)
 
 
-Matrix = matrix
-
-
 from sage.matrix.special import *
+
+
+Matrix = matrix
 
 
 @matrix_method

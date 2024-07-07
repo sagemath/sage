@@ -1865,8 +1865,7 @@ class Compositions(UniqueRepresentation, Parent):
             d.append(n)
 
         co = [d[0]]
-        for i in range(len(d) - 1):
-            co.append(d[i + 1] - d[i])
+        co.extend(d[i + 1] - d[i] for i in range(len(d) - 1))
 
         return self.element_class(self, co)
 

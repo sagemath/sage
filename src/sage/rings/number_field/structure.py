@@ -43,7 +43,6 @@ structure morphisms::
 AUTHORS:
 
 - Julian Rueth (2014-04-03): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Julian Rueth <julian.rueth@fsfe.org>

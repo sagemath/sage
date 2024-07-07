@@ -35,6 +35,7 @@ from sage.rings.integer import Integer
 from sage.algebras.lie_algebras.lie_algebra import LieAlgebra
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
+
 class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
     The current or affine Kac-Moody Lie conformal algebra.

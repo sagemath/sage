@@ -20,11 +20,13 @@ compression of FreeMonoid elements (a feature), and could be packed into words.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-# import operator
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.rings.real_mpfr import RealField
-from .free_monoid_element import FreeMonoidElement
 from sage.structure.richcmp import richcmp
+
+lazy_import('sage.rings.real_mpfr', 'RealField')
+
+from .free_monoid_element import FreeMonoidElement
 
 
 def is_StringMonoidElement(x):

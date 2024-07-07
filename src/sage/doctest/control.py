@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Classes involved in doctesting
 
@@ -475,6 +476,9 @@ class DocTestController(SageObject):
                     for pkg in list_packages('optional', local=True).values():
                         if pkg.name in options.hide:
                             continue
+                        # Skip features for which we have a more specific runtime feature test.
+                        if pkg.name in ['bliss', 'coxeter3', 'mcqd', 'meataxe', 'sirocco', 'tdlib']:
+                            continue
                         if pkg.is_installed() and pkg.installed_version == pkg.remote_version:
                             options.optional.add(pkg.name)
 
@@ -720,7 +724,7 @@ class DocTestController(SageObject):
             sage: import json
             sage: filename = tmp_filename()
             sage: with open(filename, 'w') as stats_file:
-            ....:     json.dump({'sage.doctest.control':{'walltime':1.0r}}, stats_file)
+            ....:     json.dump({'sage.doctest.control': {'walltime': 1.0r}}, stats_file)
             sage: DC.load_stats(filename)
             sage: DC.stats['sage.doctest.control']
             {'walltime': 1.0}
@@ -755,7 +759,7 @@ class DocTestController(SageObject):
 
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
             sage: DC = DocTestController(DocTestDefaults(), [])
-            sage: DC.stats['sage.doctest.control'] = {'walltime':1.0r}
+            sage: DC.stats['sage.doctest.control'] = {'walltime': 1.0r}
             sage: filename = tmp_filename()
             sage: DC.save_stats(filename)
             sage: import json
@@ -1030,8 +1034,8 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: for i, source in enumerate(DC.sources):
-            ....:     DC.stats[source.basename] = {'walltime': 0.1*(i+1)}
-            sage: DC.stats['sage.doctest.control'] = {'failed':True,'walltime':1.0}
+            ....:     DC.stats[source.basename] = {'walltime': 0.1r * (i+1)}
+            sage: DC.stats['sage.doctest.control'] = {'failed': True, 'walltime': 1.0r}
             sage: DC.filter_sources()
             Only doctesting files that failed last test.
             sage: len(DC.sources)
@@ -1061,7 +1065,7 @@ class DocTestController(SageObject):
             sage: DC.expand_files_into_sources()
             sage: DC.sources.sort(key=lambda s:s.basename)
             sage: for i, source in enumerate(DC.sources):
-            ....:     DC.stats[source.basename] = {'walltime': 0.1*(i+1)}
+            ....:     DC.stats[source.basename] = {'walltime': 0.1r * (i+1)}
             sage: DC.sort_sources()
             Sorting sources by runtime so that slower doctests are run first....
             sage: print("\n".join(source.basename for source in DC.sources))
@@ -1202,7 +1206,7 @@ class DocTestController(SageObject):
             sage: DC.sources.sort(key=lambda s:s.basename)
 
             sage: for i, source in enumerate(DC.sources):
-            ....:     DC.stats[source.basename] = {'walltime': 0.1*(i+1)}
+            ....:     DC.stats[source.basename] = {'walltime': 0.1r * (i+1)}
             ....:
 
             sage: DC.run()
@@ -1447,7 +1451,7 @@ class DocTestController(SageObject):
             sage: with open(filename, 'w') as f:
             ....:     f.write(test_hide)
             ....:     f.close()
-            729
+            714
             sage: DF = DocTestDefaults(hide='buckygen,all')
             sage: DC = DocTestController(DF, [filename])
             sage: DC.run()
@@ -1670,7 +1674,7 @@ Traceback (most recent call last):
  ...
 FeatureNotPresentError: buckygen is not available.
 ...
-{prompt}: next(graphs.fullerenes(20))   # optional buckygen
+{prompt}: next(graphs.fullerenes(20))   # optional - buckygen
 Graph on 20 vertices
 
 {prompt}: len(list(graphs.fusenes(2)))
@@ -1678,14 +1682,14 @@ Traceback (most recent call last):
  ...
 FeatureNotPresentError: benzene is not available.
 ...
-{prompt}: len(list(graphs.fusenes(2)))  # optional benzene
+{prompt}: len(list(graphs.fusenes(2)))  # optional - benzene
 1
 {prompt}: from sage.matrix.matrix_space import get_matrix_class
 {prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')
 Failed lazy import:
-sage.matrix.matrix_gfpn_dense is not available.
+meataxe is not available.
 ...
-{prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe') # optional meataxe
+{prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')  # optional - meataxe
 <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
 {quotmark}
 """.format(quotmark='"""', prompt='sage')  # using prompt to hide these lines from _test_enough_doctests

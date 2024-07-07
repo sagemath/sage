@@ -32,9 +32,9 @@ cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg) noexcept:
 
     INPUT:
 
-    - ``nvars`` - number of variables
+    - ``nvars`` -- number of variables
 
-    - ``deg`` - degree
+    - ``deg`` -- degree
 
     TESTS::
 
@@ -594,12 +594,12 @@ cdef class SBox(SageObject):
             sage: PRESENT.derivative(1).max_degree() < PRESENT.max_degree()             # needs sage.rings.polynomial.pbori
             True
         """
-        from sage.structure.element import is_Vector
+        from sage.structure.element import Vector
         nvars = self.m
 
         if isinstance(u, (tuple, list)):
             v = ZZ(u, base=2)
-        elif is_Vector(u):
+        elif isinstance(u, Vector):
             if u.base_ring() != GF(2):
                 raise TypeError("base ring of input vector must be GF(2)")
             elif u.parent().dimension() != nvars:
@@ -769,7 +769,7 @@ cdef class SBox(SageObject):
 
         INPUT:
 
-        - ``scale`` - string to choose the scaling for the LAT, one of
+        - ``scale`` -- string to choose the scaling for the LAT, one of
 
           * "bias": elements are `e(\alpha, \beta)`
           * "correlation": elements are `c(\alpha, \beta)`

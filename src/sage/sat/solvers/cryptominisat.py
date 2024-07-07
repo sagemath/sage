@@ -3,8 +3,6 @@ CryptoMiniSat Solver
 
 This solver relies on Python bindings provided by upstream cryptominisat.
 
-The ``cryptominisat`` package should be installed on your Sage installation.
-
 AUTHORS:
 
 - Thierry Monteil (2017): complete rewrite, using upstream Python bindings,
@@ -26,7 +24,7 @@ from .satsolver import SatSolver
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('pycryptosat', ['Solver'],
-            feature=PythonModule('pycryptosat', spkg='cryptominisat'))
+            feature=PythonModule('pycryptosat', spkg='pycryptosat'))
 
 
 class CryptoMiniSat(SatSolver):

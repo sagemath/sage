@@ -16,9 +16,9 @@ def have_program(program, path=None):
 
     INPUT:
 
-    - ``program`` - a string, the name of the program to check.
+    - ``program`` -- a string, the name of the program to check.
 
-    - ``path`` - string or None. Paths to search for ``program``,
+    - ``path`` -- string or None. Paths to search for ``program``,
       separated by ``os.pathsep``. If ``None``, use the :envvar:`PATH`
       environment variable.
 

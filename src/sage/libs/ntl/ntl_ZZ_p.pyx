@@ -68,7 +68,6 @@ def ntl_ZZ_p_random_element(v):
     return y
 
 
-
 ##############################################################################
 #
 # ZZ_p_c: integers modulo p

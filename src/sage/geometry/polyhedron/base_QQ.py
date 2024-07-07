@@ -155,7 +155,7 @@ class Polyhedron_QQ(Polyhedron_base):
             ....:     x = lp.new_variable(nonnegative=True)
             ....:     lp.add_constraint(lp.sum(fibonacci(i+3)*x[i] for i in range(d)) <= b)
             ....:     return lp.polyhedron(backend=backend)
-            sage: fibonacci_knapsack(20, 12).integral_points_count() # does not finish with preprocess=False            # needs sage.combinat
+            sage: fibonacci_knapsack(20, 12).integral_points_count()  # does not finish with preprocess=False           # needs sage.combinat
             33
 
         TESTS:
@@ -250,14 +250,14 @@ class Polyhedron_QQ(Polyhedron_base):
 
         - When the ``engine`` is ``'latte'``, the additional input values are:
 
-          * ``verbose`` - boolean (default: ``False``); If ``True``, print the
+          * ``verbose`` -- boolean (default: ``False``); If ``True``, print the
             whole output of the LattE command.
 
           The following options are passed to the LattE command, for details
           consult `the LattE documentation
           <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-          * ``dual`` - boolean; triangulate and signed-decompose in the dual
+          * ``dual`` -- boolean; triangulate and signed-decompose in the dual
             space
           * ``irrational_primal`` -- boolean; triangulate in the dual space,
             signed-decompose in the primal space using irrationalization.
@@ -424,7 +424,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         - When the ``engine`` is 'latte', the additional input values are:
 
-          * ``verbose`` - boolean (default: ``False``); If ``True``, print the
+          * ``verbose`` -- boolean (default: ``False``); If ``True``, print the
             whole output of the LattE command.
 
           The following options are passed to the LattE command, for details
@@ -444,7 +444,7 @@ class Polyhedron_QQ(Polyhedron_base):
           * ``compute_vertex_cones`` -- string; either ``'cdd'`` or ``'lrs'`` or ``'4ti2'``
           * ``smith_form`` -- string; either ``'ilio'`` or ``'lidia'``
           * ``dualization`` -- string; either ``'cdd'`` or ``'4ti2'``
-          * ``triangulation`` - string; ``'cddlib'``, ``'4ti2'`` or ``'topcom'``
+          * ``triangulation`` -- string; ``'cddlib'``, ``'4ti2'`` or ``'topcom'``
           * ``triangulation_max_height`` -- integer; use a uniform distribution of
             height from 1 to this number
 

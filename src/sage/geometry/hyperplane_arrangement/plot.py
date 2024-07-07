@@ -115,7 +115,6 @@ lazy_import("sage.plot.line", "line")
 lazy_import("sage.plot.text", "text")
 lazy_import("sage.plot.point", "point")
 lazy_import("sage.plot.plot", "parametric_plot")
-from sage.symbolic.ring import SR
 
 
 def plot(hyperplane_arrangement, **kwds):
@@ -423,6 +422,7 @@ def plot_hyperplane(hyperplane, **kwds):
     elif hyperplane.dimension() == 1: # a line in the plane
         pnt = hyperplane.point()
         w = hyperplane.linear_part().matrix()
+        from sage.symbolic.ring import SR
         t = SR.var('t')
         if ranges_set:
             if isinstance(ranges, (list, tuple)):
@@ -443,6 +443,7 @@ def plot_hyperplane(hyperplane, **kwds):
     elif hyperplane.dimension() == 2: # a plane in 3-space
         pnt = hyperplane.point()
         w = hyperplane.linear_part().matrix()
+        from sage.symbolic.ring import SR
         s, t = SR.var('s t')
         if ranges_set:
             if isinstance(ranges, (list, tuple)):

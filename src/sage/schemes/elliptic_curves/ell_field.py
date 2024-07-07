@@ -444,10 +444,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E1.is_isomorphic(E2)
             True
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
         E = self
         F = other
-        if not is_EllipticCurve(E) or not is_EllipticCurve(F):
+        if not isinstance(E, EllipticCurve_generic) or not isinstance(F, EllipticCurve_generic):
             raise ValueError("arguments are not elliptic curves")
         K = E.base_ring()
         zero = K.zero()
@@ -543,10 +543,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: (D/12345).is_perfect_power(4)
             True
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
         E = self
         F = other
-        if not is_EllipticCurve(E) or not is_EllipticCurve(F):
+        if not isinstance(E, EllipticCurve_generic) or not isinstance(F, EllipticCurve_generic):
             raise ValueError("arguments are not elliptic curves")
         K = E.base_ring()
         zero = K.zero()
@@ -612,10 +612,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: (D/12345).is_perfect_power(6)
             True
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
         E = self
         F = other
-        if not is_EllipticCurve(E) or not is_EllipticCurve(F):
+        if not isinstance(E, EllipticCurve_generic) or not isinstance(F, EllipticCurve_generic):
             raise ValueError("arguments are not elliptic curves")
         K = E.base_ring()
         zero = K.zero()
@@ -2065,8 +2065,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             ...
             NotImplementedError: Only implemented for isomorphic curves over general fields.
         """
-        from .ell_generic import is_EllipticCurve
-        if not is_EllipticCurve(other):
+        from .ell_generic import EllipticCurve_generic
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True

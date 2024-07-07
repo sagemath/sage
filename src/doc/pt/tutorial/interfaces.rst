@@ -32,9 +32,9 @@ otimizado cujo foco primário é teoria de números. Existem duas
 interfaces distintas que podem ser usadas no Sage:
 
 
--  ``gp`` - o "**G** do **P** ARI" interpretador, e
+-  ``gp`` -- o "**G** do **P** ARI" interpretador, e
 
--  ``pari`` - a biblioteca C do PARI.
+-  ``pari`` -- a biblioteca C do PARI.
 
 Por exemplo, os seguintes comandos são duas formas de realizar a mesma
 coisa. Eles parecem idênticos, mas o resultado é na verdade

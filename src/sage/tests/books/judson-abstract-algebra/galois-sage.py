@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -485,5 +484,4 @@ r"""
 
     sage: sg[2].is_normal(P)
     False
-
 """

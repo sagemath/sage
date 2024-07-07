@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 `p`-Selmer groups of number fields
 
@@ -33,7 +32,6 @@ of the NumberField class.
 AUTHORS:
 
 - John Cremona (2005-2021)
-
 """
 
 # ****************************************************************************

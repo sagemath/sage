@@ -6,7 +6,6 @@ All computations are done to double precision.
 AUTHORS:
 
 - Simon Spicer (2014-10): first version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Simon Spicer <mlungu@uw.edu>
@@ -484,7 +483,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
           Currently only implemented for the sincsquared and cauchy functions;
           otherwise ignored.
 
-        - ``function`` -- string (default: "sincsquared_fast") - the function
+        - ``function`` -- string (default: "sincsquared_fast"); the function
           `f(x)` as described above. Currently implemented options for `f` are
 
           - ``sincsquared`` -- `f(x) = \left(\frac{\sin(\pi x)}{\pi x}\right)^2`

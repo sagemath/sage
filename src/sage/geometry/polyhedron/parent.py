@@ -14,7 +14,7 @@ import sage.geometry.abc
 from sage.structure.parent import Parent
 from sage.structure.element import get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.modules.free_module import FreeModule, is_FreeModule
+from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.lazy_import import lazy_import
 import sage.rings.abc
@@ -1009,7 +1009,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         from sage.structure.coerce_actions import ActedUponAction
         from sage.categories.action import PrecomposedAction
 
-        if op is operator.add and is_FreeModule(other):
+        if op is operator.add and isinstance(other, FreeModule_generic):
             base_ring = self._coerce_base_ring(other)
             extended_self = self.base_extend(base_ring)
             extended_other = other.base_extend(base_ring)

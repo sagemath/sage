@@ -356,7 +356,7 @@ def random_new_basis_modp(N, p, k, LWBModp, TotalBasisModp, elldash, bound):
     - ``LWBModp`` -- list of list of `q`-expansions modulo
       `(p,q^\text{elldash})`.
     - ``TotalBasisModp`` -- matrix over `\mathrm{GF}(p)`.
-    - ``elldash`` - positive integer.
+    - ``elldash`` -- positive integer.
     - ``bound`` -- positive even integer (twice the length of the list
       ``LWBModp``).
 
@@ -436,7 +436,7 @@ def complementary_spaces_modp(N, p, k0, n, elldash, LWBModp, bound):
     - ``N`` -- positive integer at least 2 and not divisible by `p` (level).
     - ``p`` -- prime at least 5.
     - ``k0`` -- integer in range 0 to `p-1`.
-    - ``n, elldash`` -- positive integers.
+    - ``n``, ``elldash`` -- positive integers.
     - ``LWBModp`` -- list of lists of `q`-expansions over `GF(p)`.
     - ``bound`` -- positive even integer (twice the length of the list ``LWBModp``).
 
@@ -489,7 +489,7 @@ def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bo
     - ``N`` -- positive integer at least 2 and not divisible by p (level).
     - ``p`` -- prime at least 5.
     - ``k0`` -- integer in range 0 to `p - 1`.
-    - ``n, mdash, elldashp, elldash`` -- positive integers.
+    - ``n``, ``mdash``, ``elldashp``, ``elldash`` -- positive integers.
     - ``modformsring`` -- ``True`` or ``False``.
     - ``bound`` -- positive (even) integer (ignored if ``modformsring`` is True).
 
@@ -555,7 +555,7 @@ def higher_level_katz_exp(p, N, k0, m, mdash, elldash, elldashp, modformsring, b
     - ``p`` -- prime at least 5.
     - ``N`` -- positive integer at least 2 and not divisible by `p` (level).
     - ``k0`` -- integer in range 0 to `p-1`.
-    - ``m, mdash, elldash, elldashp`` -- positive integers.
+    - ``m``, ``mdash, ``elldash``, ``elldashp`` -- positive integers.
     - ``modformsring`` -- ``True`` or ``False``.
     - ``bound`` -- positive (even) integer.
 
@@ -619,7 +619,7 @@ def compute_elldash(p, N, k0, n):
 
     - ``p`` -- prime.
     - ``N`` -- positive integer (level).
-    - ``k0``, ``n`` - non-negative integers not both zero.
+    - ``k0``, ``n`` -- non-negative integers not both zero.
 
     OUTPUT:
 
@@ -909,7 +909,7 @@ def katz_expansions(k0, p, ellp, mdash, n):
 
     - ``k0`` -- integer in range 0 to `p - 1`.
     - ``p`` -- prime at least 5.
-    - ``ellp, mdash, n`` -- positive integers.
+    - ``ellp``, ``mdash``, ``n`` -- positive integers.
 
     OUTPUT:
 
@@ -1126,9 +1126,9 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     - ``N`` -- a positive integer not divisible by `p`.
     - ``klist`` -- either a list of integers congruent modulo `(p-1)`, or a single integer.
     - ``m`` -- a positive integer.
-    - ``modformsring`` -- ``True`` or ``False`` (optional, default ``False``).
+    - ``modformsring`` -- ``True`` or ``False`` (default: ``False``).
       Ignored if `N = 1`.
-    - ``weightbound`` -- a positive even integer (optional, default 6). Ignored
+    - ``weightbound`` -- a positive even integer (default: 6). Ignored
       if `N = 1` or ``modformsring`` is ``True``.
 
     OUTPUT:

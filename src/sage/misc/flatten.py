@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 "Flatten nested lists"
 
 import sys
@@ -72,9 +73,9 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
         while isinstance(new_list[index], ltypes) and current_level < max_level:
             v = list(new_list[index])
             len_v = len(v)
-            new_list[index : index + 1] = v
+            new_list[index: index + 1] = v
             old_level = level_list[index]
-            level_list[index : index + 1] = [0] * len_v
+            level_list[index: index + 1] = [0] * len_v
             if len_v:
                 current_level += 1
                 level_list[index + len_v - 1] = old_level + 1

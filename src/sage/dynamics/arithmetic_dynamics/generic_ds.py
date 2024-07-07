@@ -34,9 +34,9 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.rational_field import QQ
-from sage.schemes.affine.affine_space import is_AffineSpace
+from sage.schemes.affine.affine_space import AffineSpace_generic
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
-from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
+from sage.schemes.berkovich.berkovich_space import Berkovich_Cp
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
@@ -165,10 +165,10 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         if isinstance(morphism_or_polys, SchemeMorphism_polynomial):
             domain = morphism_or_polys.domain()
         if domain is not None:
-            if is_AffineSpace(domain) or isinstance(domain, AlgebraicScheme_subscheme_affine):
+            if isinstance(domain, AffineSpace_generic) or isinstance(domain, AlgebraicScheme_subscheme_affine):
                 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
                 return DynamicalSystem_affine(morphism_or_polys, domain)
-            if is_Berkovich_Cp(domain):
+            if isinstance(domain, Berkovich_Cp):
                 from sage.dynamics.arithmetic_dynamics.berkovich_ds import DynamicalSystem_Berkovich
                 return DynamicalSystem_Berkovich(morphism_or_polys,domain)
 

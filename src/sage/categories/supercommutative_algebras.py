@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Supercommutative Algebras
 """
@@ -12,6 +13,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.super_algebras import SuperAlgebras
 from sage.categories.signed_tensor import SignedTensorProductsCategory
 from sage.misc.cachefunc import cached_method
+
 
 class SupercommutativeAlgebras(CategoryWithAxiom_over_base_ring):
     r"""

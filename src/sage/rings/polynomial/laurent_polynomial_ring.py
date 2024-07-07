@@ -98,7 +98,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     - ``name`` -- a string
     - ``names`` -- a list or tuple of names, or a comma separated string
     - ``n`` -- a positive integer
-    - ``sparse`` -- bool (default: False), whether or not elements are sparse
+    - ``sparse`` -- bool (default: ``False``), whether or not elements are sparse
     - ``order`` -- string or
       :class:`~sage.rings.polynomial.term_order.TermOrder`, e.g.,
 

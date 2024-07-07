@@ -72,9 +72,9 @@ class FreeAbelianMonoidFactory(UniqueFactory):
     INPUT:
 
 
-    -  ``n`` - integer
+    -  ``n`` -- integer
 
-    -  ``names`` - names of generators
+    -  ``names`` -- names of generators
 
 
     OUTPUT: free abelian monoid

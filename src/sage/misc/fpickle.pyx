@@ -61,6 +61,7 @@ def reduce_code(co):
 
 copyreg.pickle(types.CodeType, reduce_code)
 
+
 def pickle_function(func):
     """
     Pickle the Python function func.  This is not a normal pickle; you

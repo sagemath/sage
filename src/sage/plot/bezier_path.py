@@ -341,7 +341,7 @@ def bezier_path(path, **options):
 
     - ``path`` -- a list of lists of tuples (see above)
     - ``alpha`` -- default: 1
-    - ``fill`` -- default: False
+    - ``fill`` -- default: ``False``
     - ``thickness`` -- default: 1
     - ``linestyle`` -- default: ``'solid'``, The style of the line, which is one
        of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or ``'--'``,

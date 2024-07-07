@@ -25,6 +25,10 @@ from sage.misc.misc_c import prod
 
 
 def is_AbelianGroupMorphism(f):
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_AbelianGroupMorphism is deprecated; "
+                "use 'isinstance(..., AbelianGroupMorphism)' instead.")
     return isinstance(f, AbelianGroupMorphism)
 
 

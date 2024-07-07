@@ -93,8 +93,8 @@ cdef class ntl_mat_GF2E():
         cdef unsigned long _nrows, _ncols
         cdef unsigned long i, j
 
-        from sage.structure.element import is_Matrix
-        if is_Matrix(nrows):
+        from sage.structure.element import Matrix
+        if isinstance(nrows, Matrix):
             _nrows = nrows.nrows()
             _ncols = nrows.ncols()
             v     = nrows.list()
@@ -518,7 +518,7 @@ cdef class ntl_mat_GF2E():
 
         INPUT:
 
-        - ``k`` - optional GF(2**deg)
+        - ``k`` -- optional GF(2**deg)
 
         OUTPUT:
             Matrix over k
@@ -544,8 +544,8 @@ cdef class ntl_mat_GF2E():
 
         l = [e._sage_(k) for e in self.list()] # we actually can do faster than this
 
-        from sage.matrix.constructor import Matrix
-        return Matrix(k,self.x.NumRows(),self.x.NumCols(),l)
+        from sage.matrix.constructor import matrix
+        return matrix(k, self.x.NumRows(), self.x.NumCols(), l)
 
     def transpose(ntl_mat_GF2E self):
         """
@@ -669,9 +669,9 @@ cdef class ntl_mat_GF2E():
 
         INPUT:
 
-        -  ``density`` - float; proportion (roughly) to be considered for
+        -  ``density`` -- float; proportion (roughly) to be considered for
            changes
-        -  ``nonzero`` - Bool (default: ``False``); whether the new entries
+        -  ``nonzero`` -- Bool (default: ``False``); whether the new entries
            are forced to be non-zero
 
         EXAMPLES::

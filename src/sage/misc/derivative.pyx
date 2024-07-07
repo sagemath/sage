@@ -56,7 +56,6 @@ For the precise specification see documentation for derivative_parse().
 AUTHORS:
 
 - David Harvey (2008-02)
-
 """
 
 from sage.rings.integer cimport Integer

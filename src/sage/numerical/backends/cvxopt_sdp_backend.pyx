@@ -8,7 +8,6 @@ AUTHORS:
 - Ingolfur Edvardsson (2014-05): initial implementation
 
 - Dima Pasechnik      (2015-12): minor fixes
-
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
@@ -55,7 +54,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
                       "feastol":1e-7,
                       "refinement":1 }
         self.answer = {}
-
 
     cpdef int solve(self) except -1:
         """
@@ -160,7 +158,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         elif self.answer['status'] == 'unknown':
             raise SDPSolverException("CVXOPT: Terminated early due to numerical difficulties or because the maximum number of iterations was reached.")
         return 0
-
 
     cpdef get_objective_value(self):
         """
@@ -357,7 +354,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         n = self.answer['ss'][i].size[0]
         assert(n == self.answer['ss'][i].size[1]) # must be square matrix
         return Matrix(n, n, list(self.answer['ss'][i]), sparse=sparse)
-
 
     cpdef solver_parameter(self, name, value=None):
         """

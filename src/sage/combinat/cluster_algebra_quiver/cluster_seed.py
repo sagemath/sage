@@ -2782,20 +2782,20 @@ class ClusterSeed(SageObject):
 
         Possible options are:
 
-        - ``"all"`` - All options below
-        - ``"edges"`` - Number of edges (works with skew-symmetric quivers)
-        - ``"edge_diff"`` - Edges added/deleted (works with skew-symmetric quivers)
-        - ``"green_vertices"`` - List of green vertices (works with principals)
-        - ``"green_vertices_diff"`` - Green vertices added/removed (works with principals)
-        - ``"red_vertices"`` - List of red vertices (works with principals)
-        - ``"red_vertices_diff"`` - Red vertices added/removed (works with principals)
-        - ``"urban_renewals"`` - List of urban renewal vertices
-        - ``"urban_renewals_diff"`` - Urban renewal vertices added/removed
-        - ``"sources"`` - List of source vertices
-        - ``"sources_diff"`` - Source vertices added/removed
-        - ``"sinks"`` - List of sink vertices
-        - ``"sinks_diff"`` - Sink vertices added/removed
-        - ``"denominators"`` - List of all denominators of the cluster variables
+        - ``"all"`` -- All options below
+        - ``"edges"`` -- Number of edges (works with skew-symmetric quivers)
+        - ``"edge_diff"`` -- Edges added/deleted (works with skew-symmetric quivers)
+        - ``"green_vertices"`` -- List of green vertices (works with principals)
+        - ``"green_vertices_diff"`` -- Green vertices added/removed (works with principals)
+        - ``"red_vertices"`` -- List of red vertices (works with principals)
+        - ``"red_vertices_diff"`` -- Red vertices added/removed (works with principals)
+        - ``"urban_renewals"`` -- List of urban renewal vertices
+        - ``"urban_renewals_diff"`` -- Urban renewal vertices added/removed
+        - ``"sources"`` -- List of source vertices
+        - ``"sources_diff"`` -- Source vertices added/removed
+        - ``"sinks"`` -- List of sink vertices
+        - ``"sinks_diff"`` -- Sink vertices added/removed
+        - ``"denominators"`` -- List of all denominators of the cluster variables
 
         OUTPUT:
 
@@ -3756,10 +3756,10 @@ class ClusterSeed(SageObject):
 
         - ``depth`` -- (default: infinity) integer, only seeds with distance
           at most ``depth`` from ``self`` are returned
-        - ``return_depth`` -- (default: ``False``) - if ``True``, ignored if
+        - ``return_depth`` -- (default: ``False``); if ``True``, ignored if
           ``depth`` is set; returns the depth of the mutation class, i.e.,
           the maximal distance from ``self`` of an element in the mutation class
-        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only
+        - ``up_to_equivalence`` -- (default: ``True``); if ``True``, only
           clusters up to equivalence are considered.
 
         EXAMPLES:

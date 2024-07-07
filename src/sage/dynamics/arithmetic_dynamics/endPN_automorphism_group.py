@@ -38,7 +38,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.primes import Primes
 from sage.sets.set import Set
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 
@@ -352,7 +352,7 @@ def PGL_repn(rational_function):
         [-2  1]
         [ 1 -3]
     """
-    if is_Matrix(rational_function):
+    if isinstance(rational_function, Matrix):
         return rational_function
     K = rational_function.parent()
     F = K.base_ring()
@@ -511,7 +511,7 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
 
     - ``M`` -- a positive integer, a product of prime powers
 
-    - ``return_functions`` -- (default: False) boolean
+    - ``return_functions`` -- (default: ``False``) boolean
 
     OUTPUT: a list of automorphisms over `\ZZ`
 
@@ -592,7 +592,7 @@ def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_a
         for psi in integral_autos:
             #The return_functions boolean determines if the automorphisms
             #are matrices or linear fractional transformations
-            if is_Matrix(psi):
+            if isinstance(psi, Matrix):
                 ppsi = psi.change_ring(GF(p))
                 B = [ppsi[0,0], ppsi[0,1], ppsi[1,0], psi[1,1]]
             else:
@@ -840,7 +840,7 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
     - ``rational_function`` -- a rational function defined over the fraction field
         of a polynomial ring in one variable with finite field coefficients
 
-    - ``absolute``-- (default: ``False``) boolean; ``True`` returns the absolute automorphism group and a field of definition
+    - ``absolute`` -- (default: ``False``) boolean; ``True`` returns the absolute automorphism group and a field of definition
 
     - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the isomorphism type of the automorphism group
 
@@ -909,7 +909,7 @@ def field_descent(sigma, y):
 
     INPUT:
 
-    - ``sigma``-- an embedding sigma: `F` -> `E` of fields
+    - ``sigma`` -- an embedding sigma: `F` -> `E` of fields
 
     - ``y`` --an element of the field `E`
 
@@ -969,9 +969,9 @@ def rational_function_coefficient_descent(rational_function, sigma, poly_ring):
 
     - ``rational_function``--a rational function with coefficients in a field `E`
 
-    - ``sigma``-- a field embedding sigma: `F` -> `E`
+    - ``sigma`` -- a field embedding sigma: `F` -> `E`
 
-    - ``poly_ring``-- a polynomial ring `R` with coefficients in `F`
+    - ``poly_ring`` -- a polynomial ring `R` with coefficients in `F`
 
     OUTPUT: a rational function with coefficients in the fraction field of ``poly_ring``
     if it exists, and otherwise ``None``
@@ -1022,7 +1022,7 @@ def rational_function_coerce(rational_function, sigma, S_polys):
 
     INPUT:
 
-    - ``rational_function``-- rational function with coefficients in `R`
+    - ``rational_function`` -- rational function with coefficients in `R`
 
     - ``sigma`` -- a ring homomorphism sigma: `R` -> ``S_polys``
 
@@ -1701,7 +1701,7 @@ def which_group(list_of_elements):
 
     INPUT:
 
-    - ``list_of_elements``-- a finite list of elements of `PGL(2,K)`
+    - ``list_of_elements`` -- a finite list of elements of `PGL(2,K)`
       that we know a priori form a group
 
     OUTPUT: a string -- the isomorphism type of the group
@@ -1714,7 +1714,7 @@ def which_group(list_of_elements):
         sage: which_group(G)
         'Dihedral of order 6'
     """
-    if is_Matrix(list_of_elements[-1]):
+    if isinstance(list_of_elements[-1], Matrix):
         R = PolynomialRing(list_of_elements[-1].base_ring(),'z')
         z = R.gen(0)
         G = [(t[0,0]*z+t[0,1])/(t[1,0]*z+t[1,1]) for t in list_of_elements]

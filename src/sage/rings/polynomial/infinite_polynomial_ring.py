@@ -416,7 +416,7 @@ class InfiniteGenDict:
         """
         INPUT:
 
-        ``Gens`` -- a list of generators of an infinite polynomial ring.
+        - ``Gens`` -- a list of generators of an infinite polynomial ring.
 
         EXAMPLES::
 
@@ -522,8 +522,8 @@ class GenDictWithBasering:
         """
         INPUT:
 
-        ``parent`` -- a ring.
-        ``start`` -- some dictionary, usually the dictionary of variables of ``parent``.
+        - ``parent`` -- a ring
+        - ``start`` -- some dictionary, usually the dictionary of variables of ``parent``
 
         EXAMPLES::
 
@@ -669,9 +669,9 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         """
         INPUT:
 
-        ``R`` -- base ring.
-        ``names`` -- list of generator names.
-        ``order`` -- string determining the monomial order of the infinite polynomial ring.
+        - ``R`` -- base ring
+        - ``names`` -- list of generator names
+        - ``order`` -- string determining the monomial order of the infinite polynomial ring
 
         EXAMPLES::
 
@@ -865,7 +865,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         INPUT:
 
-        ``x`` -- any object that can be interpreted in ``self``.
+        - ``x`` -- any object that can be interpreted in ``self``.
 
         TESTS::
 
@@ -1048,7 +1048,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         INPUT:
 
-        ``R`` - a ring.
+        - ``R`` -- a ring.
 
         OUTPUT:
 
@@ -1156,8 +1156,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         INPUT:
 
-        ``x`` -- a string of the form ``a+'_'+str(n)``, where a is the
-        name of a generator, and n is an integer
+        - ``x`` -- a string of the form ``a+'_'+str(n)``, where a is the
+          name of a generator, and n is an integer
 
         RETURN:
 
@@ -1585,7 +1585,7 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
 
         INPUT:
 
-        ``R`` - a ring.
+        - ``R`` -- a ring.
 
         OUTPUT:
 

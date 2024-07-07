@@ -447,8 +447,8 @@ class gl(MatrixLieAlgebraFromAssociative):
         gens = []
         for i in range(n):
             for j in range(n):
-                names.append('E_{0}_{1}'.format(i,j))
-                mat = MS({(i,j):one})
+                names.append('E_{}_{}'.format(i, j))
+                mat = MS({(i, j): one})
                 mat.set_immutable()
                 gens.append(mat)
         self._n = n
@@ -553,6 +553,7 @@ class gl(MatrixLieAlgebraFromAssociative):
                 d['E_{}_{}'.format(*k)] = self.value[k]
             return d
 
+
 class sl(ClassicalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{sl}_n`.
@@ -625,6 +626,7 @@ class sl(ClassicalMatrixLieAlgebra):
         """
         i = self.index_set().index(i)
         return h[i,i] - h[i+1,i+1]
+
 
 class so(ClassicalMatrixLieAlgebra):
     r"""
@@ -766,6 +768,7 @@ class so(ClassicalMatrixLieAlgebra):
             # otherwise we are odd
             return h[i, i]
         return h[i, i] - h[i+1, i+1]
+
 
 class sp(ClassicalMatrixLieAlgebra):
     r"""

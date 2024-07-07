@@ -129,14 +129,16 @@ import inspect
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
 from sage.rings.integer_ring import ZZ
-from sage.functions.all import prime_pi
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer as Integer_class
 # You may have to import more here when defining new sequences
 import sage.arith.all as arith
-from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
 from sage.combinat import combinat
 from sage.misc.misc_c import prod
+
+lazy_import("sage.functions.all", "prime_pi")
+lazy_import('sage.matrix.matrix_space', 'MatrixSpace')
 
 
 class SloaneSequence(SageObject):
@@ -454,7 +456,7 @@ class A000004(SloaneSequence):
 
         INPUT:
 
-        - ``n`` - non negative integer
+        - ``n`` -- non negative integer
 
         EXAMPLES::
 
@@ -503,7 +505,7 @@ class A000005(SloaneSequence):
 
         INPUT:
 
-        - ``n`` - positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 

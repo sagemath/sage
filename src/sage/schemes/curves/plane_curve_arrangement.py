@@ -829,7 +829,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
 
         INPUT:
 
-        - ``simplified`` -- boolean (default: True); set if the group
+        - ``simplified`` -- boolean (default: ``True``); set if the group
           is simplified
 
         OUTPUT:
