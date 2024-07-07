@@ -35,6 +35,7 @@ from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.data_structures.bitset_base cimport *
+from sage.matrix.constructor import matrix
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -42,7 +43,6 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.libs.gmp.mpq cimport *
-import sage.matrix.constructor
 
 
 cdef class LeanMatrix:
@@ -105,7 +105,7 @@ cdef class LeanMatrix:
             True
         """
         cdef long r, c
-        M = sage.matrix.constructor.Matrix(self.base_ring(), self._nrows, self._ncols)
+        M = matrix(self.base_ring(), self._nrows, self._ncols)
         for r in range(self._nrows):
             for c in range(self._ncols):
                 M[r, c] = self.get_unsafe(r, c)
@@ -1049,7 +1049,7 @@ cdef class BinaryMatrix(LeanMatrix):
             True
         """
         cdef long i, j
-        M = sage.matrix.constructor.Matrix(GF(2), self._nrows, self._ncols)
+        M = matrix(GF(2), self._nrows, self._ncols)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 if bitset_in(self._M[i], j):
@@ -1686,7 +1686,7 @@ cdef class TernaryMatrix(LeanMatrix):
             True
         """
         cdef int i, j
-        M = sage.matrix.constructor.Matrix(GF(3), self._nrows, self._ncols)
+        M = matrix(GF(3), self._nrows, self._ncols)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 M[i, j] = self.get(i, j)
@@ -2264,7 +2264,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
             [0 0 0]
             [0 0 0]
         """
-        M = sage.matrix.constructor.Matrix(self._gf4, self._nrows, self._ncols)
+        M = matrix(self._gf4, self._nrows, self._ncols)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 M[i, j] = self.get(i, j)

@@ -224,7 +224,6 @@ def bernoulli_mod_p(int p):
     return output
 
 
-
 def bernoulli_mod_p_single(long p, long k):
     r"""
     Return the Bernoulli number `B_k` mod `p`.

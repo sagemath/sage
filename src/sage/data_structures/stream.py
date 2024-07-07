@@ -2102,7 +2102,7 @@ class Stream_plethysm(Stream_binary):
     - ``g`` -- a :class:`Stream` with positive order, unless ``f`` is
       of :class:`Stream_exact`.
     - ``p`` -- the ring of powersum symmetric functions containing ``g``
-    - ``ring`` (optional, default ``None``) -- the ring the result
+    - ``ring`` (default: ``None``) -- the ring the result
       should be in, by default ``p``
     - ``include`` -- a list of variables to be treated as degree one
       elements instead of the default degree one elements

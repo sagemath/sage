@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Drinfeld modules over a base
@@ -549,8 +550,7 @@ class DrinfeldModules(Category_over_base_ring):
 
         K = self._base_field
         coeffs = [self._constant_coefficient]
-        for _ in range(rank-1):
-            coeffs.append(K.random_element())
+        coeffs.extend(K.random_element() for _ in range(rank - 1))
         dom_coeff = 0
         while dom_coeff == 0:
             dom_coeff = K.random_element()

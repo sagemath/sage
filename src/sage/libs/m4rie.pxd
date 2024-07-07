@@ -8,7 +8,6 @@
 from sage.libs.m4ri cimport mzd_t, m4ri_word
 
 
-
 cdef extern from "m4rie/m4rie.h":
     ctypedef struct gf2e:
         int degree

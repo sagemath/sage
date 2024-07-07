@@ -475,8 +475,6 @@ Test that the output is parseable (:issue:`31796`)::
     a and (b or c)
     sage: bar == foo
     True
-
-
 """
 
 # ****************************************************************************

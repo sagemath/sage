@@ -519,7 +519,6 @@ The components on the basis are returned by the square bracket operator for
     [2, 0, -5]
     sage: [v.coefficient(i) for i in {1,2,3}]
     [2, 0, -5]
-
 """
 # ******************************************************************************
 #       Copyright (C) 2014-2021 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -2329,10 +2328,10 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             if isinstance(comp, CompWithSym):
                 resu._sym = comp._sym
                 resu._antisym = comp._antisym
-        #
+
         # 2/ Tensor components set to comp:
         resu._components[comp._frame] = comp
-        #
+
         return resu
 
     def alternating_contravariant_tensor(self, degree, name=None,

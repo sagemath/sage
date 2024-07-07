@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Valuations on polynomial rings based on `\phi`-adic expansions
 
@@ -39,7 +38,6 @@ Here, the expansion lists the remainders of repeated division by `x^2 + x + 1`::
 
     sage: list(w.coefficients(f))
     [x + 1, 1]
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>

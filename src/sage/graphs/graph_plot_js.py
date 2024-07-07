@@ -165,15 +165,15 @@ def gen_html_code(G,
 
     EXAMPLES::
 
-        sage: graphs.RandomTree(50).show(method="js")                           # optional - internet, needs sage.plot
+        sage: graphs.RandomTree(50).show(method="js")                           # optional - internet
 
         sage: g = graphs.PetersenGraph()
-        sage: g.show(method="js", vertex_partition=g.coloring())                # optional - internet, needs sage.plot
+        sage: g.show(method="js", vertex_partition=g.coloring())                # optional - internet
 
-        sage: graphs.DodecahedralGraph().show(method="js",                      # optional - internet, needs sage.plot
+        sage: graphs.DodecahedralGraph().show(method="js",                      # optional - internet
         ....:                                 force_spring_layout=True)
 
-        sage: graphs.DodecahedralGraph().show(method="js")                      # optional - internet, needs sage.plot
+        sage: graphs.DodecahedralGraph().show(method="js")                      # optional - internet
 
         sage: # needs sage.combinat
         sage: g = digraphs.DeBruijn(2, 2)
@@ -183,7 +183,7 @@ def gen_html_code(G,
         sage: g.add_edge("10", "10", "c")
         sage: g.add_edge("10", "10", "d")
         sage: g.add_edge("01", "11", "1")
-        sage: g.show(method="js", vertex_labels=True, edge_labels=True,         # optional - internet, needs sage.plot
+        sage: g.show(method="js", vertex_labels=True, edge_labels=True,         # optional - internet
         ....:        link_distance=200, gravity=.05, charge=-500,
         ....:        edge_partition=[[("11", "12", "2"), ("21", "21", "a")]],
         ....:        edge_thickness=4)

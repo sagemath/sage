@@ -234,7 +234,6 @@ In case of symmetries, only non-redundant components are stored::
     [ 0  0  0]
     sage: c._comp
     {(0, 1): 3}
-
 """
 
 # *****************************************************************************
@@ -279,8 +278,8 @@ def get_components_class(sym=None, implementation=None) -> type:
     if implementation == "numpy":
         try:
             from . import comp_numpy
-        except ImportError:
-            pass
+        except:
+            raise ImportError('file comp_numpy does not exist')
         if sym is None:
             return comp_numpy.ComponentNumpy
         elif sym == "sym":
@@ -295,8 +294,8 @@ def get_components_class(sym=None, implementation=None) -> type:
     if implementation == "torch":
         try:
             from . import comp_torch
-        except ImportError:
-            pass
+        except:
+            raise ImportError('file comp_torch does not exist')
         if sym is None:
             return comp_torch.ComponentTorch
         elif sym == "fullysym":
@@ -306,6 +305,7 @@ def get_components_class(sym=None, implementation=None) -> type:
         elif sym == "kroneckerdelta":
             return comp_torch.KroneckerDeltaTorch
 
+    raise ValueError('sym must be numpy, torch or None.')
 
 class Components(SageObject):
     r"""

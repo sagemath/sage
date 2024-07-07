@@ -923,7 +923,7 @@ class ComponentNumpy(SageObject):
 
         comp = self._comp
         if np.all(comp == 0):
-            raise ValueError("all elements in componsnt are zero")
+            raise ValueError("all elements in component are zero")
         if factor_matrix is None:
             fmat = [np.array([]) for _ in range(self._nid)]
             
@@ -970,10 +970,10 @@ class ComponentNumpy(SageObject):
             for _mode, f_mat in enumerate(fmat):
                 core_shape = list(core_shape)
                 core_shape[_mode] = f_mat.shape[0]
-                full_shape = list(core_shape)
-                mode_dim = full_shape.pop(_mode)
-                full_shape.insert(0, mode_dim)
-                t = np.moveaxis(np.reshape(np.dot(f_mat, np.reshape(np.moveaxis(t, _mode, 0), (t.shape[_mode], -1))), full_shape), 0, _mode)
+                shape = list(core_shape)
+                mode_dim = shape.pop(_mode)
+                shape.insert(0, mode_dim)
+                t = np.moveaxis(np.reshape(np.dot(f_mat, np.reshape(np.moveaxis(t, _mode, 0), (t.shape[_mode], -1))), shape), 0, _mode)
 
             residual = comp - t
             previous_cost = new_cost
@@ -989,5 +989,62 @@ class ComponentNumpy(SageObject):
         if return_reconstruction:
             out.append(t)
         if return_error:
-            out.append(return_error)
+            out.append(new_cost)
         return tuple(out)
+
+    def TT(self, rank, return_error=False, return_reconstruction=False):
+        import scipy
+        comp = self._comp
+        if np.all(comp == 0):
+            raise ValueError("all elements in component are zero")
+        cores = []
+        sizes = self._shape
+        rank = (1,) + tuple(rank) + (1,)
+        C = comp
+        for k in range(len(self._shape) - 1):
+            rows = rank[k] * sizes[k]
+            C = np.reshape(C, [rows, -1], order='F')
+            U, S, V = scipy.linalg.svd(C)
+            U = U[:, :rank[k + 1]]
+            S = S[:rank[k + 1]]
+            V = V[:rank[k + 1], :].T
+
+            if k == 0:
+                new_core = np.reshape(U, [sizes[k], rank[k+1]], order='F')
+            else:
+                new_core = np.reshape(U, [rank[k], sizes[k], rank[k+1]], order='F')
+
+            cores.append(new_core)
+            C = np.dot(V, np.diag(S)).T
+        new_core = C
+        cores.append(new_core)
+
+        if return_error:
+            res = [core.copy() for core in cores]
+            rank = tuple(core_values.shape[-1] for core_values in res[:-1]) + (1,)
+            core = res[0]
+            data = core
+
+            shape = [None] * len(res)
+            shape[0] = res[0].shape[0]
+            shape[-1] = res[-1].shape[1]
+            for i in range(1, len(res) - 1):
+                shape[i] = res[i].shape[1]
+
+            for i, core in enumerate(res[1:]):
+                shape_2d = [rank[i], rank[i+1] * shape[i + 1]]
+                core_flat = np.reshape(core, shape_2d, order='F')
+                data = np.reshape(data, [-1, rank[i]], order='F')
+                data = np.dot(data, core_flat)
+            data = np.reshape(data, shape, order='F')
+
+            residual = comp - data
+
+        out = list(cores)
+
+        if return_reconstruction:
+            out.append(data)
+        if return_error:
+            cost = abs(np.linalg.norm(residual.data) / np.linalg.norm(comp.data))
+            out.append(cost)
+        return out

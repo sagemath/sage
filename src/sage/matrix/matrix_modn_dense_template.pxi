@@ -71,7 +71,6 @@ We test corner cases for multiplication::
     ....:         print('Uncaught dimension mismatch!')
     ....:     except (IndexError, TypeError, ArithmeticError):
     ....:         pass
-
 """
 
 #*****************************************************************************
@@ -403,7 +402,7 @@ cpdef __matrix_from_rows_of_matrices(X):
 
     INPUT:
 
-    - ``X`` - a nonempty list of matrices of the same size mod a
+    - ``X`` -- a nonempty list of matrices of the same size mod a
        single modulus `n`
 
     EXAMPLES::
@@ -451,7 +450,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             self._entries = <celement *>check_calloc(self._nrows * self._ncols, sizeof(celement))
         else:
             self._entries = <celement *>check_allocarray(self._nrows * self._ncols, sizeof(celement))
-            
+
         self._matrix = <celement **>check_allocarray(self._nrows, sizeof(celement*))
         cdef unsigned int k
         cdef Py_ssize_t i
@@ -491,7 +490,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` - perform modular reduction first?
+        - ``coerce`` -- perform modular reduction first?
 
         EXAMPLES::
 
@@ -524,7 +523,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         it = ma.iter(convert=False, sparse=True)
         R = ma.base
         p = R.characteristic()
-        
+
         for t in it:
             se = <SparseEntry>t
             x = se.entry
@@ -862,7 +861,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -1152,7 +1151,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``v`` - a vector
+        - ``v`` -- a vector
 
         EXAMPLES::
 
@@ -1275,9 +1274,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``var`` - a variable name
+        - ``var`` -- a variable name
 
-        - ``algorithm`` - 'generic', 'linbox' or 'all' (default: linbox)
+        - ``algorithm`` -- 'generic', 'linbox' or 'all' (default: linbox)
 
         EXAMPLES::
 
@@ -1414,9 +1413,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``var`` - a variable name
+        - ``var`` -- a variable name
 
-        - ``algorithm`` - ``generic`` or ``linbox`` (default:
+        - ``algorithm`` -- ``generic`` or ``linbox`` (default:
           ``linbox``)
 
         - ``proof`` -- (default: ``True``); whether to provably return
@@ -1553,7 +1552,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``var`` - a variable name
+        - ``var`` -- a variable name
 
         EXAMPLES::
 
@@ -1585,21 +1584,21 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``self`` - a mutable matrix
+        - ``self`` -- a mutable matrix
 
         - ``algorithm``
 
-          - ``linbox`` - uses the LinBox library (wrapping fflas-ffpack)
+          - ``linbox`` -- uses the LinBox library (wrapping fflas-ffpack)
 
-          - ``linbox_noefd`` - uses the FFPACK directly, less memory and faster (default)
+          - ``linbox_noefd`` -- uses the FFPACK directly, less memory and faster (default)
 
-          - ``gauss`` - uses a custom slower `O(n^3)` Gauss
+          - ``gauss`` -- uses a custom slower `O(n^3)` Gauss
             elimination implemented in Sage.
 
-          - ``all`` - compute using both algorithms and verify that
+          - ``all`` -- compute using both algorithms and verify that
             the results are the same.
 
-        - ``**kwds`` - these are all ignored
+        - ``**kwds`` -- these are all ignored
 
         OUTPUT:
 
@@ -1766,7 +1765,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``efd`` - if ``True`` LinBox's ``EchelonFormDomain``
+        - ``efd`` -- if ``True`` LinBox's ``EchelonFormDomain``
           implementation is used, which is faster than the direct
           ``LinBox::FFPACK`` implementation, since the latter also
           computes the transformation matrix (which we
@@ -2039,7 +2038,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``var`` - name of the indeterminate of the charpoly.
+        - ``var`` -- name of the indeterminate of the charpoly.
 
         OUTPUT:
 
@@ -2291,10 +2290,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``row1, row2`` - the two rows to be transformed (within
-          self)
+        - ``row1``, ``row2`` -- the two rows to be transformed (within
+          ``self``)
 
-        -``start_col`` - the column of the pivots in ``row1`` and
+        -``start_col`` -- the column of the pivots in ``row1`` and
          ``row2``. It is assumed that all entries before ``start_col``
          in ``row1`` and ``row2`` are zero.
 
@@ -2332,9 +2331,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``row`` - integer
-        - ``multiple`` - finite field element
-        - ``start_col`` - integer
+        - ``row`` -- integer
+        - ``multiple`` -- finite field element
+        - ``start_col`` -- integer
 
         EXAMPLES::
 
@@ -2536,9 +2535,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``density`` - Integer; proportion (roughly) to be considered
+        - ``density`` -- Integer; proportion (roughly) to be considered
            for changes
-        - ``nonzero`` - Bool (default: ``False``); whether the new
+        - ``nonzero`` -- Bool (default: ``False``); whether the new
            entries are forced to be non-zero
 
         OUTPUT:
@@ -2655,7 +2654,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        -  ``magma`` - a Magma session
+        -  ``magma`` -- a Magma session
 
         OUTPUT: string
 
@@ -3048,9 +3047,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``nrows`` - integer
+        - ``nrows`` -- integer
 
-        - ``ncols`` - integer
+        - ``ncols`` -- integer
 
         EXAMPLES::
 
@@ -3068,7 +3067,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         OUTPUT:
 
-        - ``list`` - a list of matrices
+        - ``list`` -- a list of matrices
         """
         if nrows * ncols != self._ncols:
             raise ValueError("nrows * ncols must equal self's number of columns")

@@ -13,7 +13,6 @@ REFERENCE:
 - [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
   Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
   533-583.
-
 """
 
 #*****************************************************************************
@@ -170,7 +169,6 @@ cdef class MatrixStruct:
 
         PS_dealloc(part)
 
-
     def automorphism_group(self):
         """
         Return a list of generators of the automorphism group, along with its
@@ -295,6 +293,7 @@ cdef int compare_matrices(int *gamma_1, int *gamma_2, void *S1, void *S2, int de
 
 cdef bint all_matrix_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0
+
 
 def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_matrix=5, density_range=(.1,.9)):
     """
