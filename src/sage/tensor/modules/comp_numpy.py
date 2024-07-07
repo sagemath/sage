@@ -897,7 +897,7 @@ class ComponentNumpy(SageObject):
 
     def _svd(self, matrix, rank=None):
         import scipy
-        dim_1, dim_2 = self._shape
+        dim_1, dim_2 = matrix.shape
         if dim_1 <= dim_2:
             mdim = dim_1
         else:
@@ -919,3 +919,75 @@ class ComponentNumpy(SageObject):
             U, S, V = U[:, ::-1], S[::-1], V[:, ::-1]
             return U, S, V.T
     
+    def CPD(self, rank, iterations=1000, epsilon=10e-5, tolerance=10e-8, factor_matrix=None, algo='svd', return_error=False, return_reconstruction=False):
+
+        comp = self._comp
+        if np.all(comp == 0):
+            raise ValueError("all elements in componsnt are zero")
+        if factor_matrix is None:
+            fmat = [np.array([]) for _ in range(self._nid)]
+            
+            if (np.array(self._shape) >= rank).sum() == self._nid and algo == 'svd':
+                for mode in range(self._nid):
+                    k = np.reshape(np.moveaxis(comp, mode, 0), (comp.shape[mode], -1))
+
+                    fmat[mode], _, _ = self._svd(k, rank)
+            else:
+                fmat = [np.random.randn(mode_size, rank) for mode_size in self._shape]
+        else:
+            if not isinstance(factor_matrix, list):
+                raise TypeError("factor_matrix must be of type list")
+            if not all(isinstance(m, np.ndarray) for m in factor_matrix):
+                raise TypeError("elements of factor matrix must be of type np.ndarray")
+
+            if len(factor_matrix) != self._nid:
+                raise ValueError("Invalid length of factor_matrix, expecting {}, got {}".format(self._nid, len(factor_matrix)))
+            if not all(m.shape == (mode, rank[0]) for m, mode in zip(factor_matrix, self._shape)):
+                raise ValueError("factor matrix with incorrect shape passed")
+            fmat = factor_matrix.copy()
+
+        from functools import reduce
+        initial_core = np.repeat(np.array([1]), rank)
+        norm = np.linalg.norm(comp.data)
+        new_cost = 0
+        for _ in range(iterations):
+            for mode in range(self._nid):
+                array = [fmat[i] for i in range(len(fmat)) if i != mode]
+                khatri_rao = ComponentNumpy._khatri_rao_product(*array)
+                hadamard = reduce(np.multiply, [np.dot(mat.T, mat) for i, mat in enumerate(fmat) if i != mode])
+
+                soln = reduce(np.dot, [np.reshape(np.moveaxis(comp, mode, 0), (comp.shape[mode], -1)).data,
+                                        khatri_rao,
+                                        np.linalg.pinv(hadamard)])
+                fmat[mode] = soln
+
+            core_shape = (fmat[0].shape[1],) * len(fmat)
+            order = len(core_shape)
+            _rank = core_shape[0]
+            core = np.zeros(core_shape)
+            core[np.diag_indices(_rank, ndim=order)] = initial_core
+            t = core
+            for _mode, f_mat in enumerate(fmat):
+                core_shape = list(core_shape)
+                core_shape[_mode] = f_mat.shape[0]
+                full_shape = list(core_shape)
+                mode_dim = full_shape.pop(_mode)
+                full_shape.insert(0, mode_dim)
+                t = np.moveaxis(np.reshape(np.dot(f_mat, np.reshape(np.moveaxis(t, _mode, 0), (t.shape[_mode], -1))), full_shape), 0, _mode)
+
+            residual = comp - t
+            previous_cost = new_cost
+            new_cost = abs(np.linalg.norm(residual.data) / norm)
+
+            converged = abs(new_cost - previous_cost) <= tolerance
+            if new_cost <= epsilon:
+                break
+            if converged:
+                break
+
+        out = list(fmat)
+        if return_reconstruction:
+            out.append(t)
+        if return_error:
+            out.append(return_error)
+        return tuple(out)
