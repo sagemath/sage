@@ -225,7 +225,7 @@ def _isomorphisms(E, F):
 
     INPUT:
 
-    - ``E``, ``F`` -- EllipticCurve; Two elliptic curves
+    - ``E``, ``F`` -- two elliptic curves
 
     OUTPUT:
 

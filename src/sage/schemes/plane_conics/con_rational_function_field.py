@@ -435,7 +435,7 @@ for function field of characteristic 2.")
           ``supports[i]``, in the same order
         - ``case`` -- 1 or 0, as in [HC2006]_
         - ``solution`` -- (default: 0) a solution of (5) in [HC2006]_, if
-          ``case=0``, 0 otherwise
+          ``case`` = 0, 0 otherwise
 
         OUTPUT:
 

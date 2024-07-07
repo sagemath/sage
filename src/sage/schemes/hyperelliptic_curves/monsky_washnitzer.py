@@ -664,7 +664,7 @@ def transpose_list(input) -> list[list]:
 
     - ``input`` -- list of lists, each list of the same length
 
-    OUTPUT: ``output``; list of lists such that ``output[i][j] = input[j][i]``
+    OUTPUT: list of lists such that ``output[i][j] = input[j][i]``
 
     EXAMPLES::
 

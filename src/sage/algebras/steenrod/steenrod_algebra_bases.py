@@ -269,8 +269,8 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     - ``profile`` -- profile function (default: ``None``); this
       is just passed on to the functions :func:`milnor_basis` and
       :func:`pst_basis`
-    - ``truncation_type`` -- truncation type, either 0 or Infinity
-      (default: Infinity if no profile function is specified,
+    - ``truncation_type`` -- truncation type, either 0 or ``Infinity``
+      (default: ``Infinity`` if no profile function is specified,
       0 otherwise).  This is just passed on to the function
       :func:`milnor_basis`.
     - ``generic`` -- boolean (default: ``None``)
@@ -525,8 +525,8 @@ def milnor_basis(n, p=2, **kwds):
       :func:`SteenrodAlgebra <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra>`
       for information on profile functions.
 
-    - ``truncation_type`` -- truncation type, either 0 or Infinity
-      (default: Infinity if no profile function is specified,
+    - ``truncation_type`` -- truncation type, either 0 or ``Infinity``
+      (default: ``Infinity`` if no profile function is specified,
       0 otherwise)
 
     OUTPUT: tuple of mod `p` Milnor basis elements in dimension `n`
@@ -774,8 +774,8 @@ def atomic_basis(n, basis, **kwds):
       :mod:`sage.algebras.steenrod.steenrod_algebra` and
       :func:`SteenrodAlgebra` for information on profile functions.
 
-    - ``truncation_type`` -- truncation type, either 0 or Infinity
-      (default: Infinity if no profile function is specified,
+    - ``truncation_type`` -- truncation type, either 0 or ``Infinity``
+      (default: ``Infinity`` if no profile function is specified,
       0 otherwise).
 
     OUTPUT: tuple of basis elements in dimension `n`
@@ -1005,8 +1005,8 @@ def atomic_basis_odd(n, basis, p, **kwds):
       :mod:`sage.algebras.steenrod.steenrod_algebra` and
       :func:`SteenrodAlgebra` for information on profile functions.
 
-    - ``truncation_type`` -- truncation type, either 0 or Infinity
-      (default: Infinity if no profile function is specified,
+    - ``truncation_type`` -- truncation type, either 0 or ``Infinity``
+      (default: ``Infinity`` if no profile function is specified,
       0 otherwise).
 
     OUTPUT: tuple of basis elements in dimension `n`

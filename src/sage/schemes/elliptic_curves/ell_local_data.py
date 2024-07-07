@@ -165,7 +165,7 @@ class EllipticCurveLocalData(SageObject):
 
         - ``P`` -- a prime ideal of the field, or a prime integer if the field is `\QQ`
 
-        - ``proof`` -- bool-- if ``True``, only use provably correct
+        - ``proof`` -- boolean; if ``True``, only use provably correct
           methods (default: controlled by global proof module).  Note
           that the proof module is number_field, not elliptic_curves,
           since the functions that actually need the flag are in
@@ -508,7 +508,7 @@ class EllipticCurveLocalData(SageObject):
 
         OUTPUT:
 
-        (int or ``None``):
+        integer or ``None``:
 
         - +1 for split multiplicative reduction
         - -1 for non-split multiplicative reduction
@@ -697,7 +697,7 @@ class EllipticCurveLocalData(SageObject):
 
         (tuple) ``(Emin, p, val_disc, fp, KS, cp)`` where:
 
-        - ``Emin`` -- EllipticCurve; a model (integral and) minimal at P
+        - ``Emin`` -- :class:`EllipticCurve`; a model (integral and) minimal at P
         - ``p`` -- integer; the residue characteristic
         - ``val_disc`` -- integer; the valuation of the local minimal discriminant
         - ``fp`` -- integer; the valuation of the conductor

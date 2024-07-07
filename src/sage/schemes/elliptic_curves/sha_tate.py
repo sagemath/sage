@@ -928,7 +928,7 @@ class Sha(SageObject):
           analytic rank greater than 2 (in which case we return 0)
 
         - ``index`` -- the odd part of the index of the Heegner point in the full
-          group of `K`-rational points on (if `E` has CM, returns 0)
+          group of `K`-rational points on `E` (if `E` has CM, returns 0)
 
         REMARKS:
 

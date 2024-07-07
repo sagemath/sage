@@ -187,7 +187,7 @@ cdef class PeriodicRegion:
 
         INPUT:
 
-        - ``condition`` -- function, (default: ``None``); if not ``None``, only
+        - ``condition`` -- function (default: ``None``); if not ``None``, only
           keep tiles in the refinement which satisfy the condition
 
         - ``times`` -- integer (default: 1); the number of times to refine.

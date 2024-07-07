@@ -610,7 +610,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         INPUT:
 
-        - ``basepoint`` -- (default: Infinity) a point of the
+        - ``basepoint`` -- (default: ``Infinity``) a point of the
           same Berkovich space as this point
 
         OUTPUT: a real number
@@ -1555,8 +1555,8 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         INPUT:
 
         - ``other`` -- a point of the same Berkovich space as this point
-        - ``basepoint`` -- (default: Infinity) a point of the same
-          Berkovich space as this point or Infinity
+        - ``basepoint`` -- (default: ``Infinity``) a point of the same
+          Berkovich space as this point or ``Infinity``
 
         OUTPUT: a point of the same Berkovich space
 
@@ -2238,8 +2238,8 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
         INPUT:
 
         - ``other`` -- a point of the same Berkovich space as this point
-        - ``basepoint`` -- (default: Infinity) a point of the same
-          Berkovich space as this point, or infinity
+        - ``basepoint`` -- (default: ``Infinity``) a point of the same
+          Berkovich space as this point, or ``Infinity``
 
         OUTPUT: a point of the same Berkovich space
 

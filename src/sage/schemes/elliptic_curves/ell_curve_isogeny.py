@@ -274,7 +274,7 @@ def compute_vw_kohel_even_deg1(x0, y0, a1, a2, a4):
 
     - ``a1``, ``a2``, ``a4`` -- invariants of `E`
 
-    OUTPUT: tuple) Vélu's isogeny parameters `(v,w)`.
+    OUTPUT: Vélu's isogeny parameters `(v,w)`.
 
     EXAMPLES:
 
@@ -310,7 +310,7 @@ def compute_vw_kohel_even_deg3(b2, b4, s1, s2, s3):
     - ``s1``, ``s2``, ``s3`` -- signed coefficients of the 2-division
       polynomial of `E`
 
-    OUTPUT: tuple) Vélu's isogeny parameters `(v,w)`.
+    OUTPUT: Vélu's isogeny parameters `(v,w)`.
 
     EXAMPLES:
 
@@ -349,7 +349,7 @@ def compute_vw_kohel_odd(b2, b4, b6, s1, s2, s3, n):
 
     - ``n`` -- integer; the degree
 
-    OUTPUT: tuple; Vélu's isogeny parameters `(v,w)`
+    OUTPUT: Vélu's isogeny parameters `(v,w)`
 
     EXAMPLES:
 

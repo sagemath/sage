@@ -1485,12 +1485,12 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         INPUT:
 
-        - ``R``, ``Q`` -- points on ``self.curve()`` with ``Q`` nonzero
+        - ``R``, ``Q`` -- points on ``self.curve()`` with `Q` nonzero
 
         OUTPUT:
 
         An element of the base field ``self.curve().base_field()``.
-        A :exc:`ValueError` is raised if ``Q`` is zero.`
+        A :exc:`ValueError` is raised if `Q` is zero.
 
         EXAMPLES::
 

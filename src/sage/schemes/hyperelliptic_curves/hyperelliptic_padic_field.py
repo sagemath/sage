@@ -478,7 +478,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         - ``P`` -- point on ``self``
         - ``Q`` -- point on ``self``
-        - ``algorithm`` -- (default: ``None``, uses Frobenius) or teichmuller
+        - ``algorithm`` -- ``None`` (default, uses Frobenius) or teichmuller
           (uses Teichmuller points)
 
         OUTPUT: the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
@@ -702,7 +702,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - ``w`` -- differential (if one of P,Q is Weierstrass, w must be odd)
         - ``P`` -- point on ``self``
         - ``Q`` -- point on ``self``
-        - ``algorithm`` -- (default: ``None``, uses Frobenius) or teichmuller
+        - ``algorithm`` -- ``None`` (default, uses Frobenius) or teichmuller
           (uses Teichmuller points)
 
         OUTPUT: the Coleman integral `\int_P^Q w`

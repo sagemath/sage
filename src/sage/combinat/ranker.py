@@ -181,7 +181,7 @@ def unrank(L, i):
     INPUT:
 
     - ``L`` -- list, tuple, finite enumerated set, etc.
-    - ``i`` -- integer or :class:`Integer`
+    - ``i`` -- integer
 
     The purpose of this utility is to give a uniform idiom to recover
     the `i`-th element of an object ``L``, whether ``L`` is a list,

@@ -844,7 +844,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``P`` -- either None, a prime ideal of the base field of ``self``,
+        - ``P`` -- either ``None``, a prime ideal of the base field of ``self``,
           or an element of the base field that generates a prime ideal
 
         - ``proof`` -- whether to only use provably correct methods

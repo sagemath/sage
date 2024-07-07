@@ -1441,12 +1441,12 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field,
-          `\GF{q}`
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+          finite field, `\GF{q}`
 
         OUTPUT:
 
-        - matrix(Fq,M)' The matrix `M = (c_(pi-j)), f(x)^((p-1)/2) = \sum c_i x^i`
+        - 'matrix(Fq,M)' The matrix `M = (c_(pi-j)), f(x)^((p-1)/2) = \sum c_i x^i`
         - 'Coeff' List of Coeffs of F, this is needed for Hasse-Witt function.
         - 'g' genus of the curve self, this is needed by a-number.
         - 'Fq' is the base field of self, and it is needed for Hasse-Witt
@@ -1576,12 +1576,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+          finite field, `\GF{q}`
 
         OUTPUT:
 
-        - ``M`` -- the matrix `M = (c_{pi-j})`, where `c_i` are the
-          coefficients of  `f(x)^{(p-1)/2} = \sum c_i x^i`
+        The matrix `M = (c_{pi-j})`, where `c_i` are the coefficients of
+        `f(x)^{(p-1)/2} = \sum c_i x^i`.
 
         REFERENCES:
 
@@ -1775,11 +1776,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+          finite field, `\GF{q}`
 
         OUTPUT:
 
-        - ``N`` : The matrix `N = M M^p \dots M^{p^{g-1}}` where `M = c_{pi-j}`, and `f(x)^{(p-1)/2} = \sum c_i x^i`
+        The matrix `N = M M^p \dots M^{p^{g-1}}` where `M = c_{pi-j}`, and
+        `f(x)^{(p-1)/2} = \sum c_i x^i`.
 
         Reference-N. Yui. On the Jacobian varieties of hyperelliptic curves over fields of characteristic `p > 2`.
 
@@ -1832,9 +1835,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+          finite field, `\GF{q}`
 
-        OUTPUT: ``a``; a-number
+        OUTPUT: a-number
 
         EXAMPLES::
 
@@ -1871,9 +1875,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+          finite field, `\GF{q}`
 
-        OUTPUT: ``pr``; p-rank
+        OUTPUT: p-rank
 
         EXAMPLES::
 

@@ -2039,8 +2039,8 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
 
     psi = Fxuv(Psi2(l))
     for u0, v0 in S:
-        A4 = Fuv(data['A4'])(u0,v0) #nonzero since j!=0
-        A6 = Fuv(data['A6'])(u0,v0) #nonzero since j!=1728
+        A4 = Fuv(data['A4'])(u0,v0)  # nonzero since j!=0
+        A6 = Fuv(data['A6'])(u0,v0)  # nonzero since j!=1728
         T = (c4*A6)/(2*c6*A4)
         kernels += [psi((36*X+3*b2)*T,u0,v0).monic()]
     return [E.isogeny(ker) for ker in kernels]
