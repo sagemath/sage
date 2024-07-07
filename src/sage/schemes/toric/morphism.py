@@ -35,7 +35,7 @@ familiar dictionary between toric varieties and fans. Toric geometry
 is a functor from the category of fans and fan morphisms to the
 category of toric varieties and toric morphisms.
 
-.. note::
+.. NOTE::
 
     Do not create the toric morphisms (or any morphism of schemes)
     directly from the ``SchemeMorphism...`` classes. Instead, use the

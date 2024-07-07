@@ -4204,7 +4204,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
           of lattice points generating the semigroup of lattice points
           contained in ``self``.
 
-        .. note::
+        .. NOTE::
 
             No attempt is made to return a minimal set of generators, see
             :meth:`Hilbert_basis` for that.
@@ -4502,7 +4502,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A `\ZZ`-vector of length ``len(self.Hilbert_basis())`` with nonnegative
         components.
 
-        .. note::
+        .. NOTE::
 
             Since the Hilbert basis elements are not necessarily linearly
             independent, the expansion coefficients are not unique. However,

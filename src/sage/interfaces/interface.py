@@ -179,7 +179,7 @@ class Interface(WithEqualityById, ParentWithBase):
         Press :kbd:`Ctrl` + :kbd:`D` or type 'quit' or 'exit' to exit and
         return to Sage.
 
-        .. note::
+        .. NOTE::
 
            This is completely different than the console() member
            function. The console function opens a new copy of the

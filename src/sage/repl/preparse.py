@@ -1865,7 +1865,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
     Special attentions are given to numeric literals and load/attach
     file directives.
 
-    .. note:: Temporarily, if @parallel is in the input, then
+    .. NOTE:: Temporarily, if @parallel is in the input, then
        numeric_literals is always set to False.
 
     INPUT:

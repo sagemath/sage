@@ -1102,7 +1102,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     are invalid. The matches will be case-insensitive unless
     ``ignore_case`` is ``False``.
 
-    .. note::
+    .. NOTE::
 
         The ``extraN`` parameters are present only because
         ``search_src(string, *extras, interact=False)``
@@ -1277,7 +1277,7 @@ def search_def(name, extra1='', extra2='', extra3='', extra4='',
 
     OUTPUT: same as for :func:`search_src`
 
-    .. note::
+    .. NOTE::
 
         The regular expression used by this function only finds function
         definitions that are preceded by spaces, so if you use tabs on a

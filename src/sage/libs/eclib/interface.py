@@ -9,7 +9,7 @@ classes. Instead, one can create an
 :class:`EllipticCurve <sage.schemes.elliptic_curves.constructor.EllipticCurve>`
 and call methods that are implemented using this module.
 
-.. note::
+.. NOTE::
 
    This interface is a direct library-level interface to ``eclib``,
    including the 2-descent program ``mwrank``.
@@ -366,7 +366,7 @@ class mwrank_EllipticCurve(SageObject):
         Return the conductor of this curve, computed using Cremona's
         implementation of Tate's algorithm.
 
-        .. note::
+        .. NOTE::
 
            This is independent of PARI's.
 
@@ -989,7 +989,7 @@ class mwrank_MordellWeil(SageObject):
         Return the regulator of the points in this subgroup of
         the Mordell-Weil group.
 
-        .. note::
+        .. NOTE::
 
            ``eclib`` can compute the regulator to arbitrary precision,
            but the interface currently returns the output as a ``float``.
@@ -1088,7 +1088,7 @@ class mwrank_MordellWeil(SageObject):
         - ``unsatlist`` -- list of ints list of primes at which
           saturation could not be proved or achieved
 
-        .. note::
+        .. NOTE::
 
           In versions up to v20190909, ``eclib`` used floating point
           methods based on elliptic logarithms to divide points, and
@@ -1097,7 +1097,7 @@ class mwrank_MordellWeil(SageObject):
           on division polynomials, which should mean that such
           failures does not happen.
 
-        .. note::
+        .. NOTE::
 
            We emphasize that if this function returns ``True`` as the
            first return argument (``ok``), and if the default was used
@@ -1230,7 +1230,7 @@ class mwrank_MordellWeil(SageObject):
         - ``height_limit``-- float (default: 18); search up to this
           logarithmic height
 
-        .. note::
+        .. NOTE::
 
           On 32-bit machines, this *must* be < 21.48 (`31\log(2)`) else
           `\exp(h_{\text{lim}}) > 2^{31}` and overflows.  On 64-bit machines, it
@@ -1239,7 +1239,7 @@ class mwrank_MordellWeil(SageObject):
           by (roughly) `\exp(1.5)=4.5`, so searching up to even 20
           takes a very long time.
 
-        .. note::
+        .. NOTE::
 
            The search is carried out with a quadratic sieve, using
            code adapted from a version of Michael Stoll's

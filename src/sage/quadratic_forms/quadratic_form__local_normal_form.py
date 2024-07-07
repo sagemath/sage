@@ -261,7 +261,7 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
     - `s_i` is an integer,
     - `L_i` is a block-diagonal unimodular quadratic form over `\ZZ_p`.
 
-    .. note::
+    .. NOTE::
 
         These forms `L_i` are defined over the `p`-adic integers, but by a
         matrix over `\ZZ` (or `\QQ`?).

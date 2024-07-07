@@ -75,7 +75,7 @@ cdef class Polynomial_template(Polynomial):
     We illustrate the generic glueing using univariate polynomials over
     `\mathop{\mathrm{GF}}(2)`.
 
-    .. note::
+    .. NOTE::
 
         Implementations using this template MUST implement coercion from base
         ring elements and :meth:`get_unsafe`. See

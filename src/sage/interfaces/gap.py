@@ -129,7 +129,7 @@ Long Input
 The GAP interface reads in even very long input (using files) in a
 robust manner, as long as you are creating a new object.
 
-.. note::
+.. NOTE::
 
    Using ``gap.eval`` for long input is much less robust, and is not
    recommended.

@@ -180,7 +180,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: B.is_poset_isomorphism(f, D)
                 False
 
-            .. note:: since ``D`` and ``B`` are not facade posets, ``f`` is
+            .. NOTE:: since ``D`` and ``B`` are not facade posets, ``f`` is
                responsible for the conversions between integers and subsets to
                elements of ``D`` and ``B`` and back.
 
@@ -228,7 +228,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: B.is_poset_morphism(f, D)
                 True
 
-            .. note:: since ``D`` and ``B`` are not facade posets, ``f`` is responsible
+            .. NOTE:: since ``D`` and ``B`` are not facade posets, ``f`` is responsible
                for the conversions between integers and subsets to elements of
                ``D`` and ``B`` and back.
 

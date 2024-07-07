@@ -5,7 +5,7 @@ Sage provides an interface to the Magma computational algebra
 system. This system provides extensive functionality for number
 theory, group theory, combinatorics and algebra.
 
-.. note::
+.. NOTE::
 
    You must have Magma installed on your
    computer for this interface to work. Magma is not free, so it is
@@ -281,7 +281,7 @@ class Magma(ExtraTabCompletion, Expect):
     object, and ``magma.eval(...)`` to run a string using
     Magma (and get the result back as a string).
 
-    .. note::
+    .. NOTE::
 
        If you do not own a local copy of Magma, try using the
        ``magma_free`` command instead, which uses the free demo web
@@ -1855,7 +1855,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         OUTPUT: a Magma function partially evaluated with ``self`` as the first
         input
 
-        .. note::
+        .. NOTE::
 
            If the input ``attrname`` starts with an underscore, an
            :exc:`AttributeError` is raised so that the actual
@@ -2151,7 +2151,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         Return list of Magma variable names of the generators of ``self``.
 
-        .. note::
+        .. NOTE::
 
            As illustrated below, these are not the print names of the
            the generators of the Magma object, but special variable
@@ -2487,7 +2487,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         Return all Magma functions that have this Magma element as first
         input. This is used for tab completion.
 
-        .. note::
+        .. NOTE::
 
            This function can unfortunately be slow if there are a very
            large number of functions, e.g., when ``self`` is an

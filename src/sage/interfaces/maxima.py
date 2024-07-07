@@ -410,7 +410,7 @@ Long Input
 The MAXIMA interface reads in even very long input (using files) in
 a robust manner, as long as you are creating a new object.
 
-.. note::
+.. NOTE::
 
    Using ``maxima.eval`` for long input is much less robust, and is
    not recommended.
@@ -972,7 +972,7 @@ class Maxima(MaximaAbstract, Expect):
         """
         Send a lisp command to Maxima.
 
-        .. note::
+        .. NOTE::
 
            The output of this command is very raw - not pretty.
 

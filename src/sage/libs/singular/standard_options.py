@@ -125,7 +125,7 @@ def libsingular_gb_standard_options(func):
           ...
           '        return self.basis.reduced()\n'], ...)
 
-    .. note::
+    .. NOTE::
 
        This decorator is used automatically internally so the user
        does not need to use it manually.

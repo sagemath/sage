@@ -129,7 +129,7 @@ class GenericSpeciesStructure(CombinatorialObject):
         """
         Return the labels used for this structure.
 
-        .. note::
+        .. NOTE::
 
             This includes labels which may not "appear" in this
             particular structure.
@@ -334,7 +334,7 @@ class SpeciesWrapper(Parent):
         This is a abstract base class for the set of structures of a
         species as well as the set of isotypes of the species.
 
-        .. note::
+        .. NOTE::
 
             One typically does not use :class:`SpeciesWrapper`
             directly, but instead instantiates one of its subclasses:

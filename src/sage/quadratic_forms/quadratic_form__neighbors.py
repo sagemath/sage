@@ -18,7 +18,7 @@ def find_primitive_p_divisible_vector__random(self, p):
     """
     Find a random `p`-primitive vector in `L/pL` whose value is `p`-divisible.
 
-    .. note::
+    .. NOTE::
 
         Since there are about `p^{(n-2)}` of these lines, we have a `1/p`
         chance of randomly finding an appropriate vector.

@@ -182,7 +182,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         If `N` not supplied, a default value is selected, which is the
         minimum needed to recover the charpoly unambiguously.
 
-        .. note::
+        .. NOTE::
 
             Implemented using ``hypellfrob``, which means it only works
             over the prime field `GF(p)`, and requires `p > (2g+1)(2N-1)`.
@@ -257,7 +257,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         If `N` not supplied, a default value is selected, which is the
         minimum needed to recover the charpoly unambiguously.
 
-        .. note::
+        .. NOTE::
 
             Currently only implemented using ``hypellfrob``,
             which means it only works over the prime field `GF(p)`,

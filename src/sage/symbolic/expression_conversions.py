@@ -278,7 +278,7 @@ class Converter():
         The input to this method is the result of calling
         :meth:`pyobject` on a symbolic expression.
 
-        .. note::
+        .. NOTE::
 
            Note that if a constant such as ``pi`` is encountered in
            the expression tree, its corresponding pyobject which is an

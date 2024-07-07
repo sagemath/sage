@@ -2028,7 +2028,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
              (0 : 0 : 1), (2 : 3 : 1)]
 
 
-        .. note::
+        .. NOTE::
 
             The Brill-Noether package does not always work (i.e., the
             'bn' algorithm. When it fails a :exc:`RuntimeError` exception is

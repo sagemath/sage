@@ -1891,7 +1891,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         Return a Dirichlet character that equals this one, but over as
         small a subfield (or subring) of the base ring as possible.
 
-        .. note::
+        .. NOTE::
 
             This function is currently only implemented when the base
             ring is a number field. It is the identity function in

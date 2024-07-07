@@ -117,7 +117,7 @@ def Phi2_quad(J3, ssJ1, ssJ2):
         sage: sage.modular.ssmod.ssmod.Phi2_quad(X, F(8), j_in)
         x^2 + 31*x + 31
 
-    .. note::
+    .. NOTE::
 
         Given a root (j1,j2) to the polynomial `Phi_2(J1,J2)`, the pairs
         (j2,j3) not equal to (j2,j1) which solve `Phi_2(j2,j3)` are roots of
@@ -796,7 +796,7 @@ class SupersingularModule(HeckeModule_free_module):
             [1 1 0 1 0 1]
             [1 1 1 0 1 0]
 
-        .. note::
+        .. NOTE::
 
             The first list --- list_j --- returned by the supersingular_points
             function are the rows *and* column indexes of the above hecke

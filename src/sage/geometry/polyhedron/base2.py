@@ -251,7 +251,7 @@ class Polyhedron_base2(Polyhedron_base1):
 
         A list whose entries give the `h^*`-vector.
 
-        .. NOTE:
+        .. NOTE::
 
             The backend of ``self`` should be ``'normaliz'``.
             This function depends on Normaliz (i.e. the ``'pynormaliz'`` optional
@@ -327,7 +327,7 @@ class Polyhedron_base2(Polyhedron_base1):
 
         The `h^*`-vector as a list.
 
-        .. NOTE:
+        .. NOTE::
 
         The backend of ``self`` should be ``'normaliz'``.
 

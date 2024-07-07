@@ -41,7 +41,7 @@ debugging and tuning of this module.
 Robert Bradshaw helped Andrey Novoseltsev to realize plot3d
 function.
 
-.. note::
+.. NOTE::
 
    IMPORTANT: PALP requires some parameters to be determined during
    compilation time, i.e., the maximum dimension of polytopes, the
@@ -973,7 +973,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         Returns the output of ``command`` as a string.
 
-        .. note::
+        .. NOTE::
 
           PALP cannot be called for polytopes that do not span the ambient space.
           If you specify ``reduce_dimension=True`` argument, PALP will be
@@ -1410,7 +1410,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return a*P+b, where P is this lattice polytope.
 
-        .. note::
+        .. NOTE::
 
           #. While ``a`` and ``b`` may be rational, the final result must be a
              lattice polytope, i.e. all vertices must be integral.
@@ -2451,7 +2451,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         3-dimensional reflexive polytopes. Databases are stored in the
         directory of the package.
 
-        .. note::
+        .. NOTE::
 
            The first call to this function for each dimension can take
            a few seconds while the dictionary of all polytopes is
@@ -4990,7 +4990,7 @@ def _palp(command, polytopes, reduce_dimension=False):
     Returns the name of the file containing the output of
     ``command``. You should delete it after using.
 
-    .. note::
+    .. NOTE::
 
       PALP cannot be called for polytopes that do not span the ambient space.
       If you specify ``reduce_dimension=True`` argument, PALP will be
@@ -5451,7 +5451,7 @@ def convex_hull(points):
     r"""
     Compute the convex hull of the given points.
 
-    .. note::
+    .. NOTE::
 
        ``points`` might not span the space. Also, it fails for large
        numbers of vertices in dimensions 4 or greater
@@ -5526,7 +5526,7 @@ def minkowski_sum(points1, points2):
     r"""
     Compute the Minkowski sum of two convex polytopes.
 
-    .. note::
+    .. NOTE::
 
        Polytopes might not be of maximal dimension.
 

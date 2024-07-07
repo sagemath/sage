@@ -2705,7 +2705,7 @@ class NumberField_relative(NumberField_generic):
           nonpositive valuation at all other primes of ``self``
 
 
-        .. note::
+        .. NOTE::
 
            When `P` is principal (e.g., always when ``self`` has class number
            one), the result may or may not be a generator of `P`!

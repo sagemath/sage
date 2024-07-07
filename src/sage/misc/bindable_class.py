@@ -100,7 +100,7 @@ class BindableClass(metaclass=ClasscallMetaclass):
         sage: outer.Inner
         <bound class '__main__.Outer.Inner' of <__main__.Outer object at ...>>
 
-    .. note::
+    .. NOTE::
 
         This is not actually a class, but an instance of
         :class:`functools.partial`::

@@ -195,7 +195,7 @@ class Groups(CategoryWithAxiom):
             Return the "multiplication" table of this multiplicative group,
             which is also known as the "Cayley table".
 
-            .. note:: The order of the elements in the row and column
+            .. NOTE:: The order of the elements in the row and column
               headings is equal to the order given by the table's
               :meth:`~sage.matrix.operation_table.OperationTable.column_keys`
               method.  The association between the actual elements and the

@@ -40,7 +40,7 @@ triangles, 21 edges, and 7 vertices, while there is a `\Delta`-complex
 representation of a torus using only 2 triangles, 3 edges, and 1
 vertex.
 
-.. note::
+.. NOTE::
 
    This class derives from
    :class:`~sage.homology.cell_complex.GenericCellComplex`, and so
@@ -600,7 +600,7 @@ class DeltaComplex(GenericCellComplex):
           the chain complex is actually a chain complex: the differentials are
           composable and their product is zero
 
-        .. note::
+        .. NOTE::
 
            If subcomplex is nonempty, then the argument ``augmented``
            has no effect: the chain complex relative to a nonempty

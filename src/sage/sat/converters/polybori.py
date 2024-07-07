@@ -382,7 +382,7 @@ class CNFEncoder(ANF2CNFConverter):
             sage: e.phi
             [None, a, b, c, a*b, a*b*c]
 
-        .. note::
+        .. NOTE::
 
             For correctness, this function is cached.
         """

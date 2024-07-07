@@ -578,7 +578,7 @@ def report_GF(p=16411, **kwds):
     - ``p`` -- ignored
     - ``**kwds`` -- passed through to :func:`report`
 
-    .. note::
+    .. NOTE::
 
         right now, even though p is an input, it is being ignored!  If
         you need to check the performance for other primes, you can

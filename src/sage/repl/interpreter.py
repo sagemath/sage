@@ -814,7 +814,7 @@ class SageTerminalApp(TerminalIPythonApp):
         r"""
         Initialize the :class:`SageInteractiveShell` instance.
 
-        .. note::
+        .. NOTE::
 
             This code is based on
             :meth:`TerminalIPythonApp.init_shell`.

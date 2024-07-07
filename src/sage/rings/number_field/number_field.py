@@ -3910,7 +3910,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         using the comparison function for ideals, which is based on
         the Hermite Normal Form.
 
-        .. note::
+        .. NOTE::
 
             See also :meth:`primes_of_bounded_norm_iter` for an
             iterator version of this, but note that the iterator sorts
@@ -3974,7 +3974,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         An iterator over all prime ideals of this number field of norm
         at most `B`.
 
-        .. note::
+        .. NOTE::
 
             The output is not sorted by norm, but by size of the
             underlying rational prime.
@@ -4711,7 +4711,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         OUTPUT: list of generators of the unit group
 
-        .. note::
+        .. NOTE::
 
             For more functionality see the function :func:`S_unit_group`.
 
@@ -6546,7 +6546,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         the Minkowski embedding. See the docstring for
         :meth:`NumberField_absolute.minkowski_embedding` for more information.
 
-        .. note::
+        .. NOTE::
 
            In the non-totally-real case, the LLL routine we call is
            currently PARI's :pari:`qflll`, which works with floating point
@@ -6634,7 +6634,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Find all totally positive integral elements in ``self`` whose
         trace is between C[0] and C[1], inclusive.
 
-        .. note::
+        .. NOTE::
 
            This is currently only implemented in the case that ``self`` is
            totally real, since it requires exact computation of
@@ -6989,7 +6989,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
           ``self``, or ``'negative'``, in which case the element will have
           nonpositive valuation at all other primes of ``self``
 
-        .. note::
+        .. NOTE::
 
            When `P` is principal (e.g., always when ``self`` has class number
            one) the result may or may not be a generator of `P`!
@@ -7075,7 +7075,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``proof`` -- boolean (default: ``True``); flag passed to PARI
 
-        .. note::
+        .. NOTE::
 
             For more functionality see :meth:`unit_group`.
 
@@ -7157,7 +7157,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``proof`` -- boolean (default: ``True``); flag passed to PARI
 
-        .. note::
+        .. NOTE::
 
            The group is cached.
 
@@ -7245,7 +7245,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
           group is constructed; otherwise, the `S`-unit group is
           constructed.
 
-        .. note::
+        .. NOTE::
 
            The group is cached.
 
@@ -7538,7 +7538,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         r"""
         Return the number of roots of unity in this field.
 
-        .. note::
+        .. NOTE::
 
            We do not create the full unit group since that can be
            expensive, but we do use it if it is already known.
@@ -7584,7 +7584,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         cyclotomic fields. Repeated calls of this function may return
         a different value.
 
-        .. note::
+        .. NOTE::
 
            We do not create the full unit group since that can be
            expensive, but we do use it if it is already known.
@@ -7703,7 +7703,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         An integral element `x` such that ``x - reslist[i]`` is in ``Ilist[i]`` for all `i`.
 
-        .. note::
+        .. NOTE::
 
            The current implementation requires the ideals to be pairwise
            coprime.  A more general version would be possible.
@@ -10899,7 +10899,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         Function returning a string to create this cyclotomic field in
         Magma.
 
-        .. note::
+        .. NOTE::
 
            The Magma generator name is also initialized to be the same
            as for the Sage field.
@@ -12244,7 +12244,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         Hilbert class field of this quadratic field as an extension of
         this quadratic field.
 
-        .. note::
+        .. NOTE::
 
             Computed using PARI via Schertz's method. This
             implementation is quite fast.
@@ -12279,7 +12279,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         Return the Hilbert class field of this quadratic field as a
         relative extension of this field.
 
-        .. note::
+        .. NOTE::
 
             For the polynomial that defines this field as a relative
             extension, see the method :meth:`hilbert_class_field_defining_polynomial`,

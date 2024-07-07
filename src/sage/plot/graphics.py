@@ -1675,7 +1675,7 @@ class Graphics(WithEqualityById, SageObject):
           The scale can be also be given as single argument that is a list
           or tuple ``(scale, base)`` or ``(scale, basex, basey)``.
 
-          .. note::
+          .. NOTE::
 
             - If the ``scale`` is ``'linear'``, then irrespective of what
               ``base`` is set to, it will default to 10 and will remain

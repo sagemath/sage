@@ -876,7 +876,7 @@ class R(ExtraTabCompletion, Interface):
 
         OUTPUT: list of strings
 
-        .. note::
+        .. NOTE::
 
             This requires an internet connection. The CRAN server is
             that is checked is defined at the top of sage/interfaces/r.py.
@@ -1442,7 +1442,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         """
         Return a list of all methods of this object.
 
-        .. note::
+        .. NOTE::
 
             Currently returns all R commands.
 

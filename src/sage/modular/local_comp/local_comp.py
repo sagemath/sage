@@ -48,7 +48,7 @@ def LocalComponent(f, p, twist_factor=None):
     - ``p`` -- integer; prime
     - ``twist_factor`` -- integer congruent to `k` modulo 2 (default: `k - 2`)
 
-    .. note::
+    .. NOTE::
 
         The argument ``twist_factor`` determines the choice of normalisation: if it is
         set to `j \in \ZZ`, then the central character of `\pi_{f, \ell}` maps `\ell`

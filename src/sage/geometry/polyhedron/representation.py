@@ -46,7 +46,7 @@ class PolyhedronRepresentation(SageObject):
     The internal base class for all representation objects of
     ``Polyhedron`` (vertices/rays/lines and inequalities/equations)
 
-    .. note::
+    .. NOTE::
 
         You should not (and cannot) instantiate it yourself. You can
         only obtain them from a Polyhedron() class.
@@ -611,7 +611,7 @@ class Hrepresentation(PolyhedronRepresentation):
         Evaluate the left hand side `A\vec{x}+b` on the given
         vertex/ray/line.
 
-        .. NOTE:
+        .. NOTE::
 
           * Evaluating on a vertex returns `A\vec{x}+b`
 

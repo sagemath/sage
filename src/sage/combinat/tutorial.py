@@ -461,7 +461,7 @@ We continue the calculation of this fraction in `R`::
     sage: fraction = - R(Px) / R(Py); fraction                                          # needs sage.symbolic
     (1/2/(x - 1/4))*ybar - 1/4/(x - 1/4)
 
-.. note::
+.. NOTE::
 
     The following variant does not work yet::
 

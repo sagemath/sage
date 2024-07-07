@@ -964,7 +964,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: g(-1 + 3/5 * t)
             -1 + 3/5*t^2
 
-        .. note::
+        .. NOTE::
 
            There are no ring homomorphisms from the ring of all formal
            power series to most rings, e.g, the `p`-adic field, since

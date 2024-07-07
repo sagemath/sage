@@ -2272,7 +2272,7 @@ class Order_relative(Order):
         - ``names`` -- string (default: ``'z'``); name of generator of absolute
           extension
 
-        .. note::
+        .. NOTE::
 
            There *is* a default variable name, since this absolute
            order is frequently used for internal algorithms.

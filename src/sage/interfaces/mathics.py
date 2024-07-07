@@ -875,7 +875,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         r"""
         Return a list of all methods of this object.
 
-        .. note::
+        .. NOTE::
 
            Currently returns all methods of :class:`mathics.expression.Expression`.
 

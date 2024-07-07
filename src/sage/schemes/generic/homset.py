@@ -10,7 +10,7 @@ with the set of morphisms `\mathrm{Spec}(K) \to X`. In Sage the rational points
 are implemented by such scheme morphisms. This is done by
 :class:`SchemeHomset_points` and its subclasses.
 
-.. note::
+.. NOTE::
 
     You should not create the Hom-sets manually. Instead, use the
     :meth:`~sage.structure.parent.Hom` method that is inherited by all

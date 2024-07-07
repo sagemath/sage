@@ -520,7 +520,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         OUTPUT: an iterator over all integer primes less than or equal to `B`
 
-        .. note::
+        .. NOTE::
 
             This function exists for compatibility with the related number
             field method, though it returns prime integers, not ideals.

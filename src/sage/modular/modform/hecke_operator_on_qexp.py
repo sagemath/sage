@@ -163,7 +163,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
     with character `\varepsilon` to precision at least `\#B\cdot n+1`,
     this function computes the matrix of `T_n` relative to `B`.
 
-    .. note::
+    .. NOTE::
 
        If the elements of B are not known to sufficient precision,
        this function will report that the vectors are linearly

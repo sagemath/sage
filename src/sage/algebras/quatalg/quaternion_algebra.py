@@ -3199,7 +3199,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         Return the product of the fractional ideals ``self`` and ``right``.
 
-        .. note::
+        .. NOTE::
 
            We do not keep track of left or right order structure.
 

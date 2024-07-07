@@ -623,7 +623,7 @@ class TermOrder(SageObject):
             (Degree reverse lexicographic term order of length 5,
              Degree lexicographic term order of length 2)
 
-        .. note::
+        .. NOTE::
 
            The optional `n` parameter is not necessary if only
            non-block orders like `deglex` are

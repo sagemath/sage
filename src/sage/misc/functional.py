@@ -570,7 +570,7 @@ def symbolic_sum(expression, *args, **kwds):
         sage: sum(x, x, 1r, 5r)                                                         # needs sage.symbolic
         15
 
-    .. note::
+    .. NOTE::
 
        #. Sage can currently only understand a subset of the output of Maxima, Maple and
           Mathematica, so even if the chosen backend can perform the summation the

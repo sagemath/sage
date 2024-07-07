@@ -97,7 +97,7 @@ class TorsionPoint(ModuleElement):
         r"""
         Return a string representation of ``self``.
 
-        .. note::
+        .. NOTE::
 
             Since they are represented as equivalences classes of
             rational homology modulo integral homology, we represent

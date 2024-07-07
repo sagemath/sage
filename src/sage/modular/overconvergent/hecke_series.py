@@ -350,7 +350,7 @@ def random_new_basis_modp(N, p, k, LWBModp, TotalBasisModp, elldash, bound):
 
     OUTPUT: list of lists of lists ``[j, a]``
 
-    .. note::
+    .. NOTE::
 
         As well as having a non-trivial return value, this function also
         modifies the input matrix ``TotalBasisModp``.

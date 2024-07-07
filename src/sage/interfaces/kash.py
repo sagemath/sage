@@ -142,7 +142,7 @@ We illustrate arithmetic with integers and rationals in KASH.
       ext1 := 1,
       ext2 := Unassign
 
-.. note::
+.. NOTE::
 
    For some very large numbers KASH's integer factorization seems much
    faster than PARI's (which is the default in Sage).
@@ -405,7 +405,7 @@ Long Input
 The KASH interface reads in even very long input (using files) in a
 robust manner, as long as you are creating a new object.
 
-.. note::
+.. NOTE::
 
    Using ``kash.eval`` for long input is much less robust, and is not
    recommended.

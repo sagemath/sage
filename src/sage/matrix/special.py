@@ -128,7 +128,7 @@ def column_matrix(*args, **kwds):
     r"""
     Construct a matrix, and then swap rows for columns and columns for rows.
 
-    .. note::
+    .. NOTE::
 
         Linear algebra in Sage favors rows over columns.  So,
         generally, when creating a matrix, input vectors and lists are
@@ -268,7 +268,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         successfully, do not set ``upper_bound``.  This behavior can
         be partially controlled by a ``max_tries`` keyword.
 
-    .. note::
+    .. NOTE::
 
         When constructing matrices with random entries and no
         additional properties (i.e. when ``algorithm='randomize'``),
@@ -2419,7 +2419,7 @@ def random_rref_matrix(parent, num_pivots):
     A matrix in reduced row echelon form with ``num_pivots`` nonzero rows. If the
     base ring is `ZZ` or `QQ` then the entries are all integers.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`
@@ -2604,7 +2604,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
         infeasible or unlikely to create the requested matrix.  If you *must*
         have this routine return successfully, do not set ``upper_bound``.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`
@@ -2804,7 +2804,7 @@ def random_subspaces_matrix(parent, rank=None):
     A matrix whose natural basis vectors for its four subspaces, when
     computed, have reasonably sized, integral valued, entries.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`
@@ -2964,7 +2964,7 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
         infeasible or unlikely to create the requested matrix.  If you *must*
         have this routine return successfully, do not set ``upper_bound``.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`
@@ -3062,7 +3062,7 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     eigenspaces of this matrix, if computed by hand, give basis
     vectors with only integer entries.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`

@@ -1332,7 +1332,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             Return the associated coroot of the highest root.
 
-            .. note:: this is usually not the highest coroot.
+            .. NOTE:: this is usually not the highest coroot.
 
             EXAMPLES::
 

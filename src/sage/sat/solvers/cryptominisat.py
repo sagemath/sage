@@ -121,7 +121,7 @@ class CryptoMiniSat(SatSolver):
 
         - ``lits`` -- tuple of nonzero integers
 
-        .. note::
+        .. NOTE::
 
             If any element ``e`` in ``lits`` has ``abs(e)`` greater
             than the number of variables generated so far, then new

@@ -227,7 +227,7 @@ class xmrange_iter:
     Return the multirange iterate derived from the given iterators and
     type.
 
-    .. note::
+    .. NOTE::
 
        This basically gives you the Cartesian product of sets.
 

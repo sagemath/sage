@@ -155,7 +155,7 @@ def conway_species_list_at_odd_prime(self, p):
     number is always positive, otherwise it may be positive or
     negative (or zero, but that is considered positive by convention).
 
-    .. NOTE:
+    .. NOTE::
 
         The species of a zero dimensional form is always 0+, so we
         interpret the return value of zero as positive here! =)

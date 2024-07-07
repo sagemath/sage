@@ -74,7 +74,7 @@ class Gnuplot(SageObject):
 
         OUTPUT: displays graph
 
-        .. note::
+        .. NOTE::
 
            Note that ``^`` s  are replaced by ``**`` s before being passed to gnuplot.
         """

@@ -6,7 +6,7 @@ access to Rubinstein's lcalc calculator with extra PARI
 functionality compiled in
 and is a standard part of Sage.
 
-.. note::
+.. NOTE::
 
    Each call to ``lcalc`` runs a complete
    ``lcalc`` process. On a typical Linux system, this
@@ -390,7 +390,7 @@ class LCalc(SageObject):
 
         OUTPUT: integer
 
-        .. note::
+        .. NOTE::
 
            Of course this is not provably correct in general, since it
            is an open problem to compute analytic ranks provably

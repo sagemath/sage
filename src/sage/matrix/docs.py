@@ -415,7 +415,7 @@ are named
        * Other functions, e.g., transpose, for which knowing the
          specific representation can be helpful.
 
-    .. note::
+    .. NOTE::
 
        - For caching, use self.fetch and self.cache.
 

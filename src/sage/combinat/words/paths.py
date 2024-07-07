@@ -1642,7 +1642,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             Animation with 296 frames
             sage: show(a*b*c*d)                 # long time, optional - imagemagick
 
-        .. note::
+        .. NOTE::
 
             If ImageMagick is not installed, you will get an error
             message like this::
@@ -2165,7 +2165,7 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
 
         If the path is closed, the last point is not considered.
 
-        .. note::
+        .. NOTE::
 
             The linear algorithm described in the thesis of Xavier Provençal
             should be implemented here.

@@ -496,7 +496,7 @@ class MaximaLib(MaximaAbstract):
 
         OUTPUT: ECL object
 
-        .. note::
+        .. NOTE::
 
            The output of this command is very raw - not pretty.
 
@@ -1552,7 +1552,7 @@ def pyobject_to_max(obj):
 
     OUTPUT: ECL object
 
-    .. note::
+    .. NOTE::
 
        This uses functions defined in sage.libs.ecl.
 

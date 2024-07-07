@@ -59,7 +59,7 @@ square in `\RR^3`: the same unit square as ``S1``, but embedded in
 ``S1`` (in fact, they're "cubically equivalent"), and this is
 reflected in the fact that they have isomorphic homology groups.
 
-.. note::
+.. NOTE::
 
    This class derives from
    :class:`~sage.homology.cell_complex.GenericCellComplex`, and so
@@ -1545,7 +1545,7 @@ class CubicalComplex(GenericCellComplex):
         last `n`, translating them so that they have the origin as a
         common vertex.
 
-        .. note::
+        .. NOTE::
 
             This operation is not well-defined if ``self`` or
             ``other`` is not path-connected.

@@ -102,7 +102,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         """
         Create an ambient modular forms space with character.
 
-        .. note::
+        .. NOTE::
 
            The base ring must be of characteristic 0.  The ambient_R
            Python module is used for computing in characteristic p,

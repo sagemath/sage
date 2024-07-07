@@ -761,7 +761,7 @@ def compute_definiteness(self):
 
         A degenerate form is considered neither definite nor indefinite.
 
-    .. NOTE:
+    .. NOTE::
 
         The zero-dimensional form is considered both positive definite and negative definite.
 

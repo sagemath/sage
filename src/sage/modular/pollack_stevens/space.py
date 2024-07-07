@@ -107,7 +107,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
     They are only relevant if ``coefficients`` is ``None``, in which case the
     coefficient module is inferred from the other data.
 
-    .. note::
+    .. NOTE::
 
         We emphasize that in the Pollack-Stevens notation, the
         ``weight`` is the usual weight minus 2, so a classical weight

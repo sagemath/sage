@@ -1302,7 +1302,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         Schuett). So we compute the image of ``self`` modulo `n` and return the
         preimage of that.
 
-        .. note::
+        .. NOTE::
 
             If you just want to know if the subgroup is congruence or not, it
             is *much* faster to use :meth:`~is_congruence`.

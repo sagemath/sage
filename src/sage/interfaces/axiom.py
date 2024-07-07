@@ -25,7 +25,7 @@ AUTHORS:
 - Bill Page (2006-10): Created this (based on Maxima interface)
 
 
-  .. note::
+  .. NOTE::
 
      Bill Page put a huge amount of effort into the Sage Axiom
      interface over several days during the Sage Days 2 coding
@@ -35,7 +35,7 @@ AUTHORS:
 
 - Bill Page (2007-08): Minor modifications to support axiom4sage-0.3
 
-.. note::
+.. NOTE::
 
    The axiom4sage-0.3.spkg is based on an experimental version of the
    FriCAS fork of the Axiom project by Waldek Hebisch that uses
@@ -645,7 +645,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         r"""
         Return the `n`-th element of this list.
 
-        .. note::
+        .. NOTE::
 
            Lists are 1-based.
 

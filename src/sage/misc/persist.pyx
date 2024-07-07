@@ -10,7 +10,7 @@ Object persistence
 You can load and save most Sage object to disk using the load and
 save member functions and commands.
 
-.. note::
+.. NOTE::
 
    It is impossible to save certain Sage objects to disk. For example,
    if `x` is a MAGMA object, i.e., a wrapper around an object

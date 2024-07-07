@@ -1550,7 +1550,7 @@ def cells_map_as_square(cells_map, n):
     Return a LatinSquare with cells numbered from 1, 2, ... to given
     the dictionary cells_map.
 
-    .. note::
+    .. NOTE::
 
        The value n should be the maximum of the number of rows and
        columns of the original partial latin square

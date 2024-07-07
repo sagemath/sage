@@ -265,7 +265,7 @@ class FormsRing_abstract(Parent):
 
         - ``prec`` -- integer
 
-        .. NOTE:
+        .. NOTE::
 
             This is also used as the default precision for the Fourier
             expansion when evaluating forms.

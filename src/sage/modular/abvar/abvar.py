@@ -3153,7 +3153,7 @@ class ModularAbelianVariety_abstract(Parent):
         quotient of `N` by the newform level. This function returns the tuple
         `(t,N)`, or raises a :exc:`ValueError` if ``self`` is not simple.
 
-        .. note::
+        .. NOTE::
 
            It need not be the case that ``self`` is literally equal to the
            image of the newform abelian variety under the `t`-th degeneracy
@@ -4188,7 +4188,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         Return the characteristic polynomial of the `n`-th Hecke
         operator on ``self``.
 
-        .. note::
+        .. NOTE::
 
             If ``self`` has dimension `d`, then this is a polynomial of
             degree `d`. It is not of degree `2d`, so it is the square
@@ -4912,7 +4912,7 @@ def sqrt_poly(f):
     """
     Return the square root of the polynomial `f`.
 
-    .. note::
+    .. NOTE::
 
         At some point something like this should be a member of the
         polynomial class. For now this is just used internally by some

@@ -191,7 +191,7 @@ class NonDecreasingParkingFunction(Element):
         """
         Return the `n`-th item in the underlying list.
 
-        .. note::
+        .. NOTE::
 
            Note that this is different than the image of `n` under
            function.  It is "off by one".

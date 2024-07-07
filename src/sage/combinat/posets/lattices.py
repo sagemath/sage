@@ -214,7 +214,7 @@ def MeetSemilattice(data=None, *args, **options):
 
 class FiniteMeetSemilattice(FinitePoset):
     """
-    .. note::
+    .. NOTE::
         We assume that the argument passed to MeetSemilattice is the poset
         of a meet-semilattice (i.e. a poset with greatest lower bound for
         each pair of elements).

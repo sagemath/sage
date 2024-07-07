@@ -2046,7 +2046,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         - ``reduce_init`` -- the initialisation of the reduction (e.g.: the
           neutral element of the monoid); the default value is ``0``
 
-        .. note::
+        .. NOTE::
 
             the effect of the default values is to compute the cardinality
             of ``self``.

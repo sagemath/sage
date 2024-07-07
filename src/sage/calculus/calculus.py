@@ -609,7 +609,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
         sage: sum (n^3 * x^n, n, 0, infinity)
         (x^3 + 4*x^2 + x)/(x^4 - 4*x^3 + 6*x^2 - 4*x + 1)
 
-    .. note::
+    .. NOTE::
 
        Sage can currently only understand a subset of the output of Maxima,
        Maple and Mathematica, so even if the chosen backend can perform
@@ -1099,7 +1099,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
         ...
         ValueError: Could not find minimal polynomial (1000 bits, degree 24).
 
-    .. note::
+    .. NOTE::
 
        Of course, failure to produce a minimal polynomial does not
        necessarily indicate that this number is transcendental.
@@ -1178,7 +1178,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
     - ``**argv`` -- 1 named parameter
 
-    .. note::
+    .. NOTE::
 
         The output may also use ``und`` (undefined), ``ind``
         (indefinite but bounded), and ``infinity`` (complex

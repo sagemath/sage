@@ -1333,7 +1333,7 @@ class ToricLattice_quotient_element(FGP_Element):
 
         OUTPUT: none
 
-        .. note:: Elements of toric lattice quotients are always immutable, so
+        .. NOTE:: Elements of toric lattice quotients are always immutable, so
             this method does nothing, it is introduced for compatibility
             purposes only.
 

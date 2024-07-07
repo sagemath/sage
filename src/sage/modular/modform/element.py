@@ -874,7 +874,7 @@ class ModularForm_abstract(ModuleElement):
         For more information on the significance of the last three arguments,
         see :mod:`~sage.lfunctions.dokchitser`.
 
-        .. note::
+        .. NOTE::
 
             If an explicit embedding is given, but this embedding is specified
             to smaller precision than ``prec``, it will be automatically
@@ -1589,7 +1589,7 @@ class Newform(ModularForm_abstract):
         Find an element of the ambient space of modular forms which
         represents this newform.
 
-        .. note::
+        .. NOTE::
 
            This can be quite expensive. Also, the polynomial defining
            the field of Hecke eigenvalues should be considered random,

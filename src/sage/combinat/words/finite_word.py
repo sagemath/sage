@@ -940,7 +940,7 @@ class FiniteWord_class(Word_class):
         """
         Test whether ``self`` has ``other`` as a suffix.
 
-        .. note::
+        .. NOTE::
 
            Some word datatype classes, like :class:`WordDatatype_str`,
            override this method.

@@ -1618,7 +1618,7 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
         """
         Return the underlying *finite* polynomial ring.
 
-        .. note::
+        .. NOTE::
 
            The ring returned can change over time as more variables
            are used.

@@ -581,7 +581,7 @@ def is_pseudoprime(n):
 
     - ``n`` -- integer
 
-    .. note::
+    .. NOTE::
 
        We do not consider negatives of prime numbers as prime.
 
@@ -4157,7 +4157,7 @@ def legendre_symbol(x, p):
     r"""
     The Legendre symbol `(x|p)`, for `p` prime.
 
-    .. note::
+    .. NOTE::
 
        The :func:`kronecker_symbol` command extends the Legendre
        symbol to composite moduli and `p=2`.
@@ -4209,7 +4209,7 @@ def jacobi_symbol(a, b):
     r"""
     The Jacobi symbol of integers `a` and `b`, where `b` is odd.
 
-    .. note::
+    .. NOTE::
 
        The :func:`kronecker_symbol` command extends the Jacobi
        symbol to all integers `b`.

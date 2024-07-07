@@ -27,7 +27,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
     Assumptions: ``predicate`` is symmetric (``predicate(x,y) ==
     predicate(y,x)``) and reflexive (``predicate(x,x) == True``).
 
-    .. note:: in fact, ``predicate(x,x)`` is never called.
+    .. NOTE:: in fact, ``predicate(x,x)`` is never called.
 
     .. warning:: The current name is suboptimal and is subject to
        change. Suggestions for a good name, and a good user entry

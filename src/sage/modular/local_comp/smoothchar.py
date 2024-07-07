@@ -689,7 +689,7 @@ class SmoothCharacterGroupGeneric(Parent):
           should all be units, and all but the last must be roots of unity (of
           the orders given by ``self.exponents(level)``.
 
-        .. note::
+        .. NOTE::
 
             The character returned may have level less than ``level`` in general.
 

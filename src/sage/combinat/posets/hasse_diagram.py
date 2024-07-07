@@ -74,7 +74,7 @@ class HasseDiagram(DiGraph):
     The Hasse diagram of a poset. This is just a transitively-reduced,
     directed, acyclic graph without loops or multiple edges.
 
-    .. note::
+    .. NOTE::
 
        We assume that ``range(n)`` is a linear extension of the poset.
        That is, ``range(n)`` is the vertex set and a topological sort of
@@ -293,7 +293,7 @@ class HasseDiagram(DiGraph):
         Return ``True`` if i is less than or equal to j in the poset, and
         ``False`` otherwise.
 
-        .. note::
+        .. NOTE::
 
             If the :meth:`lequal_matrix` has been computed, then this method is
             redefined to use the cached data (see :meth:`_alternate_is_lequal`).
@@ -2205,7 +2205,7 @@ class HasseDiagram(DiGraph):
         r"""
         Return an iterator over the antichains of the poset.
 
-        .. note::
+        .. NOTE::
 
             The algorithm is based on Freese-Jezek-Nation p. 226.
             It does a depth first search through the set of all

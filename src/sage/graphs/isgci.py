@@ -293,7 +293,7 @@ result ::
 What ISGCI knows is that perfect graphs contain unimodular graph which contain
 bipartite graphs. Therefore bipartite graphs are perfect !
 
-.. note::
+.. NOTE::
 
     The inclusion digraph is **NOT ACYCLIC**. Indeed, several entries exist in
     the ISGCI database which represent the same graph class, for instance

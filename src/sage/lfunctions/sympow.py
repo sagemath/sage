@@ -6,7 +6,7 @@ elliptic curve `L`-functions. It can compute up to about 64 digits of
 precision. This interface provides complete access to sympow, which
 is a standard part of Sage (and includes the extra data files).
 
-.. note::
+.. NOTE::
 
     Each call to ``sympow`` runs a complete
     ``sympow`` process. This incurs about 0.2 seconds
@@ -108,7 +108,7 @@ class Sympow(SageObject):
 
         OUTPUT: real number to prec digits of precision as a string
 
-        .. note::
+        .. NOTE::
 
            Before using this function for the first time for a given
            `n`, you may have to type ``sympow('-new_data n')``,
@@ -166,7 +166,7 @@ class Sympow(SageObject):
 
         OUTPUT: string, exactly as output by sympow
 
-        .. note::
+        .. NOTE::
 
            To use this function you may have to run a few commands
            like ``sympow('-new_data 1d2')``, each which takes a
@@ -242,11 +242,11 @@ class Sympow(SageObject):
         - ``string`` -- leading coefficient (as string)
 
 
-        .. note::
+        .. NOTE::
 
            The analytic rank is *not* computed provably correctly in general.
 
-        .. note::
+        .. NOTE::
 
            In computing the analytic rank we consider
            `L^{(r)}(E,1)` to be `0` if

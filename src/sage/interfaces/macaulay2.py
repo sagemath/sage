@@ -152,7 +152,7 @@ def remove_output_labels(s) -> str:
 
     Return type: string
 
-    .. note::
+    .. NOTE::
 
         If ``s`` consists of several outputs and their labels have
         different width, it is possible that some strings will have leading

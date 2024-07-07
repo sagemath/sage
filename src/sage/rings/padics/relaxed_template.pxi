@@ -128,7 +128,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         r"""
         Return a pointer on the `i`-th significant digit of this number.
 
-        .. NOTE:
+        .. NOTE::
 
             This function does not check that the requested digit
             has been already computed.
@@ -144,7 +144,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         Return a pointer on the digit in position `i` of
         this number.
 
-        .. NOTE:
+        .. NOTE::
 
             This function do not check that the requested digit
             has been already computed.
@@ -1196,7 +1196,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             sage: b.at_precision_relative(5, halt=21)   # now, we're okay
             5^20 + O(5^25)
 
-        .. NOTE:
+        .. NOTE::
 
             It is also possible to pass in ``halt=False`` but it is not recommended
             because the computation can hang forever if this element is `0`.
@@ -1400,7 +1400,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             sage: z.valuation(halt=21)   # now, we're okay
             20
 
-        .. NOTE:
+        .. NOTE::
 
             It is also possible to pass in ``halt=False`` but it is not recommended
             because the computation can hang forever if this element is `0`.

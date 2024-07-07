@@ -346,7 +346,7 @@ warning messages to the console.
     `Logging facility for Python <https://docs.python.org/2/library/logging.html>`_
     for more detail on logging and log system configuration.
 
-.. note::
+.. NOTE::
 
     Calls to logger which involve printing the node are commented out in the
     code, because the printing (to a string) of the node can be very time
@@ -749,7 +749,7 @@ class ActiveTaskCounterPosix():
     computation process. This is the standard implementation on POSIX
     compliant OSes. We essentially wrap a semaphore.
 
-    .. note::
+    .. NOTE::
 
         A legitimate question is whether there is a need in keeping the two
         implementations. I ran the following experiment on my machine::
@@ -986,7 +986,7 @@ class RESetMapReduce():
 
         OUTPUT: an iterable of nodes
 
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         EXAMPLES::
 
@@ -1007,7 +1007,7 @@ class RESetMapReduce():
 
         OUTPUT: by default ``1``
 
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         EXAMPLES::
 
@@ -1031,7 +1031,7 @@ class RESetMapReduce():
 
         OUTPUT: by default the sum of ``a`` and ``b``
 
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         EXAMPLES::
 
@@ -1056,7 +1056,7 @@ class RESetMapReduce():
         With the default post-processing function, which is the identity function,
         this returns ``a`` itself.
 
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         EXAMPLES::
 
@@ -1076,7 +1076,7 @@ class RESetMapReduce():
         r"""
         Return the initial element for a reduction.
 
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         TESTS::
 

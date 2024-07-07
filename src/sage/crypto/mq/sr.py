@@ -1073,7 +1073,7 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: mq.SR(2, 2, 2, 4).random_vector().parent()
             Full MatrixSpace of 16 by 1 dense matrices over Finite Field in a of size 2^4
 
-        .. note::
+        .. NOTE::
 
            `\phi` was already applied to the result.
         """

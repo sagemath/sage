@@ -303,7 +303,7 @@ class Homology_abvar(Homology):
         - ``check`` -- currently ignored
 
 
-        .. note::
+        .. NOTE::
 
            We do *not* check that U is invariant under all Hecke
            operators.

@@ -790,7 +790,7 @@ class SymmetricIdeal(Ideal_generic):
         If only a system is given - e.g. 'magma' - the default algorithm is
         chosen for that system.
 
-        .. note::
+        .. NOTE::
 
            The Singular and libSingular versions of the respective
            algorithms are identical, but the former calls an external

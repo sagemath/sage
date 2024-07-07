@@ -518,7 +518,7 @@ class Factorization(SageObject):
         r"""
         Return the parent structure of my factors.
 
-        .. note::
+        .. NOTE::
 
            This used to be called ``base_ring``, but the universe
            of a factorization need not be a ring.

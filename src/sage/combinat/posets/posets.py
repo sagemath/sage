@@ -7331,7 +7331,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         The coefficient of `q^i` is the number of chains of
         `i+1` elements containing both bounds of the poset.
 
-        .. note::
+        .. NOTE::
 
             This is slightly different from the ``fPolynomial``
             method in Macaulay2.
@@ -7646,7 +7646,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         elements in the poset. List of coefficients of this polynomial
         is also called a *f-vector* of the poset.
 
-        .. note::
+        .. NOTE::
 
             This is not what has been called the chain polynomial
             in [St1986]_. The latter is identical with the order
@@ -8967,7 +8967,7 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         r"""
         Return the cardinality of this object.
 
-        .. note::
+        .. NOTE::
 
             By default, this returns pre-computed values obtained from
             the On-Line Encyclopedia of Integer Sequences (:oeis:`A000112`).

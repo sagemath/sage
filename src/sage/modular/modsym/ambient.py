@@ -852,7 +852,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
           the rows which should be computed, otherwise the complete
           matrix will be computed
 
-        .. note::
+        .. NOTE::
 
            `p` does not have to be prime despite the function name.
 
@@ -1006,7 +1006,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         r"""
         Return the matrix function to the space `M` defined by `H`, `t`.
 
-        .. note::
+        .. NOTE::
 
            Users will instead use the simpler interface defined, for
            example, by ``hecke_matrix()`` (see examples).
@@ -1131,7 +1131,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         r"""
         Return the matrix of a modular symbols operator.
 
-        .. note::
+        .. NOTE::
 
            Users will usually instead use the simpler interface
            defined, for example, by ``hecke_matrix()`` (see examples),
@@ -1448,7 +1448,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         Return the matrix of the degeneracy map to the given level
         (which must be a multiple of the level of self).
 
-        .. note::
+        .. NOTE::
 
            Not implemented in the base class, only in the derived classes.
 
@@ -2086,7 +2086,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             sage: M.submodule([M.0 - 1/5*M.2])
             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field
 
-        .. note::
+        .. NOTE::
 
            It would make more sense to only check that `M` is invariant
            under the Hecke operators with index coprime to the level.
@@ -2122,7 +2122,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
                 \sum_{a \in (\ZZ/m\ZZ)^\times} \varepsilon(a) * [ i, 0, a/m ].
 
-        .. note::
+        .. NOTE::
 
            This will only work if the base ring of the modular symbol
            space contains the character values.

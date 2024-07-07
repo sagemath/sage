@@ -71,7 +71,7 @@ For parametrized categories one can use the following shorthand::
 A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
 ``C``.
 
-.. note::
+.. NOTE::
 
     Any object of a category should be an instance of
     :class:`~sage.structure.category_object.CategoryObject`.
@@ -840,9 +840,9 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO:: :meth:`all_super_categories`
 
-        .. note:: this attribute is likely to eventually become a tuple.
+        .. NOTE:: this attribute is likely to eventually become a tuple.
 
-        .. note:: this sets :meth:`_super_categories_for_classes` as a side effect
+        .. NOTE:: this sets :meth:`_super_categories_for_classes` as a side effect
 
         EXAMPLES::
 
@@ -875,7 +875,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO:: :meth:`all_super_categories`
 
-        .. note:: this attribute is likely to eventually become a tuple.
+        .. NOTE:: this attribute is likely to eventually become a tuple.
 
         EXAMPLES::
 
@@ -895,7 +895,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         The frozen set of all proper super categories of this category.
 
-        .. note:: this is used for speeding up category containment tests.
+        .. NOTE:: this is used for speeding up category containment tests.
 
         .. SEEALSO:: :meth:`all_super_categories`
 
@@ -934,7 +934,7 @@ class Category(UniqueRepresentation, SageObject):
         Since :issue:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
 
-        .. note::
+        .. NOTE::
 
             Whenever speed matters, the developers are advised to use
             instead the lazy attributes :meth:`_all_super_categories`,
@@ -1372,7 +1372,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         Check that the category graph matches with Python's method resolution order.
 
-        .. note::
+        .. NOTE::
 
             By :issue:`11943`, the list of categories returned by
             :meth:`all_super_categories` is supposed to match with the
@@ -3028,7 +3028,7 @@ class JoinCategory(CategoryWithParameters):
 
         - ``category`` -- a category
 
-        .. note::
+        .. NOTE::
 
             ``category`` is a sub-category of this join category if
             and only if it is a sub-category of all super categories

@@ -785,7 +785,7 @@ class OperationTable(SageObject):
         r"""
         Return a tuple of the elements used to build the table.
 
-        .. note:: ``column_keys`` and ``row_keys`` are identical.
+        .. NOTE:: ``column_keys`` and ``row_keys`` are identical.
            Both list the elements in the order used to label the table.
 
         OUTPUT:

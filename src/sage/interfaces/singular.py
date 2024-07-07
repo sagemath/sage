@@ -1057,7 +1057,7 @@ class Singular(ExtraTabCompletion, Expect):
 
         OUTPUT: a Singular ring
 
-        .. note::
+        .. NOTE::
 
            This function is *not* identical to calling the Singular
            ``ring`` function. In particular, it also attempts to
@@ -1773,7 +1773,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         - Simon King (2011-06-06): Deal with Singular's short polynomial representation,
           automatic construction of a polynomial ring, if it is not explicitly given.
 
-        .. note::
+        .. NOTE::
 
            For very simple polynomials
            ``eval(SingularElement.sage_polystring())`` is faster than
@@ -2687,7 +2687,7 @@ class SingularGBDefaultContext:
             sage: (7*a-420*c^3+158*c^2+8*c-7)/7 < (a+2*b+2*c-1)
             True
 
-        .. note::
+        .. NOTE::
 
            This context is used automatically internally whenever a
            Groebner basis is computed so the user does not need to use
@@ -2790,7 +2790,7 @@ def singular_gb_standard_options(func):
           ...
           '        return self.basis.reduced()\n'], ...)
 
-    .. note::
+    .. NOTE::
 
        This decorator is used automatically internally so the user
        does not need to use it manually.

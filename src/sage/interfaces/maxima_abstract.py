@@ -885,7 +885,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
                                       dx       !
                                                !x = 0
 
-        .. note::
+        .. NOTE::
 
            The second equation sets the values of `f(0)` and
            `f'(0)` in Maxima, so subsequent ODEs involving these
@@ -987,7 +987,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         This function requires maxima 5.9.2 or newer.
 
-        .. note::
+        .. NOTE::
 
            More that 150 points can sometimes lead to the program
            hanging. Why?
@@ -1025,7 +1025,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         Requires maxima 5.9.2 at least.
 
-        .. note::
+        .. NOTE::
 
            More that 150 points can sometimes lead to the program
            hanging.
@@ -1615,7 +1615,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         OUTPUT: Maxima object
 
-        .. note::
+        .. NOTE::
 
            Lists are 0-based when accessed via the Sage interface, not
            1-based as they are in the Maxima interpreter.

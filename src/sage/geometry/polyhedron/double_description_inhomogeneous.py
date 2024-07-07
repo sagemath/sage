@@ -16,7 +16,7 @@ While slower than specialized C/C++ implementations, the
 implementation is general and works with any field in Sage that allows
 you to define polyhedra.
 
-.. note::
+.. NOTE::
 
     If you just want polyhedra over arbitrary fields then you should
     just use the

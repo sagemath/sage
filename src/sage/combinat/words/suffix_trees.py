@@ -103,7 +103,7 @@ class SuffixTrie(SageObject):
         Process a letter. That is, modify the current suffix trie producing
         the suffix trie for ``self.word() + letter``.
 
-        .. note::
+        .. NOTE::
 
            ``letter`` must occur within the alphabet of the word.
 
@@ -143,7 +143,7 @@ class SuffixTrie(SageObject):
         Modify ``self`` to produce the suffix trie for ``self.word() +
         letter``.
 
-        .. note::
+        .. NOTE::
 
            ``letter`` must occur within the alphabet of the word.
 
@@ -602,7 +602,7 @@ class ImplicitSuffixTree(SageObject):
 
         This corresponds to the algorithm "update" in [Ukko1995]_.
 
-        .. note::
+        .. NOTE::
 
            This function is a helper and does not update ``self._data`` and
            ``self._word``.

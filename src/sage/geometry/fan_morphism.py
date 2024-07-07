@@ -1727,7 +1727,7 @@ class FanMorphism(FreeModuleMorphism):
             \hookrightarrow
             \Sigma.
 
-        .. note::
+        .. NOTE::
 
             * `\Sigma_s` is the finest fan with the smallest support that is
               compatible with ``self``: any fan morphism from `\Sigma` given by

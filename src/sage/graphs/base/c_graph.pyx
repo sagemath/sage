@@ -2931,7 +2931,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         - ``other`` -- a (mutable) subclass of :class:`CGraphBackend`
         - ``vertices`` -- list of vertex labels
 
-        .. NOTE:
+        .. NOTE::
 
             ``other`` is assumed to be the empty graph.
 

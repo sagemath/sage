@@ -6,7 +6,7 @@ infrastructure to make it easy to add new such interfaces and some example inter
 
 Currently, interfaces to **RSat** and **Glucose** are included by default.
 
-.. note::
+.. NOTE::
 
     Our SAT solver interfaces are 1-based, i.e., literals start at 1. This is consistent with the
     popular DIMACS format for SAT solving but not with Pythion's 0-based convention. However, this
@@ -42,7 +42,7 @@ class DIMACS(SatSolver):
     """
     Generic DIMACS Solver.
 
-    .. note::
+    .. NOTE::
 
         Usually, users won't have to use this class directly but some
         class which inherits from this class.
@@ -162,7 +162,7 @@ class DIMACS(SatSolver):
 
         - ``lits`` -- tuple of nonzero integers
 
-        .. note::
+        .. NOTE::
 
             If any element ``e`` in ``lits`` has ``abs(e)`` greater
             than the number of variables generated so far, then new

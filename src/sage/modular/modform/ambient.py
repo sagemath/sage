@@ -746,7 +746,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         Compute the matrix of the Hecke operator `T_n` acting on ``self``.
 
-        .. NOTE:
+        .. NOTE::
 
             If ``self`` is a level 1 space, the much faster Victor Miller basis
             is used for this computation.

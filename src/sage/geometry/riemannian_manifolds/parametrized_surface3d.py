@@ -66,7 +66,7 @@ class ParametrizedSurface3D(SageObject):
     - ``name`` -- name of the surface (optional)
 
 
-    .. note::
+    .. NOTE::
 
        Throughout the documentation, we use the Einstein summation
        convention: whenever an index appears twice, once as a
@@ -346,7 +346,7 @@ class ParametrizedSurface3D(SageObject):
         r"""
         See ``ParametrizedSurface3D`` for full documentation.
 
-        .. note::
+        .. NOTE::
 
             The orientation of the surface is determined by the
             parametrization, that is, the natural frame with positive

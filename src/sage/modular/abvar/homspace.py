@@ -902,7 +902,7 @@ class EndomorphismSubring(Homspace):
         Return the discriminant of this ring, which is the discriminant of
         the trace pairing.
 
-        .. note::
+        .. NOTE::
 
            One knows that for modular abelian varieties, the
            endomorphism ring should be isomorphic to an order in a

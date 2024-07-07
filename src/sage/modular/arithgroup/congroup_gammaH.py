@@ -1293,7 +1293,7 @@ class GammaH_class(CongruenceSubgroup):
         an exact divisor `Q` of `N`, where `N` is the level of this group; that
         is, `gcd(Q, N/Q) = 1`.
 
-        .. note::
+        .. NOTE::
 
             We follow the conventions of [AL1978]_ here, so `W_Q` is given by
             the action of any matrix of the form `\begin{pmatrix} Qx & y \\ Nz

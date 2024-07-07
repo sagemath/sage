@@ -1082,7 +1082,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         - ``end`` -- list permutation (same n, of course)
 
-        .. note::
+        .. NOTE::
 
            Must have ``start`` <= ``end``.
 

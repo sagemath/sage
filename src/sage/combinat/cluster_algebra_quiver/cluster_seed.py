@@ -2769,7 +2769,7 @@ class ClusterSeed(SageObject):
         Run an analysis of all potential mutation options. Note that this might
         take a long time on large seeds.
 
-        .. note::
+        .. NOTE::
 
             Edges are only returned if we have a non-valued quiver.
             Green and red vertices are only returned if the cluster is principal.

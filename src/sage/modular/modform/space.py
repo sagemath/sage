@@ -649,7 +649,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         enough so that each `q`-expansion determines the form as an element
         of this space.
 
-        .. note::
+        .. NOTE::
 
            In fact, the `q`-expansion basis is always computed to
            *at least* ``self.prec()``.
@@ -1613,7 +1613,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         If `p` is specified, return the `p`-new submodule of ``self``.
 
-        .. note::
+        .. NOTE::
 
             This function should be overridden by all derived classes.
 
@@ -1645,7 +1645,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         Compute the Eisenstein series associated to this space.
 
-        .. note::
+        .. NOTE::
 
            This function should be overridden by all derived classes.
 
@@ -1865,7 +1865,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         the basis for this space or of the given forms if
         independent=True.
 
-        .. note::
+        .. NOTE::
 
            If the list of forms is given, they do *not* have to be in
            ``self``.

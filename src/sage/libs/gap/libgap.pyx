@@ -703,7 +703,7 @@ class Gap(Parent):
         allocated for GAP objects (see
         ``libgap.eval('TotalMemoryAllocated()')``).
 
-        .. note::
+        .. NOTE::
 
             Slight complication is that we want to do it without accessing
             libgap objects, so we don't create new GapElements as a side

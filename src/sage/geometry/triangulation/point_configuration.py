@@ -24,7 +24,7 @@ shell command ::
 
     sage -i topcom
 
-.. note::
+.. NOTE::
 
     TOPCOM and the internal algorithms tend to enumerate
     triangulations in a different order. This is why we always
@@ -1297,7 +1297,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p.volume()
             2
 
-        .. note::
+        .. NOTE::
 
             We return `n!` * (metric volume of the simplex) to ensure that
             the volume is an integer.  Essentially, this normalizes

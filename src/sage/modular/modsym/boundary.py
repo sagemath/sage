@@ -49,7 +49,7 @@ also combine with the above to kill a cusp class - for instance, take (u,v) =
 which means this class must vanish. Notice that this cannot be used to show
 that `[(1,0)]` or `[(0,1)]` is 0.
 
-.. note::
+.. NOTE::
 
    Special care must be taken when working with the images of the cusps 0 and
    `\infty` in `B_k(G)`. For all cusps *except* 0 and `\infty`, multiplying the
@@ -64,7 +64,7 @@ that `[(1,0)]` or `[(0,1)]` is 0.
    - `[(1,0)] = \sigma \cdot [(-1,0)]` and `[(1,0)] = (-1)^k [(-1,0)]`, so
      `[(1,0)] = 0` whenever `\sigma \ne (-1)^k`.
 
-.. note::
+.. NOTE::
 
    For all the spaces of boundary symbols below, no work is done to determine
    the cusps for G at creation time. Instead, cusps are added as they are

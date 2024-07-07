@@ -134,7 +134,7 @@ class JmolData(SageObject):
 
         OUTPUT: image file, .png, .gif or .jpg (default: .png)
 
-        .. note::
+        .. NOTE::
 
             Examples will generate an error message if a functional Java Virtual Machine (JVM)
             is not installed on the machine the Sage instance is running on.

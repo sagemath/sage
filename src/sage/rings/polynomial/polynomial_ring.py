@@ -3689,7 +3689,7 @@ def polygen(ring_or_element, name='x'):
         sage: parent(z)
         Univariate Polynomial Ring in z over Rational Field
 
-    .. note::
+    .. NOTE::
 
        If you give a list or comma-separated string to :func:`polygen`, you'll
        get a tuple of indeterminates, exactly as if you called

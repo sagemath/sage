@@ -103,7 +103,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
     Build the CremonaDatabase with given name from scratch
     using the data_tgz tarball.
 
-    .. note::
+    .. NOTE::
 
            For data up to level 350000, this function takes about
            3m40s.  The resulting database occupies 426MB disk space.
@@ -150,7 +150,7 @@ def is_optimal_id(id):
     The curve is optimal if the id, which is of the
     form [letter code][number] has number 1.
 
-    .. note::
+    .. NOTE::
 
        990h3 is the optimal curve in that class, so doesn't obey
        this rule.
@@ -183,7 +183,7 @@ def cremona_letter_code(n):
 
     For example, 0 - a 25 - z 26 - ba 51 - bz 52 - ca 53 - cb etc.
 
-    .. note::
+    .. NOTE::
 
        This is just the base 26 representation of n, where a=0, b=1,
        ..., z=25. This extends the old Cremona notation (counting from
@@ -514,7 +514,7 @@ def sort_key(key1):
     """
     Comparison key for curve id strings.
 
-    .. note::
+    .. NOTE::
 
        Not the same as standard lexicographic order!
 
@@ -989,7 +989,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         OUTPUT: an :class:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field`
 
-        .. note::
+        .. NOTE::
 
             For more details on LMFDB labels see :func:`parse_lmfdb_label`.
 
@@ -1196,7 +1196,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         OUTPUT: integer; smallest conductor
 
-        .. note::
+        .. NOTE::
 
             This always returns the integer 1, since that is the
             smallest conductor for which the database is complete,

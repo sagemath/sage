@@ -230,7 +230,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         - ``self`` -- a basis determined by an orthotriangular definition
         - ``part`` -- a partition
 
-        .. note::
+        .. NOTE::
 
            We assume that self._gram_schmidt has been called before
            self._to_base is called.

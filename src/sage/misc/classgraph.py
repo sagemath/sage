@@ -72,10 +72,10 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph=True):
           'Polynomial_padic'],
          'Polynomial_padic_flat': ['Polynomial_generic_dense', 'Polynomial_padic']}
 
-    .. note:: the ``classes`` and ``as_graph`` options are mostly
+    .. NOTE:: the ``classes`` and ``as_graph`` options are mostly
        intended for internal recursive use.
 
-    .. note:: ``class_graph`` does not yet handle nested classes
+    .. NOTE:: ``class_graph`` does not yet handle nested classes
 
     TESTS::
 

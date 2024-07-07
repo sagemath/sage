@@ -773,7 +773,7 @@ class AdditiveMagmas(Category_singleton):
                 All parents in the category ``CommutativeAdditiveMonoids()``
                 should implement this method.
 
-                .. note:: This is currently not useful because this method is
+                .. NOTE:: This is currently not useful because this method is
                    overridden by ``Element``.
 
                 TESTS::

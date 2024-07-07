@@ -1091,7 +1091,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
             sage: print(maple(pi - e^3)._latex_())              # optional - maple
             \pi-{{\rm e}^{3}}
 
-        .. note::
+        .. NOTE::
 
            Some expressions might require the Maple style file
            ``maple2e.sty`` in order to latex correctly.

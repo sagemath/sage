@@ -292,7 +292,7 @@ class OutputLatex(OutputBase):
         """
         LaTeX Output.
 
-        .. note::
+        .. NOTE::
 
             The LaTeX commands will only use a subset of LaTeX that
             can be displayed by MathJax.

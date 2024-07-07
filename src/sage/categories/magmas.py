@@ -837,7 +837,7 @@ class Magmas(Category_singleton):
             r"""
             Return a table describing the multiplication operation.
 
-            .. note:: The order of the elements in the row and column
+            .. NOTE:: The order of the elements in the row and column
               headings is equal to the order given by the table's
               :meth:`~sage.matrix.operation_table.OperationTable.list`
               method.  The association can also be retrieved with the

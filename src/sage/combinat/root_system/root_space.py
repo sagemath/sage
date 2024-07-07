@@ -166,7 +166,7 @@ class RootSpace(CombinatorialFreeModule):
             ...
             ValueError: alpha[1] + alpha[2] + 3/2*alpha[3] does not have integral coefficients
 
-        .. note::
+        .. NOTE::
 
             For internal use only; instead use a conversion::
 

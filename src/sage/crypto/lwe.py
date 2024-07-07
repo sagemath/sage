@@ -801,7 +801,7 @@ def balance_sample(s, q=None):
         ....:     assert all(-257//2 <= c <= 257//2 for bi in b for c in bi)
         ....:     assert all(s[i][j] == b[i][j] % 257 for i in range(2) for j in range(8))
 
-    .. note::
+    .. NOTE::
 
         This function is useful to convert between Sage's standard
         representation of elements in `\Zmod{q}` as integers between 0 and q-1

@@ -127,7 +127,7 @@ class ParallelFunction():
     """
     def __init__(self, parallel, func):
         """
-        .. note::
+        .. NOTE::
 
             This is typically accessed indirectly through
             :meth:`Parallel.__call__`.
@@ -167,7 +167,7 @@ class ParallelFunction():
         Implement part of the descriptor protocol for
         :class:`ParallelFunction` objects.
 
-        .. note::
+        .. NOTE::
 
             This is the key to fixing :issue:`11461`.
 

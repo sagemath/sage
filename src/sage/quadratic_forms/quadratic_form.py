@@ -1475,7 +1475,7 @@ class QuadraticForm(SageObject):
         Return the determinant of the Gram matrix of `2\cdot Q`, or
         equivalently the determinant of the Hessian matrix of `Q`.
 
-        .. NOTE:
+        .. NOTE::
 
             This is always defined over the same ring as the quadratic form.
 

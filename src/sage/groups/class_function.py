@@ -4,7 +4,7 @@ Class functions of groups.
 
 This module implements a wrapper of GAP's ClassFunction function.
 
-.. NOTE:
+.. NOTE::
 
     The ordering of the columns of the character table of a group
     corresponds to the ordering of the list. However, in general there is

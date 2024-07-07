@@ -1811,7 +1811,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         Return ``True`` if ``self != 0``.
 
-        .. note::
+        .. NOTE::
 
            This is much faster than actually writing ``self == 0``.
         """
@@ -1821,7 +1821,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         r"""
         Quotient of division of ``self`` by ``other``. This is denoted ``//``.
 
-        .. note::
+        .. NOTE::
 
            It's not clear to me that this is well-defined if
            ``self`` is not exactly divisible by other.

@@ -505,7 +505,7 @@ class Triangulation(Element):
         coordinates of the points are shifted so that the apex of the
         fan is the origin of the coordinate system.
 
-        .. note:: If the set of cones over the simplices is not a fan, a
+        .. NOTE:: If the set of cones over the simplices is not a fan, a
             suitable exception is raised.
 
         EXAMPLES::

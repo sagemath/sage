@@ -653,7 +653,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
 
     if ``length(a) = d+1``, so in particular always ``a[d] = 1``.
 
-    .. note::
+    .. NOTE::
 
         This is guaranteed to give all primitive such fields, and
         seems in practice to give many imprimitive ones.

@@ -534,7 +534,7 @@ cdef class RingExtension_generic(CommutativeRing):
         - ``category`` -- the category for the resulting parent
           (default: ``CommutativeRings()``)
 
-        .. NOTE:
+        .. NOTE::
 
             The attribute ``is_backend_exposed`` is only used for printing;
             when it is ``False``, printing an element like its backend is

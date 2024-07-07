@@ -364,7 +364,7 @@ class Color:
         transformations, of this space.  Coordinates in all of these
         spaces are floating point values in the interval [0.0, 1.0].
 
-        .. note:: All instantiations of :class:`Color` are converted
+        .. NOTE:: All instantiations of :class:`Color` are converted
                   to an internal RGB floating point 3-tuple.  This is
                   likely to degrade precision.
 

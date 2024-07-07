@@ -104,7 +104,7 @@ cdef class Heilbronn:
 
         (This function is automatically called during initialization.)
 
-        .. note::
+        .. NOTE::
 
            This function must be overridden by all derived classes!
 

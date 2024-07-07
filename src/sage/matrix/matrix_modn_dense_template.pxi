@@ -414,7 +414,7 @@ cpdef __matrix_from_rows_of_matrices(X):
 
     OUTPUT: a single matrix mod ``p`` whose ``i``-th row is ``X[i].list()``.
 
-    .. note::
+    .. NOTE::
 
          Do not call this function directly but use the static method
          ``Matrix_modn_dense_float/double._matrix_from_rows_of_matrices``

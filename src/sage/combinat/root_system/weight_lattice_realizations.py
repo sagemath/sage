@@ -210,7 +210,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: L(Lambda[2])
                 (0, 1, -1, 0)
 
-            .. note::
+            .. NOTE::
 
                 More examples are given in :class:`WeightLatticeRealizations`;
                 The embeddings are systematically tested in

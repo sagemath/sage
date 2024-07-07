@@ -189,7 +189,7 @@ class DLXMatrix:
         'initialsolution' is list of row indexes that are required to be
         part of the solution. They will be removed from the matrix.
 
-        .. NOTE:
+        .. NOTE::
 
             Rows and cols are 1-indexed ; the zero index is reserved for
             the root node and column heads.

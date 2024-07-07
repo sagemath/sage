@@ -527,7 +527,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
 
     OUTPUT: the corresponding Newton polygon
 
-    .. note::
+    .. NOTE::
 
         By convention, a Newton polygon always contains the point
         at infinity `(0, \infty)`. These polygons are attached to

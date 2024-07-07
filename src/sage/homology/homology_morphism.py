@@ -56,7 +56,7 @@ class InducedHomologyMorphism(Morphism):
       ``True``, return the induced map in cohomology rather than
       homology
 
-    .. note::
+    .. NOTE::
 
         This is not intended to be used directly by the user, but instead
         via the method

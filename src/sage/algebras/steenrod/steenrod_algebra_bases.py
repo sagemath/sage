@@ -200,7 +200,7 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
 
     ``matrix`` -- change-of-basis matrix, a square matrix over `\GF{p}`
 
-    .. note::
+    .. NOTE::
 
         This is called internally.  It is not intended for casual
         users, so no error checking is made on the integer `n`, the

@@ -135,7 +135,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         sage: p[[]]
         p[]
 
-    .. note:: When elements are constructed using the ``p[something ]`` syntax ,
+    .. NOTE:: When elements are constructed using the ``p[something ]`` syntax ,
        an error will be raised if the input cannot be interpreted as a partition.
        This is *not* the case when ``p.basis()`` is used::
 

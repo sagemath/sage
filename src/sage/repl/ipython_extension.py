@@ -169,7 +169,7 @@ class SageMagics(Magics):
 
         - ``args`` -- string. The file to be interactively loaded
 
-        .. note::
+        .. NOTE::
 
             Currently, this cannot be completely doctested as it
             relies on :func:`raw_input`.

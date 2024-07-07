@@ -60,7 +60,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
     - ``dots`` -- boolean (default: ``False``); whether to display
       dots at mesh grid points
 
-    .. note::
+    .. NOTE::
 
        #. By default for a curve any points where `f_x`,
           `f_y`, or `f_z` do not evaluate to a real number

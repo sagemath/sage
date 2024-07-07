@@ -430,7 +430,7 @@ class NumberFieldIdeal(Ideal_generic):
         """
         Return the string representation of this number field ideal.
 
-        .. note::
+        .. NOTE::
 
            Only the zero ideal actually has type NumberFieldIdeal; all
            others have type NumberFieldFractionalIdeal.  So this function
@@ -1605,13 +1605,13 @@ class NumberFieldIdeal(Ideal_generic):
 
         .. MATH:: \left(\frac{\alpha}{\mathbf{P}}\right) \equiv \alpha^{\frac{N(\mathbf{P})-1}{m}} \operatorname{mod} \mathbf{P}
 
-        .. note:: accepts `m=1`, in which case returns 1
+        .. NOTE:: accepts `m=1`, in which case returns 1
 
-        .. note:: can also be called for an element from sage.rings.number_field_element.residue_symbol
+        .. NOTE:: can also be called for an element from sage.rings.number_field_element.residue_symbol
 
-        .. note:: `e` is coerced into the number field of ``self``
+        .. NOTE:: `e` is coerced into the number field of ``self``
 
-        .. note::
+        .. NOTE::
 
             if `m=2`, `e` is an integer, and ``self.number_field()`` has absolute degree 1 (i.e. it is a copy of the rationals),
             then this calls :func:`kronecker_symbol`, which is implemented using GMP.
@@ -1862,7 +1862,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         """
         Return the string representation of this number field fractional ideal.
 
-        .. note::
+        .. NOTE::
 
            Only the zero ideal actually has type NumberFieldIdeal; all
            others have type NumberFieldFractionalIdeal.
@@ -2104,7 +2104,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         - `d_i = b_i[i]`, with `\{b_0, b_1, \dots, b_n\}` HNF basis
           of the ideal ``self``.
 
-        .. note::
+        .. NOTE::
 
            The reduced element `g` is not necessarily small. To get a
            small `g` use the method :meth:`small_residue`.
@@ -2323,7 +2323,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         - ``reduce`` -- boolean; if ``True`` (default), use ``small_residues`` to
           get small representatives of the residues
 
-        .. note::
+        .. NOTE::
 
             See also :meth:`invertible_residues` for a simpler version without the subgroup.
 
@@ -2474,7 +2474,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         OUTPUT: ``True`` if ``self`` and ``other`` are coprime, else ``False``
 
-        .. note::
+        .. NOTE::
 
            This function works for fractional ideals as well as
            integral ideals.
@@ -2586,7 +2586,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         element `g` such that `f - g` belongs to the ideal ``self`` (which
         must be integral), and `g` is small.
 
-        .. note::
+        .. NOTE::
 
             The reduced representative returned is not uniquely determined.
 
@@ -2670,7 +2670,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         The finite abelian group `(O_K/I)^*`.
 
-        .. note::
+        .. NOTE::
 
             Uses the PARI function :pari:`idealstar`. The PARI function outputs
             a special ``bid`` structure which is stored in the internal
@@ -3007,7 +3007,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         - ``S`` -- list of prime ideals (not checked if they are
           indeed prime)
 
-        .. note::
+        .. NOTE::
 
            This function assumes that `S` is a list of prime ideals,
            but does not check this.  This function will fail if `S` is
@@ -3037,7 +3037,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         - ``S`` -- list of prime ideals (not checked if they are indeed prime)
 
-        .. note::
+        .. NOTE::
 
            This function assumes that `S` is a list of prime ideals,
            but does not check this.  This function will fail if `S` is
