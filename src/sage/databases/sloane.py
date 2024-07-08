@@ -109,7 +109,9 @@ class SloaneEncyclopediaClass:
 
     def __repr__(self):
         """
-        String representation of this database. OUTPUT: str
+        String representation of this database.
+
+        OUTPUT: string
         """
         return "Local copy of Sloane Online Encyclopedia of Integer Sequences"
 

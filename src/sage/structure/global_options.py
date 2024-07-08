@@ -1237,7 +1237,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
             sage: print(Partitions.options.__doc__)                                     # needs sage.combinat
             <BLANKLINE>
-            Sets and displays the global options for elements of the partition,
+            Set and display the global options for elements of the partition,
             skew partition, and partition tuple classes.  If no parameters are
             set, then the function returns a copy of the options dictionary.
             <BLANKLINE>

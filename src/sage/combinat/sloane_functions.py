@@ -1868,9 +1868,9 @@ class A000012(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A000012._repr_()
-            "The all 1s sequence."
+            'The all 1s sequence.'
         """
-        return "The all 1s sequence."
+        return 'The all 1s sequence.'
 
     def _eval(self, n):
         """
@@ -1917,9 +1917,9 @@ class A000120(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A000120._repr_()
-            "1s-counting sequence: number of 1s in binary expansion of n."
+            '1s-counting sequence: number of 1s in binary expansion of n.'
         """
-        return "1s-counting sequence: number of 1s in binary expansion of n."
+        return '1s-counting sequence: number of 1s in binary expansion of n.'
 
     def f(self, n):
         """
@@ -2031,9 +2031,9 @@ class A000069(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A000069._repr_()
-            "Odious numbers: odd number of 1s in binary expansion."
+            'Odious numbers: odd number of 1s in binary expansion.'
         """
-        return "Odious numbers: odd number of 1s in binary expansion."
+        return 'Odious numbers: odd number of 1s in binary expansion.'
 
     def _eval(self, n):
         """
@@ -2082,9 +2082,9 @@ class A001969(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A001969._repr_()
-            "Evil numbers: even number of 1s in binary expansion."
+            'Evil numbers: even number of 1s in binary expansion.'
         """
-        return "Evil numbers: even number of 1s in binary expansion."
+        return 'Evil numbers: even number of 1s in binary expansion.'
 
     def _eval(self, n):
         """

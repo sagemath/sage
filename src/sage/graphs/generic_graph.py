@@ -20376,7 +20376,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: for key, value in sorted(layout_options.items()):
             ....:     print("option {} : {}".format(key, value))
             option by_component : Whether to do the spring layout by connected component -- boolean.
-            option dim : The dimension of the layout -- `2` or `3`.
+            option dim : The dimension of the layout -- 2 or 3.
             option forest_roots : An iterable specifying which vertices to use as roots for the ``layout='forest'`` option. If no root is specified for a tree, then one is chosen close to the center of the tree. Ignored unless ``layout='forest'``.
             option heights : A dictionary mapping heights to the list of vertices at this height.
             option iterations : The number of times to execute the spring layout algorithm.

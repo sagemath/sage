@@ -1035,11 +1035,11 @@ class SageDocTestParser(doctest.DocTestParser):
 
         Test that :issue:`26575` is resolved::
 
-            sage: example3 = 'sage: Zp(5,4,print_mode='digits')(5)\n...00010'
+            sage: example3 = 'sage: Zp(5,4,print_mode="digits")(5)\n...00010'
             sage: parsed3 = DTP.parse(example3)
             sage: dte = parsed3[1]
             sage: dte.sage_source
-            'Zp(5,4,print_mode='digits')(5)\n'
+            'Zp(5,4,print_mode="digits")(5)\n'
             sage: dte.want
             '...00010\n'
 
@@ -1119,11 +1119,11 @@ class SageDocTestParser(doctest.DocTestParser):
             "P = polytopes.associahedron(['A',Integer(3)])\n"),
             '\n']
 
-            sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm='guava')  # optional - guava\n        ...\n        24\n\n'
+            sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm="guava")  # optional - guava\n        ...\n        24\n\n'
             sage: parsed4 = DTP.parse(example4)
             sage: dte = parsed4[1]
             sage: dte.sage_source
-            'C.minimum_distance(algorithm='guava')  # optional - guava\n'
+            'C.minimum_distance(algorithm="guava")  # optional - guava\n'
             sage: dte.want
             '...\n24\n'
         """

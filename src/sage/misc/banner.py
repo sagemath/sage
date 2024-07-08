@@ -20,7 +20,7 @@ def version():
     """
     Return the version of Sage.
 
-    OUTPUT: str
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -38,7 +38,9 @@ def banner_text(full=True):
 
     - ``full`` -- boolean (default: ``True``)
 
-    OUTPUT: string containing the banner message
+    OUTPUT:
+
+    A string containing the banner message.
 
     If option full is ``False``, a simplified plain ASCII banner is
     displayed; if ``True`` the full banner with box art is displayed.

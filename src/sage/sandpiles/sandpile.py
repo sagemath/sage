@@ -2815,10 +2815,10 @@ class SandpileConfig(dict):
             fire_unstable          -- Fire all unstable vertices.
             fire_vertex            -- Fire the given vertex.
             help                   -- List of SandpileConfig methods.
-            is_recurrent           -- Is the configuration recurrent?
-            is_stable              -- Is the configuration stable?
-            is_superstable         -- Is the configuration superstable?
-            is_symmetric           -- Is the configuration symmetric?
+            is_recurrent           -- Return whether the configuration is recurrent.
+            is_stable              -- Return whether the configuration is stable.
+            is_superstable         -- Return whether the configuration is superstable.
+            is_symmetric           -- Return whether the configuration is symmetric.
             order                  -- The order of the equivalent recurrent element.
             sandpile               -- The configuration's underlying sandpile.
             show                   -- Show the configuration.
@@ -3681,7 +3681,7 @@ class SandpileConfig(dict):
 
     def is_stable(self):
         r"""
-        Return whether this configuration is stable.
+        Return whether the configuration is stable.
 
         OUTPUT: boolean
 
@@ -3891,7 +3891,7 @@ class SandpileConfig(dict):
 
     def is_symmetric(self, orbits) -> bool:
         r"""
-        Is the configuration symmetric?  Return ``True`` if the values of the
+        Return whether the configuration is symmetric.  Return ``True`` if the values of the
         configuration are constant over the vertices in each sublist of
         ``orbits``.
 
@@ -4056,11 +4056,11 @@ class SandpileDivisor(dict):
             fire_unstable          -- Fire all unstable vertices.
             fire_vertex            -- Fire the given vertex.
             help                   -- List of SandpileDivisor methods.
-            is_alive               -- Is the divisor stabilizable?
-            is_linearly_equivalent -- Is the given divisor linearly equivalent?
-            is_q_reduced           -- Is the divisor q-reduced?
-            is_symmetric           -- Is the divisor symmetric?
-            is_weierstrass_pt      -- Is the given vertex a Weierstrass point?
+            is_alive               -- Return whether the divisor is stabilizable.
+            is_linearly_equivalent -- Return whether the given divisor is linearly equivalent.
+            is_q_reduced           -- Return whether the divisor is q-reduced.
+            is_symmetric           -- Return whether the divisor is symmetric.
+            is_weierstrass_pt      -- Return whether the given vertex is a Weierstrass point.
             polytope               -- The polytope determining the complete linear system.
             polytope_integer_pts   -- The integer points inside divisor's polytope.
             q_reduced              -- The linearly equivalent q-reduced divisor.
@@ -4725,7 +4725,7 @@ class SandpileDivisor(dict):
 
     def is_q_reduced(self):
         r"""
-        Is the divisor `q`-reduced?  This would mean that `self = c + kq` where
+        Return whether the divisor is `q`-reduced.  This would mean that `self = c + kq` where
         `c` is superstable, `k` is an integer, and `q` is the sink vertex.
 
         OUTPUT: boolean
@@ -4763,7 +4763,7 @@ class SandpileDivisor(dict):
 
     def is_linearly_equivalent(self, D, with_firing_vector=False):
         r"""
-        Is the given divisor linearly equivalent?  Optionally, returns the
+        Return whether the given divisor is linearly equivalent.  Optionally, returns the
         firing vector.  (See NOTE.)
 
         INPUT:
@@ -5657,7 +5657,7 @@ class SandpileDivisor(dict):
 
     def is_symmetric(self, orbits):
         r"""
-        Is the divisor symmetric?  Return ``True`` if the values of the
+        Return whether the divisor is symmetric.  Return ``True`` if the values of the
         configuration are constant over the vertices in each sublist of
         ``orbits``.
 
@@ -5712,7 +5712,7 @@ class SandpileDivisor(dict):
 
     def is_alive(self, cycle=False):
         r"""
-        Is the divisor stabilizable?  In other words, will the divisor stabilize
+        Return whether the divisor is stabilizable.  In other words, will the divisor stabilize
         under repeated firings of all unstable vertices?  Optionally returns the
         resulting cycle.
 

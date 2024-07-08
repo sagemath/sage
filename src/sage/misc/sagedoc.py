@@ -697,7 +697,7 @@ def format(s, embedded=False):
     We check that the todo Sphinx extension is correctly activated::
 
         sage: sage.misc.sagedoc.format(sage.combinat.ranker.on_fly.__doc__)             # needs sphinx
-        "   Returns ...  Todo: add tests as in combinat::rankers\n"
+        "   Return ...  Todo: add tests as in combinat::rankers\n"
 
     In the following use case, the ``nodetex`` directive would have been ignored prior
     to :issue:`11815`::

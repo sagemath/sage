@@ -2543,13 +2543,13 @@ SandpileConfig
 
 - :ref:`help <help-config>` --- List of SandpileConfig methods.
 
-- :ref:`is_recurrent <is_recurrent-config>` --- Is the configuration recurrent?
+- :ref:`is_recurrent <is_recurrent-config>` --- Return whether the configuration is recurrent.
 
-- :ref:`is_stable <is_stable-config>` --- Is the configuration stable?
+- :ref:`is_stable <is_stable-config>` --- Return whether the configuration is stable.
 
-- :ref:`is_superstable <is_superstable-config>` --- Is the configuration superstable?
+- :ref:`is_superstable <is_superstable-config>` --- Return whether the configuration is superstable.
 
-- :ref:`is_symmetric <is_symmetric-config>` --- Is the configuration symmetric?
+- :ref:`is_symmetric <is_symmetric-config>` --- Return whether the configuration is symmetric.
 
 - :ref:`order <order-config>` --- The order of the equivalent recurrent element.
 
@@ -3174,10 +3174,10 @@ EXAMPLES::
     fire_unstable          -- Fire all unstable vertices.
     fire_vertex            -- Fire the given vertex.
     help                   -- List of SandpileConfig methods.
-    is_recurrent           -- Is the configuration recurrent?
-    is_stable              -- Is the configuration stable?
-    is_superstable         -- Is the configuration superstable?
-    is_symmetric           -- Is the configuration symmetric?
+    is_recurrent           -- Return whether the configuration is recurrent.
+    is_stable              -- Return whether the configuration is stable.
+    is_superstable         -- Return whether the configuration is superstable.
+    is_symmetric           -- Return whether the configuration is symmetric.
     order                  -- The order of the equivalent recurrent element.
     sandpile               -- The configuration's underlying sandpile.
     show                   -- Show the configuration.
@@ -3192,7 +3192,7 @@ EXAMPLES::
 
 **is_recurrent()**
 
-Is the configuration recurrent?
+Return whether the configuration is recurrent.
 
 OUTPUT: boolean
 
@@ -3210,7 +3210,7 @@ EXAMPLES::
 
 **is_stable()**
 
-Is the configuration stable?
+Return whether the configuration is stable.
 
 OUTPUT: boolean
 
@@ -3230,7 +3230,7 @@ EXAMPLES::
 
 **is_superstable()**
 
-Is the configuration superstable?
+Return whether the configuration is superstable.
 
 OUTPUT: boolean
 
@@ -3246,7 +3246,7 @@ EXAMPLES::
 
 **is_symmetric(orbits)**
 
-Is the configuration symmetric?  Return ``True`` if the values of the
+Return whether the configuration is symmetric.  Return ``True`` if the values of the
 configuration are constant over the vertices in each sublist of
 ``orbits``.
 
@@ -3474,13 +3474,13 @@ SandpileDivisor
 
 - :ref:`help <help-divisor>` --- List of SandpileDivisor methods.
 
-- :ref:`is_alive <is_alive-divisor>` --- Is the divisor stabilizable?
+- :ref:`is_alive <is_alive-divisor>` --- Return whether the divisor is stabilizable.
 
-- :ref:`is_linearly_equivalent <is_linearly_equivalent-divisor>` --- Is the given divisor linearly equivalent?
+- :ref:`is_linearly_equivalent <is_linearly_equivalent-divisor>` --- Return whether the given divisor is linearly equivalent.
 
-- :ref:`is_q_reduced <is_q_reduced-divisor>` --- Is the divisor q-reduced?
+- :ref:`is_q_reduced <is_q_reduced-divisor>` --- Return whether the divisor is q-reduced.
 
-- :ref:`is_symmetric <is_symmetric-divisor>` --- Is the divisor symmetric?
+- :ref:`is_symmetric <is_symmetric-divisor>` --- Return whether the divisor is symmetric.
 
 - :ref:`is_weierstrass_pt <is_weierstrass_pt-divisor>` --- Is the given vertex a Weierstrass point?
 
@@ -3965,11 +3965,11 @@ EXAMPLES::
     fire_unstable          -- Fire all unstable vertices.
     fire_vertex            -- Fire the given vertex.
     help                   -- List of SandpileDivisor methods.
-    is_alive               -- Is the divisor stabilizable?
-    is_linearly_equivalent -- Is the given divisor linearly equivalent?
-    is_q_reduced           -- Is the divisor q-reduced?
-    is_symmetric           -- Is the divisor symmetric?
-    is_weierstrass_pt      -- Is the given vertex a Weierstrass point?
+    is_alive               -- Return whether the divisor is stabilizable.
+    is_linearly_equivalent -- Return whether the given divisor is linearly equivalent.
+    is_q_reduced           -- Return whether the divisor is q-reduced.
+    is_symmetric           -- Return whether the divisor is symmetric.
+    is_weierstrass_pt      -- Return whether the given vertex is a Weierstrass point.
     polytope               -- The polytope determining the complete linear system.
     polytope_integer_pts   -- The integer points inside divisor's polytope.
     q_reduced              -- The linearly equivalent q-reduced divisor.
@@ -3992,7 +3992,7 @@ EXAMPLES::
 
 **is_alive(cycle=False)**
 
-Is the divisor stabilizable?  In other words, will the divisor stabilize
+Return whether the divisor is stabilizable.  In other words, will the divisor stabilize
 under repeated firings of all unstable vertices?  Optionally returns the
 resulting cycle.
 
@@ -4017,7 +4017,7 @@ EXAMPLES::
 
 **is_linearly_equivalent(D, with_firing_vector=False)**
 
-Is the given divisor linearly equivalent?  Optionally, returns the
+Return whether the given divisor is linearly equivalent.  Optionally, returns the
 firing vector.  (See NOTE.)
 
 INPUT:
@@ -4058,7 +4058,7 @@ EXAMPLES::
 
 **is_q_reduced()**
 
-Is the divisor `q`-reduced?  This would mean that `self = c + kq` where
+Return whether the divisor is `q`-reduced.  This would mean that `self = c + kq` where
 `c` is superstable, `k` is an integer, and `q` is the sink vertex.
 
 OUTPUT: boolean
@@ -4096,7 +4096,7 @@ general directed graphs:
 
 **is_symmetric(orbits)**
 
-Is the divisor symmetric?  Return ``True`` if the values of the
+Return whether the divisor is symmetric.  Return ``True`` if the values of the
 configuration are constant over the vertices in each sublist of
 ``orbits``.
 
@@ -4125,7 +4125,7 @@ EXAMPLES::
 
 **is_weierstrass_pt(v='sink')**
 
-Is the given vertex a Weierstrass point?
+Return whether the given vertex is a Weierstrass point.
 
 INPUT:
 

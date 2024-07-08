@@ -334,7 +334,6 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
         |            Traceback (most recent call last):
         |            ...
         |            NotImplementedError
-        |
         |        ...
         |        p = cls()                         # fresh instance of the backend
         |        if tester is None:

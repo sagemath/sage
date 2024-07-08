@@ -2237,7 +2237,7 @@ def sage_getsourcelines(obj):
         sage: # needs sage.combinat
         sage: cachedfib = cached_function(fibonacci)
         sage: sage_getsourcelines(cachedfib)[0][0]
-        'def fibonacci(n, algorithm='pari') -> Integer:\n'
+        "def fibonacci(n, algorithm='pari') -> Integer:\n"
         sage: sage_getsourcelines(type(cachedfib))[0][0]
         'cdef class CachedFunction():\n'
 

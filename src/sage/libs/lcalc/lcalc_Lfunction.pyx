@@ -119,7 +119,7 @@ cdef class Lfunction:
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
             sage: Lfunction_from_character(DirichletGroup(5)[1])
-            `L`-function with complex Dirichlet coefficients
+            L-function with complex Dirichlet coefficients
 
             sage: Lfunction_Zeta()
             The Riemann zeta function

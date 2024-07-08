@@ -79,7 +79,7 @@ approach is still needed for cpdef methods::
     ....: '    def direct_method(self, x):',
     ....: '        "Some doc for direct method"',
     ....: '        return 2*x',
-    ....: '    wrapped_method = cached_method(test_meth,name='wrapped_method')']
+    ....: '    wrapped_method = cached_method(test_meth,name="wrapped_method")']
     sage: cython(os.linesep.join(cython_code))
     sage: O = MyClass()
     sage: O.direct_method
