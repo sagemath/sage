@@ -109,7 +109,6 @@ from sage.schemes.projective.projective_morphism import (
 from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
-from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
 
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
@@ -5179,7 +5178,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: K = GF(3).algebraic_closure()
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sagxe: P.<x,y,z> = ProjectiveSpace(K, 2)
             sage: f = DynamicalSystem_projective([x^2 + 2*y^2, 4*x*y, z^2])
             sage: f.multiplier_spectra(1)                                               # needs sage.rings.number_field
             [
@@ -6837,7 +6836,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r_lattes_cases = [[2, 2, 2, 2], [3, 3, 3], [2, 4, 4], [2, 3, 6]]
         r_vals = sorted([val for val in r.values() if val != 1])
         return r_vals in r_lattes_cases
-    
+
     def Lattes_to_curve(self,return_conjugation = False):
         r"""
         Finds a Short Weierstrass Model Elliptic curve of self
@@ -6849,7 +6848,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         Short Weierstrass Model Elliptic curve
 
         OUTPUT: a Short Weierstrass Model Elliptic curve which is isogenous to
-        the Elliptic curve of 'self', If ``return_conjugation`` is ``True`` 
+        the Elliptic curve of 'self' and the defining polynomial of any required extension, 
+        If ``return_conjugation`` is ``True`` 
         then also returns conjugation of 'self' to short form as a matrix
 
         EXAMPLES:
@@ -6867,26 +6867,21 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         sage: f = f.conjugate(M)
         sage: f.Lattes_to_curve(return_conjugation = True)
         (
-        Elliptic Curve defined by y^2 = x^3 + 2182587088896/282475249*x + 5889333996885639168/4747561509943 over Rational Field,
-        <BLANKLINE>
-        [           1         34/7]
-        [-2401/124416   2401/62208]
+        [  -7/36*a^2 + 7/12*a + 7/3 -17/18*a^2 + 17/6*a + 34/3]                                                                                                                                               
+        [    -1/8*a^2 + 1/4*a + 3/2        1/4*a^2 - 1/2*a - 3], Elliptic Curve defined by y^2 = x^3 + (-94/27*a^2+94/9*a+376/9)*x + 12232/243 over Number Field in a with defining polynomial y^3 - 18*y - 30
         )
-
 
         ::
 
         sage: P.<x,y> = ProjectiveSpace(QQ,1)
         sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 2, 2]), 2)
         sage: L.<i> = CyclotomicField(4)
-        sage: M = Matrix([[i,i], [0, -i]])
+        sage: M = Matrix([[1+i,2*i], [0, -i]])
         sage: f = f.conjugate(M)
-        sage: f.Lattes_to_curve(true)
+        sage: f.Lattes_to_curve(return_conjugation = True)
         (
-        Elliptic Curve defined by y^2 = x^3 + 95/48*x - 1169/864 over Rational Field,
-        <BLANKLINE>
-        [   1 7/12]
-        [   0    1]
+        [              1 19/24*I + 19/24]                                                                                                                                                 
+        [              0               1], Elliptic Curve defined by y^2 = x^3 + 95/96*I*x + (-1169/3456*I+1169/3456) over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         )
 
         ::
@@ -6894,54 +6889,45 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: M = matrix(QQ,2,2,[[1,3],[2,1]])
         sage: E = EllipticCurve([1, 1, 1, 2, 3])
-        sage: f = P.Lattes_map(E, 3)
+        sage: f = P.Lattes_map(E, 2)
         sage: f = f.conjugate(M)
         sage: f.Lattes_to_curve(return_conjugation = True)
         (
-        Elliptic Curve defined by y^2 = x^3 + 2971089832419908421490114560/672749994932560009201*x - 136859124978149365523025777492183402676224/17449402268886407318558803753801 over Rational Field,
-        <BLANKLINE>
-        [                        1                     41/22]
-        [-2357947691/3228757749504 -2357947691/6457515499008]
+        [11/1602*a^2 41/3204*a^2]                                                                                                                                         
+        [     -2/5*a      -1/5*a], Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696) over Number Field in a with defining polynomial y^3 - 267
         )
 
         """
         if self.base_ring() not in NumberFields():
                 raise NotImplementedError("Base ring must be a number field")
-
     #The Complex case is hard to implement and needs to be done later
         if sqrt(self.degree()) != int(sqrt(self.degree())):
             raise NotImplementedError("Map is not Lattes or is Complex Lattes")
-            
-        
-        
+        from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
+        from sage.schemes.elliptic_curves.constructor import EllipticCurve
         d = self.degree()
-        n = int(sqrt(self.degree()))\
-
+        n = int(sqrt(self.degree()))
     #Creating a Symbolic Lattes map f_sym from a short Elliptic curve
-        R = PolynomialRing(QQ,6,"a,b,u,v,w,t")
+        R = PolynomialRing(self.base_ring(),6,"a,b,u,v,w,t")
         a,b,u,v,w,t = R.gens()
         E_sym = EllipticCurve([a,b])
         P = ProjectiveSpace(R,1,"x,y")
         x,y = P.gens()
         f_sym = P.Lattes_map(E_sym, n)
-        
     # Conjugating f_sym map to have the right form so we can solve for the conjugating matrix later
         m=matrix(R,2,[u,v,t,w])
         f_sym = f_sym.conjugate(m)
         f_sym.scale_by(u*w - v*t)
         F_sym = f_sym.dehomogenize(1)
-
     #extracting the base variables to do term by term matching
-        P = ProjectiveSpace(QQ,1,"x,y")
+        P = ProjectiveSpace(self.base_ring(),1,"x,y")
         x,y = P.gens()
         self.scale_by(1/self[0].lc())
         F = self.dehomogenize(1)
         x = F[0].parent().gen(0)
         z = F_sym[0].parent().gen(0)
-
     #Creating a set of equations, eq, from term by term matching
-    #Scales conjugation matrix to have 1 in top left entry original solution wanted det=1 but proved too restrictive
-        eq = [u-1] 
+        eq = [u*w - v*t-1]
         for j in range(2):
             if j == 0:
                 g = F[0].numerator()
@@ -6951,27 +6937,23 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 g_sym = F_sym[0].denominator()
             for i in range(d+1):
                 eq += [g.coefficient({x:i}) - g_sym.coefficient({z:i})]
-
     #Solving the equations
         I = R.ideal(eq)
-        pts = I.variety()
-        assert(len(pts)==1)
+        pts = I.variety(ring=QQbar)
         a = pts[0]['a']
         b = pts[0]['b']
         u = pts[0]['u']
         v = pts[0]['v']
         t = pts[0]['t']
         w = pts[0]['w']
-
+        K,[a,b,u,v,t,w],phi = number_field_elements_from_algebraics([a,b,u,v,t,w])
     #creating our end products
         E = EllipticCurve([a,b])
-        
         if return_conjugation:
-            M = matrix(QQ,2,2,[u,v,t,w])
-            return (E , M)
+            M = matrix(K,2,2,[u,v,t,w])
+            return (M,E)
         else:
             return E
-
 
 class DynamicalSystem_projective_field(DynamicalSystem_projective,
                                        SchemeMorphism_polynomial_projective_space_field):
