@@ -228,7 +228,7 @@ jobs:
           # We copy everything to a local folder
           docker cp --follow-link BUILD:/sage/local/share/doc/sage/html livedoc
           docker cp --follow-link BUILD:/sage/local/share/doc/sage/pdf livedoc
-          docker cp BUILD:/sage/local/share/doc/sage/index.html livedoc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/index.html livedoc
           zip -r livedoc.zip livedoc
 
       - name: Upload live doc
