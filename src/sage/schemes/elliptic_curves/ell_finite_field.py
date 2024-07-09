@@ -2725,8 +2725,8 @@ def EllipticCurve_with_order(m, *, D=None):
         sage: all(E.order() == 21 for E in Es)
         True
 
-    Indeed, we can verify that this is correct. Hasse's bounds tell us that $p \leq 50$
-    (approximately), and the rest can be checked via bruteforce::
+    Indeed, we can verify that this is correct. Hasse's bounds tell us that
+    `p \leq 50` (approximately), and the rest can be checked via bruteforce::
 
         sage: for p in prime_range(50):
         ....:     for j in range(p):
