@@ -427,7 +427,7 @@ class NumberFieldIdeal(Ideal_generic):
         K = self.number_field()
         return [K(x, check=False) for x in K.pari_zk() * hnf]
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return the string representation of this number field ideal.
 
@@ -1862,7 +1862,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         else:
             raise ValueError("gens must have a nonzero element (zero ideal is not a fractional ideal)")
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return the string representation of this number field fractional ideal.
 
@@ -3396,7 +3396,7 @@ class QuotientMap:
         w = v * self.__M_OK_change
         return self.__Q( list(w) )
 
-    def __repr__(self):
+    def _repr_(self):
         r"""
         Return a string representation of this QuotientMap.
 
@@ -3464,7 +3464,7 @@ class LiftMap:
         z = (w * self.__M_OK_map).list()
         return self.__OK(sum(z[i] * self.__Kgen ** i for i in range(len(z))))
 
-    def __repr__(self):
+    def _repr_(self):
         r"""
         Return a string representation of this QuotientMap.
 
