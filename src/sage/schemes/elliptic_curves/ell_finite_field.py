@@ -2842,7 +2842,7 @@ def EllipticCurve_with_prime_order(N):
         ...
         ValueError: input order is not prime
 
-    ..NOTE::
+    .. NOTE::
 
         Depending on the input, this function may run forever.
 
