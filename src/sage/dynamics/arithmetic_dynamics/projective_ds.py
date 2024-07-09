@@ -5178,7 +5178,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: K = GF(3).algebraic_closure()
-            sagxe: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
             sage: f = DynamicalSystem_projective([x^2 + 2*y^2, 4*x*y, z^2])
             sage: f.multiplier_spectra(1)                                               # needs sage.rings.number_field
             [
@@ -6896,6 +6896,21 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         [11/1602*a^2 41/3204*a^2]                                                                                                                                         
         [     -2/5*a      -1/5*a], Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696) over Number Field in a with defining polynomial y^3 - 267
         )
+
+        ::
+
+        sage: P.<x,y> = ProjectiveSpace(QQ , 1)
+        sage: M = matrix(QQ,2,2,[[1 , 3],[2 , 1]])
+        sage: E = EllipticCurve([1, 1, 1, 2, 3])
+        sage: f = P.Lattes_map(E , 2)
+        sage: f = f.conjugate(M)
+        sage: m,H = f.Lattes_to_curve(true)
+        sage: J.<x,y> = ProjectiveSpace(H.base_ring(), 1)
+        sage: K = J.Lattes_map(H,2)
+        sage: K = K.conjugate(m)
+        sage: K.scale_by(f[0].lc()/K[0].lc())
+        sage: K == f.change_ring(K.base_ring())
+        True
 
         """
         if self.base_ring() not in NumberFields():
