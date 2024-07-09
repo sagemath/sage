@@ -6837,19 +6837,18 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r_vals = sorted([val for val in r.values() if val != 1])
         return r_vals in r_lattes_cases
 
-    def Lattes_to_curve(self,return_conjugation = False):
+    def Lattes_to_curve(self, return_conjugation=False):
         r"""
         Finds a Short Weierstrass Model Elliptic curve of self
-        
         self assumed to be Lattes map and not in charateristic 2 or 3
 
         INPUT: `return_conjugation`` -- (default: ``False``) if ``True``, then
-        return the conjugation that moves self to a map that comes from a 
+        return the conjugation that moves self to a map that comes from a
         Short Weierstrass Model Elliptic curve
 
         OUTPUT: a Short Weierstrass Model Elliptic curve which is isogenous to
-        the Elliptic curve of 'self' and the defining polynomial of any required extension, 
-        If ``return_conjugation`` is ``True`` 
+        the Elliptic curve of 'self' and the defining polynomial of any required extension,
+        If ``return_conjugation`` is ``True``
         then also returns conjugation of 'self' to short form as a matrix
 
         EXAMPLES:
@@ -6923,20 +6922,20 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         d = self.degree()
         n = int(sqrt(self.degree()))
     #Creating a Symbolic Lattes map f_sym from a short Elliptic curve
-        R = PolynomialRing(self.base_ring(),6,"a,b,u,v,w,t")
-        a,b,u,v,w,t = R.gens()
-        E_sym = EllipticCurve([a,b])
-        P = ProjectiveSpace(R,1,"x,y")
-        x,y = P.gens()
+        R = PolynomialRing(self.base_ring(),6,"a, b, u, v, w, t")
+        a, b, u, v, w, t = R.gens()
+        E_sym = EllipticCurve([a, b])
+        P = ProjectiveSpace(R,1,"x, y")
+        x, y = P.gens()
         f_sym = P.Lattes_map(E_sym, n)
     # Conjugating f_sym map to have the right form so we can solve for the conjugating matrix later
-        m=matrix(R,2,[u,v,t,w])
+        m=matrix(R, 2, [u, v, t, w])
         f_sym = f_sym.conjugate(m)
         f_sym.scale_by(u*w - v*t)
         F_sym = f_sym.dehomogenize(1)
     #extracting the base variables to do term by term matching
-        P = ProjectiveSpace(self.base_ring(),1,"x,y")
-        x,y = P.gens()
+        P = ProjectiveSpace(self.base_ring(), 1, "x, y")
+        x, y = P.gens()
         self.scale_by(1/self[0].lc())
         F = self.dehomogenize(1)
         x = F[0].parent().gen(0)
@@ -6950,7 +6949,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             else:
                 g = F[0].denominator()
                 g_sym = F_sym[0].denominator()
-            for i in range(d+1):
+            for i in range(d + 1):
                 eq += [g.coefficient({x:i}) - g_sym.coefficient({z:i})]
     #Solving the equations
         I = R.ideal(eq)
@@ -6961,12 +6960,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         v = pts[0]['v']
         t = pts[0]['t']
         w = pts[0]['w']
-        K,[a,b,u,v,t,w],phi = number_field_elements_from_algebraics([a,b,u,v,t,w])
+        K, [a, b, u, v, t, w], phi = number_field_elements_from_algebraics([a, b, u, v, t, w])
     #creating our end products
-        E = EllipticCurve([a,b])
+        E = EllipticCurve([a, b])
         if return_conjugation:
-            M = matrix(K,2,2,[u,v,t,w])
-            return (M,E)
+            M = matrix(K, 2, 2, [u, v, t, w])
+            return (M, E)
         else:
             return E
 
