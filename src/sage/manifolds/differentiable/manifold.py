@@ -3193,7 +3193,7 @@ class DifferentiableManifold(TopologicalManifold):
         latex_indices = kwargs.pop('latex_indices', None)
         symbol_dual = kwargs.pop('symbol_dual', None)
         latex_symbol_dual = kwargs.pop('latex_symbol_dual', None)
-        #
+
         if vector_fields:
             dest_map0 = vector_fields[0].parent().destination_map()
             if dest_map and dest_map is not dest_map0:
