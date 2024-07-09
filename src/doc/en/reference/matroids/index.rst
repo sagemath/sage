@@ -65,4 +65,10 @@ Internals
    sage/matroids/set_system
    sage/matroids/unpickling
 
+.. toctree::
+   :maxdepth: 1
+
+   sage/matroids/chow_ring_ideal
+   sage/matroids/chow_ring
+
 .. include:: ../footer.txt
