@@ -1,15 +1,8 @@
-from sage.matroids.chow_ring_ideal import *
-from sage.rings.quotient_ring import QuotientRing_nc
-from sage.rings.quotient_ring_element import QuotientRingElement
-from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
-import sage.misc.latex as latex
-
 r"""
 Chow rings of matroids
 
 AUTHORS:
 
-- Travis Scrimshaw 
 - Shriya M
 
 These are the classes of Chow rings for matroids. It also takes in
@@ -22,26 +15,16 @@ REFERENCES
 - :arxiv:`2309.14312`
 - :arxiv:`2111.00393`
 """
-#*****************************************************************************
-#       Copyright (C) 2024 Travis Scrimshaw
-#                     2024 Shriya M
-#
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful, but
-#    WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
 
+from sage.matroids.chow_ring_ideal import ChowRingIdeal, AugmentedChowRingIdeal
+from sage.rings.quotient_ring import QuotientRing_nc
+from sage.rings.quotient_ring_element import QuotientRingElement
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+import sage.misc.latex as latex
 
 class ChowRing(QuotientRing_nc):
     r"""
-    The class of Chow ring, a multi-polynomial quotient ring. 
+    The class of Chow ring, a multi-polynomial quotient ring.
     Base class - ``QuotientRing_nc``.
 
     INPUT:
@@ -50,7 +33,7 @@ class ChowRing(QuotientRing_nc):
     - `M` -- a matroid.
     - `R` -- a ring.
     - ``augmented`` -- a Boolean value. When ``True``, it returns the augmented Chow
-    ring. If ``False``, it returns the Chow ring
+      ring. If ``False``, it returns the Chow ring
 
     OUTPUT: Chow ring of matroid `M`.
 
@@ -74,5 +57,4 @@ class ChowRing(QuotientRing_nc):
         return "Chow ring of {}".format(self._matroid)    
 
     def _latex_(self):
-        return "%s/%s" % (latex.latex(self.poly_ring), latex.latex(self._ideal))  
-
+        return "%s/%s" % (latex.latex(self.poly_ring), latex.latex(self._ideal))
