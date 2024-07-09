@@ -928,6 +928,7 @@ If this all works, you can then make calls like:
 
         TESTS::
 
+            sage: from sage.interfaces.singular import singular
             sage: singular._eval_line('def a=3;')
             ''
             sage: singular('a')

@@ -1136,6 +1136,7 @@ def lazy_import(module, names, as_=None, *,
 
 star_imports = None
 
+
 def save_cache_file():
     """
     Used to save the cached * import names.
@@ -1157,6 +1158,7 @@ def save_cache_file():
     os.makedirs(cache_dir, exist_ok=True)
     with atomic_write(cache_file, binary=True) as f:
         pickle.dump(star_imports, f)
+
 
 def get_star_imports(module_name):
     """

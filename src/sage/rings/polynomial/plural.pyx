@@ -120,7 +120,7 @@ import sage.libs.singular.ring
 
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import is_IntegerRing
+from sage.rings.integer_ring import IntegerRing_class
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular, MPolynomial_libsingular, new_MP
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
@@ -532,7 +532,7 @@ cdef class NCPolynomialRing_plural(Ring):
                     _p = p_NSet(_n, _ring)
 
             # also accepting ZZ
-            elif is_IntegerRing(element.parent()):
+            elif isinstance(element.parent(), IntegerRing_class):
                 if isinstance(base_ring, FiniteField_prime_modn):
                     _p = p_ISet(int(element),_ring)
                 else:

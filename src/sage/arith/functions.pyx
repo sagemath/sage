@@ -39,17 +39,17 @@ def lcm(a, b=None):
 
     EXAMPLES::
 
-        sage: lcm(97,100)
+        sage: lcm(97, 100)
         9700
-        sage: LCM(97,100)
+        sage: LCM(97, 100)
         9700
-        sage: LCM(0,2)
+        sage: LCM(0, 2)
         0
-        sage: LCM(-3,-5)
+        sage: LCM(-3, -5)
         15
         sage: LCM([1,2,3,4,5])
         60
-        sage: v = LCM(range(1,10000))   # *very* fast!
+        sage: v = LCM(range(1, 10000))   # *very* fast!
         sage: len(str(v))
         4349
 
