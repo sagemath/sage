@@ -6851,7 +6851,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         If ``return_conjugation`` is ``True``
         then also returns conjugation of 'self' to short form as a matrix
 
-        EXAMPLES:
+        EXAMPLES::
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: f = P.Lattes_map(EllipticCurve([0, 0, 0, 10, 2]), 2)
@@ -6866,7 +6866,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         sage: f = f.conjugate(M)
         sage: f.Lattes_to_curve(return_conjugation = True)
         (
-        [  -7/36*a^2 + 7/12*a + 7/3 -17/18*a^2 + 17/6*a + 34/3]                                                                                                                                               
+        [  -7/36*a^2 + 7/12*a + 7/3 -17/18*a^2 + 17/6*a + 34/3]
         [    -1/8*a^2 + 1/4*a + 3/2        1/4*a^2 - 1/2*a - 3], Elliptic Curve defined by y^2 = x^3 + (-94/27*a^2+94/9*a+376/9)*x + 12232/243 over Number Field in a with defining polynomial y^3 - 18*y - 30
         )
 
@@ -6879,7 +6879,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         sage: f = f.conjugate(M)
         sage: f.Lattes_to_curve(return_conjugation = True)
         (
-        [              1 19/24*I + 19/24]                                                                                                                                                 
+        [              1 19/24*I + 19/24]
         [              0               1], Elliptic Curve defined by y^2 = x^3 + 95/96*I*x + (-1169/3456*I+1169/3456) over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         )
 
@@ -6892,7 +6892,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         sage: f = f.conjugate(M)
         sage: f.Lattes_to_curve(return_conjugation = True)
         (
-        [11/1602*a^2 41/3204*a^2]                                                                                                                                         
+        [11/1602*a^2 41/3204*a^2]
         [     -2/5*a      -1/5*a], Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696) over Number Field in a with defining polynomial y^3 - 267
         )
 
@@ -6929,7 +6929,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         x, y = P.gens()
         f_sym = P.Lattes_map(E_sym, n)
     # Conjugating f_sym map to have the right form so we can solve for the conjugating matrix later
-        m=matrix(R, 2, [u, v, t, w])
+        m = matrix(R, 2, [u, v, t, w])
         f_sym = f_sym.conjugate(m)
         f_sym.scale_by(u*w - v*t)
         F_sym = f_sym.dehomogenize(1)
