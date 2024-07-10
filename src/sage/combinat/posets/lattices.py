@@ -3615,7 +3615,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: PP.atoms()
             [(0, 1), (0, 2), (1, 'a')]
             sage: PP.coatoms()
-            [(0, 3), (0, 1)]
+            [(0, 1), (0, 3)]
 
         TESTS::
 
