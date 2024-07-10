@@ -12,7 +12,7 @@ AUTHORS:
 
 REFERENCES:
 
-    - [Bru2013]_
+    - [Bru2014]_
     - [Fil2017]_
     - [Hun2021]_
 
