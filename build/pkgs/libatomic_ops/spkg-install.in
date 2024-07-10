@@ -5,10 +5,6 @@ if [ "$SAGE64" = "yes" ]; then
     export CFLAGS="-m64 $CFLAGS"
 fi
 
-if [ "$UNAME" = "CYGWIN" ]; then
-    LIBATOMIC_OPS_CONFIGURE="$LIBATOMIC_OPS_CONFIGURE --enable-shared --disable-static"
-fi
-
 sdh_configure --enable-static $LIBATOMIC_OPS_CONFIGURE
 sdh_make
 sdh_make_install

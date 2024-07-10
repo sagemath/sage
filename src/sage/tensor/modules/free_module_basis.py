@@ -10,15 +10,14 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Travis Scrimshaw (2016): ABC Basis_abstract and list functionality for bases
-  (:trac:`20770`)
+  (:issue:`20770`)
 - Eric Gourgoulhon (2018): some refactoring and more functionalities in the
-  choice of symbols for basis elements (:trac:`24792`)
+  choice of symbols for basis elements (:issue:`24792`)
 
 REFERENCES:
 
 - Chap. 10 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015, 2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -48,7 +47,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
     :class:`Mapping` subclasses, not the :meth:`keys` but the
     :meth:`values` are considered the elements.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: M = FiniteRankFreeModule(ZZ, 3, name='M', start_index=1)
         sage: e = M.basis('e'); e
@@ -111,8 +110,8 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
             sage: e = M.basis('e')
             sage: list(e.values())
             [Element e_0 of the Rank-3 free module M over the Integer Ring,
-            Element e_1 of the Rank-3 free module M over the Integer Ring,
-            Element e_2 of the Rank-3 free module M over the Integer Ring]
+             Element e_1 of the Rank-3 free module M over the Integer Ring,
+             Element e_2 of the Rank-3 free module M over the Integer Ring]
         """
         return self._vec
 
@@ -700,7 +699,7 @@ class FreeModuleBasis(Basis_abstract):
             symbol_dual = tuple(symbol_dual)
         if isinstance(latex_symbol_dual, list):
             latex_symbol_dual = tuple(latex_symbol_dual)
-        return super(FreeModuleBasis, cls).__classcall__(cls, fmodule, symbol,
+        return super().__classcall__(cls, fmodule, symbol,
                                            latex_symbol=latex_symbol,
                                            indices=indices,
                                            latex_indices=latex_indices,
@@ -1084,5 +1083,5 @@ class FreeModuleBasis(Basis_abstract):
         # of changes of bases:
         fmodule._basis_changes[(self, the_new_basis)] = transf
         fmodule._basis_changes[(the_new_basis, self)] = inv_transf
-        #
+
         return the_new_basis

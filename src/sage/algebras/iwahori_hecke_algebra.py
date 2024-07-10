@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Iwahori-Hecke Algebras
 
@@ -12,7 +13,6 @@ AUTHORS:
 - Chase Meadors, Tianyuan Xu (2021):
   Implemented direct computation of products in the
   `C^{\prime}` basis using du Cloux's Coxeter3 package
-
 """
 # ****************************************************************************
 #  Copyright (C) 2013 Brant Jones <brant at math.jmu.edu>
@@ -51,15 +51,15 @@ def normalized_laurent_polynomial(R, p):
     the base ring. This function is a hack to recover from this. This occurs
     somewhat haphazardly with Laurent polynomial rings::
 
-        sage: R.<q>=LaurentPolynomialRing(ZZ)
+        sage: R.<q> = LaurentPolynomialRing(ZZ)
         sage: [type(c) for c in (q**-1).coefficients()]
         [<class 'sage.rings.integer.Integer'>]
 
     It also happens in any ring when dividing by units::
 
-        sage: type ( 3/1 )
+        sage: type(3/1)
         <class 'sage.rings.rational.Rational'>
-        sage: type ( -1/-1 )
+        sage: type(-1/-1)
         <class 'sage.rings.rational.Rational'>
 
     This function is a variation on a suggested workaround of Nils Bruin.
@@ -67,19 +67,19 @@ def normalized_laurent_polynomial(R, p):
     EXAMPLES::
 
         sage: from sage.algebras.iwahori_hecke_algebra import normalized_laurent_polynomial
-        sage: type ( normalized_laurent_polynomial(ZZ, 3/1) )
+        sage: type(normalized_laurent_polynomial(ZZ, 3/1))
         <class 'sage.rings.integer.Integer'>
-        sage: R.<q>=LaurentPolynomialRing(ZZ)
+        sage: R.<q> = LaurentPolynomialRing(ZZ)
         sage: [type(c) for c in normalized_laurent_polynomial(R, q**-1).coefficients()]
         [<class 'sage.rings.integer.Integer'>]
-        sage: R.<u,v>=LaurentPolynomialRing(ZZ,2)
-        sage: p=normalized_laurent_polynomial(R, 2*u**-1*v**-1+u*v)
-        sage: ui=normalized_laurent_polynomial(R, u^-1)
-        sage: vi=normalized_laurent_polynomial(R, v^-1)
-        sage: p(ui,vi)
+        sage: R.<u,v> = LaurentPolynomialRing(ZZ,2)
+        sage: p = normalized_laurent_polynomial(R, 2*u**-1*v**-1 + u*v)
+        sage: ui = normalized_laurent_polynomial(R, u^-1)
+        sage: vi = normalized_laurent_polynomial(R, v^-1)
+        sage: p(ui, vi)
         2*u*v + u^-1*v^-1
-        sage: q= u+v+ui
-        sage: q(ui,vi)
+        sage: q = u+v+ui
+        sage: q(ui, vi)
         u + v^-1 + u^-1
     """
     try:
@@ -207,8 +207,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
     The Kazhdan-Lusztig bases are implemented inside `H` whenever `-q_1 q_2`
     has a square root::
 
-        sage: H = IwahoriHeckeAlgebra('A3', u^2,-v^2)
-        sage: T=H.T(); Cp= H.Cp(); C=H.C()
+        sage: H = IwahoriHeckeAlgebra('A3', u^2, -v^2)
+        sage: T = H.T(); Cp = H.Cp(); C = H.C()
         sage: T(Cp[1])
         (u^-1*v^-1)*T[1] + (u^-1*v)
         sage: T(C[1])
@@ -1885,7 +1885,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         Iwahori--Hecke algebra was initialized in the "standard" presentation
         where `\{q_1,q_2\} = \{v^2,1\}` as sets or the "normalized"
         presentation where `\{q_1,q_2\} = \{v,-v^{-1}\}` as sets, the function
-        :func::`product_on_basis` in this class computes products in the
+        :func:`product_on_basis` in this class computes products in the
         `C^{\prime}`-basis directly in the basis itself, using ``coxeter3`` to
         calculate certain `\mu`-coefficients quickly. If the above conditions
         are not all met, the function computes such products indirectly, by
@@ -1954,12 +1954,13 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         implemented with ``coxeter3`` to avoid unnecessary conversions, as in
         the following example with the same product computed in the last one::
 
-            sage: R = LaurentPolynomialRing(QQ, 'v')                    # optional - coxeter3
-            sage: v = R.gen(0)                                          # optional - coxeter3
-            sage: W = CoxeterGroup('A9', implementation='coxeter3')     # optional - coxeter3
-            sage: H = IwahoriHeckeAlgebra(W, v**2)                      # optional - coxeter3
-            sage: Cp = H.Cp()                                           # optional - coxeter3
-            sage: Cp[1,2,1,8,9,8]*Cp[1,2,3,7,8,9]                       # optional - coxeter3
+            sage: # optional - coxeter3
+            sage: R = LaurentPolynomialRing(QQ, 'v')
+            sage: v = R.gen(0)
+            sage: W = CoxeterGroup('A9', implementation='coxeter3')
+            sage: H = IwahoriHeckeAlgebra(W, v**2)
+            sage: Cp = H.Cp()
+            sage: Cp[1,2,1,8,9,8]*Cp[1,2,3,7,8,9]
             (v^-2+2+v^2)*Cp[1,2,1,3,7,8,7,9,8,7]
             + (v^-2+2+v^2)*Cp[1,2,1,3,8,9,8,7]
             + (v^-3+3*v^-1+3*v+v^3)*Cp[1,2,1,3,8,9,8]
@@ -1983,17 +1984,18 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             r"""
             TESTS::
 
-                sage: R.<v> = LaurentPolynomialRing(QQ)                  # optional - coxeter3
-                sage: W = CoxeterGroup('A3', implementation='coxeter3')  # optional - coxeter3
-                sage: H = IwahoriHeckeAlgebra(W, v**2)                   # optional - coxeter3
-                sage: Cp = H.Cp()                                        # optional - coxeter3
-                sage: Cp._delta == v + ~v                                # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: R.<v> = LaurentPolynomialRing(QQ)
+                sage: W = CoxeterGroup('A3', implementation='coxeter3')
+                sage: H = IwahoriHeckeAlgebra(W, v**2)
+                sage: Cp = H.Cp()
+                sage: Cp._delta == v + ~v
                 True
-                sage: Cp._W_Coxeter3 == H._W                             # optional - coxeter3
+                sage: Cp._W_Coxeter3 == H._W
                 True
-                sage: H = IwahoriHeckeAlgebra(W, QQ(1))                  # optional - coxeter3
-                sage: Cp = H.Cp()                                        # optional - coxeter3
-                sage: Cp._W_Coxeter3 is None                             # optional - coxeter3
+                sage: H = IwahoriHeckeAlgebra(W, QQ(1))
+                sage: Cp = H.Cp()
+                sage: Cp._W_Coxeter3 is None
                 True
             """
             super().__init__(IHAlgebra, prefix)
@@ -2127,12 +2129,13 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: R.<v> = LaurentPolynomialRing(ZZ, 'v')                    # optional - coxeter3
-                sage: W = CoxeterGroup('A3', implementation='coxeter3')         # optional - coxeter3
-                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp=H.Cp()               # optional - coxeter3
-                sage: Cp.product_on_basis(W([1,2,1]), W([3,1]))                 # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: R.<v> = LaurentPolynomialRing(ZZ, 'v')
+                sage: W = CoxeterGroup('A3', implementation='coxeter3')
+                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp=H.Cp()
+                sage: Cp.product_on_basis(W([1,2,1]), W([3,1]))
                 (v^-1+v)*Cp[1,2,1,3]
-                sage: Cp.product_on_basis(W([1,2,1]), W([3,1,2]))               # optional - coxeter3
+                sage: Cp.product_on_basis(W([1,2,1]), W([3,1,2]))
                 (v^-1+v)*Cp[1,2,1,3,2] + (v^-1+v)*Cp[1,2,1]
             """
             if self._W_Coxeter3 is None:
@@ -2194,14 +2197,15 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: R.<v> = LaurentPolynomialRing(ZZ, 'v')                           # optional - coxeter3
-                sage: W = CoxeterGroup('A3', implementation='coxeter3')                # optional - coxeter3
-                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp = H.Cp()                    # optional - coxeter3
-                sage: Cp._product_with_generator_on_basis(1, W([2,1]), 'left')         # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: R.<v> = LaurentPolynomialRing(ZZ, 'v')
+                sage: W = CoxeterGroup('A3', implementation='coxeter3')
+                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp = H.Cp()
+                sage: Cp._product_with_generator_on_basis(1, W([2,1]), 'left')
                 Cp[1,2,1] + Cp[1]
-                sage: Cp._product_with_generator_on_basis(1, W([2,1]), 'right')        # optional - coxeter3
+                sage: Cp._product_with_generator_on_basis(1, W([2,1]), 'right')
                 (v^-1+v)*Cp[2,1]
-                sage: Cp._product_with_generator_on_basis(2, W([1,3,2,1,3]), 'right')  # optional - coxeter3
+                sage: Cp._product_with_generator_on_basis(2, W([1,3,2,1,3]), 'right')
                 Cp[1,2,1,3,2,1] + Cp[1,2,3,2] + Cp[1,3,2,1]
             """
             # use the product formula described in the class' documentation
@@ -2236,12 +2240,13 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: R.<v> = LaurentPolynomialRing(ZZ, 'v')                    # optional - coxeter3
-                sage: W = CoxeterGroup('A3', implementation='coxeter3')         # optional - coxeter3
-                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp = H.Cp()             # optional - coxeter3
-                sage: Cp._product_with_generator(1, Cp[1]+Cp[2], 'left')        # optional - coxeter3
+                sage: # optional - coxeter3
+                sage: R.<v> = LaurentPolynomialRing(ZZ, 'v')
+                sage: W = CoxeterGroup('A3', implementation='coxeter3')
+                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp = H.Cp()
+                sage: Cp._product_with_generator(1, Cp[1]+Cp[2], 'left')
                 Cp[1,2] + (v^-1+v)*Cp[1]
-                sage: Cp._product_with_generator(1, Cp[1]+Cp[2], 'right')       # optional - coxeter3
+                sage: Cp._product_with_generator(1, Cp[1]+Cp[2], 'right')
                 Cp[2,1] + (v^-1+v)*Cp[1]
             """
             return self.linear_combination((self._product_with_generator_on_basis(s, w, side), coeff) for (w, coeff) in x)

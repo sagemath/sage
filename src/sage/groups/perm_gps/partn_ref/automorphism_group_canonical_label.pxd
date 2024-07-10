@@ -8,7 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.data_structures.bitset cimport bitset_t
 from sage.rings.integer cimport Integer
 
@@ -19,9 +19,9 @@ cdef struct aut_gp_and_can_lab:
     StabilizerChain *group
     int *relabeling
 
-cdef aut_gp_and_can_lab *allocate_agcl_output(int)
+cdef aut_gp_and_can_lab *allocate_agcl_output(int) noexcept
 
-cdef void deallocate_agcl_output(aut_gp_and_can_lab *)
+cdef void deallocate_agcl_output(aut_gp_and_can_lab *) noexcept
 
 cdef struct agcl_work_space:
     int degree
@@ -39,16 +39,13 @@ cdef struct agcl_work_space:
     OrbitPartition *orbits_of_permutation # degree n
     PartitionStack *first_ps # degree n
 
-cdef agcl_work_space *allocate_agcl_work_space(int)
+cdef agcl_work_space *allocate_agcl_work_space(int) noexcept
 
-cdef void deallocate_agcl_work_space(agcl_work_space *)
+cdef void deallocate_agcl_work_space(agcl_work_space *) noexcept
 
 cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab( void *,
     PartitionStack *, int,
-    bint (*)(PartitionStack *, void *),
-    int (*)(PartitionStack *, void *, int *, int),
-    int (*)(int *, int *, void *, void *, int), bint, StabilizerChain *,
+    bint (*)(PartitionStack *, void *) noexcept,
+    int (*)(PartitionStack *, void *, int *, int) noexcept,
+    int (*)(int *, int *, void *, void *, int) noexcept, bint, StabilizerChain *,
     agcl_work_space *, aut_gp_and_can_lab *) except NULL
-
-
-

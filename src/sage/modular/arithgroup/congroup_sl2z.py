@@ -3,8 +3,7 @@ The modular group `\SL_2(\ZZ)`
 
 AUTHORS:
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
-
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
 """
 
 ################################################################################
@@ -36,10 +35,15 @@ def is_SL2Z(x):
 
         sage: from sage.modular.arithgroup.all import is_SL2Z
         sage: is_SL2Z(SL2Z)
+        doctest:warning...
+        DeprecationWarning: The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_SL2Z(Gamma0(6))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.")
     return isinstance(x, SL2Z_class)
 
 class SL2Z_class(Gamma0_class):
@@ -146,7 +150,7 @@ class SL2Z_class(Gamma0_class):
             sage: latex(SL2Z)
             \mbox{\rm SL}_2(\Bold{Z})
         """
-        return "\\mbox{\\rm SL}_2(%s)"%(ZZ._latex_())
+        return "\\mbox{\\rm SL}_2(%s)" % (ZZ._latex_())
 
     def is_subgroup(self, right):
         """

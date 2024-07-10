@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 """
 Elements (characters) of the dual group of a finite Abelian group
 
@@ -8,8 +9,7 @@ To obtain the dual group of a finite Abelian group, use the
     sage: F
     Multiplicative Abelian group isomorphic to C2 x C3 x C5 x C7 x C8
 
-    sage: Fd = F.dual_group(names="ABCDE")
-    sage: Fd
+    sage: Fd = F.dual_group(names="ABCDE"); Fd
     Dual of Abelian Group isomorphic to Z/2Z x Z/3Z x Z/5Z x Z/7Z x Z/8Z
     over Cyclotomic Field of order 840 and degree 192
 
@@ -64,19 +64,25 @@ def is_DualAbelianGroupElement(x) -> bool:
 
     - ``x`` -- anything
 
-    OUTPUT:
-
-    Boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
         sage: from sage.groups.abelian_gps.dual_abelian_group import is_DualAbelianGroupElement
-        sage: F = AbelianGroup(5,[5,5,7,8,9],names = list("abcde")).dual_group()
+        sage: F = AbelianGroup(5, [5,5,7,8,9], names=list("abcde")).dual_group()
         sage: is_DualAbelianGroupElement(F)
+        doctest:warning...
+        DeprecationWarning: The function is_DualAbelianGroupElement is deprecated;
+        use 'isinstance(..., DualAbelianGroupElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: is_DualAbelianGroupElement(F.an_element())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DualAbelianGroupElement is deprecated; "
+                "use 'isinstance(..., DualAbelianGroupElement)' instead.")
     return isinstance(x, DualAbelianGroupElement)
 
 
@@ -89,10 +95,8 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
         """
         Evaluate ``self`` on a group element ``g``.
 
-        OUTPUT:
-
-        An element in
-        :meth:`~sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class.base_ring`.
+        OUTPUT: an element in
+        :meth:`~sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class.base_ring`
 
         EXAMPLES::
 
@@ -117,7 +121,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
             sage: a, = F.gens()
             sage: Fd = F.dual_group(names="A", base_ring=GF(29))
             sage: A, = Fd.gens()
-            sage: A(a)
+            sage: A(a)                                                                  # needs sage.libs.pari
             16
         """
         F = self.parent().base_ring()
@@ -146,7 +150,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(5,[3, 5, 5, 7, 8],names="abcde")
+            sage: G = AbelianGroup(5,[3, 5, 5, 7, 8], names="abcde")
             sage: Gd = G.dual_group(names="abcde")
             sage: a,b,c,d,e = Gd.gens()
             sage: u = a^3*b*c*d^2*e^5
@@ -154,7 +158,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
             sage: w = a^7*b^3*c^5*d^4*e^4
             sage: x = a^3*b^2*c^2*d^3*e^5
             sage: y = a^2*b^4*c^2*d^4*e^5
-            sage: e.word_problem([u,v,w,x,y])
+            sage: e.word_problem([u,v,w,x,y])                                           # needs sage.libs.gap
             [[b^2*c^2*d^3*e^5, 245]]
         """
         from sage.libs.gap.libgap import libgap

@@ -51,7 +51,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class PuzzlePiece():
+class PuzzlePiece:
     r"""
     Abstract class for puzzle pieces.
 
@@ -621,7 +621,7 @@ class RhombusPiece(PuzzlePiece):
         return ('north_west', 'north_east', 'south_east', 'south_west')
 
 
-class PuzzlePieces():
+class PuzzlePieces:
     r"""
     Construct a valid set of puzzle pieces.
 
@@ -817,8 +817,8 @@ class PuzzlePieces():
             Nablas : [a\b/c, b\c/a, c\a/b]
             Deltas : [a/c\b, b/a\c, c/b\a]
         """
-        s = "Nablas : %s\n" % sorted([p for p in self._nabla_pieces], key=str)
-        s += "Deltas : %s" % sorted([p for p in self._delta_pieces], key=str)
+        s = "Nablas : %s\n" % sorted(self._nabla_pieces, key=str)
+        s += "Deltas : %s" % sorted(self._delta_pieces, key=str)
         return s
 
     def delta_pieces(self):
@@ -1068,7 +1068,7 @@ def BK_pieces(max_letter):
     return pieces
 
 
-class PuzzleFilling():
+class PuzzleFilling:
     r"""
     Create partial puzzles and provides methods to build puzzles from them.
     """
@@ -1195,7 +1195,7 @@ class PuzzleFilling():
             sage: puzzle.is_completed()
             True
         """
-        (i, j) = self.kink_coordinates()
+        i, _ = self.kink_coordinates()
         return i == self._n + 1
 
     def south_labels(self):
@@ -1225,7 +1225,7 @@ class PuzzleFilling():
             sage: P.add_piece(piece); P
             {(1, 4): 1/0\0}
         """
-        (i, j) = self.kink_coordinates()
+        i, j = self.kink_coordinates()
         self._squares[i, j] = piece
         if isinstance(piece, DeltaPiece):
             i += 1
@@ -1253,7 +1253,7 @@ class PuzzleFilling():
             sage: P
             {(1, 4): 1/0\0, (2, 4): 1/0\0}
         """
-        (i, j) = self.kink_coordinates()
+        i, j = self.kink_coordinates()
         for piece in pieces:
             self._squares[i, j] = piece
             if isinstance(piece, DeltaPiece):
@@ -2178,7 +2178,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         queue = [PuzzleFilling(lamda, mu)]
         while queue:
             PP = queue.pop()
-            (i, j) = PP.kink_coordinates()
+            i, _ = PP.kink_coordinates()
 
             # grab nw labels
             if i == 1:

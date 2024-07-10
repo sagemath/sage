@@ -236,7 +236,7 @@ def reorder_sets(sets):
 
     INPUT:
 
-    - ``sets`` - a list of instances of ``list, Set`` or ``set``
+    - ``sets`` -- a list of instances of ``list, Set`` or ``set``
 
     ALGORITHM:
 
@@ -296,7 +296,7 @@ class PQ:
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
 
-        :trac:`17787`::
+        :issue:`17787`::
 
             sage: Graph('GvGNp?').is_interval()
             False
@@ -428,10 +428,10 @@ class PQ:
 
         INPUT:
 
-        - ``left, right`` (boolean) -- whether ``v`` is aligned to the
+        - ``left``, ``right`` -- booleans; whether ``v`` is aligned to the
           right or to the left
 
-        - ``v``-- an element of the ground set
+        - ``v`` -- an element of the ground set
 
         OUTPUT:
 
@@ -558,7 +558,7 @@ class P(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a ``ValueError`` exception.
+        raises a :class:`ValueError` exception.
 
         EXAMPLES:
 
@@ -837,7 +837,7 @@ class Q(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a ``ValueError`` exception.
+        raises a :class:`ValueError` exception.
 
         EXAMPLES:
 

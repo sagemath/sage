@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Determination of programs for viewing web pages, etc.
 
@@ -29,6 +30,7 @@ from sage.structure.sage_object import SageObject
 
 
 VIEWERS = ['browser', 'dvi_viewer', 'pdf_viewer', 'png_viewer']
+
 
 def default_viewer(viewer=None):
     """
@@ -68,19 +70,6 @@ def default_viewer(viewer=None):
         # Simple on OS X, since there is an open command that opens
         # anything, using the user's preferences.
         BROWSER = 'open'
-        DVI_VIEWER = BROWSER
-        PDF_VIEWER = BROWSER
-        PNG_VIEWER = BROWSER
-
-    elif os.uname()[0][:6] == 'CYGWIN':
-        # Windows is also easy, since it has a system for
-        # determining what opens things.  However, on Cygwin we
-        # should access this through the 'cygstart' program rather
-        # than trying to run rundll32 directly, which on newer Windows versions
-        # has security implications
-        # Indeed, on Sage for Windows, BROWSER is set by default to cygstart,
-        # so we just canonize that here
-        BROWSER = os.environ.get('BROWSER', 'cygstart')
         DVI_VIEWER = BROWSER
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
@@ -137,6 +126,7 @@ def default_viewer(viewer=None):
 
 # _viewer_prefs: a dictionary holding global preferences for viewers.
 _viewer_prefs = {}
+
 
 class Viewer(SageObject):
     """
@@ -301,7 +291,9 @@ class Viewer(SageObject):
         elif x.startswith('pdf'):
             return self.pdf_viewer()
 
+
 viewer = Viewer()
+
 
 def browser():
     """
@@ -319,6 +311,7 @@ def browser():
     """
     return viewer.browser()
 
+
 def dvi_viewer():
     """
     Return the program used to display a dvi file.  By default, the
@@ -335,6 +328,7 @@ def dvi_viewer():
     """
     viewer()
     return viewer.dvi_viewer()
+
 
 def pdf_viewer():
     """
@@ -355,6 +349,7 @@ def pdf_viewer():
     """
     viewer()
     return viewer.pdf_viewer()
+
 
 def png_viewer():
     """

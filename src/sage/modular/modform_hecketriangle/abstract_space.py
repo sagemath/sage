@@ -1,10 +1,10 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Modular forms for Hecke triangle groups
 
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -16,20 +16,22 @@ AUTHORS:
 # ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.modules.free_module_element import is_FreeModuleElement
+from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_element import vector
-from sage.rings.imaginary_unit import I
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.power_series_ring import is_PowerSeriesRing
-from sage.rings.qqbar import AlgebraicField
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
 
 from .abstract_ring import FormsRing_abstract
+
+lazy_import('sage.rings.imaginary_unit', 'I')
+lazy_import('sage.rings.qqbar', 'QQbar')
 
 
 class FormsSpace_abstract(FormsRing_abstract):
@@ -260,9 +262,9 @@ class FormsSpace_abstract(FormsRing_abstract):
                 return self.construct_form(el)
             else:
                 return self.construct_quasi_form(el)
-        if is_FreeModuleElement(el) and (self.module() is P or self.ambient_module() is P):
+        if isinstance(el, FreeModuleElement) and (self.module() is P or self.ambient_module() is P):
             return self.element_from_ambient_coordinates(el)
-        if (not self.is_ambient()) and (isinstance(el, list) or isinstance(el, tuple) or is_FreeModuleElement(el)) and len(el) == self.rank():
+        if (not self.is_ambient()) and (isinstance(el, list) or isinstance(el, tuple) or isinstance(el, FreeModuleElement)) and len(el) == self.rank():
             try:
                 return self.element_from_coordinates(el)
             except (ArithmeticError, TypeError):
@@ -533,7 +535,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             False
         """
 
-        return ((self.AT("holo") <= self._analytic_type) and (self.weight()==QQ(0)) and (self.ep()==ZZ(1)))
+        return ((self.AT("holo") <= self._analytic_type) and (self.weight() == QQ(0)) and (self.ep() == ZZ(1)))
 
     def element_from_coordinates(self, vec):
         r"""
@@ -617,7 +619,7 @@ class FormsSpace_abstract(FormsRing_abstract):
     def homogeneous_part(self, k, ep):
         r"""
         Since ``self`` already is a homogeneous component return ``self``
-        unless the degree differs in which case a ``ValueError`` is raised.
+        unless the degree differs in which case a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -631,7 +633,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             ValueError: QuasiMeromorphicModularForms(n=6, k=4, ep=1) over Integer Ring already is homogeneous with degree (4, 1) != (5, 1)!
         """
 
-        if (k==self._weight and ep==self._ep):
+        if (k == self._weight and ep == self._ep):
             return self
         else:
             raise ValueError("{} already is homogeneous with degree ({}, {}) != ({}, {})!".format(self, self._weight, self._ep, k, ep))
@@ -756,9 +758,9 @@ class FormsSpace_abstract(FormsRing_abstract):
         if (gamma.is_translation()):
             return ZZ(1)
         elif (gamma.is_reflection()):
-            return self._ep * (t/AlgebraicField()(I))**self._weight
+            return self._ep * (t/QQbar(I))**self._weight
         else:
-            L = [v for v in gamma.word_S_T()[0]]
+            L = list(gamma.word_S_T()[0])
             aut_f = ZZ(1)
             while (len(L) > 0):
                 M = L.pop(-1)
@@ -827,7 +829,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (order_inf > 0 and order_1 > 0):
             new_space = self.extend_type("cusp")
-        elif (order_inf >=0 and order_1 >= 0):
+        elif (order_inf >= 0 and order_1 >= 0):
             new_space = self.extend_type("holo")
         else:
             new_space = self.extend_type("weak")
@@ -979,7 +981,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             # The first term is zero only up to numerical errors,
             # so we manually have to remove it
             if (not d.parent().is_exact()):
-                temp_reminder=temp_reminder.truncate_neg(-temp_exp+1)
+                temp_reminder = temp_reminder.truncate_neg(-temp_exp+1)
 
         return fab_pol.polynomial()
 
@@ -1212,7 +1214,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         (x,y,z,d) = self.rat_field().gens()
         n = self._group.n()
 
-        if (n ==infinity):
+        if (n == infinity):
             order_1 = ZZ(order_1)
             order_inf = self._l1 - order_1
             finf_pol = d*(x-y**2)
@@ -1854,7 +1856,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                 return A
 
             B = A
-            A = A.delete_rows([r for r in range(column_size + (row_size-column_size)//2 - 1, row_size)])
+            A = A.delete_rows(list(range(column_size + (row_size-column_size)//2 - 1, row_size)))
 
         # Next we simply delete row by row. Note that A is still modified here...
         while (B.rank() == column_size):
@@ -2536,7 +2538,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         k = ZZ(k)
-        if k>=0 and k < self.dimension():
+        if k >= 0 and k < self.dimension():
             return self.gens()[k]
         else:
             raise ValueError("Invalid index: k={} does not satisfy 0 <= k <= {}!".format(k, self.dimension()))

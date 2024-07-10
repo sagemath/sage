@@ -84,7 +84,7 @@ Technical details
 -----------------
 
 * When creating a ``short_digraph`` from a ``Graph`` or ``DiGraph`` named ``G``,
-  the `i^{\text{th}}` vertex corresponds *by default* to ``G.vertices(sort=True)[i]``.
+  the `i^{\text{th}}` vertex corresponds *by default* to ``list(G)[i]``.
   Using optional parameter ``vertex_list``, you can specify the order of the
   vertices. Then `i^{\text{th}}` vertex will corresponds to ``vertex_list[i]``.
 
@@ -116,7 +116,7 @@ Cython functions
     :widths: 30, 70
     :delim: |
 
-    ``init_short_digraph(short_digraph g, G)`` | Initialize ``short_digraph g`` from a Sage (Di)Graph.
+    ``init_short_digraph(short_digraph g, G, edge_labelled, vertex_list, sort_neighbors)`` | Initialize ``short_digraph g`` from a Sage (Di)Graph.
     ``int n_edges(short_digraph g)`` | Return the number of edges in ``g``
     ``int out_degree(short_digraph g, int i)`` | Return the out-degree of vertex `i` in ``g``
     ``has_edge(short_digraph g, int u, int v)`` | Test the existence of an edge.
@@ -191,8 +191,8 @@ from memory_allocator cimport MemoryAllocator
 
 from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.c_graph cimport CGraph
-from .static_sparse_backend cimport StaticSparseCGraph
-from .static_sparse_backend cimport StaticSparseBackend
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 
 
 cdef extern from "fenv.h":
@@ -204,23 +204,41 @@ cdef extern from "fenv.h":
     int fesetround (int)
 
 
-cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list=None) except -1:
+cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
+                            vertex_list=None, sort_neighbors=True) except -1:
     r"""
     Initialize ``short_digraph g`` from a Sage (Di)Graph.
 
-    If ``G`` is a ``Graph`` object (and not a ``DiGraph``), an edge between two
-    vertices `u` and `v` is replaced by two arcs in both directions.
+    INPUT:
 
-    The optional argument ``vertex_list`` is assumed to be a list of all
-    vertices of the graph ``G`` in some order.
-    **Beware that no checks are made that this input is correct**.
+    - ``g`` -- a short_digraph
 
-    If ``vertex_list`` is given, it will be used to map vertices of
-    the graph to consecutive integers. Otherwise, the result of
-    ``G.vertices(sort=True)`` will be used instead. Because this only
-    works if the vertices can be sorted, using ``vertex_list`` is
-    useful when working with possibly non-sortable objects in Python
-    3.
+    - ``G`` -- a ``Graph`` or a ``DiGraph``. If ``G`` is a ``Graph`` object,
+      then any edge between two vertices `u` and `v` is replaced by two arcs in
+      both directions.
+
+    - ``edge_labelled`` -- boolean (default: ``False``); whether to store the
+      label of edges or not
+
+    - ``vertex_list`` -- list (default: ``None``); list of all vertices of ``G``
+      in some order. When given, it is used to map the vertices of the graph to
+      consecutive integers. Otherwise, the result of ``list(G)`` is used
+      instead.
+
+    - ``sort_neighbors`` -- boolean (default: ``True``); whether to ensure that
+      the vertices in the list of neighbors of a vertex are sorted by increasing
+      vertex labels. This choice may have a non-negligeable impact on the time
+      complexity of some methods. More precisely:
+
+      - When set to ``True``, the time complexity for initializing ``g`` is in
+        `O(n + m\log{m})` for ``SparseGraph`` and `O(n^2\log{m})` for
+        ``DenseGraph``, and deciding if ``g`` has edge `(u, v)` can be done in
+        time `O(\log{m})` using binary search.
+
+      - When set to ``False``, the time complexity for initializing ``g`` is
+        reduced to `O(n + m)` for ``SparseGraph`` and `O(n^2)` for
+        ``DenseGraph``, but the time complexity for deciding if ``g`` has
+        edge `(u, v)` increases to `O(m)`.
     """
     g.edge_labels = NULL
 
@@ -242,7 +260,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
         raise ValueError("The source graph must be either a DiGraph or a Graph object !")
 
     cdef int i, j, v_id
-    cdef list vertices = vertex_list if vertex_list is not None else G.vertices(sort=True)
+    cdef list vertices = vertex_list if vertex_list is not None else list(G)
     cdef dict v_to_id = {v: i for i, v in enumerate(vertices)}
     cdef list neighbor_label
     cdef list edge_labels
@@ -256,6 +274,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
     # Initializing the value of neighbors
     g.neighbors[0] = g.edges
     cdef CGraph cg = <CGraph> G._backend
+    g.sorted_neighbors = sort_neighbors
 
     if not G.has_loops():
         # Normal case
@@ -272,7 +291,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
             g.neighbors[i] = g.neighbors[i - 1] + <int> len(G.edges_incident(vertices[i - 1]))
 
     if not edge_labelled:
-        for u, v in G.edge_iterator(labels=False):
+        for u, v in G.edge_iterator(labels=False, sort_vertices=False):
             i = v_to_id[u]
             j = v_to_id[v]
 
@@ -289,28 +308,39 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
 
         g.neighbors[0] = g.edges
 
-        # Sorting the neighbors
-        for i in range(g.n):
-            qsort(g.neighbors[i], g.neighbors[i + 1] - g.neighbors[i], sizeof(int), compare_uint32_p)
+        if sort_neighbors:
+            # Sorting the neighbors
+            for i in range(g.n):
+                qsort(g.neighbors[i], g.neighbors[i + 1] - g.neighbors[i], sizeof(int), compare_uint32_p)
 
     else:
         from operator import itemgetter
         edge_labels = [None] * n_edges
-        for v in G:
-            neighbor_label = [(v_to_id[uu], l) if uu != v else (v_to_id[u], l)
-                              for u, uu, l in G.edges_incident(v)]
-            neighbor_label.sort(key=itemgetter(0))
-            v_id = v_to_id[v]
+        if sort_neighbors:
+            for v in G:
+                neighbor_label = [(v_to_id[uu], l) if uu != v else (v_to_id[u], l)
+                                  for u, uu, l in G.edges_incident(v)]
+                neighbor_label.sort(key=itemgetter(0))
+                v_id = v_to_id[v]
 
-            for i, (j, label) in enumerate(neighbor_label):
-                g.neighbors[v_id][i] = j
-                edge_labels[(g.neighbors[v_id] + i) - g.edges] = label
+                for i, (j, label) in enumerate(neighbor_label):
+                    g.neighbors[v_id][i] = j
+                    edge_labels[(g.neighbors[v_id] + i) - g.edges] = label
+        else:
+            for v in G:
+                v_id = v_to_id[v]
+                for i, (u, uu, label) in enumerate(G.edges_incident(v)):
+                    if v == uu:
+                        g.neighbors[v_id][i] = v_to_id[u]
+                    else:
+                        g.neighbors[v_id][i] = v_to_id[uu]
+                    edge_labels[(g.neighbors[v_id] + i) - g.edges] = label
 
         g.edge_labels = <PyObject *> <void *> edge_labels
         cpython.Py_XINCREF(g.edge_labels)
 
 
-cdef inline int n_edges(short_digraph g):
+cdef inline int n_edges(short_digraph g) noexcept:
     """
     Return the number of edges in ``g``.
 
@@ -319,7 +349,7 @@ cdef inline int n_edges(short_digraph g):
     return <int> (g.neighbors[g.n] - g.edges)
 
 
-cdef inline int out_degree(short_digraph g, int i):
+cdef inline int out_degree(short_digraph g, int i) noexcept:
     """
     Return the out-degree of vertex `i` in ``g``.
 
@@ -335,6 +365,7 @@ cdef int init_empty_copy(short_digraph dst, short_digraph src) except -1:
     """
     dst.n = src.n
     dst.m = src.m
+    dst.sorted_neighbors = src.sorted_neighbors
     dst.edge_labels = NULL
     cdef list edge_labels
 
@@ -360,7 +391,7 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
     if not dst.n:
         return 0
 
-    # 1/3
+    # 1/4
     #
     # In a first pass, we count the in-degrees of each vertex and store it in a
     # vector. With this information, we can initialize dst.neighbors to its
@@ -376,7 +407,7 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
         dst.neighbors[i] = dst.neighbors[i - 1] + in_degree[i - 1]
     sig_free(in_degree)
 
-    # 2/3
+    # 2/4
     #
     # Second pass : we list the edges again, and add them in dst.edges. Doing
     # so, we will change the value of dst.neighbors, but that is not so bad as
@@ -391,31 +422,49 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
 
             dst.neighbors[v] += 1
 
-    # 3/3
+    # 3/4
     #
-    # Final step : set the correct values of dst.neighbors again. It is easy, as
+    # Third step : set the correct values of dst.neighbors again. It is easy, as
     # the correct value of dst.neighbors[i] is actually dst.neighbors[i-1]
     for i in range(src.n - 1, 0, -1):
         dst.neighbors[i] = dst.neighbors[i - 1]
     dst.neighbors[0] = dst.edges
 
+    # 4/4
+    #
+    # Final step : if the neighbors of src are assumed to be sorted by
+    # increasing labels, we do the same for dst.
+    if src.sorted_neighbors:
+        for i in range(dst.n):
+            qsort(dst.neighbors[i], dst.neighbors[i + 1] - dst.neighbors[i], sizeof(int), compare_uint32_p)
+
     return 0
 
 
-cdef int compare_uint32_p(const_void *a, const_void *b):
+cdef int compare_uint32_p(const_void *a, const_void *b) noexcept:
     """
-    Comparison function needed for ``bsearch``.
+    Comparison function needed for ``bsearch`` and ``lfind``.
     """
     return (<uint32_t *> a)[0] - (<uint32_t *> b)[0]
 
 
-cdef inline uint32_t * has_edge(short_digraph g, int u, int v):
+cdef inline uint32_t * has_edge(short_digraph g, int u, int v) noexcept:
     r"""
     Test the existence of an edge.
 
-    Assumes that the neighbors of each vertex are sorted.
+    Return a pointer to ``v`` in the list of neighbors of ``u`` if found and
+    ``NULL`` otherwise.
     """
-    return <uint32_t *> bsearch(&v, g.neighbors[u], g.neighbors[u + 1] - g.neighbors[u], sizeof(uint32_t), compare_uint32_p)
+    if g.sorted_neighbors:
+        # The neighbors of u are sorted by increasing label. We can use binary
+        # search to decide if g has edge (u, v)
+        return <uint32_t *> bsearch(&v, g.neighbors[u], g.neighbors[u + 1] - g.neighbors[u],
+                                    sizeof(uint32_t), compare_uint32_p)
+
+    # Otherwise, we use the linear time lfind method
+    cdef size_t nelem = g.neighbors[u + 1] - g.neighbors[u]
+    return <uint32_t *> lfind(&v, g.neighbors[u], &nelem,
+                              sizeof(uint32_t), compare_uint32_p)
 
 
 cdef inline object edge_label(short_digraph g, uint32_t * edge):
@@ -424,8 +473,7 @@ cdef inline object edge_label(short_digraph g, uint32_t * edge):
     """
     if not g.edge_labels:
         return None
-    else:
-        return (<list> g.edge_labels)[edge - g.edges]
+    return (<list> g.edge_labels)[edge - g.edges]
 
 
 cdef uint32_t simple_BFS(short_digraph g,
@@ -433,7 +481,7 @@ cdef uint32_t simple_BFS(short_digraph g,
                          uint32_t *distances,
                          uint32_t *predecessors,
                          uint32_t *waiting_list,
-                         bitset_t seen):
+                         bitset_t seen) noexcept:
     """
     Perform a breadth first search (BFS) using the same method as in
     sage.graphs.distances_all_pairs.all_pairs_shortest_path_BFS
@@ -565,7 +613,7 @@ cdef int can_be_reached_from(short_digraph g, int src, bitset_t reached) except 
     sig_free(stack)
 
 
-cdef int tarjan_strongly_connected_components_C(short_digraph g, int *scc):
+cdef int tarjan_strongly_connected_components_C(short_digraph g, int *scc) noexcept:
     r"""
     The Tarjan algorithm to compute strongly connected components (SCCs).
 
@@ -702,7 +750,7 @@ def tarjan_strongly_connected_components(G):
         sage: tarjan_strongly_connected_components(digraphs.Path(3))
         [[2], [1], [0]]
         sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
-        sage: D.connected_components()
+        sage: D.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
         sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
         sage: D.strongly_connected_components()
@@ -731,8 +779,8 @@ def tarjan_strongly_connected_components(G):
 
     Checking against NetworkX::
 
-        sage: import networkx                                                                       # optional - networkx
-        sage: for i in range(10):                          # long time                              # optional - networkx
+        sage: import networkx                                                                       # needs networkx
+        sage: for i in range(10):               # long time                             # needs networkx
         ....:      g = digraphs.RandomDirectedGNP(100,.05)
         ....:      h = g.networkx_graph()
         ....:      scc1 = g.strongly_connected_components()
@@ -750,7 +798,7 @@ def tarjan_strongly_connected_components(G):
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef list int_to_vertex = list(G)
     cdef short_digraph g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
     cdef int * scc = <int*> mem.malloc(g.n * sizeof(int))
     sig_on()
     cdef int nscc = tarjan_strongly_connected_components_C(g, scc)
@@ -765,7 +813,7 @@ def tarjan_strongly_connected_components(G):
     return output
 
 
-cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int *scc, short_digraph output):
+cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int *scc, short_digraph output) noexcept:
     r"""
     Compute the strongly connected components (SCCs) digraph of `g`.
 
@@ -784,10 +832,8 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     cdef size_t s_nscc = <size_t>nscc
     cdef vector[vector[int]] scc_list = vector[vector[int]](nscc, vector[int]())
     cdef vector[vector[int]] sons = vector[vector[int]](nscc + 1, vector[int]())
-    cdef vector[int].iterator iter
     cdef short *neighbors = <short *> mem.calloc(nscc, sizeof(short))
     cdef long m = 0
-    cdef uint32_t degv
     cdef uint32_t *p_tmp
 
     for v in range(s_nscc):
@@ -869,7 +915,7 @@ def strongly_connected_components_digraph(G):
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef list int_to_vertex = list(G)
     cdef short_digraph g, scc_g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
     cdef int * scc = <int*> mem.malloc(g.n * sizeof(int))
     cdef int i, j, nscc
     cdef list edges = []
@@ -903,7 +949,7 @@ cdef strongly_connected_component_containing_vertex(short_digraph g, short_digra
     bitset_intersection(scc, scc, scc_reversed)
 
 
-cdef void free_short_digraph(short_digraph g):
+cdef void free_short_digraph(short_digraph g) noexcept:
     """
     Free the resources used by ``g``
     """
@@ -918,14 +964,14 @@ def triangles_count(G):
 
     INPUT:
 
-    - `G`-- a graph
+    - `G` -- a graph
 
     EXAMPLES::
 
         sage: from sage.graphs.base.static_sparse_graph import triangles_count
         sage: triangles_count(graphs.PetersenGraph())
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
-        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)
+        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)           # needs sage.symbolic
         True
     """
     from sage.rings.integer import Integer
@@ -934,7 +980,7 @@ def triangles_count(G):
     # g is a copy of G. If G is internally a static sparse graph, we use it.
     cdef list int_to_vertex = list(G)
     cdef short_digraph g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=True)
 
     cdef uint64_t * count = <uint64_t *> check_calloc(G.order(), sizeof(uint64_t))
 
@@ -1023,8 +1069,8 @@ def spectral_radius(G, prec=1e-10):
 
         sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(2,4),(3,4)])
         sage: e_min, e_max = spectral_radius(G, 1e-14)
-        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))
-        sage: e_min < e < e_max
+        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))  # needs sage.modules sage.rings.number_field
+        sage: e_min < e < e_max                                                         # needs sage.modules sage.rings.number_field sage.symbolic
         True
 
         sage: G.spectral_radius()  # abs tol 1e-9
@@ -1032,6 +1078,7 @@ def spectral_radius(G, prec=1e-10):
 
     A larger example::
 
+        sage: # needs sage.modules
         sage: G = DiGraph()
         sage: G.add_edges((i,i+1) for i in range(200))
         sage: G.add_edge(200,0)
@@ -1040,8 +1087,8 @@ def spectral_radius(G, prec=1e-10):
         sage: p = G.adjacency_matrix(sparse=True).charpoly()
         sage: p
         x^201 - x^199 - 1
-        sage: r = p.roots(AA, multiplicities=False)[0]
-        sage: e_min < r < e_max
+        sage: r = p.roots(AA, multiplicities=False)[0]                                  # needs sage.rings.number_field
+        sage: e_min < r < e_max                                                         # needs sage.rings.number_field
         True
 
     A much larger example::
@@ -1060,7 +1107,7 @@ def spectral_radius(G, prec=1e-10):
         sage: G.add_edges([(0,0),(0,0),(0,1),(1,0)])
         sage: spectral_radius(G, 1e-14)  # abs tol 1e-14
         (2.414213562373094, 2.414213562373095)
-        sage: max(G.adjacency_matrix().eigenvalues(AA))
+        sage: max(G.adjacency_matrix().eigenvalues(AA))                                 # needs sage.modules sage.rings.number_field
         2.414213562373095?
 
     Some bipartite graphs::
@@ -1091,7 +1138,7 @@ def spectral_radius(G, prec=1e-10):
         ...
         ValueError: precision (=1.00000000000000e-20) is too small
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                      # needs sage.modules sage.rings.number_field
         ....:     G = digraphs.RandomDirectedGNM(10,35)
         ....:     if not G.is_strongly_connected():
         ....:         continue

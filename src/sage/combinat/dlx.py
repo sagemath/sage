@@ -126,7 +126,7 @@ class DLXMatrix:
         INPUT:
 
 
-        -  ``other`` - a DLX matrix
+        -  ``other`` -- a DLX matrix
 
 
         EXAMPLES::
@@ -237,7 +237,7 @@ class DLXMatrix:
         for r in ones:
             curRow = r[0]  # row index
             columns = r[1]  # column indexes
-            if not(columns):
+            if not (columns):
                 continue
             columns.sort()
 
@@ -474,11 +474,12 @@ def AllExactCovers(M):
 
     EXAMPLES::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers                  # optional - sage.modules
-        sage: for cover in AllExactCovers(M):                                           # optional - sage.modules
+        sage: # needs sage.modules
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers
+        sage: for cover in AllExactCovers(M):
         ....:     print(cover)
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) # two exact covers          # optional - sage.modules
-        sage: for cover in AllExactCovers(M):                                           # optional - sage.modules
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) # two exact covers
+        sage: for cover in AllExactCovers(M):
         ....:     print(cover)
         [(1, 1, 0), (0, 0, 1)]
         [(1, 0, 1), (0, 1, 0)]
@@ -503,11 +504,11 @@ def OneExactCover(M):
 
     EXAMPLES::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers                  # optional - sage.modules
-        sage: OneExactCover(M)                                                          # optional - sage.modules
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers                  # needs sage.modules
+        sage: OneExactCover(M)                                                          # needs sage.modules
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]])  # two exact covers         # optional - sage.modules
-        sage: OneExactCover(M)                                                          # optional - sage.modules
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]])  # two exact covers         # needs sage.modules
+        sage: OneExactCover(M)                                                          # needs sage.modules
         [(1, 1, 0), (0, 0, 1)]
     """
     for s in AllExactCovers(M):

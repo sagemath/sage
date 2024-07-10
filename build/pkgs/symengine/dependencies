@@ -1,4 +1,4 @@
-$(MP_LIBRARY) arb ecm flint mpc mpfr | cmake
+$(MP_LIBRARY) ecm flint mpc mpfr | cmake
 
 ----------
 All lines of this file are ignored except the first.

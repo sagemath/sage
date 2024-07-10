@@ -1,10 +1,12 @@
-# sage.doctest: optional - sage.combinat, sage.groups
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Coxeter Group Algebras
 """
 import functools
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebra_functor import AlgebrasCategory
+
 
 class CoxeterGroupAlgebras(AlgebrasCategory):
 
@@ -20,7 +22,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
 
             - ``w`` -- an element of the Coxeter group
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``bar`` -- a boolean (default ``False``)
 
             See :meth:`demazure_lusztig_operators` for details.
@@ -74,7 +76,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring `K`
+            - ``q1``, ``q2`` -- two elements of the ground ring `K`
             - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``);
               which side to act upon
             - ``affine`` -- a boolean (default: ``True``)
@@ -144,7 +146,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             INPUT:
 
             - ``self`` -- a finite Coxeter group `W`
-            - ``q1,q2`` -- two elements of the ground ring `K`
+            - ``q1``, ``q2`` -- two elements of the ground ring `K`
 
             The affine Hecke algebra `H_{q_1,q_2}(\tilde W)` acts on
             the group algebra of `W` through the Demazure-Lusztig
@@ -168,10 +170,10 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 sage: q1, q2 = K.gens()
                 sage: KW = W.algebra(K)
                 sage: E = KW.demazure_lusztig_eigenvectors(q1,q2)
-                sage: E.keys()
+                sage: E.keys()                                                          # needs sage.rings.number_field
                 Weyl Group of type ['B', 2] (as a matrix group acting on the ambient space)
                 sage: w = W.an_element()
-                sage: E[w]
+                sage: E[w]                                                              # needs sage.rings.number_field
                 (q2/(-q1+q2))*2121 + ((-q2)/(-q1+q2))*121 - 212 + 12
             """
             W = self.basis().keys()

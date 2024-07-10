@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Graded Lie Conformal Algebras
 
@@ -19,6 +20,7 @@ AUTHORS:
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.misc.cachefunc import cached_method
 
+
 class GradedLieConformalAlgebrasCategory(GradedModulesCategory):
     @cached_method
     def Super(self, base_ring=None):
@@ -31,11 +33,12 @@ class GradedLieConformalAlgebrasCategory(GradedModulesCategory):
 
         EXAMPLES::
 
-            sage: C = LieConformalAlgebras(QQbar)                                       # optional - sage.rings.number_field
-            sage: C.Graded().Super() is C.Super().Graded()                              # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: C = LieConformalAlgebras(QQbar)
+            sage: C.Graded().Super() is C.Super().Graded()
             True
-            sage: Cp = C.WithBasis()                                                    # optional - sage.rings.number_field
-            sage: Cp.Graded().Super() is Cp.Super().Graded()                            # optional - sage.rings.number_field
+            sage: Cp = C.WithBasis()
+            sage: Cp.Graded().Super() is Cp.Super().Graded()
             True
         """
         return self.base_category().Super(base_ring).Graded()
@@ -46,13 +49,14 @@ class GradedLieConformalAlgebrasCategory(GradedModulesCategory):
 
         EXAMPLES::
 
-            sage: LieConformalAlgebras(QQbar).Graded()                                  # optional - sage.rings.number_field
+            sage: LieConformalAlgebras(QQbar).Graded()                                  # needs sage.rings.number_field
             Category of H-graded Lie conformal algebras over Algebraic Field
 
-            sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()  # optional - sage.rings.number_field
+            sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()  # needs sage.rings.number_field
             Category of H-graded finitely generated Lie conformal algebras with basis over Algebraic Field
         """
         return "H-graded {}".format(self.base_category()._repr_object_names())
+
 
 class GradedLieConformalAlgebras(GradedLieConformalAlgebrasCategory):
     """
@@ -60,7 +64,7 @@ class GradedLieConformalAlgebras(GradedLieConformalAlgebrasCategory):
 
     EXAMPLES::
 
-        sage: C = LieConformalAlgebras(QQbar).Graded(); C                               # optional - sage.rings.number_field
+        sage: C = LieConformalAlgebras(QQbar).Graded(); C                               # needs sage.rings.number_field
         Category of H-graded Lie conformal algebras over Algebraic Field
 
         sage: CS = LieConformalAlgebras(QQ).Graded().Super(); CS

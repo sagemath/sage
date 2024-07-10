@@ -1,19 +1,21 @@
-# sage.doctest: optional - sage.graphs, sage.combinat
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Highest Weight Crystals
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010    Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import (Crystals, CrystalHomset,
                                       CrystalMorphismByGenerators)
 from sage.categories.tensor import TensorProductsCategory
+
 
 class HighestWeightCrystals(Category_singleton):
     """
@@ -342,7 +344,7 @@ class HighestWeightCrystals(Category_singleton):
                     deg += 1
                     yield len(next)
                     todo = next
-                    next = set([])
+                    next = set()
                     while todo:
                         x = todo.pop()
                         for i in I:
@@ -410,7 +412,8 @@ class HighestWeightCrystals(Category_singleton):
             The sole purpose of this method is to construct the homset as a
             :class:`~sage.categories.highest_weight_crystals.HighestWeightCrystalHomset`.
             If ``category`` is specified and is not a subcategory of
-            :class:`HighestWeightCrystals`, a ``TypeError`` is raised instead
+            :class:`HighestWeightCrystals`, a :class:`TypeError` is raised
+            instead
 
             This method is not meant to be called directly. Please use
             :func:`sage.categories.homset.Hom` instead.
@@ -428,7 +431,7 @@ class HighestWeightCrystals(Category_singleton):
             TESTS:
 
             Check that we fallback first to trying a crystal homset
-            (:trac:`19458`)::
+            (:issue:`19458`)::
 
                 sage: Binf = crystals.infinity.Tableaux(['A',2])
                 sage: Bi = crystals.elementary.Elementary(Binf.cartan_type(), 1)
@@ -762,7 +765,7 @@ class HighestWeightCrystals(Category_singleton):
                     ...
                     NotImplementedError: not implemented for infinite crystals
 
-                Check that :trac:`30493` is fixed::
+                Check that :issue:`30493` is fixed::
 
                     sage: CW = CartanType("G", 2)
                     sage: C = crystals.Letters(CW)
@@ -830,6 +833,7 @@ class HighestWeightCrystals(Category_singleton):
 
 ###############################################################################
 ## Morphisms
+
 
 class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
     r"""
@@ -946,6 +950,7 @@ class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
                 s += [j]*sf
             cur = cur.f_string(s)
         return cur
+
 
 class HighestWeightCrystalHomset(CrystalHomset):
     """

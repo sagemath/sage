@@ -462,7 +462,7 @@ class FiniteField_givaro(FiniteField):
 
         INPUT:
 
-        - ``n`` -- integer representation of an finite field element
+        - ``n`` -- integer representation of a finite field element
 
         OUTPUT:
 
@@ -510,7 +510,7 @@ class FiniteField_givaro(FiniteField):
             Mod(1, 3)*a^4 + Mod(2, 3)*a^3 + Mod(2, 3)
         """
         f = pari(str(self.modulus()))
-        return f.subst('x', 'a') * pari("Mod(1,%s)"%self.characteristic())
+        return f.subst('x', 'a') * pari("Mod(1,%s)" % self.characteristic())
 
     def __iter__(self):
         """
@@ -531,7 +531,7 @@ class FiniteField_givaro(FiniteField):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`~~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`~~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -547,7 +547,7 @@ class FiniteField_givaro(FiniteField):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -563,7 +563,7 @@ class FiniteField_givaro(FiniteField):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
 
         EXAMPLES::
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 """
 Torsion points on modular abelian varieties
 
@@ -30,10 +31,10 @@ class TorsionPoint(ModuleElement):
     - ``parent`` -- a finite subgroup of a modular abelian variety
 
     - ``element`` -- a `\QQ`-vector space element that represents
-       this element in terms of the ambient rational homology
+      this element in terms of the ambient rational homology
 
     - ``check`` -- bool (default: ``True``): whether to check that
-       element is in the appropriate vector space
+      element is in the appropriate vector space
 
     EXAMPLES:
 
@@ -78,7 +79,8 @@ class TorsionPoint(ModuleElement):
 
             sage: J = J0(11)
             sage: G = J.finite_subgroup([[1/3,0], [0,1/5]]); G
-            Finite subgroup with invariants [15] over QQbar of Abelian variety J0(11) of dimension 1
+            Finite subgroup with invariants [15] over QQbar of
+             Abelian variety J0(11) of dimension 1
             sage: G.0.element()
             (1/3, 0)
 
@@ -193,8 +195,8 @@ class TorsionPoint(ModuleElement):
 
         INPUT:
 
-        - ``self, right`` -- elements of the same finite abelian
-           variety subgroup.
+        - ``self``, ``right`` -- elements of the same finite abelian
+          variety subgroup.
 
         - ``op`` -- comparison operator (see :mod:`sage.structure.richcmp`)
 
@@ -255,10 +257,12 @@ class TorsionPoint(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: A = J0(43)[1]; A
             Simple abelian subvariety 43b(1,43) of dimension 2 of J0(43)
             sage: C = A.cuspidal_subgroup(); C
-            Finite subgroup with invariants [7] over QQ of Simple abelian subvariety 43b(1,43) of dimension 2 of J0(43)
+            Finite subgroup with invariants [7] over QQ of
+             Simple abelian subvariety 43b(1,43) of dimension 2 of J0(43)
             sage: x = C.0; x
             [(0, 1/7, 0, 6/7, 0, 5/7)]
             sage: x._relative_element()

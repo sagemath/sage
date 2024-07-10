@@ -1,0 +1,3 @@
+# According to https://pypi.org/project/importlib-metadata/,
+# 4.13 provides the features of Python 3.11 importlib.metadata
+importlib_metadata >=4.13; python_version<"3.11"

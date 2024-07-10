@@ -8,7 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .glpk_backend cimport GLPKBackend
+from sage.numerical.backends.glpk_backend cimport GLPKBackend
 
 cdef class GLPKExactBackend(GLPKBackend):
     cpdef int add_variable(self, lower_bound=*, upper_bound=*, binary=*, continuous=*, integer=*, obj=*, name=*) except -1

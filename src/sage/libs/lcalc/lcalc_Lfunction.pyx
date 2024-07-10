@@ -99,7 +99,7 @@ cdef class Lfunction:
             tmpc=CCC(residue[i])
             r[i+1] = new_Complex(mpfr_get_d(tmpc.__re, MPFR_RNDN), mpfr_get_d(tmpc.__im, MPFR_RNDN))
 
-        self.__init_fun(NAME, what_type, dirichlet_coefficient, Period, q,  w,  A, g, l, n_poles, p, r)
+        self._init_fun(NAME, what_type, dirichlet_coefficient, Period, q,  w,  A, g, l, n_poles, p, r)
 
         if name:
             name += ': '
@@ -132,9 +132,9 @@ cdef class Lfunction:
 
         INPUT:
 
-        - ``s`` -  a complex number
-        - ``derivative`` - integer (default: 0)  the derivative to be evaluated
-        - ``rotate`` - (default: False) If True, this returns the value of the
+        - ``s`` --  a complex number
+        - ``derivative`` -- integer (default: 0)  the derivative to be evaluated
+        - ``rotate`` -- (default: ``False``) If True, this returns the value of the
           Hardy Z-function (sometimes called the Riemann-Siegel Z-function or
           the Siegel Z-function).
 
@@ -180,7 +180,7 @@ cdef class Lfunction:
         """
         cdef ComplexNumber complexified_s = CCC(s)
         cdef c_Complex z = new_Complex(mpfr_get_d(complexified_s.__re, MPFR_RNDN), mpfr_get_d(complexified_s.__im, MPFR_RNDN))
-        cdef c_Complex result = self.__value(z, derivative)
+        cdef c_Complex result = self._value(z, derivative)
         return CCC(result.real(),result.imag())
 
     def hardy_z_function(self, s):
@@ -189,7 +189,7 @@ cdef class Lfunction:
 
         INPUT:
 
-        - ``s`` - a complex number with imaginary part between -0.5 and 0.5
+        - ``s`` -- a complex number with imaginary part between -0.5 and 0.5
 
         EXAMPLES::
 
@@ -223,9 +223,8 @@ cdef class Lfunction:
         #This takes s -> .5 + I*s
         cdef ComplexNumber complexified_s = CCC(0.5)+ CCC(0,1)*CCC(s)
         cdef c_Complex z = new_Complex(mpfr_get_d(complexified_s.__re, MPFR_RNDN), mpfr_get_d(complexified_s.__im, MPFR_RNDN))
-        cdef c_Complex result = self.__hardy_z_function(z)
+        cdef c_Complex result = self._hardy_z_function(z)
         return CCC(result.real(),result.imag())
-
 
     def compute_rank(self):
         """
@@ -249,9 +248,9 @@ cdef class Lfunction:
             3
 
         """
-        return self.__compute_rank()
+        return self._compute_rank()
 
-    def __N(self, T):
+    def _N(self, T):
         """
         Compute the number of zeroes upto height `T` using the formula for
         `N(T)` with the error of `S(T)`. Please do not use this. It is only
@@ -262,12 +261,12 @@ cdef class Lfunction:
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
             sage: chi = DirichletGroup(5)[2] #This is a quadratic character
             sage: L=Lfunction_from_character(chi, type="complex")
-            sage: L.__N(10) # abs tol 1e-8
+            sage: L._N(10) # abs tol 1e-8
             4.0
         """
         cdef RealNumber real_T=RRR(T)
         cdef double double_T = mpfr_get_d(real_T.value, MPFR_RNDN)
-        cdef double res_d = self.__typedN(double_T)
+        cdef double res_d = self._typedN(double_T)
         return RRR(res_d)
 
     def find_zeros(self, T1, T2, stepsize):
@@ -323,7 +322,7 @@ cdef class Lfunction:
         cdef RealNumber real_T2 = RRR(T2)
         cdef RealNumber real_stepsize = RRR(stepsize)
         sig_on()
-        self.__find_zeros_v( mpfr_get_d(real_T1.value, MPFR_RNDN), mpfr_get_d(real_T2.value, MPFR_RNDN), mpfr_get_d(real_stepsize.value, MPFR_RNDN),&result)
+        self._find_zeros_v( mpfr_get_d(real_T1.value, MPFR_RNDN), mpfr_get_d(real_T2.value, MPFR_RNDN), mpfr_get_d(real_stepsize.value, MPFR_RNDN),&result)
         sig_off()
         i=result.size()
         returnvalue = []
@@ -346,13 +345,13 @@ cdef class Lfunction:
 
         INPUT:
 
-        - ``count`` - number of zeros to be found
-        - ``start`` - (default: 0) how many initial zeros to skip
-        - ``max_refine`` - when some zeros are found to be missing, the step
+        - ``count`` -- number of zeros to be found
+        - ``start`` -- (default: 0) how many initial zeros to skip
+        - ``max_refine`` -- when some zeros are found to be missing, the step
           size used to find zeros is refined. max_refine gives an upper limit
           on when lcalc should give up. Use default value unless you know
           what you are doing.
-        - ``rank`` - integer (default: -1) analytic rank of the L-function.
+        - ``rank`` -- integer (default: -1) analytic rank of the L-function.
           If -1 is passed, then we attempt to compute it. (Use default if in
           doubt)
 
@@ -399,7 +398,7 @@ cdef class Lfunction:
         cdef const char* message_stamp = ""
         cdef doublevec result
         sig_on()
-        self.__find_zeros(count, start, max_refine, rank, message_stamp, &result)
+        self._find_zeros(count, start, max_refine, rank, message_stamp, &result)
         sig_off()
         returnvalue = []
         for i in range(result.size()):
@@ -408,25 +407,25 @@ cdef class Lfunction:
         return returnvalue
 
     # Needs to be overriden
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         raise NotImplementedError
 
-    cdef c_Complex __value(self,c_Complex s,int derivative):
+    cdef c_Complex _value(self,c_Complex s,int derivative) noexcept:
         raise NotImplementedError
 
-    cdef c_Complex __hardy_z_function(self,c_Complex s):
+    cdef c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         raise NotImplementedError
 
-    cdef int __compute_rank(self):
+    cdef int _compute_rank(self) noexcept:
         raise NotImplementedError
 
-    cdef double __typedN(self,double T):
+    cdef double _typedN(self,double T) noexcept:
         raise NotImplementedError
 
-    cdef void __find_zeros_v(self,double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self,double T1, double T2, double stepsize, doublevec *result) noexcept:
         raise NotImplementedError
 
-    cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
         raise NotImplementedError
 
 ##############################################################################
@@ -497,7 +496,7 @@ cdef class Lfunction_I(Lfunction):
         self._repr += " with integer Dirichlet coefficients"
 
     # override
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         cdef int N = len(dirichlet_coeff)
         cdef Integer tmpi
         cdef int * coeffs = new_ints(N+1) #lcalc ignores 0the coefficient
@@ -507,22 +506,22 @@ cdef class Lfunction_I(Lfunction):
         self.thisptr=new_c_Lfunction_I(NAME, what_type,  N, coeffs, Period, q,  w,  A, g, l, n_poles, p, r)
         del_ints(coeffs)
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
         return (<c_Lfunction_I *>(self.thisptr)).value(s, derivative, "pure")
 
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         return (<c_Lfunction_I *>(self.thisptr)).value(s, 0, "rotated pure")
 
-    cdef int __compute_rank(self):
+    cdef int _compute_rank(self) noexcept:
         return (<c_Lfunction_I *>(self.thisptr)).compute_rank()
 
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result) noexcept:
         (<c_Lfunction_I *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T) noexcept:
         return (<c_Lfunction_I *>self.thisptr).N(T)
 
-    cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
         (<c_Lfunction_I *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     # debug tools
@@ -590,26 +589,26 @@ cdef class Lfunction_D(Lfunction):
 
     INPUT:
 
-    - ``what_type_L`` - integer, this should be set to 1 if the coefficients are
+    - ``what_type_L`` -- integer, this should be set to 1 if the coefficients are
       periodic and 0 otherwise.
 
-    - ``dirichlet_coefficient`` - List of Dirichlet coefficients of the
+    - ``dirichlet_coefficient`` -- List of Dirichlet coefficients of the
       L-function. Only first `M` coefficients are needed if they are periodic.
 
-    - ``period`` - If the coefficients are periodic, this should be the
+    - ``period`` -- If the coefficients are periodic, this should be the
       period of the coefficients.
 
-    - ``Q`` - See above
+    - ``Q`` -- See above
 
-    - ``OMEGA`` - See above
+    - ``OMEGA`` -- See above
 
-    - ``kappa`` - List of the values of `\kappa_j` in the functional equation
+    - ``kappa`` -- List of the values of `\kappa_j` in the functional equation
 
-    - ``gamma`` - List of the values of `\gamma_j` in the functional equation
+    - ``gamma`` -- List of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` - List of the poles of L-function
+    - ``pole`` -- List of the poles of L-function
 
-    - ``residue`` - List of the residues of the L-function
+    - ``residue`` -- List of the residues of the L-function
 
     .. NOTE::
 
@@ -633,7 +632,7 @@ cdef class Lfunction_D(Lfunction):
         self._repr += " with real Dirichlet coefficients"
 
     # override
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         cdef int i
         cdef RealNumber tmpr
         cdef int N = len(dirichlet_coeff)
@@ -644,23 +643,22 @@ cdef class Lfunction_D(Lfunction):
         self.thisptr=new_c_Lfunction_D(NAME, what_type,  N, coeffs, Period, q,  w,  A, g, l, n_poles, p, r)
         del_doubles(coeffs)
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
         return (<c_Lfunction_D *>(self.thisptr)).value(s, derivative, "pure")
 
-
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         return (<c_Lfunction_D *>(self.thisptr)).value(s, 0, "rotated pure")
 
-    cdef inline int __compute_rank(self):
+    cdef inline int _compute_rank(self) noexcept:
         return (<c_Lfunction_D *>(self.thisptr)).compute_rank()
 
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result) noexcept:
         (<c_Lfunction_D *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T) noexcept:
         return (<c_Lfunction_D *>self.thisptr).N(T)
 
-    cdef int __find_zeros(self, long count, long start,double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start,double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
         (<c_Lfunction_D *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     # debug tools
@@ -729,26 +727,26 @@ cdef class Lfunction_C:
 
     INPUT:
 
-    - ``what_type_L`` - integer, this should be set to 1 if the coefficients are
+    - ``what_type_L`` -- integer, this should be set to 1 if the coefficients are
       periodic and 0 otherwise.
 
-    - ``dirichlet_coefficient`` - List of Dirichlet coefficients of the
+    - ``dirichlet_coefficient`` -- List of Dirichlet coefficients of the
       L-function. Only first `M` coefficients are needed if they are periodic.
 
-    - ``period`` - If the coefficients are periodic, this should be the
+    - ``period`` -- If the coefficients are periodic, this should be the
       period of the coefficients.
 
-    - ``Q`` - See above
+    - ``Q`` -- See above
 
-    - ``OMEGA`` - See above
+    - ``OMEGA`` -- See above
 
-    - ``kappa`` - List of the values of `\kappa_j` in the functional equation
+    - ``kappa`` -- List of the values of `\kappa_j` in the functional equation
 
-    - ``gamma`` - List of the values of `\gamma_j` in the functional equation
+    - ``gamma`` -- List of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` - List of the poles of L-function
+    - ``pole`` -- List of the poles of L-function
 
-    - ``residue`` - List of the residues of the L-function
+    - ``residue`` -- List of the residues of the L-function
 
     .. NOTE::
 
@@ -773,7 +771,7 @@ cdef class Lfunction_C:
         self._repr += " with complex Dirichlet coefficients"
 
     # override
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         cdef int i
         cdef int N = len(dirichlet_coeff)
         cdef ComplexNumber tmpc
@@ -788,24 +786,22 @@ cdef class Lfunction_C:
 
         del_Complexes(coeffs)
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
         return (<c_Lfunction_C *>(self.thisptr)).value(s, derivative, "pure")
 
-
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         return (<c_Lfunction_C *>(self.thisptr)).value(s, 0,"rotated pure")
 
-    cdef inline int __compute_rank(self):
+    cdef inline int _compute_rank(self) noexcept:
         return (<c_Lfunction_C *>(self.thisptr)).compute_rank()
 
-
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result) noexcept:
         (<c_Lfunction_C *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T) noexcept:
         return (<c_Lfunction_C *>self.thisptr).N(T)
 
-    cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
         (<c_Lfunction_C *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     # debug tools
@@ -873,24 +869,22 @@ cdef class Lfunction_Zeta(Lfunction):
         self.thisptr = new_c_Lfunction_Zeta()
         self._repr = "The Riemann zeta function"
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, derivative, "pure")
 
-
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, 0, "rotated pure")
 
-    cdef inline int __compute_rank(self):
+    cdef inline int _compute_rank(self) noexcept:
         return (<c_Lfunction_Zeta *>(self.thisptr)).compute_rank()
 
-
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result) noexcept:
         (<c_Lfunction_Zeta *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T) noexcept:
         return (<c_Lfunction_Zeta *>self.thisptr).N(T)
 
-    cdef int __find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result):
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
         (<c_Lfunction_Zeta *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     def __dealloc__(self):
@@ -898,6 +892,7 @@ cdef class Lfunction_Zeta(Lfunction):
         Deallocate memory used
         """
         del_c_Lfunction_Zeta(<c_Lfunction_Zeta *>(self.thisptr))
+
 
 ##############################################################################
 # Tools
@@ -910,8 +905,8 @@ def Lfunction_from_character(chi, type="complex"):
 
     INPUT:
 
-    - ``chi`` - A Dirichlet character
-    - ``use_type`` - string (default: "complex") type used for the Dirichlet
+    - ``chi`` -- A Dirichlet character
+    - ``use_type`` -- string (default: "complex") type used for the Dirichlet
       coefficients. This can be "int", "double" or "complex".
 
     OUTPUT:
@@ -970,8 +965,8 @@ def Lfunction_from_elliptic_curve(E, number_of_coeffs=10000):
 
     INPUT:
 
-    - ``E`` - An elliptic curve
-    - ``number_of_coeffs`` - integer (default: 10000) The number of
+    - ``E`` -- An elliptic curve
+    - ``number_of_coeffs`` -- integer (default: 10000) The number of
       coefficients to be used when constructing the L-function object. Right
       now this is fixed at object creation time, and is not automatically
       set intelligently.

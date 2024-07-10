@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Robinson-Schensted-Knuth correspondence
 
@@ -166,12 +167,14 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from bisect import bisect_left, bisect_right
+
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import Matrix
 from sage.structure.unique_representation import UniqueRepresentation
 
-from bisect import bisect_left, bisect_right
-from sage.structure.element import is_Matrix
-from sage.matrix.constructor import matrix
-from sage.rings.integer_ring import ZZ
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class Rule(UniqueRepresentation):
@@ -217,7 +220,7 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a biword
+        - ``obj1``, ``obj2`` -- anything representing a biword
           (see the doc of :meth:`forward_rule` for the
           encodings accepted).
 
@@ -278,7 +281,7 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to
+        - ``obj1``, ``obj2`` -- can be one of the following ways to
           represent a generalized permutation (or, equivalently,
           biword):
 
@@ -877,7 +880,7 @@ class RuleHecke(Rule):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to
+        - ``obj1``, ``obj2`` -- can be one of the following ways to
           represent a generalized permutation (or, equivalently,
           biword):
 
@@ -1323,7 +1326,7 @@ class RuleDualRSK(Rule):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a strict biword
+        - ``obj1``, ``obj2`` -- anything representing a strict biword
           (see the doc of :meth:`forward_rule` for the
           encodings accepted)
 
@@ -1706,7 +1709,7 @@ class RuleCoRSK(RuleRSK):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a strict
+        - ``obj1``, ``obj2`` -- anything representing a strict
           cobiword (see the doc of :meth:`forward_rule` for
           the encodings accepted)
 
@@ -2026,7 +2029,7 @@ class RuleSuperRSK(RuleRSK):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a restricted super biword
+        - ``obj1``, ``obj2`` -- anything representing a restricted super biword
           (see the doc of :meth:`forward_rule` for the
           encodings accepted)
 
@@ -2156,7 +2159,7 @@ class RuleSuperRSK(RuleRSK):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to
+        - ``obj1``, ``obj2`` -- can be one of the following ways to
           represent a generalized permutation (or, equivalently,
           biword):
 
@@ -2659,7 +2662,7 @@ class RuleStar(Rule):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to represent a
+        - ``obj1``, ``obj2`` -- can be one of the following ways to represent a
           biword (or, equivalently, an increasing 0-Hecke factorization) that
           is fully commutative:
 
@@ -2955,7 +2958,7 @@ class RuleStar(Rule):
                 if j == 0:
                     df.append([])
                 if j > 0 and obj1[j] < obj1[j-1]:
-                    for a in range(obj1[j-1]-obj1[j]):
+                    for _ in range(obj1[j-1]-obj1[j]):
                         df.append([])
                 df[-1].append(obj2[j])
             if obj1:
@@ -2967,7 +2970,7 @@ class RuleStar(Rule):
             return DecreasingHeckeFactorization(df)
 
 
-class InsertionRules():
+class InsertionRules:
     r"""
     Catalog of rules for RSK-like insertion algorithms.
     """
@@ -3045,7 +3048,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
 
     INPUT:
 
-    - ``obj1, obj2`` -- can be one of the following:
+    - ``obj1``, ``obj2`` -- can be one of the following:
 
       - a word in an ordered alphabet (in this case, ``obj1`` is said
         word, and ``obj2`` is ``None``)
@@ -3180,7 +3183,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
         else:
             raise ValueError("invalid input")
 
-    if is_Matrix(obj1):
+    if isinstance(obj1, Matrix):
         obj1 = obj1.rows()
 
     output = rule.forward_rule(obj1, obj2, check_standard)
@@ -3345,7 +3348,7 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
         ...
         ValueError: p(=[[1, 2, 3]]) and q(=[[1, 2]]) must have the same shape
 
-    Check that :trac:`20430` is fixed::
+    Check that :issue:`20430` is fixed::
 
         sage: RSK([1,1,1,1,1,1,1,2,2,2,3], [1,1,1,1,1,1,3,2,2,2,1])
         [[[1, 1, 1, 1, 1, 1, 1, 2, 2], [2], [3]],

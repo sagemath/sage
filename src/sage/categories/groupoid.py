@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.groups
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.groups
 r"""
 Groupoid
 """
@@ -12,7 +13,8 @@ Groupoid
 #******************************************************************************
 
 from sage.categories.category import CategoryWithParameters
-from .sets_cat import Sets
+from sage.categories.sets_cat import Sets
+
 
 class Groupoid(CategoryWithParameters):
     """
@@ -52,7 +54,7 @@ class Groupoid(CategoryWithParameters):
             sage: Groupoid(S8)
             Groupoid with underlying set Symmetric group of order 8! as a permutation group
         """
-        return "Groupoid with underlying set %s"%self.__G
+        return "Groupoid with underlying set %s" % self.__G
 
     #def construction(self):
     #    return (self.__class__, self.__G)

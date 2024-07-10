@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Free Fermions Super Lie Conformal Algebra.
 
@@ -33,6 +34,7 @@ AUTHORS:
 #*****************************************************************************
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+
 
 class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
@@ -111,7 +113,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
         latex_names = None
 
         if (names is None) and (index_set is None):
-            if ngens==1:
+            if ngens == 1:
                 names = 'psi'
             else:
                 names = 'psi_'

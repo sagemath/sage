@@ -182,9 +182,9 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
     - ``naming`` -- (optional) a string; the naming scheme to use for
       the basis; valid values are:
 
-      * ``'index'`` - (default for `r < 10`) the basis elements are
+      * ``'index'`` -- (default for `r < 10`) the basis elements are
         ``names_w``, where ``w`` are Lyndon words indexing the basis
-      * ``'linear'`` - (default for `r \geq 10`) the basis is indexed
+      * ``'linear'`` -- (default for `r \geq 10`) the basis is indexed
         ``names_1``, ..., ``names_n`` in the ordering of the Lyndon basis
 
     .. NOTE::
@@ -243,7 +243,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
 
         sage: L = LieAlgebra(QQ, 3, step=3)
         sage: L.category()
-        Category of finite dimensional stratified lie algebras with basis over Rational Field
+        Category of finite dimensional stratified Lie algebras with basis over Rational Field
         sage: L in LieAlgebras(QQ).Nilpotent()
         True
 
@@ -309,7 +309,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
         [3, 6, 14]
 
     Verify that a free nilpotent Lie algebra of step `>2` with `>10`
-    generators can be created, see :trac:`27018` (see also :trac:`27069`)::
+    generators can be created, see :issue:`27018` (see also :issue:`27069`)::
 
         sage: L = LieAlgebra(QQ, 11, step=3)
         sage: L.dimension() == 11 + (11^2-11)/2 + (11^3-11)/3

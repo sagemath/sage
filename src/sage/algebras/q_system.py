@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Q-Systems
 
@@ -293,10 +293,10 @@ class QSystem(CombinatorialFreeModule):
         ret = UnicodeArt("")
         for k, exp in t._sorted_items():
             a,m = k
-            var = UnicodeArt([u"Q" + unicode_subscript(m) + u'⁽' + unicode_superscript(a) + u'⁾'], baseline=0)
+            var = UnicodeArt(["Q" + unicode_subscript(m) + '⁽' + unicode_superscript(a) + '⁾'], baseline=0)
             if exp > 1:
-                var = (UnicodeArt([u'('], baseline=0) + var
-                       + UnicodeArt([u')' + unicode_superscript(exp)], baseline=0))
+                var = (UnicodeArt(['('], baseline=0) + var
+                       + UnicodeArt([')' + unicode_superscript(exp)], baseline=0))
             ret += var
         return ret
 
@@ -564,6 +564,7 @@ class QSystem(CombinatorialFreeModule):
             """
             return self.parent().sum_of_terms((tl*tr, cl*cr)
                                               for tl,cl in self for tr,cr in x)
+
 
 def is_tamely_laced(ct):
     r"""

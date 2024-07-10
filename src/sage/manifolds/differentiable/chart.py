@@ -20,7 +20,6 @@ AUTHORS:
 REFERENCES:
 
 - Chap. 1 of [Lee2013]_
-
 """
 # ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -1155,7 +1154,7 @@ class DiffCoordChange(CoordChange):
         """
         CoordChange.__init__(self, chart1, chart2, *transformations)
         # Jacobian matrix:
-        self._jacobian  = self._transf.jacobian()
+        self._jacobian = self._transf.jacobian()
         # If the two charts are on the same open subset, the Jacobian matrix is
         # added to the dictionary of changes of frame:
         if chart1.domain() == chart2.domain():

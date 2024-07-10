@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Jack Symmetric Functions
 
@@ -35,7 +36,7 @@ from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.arith.misc import gcd
 from sage.arith.functions import lcm
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.misc.misc_c import prod
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom, End
@@ -49,8 +50,25 @@ m_to_p_cache = {}
 
 
 class Jack(UniqueRepresentation):
+    @staticmethod
+    def __classcall__(cls, Sym, t='t'):
+        """
+        Normalize the arguments.
 
-    def __init__(self, Sym, t='t'):
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).jack().P()
+            sage: B2 = SymmetricFunctions(R).jack(t).P()
+            sage: B3 = SymmetricFunctions(R).jack(q).P()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(t))
+
+    def __init__(self, Sym, t):
         r"""
         The family of Jack symmetric functions including the `P`, `Q`, `J`, `Qp`
         bases.  The default parameter is ``t``.
@@ -69,10 +87,10 @@ class Jack(UniqueRepresentation):
             Jack polynomials with t=1 over Rational Field
         """
         self._sym = Sym
-        self.t = Sym.base_ring()(t)
+        self.t = t
         self._name_suffix = ""
-        if str(t) !='t':
-            self._name_suffix += " with t=%s"%t
+        if str(t) != 't':
+            self._name_suffix += " with t=%s" % t
         self._name = "Jack polynomials"+self._name_suffix+" over "+repr(Sym.base_ring())
 
     def __repr__(self):
@@ -463,7 +481,7 @@ def normalize_coefficients(self, c):
         6/(t^2 + 3*t + 2)
     """
     BR = self.base_ring()
-    if is_FractionField(BR) and BR.base_ring() == QQ:
+    if isinstance(BR, FractionField_generic) and BR.base_ring() == QQ:
         denom = c.denominator()
         numer = c.numerator()
 
@@ -531,6 +549,25 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             self._h = self._sym.homogeneous()
             self   .register_coercion(SetMorphism(Hom(self._h, self, category), self._h_to_self))
             self._h.register_coercion(SetMorphism(Hom(self, self._h, category), self._self_to_h))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
+            sage: JP = Sym.jack().P()
+            sage: JP.construction()
+            (SymmetricFunctionsFunctor[Jack P],
+             Fraction Field of Univariate Polynomial Ring in t over Rational Field)
+        """
+        return (sfa.SymmetricFunctionsFamilyFunctor(self, Jack,
+                                                    self.basis_name(),
+                                                    self.t),
+                self.base_ring())
 
     def _m_to_self(self, x):
         r"""
@@ -1084,7 +1121,7 @@ class JackPolynomials_j(JackPolynomials_generic):
                                    codomain=self._P, category=category)
         # should use module_morphism(on_coeffs = ...) once it exists
         self._P.register_coercion(self._P._normalize_morphism(category) * phi)
-        self   .register_coercion(self   ._normalize_morphism(category) *~phi)
+        self   .register_coercion(self   ._normalize_morphism(category) * ~phi)
 
     class Element(JackPolynomials_generic.Element):
         pass

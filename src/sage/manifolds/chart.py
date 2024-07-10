@@ -22,7 +22,6 @@ REFERENCES:
 
 - Chap. 2 of [Lee2011]_
 - Chap. 1 of [Lee2013]_
-
 """
 
 # ****************************************************************************
@@ -345,7 +344,7 @@ class Chart(UniqueRepresentation, SageObject):
             []
             sage: TestSuite(X).run()
 
-        Check that :trac:`32112` has been fixed::
+        Check that :issue:`32112` has been fixed::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: U = M.open_subset('U')
@@ -402,7 +401,7 @@ class Chart(UniqueRepresentation, SageObject):
         # Initialization of the set of charts which the current chart is a
         # restriction of:
         self._supercharts = set([self])
-        #
+
         self._dom_restrict = {}  # dict. of the restrictions of self to
                                  # subsets of self._domain, with the
                                  # subsets as keys
@@ -1145,7 +1144,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``codomain_subset`` - an instance of
+        - ``codomain_subset`` -- an instance of
           :class:`~sage.geometry.convex_set.ConvexSet_base` or another
           object with a ``__contains__`` method that accepts coordinate
           vectors
@@ -1165,6 +1164,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         Pulling back a polytope under a chart::
 
+            sage: # needs sage.geometry.polyhedron
             sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [2, 1]]); P
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
             sage: McP = c_cart.preimage(P); McP
@@ -1176,6 +1176,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         Pulling back the interior of a polytope under a chart::
 
+            sage: # needs sage.geometry.polyhedron
             sage: int_P = P.interior(); int_P
             Relative interior of
              a 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
@@ -1384,6 +1385,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         Zero function on a p-adic manifold::
 
+            sage: # needs sage.rings.padics
             sage: M = Manifold(2, 'M', structure='topological', field=Qp(5)); M
             2-dimensional topological manifold M over the 5-adic Field with
              capped relative precision 20
@@ -1438,6 +1440,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         One function on a p-adic manifold::
 
+            sage: # needs sage.rings.padics
             sage: M = Manifold(2, 'M', structure='topological', field=Qp(5)); M
             2-dimensional topological manifold M over the 5-adic Field with
              capped relative precision 20
@@ -2382,7 +2385,7 @@ class RealChart(Chart):
 
         TESTS:
 
-        Check that :trac:`32929` is fixed::
+        Check that :issue:`32929` is fixed::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart(r"x:(0,+oo) y:(0,2):periodic")
@@ -2754,10 +2757,9 @@ class RealChart(Chart):
         A 2-dimensional chart plotted in terms of itself results in a
         rectangular grid::
 
-            sage: R2 = Manifold(2, 'R^2', structure='topological') # the Euclidean plane
-            sage: c_cart.<x,y> = R2.chart() # Cartesian coordinates
-            sage: g = c_cart.plot()  # equivalent to c_cart.plot(c_cart)
-            sage: g
+            sage: R2 = Manifold(2, 'R^2', structure='topological')  # the Euclidean plane
+            sage: c_cart.<x,y> = R2.chart()  # Cartesian coordinates
+            sage: g = c_cart.plot(); g  # equivalent to c_cart.plot(c_cart)             # needs sage.plot
             Graphics object consisting of 18 graphics primitives
 
         .. PLOT::
@@ -2770,11 +2772,10 @@ class RealChart(Chart):
         Grid of polar coordinates in terms of Cartesian coordinates in the
         Euclidean plane::
 
-            sage: U = R2.open_subset('U', coord_def={c_cart: (y!=0, x<0)}) # the complement of the segment y=0 and x>0
-            sage: c_pol.<r,ph> = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi') # polar coordinates on U
+            sage: U = R2.open_subset('U', coord_def={c_cart: (y!=0, x<0)})  # the complement of the segment y=0 and x>0
+            sage: c_pol.<r,ph> = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi')  # polar coordinates on U
             sage: pol_to_cart = c_pol.transition_map(c_cart, [r*cos(ph), r*sin(ph)])
-            sage: g = c_pol.plot(c_cart)
-            sage: g
+            sage: g = c_pol.plot(c_cart); g                                             # needs sage.plot
             Graphics object consisting of 18 graphics primitives
 
         .. PLOT::
@@ -2789,7 +2790,7 @@ class RealChart(Chart):
 
         Call with non-default values::
 
-            sage: g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)},
+            sage: g = c_pol.plot(c_cart, ranges={ph:(pi/4,pi)},                         # needs sage.plot
             ....:                number_values={r:7, ph:17},
             ....:                color={r:'red', ph:'green'},
             ....:                style={r:'-', ph:'--'})
@@ -2807,7 +2808,8 @@ class RealChart(Chart):
 
         A single coordinate line can be drawn::
 
-            sage: g = c_pol.plot(c_cart, fixed_coords={r: 2}) # draw a circle of radius r=2
+            sage: g = c_pol.plot(c_cart,    # draw a circle of radius r=2               # needs sage.plot
+            ....:                fixed_coords={r: 2})
 
         .. PLOT::
 
@@ -2821,7 +2823,8 @@ class RealChart(Chart):
 
         ::
 
-            sage: g = c_pol.plot(c_cart, fixed_coords={ph: pi/4}) # draw a segment at phi=pi/4
+            sage: g = c_pol.plot(c_cart,    # draw a segment at phi=pi/4                # needs sage.plot
+            ....:                fixed_coords={ph: pi/4})
 
         .. PLOT::
 
@@ -2838,24 +2841,23 @@ class RealChart(Chart):
         argument ``mapping``): 3D plot of the stereographic charts on the
         2-sphere::
 
-            sage: S2 = Manifold(2, 'S^2', structure='topological') # the 2-sphere
-            sage: U = S2.open_subset('U') ; V = S2.open_subset('V') # complement of the North and South pole, respectively
+            sage: S2 = Manifold(2, 'S^2', structure='topological')  # the 2-sphere
+            sage: U = S2.open_subset('U'); V = S2.open_subset('V')  # complement of the North and South pole, respectively
             sage: S2.declare_union(U,V)
-            sage: c_xy.<x,y> = U.chart() # stereographic coordinates from the North pole
-            sage: c_uv.<u,v> = V.chart() # stereographic coordinates from the South pole
+            sage: c_xy.<x,y> = U.chart()  # stereographic coordinates from the North pole
+            sage: c_uv.<u,v> = V.chart()  # stereographic coordinates from the South pole
             sage: xy_to_uv = c_xy.transition_map(c_uv, (x/(x^2+y^2), y/(x^2+y^2)),
             ....:                 intersection_name='W', restrictions1= x^2+y^2!=0,
             ....:                 restrictions2= u^2+v^2!=0)
             sage: uv_to_xy = xy_to_uv.inverse()
-            sage: R3 = Manifold(3, 'R^3', structure='topological') # the Euclidean space R^3
+            sage: R3 = Manifold(3, 'R^3', structure='topological')  # the Euclidean space R^3
             sage: c_cart.<X,Y,Z> = R3.chart()  # Cartesian coordinates on R^3
             sage: Phi = S2.continuous_map(R3, {(c_xy, c_cart): [2*x/(1+x^2+y^2),
             ....:                          2*y/(1+x^2+y^2), (x^2+y^2-1)/(1+x^2+y^2)],
             ....:                          (c_uv, c_cart): [2*u/(1+u^2+v^2),
             ....:                          2*v/(1+u^2+v^2), (1-u^2-v^2)/(1+u^2+v^2)]},
-            ....:                         name='Phi', latex_name=r'\Phi') # Embedding of S^2 in R^3
-            sage: g = c_xy.plot(c_cart, mapping=Phi)
-            sage: g
+            ....:                         name='Phi', latex_name=r'\Phi')  # Embedding of S^2 in R^3
+            sage: g = c_xy.plot(c_cart, mapping=Phi); g                                 # needs sage.plot
             Graphics3d Object
 
         .. PLOT::
@@ -2885,12 +2887,12 @@ class RealChart(Chart):
 
         The same plot without the ``(X,Y,Z)`` axes labels::
 
-            sage: g = c_xy.plot(c_cart, mapping=Phi, label_axes=False)
+            sage: g = c_xy.plot(c_cart, mapping=Phi, label_axes=False)                  # needs sage.plot
 
         The North and South stereographic charts on the same plot::
 
-            sage: g2 = c_uv.plot(c_cart, mapping=Phi, color='green')
-            sage: g + g2
+            sage: g2 = c_uv.plot(c_cart, mapping=Phi, color='green')                    # needs sage.plot
+            sage: g + g2                                                                # needs sage.plot
             Graphics3d Object
 
         .. PLOT::
@@ -2915,16 +2917,17 @@ class RealChart(Chart):
             g2 = c_uv.plot(c_cart, mapping=Phi, color='green')
             sphinx_plot(g+g2)
 
-        South stereographic chart drawned in terms of the North one (we split
+        South stereographic chart drawn in terms of the North one (we split
         the plot in four parts to avoid the singularity at `(u,v)=(0,0)`)::
 
+            sage: # long time, needs sage.plot
             sage: W = U.intersection(V) # the subset common to both charts
             sage: c_uvW = c_uv.restrict(W) # chart (W,(u,v))
-            sage: gSN1 = c_uvW.plot(c_xy, ranges={u:[-6.,-0.02], v:[-6.,-0.02]})  # long time
-            sage: gSN2 = c_uvW.plot(c_xy, ranges={u:[-6.,-0.02], v:[0.02,6.]})  # long time
-            sage: gSN3 = c_uvW.plot(c_xy, ranges={u:[0.02,6.], v:[-6.,-0.02]})  # long time
-            sage: gSN4 = c_uvW.plot(c_xy, ranges={u:[0.02,6.], v:[0.02,6.]})  # long time
-            sage: show(gSN1+gSN2+gSN3+gSN4, xmin=-1.5, xmax=1.5, ymin=-1.5, ymax=1.5)  # long time
+            sage: gSN1 = c_uvW.plot(c_xy, ranges={u:[-6.,-0.02], v:[-6.,-0.02]})
+            sage: gSN2 = c_uvW.plot(c_xy, ranges={u:[-6.,-0.02], v:[0.02,6.]})
+            sage: gSN3 = c_uvW.plot(c_xy, ranges={u:[0.02,6.], v:[-6.,-0.02]})
+            sage: gSN4 = c_uvW.plot(c_xy, ranges={u:[0.02,6.], v:[0.02,6.]})
+            sage: show(gSN1+gSN2+gSN3+gSN4, xmin=-1.5, xmax=1.5, ymin=-1.5, ymax=1.5)
 
         .. PLOT::
 
@@ -2947,9 +2950,12 @@ class RealChart(Chart):
         The coordinate line `u = 1` (red) and the coordinate line `v = 1`
         (green) on the same plot::
 
-            sage: gu1 = c_uvW.plot(c_xy, fixed_coords={u: 1}, max_range=20, plot_points=300)  # long time
-            sage: gv1 = c_uvW.plot(c_xy, fixed_coords={v: 1}, max_range=20, plot_points=300, color='green')  # long time
-            sage: gu1 + gv1  # long time
+            sage: # long time, needs sage.plot
+            sage: gu1 = c_uvW.plot(c_xy, fixed_coords={u: 1}, max_range=20,
+            ....:                  plot_points=300)
+            sage: gv1 = c_uvW.plot(c_xy, fixed_coords={v: 1}, max_range=20,
+            ....:                  plot_points=300, color='green')
+            sage: gu1 + gv1
             Graphics object consisting of 2 graphics primitives
 
         .. PLOT::
@@ -2975,8 +2981,9 @@ class RealChart(Chart):
         A 3-dimensional chart plotted in terms of itself results in a 3D
         rectangular grid::
 
-            sage: g = c_cart.plot() # equivalent to c_cart.plot(c_cart)  # long time
-            sage: g  # long time
+            sage: # long time, needs sage.plot
+            sage: g = c_cart.plot()  # equivalent to c_cart.plot(c_cart)
+            sage: g
             Graphics3d Object
 
         .. PLOT::
@@ -2989,10 +2996,11 @@ class RealChart(Chart):
         performed for at most 3 coordinates, which must be specified via
         the argument ``ambient_coords``)::
 
+            sage: # needs sage.plot
             sage: M = Manifold(4, 'M', structure='topological')
             sage: X.<t,x,y,z> = M.chart()
-            sage: g = X.plot(ambient_coords=(t,x,y)) # the coordinate z is not depicted  # long time
-            sage: g  # long time
+            sage: g = X.plot(ambient_coords=(t,x,y))  # the coordinate z is not depicted  # long time
+            sage: g                                                                       # long time
             Graphics3d Object
 
         .. PLOT::
@@ -3004,7 +3012,8 @@ class RealChart(Chart):
 
         ::
 
-            sage: g = X.plot(ambient_coords=(t,y)) # the coordinates x and z are not depicted
+            sage: # needs sage.plot
+            sage: g = X.plot(ambient_coords=(t,y))  # the coordinates x and z are not depicted
             sage: g
             Graphics object consisting of 18 graphics primitives
 
@@ -3140,7 +3149,7 @@ class RealChart(Chart):
         elif not isinstance(ambient_coords, tuple):
             ambient_coords = tuple(ambient_coords)
         nca = len(ambient_coords)
-        if nca != 2 and nca !=3:
+        if nca != 2 and nca != 3:
             raise ValueError("bad number of ambient coordinates: {}".format(nca))
         if ranges is None:
             ranges = {}
@@ -3716,7 +3725,7 @@ class CoordChange(SageObject):
 
         TESTS:
 
-        Check that :trac:`31923` is fixed::
+        Check that :issue:`31923` is fixed::
 
             sage: X1_to_X2.inverse().inverse() is X1_to_X2
             True

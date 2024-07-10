@@ -669,7 +669,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: QuiverMutationType(['A', 2]) # indirect doctest
+            sage: QuiverMutationType(['A', 2])  # indirect doctest
             ['A', 2]
         """
         return self._description
@@ -816,22 +816,22 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType( ['A',5] ); mut_type
             ['A', 5]
-            sage: mut_type.standard_quiver()
+            sage: mut_type.standard_quiver()                                            # needs sage.modules
             Quiver on 5 vertices of type ['A', 5]
 
             sage: mut_type = QuiverMutationType( ['A',[5,3], 1] ); mut_type
             ['A', [3, 5], 1]
-            sage: mut_type.standard_quiver()
+            sage: mut_type.standard_quiver()                                            # needs sage.modules
             Quiver on 8 vertices of type ['A', [3, 5], 1]
 
             sage: mut_type = QuiverMutationType(['A',3],['B',3]); mut_type
             [ ['A', 3], ['B', 3] ]
-            sage: mut_type.standard_quiver()
+            sage: mut_type.standard_quiver()                                            # needs sage.modules
             Quiver on 6 vertices of type [ ['A', 3], ['B', 3] ]
 
             sage: mut_type = QuiverMutationType(['A',3],['B',3],['X',6]); mut_type
             [ ['A', 3], ['B', 3], ['X', 6] ]
-            sage: mut_type.standard_quiver()
+            sage: mut_type.standard_quiver()                                            # needs sage.modules
             Quiver on 12 vertices of type [ ['A', 3], ['B', 3], ['X', 6] ]
         """
         from .quiver import ClusterQuiver
@@ -1686,7 +1686,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             sage: mut_type.irreducible_components()
             (['A', 3],)
         """
-        return tuple([self])
+        return (self,)
 
     @cached_method
     def class_size(self):
@@ -1732,7 +1732,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             Warning: This method uses a formula which has not been proved correct.
             504
 
-        Check that :trac:`14048` is fixed::
+        Check that :issue:`14048` is fixed::
 
             sage: mut_type = QuiverMutationType( ['F',4,(2, 1)] )
             sage: mut_type.class_size()
@@ -2237,31 +2237,28 @@ def _save_data_dig6(n, types='ClassicalExceptional', verbose=False):
 
     TESTS::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import save_quiver_data
-        sage: save_quiver_data(2) # indirect doctest
+        sage: save_quiver_data(2)  # indirect doctest
         <BLANKLINE>
         The following types are saved to file ... and will now be used to determine quiver mutation types:
         [('A', 1)]
         <BLANKLINE>
         The following types are saved to file ... and will now be used to determine quiver mutation types:
         [('A', (1, 1), 1), ('A', 2), ('B', 2), ('BC', 1, 1), ('G', 2)]
-
-        sage: save_quiver_data(2,up_to=False) # indirect doctest
+        sage: save_quiver_data(2, up_to=False)  # indirect doctest
         <BLANKLINE>
         The following types are saved to file ... and will now be used to determine quiver mutation types:
         [('A', (1, 1), 1), ('A', 2), ('B', 2), ('BC', 1, 1), ('G', 2)]
-
-        sage: save_quiver_data(2,up_to=False, types='Classical') # indirect doctest
+        sage: save_quiver_data(2, up_to=False, types='Classical')  # indirect doctest
         <BLANKLINE>
         The following types are saved to file ... and will now be used to determine quiver mutation types:
         [('A', (1, 1), 1), ('A', 2), ('B', 2), ('BC', 1, 1)]
-
-        sage: save_quiver_data(2,up_to=False, types='Exceptional') # indirect doctest
+        sage: save_quiver_data(2, up_to=False, types='Exceptional')  # indirect doctest
         <BLANKLINE>
         The following types are saved to file ... and will now be used to determine quiver mutation types:
         [('G', 2)]
-
-        sage: save_quiver_data(2,up_to=False, verbose=False) # indirect doctest
+        sage: save_quiver_data(2, up_to=False, verbose=False)  # indirect doctest
     """
     data = {}
     possible_types = ['Classical', 'ClassicalExceptional', 'Exceptional']
@@ -2311,6 +2308,7 @@ def save_quiver_data(n, up_to=True, types='ClassicalExceptional', verbose=True):
 
     TESTS::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import save_quiver_data
         sage: save_quiver_data(2)
         <BLANKLINE>
@@ -2319,22 +2317,18 @@ def save_quiver_data(n, up_to=True, types='ClassicalExceptional', verbose=True):
         <BLANKLINE>
         The following types are saved to file ... and will now be used to determine quiver mutation types:
         [('A', (1, 1), 1), ('A', 2), ('B', 2), ('BC', 1, 1), ('G', 2)]
-
         sage: save_quiver_data(2,up_to=False)
         <BLANKLINE>
         The following types are saved to file ... and will now be used to determine quiver mutation types:
         [('A', (1, 1), 1), ('A', 2), ('B', 2), ('BC', 1, 1), ('G', 2)]
-
         sage: save_quiver_data(2,up_to=False, types='Classical')
         <BLANKLINE>
         The following types are saved to file ... and will now be used to determine quiver mutation types:
         [('A', (1, 1), 1), ('A', 2), ('B', 2), ('BC', 1, 1)]
-
         sage: save_quiver_data(2,up_to=False, types='Exceptional')
         <BLANKLINE>
         The following types are saved to file ... and will now be used to determine quiver mutation types:
         [('G', 2)]
-
         sage: save_quiver_data(2,up_to=False, verbose=False)
     """
     from sage.combinat.cluster_algebra_quiver.mutation_type import load_data
@@ -2398,7 +2392,7 @@ def _mutation_type_error(data):
 
     EXAMPLES::
 
-        sage: QuiverMutationType( 'Christian', 'Stump' ) # indirect doctest
+        sage: QuiverMutationType( 'Christian', 'Stump' )  # indirect doctest
         Traceback (most recent call last):
         ...
         ValueError: ['Christian', 'Stump'] is not a valid quiver mutation type

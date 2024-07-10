@@ -24,7 +24,7 @@ from sage.libs.ntl.GF2 cimport *
 from sage.libs.ntl.GF2X cimport *
 
 
-cdef GF2X_c *celement_new(long parent):
+cdef GF2X_c *celement_new(long parent) noexcept:
     """
     EXAMPLES::
 
@@ -32,7 +32,7 @@ cdef GF2X_c *celement_new(long parent):
     """
     return new GF2X_c()
 
-cdef int celement_delete(GF2X_c *e, long parent):
+cdef int celement_delete(GF2X_c *e, long parent) noexcept:
     """
     EXAMPLES::
 
@@ -41,7 +41,7 @@ cdef int celement_delete(GF2X_c *e, long parent):
     """
     del e
 
-cdef int celement_construct(GF2X_c *e, long parent):
+cdef int celement_construct(GF2X_c *e, long parent) noexcept:
     """
     EXAMPLES::
 
@@ -49,7 +49,7 @@ cdef int celement_construct(GF2X_c *e, long parent):
     """
     pass
 
-cdef int celement_destruct(GF2X_c *e, long parent):
+cdef int celement_destruct(GF2X_c *e, long parent) noexcept:
     """
     EXAMPLES::
 

@@ -5,15 +5,8 @@ ROOT_DIR="`pwd`"
 INCLUDES="-I$SAGE_LOCAL/include"
 LIBDIRS="-L$SAGE_LOCAL/lib"
 
-CFLAGS="`testcflags.sh -fPIC -Wall -pedantic -g` $CFLAGS $INCLUDES"
+CFLAGS="-fPIC -Wall -pedantic -g $CFLAGS $INCLUDES"
 LDFLAGS="$LIBDIRS $LDFLAGS"
-
-COMPILER=`testcc.sh $CC`
-if [ "$COMPILER" = "Sun_Studio" ] ; then
-    CFLAGS="$CFLAGS -Kpic"
-elif [ "$COMPILER" = "HP_on_HP-UX" ] ; then
-    CFLAGS="$CFLAGS + z"
-fi
 
 CPPFLAGS="$INCLUDES"
 
@@ -27,15 +20,12 @@ export CFLAGS
 export CPPFLAGS
 export LDFLAGS
 
-# otherwise we might run into problems with old headers
-
-if [ -d "$SAGE_LOCAL/include/m4rie" ]; then
-    rm -rf "$SAGE_LOCAL/include/m4rie"
-fi
-
 # build M4RIE
 
 cd $ROOT_DIR/src/
+
+cp "$SAGE_ROOT"/config/config.* .
+
 sdh_configure --enable-shared --disable-static $ENABLE_DEBUG
 sdh_make
 sdh_make_install

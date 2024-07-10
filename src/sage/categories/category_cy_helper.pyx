@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fast functions for the category framework
 
@@ -5,7 +6,6 @@ Fast functions for the category framework
 AUTHOR:
 
 - Simon King (initial version)
-
 """
 
 #*****************************************************************************
@@ -108,7 +108,7 @@ cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
 #############################################
 #  Join
 
-cdef bint is_supercategory_of_done(new_cat, dict done):
+cdef bint is_supercategory_of_done(new_cat, dict done) noexcept:
     # This is a helper function. It replaces the closure
     # any(cat.is_subcategory(new_cat) for cat in done)
     for cat in done:

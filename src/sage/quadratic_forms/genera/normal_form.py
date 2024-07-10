@@ -1,4 +1,4 @@
-# sage.doctest:           optional - sage.libs.pari sage.rings.padics
+# sage.doctest:           needs sage.libs.pari sage.rings.padics
 r"""
 Normal forms for `p`-adic quadratic and bilinear forms
 
@@ -539,7 +539,7 @@ def _homogeneous_normal_form(G, w):
         e1 = D[-2, -2].unit_part()
         e2 = D[-1, -1].unit_part()
         e = {e1, e2}
-        E = [{3, 3}, {3, 5}, {5, 5}, {5, 7}]
+        E = [{3}, {3, 5}, {5}, {5, 7}]
         if e in E:
             B[-2:, :] = _relations(D[-2:, -2:], 1) * B[-2:, :]
             D = B * G * B.T
@@ -771,7 +771,7 @@ def _normalize(G, normal_odd=True):
 
     - ``G`` -- a symmetric matrix over `\ZZ_p` in jordan form --
       the output of :meth:`p_adic_normal_form` or :meth:`_jordan_2_adic`
-    - ``normal_odd`` -- bool (default: True) if true and `p` is odd,
+    - ``normal_odd`` -- bool (default: ``True``) if true and `p` is odd,
       compute a normal form.
 
     OUTPUT:
@@ -860,13 +860,13 @@ def _normalize_2x2(G):
 
     INPUT:
 
-    ``G`` - a `2` by `2` matrix over `\ZZ_p`
-    with ``type='fixed-mod'`` of the form::
+    - ``G`` -- a `2` by `2` matrix over `\ZZ_p`
+      with ``type='fixed-mod'`` of the form::
 
-        [2a  b]
-        [ b 2c] * 2^n
+          [2a  b]
+          [ b 2c] * 2^n
 
-    with `b` of valuation 1.
+      with `b` of valuation 1.
 
     OUTPUT:
 
@@ -1031,7 +1031,7 @@ def _partial_normal_form_of_block(G):
 
     OUTPUT:
 
-    - ``D, B, w`` -- with ``B`` a transformation matrix such that
+    - ``D``, ``B``, ``w`` -- with ``B`` a transformation matrix such that
       ``B * G * B.T`` is in partial normal form
       and `w = 0, 1, 2` is the size of the part consisting of forms of type W
 
@@ -1374,7 +1374,7 @@ def _relations(G, n):
         e1 = G[0, 0].unit_part()
         e2 = G[1, 1].unit_part()
         B = Matrix(R, 2, 2, [1, 1, -4 * e2, e1])
-    D, B1 = _normalize(B * G * B.T)
+    _, B1 = _normalize(B * G * B.T)
     return B1 * B
 
 

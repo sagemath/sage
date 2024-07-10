@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Galois representations attached to elliptic curves
 
@@ -97,7 +96,6 @@ REFERENCES:
 AUTHORS:
 
 - chris wuthrich (02/10): moved from ell_rational_field.py.
-
 """
 
 ######################################################################
@@ -115,17 +113,19 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ######################################################################
 
+from math import sqrt
+
 from sage.structure.sage_object import SageObject
 import sage.arith.all as arith
 from sage.rings.fast_arith import prime_range
-import sage.misc.all as misc
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod as mul
 from sage.misc.verbose import verbose
-import sage.rings.all as rings
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.real_mpfr import RealField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
-from math import sqrt
-from sage.libs.pari.all import pari
+lazy_import('sage.libs.pari.all', 'pari')
 
 
 def _ex_set(p):
@@ -455,7 +455,7 @@ class GaloisRepresentation(SageObject):
             sage: rho._is_surjective(7,100)
             True
 
-        TEST for :trac:`8451`::
+        TEST for :issue:`8451`::
 
             sage: E = EllipticCurve('648a1')
             sage: rho = E.galois_representation()
@@ -467,7 +467,7 @@ class GaloisRepresentation(SageObject):
             self.__image_type[p] = "The image is meta-cyclic inside a Borel subgroup as there is a %s-torsion point on the curve." % p
             return False
 
-        R = rings.PolynomialRing(self._E.base_ring(), 'x')
+        R = PolynomialRing(self._E.base_ring(), 'x')
         x = R.gen()
 
         if p == 2:
@@ -676,12 +676,12 @@ class GaloisRepresentation(SageObject):
             C2 = (sqrt(p0)+1)**8
             C = max(C1,C2)
             verbose("j is not integral -- Serre's bound is %s" % C)
-            C3 = 1 + 4*sqrt(6)*int(N)/3 * sqrt(misc.mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
+            C3 = 1 + 4*sqrt(6)*int(N)/3 * sqrt(mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
             C = min(C,C3)
             verbose("conductor = %s, and bound is %s" % (N,C))
         else:
             # Cojocaru's bound (depends on the conductor)
-            C = 1 + 4*sqrt(6)*int(N)/3 * sqrt(misc.mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
+            C = 1 + 4*sqrt(6)*int(N)/3 * sqrt(mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
             verbose("conductor = %s, and bound is %s" % (N,C))
         B = []
         p = 2
@@ -758,12 +758,12 @@ class GaloisRepresentation(SageObject):
             sage: EllipticCurve([0,0,1,2580,549326]).galois_representation().image_type(7)
             'The image is contained in the normalizer of a split Cartan group.'
 
-        Test :trac:`14577`::
+        Test :issue:`14577`::
 
             sage: EllipticCurve([0, 1, 0, -4788, 109188]).galois_representation().image_type(13)
             'The image in PGL_2(F_13) is the exceptional group S_4.'
 
-        Test :trac:`14752`::
+        Test :issue:`14752`::
 
             sage: EllipticCurve([0, 0, 0, -1129345880,-86028258620304]).galois_representation().image_type(11)
             'The image is contained in the normalizer of a non-split Cartan group.'
@@ -1107,7 +1107,7 @@ class GaloisRepresentation(SageObject):
 
         - a prime ``p``
 
-        - a natural number ``bound`` (optional, default=10000)
+        - a natural number ``bound`` (default: 10000)
 
         OUTPUT:
 

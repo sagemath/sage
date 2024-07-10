@@ -5,7 +5,6 @@ AUTHORS:
 
 - Mikhail Malakhaltsev (2010-09-25): initial version
 - Joris Vankerschaver  (2010-10-25): implementation, doctests
-
 """
 # ****************************************************************************
 #       Copyright (C) 2010  Mikhail Malakhaltsev <mikarm@gmail.com>
@@ -34,7 +33,7 @@ def _simplify_full_rad(f):
 
     INPUT:
 
-     - ``f`` - a symbolic expression.
+     - ``f`` -- a symbolic expression.
 
     EXAMPLES::
 
@@ -99,7 +98,7 @@ class ParametrizedSurface3D(SageObject):
         sage: ellipsoid = ParametrizedSurface3D(ellipsoid_eq, coords, 'ellipsoid'); ellipsoid
         Parametrized surface ('ellipsoid') with equation
         (cos(u1)*cos(u2), 2*cos(u2)*sin(u1), 3*sin(u2))
-        sage: ellipsoid.plot()  # optional - sage.plot
+        sage: ellipsoid.plot()                                                          # needs sage.plot
         Graphics3d Object
 
     Standard surfaces can be constructed using the ``surfaces`` generator::
@@ -127,7 +126,7 @@ class ParametrizedSurface3D(SageObject):
         sage: enneper = surfaces.Enneper(); enneper
         Parametrized surface ('Enneper's surface') with equation
         (-1/9*(u^2 - 3*v^2 - 3)*u, -1/9*(3*u^2 - v^2 + 3)*v, 1/3*u^2 - 1/3*v^2)
-        sage: enneper.plot(aspect_ratio='automatic')  # optional - sage.plot
+        sage: enneper.plot(aspect_ratio='automatic')                                    # needs sage.plot
         Graphics3d Object
 
     We construct an ellipsoid whose axes are given by symbolic variables `a`,
@@ -255,6 +254,7 @@ class ParametrizedSurface3D(SageObject):
     We can easily generate a color plot of the Gaussian curvature of a surface.
     Here we deal with the ellipsoid::
 
+        sage: # needs numpy
         sage: u1, u2 = var('u1,u2', domain='real')
         sage: u = [u1,u2]
         sage: ellipsoid_equation(u1,u2) = [2*cos(u1)*cos(u2),1.5*cos(u1)*sin(u2),sin(u1)]
@@ -264,27 +264,27 @@ class ParametrizedSurface3D(SageObject):
         sage: u2min, u2max = 0, 6.28
         sage: u1num, u2num = 10, 20
         sage: # make the arguments array
-        sage: from numpy import linspace                                                # optional - numpy
-        sage: u1_array = linspace(u1min, u1max, u1num)                                  # optional - numpy
-        sage: u2_array = linspace(u2min, u2max, u2num)                                  # optional - numpy
-        sage: u_array = [(uu1,uu2) for uu1 in u1_array for uu2 in u2_array]             # optional - numpy
+        sage: from numpy import linspace
+        sage: u1_array = linspace(u1min, u1max, u1num)
+        sage: u2_array = linspace(u2min, u2max, u2num)
+        sage: u_array = [(uu1,uu2) for uu1 in u1_array for uu2 in u2_array]
         sage: # Find the gaussian curvature
-        sage: K(u1,u2) = ellipsoid.gauss_curvature()                                    # optional - numpy
-        sage: # Make array of K values                                                  # optional - numpy
-        sage: K_array = [K(uu[0],uu[1]) for uu in u_array]                              # optional - numpy
+        sage: K(u1,u2) = ellipsoid.gauss_curvature()
+        sage: # Make array of K values
+        sage: K_array = [K(uu[0],uu[1]) for uu in u_array]
         sage: # Find minimum and max of the Gauss curvature
-        sage: K_max = max(K_array)                                                      # optional - numpy
-        sage: K_min = min(K_array)                                                      # optional - numpy
+        sage: K_max = max(K_array)
+        sage: K_min = min(K_array)
         sage: # Make the array of color coefficients
-        sage: cc_array = [(ccc - K_min)/(K_max - K_min) for ccc in K_array]             # optional - numpy
-        sage: points_array = [ellipsoid_equation(u_array[counter][0],                   # optional - numpy
+        sage: cc_array = [(ccc - K_min)/(K_max - K_min) for ccc in K_array]
+        sage: points_array = [ellipsoid_equation(u_array[counter][0],
         ....:                                    u_array[counter][1])
         ....:                 for counter in range(0,len(u_array))]
-        sage: curvature_ellipsoid_plot = sum(point([xx                                  # optional - numpy sage.plot
+        sage: curvature_ellipsoid_plot = sum(point([xx                                  # needs sage.plot
         ....:                                       for xx in points_array[counter]],
         ....:                                      color=hue(cc_array[counter]/2))
         ....:                                for counter in range(0,len(u_array)))
-        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)                             # optional - numpy sage.plot
+        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)                             # needs sage.plot
 
     We can find the principal curvatures and principal directions of the
     elliptic paraboloid::
@@ -341,7 +341,7 @@ class ParametrizedSurface3D(SageObject):
         sage: g3 = [c[-1] for c in S.geodesics_numerical((0,0),
         ....:                                            (cos(2*pi/3),sin(2*pi/3)),
         ....:                                            (0,2*pi,100))]
-        sage: (S.plot(opacity=0.3) + line3d(g1, color='red')                            # optional - sage.plot
+        sage: (S.plot(opacity=0.3) + line3d(g1, color='red')                            # needs sage.plot
         ....:     + line3d(g2, color='red') + line3d(g3, color='red')).show()
 
     """
@@ -414,7 +414,7 @@ class ParametrizedSurface3D(SageObject):
         name = 'Parametrized surface'
         if self.name is not None:
             name += " ('%s')" % self.name
-        s ='%(designation)s with equation %(eq)s' % \
+        s = '%(designation)s with equation %(eq)s' % \
             {'designation': name, 'eq': str(self.equation)}
         return s
 
@@ -424,7 +424,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``coords`` - 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
+         - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
 
         OUTPUT:
 
@@ -456,9 +456,9 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``coords`` - 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
+         - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
 
-         - ``components`` - 2-tuple specifying the components of the tangent vector in the intrinsic coordinate frame.
+         - ``components`` -- 2-tuple specifying the components of the tangent vector in the intrinsic coordinate frame.
 
         OUTPUT:
 
@@ -506,15 +506,15 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``urange`` - 2-tuple specifying the parameter range for `u`.
-         - ``vrange`` - 2-tuple specifying the parameter range for `v`.
+         - ``urange`` -- 2-tuple specifying the parameter range for `u`.
+         - ``vrange`` -- 2-tuple specifying the parameter range for `v`.
 
         EXAMPLES::
 
             sage: u, v = var('u, v', domain='real')
             sage: eq = (3*u + 3*u*v^2 - u^3, 3*v + 3*u^2*v - v^3, 3*(u^2-v^2))
             sage: enneper = ParametrizedSurface3D(eq, (u, v), 'Enneper Surface')
-            sage: enneper.plot((-5, 5), (-5, 5))  # optional - sage.plot
+            sage: enneper.plot((-5, 5), (-5, 5))                                        # needs sage.plot
             Graphics3d Object
 
         """
@@ -574,7 +574,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-          - ``normalized`` - default ``False`` - specifies whether the normal vector should be normalized.
+          - ``normalized`` -- (default ``False``); specifies whether the normal vector should be normalized.
 
         OUTPUT:
 
@@ -630,7 +630,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - tuple ``(i, j)`` specifying the index of the component `g_{ij}`.
+         - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g_{ij}`.
 
         OUTPUT:
 
@@ -693,7 +693,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` - vectors on the surface.
+         - ``vector1``, ``vector2`` -- vectors on the surface.
 
         OUTPUT:
 
@@ -804,7 +804,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - tuple ``(i, j)`` specifying the index of the component `g^{ij}`.
+         - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g^{ij}`.
 
         OUTPUT:
 
@@ -835,7 +835,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``theta`` - rotation angle
+         - ``theta`` -- rotation angle
 
         OUTPUT:
 
@@ -887,7 +887,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``coordinates`` - either ``ext`` (default) or ``int``.
+         - ``coordinates`` -- either ``ext`` (default) or ``int``.
 
         OUTPUT:
 
@@ -951,8 +951,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - index of the basis vector;
-         - ``coordinates`` - either ``ext`` (default) or ``int``.
+         - ``index`` -- index of the basis vector;
+         - ``coordinates`` -- either ``ext`` (default) or ``int``.
 
         OUTPUT:
 
@@ -987,7 +987,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``v`` and ``w`` - vector fields on the surface, expressed
+         - ``v`` and ``w`` -- vector fields on the surface, expressed
            as pairs of functions or as vectors of length 2.
 
         OUTPUT:
@@ -1026,7 +1026,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``e1``, ``e2`` - vector fields in intrinsic coordinates on
+         - ``e1``, ``e2`` -- vector fields in intrinsic coordinates on
            the surface, expressed as pairs of functions, or as vectors of
            length 2.
 
@@ -1066,7 +1066,7 @@ class ParametrizedSurface3D(SageObject):
              (2, 2, 2): 0}
             sage: sphere.lie_bracket(EE_int[1],EE_int[2]) - CC[(1,2,1)]*EE_int[1] - CC[(1,2,2)]*EE_int[2]
             (0, 0)
-            """
+        """
         e1 = vector(SR, e1)
         e2 = vector(SR, e2)
 
@@ -1144,7 +1144,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - a 2-tuple ``(i, j)`` specifying the element of the second-order frame.
+         - ``index`` -- a 2-tuple ``(i, j)`` specifying the element of the second-order frame.
 
         OUTPUT:
 
@@ -1195,7 +1195,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - a 2-tuple ``(i, j)``
+         - ``index`` -- a 2-tuple ``(i, j)``
 
         OUTPUT:
 
@@ -1255,7 +1255,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` - 2-tuples representing the input vectors.
+         - ``vector1``, ``vector2`` -- 2-tuples representing the input vectors.
 
         OUTPUT:
 
@@ -1409,7 +1409,7 @@ class ParametrizedSurface3D(SageObject):
         """
 
         shop = self.shape_operator_coefficients()
-        shop_matrix=matrix([[shop[(1,1)],shop[(1,2)]],
+        shop_matrix = matrix([[shop[(1,1)],shop[(1,2)]],
                             [shop[(2,1)],shop[(2,2)]]])
         return shop_matrix
 
@@ -1441,9 +1441,6 @@ class ParametrizedSurface3D(SageObject):
             sage: helicoid.principal_directions()
             [(-1/(u^2 + 1), [(1, -(u^2 - sqrt(u^2 + 1) + 1)/(u^2 + 1))], 1),
             (1/(u^2 + 1), [(1, -(u^2 + sqrt(u^2 + 1) + 1)/(u^2 + 1))], 1)]
-
-
-
         """
         return self.shape_operator().eigenvectors_right()
 
@@ -1491,10 +1488,10 @@ class ParametrizedSurface3D(SageObject):
         for i,j,k in product((1, 2), repeat=3):
             dg[(i,j,k)] = _simplify_full_rad(gg[(j,k)].differentiate(x[i]))
 
-        structfun={}
+        structfun = {}
         for i,j,k in product((1, 2), repeat=3):
             structfun[(i,j,k)] = sum(gi[(k,s)]*(dg[(i,j,s)] + dg[(j,i,s)]
-                                                -dg[(s,i,j)])/2
+                                                - dg[(s,i,j)])/2
                                      for s in (1,2))
             structfun[(i,j,k)] = _simplify_full_rad(structfun[(i,j,k)])
         return structfun
@@ -1554,11 +1551,11 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``p0`` - 2-tuple with coordinates of the initial point.
+         - ``p0`` -- 2-tuple with coordinates of the initial point.
 
-         - ``v0`` - 2-tuple with components of the initial tangent vector to the geodesic.
+         - ``v0`` -- 2-tuple with components of the initial tangent vector to the geodesic.
 
-         - ``tinterval`` - List ``[a, b, M]``, where ``(a,b)`` is the domain of the geodesic and ``M`` is the number of subdivision points used when returning the solution.
+         - ``tinterval`` -- List ``[a, b, M]``, where ``(a,b)`` is the domain of the geodesic and ``M`` is the number of subdivision points used when returning the solution.
 
         OUTPUT:
 
@@ -1608,8 +1605,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``curve`` - curve in intrinsic coordinates along which to do parallel transport.
-         - ``t`` - curve parameter
+         - ``curve`` -- curve in intrinsic coordinates along which to do parallel transport.
+         - ``t`` -- curve parameter
 
         EXAMPLES::
 
@@ -1666,14 +1663,14 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``curve`` - 2-tuple of functions which determine the curve with respect to
+         - ``curve`` -- 2-tuple of functions which determine the curve with respect to
            the local coordinate system;
 
-         - ``t`` - symbolic variable denoting the curve parameter;
+         - ``t`` -- symbolic variable denoting the curve parameter;
 
-         - ``v0`` - 2-tuple representing the initial vector;
+         - ``v0`` -- 2-tuple representing the initial vector;
 
-         - ``tinterval`` - list ``[a, b, N]``, where ``(a, b)`` is the domain of the curve
+         - ``tinterval`` -- list ``[a, b, N]``, where ``(a, b)`` is the domain of the curve
            and ``N`` is the number of subdivision points.
 
         OUTPUT:

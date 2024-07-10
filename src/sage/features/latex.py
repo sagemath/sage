@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``latex`` and equivalent programs
 """
@@ -243,8 +244,7 @@ class TeXFile(StaticFile):
         from subprocess import run, CalledProcessError, PIPE
         try:
             proc = run(['kpsewhich', self.filename],
-                       stdout=PIPE, stderr=PIPE,
-                       universal_newlines=True, check=True)
+                       capture_output=True, text=True, check=True)
             return proc.stdout.strip()
         except CalledProcessError:
             reason = "{filename!r} not found by kpsewhich".format(filename=self.filename)

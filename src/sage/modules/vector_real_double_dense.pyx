@@ -1,10 +1,11 @@
+# sage.doctest: optional - numpy
 r"""
 Dense real double vectors using a NumPy backend
 
 EXAMPLES::
 
-    sage: v = vector(RDF,[1, pi, sqrt(2)])
-    sage: v
+    sage: # needs sage.symbolic
+    sage: v = vector(RDF, [1, pi, sqrt(2)]); v
     (1.0, 3.141592653589793, 1.414213562373095)
     sage: type(v)
     <class 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
@@ -71,12 +72,11 @@ cdef class Vector_real_double_dense(Vector_double_dense):
         EXAMPLES::
 
             sage: v = vector(RDF, range(9))
-            sage: v.stats_skew()
+            sage: v.stats_skew()                                                        # needs scipy
             0.0
         """
         import scipy.stats
         return self._sage_dtype(scipy.stats.skew(self._vector_numpy))
-
 
     def __reduce__(self):
         """
@@ -105,6 +105,7 @@ def unpickle_v0(parent, entries, degree):
         True
     """
     return unpickle_v1(parent, entries, degree)
+
 
 def unpickle_v1(parent, entries, degree, is_mutable=None):
     """

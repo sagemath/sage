@@ -16,45 +16,42 @@ if [ "$SAGE_DEBUG" = yes ] ; then
     export CFLAGS="-O0 -g3 -DDEBUG_MASTERPOINTERS -DDEBUG_GLOBAL_BAGS -DDEBUG_FUNCTIONS_BAGS $CFLAGS"
 fi
 
-# LDFLAGS hack below needed by Semigroups package
-sdh_configure $SAGE_CONFIGURE_GMP LDFLAGS="-pthread" --prefix=$SAGE_LOCAL
+sdh_configure $SAGE_CONFIGURE_GMP --prefix=$SAGE_LOCAL
 sdh_make
-
 sdh_make_install
-# sdh_make install-headers install-libgap
-# The 'packagemanager' package expects this https://github.com/gap-packages/PackageManager/issues/105
-mkdir -p "$SAGE_LOCAL/lib/gap/bin"
 
 # Install only the minimal packages GAP needs to run
 sdh_install pkg/gapdoc pkg/primgrp pkg/smallgrp pkg/transgrp "$GAP_ROOT"/pkg
 
-# Install additional packages that are not strictly required, but that are
-# typically "expected" to be loaded: These are the default packages that are
-# autoloaded at GAP startup (via the PackagesToLoad UserPreference) with an
-# out-of-the-box GAP installation; see
-# https://github.com/sagemath/sage/issues/22626#comment:393 for discussion on this
-#
-# Also include atlasrep which is a dependency of tomlib
+# Install additional packages that are automatically loaded in the
+# default GAP configuration. The list can be found in lib/package.gi
+# as part of the "PackagesToLoad" user preference. Also include
+# atlasrep because it is a dependency of tomlib.
 sdh_install \
-    pkg/atlasrep \
-    pkg/autodoc \
-    pkg/autpgrp \
     pkg/alnuth \
+    pkg/atlasrep \
+    pkg/autpgrp \
     pkg/crisp \
     pkg/ctbllib \
     pkg/factint \
     pkg/fga \
     pkg/irredsol \
     pkg/laguna \
-    pkg/packagemanager \
     pkg/polenta \
     pkg/polycyclic \
-    pkg/radiroot \
     pkg/resclasses \
     pkg/sophus \
     pkg/tomlib \
-    pkg/utils \
     "$GAP_ROOT"/pkg
+
+# Finally, install packagemanager for the people who reject both
+# sage's and their system's package managers. We have to create
+# the local bin directory first:
+#
+#   https://github.com/gap-packages/PackageManager/issues/105
+#
+mkdir -p "$SAGE_LOCAL/lib/gap/bin"
+sdh_install pkg/packagemanager "$GAP_ROOT"/pkg
 
 # TODO: This seems unnecessary--we are already installing all of doc/ to
 # GAP_ROOT, which is necessary for some functionality in GAP to work.  Do

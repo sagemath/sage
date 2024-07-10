@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat
 r"""
 F-algebra for motivic multiple zeta values.
 
@@ -18,7 +18,6 @@ general, allowing any positive odd integer as start index.
 AUTHORS:
 
 - Frédéric Chapoton (2022-09): Initial version
-
 """
 # ****************************************************************************
 #  Copyright (C) 2022 Frédéric Chapoton <chapoton-unistra-fr>
@@ -121,7 +120,7 @@ def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
          (3, 11)]
     """
     if n == 0:
-        yield tuple()
+        yield ()
         return
     if n % 2 and n >= start:
         yield (n,)
@@ -563,7 +562,7 @@ class F_algebra(CombinatorialFreeModule):
 
         OUTPUT:
 
-        an homogeneous element of :func:`F_ring` over this base ring
+        a homogeneous element of :func:`F_ring` over this base ring
 
         .. SEEALSO:: :meth:`F_algebra.homogeneous_to_vector`
 

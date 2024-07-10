@@ -180,8 +180,8 @@ Here's another way, working more directly with GAP::
     sage: print(gap.eval("normal := NormalSubgroups( G )"))
     [ Alt( [ 1 .. 5 ] ), Group(()) ]
     sage: G = gap.new("DihedralGroup( 10 )")
-    sage: G.NormalSubgroups()
-    [ Group( [ f1, f2 ] ), Group( [ f2 ] ), Group( <identity> of ... ) ]
+    sage: G.NormalSubgroups().SortedList()
+    [ Group( <identity> of ... ), Group( [ f2 ] ), Group( [ f1, f2 ] ) ]
     sage: print(gap.eval("G := SymmetricGroup( 4 )"))
     Sym( [ 1 .. 4 ] )
     sage: print(gap.eval("normal := NormalSubgroups( G );"))

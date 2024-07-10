@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Elements of modular forms spaces
 
@@ -35,28 +35,30 @@ AUTHORS:
 from sage.arith.functions import lcm
 from sage.arith.misc import divisors, moebius, sigma, factor, crt
 from sage.arith.srange import xsrange
-from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.matrix.constructor import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.modular.dirichlet import DirichletGroup
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modsym.p1list import lift_to_sl2z
-from sage.modular.modsym.space import is_ModularSymbolsSpace
+from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modules.free_module_element import vector
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.fast_arith import prime_range
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.morphism import RingHomomorphism
-from sage.rings.number_field.number_field_morphisms import NumberFieldEmbedding
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.structure.element import coercion_model, ModuleElement, Element
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
+
+lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
+lazy_import('sage.rings.number_field.number_field_morphisms', 'NumberFieldEmbedding')
 
 import sage.modular.hecke.element as element
 from . import defaults
@@ -70,10 +72,18 @@ def is_ModularFormElement(x):
 
         sage: from sage.modular.modform.element import is_ModularFormElement
         sage: is_ModularFormElement(5)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularFormElement is deprecated;
+        use 'isinstance(..., ModularFormElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: is_ModularFormElement(ModularForms(11).0)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ModularFormElement is deprecated; "
+                "use 'isinstance(..., ModularFormElement)' instead.")
     return isinstance(x, ModularFormElement)
 
 
@@ -297,7 +307,7 @@ class ModularForm_abstract(ModuleElement):
 
         TESTS:
 
-        The following used to fail (see :trac:`18068`)::
+        The following used to fail (see :issue:`18068`)::
 
             sage: f != loads(dumps(f))
             False
@@ -404,7 +414,7 @@ class ModularForm_abstract(ModuleElement):
 
         INPUT:
 
-        - ``n`` (int, Integer) - A non-negative integer.
+        - ``n`` -- non-negative integer
 
         EXAMPLES::
 
@@ -656,7 +666,7 @@ class ModularForm_abstract(ModuleElement):
         specified, and in (a suitable extension of) the base field of
         ``self`` otherwise.
 
-        If ``self`` is not an eigenform for `W_d`, a ``ValueError`` is
+        If ``self`` is not an eigenform for `W_d`, a :class:`ValueError` is
         raised.
 
         .. SEEALSO::
@@ -851,16 +861,16 @@ class ModularForm_abstract(ModuleElement):
 
         INPUT:
 
-        - ``embedding`` - either an embedding of the coefficient field of self
+        - ``embedding`` -- either an embedding of the coefficient field of self
           into `\CC`, or an integer `i` between 0 and D-1 where D is the degree
           of the coefficient field (meaning to pick the `i`-th embedding).
           (Default: 0)
 
-        - ``prec`` - integer (bits precision). Default: 53.
+        - ``prec`` -- integer (bits precision). Default: 53.
 
-        - ``max_imaginary_part`` - real number. Default: 0.
+        - ``max_imaginary_part`` -- real number. Default: 0.
 
-        - ``max_asymp_coeffs`` - integer. Default: 40.
+        - ``max_asymp_coeffs`` -- integer. Default: 40.
 
         For more information on the significance of the last three arguments,
         see :mod:`~sage.lfunctions.dokchitser`.
@@ -935,7 +945,7 @@ class ModularForm_abstract(ModuleElement):
             sage: L(1)
             0.0374412812685155
 
-        We check that :trac:`5262` is fixed::
+        We check that :issue:`5262` is fixed::
 
             sage: E = EllipticCurve('37b2')
             sage: h = Newforms(37)[1]
@@ -946,7 +956,7 @@ class ModularForm_abstract(ModuleElement):
             sage: CuspForms(1, 30).0.lseries().eps
             -1.00000000000000
 
-        We check that :trac:`25369` is fixed::
+        We check that :issue:`25369` is fixed::
 
             sage: f5 = Newforms(Gamma1(4), 5, names='a')[0]; f5
             q - 4*q^2 + 16*q^4 - 14*q^5 + O(q^6)
@@ -1070,7 +1080,7 @@ class ModularForm_abstract(ModuleElement):
             sage: CuspForms(1, 12).0.symsquare_lseries(prec=1000)(22) # long time (20s)
             0.999645711124771397835729622033153189549796658647254961493709341358991830134499267117001769570658192128781135161587571716303826382489492569725002840546129937149159065273765309218543427544527498868033604310899372849565046516553245752253255585377793879866297612679545029546953895098375829822346290125161
 
-        Check that :trac:`23247` is fixed::
+        Check that :issue:`23247` is fixed::
 
             sage: F = Newforms(1,12)[0]
             sage: chi = DirichletGroup(7).0
@@ -1376,13 +1386,13 @@ class Newform(ModularForm_abstract):
 
         INPUT:
 
-        - ``parent`` - An ambient cuspidal space of modular forms for
+        - ``parent`` -- An ambient cuspidal space of modular forms for
           which self is a newform.
 
-        - ``component`` - A simple component of a cuspidal modular
+        - ``component`` -- A simple component of a cuspidal modular
           symbols space of any sign corresponding to this newform.
 
-        - ``check`` - If check is ``True``, check that parent and
+        - ``check`` -- If check is ``True``, check that parent and
           component have the same weight, level, and character, that
           component has sign 1 and is simple, and that the types are
           correct on all inputs.
@@ -1395,11 +1405,11 @@ class Newform(ModularForm_abstract):
             sage: f = Newforms(DirichletGroup(5).0, 7,names='a')[0]; f[2].trace(f.base_ring().base_field())
             -5*zeta4 - 5
         """
-        from .space import is_ModularFormsSpace
+        from .space import ModularFormsSpace
         if check:
-            if not is_ModularFormsSpace(parent):
+            if not isinstance(parent, ModularFormsSpace):
                 raise TypeError("parent must be a space of modular forms")
-            if not is_ModularSymbolsSpace(component):
+            if not isinstance(component, ModularSymbolsSpace):
                 raise TypeError("component must be a space of modular symbols")
             if parent.group() != component.group():
                 raise ValueError("parent and component must be defined by the same congruence subgroup")
@@ -1457,7 +1467,7 @@ class Newform(ModularForm_abstract):
             False
 
         We test comparison of equal newforms with different parents
-        (see :trac:`18478`)::
+        (see :issue:`18478`)::
 
             sage: f = Newforms(Gamma1(11), 2)[0]; f
             q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
@@ -1534,7 +1544,7 @@ class Newform(ModularForm_abstract):
 
         INPUT:
 
-        - ``n`` - a positive integer
+        - ``n`` -- a positive integer
 
         OUTPUT:
 
@@ -1569,7 +1579,7 @@ class Newform(ModularForm_abstract):
             sage: f._compute([])
             []
 
-        Check that :trac:`20793` is fixed::
+        Check that :issue:`20793` is fixed::
 
             sage: f = Newforms(83, 2, names='a')[1]; f
             q + a1*q^2 + (1/2*a1^4 - 1/2*a1^3 - 7/2*a1^2 + 3/2*a1 + 4)*q^3 + (a1^2 - 2)*q^4 + (-1/2*a1^5 - 1/2*a1^4 + 9/2*a1^3 + 7/2*a1^2 - 8*a1 - 2)*q^5 + O(q^6)
@@ -2063,14 +2073,14 @@ class Newform(ModularForm_abstract):
 
         TESTS:
 
-        Check that the bug reported at :trac:`18061` is fixed::
+        Check that the bug reported at :issue:`18061` is fixed::
 
             sage: K.<i> = CyclotomicField(4)
             sage: f = Newforms(DirichletGroup(30, QQ).1, 2, K)[0]
             sage: f.atkin_lehner_eigenvalue(embedding=K.embeddings(QQbar)[1])
             -0.8944271909999159? - 0.4472135954999580?*I
 
-        Check that :trac:`24086` is fixed::
+        Check that :issue:`24086` is fixed::
 
             sage: f = Newforms(24, 4)[0]
             sage: f.atkin_lehner_eigenvalue(8)
@@ -2313,13 +2323,14 @@ class Newform(ModularForm_abstract):
             sage: f.twist(chi, level=11) == g
             True
 
-            sage: f = Newforms(575, 2, names='a')[4]    # long time
-            sage: g, chi = f.minimal_twist(5)           # long time
-            sage: g                                     # long time
+            sage: # long time
+            sage: f = Newforms(575, 2, names='a')[4]
+            sage: g, chi = f.minimal_twist(5)
+            sage: g
             q + a*q^2 - a*q^3 - 2*q^4 + (1/2*a + 2)*q^5 + O(q^6)
-            sage: chi                                   # long time
+            sage: chi
             Dirichlet character modulo 5 of conductor 5 mapping 2 |--> 1/2*a
-            sage: f.twist(chi, level=g.level()) == g    # long time
+            sage: f.twist(chi, level=g.level()) == g
             True
         """
         if p is None:
@@ -2421,16 +2432,16 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         INPUT:
 
-        - ``parent`` - ModularForms (an ambient space of modular forms)
+        - ``parent`` -- ModularForms (an ambient space of modular forms)
 
-        - ``x`` - a vector on the basis for parent
+        - ``x`` -- a vector on the basis for parent
 
-        - ``check`` - if check is ``True``, check the types of the
+        - ``check`` -- if check is ``True``, check the types of the
           inputs.
 
         OUTPUT:
 
-        - ``ModularFormElement`` - a modular form
+        - ``ModularFormElement`` -- a modular form
 
         EXAMPLES::
 
@@ -2522,7 +2533,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         TESTS:
 
-        This shows that the issue at :trac:`7548` is fixed::
+        This shows that the issue at :issue:`7548` is fixed::
 
             sage: M = CuspForms(Gamma0(5*3^2), 2)
             sage: f = M.basis()[0]
@@ -2585,7 +2596,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         OUTPUT:
 
         The Atkin-Lehner eigenvalue of `W_d` on ``self``. If ``self`` is not an
-        eigenform for `W_d`, a ``ValueError`` is raised.
+        eigenform for `W_d`, a :class:`ValueError` is raised.
 
         .. SEEALSO::
 
@@ -3234,7 +3245,7 @@ class GradedModularFormElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Modular Forms space of dimension 1 for Modular Group SL(2,Z) of weight 4 over Rational Field to Rational Field
-            sage: M([E4, x])
+            sage: M([E4, x])                                                            # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Symbolic Ring to Rational Field
@@ -3262,7 +3273,7 @@ class GradedModularFormElement(ModuleElement):
                     k = ZZ(k)
                     if k == 0:
                         forms_dictionary[k] = parent.base_ring().coerce(f)
-                    elif is_ModularFormElement(f):
+                    elif isinstance(f, ModularFormElement):
                         if f.weight() == k:
                             if parent.group().is_subgroup(f.group()) and parent.base_ring().has_coerce_map_from(f.base_ring()):
                                 M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
@@ -3277,7 +3288,7 @@ class GradedModularFormElement(ModuleElement):
                     raise ValueError('at least one key (%s) of the defining dictionary is not an integer' % (k))
         elif isinstance(forms_datum, list):
             for f in forms_datum:
-                if is_ModularFormElement(f):
+                if isinstance(f, ModularFormElement):
                     chi = f.character(compute=False)
                     if (chi is not None) and (not chi.is_trivial()):
                         raise NotImplementedError("graded modular forms for non-trivial characters is not yet implemented")
@@ -3544,18 +3555,26 @@ class GradedModularFormElement(ModuleElement):
         TESTS::
 
             sage: M = ModularFormsRing(1)
-            sage: f4 = ModularForms(1, 4).0; f6 = ModularForms(1, 6).0;
-            sage: F4 = M(f4); F6 = M(f6);
+            sage: F4 = M.0; F6 = M.1;
             sage: F4*F6 # indirect doctest
             1 - 264*q - 135432*q^2 - 5196576*q^3 - 69341448*q^4 - 515625264*q^5 + O(q^6)
+
+        This shows that the issue at :issue:`35932` is fixed::
+
+            sage: (F4 + M(1))^2
+            4 + 960*q + 66240*q^2 + 1063680*q^3 + 7961280*q^4 + 37560960*q^5 + O(q^6)
         """
+        from collections import defaultdict
+
         GM = self.__class__
         f_self = self._forms_dictionary
         f_other = other._forms_dictionary
-        f_mul = {}
+        f_mul = defaultdict(int)
+
         for k_self in f_self.keys():
             for k_other in f_other.keys():
-                f_mul[k_self + k_other] = f_self[k_self]*f_other[k_other]
+                f_mul[k_self + k_other] += f_self[k_self] * f_other[k_other]
+
         return GM(self.parent(), f_mul)
 
     def _lmul_(self, c):

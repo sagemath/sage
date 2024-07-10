@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Wrappers for Giac functions
 
@@ -132,10 +131,10 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
 
     INPUT:
 
-    - ``gens`` - an ideal (or a list) of polynomials over a prime field
+    - ``gens`` -- an ideal (or a list) of polynomials over a prime field
       of characteristic 0 or p<2^31
 
-    - ``proba_epsilon`` - (default: None) majoration of the probability
+    - ``proba_epsilon`` -- (default: None) majoration of the probability
        of a wrong answer when probabilistic algorithms are allowed.
 
         * if ``proba_epsilon`` is None, the value of
@@ -146,13 +145,13 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         * if ``proba_epsilon`` is 0, probabilistic algorithms are
           disabled.
 
-    - ``threads`` - (default: None) Maximal number of threads allowed
+    - ``threads`` -- (default: None) Maximal number of threads allowed
       for giac. If None, the global ``giacpy_sage.giacsettings.threads`` is
       considered.
 
-    - ``prot`` - (default: False) if True print detailled informations
+    - ``prot`` -- (default: ``False``) if True print detailled informations
 
-    - ``elim_variables`` - (default: None) a list of variables to eliminate
+    - ``elim_variables`` -- (default: None) a list of variables to eliminate
       from the ideal.
 
         * if ``elim_variables`` is None, a Groebner basis with respect to the
@@ -172,9 +171,9 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         sage: from sage.libs.giac import groebner_basis as gb_giac
         sage: P = PolynomialRing(GF(previous_prime(2**31)), 6, 'x')
         sage: I = sage.rings.ideal.Cyclic(P)
-        sage: B=gb_giac(I.gens());B
-        <BLANKLINE>
-        // Groebner basis computation time ...
+        sage: B = gb_giac(I.gens())
+        ...
+        sage: B
         Polynomial Sequence with 45 Polynomials in 6 Variables
         sage: B.is_groebner()
         True
@@ -184,8 +183,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         sage: P = PolynomialRing(GF(previous_prime(2**31)), 5, 'x')
         sage: I = sage.rings.ideal.Cyclic(P)
         sage: B = gb_giac(I.gens(), elim_variables=[P.gen(0), P.gen(2)])
-        <BLANKLINE>
-        // Groebner basis computation time ...
+        ...
         sage: B.is_groebner()
         True
         sage: B.ideal() == I.elimination_ideal([P.gen(0), P.gen(2)])
@@ -201,11 +199,10 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         ...
         sage: sage.structure.proof.all.polynomial(True)
         sage: B2 = gb_giac(I.gens()) # long time (4s)
-        <BLANKLINE>
-        // Groebner basis computation time...
+        ...
         sage: B1 == B2 # long time
         True
-        sage: B1.is_groebner() # long time (20s)
+        sage: B1.is_groebner() # not tested, too long time (50s)
         True
 
     * multi threaded operations::
@@ -253,9 +250,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         sage: libgiac.purge('x2'),libgiac.purge('x4')
         (22, whywouldyoudothis)
         sage: gb_giac(I) # long time (3s)
-        <BLANKLINE>
-        // Groebner basis computation time...
-        Polynomial Sequence with 74 Polynomials in 8 Variables
+        ...Polynomial Sequence with 74 Polynomials in 8 Variables
 
         sage: I = ideal(P(0),P(0))
         sage: I.groebner_basis() == gb_giac(I)

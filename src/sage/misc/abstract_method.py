@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Abstract methods
 """
@@ -48,7 +49,7 @@ def abstract_method(f=None, optional=False):
         sage: A.my_method
         <abstract method my_method at ...>
 
-    The current policy is that a ``NotImplementedError`` is raised
+    The current policy is that a :class:`NotImplementedError` is raised
     when accessing the method through an instance, even before the
     method is called::
 
@@ -138,7 +139,7 @@ def abstract_method(f=None, optional=False):
         return AbstractMethod(f, optional)
 
 
-class AbstractMethod():
+class AbstractMethod:
     def __init__(self, f, optional=False):
         """
         Constructor for abstract methods

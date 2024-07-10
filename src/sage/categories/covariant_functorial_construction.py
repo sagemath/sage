@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Covariant Functorial Constructions
 
@@ -49,6 +50,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.dynamic_class import DynamicMetaclass
 
+
 class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
     r"""
     An abstract class for construction functors `F` (eg `F` = Cartesian
@@ -91,12 +93,12 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
     In practice, each subclass of this class should provide the
     following attributes:
 
-     - ``_functor_category`` - a string which should match the name of
+     - ``_functor_category`` -- a string which should match the name of
        the nested category class to be used in each category to
        specify information and generic operations for elements of this
        category.
 
-     - ``_functor_name`` - an string which specifies the name of the
+     - ``_functor_name`` -- a string which specifies the name of the
        functor, and also (when relevant) of the method on parents and
        elements used for calling the construction.
 
@@ -134,8 +136,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"])                      # optional - sage.modules
-            sage: tensor.category_from_parents((E, E, E))                               # optional - sage.modules
+            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"])                      # needs sage.modules
+            sage: tensor.category_from_parents((E, E, E))                               # needs sage.modules
             Category of tensor products of
              finite dimensional vector spaces with basis over Rational Field
         """
@@ -145,7 +147,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
         # But then this would impose that, for any constructor, the
         # category of the result does not depend on the order/repetition
         # of the categories of the parents
-        return self.category_from_categories(tuple(set(parent.category() for parent in parents)))
+        return self.category_from_categories(tuple({parent.category() for parent in parents}))
 
     @cached_method
     def category_from_categories(self, categories):
@@ -199,7 +201,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
             sage: tensor                       # indirect doctest
             The tensor functorial construction
         """
-        return "The %s functorial construction"%self._functor_name
+        return "The %s functorial construction" % self._functor_name
 
     def __call__(self, args, **kwargs):
         """
@@ -214,8 +216,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename("E")       # optional - sage.modules
-            sage: tensor((E, E, E))                                                     # optional - sage.modules
+            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename("E")       # needs sage.modules
+            sage: tensor((E, E, E))                                                     # needs sage.modules
             E # E # E
         """
         args = tuple(args)  # a bit brute force; let's see if this becomes a bottleneck later
@@ -269,7 +271,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
              got <...GradedAlgebrasWithBasis'>
 
         We note that because ``Algebras.WithBasis`` is not lazily imported
-        on startup (see :trac:`22955`), the test fails at a different
+        on startup (see :issue:`22955`), the test fails at a different
         point in the code. However, if this import becomes lazy again, then
         the following error will be generated and can replace the above::
 
@@ -345,7 +347,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
             sage: Sets.Subquotients._base_category_class
             (<class 'sage.categories.sets_cat.Sets'>,)
 
-        It also forces the resolution of lazy imports (see :trac:`15648`)::
+        It also forces the resolution of lazy imports (see :issue:`15648`)::
 
             sage: type(Algebras.__dict__["Graded"])
             <class 'sage.misc.lazy_import.LazyImport'>
@@ -494,7 +496,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
             sage: Semigroups().Subquotients()  # indirect doctest
             Category of subquotients of semigroups
         """
-        return "%s of %s"%(Category._repr_object_names(self), self.base_category()._repr_object_names())
+        return "%s of %s" % (Category._repr_object_names(self), self.base_category()._repr_object_names())
 
     def _latex_(self):
         r"""
@@ -508,7 +510,8 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
             \mathbf{Algebras}(\mathbf{Semigroups})
         """
         from sage.misc.latex import latex
-        return "\\mathbf{%s}(%s)"%(self._short_name(), latex(self.base_category()))
+        return "\\mathbf{%s}(%s)" % (self._short_name(), latex(self.base_category()))
+
 
 class CovariantConstructionCategory(FunctorialConstructionCategory):
     """
@@ -654,6 +657,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
             return self
         else:
             return None
+
 
 class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):
     """

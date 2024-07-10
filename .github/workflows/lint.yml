@@ -1,6 +1,12 @@
 name: Lint
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  merge_group:
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
@@ -8,45 +14,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-pycodestyle:
-    name: Code style check with pycodestyle
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.8
-    - name: Install pycodestyle
-      run: pip install tox pycodestyle
-    - name: Lint using pycodestyle
+      uses: actions/checkout@v4
+
+    - name: Merge CI fixes from sagemath/sage
+      run: |
+        .ci/merge-fixes.sh
+      env:
+        GH_TOKEN: ${{ github.token }}
+        SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
+
+    - name: Install test prerequisites
+      id: deps
+      # From docker.yml
+      run: |
+        sudo DEBIAN_FRONTEND=noninteractive apt-get update
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+
+    - name: Code style check with ruff-minimal
+      if: (success() || failure()) && steps.deps.outcome == 'success'
+      run: tox -e ruff-minimal
+      env:
+        # https://github.com/ChartBoost/ruff-action/issues/7#issuecomment-1887780308
+        RUFF_OUTPUT_FORMAT: github
+
+    - name: Code style check with pycodestyle-minimal
+      if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e pycodestyle-minimal
-  lint-relint:
-    name: Code style check with relint
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.8
-    - name: Install relint
-      run: pip install tox relint
-    - name: Lint using relint
+
+    - name: Code style check with relint
+      if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e relint -- src/sage/
-  lint-rst:
-    name: Validate docstring markup as RST
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.8
-    - name: Install tox
-      run: pip install tox
-    - name: Lint using tox -e rst
+
+    - name: Validate docstring markup as RST
+      if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e rst

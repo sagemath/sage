@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Hyperelliptic curves over a finite field
 
@@ -26,7 +26,6 @@ AUTHORS:
 - Kiran Kedlaya (2016)
 
 - Dean Bisogno (2017): Fixed Hasse-Witt computation
-
 """
 # ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -489,7 +488,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         TESTS:
 
-        Check that :trac:`28789` is fixed::
+        Check that :issue:`28789` is fixed::
 
             sage: P.<x> = PolynomialRing(GF(3))
             sage: u = x^10 + x^9 + x^8 + x
@@ -569,7 +568,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         TESTS:
 
-        Check that :trac:`28789` is fixed::
+        Check that :issue:`28789` is fixed::
 
             sage: P.<x> = PolynomialRing(GF(3))
             sage: u = x^10 + x^9 + x^8 + x
@@ -644,7 +643,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             # (0:1:0) is a point on the curve
             points = [self.point([K(0), K(1), K(0)], check=True)]
         else:
-            points=[]
+            points = []
         if P.degree() > 2:
             # P(1, y, 0) = r*y + s
             s = P(K(1), K(0), K(0))
@@ -821,7 +820,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: len(C.points())
             122
 
-        Conics are allowed (the issue reported at :trac:`11800`
+        Conics are allowed (the issue reported at :issue:`11800`
         has been resolved)::
 
             sage: R.<x> = GF(7)[]
@@ -890,7 +889,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         TESTS:
 
-        Check that :trac:`18831` is fixed::
+        Check that :issue:`18831` is fixed::
 
             sage: R.<t> = PolynomialRing(GF(11))
             sage: H = HyperellipticCurve(t^5 - t + 1)
@@ -1109,7 +1108,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
                 raise ValueError("Unknown algorithm")
 
         if p <= (2*g+1)*(2*N-1):
-            raise ValueError("p=%d should be greater than (2*g+1)(2*N-1)=%d"%(p,(2*g+1)*(2*N-1)))
+            raise ValueError("p=%d should be greater than (2*g+1)(2*N-1)=%d" % (p,(2*g+1)*(2*N-1)))
 
         if algorithm == 'traces':
             M = self.frobenius_matrix(N=N, algorithm='hypellfrob')
@@ -1180,7 +1179,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H.count_points(6)
             [2, 24, 74, 256, 1082, 4272]
 
-        This example shows that :trac:`20391` is resolved::
+        This example shows that :issue:`20391` is resolved::
 
             sage: x = polygen(GF(4099))
             sage: H = HyperellipticCurve(x^6 + x + 1)
@@ -1236,7 +1235,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         TESTS:
 
-        Check for :trac:`19122`::
+        Check for :issue:`19122`::
 
             sage: x = polygen(GF(19), 'x')
             sage: f = 15*x^4 + 7*x^3 + 3*x^2 + 7*x + 18
@@ -1244,7 +1243,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             19
 
         Points at infinity on general curves of genus 1 are counted
-        correctly (see :trac:`21195`)::
+        correctly (see :issue:`21195`)::
 
             sage: S.<z> = PolynomialRing(ZZ)
             sage: C = HyperellipticCurve(-z^2 + z, z^2)
@@ -1369,7 +1368,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H.cardinality(3)
             50116
 
-        The following example shows that :trac:`20391` has been resolved::
+        The following example shows that :issue:`20391` has been resolved::
 
             sage: F=GF(23)
             sage: x=polygen(F)
@@ -1442,7 +1441,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - 'E' - Hyperelliptic Curve of the form `y^2 = f(x)` over a
+        - 'E' -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
           finite field, `\GF{q}`
 
         OUTPUT:
@@ -1535,16 +1534,16 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         #retrieve the function f(x) ,where y^2=f(x)
         f,h = self.hyperelliptic_polynomials()
         #This implementation only deals with h=0
-        if h!=0:
+        if h != 0:
             raise ValueError("E must be of the form y^2 = f(x)")
 
         d = f.degree()
         #this implementation is for odd degree only, even degree will be handled later.
-        if d%2 == 0:
+        if d % 2 == 0:
             raise ValueError("In this implementation the degree of f must be odd")
         #Compute resultant to make sure no repeated roots
-        df=f.derivative()
-        R=df.resultant(f)
+        df = f.derivative()
+        R = df.resultant(f)
         if R == 0:
             raise ValueError("curve is not smooth")
 
@@ -1566,9 +1565,9 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         # compute each row of matrix as list and then M=list of lists(rows)
 
-        M=[]
+        M = []
         for j in range(1,g+1):
-            H=[Coeff[i] for i in range((p*j-1), (p*j-g-1),-1)]
+            H = [Coeff[i] for i in range((p*j-1), (p*j-g-1),-1)]
             M.append(H)
         return matrix(Fq,M), Coeff, g, Fq,p, self
 
@@ -1657,10 +1656,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         # Github Issue #11115: Why shall we waste time by studying
         # the cache manually? We only need to check whether the cached
         # data belong to self.
-        M, Coeffs,g, Fq, p, E= self._Cartier_matrix_cached()
-        if E!=self:
+        M, Coeffs,g, Fq, p, E = self._Cartier_matrix_cached()
+        if E != self:
             self._Cartier_matrix_cached.clear_cache()
-            M, Coeffs,g, Fq, p, E= self._Cartier_matrix_cached()
+            M, Coeffs,g, Fq, p, E = self._Cartier_matrix_cached()
         return M
 
     @cached_method
@@ -1723,7 +1722,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         TESTS:
 
-        This shows that the bug at :trac:`23181` is fixed::
+        This shows that the bug at :issue:`23181` is fixed::
 
             sage: K.<z> = PolynomialRing(GF(5))
             sage: L.<a> = GF(5).extension(z^3+3*z+3,'a')
@@ -1781,8 +1780,6 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         - ``N`` : The matrix `N = M M^p \dots M^{p^{g-1}}` where `M = c_{pi-j}`, and `f(x)^{(p-1)/2} = \sum c_i x^i`
 
-
-
         Reference-N. Yui. On the Jacobian varieties of hyperelliptic curves over fields of characteristic `p > 2`.
 
         EXAMPLES::
@@ -1824,10 +1821,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         # from the cache - but apparently it could be
         # that the cached value does not belong to self.
         # So, the easiest is:
-        N, E= self._Hasse_Witt_cached()
-        if E!=self:
+        N, E = self._Hasse_Witt_cached()
+        if E != self:
             self._Hasse_Witt_cached.clear_cache()
-            N, E= self._Hasse_Witt_cached()
+            N, E = self._Hasse_Witt_cached()
         return N
 
     def a_number(self):
@@ -1866,10 +1863,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         # Since Github Issue #11115, there is a special cache for methods
         # that don't accept arguments. The easiest is: Call the cached
         # method, and test whether the last entry is self.
-        M,Coeffs,g, Fq, p,E= self._Cartier_matrix_cached()
+        M,Coeffs,g, Fq, p,E = self._Cartier_matrix_cached()
         if E != self:
             self._Cartier_matrix_cached.clear_cache()
-            M,Coeffs,g, Fq, p,E= self._Cartier_matrix_cached()
+            M,Coeffs,g, Fq, p,E = self._Cartier_matrix_cached()
         return g - rank(M)
 
     def p_rank(self):

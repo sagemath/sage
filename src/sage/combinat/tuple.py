@@ -15,13 +15,14 @@ Tuples
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product, combinations_with_replacement
 
 from sage.arith.misc import binomial
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from itertools import product, combinations_with_replacement
+
 
 class Tuples(Parent, UniqueRepresentation):
     """
@@ -47,11 +48,12 @@ class Tuples(Parent, UniqueRepresentation):
 
     ::
 
-        sage: K.<a> = GF(4, 'a')                                                        # optional - sage.rings.finite_rings
-        sage: mset = [x for x in K if x != 0]                                           # optional - sage.rings.finite_rings
-        sage: Tuples(mset,2).list()                                                     # optional - sage.rings.finite_rings
-        [(a, a), (a + 1, a), (1, a), (a, a + 1), (a + 1, a + 1), (1, a + 1),
-         (a, 1), (a + 1, 1), (1, 1)]
+        sage: K.<a> = GF(4, 'a')                                                        # needs sage.rings.finite_rings
+        sage: mset = sorted((x for x in K if x != 0), key=str)                          # needs sage.rings.finite_rings
+        sage: Tuples(mset, 2).list()                                                    # needs sage.rings.finite_rings
+        [(1, 1),     (a, 1),     (a + 1, 1),
+         (1, a),     (a, a),     (a + 1, a),
+         (1, a + 1), (a, a + 1), (a + 1, a + 1)]
     """
     @staticmethod
     def __classcall_private__(cls, S, k):
@@ -75,7 +77,7 @@ class Tuples(Parent, UniqueRepresentation):
         """
         self.S = S
         self.k = k
-        self._index_list = list(set(S.index(s) for s in S))
+        self._index_list = list({S.index(s) for s in S})
         category = FiniteEnumeratedSets()
         Parent.__init__(self, category=category)
 
@@ -115,10 +117,10 @@ class Tuples(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = [1,2,3,4,5]
-            sage: Tuples(S,2).cardinality()                                             # optional - sage.libs.gap
+            sage: Tuples(S,2).cardinality()
             25
             sage: S = [1,1,2,3,4,5]
-            sage: Tuples(S,2).cardinality()                                             # optional - sage.libs.gap
+            sage: Tuples(S,2).cardinality()
             25
         """
         return ZZ(len(self._index_list)).__pow__(self.k)
@@ -166,7 +168,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         """
         self.S = S
         self.k = k
-        self._index_list = list(set(S.index(s) for s in S))
+        self._index_list = list({S.index(s) for s in S})
         category = FiniteEnumeratedSets()
         Parent.__init__(self, category=category)
 
@@ -200,7 +202,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = [1,2,3,4,5]
-            sage: UnorderedTuples(S,2).cardinality()                                    # optional - sage.libs.gap
+            sage: UnorderedTuples(S,2).cardinality()
             15
         """
         return binomial(len(self._index_list) + self.k - 1, self.k)

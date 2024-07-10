@@ -26,9 +26,9 @@ class WordDatatype_callable(WordDatatype):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``callable`` - a callable defined on ``range(stop=length)``
-        -  ``length`` - (default: ``None``) nonnegative integer or ``None``
+        - ``parent`` -- a parent
+        -  ``callable`` -- a callable defined on ``range(stop=length)``
+        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -226,7 +226,7 @@ class WordDatatype_callable(WordDatatype):
             ...
             ValueError: for infinite words, start and stop values cannot be negative
 
-        Out of range index (:trac:`8673`)::
+        Out of range index (:issue:`8673`)::
 
             sage: w = Word(lambda n:n^2, length=23)
             sage: w[100]
@@ -237,8 +237,8 @@ class WordDatatype_callable(WordDatatype):
         if isinstance(key, slice):
             # Infinite words
             if self._len is Infinity or self._len is None:
-                if not(key.start is None) and key.start < 0 or \
-                        not(key.stop is None) and key.stop < 0:
+                if key.start is not None and key.start < 0 or \
+                        key.stop is not None and key.stop < 0:
                     raise ValueError("for infinite words, start and stop values cannot be negative")
                 step = 1 if key.step is None else key.step
                 if step > 0:
@@ -322,9 +322,9 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``callable`` - a callable defined on ``range(stop=length)``
-        -  ``length`` - (default: ``None``) nonnegative integer or ``None``
+        - ``parent`` -- a parent
+        -  ``callable`` -- a callable defined on ``range(stop=length)``
+        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -589,9 +589,9 @@ class WordDatatype_iter(WordDatatype):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``iter`` - an iterator
-        -  ``length`` - (default: ``None``) the length of the word
+        - ``parent`` -- a parent
+        -  ``iter`` -- an iterator
+        -  ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 
@@ -831,8 +831,8 @@ class WordDatatype_iter(WordDatatype):
         """
         if isinstance(key, slice):
             if self._len is Infinity or self._len is None:
-                if not(key.start is None) and key.start < 0 or \
-                        not(key.stop is None) and key.stop < 0:
+                if key.start is not None and key.start < 0 or \
+                        key.stop is not None and key.stop < 0:
                     raise ValueError("for infinite words, start and stop values cannot be negative")
                 step = 1 if key.step is None else int(key.step)
                 if step >= 0:
@@ -840,7 +840,7 @@ class WordDatatype_iter(WordDatatype):
                     if key.stop is None:
                         length = Infinity
                         stop = None
-                    else: # key.stop > 0
+                    else:  # key.stop > 0
                         length = int(max(0, ceil((key.stop-start)/float(step))))
                         stop = int(key.stop)
                     data = itertools.islice(self, start, stop, step)
@@ -862,7 +862,7 @@ class WordDatatype_iter(WordDatatype):
                 step = 1 if key.step is None else int(key.step)
                 # If either key.start or key.stop is negative,
                 # then we need to expand the word.
-                if start < 0 or (not(stop is None) and stop < 0):
+                if start < 0 or (stop is not None and stop < 0):
                     data = list(self)[key]
                     length = None
                 # If key.step is negative, then we need to expand a prefix.
@@ -922,9 +922,9 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``iter`` - an iterator
-        -  ``length`` - (default: ``None``) the length of the word
+        - ``parent`` -- a parent
+        -  ``iter`` -- an iterator
+        -  ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 

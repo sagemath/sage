@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Modular Decomposition
 
@@ -12,10 +11,10 @@ of undirected graphs.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from enum import Enum
+from enum import Enum, IntEnum
 
 from sage.misc.lazy_import import lazy_import
 from sage.misc.random_testing import random_testing
@@ -23,7 +22,7 @@ from sage.misc.random_testing import random_testing
 lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
 
 
-class NodeType(Enum):
+class NodeType(IntEnum):
     """
     NodeType is an enumeration class used to define the various types of nodes
     in modular decomposition tree.
@@ -46,7 +45,7 @@ class NodeType(Enum):
     NORMAL = 3
     FOREST = -1
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of this node type.
 
@@ -372,17 +371,17 @@ def print_md_tree(root):
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: print_md_tree(modular_decomposition(graphs.IcosahedralGraph()))
         PRIME
+         3
+         4
+         7
+         9
+         11
          1
          5
-         7
          8
-         11
          0
          2
          6
-         3
-         9
-         4
          10
     """
 
@@ -451,7 +450,7 @@ def gamma_classes(graph):
     pieces = DisjointSet(frozenset(e) for e in graph.edge_iterator(labels=False))
     for v in graph:
         neighborhood = graph.subgraph(vertices=graph.neighbors(v))
-        for component in neighborhood.complement().connected_components():
+        for component in neighborhood.complement().connected_components(sort=False):
             v1 = component[0]
             e = frozenset([v1, v])
             for vi in component[1:]:
@@ -495,17 +494,17 @@ def habib_maurer_algorithm(graph, g_classes=None):
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: print_md_tree(habib_maurer_algorithm(graphs.IcosahedralGraph()))
         PRIME
+         3
+         4
+         7
+         9
+         11
          1
          5
-         7
          8
-         11
          0
          2
          6
-         3
-         9
-         4
          10
 
     The Octahedral graph is not Prime::
@@ -610,7 +609,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
     decompositions. ::
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import permute_decomposition
-        sage: permute_decomposition(2, habib_maurer_algorithm, 20, 0.5)                 # optional - sage.groups
+        sage: permute_decomposition(2, habib_maurer_algorithm, 20, 0.5)                 # needs sage.groups
     """
     if graph.is_directed():
         raise ValueError("Graph must be undirected")
@@ -625,7 +624,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
     elif not graph.is_connected():
         root = create_parallel_node()
         root.children = [habib_maurer_algorithm(graph.subgraph(vertices=sg), g_classes)
-                         for sg in graph.connected_components()]
+                         for sg in graph.connected_components(sort=False)]
         return root
 
     g_comp = graph.complement()
@@ -650,7 +649,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
 
     root = create_series_node()
     root.children = [habib_maurer_algorithm(graph.subgraph(vertices=sg), g_classes)
-                     for sg in g_comp.connected_components()]
+                     for sg in g_comp.connected_components(sort=False)]
     return root
 
 
@@ -1246,7 +1245,7 @@ def test_gamma_modules(trials, vertices, prob, verbose=False):
             m_list = list(module)
             for v in g:
                 if v not in module:
-                    assert(either_connected_or_not_connected(v, m_list, g))
+                    assert either_connected_or_not_connected(v, m_list, g)
         if verbose:
             print("Passes!")
 
@@ -1276,10 +1275,10 @@ def permute_decomposition(trials, algorithm, vertices, prob, verbose=False):
             print(random_perm)
         t1 = algorithm(g1)
         t2 = algorithm(g2)
-        assert(test_modular_decomposition(t1, g1))
-        assert(test_modular_decomposition(t2, g2))
+        assert test_modular_decomposition(t1, g1)
+        assert test_modular_decomposition(t2, g2)
         t1p = relabel_tree(t1, random_perm)
-        assert(equivalent_trees(t1p, t2))
+        assert equivalent_trees(t1p, t2)
         if verbose:
             print("Passes!")
 
@@ -1423,6 +1422,6 @@ def recreate_decomposition(trials, algorithm, max_depth, max_fan_out,
         reconstruction = algorithm(graph)
         if verbose:
             print_md_tree(reconstruction)
-        assert(equivalent_trees(rand_tree, reconstruction))
+        assert equivalent_trees(rand_tree, reconstruction)
         if verbose:
             print("Passes!")

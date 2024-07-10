@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Partition/Diagram Algebras
 """
@@ -15,18 +16,19 @@ Partition/Diagram Algebras
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.arith.misc import binomial, factorial
+from sage.arith.misc import binomial, factorial, integer_ceil as ceil
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.combinat import catalan_number
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
 from sage.combinat.set_partition import SetPartition, SetPartitions, SetPartitions_set
 from sage.combinat.subset import Subsets
-from sage.functions.all import ceil
-from sage.graphs.graph import Graph
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set, Set_generic
+
+lazy_import('sage.graphs.graph', 'Graph')
 
 
 def _int_or_half_int(k):
@@ -35,7 +37,7 @@ def _int_or_half_int(k):
 
     OUTPUT:
 
-    If ``k`` is not in `1/2 \ZZ`, then this raises a ``ValueError``.
+    If ``k`` is not in `1/2 \ZZ`, then this raises a :class:`ValueError`.
     Otherwise, we return the pair:
 
     - boolean; ``True`` if ``k`` is an integer and ``False`` if a half integer
@@ -1842,7 +1844,7 @@ def pair_to_graph(sp1, sp2):
          ((-2, 1), (1, 1), None),
          ((-2, 1), (2, 2), None)]
 
-    Another example which used to be wrong until :trac:`15958`::
+    Another example which used to be wrong until :issue:`15958`::
 
         sage: sp3 = pa.to_set_partition([[1, -1], [2], [-2]])
         sage: sp4 = pa.to_set_partition([[1], [-1], [2], [-2]])
@@ -1930,7 +1932,7 @@ def to_set_partition(l, k=None):
         if not l:
             return Set([])
         else:
-            k = max((max(map(abs, x)) for x in l))
+            k = max(max(map(abs, x)) for x in l)
 
     to_be_added = Set(list(range(1, k + 1)) + [-x for x in range(1, k + 1)])
 
@@ -1974,13 +1976,13 @@ def set_partition_composition(sp1, sp2):
         True
     """
     g = pair_to_graph(sp1, sp2)
-    connected_components = g.connected_components()
+    connected_components = g.connected_components(sort=False)
 
     res = []
     total_removed = 0
     for cc in connected_components:
         # Remove the vertices that live in the middle two rows
-        new_cc = [x for x in cc if not((x[0] < 0 and x[1] == 1) or
+        new_cc = [x for x in cc if not ((x[0] < 0 and x[1] == 1) or
                                        (x[0] > 0 and x[1] == 2))]
 
         if not new_cc:

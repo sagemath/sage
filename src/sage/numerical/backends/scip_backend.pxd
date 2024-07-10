@@ -8,7 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .generic_backend cimport GenericBackend
+from sage.numerical.backends.generic_backend cimport GenericBackend
 
 cdef class SCIPBackend(GenericBackend):
 

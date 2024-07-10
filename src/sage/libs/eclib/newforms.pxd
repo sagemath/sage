@@ -1,4 +1,4 @@
-from ..eclib cimport newforms
+from sage.libs.eclib cimport newforms
 
 cdef class ECModularSymbol:
     cdef newforms* nfs

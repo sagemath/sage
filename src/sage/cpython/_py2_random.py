@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Except from the `random` module from Python 2.7.14 used solely for consistency
 in the doctest suite for random results that depend on the Python PRNG.
@@ -6,7 +7,7 @@ It should be made clear that the actual random data from the PRNG is consistent
 between Python versions, but the difference lies in higher-level methods such
 as `random.randint`.
 
-See :trac:`24508`
+See :issue:`24508`
 """
 
 # The following code was copied from
@@ -92,19 +93,19 @@ class Random(_random.Random):
                 import time
                 a = int(time.time() * 256) # use fractional seconds
 
-        super(Random, self).seed(a)
+        super().seed(a)
         self.gauss_next = None
 
     def getstate(self):
         """Return internal state; can be passed to setstate() later."""
-        return self.VERSION, super(Random, self).getstate(), self.gauss_next
+        return self.VERSION, super().getstate(), self.gauss_next
 
     def setstate(self, state):
         """Restore internal state from object returned by getstate()."""
         version = state[0]
         if version == 3:
             version, internalstate, self.gauss_next = state
-            super(Random, self).setstate(internalstate)
+            super().setstate(internalstate)
         elif version == 2:
             version, internalstate, self.gauss_next = state
             # In version 2, the state was saved as signed ints, which causes
@@ -115,7 +116,7 @@ class Random(_random.Random):
                 internalstate = tuple( int(x) % (2**32) for x in internalstate )
             except ValueError as e:
                 raise TypeError(e)
-            super(Random, self).setstate(internalstate)
+            super().setstate(internalstate)
         else:
             raise ValueError("state with version %s passed to "
                              "Random.setstate() of version %s" %
@@ -131,7 +132,7 @@ class Random(_random.Random):
         # we use hashing to create a large n for the shuffle.
         s = repr(n) + repr(self.getstate())
         n = int(_hashlib.new('sha512', s).hexdigest(), 16)
-        super(Random, self).jumpahead(n)
+        super().jumpahead(n)
 
 ## ---- Methods below this point do not need to be overridden when
 ## ---- subclassing for the purpose of using a different core generator.
@@ -281,9 +282,9 @@ class Random(_random.Random):
         population contains repeats, then each occurrence is a possible
         selection in the sample.
 
-        To choose a sample in a range of integers, use xrange as an argument.
+        To choose a sample in a range of integers, use range as an argument.
         This is especially fast and space efficient for sampling from a
-        large population:   sample(xrange(10000000), 60)
+        large population:   sample(range(10000000), 60)
         """
 
         # Sampling without replacement entails tracking either potential

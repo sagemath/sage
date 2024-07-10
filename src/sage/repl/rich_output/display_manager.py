@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Display Manager
 
@@ -44,22 +44,6 @@ from sage.repl.rich_output.output_browser import (
     OutputHtml,
 )
 from sage.repl.rich_output.preferences import DisplayPreferences
-
-
-def _required_threejs_version():
-    """
-    Return the version of threejs that Sage requires.
-
-    EXAMPLES::
-
-        sage: from sage.repl.rich_output.display_manager import _required_threejs_version
-        sage: _required_threejs_version()
-        'r...'
-    """
-    import os
-    import sage.env
-    with open(os.path.join(sage.env.SAGE_EXTCODE, 'threejs', 'threejs-version.txt')) as f:
-        return f.read().strip()
 
 
 class DisplayException(Exception):
@@ -708,10 +692,12 @@ class DisplayManager(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.plot sage.symbolic
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: plt = plot(sin)
-            sage: out = dm.graphics_from_save(plt.save, dict(), '.png', dm.types.OutputImagePng)
+            sage: out = dm.graphics_from_save(plt.save, dict(), '.png',
+            ....:                             dm.types.OutputImagePng)
             sage: out
             OutputImagePng container
             sage: out.png.get().startswith(b'\x89PNG')
@@ -758,16 +744,17 @@ class DisplayManager(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output import get_display_manager
-            sage: get_display_manager().threejs_scripts(online=True)
+            sage: get_display_manager().threejs_scripts(online=True)                    # needs sage.plot
             '...<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@...'
-            sage: get_display_manager().threejs_scripts(online=False)
+            sage: get_display_manager().threejs_scripts(online=False)                   # needs sage.plot
             Traceback (most recent call last):
             ...
             ValueError: current backend does not support
             offline threejs graphics
         """
+        from sage.features.threejs import Threejs
         if online:
-            version = _required_threejs_version()
+            version = Threejs().required_version()
             return """
 <script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@{0}/build/three.min.js"></script>
             """.format(version)

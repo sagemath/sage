@@ -6,7 +6,6 @@ All computations are done to double precision.
 AUTHORS:
 
 - Simon Spicer (2014-10): first version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Simon Spicer <mlungu@uw.edu>
@@ -484,7 +483,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
           Currently only implemented for the sincsquared and cauchy functions;
           otherwise ignored.
 
-        - ``function`` -- string (default: "sincsquared_fast") - the function
+        - ``function`` -- string (default: "sincsquared_fast"); the function
           `f(x)` as described above. Currently implemented options for `f` are
 
           - ``sincsquared`` -- `f(x) = \left(\frac{\sin(\pi x)}{\pi x}\right)^2`
@@ -1066,7 +1065,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
                                        double logq,
                                        double thetaq,
                                        double sqrtq,
-                                       double z):
+                                       double z) noexcept:
         r"""
         Private cdef method to compute the logarithmic derivative
         summand for the sinc^2 sum at prime values for when
@@ -1096,7 +1095,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
                                        double t,
                                        int ap,
                                        double p,
-                                       double logp):
+                                       double logp) noexcept:
         r"""
         Private cdef method to compute the logarithmic derivative
         summand for the sinc^2 sum at prime values for when

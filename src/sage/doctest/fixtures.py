@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Fixtures to help testing functionality
 
@@ -33,7 +34,7 @@ communicates with its surroundings::
 """
 
 #*****************************************************************************
-#       Copyright (C) 2014 Martin von Gagern <Martin.vGagern@gmx.net>
+#       Copyright (C) 2014-2015 Martin von Gagern <Martin.vGagern@gmx.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,9 +81,9 @@ def reproducible_repr(val):
         frozenset(['a', 'b', 'c', 'd'])
         sage: print(reproducible_repr([1, frozenset("cab"), set("bar"), 0]))
         [1, frozenset(['a', 'b', 'c']), set(['a', 'b', 'r']), 0]
-        sage: print(reproducible_repr({3.0:"three","2":"two",1:"one"}))
+        sage: print(reproducible_repr({3.0: "three", "2": "two", 1: "one"}))            # optional - sage.rings.real_mpfr
         {'2': 'two', 1: 'one', 3.00000000000000: 'three'}
-        sage: print(reproducible_repr("foo\nbar")) # demonstrate default case
+        sage: print(reproducible_repr("foo\nbar"))  # demonstrate default case
         'foo\nbar'
     """
 

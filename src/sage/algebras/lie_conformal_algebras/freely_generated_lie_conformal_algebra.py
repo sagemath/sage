@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Freely Generated Lie Conformal Algebras
 
@@ -22,6 +23,7 @@ from sage.categories.cartesian_product import cartesian_product
 from sage.rings.integer import Integer
 from sage.sets.family import Family
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+
 
 class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
     """
@@ -60,7 +62,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
         if central_elements is not None:
             self._central_elements = Family(central_elements)
         else:
-            self._central_elements = tuple()
+            self._central_elements = ()
 
     def lie_conformal_algebra_generators(self):
         """

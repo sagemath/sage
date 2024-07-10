@@ -86,7 +86,7 @@ class CartanType(CartanType_standard, CartanType_simple):
         """
         return 'A_{{{}}}'.format(self.n._latex_())
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the extended Dynkin diagram.
 
@@ -100,6 +100,8 @@ class CartanType(CartanType_standard, CartanType_simple):
             0   1   2   3   4   5   6
 
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
 

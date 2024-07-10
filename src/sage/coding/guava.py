@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.gap sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.libs.gap sage.modules sage.rings.finite_rings
 r"""
 Constructions of generator matrices using the GUAVA package for GAP
 
@@ -60,7 +60,7 @@ def QuasiQuadraticResidueCode(p):
 
     EXAMPLES::
 
-        sage: C = codes.QuasiQuadraticResidueCode(11); C   # optional - gap_packages (Guava package)
+        sage: C = codes.QuasiQuadraticResidueCode(11); C   # optional - gap_package_guava
         [22, 11] linear code over GF(2)
 
     These are self-orthogonal in general and self-dual when `p \equiv 3 \pmod 4`.
@@ -69,8 +69,8 @@ def QuasiQuadraticResidueCode(p):
     """
     GapPackage("guava", spkg="gap_packages").require()
     libgap.load_package("guava")
-    C=libgap.QQRCode(p)
-    G=C.GeneratorMat()
+    C = libgap.QQRCode(p)
+    G = C.GeneratorMat()
     MS = MatrixSpace(GF(2), len(G), len(G[0]))
     return LinearCode(MS(G))
 
@@ -85,7 +85,7 @@ def RandomLinearCodeGuava(n, k, F):
 
     INPUT:
 
-    - ``n,k`` -- integers with `n>k>1`.
+    - ``n``, ``k`` -- integers with `n>k>1`.
 
     OUTPUT:
 
@@ -93,9 +93,9 @@ def RandomLinearCodeGuava(n, k, F):
 
     EXAMPLES::
 
-        sage: C = codes.RandomLinearCodeGuava(30,15,GF(2)); C      # optional - gap_packages (Guava package)
+        sage: C = codes.RandomLinearCodeGuava(30,15,GF(2)); C      # optional - gap_package_guava
         [30, 15] linear code over GF(2)
-        sage: C = codes.RandomLinearCodeGuava(10,5,GF(4,'a')); C   # optional - gap_packages (Guava package)
+        sage: C = codes.RandomLinearCodeGuava(10,5,GF(4,'a')); C   # optional - gap_package_guava
         [10, 5] linear code over GF(4)
 
     AUTHOR: David Joyner (11-2005)
@@ -104,7 +104,7 @@ def RandomLinearCodeGuava(n, k, F):
 
     GapPackage("guava", spkg="gap_packages").require()
     libgap.load_package("guava")
-    C=libgap.RandomLinearCode(n,k,F)
-    G=C.GeneratorMat()
+    C = libgap.RandomLinearCode(n,k,F)
+    G = C.GeneratorMat()
     MS = MatrixSpace(F, len(G), len(G[0]))
     return LinearCode(MS(G))

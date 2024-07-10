@@ -1,1 +1,1 @@
-python3-sphinxcontrib-websupport
+python3${PYTHON_MINOR}-sphinxcontrib-websupport

@@ -45,7 +45,7 @@ class TotallyOrderedFiniteSetElement(Element):
         r"""
         TESTS::
 
-            sage: T = TotallyOrderedFiniteSet([3,2,1],facade=False)
+            sage: T = TotallyOrderedFiniteSet([3,2,1], facade=False)
             sage: TestSuite(T.an_element()).run()
         """
         Element.__init__(self, parent)
@@ -173,8 +173,8 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
         sage: T1 = TotallyOrderedFiniteSet([3,2,5,1])
         sage: T1(3) < T1(1)
         False
-        sage: T2 = TotallyOrderedFiniteSet([3,var('x')])
-        sage: T2(3) < T2(var('x'))
+        sage: T2 = TotallyOrderedFiniteSet([3, x])                                      # needs sage.symbolic
+        sage: T2(3) < T2(x)                                                             # needs sage.symbolic
         3 < x
 
     To make the above example work, you should set the argument facade to
@@ -212,7 +212,7 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
         sage: A('a') == 'a'
         False
 
-    Since :trac:`16280`, totally ordered sets support elements that do
+    Since :issue:`16280`, totally ordered sets support elements that do
     not inherit from :class:`sage.structure.element.Element`, whether
     they are facade or not::
 

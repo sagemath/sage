@@ -32,5 +32,6 @@ class Sh:
         # gets printed when doing %sh in the notebook.
         return ''
 
+
 # Create the sh object, so that %sh mode works in the notebook.
 sh = Sh()

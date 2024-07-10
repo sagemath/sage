@@ -440,6 +440,7 @@ class StorageTypeSimple(StorageTypeAssignable):
     """
     pass
 
+
 ty_int = StorageTypeSimple('int')
 ty_double = StorageTypeSimple('double')
 
@@ -460,6 +461,7 @@ class StorageTypeDoubleComplex(StorageTypeSimple):
         'z_c = CDE_to_dz(z_py)'
         """
         return je("{{ c }} = CDE_to_dz({{ py }})", c=c, py=py)
+
 
 ty_double_complex = StorageTypeDoubleComplex('double_complex')
 
@@ -649,6 +651,7 @@ class StorageTypePython(StorageTypeAssignable):
             'Py_CLEAR(foo[i])'
         """
         return je("Py_CLEAR({{ loc }})", loc=loc)
+
 
 ty_python = StorageTypePython()
 
@@ -846,6 +849,7 @@ class StorageTypeMPFR(StorageTypeAutoReference):
             mpfr_set({{ c }}, rn.value, MPFR_RNDN)"""),
             myself=self, c=c, py=py)
 
+
 ty_mpfr = StorageTypeMPFR()
 
 class StorageTypeMPC(StorageTypeAutoReference):
@@ -947,5 +951,6 @@ class StorageTypeMPC(StorageTypeAutoReference):
         return je("""
 cn{{ myself.id }} = self.domain({{ py }})
 mpc_set_fr_fr({{ c }}, cn.__re, cn.__im, MPC_RNDNN)""", myself=self, c=c, py=py)
+
 
 ty_mpc = StorageTypeMPC()

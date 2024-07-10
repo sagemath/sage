@@ -37,19 +37,19 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     INPUT:
 
-    -  ``N`` - an integer
+    -  ``N`` -- an integer
 
-    -  ``u`` - an integer
+    -  ``u`` -- an integer
 
-    -  ``v`` - an integer
+    -  ``v`` -- an integer
 
     OUTPUT: If gcd(u,v,N) = 1, then returns
 
-    -  ``uu`` - an integer
+    -  ``uu`` -- an integer
 
-    -  ``vv`` - an integer
+    -  ``vv`` -- an integer
 
-    - ``ss`` - an integer such that `(ss*uu, ss*vv)` is congruent to
+    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is congruent to
        `(u,v)` (mod `N`);
 
        if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
@@ -108,7 +108,7 @@ cdef int c_p1_normalize_int(int N, int u, int v,
         Ng = N/g
         vNg = (v*Ng) % N
         t = 1
-        for k from 2 <= k <= g:
+        for k in range(2, g + 1):
             v = (v + vNg) % N
             t = (t + Ng) % N
             if v<min_v and arith_int.c_gcd_int(t,N)==1:
@@ -135,21 +135,21 @@ def p1_normalize_int(N, u, v):
     INPUT:
 
 
-    -  ``N`` - an integer
+    -  ``N`` -- an integer
 
-    -  ``u`` - an integer
+    -  ``u`` -- an integer
 
-    -  ``v`` - an integer
+    -  ``v`` -- an integer
 
 
     OUTPUT: If gcd(u,v,N) = 1, then returns
 
 
-    -  ``uu`` - an integer
+    -  ``uu`` -- an integer
 
-    -  ``vv`` - an integer
+    -  ``vv`` -- an integer
 
-    - ``ss`` - an integer such that `(ss*uu, ss*vv)` is congruent to `(u,v)` (mod `N`);
+    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is congruent to `(u,v)` (mod `N`);
 
        if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
 
@@ -178,7 +178,7 @@ def p1list_int(int N):
     INPUT:
 
 
-    -  ``N`` - integer (the level or modulus).
+    -  ``N`` -- integer (the level or modulus).
 
     EXAMPLES::
 
@@ -220,8 +220,8 @@ def p1list_int(int N):
 
     lst = [(0,1)]
     c = 1
-    for d from 0 <= d < N:
-        lst.append((c,d))
+    for d in range(N):
+        lst.append((c, d))
 
     cmax = N // 2
     if N % 2:   # N odd, max divisor is <= N/3
@@ -230,11 +230,11 @@ def p1list_int(int N):
         else:
             cmax = N // 3
 
-    for c from 2 <= c <= cmax:
+    for c in range(2, cmax + 1):
         if N % c == 0:  # c is a proper divisor
             h = N // c
             g = arith_int.c_gcd_int(c, h)
-            for d from 1 <= d <= h:
+            for d in range(1, h + 1):
                 sig_check()
                 if arith_int.c_gcd_int(d, g) == 1:
                     d1 = d
@@ -271,23 +271,23 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
     INPUT:
 
 
-    -  ``N`` - an integer (the modulus or level)
+    -  ``N`` -- an integer (the modulus or level)
 
-    -  ``u`` - an integer (the first coordinate of (u:v))
+    -  ``u`` -- an integer (the first coordinate of (u:v))
 
-    -  ``v`` - an integer (the second coordinate of (u:v))
+    -  ``v`` -- an integer (the second coordinate of (u:v))
 
-    -  ``compute_s`` - a boolean (int)
+    -  ``compute_s`` -- a boolean (int)
 
 
     OUTPUT: If gcd(u,v,N) = 1, then returns
 
 
-    -  ``uu`` - an integer
+    -  ``uu`` -- an integer
 
-    -  ``vv`` - an integer
+    -  ``vv`` -- an integer
 
-    - ``ss`` - an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
+    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
 
        if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
 
@@ -305,7 +305,7 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     TESTS:
 
-    This test reflects :trac:`20932`::
+    This test reflects :issue:`20932`::
 
         sage: N = 3*61379
         sage: import sage.modular.modsym.p1list as p1list
@@ -373,10 +373,10 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
         Ng = N/g
         vNg = <int> ((<llong>v * <llong> Ng) % ll_N)
         t = 1
-        for k from 2 <= k <= g:
+        for k in range(2, g + 1):
             v = (v + vNg) % N
             t = (t + Ng) % N
-            if v<min_v and arith_int.c_gcd_int(t,N)==1:
+            if v < min_v and arith_int.c_gcd_int(t, N) == 1:
                 min_v = v
                 min_t = t
     v = min_v
@@ -400,21 +400,21 @@ def p1_normalize_llong(N, u, v):
     INPUT:
 
 
-    -  ``N`` - an integer
+    -  ``N`` -- an integer
 
-    -  ``u`` - an integer
+    -  ``u`` -- an integer
 
-    -  ``v`` - an integer
+    -  ``v`` -- an integer
 
 
     OUTPUT: If gcd(u,v,N) = 1, then returns
 
 
-    -  ``uu`` - an integer
+    -  ``uu`` -- an integer
 
-    -  ``vv`` - an integer
+    -  ``vv`` -- an integer
 
-    - ``ss`` - an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
+    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
 
        if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
 
@@ -444,7 +444,7 @@ def p1list_llong(int N):
     INPUT:
 
 
-    -  ``N`` - integer (the level or modulus).
+    -  ``N`` -- integer (the level or modulus).
 
     EXAMPLES::
 
@@ -460,7 +460,7 @@ def p1list_llong(int N):
 
     TESTS:
 
-    This test shows that :trac:`20932` has been resolved::
+    This test shows that :issue:`20932` has been resolved::
 
         sage: import sage.modular.modsym.p1list as p1list
         sage: [(i,j) for (i,j) in p1list.P1List(103809) if i != 1 and i != 3] # not tested -- too long
@@ -472,8 +472,8 @@ def p1list_llong(int N):
 
     lst = [(0,1)]
     c = 1
-    for d from 0 <= d < N:
-        lst.append((c,d))
+    for d in range(N):
+        lst.append((c, d))
 
     cmax = N // 2
     if N % 2:   # N odd, max divisor is <= N/3
@@ -482,18 +482,18 @@ def p1list_llong(int N):
         else:
             cmax = N // 3
 
-    for c from 2 <= c <= cmax:
+    for c in range(2, cmax + 1):
         if N % c == 0:  # c is a proper divisor
             h = N // c
             g = arith_int.c_gcd_int(c, h)
-            for d from 1 <= d <= h:
+            for d in range(1, h + 1):
                 if arith_int.c_gcd_int(d, g) == 1:
                     sig_check()
                     d1 = d
                     while arith_int.c_gcd_int(d1, c) != 1:
                         d1 += h
                     c_p1_normalize_llong(N, c, d1, &u, &v, &s, 0)
-                    lst.append((u,v))
+                    lst.append((u, v))
     lst.sort()
     return lst
 
@@ -505,7 +505,7 @@ def p1list(N):
 
     INPUT:
 
-    - N (integer) - a positive integer (less than 2^31).
+    - N (integer) -- a positive integer (less than 2^31).
 
     OUTPUT:
 
@@ -539,21 +539,21 @@ def p1_normalize(int N, int u, int v):
     INPUT:
 
 
-    -  ``N`` - an integer
+    -  ``N`` -- an integer
 
-    -  ``u`` - an integer
+    -  ``u`` -- an integer
 
-    -  ``v`` - an integer
+    -  ``v`` -- an integer
 
 
     OUTPUT: If gcd(u,v,N) = 1, then returns
 
 
-    -  ``uu`` - an integer
+    -  ``uu`` -- an integer
 
-    -  ``vv`` - an integer
+    -  ``vv`` -- an integer
 
-    -  ``ss`` - an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
+    -  ``ss`` -- an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
 
        if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
 
@@ -597,16 +597,16 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
     INPUT:
 
 
-    -  ``N, u, v`` - integers
+    -  ``N, u, v`` -- integers
 
-    -  ``compute_s`` - do not compute s if compute_s == 0.
+    -  ``compute_s`` -- do not compute s if compute_s == 0.
 
-    -  ``t_g, t_a, t_b`` - int arrays of
+    -  ``t_g, t_a, t_b`` -- int arrays of
 
 
     OUTPUT:
 
-    -  ``uu, vv, ss`` - reduced representative and normalizing scalar.
+    -  ``uu, vv, ss`` -- reduced representative and normalizing scalar.
     """
     cdef int d, k, g, s, t, min_v, min_t, Ng, vNg
     if N == 1:
@@ -663,7 +663,7 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
         Ng = N/g
         vNg = (v*Ng) % N
         t = 1
-        for k from 2 <= k <= g:
+        for k in range(2, g + 1):
             v = (v + vNg) % N
             t = (t + Ng) % N
             if v < min_v and t_g[t] == 1:     # arith_int.c_gcd_int(t,N)==1:
@@ -706,7 +706,7 @@ cdef class P1List():
 
         INPUT:
 
-        -  ``N`` - positive integer (the modulus or level).
+        -  ``N`` -- positive integer (the modulus or level).
 
         OUTPUT:
 
@@ -723,10 +723,10 @@ cdef class P1List():
         self.__N = N
         if N <= 46340:
             self.__list = p1list_int(N)
-            self.__normalize = c_p1_normalize_int
+            self._normalize = c_p1_normalize_int
         elif N <= 2147483647:
             self.__list = p1list_llong(N)
-            self.__normalize = c_p1_normalize_llong
+            self._normalize = c_p1_normalize_llong
         else:
             raise OverflowError("p1list not defined for such large N.")
         self.__list.sort()
@@ -744,10 +744,10 @@ cdef class P1List():
         cdef llong ll_s, ll_t, ll_N = N
 
         if N <= 46340:
-            for i from 0 <= i < N:
+            for i in range(N):
                 self.g[i] = arith_int.c_xgcd_int(i, N, &self.s[i], &self.t[i])
         else:
-            for i from 0 <= i < N:
+            for i in range(N):
                 self.g[i] = arith_llong.c_xgcd_longlong(i, N, &ll_s, &ll_t)
                 self.s[i] = <int>(ll_s % ll_N)
                 self.t[i] = <int>(ll_t % ll_N)
@@ -863,7 +863,7 @@ cdef class P1List():
 
         INPUT:
 
-        -  ``i`` - integer (the index of the element to lift).
+        -  ``i`` -- integer (the index of the element to lift).
 
         EXAMPLES::
 
@@ -900,7 +900,7 @@ cdef class P1List():
 
         INPUT:
 
-        -  ``i`` - integer (the index of the element to act on).
+        -  ``i`` -- integer (the index of the element to act on).
 
         EXAMPLES::
 
@@ -921,7 +921,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, -u, v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, -u, v, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -933,7 +933,7 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``i`` - integer (the index of the element to act on).
+        -  ``i`` -- integer (the index of the element to act on).
 
         EXAMPLES::
 
@@ -954,7 +954,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, -v, u, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, -v, u, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -966,7 +966,7 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``i`` - integer (the index of the element to act on).
+        -  ``i`` -- integer (the index of the element to act on).
 
         EXAMPLES::
 
@@ -987,7 +987,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, v, -u-v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, v, -u-v, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -1000,13 +1000,13 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``u, v`` - integers, with `\gcd(u,v,N)=1`.
+        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
 
 
         OUTPUT:
 
 
-        -  ``i`` - the index of `u`, `v`, in the P1list.
+        -  ``i`` -- the index of `u`, `v`, in the P1list.
 
         EXAMPLES::
 
@@ -1044,15 +1044,15 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``u, v`` - integers, with `\gcd(u,v,N)=1`.
+        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
 
 
         OUTPUT:
 
 
-        -  ``i`` - the index of `u`, `v`, in the P1list.
+        -  ``i`` -- the index of `u`, `v`, in the P1list.
 
-        -  ``s`` - normalizing scalar.
+        -  ``s`` -- normalizing scalar.
         """
         if self.__N == 1:
             # there is exactly 1 class [(0,0)].
@@ -1087,13 +1087,13 @@ cdef class P1List():
         INPUT:
 
 
-        - ``u, v`` - integers, with `\gcd(u,v,N)=1`, normalized so they lie in the list.
+        - ``u``, ``v`` -- integers, with `\gcd(u,v,N)=1`, normalized so they lie in the list.
 
 
         OUTPUT:
 
 
-        -  ``i`` - the index of `(u:v)`, in the P1list.
+        -  ``i`` -- the index of `(u:v)`, in the P1list.
 
         EXAMPLES::
 
@@ -1131,7 +1131,7 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``u, v`` - integers, with `\gcd(u,v,N)=1`.
+        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
 
 
         OUTPUT:
@@ -1153,7 +1153,7 @@ cdef class P1List():
             True
         """
         cdef int uu, vv, ss
-        self.__normalize(self.__N, u, v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, u, v, &uu, &vv, &ss, 0)
         return (uu,vv)
 
     def normalize_with_scalar(self, int u, int v):
@@ -1164,7 +1164,7 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``u, v`` - integers, with `\gcd(u,v,N)=1`.
+        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
 
 
         OUTPUT:
@@ -1186,7 +1186,7 @@ cdef class P1List():
             True
         """
         cdef int uu, vv, ss
-        self.__normalize(self.__N, u, v, &uu, &vv, &ss, 1)
+        self._normalize(self.__N, u, v, &uu, &vv, &ss, 1)
         return (uu, vv, ss)
 
     def N(self):
@@ -1226,7 +1226,7 @@ def lift_to_sl2z_int(int c, int d, int N):
 
     INPUT:
 
-    -  ``c,d,N`` - integers such that `\gcd(c,d,N)=1`.
+    -  ``c,d,N`` -- integers such that `\gcd(c,d,N)=1`.
 
     EXAMPLES::
 
@@ -1296,7 +1296,7 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
 
     INPUT:
 
-    -  ``c,d,N`` - integers such that `\gcd(c,d,N)=1`.
+    -  ``c,d,N`` -- integers such that `\gcd(c,d,N)=1`.
 
     EXAMPLES::
 
@@ -1362,7 +1362,7 @@ def lift_to_sl2z(c, d, N):
 
     INPUT:
 
-    -  ``c,d,N`` - Python ints or longs such that `\gcd(c,d,N)=1`.
+    -  ``c,d,N`` -- Python ints or longs such that `\gcd(c,d,N)=1`.
 
     EXAMPLES::
 
@@ -1371,8 +1371,8 @@ def lift_to_sl2z(c, d, N):
         sage: lift_to_sl2z(2,3,6000000)
         [1, 1, 2, 3]
 
-    You will get a ValueError exception if the input is invalid.  Note
-    that here gcd(15,6,24)=3::
+    You will get a :class:`ValueError` exception if the input is invalid.
+    Note that here gcd(15,6,24)=3::
 
         sage: lift_to_sl2z(15,6,24)
         Traceback (most recent call last):

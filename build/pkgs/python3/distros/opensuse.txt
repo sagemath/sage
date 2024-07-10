@@ -1,1 +1,2 @@
-python3-devel
+python3${PYTHON_MINOR}-devel
+python3${PYTHON_MINOR}-setuptools

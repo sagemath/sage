@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 Utility functions for pretty-printing
 
@@ -64,7 +64,7 @@ class TallListFormatter():
 
         INPUT:
 
-        - ``the_list`` - The list (or a tuple).
+        - ``the_list`` -- The list (or a tuple).
 
         OUTPUT:
 
@@ -74,7 +74,7 @@ class TallListFormatter():
         TESTS::
 
             sage: from sage.repl.display.util import format_list
-            sage: print(format_list.try_format(
+            sage: print(format_list.try_format(                                         # needs sage.modules
             ....:        [matrix([[1, 2, 3, 4], [5, 6, 7, 8]]) for i in range(7)]))
             [
             [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]

@@ -191,7 +191,7 @@ class RibbonShapedTableaux(SkewTableaux):
         #     return RibbonShapedTableaux_shape(Partition(shape))
 
         # Otherwise arg0 takes the place of the category in pickling
-        return super(RibbonShapedTableaux, cls).__classcall__(cls, **kwds)
+        return super().__classcall__(cls, **kwds)
 
     def __init__(self, category=None):
         """
@@ -199,8 +199,8 @@ class RibbonShapedTableaux(SkewTableaux):
 
         EXAMPLES::
 
-            sage: S = RibbonShapedTableaux()
-            sage: TestSuite(S).run()
+            sage: S = RibbonShapedTableaux()                                            # needs sage.graphs
+            sage: TestSuite(S).run()                                                    # needs sage.graphs
         """
         if category is None:
             category = Sets()
@@ -262,7 +262,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
             return StandardRibbonShapedTableaux_shape(Partition(shape))
 
         # Otherwise arg0 takes the place of the category in pickling
-        return super(StandardRibbonShapedTableaux, cls).__classcall__(cls, **kwds)
+        return super().__classcall__(cls, **kwds)
 
     def __init__(self, category=None):
         """
@@ -270,6 +270,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.modules
             sage: S = StandardRibbonShapedTableaux()
             sage: TestSuite(S).run()
         """
@@ -293,6 +294,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.modules
             sage: it = StandardRibbonShapedTableaux().__iter__()
             sage: [next(it) for x in range(10)]
             [[],
@@ -339,7 +341,8 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
         EXAMPLES::
 
             sage: import sage.combinat.ribbon_shaped_tableau as rst
-            sage: [StandardRibbonShapedTableaux().from_permutation(p) for p in Permutations(3)]
+            sage: [StandardRibbonShapedTableaux().from_permutation(p)
+            ....:  for p in Permutations(3)]
             [[[1, 2, 3]],
              [[None, 2], [1, 3]],
              [[1, 3], [2]],
@@ -376,6 +379,8 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         [[None, 2, 4], [1, 3]]
         sage: StandardRibbonShapedTableaux([2,2]).last()
         [[None, 1, 2], [3, 4]]
+
+        sage: # needs sage.graphs sage.modules
         sage: StandardRibbonShapedTableaux([2,2]).cardinality()
         5
         sage: StandardRibbonShapedTableaux([2,2]).list()
@@ -406,7 +411,7 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         TESTS::
 
             sage: S = StandardRibbonShapedTableaux([2,2])
-            sage: TestSuite(S).run()
+            sage: TestSuite(S).run()                                                    # needs sage.graphs
         """
         self.shape = shape
         StandardRibbonShapedTableaux.__init__(self, FiniteEnumeratedSets())
@@ -448,7 +453,7 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
 
         EXAMPLES::
 
-            sage: [t for t in StandardRibbonShapedTableaux([2,2])]
+            sage: [t for t in StandardRibbonShapedTableaux([2,2])]                      # needs sage.graphs
             [[[None, 1, 3], [2, 4]],
              [[None, 1, 2], [3, 4]],
              [[None, 2, 3], [1, 4]],

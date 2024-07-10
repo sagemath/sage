@@ -70,12 +70,13 @@
 
 
 ARG ARTIFACT_BASE=source-clean
+ARG MAKE_BUILD=make-build
 
 ################################################################################
 # Image containing the run-time dependencies for Sage                          #
 ################################################################################
 FROM ubuntu:jammy as run-time-dependencies
-LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>"
+LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>, Sebastian Oehms <seb.oehms@gmail.com>"
 # Set sane defaults for common environment variables.
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
@@ -122,7 +123,7 @@ ARG SAGE_ROOT=/home/sage/sage
 RUN mkdir -p "$SAGE_ROOT"
 WORKDIR $SAGE_ROOT
 RUN git init
-RUN git remote add trac https://gitlab.com/sagemath/dev/tracmirror.git
+RUN git remote add upstream https://github.com/sagemath/sage.git
 
 ################################################################################
 # Image with the build context added, i.e., the directory from which `docker   #
@@ -155,10 +156,10 @@ WORKDIR $SAGE_ROOT
 # We create a list of all files present in the artifact-base (with a timestamp
 # of now) so we can find out later which files were added/changed/removed.
 RUN find . \( -type f -or -type l \) > $HOME/artifact-base.manifest
-RUN git fetch "$HOME/sage-context" HEAD \
+RUN git fetch --update-shallow "$HOME/sage-context" HEAD \
     && if [ -e docker/.commit ]; then \
           git reset `cat docker/.commit` \
-          || ( echo "Could not find commit `cat docker/.commit` in your local Git history. Please merge in the latest built develop branch to fix this: git fetch trac && git merge `cat docker/.commit`." && exit 1 ) \
+          || ( echo "Could not find commit `cat docker/.commit` in your local Git history. Please merge in the latest built develop branch to fix this: git fetch upstream && git merge `cat docker/.commit`." && exit 1 ) \
        else \
           echo "You are building from $ARTIFACT_BASE which has no docker/.commit file. That's a bug unless you are building from source-clean or something similar." \
           && git reset FETCH_HEAD \
@@ -203,7 +204,7 @@ RUN make build
 ################################################################################
 # Image with a full build of sage and its documentation.                       #
 ################################################################################
-FROM make-build as make-all
+FROM $MAKE_BUILD as make-all
 # The docbuild needs quite some RAM (as of May 2018). It sometimes calls
 # os.fork() to spawn an external program which then exceeds easily the
 # overcommit limit of the system (no RAM is actually used, but this limit is
@@ -229,8 +230,10 @@ FROM run-time-dependencies as sagemath
 ARG HOME=/home/sage
 ARG SAGE_ROOT=/home/sage/sage
 COPY --chown=sage:sage --from=make-release $SAGE_ROOT/ $SAGE_ROOT/
-# Put scripts to start gap, gp, maxima, ... in /usr/bin
-RUN sudo $SAGE_ROOT/sage --nodotsage -c "install_scripts('/usr/bin')"
+# set path in bashrc to start gap, gp, maxima, ... this does not
+# affect Sage (see https://github.com/sagemath/sage/pull/38049)
+RUN echo "export PATH=$SAGE_ROOT/local/bin:$PATH" >> ~/.bashrc
+
 COPY ./docker/entrypoint.sh /usr/local/bin/sage-entrypoint
 WORKDIR $HOME
 ENTRYPOINT ["/usr/local/bin/sage-entrypoint"]

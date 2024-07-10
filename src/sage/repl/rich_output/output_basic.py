@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Basic Output Types
 
@@ -320,7 +320,7 @@ class OutputLatex(OutputBase):
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputLatex
-            sage: OutputLatex(latex(sqrt(x)))
+            sage: OutputLatex(latex(sqrt(x)))                                           # needs sage.symbolic
             OutputLatex container
         """
         self.latex = OutputBuffer(latex)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Root system data for type F
 """
@@ -37,7 +36,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         TESTS::
 
-            sage: TestSuite(e).run()
+            sage: TestSuite(e).run()                                                    # needs sage.graphs
         """
         ambient_space.AmbientSpace.__init__(self, root_system, base_ring)
         v = ZZ(1)/ZZ(2)
@@ -275,12 +274,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-            sage: f = CartanType(['F',4]).dynkin_diagram()
-            sage: f
+            sage: f = CartanType(['F',4]).dynkin_diagram(); f                           # needs sage.graphs
             O---O=>=O---O
             1   2   3   4
             F4
-            sage: f.edges(sort=True)
+            sage: f.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
 
         """
@@ -291,7 +289,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         g.set_edge_label(2,3,2)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -309,12 +307,14 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%node_dist
-        ret += "\\draw (%s cm, 0.1 cm) -- +(%s cm,0);\n"%(node_dist, node_dist)
-        ret += "\\draw (%s cm, -0.1 cm) -- +(%s cm,0);\n"%(node_dist, node_dist)
-        ret += "\\draw (%s cm,0) -- +(%s cm,0);\n"%(node_dist*2.0, node_dist)
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % node_dist
+        ret += "\\draw (%s cm, 0.1 cm) -- +(%s cm,0);\n" % (node_dist, node_dist)
+        ret += "\\draw (%s cm, -0.1 cm) -- +(%s cm,0);\n" % (node_dist, node_dist)
+        ret += "\\draw (%s cm,0) -- +(%s cm,0);\n" % (node_dist*2.0, node_dist)
         if dual:
             ret += self._latex_draw_arrow_tip(1.5*node_dist-0.2, 0, 180)
         else:
@@ -323,7 +323,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             ret += node(i*node_dist, 0, label(i+1))
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the extended Dynkin diagram.
 
@@ -336,6 +336,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O---O=>=O---O
             -1  0   1   2
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         ret = "{}---{}=>={}---{}\n".format(node(label(1)), node(label(2)),
@@ -355,11 +357,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: F4.dual()
             ['F', 4] relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
 
-            sage: F4.dynkin_diagram()
+            sage: F4.dynkin_diagram()                                                   # needs sage.graphs
             O---O=>=O---O
             1   2   3   4
             F4
-            sage: F4.dual().dynkin_diagram()
+            sage: F4.dual().dynkin_diagram()                                            # needs sage.graphs
             O---O=>=O---O
             4   3   2   1
             F4 relabelled by {1: 4, 2: 3, 3: 2, 4: 1}

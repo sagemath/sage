@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat
+# sage.doctest: needs sage.combinat
 r"""
 Generating Function of Polyhedron's Integral Points
 
@@ -772,7 +772,7 @@ def _generating_function_via_Omega_(inequalities, B, skip_indices=()):
     return _simplify_(numerator, terms)
 
 
-class _TransformHrepresentation(object):
+class _TransformHrepresentation:
     r"""
     An abstract base class for transformations of the
     Hrepresentation of a polyhedron together with its
@@ -1428,7 +1428,7 @@ class _TransformMod(_TransformHrepresentation):
             <..._TransformMod object at 0x...>
         """
         self.mod = mod
-        super(_TransformMod, self).__init__(inequalities, equations, B)
+        super().__init__(inequalities, equations, B)
 
     def _transform_(self):
         r"""

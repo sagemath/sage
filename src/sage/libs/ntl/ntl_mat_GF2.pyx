@@ -40,7 +40,7 @@ include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
-from .ntl_GF2 cimport ntl_GF2
+from sage.libs.ntl.ntl_GF2 cimport ntl_GF2
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 
@@ -89,9 +89,9 @@ cdef class ntl_mat_GF2():
         cdef Py_ssize_t i, j
         cdef GF2_c _elem
 
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
-        if is_Matrix(nrows):
+        if isinstance(nrows, Matrix):
             _nrows = nrows.nrows()
             _ncols = nrows.ncols()
             v = nrows
@@ -470,8 +470,8 @@ cdef class ntl_mat_GF2():
             True
         """
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
-        from sage.matrix.constructor import Matrix
-        m =  Matrix(FiniteField(2),self.x.NumRows(),self.x.NumCols())
+        from sage.matrix.constructor import matrix
+        m = matrix(FiniteField(2),self.x.NumRows(),self.x.NumCols())
 
         cdef Py_ssize_t i, j
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Numerical Integration
 
@@ -9,7 +10,7 @@ AUTHORS:
 
 - Robert Bradshaw (2008-08): fast float integration
 
-- Jeroen Demeyer (2011-11-23): :trac:`12047`: return 0 when the
+- Jeroen Demeyer (2011-11-23): :issue:`12047`: return 0 when the
   integration interval is a point; reformat documentation and add to
   the reference manual.
 """
@@ -42,10 +43,10 @@ cdef class PyFunctionWrapper:
     cdef list lx
 
 cdef class compiled_integrand:
-    cdef int c_f(self, double t):  # void *params):
+    cdef int c_f(self, double t) noexcept:  # void *params):
         return 0
 
-cdef double c_f(double t, void *params):
+cdef double c_f(double t, void *params) noexcept:
     cdef double value
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
@@ -194,7 +195,7 @@ def numerical_integral(func, a, b=None,
 
     If the interval of integration is a point, then the result is
     always zero (this makes sense within the Lebesgue theory of
-    integration), see :trac:`12047`::
+    integration), see :issue:`12047`::
 
         sage: numerical_integral(log, 0, 0)
         (0.0, 0.0)
@@ -224,7 +225,7 @@ def numerical_integral(func, a, b=None,
     TESTS:
 
     Make sure that constant Expressions, not merely uncallable arguments,
-    can be integrated (:trac:`10088`), at least if we can coerce them
+    can be integrated (:issue:`10088`), at least if we can coerce them
     to float::
 
         sage: f, g = x, x-1
@@ -237,7 +238,7 @@ def numerical_integral(func, a, b=None,
         ...
         TypeError: unable to simplify to float approximation
 
-    Check for :trac:`15496`::
+    Check for :issue:`15496`::
 
         sage: f = x^2/exp(-1/(x^2+1))/(x^2+1)
         sage: D = integrate(f,(x,-infinity,infinity),hold=True)
@@ -247,7 +248,7 @@ def numerical_integral(func, a, b=None,
         ValueError: integral does not converge at -infinity
 
     Symbolic functions can be integrated as conveniently as symbolic
-    expressions, as in :trac:`15219`::
+    expressions, as in :issue:`15219`::
 
         sage: h(x) = x
         sage: numerical_integral(h,0,1)[0] # abs tol 1e-8
@@ -400,7 +401,7 @@ def numerical_integral(func, a, b=None,
     return result, abs_err
 
 
-cdef double c_monte_carlo_f(double *t, size_t dim, void *params):
+cdef double c_monte_carlo_f(double *t, size_t dim, void *params) noexcept:
     cdef double value
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
@@ -420,7 +421,7 @@ cdef double c_monte_carlo_f(double *t, size_t dim, void *params):
     return value
 
 
-cdef double c_monte_carlo_ff(double *x, size_t dim, void *params):
+cdef double c_monte_carlo_ff(double *x, size_t dim, void *params) noexcept:
     cdef double result
     (<Wrapper_rdf> params).call_c(x, &result)
     return result

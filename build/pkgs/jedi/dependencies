@@ -1,4 +1,4 @@
-$(PYTHON) parso | $(PYTHON_TOOLCHAIN)
+ parso | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

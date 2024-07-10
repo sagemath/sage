@@ -52,11 +52,11 @@ def find_min(vect):
         [0, 1, 0]
     """
     i = len(vect)
-    while vect[i-1]==0 and i>0:
-        i=i-1
+    while vect[i-1] == 0 and i > 0:
+        i = i-1
     min = [0]*len(vect)
-    if i>0:
-        min[i-1]=1
+    if i > 0:
+        min[i-1] = 1
     return min
 
 
@@ -174,11 +174,11 @@ class VectorPartitions(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``vec`` - Integer vector
-    - ``min`` - Integer vector dominated elementwise by ``vec``
-    - ``parts`` - Finite list of possible parts
-    - ``distinct`` - Boolean, set to ``True`` if only vector partitions with distinct parts are enumerated
-    - ``is_repeatable`` - Boolean function on ``parts`` which gives ``True`` in parts that can be repeated
+    - ``vec`` -- Integer vector
+    - ``min`` -- Integer vector dominated elementwise by ``vec``
+    - ``parts`` -- Finite list of possible parts
+    - ``distinct`` -- Boolean, set to ``True`` if only vector partitions with distinct parts are enumerated
+    - ``is_repeatable`` -- Boolean function on ``parts`` which gives ``True`` in parts that can be repeated
 
     EXAMPLES:
 
@@ -315,7 +315,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
             for part in self._parts: # choose the first part
                 if tuple(part) == self._vec:
                     yield self.element_class(self, [list(part)])
-                elif any(part[i]>self._vec[i] for i in range(len(self._vec))):
+                elif any(part[i] > self._vec[i] for i in range(len(self._vec))):
                     pass
                 else:# recursively find all possibilities for the rest of the vector partition
                     new_vec = tuple(self._vec[i]-part[i] for i in range(len(self._vec)))

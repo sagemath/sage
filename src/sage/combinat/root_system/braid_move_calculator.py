@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 """
 Braid Move Calculator
 
@@ -18,7 +19,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 
 
-class BraidMoveCalculator():
+class BraidMoveCalculator:
     """
     Helper class to compute braid moves.
     """

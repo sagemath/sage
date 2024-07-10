@@ -86,7 +86,7 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
         sage: coeffs
         (0, 1, -1, 0)
         sage: R.<x> = QQ[]
-        sage: R(coeffs).discriminant()
+        sage: R(coeffs).discriminant()                                                  # needs sage.libs.pari
         1
 
     The two non-equivalent cubics `x^3` and `x^2*z` with discriminant 0 can't
@@ -229,7 +229,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
         (1, 0, 0, 0, 1, 0)
 
     For fields of characteristic 2, 3 or 5, there is no reconstruction
-    implemented. This is part of :trac:`26786`.::
+    implemented. This is part of :issue:`26786`.::
 
         sage: binary_quintic_coefficients_from_invariants([3,1,2], K=GF(5))
         Traceback (most recent call last):

@@ -11,7 +11,6 @@ See also :mod:`sage.matroids.advanced`.
 AUTHORS:
 
 - Stefan van Zwam (2011-06-24): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
@@ -69,9 +68,9 @@ def setprint(X):
     Note that for iterables, the effect can be undesirable::
 
         sage: from sage.matroids.advanced import setprint
-        sage: M = matroids.named_matroids.Fano().delete('efg')
+        sage: M = matroids.catalog.Fano().delete('efg')
         sage: M.bases()
-        Iterator over a system of subsets
+        SetSystem of 3 sets over 4 elements
         sage: setprint(M.bases())
         [{'a', 'b', 'c'}, {'a', 'b', 'd'}, {'a', 'c', 'd'}]
 
@@ -172,7 +171,6 @@ def newlabel(groundset):
         63
         sage: t[0]
         'e'
-
     """
     char_list = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
     char_list.difference_update([str(e) for e in groundset])
@@ -210,7 +208,7 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
 
         sage: from sage.matroids.utilities import setprint
         sage: from sage.matroids.utilities import sanitize_contractions_deletions
-        sage: M = matroids.named_matroids.Fano()
+        sage: M = matroids.catalog.Fano()
         sage: setprint(sanitize_contractions_deletions(M, 'abc', 'defg'))
         [{'a', 'b', 'c'}, {'d', 'e', 'f', 'g'}]
         sage: setprint(sanitize_contractions_deletions(M, 'defg', 'abc'))
@@ -227,7 +225,6 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
         Traceback (most recent call last):
         ...
         ValueError: contraction and deletion sets are not disjoint.
-
     """
     if not contractions:
         contractions = frozenset()
@@ -392,8 +389,8 @@ def spanning_forest(M):
         G.add_edge(x + m, y)
     T = []
     # find spanning tree in each component
-    for component in G.connected_components():
-        spanning_tree = kruskal(G.subgraph(component))
+    for component in G.connected_components_subgraphs():
+        spanning_tree = kruskal(component)
         for (x, y, z) in spanning_tree:
             if x < m:
                 t = x
@@ -496,7 +493,7 @@ def lift_cross_ratios(A, lift_map=None):
     INPUT:
 
     - ``A`` -- a matrix over a ring ``source_ring``.
-    - ``lift_map`` -- a python dictionary, mapping each cross ratio of ``A`` to some element
+    - ``lift_map`` -- a Python dictionary, mapping each cross ratio of ``A`` to some element
       of a target ring, and such that ``lift_map[source_ring(1)] = target_ring(1)``.
 
     OUTPUT:
@@ -546,9 +543,9 @@ def lift_cross_ratios(A, lift_map=None):
         [0 6 3 6 0]
         sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)                          # needs sage.rings.finite_rings sage.rings.number_field
         sage: Z                                                                         # needs sage.rings.finite_rings sage.rings.number_field
-        [ 1  0  1  1  1]
-        [ 1  1  0  0  z]
-        [ 0 -1  z  1  0]
+        [     1      0      1      1      1]
+        [-z + 1      1      0      0      1]
+        [     0     -1      1 -z + 1      0]
         sage: M = LinearMatroid(reduced_matrix=A)
         sage: sorted(M.cross_ratios())
         [3, 5]
@@ -557,7 +554,6 @@ def lift_cross_ratios(A, lift_map=None):
         [-z + 1, z]
         sage: M.is_isomorphism(N, {e:e for e in M.groundset()})                         # needs sage.rings.finite_rings sage.rings.number_field
         True
-
     """
     from sage.graphs.graph import Graph
 
@@ -572,26 +568,28 @@ def lift_cross_ratios(A, lift_map=None):
 
     G = Graph([((r, 0), (c, 1), (r, c)) for r, c in A.nonzero_positions()])
     # write the entries of (a scaled version of) A as products of cross ratios of A
-    T = set()
-    for C in G.connected_components():
-        T.update(G.subgraph(C).min_spanning_tree())
+    T = Graph()
+    for C in G.connected_components_subgraphs():
+        T.add_edges(C.min_spanning_tree())
     # - fix a tree of the support graph G to units (= empty dict, product of 0 terms)
-    F = {entry[2]: dict() for entry in T}
-    W = set(G.edge_iterator()) - set(T)
-    H = G.subgraph(edges=T)
+    F = {entry: dict() for entry in T.edge_labels()}
+    W = set(G.edge_iterator()) - set(T.edge_iterator())
+    H = G.subgraph(edges=T.edge_iterator())
     while W:
         # - find an edge in W to process, closing a circuit in H which is induced in G
         edge = W.pop()
         path = H.shortest_path(edge[0], edge[1])
+        path_s = set(path)
         retry = True
         while retry:
             retry = False
             for edge2 in W:
-                if edge2[0] in path and edge2[1] in path:
+                if edge2[0] in path_s and edge2[1] in path_s:
                     W.add(edge)
                     edge = edge2
                     W.remove(edge)
                     path = H.shortest_path(edge[0], edge[1])
+                    path_s = set(path)
                     retry = True
                     break
         entry = edge[2]
@@ -709,7 +707,6 @@ def lift_map(target):
         ....:         for z in lm:
         ....:             if (x*y==z) and not (lm[x]*lm[y]==lm[z]):
         ....:                 print('not a proper lift map')
-
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
 
@@ -803,3 +800,17 @@ def split_vertex(G, u, v=None, edges=None):
 
     # This modifies the graph without needing to return anything
     return
+
+
+def cmp_elements_key(x):
+    """
+    A helper function to compare elements which may be integers or strings.
+
+    EXAMPLES::
+
+        sage: from sage.matroids.utilities import cmp_elements_key
+        sage: l = ['a', 'b', 1, 3, 2, 10, 111, 100, 'c', 'aa']
+        sage: sorted(l, key=cmp_elements_key)
+        [1, 2, 3, 10, 100, 111, 'a', 'aa', 'b', 'c']
+    """
+    return (isinstance(x, str), x)

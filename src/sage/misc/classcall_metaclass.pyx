@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Special Methods for Classes
 
@@ -79,7 +80,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
     TESTS::
 
-        sage: PerfectMatchings(2).list()
+        sage: PerfectMatchings(2).list()                                                # needs sage.combinat
         [[(1, 2)]]
 
     .. NOTE::
@@ -271,12 +272,12 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         The benefit, compared with using a wrapper function, is that the
         user interface has a single handle for the class::
 
-            sage: x = Partition([3,2,2])
-            sage: isinstance(x, Partition)          # todo: not implemented
+            sage: x = Partition([3,2,2])                                                # needs sage.combinat
+            sage: isinstance(x, Partition)      # not implemented                       # needs sage.combinat
 
         instead of::
 
-            sage: isinstance(x, sage.combinat.partition.Partition)
+            sage: isinstance(x, sage.combinat.partition.Partition)                      # needs sage.combinat
             True
 
         Another difference is that ``__classcall__`` is inherited by

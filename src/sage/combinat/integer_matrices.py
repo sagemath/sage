@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Counting, generating, and manipulating non-negative integer matrices
 
@@ -76,7 +77,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         from sage.combinat.composition import Composition
         row_sums = Composition(row_sums)
         column_sums = Composition(column_sums)
-        return super(IntegerMatrices, cls).__classcall__(cls, row_sums, column_sums)
+        return super().__classcall__(cls, row_sums, column_sums)
 
     def __init__(self, row_sums, column_sums):
         r"""
@@ -166,8 +167,8 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             sage: matrix([[-1, 3, 1]]) in IM
             False
         """
-        from sage.structure.element import is_Matrix
-        if not is_Matrix(x):
+        from sage.structure.element import Matrix
+        if not isinstance(x, Matrix):
             return False
         row_sums = [ZZ.zero()] * x.nrows()
         col_sums = [ZZ.zero()] * x.ncols()

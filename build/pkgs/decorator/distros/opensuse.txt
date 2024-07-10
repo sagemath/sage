@@ -1,1 +1,1 @@
-python3-decorator
+python3${PYTHON_MINOR}-decorator

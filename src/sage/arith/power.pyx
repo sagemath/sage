@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Generic implementation of powering
 
@@ -5,19 +6,19 @@ This implements powering of arbitrary objects using a
 square-and-multiply algorithm.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_check
 
-from .long cimport integer_check_long
+from sage.arith.long cimport integer_check_long
 
 
 cpdef generic_power(a, n):

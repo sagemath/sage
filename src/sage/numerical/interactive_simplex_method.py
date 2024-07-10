@@ -64,7 +64,7 @@ you can run these commands with typeset mode on (``%display typeset``) and get
 
 Since it has only two variables, we can solve it graphically::
 
-    sage: P.plot()                                                                      # optional - sage.plot
+    sage: P.plot()                                                                      # needs sage.plot
     Graphics object consisting of 19 graphics primitives
 
 
@@ -185,7 +185,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.matrix.special import column_matrix
 from sage.matrix.special import identity_matrix
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.special import random_matrix
 from sage.misc.latex import LatexExpr, latex
 from sage.misc.cachefunc import cached_function, cached_method
@@ -197,12 +197,13 @@ from sage.modules.free_module_element import free_module_element as vector
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "text"])
 from sage.rings.infinity import Infinity
+from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.rings.integer_ring import ZZ
 from sage.structure.all import SageObject
-from sage.symbolic.ring import SR
 
 
 # We produce rather complicated LaTeX code which needs some tweaks to be
@@ -298,9 +299,9 @@ def _latex_product(coefficients, variables,
 
         sage: from sage.numerical.interactive_simplex_method import \
         ....:       _latex_product
-        sage: var("x, y")
+        sage: var("x, y")                                                               # needs sage.symbolic
         (x, y)
-        sage: print(_latex_product([-1, 3], [x, y]))
+        sage: print(_latex_product([-1, 3], [x, y]))                                    # needs sage.symbolic
         - \mspace{-6mu}&\mspace{-6mu} x \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 3 y
     """
     entries = []
@@ -316,8 +317,10 @@ def _latex_product(coefficients, variables,
             t = latex(v)
         else:
             t = latex(c)
-            if SR(c).operator() in [operator.add, operator.sub]:
-                t = r"\left( " + t + r" \right)"
+            if '+' in t or '-' in t:
+                from sage.symbolic.ring import SR
+                if SR(c).operator() in [operator.add, operator.sub]:
+                    t = r"\left( " + t + r" \right)"
             t += " " + latex(v)
         entries.extend([sign, t])
     if drop_plus:   # Don't start with +
@@ -449,7 +452,7 @@ def default_variable_name(variable):
 
     INPUT:
 
-    - ``variable`` - a string describing requested name
+    - ``variable`` -- a string describing requested name
 
     OUTPUT:
 
@@ -1534,19 +1537,19 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot()                                                          # optional - sage.plot
-            sage: p.show()                                                              # optional - sage.plot
+            sage: p = P.plot()                                                          # needs sage.plot
+            sage: p.show()                                                              # needs sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot(0, 1000, 0, 1500)                                          # optional - sage.plot
-            sage: p.show()                                                              # optional - sage.plot
+            sage: p = P.plot(0, 1000, 0, 1500)                                          # needs sage.plot
+            sage: p.show()                                                              # needs sage.plot
 
         TESTS:
 
         We check that zero objective can be dealt with::
 
-            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()         # optional - sage.plot
+            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()         # needs sage.plot
             Graphics object consisting of 8 graphics primitives
         """
         FP = self.plot_feasible_set(*args, **kwds)
@@ -1611,13 +1614,13 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot_feasible_set()                                             # optional - sage.plot
-            sage: p.show()                                                              # optional - sage.plot
+            sage: p = P.plot_feasible_set()                                             # needs sage.plot
+            sage: p.show()                                                              # needs sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                             # optional - sage.plot
-            sage: p.show()                                                              # optional - sage.plot
+            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                             # needs sage.plot
+            sage: p.show()                                                              # needs sage.plot
         """
         if self.n() != 2:
             raise ValueError("only problems with 2 variables can be plotted")
@@ -1840,7 +1843,7 @@ class InteractiveLPProblem(SageObject):
             x = newx
             f = newf
 
-        objective_name = SR(kwds.get("objective_name", default_variable_name(
+        objective_name = polygen(ZZ, kwds.get("objective_name", default_variable_name(
             "primal objective" if self.is_primal() else "dual objective")))
         is_negative = self._is_negative
         constant_term = self._constant_term
@@ -1849,7 +1852,7 @@ class InteractiveLPProblem(SageObject):
             c = - c
             constant_term = - constant_term
             objective_name = - objective_name
-        kwds["objective_name"] = objective_name
+        kwds["objective_name"] = objective_name  # polynomial, no longer a string
         kwds["problem_type"] = "-max" if is_negative else "max"
         kwds["is_primal"] = self.is_primal()
         kwds["objective_constant_term"] = constant_term
@@ -2016,7 +2019,10 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
         if objective_name is None:
             objective_name = default_variable_name(
                 "primal objective" if is_primal else "dual objective")
-        self._objective_name = SR(objective_name)
+        if isinstance(objective_name, Polynomial):
+            self._objective_name = objective_name
+        else:
+            self._objective_name = polygen(ZZ, objective_name)
 
     @staticmethod
     def random_element(m, n, bound=5, special_probability=0.2,
@@ -2797,7 +2803,7 @@ class LPAbstractDictionary(SageObject):
         leaving = "Leaving: ${}$. ".format(latex(self.leaving()))
         if direction == "primal":
             return HtmlFragment(entering + leaving)
-        elif direction =="dual":
+        elif direction == "dual":
             return HtmlFragment(leaving + entering)
         else:
             raise ValueError("direction must be either primal or dual")
@@ -2832,13 +2838,13 @@ class LPAbstractDictionary(SageObject):
 
         INPUT:
 
-        - ``nonbasic_coefficients``-- a list of the coefficients for the
+        - ``nonbasic_coefficients`` -- a list of the coefficients for the
           new row (with which nonbasic variables are subtracted in the relation
           for the new basic variable)
 
-        - ``constant``--  the constant term for the new row
+        - ``constant`` --  the constant term for the new row
 
-        - ``basic_variable``-- (default: depends on :func:`style`)
+        - ``basic_variable`` -- (default: depends on :func:`style`)
           a string giving the name of the basic variable of the new row
 
         OUTPUT:
@@ -3904,7 +3910,35 @@ class LPDictionary(LPAbstractDictionary):
         c = copy(c)
         B = vector(basic_variables)
         N = vector(nonbasic_variables)
-        self._AbcvBNz = [A, b, c, objective_value, B, N, SR(objective_name)]
+        # Issue #29101: vector does not guarantee that the result is freshly allocated
+        # if the input was already a vector
+        if B is basic_variables:
+            B = copy(B)
+        if N is nonbasic_variables:
+            N = copy(N)
+        self._AbcvBNz = [A, b, c, objective_value, B, N, polygen(ZZ, objective_name)]
+
+    def __copy__(self):
+        r"""
+        TESTS:
+
+        Test that copies do not share state with the original::
+
+            sage: A = ([1, 1], [3, 1])
+            sage: b = (1000, 1500)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: D = P.initial_dictionary()
+            sage: D_2 = copy(D)
+            sage: D is D_2
+            False
+            sage: D.enter('x1')
+            sage: D.leave('x3')
+            sage: D.update()
+            sage: D_2 == D
+            False
+        """
+        return type(self)(*self._AbcvBNz)
 
     @staticmethod
     def random_element(m, n, bound=5, special_probability=0.2):
@@ -3944,9 +3978,7 @@ class LPDictionary(LPAbstractDictionary):
             c = random_vector(ZZ, n, x=-bound, y=0).change_ring(QQ)
         x_N = list(PolynomialRing(QQ, "x", m + n + 1, order="neglex").gens())
         x_N.pop(0)
-        x_B = []
-        for i in range(m):
-            x_B.append(x_N.pop(randint(0, n + m - i - 1)))
+        x_B = [x_N.pop(randint(0, n + m - i - 1)) for i in range(m)]
         return LPDictionary(A, b, c, randint(-bound, bound), x_B, x_N, "z")
 
     def __eq__(self, other):
@@ -4067,13 +4099,13 @@ class LPDictionary(LPAbstractDictionary):
 
         INPUT:
 
-        - ``nonbasic_coefficients``-- a list of the coefficients for the
+        - ``nonbasic_coefficients`` -- a list of the coefficients for the
           new row (with which nonbasic variables are subtracted in the relation
           for the new basic variable)
 
-        - ``constant``--  the constant term for the new row
+        - ``constant`` --  the constant term for the new row
 
-        - ``basic_variable``-- (default: depends on :func:`style`)
+        - ``basic_variable`` -- (default: depends on :func:`style`)
           a string giving the name of the basic variable of the new row
 
         OUTPUT:
@@ -4914,13 +4946,13 @@ class LPRevisedDictionary(LPAbstractDictionary):
 
         INPUT:
 
-        - ``nonbasic_coefficients``-- a list of the coefficients for the
+        - ``nonbasic_coefficients`` -- a list of the coefficients for the
           new row (with which nonbasic variables are subtracted in the relation
           for the new basic variable)
 
-        - ``constant``--  the constant term for the new row
+        - ``constant`` --  the constant term for the new row
 
-        - ``basic_variable``-- (default: depends on :func:`style`)
+        - ``basic_variable`` -- (default: depends on :func:`style`)
           a string giving the name of the basic variable of the new row
 
         OUTPUT:
@@ -4977,7 +5009,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
         for i, coef in zip(self.nonbasic_indices(), nonbasic_coefficients):
             # Extra -1 is due to the auxiliary variable at index 0
             if i > n:
-                nbc_slack[i -1 - n] = coef
+                nbc_slack[i - 1 - n] = coef
             else:
                 nbc_decision[i - 1] = coef
         if 0 in self.basic_indices() and not sum(nbc_slack) == -1:

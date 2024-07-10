@@ -16,7 +16,7 @@ AUTHOR:
 # to make sure the function get_cparent is found since it is used in
 # 'polynomial_template.pxi'.
 
-cdef inline cparent get_cparent(parent):
+cdef inline cparent get_cparent(parent) noexcept:
     return 0
 
 # first we include the definitions
@@ -53,7 +53,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             sage: x^3 + x^2 + 1
             x^3 + x^2 + 1
 
-        We check that the bug noted at :trac:`12724` is fixed::
+        We check that the bug noted at :issue:`12724` is fixed::
 
             sage: R.<x> = Zmod(2)[]
             sage: R([2^80])

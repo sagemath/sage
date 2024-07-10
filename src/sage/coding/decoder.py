@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Decoders
 
@@ -9,7 +9,6 @@ AUTHORS:
 - David Joyner (2009-02-01): initial version
 
 - David Lucas (2015-06-29): abstract class version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2009 David Joyner <wdjoyner@gmail.com>
@@ -31,7 +30,7 @@ class Decoder(SageObject):
     Every decoder class for linear codes (of any metric) should inherit from
     this abstract class.
 
-    To implement an decoder, you need to:
+    To implement a decoder, you need to:
 
     - inherit from :class:`Decoder`
 

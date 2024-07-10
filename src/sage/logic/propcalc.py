@@ -140,8 +140,8 @@ It is an error to create a formula with bad syntax::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-### TODO:
-### converts (cnf) returns w/o change
+# TODO:
+# converts (cnf) returns w/o change
 
 from . import boolformula
 from . import logicparser
@@ -188,6 +188,7 @@ def formula(s):
         msg = "malformed statement"
         raise SyntaxError(msg)
     return f
+
 
 def get_formulas(*statements):
     r"""
@@ -261,6 +262,7 @@ def get_formulas(*statements):
             raise TypeError
     return formulas
 
+
 def consistent(*formulas):
     r"""
     Determine if the formulas are logically consistent.
@@ -273,9 +275,9 @@ def consistent(*formulas):
 
     A boolean value to be determined as follows:
 
-    - ``True`` - if the formulas are logically consistent
+    - ``True`` -- if the formulas are logically consistent
 
-    - ``False`` - if the formulas are not logically consistent
+    - ``False`` -- if the formulas are not logically consistent
 
     EXAMPLES:
 
@@ -309,6 +311,7 @@ def consistent(*formulas):
 
     # if conjunction is a contradiction, the formulas are inconsistent
     return not conjunction.is_contradiction()
+
 
 # define function ``valid_consequence`` for backward compatibility
 valid_consequence = deprecated_function_alias(28052, boolformula.is_consequence)

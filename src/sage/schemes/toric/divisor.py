@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Toric divisors and divisor classes
 
@@ -169,7 +170,7 @@ AUTHORS:
 from sage.combinat.combination import Combinations
 import sage.geometry.abc
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.toric_lattice_element import is_ToricLatticeElement
+from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.topology.simplicial_complex import SimplicialComplex
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
@@ -184,9 +185,9 @@ from sage.rings.rational_field import QQ
 from sage.schemes.generic.divisor import Divisor_generic
 from sage.schemes.generic.divisor_group import DivisorGroup_generic
 from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
-from sage.schemes.toric.variety import CohomologyRing, is_ToricVariety
+from sage.schemes.toric.variety import CohomologyRing, ToricVariety_field
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 
 
 def is_ToricDivisor(x):
@@ -243,11 +244,11 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
       divisor group. If ``ring`` is not specified, a coefficient ring
       suitable for ``arg`` is derived.
 
-    - ``check`` -- bool (default: True). Whether to coerce
+    - ``check`` -- bool (default: ``True``). Whether to coerce
       coefficients into base ring. Setting it to ``False`` can speed
       up construction.
 
-    - ``reduce`` -- reduce (default: True). Whether to combine common
+    - ``reduce`` -- reduce (default: ``True``). Whether to combine common
       terms. Setting it to ``False`` can speed up construction.
 
     .. WARNING::
@@ -301,7 +302,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         ...
         TypeError: cannot deduce coefficient ring for [(u, u)]
     """
-    assert is_ToricVariety(toric_variety)
+    assert isinstance(toric_variety, ToricVariety_field)
 
     # First convert special arguments into lists
     # of multiplicities or (multiplicity,coordinate)
@@ -311,7 +312,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         check = False
         reduce = False
     # Divisor by lattice point (corresponding to a ray)
-    if is_ToricLatticeElement(arg):
+    if isinstance(arg, ToricLatticeElement):
         if arg not in toric_variety.fan().lattice():
             raise ValueError("%s is not in the ambient lattice of %s"
                              % (arg, toric_variety.fan()))
@@ -345,7 +346,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
     except (AssertionError, TypeError):
         n_rays = toric_variety.fan().nrays()
         assert len(arg) == n_rays, \
-            'Argument list {0} is not of the required length {1}!' \
+            'Argument list {} is not of the required length {}!' \
             .format(arg, n_rays)
         arg = list(zip(arg, toric_variety.gens()))
         reduce = False
@@ -566,7 +567,7 @@ class ToricDivisor_generic(Divisor_generic):
           returned.
 
         - If there is no such vector (i.e. ``self`` is not even a
-          `\QQ`-Cartier divisor), a ``ValueError`` is raised.
+          `\QQ`-Cartier divisor), a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -772,7 +773,7 @@ class ToricDivisor_generic(Divisor_generic):
         .. NOTE::
 
             A divisor that is Weil but not Cartier might be impossible
-            to move away. In this case, a ``ValueError`` is raised.
+            to move away. In this case, a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -817,7 +818,7 @@ class ToricDivisor_generic(Divisor_generic):
 
             sage: dP6 = toric_varieties.dP6()
             sage: D = dP6.divisor(dP6.fan().ray(0))
-            sage: D.cohomology_class()
+            sage: D.cohomology_class()                                                  # needs sage.libs.singular
             [y + v - w]
         """
         divisor = vector(self)
@@ -840,9 +841,9 @@ class ToricDivisor_generic(Divisor_generic):
             sage: D5 = dP6.divisor(dP6.fan().cone_containing( N(-1,-1) ))
             sage: D6 = dP6.divisor(dP6.fan().cone_containing( N(0,-1)  ))
             sage: D = -D3 + 2*D5 - D6
-            sage: D.Chern_character()
+            sage: D.Chern_character()                                                   # needs sage.libs.singular
             [5*w^2 + y - 2*v + w + 1]
-            sage: dP6.integrate( D.ch() * dP6.Td() )
+            sage: dP6.integrate(D.ch() * dP6.Td())                                      # needs sage.libs.singular
             -4
         """
         return self.cohomology_class().exp()
@@ -1062,7 +1063,7 @@ class ToricDivisor_generic(Divisor_generic):
             (A vertex at (0, 0),)
             sage: D.is_nef()
             False
-            sage: dP7.integrate( D.ch() * dP7.Td() )
+            sage: dP7.integrate(D.ch() * dP7.Td())                                      # needs sage.libs.singular
             1
             sage: P_antiK = (-dP7.K()).polyhedron(); P_antiK
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 5 vertices
@@ -1266,7 +1267,7 @@ class ToricDivisor_generic(Divisor_generic):
 
             sage: P1.<u,v> = toric_varieties.P1()
             sage: D = -P1.K()
-            sage: D.Kodaira_map()
+            sage: D.Kodaira_map()                                                       # needs fpylll sage.libs.singular
             Scheme morphism:
               From: 1-d CPR-Fano toric variety covered by 2 affine patches
               To:   Closed subscheme of Projective Space of dimension 2
@@ -1275,7 +1276,7 @@ class ToricDivisor_generic(Divisor_generic):
 
             sage: dP6 = toric_varieties.dP6()
             sage: D = -dP6.K()
-            sage: D.Kodaira_map(names='x')
+            sage: D.Kodaira_map(names='x')                                              # needs fpylll sage.libs.singular
             Scheme morphism:
               From: 2-d CPR-Fano toric variety covered by 6 affine patches
               To:   Closed subscheme of Projective Space of dimension 6
@@ -1359,7 +1360,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: D._sheaf_cohomology( SimplicialComplex([[1,2],[2,3],[3,1]]) )
             (0, 0, 1)
 
-        A more complicated example to test that :trac:`10731` is fixed::
+        A more complicated example to test that :issue:`10731` is fixed::
 
             sage: cell24 = Polyhedron(vertices=[
             ....:  (1,0,0,0),(0,1,0,0),(0,0,1,0),(0,0,0,1),(1,-1,-1,1),(0,0,-1,1),
@@ -1530,7 +1531,7 @@ class ToricDivisor_generic(Divisor_generic):
              2: Vector space of dimension 0 over Rational Field}
             sage: D.cohomology( weight=M(0,0), deg=1 )
             Vector space of dimension 1 over Rational Field
-            sage: dP6.integrate( D.ch() * dP6.Td() )
+            sage: dP6.integrate(D.ch() * dP6.Td())                                      # needs sage.libs.singular
             -4
 
         Note the different output options::
@@ -1686,7 +1687,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             sage: DivisorGroup(P2, ZZ) is ToricDivisorGroup(P2, ZZ)
             False
         """
-        assert is_ToricVariety(toric_variety), str(toric_variety) + ' is not a toric variety!'
+        assert isinstance(toric_variety, ToricVariety_field), str(toric_variety) + ' is not a toric variety!'
         super().__init__(toric_variety, base_ring)
 
     def _latex_(self):
@@ -1805,7 +1806,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
 
         TESTS:
 
-        Check for :trac:`12812`::
+        Check for :issue:`12812`::
 
             sage: TDiv(0)
             0
@@ -2013,7 +2014,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
         """
         if is_ToricDivisor(x):
             x = self._projection_matrix * vector(x)
-        if is_Vector(x):
+        if isinstance(x, Vector):
             x = list(x)
         return self.element_class(self, x)
 

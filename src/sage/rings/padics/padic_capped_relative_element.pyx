@@ -29,7 +29,7 @@ from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.padics.pow_computer cimport PowComputer_class
 
-cdef extern from "sage/rings/padics/transcendantal.c":
+cdef extern from "transcendantal.c":
     cdef void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
@@ -126,16 +126,16 @@ cdef class pAdicCappedRelativeElement(CRElement):
     Construct from Pari objects::
 
         sage: R = Zp(5)
-        sage: x = pari(123123) ; R(x)
+        sage: x = pari(123123) ; R(x)                                                   # needs sage.libs.pari
         3 + 4*5 + 4*5^2 + 4*5^3 + 5^4 + 4*5^5 + 2*5^6 + 5^7 + O(5^20)
         sage: R(pari(R(5252)))
         2 + 2*5^3 + 3*5^4 + 5^5 + O(5^20)
         sage: R = Zp(5,prec=5)
         sage: R(pari(-1))
         4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5)
-        sage: pari(R(-1))
+        sage: pari(R(-1))                                                               # needs sage.libs.pari
         4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5)
-        sage: pari(R(0))
+        sage: pari(R(0))                                                                # needs sage.libs.pari
         0
         sage: R(pari(R(0,5)))
         O(5^5)
@@ -201,11 +201,11 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: R = Zp(17, 10); a = ~R(14); pari(a) #indirect doctest
+            sage: R = Zp(17, 10); a = ~R(14); pari(a)  # indirect doctest
             11 + 3*17 + 17^2 + 6*17^3 + 13*17^4 + 15*17^5 + 10*17^6 + 3*17^7 + 17^8 + 6*17^9 + O(17^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             0
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(17^5)
         """
         return self._to_gen()
@@ -216,13 +216,13 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: R = Zp(5, 10); a = R(17); pari(a) #indirect doctest
+            sage: R = Zp(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             0
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^5)
-            sage: pari(R(0,5)).debug()
+            sage: pari(R(0,5)).debug()                                                  # needs sage.libs.pari
             [&=...] PADIC(lg=5):... (precp=0,valp=5):... ... ... ...
                 p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
@@ -235,6 +235,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
                                       self.prime_pow.prime.value,
                                       self.prime_pow.pow_mpz_t_tmp(self.relprec),
                                       self.unit)
+
     def _integer_(self, Z=None):
         r"""
         Return an integer congruent to this element modulo
@@ -534,6 +535,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest
@@ -574,6 +576,7 @@ def unpickle_pcre_v1(R, unit, ordp, relprec):
         2*5^2 + 3*5^3 + O(5^7)
     """
     return unpickle_cre_v2(pAdicCappedRelativeElement, R, unit, ordp, relprec)
+
 
 def base_p_list(Integer n, bint pos, PowComputer_class prime_pow):
     r"""

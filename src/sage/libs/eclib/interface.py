@@ -295,7 +295,7 @@ class mwrank_EllipticCurve(SageObject):
 
         TESTS:
 
-        See :trac:`7992`::
+        See :issue:`7992`::
 
             sage: EllipticCurve([0, prod(prime_range(10))]).mwrank_curve().two_descent()
             Basic pair: I=0, J=-5670
@@ -331,7 +331,7 @@ class mwrank_EllipticCurve(SageObject):
             RuntimeError: A 2-descent did not complete successfully.
 
         Calling this method twice does not cause a segmentation fault
-        (see :trac:`10665`)::
+        (see :issue:`10665`)::
 
             sage: E = EllipticCurve([1, 1, 0, 0, 528])
             sage: E.two_descent(verbose=False)
@@ -556,7 +556,7 @@ class mwrank_EllipticCurve(SageObject):
             sage: E.gens()
             [[-1001107, -4004428, 1]]
 
-        Check that :trac:`18031` is fixed::
+        Check that :issue:`18031` is fixed::
 
             sage: E = EllipticCurve([0,-1,1,-266,968])
             sage: Q1 = E([-1995,3674,125])
@@ -569,7 +569,7 @@ class mwrank_EllipticCurve(SageObject):
             self.__two_descent_data().saturate(bound, lower)
             self.__saturate = bound
 
-    def gens(self):
+    def gens(self) -> list:
         """
         Return a list of the generators for the Mordell-Weil group.
 
@@ -728,7 +728,7 @@ class mwrank_MordellWeil(SageObject):
         P1 = [-3:0:1]     is generator number 1
         saturating up to 20...Saturation index bound (for points of good reduction)  = 3
         Reducing saturation bound from given value 20 to computed index bound 3
-        Tamagawa index primes are [ 2 ]
+        Tamagawa index primes are [ 2 ]...
         Checking saturation at [ 2 3 ]
         Checking 2-saturation
         Points were proved 2-saturated (max q used = 7)
@@ -738,7 +738,7 @@ class mwrank_MordellWeil(SageObject):
         P2 = [-2:3:1]     is generator number 2
         saturating up to 20...Saturation index bound (for points of good reduction)  = 4
         Reducing saturation bound from given value 20 to computed index bound 4
-        Tamagawa index primes are [ 2 ]
+        Tamagawa index primes are [ 2 ]...
         Checking saturation at [ 2 3 ]
         Checking 2-saturation
         possible kernel vector = [1,1]
@@ -753,7 +753,7 @@ class mwrank_MordellWeil(SageObject):
         P3 = [-14:25:8]   is generator number 3
         saturating up to 20...Saturation index bound (for points of good reduction)  = 3
         Reducing saturation bound from given value 20 to computed index bound 3
-        Tamagawa index primes are [ 2 ]
+        Tamagawa index primes are [ 2 ]...
         Checking saturation at [ 2 3 ]
         Checking 2-saturation
         Points were proved 2-saturated (max q used = 11)
@@ -799,7 +799,7 @@ class mwrank_MordellWeil(SageObject):
             Subgroup of Mordell-Weil group: []
         """
         if not isinstance(curve, mwrank_EllipticCurve):
-            raise TypeError("curve (=%s) must be an mwrank_EllipticCurve"%curve)
+            raise TypeError("curve (=%s) must be an mwrank_EllipticCurve" % curve)
         self.__curve = curve
         self.__verbose = verbose
         self.__pp = pp
@@ -841,7 +841,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ.__repr__()
             'Subgroup of Mordell-Weil group: [[1:-1:1], [-2:3:1], [-14:25:8]]'
         """
-        return "Subgroup of Mordell-Weil group: %s"%self.__mw
+        return "Subgroup of Mordell-Weil group: %s" % self.__mw
 
     def process(self, v, saturation_bound=0):
         """Process points in the list ``v``.
@@ -908,7 +908,7 @@ class mwrank_MordellWeil(SageObject):
             saturating basis...Saturation index bound (for points of good reduction)  = 93
             Only p-saturating for p up to given value 2.
             The resulting points may not be p-saturated for p between this and the computed index bound 93
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 ]
             Checking 2-saturation
             possible kernel vector = [1,0,0]
@@ -930,7 +930,7 @@ class mwrank_MordellWeil(SageObject):
             saturating basis...Saturation index bound (for points of good reduction)  = 46
             Only p-saturating for p up to given value 3.
             The resulting points may not be p-saturated for p between this and the computed index bound 46
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
@@ -954,7 +954,7 @@ class mwrank_MordellWeil(SageObject):
             saturating basis...Saturation index bound (for points of good reduction)  = 15
             Only p-saturating for p up to given value 5.
             The resulting points may not be p-saturated for p between this and the computed index bound 15
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 5 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
@@ -978,7 +978,7 @@ class mwrank_MordellWeil(SageObject):
             0.417143558758384
             sage: EQ.saturate()   # points are now saturated
             saturating basis...Saturation index bound (for points of good reduction)  = 3
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
@@ -988,11 +988,11 @@ class mwrank_MordellWeil(SageObject):
             (True, 1, '[ ]')
         """
         if not isinstance(v, list):
-            raise TypeError("v (=%s) must be a list"%v)
+            raise TypeError("v (=%s) must be a list" % v)
         saturation_bound = int(saturation_bound)
         for P in v:
             if not isinstance(P, (list, tuple)) or len(P) != 3:
-                raise TypeError("v (=%s) must be a list of 3-tuples (or 3-element lists) of ints"%v)
+                raise TypeError("v (=%s) must be a list of 3-tuples (or 3-element lists) of ints" % v)
             self.__mw.process(P, saturation_bound)
 
     def regulator(self):
@@ -1189,7 +1189,7 @@ class mwrank_MordellWeil(SageObject):
 
             sage: EQ.saturate()   # points are now saturated
             saturating basis...Saturation index bound (for points of good reduction) = 3
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
@@ -1217,7 +1217,7 @@ class mwrank_MordellWeil(SageObject):
 
             sage: EQ.saturate()
             saturating basis...Saturation index bound (for points of good reduction) = 3
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)

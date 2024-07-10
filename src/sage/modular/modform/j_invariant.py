@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 r"""
 `q`-expansion of `j`-invariant
 """

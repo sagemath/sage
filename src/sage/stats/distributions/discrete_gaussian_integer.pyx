@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 #
 # distutils: sources = sage/stats/distributions/dgs_gauss_mp.c sage/stats/distributions/dgs_gauss_dp.c sage/stats/distributions/dgs_bern.c
 # distutils: depends = sage/stats/distributions/dgs_gauss.h sage/stats/distributions/dgs_bern.h sage/stats/distributions/dgs_misc.h
@@ -107,7 +107,6 @@ We construct a sampler with `c\%1 != 0`::
 REFERENCES:
 
 - [DDLL2013]_
-
 """
 #******************************************************************************
 #
@@ -148,9 +147,9 @@ from sage.libs.mpfr cimport mpfr_set, MPFR_RNDN
 from sage.rings.integer cimport Integer
 from sage.misc.randstate cimport randstate, current_randstate
 
-from .dgs cimport dgs_disc_gauss_mp_init, dgs_disc_gauss_mp_clear, dgs_disc_gauss_mp_flush_cache
-from .dgs cimport dgs_disc_gauss_dp_init, dgs_disc_gauss_dp_clear, dgs_disc_gauss_dp_flush_cache
-from .dgs cimport DGS_DISC_GAUSS_UNIFORM_TABLE, DGS_DISC_GAUSS_UNIFORM_ONLINE, DGS_DISC_GAUSS_UNIFORM_LOGTABLE, DGS_DISC_GAUSS_SIGMA2_LOGTABLE
+from sage.stats.distributions.dgs cimport dgs_disc_gauss_mp_init, dgs_disc_gauss_mp_clear, dgs_disc_gauss_mp_flush_cache
+from sage.stats.distributions.dgs cimport dgs_disc_gauss_dp_init, dgs_disc_gauss_dp_clear, dgs_disc_gauss_dp_flush_cache
+from sage.stats.distributions.dgs cimport DGS_DISC_GAUSS_UNIFORM_TABLE, DGS_DISC_GAUSS_UNIFORM_ONLINE, DGS_DISC_GAUSS_UNIFORM_LOGTABLE, DGS_DISC_GAUSS_SIGMA2_LOGTABLE
 
 cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
     r"""
@@ -169,45 +168,45 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
 
         INPUT:
 
-        - ``sigma`` - samples `x` are accepted with probability proportional to
+        - ``sigma`` -- samples `x` are accepted with probability proportional to
           `\exp(-(x-c)²/(2σ²))`
 
-        - ``c`` - the mean of the distribution. The value of ``c`` does not have
+        - ``c`` -- the mean of the distribution. The value of ``c`` does not have
           to be an integer. However, some algorithms only support integer-valued
           ``c`` (default: ``0``)
 
-        - ``tau`` - samples outside the range `(⌊c⌉-⌈στ⌉,...,⌊c⌉+⌈στ⌉)` are
+        - ``tau`` -- samples outside the range `(⌊c⌉-⌈στ⌉,...,⌊c⌉+⌈στ⌉)` are
           considered to have probability zero. This bound applies to algorithms which
           sample from the uniform distribution (default: ``6``)
 
-        - ``algorithm`` - see list below (default: ``"uniform+table"`` for
+        - ``algorithm`` -- see list below (default: ``"uniform+table"`` for
            `σt` bounded by ``DiscreteGaussianDistributionIntegerSampler.table_cutoff`` and
            ``"uniform+online"`` for bigger `στ`)
 
-        - ``precision`` - either ``"mp"`` for multi-precision where the actual
+        - ``precision`` -- either ``"mp"`` for multi-precision where the actual
           precision used is taken from sigma or ``"dp"`` for double precision. In
           the latter case results are not reproducible. (default: ``"mp"``)
 
         ALGORITHMS:
 
-        - ``"uniform+table"`` - classical rejection sampling, sampling from the
+        - ``"uniform+table"`` -- classical rejection sampling, sampling from the
           uniform distribution and accepted with probability proportional to
           `\exp(-(x-c)²/(2σ²))` where `\exp(-(x-c)²/(2σ²))` is precomputed and
           stored in a table. Any real-valued `c` is supported.
 
-        - ``"uniform+logtable"`` - samples are drawn from a uniform distribution and
+        - ``"uniform+logtable"`` -- samples are drawn from a uniform distribution and
           accepted with probability proportional to `\exp(-(x-c)²/(2σ²))` where
           `\exp(-(x-c)²/(2σ²))` is computed using logarithmically many calls to
           Bernoulli distributions. See [DDLL2013]_ for details.  Only
           integer-valued `c` are supported.
 
-        - ``"uniform+online"`` - samples are drawn from a uniform distribution and
+        - ``"uniform+online"`` -- samples are drawn from a uniform distribution and
           accepted with probability proportional to `\exp(-(x-c)²/(2σ²))` where
           `\exp(-(x-c)²/(2σ²))` is computed in each invocation. Typically this
           is very slow.  See [DDLL2013]_ for details.  Any real-valued `c` is
           accepted.
 
-        - ``"sigma2+logtable"`` - samples are drawn from an easily samplable
+        - ``"sigma2+logtable"`` -- samples are drawn from an easily samplable
           distribution with `σ = k·σ_2` with `σ_2 = \sqrt{1/(2\log 2)}` and accepted
           with probability proportional to `\exp(-(x-c)²/(2σ²))` where
           `\exp(-(x-c)²/(2σ²))` is computed using  logarithmically many calls to Bernoulli

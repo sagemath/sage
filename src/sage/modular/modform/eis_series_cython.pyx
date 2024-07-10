@@ -12,7 +12,7 @@ from sage.rings.fast_arith cimport prime_range
 from cpython.list cimport PyList_GET_ITEM
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.gmp.mpz cimport *
-from sage.libs.flint.fmpz_poly cimport Fmpz_poly
+from sage.libs.flint.fmpz_poly_sage cimport Fmpz_poly, fmpz_poly_set_coeff_mpz, fmpz_poly_scalar_mul_mpz
 
 cpdef Ek_ZZ(int k, int prec=10):
     """
@@ -93,7 +93,7 @@ cpdef Ek_ZZ(int k, int prec=10):
         while True:
             continue_flag = 0
             # do the first p-1
-            for i from 0 < i < p:
+            for i in range(1, p):
                 ind += p
                 if (ind >= prec):
                     continue_flag = 1
@@ -140,7 +140,7 @@ cpdef Ek_ZZ(int k, int prec=10):
     return val
 
 
-cpdef eisenstein_series_poly(int k, int prec = 10) :
+cpdef eisenstein_series_poly(int k, int prec=10):
     r"""
     Return the q-expansion up to precision ``prec`` of the weight `k`
     Eisenstein series, as a FLINT :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly`
@@ -215,7 +215,7 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
     mpz_clear(last_m1)
 
     fmpz_poly_set_coeff_mpz(res.poly, prec-1, val[prec-1])
-    for i from 1 <= i < prec - 1 :
+    for i in range(1, prec - 1):
         fmpz_poly_set_coeff_mpz(res.poly, i, val[i])
 
     fmpz_poly_scalar_mul_mpz(res.poly, res.poly, (<Integer>(a0.denominator())).value)

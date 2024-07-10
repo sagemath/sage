@@ -1,7 +1,8 @@
+# sage.doctest: needs sage.symbolic
 """
 Plotting fields
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
@@ -15,8 +16,8 @@ Plotting fields
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options
 from sage.arith.srange import xsrange
@@ -118,8 +119,8 @@ class PlotField(GraphicPrimitive):
 
         TESTS:
 
-        We check that :trac:`15052` is fixed
-        (note that in general :trac:`15002` should be fixed)::
+        We check that :issue:`15052` is fixed
+        (note that in general :issue:`15002` should be fixed)::
 
             sage: x,y=var('x,y')
             sage: P=plot_vector_field((sin(x), cos(y)), (x,-3,3), (y,-3,3), wrong_option='nonsense')
@@ -138,7 +139,7 @@ class PlotField(GraphicPrimitive):
             20
 
         """
-        return "PlotField defined by a %s x %s vector grid"%(
+        return "PlotField defined by a {} x {} vector grid".format(
                self._options['plot_points'], self._options['plot_points'])
 
     def _render_on_subplot(self, subplot):
@@ -255,12 +256,12 @@ def plot_vector_field(f_g, xrange, yrange, **options):
         x,y = var('x,y')
         g = plot_vector_field((x,y), (x,-2,2), (y,-2,2), xmax=10)
         sphinx_plot(g)
-
     """
-    (f,g) = f_g
+    f, g = f_g
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
-    z, ranges = setup_for_eval_on_grid([f,g], [xrange,yrange], options['plot_points'])
+    z, ranges = setup_for_eval_on_grid([f, g], [xrange, yrange],
+                                       options['plot_points'])
     f, g = z
 
     xpos_array, ypos_array, xvec_array, yvec_array = [], [], [], []
@@ -334,7 +335,7 @@ def plot_slope_field(f, xrange, yrange, **kwds):
     TESTS:
 
     Verify that we're not getting warnings due to use of headless quivers
-    (:trac:`11208`)::
+    (:issue:`11208`)::
 
         sage: x,y = var('x y')
         sage: import numpy # bump warnings up to errors for testing purposes
@@ -351,9 +352,12 @@ def plot_slope_field(f, xrange, yrange, **kwds):
     from sage.misc.functional import sqrt
     from sage.misc.sageinspect import is_function_or_cython_function
     if is_function_or_cython_function(f):
-        norm_inverse = lambda x,y: 1/sqrt(f(x, y)**2+1)
-        f_normalized = lambda x,y: f(x, y)*norm_inverse(x, y)
+        def norm_inverse(x, y):
+            return 1 / sqrt(f(x, y)**2 + 1)
+
+        def f_normalized(x, y):
+            return f(x, y) * norm_inverse(x, y)
     else:
-        norm_inverse = 1 / sqrt((f**2+1))
+        norm_inverse = 1 / sqrt(f**2 + 1)
         f_normalized = f * norm_inverse
     return plot_vector_field((norm_inverse, f_normalized), xrange, yrange, **slope_options)

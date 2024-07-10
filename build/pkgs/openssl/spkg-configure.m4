@@ -2,7 +2,7 @@ SAGE_SPKG_CONFIGURE([openssl], [
   AX_CHECK_OPENSSL([
     AC_MSG_CHECKING([whether OpenSSL >= 1.1.1, as required by PEP 644, and provides required APIs])
     AC_COMPILE_IFELSE(
-        dnl Trac #32580: Need OpenSSL >= 1.1.1 for PEP 644
+        dnl Issue #32580: Need OpenSSL >= 1.1.1 for PEP 644
         dnl From https://www.openssl.org/docs/man3.0/man3/OPENSSL_VERSION_NUMBER.html:
         dnl If M  is the number from OPENSSL_VERSION_MAJOR
         dnl    NN is the number from OPENSSL_VERSION_MINOR
@@ -13,7 +13,7 @@ SAGE_SPKG_CONFIGURE([openssl], [
         dnl    S  is "status" (f = release)
         dnl -> OPENSSL_VERSION_NUMBER is 0xMNNFFPPSL
         dnl
-        dnl Trac #34273: Test program from ​https://github.com/python/cpython/blob/3.10/configure.ac#L5845
+        dnl Issue #34273: Test program from ​https://github.com/python/cpython/blob/3.10/configure.ac#L5845
         [AC_LANG_PROGRAM([[
             #include <openssl/opensslv.h>
             #include <openssl/evp.h>
@@ -48,12 +48,6 @@ SAGE_SPKG_CONFIGURE([openssl], [
   ], [dnl No openssl found
       sage_spkg_install_openssl=yes
   ])
-  AS_CASE([$host],
-          [*-*-cygwin*], [AS_VAR_IF([sage_spkg_install_openssl], [yes], [
-                              AS_VAR_APPEND([SAGE_SPKG_ERRORS], ["
-On Cygwin, openssl must be installed as a system package. This is an error."])
-                          ])
-                         ])
 ], [dnl REQUIRED-CHECK
   AC_REQUIRE([SAGE_SPKG_CONFIGURE_PYTHON3])
   AC_REQUIRE([SAGE_SPKG_CONFIGURE_CURL])

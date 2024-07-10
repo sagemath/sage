@@ -204,13 +204,13 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
 
     TESTS:
 
-    Wagner's Graph (:trac:`13599`)::
+    Wagner's Graph (:issue:`13599`)::
 
-        sage: g = graphs.WagnerGraph()                                                  # optional - networkx
-        sage: g.is_cartesian_product()                                                  # optional - networkx
+        sage: g = graphs.WagnerGraph()                                                  # needs networkx
+        sage: g.is_cartesian_product()                                                  # needs networkx
         False
 
-    Empty and one-element graph (:trac:`19546`)::
+    Empty and one-element graph (:issue:`19546`)::
 
         sage: Graph().is_cartesian_product()
         False
@@ -309,7 +309,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
 
     # Gathering the connected components, relabeling the vertices on-the-fly
     edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc]
-             for cc in h.connected_components()]
+             for cc in h.connected_components(sort=False)]
 
     # Only one connected component ?
     if len(edges) == 1:
@@ -320,7 +320,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
     for cc in edges:
         tmp = Graph()
         tmp.add_edges(cc)
-        factors.append(tmp.subgraph(vertices=tmp.connected_components()[0]))
+        factors.append(tmp.subgraph(vertices=tmp.connected_components(sort=False)[0]))
 
     # Computing the product of these graphs
     answer = factors[0]
@@ -397,12 +397,12 @@ def rooted_product(G, H, root=None):
         sage: G = graphs.RandomGNP(20, .3)
         sage: P = graphs.PathGraph(2)
         sage: R = G.rooted_product(P)
-        sage: len(R.dominating_set()) == G.order()
+        sage: len(R.dominating_set()) == G.order()                                      # needs sage.numerical.mip
         True
         sage: G = digraphs.RandomDirectedGNP(20, .3)
         sage: P = digraphs.Path(2)
         sage: R = G.rooted_product(P)
-        sage: len(R.dominating_set()) == G.order()
+        sage: len(R.dominating_set()) == G.order()                                      # needs sage.numerical.mip
         True
 
     The rooted product of two graphs is a subgraph of the cartesian product of

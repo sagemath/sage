@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Toric rational divisor classes
 
@@ -63,7 +64,7 @@ from sage.modules.vector_rational_dense cimport Vector_rational_dense
 from sage.rings.rational_field import QQ
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Vector
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 
 
 def is_ToricRationalDivisorClass(x):
@@ -142,7 +143,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
         INPUT:
 
-        - ``other`` - something that
+        - ``other`` -- something that
           :class:`~sage.modules.vector_rational_dense.Vector_rational_dense`
           can act on *except* for another toric rational divisor class.
 
@@ -191,7 +192,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
         if isinstance(other, Vector_rational_dense):
             return Vector_rational_dense._dot_product_(self, other)
         cdef Vector v
-        if is_Vector(other) and not is_ToricRationalDivisorClass(other):
+        if isinstance(other, Vector) and not is_ToricRationalDivisorClass(other):
             try:
                 v = vector(QQ, other)
                 if v._degree == self._degree:
@@ -203,17 +204,17 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
     cpdef _dot_product_(self, Vector right):
         r"""
-        Raise a ``TypeError`` exception.
+        Raise a :class:`TypeError` exception.
 
         Dot product is not defined on toric rational divisor classes.
 
         INPUT:
 
-        - ``right`` - vector.
+        - ``right`` -- vector.
 
         OUTPUT:
 
-        - ``TypeError`` exception is raised.
+        A :class:`TypeError` exception is raised.
 
         TESTS::
 

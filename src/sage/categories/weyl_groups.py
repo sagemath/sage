@@ -1,13 +1,14 @@
-# sage.doctest: optional - sage.combinat sage.groups
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Weyl Groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009    Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_import import LazyImport
@@ -24,9 +25,9 @@ class WeylGroups(Category_singleton):
     EXAMPLES::
 
         sage: WeylGroups()
-        Category of weyl groups
+        Category of Weyl groups
         sage: WeylGroups().super_categories()
-        [Category of coxeter groups]
+        [Category of Coxeter groups]
 
     Here are some examples::
 
@@ -53,7 +54,7 @@ class WeylGroups(Category_singleton):
         EXAMPLES::
 
             sage: WeylGroups().super_categories()
-            [Category of coxeter groups]
+            [Category of Coxeter groups]
         """
         return [CoxeterGroups()]
 
@@ -166,14 +167,14 @@ class WeylGroups(Category_singleton):
 
             INPUT:
 
-            - ``x`` - an element in the group `W`
+            - ``x`` -- an element in the group `W`
 
-            - ``y`` - an element in the group `W`
+            - ``y`` -- an element in the group `W`
 
             - ``side`` (default: ``'upper'``) -- must be one of the following:
 
-              * ``'upper'`` - return the upper Bruhat cone of the interval [``x``, ``y``]
-              * ``'lower'`` - return the lower Bruhat cone of the interval [``x``, ``y``]
+              * ``'upper'`` -- return the upper Bruhat cone of the interval [``x``, ``y``]
+              * ``'lower'`` -- return the lower Bruhat cone of the interval [``x``, ``y``]
 
             - ``backend`` -- string (default: ``'cdd'``); the backend to use to create the polyhedron
 
@@ -276,13 +277,13 @@ class WeylGroups(Category_singleton):
             NPR = lattice.nonparabolic_positive_roots(index_set)
             NPR_sum = sum(NPR)
             NPR_data = {}
-            double_rho = lattice.sum(lattice.positive_roots()) # = 2 * \rho
+            double_rho = lattice.sum(lattice.positive_roots())  # = 2 * \rho
             for alpha in NPR:
                 ref = alpha.associated_reflection()
                 alphacheck = alpha.associated_coroot()
-                NPR_data[alpha] = [self.from_reduced_word(ref), # the element
-                                   len(ref) == double_rho.scalar(alphacheck) - 1, # is_quantum
-                                   NPR_sum.scalar(alphacheck)] # the scalar
+                NPR_data[alpha] = [self.from_reduced_word(ref),  # the element
+                                   len(ref) == double_rho.scalar(alphacheck) - 1,  # is_quantum
+                                   NPR_sum.scalar(alphacheck)]  # the scalar
             # We also create a temporary cache of lengths as they are
             #   relatively expensive to compute and needed frequently
             visited = {}
@@ -315,7 +316,7 @@ class WeylGroups(Category_singleton):
 
             from sage.graphs.digraph import DiGraph
             return DiGraph(visited,
-                           name="Parabolic Quantum Bruhat Graph of %s for nodes %s"%(self, index_set),
+                           name="Parabolic Quantum Bruhat Graph of %s for nodes %s" % (self, index_set),
                            format="dict_of_dicts",
                            data_structure="static_sparse")
 
@@ -493,14 +494,14 @@ class WeylGroups(Category_singleton):
             W = self.parent()
             pieri_factors = W.pieri_factors()
             from sage.rings.rational_field import QQ
-            R = QQ[','.join('x%s'%l for l in range(1,pieri_factors.max_length()+1))]
+            R = QQ[','.join('x%s' % l for l in range(1, pieri_factors.max_length() + 1))]
             x = R.gens()
             if self.is_one():
                 return R.one()
 
-            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
-                           for (u,v) in self.left_pieri_factorizations(max_length)
-                           if u != W.one()))
+            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u)) * x[u.length() - 1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
+                         for (u, v) in self.left_pieri_factorizations(max_length)
+                         if u != W.one()))
 
         def stanley_symmetric_function(self):
             r"""
@@ -554,7 +555,7 @@ class WeylGroups(Category_singleton):
                 + 2*m[3, 3, 1, 1] + m[3, 3, 2] + 3*m[4, 1, 1, 1, 1]
                 + 2*m[4, 2, 1, 1] + m[4, 2, 2] + m[4, 3, 1]
 
-            One more example (:trac:`14095`)::
+            One more example (:issue:`14095`)::
 
                 sage: G = SymmetricGroup(4)
                 sage: w = G.from_reduced_word([3,2,3,1])
@@ -571,9 +572,10 @@ class WeylGroups(Category_singleton):
 
             - [Pon2010]_
             """
-            import sage.combinat.sf
             from sage.rings.rational_field import QQ
-            m = sage.combinat.sf.sf.SymmetricFunctions(QQ).monomial()
+            from sage.combinat.sf.sf import SymmetricFunctions
+
+            m = SymmetricFunctions(QQ).monomial()
             return m.from_polynomial_exp(self.stanley_symmetric_function_as_polynomial())
 
         @cached_in_parent_method
@@ -747,7 +749,7 @@ class WeylGroups(Category_singleton):
                 [(s1*s2*s1, alphacheck[1] + alphacheck[2] + alphacheck[3]),
                  (s3*s2*s1, alphacheck[2]), (s3*s1*s2, alphacheck[1])]
             """
-            return [(x[0],x[1].reflection_to_coroot())
+            return [(x[0], x[1].reflection_to_coroot())
                     for x in self.bruhat_lower_covers_reflections()]
 
         def bruhat_upper_covers_coroots(self):
@@ -770,7 +772,7 @@ class WeylGroups(Category_singleton):
                  (s3*s4*s1*s2*s1, alphacheck[4]),
                  (s4*s3*s1*s2*s1, alphacheck[1] + alphacheck[2] + alphacheck[3] + alphacheck[4])]
             """
-            return [(x[0],x[1].reflection_to_coroot())
+            return [(x[0], x[1].reflection_to_coroot())
                     for x in self.bruhat_upper_covers_reflections()]
 
         def quantum_bruhat_successors(self, index_set=None, roots=False, quantum_only=False):
@@ -828,7 +830,7 @@ class WeylGroups(Category_singleton):
             if index_set is None:
                 index_set = []
             else:
-                index_set = [x for x in index_set]
+                index_set = list(index_set)
             index_set = tuple(index_set)
             if self != self.coset_representative(index_set):
                 raise ValueError("{} is not of minimum length in its coset of the parabolic subgroup generated by the reflections {}".format(self, index_set))
@@ -840,12 +842,12 @@ class WeylGroups(Category_singleton):
                 wrc = wr.coset_representative(index_set)
                 if wrc == wr and wr.length() == w_length_plus_one and not quantum_only:
                     if roots:
-                        successors.append((wr,alpha))
+                        successors.append((wr, alpha))
                     else:
                         successors.append(wr)
                 elif alpha.quantum_root() and wrc.length() == w_length_plus_one - lattice.nonparabolic_positive_root_sum(index_set).scalar(alpha.associated_coroot()):
                     if roots:
-                        successors.append((wrc,alpha))
+                        successors.append((wrc, alpha))
                     else:
                         successors.append(wrc)
             return successors

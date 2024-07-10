@@ -92,7 +92,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 
 @richcmp_method
 class SuperPartition(ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
+                     metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A super partition.
 
@@ -688,10 +688,10 @@ class SuperPartition(ClonableArray,
             row_changed = [row1 - row2 for row1, row2 in zip(elt, sp1)]
             new_sp = [elt, [(i[0] + 1, elt[i[0] + 1]) for i in circ_list
                             if row_changed[i[0]] != 0]
-                            # TODO: Check that this is not supposed to be
-                            #   a tuple of size 1
-                           + [(i) for i in circ_list if row_changed[i[0]] == 0]]
-            if len(set([k for (j, k) in new_sp[1]])) == len(new_sp[1]):
+                      # TODO: Check that this is not supposed to be
+                      #   a tuple of size 1
+                      + [(i) for i in circ_list if row_changed[i[0]] == 0]]
+            if len({k for j, k in new_sp[1]}) == len(new_sp[1]):
                 out += [SuperPartition.from_circled_diagram(*new_sp)]
         return out
 

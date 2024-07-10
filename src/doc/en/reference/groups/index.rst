@@ -18,6 +18,7 @@ Groups
    sage/groups/braid
    sage/groups/cubic_braid
    sage/groups/indexed_free_group
+   sage/groups/artin
    sage/groups/raag
    sage/groups/cactus_group
    sage/groups/group_exp

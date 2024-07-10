@@ -1,3 +1,0 @@
-cd src
-sdh_setup_bdist_wheel
-sdh_store_wheel .

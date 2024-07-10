@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([pluggy], [SAGE_PYTHON_PACKAGE_CHECK([pluggy])])

@@ -1,4 +1,4 @@
-from sage.libs.singular.decl cimport ring, poly, number, intvec
+from sage.libs.singular.decl cimport ring, poly, number, intvec, bigintmat
 from sage.libs.singular.function cimport Resolution
 
 from sage.rings.rational cimport Rational
@@ -29,6 +29,7 @@ cdef object   si2sa_ZZmod(number *n, ring *_ring, object base)
 cdef object   si2sa_NF(number *n, ring *_ring, object base)
 
 cdef object si2sa_intvec(intvec *v)
+cdef object si2sa_bigintvec(bigintmat *v)
 
 # dispatches to all the above.
 cdef object si2sa(number *n, ring *_ring, object base)
@@ -41,18 +42,18 @@ cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees)
 # Conversion from Sage to Singular types
 # ======================================
 
-cdef number *sa2si_QQ(Rational ,ring (*))
-cdef number *sa2si_ZZ(Integer d, ring *_ring)
+cdef number *sa2si_QQ(Rational ,ring (*)) noexcept
+cdef number *sa2si_ZZ(Integer d, ring *_ring) noexcept
 
-cdef number *sa2si_GFqGivaro(int exp ,ring (*))
-cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring)
-cdef number *sa2si_GFq_generic(object vector, ring *_ring)
-cdef number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring)
+cdef number *sa2si_GFqGivaro(int exp ,ring (*)) noexcept
+cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring) noexcept
+cdef number *sa2si_GFq_generic(object vector, ring *_ring) noexcept
+cdef number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept
 
-cdef number *sa2si_NF(object element, ring *_ring)
+cdef number *sa2si_NF(object element, ring *_ring) noexcept
 
 # dispatches to all the above.
-cdef number *sa2si(Element elem, ring * _ring)
+cdef number *sa2si(Element elem, ring * _ring) noexcept
 
 # ==============
 # Initialisation

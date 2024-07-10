@@ -15,7 +15,8 @@ Manifold Subsets Defined as Pullbacks of Subsets under Continuous Maps
 
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.categories.metric_spaces import MetricSpaces
-from sage.modules.free_module import is_FreeModule
+from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module import FreeModule_generic
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -29,7 +30,8 @@ from sage.manifolds.chart import Chart
 from sage.manifolds.scalarfield import ScalarField
 from sage.sets.real_set import RealSet
 import sage.geometry.abc
-from sage.geometry.relative_interior import RelativeInterior
+
+lazy_import('sage.geometry.relative_interior', 'RelativeInterior')
 
 
 class ManifoldSubsetPullback(ManifoldSubset):
@@ -39,10 +41,10 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
     INPUT:
 
-    - ``map`` - an instance of :class:`~sage.manifolds.continuous_map.ContinuousMap`,
+    - ``map`` -- an instance of :class:`~sage.manifolds.continuous_map.ContinuousMap`,
       :class:`ScalarField`, or :class:`Chart`
 
-    - ``codomain_subset`` - an instance of :class:`~sage.manifolds.subset.ManifoldSubset`,
+    - ``codomain_subset`` -- an instance of :class:`~sage.manifolds.subset.ManifoldSubset`,
       :class:`RealSet`, or :class:`~sage.geometry.convex_set.ConvexSet_base`
 
     EXAMPLES::
@@ -77,6 +79,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
     Pulling back a polytope under a chart::
 
+        sage: # needs sage.geometry.polyhedron
         sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [2, 1]]); P
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
         sage: S = ManifoldSubsetPullback(c_cart, P); S
@@ -88,8 +91,10 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
     Pulling back the interior of a polytope under a chart::
 
+        sage: # needs sage.geometry.polyhedron
         sage: int_P = P.interior(); int_P
-        Relative interior of a 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
+        Relative interior of a
+         2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
         sage: int_S = ManifoldSubsetPullback(c_cart, int_P, name='int_S'); int_S
         Open subset int_S of the 2-dimensional topological manifold R^2
         sage: M((0, 0)) in int_S
@@ -100,9 +105,9 @@ class ManifoldSubsetPullback(ManifoldSubset):
     Using the embedding map of a submanifold::
 
         sage: M = Manifold(3, 'M', structure="topological")
-        sage: N = Manifold(2, 'N', ambient=M, structure="topological")
-        sage: N
-        2-dimensional topological submanifold N immersed in the 3-dimensional topological manifold M
+        sage: N = Manifold(2, 'N', ambient=M, structure="topological"); N
+        2-dimensional topological submanifold N
+         immersed in the 3-dimensional topological manifold M
         sage: CM.<x,y,z> = M.chart()
         sage: CN.<u,v> = N.chart()
         sage: t = var('t')
@@ -115,7 +120,9 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
         sage: S = M.open_subset('S', coord_def={CM: z<1})
-        sage: phi_without_t = N.continuous_map(M, {(CN, CM): [expr.subs(t=0) for expr in phi.expr()]}); phi_without_t
+        sage: phi_without_t = N.continuous_map(M, {(CN, CM): [expr.subs(t=0)
+        ....:                                                 for expr in phi.expr()]})
+        sage: phi_without_t
         Continuous map
          from the 2-dimensional topological submanifold N
           embedded in the 3-dimensional topological manifold M
@@ -123,7 +130,8 @@ class ManifoldSubsetPullback(ManifoldSubset):
         sage: phi_without_t.expr()
         (u, v, u^2 + v^2)
         sage: D = ManifoldSubsetPullback(phi_without_t, S); D
-        Subset f_inv_S of the 2-dimensional topological submanifold N embedded in the 3-dimensional topological manifold M
+        Subset f_inv_S of the 2-dimensional topological submanifold N
+         embedded in the 3-dimensional topological manifold M
         sage: N.point((2,0)) in D
         False
 
@@ -136,6 +144,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(2, 'R^2', structure='topological')
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
@@ -243,6 +252,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         Polyhedra::
 
+            sage: # needs sage.geometry.polyhedron
             sage: Empty = Polyhedron(ambient_dim=2); Empty
             The empty polyhedron in ZZ^2
             sage: ManifoldSubsetPullback._is_open(Empty)
@@ -254,30 +264,32 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         Interiors of polyhedra::
 
-            sage: int_C = C.interior(); int_C
-            Relative interior of a 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: ManifoldSubsetPullback._is_open(int_C)
+            sage: int_C = C.interior(); int_C                                           # needs sage.geometry.polyhedron
+            Relative interior of a
+             3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
+            sage: ManifoldSubsetPullback._is_open(int_C)                                # needs sage.geometry.polyhedron
             True
 
         PPL polyhedra and not-necessarily-closed polyhedra::
 
-            sage: from ppl import Variable, C_Polyhedron, NNC_Polyhedron, Constraint_System                             # optional - pplpy
-            sage: u = Variable(0)                                                                                       # optional - pplpy
-            sage: v = Variable(1)                                                                                       # optional - pplpy
-            sage: CS = Constraint_System()                                                                              # optional - pplpy
-            sage: CS.insert(0 < u)                                                                                      # optional - pplpy
-            sage: CS.insert(u < 1)                                                                                      # optional - pplpy
-            sage: CS.insert(0 < v)                                                                                      # optional - pplpy
-            sage: CS.insert(v < 1)                                                                                      # optional - pplpy
-            sage: CS.insert(u + v <= 3)       # redundant inequality                                                    # optional - pplpy
-            sage: P = NNC_Polyhedron(CS); P                                                                             # optional - pplpy
+            sage: # needs pplpy
+            sage: from ppl import Variable, C_Polyhedron, NNC_Polyhedron, Constraint_System
+            sage: u = Variable(0)
+            sage: v = Variable(1)
+            sage: CS = Constraint_System()
+            sage: CS.insert(0 < u)
+            sage: CS.insert(u < 1)
+            sage: CS.insert(0 < v)
+            sage: CS.insert(v < 1)
+            sage: CS.insert(u + v <= 3)       # redundant inequality
+            sage: P = NNC_Polyhedron(CS); P
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 point, 4 closure_points
-            sage: ManifoldSubsetPullback._is_open(P)                                                                    # optional - pplpy
+            sage: ManifoldSubsetPullback._is_open(P)
             True
-            sage: CS.insert(u + v <= 1)                                                                                 # optional - pplpy
-            sage: T = NNC_Polyhedron(CS); T                                                                             # optional - pplpy
+            sage: CS.insert(u + v <= 1)
+            sage: T = NNC_Polyhedron(CS); T
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 point, 3 closure_points
-            sage: ManifoldSubsetPullback._is_open(T)                                                                    # optional - pplpy
+            sage: ManifoldSubsetPullback._is_open(T)
             False
 
         """
@@ -454,10 +466,10 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: _polyhedron_restriction = ManifoldSubsetPullback._polyhedron_restriction
             sage: var('x y z')
             (x, y, z)
-            sage: c = polytopes.cube()
-            sage: _polyhedron_restriction((x, y, z), c)
+            sage: c = polytopes.cube()                                                  # needs sage.geometry.polyhedron
+            sage: _polyhedron_restriction((x, y, z), c)                                 # needs sage.geometry.polyhedron
             [-x + 1 >= 0, -y + 1 >= 0, -z + 1 >= 0, x + 1 >= 0, z + 1 >= 0, y + 1 >= 0]
-            sage: _polyhedron_restriction((x, y, z), c, relint=True)
+            sage: _polyhedron_restriction((x, y, z), c, relint=True)                    # needs sage.geometry.polyhedron
             [-x + 1 > 0, -y + 1 > 0, -z + 1 > 0, x + 1 > 0, z + 1 > 0, y + 1 > 0]
         """
         conjunction = []
@@ -491,10 +503,10 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         - ``map`` -- an instance of :class:`ScalarField` or :class:`Chart`.
 
-        - ``codomain_subset`` - if ``map`` is a :class:`ScalarField`, an instance of :class:`RealSet`;
+        - ``codomain_subset`` -- if ``map`` is a :class:`ScalarField`, an instance of :class:`RealSet`;
           if ``map`` is a :class:`Chart`, the relative interior of a polyhedron.
 
-        For other inputs, a ``NotImplementedError`` will be raised.
+        For other inputs, a :class:`NotImplementedError` will be raised.
 
         OUTPUT:
 
@@ -510,16 +522,16 @@ class ManifoldSubsetPullback(ManifoldSubset):
         Coordinate definition of an open chart polyhedron::
 
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
-            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
+            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P                  # needs sage.geometry.polyhedron
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: ri_P = P.relative_interior(); ri_P
+            sage: ri_P = P.relative_interior(); ri_P                                    # needs sage.geometry.polyhedron
             Relative interior of a 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: _coord_def(c_cart, ri_P)
+            sage: _coord_def(c_cart, ri_P)                                              # needs sage.geometry.polyhedron
             {Chart (R^2, (x, y)): [2*x - y > 0, -4*x + 3*y > 0, x - y + 1 > 0]}
 
         Coordinate definition of the pullback of an open interval under a scalar field::
 
-            sage: r_squared = M.scalar_field(x^2+y^2)
+            sage: r_squared = M.scalar_field(x^2 + y^2)
             sage: I = RealSet((1, 4)); I
             (1, 4)
             sage: _coord_def(r_squared, I)
@@ -594,6 +606,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
@@ -606,8 +619,10 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: p.coordinates(c_cart)
             (0, 0, 0)
 
+            sage: # needs sage.geometry.polyhedron
             sage: Empty = Polyhedron(ambient_dim=3)
-            sage: McEmpty = ManifoldSubsetPullback(c_cart, Empty, name='McEmpty'); McEmpty
+            sage: McEmpty = ManifoldSubsetPullback(c_cart, Empty, name='McEmpty')
+            sage: McEmpty
             Subset McEmpty of the 3-dimensional topological manifold R^3
             sage: McEmpty.an_element()
             Traceback (most recent call last):
@@ -625,6 +640,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
@@ -647,8 +663,10 @@ class ManifoldSubsetPullback(ManifoldSubset):
              (1, -1/4, 1/2),
              (0, -5/8, 3/4)]
 
+            sage: # needs sage.geometry.polyhedron
             sage: Empty = Polyhedron(ambient_dim=3)
-            sage: McEmpty = ManifoldSubsetPullback(c_cart, Empty, name='McEmpty'); McEmpty
+            sage: McEmpty = ManifoldSubsetPullback(c_cart, Empty, name='McEmpty')
+            sage: McEmpty
             Subset McEmpty of the 3-dimensional topological manifold R^3
             sage: list(McEmpty.some_elements())
             []
@@ -670,6 +688,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
@@ -694,7 +713,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
             Point on the 3-dimensional topological manifold R^3
             sage: q in McCube
             False
-         """
+        """
         if super().__contains__(point):
             return True
         coords = self._map(point)
@@ -722,6 +741,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: M = Manifold(2, 'R^2', structure='topological')
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
 
+            sage: # needs sage.geometry.polyhedron
             sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
             sage: P.is_open()
@@ -756,6 +776,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         The pullback of a (closed convex) polyhedron under a chart is closed::
 
+            sage: # needs sage.geometry.polyhedron
             sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
             sage: McP = ManifoldSubsetPullback(c_cart, P, name='McP'); McP
@@ -808,7 +829,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
             # Regardless of their base_ring, we treat polyhedra as closed
             # convex subsets of R^n
             return True
-        elif is_FreeModule(self._codomain_subset) and self._codomain_subset.rank() != infinity:
+        elif isinstance(self._codomain_subset, FreeModule_generic) and self._codomain_subset.rank() != infinity:
             if self._codomain_subset.base_ring() in MetricSpaces().Complete():
                 # Closed topological vector subspace
                 return True

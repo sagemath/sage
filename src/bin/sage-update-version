@@ -43,18 +43,22 @@ for version_file in "$SAGE_ROOT"/pkgs/*/VERSION.txt; do
     fi
 done
 
-# Update install-requires.txt for all distribution packages
+# Update version_requirements.txt for all distribution packages
 ( cd "$SAGE_ROOT"/build/pkgs/ && for spkg in sage*; do
-      if [ -f "$spkg"/install-requires.txt -a -d "$spkg"/src ]; then
+      if [ -f "$spkg"/version_requirements.txt -a -d "$spkg"/src ]; then
           ( echo "# This file is updated on every release by the sage-update-version script"
             # Normalize the package name to PyPI convention (dashes, not underscores)
-            pkg=${spkg//_/-}
+            if [ "$spkg" = sagelib ]; then
+                pkg=sagemath-standard
+            else
+                pkg=${spkg//_/-}
+            fi
             # Normalize the version (updated above as VERSION.txt) according to PEP440.
             version=$(cat "$spkg"/package-version.txt)
             version=${version//.beta/b}
             version=${version//.rc/rc}
             # ~= asks for a compatible release. https://peps.python.org/pep-0440/#compatible-release
-            echo "$pkg ~= $version" ) > "$spkg"/install-requires.txt
+            echo "$pkg ~= $version" ) > "$spkg"/version_requirements.txt
       fi
   done )
 
@@ -83,6 +87,23 @@ EOF
 # Create a top-level VERSION.txt file, which some external utilities rely on
 echo "$SAGE_VERSION_BANNER" > "$SAGE_ROOT/VERSION.txt"
 
+# Add version to the front of GitHub release assets URLs.
+SAGE_MINOR_VERSION=${SAGE_VERSION//.alpha*/}
+SAGE_MINOR_VERSION=${SAGE_MINOR_VERSION//.beta*/}
+SAGE_MINOR_VERSION=${SAGE_MINOR_VERSION//.dev*/}
+SAGE_MINOR_VERSION=${SAGE_MINOR_VERSION//.post*/}
+SAGE_MINOR_VERSION=${SAGE_MINOR_VERSION//.rc*/}
+( echo "https://github.com/sagemath/sage/releases/download/$SAGE_MINOR_VERSION/"
+  sed '/^#/d' "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases"
+) | uniq | head -n 3 > "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases.tmp"
+( cat <<EOF
+# Upstream packages as uploaded as GitHub release assets.
+# This file is automatically updated by the sage-update-version script.
+EOF
+  cat "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases.tmp"
+) > "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases"
+rm -f "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases.tmp"
+
 # Regenerate auto-generated files tarball
 "$SAGE_ROOT/bootstrap" -s
 
@@ -100,8 +121,9 @@ git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_SRC/bin/sage-version.sh" \
     "$SAGE_ROOT/build/pkgs/configure/checksums.ini" \
     "$SAGE_ROOT/build/pkgs/configure/package-version.txt" \
-    "$SAGE_ROOT/build/pkgs/*/install-requires.txt" \
+    "$SAGE_ROOT/build/pkgs/*/version_requirements.txt" \
     "$SAGE_ROOT"/pkgs/*/VERSION.txt \
+    "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases" \
     || die "Error committing to the repository."
 
 git tag -a "$SAGE_VERSION" -m "$SAGE_VERSION_BANNER" \

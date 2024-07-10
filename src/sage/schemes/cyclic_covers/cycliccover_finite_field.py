@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 
 Cyclic covers over a finite field
@@ -54,8 +54,6 @@ EXAMPLES::
     [          0           0 79 + O(107)      O(107)]
     [     O(107) 42 + O(107)           0           0]
     [30 + O(107)      O(107)           0           0]
-
-
 """
 
 # *****************************************************************************
@@ -333,20 +331,20 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
 
         INPUT:
 
-        -   ``i`` - The power of x in the expression `Frob(x^i dx/y^j) / dx`
+        -   ``i`` -- The power of x in the expression `Frob(x^i dx/y^j) / dx`
 
-        -   ``j`` - The (negative) power of y in the expression
-                    `Frob(x^i dx/y^j) / dx`
+        -   ``j`` -- The (negative) power of y in the expression
+                     `Frob(x^i dx/y^j) / dx`
 
         OUTPUT:
 
-        ``frobij`` - a Matrix of size  (d * (N0 - 1) + ) x (N0)
-                     that represents the Frobenius expansion of
-                     x^i dx/y^j modulo p^(N0 + 1)
+        ``frobij`` -- a Matrix of size  (d * (N0 - 1) + ) x (N0)
+                      that represents the Frobenius expansion of
+                      x^i dx/y^j modulo p^(N0 + 1)
 
-                    the entry (l, s) corresponds to the coefficient associated
-                    to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
-                    (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
+                      the entry (l, s) corresponds to the coefficient associated
+                      to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
+                      (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
 
         ALGORITHM:
 
@@ -733,8 +731,8 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                 targets[2 * l] = self._p * l
                 targets[2 * l + 1] = self._p * (l + 1) - d - 1
             (m0, m1), (M0, M1) = self._horizontal_matrix_reduction(s)
-            M0, M1 = [elt.change_ring(self._Zq0) for elt in [M0, M1]]
-            D0, D1 = [matrix(self._Zq0, [elt]) for elt in [m0, m1]]
+            M0, M1 = (elt.change_ring(self._Zq0) for elt in [M0, M1])
+            D0, D1 = (matrix(self._Zq0, [elt]) for elt in [m0, m1])
             MH = interval_products(M0, M1, targets)
             DH = [elt[0, 0] for elt in interval_products(D0, D1, targets)]
             if L > N:  # Vandermonde interpolation
@@ -921,7 +919,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         L = floor((max_upper_target - self._epsilon) / self._p) + 1
         if s0 not in self._vertical_fat_s:
             (m0, m1), (M0, M1) = self._vertical_matrix_reduction(s0)
-            D0, D1 = map(lambda y: matrix(self._Zq, [y]), [m0, m1])
+            D0, D1 = (matrix(self._Zq, [y]) for y in [m0, m1])
             targets = [0] * (2 * L)
             for l in reversed(range(L)):
                 targets[2 * l] = max_upper_target - self._p * (L - l)
@@ -1145,12 +1143,12 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
              + 24687045654725446027864774006541463602997309796*x^10
              + 11320844849639649951608809973589776933203136765026963553258401
 
-            sage; h = PolynomialRing(GF(1009^2), 'x')([-1] + [0]*(5-1) + [1])
+            sage: h = PolynomialRing(GF(1009^2), 'x')([-1] + [0]*(5-1) + [1])
             sage: CyclicCover(3, h).frobenius_polynomial()  # long time
             x^8 + 532*x^7 - 2877542*x^6 - 242628176*x^5 + 4390163797795*x^4 - 247015136050256*x^3
              - 2982540407204025062*x^2 + 561382189105547134612*x + 1074309286591662654798721
 
-        A non-monic example checking that :trac:`29015` is fixed::
+        A non-monic example checking that :issue:`29015` is fixed::
 
             sage: a = 3
             sage: K.<s> = GF(83^3);
@@ -1268,7 +1266,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                 f = x ** self._delta - lc
                 L = f.splitting_field("a")
                 roots = [r for r, _ in f.change_ring(L).roots()]
-                roots_dict = dict([(r, i) for i, r in enumerate(roots)])
+                roots_dict = {r: i for i, r in enumerate(roots)}
                 rootsfrob = [L.frobenius_endomorphism(self._Fq.degree())(r) for r in roots]
                 m = zero_matrix(len(roots))
                 for i, r in enumerate(roots):

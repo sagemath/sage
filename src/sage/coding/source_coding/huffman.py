@@ -32,6 +32,7 @@ from collections import defaultdict
 
 from sage.structure.sage_object import SageObject
 
+
 ###########################################################################
 #
 # Helper functions
@@ -235,7 +236,7 @@ class Huffman(SageObject):
 
         Feeding anything else than a string or a dictionary::
 
-            sage: Huffman(Graph())                                                      # optional - sage.graphs
+            sage: Huffman(Graph())                                                      # needs sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: Input must be either a string or a dictionary.
@@ -366,9 +367,9 @@ class Huffman(SageObject):
         # Build the binary tree of a Huffman code, where the root of the tree
         # is associated with the empty string.
         self._build_code_from_tree(self._tree, d, prefix="")
-        self._index = dict((i, s) for i, (s, w) in enumerate(symbols))
-        self._character_to_code = dict(
-            (s, d[i]) for i, (s, w) in enumerate(symbols))
+        self._index = {i: s for i, (s, w) in enumerate(symbols)}
+        self._character_to_code = {
+            s: d[i] for i, (s, w) in enumerate(symbols)}
 
     def encode(self, string):
         r"""
@@ -510,9 +511,9 @@ class Huffman(SageObject):
             sage: from sage.coding.source_coding.huffman import Huffman
             sage: str = "Sage is my most favorite general purpose computer algebra system"
             sage: h = Huffman(str)
-            sage: T = h.tree(); T                                                       # optional - sage.graphs
+            sage: T = h.tree(); T                                                       # needs sage.graphs
             Digraph on 39 vertices
-            sage: T.show(figsize=[20,20])                                               # optional - sage.graphs sage.plot
+            sage: T.show(figsize=[20,20])                                               # needs sage.graphs sage.plot
             <BLANKLINE>
         """
         from sage.graphs.digraph import DiGraph
@@ -543,8 +544,8 @@ class Huffman(SageObject):
 
             sage: from sage.coding.source_coding.huffman import Huffman
             sage: H = Huffman("Sage")
-            sage: T = H.tree()                                                          # optional - sage.graphs
-            sage: T.edges(sort=True, labels=None)  # indirect doctest                   # optional - sage.graphs
+            sage: T = H.tree()                                                          # needs sage.graphs
+            sage: T.edges(sort=True, labels=None)  # indirect doctest                   # needs sage.graphs
             [('0', 'S: 00'), ('0', 'a: 01'), ('1', 'e: 10'), ('1', 'g: 11'), ('root', '0'), ('root', '1')]
         """
         if parent == "":

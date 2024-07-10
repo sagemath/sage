@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
 r"""
 Chessboard graphs
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 
-- :meth:`BishopGraph <GraphGenerators.BishopGraph>`
-- :meth:`KingGraph <GraphGenerators.KingGraph>`
-- :meth:`KnightGraph <GraphGenerators.KnightGraph>`
-- :meth:`QueenGraph <GraphGenerators.QueenGraph>`
-- :meth:`RookGraph <GraphGenerators.RookGraph>`
+- :meth:`BishopGraph <sage.graphs.graph_generators.GraphGenerators.BishopGraph>`
+- :meth:`KingGraph <sage.graphs.graph_generators.GraphGenerators.KingGraph>`
+- :meth:`KnightGraph <sage.graphs.graph_generators.GraphGenerators.KnightGraph>`
+- :meth:`QueenGraph <sage.graphs.graph_generators.GraphGenerators.QueenGraph>`
+- :meth:`RookGraph <sage.graphs.graph_generators.GraphGenerators.RookGraph>`
 
 AUTHORS:
 
@@ -414,7 +413,7 @@ def KnightGraph(dim_list, one=1, two=2, relabel=False):
     The `(6,6)`-Knight Graph is Hamiltonian::
 
         sage: G = graphs.KnightGraph( [6, 6] )
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # needs sage.numerical.mip
         True
     """
     G, dimstr = ChessboardGraphGenerator(dim_list,

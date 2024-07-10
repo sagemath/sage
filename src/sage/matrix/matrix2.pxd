@@ -12,7 +12,7 @@ Generic matrices
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .matrix1 cimport Matrix as Matrix1
+from sage.matrix.matrix1 cimport Matrix as Matrix1
 
 cdef class Matrix(Matrix1):
     cdef _det_by_minors(self, Py_ssize_t level)

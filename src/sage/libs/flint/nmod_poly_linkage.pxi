@@ -20,20 +20,22 @@ AUTHOR:
 from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport sig_malloc, sig_free
 
+from sage.libs.flint.types cimport *
 from sage.libs.flint.nmod_poly cimport *
+from sage.libs.flint.nmod_poly_factor cimport *
 from sage.libs.flint.ulong_extras cimport *
 from sage.structure.factorization import Factorization
 
-cdef inline celement *celement_new(unsigned long n):
+cdef inline celement *celement_new(unsigned long n) noexcept:
     cdef celement *g = <celement *>sig_malloc(sizeof(nmod_poly_t))
     nmod_poly_init(g, n)
     return g
 
-cdef inline int celement_delete(nmod_poly_t e, unsigned long n):
+cdef inline int celement_delete(nmod_poly_t e, unsigned long n) noexcept:
     nmod_poly_clear(e)
     sig_free(e)
 
-cdef inline int celement_construct(nmod_poly_t e, unsigned long n):
+cdef inline int celement_construct(nmod_poly_t e, unsigned long n) noexcept:
     """
     EXAMPLES::
 
@@ -43,7 +45,7 @@ cdef inline int celement_construct(nmod_poly_t e, unsigned long n):
     """
     nmod_poly_init(e, n)
 
-cdef inline int celement_destruct(nmod_poly_t e, unsigned long n):
+cdef inline int celement_destruct(nmod_poly_t e, unsigned long n) noexcept:
     """
     EXAMPLES::
 
@@ -472,13 +474,13 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
 
     INPUT:
 
-    - ``x`` -- polynomial - the base.
+    - ``x`` -- polynomial; the base.
 
-    - ``e`` -- integer - the exponent.
+    - ``e`` -- integer; the exponent.
 
-    - ``modulus`` -- polynomial or NULL - if not NULL, then perform a modular exponentiation.
+    - ``modulus`` -- polynomial or NULL; if not NULL, then perform a modular exponentiation.
 
-    - ``n`` -- integer - not used, but all polynomials' coefficients are understood modulo ``n``.
+    - ``n`` -- integer; not used, but all polynomials' coefficients are understood modulo ``n``.
 
     EXAMPLES::
 
@@ -531,7 +533,7 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
         sage: f^5 % g
         7231*x + 17274
 
-    Make sure that exponentiation can be interrupted, see :trac:`17470`::
+    Make sure that exponentiation can be interrupted, see :issue:`17470`::
 
         sage: n = 2^23
         sage: alarm(0.2); x^n; cancel_alarm()
@@ -580,11 +582,13 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
         nmod_poly_set(res, a)
         return 0
 
-    nmod_poly_gcd(res, a, b)
-    cdef unsigned long leadcoeff = nmod_poly_get_coeff_ui(res, nmod_poly_degree(res))
-    cdef unsigned long modulus = nmod_poly_modulus(res)
-    if n_gcd(modulus,leadcoeff) == 1:
-        nmod_poly_make_monic(res, res)
+    # A check that the leading coefficients are invertible is *not* sufficient
+    try:
+        sig_on()
+        nmod_poly_gcd(res, a, b)
+        sig_off()
+    except RuntimeError:
+        raise ValueError("non-invertible elements encountered during GCD")
 
 cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """

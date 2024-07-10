@@ -55,9 +55,10 @@ class AmbientSpace(CombinatorialFreeModule):
 
     TESTS::
 
-        sage: types = CartanType.samples(crystallographic = True)+[CartanType(["A",2],["C",5])]
+        sage: # needs sage.libs.gap
+        sage: types = CartanType.samples(crystallographic=True) + [CartanType(["A",2],["C",5])]
         sage: for e in [ct.root_system().ambient_space() for ct in types]:
-        ....:          TestSuite(e).run()
+        ....:     TestSuite(e).run()
 
         sage: e1 = RootSystem(['A',3]).ambient_lattice()
         sage: e2 = RootSystem(['B',3]).ambient_lattice()
@@ -117,9 +118,13 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         tester = self._tester(**options)
         T = self.cartan_type()
-        D = T.symmetrizer()
-        alpha = self.simple_roots()
-        for C in T.dynkin_diagram().connected_components():
+        try:
+            D = T.symmetrizer()
+            alpha = self.simple_roots()
+            DD = T.dynkin_diagram()
+        except ImportError:  # Dynkin diagrams need sage.graphs
+            return
+        for C in DD.connected_components(sort=False):
             tester.assertEqual(len( set( alpha[i].scalar(alpha[i]) / D[i] for i in C ) ), 1)
 
     # FIXME: attribute or method?
@@ -290,7 +295,7 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         INPUT:
 
-        - ``weight`` - a vector or tuple representing a weight
+        - ``weight`` -- a vector or tuple representing a weight
 
         Returns an element of self. If the weight lattice is not
         of full rank, it coerces it into the weight lattice, or

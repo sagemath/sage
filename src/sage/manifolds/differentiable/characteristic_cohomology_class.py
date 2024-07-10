@@ -260,15 +260,15 @@ Now the representative of the Euler class with respect to the connection
 
 Let us check whether this form represents the Euler class correctly::
 
-    sage: expr = e_class_form[2][[1,2]].expr() # long time
-    sage: expr = integrate(expr, x, -infinity, infinity) # long time
-    sage: expr = expr.simplify_full() # long time
-    sage: integrate(expr, y, -infinity, infinity) # long time
+    sage: # long time
+    sage: expr = e_class_form[2][[1,2]].expr()
+    sage: expr = integrate(expr, x, -infinity, infinity)
+    sage: expr = expr.simplify_full()
+    sage: integrate(expr, y, -infinity, infinity)
     2
 
 As we can see, the integral coincides with the Euler characteristic of `S^2` so
 that our form actually represents the Euler class appropriately.
-
 """
 
 # *****************************************************************************
@@ -905,7 +905,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                     name = 'c'
                 class_type = 'multiplicative'
                 val = 1 + x
-            if val == 'Pontryagin':
+            elif val == 'Pontryagin':
                 if vbundle._field_type != 'real':
                     raise ValueError(f'total Pontryagin class not defined on {vbundle}')
                 if name is None:
@@ -966,7 +966,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 class_type = 'Pfaffian'
                 val = x
             else:
-                ValueError(f'predefined class "{val}" unknown')
+                raise ValueError(f'predefined class "{val}" unknown')
 
         # turn symbolic expression into a polynomial via Taylor expansion
         if isinstance(val, Expression):
@@ -978,7 +978,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             elif vbundle._field_type == 'complex':
                 pow_range = dim // 2
             else:
-                ValueError(f'field type of {vbundle} must be real or complex')
+                raise ValueError(f'field type of {vbundle} must be real or complex')
 
             val = P(val.taylor(x, 0, pow_range))
 
@@ -1004,7 +1004,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 val = P([(-1) ** k * val[2 * k + 1] for k in range(n + 1)])
                 sym = multiplicative_sequence(val, n)
             else:
-                AttributeError('unkown class type')
+                raise AttributeError('unkown class type')
 
             d = {}
             w_vec = self._weighted_vectors

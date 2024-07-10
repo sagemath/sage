@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Vector Spaces
 """
@@ -23,6 +24,7 @@ from sage.categories.modules import Modules
 from sage.categories.modules_with_basis import ModulesWithBasis
 _Fields = Fields()
 
+
 class VectorSpaces(Category_module):
     """
     The category of (abstract) vector spaces over a given field
@@ -42,7 +44,7 @@ class VectorSpaces(Category_module):
         INPUT:
 
         - `K` -- a field
-        - ``check`` -- a boolean (default: True) whether to check that `K` is a field.
+        - ``check`` -- a boolean (default: ``True``) whether to check that `K` is a field.
 
         EXAMPLES::
 
@@ -82,8 +84,8 @@ class VectorSpaces(Category_module):
 
         TESTS::
 
-            sage: C = QQ^10      # vector space                                         # optional - sage.modules
-            sage: TestSuite(C).run()                                                    # optional - sage.modules
+            sage: C = QQ^10      # vector space                                         # needs sage.modules
+            sage: TestSuite(C).run()                                                    # needs sage.modules
             sage: TestSuite(VectorSpaces(QQ)).run()
         """
         Category_module.__init__(self, K)
@@ -94,15 +96,15 @@ class VectorSpaces(Category_module):
 
         EXAMPLES::
 
-            sage: VectorSpaces(QQ)(ZZ^3)                                                # optional - sage.modules
+            sage: VectorSpaces(QQ)(ZZ^3)                                                # needs sage.modules
             Vector space of dimension 3 over Rational Field
 
         TESTS:
 
-        Check whether :trac:`30174` is fixed::
+        Check whether :issue:`30174` is fixed::
 
-            sage: Q3 = FiniteRankFreeModule(QQ, 3)                                      # optional - sage.modules
-            sage: Modules(QQ)(Q3) is Q3                                                 # optional - sage.modules
+            sage: Q3 = FiniteRankFreeModule(QQ, 3)                                      # needs sage.modules
+            sage: Modules(QQ)(Q3) is Q3                                                 # needs sage.modules
             True
 
         """
@@ -111,7 +113,7 @@ class VectorSpaces(Category_module):
             if V.base_field() != self.base_field():
                 V = V.change_ring(self.base_field())
         except (TypeError, AttributeError) as msg:
-            raise TypeError("%s\nunable to coerce x (=%s) into %s"%(msg,x,self))
+            raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg,x,self))
         return V
 
     def base_field(self):
@@ -162,15 +164,15 @@ class VectorSpaces(Category_module):
 
             EXAMPLES::
 
-                sage: M = FreeModule(FiniteField(19), 100)                              # optional - sage.modules sage.rings.finite_rings
-                sage: W = M.submodule([M.gen(50)])                                      # optional - sage.modules sage.rings.finite_rings
-                sage: W.dimension()                                                     # optional - sage.modules sage.rings.finite_rings
+                sage: M = FreeModule(FiniteField(19), 100)                              # needs sage.modules
+                sage: W = M.submodule([M.gen(50)])                                      # needs sage.modules
+                sage: W.dimension()                                                     # needs sage.modules
                 1
 
-                sage: M = FiniteRankFreeModule(QQ, 3)                                   # optional - sage.modules
-                sage: M.dimension()                                                     # optional - sage.modules
+                sage: M = FiniteRankFreeModule(QQ, 3)                                   # needs sage.modules
+                sage: M.dimension()                                                     # needs sage.modules
                 3
-                sage: M.tensor_module(1, 2).dimension()                                 # optional - sage.modules
+                sage: M.tensor_module(1, 2).dimension()                                 # needs sage.modules
                 27
 
             """
@@ -253,7 +255,7 @@ class VectorSpaces(Category_module):
 
                 EXAMPLES::
 
-                    sage: Modules(QQ).WithBasis().Graded().example()                    # optional - sage.combinat sage.modules
+                    sage: Modules(QQ).WithBasis().Graded().example()                    # needs sage.combinat sage.modules
                     An example of a graded module with basis:
                      the free module on partitions over Rational Field
                 """
@@ -274,7 +276,7 @@ class VectorSpaces(Category_module):
 
                 EXAMPLES::
 
-                    sage: Modules(QQ).WithBasis().Graded().example()                    # optional - sage.combinat sage.modules
+                    sage: Modules(QQ).WithBasis().Graded().example()                    # needs sage.combinat sage.modules
                     An example of a graded module with basis:
                      the free module on partitions over Rational Field
                 """

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Generic structures for linear codes of any metric
 
@@ -313,7 +313,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         TESTS:
 
-        Check that :trac:`21156` is fixed::
+        Check that :issue:`21156` is fixed::
 
             sage: from sage.coding.linear_code import AbstractLinearCode
             sage: from sage.coding.encoder import Encoder
@@ -373,7 +373,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         return self.dimension() / self.length()
 
     @cached_method
-    def gens(self):
+    def gens(self) -> list:
         r"""
         Return the generators of this code as a list of vectors.
 
@@ -392,7 +392,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         OUTPUT:
 
-        -  ``Sequence`` - an immutable sequence whose universe is ambient space of ``self``.
+        -  ``Sequence`` -- an immutable sequence whose universe is ambient space of ``self``.
 
         EXAMPLES::
 
@@ -796,7 +796,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             0 and 'q^k -1' (=624), inclusive, where 'q' is the size of the
             base field and 'k' is the dimension of the code.
 
-        Check that codewords are immutable. See :trac:`16338`::
+        Check that codewords are immutable. See :issue:`16338`::
 
             sage: C[0].is_immutable()
             True
@@ -846,7 +846,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         If ``C1`` and ``C2`` are two codes which only differ by the
         coefficients of their generator matrices, their hashes are
-        different (we check that the bug found in :trac:`18813` is
+        different (we check that the bug found in :issue:`18813` is
         fixed)::
 
             sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
@@ -891,18 +891,16 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             True
         """
         G = self.generator_matrix()
-        for r in G.rows():
-            if not(r in other):
-                return False
-        return True
+        return all(r in other for r in G.rows())
 
-    def is_permutation_automorphism(self,g):
+    def is_permutation_automorphism(self, g):
         r"""
         Return `1` if `g` is an element of `S_n` (`n` = length of ``self``) and
         if `g` is an automorphism of ``self``.
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: C = codes.HammingCode(GF(3), 3)
             sage: g = SymmetricGroup(13).random_element()
             sage: C.is_permutation_automorphism(g)
@@ -935,6 +933,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: C = codes.HammingCode(GF(2), 3)
             sage: G = C.permutation_automorphism_group(); G
             Permutation Group with generators
@@ -1004,8 +1003,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.is_self_orthogonal()
             False
-            sage: C = codes.QuasiQuadraticResidueCode(11)  # optional - gap_packages (Guava package)
-            sage: C.is_self_orthogonal()                   # optional - gap_packages (Guava package)
+            sage: C = codes.QuasiQuadraticResidueCode(11)  # optional - gap_package_guava
+            sage: C.is_self_orthogonal()                   # optional - gap_package_guava
             True
         """
         return self.is_subcode(self.dual_code())

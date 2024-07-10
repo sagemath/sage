@@ -1,2 +1,0 @@
-#! /usr/bin/env bash
-rm -rf "${SAGE_LOCAL}"/include/boost

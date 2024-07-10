@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Element class for Pollack-Stevens' modular symbols
 
@@ -26,7 +25,6 @@ EXAMPLES::
     sage: phi = ps_modsym_from_simple_modsym_space(A)
     sage: phi.values()
     [(-1, 0, 0), (1, 0, 0), (-9, -6, -4)]
-
 """
 # ****************************************************************************
 #        Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
@@ -42,15 +40,17 @@ import operator
 from sage.arith.misc import next_prime, gcd, kronecker
 from sage.categories.action import Action
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
 from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Qp
-from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.structure.element import ModuleElement
 from sage.structure.richcmp import op_EQ, op_NE
+
+lazy_import('sage.rings.padics.factory', 'Qp')
+lazy_import('sage.rings.padics.padic_generic', 'pAdicGeneric')
 
 from .manin_map import ManinMap
 from .sigma0 import Sigma0
@@ -354,14 +354,14 @@ class PSModularSymbolElement(ModuleElement):
         - ``alpha`` -- an element or None (default None); if p-adic
           can contribute a prime.
 
-        - ``allow_none`` -- boolean (default False); whether to allow
+        - ``allow_none`` -- boolean (default: ``False``); whether to allow
           no prime to be specified.
 
         OUTPUT:
 
-        - a prime or None.  If ``allow_none`` is False then a
-          ``ValueError`` will be raised rather than returning None if no
-          prime can be determined.
+        - a prime or ``None``.  If ``allow_none`` is ``False`` then a
+          :class:`ValueError` will be raised rather than returning ``None``
+          if no prime can be determined.
 
         EXAMPLES::
 
@@ -504,7 +504,7 @@ class PSModularSymbolElement(ModuleElement):
 
         INPUT:
 
-        - ``p`` - prime
+        - ``p`` -- prime
 
         OUTPUT:
 
@@ -691,8 +691,8 @@ class PSModularSymbolElement(ModuleElement):
 
         INPUT:
 
-        - ``p`` - a positive integral prime, or None (default None)
-        - ``P`` - a prime of the base ring above `p`, or None. This is ignored
+        - ``p`` -- a positive integral prime, or None (default None)
+        - ``P`` -- a prime of the base ring above `p`, or None. This is ignored
           unless the base ring is a number field.
 
         OUTPUT:
@@ -775,7 +775,7 @@ class PSModularSymbolElement(ModuleElement):
 
         TESTS:
 
-        Check for :trac:`32878`::
+        Check for :issue:`32878`::
 
             sage: E = EllipticCurve('11a1')
             sage: L = E.padic_lseries(3, implementation="pollackstevens", precision=4)
@@ -866,11 +866,11 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``new_base_ring`` -- field of definition of `\alpha` (default: None)
 
-        - ``ordinary`` -- True if the prime is ordinary (default: True)
+        - ``ordinary`` -- True if the prime is ordinary (default: ``True``)
 
-        - ``check`` -- check to see if the prime is ordinary (default: True)
+        - ``check`` -- check to see if the prime is ordinary (default: ``True``)
 
-        - ``find_extraprec`` -- setting this to True finds extra precision (default: True)
+        - ``find_extraprec`` -- setting this to True finds extra precision (default: ``True``)
 
         OUTPUT:
 
@@ -980,10 +980,10 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``new_base_ring`` -- change of base ring
 
-        - ``ordinary`` -- (default: True) whether to return the ordinary
+        - ``ordinary`` -- (default: ``True``) whether to return the ordinary
                           (at ``p``) eigensymbol.
 
-        - ``check`` -- (default: True) whether to perform extra sanity checks
+        - ``check`` -- (default: ``True``) whether to perform extra sanity checks
 
         OUTPUT:
 
@@ -1458,7 +1458,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``new_base_ring`` -- (default: None) if specified, force the resulting eigensymbol to take values in the given ring
 
-        - ``ordinary`` -- (default: True) whether to return the ordinary
+        - ``ordinary`` -- (default: ``True``) whether to return the ordinary
                           (at ``p``) eigensymbol.
 
         - ``algorithm`` -- (default: 'greenberg') a string, either 'greenberg'
@@ -1467,9 +1467,9 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
           The latter one solves the difference equation, which is not needed. The
           option to use Pollack--Stevens' algorithm here is just for historical reasons.
 
-        - ``eigensymbol`` -- (default: False) if True, return an overconvergent eigensymbol. Otherwise just perform a naive lift
+        - ``eigensymbol`` -- (default: ``False``) if True, return an overconvergent eigensymbol. Otherwise just perform a naive lift
 
-        - ``check`` -- (default: True) whether to perform extra sanity checks
+        - ``check`` -- (default: ``True``) whether to perform extra sanity checks
 
         OUTPUT:
 

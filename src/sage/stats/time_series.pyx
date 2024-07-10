@@ -1,4 +1,5 @@
-"""
+# sage.doctest: optional - numpy
+r"""
 Time Series
 
 This is a module for working with discrete floating point time series.
@@ -66,7 +67,7 @@ digits = 4
 
 cdef class TimeSeries:
     def __cinit__(self):
-        """
+        r"""
         Create new empty uninitialized time series.
 
         EXAMPLES:
@@ -79,7 +80,7 @@ cdef class TimeSeries:
         self._values = NULL
 
     def __init__(self, values, bint initialize=True):
-        """
+        r"""
         Initialize new time series.
 
         INPUT:
@@ -96,7 +97,7 @@ cdef class TimeSeries:
 
         This implicitly calls init::
 
-            sage: stats.TimeSeries([pi, 3, 18.2])
+            sage: stats.TimeSeries([pi, 3, 18.2])                                       # needs sage.symbolic
             [3.1416, 3.0000, 18.2000]
 
         Conversion from a NumPy 1-D array, which is very fast::
@@ -171,7 +172,7 @@ cdef class TimeSeries:
                 self._values[i] = 0
 
     def __reduce__(self):
-        """
+        r"""
         Used in pickling time series.
 
         EXAMPLES::
@@ -193,7 +194,7 @@ cdef class TimeSeries:
         return unpickle_time_series_v1, (buf, self._length)
 
     def __richcmp__(TimeSeries self, other, int op):
-        """
+        r"""
         Compare ``self`` and ``other``.  This has the same semantics
         as list comparison.
 
@@ -224,7 +225,7 @@ cdef class TimeSeries:
         return rich_to_bool(op, 0)
 
     def __dealloc__(self):
-        """
+        r"""
         Free up memory used by a time series.
 
         EXAMPLES:
@@ -237,7 +238,7 @@ cdef class TimeSeries:
         sig_free(self._values)
 
     def vector(self):
-        """
+        r"""
         Return real double vector whose entries are the values of this
         time series.  This is useful since vectors have standard
         algebraic structure and play well with matrices.
@@ -258,7 +259,7 @@ cdef class TimeSeries:
         return x
 
     def __repr__(self):
-        """
+        r"""
         Return string representation of ``self``.
 
         EXAMPLES::
@@ -282,7 +283,7 @@ cdef class TimeSeries:
         return self._repr()
 
     def _repr(self, prec=None):
-        """
+        r"""
         Print representation of a time series.
 
         INPUT:
@@ -316,7 +317,7 @@ cdef class TimeSeries:
             return '[' + ', '.join(format%x for x in self) + ']'
 
     def __len__(self):
-        """
+        r"""
         Return the number of entries in this time series.
 
         OUTPUT:
@@ -334,8 +335,8 @@ cdef class TimeSeries:
         return self._length
 
     def __getitem__(self, i):
-        """
-        Return i-th entry or slice of ``self``.
+        r"""
+        Return `i`-th entry or slice of ``self``.
 
         EXAMPLES::
 
@@ -420,14 +421,14 @@ cdef class TimeSeries:
             return self._values[j]
 
     def __setitem__(self, Py_ssize_t i, double x):
-        """
-        Set the i-th entry of ``self`` to ``x``.
+        r"""
+        Set the `i`-th entry of ``self`` to ``x``.
 
         INPUT:
 
-        - i -- a nonnegative integer.
+        - ``i`` -- a nonnegative integer.
 
-        - x -- a float.
+        - ``x`` -- a float.
 
         EXAMPLES::
 
@@ -455,7 +456,7 @@ cdef class TimeSeries:
         self._values[i] = x
 
     def __copy__(self):
-        """
+        r"""
         Return a copy of ``self``.
 
         EXAMPLES::
@@ -474,7 +475,7 @@ cdef class TimeSeries:
         return t
 
     def __add__(left, right):
-        """
+        r"""
         Concatenate the time series ``self`` and ``right``.
 
         .. NOTE::
@@ -522,7 +523,7 @@ cdef class TimeSeries:
         return t
 
     def __mul__(left, right):
-        """
+        r"""
         Multiply a time series by an integer n, which (like for lists)
         results in the time series concatenated with itself n times.
 
@@ -565,7 +566,6 @@ cdef class TimeSeries:
         for i from 0 <= i < n:
             memcpy(v._values + i*T._length, T._values, sizeof(double)*T._length)
         return v
-
 
     def autoregressive_fit(self,M):
         r"""
@@ -624,9 +624,9 @@ cdef class TimeSeries:
         return autoregressive_fit(acvs)
 
     def autoregressive_forecast(self, filter):
-        """
+        r"""
         Given the autoregression coefficients as outputted by the
-        ``autoregressive_fit`` command, compute the forecast for the next
+        :meth:`autoregressive_fit` command, compute the forecast for the next
         term in the series.
 
         INPUT:
@@ -658,7 +658,7 @@ cdef class TimeSeries:
         return f
 
     def reversed(self):
-        """
+        r"""
         Return new time series obtain from this time series by
         reversing the order of the entries in this time series.
 
@@ -680,7 +680,7 @@ cdef class TimeSeries:
         return t
 
     def extend(self, right):
-        """
+        r"""
         Extend this time series by appending elements from the iterable
         ``right``.
 
@@ -711,7 +711,7 @@ cdef class TimeSeries:
         self._length = self._length + T._length
 
     def list(self):
-        """
+        r"""
         Return list of elements of ``self``.
 
         EXAMPLES::
@@ -724,7 +724,7 @@ cdef class TimeSeries:
         return [self._values[i] for i in range(self._length)]
 
     def log(self):
-        """
+        r"""
         Return new time series got by taking the logarithms of all the
         terms in the time series.
 
@@ -756,7 +756,7 @@ cdef class TimeSeries:
         return t
 
     def exp(self):
-        """
+        r"""
         Return new time series got by applying the exponential map to
         all the terms in the time series.
 
@@ -780,7 +780,7 @@ cdef class TimeSeries:
         return t
 
     def abs(self):
-        """
+        r"""
         Return new time series got by replacing all entries
         of ``self`` by their absolute value.
 
@@ -892,7 +892,7 @@ cdef class TimeSeries:
         return t
 
     cpdef rescale(self, double s):
-        """
+        r"""
         Change ``self`` by multiplying every value in the series by ``s``.
 
         INPUT:
@@ -911,7 +911,7 @@ cdef class TimeSeries:
             self._values[i] = self._values[i] * s
 
     def scale(self, double s):
-        """
+        r"""
         Return new time series obtained by multiplying every value in the
         series by ``s``.
 
@@ -936,13 +936,13 @@ cdef class TimeSeries:
         return t
 
     def add_scalar(self, double s):
-        """
+        r"""
         Return new time series obtained by adding a scalar to every
         value in the series.
 
         .. NOTE::
 
-            To add componentwise, use the ``add_entries`` method.
+            To add componentwise, use the :meth:`add_entries` method.
 
         INPUT:
 
@@ -965,7 +965,7 @@ cdef class TimeSeries:
         return t
 
     def add_entries(self, t):
-        """
+        r"""
         Add corresponding entries of ``self`` and ``t`` together,
         extending either ``self`` or ``t`` by 0's if they do
         not have the same length.
@@ -981,7 +981,7 @@ cdef class TimeSeries:
 
         OUTPUT:
 
-        A time series with length the maxima of the lengths of
+        A time series with length the maximum of the lengths of
         ``self`` and ``t``.
 
         EXAMPLES::
@@ -1022,22 +1022,25 @@ cdef class TimeSeries:
         return v
 
     def show(self, *args, **kwds):
-        """
-        Calls plot and passes all arguments onto the plot function.  This is
-        thus just an alias for plot.
+        r"""
+        Return a plot of this time series.
+
+        This is an alias of :meth:`plot`.
 
         EXAMPLES:
 
         Draw a plot of a time series::
 
-            sage: stats.TimeSeries([1..10]).show()
+            sage: stats.TimeSeries([1..10]).show()                                      # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         return self.plot(*args, **kwds)
 
     def plot(self, Py_ssize_t plot_points=1000, points=False, **kwds):
         r"""
-        Return a plot of this time series as a line or points through
+        Return a plot of this time series.
+
+        The plot shows a line or points through
         `(i,T(i))`, where `i` ranges over nonnegative integers up to the
         length of ``self``.
 
@@ -1054,6 +1057,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
+            sage: # needs sage.plot
             sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.plot()
@@ -1088,12 +1092,13 @@ cdef class TimeSeries:
         return L
 
     def simple_moving_average(self, Py_ssize_t k):
-        """
-        Return the moving average time series over the last ``k`` time units.
+        r"""
+        Return the moving average time series over the last `k` time units.
+
         Assumes the input time series was constant with its starting value
-        for negative time.  The t-th step of the output is the sum of
-        the previous ``k - 1`` steps of ``self`` and the ``k``-th step
-        divided by ``k``. Thus ``k`` values are averaged at each point.
+        for negative time.  The `t`-th step of the output is the sum of
+        the previous `k - 1` steps of ``self`` and the `k`-th step
+        divided by `k`. Thus `k` values are averaged at each point.
 
         INPUT:
 
@@ -1138,11 +1143,13 @@ cdef class TimeSeries:
         return t
 
     def exponential_moving_average(self, double alpha):
-        """
-        Return the exponential moving average time series.  Assumes
-        the input time series was constant with its starting value for
-        negative time.  The t-th step of the output is the sum of the
-        previous k-1 steps of ``self`` and the k-th step divided by k.
+        r"""
+        Return the exponential moving average time series.
+
+        Assumes the input time series was constant with its starting
+        value for negative time.  The `t`-th step of the output is the
+        sum of the previous `k-1` steps of ``self`` and the `k`-th
+        step divided by `k`.
 
         The 0-th term is formally undefined, so we define it to be 0,
         and we define the first term to be ``self[0]``.
@@ -1189,7 +1196,7 @@ cdef class TimeSeries:
         return t
 
     def sums(self, double s=0):
-        """
+        r"""
         Return the new time series got by taking the running partial
         sums of the terms of this time series.
 
@@ -1215,10 +1222,11 @@ cdef class TimeSeries:
             t._values[i] = s
         return t
 
-    cpdef double sum(self):
-        """
-        Return the sum of all the entries of ``self``.  If ``self`` has
-        length 0, returns 0.
+    cpdef double sum(self) noexcept:
+        r"""
+        Return the sum of all the entries of ``self``.
+
+        If ``self`` has length 0, returns 0.
 
         OUTPUT:
 
@@ -1238,9 +1246,10 @@ cdef class TimeSeries:
         return s
 
     def prod(self):
-        """
-        Return the product of all the entries of ``self``.  If ``self`` has
-        length 0, returns 1.
+        r"""
+        Return the product of all the entries of ``self``.
+
+        If ``self`` has length 0, returns 1.
 
         OUTPUT:
 
@@ -1259,9 +1268,8 @@ cdef class TimeSeries:
             s *= self._values[i]
         return s
 
-
     def mean(self):
-        """
+        r"""
         Return the mean (average) of the elements of ``self``.
 
         OUTPUT:
@@ -1278,9 +1286,9 @@ cdef class TimeSeries:
         return self.sum() / self._length
 
     def pow(self, double k):
-        """
-        Return a new time series with every elements of ``self`` raised to the
-        k-th power.
+        r"""
+        Return a new time series with all elements of ``self`` raised to the
+        `k`-th power.
 
         INPUT:
 
@@ -1304,9 +1312,9 @@ cdef class TimeSeries:
         return t
 
     def moment(self, int k):
-        """
-        Return the k-th moment of ``self``, which is just the
-        mean of the k-th powers of the elements of ``self``.
+        r"""
+        Return the `k`-th moment of ``self``, which is just the
+        mean of the `k`-th powers of the elements of ``self``.
 
         INPUT:
 
@@ -1336,9 +1344,9 @@ cdef class TimeSeries:
         return s / self._length
 
     def central_moment(self, int k):
-        """
-        Return the k-th central moment of ``self``, which is just the mean
-        of the k-th powers of the differences ``self[i] - mu``, where ``mu`` is
+        r"""
+        Return the `k`-th central moment of ``self``, which is just the mean
+        of the `k`-th powers of the differences ``self[i] - mu``, where ``mu`` is
         the mean of ``self``.
 
         INPUT:
@@ -1405,7 +1413,8 @@ cdef class TimeSeries:
 
     def autocovariance(self, Py_ssize_t k=0):
         r"""
-        Return the k-th autocovariance function `\gamma(k)` of ``self``.
+        Return the `k`-th autocovariance function `\gamma(k)` of ``self``.
+
         This is the covariance of ``self`` with ``self`` shifted by `k`, i.e.,
 
         .. MATH::
@@ -1436,7 +1445,8 @@ cdef class TimeSeries:
             14.4
             sage: v.autocovariance(1)
             -2.7
-            sage: mu = v.mean(); sum([(v[i]-mu)*(v[i+1]-mu) for i in range(len(v)-1)])/len(v)
+            sage: mu = v.mean()
+            sage: sum((v[i]-mu)*(v[i+1]-mu) for i in range(len(v)-1))/len(v)
             -2.7
             sage: v.autocovariance(1)
             -2.7
@@ -1449,7 +1459,8 @@ cdef class TimeSeries:
             sage: set_random_seed(0)
             sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('normal', 0, 5)
-            [3.3835, -2.0055, 1.7882, -2.9319, -4.6827 ... -5.1868, 9.2613, 0.9274, -6.2282, -8.7652]
+            [3.3835, -2.0055, 1.7882, -2.9319, -4.6827 ...
+             -5.1868, 9.2613, 0.9274, -6.2282, -8.7652]
             sage: v.autocovariance(0)
             24.95410689...
             sage: v.autocovariance(1)
@@ -1468,7 +1479,7 @@ cdef class TimeSeries:
         return s / self._length
 
     def correlation(self, TimeSeries other):
-        """
+        r"""
         Return the correlation of ``self`` and ``other``, which is the
         covariance of ``self`` and ``other`` divided by the product of their
         standard deviation.
@@ -1491,7 +1502,7 @@ cdef class TimeSeries:
 
     def autocorrelation(self, Py_ssize_t k=1):
         r"""
-        Return the k-th sample autocorrelation of this time series
+        Return the `k`-th sample autocorrelation of this time series
         `x_i`.
 
         Let `\mu` be the sample mean.  Then the sample autocorrelation
@@ -1503,7 +1514,7 @@ cdef class TimeSeries:
                  {\sum_{t=0}^{n-1}   (x_t - \mu)^2}.
 
         Note that the variance must be nonzero or you will get a
-        ``ZeroDivisionError``.
+        :class:`ZeroDivisionError`.
 
         INPUT:
 
@@ -1533,7 +1544,7 @@ cdef class TimeSeries:
         return self.autocovariance(k) / self.variance(bias=True)
 
     def variance(self, bias=False):
-        """
+        r"""
         Return the variance of the elements of ``self``, which is the mean
         of the squares of the differences from the mean.
 
@@ -1578,7 +1589,7 @@ cdef class TimeSeries:
             return s / (self._length - 1)
 
     def standard_deviation(self, bias=False):
-        """
+        r"""
         Return the standard deviation of the entries of ``self``.
 
         INPUT:
@@ -1617,7 +1628,7 @@ cdef class TimeSeries:
         statistics of disjoint blocks of size ``b``.
 
         Let `\sigma` be the standard deviation of the sequence of
-        differences of ``self``, and let `Y_k` be the k-th term of ``self``.
+        differences of ``self``, and let `Y_k` be the `k`-th term of ``self``.
         Let `n` be the number of terms of ``self``, and set
         `Z_k = Y_k - ((k+1)/n) \cdot Y_n`. Then
 
@@ -1668,7 +1679,7 @@ cdef class TimeSeries:
         return (Z.max() - Z.min()) / sigma
 
     def hurst_exponent(self):
-        """
+        r"""
         Return an estimate of the Hurst exponent of this time series.
 
         We use the algorithm from pages 61 -- 63 of [Peteres, Fractal
@@ -1684,47 +1695,10 @@ cdef class TimeSeries:
 
             sage: set_random_seed(0)
             sage: bm = stats.TimeSeries(10^5).randomize('normal').sums(); bm
-            [0.6767, 0.2756, 0.6332, 0.0469, -0.8897 ... 152.2437, 151.5327, 152.7629, 152.9169, 152.9084]
+            [0.6767, 0.2756, 0.6332, 0.0469, -0.8897 ...
+             152.2437, 151.5327, 152.7629, 152.9169, 152.9084]
             sage: bm.hurst_exponent()
             0.527450972...
-
-        We compute the Hurst exponent of a simulated fractional Brownian
-        motion with Hurst parameter 0.7.  This function estimates the
-        Hurst exponent as 0.706511951... ::
-
-            sage: set_random_seed(0)
-            sage: import sage.finance.all as finance
-            doctest:warning...
-            DeprecationWarning: the package sage.finance is deprecated
-            See https://github.com/sagemath/sage/issues/32427 for details.
-            sage: fbm = finance.fractional_brownian_motion_simulation(0.7,0.1,10^5,1)[0]
-            sage: fbm.hurst_exponent()
-            0.706511951...
-
-        Another example with small Hurst exponent (notice the overestimation).
-
-        ::
-
-            sage: fbm = finance.fractional_brownian_motion_simulation(0.2,0.1,10^5,1)[0]
-            sage: fbm.hurst_exponent()
-            0.278997441...
-
-        We compute the mean Hurst exponent of 100 simulated multifractal
-        cascade random walks::
-
-            sage: set_random_seed(0)
-            sage: y = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,100)
-            sage: stats.TimeSeries([z.hurst_exponent() for z in y]).mean()
-            0.57984822577934...
-
-        We compute the mean Hurst exponent of 100 simulated Markov switching
-        multifractal time series.  The Hurst exponent is quite small. ::
-
-            sage: set_random_seed(0)
-            sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,0.5,0.95,3)
-            sage: y = msm.simulations(1000,100)
-            sage: stats.TimeSeries([z.hurst_exponent() for z in y]).mean()
-            0.286102325623705...
         """
         # We use disjoint blocks of size 8, 16, 32, ....
         cdef Py_ssize_t k = 8
@@ -1748,9 +1722,10 @@ cdef class TimeSeries:
         return coeffs[0]
 
     def min(self, bint index=False):
-        """
-        Return the smallest value in this time series. If this series
-        has length 0 we raise a ``ValueError``.
+        r"""
+        Return the smallest value in this time series.
+
+        If this series has length 0, we raise a :class:`ValueError`.
 
         INPUT:
 
@@ -1786,9 +1761,9 @@ cdef class TimeSeries:
             return s
 
     def max(self, bint index=False):
-        """
+        r"""
         Return the largest value in this time series. If this series
-        has length 0 we raise a ``ValueError``.
+        has length 0 we raise a :class:`ValueError`.
 
         INPUT:
 
@@ -1823,7 +1798,7 @@ cdef class TimeSeries:
             return s
 
     def clip_remove(self, min=None, max=None):
-        """
+        r"""
         Return new time series obtained from ``self`` by removing all
         values that are less than or equal to a certain minimum value
         or greater than or equal to a certain maximum.
@@ -1901,7 +1876,7 @@ cdef class TimeSeries:
         return t
 
     def histogram(self, Py_ssize_t bins=50, bint normalize=False):
-        """
+        r"""
         Return the frequency histogram of the values in
         this time series divided up into the given
         number of bins.
@@ -1970,7 +1945,7 @@ cdef class TimeSeries:
         return counts, v
 
     def plot_histogram(self, bins=50, normalize=True, **kwds):
-        """
+        r"""
         Return histogram plot of this time series with given number of bins.
 
         INPUT:
@@ -1987,12 +1962,12 @@ cdef class TimeSeries:
         EXAMPLES::
 
             sage: v = stats.TimeSeries([1..50])
-            sage: v.plot_histogram(bins=10)
+            sage: v.plot_histogram(bins=10)                                             # needs sage.plot
             Graphics object consisting of 10 graphics primitives
 
         ::
 
-            sage: v.plot_histogram(bins=3,normalize=False,aspect_ratio=1)
+            sage: v.plot_histogram(bins=3,normalize=False,aspect_ratio=1)               # needs sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         from sage.plot.all import polygon
@@ -2006,7 +1981,7 @@ cdef class TimeSeries:
         return s
 
     def plot_candlestick(self, int bins=30):
-        """
+        r"""
         Return a candlestick plot of this time series with the given number
         of bins.
 
@@ -2031,7 +2006,7 @@ cdef class TimeSeries:
         Here we look at the candlestick plot for Brownian motion::
 
             sage: v = stats.TimeSeries(1000).randomize()
-            sage: v.plot_candlestick(bins=20)
+            sage: v.plot_candlestick(bins=20)                                           # needs sage.plot
             Graphics object consisting of 40 graphics primitives
         """
         from sage.plot.all import line, polygon, Graphics
@@ -2066,7 +2041,7 @@ cdef class TimeSeries:
         return p
 
     def numpy(self, copy=True):
-        """
+        r"""
         Return a NumPy version of this time series.
 
         .. NOTE::
@@ -2226,7 +2201,7 @@ cdef class TimeSeries:
         return self
 
     def _randomize_uniform(self, double left, double right):
-        """
+        r"""
         Generates a uniform random distribution of doubles between ``left`` and
         ``right`` and stores values in place.
 
@@ -2263,7 +2238,7 @@ cdef class TimeSeries:
             self._values[k] = rstate.c_rand_double() * d + left
 
     def _randomize_normal(self, double m, double s):
-        """
+        r"""
         Generates a normal random distribution of doubles with mean ``m`` and
         standard deviation ``s`` and stores values in place. Uses the
         Box-Muller algorithm.
@@ -2320,7 +2295,7 @@ cdef class TimeSeries:
                 self._values[k] = m + y2*s
 
     def _randomize_semicircle(self, double center):
-        """
+        r"""
         Generates a semicircle random distribution of doubles about center
         and stores values in place. Uses the acceptance-rejection method.
 
@@ -2394,7 +2369,7 @@ cdef class TimeSeries:
             sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('lognormal').mean()
             1.647351973...
-            sage: exp(0.5)
+            sage: exp(0.5)                                                              # needs sage.symbolic
             1.648721270...
 
         A log-normal distribution can be simply thought of as the logarithm
@@ -2538,7 +2513,7 @@ cdef class TimeSeries:
 
 
 cdef new_time_series(Py_ssize_t length):
-    """
+    r"""
     Return a new uninitialized time series of the given length.
     The entries of the time series are garbage.
 
@@ -2568,7 +2543,7 @@ cdef new_time_series(Py_ssize_t length):
 
 @cython.binding(True)
 def unpickle_time_series_v1(bytes v, Py_ssize_t n):
-    """
+    r"""
     Version 1 unpickle method.
 
     INPUT:
@@ -2607,108 +2582,6 @@ def autoregressive_fit(acvs):
     `\Gamma a =\gamma`, where `\gamma=(\gamma(1),\dots,\gamma(M))`,
     `a=(a_1,\dots,a_M)`, with `\gamma(i)` the autocovariance of lag `i`
     and `\Gamma_{ij}=\gamma(i-j)`.
-
-    EXAMPLES:
-
-    In this example we consider the multifractal cascade random walk
-    of length 1000, and use simulations to estimate the
-    expected first few autocovariance parameters for this model, then
-    use them to construct a linear filter that works vastly better
-    than a linear filter constructed from the same data but not using
-    this model. The Monte-Carlo method illustrated below should work for
-    predicting one "time step" into the future for any
-    model that can be simulated.  To predict k time steps into the
-    future would require using a similar technique but would require
-    scaling time by k.
-
-    We create 100 simulations of a multifractal random walk.  This
-    models the logarithms of a stock price sequence. ::
-
-        sage: set_random_seed(0)
-        sage: import sage.finance.all as finance
-        sage: y = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,100)
-
-    For each walk below we replace the walk by the walk but where each
-    step size is replaced by its absolute value -- this is what we
-    expect to be able to predict given the model, which is only a
-    model for predicting volatility.  We compute the first 200
-    autocovariance values for every random walk::
-
-        sage: c = [[a.diffs().abs().sums().autocovariance(i) for a in y] for i in range(200)]
-
-    We make a time series out of the expected values of the
-    autocovariances::
-
-        sage: ac = stats.TimeSeries([stats.TimeSeries(z).mean() for z in c])
-        sage: ac
-        [3.9962, 3.9842, 3.9722, 3.9601, 3.9481 ... 1.7144, 1.7033, 1.6922, 1.6812, 1.6701]
-
-    .. NOTE::
-
-        ``ac`` looks like a line -- one could best fit it to yield a lot
-        more approximate autocovariances.
-
-    We compute the autoregression coefficients matching the above
-    autocovariances::
-
-        sage: F = stats.autoregressive_fit(ac); F
-        [0.9982, -0.0002, -0.0002, 0.0003, 0.0001 ... 0.0002, -0.0002, -0.0000, -0.0002, -0.0014]
-
-    Note that the sum is close to 1::
-
-        sage: sum(F)
-        0.99593284089454...
-
-    Now we make up an 'out of sample' sequence::
-
-        sage: y2 = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,1)[0].diffs().abs().sums()
-        sage: y2
-        [0.0013, 0.0059, 0.0066, 0.0068, 0.0184 ... 6.8004, 6.8009, 6.8063, 6.8090, 6.8339]
-
-    And we forecast the very last value using our linear filter; the forecast
-    is close::
-
-        sage: y2[:-1].autoregressive_forecast(F)
-        6.7836741372407...
-
-    In fact it is closer than we would get by forecasting using a
-    linear filter made from all the autocovariances of our sequence::
-
-        sage: y2[:-1].autoregressive_forecast(y2[:-1].autoregressive_fit(len(y2)))
-        6.770168705668...
-
-    We record the last 20 forecasts, always using all correct values up to the
-    one we are forecasting::
-
-        sage: s1 = sum([(y2[:-i].autoregressive_forecast(F)-y2[-i])^2 for i in range(1,20)])
-
-    We do the same, but using the autocovariances of the sample sequence::
-
-        sage: F2 = y2[:-100].autoregressive_fit(len(F))
-        sage: s2 = sum([(y2[:-i].autoregressive_forecast(F2)-y2[-i])^2 for i in range(1,20)])
-
-    Our model gives us something that is 15 percent better in this case::
-
-        sage: s2/s1
-        1.15464636102...
-
-    How does it compare overall?  To find out we do 100 simulations
-    and for each we compute the percent that our model beats naively
-    using the autocovariances of the sample::
-
-        sage: y_out = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,100)
-        sage: s1 = []; s2 = []
-        sage: for v in y_out:
-        ....:     s1.append(sum([(v[:-i].autoregressive_forecast(F)-v[-i])^2 for i in range(1,20)]))
-        ....:     F2 = v[:-len(F)].autoregressive_fit(len(F))
-        ....:     s2.append(sum([(v[:-i].autoregressive_forecast(F2)-v[-i])^2 for i in range(1,20)]))
-
-    We find that overall the model beats naive linear forecasting by 35
-    percent! ::
-
-        sage: s = stats.TimeSeries([s2[i]/s1[i] for i in range(len(s1))])
-        sage: s.mean()
-        1.354073591877...
     """
     cdef TimeSeries c
     cdef Py_ssize_t i

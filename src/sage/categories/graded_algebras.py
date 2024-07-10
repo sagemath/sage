@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded Algebras
 """
@@ -12,6 +13,7 @@ Graded Algebras
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory
 from sage.misc.cachefunc import cached_method
+
 
 class GradedAlgebras(GradedModulesCategory):
     """
@@ -39,8 +41,8 @@ class GradedAlgebras(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()                                    # optional - sage.combinat
-                sage: m.graded_algebra() is m                                           # optional - sage.combinat
+                sage: m = SymmetricFunctions(QQ).m()                                    # needs sage.combinat sage.modules
+                sage: m.graded_algebra() is m                                           # needs sage.combinat sage.modules
                 True
             """
             return self

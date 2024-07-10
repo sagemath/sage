@@ -24,8 +24,6 @@ from sage.libs.pari.all import pari_gen
 
 import operator
 
-from sage.interfaces.singular import singular as singular_default
-
 def make_element(parent, args):
     return parent(*args)
 
@@ -212,8 +210,9 @@ cdef class Polynomial_template(Polynomial):
         TESTS:
 
         The following has been a problem in a preliminary version of
-        :trac:`12313`::
+        :issue:`12313`::
 
+            sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(4)
             sage: P.<x> = K[]
             sage: del P
@@ -351,11 +350,35 @@ cdef class Polynomial_template(Polynomial):
             x + 1
             sage: f.gcd(x^2)
             x
+
+        TESTS:
+
+        Ensure non-invertible elements does not crash Sage (:issue:`37317`)::
+
+            sage: R.<x> = Zmod(4)[]
+            sage: f = R(2 * x)
+            sage: f.gcd(f)
+            Traceback (most recent call last):
+            ...
+            ValueError: leading coefficient must be invertible
+
+        ::
+
+            sage: f = x^2 + 3 * x + 1
+            sage: g = x^2 + x + 1
+            sage: f.gcd(g)
+            Traceback (most recent call last):
+            ...
+            ValueError: non-invertible elements encountered during GCD
         """
-        if(celement_is_zero(&self.x, (<Polynomial_template>self)._cparent)):
+        if celement_is_zero(&self.x, (<Polynomial_template>self)._cparent):
             return other
-        if(celement_is_zero(&other.x, (<Polynomial_template>self)._cparent)):
+        if celement_is_zero(&other.x, (<Polynomial_template>self)._cparent):
             return self
+        if celement_equal(&self.x, &other.x, (<Polynomial_template>self)._cparent):
+            # note: gcd(g, g) "canonicalizes" the generator i.e. make polynomials monic
+            # c.f. ring/ring.pyx:445
+            return self.monic()
 
         cdef type T = type(self)
         cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
@@ -453,7 +476,7 @@ cdef class Polynomial_template(Polynomial):
 
         TESTS:
 
-        We test that :trac:`10578` is fixed::
+        We test that :issue:`10578` is fixed::
 
             sage: P.<x> = GF(2)[]
             sage: x % 1r
@@ -569,7 +592,6 @@ cdef class Polynomial_template(Polynomial):
         EXAMPLES::
 
             sage: P.<x> = GF(2)[]
-            sage: P.<x> = GF(2)[]
             sage: x^1000
             x^1000
             sage: (x+1)^2
@@ -582,6 +604,28 @@ cdef class Polynomial_template(Polynomial):
             x^9 + x^8 + x^7 + x^5 + x^3
             sage: pow(f, 2, h)
             x^9 + x^8 + x^7 + x^5 + x^3
+
+        TESTS:
+
+        Ensure modulo `0` and modulo `1` does not crash (:issue:`37169`)::
+
+            sage: R.<x> = GF(2)[]
+            sage: pow(x + 1, 2, R.zero())
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: modulus must be nonzero
+            sage: pow(x + 1, 2, R.one())
+            0
+
+        ::
+
+            sage: R.<x> = GF(2^8)[]
+            sage: pow(x + 1, 2, R.zero())
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: modulus must be nonzero
+            sage: pow(x + 1, 2, R.one())
+            0
         """
         if not isinstance(self, Polynomial_template):
             raise NotImplementedError("%s^%s not defined."%(ee,self))
@@ -614,6 +658,10 @@ cdef class Polynomial_template(Polynomial):
         else:
             if parent is not (<Polynomial_template>modulus)._parent and parent != (<Polynomial_template>modulus)._parent:
                 modulus = parent.coerce(modulus)
+            if celement_is_zero(&(<Polynomial_template>modulus).x, (<Polynomial_template>self)._cparent):
+                raise ZeroDivisionError("modulus must be nonzero")
+            if celement_is_one(&(<Polynomial_template>modulus).x, (<Polynomial_template>self)._cparent):
+                return parent.zero()
             celement_pow(&r.x, &(<Polynomial_template>self).x, e, &(<Polynomial_template>modulus).x, (<Polynomial_template>self)._cparent)
 
         #assert(r._parent(pari(self)**ee) == r)
@@ -766,7 +814,7 @@ cdef class Polynomial_template(Polynomial):
         celement_truncate(&r.x, &self.x, n, (<Polynomial_template>self)._cparent)
         return r
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         r"""
         Return Singular representation of this polynomial
 
@@ -778,8 +826,11 @@ cdef class Polynomial_template(Polynomial):
 
             sage: P.<x> = PolynomialRing(GF(7))
             sage: f = 3*x^2 + 2*x + 5
-            sage: singular(f)
+            sage: singular(f)                                                           # needs sage.libs.singular
             3*x^2+2*x-2
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
+
         self.parent()._singular_(singular).set_ring()  # this is expensive
         return singular(self._singular_init_())

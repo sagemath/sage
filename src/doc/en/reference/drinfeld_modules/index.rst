@@ -12,6 +12,7 @@ Drinfeld modules
    :maxdepth: 2
 
    sage/rings/function_field/drinfeld_modules/drinfeld_module
+   sage/rings/function_field/drinfeld_modules/charzero_drinfeld_module
    sage/rings/function_field/drinfeld_modules/finite_drinfeld_module
 
 Morphisms and isogenies

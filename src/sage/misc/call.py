@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 """
 Attribute and method calling
 """
@@ -18,7 +18,9 @@ Attribute and method calling
 #############################################
 # Operators
 #############################################
-class AttrCallObject():
+
+
+class AttrCallObject:
     def __init__(self, name, args, kwds):
         """
         TESTS::
@@ -40,11 +42,11 @@ class AttrCallObject():
         EXAMPLES::
 
             sage: core = attrcall('core', 3)
-            sage: core(Partition([4,2]))
+            sage: core(Partition([4,2]))                                                # needs sage.combinat
             [4, 2]
 
-            sage: series = attrcall('series', x)
-            sage: series(sin(x), 4)
+            sage: series = attrcall('series', x)                                        # needs sage.symbolic
+            sage: series(sin(x), 4)                                                     # needs sage.symbolic
             1*x + (-1/6)*x^3 + Order(x^4)
         """
         return getattr(x, self.name)(*(self.args + args), **self.kwds)
@@ -136,7 +138,7 @@ class AttrCallObject():
 
         Note: a missing ``__hash__`` method here used to break the
         unique representation of parents taking ``attrcall`` objects
-        as input; see :trac:`8911`.
+        as input; see :issue:`8911`.
         """
         return hash((self.args, tuple(sorted(self.kwds.items()))))
 
@@ -149,17 +151,17 @@ def attrcall(name, *args, **kwds):
 
     INPUT:
 
-    -  ``name`` - a string of the name of the method you
+    -  ``name`` -- a string of the name of the method you
        want to call
 
-    -  ``args, kwds`` - arguments and keywords to be passed
+    -  ``args, kwds`` -- arguments and keywords to be passed
        to the method
 
     EXAMPLES::
 
         sage: f = attrcall('core', 3); f
         *.core(3)
-        sage: [f(p) for p in Partitions(5)]
+        sage: [f(p) for p in Partitions(5)]                                             # needs sage.combinat
         [[2], [1, 1], [1, 1], [3, 1, 1], [2], [2], [1, 1]]
     """
     return AttrCallObject(name, args, kwds)
@@ -180,6 +182,7 @@ def call_method(obj, name, *args, **kwds):
         3
     """
     return getattr(obj, name)(*args, **kwds)
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.misc.misc", "call_method", call_method)

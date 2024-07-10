@@ -4,19 +4,21 @@ libatomic_ops: Access hardware-provided atomic memory update operations
 Description
 -----------
 
-A part of the Boehm-Demers-Weiser conservative garbage collector.
+This package provides semi-portable access to hardware-provided
+atomic memory update operations on a number of architectures.
+
 
 License
 -------
 
--  Permissive BSD + GPL 2.0+
+- MIT (core library) + GPL 2.0+ (gpl extension library)
 
 
 Upstream Contact
 ----------------
 
-- Webpage: http://www.hboehm.info/gc/
-- Email List: bdwgc@lists.opendylan.org
+https://github.com/ivmai/libatomic_ops/
+
 
 Special Update/Build Instructions
 ---------------------------------

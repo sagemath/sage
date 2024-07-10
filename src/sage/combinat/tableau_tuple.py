@@ -16,7 +16,7 @@ A :class:`TableauTuple` is an ordered tuple
 its *level* and the tableaux `t^{(1)}, t^{(2)}, \ldots, t^{(l)}` are the
 components of the :class:`TableauTuple`.
 
-A tableaux can be thought of as the labelled diagram of a partition.
+A tableau can be thought of as the labelled diagram of a partition.
 Analogously, a :class:`TableauTuple` is the labelled diagram of a
 :class:`PartitionTuple`. That is, a :class:`TableauTuple` is a tableau of
 :class:`PartitionTuple` shape. As much as possible, :class:`TableauTuples`
@@ -130,7 +130,7 @@ There is one situation where a 1-tuple of tableau is not actually a
 iterators must have the correct parents, so in this one case 1-tuples of
 tableaux are different from :class:`Tableaux`::
 
-    sage: StandardTableauTuples()[:10]
+    sage: StandardTableauTuples()[:10]                                                  # needs sage.libs.flint
     [(),
      ([[1]]),
      ([], []),
@@ -198,7 +198,6 @@ Parent classes:
 
 Much of the combinatorics implemented here is motivated by this and
 subsequent papers on the representation theory of these algebras.
-
 """
 
 # ****************************************************************************
@@ -211,9 +210,9 @@ subsequent papers on the representation theory of these algebras.
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import factorial
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.words.word import Word
-from sage.combinat.posets.posets import Poset
 from sage.combinat.tableau import (Tableau, Tableaux, Tableaux_size, Tableaux_all,
                                    StandardTableau, RowStandardTableau,
                                    StandardTableaux, StandardTableaux_size,
@@ -222,13 +221,12 @@ from sage.combinat.tableau import (Tableau, Tableaux, Tableaux_size, Tableaux_al
                                    RowStandardTableaux_all, RowStandardTableaux_shape)
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
-from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.flatten import flatten
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randint
-from sage.arith.misc import factorial
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.semirings.non_negative_integer_semiring import NN
@@ -239,6 +237,9 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.combinat import permutation
+
+lazy_import('sage.combinat.posets.posets', 'Poset')
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
 
 
 # -------------------------------------------------
@@ -279,7 +280,7 @@ class TableauTuple(CombinatorialElement):
     The :meth:`level` of a tableau tuple is the length of the tuples. This
     corresponds to the level of the corresponding highest weight module.
 
-    In sage a :class:`TableauTuple` looks an behaves like a real tuple of
+    In sage a :class:`TableauTuple` looks and behaves like a real tuple of
     (level 1) :class:`Tableaux`. Many of the operations which are defined
     on :class:`Tableau` extend to :class:`TableauTuples`. Tableau tuples of
     level 1 are just ordinary :class:`Tableau`.
@@ -484,7 +485,7 @@ class TableauTuple(CombinatorialElement):
 
         TESTS:
 
-        Check that :trac:`20768` is fixed::
+        Check that :issue:`20768` is fixed::
 
             sage: T = TableauTuple([[[1,2,1],[1],[12345]], [], [[1523,1,2],[1,12341,-2]]])
             sage: T.pp()
@@ -597,7 +598,7 @@ class TableauTuple(CombinatorialElement):
               6  7
               8  9
         """
-        return [t for t in self]
+        return list(self)
 
     def to_list(self):
         """
@@ -1072,7 +1073,9 @@ class TableauTuple(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: rs = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]]).row_stabilizer()
+            sage: # needs sage.groups
+            sage: t = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]])
+            sage: rs = t.row_stabilizer()
             sage: rs.order()
             24
             sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs
@@ -1100,7 +1103,9 @@ class TableauTuple(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: cs = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]]).column_stabilizer()
+            sage: # needs sage.groups
+            sage: t = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]])
+            sage: cs = t.column_stabilizer()
             sage: cs.order()
             8
             sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs
@@ -1507,7 +1512,7 @@ class RowStandardTableauTuple(TableauTuple, metaclass=ClasscallMetaclass):
             <class 'sage.combinat.tableau_tuple.RowStandardTableauTuples_all_with_category.element_class'>
             sage: RowStandardTableauTuples(level=2)(t).parent()
             Row standard tableau tuples of level 2
-            sage: RowStandardTableauTuples(level=2,size=6)(t).parent()
+            sage: RowStandardTableauTuples(level=2, size=6)(t).parent()                 # needs sage.libs.flint
             Row standard tableau tuples of level 2 and size 6
         """
         if isinstance(t, (RowStandardTableau, RowStandardTableauTuple)):
@@ -1894,7 +1899,7 @@ class StandardTableauTuple(RowStandardTableauTuple):
             <class 'sage.combinat.tableau_tuple.StandardTableauTuples_all_with_category.element_class'>
             sage: StandardTableauTuples(level=2)(t).parent()
             Standard tableau tuples of level 2
-            sage: StandardTableauTuples(level=2,size=6)(t).parent()
+            sage: StandardTableauTuples(level=2, size=6)(t).parent()                    # needs sage.libs.flint
             Standard tableau tuples of level 2 and size 6
         """
         if isinstance(t, (StandardTableau, StandardTableauTuple)):
@@ -2154,7 +2159,7 @@ class TableauTuples(UniqueRepresentation, Parent):
         sage: TestSuite( TableauTuples(level=6, size=1) ).run()
         sage: TestSuite( TableauTuples(level=6, size=10) ).run()
 
-    Check that :trac:`14145` has been fixed::
+    Check that :issue:`14145` has been fixed::
 
         sage: 1 in TableauTuples()
         False
@@ -2290,7 +2295,7 @@ class TableauTuples(UniqueRepresentation, Parent):
             sage: ([[1,2],[4]],[[2,3],[1],[1]]) in T
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in TableauTuples()
             False
@@ -2367,9 +2372,8 @@ class TableauTuples(UniqueRepresentation, Parent):
              ([[3, 5], [4]], [[1, 2]])]
         """
         if self.is_finite():
-            return [y for y in self]
-        else:
-            raise NotImplementedError('this is an infinite set of tableaux')
+            return list(self)
+        raise NotImplementedError('this is an infinite set of tableaux')
 
 
 class TableauTuples_all(TableauTuples):
@@ -2451,7 +2455,7 @@ class TableauTuples_level(TableauTuples):
             sage: [[1],[2],[3]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in TableauTuples(3)
             False
@@ -2532,7 +2536,7 @@ class TableauTuples_size(TableauTuples):
             sage: [[1],[2],[3],[4]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in TableauTuples(size=3)
             False
@@ -2615,7 +2619,7 @@ class TableauTuples_level_size(TableauTuples):
             sage: [[2,4],[1,3]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in TableauTuples(3,3)
             False
@@ -2661,11 +2665,11 @@ class TableauTuples_level_size(TableauTuples):
         """
         if self.size() == 0:
             return self.element_class(self, [[] for _ in range(self.level())])
-        else:
-            tab = [[[m for m in range(1, self.size() + 1)]]]
-            for s in range(self.level() - 1):
-                tab.append([])
-            return self.element_class(self, tab)
+
+        tab = [[list(range(1, self.size() + 1))]]
+        for _ in range(self.level() - 1):
+            tab.append([])
+        return self.element_class(self, tab)
 
 
 # -------------------------------------------------
@@ -2712,7 +2716,7 @@ class RowStandardTableauTuples(TableauTuples):
         Row standard tableau tuples of shape ([2], [1, 1])
         sage: tabs.cardinality()
         12
-        sage: tabs[:]
+        sage: tabs[:]                                                                   # needs sage.graphs sage.rings.finite_rings
         [([[3, 4]], [[2], [1]]),
          ([[2, 4]], [[3], [1]]),
          ([[1, 4]], [[3], [2]]),
@@ -2728,25 +2732,26 @@ class RowStandardTableauTuples(TableauTuples):
 
         sage: tabs = RowStandardTableauTuples(level=3); tabs
         Row standard tableau tuples of level 3
-        sage: tabs[100]
+        sage: tabs[100]                                                                 # needs sage.libs.flint
         ([], [], [[2, 3], [1]])
 
-        sage: RowStandardTableauTuples()[0]
+        sage: RowStandardTableauTuples()[0]                                             # needs sage.libs.flint
         ([])
 
     TESTS::
 
+        sage: # needs sage.libs.flint
         sage: TestSuite( RowStandardTableauTuples() ).run()
         sage: TestSuite( RowStandardTableauTuples(level=1) ).run()
         sage: TestSuite( RowStandardTableauTuples(level=4) ).run()
-        sage: TestSuite( RowStandardTableauTuples(size=0) ).run(max_runs=50) # recursion depth exceeded with default max_runs
+        sage: TestSuite( RowStandardTableauTuples(size=0) ).run(max_runs=50)  # recursion depth exceeded with default max_runs
         sage: TestSuite( RowStandardTableauTuples(size=6) ).run()
         sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()
         sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()
         sage: TestSuite( RowStandardTableauTuples(level=1, size=10) ).run()
         sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()
         sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()
-        sage: TestSuite( RowStandardTableauTuples(level=4, size=10) ).run() # long time
+        sage: TestSuite( RowStandardTableauTuples(level=4, size=10) ).run()     # long time
         sage: TestSuite( RowStandardTableauTuples(shape=[[1],[3,1],[],[2,1]]) ).run()
 
     .. SEEALSO::
@@ -2772,9 +2777,9 @@ class RowStandardTableauTuples(TableauTuples):
             Row standard tableau tuples
             sage: RowStandardTableauTuples(4)
             Row standard tableau tuples of level 4
-            sage: RowStandardTableauTuples(4,3)
+            sage: RowStandardTableauTuples(4,3)                                         # needs sage.libs.flint
             Row standard tableau tuples of level 4 and size 3
-            sage: RowStandardTableauTuples([ [2,1],[1],[1,1,1],[3,2] ])
+            sage: RowStandardTableauTuples([ [2,1],[1],[1,1,1],[3,2] ])                 # needs sage.libs.flint
             Row standard tableau tuples of shape ([2, 1], [1], [1, 1, 1], [3, 2])
 
         TESTS::
@@ -2787,7 +2792,7 @@ class RowStandardTableauTuples(TableauTuples):
             sage: P = PartitionTuples()
             sage: pt = P([[1]]); pt
             ([1])
-            sage: RowStandardTableauTuples(pt)
+            sage: RowStandardTableauTuples(pt)                                          # needs sage.libs.flint
             Row standard tableaux of shape [1]
         """
         from sage.combinat.partition_tuple import PartitionTuple
@@ -2874,7 +2879,7 @@ class RowStandardTableauTuples(TableauTuples):
 
         EXAMPLES::
 
-            sage: RowStandardTableauTuples()[10:20]
+            sage: RowStandardTableauTuples()[10:20]                                     # needs sage.libs.flint
             [([[2, 3], [1]]),
              ([[1, 2], [3]]),
              ([[1, 3], [2]]),
@@ -2936,7 +2941,7 @@ class RowStandardTableauTuples(TableauTuples):
             sage: [[1,1],[5]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in RowStandardTableauTuples()
             False
@@ -2993,7 +2998,7 @@ class RowStandardTableauTuples_all(RowStandardTableauTuples, DisjointUnionEnumer
         EXAMPLES::
 
             sage: RSTT = RowStandardTableauTuples()
-            sage: TestSuite(RSTT).run()
+            sage: TestSuite(RSTT).run()                                                 # needs sage.libs.flint
         """
         RowStandardTableauTuples.__init__(self)
         from sage.combinat.partition_tuple import PartitionTuples
@@ -3046,7 +3051,7 @@ class RowStandardTableauTuples_level(RowStandardTableauTuples, DisjointUnionEnum
 
             sage: RowStandardTableauTuples(3)
             Row standard tableau tuples of level 3
-            sage: RowStandardTableauTuples(3)[:10]
+            sage: RowStandardTableauTuples(3)[:10]                                      # needs sage.libs.flint
             [([], [], []),
             ([[1]], [], []),
             ([], [[1]], []),
@@ -3094,7 +3099,7 @@ class RowStandardTableauTuples_level(RowStandardTableauTuples, DisjointUnionEnum
             sage: [] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in RowStandardTableauTuples(3)
             False
@@ -3144,7 +3149,7 @@ class RowStandardTableauTuples_size(RowStandardTableauTuples, DisjointUnionEnume
 
             sage: RowStandardTableauTuples(size=3) # indirect doctest
             Row standard tableau tuples of size 3
-            sage: RowStandardTableauTuples(size=2)[:10]
+            sage: RowStandardTableauTuples(size=2)[:10]                                 # needs sage.libs.flint
             [([[1, 2]]),
             ([[2], [1]]),
             ([[1], [2]]),
@@ -3242,9 +3247,10 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
 
         EXAMPLES::
 
-            sage: RowStandardTableauTuples(size=4,level=3)
+            sage: # needs sage.libs.flint
+            sage: RSTT43 = RowStandardTableauTuples(size=4, level=3); RSTT43
             Row standard tableau tuples of level 3 and size 4
-            sage: RowStandardTableauTuples(size=4,level=3) is RowStandardTableauTuples(3,4)
+            sage: RSTT43 is RowStandardTableauTuples(3,4)
             True
             sage: RowStandardTableauTuples(level=3, size=2)[:]
             [([[1, 2]], [], []),
@@ -3281,7 +3287,7 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
 
         EXAMPLES::
 
-            sage: RowStandardTableauTuples(3, 4)
+            sage: RowStandardTableauTuples(3, 4)                                        # needs sage.libs.flint
             Row standard tableau tuples of level 3 and size 4
         """
         return f"Row standard tableau tuples of level {self.level()} and size {self.size()}"
@@ -3293,6 +3299,7 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: tabs = RowStandardTableauTuples(level=4, size=4); tabs
             Row standard tableau tuples of level 4 and size 4
             sage: [[[2,4],[1]],[],[[3]],[]] in tabs
@@ -3302,9 +3309,9 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
             sage: RowStandardTableauTuple([[[2, 3]], [[1]]]) in tabs
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
-            sage: 1 in RowStandardTableauTuples(level=4, size=3)
+            sage: 1 in RowStandardTableauTuples(level=4, size=3)                        # needs sage.libs.flint
             False
         """
         if isinstance(t, self.element_class):
@@ -3323,9 +3330,9 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
 
         EXAMPLES::
 
-            sage: RowStandardTableauTuples(5,size=2).an_element()
+            sage: RowStandardTableauTuples(5, size=2).an_element()                      # needs sage.libs.flint
             ([], [], [], [], [[1], [2]])
-            sage: RowStandardTableauTuples(2,size=4).an_element()
+            sage: RowStandardTableauTuples(2, size=4).an_element()                      # needs sage.libs.flint
             ([[1]], [[2, 3], [4]])
         """
         if self.size() == 0:
@@ -3383,7 +3390,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
             sage: ([[1, 4],[3]], [[2]]) in STT
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in RowStandardTableauTuples([[2,1],[1]])
             False
@@ -3423,14 +3430,14 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
 
         EXAMPLES::
 
-            sage: RowStandardTableauTuples([[1],[1],[1]]).list()
+            sage: RowStandardTableauTuples([[1],[1],[1]]).list()                        # needs sage.graphs sage.modules sage.rings.finite_rings
             [([[3]], [[2]], [[1]]),
              ([[2]], [[3]], [[1]]),
              ([[1]], [[3]], [[2]]),
              ([[1]], [[2]], [[3]]),
              ([[2]], [[1]], [[3]]),
              ([[3]], [[1]], [[2]])]
-            sage: RowStandardTableauTuples([[2,1],[2]]).list()
+            sage: RowStandardTableauTuples([[2,1],[2]]).list()                          # needs sage.graphs sage.modules sage.rings.finite_rings
             [([[4, 5], [2]], [[1, 3]]),
              ([[4, 5], [3]], [[1, 2]]),
              ([[3, 5], [4]], [[1, 2]]),
@@ -3464,10 +3471,10 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
 
         TESTS::
 
-            sage: def check(mu):
+            sage: def check(mu):                                                        # needs sage.graphs sage.modules sage.rings.finite_rings
             ....:     return (RowStandardTableauTuples(mu).cardinality()
             ....:             == len(RowStandardTableauTuples(mu).list()))
-            sage: all(check(mu) for mu in PartitionTuples(4,4))
+            sage: all(check(mu) for mu in PartitionTuples(4,4))                         # needs sage.graphs sage.modules sage.rings.finite_rings
             True
         """
         mu = self.shape()
@@ -3536,9 +3543,9 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
 
         EXAMPLES::
 
-            sage: RowStandardTableauTuples([[2],[2,1]]).an_element()
+            sage: RowStandardTableauTuples([[2],[2,1]]).an_element()                    # needs sage.graphs
             ([[4, 5]], [[1, 3], [2]])
-            sage: RowStandardTableauTuples([[10],[],[]]).an_element()
+            sage: RowStandardTableauTuples([[10],[],[]]).an_element()                   # needs sage.graphs
             ([[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]], [], [])
         """
         c = self.cardinality()
@@ -3641,7 +3648,7 @@ class RowStandardTableauTuples_residue(RowStandardTableauTuples):
         EXAMPLES::
 
             sage: R = RowStandardTableauTuple([[[4, 5], [3]],[[1,2]]]).residue_sequence(3, (0,1))
-            sage: R.row_standard_tableaux()[:]
+            sage: R.row_standard_tableaux()[:]                                          # needs sage.libs.flint
             [([[4, 5], [3]], [[1, 2]]),
              ([[4, 5], [2]], [[1, 3]]),
              ([[4], [3], [5]], [[1, 2]]),
@@ -3651,7 +3658,7 @@ class RowStandardTableauTuples_residue(RowStandardTableauTuples):
              ([], [[1, 3], [4], [2], [5]]),
              ([], [[1, 2], [4], [3], [5]])]
             sage: R = RowStandardTableauTuple([[[2,4],[1]],[[3]]]).residue_sequence(3,(0,1))
-            sage: R.row_standard_tableaux()[:]
+            sage: R.row_standard_tableaux()[:]                                          # needs sage.libs.flint
             [([[2, 4], [1], [3]], []),
              ([[2, 3], [1], [4]], []),
              ([[2, 4], [1]], [[3]]),
@@ -3774,8 +3781,8 @@ class RowStandardTableauTuples_residue(RowStandardTableauTuples):
             [[2, 3], [1]]
             sage: StandardTableau([[1,3],[2]]).residue_sequence(3).row_standard_tableaux().an_element()
             [[1, 3], [2]]
-            sage: RowStandardTableauTuple([[[4]],[[2,3],[1]]]).residue_sequence(3,(0,1)).row_standard_tableaux().an_element()
-            sage: StandardTableauTuple([[[4]],[[1,3],[2]]]).residue_sequence(3,(0,1)).row_standard_tableaux().an_element()
+            sage: RowStandardTableauTuple([[[4]],[[2,3],[1]]]).residue_sequence(3,(0,1)).row_standard_tableaux().an_element()                                   # needs sage.libs.flint
+            sage: StandardTableauTuple([[[4]],[[1,3],[2]]]).residue_sequence(3,(0,1)).row_standard_tableaux().an_element()                                      # needs sage.libs.flint
             ([[4], [3], [1], [2]], [])
         """
         try:
@@ -4017,14 +4024,15 @@ class StandardTableauTuples(RowStandardTableauTuples):
 
         sage: tabs=StandardTableauTuples(level=3); tabs
         Standard tableau tuples of level 3
-        sage: tabs[100]
+        sage: tabs[100]                                                                 # needs sage.libs.flint
         ([[1, 2], [3]], [], [[4]])
 
-        sage: StandardTableauTuples()[0]
+        sage: StandardTableauTuples()[0]                                                # needs sage.libs.flint
         ()
 
     TESTS::
 
+        sage: # needs sage.libs.flint
         sage: TestSuite( StandardTableauTuples() ).run()
         sage: TestSuite( StandardTableauTuples(level=1) ).run()
         sage: TestSuite( StandardTableauTuples(level=4) ).run()
@@ -4061,14 +4069,14 @@ class StandardTableauTuples(RowStandardTableauTuples):
             Standard tableau tuples
             sage: StandardTableauTuples(4)
             Standard tableau tuples of level 4
-            sage: StandardTableauTuples(4,3)
+            sage: StandardTableauTuples(4,3)                                            # needs sage.libs.flint
             Standard tableau tuples of level 4 and size 3
-            sage: StandardTableauTuples([ [2,1],[1],[1,1,1],[3,2] ])
+            sage: StandardTableauTuples([ [2,1],[1],[1,1,1],[3,2] ])                    # needs sage.libs.flint
             Standard tableau tuples of shape ([2, 1], [1], [1, 1, 1], [3, 2])
 
         TESTS::
 
-            sage: StandardTableauTuples([ [2,1],[1],[1,1,1],[3,2,3] ])
+            sage: StandardTableauTuples([ [2,1],[1],[1,1,1],[3,2,3] ])                  # needs sage.libs.flint
             Traceback (most recent call last):
             ...
             ValueError: the shape must be a partition tuple
@@ -4076,7 +4084,7 @@ class StandardTableauTuples(RowStandardTableauTuples):
             sage: P = PartitionTuples()
             sage: pt = P([[1]]); pt
             ([1])
-            sage: StandardTableauTuples(pt)
+            sage: StandardTableauTuples(pt)                                             # needs sage.libs.flint
             Standard tableaux of shape [1]
         """
         from sage.combinat.partition_tuple import PartitionTuple
@@ -4126,12 +4134,12 @@ class StandardTableauTuples(RowStandardTableauTuples):
                 raise ValueError('the shape must be a partition tuple')
 
             if level is None:
-                level=shape.level()
-            elif level!=shape.level():
+                level = shape.level()
+            elif level != shape.level():
                 raise ValueError('the shape and level must agree')
             if size is None:
-                size=shape.size()
-            elif size!=shape.size():
+                size = shape.size()
+            elif size != shape.size():
                 raise ValueError('the shape and size must agree')
 
         # now that the inputs appear to make sense, return the appropriate class
@@ -4162,7 +4170,7 @@ class StandardTableauTuples(RowStandardTableauTuples):
 
         EXAMPLES::
 
-            sage: StandardTableauTuples()[10:20]
+            sage: StandardTableauTuples()[10:20]                                        # needs sage.libs.flint
             [([[1, 2], [3]]),
              ([[1], [2], [3]]),
              ([[1, 2]], []),
@@ -4224,7 +4232,7 @@ class StandardTableauTuples(RowStandardTableauTuples):
             sage: [[1,1],[5]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableauTuples()
             False
@@ -4235,8 +4243,8 @@ class StandardTableauTuples(RowStandardTableauTuples):
             if all(s in Tableaux() for s in t):
                 flatt = sorted(sum((list(row) for s in t for row in s), []))
                 return flatt == list(range(1, len(flatt)+1)) and all(len(x) == 0 or
-                  (all(row[i]<row[i+1] for row in x for i in range(len(row)-1))
-                      and all(x[r][c]<x[r+1][c] for c in range(len(x[0]))
+                  (all(row[i] < row[i+1] for row in x for i in range(len(row)-1))
+                      and all(x[r][c] < x[r+1][c] for c in range(len(x[0]))
                               for r in range(len(x)-1) if len(x[r+1]) > c)) for x in t)
             else:
                 return t in StandardTableaux()
@@ -4316,6 +4324,7 @@ class StandardTableauTuples_all(StandardTableauTuples, DisjointUnionEnumeratedSe
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: stt = StandardTableauTuples()
             sage: stt[0:8]
             [(),
@@ -4395,7 +4404,7 @@ class StandardTableauTuples_level(StandardTableauTuples, DisjointUnionEnumerated
             sage: [] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableauTuples(3)
             False
@@ -4418,7 +4427,7 @@ class StandardTableauTuples_level(StandardTableauTuples, DisjointUnionEnumerated
         EXAMPLES::
 
             sage: stt = StandardTableauTuples(3)
-            sage: stt[0:8]
+            sage: stt[0:8]                                                              # needs sage.libs.flint
             [([], [], []),
               ([[1]], [], []),
               ([], [[1]], []),
@@ -4427,9 +4436,9 @@ class StandardTableauTuples_level(StandardTableauTuples, DisjointUnionEnumerated
               ([[1], [2]], [], []),
               ([[1]], [[2]], []),
               ([[2]], [[1]], [])]
-            sage: stt[50]
+            sage: stt[50]                                                               # needs sage.libs.flint
             ([], [[1, 2, 3]], [])
-            sage: stt[0].parent() is stt
+            sage: stt[0].parent() is stt                                                # needs sage.libs.flint
             True
         """
         # Iterate through the PartitionTuples and then the tableaux
@@ -4507,7 +4516,7 @@ class StandardTableauTuples_size(StandardTableauTuples, DisjointUnionEnumeratedS
             sage: Tableau([[1]]) in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableauTuples(size=3)
             False
@@ -4540,7 +4549,7 @@ class StandardTableauTuples_size(StandardTableauTuples, DisjointUnionEnumeratedS
         EXAMPLES::
 
             sage: stt = StandardTableauTuples(size=3)
-            sage: stt[0:8]
+            sage: stt[0:8]                                                              # needs sage.libs.flint
             [([[1, 2, 3]]),
              ([[1, 3], [2]]),
              ([[1, 2], [3]]),
@@ -4549,9 +4558,9 @@ class StandardTableauTuples_size(StandardTableauTuples, DisjointUnionEnumeratedS
              ([[1, 2], [3]], []),
              ([[1, 3], [2]], []),
              ([[1], [2], [3]], [])]
-            sage: stt[50]
+            sage: stt[50]                                                               # needs sage.libs.flint
             ([[3]], [[1]], [[2]])
-            sage: stt[0].parent() is stt
+            sage: stt[0].parent() is stt                                                # needs sage.libs.flint
             True
         """
         # Iterate through the PartitionTuples and then the tableaux
@@ -4597,9 +4606,9 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
 
         EXAMPLES::
 
-            sage: StandardTableauTuples(size=4,level=3)
+            sage: StandardTableauTuples(size=4, level=3)                                # needs sage.libs.flint
             Standard tableau tuples of level 3 and size 4
-            sage: StandardTableauTuples(size=4,level=3) is StandardTableauTuples(3,4)
+            sage: StandardTableauTuples(size=4, level=3) is StandardTableauTuples(3,4)  # needs sage.libs.flint
             True
         """
         StandardTableauTuples.__init__(self)
@@ -4617,7 +4626,7 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
 
         EXAMPLES::
 
-            sage: StandardTableauTuples(3, 4)    # indirect doctest
+            sage: StandardTableauTuples(3, 4)    # indirect doctest                     # needs sage.libs.flint
             Standard tableau tuples of level 3 and size 4
         """
         return f"Standard tableau tuples of level {self.level()} and size {self.size()}"
@@ -4629,6 +4638,7 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: tabs = StandardTableauTuples(level=4, size=3); tabs
             Standard tableau tuples of level 4 and size 3
             sage: [[[1,2]],[],[[3]],[]] in tabs
@@ -4640,9 +4650,9 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
             sage: Tableau([[1]]) in tabs
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
-            sage: 1 in StandardTableauTuples(level=4, size=3)
+            sage: 1 in StandardTableauTuples(level=4, size=3)                           # needs sage.libs.flint
             False
         """
         if isinstance(t, self.element_class):
@@ -4661,9 +4671,9 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
 
         EXAMPLES::
 
-            sage: StandardTableauTuples(3,2).cardinality()
+            sage: StandardTableauTuples(3,2).cardinality()                              # needs sage.libs.flint
             12
-            sage: StandardTableauTuples(4,6).cardinality()
+            sage: StandardTableauTuples(4,6).cardinality()                              # needs sage.libs.flint
             31936
         """
         from sage.combinat.partition_tuple import PartitionTuples
@@ -4680,7 +4690,8 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
 
         EXAMPLES::
 
-            sage: stt = StandardTableauTuples(3,3)
+            sage: # needs sage.libs.flint
+            sage: stt = StandardTableauTuples(3, 3)
             sage: stt[0:8]
             [([[1, 2, 3]], [], []),
               ([[1, 2], [3]], [], []),
@@ -4707,9 +4718,9 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
 
         EXAMPLES::
 
-            sage: StandardTableauTuples(5,size=2).an_element()
+            sage: StandardTableauTuples(5, size=2).an_element()                         # needs sage.libs.flint
             ([], [], [], [], [[1], [2]])
-            sage: StandardTableauTuples(2,size=4).an_element()
+            sage: StandardTableauTuples(2, size=4).an_element()                         # needs sage.libs.flint
             ([[1]], [[2, 3], [4]])
         """
         if self.size() == 0:
@@ -4763,7 +4774,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
             sage: ([[1, 4],[3]], [[2]]) in STT
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableauTuples([[2,1],[1]])
             False
@@ -4823,8 +4834,8 @@ class StandardTableauTuples_shape(StandardTableauTuples):
 
         TESTS::
 
-            sage: correct_number=lambda mu : StandardTableauTuples(mu).cardinality()==len(StandardTableauTuples(mu).list())
-            sage: all(correct_number(mu) for mu in PartitionTuples(4,4))
+            sage: correct_number = lambda mu: StandardTableauTuples(mu).cardinality()==len(StandardTableauTuples(mu).list())
+            sage: all(correct_number(mu) for mu in PartitionTuples(4,4))                # needs sage.libs.flint
             True
         """
         mu = self.shape()

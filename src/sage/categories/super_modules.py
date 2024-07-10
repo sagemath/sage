@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Super modules
 """
@@ -23,6 +24,7 @@ axiom_whitelist = frozenset(["Facade", "Finite", "Infinite",
                              "AdditiveInverse", "AdditiveUnital",
                              "NoZeroDivisors", "Distributive"])
 
+
 class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_ring):
     @classmethod
     def default_super_categories(cls, category, *args):
@@ -46,7 +48,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
         EXAMPLES::
 
             sage: HopfAlgebras(ZZ).WithBasis().FiniteDimensional().Super()  # indirect doctest
-            Category of finite dimensional super hopf algebras with basis over Integer Ring
+            Category of finite dimensional super Hopf algebras with basis over Integer Ring
         """
         axioms = axiom_whitelist.intersection(category.axioms())
         C = super().default_super_categories(category, *args)
@@ -82,6 +84,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
             Category of super algebras with basis over Rational Field
         """
         return "super {}".format(self.base_category()._repr_object_names())
+
 
 class SuperModules(SuperModulesCategory):
     r"""
@@ -182,12 +185,13 @@ class SuperModules(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: cat = Algebras(QQ).WithBasis().Super()
-                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)       # optional - sage.combinat sage.modules
-                sage: C.degree_on_basis = sum                                           # optional - sage.combinat sage.modules
-                sage: C.basis()[2,2,1].is_even_odd()                                    # optional - sage.combinat sage.modules
+                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)
+                sage: C.degree_on_basis = sum
+                sage: C.basis()[2,2,1].is_even_odd()
                 1
-                sage: C.basis()[2,2].is_even_odd()                                      # optional - sage.combinat sage.modules
+                sage: C.basis()[2,2].is_even_odd()
                 0
             """
             return self.degree() % 2
@@ -198,12 +202,13 @@ class SuperModules(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: cat = Algebras(QQ).WithBasis().Super()
-                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)       # optional - sage.combinat sage.modules
-                sage: C.degree_on_basis = sum                                           # optional - sage.combinat sage.modules
-                sage: C.basis()[2,2,1].is_even()                                        # optional - sage.combinat sage.modules
+                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)
+                sage: C.degree_on_basis = sum
+                sage: C.basis()[2,2,1].is_even()
                 False
-                sage: C.basis()[2,2].is_even()                                          # optional - sage.combinat sage.modules
+                sage: C.basis()[2,2].is_even()
                 True
             """
             return self.is_even_odd() == 0
@@ -214,12 +219,13 @@ class SuperModules(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: cat = Algebras(QQ).WithBasis().Super()
-                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)       # optional - sage.combinat sage.modules
-                sage: C.degree_on_basis = sum                                           # optional - sage.combinat sage.modules
-                sage: C.basis()[2,2,1].is_odd()                                         # optional - sage.combinat sage.modules
+                sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)
+                sage: C.degree_on_basis = sum
+                sage: C.basis()[2,2,1].is_odd()
                 True
-                sage: C.basis()[2,2].is_odd()                                           # optional - sage.combinat sage.modules
+                sage: C.basis()[2,2].is_odd()
                 False
             """
             return self.is_even_odd() == 1

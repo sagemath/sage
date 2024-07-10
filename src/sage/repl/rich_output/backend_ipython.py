@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 IPython Backend for the Sage Rich Output System
 
@@ -17,6 +17,7 @@ This module defines the IPython backends for
 
 import os
 import sys
+import html
 from IPython.display import publish_display_data
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
@@ -362,13 +363,13 @@ class BackendIPythonCommandline(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: from sage.repl.rich_output.output_graphics3d import OutputSceneJmol
-            sage: backend.launch_jmol(OutputSceneJmol.example(), 'Graphics3d object')
+            sage: backend.launch_jmol(OutputSceneJmol.example(), 'Graphics3d object')   # needs sage.plot
             'Launched jmol viewer for Graphics3d object'
         """
         from sage.doctest import DOCTEST_MODE
         from sage.interfaces.jmoldata import JmolData
         jdata = JmolData()
-        if not jdata.is_jvm_available() and not DOCTEST_MODE:
+        if not jdata.is_jmol_available() and not DOCTEST_MODE:
             raise RuntimeError('jmol cannot run, no suitable java version found')
         launch_script = output_jmol.launch_script_filename()
         jmol_cmd = 'jmol'
@@ -408,22 +409,18 @@ class BackendIPythonCommandline(BackendIPython):
 
         EXAMPLES::
 
+            sage: # needs threejs
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: backend.threejs_offline_scripts()
             '...<script ...</script>...'
         """
-        from sage.env import THREEJS_DIR
-        from sage.repl.rich_output.display_manager import _required_threejs_version
+        from sage.features.threejs import Threejs
 
-        script = os.path.join(THREEJS_DIR, '{}/three.min.js'.format(_required_threejs_version()))
+        if not Threejs().is_present():
+            return ''
 
-        if sys.platform == 'cygwin':
-            import cygwin
-
-            def normpath(p):
-                return 'file:///' + cygwin.cygpath(p, 'w').replace('\\', '/')
-            script = normpath(script)
+        script = Threejs().absolute_filename()
 
         return '\n<script src="{0}"></script>'.format(script)
 
@@ -574,7 +571,7 @@ class BackendIPythonNotebook(BackendIPython):
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneThreejs):
-            escaped_html = rich_output.html.get_str().replace('"', '&quot;')
+            escaped_html = html.escape(rich_output.html.get_str())
             iframe = IFRAME_TEMPLATE.format(
                 escaped_html=escaped_html,
                 width='100%',
@@ -598,11 +595,11 @@ class BackendIPythonNotebook(BackendIPython):
 
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
-            sage: backend.threejs_offline_scripts()
+            sage: backend.threejs_offline_scripts()                                     # needs sage.plot
             '...<script src="/nbextensions/threejs-sage/r.../three.min.js...<\\/script>...'
         """
         from sage.repl.rich_output import get_display_manager
-        from sage.repl.rich_output.display_manager import _required_threejs_version
+        from sage.features.threejs import Threejs
         CDN_script = get_display_manager().threejs_scripts(online=True)
         CDN_script = CDN_script.replace('</script>', r'<\/script>').replace('\n', ' \\\n')
         return """
@@ -610,4 +607,4 @@ class BackendIPythonNotebook(BackendIPython):
 <script>
   if ( !window.THREE ) document.write('{}');
 </script>
-        """.format(_required_threejs_version(), CDN_script)
+        """.format(Threejs().required_version(), CDN_script)

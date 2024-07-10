@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fully commutative elements of Coxeter groups
 
@@ -27,15 +28,18 @@ Natalie Schoenhals for their contribution to the project and the code.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.structure.parent import Parent
-from sage.structure.list_clone import NormalizedClonableList
-from sage.categories.enumerated_sets import EnumeratedSets
-from sage.structure.unique_representation import UniqueRepresentation
-from .root_system.coxeter_matrix import CoxeterMatrix
 from collections import deque
-from sage.combinat.posets.posets import Poset
+
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.misc.lazy_import import lazy_import
+from sage.structure.list_clone import NormalizedClonableList
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.combinat.posets.posets', 'Poset')
+lazy_import('sage.combinat.root_system.coxeter_group', 'CoxeterGroup')
+lazy_import('sage.combinat.root_system.coxeter_matrix', 'CoxeterMatrix')
 
 
 class FullyCommutativeElement(NormalizedClonableList):
@@ -187,10 +191,10 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         - ``self`` -- list, a reduced word `w=s_0... s_{k-1}` of an FC element
 
-        - ``one_index`` -- boolean (default: False). Setting the value to True
+        - ``one_index`` -- boolean (default: ``False``). Setting the value to True
           will change the underlying set of the poset to `\{1, 2, \dots, n\}`
 
-        - ``display_labeling`` -- boolean (default: False). Setting the value to
+        - ``display_labeling`` -- boolean (default: ``False``). Setting the value to
           True will display the label `s_i` for each element `i` of the poset
 
         OUTPUT:
@@ -247,7 +251,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         EXAMPLES::
 
             sage: FC = CoxeterGroup(['B', 5]).fully_commutative_elements()
-            sage: FC([3,2,4,3,1]).plot_heap()                                           # optional - sage.plot
+            sage: FC([3,2,4,3,1]).plot_heap()                                           # needs sage.plot
             Graphics object consisting of 15 graphics primitives
 
         .. PLOT::
@@ -607,13 +611,13 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         # Find the first letter in that doesn't commute with s.
         try:
-            (j, t) = next((i, x) for (i, x) in enumerate(self) if m[s, x] >= 3)
+            j, t = next((i, x) for i, x in enumerate(self) if m[s, x] >= 3)
         except StopIteration:
             return True
 
         u = self.clone()
         u._set_list(self[j:])
-        x, y = u.coset_decomposition({s, t})
+        x, _ = u.coset_decomposition({s, t})
         return len(x) != m[s, t] - 1
 
     ###########################################################################
@@ -799,7 +803,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         True
 
     Attempting to create an element from an input that is not the reduced word
-    of a fully commutative element throws a ``ValueError``::
+    of a fully commutative element throws a :class:`ValueError`::
 
         sage: FC([1,2,1])
         Traceback (most recent call last):

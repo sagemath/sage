@@ -1,11 +1,11 @@
 """
-Arbitrary Precision Complex Numbers using GNU MPC
+Arbitrary precision floating point complex numbers using GNU MPC
 
-This is a binding for the MPC arbitrary-precision floating point library.
-It is adaptated from ``real_mpfr.pyx`` and ``complex_mpfr.pyx``.
+This is a binding for the arbitrary-precision floating point library
+:ref:`GNU MPC <spkg_mpc>`.
 
-We define a class :class:`MPComplexField`, where each instance of
-``MPComplexField`` specifies a field of floating-point complex numbers with
+We define a class :class:`MPComplexField`, each instance of which
+specifies a field of floating-point complex numbers with
 a specified precision shared by the real and imaginary part and a rounding
 mode stating the rounding mode directions specific to real and imaginary
 parts.
@@ -17,7 +17,8 @@ documentation for the :mod:`sage.rings.real_mpfr`.
 
 AUTHORS:
 
-- Philippe Theveny (2008-10-13): initial version.
+- Philippe Theveny (2008-10-13): initial version, adapted from
+  :mod:`sage.rings.real_mpfr` and :mod:`sage.rings.complex_mpfr`.
 
 - Alex Ghitza (2008-11): cache, generators, random element, and many doctests.
 
@@ -59,7 +60,7 @@ EXAMPLES::
 # ****************************************************************************
 
 import re
-from . import real_mpfr
+from sage.rings import real_mpfr
 import weakref
 from cpython.object cimport Py_NE
 
@@ -68,23 +69,24 @@ from sage.cpython.string cimport str_to_bytes
 from sage.libs.mpfr cimport *
 from sage.libs.mpc cimport *
 from sage.structure.parent cimport Parent
-from sage.structure.parent_gens cimport ParentWithGens
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
-from sage.libs.pari.all import pari
 
-from .integer cimport Integer
-from .complex_mpfr cimport ComplexNumber
-from .complex_mpfr import ComplexField_class
+try:
+    from sage.libs.pari.all import pari, pari_gen, PariError
+except ImportError:
+    pari_gen = PariError = ()
+
+from sage.rings.integer cimport Integer
+from sage.rings.complex_mpfr cimport ComplexNumber
+from sage.rings.complex_mpfr import ComplexField_class
 
 from sage.misc.randstate cimport randstate, current_randstate
-from .real_mpfr cimport RealField_class, RealNumber
-from .real_mpfr import mpfr_prec_min, mpfr_prec_max
+from sage.rings.real_mpfr cimport RealField_class, RealNumber
+from sage.rings.real_mpfr import mpfr_prec_min, mpfr_prec_max
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.categories.fields import Fields
-
-from sage.misc.superseded import deprecated_function_alias
 
 cimport gmpy2
 gmpy2.import_gmpy2()
@@ -92,6 +94,7 @@ gmpy2.import_gmpy2()
 AA = None
 QQbar = None
 CDF = CLF = RLF = None
+
 
 def late_import():
     """
@@ -107,8 +110,9 @@ def late_import():
         import sage.rings.qqbar
         AA = sage.rings.qqbar.AA
         QQbar = sage.rings.qqbar.QQbar
-        from .real_lazy import CLF, RLF
-        from .complex_double import CDF
+        from sage.rings.real_lazy import CLF, RLF
+        from sage.rings.complex_double import CDF
+
 
 _mpfr_rounding_modes = ['RNDN', 'RNDZ', 'RNDU', 'RNDD']
 
@@ -120,14 +124,14 @@ _mpc_rounding_modes = [ 'RNDNN', 'RNDZN', 'RNDUN', 'RNDDN',
                         '', '', '', '', '', '', '', '', '', '', '', '',
                         'RNDDN', 'RNDZD', 'RNDUD', 'RNDDD' ]
 
-cdef inline mpfr_rnd_t rnd_re(mpc_rnd_t rnd):
+cdef inline mpfr_rnd_t rnd_re(mpc_rnd_t rnd) noexcept:
     """
     Return the numeric value of the real part rounding mode.  This
     is an internal function.
     """
     return <mpfr_rnd_t>(rnd & 3)
 
-cdef inline mpfr_rnd_t rnd_im(mpc_rnd_t rnd):
+cdef inline mpfr_rnd_t rnd_im(mpc_rnd_t rnd) noexcept:
     """
     Return the numeric value of the imaginary part rounding mode.
     This is an internal function.
@@ -231,6 +235,8 @@ cpdef inline split_complex_string(string, int base=10):
 # their parent via direct C calls, which will be faster.
 
 cache = {}
+
+
 def MPComplexField(prec=53, rnd="RNDNN", names=None):
     """
     Return the complex field with real and imaginary parts having
@@ -260,7 +266,7 @@ def MPComplexField(prec=53, rnd="RNDNN", names=None):
     return C
 
 
-cdef class MPComplexField_class(sage.rings.ring.Field):
+cdef class MPComplexField_class(Field):
     def __init__(self, int prec=53, rnd="RNDNN"):
         """
         Initialize ``self``.
@@ -307,7 +313,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         if prec < mpfr_prec_min() or prec > mpfr_prec_max():
             raise ValueError("prec (=%s) must be >= %s and <= %s." % (
                 prec, mpfr_prec_min(), mpfr_prec_max()))
-        self.__prec = prec
+        self._prec = prec
         if not isinstance(rnd, str):
             raise TypeError("rnd must be a string")
         try:
@@ -321,7 +327,8 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         self.__real_field = real_mpfr.RealField(prec, rnd=_mpfr_rounding_modes[rnd_re(n)])
         self.__imag_field = real_mpfr.RealField(prec, rnd=_mpfr_rounding_modes[rnd_im(n)])
 
-        ParentWithGens.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite())
+        Parent.__init__(self, self._real_field(), names=('I',), normalize=False,
+                        category=Fields().Infinite())
         self._populate_coercion_lists_(coerce_list=[MPFRtoMPC(self._real_field(), self)])
 
     cdef MPComplexNumber _new(self):
@@ -331,7 +338,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         cdef MPComplexNumber z
         z = MPComplexNumber.__new__(MPComplexNumber)
         z._parent = self
-        mpc_init2(z.value, self.__prec)
+        mpc_init2(z.value, self._prec)
         z.init = 1
         return z
 
@@ -344,7 +351,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
             sage: MPComplexField(200, 'RNDDU') # indirect doctest
             Complex Field with 200 bits of precision and rounding RNDDU
         """
-        s = "Complex Field with %s bits of precision"%self.__prec
+        s = "Complex Field with %s bits of precision"%self._prec
         if self.__rnd != MPC_RNDNN:
             s = s + " and rounding %s"%(self.__rnd_str)
         return s
@@ -465,13 +472,13 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         if RR.has_coerce_map_from(S):
             return self._coerce_map_via([RR], S)
 
-        if isinstance(S, MPComplexField_class) and S.prec() >= self.__prec:
+        if isinstance(S, MPComplexField_class) and S.prec() >= self._prec:
             #FIXME: What map when rounding modes differ but prec is the same ?
             #       How to provide commutativity of morphisms ?
             #       Change _cmp_ when done
             return MPCtoMPC(S, self)
 
-        if isinstance(S, ComplexField_class) and S.prec() >= self.__prec:
+        if isinstance(S, ComplexField_class) and S.prec() >= self._prec:
             return CCtoMPC(S, self)
 
         late_import()
@@ -490,7 +497,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
             sage: loads(dumps(C)) == C
             True
         """
-        return __create__MPComplexField_version0, (self.__prec, self.__rnd_str)
+        return __create__MPComplexField_version0, (self._prec, self.__rnd_str)
 
     def __richcmp__(left, right, int op):
         """
@@ -513,7 +520,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
 
         cdef MPComplexField_class s = <MPComplexField_class>left
         cdef MPComplexField_class o = <MPComplexField_class>right
-        return richcmp(s.__prec, o.__prec, op)
+        return richcmp(s._prec, o._prec, op)
 
     def gen(self, n=0):
         """
@@ -604,7 +611,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
             sage: C = MPComplexField(10, 'RNDNZ'); C.name()
             'MPComplexField10_RNDNZ'
         """
-        return "MPComplexField%s_%s"%(self.__prec, self.__rnd_str)
+        return "MPComplexField%s_%s"%(self._prec, self.__rnd_str)
 
     def __hash__(self):
         """
@@ -629,7 +636,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
             sage: MPComplexField(22).prec()
             22
         """
-        return self.__prec
+        return self._prec
 
     def rounding_mode(self):
         """
@@ -707,7 +714,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         cdef MPComplexNumber z
         z = MPComplexNumber.__new__(MPComplexNumber)
         z._parent = self._parent
-        mpc_init2(z.value, (<MPComplexField_class>self._parent).__prec)
+        mpc_init2(z.value, (<MPComplexField_class>self._parent)._prec)
         z.init = 1
         return z
 
@@ -760,7 +767,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         if parent is None:
             raise TypeError
         self._parent = parent
-        mpc_init2(self.value, parent.__prec)
+        mpc_init2(self.value, parent._prec)
         self.init = 1
         if x is None: return
         self._set(x, y, base)
@@ -843,7 +850,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             elif isinstance(z, ComplexNumber):
                 mpc_set_fr_fr(self.value, (<ComplexNumber>z).__re, (<ComplexNumber>z).__im, rnd)
                 return
-            elif isinstance(z, sage.libs.pari.all.pari_gen):
+            elif isinstance(z, pari_gen):
                 real, imag = z.real(), z.imag()
             elif isinstance(z, (list, tuple)):
                 real, imag = z
@@ -1010,7 +1017,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             sage: i.prec()
             2000
         """
-        return <MPComplexField_class>(self._parent).__prec
+        return <MPComplexField_class>(self._parent)._prec
 
     def real(self):
         """
@@ -1195,27 +1202,27 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
             sage: MPC = MPComplexField()
             sage: a = MPC(2,1)
-            sage: a.__pari__()
+            sage: a.__pari__()                                                          # needs sage.libs.pari
             2.00000000000000 + 1.00000000000000*I
-            sage: pari(a)
+            sage: pari(a)                                                               # needs sage.libs.pari
             2.00000000000000 + 1.00000000000000*I
-            sage: pari(a).type()
+            sage: pari(a).type()                                                        # needs sage.libs.pari
             't_COMPLEX'
-            sage: a = MPC(pi)
-            sage: pari(a)
+            sage: a = MPC(pi)                                                           # needs sage.libs.pari sage.symbolic
+            sage: pari(a)                                                               # needs sage.libs.pari sage.symbolic
             3.14159265358979
-            sage: pari(a).type()
+            sage: pari(a).type()                                                        # needs sage.libs.pari sage.symbolic
             't_REAL'
             sage: a = MPC(-2).sqrt()
-            sage: pari(a)
+            sage: pari(a)                                                               # needs sage.libs.pari
             1.41421356237310*I
 
         The precision is preserved, rounded up to the wordsize::
 
             sage: MPC = MPComplexField(250)
-            sage: MPC(1,2).__pari__().bitprecision()
+            sage: MPC(1,2).__pari__().bitprecision()                                    # needs sage.libs.pari
             256
-            sage: MPC(pi).__pari__().bitprecision()
+            sage: MPC(pi).__pari__().bitprecision()                                     # needs sage.libs.pari
             256
         """
         if mpfr_zero_p(self.value.re):
@@ -1520,7 +1527,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             2.23606797749979
             sage: a.__abs__()
             2.23606797749979
-            sage: float(sqrt(2^2 + 1^1))
+            sage: float(sqrt(2^2 + 1^1))                                                # needs sage.symbolic
             2.23606797749979
 
             sage: b = MPC(42,0)
@@ -1570,26 +1577,6 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         x = RealNumber(self._parent._real_field())
         mpc_norm(x.value, self.value, (<RealField_class>x._parent).rnd)
         return x
-
-    def __rtruediv__(self, left):
-        r"""
-        Returns the quotient of ``left`` with ``self``, that is: ``left/self``
-        as a complex number.
-
-        INPUT:
-
-        - ``left`` -- a complex number
-
-        EXAMPLES::
-
-            sage: MPC = MPComplexField()
-            sage: a = MPC(2, 2)
-            sage: a.__rtruediv__(MPC(1))
-            0.250000000000000 - 0.250000000000000*I
-            sage: MPC(1)/a
-            0.250000000000000 - 0.250000000000000*I
-        """
-        return MPComplexNumber(self._parent, left)/self
 
     def __pow__(self, right, modulus):
         """
@@ -1969,8 +1956,6 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         return ~(self.tan())
 
-    cotan = deprecated_function_alias(29412, cot)
-
     ################################
     # Other functions
     ################################
@@ -2146,7 +2131,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``all`` - bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- bool (default: ``False``); if ``True``, return a
            list of all `n`-th roots.
 
         EXAMPLES::
@@ -2212,7 +2197,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             sage: a = MPC(1,0)
             sage: a.dilog()
             1.64493406684823
-            sage: float(pi^2/6)
+            sage: float(pi^2/6)                                                         # needs sage.symbolic
             1.6449340668482262
 
         ::
@@ -2242,10 +2227,10 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``self`` - element of the upper half plane (if not,
+        -  ``self`` -- element of the upper half plane (if not,
            raises a ``ValueError``).
 
-        -  ``omit_frac`` - (bool, default: ``False``), if ``True``,
+        -  ``omit_frac`` -- (bool, default: ``False``), if ``True``,
            omit the `e^{\pi i z / 12}` factor.
 
         OUTPUT: a complex number
@@ -2261,7 +2246,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().eta(not omit_frac))
-        except sage.libs.pari.all.PariError:
+        except PariError:
             raise ValueError("value must be in the upper half plane")
 
     def gamma(self):
@@ -2287,7 +2272,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().gamma())
-        except sage.libs.pari.all.PariError:
+        except PariError:
             from sage.rings.infinity import UnsignedInfinityRing
             return UnsignedInfinityRing.gen()
 
@@ -2347,7 +2332,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         cdef mpc_rnd_t rnd = (<MPComplexField_class>(self._parent)).__rnd
 
-        cdef int prec = self._parent.__prec
+        cdef int prec = self._parent._prec
 
         if optimal or algorithm == "principal":
             if not isinstance(right, MPComplexNumber) or (<MPComplexNumber>right)._parent is not self._parent:
@@ -2415,12 +2400,12 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
                     mpc_set(res.value, a.value, rnd)
                     return res
 
-cdef inline mp_exp_t min_exp_t(mp_exp_t a, mp_exp_t b):
+cdef inline mp_exp_t min_exp_t(mp_exp_t a, mp_exp_t b) noexcept:
     return a if a < b else b
-cdef inline mp_exp_t max_exp_t(mp_exp_t a, mp_exp_t b):
+cdef inline mp_exp_t max_exp_t(mp_exp_t a, mp_exp_t b) noexcept:
     return a if a > b else b
 
-cdef inline mp_exp_t max_exp(MPComplexNumber z):
+cdef inline mp_exp_t max_exp(MPComplexNumber z) noexcept:
     """
     Quickly return the maximum exponent of the real and complex parts of ``z``,
     which is useful for estimating its magnitude.
@@ -2430,6 +2415,7 @@ cdef inline mp_exp_t max_exp(MPComplexNumber z):
     elif mpfr_zero_p(z.value.re):
         return mpfr_get_exp(z.value.im)
     return max_exp_t(mpfr_get_exp(z.value.re), mpfr_get_exp(z.value.im))
+
 
 def __create__MPComplexField_version0 (prec, rnd):
     """
@@ -2442,6 +2428,7 @@ def __create__MPComplexField_version0 (prec, rnd):
 
     """
     return MPComplexField(prec, rnd)
+
 
 def __create__MPComplexNumber_version0 (parent, s, base=10):
     """
@@ -2457,6 +2444,7 @@ def __create__MPComplexNumber_version0 (parent, s, base=10):
         33.000
     """
     return MPComplexNumber(parent, s, base=base)
+
 
 # original version of the file had this with only 1 underscore - TCS
 __create_MPComplexNumber_version0 = __create__MPComplexNumber_version0
@@ -2577,4 +2565,3 @@ cdef class CCtoMPC(Map):
 
 # Support Python's numbers abstract base class
 # import numbers
-from sage.rings.complex_mpc import MPComplexNumber

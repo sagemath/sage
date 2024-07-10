@@ -33,20 +33,21 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
-        sage: P = K.ideal(923478923).factor()[0][0]                                     # optional - sage.rings.number_field
-        sage: k = K.residue_field(P)                                                    # optional - sage.rings.number_field
-        sage: k.degree()                                                                # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 7)
+        sage: P = K.ideal(923478923).factor()[0][0]
+        sage: k = K.residue_field(P)
+        sage: k.degree()
         2
-        sage: OK = K.maximal_order()                                                    # optional - sage.rings.number_field
-        sage: c = OK(a)                                                                 # optional - sage.rings.number_field
-        sage: b = k(c)                                                                  # optional - sage.rings.number_field
-        sage: b + c                                                                     # optional - sage.rings.number_field
+        sage: OK = K.maximal_order()
+        sage: c = OK(a)
+        sage: b = k(c)
+        sage: b + c
         2*abar
-        sage: b*c                                                                       # optional - sage.rings.number_field
+        sage: b*c
         664346875*abar + 535606347
-        sage: k.base_ring()                                                             # optional - sage.rings.number_field
+        sage: k.base_ring()
         Finite Field of size 923478923
 
         sage: R.<t> = GF(5)[]
@@ -67,6 +68,7 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
 
         We create a residue field with implementation ``pari_ffelt``::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)
             sage: P = K.ideal(923478923).factor()[0][0]
@@ -94,28 +96,29 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<aa> = NumberField(x^3 - 2)                                         # optional - sage.rings.number_field
-            sage: P = K.factor(10007)[0][0]                                             # optional - sage.rings.number_field
-            sage: P.residue_class_degree()                                              # optional - sage.rings.number_field
+            sage: K.<aa> = NumberField(x^3 - 2)
+            sage: P = K.factor(10007)[0][0]
+            sage: P.residue_class_degree()
             2
-            sage: ff.<alpha> = P.residue_field(); ff                                    # optional - sage.rings.number_field
+            sage: ff.<alpha> = P.residue_field(); ff
             Residue field in alpha of Fractional ideal (-12*aa^2 + 189*aa - 475)
-            sage: type(ff)                                                              # optional - sage.rings.number_field
+            sage: type(ff)
             <class 'sage.rings.finite_rings.residue_field_pari_ffelt.ResidueFiniteField_pari_ffelt_with_category'>
-            sage: ff(alpha^2 + 1)                                                       # optional - sage.rings.number_field
+            sage: ff(alpha^2 + 1)
             7521*alpha + 4131
-            sage: ff(17/3)                                                              # optional - sage.rings.number_field
+            sage: ff(17/3)
             6677
-            sage: V = ff.vector_space(map=False); v = V([3,-2])                         # optional - sage.rings.number_field
-            sage: type(ff.convert_map_from(V))                                          # optional - sage.rings.number_field
+            sage: V = ff.vector_space(map=False); v = V([3,-2])                         # needs sage.modules
+            sage: type(ff.convert_map_from(V))                                          # needs sage.modules
             <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
-            sage: ff(v) # indirect doctest                                              # optional - sage.rings.number_field
+            sage: ff(v)  # indirect doctest                                             # needs sage.modules
             10005*alpha + 3
 
             sage: R.<t> = GF(5)[]; P = R.ideal(4*t^12 + 3*t^11 + 4*t^10 + t^9 + t^8 + 3*t^7 + 2*t^6 + 3*t^4 + t^3 + 3*t^2 + 2)
             sage: k.<a> = P.residue_field()
-            sage: V = k.vector_space(map=False); v = V([1,2,3,4,5,6,7,8,9,0,1,2]); k(v) # indirect doctest
+            sage: V = k.vector_space(map=False); v = V([1,2,3,4,5,6,7,8,9,0,1,2]); k(v)  # indirect doctest             # needs sage.modules
             2*a^11 + a^10 + 4*a^8 + 3*a^7 + 2*a^6 + a^5 + 4*a^3 + 3*a^2 + 2*a + 1
         """
         try:

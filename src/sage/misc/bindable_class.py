@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Bindable classes
 """
@@ -175,7 +176,7 @@ class BoundClass(functools.partial):
 
     .. warning::
 
-        Since ``c`` is not a class (as tested by inspect.isclass),
+        Since ``c`` is not a class (as tested by :func:`inspect.isclass`),
         and has a ``__call__`` method, IPython's introspection
         (with ``c?``) insists on showing not only its
         documentation but also its class documentation and call
@@ -183,15 +184,15 @@ class BoundClass(functools.partial):
         if available.
 
         Until a better approach is found, we reset the documentation
-        of ``BoundClass`` below, and make an exception for
+        of :class:`BoundClass` below, and make an exception for
         :meth:`__init__` to the strict rule that every method should
         be doctested::
 
             sage: c.__class__.__doc__
             sage: c.__class__.__init__.__doc__
 
-    Make sure classes which inherit from functools.partial have the correct
-    syntax, see :trac:`14748`::
+    Make sure classes which inherit from :class:`functools.partial` have the correct
+    syntax, see :issue:`14748`::
 
         sage: import warnings
         sage: warnings.simplefilter('error', DeprecationWarning)
@@ -201,7 +202,7 @@ class BoundClass(functools.partial):
         sage: g()
         8
 
-    The following has correct syntax and no ``DeprecationWarning``::
+    The following has correct syntax and no :class:`DeprecationWarning`::
 
         sage: class mynewpartial(functools.partial):
         ....:     def __init__(self, f, i, j):
@@ -213,7 +214,7 @@ class BoundClass(functools.partial):
     __doc__ = None  # See warning above
 
     def __init__(self, *args):
-        super(BoundClass, self).__init__()
+        super().__init__()
         self.__doc__ = self.func.__doc__
 
     def __repr__(self):

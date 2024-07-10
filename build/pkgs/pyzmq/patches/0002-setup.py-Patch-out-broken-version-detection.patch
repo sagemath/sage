@@ -1,0 +1,24 @@
+From b5bdcad66a28394f6e5be4ad7fd00835deec73f7 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Sun, 5 Nov 2023 21:35:29 -0800
+Subject: [PATCH 2/2] setup.py: Patch out broken version detection
+
+---
+ setup.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/setup.py b/setup.py
+index 8a2a4943..19d31654 100755
+--- a/setup.py
++++ b/setup.py
+@@ -463,6 +463,7 @@ class Configure(build_ext):
+ 
+     def check_zmq_version(self):
+         """check the zmq version"""
++        return
+         cfg = self.config
+         # build test program
+         zmq_prefix = cfg['zmq_prefix']
+-- 
+2.42.0
+

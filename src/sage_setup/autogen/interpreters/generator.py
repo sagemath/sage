@@ -374,7 +374,7 @@ class InterpreterGenerator(object):
 
             from sage.ext.fast_callable cimport Wrapper
 
-            cdef extern from "sage/ext/interpreters/interp_{{ s.name }}.c":
+            cdef extern from "interp_{{ s.name }}.c":
                 {{ myself.func_header(cython=true) -}}
 
             {% if s.err_return != 'NULL' %}

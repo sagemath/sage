@@ -33,7 +33,7 @@ class RestrictedGrowthArrays(UniqueRepresentation, Parent):
             sage: R = RestrictedGrowthArrays(3)
             sage: R == loads(dumps(R))
             True
-            sage: TestSuite(R).run(skip=['_test_an_element',
+            sage: TestSuite(R).run(skip=['_test_an_element',                            # needs sage.libs.flint
             ....:   '_test_enumerated_set_contains', '_test_some_elements'])
         """
         self._n = n
@@ -74,7 +74,7 @@ class RestrictedGrowthArrays(UniqueRepresentation, Parent):
 
             sage: from sage.combinat.restricted_growth import RestrictedGrowthArrays
             sage: R = RestrictedGrowthArrays(6)
-            sage: R.cardinality()
+            sage: R.cardinality()                                                       # needs sage.libs.flint
             203
         """
         return bell_number(self._n)

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Resolvable Balanced Incomplete Block Design (RBIBD)
 
@@ -64,7 +65,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
 
     INPUT:
 
-    - ``v,k`` (integers)
+    - ``v``, ``k`` (integers)
 
     - ``existence`` (boolean) -- instead of building the design, return:
 
@@ -95,30 +96,30 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
         ....:             _ = designs.resolvable_balanced_incomplete_block_design(v,k)
     """
     # Trivial cases
-    if v==1 or k==v:
+    if v == 1 or k == v:
         return balanced_incomplete_block_design(v,k,existence=existence)
 
     # Non-existence of resolvable BIBD
     if (v < k or
         k < 2 or
-        v%k != 0 or
+        v % k != 0 or
         (v-1) % (k-1) != 0 or
         (v*(v-1)) % (k*(k-1)) != 0 or
         # From the Handbook of combinatorial designs:
         #
         # With lambda>1 the other exceptions is
         # (15,5,2)
-        (k==6 and v == 36) or
+        (k == 6 and v == 36) or
         # Fisher's inequality
         (v*(v-1))/(k*(k-1)) < v):
         if existence:
             return False
         raise EmptySetError("There exists no ({},{},{})-RBIBD".format(v,k,1))
 
-    if k==2:
+    if k == 2:
         if existence:
             return True
-        classes = [[[(c+i)%(v-1),(c+v-i)%(v-1)] for i in range(1, v//2)]
+        classes = [[[(c+i) % (v-1),(c+v-i) % (v-1)] for i in range(1, v//2)]
                    for c in range(v-1)]
         for i,classs in enumerate(classes):
             classs.append([v-1,i])
@@ -130,14 +131,15 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
                                           copy=False)
         B._classes = classes
         return B
-    elif k==3:
+    elif k == 3:
         return kirkman_triple_system(v,existence=existence)
-    elif k==4:
+    elif k == 4:
         return v_4_1_rbibd(v,existence=existence)
     else:
         if existence:
             return Unknown
         raise NotImplementedError("I don't know how to build a ({},{},1)-RBIBD!".format(v,3))
+
 
 def kirkman_triple_system(v,existence=False):
     r"""
@@ -179,10 +181,10 @@ def kirkman_triple_system(v,existence=False):
 
     TESTS::
 
-        sage: for i in range(3,300,6):
+        sage: for i in range(3,300,6):                                                  # needs sage.combinat
         ....:     _ = designs.kirkman_triple_system(i)
     """
-    if v%6 != 3:
+    if v % 6 != 3:
         if existence:
             return False
         raise ValueError("There is no KTS({}) as v!=3 mod(6)".format(v))
@@ -205,7 +207,7 @@ def kirkman_triple_system(v,existence=False):
     # Construction 1.1 from [Stinson91] (originally Theorem 6 from [RCW71])
     #
     # For all prime powers q=1 mod 6, there exists a KTS(2q+1)
-    elif ((v-1)//2)%6 == 1 and is_prime_power((v-1)//2):
+    elif ((v-1)//2) % 6 == 1 and is_prime_power((v-1)//2):
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
         q = (v-1)//2
         K = GF(q,'x')
@@ -250,7 +252,7 @@ def kirkman_triple_system(v,existence=False):
     # Construction 1.2 from [Stinson91] (originally Theorem 5 from [RCW71])
     #
     # For all prime powers q=1 mod 6, there exists a KTS(3q)
-    elif (v//3)%6 == 1 and is_prime_power(v//3):
+    elif (v//3) % 6 == 1 and is_prime_power(v//3):
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
         q = v//3
         K = GF(q,'x')
@@ -348,7 +350,7 @@ def kirkman_triple_system(v,existence=False):
         gdd = {4: gdd4, 7: gdd7}
         for B in PBD_4_7((v-1)//2,check=False):
             for i,classs in enumerate(gdd[len(B)]):
-                classes[B[i]].extend([[2*B[x//2]+x%2 for x in BB] for BB in classs])
+                classes[B[i]].extend([[2*B[x//2]+x % 2 for x in BB] for BB in classs])
 
         # The {x,x',\infty} blocks
         for i,classs in enumerate(classes):
@@ -404,7 +406,7 @@ def v_4_1_rbibd(v,existence=False):
         ....:         _ = designs.resolvable_balanced_incomplete_block_design(3*q+1,4)
     """
     # Volume 1, VII.7.5.a from [BJL99]_
-    if v%3 != 1 or not is_prime_power((v-1)//3):
+    if v % 3 != 1 or not is_prime_power((v-1)//3):
         if existence:
             return Unknown
         raise NotImplementedError("I don't know how to build a ({},{},1)-RBIBD!".format(v,4))
@@ -423,7 +425,7 @@ def v_4_1_rbibd(v,existence=False):
 
     label = {p:i for i,p in enumerate(G)}
 
-    classes = [[[v-1 if x=='inf' else (x[1]%3)*q+label[x[0]+g] for x in S]
+    classes = [[[v-1 if x == 'inf' else (x[1] % 3)*q+label[x[0]+g] for x in S]
                 for S in first_class]
                for g in G]
 
@@ -435,6 +437,7 @@ def v_4_1_rbibd(v,existence=False):
     BIBD._classes = classes
     assert BIBD.is_resolvable()
     return BIBD
+
 
 def PBD_4_7(v,check=True, existence=False):
     r"""
@@ -457,12 +460,12 @@ def PBD_4_7(v,check=True, existence=False):
 
     All values `\leq 300`::
 
-        sage: for i in range(1,300,3):
+        sage: for i in range(1,300,3):                                                  # needs sage.schemes
         ....:     if i not in [10,19,31]:
         ....:         assert PBD_4_7(i,existence=True) is True
         ....:         _ = PBD_4_7(i,check=True)
     """
-    if v%3 != 1 or v in [10,19,31]:
+    if v % 3 != 1 or v in [10,19,31]:
         if existence:
             return Unknown
         raise NotImplementedError
@@ -492,7 +495,7 @@ def PBD_4_7(v,check=True, existence=False):
         C = [[(x+i+j,y+2*i+j) for x,y in C]+[30+j] for i in range(9) for j in range(3)]
         D = [[(x+i,  y+i)     for x,y in D]+[33]   for i in range(9)]
 
-        blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*9+(x[0]%9) for x in S]
+        blocks = [[int(x) if not isinstance(x,tuple) else (x[1] % 3)*9+(x[0] % 9) for x in S]
                   for S in A+B+C+D+[list(range(27,34))]]
     elif v == 46:
         # [BJL99] (p527,vol1), but originally Brouwer
@@ -508,7 +511,7 @@ def PBD_4_7(v,check=True, existence=False):
         D = [[(x+i,  y+j) for x,y in D]+[42+j] for i in range(13) for j in range(3)]
         E = [[(x+i,  y+i) for x,y in E]+[45]   for i in range(13)]
 
-        blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*13+(x[0]%13) for x in S]
+        blocks = [[int(x) if not isinstance(x,tuple) else (x[1] % 3)*13+(x[0] % 13) for x in S]
                   for S in A+B+C+D+E+[list(range(39, 46))]]
 
     elif v == 58:
@@ -527,7 +530,7 @@ def PBD_4_7(v,check=True, existence=False):
         E = [[(x+i,  y+j) for x,y in E]+[54+j] for i in range(17) for j in range(3)]
         F = [[(x+i,  y+i) for x,y in F]+[57]   for i in range(17)]
 
-        blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*17+(x[0]%17) for x in S]
+        blocks = [[int(x) if not isinstance(x,tuple) else (x[1] % 3)*17+(x[0] % 17) for x in S]
                   for S in A+B+C+D+E+F+[list(range(51,58))]]
 
     elif v == 70:
@@ -548,7 +551,7 @@ def PBD_4_7(v,check=True, existence=False):
         F = [[(x+3*i+j, y+ii+j) for x,y in F]+[66+j] for i in range( 7) for j in range(3) for ii in range(3)]
         H = [[(x+i,  y+i)       for x,y in H]+[69]   for i in range(21)]
 
-        blocks = [[int(x) if not isinstance(x,tuple) else (x[1]%3)*21+(x[0]%21)
+        blocks = [[int(x) if not isinstance(x,tuple) else (x[1] % 3)*21+(x[0] % 21)
                    for x in S]
                   for S in A+B+C+D+E+F+H+[list(range(63,70))]]
 
@@ -562,7 +565,7 @@ def PBD_4_7(v,check=True, existence=False):
         TD = transversal_design(5,5)
 
         # A (75,{4},{15})-GDD
-        GDD2 = [[3*B[x//3]+x%3 for x in BB] for B in TD for BB in GDD]
+        GDD2 = [[3*B[x//3]+x % 3 for x in BB] for B in TD for BB in GDD]
 
         # We now complete the (75,{4},{15})-GDD into a (82,{4,7})-PBD. For this,
         # we add 7 new points that are added to all groups of size 15.
@@ -577,7 +580,7 @@ def PBD_4_7(v,check=True, existence=False):
             if B == S:
                 continue
             for i in range(5):
-                GDD2.append([x+i*15 if x<15 else x+60 for x in B])
+                GDD2.append([x+i*15 if x < 15 else x+60 for x in B])
 
         GDD2.append(list(range(75,82)))
         blocks = GDD2
@@ -601,7 +604,7 @@ def PBD_4_7(v,check=True, existence=False):
         X = set(sum(parall, plus_one))
 
         S_4_5_7 = [X.intersection(S) for S in AF]
-        S_4_5_7 = [S for S in S_4_5_7 if len(S)>1]
+        S_4_5_7 = [S for S in S_4_5_7 if len(S) > 1]
         S_4_5_7 = PairwiseBalancedDesign(X,
                                          blocks=S_4_5_7,
                                          K=[4,5,7],
@@ -616,7 +619,7 @@ def PBD_4_7(v,check=True, existence=False):
         # (42,{4,5},{1,2,7})-GDD or a (47,{4,5},{1,2,7})-GDD
         points_to_add = 2 if v == 127 else 7
         rBIBD4 = v_4_1_rbibd(40)
-        GDD = [S+[40+i] if i<points_to_add else S
+        GDD = [S+[40+i] if i < points_to_add else S
                for i,classs in enumerate(rBIBD4._classes)
                for S in classs]
         if points_to_add == 7:
@@ -682,6 +685,7 @@ def PBD_4_7(v,check=True, existence=False):
                                   check=check,
                                   copy=False)
 
+
 def PBD_4_7_from_Y(gdd,check=True):
     r"""
     Return a `(3v+1,\{4,7\})`-PBD from a `(v,\{4,5,7\},\NN-\{3,6,10\})`-GDD.
@@ -710,16 +714,16 @@ def PBD_4_7_from_Y(gdd,check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.resolvable_bibd import PBD_4_7_from_Y
-        sage: PBD_4_7_from_Y(designs.transversal_design(7,8))
+        sage: PBD_4_7_from_Y(designs.transversal_design(7,8))                           # needs sage.schemes
         Pairwise Balanced Design on 169 points with sets of sizes in [4, 7]
 
     TESTS::
 
-        sage: PBD_4_7_from_Y(designs.balanced_incomplete_block_design(10,10))
+        sage: PBD_4_7_from_Y(designs.balanced_incomplete_block_design(10,10))           # needs sage.schemes
         Traceback (most recent call last):
         ...
         ValueError: The GDD should only contain blocks of size {4,5,7} but there are other: [10]
-        sage: PBD_4_7_from_Y(designs.transversal_design(4,3))
+        sage: PBD_4_7_from_Y(designs.transversal_design(4,3))                           # needs sage.schemes
         Traceback (most recent call last):
         ...
         RuntimeError: A group has size 3 but I do not know how to build a (10,[4,7])-PBD
@@ -734,7 +738,7 @@ def PBD_4_7_from_Y(gdd,check=True):
                          "but there are other: {}".format(txt))
 
     for gs in group_sizes:
-        if not PBD_4_7(3*gs+1,existence=True) is True:
+        if PBD_4_7(3*gs+1,existence=True) is not True:
             raise RuntimeError("A group has size {} but I do not know how to "
                                "build a ({},[4,7])-PBD".format(gs,3*gs+1))
 
@@ -760,14 +764,14 @@ def PBD_4_7_from_Y(gdd,check=True):
     # The blocks
     for B in gdd:
         for B_GDD in GDD[len(B)]:
-            PBD.append([3*B[x//3]+(x%3) for x in B_GDD])
+            PBD.append([3*B[x//3]+(x % 3) for x in B_GDD])
 
     # The groups
     group_PBD = {gs:PBD_4_7(3*gs+1) for gs in group_sizes}
     for G in gdd.groups():
         gs = len(G)
         for B in group_PBD[gs]:
-            PBD.append([3*G[x//3]+(x%3) if x < 3*gs else 3*gdd.num_points()
+            PBD.append([3*G[x//3]+(x % 3) if x < 3*gs else 3*gdd.num_points()
                         for x in B])
 
     return PairwiseBalancedDesign(3*gdd.num_points()+1,

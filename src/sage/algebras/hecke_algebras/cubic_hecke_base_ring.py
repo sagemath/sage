@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari (for factorization)
 r"""
 Cubic Hecke Base Rings
 
@@ -59,9 +60,9 @@ def normalize_names_markov(names, markov_trace_version):
     if markov_trace_version:
         names = normalize_names(4, names)
     else:
-        if type(names) == tuple:
+        if isinstance(names, tuple):
             names = list(names)
-        if type(names) == list and len(names) > 3:
+        if isinstance(names, list) and len(names) > 3:
             names = normalize_names(3, names[0:3])
         else:
             names = normalize_names(3, names)
@@ -297,14 +298,15 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         EXAMPLES::
 
-            sage: CHA3 = algebras.CubicHecke(3)                  # optional gap3
-            sage: GER = CHA3.extension_ring(generic=True)        # optional gap3
-            sage: sch7 = CHA3.chevie().SchurElements()[7]        # optional gap3
-            sage: GER(sch7)                                      # optional gap3
+            sage: # optional - gap3
+            sage: CHA3 = algebras.CubicHecke(3)
+            sage: GER = CHA3.extension_ring(generic=True)
+            sage: sch7 = CHA3.chevie().SchurElements()[7]
+            sage: GER(sch7)
             a*b*c^-2 + a^2*b^-1*c^-1 + a^-1*b^2*c^-1 + 2
             + a*b^-2*c + a^-2*b*c + a^-1*b^-1*c^2
-            sage: rep4_gap3 = CHA3.chevie().Representations(4)   # optional gap3
-            sage: matrix(GER, rep4_gap3[1])                      # optional gap3
+            sage: rep4_gap3 = CHA3.chevie().Representations(4)
+            sage: matrix(GER, rep4_gap3[1])
             [ b  0]
             [-b  c]
         """
@@ -641,10 +643,10 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
         # corresponding specialized extension ring.
         # ----------------------------------------------------------------------
 
-        if type(im_cubic_equation_roots) == tuple:
+        if isinstance(im_cubic_equation_roots, tuple):
             im_cubic_equation_roots = list(im_cubic_equation_roots)
 
-        if type(im_cubic_equation_roots) != list:
+        if not isinstance(im_cubic_equation_roots, list):
             raise TypeError('cubic_equation_roots must be a list of three elements')
 
         if len(im_cubic_equation_roots) != 3:
@@ -1226,10 +1228,10 @@ class CubicHeckeRingOfDefinition(Localization):
         # ----------------------------------------------------------------------
         # setting the base_ring  according to the cubic_equation_parameters
         # ----------------------------------------------------------------------
-        if type(im_cubic_equation_parameters) == tuple:
+        if isinstance(im_cubic_equation_parameters, tuple):
             im_cubic_equation_parameters = list(im_cubic_equation_parameters)
 
-        if type(im_cubic_equation_parameters) != list:
+        if not isinstance(im_cubic_equation_parameters, list):
             raise TypeError('cubic_equation_parameters must be a list of three elements')
 
         if len(im_cubic_equation_parameters) != 3:

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Mutability Cython Implementation
 """
@@ -135,7 +136,7 @@ cdef class Mutability:
         """
         self._is_immutable = 1
 
-    cpdef bint is_immutable(self):
+    cpdef bint is_immutable(self) noexcept:
         """
         Return ``True`` if this object is immutable (cannot be changed)
         and ``False`` if it is not.
@@ -156,7 +157,7 @@ cdef class Mutability:
         """
         return self._is_immutable
 
-    cpdef bint is_mutable(self):
+    cpdef bint is_mutable(self) noexcept:
         """
         Return ``True`` if this object is mutable (can be changed)
         and ``False`` if it is not.
@@ -242,8 +243,9 @@ cdef class Mutability:
             self.__dict__ = state
         self._is_immutable = state['_is_immutable']
 
+
 ##########################################################################
-## Method decorators for mutating methods resp. methods that assume immutability
+# Method decorators for mutating methods resp. methods that assume immutability
 
 def require_mutable(f):
     """

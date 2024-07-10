@@ -20,10 +20,19 @@ from sage_docbuild.conf import *  # NOQA
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
+# Add a small edit button.
+html_theme_options.update({
+  'source_edit_link': os.path.join(source_repository, 'blob/develop/src/doc/ja/tutorial', '{filename}'),
+})
+
 # General information about the project.
 project = "Sage チュートリアル"
 name = 'tutorial-jp'
 language = "ja"
+
+# The LaTeX engine to build the docs in Japanese.
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-latex_engine
+latex_engine = 'uplatex'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".

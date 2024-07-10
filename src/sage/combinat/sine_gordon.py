@@ -447,23 +447,23 @@ class SineGordonYsystem(SageObject):
 
         INPUT:
 
-        - ``radius`` - the radius of the disk; by default the length of
+        - ``radius`` -- the radius of the disk; by default the length of
           the circle is the number of vertices
-        - ``points_color`` - the color of the vertices; default 'black'
-        - ``points_size`` - the size of the vertices; default 7
-        - ``triangulation_color`` - the color of the arcs; default 'black'
-        - ``triangulation_thickness`` - the thickness of the arcs; default 0.5
-        - ``shading_color`` - the color of the shading used on neuter
+        - ``points_color`` -- the color of the vertices; default 'black'
+        - ``points_size`` -- the size of the vertices; default 7
+        - ``triangulation_color`` -- the color of the arcs; default 'black'
+        - ``triangulation_thickness`` -- the thickness of the arcs; default 0.5
+        - ``shading_color`` -- the color of the shading used on neuter
           intervals; default 'lightgray'
-        - ``reflections_color`` - the color of the reflection axes; default
+        - ``reflections_color`` -- the color of the reflection axes; default
           'blue'
-        - ``reflections_thickness`` - the thickness of the reflection axes;
+        - ``reflections_thickness`` -- the thickness of the reflection axes;
           default 1
 
         EXAMPLES::
 
             sage: Y = SineGordonYsystem('A',(6,4,3))
-            sage: Y.plot()  # long time 2s
+            sage: Y.plot()                      # long time (2s)                        # needs sage.plot
             Graphics object consisting of 219 graphics primitives
         """
         # Set up plotting options

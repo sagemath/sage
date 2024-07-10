@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fixing pickle for nested classes
 
@@ -152,7 +153,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
     TESTS:
 
     The following is a real life example, that was enabled by the internal
-    use of the``first_run`` in :trac:`9107`::
+    use of the``first_run`` in :issue:`9107`::
 
         sage: cython_code = [
         ....:  "from sage.structure.unique_representation import UniqueRepresentation",
@@ -162,18 +163,19 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
         ....:  "    class B2:",
         ....:  "        class C2: pass"]
         sage: import os
-        sage: cython(os.linesep.join(cython_code))                              # optional - sage.misc.cython
+        sage: cython(os.linesep.join(cython_code))                                      # needs sage.misc.cython
 
-    Before :trac:`9107`, the name of ``A1.B1.C1`` would have been wrong::
+    Before :issue:`9107`, the name of ``A1.B1.C1`` would have been wrong::
 
-        sage: A1.B1.C1.__name__                                                 # optional - sage.misc.cython
+        sage: # needs sage.misc.cython
+        sage: A1.B1.C1.__name__
         'A1.B1.C1'
-        sage: A1.B2.C2.__name__                                                 # optional - sage.misc.cython
+        sage: A1.B2.C2.__name__
         'A1.B2.C2'
-        sage: A_module = sys.modules[A1.__module__]                             # optional - sage.misc.cython
-        sage: getattr(A_module, 'A1.B1.C1', 'Not found').__name__               # optional - sage.misc.cython
+        sage: A_module = sys.modules[A1.__module__]
+        sage: getattr(A_module, 'A1.B1.C1', 'Not found').__name__
         'A1.B1.C1'
-        sage: getattr(A_module, 'A1.B2.C2', 'Not found').__name__               # optional - sage.misc.cython
+        sage: getattr(A_module, 'A1.B2.C2', 'Not found').__name__
         'A1.B2.C2'
 
     """
@@ -343,6 +345,7 @@ class MainClass(object, metaclass=NestedClassMetaclass):
                 """
                 pass
 
+
 class SubClass(MainClass):
     r"""
     A simple class to test nested_pickle.
@@ -357,10 +360,13 @@ class SubClass(MainClass):
     """
     pass
 
+
 nested_pickle(SubClass)
+
 
 def _provide_SubClass():
     return SubClass
+
 
 class CopiedClass():
     r"""
@@ -378,7 +384,9 @@ class CopiedClass():
     NestedSubClass = MainClass.NestedClass.NestedSubClass
     SubClass = _provide_SubClass()
 
+
 nested_pickle(CopiedClass)
+
 
 # Further classes for recursive tests
 

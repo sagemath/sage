@@ -12,6 +12,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 cdef class LaurentPolynomial_univariate(LaurentPolynomial):
     cdef ModuleElement __u
     cdef long __n
-    cpdef __normalize(self)
+    cpdef _normalize(self)
     cpdef _unsafe_mutate(self, i, value)
 

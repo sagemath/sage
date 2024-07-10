@@ -51,7 +51,7 @@ import os
 from sage.structure.sage_object import SageObject
 from sage.misc.pager import pager
 from sage.misc.verbose import verbose
-import sage.rings.all
+from sage.rings.integer import Integer
 
 
 class Sympow(SageObject):
@@ -101,17 +101,17 @@ class Sympow(SageObject):
         INPUT:
 
 
-        -  ``E`` - elliptic curve
+        -  ``E`` -- elliptic curve
 
-        -  ``n`` - even integer
+        -  ``n`` -- even integer
 
-        -  ``prec`` - integer
+        -  ``prec`` -- integer
 
 
         OUTPUT:
 
 
-        -  ``string`` - real number to prec digits of precision
+        -  ``string`` -- real number to prec digits of precision
            as a string.
 
 
@@ -164,13 +164,13 @@ class Sympow(SageObject):
         INPUT:
 
 
-        -  ``E`` - elliptic curve
+        -  ``E`` -- elliptic curve
 
-        -  ``n`` - integer (even or odd)
+        -  ``n`` -- integer (even or odd)
 
-        -  ``prec`` - integer
+        -  ``prec`` -- integer
 
-        -  ``d`` - integer
+        -  ``d`` -- integer
 
 
         OUTPUT: a string, exactly as output by sympow
@@ -208,13 +208,13 @@ class Sympow(SageObject):
         INPUT:
 
 
-        -  ``E`` - elliptic curve over Q
+        -  ``E`` -- elliptic curve over Q
 
 
         OUTPUT:
 
 
-        -  ``integer`` - modular degree
+        -  ``integer`` -- modular degree
 
 
         EXAMPLES: We compute the modular degrees of the lowest known
@@ -237,7 +237,7 @@ class Sympow(SageObject):
         if i == -1:
             print(self._fix_err(v))
             raise RuntimeError("failed to compute modular degree")
-        return sage.rings.all.Integer(v[i + len(s):])
+        return Integer(v[i + len(s):])
 
     def analytic_rank(self, E):
         r"""
@@ -247,15 +247,15 @@ class Sympow(SageObject):
         INPUT:
 
 
-        -  ``E`` - elliptic curve over Q
+        -  ``E`` -- elliptic curve over Q
 
 
         OUTPUT:
 
 
-        -  ``integer`` - analytic rank
+        -  ``integer`` -- analytic rank
 
-        -  ``string`` - leading coefficient (as string)
+        -  ``string`` -- leading coefficient (as string)
 
 
         .. note::
@@ -296,7 +296,7 @@ class Sympow(SageObject):
             print(self._fix_err(v))
             raise RuntimeError("failed to compute analytic rank")
         j = v.rfind(':')
-        r = sage.rings.all.Integer(v[i + len(s):j])
+        r = Integer(v[i + len(s):j])
         i = v.rfind(' ')
         L = v[i + 1:]
         return r, L

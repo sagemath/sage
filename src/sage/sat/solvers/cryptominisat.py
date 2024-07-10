@@ -3,8 +3,6 @@ CryptoMiniSat Solver
 
 This solver relies on Python bindings provided by upstream cryptominisat.
 
-The ``cryptominisat`` package should be installed on your Sage installation.
-
 AUTHORS:
 
 - Thierry Monteil (2017): complete rewrite, using upstream Python bindings,
@@ -26,7 +24,7 @@ from .satsolver import SatSolver
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('pycryptosat', ['Solver'],
-            feature=PythonModule('pycryptosat', spkg='cryptominisat'))
+            feature=PythonModule('pycryptosat', spkg='pycryptosat'))
 
 
 class CryptoMiniSat(SatSolver):
@@ -182,12 +180,13 @@ class CryptoMiniSat(SatSolver):
 
         EXAMPLES::
 
+            sage: # optional - pycryptosat
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                                  # optional - pycryptosat
-            sage: solver.add_clause((1,2))                                  # optional - pycryptosat
-            sage: solver.add_clause((-1,2))                                 # optional - pycryptosat
-            sage: solver.add_clause((-1,-2))                                # optional - pycryptosat
-            sage: solver()                                                  # optional - pycryptosat
+            sage: solver = CryptoMiniSat()
+            sage: solver.add_clause((1,2))
+            sage: solver.add_clause((-1,2))
+            sage: solver.add_clause((-1,-2))
+            sage: solver()
             (None, False, True)
 
             sage: solver.add_clause((1,-2))                                 # optional - pycryptosat
@@ -231,23 +230,25 @@ class CryptoMiniSat(SatSolver):
 
         EXAMPLES::
 
+            sage: # optional - pycryptosat
             sage: from sage.sat.solvers import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                              # optional - pycryptosat
-            sage: solver.add_clause((1,2,3,4,5,6,7,8,-9))               # optional - pycryptosat
-            sage: solver.add_xor_clause((1,2,3,4,5,6,7,8,9), rhs=True)  # optional - pycryptosat
-            sage: solver.clauses()                                      # optional - pycryptosat
+            sage: solver = CryptoMiniSat()
+            sage: solver.add_clause((1,2,3,4,5,6,7,8,-9))
+            sage: solver.add_xor_clause((1,2,3,4,5,6,7,8,9), rhs=True)
+            sage: solver.clauses()
             [((1, 2, 3, 4, 5, 6, 7, 8, -9), False, None),
             ((1, 2, 3, 4, 5, 6, 7, 8, 9), True, True)]
 
         DIMACS format output::
 
+            sage: # optional - pycryptosat
             sage: from sage.sat.solvers import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                      # optional - pycryptosat
-            sage: solver.add_clause((1, 2, 4))                  # optional - pycryptosat
-            sage: solver.add_clause((1, 2, -4))                 # optional - pycryptosat
-            sage: fn = tmp_filename()                           # optional - pycryptosat
-            sage: solver.clauses(fn)                            # optional - pycryptosat
-            sage: print(open(fn).read())                        # optional - pycryptosat
+            sage: solver = CryptoMiniSat()
+            sage: solver.add_clause((1, 2, 4))
+            sage: solver.add_clause((1, 2, -4))
+            sage: fn = tmp_filename()
+            sage: solver.clauses(fn)
+            sage: print(open(fn).read())
             p cnf 4 2
             1 2 4 0
             1 2 -4 0

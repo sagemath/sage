@@ -25,7 +25,6 @@ REFERENCES:
 
 - \R. L. Bishop and S. L. Goldberg (1980) [BG1980]_
 - \C.-M. Marle (1997) [Mar1997]_
-
 """
 
 # *****************************************************************************
@@ -1040,8 +1039,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: b.display()
             b = y^2 ∂/∂x∧∂/∂y + (x + z) ∂/∂x∧∂/∂z + z^2 ∂/∂y∧∂/∂z
             sage: s = a.wedge(b); s
-            3-vector field a∧b on the 3-dimensional differentiable
-             manifold M
+            3-vector field a∧b on the 3-dimensional differentiable manifold M
             sage: s.display()
             a∧b = (-x^2 + (y^3 - x - 1)*z + 2*z^2 - x) ∂/∂x∧∂/∂y∧∂/∂z
 
@@ -1173,7 +1171,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
         TESTS:
 
-        Check that :trac:`33780` is fixed::
+        Check that :issue:`33780` is fixed::
 
             sage: v = X.frame()[0]  # vector field d/dt
             sage: f = X.coframe()[1]  # 1-form dx
@@ -1404,18 +1402,20 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         Finally let us check the graded Jacobi identity for `p=1`, `q=1` and
         `r=2`::
 
-            sage: a_bc = a.bracket(b.bracket(c))  # long time
-            sage: b_ca = b.bracket(c.bracket(a))  # long time
-            sage: c_ab = c.bracket(a.bracket(b))  # long time
-            sage: a_bc + b_ca + c_ab == 0         # long time
+            sage: # long time
+            sage: a_bc = a.bracket(b.bracket(c))
+            sage: b_ca = b.bracket(c.bracket(a))
+            sage: c_ab = c.bracket(a.bracket(b))
+            sage: a_bc + b_ca + c_ab == 0
             True
 
         as well as for `p=1`, `q=2` and `r=2`::
 
-            sage: a_cd = a.bracket(c.bracket(d))  # long time
-            sage: c_da = c.bracket(d.bracket(a))  # long time
-            sage: d_ac = d.bracket(a.bracket(c))  # long time
-            sage: a_cd + c_da - d_ac == 0         # long time
+            sage: # long time
+            sage: a_cd = a.bracket(c.bracket(d))
+            sage: c_da = c.bracket(d.bracket(a))
+            sage: d_ac = d.bracket(a.bracket(c))
+            sage: a_cd + c_da - d_ac == 0
             True
 
         """

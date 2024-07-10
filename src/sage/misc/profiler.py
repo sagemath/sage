@@ -7,13 +7,13 @@ AUTHORS:
 - Martin Albrecht
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #                     2006 David Harvey <dmharvey@math.harvard.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.misc.timing import cputime
 import inspect
@@ -43,11 +43,12 @@ class Profiler:
     You can create a checkpoints without a string; ``Profiler``
     will use the source code instead::
 
-        sage: p()                             # not tested
-        sage: y = factor(25)                  # not tested
-        sage: p("last step")                  # not tested
-        sage: z = factor(35)                  # not tested
-        sage: p()                             # not tested
+        sage: # not tested
+        sage: p()
+        sage: y = factor(25)
+        sage: p("last step")
+        sage: z = factor(35)
+        sage: p()
 
     This will give a nice list of timings between checkpoints::
 
@@ -99,7 +100,7 @@ class Profiler:
 
     def __call__(self, message=None):
         """ Adds a checkpoint. """
-        entry_times = [fn() for fn in self._cputime_functions ]
+        entry_times = [fn() for fn in self._cputime_functions]
 
         frame = inspect.currentframe().f_back
         try:
@@ -119,7 +120,7 @@ class Profiler:
 
         self._active_details = (line_number, context, message)
 
-        self._last_cputime = [fn() for fn in self._cputime_functions ]
+        self._last_cputime = [fn() for fn in self._cputime_functions]
         if self._verbose:
             print(self.print_last())
             sys.stdout.flush()
@@ -173,4 +174,4 @@ class Profiler:
 
         return "%9.3fs -- %s" % (time_used, message)
 
-## end of file
+# end of file

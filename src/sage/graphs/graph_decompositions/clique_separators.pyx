@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # cython: binding=True
 # distutils: language = c++
 r"""
@@ -140,7 +139,7 @@ def make_labelled_rooted_tree(atoms, cliques):
     return to_tree(0, len(cliques))
 
 
-cdef inline bint is_clique(short_digraph sd, vector[int] Hx):
+cdef inline bint is_clique(short_digraph sd, vector[int] Hx) noexcept:
     """
     Check if the subgraph sd[Hx] is a clique.
 
@@ -172,6 +171,12 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     clique minimal separators of a graph. This algorithm is based on the
     :meth:`~sage.graphs.traversals.maximum_cardinality_search_M` graph traversal
     and has time complexity in `O(|V|\cdot|E|)`.
+
+    .. NOTE::
+        As the graph is converted to a short_digraph (with
+        ``sort_neighbors=True``), the complexity has an extra
+        `O(|V|+|E|\log{|E|})` for ``SparseGraph`` and `O(|V|^2\log{|E|})` for
+        ``DenseGraph``.
 
     If the graph is not connected, we insert empty separators between the lists
     of separators of each connected components. See the examples below for more
@@ -423,7 +428,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     if not G.is_connected():
         from sage.graphs.graph import Graph
 
-        for cc in G.connected_components():
+        for cc in G.connected_components(sort=False):
             g = Graph([cc, G.edge_boundary(cc, cc, False, False)],
                       format='vertices_and_edges',
                       loops=True, multiedges=True)
@@ -459,7 +464,8 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=True)
 
     # variables for the manipulation of the short digraph
     cdef uint32_t** p_vertices = sd.neighbors

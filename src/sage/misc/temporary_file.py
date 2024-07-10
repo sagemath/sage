@@ -1,17 +1,17 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-environment
 """
 Temporary file handling
 
 AUTHORS:
 
 - Volker Braun, Jeroen Demeyer (2012-10-18): move these functions here
-  from sage/misc/misc.py and make them secure, see :trac:`13579`.
+  from sage/misc/misc.py and make them secure, see :issue:`13579`.
 
 - Jeroen Demeyer (2013-03-17): add :class:`atomic_write`,
-  see :trac:`14292`.
+  see :issue:`14292`.
 
 - Sebastian Oehms (2021-08-07): add :class:`atomic_dir`,
-  see :trac:`32344`
+  see :issue:`32344`
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun@stp.dias.ie>
@@ -33,7 +33,7 @@ import atexit
 # as the parent for all temporary files & directories created by them.
 # This lets us clean up after those two functions when sage exits normally
 # using an atexit hook
-TMP_DIR_FILENAME_BASE=tempfile.TemporaryDirectory()
+TMP_DIR_FILENAME_BASE = tempfile.TemporaryDirectory()
 atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 
 
@@ -135,7 +135,7 @@ def tmp_filename(name="tmp_", ext=""):
 #################################################################
 # write to a temporary file and move it in place
 #################################################################
-class atomic_write():
+class atomic_write:
     """
     Write to a given file using a temporary file and then rename it
     to the target file. This renaming should be atomic on modern
@@ -153,7 +153,7 @@ class atomic_write():
     - ``target_filename`` -- the name of the file to be written.
       Normally, the contents of this file will be overwritten.
 
-    - ``append`` -- (boolean, default: False) if True and
+    - ``append`` -- (boolean, default: ``False``) if True and
       ``target_filename`` is an existing file, then copy the current
       contents of ``target_filename`` to the temporary file when
       entering the ``with`` statement. Otherwise, the temporary file is
@@ -165,7 +165,7 @@ class atomic_write():
       mode bits of the file were changed manually). (Not to be confused with
       the file opening mode.)
 
-    - ``binary`` -- (boolean, default: True on Python 2, False on Python 3) the
+    - ``binary`` -- (boolean, default: ``True`` on Python 2, False on Python 3) the
       underlying file is opened in binary mode.  If False then it is opened in
       text mode and an encoding with which to write the file may be supplied.
 
@@ -353,7 +353,7 @@ class atomic_write():
         wmode = 'w+' + ('b' if self.binary else '')
 
         try:
-            self.tempfile = io.open(name, wmode, **self.kwargs)
+            self.tempfile = open(name, wmode, **self.kwargs)
         except Exception:
             # Some invalid arguments were passed to io.open
             os.unlink(name)
@@ -364,9 +364,9 @@ class atomic_write():
         os.chmod(name, self.mode)
         if self.append:
             try:
-                with io.open(self.target, rmode, **self.kwargs) as f:
+                with open(self.target, rmode, **self.kwargs) as f:
                     r = f.read()
-            except IOError:
+            except OSError:
                 pass
             else:
                 self.tempfile.write(r)
@@ -414,7 +414,9 @@ class atomic_write():
 #################################################################
 # write to a temporary directory and move it in place
 #################################################################
-class atomic_dir():
+
+
+class atomic_dir:
     """
     Write to a given directory using a temporary directory and then rename it
     to the target directory. This is for creating a directory whose contents
@@ -525,6 +527,8 @@ class atomic_dir():
 
 
 _spyx_tmp = None
+
+
 def spyx_tmp():
     r"""
     The temporary directory used to store pyx files.

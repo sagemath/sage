@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Commutative ring ideals
 """
@@ -10,9 +11,10 @@ Commutative ring ideals
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_ideal
+from sage.categories.category_types import Category_ideal
 from sage.categories.commutative_rings import CommutativeRings
-from .ring_ideals import RingIdeals
+from sage.categories.ring_ideals import RingIdeals
+
 
 class CommutativeRingIdeals(Category_ideal):
     """
@@ -35,14 +37,14 @@ class CommutativeRingIdeals(Category_ideal):
 
         TESTS::
 
-            sage: CommutativeRingIdeals(Partitions(4))                                  # optional - sage.combinat
+            sage: CommutativeRingIdeals(Partitions(4))                                  # needs sage.combinat
             Traceback (most recent call last):
             ...
             TypeError: R (=Partitions of the integer 4) must be a commutative ring
             sage: TestSuite(CommutativeRingIdeals(ZZ)).run()
         """
         if R not in CommutativeRings():
-            raise TypeError("R (=%s) must be a commutative ring"%R)
+            raise TypeError("R (=%s) must be a commutative ring" % R)
         Category_ideal.__init__(self, R)
 
     def super_categories(self):

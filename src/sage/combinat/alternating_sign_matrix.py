@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Alternating Sign Matrices
 
@@ -45,15 +45,17 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import zero_vector
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.arith.misc import factorial
 from sage.rings.integer import Integer
-from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPatternsTopRow
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction
 from sage.combinat.permutation import Permutation
 from sage.combinat.six_vertex_model import SquareIceModel
+
+lazy_import('sage.combinat.posets.lattices', 'LatticePoset')
 
 
 def _inplace_height_function_gyration(hf):
@@ -106,7 +108,7 @@ class AlternatingSignMatrix(Element,
 
         TESTS:
 
-        Check that :trac:`22032` is fixed::
+        Check that :issue:`22032` is fixed::
 
             sage: AlternatingSignMatrix([])
             []
@@ -823,7 +825,7 @@ class AlternatingSignMatrix(Element,
 
         INPUT:
 
-        - ``algorithm`` - either ``'last_diagonal'`` or ``'link_pattern'``
+        - ``algorithm`` -- either ``'last_diagonal'`` or ``'link_pattern'``
 
         EXAMPLES::
 
@@ -944,7 +946,7 @@ class AlternatingSignMatrix(Element,
             [[1, 1, 2], [2, 3], [3]]
             sage: parent(t)
             Semistandard tableaux
-            """
+        """
         from sage.combinat.tableau import SemistandardTableau
         mt = self.to_monotone_triangle()
         ssyt = [[0]*(len(mt) - j) for j in range(len(mt))]
@@ -1821,9 +1823,8 @@ class ContreTableaux(Parent, metaclass=ClasscallMetaclass):
             sage: C = ContreTableaux(4)
             sage: type(C)
             <class 'sage.combinat.alternating_sign_matrix.ContreTableaux_n'>
-
         """
-        assert(isinstance(n, (int, Integer)))
+        assert isinstance(n, (int, Integer))
         return ContreTableaux_n(n, **kwds)
 
 
@@ -1909,8 +1910,7 @@ class ContreTableaux_n(ContreTableaux):
              [[1, 2, 3], [2, 3], [2]],
              [[1, 2, 3], [2, 3], [3]]]
         """
-        for z in self._iterator_rec(self.n):
-            yield z
+        yield from self._iterator_rec(self.n)
 
 
 def _next_column_iterator(previous_column, height, i=None):
@@ -1983,9 +1983,8 @@ class TruncatedStaircases(Parent, metaclass=ClasscallMetaclass):
             sage: T = TruncatedStaircases(4, [2,3])
             sage: type(T)
             <class 'sage.combinat.alternating_sign_matrix.TruncatedStaircases_nlastcolumn'>
-
         """
-        assert(isinstance(n, (int, Integer)))
+        assert isinstance(n, (int, Integer))
         return TruncatedStaircases_nlastcolumn(n, last_column, **kwds)
 
 

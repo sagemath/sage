@@ -32,7 +32,6 @@ REFERENCES:
 
 - [Lee2013]_
 - [KN1963]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -931,7 +930,7 @@ class IntegratedCurveSet(DifferentiableCurveSet):
         v = codom.tangent_space(p)(v_comps)
 
         # The equations defining the curve:
-        eqns_rhs=[-(x0_B-x0_A)/2*sin(param-t_min)]+[0 for i in range(dim-1)]
+        eqns_rhs = [-(x0_B-x0_A)/2*sin(param-t_min)]+[0 for i in range(dim-1)]
         # combined with the initial components above, all velocities
         # vanish, except the first one, which is a cosine function.
         # This differential system results in a curve constant in all
@@ -1188,8 +1187,8 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
         else:
             self._name = name
         if latex_name is None:
-            self._latex_name=r"\mathrm{{Hom}_{autoparallel}}"
-            self._latex_name+= r"\left({},{}\right)".format(
+            self._latex_name = r"\mathrm{{Hom}_{autoparallel}}"
+            self._latex_name += r"\left({},{}\right)".format(
                                domain._latex_name, codomain._latex_name)
         else:
             self._latex_name = latex_name
@@ -1644,7 +1643,7 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
             self._name = name
         if latex_name is None:
             self._latex_name = r"\mathrm{{Hom}_{geodesic}}"
-            self._latex_name+= r"\left({},{}\right)".format(
+            self._latex_name += r"\left({},{}\right)".format(
                                domain._latex_name, codomain._latex_name)
         else:
             self._latex_name = latex_name

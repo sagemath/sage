@@ -214,14 +214,15 @@ def transvectant(f, g, h=1, scale='default'):
     factor will not be invertible in that case. The scale argument ``'none'``
     can be used to compute the transvectant in this case::
 
-        sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = GF(5)[]                                     # optional - sage.rings.finite_rings
-        sage: f = AlgebraicForm(2, 5, a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2               # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = GF(5)[]
+        sage: f = AlgebraicForm(2, 5, a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2
         ....:                         + a3*x1^2*x0^3 + a4*x1*x0^4 + a5*x0^5, x0, x1)
-        sage: transvectant(f, f, 4)                                                     # optional - sage.rings.finite_rings
+        sage: transvectant(f, f, 4)
         Traceback (most recent call last):
         ...
         ZeroDivisionError
-        sage: transvectant(f, f, 4, scale='none')                                       # optional - sage.rings.finite_rings
+        sage: transvectant(f, f, 4, scale='none')
         Binary quadratic given by -a3^2*x0^2 + a2*a4*x0^2 + a2*a3*x0*x1
         - a1*a4*x0*x1 - a2^2*x1^2 + a1*a3*x1^2
 
@@ -278,7 +279,7 @@ def transvectant(f, g, h=1, scale='default'):
         elif scale == 'none':
             scalar = 1
         else:
-            raise ValueError('unknown scale type: %s' %scale)
+            raise ValueError('unknown scale type: %s' % scale)
 
         def diff(j):
             df = f.form().derivative(x,j).derivative(y,h-j)
@@ -533,7 +534,7 @@ class AlgebraicForm(FormsBase):
         elif len(variables) == n-1:
             variables = variables + (None,)
         else:
-            raise ValueError('need '+str(n)+' or '+
+            raise ValueError('need '+str(n)+' or ' +
                              str(n-1)+' variables, got '+str(variables))
         ring = polynomial.parent()
         homogeneous = variables[-1] is not None
@@ -562,7 +563,7 @@ class AlgebraicForm(FormsBase):
                 deg = sum([ e[R.gens().index(x)]
                             for x in self._variables if x is not None ])
                 degrees.add(deg)
-        if self._homogeneous and len(degrees)>1:
+        if self._homogeneous and len(degrees) > 1:
             raise ValueError('polynomial is not homogeneous')
         if degrees == set() or \
                 (self._homogeneous and degrees == set([self._d])) or \
@@ -598,7 +599,7 @@ class AlgebraicForm(FormsBase):
             sage: quartic._check_covariant('EisensteinE', invariant=True)
             sage: quartic._check_covariant('h_covariant')
 
-            sage: quartic._check_covariant('h_covariant', invariant=True)  # not tested, known bug (see :trac:`32118`)
+            sage: quartic._check_covariant('h_covariant', invariant=True)  # not tested, known bug (see :issue:`32118`)
             Traceback (most recent call last):
             ...
             AssertionError: not invariant
@@ -635,7 +636,7 @@ class AlgebraicForm(FormsBase):
             sage: quartic == quartic
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp(self.coeffs(), other.coeffs(), op)
 
@@ -803,7 +804,7 @@ class AlgebraicForm(FormsBase):
 
         TESTS:
 
-        Check for :trac:`30035`::
+        Check for :issue:`30035`::
 
             sage: R.<a,b,c> = QQ[]
             sage: f = 3*a**3 + b**3 + a*b*c
@@ -963,7 +964,7 @@ class QuadraticForm(AlgebraicForm):
 
         sage: invariant_theory.inhomogeneous_quadratic_form(p.subs(z=1), x,y)
         Ternary quadratic with coefficients (a, b, c, d, e, f)
-   """
+    """
 
     def __init__(self, n, d, polynomial, *args):
         """
@@ -1037,18 +1038,15 @@ class QuadraticForm(AlgebraicForm):
         def prod(a, b):
             if a is None and b is None:
                 return self._ring.one()
-            elif a is None:
+            if a is None:
                 return b
-            elif b is None:
+            if b is None:
                 return a
-            else:
-                return a * b
-        squares = tuple( prod(x,x) for x in var )
-        mixed = []
-        for i in range(self._n):
-            for j in range(i+1, self._n):
-                mixed.append(prod(var[i], var[j]))
-        mixed = tuple(mixed)
+            return a * b
+
+        squares = tuple(prod(x, x) for x in var)
+        mixed = tuple([prod(var[i], var[j]) for i in range(self._n)
+                       for j in range(i + 1, self._n)])
         return squares + mixed
 
     @cached_method
@@ -1305,7 +1303,7 @@ class QuadraticForm(AlgebraicForm):
             [ * * 1 ]
             sage: _.polynomial('X,Y,Z')
             X^2 + 2*X*Y + Y^2 + 3*X*Z + Z^2
-       """
+        """
         R = self._ring
         B = 2*self._matrix_()
         import sage.quadratic_forms.quadratic_form
@@ -1492,7 +1490,7 @@ class BinaryQuartic(AlgebraicForm):
         """
         a = self.scaled_coeffs()
         assert len(a) == 5
-        return a[0]*a[3]**2 +a[1]**2*a[4] -a[0]*a[2]*a[4] -2*a[1]*a[2]*a[3] +a[2]**3
+        return a[0]*a[3]**2 + a[1]**2*a[4] - a[0]*a[2]*a[4] - 2*a[1]*a[2]*a[3] + a[2]**3
 
     @cached_method
     def g_covariant(self):
@@ -2442,9 +2440,9 @@ class BinaryQuintic(AlgebraicForm):
         invariants = {}
         invariants['I4'] = R(2)**-1*5**4*clebsch['A']
         invariants['I8'] = 5**5 * (R(2)**-1*47*clebsch['A']**2
-                                    -2**2*clebsch['B'])
+                                    - 2**2*clebsch['B'])
         invariants['I12'] = 5**10 * (R(2)**-1*3*clebsch['A']**3
-                                        -2**5*R(3)**-1*clebsch['C'])
+                                        - 2**5*R(3)**-1*clebsch['C'])
         invariants['I18'] = 2**8*R(3)**-1*5**15 * clebsch['R']
         return invariants
 
@@ -2526,9 +2524,9 @@ def _covariant_conic(A_scaled_coeffs, B_scaled_coeffs, monomials):
         (b0*c1+c0*b1-2*f0*f1) * monomials[0] +
         (a0*c1+c0*a1-2*g0*g1) * monomials[1] +
         (a0*b1+b0*a1-2*h0*h1) * monomials[2] +
-        2*(f0*g1+g0*f1 -c0*h1-h0*c1) * monomials[3] +
-        2*(h0*f1+f0*h1 -b0*g1-g0*b1) * monomials[4] +
-        2*(g0*h1+h0*g1 -a0*f1-f0*a1) * monomials[5]  )
+        2*(f0*g1+g0*f1 - c0*h1-h0*c1) * monomials[3] +
+        2*(h0*f1+f0*h1 - b0*g1-g0*b1) * monomials[4] +
+        2*(g0*h1+h0*g1 - a0*f1-f0*a1) * monomials[5]  )
 
 
 ######################################################################
@@ -2856,12 +2854,12 @@ class TernaryCubic(AlgebraicForm):
         """
         a,b,c,a2,a3,b1,b3,c1,c2,m = self.scaled_coeffs()
         S = ( a*b*c*m-(b*c*a2*a3+c*a*b1*b3+a*b*c1*c2)
-              -m*(a*b3*c2+b*c1*a3+c*a2*b1)
-              +(a*b1*c2**2+a*c1*b3**2+b*a2*c1**2+b*c2*a3**2+c*b3*a2**2+c*a3*b1**2)
-              -m**4+2*m**2*(b1*c1+c2*a2+a3*b3)
-              -3*m*(a2*b3*c1+a3*b1*c2)
-              -(b1**2*c1**2+c2**2*a2**2+a3**2*b3**2)
-              +(c2*a2*a3*b3+a3*b3*b1*c1+b1*c1*c2*a2) )
+              - m*(a*b3*c2+b*c1*a3+c*a2*b1)
+              + (a*b1*c2**2+a*c1*b3**2+b*a2*c1**2+b*c2*a3**2+c*b3*a2**2+c*a3*b1**2)
+              - m**4+2*m**2*(b1*c1+c2*a2+a3*b3)
+              - 3*m*(a2*b3*c1+a3*b1*c2)
+              - (b1**2*c1**2+c2**2*a2**2+a3**2*b3**2)
+              + (c2*a2*a3*b3+a3*b3*b1*c1+b1*c1*c2*a2) )
         return S
 
     def T_invariant(self):
@@ -2882,35 +2880,35 @@ class TernaryCubic(AlgebraicForm):
         """
         a,b,c,a2,a3,b1,b3,c1,c2,m = self.scaled_coeffs()
         T = ( a**2*b**2*c**2-6*a*b*c*(a*b3*c2+b*c1*a3+c*a2*b1)
-              -20*a*b*c*m**3+12*a*b*c*m*(b1*c1+c2*a2+a3*b3)
-              +6*a*b*c*(a2*b3*c1+a3*b1*c2)+
-              4*(a**2*b*c2**3+a**2*c*b3**3+b**2*c*a3**3+
+              - 20*a*b*c*m**3+12*a*b*c*m*(b1*c1+c2*a2+a3*b3)
+              + 6*a*b*c*(a2*b3*c1+a3*b1*c2) +
+              4*(a**2*b*c2**3+a**2*c*b3**3+b**2*c*a3**3 +
                  b**2*a*c1**3+c**2*a*b1**3+c**2*b*a2**3)
-              +36*m**2*(b*c*a2*a3+c*a*b1*b3+a*b*c1*c2)
-              -24*m*(b*c*b1*a3**2+b*c*c1*a2**2+c*a*c2*b1**2+c*a*a2*b3**2+a*b*a3*c2**2+
+              + 36*m**2*(b*c*a2*a3+c*a*b1*b3+a*b*c1*c2)
+              - 24*m*(b*c*b1*a3**2+b*c*c1*a2**2+c*a*c2*b1**2+c*a*a2*b3**2+a*b*a3*c2**2 +
                      a*b*b3*c1**2)
-              -3*(a**2*b3**2*c2**2+b**2*c1**2*a3**2+c**2*a2**2*b1**2)+
+              - 3*(a**2*b3**2*c2**2+b**2*c1**2*a3**2+c**2*a2**2*b1**2) +
               18*(b*c*b1*c1*a2*a3+c*a*c2*a2*b3*b1+a*b*a3*b3*c1*c2)
-              -12*(b*c*c2*a3*a2**2+b*c*b3*a2*a3**2+c*a*c1*b3*b1**2+
+              - 12*(b*c*c2*a3*a2**2+b*c*b3*a2*a3**2+c*a*c1*b3*b1**2 +
                    c*a*a3*b1*b3**2+a*b*a2*c1*c2**2+a*b*b1*c2*c1**2)
-              -12*m**3*(a*b3*c2+b*c1*a3+c*a2*b1)
-              +12*m**2*(a*b1*c2**2+a*c1*b3**2+b*a2*c1**2+
+              - 12*m**3*(a*b3*c2+b*c1*a3+c*a2*b1)
+              + 12*m**2*(a*b1*c2**2+a*c1*b3**2+b*a2*c1**2 +
                         b*c2*a3**2+c*b3*a2**2+c*a3*b1**2)
-              -60*m*(a*b1*b3*c1*c2+b*c1*c2*a2*a3+c*a2*a3*b1*b3)
-              +12*m*(a*a2*b3*c2**2+a*a3*c2*b3**2+b*b3*c1*a3**2+
+              - 60*m*(a*b1*b3*c1*c2+b*c1*c2*a2*a3+c*a2*a3*b1*b3)
+              + 12*m*(a*a2*b3*c2**2+a*a3*c2*b3**2+b*b3*c1*a3**2 +
                      b*b1*a3*c1**2+c*c1*a2*b1**2+c*c2*b1*a2**2)
-              +6*(a*b3*c2+b*c1*a3+c*a2*b1)*(a2*b3*c1+a3*b1*c2)
-              +24*(a*b1*b3**2*c1**2+a*c1*c2**2*b1**2+b*c2*c1**2*a2**2
-                   +b*a2*a3**2*c2**2+c*a3*a2**2*b3**2+c*b3*b1**2*a3**2)
-              -12*(a*a2*b1*c2**3+a*a3*c1*b3**3+b*b3*c2*a3**3+b*b1*a2*c1**3
-                   +c*c1*a3*b1**3+c*c2*b3*a2**3)
-              -8*m**6+24*m**4*(b1*c1+c2*a2+a3*b3)-36*m**3*(a2*b3*c1+a3*b1*c2)
-              -12*m**2*(b1*c1*c2*a2+c2*a2*a3*b3+a3*b3*b1*c1)
-              -24*m**2*(b1**2*c1**2+c2**2*a2**2+a3**2*b3**2)
-              +36*m*(a2*b3*c1+a3*b1*c2)*(b1*c1+c2*a2+a3*b3)
-              +8*(b1**3*c1**3+c2**3*a2**3+a3**3*b3**3)
-              -27*(a2**2*b3**2*c1**2+a3**2*b1**2*c2**2)-6*b1*c1*c2*a2*a3*b3
-              -12*(b1**2*c1**2*c2*a2+b1**2*c1**2*a3*b3+c2**2*a2**2*a3*b3+
+              + 6*(a*b3*c2+b*c1*a3+c*a2*b1)*(a2*b3*c1+a3*b1*c2)
+              + 24*(a*b1*b3**2*c1**2+a*c1*c2**2*b1**2+b*c2*c1**2*a2**2
+                   + b*a2*a3**2*c2**2+c*a3*a2**2*b3**2+c*b3*b1**2*a3**2)
+              - 12*(a*a2*b1*c2**3+a*a3*c1*b3**3+b*b3*c2*a3**3+b*b1*a2*c1**3
+                   + c*c1*a3*b1**3+c*c2*b3*a2**3)
+              - 8*m**6+24*m**4*(b1*c1+c2*a2+a3*b3)-36*m**3*(a2*b3*c1+a3*b1*c2)
+              - 12*m**2*(b1*c1*c2*a2+c2*a2*a3*b3+a3*b3*b1*c1)
+              - 24*m**2*(b1**2*c1**2+c2**2*a2**2+a3**2*b3**2)
+              + 36*m*(a2*b3*c1+a3*b1*c2)*(b1*c1+c2*a2+a3*b3)
+              + 8*(b1**3*c1**3+c2**3*a2**3+a3**3*b3**3)
+              - 27*(a2**2*b3**2*c1**2+a3**2*b1**2*c2**2)-6*b1*c1*c2*a2*a3*b3
+              - 12*(b1**2*c1**2*c2*a2+b1**2*c1**2*a3*b3+c2**2*a2**2*a3*b3 +
                    c2**2*a2**2*b1*c1+a3**2*b3**2*b1*c1+a3**2*b3**2*c2*a2) )
         return T
 
@@ -3086,8 +3084,8 @@ class TernaryCubic(AlgebraicForm):
         return ( -J**2 + 4*Theta**3 + T*U**2*Theta**2 +
                  Theta*(-4*S**3*U**4 + 2*S*T*U**3*H - 72*S**2*U**2*H**2
                         - 18*T*U*H**3 + 108*S*H**4)
-                 -16*S**4*U**5*H - 11*S**2*T*U**4*H**2 -4*T**2*U**3*H**3
-                 +54*S*T*U**2*H**4 -432*S**2*U*H**5 -27*T*H**6 )
+                 - 16*S**4*U**5*H - 11*S**2*T*U**4*H**2 - 4*T**2*U**3*H**3
+                 + 54*S*T*U**2*H**4 - 432*S**2*U*H**5 - 27*T*H**6 )
 
 
 ######################################################################
@@ -3159,7 +3157,7 @@ class SeveralAlgebraicForms(FormsBase):
             sage: two_inv == two_inv
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp(self._forms, other._forms, op)
 
@@ -3967,7 +3965,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
               (Theta*Phi - 3*Theta_prime*Delta)*T**2*T_prime +
               (Theta*Theta_prime - 4*Delta*Delta_prime)*T*T_prime**2 -
               (Delta_prime*Theta)*T_prime**3
-            )* V + \
+            ) * V + \
             ( (Delta*Phi*Delta_prime) * T**2 +
               (3*Delta*Theta_prime*Delta_prime - Theta*Phi*Delta_prime) * T*T_prime +
               (2*Delta*Delta_prime**2 - 2*Theta*Theta_prime*Delta_prime
@@ -4374,7 +4372,7 @@ class InvariantTheoryFactory():
             True
 
         For binary forms of other degrees, no reconstruction has been
-        implemented yet. For forms of degree 6, see :trac:`26462`::
+        implemented yet. For forms of degree 6, see :issue:`26462`::
 
             sage: invariant_theory.binary_form_from_invariants(6, invariants)
             Traceback (most recent call last):
@@ -4643,7 +4641,7 @@ class InvariantTheoryFactory():
             2*a^2 + 2*b^2 + 2*c^2 - 3*r1^2 - 3*r2^2
             sage: inv.J_covariant()
             0
-       """
+        """
         q1 = QuadraticForm(4, 2, quadratic1, *args, **kwds)
         q2 = QuadraticForm(4, 2, quadratic2, *args, **kwds)
         return TwoQuaternaryQuadratics([q1, q2])

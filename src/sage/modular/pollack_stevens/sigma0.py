@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The matrix monoid `\Sigma_0(N)`.
 
@@ -161,6 +160,7 @@ class Sigma0_factory(UniqueFactory):
             Monoid Sigma0(3) with coefficients in Integer Ring
         """
         return Sigma0_class(*key)
+
 
 Sigma0 = Sigma0_factory('sage.modular.pollack_stevens.sigma0.Sigma0')
 
@@ -484,7 +484,7 @@ class Sigma0_class(Parent):
 
         - ``x`` -- something that one can make into a matrix over the
           appropriate base ring
-        - ``check`` (boolean, default True) -- if True, then check that this
+        - ``check`` (boolean, default: ``True``) -- if True, then check that this
           matrix actually satisfies the conditions.
 
         EXAMPLES::

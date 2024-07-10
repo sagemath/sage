@@ -1,4 +1,4 @@
-$(MP_LIBRARY) flint arb antic boost_cropped
+$(MP_LIBRARY) flint boost_cropped
 
 ----------
 All lines of this file are ignored except the first.

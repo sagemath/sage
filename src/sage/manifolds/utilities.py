@@ -11,7 +11,6 @@ AUTHORS:
 - Travis Scrimshaw (2016): review tweaks
 - Marius Gerbershagen (2022) : skip simplification of expressions with a single
   number or symbolic variable
-
 """
 
 # *****************************************************************************
@@ -323,9 +322,9 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
                 if x.has(abs_symbolic(sin(w0))) or x.has(abs_symbolic(cos(w0))):
                     x = self(x)  # treatment of nested abs(sin_or_cos(...))
                 # Simplifications for values of x in the range [-pi, 2*pi]:
-                if x>=0 and x<=pi:
+                if x >= 0 and x <= pi:
                     ex = sin(x)
-                elif (x>pi and x<=2*pi) or (x>=-pi and x<0):
+                elif (x > pi and x <= 2*pi) or (x >= -pi and x < 0):
                     ex = -sin(x)
                 return ex
             if argum.operator() is cos:
@@ -335,9 +334,9 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
                 if x.has(abs_symbolic(sin(w0))) or x.has(abs_symbolic(cos(w0))):
                     x = self(x)  # treatment of nested abs(sin_or_cos(...))
                 # Simplifications for values of x in the range [-pi, 2*pi]:
-                if (x>=-pi/2 and x<=pi/2) or (x>=3*pi/2 and x<=2*pi):
+                if (x >= -pi/2 and x <= pi/2) or (x >= 3*pi/2 and x <= 2*pi):
                     ex = cos(x)
-                elif (x>pi/2 and x<=3*pi/2) or (x>=-pi and x<-pi/2):
+                elif (x > pi/2 and x <= 3*pi/2) or (x >= -pi and x < -pi/2):
                     ex = -cos(x)
                 return ex
         # If no pattern is found, we default to ExpressionTreeWalker:
@@ -949,7 +948,7 @@ class ExpressionNice(Expression):
             sage: ExpressionNice(fun)
             y*(z - d(h)/dz)^2 + x*d^2(f)/dxdy
 
-        Check that :trac:`33399` is fixed::
+        Check that :issue:`33399` is fixed::
 
             sage: ExpressionNice(function('f')(x+y, x-y).diff(y))
             d(f)/d(x + y) - d(f)/d(x - y)
@@ -983,7 +982,7 @@ class ExpressionNice(Expression):
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
             occ = dict((i, strv[i] + "^" + str(diffargs.count(i))
-                       if (diffargs.count(i)>1) else strv[i])
+                       if (diffargs.count(i) > 1) else strv[i])
                        for i in diffargs)
 
             res = "d" + str(numargs) + "(" + str(funcname) + ")/d" + "d".join(
@@ -1047,7 +1046,7 @@ class ExpressionNice(Expression):
             sage: latex(ExpressionNice(fun))
             \frac{\partial\,{\cal F}}{\partial y}
 
-        Check that :trac:`33399` is fixed::
+        Check that :issue:`33399` is fixed::
 
             sage: latex(ExpressionNice(function('f')(x+y, x-y).diff(y)))
             \frac{\partial\,f}{\partial \left( x + y \right)}
@@ -1270,6 +1269,7 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
 
     EXAMPLES::
 
+        sage: # needs sage.plot
         sage: g = sphere()
         sage: g.all
         [Graphics3d Object]
@@ -1356,5 +1356,6 @@ def exterior_derivative(form):
 
     """
     return form.exterior_derivative()
+
 
 xder = exterior_derivative

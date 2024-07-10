@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Sage's IPython Extension
 
@@ -68,6 +69,7 @@ from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
 from sage.repl.load import load_wrap
 from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
 from sage.misc.lazy_import import LazyImport
+from sage.misc.misc import run_once
 
 @magics_class
 class SageMagics(Magics):
@@ -220,8 +222,8 @@ class SageMagics(Magics):
         That means you do not have to use :func:`ascii_art` to get an ASCII art
         output::
 
-            sage: shell.run_cell("i = var('i')")
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')
+            sage: shell.run_cell("i = var('i')")                                        # needs sage.symbolic
+            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
                  10       9       8       7       6       5       4      3      2
             100*x   + 81*x  + 64*x  + 49*x  + 36*x  + 25*x  + 16*x  + 9*x  + 4*x  + x
 
@@ -229,14 +231,14 @@ class SageMagics(Magics):
 
             sage: shell.run_cell('%display text plain')
             sage: shell.run_cell('%display plain')        # shortcut for "text plain"
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')
+            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
             100*x^10 + 81*x^9 + 64*x^8 + 49*x^7 + 36*x^6 + 25*x^5 + 16*x^4 + 9*x^3 + 4*x^2 + x
 
         Sometime you could have to use a special output width and you
         could specify it::
 
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('StandardTableaux(4).list()')
+            sage: shell.run_cell('StandardTableaux(4).list()')                          # needs sage.combinat
             [
             [                                                                  1  4    1  3
             [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
@@ -247,7 +249,7 @@ class SageMagics(Magics):
                3       3 ]
                4   ,   4 ]
             sage: shell.run_cell('%display ascii_art 50')
-            sage: shell.run_cell('StandardTableaux(4).list()')
+            sage: shell.run_cell('StandardTableaux(4).list()')                          # needs sage.combinat
             [
             [
             [                 1  3  4    1  2  4    1  2  3
@@ -351,12 +353,13 @@ class SageMagics(Magics):
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('''
+            sage: shell.run_cell(                                                       # needs sage.misc.cython
+            ....: '''
             ....: %%cython
             ....: def f():
             ....:     print('test')
             ....: ''')
-            sage: f()
+            sage: f()                                                                   # needs sage.misc.cython
             test
         """
         from sage.misc.cython import cython_compile
@@ -382,6 +385,7 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('''
@@ -486,7 +490,7 @@ class SageCustomizations():
         try:
             with open(SAGE_STARTUP_FILE, 'r') as f:
                 self.shell.run_cell(f.read(), store_history=False)
-        except IOError:
+        except OSError:
             pass
 
     def init_inspector(self):
@@ -506,7 +510,7 @@ class SageCustomizations():
 
         TESTS:
 
-        Check that :trac:`31951` is fixed::
+        Check that :issue:`31951` is fixed::
 
              sage: from IPython import get_ipython
              sage: ip = get_ipython()
@@ -581,41 +585,6 @@ class SageJupyterCustomizations(SageCustomizations):
         """
         from .ipython_kernel import all_jupyter
         return all_jupyter
-
-
-# from https://stackoverflow.com/questions/4103773/efficient-way-of-having-a-function-only-execute-once-in-a-loop
-from functools import wraps
-def run_once(func):
-    """
-    Runs a function (successfully) only once.
-
-    The running can be reset by setting the ``has_run`` attribute to False
-
-    TESTS::
-
-        sage: from sage.repl.ipython_extension import run_once
-        sage: @run_once
-        ....: def foo(work):
-        ....:     if work:
-        ....:         return 'foo worked'
-        ....:     raise RuntimeError("foo didn't work")
-        sage: foo(False)
-        Traceback (most recent call last):
-        ...
-        RuntimeError: foo didn't work
-        sage: foo(True)
-        'foo worked'
-        sage: foo(False)
-        sage: foo(True)
-    """
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if not wrapper.has_run:
-            result = func(*args, **kwargs)
-            wrapper.has_run = True
-            return result
-    wrapper.has_run = False
-    return wrapper
 
 
 @run_once

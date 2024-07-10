@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Examples of infinite enumerated sets
 """
@@ -184,5 +185,6 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         return self.element_class(i)
 
     Element = Integer
+
 
 Example = NonNegativeIntegers

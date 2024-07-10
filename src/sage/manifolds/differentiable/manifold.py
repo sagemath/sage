@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Differentiable Manifolds
 
@@ -421,7 +420,6 @@ REFERENCES:
 - [Ser1992]_
 - [Ber2008]_
 - [BG1988]_
-
 """
 
 # ****************************************************************************
@@ -814,7 +812,7 @@ class DifferentiableManifold(TopologicalManifold):
             sage: U.default_chart() is X.restrict(U)
             True
 
-        An point in ``U``::
+        A point in ``U``::
 
             sage: p = U.an_element(); p
             Point on the 2-dimensional differentiable manifold M
@@ -1904,7 +1902,7 @@ class DifferentiableManifold(TopologicalManifold):
         vmodule = self.vector_field_module(dest_map)
         resu = vmodule.tensor((k, l), name=name, latex_name=latex_name,
                               sym=sym, antisym=antisym)
-        if len(args)>2:
+        if len(args) > 2:
             # Some components are to be initialized
             resu._init_components(args[2], **kwargs)
         return resu
@@ -2173,7 +2171,7 @@ class DifferentiableManifold(TopologicalManifold):
         vmodule = self.vector_field_module(dest_map)
         resu = vmodule.alternating_contravariant_tensor(degree, name=name,
                                                         latex_name=latex_name)
-        if len(args)>1:
+        if len(args) > 1:
             # Some components are to be initialized
             resu._init_components(args[1], **kwargs)
         return resu
@@ -2277,7 +2275,7 @@ class DifferentiableManifold(TopologicalManifold):
         vmodule = self.vector_field_module(dest_map)
         resu = vmodule.alternating_form(degree, name=name,
                                         latex_name=latex_name)
-        if len(args)>1:
+        if len(args) > 1:
             # Some components are to be initialized
             resu._init_components(args[1], **kwargs)
         return resu
@@ -2993,7 +2991,7 @@ class DifferentiableManifold(TopologicalManifold):
           :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismFieldParal`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: True) -- if set to True, the inverse
+        - ``compute_inverse`` (default: ``True``) -- if set to True, the inverse
           automorphism is computed and the change from basis `(f_i)` to `(e_i)`
           is set to it in the internal dictionary ``self._frame_changes``
 
@@ -3195,7 +3193,7 @@ class DifferentiableManifold(TopologicalManifold):
         latex_indices = kwargs.pop('latex_indices', None)
         symbol_dual = kwargs.pop('symbol_dual', None)
         latex_symbol_dual = kwargs.pop('latex_symbol_dual', None)
-        #
+
         if vector_fields:
             dest_map0 = vector_fields[0].parent().destination_map()
             if dest_map and dest_map is not dest_map0:
@@ -4187,7 +4185,7 @@ class DifferentiableManifold(TopologicalManifold):
         """
         vmodule = self.vector_field_module(dest_map)
         dim = vmodule.ambient_domain().dimension()
-        if signature=='positive':
+        if signature == 'positive':
             signat = dim - 2
         else:
             signat = 2 - dim

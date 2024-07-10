@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Elements, Array and Lists With Clone Protocol
 
@@ -141,7 +142,7 @@ AUTHORS:
 # ****************************************************************************
 
 from cpython.list cimport *
-from cpython.int cimport *
+from cpython.long cimport *
 from cpython.ref cimport *
 
 from cysignals.memory cimport check_reallocarray, sig_free
@@ -308,7 +309,7 @@ cdef class ClonableElement(Element):
         if self._is_immutable:
             raise ValueError("object is immutable; please change a copy instead.")
 
-    cpdef bint is_mutable(self):
+    cpdef bint is_mutable(self) noexcept:
         """
         Return ``True`` if ``self`` is mutable (can be changed) and ``False``
         if it is not.
@@ -329,7 +330,7 @@ cdef class ClonableElement(Element):
         """
         return not self._is_immutable
 
-    cpdef bint is_immutable(self):
+    cpdef bint is_immutable(self) noexcept:
         """
         Return ``True`` if ``self`` is immutable (cannot be changed)
         and ``False`` if it is not.
@@ -1104,7 +1105,7 @@ cdef class ClonableList(ClonableArray):
         """
         Remove ``self[index]`` from ``self`` and returns it
 
-        INPUT: ``index`` - any int, default to -1
+        INPUT: ``index`` -- any int, default to -1
 
         EXAMPLES::
 
@@ -1132,7 +1133,7 @@ cdef class ClonableList(ClonableArray):
         """
         Remove the first occurrence of ``el`` from ``self``
 
-        INPUT: ``el`` - any object
+        INPUT: ``el`` -- any object
 
         EXAMPLES::
 
@@ -1291,7 +1292,7 @@ cdef class ClonableIntArray(ClonableElement):
 
         This can be used to initialize ``self`` without passing a list
 
-        INPUT: ``size`` - an int
+        INPUT: ``size`` -- an int
 
         EXAMPLES::
 
@@ -1391,7 +1392,7 @@ cdef class ClonableIntArray(ClonableElement):
         cdef list L = <list> PyList_New(self._len)
         cdef object o
         for i in range(self._len):
-            o = PyInt_FromLong(self._list[i])
+            o = PyLong_FromLong(self._list[i])
             Py_INCREF(o)
             PyList_SET_ITEM(L, i, o)
         return L
@@ -1772,7 +1773,6 @@ def _make_int_array_clone(clas, parent, lst, needs_check, is_immutable, dic):
     if dic is not None:
         res.__dict__ = dic
     return res
-
 
 
 cdef class NormalizedClonableList(ClonableList):

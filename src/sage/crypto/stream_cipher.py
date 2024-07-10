@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.rings.finite_rings
 """
 Stream Ciphers
 """
@@ -21,11 +22,11 @@ class LFSRCipher(SymmetricKeyCipher):
         INPUT:
 
 
-        -  ``parent`` - parent
+        -  ``parent`` -- parent
 
-        -  ``poly`` - connection polynomial
+        -  ``poly`` -- connection polynomial
 
-        -  ``IS`` - initial state
+        -  ``IS`` -- initial state
 
 
         EXAMPLES::
@@ -70,9 +71,9 @@ class LFSRCipher(SymmetricKeyCipher):
         INPUT:
 
 
-        -  ``M`` - a StringMonoidElement
+        -  ``M`` -- a StringMonoidElement
 
-        -  ``mode`` - ignored (default: 'ECB')
+        -  ``mode`` -- ignored (default: 'ECB')
 
 
         EXAMPLES::
@@ -94,7 +95,7 @@ class LFSRCipher(SymmetricKeyCipher):
         N = len(M)
         Melt = M._element_list
         Kelt = lfsr_sequence(poly.list(), IS, N)
-        return B([ (Melt[i]+int(Kelt[i]))%n for i in range(N) ])
+        return B([ (Melt[i]+int(Kelt[i])) % n for i in range(N) ])
 
     def _repr_(self):
         r"""
@@ -154,11 +155,11 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         INPUT:
 
 
-        -  ``parent`` - parent
+        -  ``parent`` -- parent
 
-        -  ``poly`` - connection polynomial
+        -  ``poly`` -- connection polynomial
 
-        -  ``IS`` - initial state
+        -  ``IS`` -- initial state
 
 
         EXAMPLES::
@@ -226,9 +227,9 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         INPUT:
 
 
-        -  ``M`` - a StringMonoidElement
+        -  ``M`` -- a StringMonoidElement
 
-        -  ``mode`` - ignored (default: 'ECB')
+        -  ``mode`` -- ignored (default: 'ECB')
 
 
         EXAMPLES::

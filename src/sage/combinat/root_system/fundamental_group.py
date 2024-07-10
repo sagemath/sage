@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.groups
 r"""
 Fundamental Group of an Extended Affine Weyl Group
 
@@ -324,6 +325,21 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         """
         return wt.map_support(self.parent().action(self.value()))
 
+    def __hash__(self):
+        r"""
+        Return the hash of ``self``.
+
+        TESTS:
+
+        Check that :issue:`36121` is fixed::
+
+            sage: W = ExtendedAffineWeylGroup('A4')
+            sage: fun = W.fundamental_group().an_element()
+            sage: hash(fun) == hash(fun.value())
+            True
+        """
+        return hash(self.value())
+
 
 class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
                                                       Parent):
@@ -377,7 +393,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             cartan_type = cartan_type.dual()
         if cartan_type.is_untwisted_affine():
             cartan_type_classical = cartan_type.classical()
-            I = [i for i in cartan_type_classical.index_set()]
+            I = list(cartan_type_classical.index_set())
             Q = RootSystem(cartan_type_classical).root_lattice()
             alpha = Q.simple_roots()
             omega = RootSystem(cartan_type_classical).weight_lattice().fundamental_weights()

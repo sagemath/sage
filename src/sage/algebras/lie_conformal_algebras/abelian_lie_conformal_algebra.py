@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Abelian Lie Conformal Algebra
 
@@ -22,6 +23,7 @@ AUTHORS:
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 from sage.structure.indexed_generators import standardize_names_index_set
+
 
 class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""

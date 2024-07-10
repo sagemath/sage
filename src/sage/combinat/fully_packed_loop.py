@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fully packed loops
 
@@ -157,7 +158,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
     The class also has a plot method::
 
-        sage: fpl.plot()                                                                # optional - sage.plot
+        sage: fpl.plot()                                                                # needs sage.plot
         Graphics object consisting of 3 graphics primitives
 
     which gives:
@@ -749,24 +750,24 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``link``, ``loop`` - (boolean, default ``True``) whether to plot the links
+        - ``link``, ``loop`` -- (boolean, default ``True``) whether to plot the links
           or the loops
 
-        - ``color``, ``link_color``, ``loop_color`` - (optional, a string or a
+        - ``color``, ``link_color``, ``loop_color`` -- (optional, a string or a
           RGB triple)
 
-        - ``colors``, ``link_colors``, ``loop_colors`` - (optional, list) a list of
+        - ``colors``, ``link_colors``, ``loop_colors`` -- (optional, list) a list of
           colors
 
-        - ``color_map``, ``link_color_map``, ``loop_color_map`` - (string,
+        - ``color_map``, ``link_color_map``, ``loop_color_map`` -- (string,
           optional) a name of a matplotlib color map for the link or the loop
 
-        - ``link_color_randomize`` - (boolean, default ``False``) when
+        - ``link_color_randomize`` -- (boolean, default ``False``) when
           ``link_colors`` or ``link_color_map`` is specified it randomizes
           its order. Setting this option to ``True`` makes it unlikely to
           have two neighboring links with the same color.
 
-        - ``loop_fill`` - (boolean, optional) whether to fill the interior of the loops
+        - ``loop_fill`` -- (boolean, optional) whether to fill the interior of the loops
 
         EXAMPLES:
 
@@ -781,7 +782,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: fpl.plot()                                                            # optional - sage.plot
+            sage: fpl.plot()                                                            # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         The resulting graphics is as follows
@@ -798,7 +799,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: fpl.plot(link_color_map='rainbow')                                    # optional - sage.plot
+            sage: fpl.plot(link_color_map='rainbow')                                    # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         .. PLOT::
@@ -811,9 +812,9 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
         You can plot the 42 fully packed loops of size `4 \times 4` using::
 
-            sage: G = [fpl.plot(link_color_map='winter', loop_color='black')            # optional - sage.plot
+            sage: G = [fpl.plot(link_color_map='winter', loop_color='black')            # needs sage.plot
             ....:      for fpl in FullyPackedLoops(4)]
-            sage: graphics_array(G, 7, 6)                                               # optional - sage.plot
+            sage: graphics_array(G, 7, 6)                                               # needs sage.plot
             Graphics Array of size 7 x 6
 
         .. PLOT::
@@ -834,7 +835,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             ....: 00000000+-0000+00000000000000+0000000000"
             sage: a = matrix(20, [{'0':0, '+':1, '-': -1}[i] for i in s])
             sage: fpl = FullyPackedLoop(a)
-            sage: fpl.plot(loop_fill=True, loop_color_map='rainbow')                    # optional - sage.plot
+            sage: fpl.plot(loop_fill=True, loop_color_map='rainbow')                    # needs sage.plot
             Graphics object consisting of 27 graphics primitives
 
         .. PLOT::

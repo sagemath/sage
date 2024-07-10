@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Subsets of Topological Manifolds
 
@@ -53,7 +52,6 @@ Families of subsets after the above operations::
     Set {A_inter_B} of subsets of the 2-dimensional topological manifold M
     sage: d.subset_family()
     Set {A, A_inter_B, A_union_B, B} of subsets of the 2-dimensional topological manifold M
-
 """
 #*****************************************************************************
 #       Copyright (C) 2015-2020 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -897,11 +895,12 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: M = Manifold(3, 'M')
             sage: U = M.open_subset('U'); V = M.open_subset('V'); W = M.open_subset('W')
             sage: D = M.subset_digraph(); D
             Digraph on 4 vertices
-            sage: D.edges(key=lambda e: (e[0]._name, e[1]._name))
+            sage: D.edges(sort=True, key=lambda e: (e[0]._name, e[1]._name))            # needs sage.graphs
             [(Set {U} of open subsets of the 3-dimensional differentiable manifold M,
               Set {M} of open subsets of the 3-dimensional differentiable manifold M,
               None),
@@ -911,27 +910,26 @@ class ManifoldSubset(UniqueRepresentation, Parent):
              (Set {W} of open subsets of the 3-dimensional differentiable manifold M,
               Set {M} of open subsets of the 3-dimensional differentiable manifold M,
               None)]
-            sage: D.plot(layout='acyclic')
+            sage: D.plot(layout='acyclic')                                              # needs sage.plot
             Graphics object consisting of 8 graphics primitives
             sage: def label(element):
             ....:     try:
             ....:         return element._name
             ....:     except AttributeError:
             ....:         return '[' + ', '.join(sorted(x._name for x in element)) + ']'
-            sage: D.relabel(label, inplace=False).plot(layout='acyclic')
+            sage: D.relabel(label, inplace=False).plot(layout='acyclic')                # needs sage.plot
             Graphics object consisting of 8 graphics primitives
-
             sage: VW = V.union(W)
             sage: D = M.subset_digraph(); D
             Digraph on 5 vertices
-            sage: D.relabel(label, inplace=False).plot(layout='acyclic')
+            sage: D.relabel(label, inplace=False).plot(layout='acyclic')                # needs sage.plot
             Graphics object consisting of 12 graphics primitives
 
         If ``open_covers`` is ``True``, the digraph includes a special vertex for
         each nontrivial open cover of a subset::
 
-            sage: D = M.subset_digraph(open_covers=True)
-            sage: D.relabel(label, inplace=False).plot(layout='acyclic')
+            sage: D = M.subset_digraph(open_covers=True)                                # needs sage.graphs
+            sage: D.relabel(label, inplace=False).plot(layout='acyclic')                # needs sage.graphs sage.plot
             Graphics object consisting of 14 graphics primitives
 
         .. PLOT::
@@ -1057,11 +1055,12 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: M = Manifold(3, 'M')
             sage: U = M.open_subset('U'); V = M.open_subset('V'); W = M.open_subset('W')
             sage: P = M.subset_poset(); P
             Finite poset containing 4 elements
-            sage: P.plot(element_labels={element: element._name for element in P})
+            sage: P.plot(element_labels={element: element._name for element in P})      # needs sage.plot
             Graphics object consisting of 8 graphics primitives
             sage: VW = V.union(W)
             sage: P = M.subset_poset(); P
@@ -1076,12 +1075,13 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: sorted(P.lower_covers(ManifoldSubsetFiniteFamily([M])), key=str)
              [Set {U} of open subsets of the 3-dimensional differentiable manifold M,
               Set {V_union_W} of open subsets of the 3-dimensional differentiable manifold M]
-            sage: P.plot(element_labels={element: element._name for element in P})
+            sage: P.plot(element_labels={element: element._name for element in P})      # needs sage.plot
             Graphics object consisting of 10 graphics primitives
 
         If ``open_covers`` is ``True``, the poset includes a special vertex for
         each nontrivial open cover of a subset::
 
+            sage: # needs sage.graphs
             sage: P = M.subset_poset(open_covers=True); P
             Finite poset containing 6 elements
             sage: from sage.manifolds.subset import ManifoldSubsetFiniteFamily
@@ -1094,7 +1094,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             ....:         return element._name
             ....:     except AttributeError:
             ....:         return '[' + ', '.join(sorted(x._name for x in element)) + ']'
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.plot
             Graphics object consisting of 12 graphics primitives
 
         .. PLOT::
@@ -1236,7 +1236,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: M = Manifold(3, 'M')
             sage: U = M.open_subset('U'); V = M.open_subset('V'); W = M.open_subset('W')
             sage: VW = V.union(W)
-            sage: P = V.superset_digraph(loops=False, upper_bound=VW); P
+            sage: P = V.superset_digraph(loops=False, upper_bound=VW); P                # needs sage.graphs
             Digraph on 2 vertices
 
         """
@@ -1261,9 +1261,9 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: M = Manifold(3, 'M')
             sage: U = M.open_subset('U'); V = M.open_subset('V'); W = M.open_subset('W')
             sage: VW = V.union(W)
-            sage: P = V.superset_poset(); P
+            sage: P = V.superset_poset(); P                                             # needs sage.graphs
             Finite poset containing 3 elements
-            sage: P.plot(element_labels={element: element._name for element in P})
+            sage: P.plot(element_labels={element: element._name for element in P})      # needs sage.graphs sage.plot
             Graphics object consisting of 6 graphics primitives
 
         """
@@ -1369,25 +1369,25 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             ....:         return element._name
             ....:     except AttributeError:
             ....:         return '[' + ', '.join(sorted(x._name for x in element)) + ']'
-            sage: P = M.subset_poset(open_covers=True); P
+            sage: P = M.subset_poset(open_covers=True); P                               # needs sage.graphs
             Finite poset containing 4 elements
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 8 graphics primitives
 
             sage: AB.declare_union(A, B)
             sage: A.union(B)
             Subset AB of the 2-dimensional topological manifold M
-            sage: P = M.subset_poset(open_covers=True); P
+            sage: P = M.subset_poset(open_covers=True); P                               # needs sage.graphs
             Finite poset containing 4 elements
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 8 graphics primitives
 
             sage: B1 = B.subset('B1', is_open=True)
             sage: B2 = B.subset('B2', is_open=True)
             sage: B.declare_union(B1, B2, disjoint=True)
-            sage: P = M.subset_poset(open_covers=True); P
+            sage: P = M.subset_poset(open_covers=True); P                               # needs sage.graphs
             Finite poset containing 9 elements
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 19 graphics primitives
 
         .. PLOT::
@@ -1495,18 +1495,18 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: Vs = [M.open_subset(f'V{i}') for i in range(2)]
             sage: UV = U.intersection(V)
             sage: W = UV.open_subset('W')
-            sage: P = M.subset_poset()
+            sage: P = M.subset_poset()                                                  # needs sage.graphs
             sage: def label(element):
             ....:     return element._name
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 15 graphics primitives
             sage: V.declare_equal(Vs)
-            sage: P = M.subset_poset()
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P = M.subset_poset()                                                  # needs sage.graphs
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 11 graphics primitives
             sage: W.declare_equal(U)
-            sage: P = M.subset_poset()
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P = M.subset_poset()                                                  # needs sage.graphs
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 6 graphics primitives
 
         .. PLOT::
@@ -1557,16 +1557,16 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             Set {M, V} of open subsets of the 2-dimensional differentiable manifold M
             sage: U1.subset_family()
             Set {U1} of open subsets of the 2-dimensional differentiable manifold M
-            sage: P = M.subset_poset()
+            sage: P = M.subset_poset()                                                  # needs sage.graphs
             sage: def label(element):
             ....:     return element._name
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 8 graphics primitives
             sage: V.declare_subset(U1, U2)
             sage: V.superset_family()
             Set {M, U1, U2, V} of open subsets of the 2-dimensional differentiable manifold M
-            sage: P = M.subset_poset()
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P = M.subset_poset()                                                  # needs sage.graphs
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 9 graphics primitives
 
         Subsets in a directed cycle of inclusions are equal::
@@ -1576,8 +1576,8 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             Set {M, U1, U2, V} of open subsets of the 2-dimensional differentiable manifold M
             sage: M.equal_subset_family()
             Set {M, U1, U2, V} of open subsets of the 2-dimensional differentiable manifold M
-            sage: P = M.subset_poset()
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P = M.subset_poset()                                                  # needs sage.graphs
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 2 graphics primitives
 
         .. PLOT::
@@ -1623,16 +1623,16 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: W = V1.intersection(V2)
             sage: U.subset_family()
             Set {U} of open subsets of the 2-dimensional differentiable manifold M
-            sage: P = M.subset_poset()
+            sage: P = M.subset_poset()                                                  # needs sage.graphs
             sage: def label(element):
             ....:     return element._name
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 11 graphics primitives
             sage: U.declare_superset(V1, V2)
             sage: U.subset_family()
             Set {U, V1, V1_inter_V2, V2} of open subsets of the 2-dimensional differentiable manifold M
-            sage: P = M.subset_poset()
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P = M.subset_poset()                                                  # needs sage.graphs
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 11 graphics primitives
 
         Subsets in a directed cycle of inclusions are equal::
@@ -1642,8 +1642,8 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             Set {U, V1, V1_inter_V2, V2} of open subsets of the 2-dimensional differentiable manifold M
             sage: W.equal_subset_family()
             Set {U, V1, V1_inter_V2, V2} of open subsets of the 2-dimensional differentiable manifold M
-            sage: P = M.subset_poset()
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P = M.subset_poset()                                                  # needs sage.graphs
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 4 graphics primitives
 
         .. PLOT::
@@ -1726,7 +1726,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         Emptiness is recorded as empty open covers::
 
-            sage: P = M.subset_poset(open_covers=True, points=[b])
+            sage: P = M.subset_poset(open_covers=True, points=[b])                      # needs sage.graphs
             sage: def label(element):
             ....:     if isinstance(element, str):
             ....:         return element
@@ -1734,7 +1734,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             ....:         return element._name
             ....:     except AttributeError:
             ....:         return '[' + ', '.join(sorted(x._name for x in element)) + ']'
-            sage: P.plot(element_labels={element: label(element) for element in P})
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
             Graphics object consisting of 10 graphics primitives
 
         .. PLOT::
@@ -2480,7 +2480,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: M.union(a) is M
             True
 
-        Check that :trac:`30401` is fixed::
+        Check that :issue:`30401` is fixed::
 
             sage: d = a.subset('D')
             sage: e = a.subset('E')

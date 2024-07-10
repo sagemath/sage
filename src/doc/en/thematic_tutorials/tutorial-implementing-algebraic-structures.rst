@@ -179,7 +179,7 @@ Since we defined the class interactively, instead of in a Python
 module, those tests will complain about "pickling". We can silence this
 error by making sage think that the class is defined in a module. We could also
 just ignore those failing tests for now or call :class:`TestSuite` with the
-argument `skip='_test_pickling')`::
+argument ``skip='_test_pickling')``::
 
     sage: import __main__
     sage: __main__.MyCyclicGroupAlgebra = MyCyclicGroupAlgebra
@@ -199,6 +199,7 @@ Ok, let's run the tests::
       Running the test suite of self.an_element()
       running ._test_category() . . . pass
       running ._test_eq() . . . pass
+      running ._test_monomial_coefficients() . . . pass
       running ._test_new() . . . pass
       running ._test_nonzero_equal() . . . pass
       running ._test_not_implemented_methods() . . . pass
@@ -238,7 +239,7 @@ Exercises
 #. Make a tiny modification to ``product_on_basis`` in
    "MyCyclicGroupAlgebra" to implement the *dual* of the group algebra
    of the cyclic group instead of its group algebra (so the product is now given by
-   `b_fb_g=\delta_{f,g}bf`).
+   `b_fb_g=\delta_{f,g}b_f`).
 
    Run the :class:`TestSuite` tests (you may ignore the "pickling"
    errors). What do you notice?
@@ -319,7 +320,7 @@ Diagonal and Triangular Morphisms
 
 We now illustrate how to specify that a given morphism is diagonal or triangular
 with respect to some order on the basis, which means that the morphism is
-invertible and `Sage` is able to compute the inverse morphism automatically.
+invertible and Sage is able to compute the inverse morphism automatically.
 Currently this feature requires the domain and codomain to have the same index
 set (in progress ...).
 
@@ -659,7 +660,7 @@ particular, this construction says that they are:
     There is a bit of redundancy here: given that ``A`` knows it is a
     commutative algebra with realizations the infrastructure could, in
     principle, determine that its realizations are commutative algebras. If this
-    was done then it would be possible to implement `Bases.super_categories` by
+    was done then it would be possible to implement ``Bases.super_categories`` by
     returning::
 
             [A.Realizations().WithBasis()]

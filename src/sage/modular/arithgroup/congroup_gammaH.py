@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Congruence subgroup `\Gamma_H(N)`
 
@@ -40,7 +40,7 @@ def GammaH_constructor(level, H):
     r"""
     Return the congruence subgroup `\Gamma_H(N)`, which is the subgroup of
     `SL_2(\ZZ)` consisting of matrices of the form `\begin{pmatrix} a & b \\
-    c & d \end{pmatrix}` with `N | c` and `a, b \in H`, for `H` a specified
+    c & d \end{pmatrix}` with `N | c` and `a, d \in H`, for `H` a specified
     subgroup of `(\ZZ/N\ZZ)^\times`.
 
     INPUT:
@@ -100,6 +100,9 @@ def is_GammaH(x):
 
         sage: from sage.modular.arithgroup.all import is_GammaH
         sage: is_GammaH(GammaH(13, [2]))
+        doctest:warning...
+        DeprecationWarning: The function is_GammaH is deprecated; use 'isinstance(..., GammaH_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_GammaH(Gamma0(6))
         True
@@ -108,6 +111,8 @@ def is_GammaH(x):
         sage: is_GammaH(sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_GammaH is deprecated; use 'isinstance(..., GammaH_class)' instead.")
     return isinstance(x, GammaH_class)
 
 
@@ -146,7 +151,7 @@ def _normalize_H(H, level):
     for h in H:
         if gcd(h, level) > 1:
             raise ArithmeticError('The generators %s must be units modulo %s' % (H, level))
-    H = set(u for u in H if u > 1)
+    H = {u for u in H if u > 1}
     final_H = set()
     for h in H:
         inv_h = h.inverse_mod(level)
@@ -163,7 +168,7 @@ class GammaH_class(CongruenceSubgroup):
     The congruence subgroup `\Gamma_H(N)` for some subgroup `H \trianglelefteq
     (\ZZ / N\ZZ)^\times`, which is the subgroup of `\SL_2(\ZZ)` consisting of
     matrices of the form `\begin{pmatrix} a &
-    b \\ c & d \end{pmatrix}` with `N \mid c` and `a, b \in H`.
+    b \\ c & d \end{pmatrix}` with `N \mid c` and `a, d \in H`.
 
     TESTS:
 
@@ -352,7 +357,7 @@ class GammaH_class(CongruenceSubgroup):
             sage: Gamma0(2) == Gamma1(2)
             True
 
-            sage: [x._list_of_elements_in_H() for x in sorted(Gamma0(24).gamma_h_subgroups())]
+            sage: [x._list_of_elements_in_H() for x in sorted(Gamma0(24).gamma_h_subgroups())]  # optional - gap_package_polycyclic
             [[1],
             [1, 5],
             [1, 7],
@@ -505,7 +510,7 @@ class GammaH_class(CongruenceSubgroup):
 
         INPUT:
 
-        ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
+        - ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
 
         OUTPUT:
 
@@ -694,7 +699,7 @@ class GammaH_class(CongruenceSubgroup):
             sage: len(v)
             361
 
-        This demonstrates the problem underlying :trac:`1220`::
+        This demonstrates the problem underlying :issue:`1220`::
 
             sage: G = GammaH(99, [67])
             sage: G._reduce_coset(11,-3)
@@ -1026,7 +1031,7 @@ class GammaH_class(CongruenceSubgroup):
             True
         """
 
-        from .all import is_Gamma0, is_Gamma1
+        from .all import Gamma0_class, Gamma1_class
         if not isinstance(other, GammaH_class):
             raise NotImplementedError
 
@@ -1035,17 +1040,17 @@ class GammaH_class(CongruenceSubgroup):
             return False
 
         # easy cases
-        if is_Gamma0(other):
+        if isinstance(other, Gamma0_class):
             return True  # recall self is a GammaH, so it's contained in Gamma0
 
-        if is_Gamma1(other) and len(self._generators_for_H()) > 0:
+        if isinstance(other, Gamma1_class) and len(self._generators_for_H()) > 0:
             return False
 
         else:
             # difficult case
             t = other._list_of_elements_in_H()
             for x in self._generators_for_H():
-                if not (x in t):
+                if x not in t:
                     return False
             return True
 
@@ -1055,7 +1060,7 @@ class GammaH_class(CongruenceSubgroup):
 
         EXAMPLES::
 
-            sage: [G.index() for G in Gamma0(40).gamma_h_subgroups()]
+            sage: [G.index() for G in Gamma0(40).gamma_h_subgroups()]  # optional - gap_package_polycyclic
             [72, 144, 144, 144, 144, 288, 288, 288, 288, 144, 288, 288, 576, 576, 144, 288, 288, 576, 576, 144, 288, 288, 576, 576, 288, 576, 1152]
         """
         from .all import Gamma1
@@ -1068,7 +1073,7 @@ class GammaH_class(CongruenceSubgroup):
 
         EXAMPLES::
 
-            sage: [H.nu2() for n in [1..10] for H in Gamma0(n).gamma_h_subgroups()]
+            sage: [H.nu2() for n in [1..10] for H in Gamma0(n).gamma_h_subgroups()]  # optional - gap_package_polycyclic
             [1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0]
             sage: GammaH(33,[2]).nu2()
             0
@@ -1095,7 +1100,7 @@ class GammaH_class(CongruenceSubgroup):
 
         EXAMPLES::
 
-            sage: [H.nu3() for n in [1..10] for H in Gamma0(n).gamma_h_subgroups()]
+            sage: [H.nu3() for n in [1..10] for H in Gamma0(n).gamma_h_subgroups()]  # optional - gap_package_polycyclic
             [1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             sage: GammaH(33,[2]).nu3()
             0
@@ -1140,7 +1145,7 @@ class GammaH_class(CongruenceSubgroup):
         c = ZZ(0)
         for d in (d for d in N.divisors() if d**2 <= N):
             Nd = lcm(d, N // d)
-            Hd = set([x % Nd for x in H])
+            Hd = {x % Nd for x in H}
             lenHd = len(Hd)
             if Nd - 1 not in Hd:
                 lenHd *= 2
@@ -1182,7 +1187,7 @@ class GammaH_class(CongruenceSubgroup):
         c = ZZ(0)
         for d in (d for d in divisors(N) if d**2 <= N):
             Nd = lcm(d, N // d)
-            Hd = set([x % Nd for x in H])
+            Hd = {x % Nd for x in H}
             if Nd - 1 not in Hd:
                 summand = euler_phi(d) * euler_phi(N // d) // (2 * len(Hd))
                 if d**2 == N:
@@ -1242,8 +1247,8 @@ class GammaH_class(CongruenceSubgroup):
 
         INPUT:
 
-        -  ``k`` - an integer (default: 2), the weight. Not fully implemented for k = 1.
-        -  ``p`` - integer (default: 0); if nonzero, compute the `p`-new subspace.
+        -  ``k`` -- an integer (default: 2), the weight. Not fully implemented for k = 1.
+        -  ``p`` -- integer (default: 0); if nonzero, compute the `p`-new subspace.
 
         OUTPUT: Integer
 
@@ -1279,7 +1284,7 @@ class GammaH_class(CongruenceSubgroup):
 
         TESTS::
 
-            sage: for n in [2..20]:
+            sage: for n in [2..20]:  # optional - gap_package_polycyclic
             ....:     for g in Gamma0(n).gamma_h_subgroups():
             ....:         G = g.image_mod_n()
             ....:         assert G.order() == Gamma(n).index() / g.index()
@@ -1347,7 +1352,7 @@ class GammaH_class(CongruenceSubgroup):
         - ``sign`` (default: None): if not None, return only characters of the
           given sign
 
-        - ``galois_orbits`` (default: False): if True, return only one
+        - ``galois_orbits`` (default: ``False``): if True, return only one
           character from each Galois orbit.
 
         EXAMPLES::
@@ -1395,17 +1400,17 @@ def _list_subgroup(N, gens):
         sage: sage.modular.arithgroup.congroup_gammaH._list_subgroup(11, [3])
         [1, 3, 4, 5, 9]
     """
-    H = set([1])
+    H = {1}
     N = int(N)
     for g in gens:
         if gcd(g, N) != 1:
             raise ValueError("gen (=%s) is not in (Z/%sZ)^*" % (g, N))
         gk = int(g) % N
         sbgrp = [gk]
-        while not (gk in H):
+        while gk not in H:
             gk = (gk * g) % N
             sbgrp.append(gk)
-        H = set([(x * h) % N for x in sbgrp for h in H])
+        H = {(x * h) % N for x in sbgrp for h in H}
     return sorted(H)
 
 

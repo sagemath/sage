@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Coercion Maps Between Hyperbolic Plane Models
 
@@ -82,7 +81,7 @@ class HyperbolicModelCoercion(Morphism):
         """
         C = self.codomain()
         if not C.is_bounded() and self.domain().is_bounded() and x.is_boundary():
-            msg = u"boundary points are not implemented for the {}"
+            msg = "boundary points are not implemented for the {}"
             raise NotImplementedError(msg.format(C.name()))
 
         y = self.image_coordinates(x.coordinates())

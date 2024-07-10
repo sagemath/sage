@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.combinat sage.groups
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Examples of finite Coxeter groups
 """

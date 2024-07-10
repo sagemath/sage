@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Rank Two Heisenberg-Virasoro Algebras
 
@@ -26,6 +25,7 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.structure.indexed_generators import IndexedGenerators
 from sage.algebras.lie_algebras.lie_algebra_element import LieAlgebraElement
 from sage.algebras.lie_algebras.lie_algebra import (InfinitelyGeneratedLieAlgebra)
+
 
 class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
     r"""

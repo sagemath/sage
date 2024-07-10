@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Alcove paths
 
@@ -28,18 +29,20 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import richcmp
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.loop_crystals import LoopCrystals
-from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.modules.free_module_element import free_module_element as vector
 from sage.rings.integer import Integer
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.misc.misc_c import prod
 from sage.categories.sets_cat import Sets
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
+from sage.misc.lazy_import import lazy_import
 from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from copy import copy
 from sage.misc.latex import latex
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
+lazy_import('sage.modules.free_module_element', 'vector')
 
 
 class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
@@ -174,7 +177,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         sage: C([1,3]).is_admissible() #check if a valid vertex
         False
 
-    Alcove path crystals now works in affine type (:trac:`14143`)::
+    Alcove path crystals now works in affine type (:issue:`14143`)::
 
         sage: C = crystals.AlcovePaths(['A',2,1],[1,0,0]) ; C
         Highest weight crystal of alcove paths of type ['A', 2, 1] and weight Lambda[0]
@@ -294,7 +297,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
             sage: C = crystals.AlcovePaths(['A',2,1],[1,0],False)
             sage: TestSuite(C).run(skip="_test_stembridge_local_axioms") #long time
 
-        Check that :trac:`20292` is fixed::
+        Check that :issue:`20292` is fixed::
 
             sage: A = crystals.AlcovePaths(['A',2], [1,0])
             sage: A.category()
@@ -418,13 +421,13 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         # you to the word, it needs to be refreshed
 
         #initialization
-        lst=[]
+        lst = []
         for i in range(len_lambda_chain):
             associated_reflection = lambda_chain[i].root.associated_reflection()
             if len(associated_reflection) == 1:
                 lst.append( (prod([ s[j] for j in associated_reflection ]), [i]) )
 
-        l=copy(lst)
+        l = copy(lst)
 
         while True:
             lst2 = []
@@ -603,7 +606,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         highest_weight_crystal = self.parent()._highest_weight_crystal
         positions, gi = self._gi(i)
 
-        m=max(gi)
+        m = max(gi)
 
         if not highest_weight_crystal and i == 0:
             raise NotImplementedError
@@ -629,7 +632,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         temp = self
         temp = temp.e(i)
         while temp is not None:
-            j+=1
+            j += 1
             temp = temp.e(i)
 
         return j
@@ -655,7 +658,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         TESTS:
 
-        Check that crystal morphisms work (:trac:`19481`)::
+        Check that crystal morphisms work (:issue:`19481`)::
 
             sage: C1 = crystals.AlcovePaths(['A',2],[1,0])
             sage: C2 = crystals.AlcovePaths(['A',2],[2,0])
@@ -664,7 +667,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             [(), ((alpha[1], 0),), ((alpha[1], 0), (alpha[1] + alpha[2], 0))]
 
         Check that all weights are of level 0 in the KR crystal setting
-        (:trac:`20292`)::
+        (:issue:`20292`)::
 
             sage: A = crystals.AlcovePaths(['A',2,1], [1,0], highest_weight_crystal=False)
             sage: all(x.weight().level() == 0 for x in A)
@@ -899,7 +902,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         else:
             M = Integer(m)/2 - Integer(1)/2
 
-        KR_test = finite_cartan_type and i==0 and m_index < len(gi) - 1
+        KR_test = finite_cartan_type and i == 0 and m_index < len(gi) - 1
         KR_test = KR_test and M >= 1
 
         ######################################################################
@@ -909,7 +912,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         # If m_index == 0 then M >=1 guarantees this
         ######################################################################
 
-        if ( (not finite_cartan_type or i!=0) and m_index < len(gi)-1  # alpha_i is a simple root
+        if ( (not finite_cartan_type or i != 0) and m_index < len(gi)-1  # alpha_i is a simple root
             ) or KR_test:
 
             J.remove(positions[m_index])
@@ -940,7 +943,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         INPUT:
 
-        - ``i`` - element of the index_set of the underlying root_system.
+        - ``i`` -- element of the index_set of the underlying root_system.
 
         OUTPUT:
 
@@ -1014,7 +1017,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         positions, gi = self._gi(i)
 
         m = max(gi)
-        m_index=gi.index(m)
+        m_index = gi.index(m)
 
         if finite_cartan_type and i == 0:
 
@@ -1037,7 +1040,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         #
         # otherwise if m_index - 1 > 0 then (C2) is enough
 
-        if ( (not finite_cartan_type or i!=0) and M > 0  # alpha_i is a simple root
+        if ( (not finite_cartan_type or i != 0) and M > 0  # alpha_i is a simple root
            ) or KR_test :# KR case
 
             J.append(positions[m_index-1])
@@ -1573,7 +1576,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
         if not self._root_lattice.cartan_type().is_finite():
             raise ValueError("Cartan type {0} is not finite".format(self._root_lattice.cartan_type()))
 
-        l=[]
+        l = []
         for i in self._root_lattice.positive_roots():
             for j in range(self._max_height(i)):
                 l.append(self(i,j))
@@ -1654,7 +1657,7 @@ class RootsWithHeightElement(Element):
         # roots
 
         if not 0 <= height < max_height:
-            raise ValueError("%d out of allowed range [%d,%d)"%(height, 0, max_height))
+            raise ValueError("%d out of allowed range [%d,%d)" % (height, 0, max_height))
 
         v = [height/max_height]
         v.extend( [ x/max_height for x in root.associated_coroot().to_vector() ] )

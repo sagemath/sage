@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 """
 Places of function fields: extension
 """
@@ -33,14 +33,15 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.rings.finite_rings
-            sage: OK = K.maximal_order()                                                # optional - sage.rings.finite_rings
-            sage: OL = L.maximal_order()                                                # optional - sage.rings.finite_rings
-            sage: p = OK.ideal(x^2 + x + 1)                                             # optional - sage.rings.finite_rings
-            sage: dec = OL.decomposition(p)                                             # optional - sage.rings.finite_rings
-            sage: q = dec[0][0].place()                                                 # optional - sage.rings.finite_rings
-            sage: q.place_below()                                                       # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: OK = K.maximal_order()
+            sage: OL = L.maximal_order()
+            sage: p = OK.ideal(x^2 + x + 1)
+            sage: dec = OL.decomposition(p)
+            sage: q = dec[0][0].place()
+            sage: q.place_below()
             Place (x^2 + x + 1)
         """
         return self.prime_ideal().prime_below().place()
@@ -51,14 +52,15 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.rings.finite_rings
-            sage: OK = K.maximal_order()                                                # optional - sage.rings.finite_rings
-            sage: OL = L.maximal_order()                                                # optional - sage.rings.finite_rings
-            sage: p = OK.ideal(x^2 + x + 1)                                             # optional - sage.rings.finite_rings
-            sage: dec = OL.decomposition(p)                                             # optional - sage.rings.finite_rings
-            sage: q = dec[0][0].place()                                                 # optional - sage.rings.finite_rings
-            sage: q.relative_degree()                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: OK = K.maximal_order()
+            sage: OL = L.maximal_order()
+            sage: p = OK.ideal(x^2 + x + 1)
+            sage: dec = OL.decomposition(p)
+            sage: q = dec[0][0].place()
+            sage: q.relative_degree()
             1
         """
         return self._prime._relative_degree
@@ -69,14 +71,15 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.rings.finite_rings
-            sage: OK = K.maximal_order()                                                # optional - sage.rings.finite_rings
-            sage: OL = L.maximal_order()                                                # optional - sage.rings.finite_rings
-            sage: p = OK.ideal(x^2 + x + 1)                                             # optional - sage.rings.finite_rings
-            sage: dec = OL.decomposition(p)                                             # optional - sage.rings.finite_rings
-            sage: q = dec[0][0].place()                                                 # optional - sage.rings.finite_rings
-            sage: q.degree()                                                            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: OK = K.maximal_order()
+            sage: OL = L.maximal_order()
+            sage: p = OK.ideal(x^2 + x + 1)
+            sage: dec = OL.decomposition(p)
+            sage: q = dec[0][0].place()
+            sage: q.degree()
             2
         """
         return self.relative_degree() * self.place_below().degree()
@@ -88,12 +91,13 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.rings.finite_rings
-            sage: pls = L.places()                                                      # optional - sage.rings.finite_rings
-            sage: [p.is_infinite_place() for p in pls]                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: pls = L.places()
+            sage: [p.is_infinite_place() for p in pls]
             [True, True, False]
-            sage: [p.place_below() for p in pls]                                        # optional - sage.rings.finite_rings
+            sage: [p.place_below() for p in pls]
             [Place (1/x), Place (1/x), Place (x)]
         """
         return self.place_below().is_infinite_place()
@@ -105,10 +109,11 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.rings.finite_rings
-            sage: pls = L.places()                                                      # optional - sage.rings.finite_rings
-            sage: [p.local_uniformizer().valuation(p) for p in pls]                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: pls = L.places()
+            sage: [p.local_uniformizer().valuation(p) for p in pls]
             [1, 1, 1, 1, 1]
         """
         gens = self._prime.gens()
@@ -123,16 +128,17 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.rings.finite_rings
-            sage: O = L.maximal_order()                                                 # optional - sage.rings.finite_rings
-            sage: p = O.ideal(x,y).place()                                              # optional - sage.rings.finite_rings
-            sage: p.gaps() # a Weierstrass place                                        # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: O = L.maximal_order()
+            sage: p = O.ideal(x,y).place()
+            sage: p.gaps() # a Weierstrass place
             [1, 2, 4]
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # optional - sage.rings.finite_rings
-            sage: [p.gaps() for p in L.places()]                                        # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # needs sage.rings.finite_rings
+            sage: [p.gaps() for p in L.places()]                                        # needs sage.rings.finite_rings
             [[1, 2, 4], [1, 2, 4], [1, 2, 4]]
         """
         if self.degree() == 1:
@@ -150,16 +156,17 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.rings.finite_rings
-            sage: O = L.maximal_order()                                                 # optional - sage.rings.finite_rings
-            sage: p = O.ideal(x, y).place()                                             # optional - sage.rings.finite_rings
-            sage: p.gaps()  # indirect doctest                                          # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: O = L.maximal_order()
+            sage: p = O.ideal(x, y).place()
+            sage: p.gaps()  # indirect doctest
             [1, 2, 4]
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.rings.finite_rings
-            sage: [p.gaps() for p in L.places()]  # indirect doctest                    # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # needs sage.rings.finite_rings
+            sage: [p.gaps() for p in L.places()]  # indirect doctest                    # needs sage.rings.finite_rings
             [[1, 2, 4], [1, 2, 4], [1, 2, 4]]
         """
         from sage.matrix.constructor import matrix
@@ -281,16 +288,17 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.rings.finite_rings
-            sage: O = L.maximal_order()                                                 # optional - sage.rings.finite_rings
-            sage: p = O.ideal(x, y).place()                                             # optional - sage.rings.finite_rings
-            sage: p._gaps_wronskian()  # a Weierstrass place                            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: O = L.maximal_order()
+            sage: p = O.ideal(x, y).place()
+            sage: p._gaps_wronskian()  # a Weierstrass place
             [1, 2, 4]
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # optional - sage.rings.finite_rings
-            sage: [p._gaps_wronskian() for p in L.places()]                             # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^3 + x^3 * Y + x)                                # needs sage.rings.finite_rings
+            sage: [p._gaps_wronskian() for p in L.places()]                             # needs sage.rings.finite_rings
             [[1, 2, 4], [1, 2, 4], [1, 2, 4]]
         """
         from sage.matrix.constructor import matrix
@@ -344,28 +352,29 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings
-            sage: p = L.places_finite()[0]                                              # optional - sage.rings.finite_rings
-            sage: k, fr_k, to_k = p.residue_field()                                     # optional - sage.rings.finite_rings
-            sage: k                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: k, fr_k, to_k = p.residue_field()
+            sage: k
             Finite Field of size 2
-            sage: fr_k                                                                  # optional - sage.rings.finite_rings
+            sage: fr_k
             Ring morphism:
               From: Finite Field of size 2
               To:   Valuation ring at Place (x, x*y)
-            sage: to_k                                                                  # optional - sage.rings.finite_rings
+            sage: to_k
             Ring morphism:
               From: Valuation ring at Place (x, x*y)
               To:   Finite Field of size 2
-            sage: to_k(y)                                                               # optional - sage.rings.finite_rings
+            sage: to_k(y)
             Traceback (most recent call last):
             ...
             TypeError: y fails to convert into the map's domain
             Valuation ring at Place (x, x*y)...
-            sage: to_k(1/y)                                                             # optional - sage.rings.finite_rings
+            sage: to_k(1/y)
             0
-            sage: to_k(y/(1+y))                                                         # optional - sage.rings.finite_rings
+            sage: to_k(y/(1+y))
             1
         """
         return self.valuation_ring().residue_field(name=name)
@@ -383,21 +392,23 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings
-            sage: p = L.places_finite()[0]                                              # optional - sage.rings.finite_rings
-            sage: k,fr_k,to_k = p._residue_field()                                      # optional - sage.rings.finite_rings
-            sage: k                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: k,fr_k,to_k = p._residue_field()
+            sage: k
             Finite Field of size 2
-            sage: [fr_k(e) for e in k]                                                  # optional - sage.rings.finite_rings
+            sage: [fr_k(e) for e in k]
             [0, 1]
 
         ::
 
-            sage: K.<x> = FunctionField(GF(9)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^3 + Y - x^4)                                    # optional - sage.rings.finite_rings
-            sage: p = L.places()[-1]                                                    # optional - sage.rings.finite_rings
-            sage: p.residue_field()                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(9)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + Y - x^4)
+            sage: p = L.places()[-1]
+            sage: p.residue_field()
             (Finite Field in z2 of size 3^2, Ring morphism:
                From: Finite Field in z2 of size 3^2
                To:   Valuation ring at Place (x + 1, y + 2*z2), Ring morphism:
@@ -428,11 +439,12 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         ::
 
-            sage: K.<x> = FunctionField(QQbar); _.<Y> = K[]                             # optional - sage.rings.number_field
-            sage: L.<y> = K.extension(Y^3 + Y - x^4)                                    # optional - sage.rings.number_field
-            sage: O = K.maximal_order()                                                 # optional - sage.rings.number_field
-            sage: I = O.ideal(x)                                                        # optional - sage.rings.number_field
-            sage: [p.residue_field() for p in L.places_above(I.place())]                # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<x> = FunctionField(QQbar); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + Y - x^4)
+            sage: O = K.maximal_order()
+            sage: I = O.ideal(x)
+            sage: [p.residue_field() for p in L.places_above(I.place())]
             [(Algebraic Field, Ring morphism:
                 From: Algebraic Field
                 To:   Valuation ring at Place (x, y - I, y^2 + 1), Ring morphism:
@@ -451,7 +463,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         prime = self.prime_ideal()  # Let P be this prime ideal
 
         if self.is_infinite_place():
-            _F, from_F, to_F  = F._inversion_isomorphism()
+            _F, from_F, to_F = F._inversion_isomorphism()
             _prime = prime._ideal
             _place = _prime.place()
 
@@ -590,7 +602,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         if deg > 1:
             if isinstance(k, NumberField):
                 if name is None:
-                    name='s'
+                    name = 's'
                 K = k.extension(min_poly, names=name)
 
                 def from_W(e):
@@ -656,10 +668,11 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings
-            sage: p = L.places_finite()[0]                                              # optional - sage.rings.finite_rings
-            sage: p.valuation_ring()                                                    # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: p.valuation_ring()
             Valuation ring at Place (x, x*y)
         """
         from .valuation_ring import FunctionFieldValuationRing
