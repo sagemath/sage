@@ -272,6 +272,13 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     def _repr_(self):
         """
         Return a string representation of this polynomial semiring.
+
+            EXAMPLES::
+
+            sage: T = TropicalSemiring(RR)
+            sage: R.<u,v,w> = PolynomialRing(T); R
+            Multivariate Tropical Polynomial Semiring in u, v, w over Real 
+            Field with 53 bits of precision
         """
         if self._ngens == 0:
             return (f"Multivariate Tropical Polynomial Semiring in no variables"

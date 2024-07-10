@@ -647,6 +647,13 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         """
         Return the number of generators of this polynomial ring, which is 1
         since it is a univariate polynomial ring.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x')
+            sage: R.ngens()
+            1
         """
         from sage.rings.integer_ring import ZZ
         return ZZ.one()
@@ -670,6 +677,13 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     def is_sparse(self):
         """
         Returns True to indicate that the object is a sparse polynomial.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x')
+            sage: R.is_sparse()
+            True
         """
         return True
     
