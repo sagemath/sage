@@ -2853,7 +2853,11 @@ def EllipticCurve_with_prime_order(N):
 
     .. NOTE::
 
-        Depending on the input, this function may run forever.
+        Depending on the input, this function may run for a *very* long time.
+        This algorithm consists of multiple "search rounds" for a suitable
+        discriminant `D`. We expect this algorithm to terminate after a number
+        of rounds that is polynomial in `loglog N`. In practice (cf. Section 5),
+        this number is usually 1.
 
     ALGORITHM: [BS2007]_, Algorithm 2.2
     """
