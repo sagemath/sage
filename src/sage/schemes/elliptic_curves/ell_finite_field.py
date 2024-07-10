@@ -2821,14 +2821,19 @@ def EllipticCurve_with_prime_order(N):
 
     TESTS::
 
-        sage: N = next_prime(123456789)
+        sage: for N in prime_range(3, 100):
+        ....:     E = EllipticCurve_with_prime_order(N)
+        ....:     assert E.order() == N
+
+        sage: N = 15175980689839334471
         sage: E = EllipticCurve_with_prime_order(N)
         sage: E.order() == N
         True
 
-        sage: for N in prime_range(3, 100):
-        ....:     E = EllipticCurve_with_prime_order(N)
-        ....:     assert E.order() == N
+        sage: N = next_prime(123456789)
+        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E.order() == N
+        True
 
         sage: N = 123456789
         sage: E = EllipticCurve_with_prime_order(N)
@@ -2841,17 +2846,23 @@ def EllipticCurve_with_prime_order(N):
         ...
         ValueError: input order is not prime
 
+        sage: E = EllipticCurve_with_prime_order(-7)
+        Traceback (most recent call last):
+        ...
+        ValueError: input order is not prime
+
     .. NOTE::
 
         Depending on the input, this function may run forever.
 
     ALGORITHM: [BS2007]_, Algorithm 2.2
     """
-    from sage.arith.misc import is_prime, next_prime
+    from sage.arith.misc import is_prime
     from sage.combinat.subset import powerset
-    from sage.functions.other import floor
+    from sage.functions.other import ceil
     from sage.misc.functional import symbolic_prod as product
     from sage.quadratic_forms.binary_qf import BinaryQF
+    from sage.rings.fast_arith import prime_range
     from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
 
     if not is_prime(N):
@@ -2862,15 +2873,10 @@ def EllipticCurve_with_prime_order(N):
     # algorithm to terminate after a number of rounds that is polynomial in
     # loglog N.
     r = 0
-    S = []
-    # First prime. Iterating over the primes by chunks of size log(`N`).
-    p = next_prime(0)
 
     while True:
-        while p < (r + 1) * floor(N.log()):
-            S.append(p)
-            p = next_prime(p)
-        r += 1
+        # Iterating over the odd primes by chunks of size log(`N`).
+        S = prime_range(3, ceil((r + 1) * N.log()))
 
         # Every possible products of distinct elements of `S`.
         # There probably is a more optimal way to compute all possible products
@@ -2900,3 +2906,7 @@ def EllipticCurve_with_prime_order(N):
                             for Et in E.twists():
                                 if Et.order() == N:
                                     return Et
+
+        # At this point, no discriminant has been found, moving to next round
+        # and extending the prime list.
+        r += 1
