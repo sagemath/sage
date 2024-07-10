@@ -6842,7 +6842,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         Finds a Short Weierstrass Model Elliptic curve of self
         self assumed to be Lattes map and not in charateristic 2 or 3
 
-        INPUT: `return_conjugation`` -- (default: ``False``) if ``True``, then
+        INPUT:
+
+        - `return_conjugation`` -- (default: ``False``) if ``True``, then
         return the conjugation that moves self to a map that comes from a
         Short Weierstrass Model Elliptic curve
 
@@ -6853,63 +6855,63 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         EXAMPLES::
 
-        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-        sage: f = P.Lattes_map(EllipticCurve([0, 0, 0, 10, 2]), 2)
-        sage: f.Lattes_to_curve()
-        Elliptic Curve defined by y^2 = x^3 + 10*x + 2 over Rational Field
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = P.Lattes_map(EllipticCurve([0, 0, 0, 10, 2]), 2)
+            sage: f.Lattes_to_curve()
+            Elliptic Curve defined by y^2 = x^3 + 10*x + 2 over Rational Field
 
         ::
 
-        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-        sage: M = matrix(QQ,2,2,[[1,2],[-1,2]])
-        sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
-        sage: f = f.conjugate(M)
-        sage: f.Lattes_to_curve(return_conjugation = True)
-        (
-        [  -7/36*a^2 + 7/12*a + 7/3 -17/18*a^2 + 17/6*a + 34/3]
-        [    -1/8*a^2 + 1/4*a + 3/2        1/4*a^2 - 1/2*a - 3], Elliptic Curve defined by y^2 = x^3 + (-94/27*a^2+94/9*a+376/9)*x + 12232/243 over Number Field in a with defining polynomial y^3 - 18*y - 30
-        )
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: M = matrix(QQ,2,2,[[1,2],[-1,2]])
+            sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
+            sage: f = f.conjugate(M)
+            sage: f.Lattes_to_curve(return_conjugation = True)
+            (
+            [  -7/36*a^2 + 7/12*a + 7/3 -17/18*a^2 + 17/6*a + 34/3]
+            [    -1/8*a^2 + 1/4*a + 3/2        1/4*a^2 - 1/2*a - 3], Elliptic Curve defined by y^2 = x^3 + (-94/27*a^2+94/9*a+376/9)*x + 12232/243 over Number Field in a with defining polynomial y^3 - 18*y - 30
+            )
 
         ::
 
-        sage: P.<x,y> = ProjectiveSpace(QQ,1)
-        sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 2, 2]), 2)
-        sage: L.<i> = CyclotomicField(4)
-        sage: M = Matrix([[1+i,2*i], [0, -i]])
-        sage: f = f.conjugate(M)
-        sage: f.Lattes_to_curve(return_conjugation = True)
-        (
-        [              1 19/24*I + 19/24]
-        [              0               1], Elliptic Curve defined by y^2 = x^3 + 95/96*I*x + (-1169/3456*I+1169/3456) over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
-        )
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 2, 2]), 2)
+            sage: L.<i> = CyclotomicField(4)
+            sage: M = Matrix([[1+i,2*i], [0, -i]])
+            sage: f = f.conjugate(M)
+            sage: f.Lattes_to_curve(return_conjugation = True)
+            (
+            [              1 19/24*I + 19/24]
+            [              0               1], Elliptic Curve defined by y^2 = x^3 + 95/96*I*x + (-1169/3456*I+1169/3456) over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+            )
 
         ::
 
-        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-        sage: M = matrix(QQ,2,2,[[1,3],[2,1]])
-        sage: E = EllipticCurve([1, 1, 1, 2, 3])
-        sage: f = P.Lattes_map(E, 2)
-        sage: f = f.conjugate(M)
-        sage: f.Lattes_to_curve(return_conjugation = True)
-        (
-        [11/1602*a^2 41/3204*a^2]
-        [     -2/5*a      -1/5*a], Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696) over Number Field in a with defining polynomial y^3 - 267
-        )
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: M = matrix(QQ,2,2,[[1,3],[2,1]])
+            sage: E = EllipticCurve([1, 1, 1, 2, 3])
+            sage: f = P.Lattes_map(E, 2)
+            sage: f = f.conjugate(M)
+            sage: f.Lattes_to_curve(return_conjugation = True)
+            (
+            [11/1602*a^2 41/3204*a^2]
+            [     -2/5*a      -1/5*a], Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696) over Number Field in a with defining polynomial y^3 - 267
+            )
 
         ::
 
-        sage: P.<x,y> = ProjectiveSpace(QQ , 1)
-        sage: M = matrix(QQ,2,2,[[1 , 3],[2 , 1]])
-        sage: E = EllipticCurve([1, 1, 1, 2, 3])
-        sage: f = P.Lattes_map(E , 2)
-        sage: f = f.conjugate(M)
-        sage: m,H = f.Lattes_to_curve(true)
-        sage: J.<x,y> = ProjectiveSpace(H.base_ring(), 1)
-        sage: K = J.Lattes_map(H,2)
-        sage: K = K.conjugate(m)
-        sage: K.scale_by(f[0].lc()/K[0].lc())
-        sage: K == f.change_ring(K.base_ring())
-        True
+            sage: P.<x,y> = ProjectiveSpace(QQ , 1)
+            sage: M = matrix(QQ,2,2,[[1 , 3],[2 , 1]])
+            sage: E = EllipticCurve([1, 1, 1, 2, 3])
+            sage: f = P.Lattes_map(E , 2)
+            sage: f = f.conjugate(M)
+            sage: m,H = f.Lattes_to_curve(true)
+            sage: J.<x,y> = ProjectiveSpace(H.base_ring(), 1)
+            sage: K = J.Lattes_map(H,2)
+            sage: K = K.conjugate(m)
+            sage: K.scale_by(f[0].lc()/K[0].lc())
+            sage: K == f.change_ring(K.base_ring())
+            True
 
         """
         if self.base_ring() not in NumberFields():
