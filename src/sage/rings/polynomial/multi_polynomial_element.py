@@ -70,7 +70,6 @@ from sage.structure.sequence import Sequence
 from .multi_polynomial import MPolynomial, is_MPolynomial
 from sage.categories.morphism import Morphism
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.rings.semirings.tropical_semiring import TropicalSemiring
 
 from sage.rings.rational_field import QQ
 from sage.rings.fraction_field import FractionField
