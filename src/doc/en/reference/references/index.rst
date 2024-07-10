@@ -858,7 +858,8 @@ REFERENCES:
               Ann. Math. (2) 192, No. 3, 821-891 (2020).
               :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
         
-.. [Bru2013] Erwan Brugalle. *Tropical Curves*. 2013.
+.. [Bru2013] Erwan Brugalle and Kristin Shaw. *A bit of tropical geometry*.
+             Amer. Math. Monthly, 121(7):563-589, 2014.
 
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
               Palindromic Complexity of Infinite Words,
@@ -3491,6 +3492,8 @@ REFERENCES:
               *Logarithmic concavity of Schur and related polynomials*.
               Trans. Am. Math. Soc. 375, No. 6, 4411-4427 (2022).
               :arxiv:`1906.09633`, :doi:`10.1090/tran/8606`.
+
+.. [Hun2021] Joel Hunter. *Tropical Geometry*. University of Bath, 2021.
 
 .. [Hutz2007] \B. Hutz. Arithmetic Dynamics on Varieties of dimension greater
               than one. PhD Thesis, Brown University 2007

@@ -46,7 +46,6 @@ from sage.rings.infinity import infinity, Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.structure.factorization import Factorization
-from sage.rings.semirings.tropical_semiring import TropicalSemiring
 
 from sage.rings.padics.precision_error import PrecisionError
 
