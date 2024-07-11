@@ -439,13 +439,11 @@ def complete_top(G, u):
         sage: complete_top(G, Set([5, 6, 9]))
         ({1, 4}, {9, 5, 6})
     """
-    P = Poset(G)
     m = Set()
-    for k in P.linear_extension():
-        ngk = Set(i[0] for i in G.incoming_edges(k))
-        nlk = Set(i[1] for i in G.outgoing_edges(k))
-        if not ngk.intersection(m) \
-                and not nlk.intersection(u) and k not in u:
+    for k in G.topological_sort():
+        ngk_m = any(g in m for g in G.neighbor_in_iterator(k))
+        nlk_u = any(g in u for g in G.neighbor_out_iterator(k))
+        if not ngk_m and not nlk_u and k not in u:
             m = m.union(Set([k]))
     return (m, u)
 
@@ -538,10 +536,9 @@ def minimal_top(G):
         sage: minimal_top(G)
         ({}, {1, 4, 5, 6, 9})
     """
-    P = Poset(G)
     m = Set()
-    for k in reversed(P.linear_extension()):
-        if not Set([i[1] for i in G.outgoing_edges(k)]).intersection(m):
+    for k in reversed(G.topological_sort()):
+        if not any(g in m for g in G.neighbor_out_iterator(k)):
             m = m.union(Set([k]))
     return (Set(), m)
 
