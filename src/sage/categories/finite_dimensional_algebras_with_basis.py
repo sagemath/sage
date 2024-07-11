@@ -554,6 +554,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 - :meth:`peirce_summand`
             """
+            opts.pop("coerce", None)
             return self.submodule([(a * b if side == 'right' else b * a)
                                    for b in self.basis()], *args, **opts)
 
