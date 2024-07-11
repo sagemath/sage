@@ -150,7 +150,7 @@ def mops(G) -> list:
 
         sage: G = digraphs.TransitiveTournament(3)
         sage: mops(G)
-        [({2}, {0, 1}), ({}, {0, 1, 2}), ({1, 2}, {0}), ({0, 1, 2}, {})]
+        [({}, {0, 1, 2}), ({2}, {0, 1}), ({1, 2}, {0}), ({0, 1, 2}, {})]
     """
     return poset_of_orthogonal_pairs(G).maximal_elements()
 
@@ -462,7 +462,7 @@ def top_to_mop(G, du):
 
     OUTPUT:
 
-    a maximal orthogonal pair corresponding to the top (``d``, ``u``) given
+    a maximal orthogonal pair corresponding to the given tight orthogonal pair (``d``, ``u``)
 
     EXAMPLES::
 
@@ -475,11 +475,12 @@ def top_to_mop(G, du):
         ({1, 3, 6, 8, 9}, {4, 7})
     """
     X, Y = du
-    for b in Set(G).difference(Y):
-        if not Set(G.neighbors_out(b)).intersection(Y):
+    setG = Set(G)
+    for b in setG.difference(Y):
+        if not any(g in Y for g in G.neighbor_out_iterator(b)):
             X = X.union(Set([b]))
-    for a in Set(G).difference(X):
-        if not Set(G.neighbors_in(a)).intersection(X):
+    for a in setG.difference(X):
+        if not any(g in X for g in G.neighbor_in_iterator(a)):
             Y = Y.union(Set([a]))
     return (X, Y)
 
@@ -547,18 +548,19 @@ def minimal_top(G):
 
 def flip(G, du, j):
     r"""
+    Perform a flip if `j \in D` or `j \in U`.
+
     INPUT:
 
     - ``G`` -- a finite acyclic directed graph
 
-    - ``du`` -- a top (D, U)
+    - ``du`` -- a tight orthogonal pair (D, U)
 
-    - ``j`` -- an element `j`
+    - ``j`` -- an element `j` of ``G``
 
     OUTPUT:
 
-    Performs a flip if `j \in U` or `j \in D`.
-    Returns a new top ``(d, u)`` after the flip.
+    a new tight orthogonal pair ``(d, u)``
 
     EXAMPLES:
 
@@ -590,27 +592,27 @@ def flip(G, du, j):
         sage: flip(G, du, 5)
         ({8, 3, 7}, {1, 4})
     """
-    P = Poset(G)
-    a = du[0]
-    b = du[1]
+    a, b = du
     if j not in b and j not in a:
         return du
+    P = Poset(G)
     if j in b:
-        a2 = Set([k for k in a if not (P.ge(k, j))] + [j])
-        b2 = Set([k for k in b if not (P.le(k, j))])
+        a2 = Set([k for k in a if not P.ge(k, j)] + [j])
+        b2 = Set(k for k in b if not P.le(k, j))
     elif j in a:
-        a2 = Set([k for k in a if not (P.ge(k, j))])
-        b2 = Set([k for k in b if not (P.le(k, j))] + [j])
+        a2 = Set(k for k in a if not P.ge(k, j))
+        b2 = Set([k for k in b if not P.le(k, j)] + [j])
+
     for k in P.linear_extension():
-        if not (P.le(k, j)) \
-           and not Set([i[1] for i in G.outgoing_edges(k)]).intersection(b) \
-           and not Set([i[0] for i in G.incoming_edges(k)]).intersection(a2) \
+        if not P.le(k, j) \
+           and not Set(G.neighbor_out_iterator(k)).intersection(b) \
+           and not Set(G.neighbor_in_iterator(k)).intersection(a2) \
                 and (k not in b2):
             a2 = a2.union(Set([k]))
     for k in reversed(P.linear_extension()):
-        if not (P.ge(k, j)) \
-           and not Set([i[0] for i in G.incoming_edges(k)]).intersection(a) \
-           and not Set([i[1] for i in G.outgoing_edges(k)]).intersection(b2) \
+        if not P.ge(k, j) \
+           and not Set(G.neighbor_in_iterator(k)).intersection(a) \
+           and not Set(G.neighbor_out_iterator(k)).intersection(b2) \
                 and (k not in a2):
             b2 = b2.union(Set([k]))
     return (a2, b2)
@@ -618,18 +620,19 @@ def flip(G, du, j):
 
 def flip_up(G, du, j):
     r"""
+    Perform a flip only if `j \in U`.
+
     INPUT:
 
     - ``G`` -- a finite acyclic directed graph
 
-    - ``du`` -- a top (D, U)
+    - ``du`` -- a tight orthogonal pair (D, U)
 
     - ``j`` -- an element j in U
 
     OUTPUT:
 
-    conducts a flip only if `j \in U`.
-    Returns a new top ``(d, u)`` after the flip
+    a new tight orthogonal pair ``(d, u)``
 
     EXAMPLES:
 
@@ -668,18 +671,21 @@ def flip_up(G, du, j):
 
 def flips(G, du, s):
     r"""
+    Perform a sequence of flips.
+
     INPUT:
 
     - ``G`` -- a directed acyclic graph
 
-    - ``du`` -- a top (D, U)
+    - ``du`` -- a tight orthogonal pair (D, U)
 
-    - ``s`` -- a sequence of elements `j` in G
+    - ``s`` -- a sequence of elements `j` in ``G``
 
     OUTPUT:
 
-    returns a new top ``(d, u)`` after flipping on each element in ``s``
-    (i.e `\displaystyle{ \left( \prod_{j \in s} \text{flip}_j \right)(D, U) }`)
+    a new top ``(d, u)`` after flipping on each element in ``s``
+
+    This applies `\displaystyle{ \left( \prod_{j \in s} \text{flip}_j \right)(D, U) }`.
 
     EXAMPLES::
 
