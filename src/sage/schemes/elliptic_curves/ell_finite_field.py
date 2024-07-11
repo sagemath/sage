@@ -2877,10 +2877,13 @@ def EllipticCurve_with_prime_order(N):
     # algorithm to terminate after a number of rounds that is polynomial in
     # loglog N.
     r = 0
+    prime_start = 3
+    prime_end = ceil((r + 1) * N.log())
+    S = []
 
     while True:
         # Iterating over the odd primes by chunks of size log(`N`).
-        S = prime_range(3, ceil((r + 1) * N.log()))
+        S.extend(prime_range(prime_start, prime_end))
 
         # Every possible products of distinct elements of `S`.
         # There probably is a more optimal way to compute all possible products
@@ -2914,3 +2917,6 @@ def EllipticCurve_with_prime_order(N):
         # At this point, no discriminant has been found, moving to next round
         # and extending the prime list.
         r += 1
+
+        prime_start = prime_end
+        prime_end = ceil((r + 1) * N.log())
