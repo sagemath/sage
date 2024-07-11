@@ -2864,7 +2864,7 @@ def EllipticCurve_with_prime_order(N):
     from sage.arith.misc import is_prime
     from sage.combinat.subset import powerset
     from sage.functions.other import ceil
-    from sage.misc.functional import symbolic_prod as product
+    from sage.misc.functional import symbolic_prod as product, log
     from sage.quadratic_forms.binary_qf import BinaryQF
     from sage.rings.fast_arith import prime_range
     from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
@@ -2878,7 +2878,7 @@ def EllipticCurve_with_prime_order(N):
     # loglog N.
     r = 0
     prime_start = 3
-    prime_end = ceil((r + 1) * N.log())
+    prime_end = ceil((r + 1) * log(N))
     S = []
 
     while True:
@@ -2919,4 +2919,4 @@ def EllipticCurve_with_prime_order(N):
         r += 1
 
         prime_start = prime_end
-        prime_end = ceil((r + 1) * N.log())
+        prime_end = ceil((r + 1) * log(N))
