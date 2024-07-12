@@ -4062,7 +4062,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             z = P1.weil_pairing(P2, n)
             o = generic.order_from_multiple(z, n1.gcd(n2), operation='*')
             if o.is_one():
-                # workaround for PARI bug #2562
+                # slight optimization, but also workaround for PARI bug #2562
                 x0, y0 = ZZ.zero(), ZZ.zero()
             else:
                 v = self.weil_pairing(P2, n)
@@ -4071,6 +4071,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
                     x0, y0 = v.log(z, o), w.log(z, o)
                 except TypeError:
                     # not all implementations of finite-field elements support passing the order in .log()
+                    # known bug -- fixing #38350 will eliminate the need for this try-except
                     x0, y0 = v.log(z), w.log(z)
 
             T = self - x0*P1 - y0*P2
@@ -4083,6 +4084,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
                 y1 = (n//n2 * T).log(o*P2, n2)
             except TypeError:
                 # not all implementations of finite-field elements support passing the order in .log()
+                # known bug -- fixing #38350 will eliminate the need for this try-except
                 x1 = (n//n1 * T).log(o*P1)
                 y1 = (n//n2 * T).log(o*P2)
 
