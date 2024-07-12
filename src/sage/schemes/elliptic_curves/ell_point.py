@@ -3999,7 +3999,9 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: # needs sage.rings.finite_rings
             sage: F = GF((5, 60), 'a')
             sage: E = EllipticCurve(F, [1, 1])
-            sage: P, Q = E.gens()
+            sage: E.abelian_group()
+            Additive abelian group isomorphic to Z/194301464603136995341424045476456938000 + Z/4464 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field in a of size 5^60
+            sage: P, Q = E.gens()  # cached generators from .abelian_group()
             sage: T = 1234567890987654321*P + 1337*Q
             sage: T.log([P, Q])
             (1234567890987654321, 1337)
