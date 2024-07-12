@@ -158,7 +158,7 @@ class Composition(CombinatorialElement):
 
         TESTS:
 
-        Let us check that :trac:`14862` is solved::
+        Let us check that :issue:`14862` is solved::
 
             sage: C = Compositions()
             sage: C([3,-1,1])
@@ -197,8 +197,7 @@ class Composition(CombinatorialElement):
         lst = [Integer(u) for u in lst]
         if not all(u >= 0 for u in lst):
             raise ValueError("elements must be nonnegative integers")
-        CombinatorialObject.__init__(self, lst)
-        Element.__init__(self, parent)
+        CombinatorialElement.__init__(self, parent, lst)
 
     def _ascii_art_(self):
         """
@@ -1893,7 +1892,7 @@ class Compositions(UniqueRepresentation, Parent):
 
         if n <= d[-1]:
             raise ValueError("S (=%s) is not a subset of {1, ..., %s}"
-                             % (d, n-1))
+                             % (d, n - 1))
         else:
             d.append(n)
 
