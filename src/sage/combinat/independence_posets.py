@@ -37,7 +37,6 @@ from sage.combinat.subset import Subsets
 from sage.graphs.digraph import DiGraph
 from sage.sets.set import Set
 
-
 ##############################################################
 # code for maximal orthogonal pairs
 ##############################################################
@@ -135,7 +134,7 @@ def mops(G) -> list:
 
     list of pairs of sets `(X, Y)` containing the maximal elements in a poset
     of orthogonal pairs with respect to the condition that
-    no edges run from `X` to `Y`.
+    no edges run from `X` to `Y`
 
     EXAMPLES:
 
@@ -334,13 +333,15 @@ def downward_labels(L, c, z):
 
 def upward_labels(L, c, z):
     r"""
+    Return the list of upward labels of ``z`` in the lattice ``L``.
+
     INPUT:
 
-    ``L`` -- a trim lattice L
+    ``L`` -- a trim lattice
 
-    ``c`` -- a left-modular chain c
+    ``c`` -- a left-modular chain in ``L``
 
-    ``z`` -- an element z in the lattice ``L``
+    ``z`` -- an element in the lattice ``L``
 
     OUTPUT:
 
@@ -371,11 +372,13 @@ def upward_labels(L, c, z):
 
 def cover_label(L, c, edge):
     r"""
+    Return the label for the covering relation ``edge`` in ``L``.
+
     INPUT:
 
-    ``L`` -- a trim lattice L
+    ``L`` -- a trim lattice
 
-    ``c`` -- a left-modular chain c
+    ``c`` -- a left-modular chain in ``L``
 
     ``edge`` -- a covering relation ``[x,y]`` where `x \leq y`
 
@@ -408,6 +411,8 @@ def cover_label(L, c, edge):
 ##############################################################
 def complete_top(G, u):
     """
+    Return the completion into a tight orthogonal pair.
+
     INPUT:
 
     - ``G`` -- a finite acyclic directed graph
@@ -416,12 +421,12 @@ def complete_top(G, u):
 
     OUTPUT:
 
-    returns a tuple (``m``, ``u``) independent sets in ``G``
+    This returns a tuple (``m``, ``u``) of independent sets in ``G``
     which are orthogonal (there is no edge from ``m`` to ``u`` in ``G``)
     and tight (if an element in ``m`` is increased (removed and replaced
     by a larger element) or any element of ``u`` is decreased,
     or a new element is added into either ``m`` or ``u``
-    then the result will no longer be an orthogonal pair)
+    then the result will no longer be an orthogonal pair).
 
     EXAMPLES::
 
@@ -494,7 +499,7 @@ def maximal_top(G):
     OUTPUT:
 
     a tuple (``m``, ``u``) where ``m`` is the set which is
-    tight and orthogonal to an empty ``u``.
+    tight and orthogonal to an empty ``u``
 
     EXAMPLES::
 
@@ -522,7 +527,7 @@ def minimal_top(G):
     OUTPUT:
 
     a tuple (``m``, ``u``) where ``u`` is the set which
-    is tight and orthogonal to an empty ``m``.
+    is tight and orthogonal to an empty ``m``
 
     EXAMPLES::
 
