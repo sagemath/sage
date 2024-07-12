@@ -211,8 +211,16 @@ def is_PermutationGroupElement(x):
         sage: p = PermutationGroupElement([(1,2),(3,4,5)])
         sage: from sage.groups.perm_gps.permgroup_element import is_PermutationGroupElement
         sage: is_PermutationGroupElement(p)
+        doctest:warning...
+        DeprecationWarning: The function is_PermutationGroupElement is deprecated;
+        use 'isinstance(..., PermutationGroupElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_PermutationGroupElement is deprecated; "
+                       "use 'isinstance(..., PermutationGroupElement)' instead.")
     return isinstance(x, PermutationGroupElement)
 
 

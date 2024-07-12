@@ -807,7 +807,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         symbol_dual = kwargs.pop('symbol_dual', None)
         latex_symbol_dual = kwargs.pop('latex_symbol_dual', None)
         domain = kwargs.pop('domain', None)
-        #
+
         sec_module = self.section_module(domain=domain, force_free=True)
         resu = LocalFrame(sec_module, symbol=symbol, latex_symbol=latex_symbol,
                           indices=indices, latex_indices=latex_indices,

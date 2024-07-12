@@ -137,6 +137,7 @@ class Sets(Category_singleton):
         <class 'sage.categories.examples.sets_cat.PrimeNumbers_Abstract'>
         <class 'sage.structure.unique_representation.UniqueRepresentation'>
         <class 'sage.structure.unique_representation.CachedRepresentation'>
+        <class 'sage.structure.unique_representation.WithPicklingByInitArgs'>
         <class 'sage.misc.fast_methods.WithEqualityById'>
         <class 'sage.structure.parent.Parent'>
         <class 'sage.structure.category_object.CategoryObject'>
@@ -144,7 +145,7 @@ class Sets(Category_singleton):
         <class 'sage.categories.sets_cat.Sets.parent_class'>
         <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.parent_class'>
         <class 'sage.categories.objects.Objects.parent_class'>
-        <... 'object'>
+        <class 'object'>
 
     We run some generic checks on P::
 
