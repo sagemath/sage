@@ -71,6 +71,7 @@ def pAdicPrinter(ring, options={}):
             options[option] = None
     return pAdicPrinter_class(ring, **options)
 
+
 class pAdicPrinterDefaults(SageObject):
     """
     This class stores global defaults for p-adic printing.

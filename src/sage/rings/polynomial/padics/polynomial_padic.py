@@ -274,7 +274,7 @@ class Polynomial_padic(Polynomial):
 
         * ``check_irreducible`` -- check whether the polynomial is irreducible
 
-        * ``kwds`` -- see :meth:`sage.ring.padics.padic_generic.pAdicGeneric.extension`
+        * ``kwds`` -- see :meth:`sage.rings.padics.padic_generic.pAdicGeneric.extension`
 
         EXAMPLES::
 

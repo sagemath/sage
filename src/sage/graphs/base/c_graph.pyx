@@ -5022,8 +5022,8 @@ cdef inline bint _reorganize_edge(object v, object u, const int modus) noexcept:
     - ``modus`` -- integer representing the modus of the iterator:
       - ``0`` -- outgoing edges
       - ``1`` -- ingoing edges
-      - ``3`` -- unsorted edges of an undirected graph
-      - ``4`` -- sorted edges of an undirected graph
+      - ``2`` -- unsorted edges of an undirected graph
+      - ``3`` -- sorted edges of an undirected graph
 
     OUTPUT: Boolean according the modus:
 
@@ -5034,12 +5034,11 @@ cdef inline bint _reorganize_edge(object v, object u, const int modus) noexcept:
     """
     if modus == 0:
         return False
-    if modus == 1 or modus == 2:
-        return True
+    elif modus == 3:
+        try:
+            if v <= u:
+                return False
+        except TypeError:
+            pass
 
-    try:
-        if v <= u:
-            return False
-    except TypeError:
-        pass
     return True

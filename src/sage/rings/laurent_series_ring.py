@@ -503,7 +503,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: P({-3: 1})
             x^-3
         """
-        from sage.rings.fraction_field_element import is_FractionFieldElement
+        from sage.rings.fraction_field_element import FractionFieldElement
         from sage.rings.lazy_series import LazyPowerSeries, LazyLaurentSeries
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.rings.polynomial.polynomial_element import Polynomial
@@ -536,7 +536,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
                 return (x << n).add_bigoh(bigoh)
             else:  # General case, pretend to be a polynomial
                 return (self(self.polynomial_ring()(x)) << n).add_bigoh(prec)
-        elif (is_FractionFieldElement(x)
+        elif (isinstance(x, FractionFieldElement)
               and (x.base_ring() is self.base_ring() or x.base_ring() == self.base_ring())
               and isinstance(x.numerator(), (Polynomial, MPolynomial))):
             x = self(x.numerator()) / self(x.denominator())

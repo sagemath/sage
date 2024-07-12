@@ -93,7 +93,7 @@ from sage.misc.repr import repr_lincomb
 from sage.structure.richcmp import richcmp_method, richcmp
 
 import sage.modules.free_module as free_module
-from sage.modules.free_module_element import is_FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement
 
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.cusps as cusps
@@ -554,7 +554,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
         elif isinstance(x, ManinSymbol):
             return self._coerce_in_manin_symbol(x)
 
-        elif element.is_ModularSymbolsElement(x):
+        elif isinstance(x, element.ModularSymbolsElement):
             M = x.parent()
             if not isinstance(M, ModularSymbolsAmbient):
                 raise TypeError("x (=%s) must be an element of a space of modular symbols of type ModularSymbolsAmbient" % x)
@@ -566,7 +566,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
                 return self(0)
             return sum([c * self._coerce_in_manin_symbol(v) for c, v in S])
 
-        elif is_FreeModuleElement(x):
+        elif isinstance(x, FreeModuleElement):
             y = dict(enumerate(x))
             return BoundarySpaceElement(self, y)
 

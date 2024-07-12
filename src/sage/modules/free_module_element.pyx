@@ -139,10 +139,18 @@ def is_FreeModuleElement(x):
     EXAMPLES::
 
         sage: sage.modules.free_module_element.is_FreeModuleElement(0)
+        doctest:warning...
+        DeprecationWarning: The function is_FreeModuleElement is deprecated;
+        use 'isinstance(..., FreeModuleElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: sage.modules.free_module_element.is_FreeModuleElement(vector([1,2,3]))
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_FreeModuleElement is deprecated; "
+                       "use 'isinstance(..., FreeModuleElement)' instead.")
     return isinstance(x, FreeModuleElement)
 
 

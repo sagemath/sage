@@ -79,6 +79,7 @@ Hecke algebras
    :maxdepth: 1
 
    sage/algebras/hecke_algebras/ariki_koike_algebra
+   sage/algebras/hecke_algebras/ariki_koike_specht_modules
    sage/algebras/iwahori_hecke_algebra
    sage/algebras/nil_coxeter_algebra
    sage/algebras/yokonuma_hecke_algebra

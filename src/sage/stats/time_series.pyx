@@ -567,7 +567,6 @@ cdef class TimeSeries:
             memcpy(v._values + i*T._length, T._values, sizeof(double)*T._length)
         return v
 
-
     def autoregressive_fit(self,M):
         r"""
         This method fits the time series to an autoregressive process
@@ -1268,7 +1267,6 @@ cdef class TimeSeries:
         for i from 0 <= i < self._length:
             s *= self._values[i]
         return s
-
 
     def mean(self):
         r"""

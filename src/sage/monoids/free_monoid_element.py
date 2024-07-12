@@ -30,6 +30,10 @@ from sage.structure.richcmp import richcmp, richcmp_not_equal
 
 
 def is_FreeMonoidElement(x):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_FreeMonoidElement is deprecated; "
+                "use 'isinstance(..., FreeMonoidElement)' instead.")
     return isinstance(x, FreeMonoidElement)
 
 
