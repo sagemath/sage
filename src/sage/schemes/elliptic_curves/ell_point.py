@@ -3926,6 +3926,11 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         In other words, return an integer `x` such that `xP = Q` where
         `P` is ``base`` and `Q` is this point.
 
+        If ``base`` is a list or tuple of two points, then this function
+        solves a two-dimensional discrete logarithm: Given `(P_1,P_2)` in
+        ``base``, it returns a tuple of integers `(x,y)` such that
+        `[x]P_1 + [y]P_2 = Q`, where `Q` is this point.
+
         A :class:`ValueError` is raised if there is no solution.
 
         ALGORITHM:
@@ -3950,20 +3955,31 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         For anomalous curves with `\#E = p`, the
         :meth:`padic_elliptic_logarithm` function is called.
 
+        For two-dimensional logarithms, we first compute the Weil pairing of
+        `Q` with `P_1` and `P_2` and their logarithms to base the pairing of
+        `P_1` and `P_2`; this allows to read off `x` and `y` modulo the part
+        of the order where `P_1` and `P_2`. Modulo the rest of the order the
+        logarithm is effectively one-dimensional, so we can reduce the problem
+        to the basic one-dimensional case and finally recombine the results.
+
         INPUT:
 
-        - ``base`` (point) -- another point on the same curve as ``self``.
+        - ``base`` (point, or list/tuple of two points) -- another point or
+          sequence of two points on the same curve as ``self``.
 
         OUTPUT:
 
         (integer) -- The discrete logarithm of `Q` with respect to `P`,
         which is an integer `x` with `0\le x<\mathrm{ord}(P)` such that
-        `xP=Q`, if one exists.
+        `xP=Q`, if one exists. In the case of two points `P_1,P_2`, two
+        integers `x,y` with `0\le x<\mathrm{ord}(P_1)` and
+        `0\le y<\mathrm{ord}(P_2)` such that `[x]P_1 + [y]P_2 = Q`.
 
         AUTHORS:
 
         - John Cremona. Adapted to use generic functions 2008-04-05.
         - Lorenz Panny (2022): switch to PARI.
+        - Lorenz Panny (2024): the two-dimensional case.
 
         EXAMPLES::
 
@@ -3977,6 +3993,16 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: Q = 400*P
             sage: Q.log(P)
             400
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF((5, 60), 'a')
+            sage: E = EllipticCurve(F, [1, 1])
+            sage: P, Q = E.gens()
+            sage: T = 1234567890987654321*P + 1337*Q
+            sage: T.log([P, Q])
+            (1234567890987654321, 1337)
 
         TESTS:
 
@@ -3992,15 +4018,92 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: x = Q.log(P)
             sage: x*P == Q
             True
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: sz = randint(16,24)
+            sage: e = randint(1,6)
+            sage: p = random_prime(ceil(2**(sz/e)))
+            sage: E = EllipticCurve(j=GF((p,e),'a').random_element())
+            sage: E = choice(E.twists())
+            sage: P = E.random_point()
+            sage: Q = E.random_point()
+            sage: T = randrange(2^99) * P + randrange(2^99) * Q
+            sage: x, y = T.log([P, Q])
+            sage: 0 <= x < P.order()
+            True
+            sage: 0 <= y < Q.order()
+            True
+            sage: T == x*P + y*Q
+            True
         """
+        # handle the two-dimensional case first
+        if isinstance(base, (list, tuple)):
+            if len(base) != 2:
+                raise ValueError('sequence must have length 2')
+            P1, P2 = base
+            if P1 not in self.parent() or P2 not in self.parent():
+                raise ValueError('points do not lie on the same curve')
+
+            n1 = P1.order()
+            n2 = P2.order()
+            n = n1.lcm(n2)
+            if not hasattr(self, '_order'):
+                if n * self:
+                    raise ValueError('ECDLog problem has no solution (order does not divide order of base)')
+                self.set_order(multiple=n, check=False)
+            if not self.order().divides(n):
+                raise ValueError('ECDLog problem has no solution (order does not divide order of base)')
+
+            # find the solution modulo the part where P1,P2 are independent
+            z = P1.weil_pairing(P2, n)
+            o = generic.order_from_multiple(z, n1.gcd(n2), operation='*')
+            if o.is_one():
+                # workaround for PARI bug #2562
+                x0, y0 = ZZ.zero(), ZZ.zero()
+            else:
+                v = self.weil_pairing(P2, n)
+                w = P1.weil_pairing(self, n)
+                try:
+                    x0, y0 = v.log(z, o), w.log(z, o)
+                except TypeError:
+                    # not all implementations of finite-field elements support passing the order in .log()
+                    x0, y0 = v.log(z), w.log(z)
+
+            T = self - x0*P1 - y0*P2
+            if not T:
+                return x0, y0
+
+            from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
+            try:
+                x1 = (n//n1 * T).log(o*P1, n1)
+                y1 = (n//n2 * T).log(o*P2, n2)
+            except TypeError:
+                # not all implementations of finite-field elements support passing the order in .log()
+                x1 = (n//n1 * T).log(o*P1)
+                y1 = (n//n2 * T).log(o*P2)
+
+#            assert n//n1 * self == (x1*o + n//n1*x0) * P1 + n//n1*y0 * P2
+#            assert n//n2 * self == n//n2*x0 * P1 + (y1*o + n//n2*y0) * P2
+
+            _,u,v = (n//n1).xgcd(n//n2)
+            assert _.is_one()
+            x = (u * (x1*o + n//n1*x0) + v * (n//n2*x0)) % n1
+            y = (u * (n//n1*y0) + v * (y1*o + n//n2*y0)) % n2
+
+#            assert x*P1 + y*P2 == self
+            return x, y
+
         if base not in self.parent():
             raise ValueError('not a point on the same curve')
         n = base.order()
-        if n*self:
+        if (hasattr(self, '_order') and not self._order.divides(n)) or n*self:
             raise ValueError('ECDLog problem has no solution (order does not divide order of base)')
         E = self.curve()
         F = E.base_ring()
         p = F.cardinality()
+
         if F.is_prime_field() and n == p:
             # Anomalous case
             return base.padic_elliptic_logarithm(self, p)
