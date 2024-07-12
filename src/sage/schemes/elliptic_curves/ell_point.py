@@ -4042,14 +4042,18 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         """
         # handle the two-dimensional case first
         if isinstance(base, (list, tuple)):
-            if len(base) != 2:
-                raise ValueError('sequence must have length 2')
+            if not base:
+                return self.log(self.curve().zero())
+            elif len(base) == 1:
+                return self.log(base[0])
+            elif len(base) > 2:
+                raise ValueError('sequence must have length <= 2')
+
             P1, P2 = base
             if P1 not in self.parent() or P2 not in self.parent():
                 raise ValueError('points do not lie on the same curve')
 
-            n1 = P1.order()
-            n2 = P2.order()
+            n1, n2 = P1.order(), P2.order()
             n = n1.lcm(n2)
             if not hasattr(self, '_order'):
                 if n * self:
