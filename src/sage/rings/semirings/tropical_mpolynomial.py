@@ -294,6 +294,30 @@ class TropicalMPolynomial(MPolynomial_polydict):
                 const = str(self.monomial_coefficient(self.parent(0)))
                 s = s.replace(f" {const}", f" ({const})")
         return s
+    
+    def _latex_(self):
+        r"""
+        Return the latex representation of this tropical polynomial.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = x^2 + R(-1)*x*y + R(-1)
+            sage: latex(p1)
+            0 x^{2} + \left(-1\right) x y + \left(-1\right)
+            sage: latex(R.zero())
+            \infty
+        """
+        if not self.dict():
+            return self.parent().base().zero()._latex_()
+        s = super()._latex_()
+        if self.monomials()[-1].is_constant():
+            if self.monomial_coefficient(self.parent()(0)) < 0:
+                s = s.replace(" - ", " + -")
+                const = str(self.monomial_coefficient(self.parent(0)))
+                s = s.replace(f" {const}", f" \\left({const}\\right)")
+        return s
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
