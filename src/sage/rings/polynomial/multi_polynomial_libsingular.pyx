@@ -5857,20 +5857,17 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         R = self.parent()
         algorithm = algorithm.lower()
-        from sage.libs.singular.function import singular_function, lib as singular_lib
+        from sage.libs.singular.function import (singular_function,
+                                                 get_printlevel,
+                                                 lib as singular_lib)
         singular_lib('algebra.lib')
         if algorithm == "algebra_containment":
             execute = singular_function('execute')
-            try:
-                get_printlevel = singular_function('get_printlevel')
-            except NameError:
-                execute('proc get_printlevel {return (printlevel);}')
-                get_printlevel = singular_function('get_printlevel')
-            # It's fairly verbose unless printlevel is -1.
+            # verbose unless printlevel is -1.
             saved_printlevel = get_printlevel()
             execute('printlevel=-1')
             contains = singular_function('algebra_containment')(self, R.ideal(J)) == 1
-            execute('printlevel={}'.format(saved_printlevel))
+            execute(f'printlevel={saved_printlevel}')
             return contains
         elif algorithm == "insubring":
             return singular_function('inSubring')(self, R.ideal(J))[0] == 1
