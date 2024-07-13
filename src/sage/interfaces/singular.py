@@ -655,7 +655,7 @@ class Singular(ExtraTabCompletion, Expect):
         x = x.replace("> ", ">\t")  # don't send a prompt  (added by Martin Albrecht)
         if not allow_semicolon and x.find(";") != -1:
             raise TypeError("singular input must not contain any semicolons:\n%s" % x)
-        if len(x) == 0 or x[len(x) - 1] != ';':
+        if not x or x[len(x) - 1] != ';':
             x += ';'
 
         s = Expect.eval(self, x, **kwds)
@@ -1450,7 +1450,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             0,  y,0,
             x*y,0,0
         """
-        if (self.type() == 'ring') or (self.type() == 'qring'):
+        if self.type() in ['ring', 'qring']:
             # Problem: singular has no clean method to produce
             # a copy of a ring/qring. We use ringlist, but this
             # is only possible if we make self the active ring,
@@ -1471,10 +1471,31 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         EXAMPLES::
 
             sage: R = singular.ring(0, '(x,y,z)', 'dp')
-            sage: A = singular.matrix(2,2)
+            sage: f = singular.poly('x+4*y+6'); f
+            x+4*y+6
+            sage: len(f)
+            3
+
+            sage: v = singular.vector('[x,y,4]'); v
+            [x,y,4]
+            sage: len(v)
+            3
+
+        Beware that vectors are truncated when ending with zeros::
+
+            sage: v = singular.vector('[x,y,0,0]'); v
+            [x,y]
+            sage: len(v)
+            2
+
+        For matrices, the length is the number of columns::
+
+            sage: A = singular.matrix(2,4)
             sage: len(A)
             4
         """
+        if self.type() == 'matrix':
+            return int(self.ncols())
         return int(self.size())
 
     def __setitem__(self, n, value):
@@ -1712,7 +1733,6 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
         INPUT:
 
-
         -  ``R`` -- (default: None); an optional polynomial ring.
            If it is provided, then you have to make sure that it
            matches the current singular ring as, e.g., returned by
@@ -1722,7 +1742,6 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         -  ``kcache`` -- (default: None); an optional dictionary
            for faster finite field lookups, this is mainly useful for finite
            extension fields
-
 
         OUTPUT: MPolynomial
 
@@ -1802,111 +1821,88 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         from sage.rings.quotient_ring import QuotientRing_generic
 
-        ring_is_fine = False
         if R is None:
             ring_is_fine = True
             R = self.sage_global_ring()
+        else:
+            ring_is_fine = can_convert_to_singular(R)
 
-        if isinstance(R, QuotientRing_generic) and (ring_is_fine or can_convert_to_singular(R)):
+        if not self:
+            return R.zero()
+
+        if isinstance(R, QuotientRing_generic) and ring_is_fine:
             p = self.sage_poly(R.ambient(), kcache)
             return R(p)
 
         sage_repr = {}
         k = R.base_ring()
 
-        variable_str = "*".join(R.variable_names())
+        P = self.parent()
+        variable_prod = P("*".join(R.variable_names()))
 
-        # This returns a string which looks like a list where the first
-        # half of the list is filled with monomials occurring in the
-        # Singular polynomial and the second half filled with the matching
-        # coefficients.
-        #
-        # Our strategy is to split the monomials at "*" to get the powers
-        # in the single variables and then to split the result to get
-        # actual exponent.
-        #
-        # So e.g. ['x^3*y^3','a'] get's split to
-        # [[['x','3'],['y','3']],'a']. We may do this quickly,
-        # as we know what to expect.
+        # The output of self.coef is a Singular matrix. When iterating over
+        # this matrix, each term is a pair (monomial, coefficient)
 
-        is_short = self.parent().eval('short')
+        # warning: self.coef has a bug for the zero polynomial !
+
+        # The first elements are monomials occurring in the Singular
+        # polynomial and the second elements are the matching coefficients.
+
+        is_short = P.eval('short')
         if is_short != '0':
-            self.parent().eval('short=0')
+            P.eval('short=0')
             if isinstance(R, MPolynomialRing_libsingular):
                 out = R(self)
-                self.parent().eval('short=%s' % is_short)
+                P.eval(f'short={is_short}')
                 return out
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (
-                self.name(), variable_str)).split(",")
-            self.parent().eval('short=%s' % is_short)
+            singular_poly_list = self.coef(variable_prod)
+            P.eval(f'short={is_short}')
         else:
             if isinstance(R, MPolynomialRing_libsingular):
                 return R(self)
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (
-                self.name(), variable_str)).split(",")
-
-        # Directly treat constants
-        if singular_poly_list[0] in ['1', '(1.000e+00)']:
-            return R(singular_poly_list[1])
-
-        coeff_start = len(singular_poly_list) // 2
+            singular_poly_list = self.coef(variable_prod)
 
         # Singular 4 puts parentheses around floats and sign outside them
-        charstr = self.parent().eval('charstr(basering)').split(',', 1)
-        if charstr[0].startswith('Float') or charstr[0] == 'complex':
-            for i in range(coeff_start, 2 * coeff_start):
-                singular_poly_list[i] = singular_poly_list[i].replace('(', '').replace(')', '')
+        charstr = str(singular.charstr('basering')).split(',', 1)[0]
+        remove_par = charstr.startswith('Float') or charstr == 'complex'
 
-        if isinstance(R, MPolynomialRing_polydict) and (ring_is_fine or can_convert_to_singular(R)):
-            # we need to lookup the index of a given variable represented
-            # through a string
-            var_dict = dict(zip(R.variable_names(), range(R.ngens())))
-
+        if isinstance(R, MPolynomialRing_polydict) and ring_is_fine:
             ngens = R.ngens()
 
-            for i in range(coeff_start):
-                exp = dict()
-                monomial = singular_poly_list[i]
-
-                if monomial not in ['1', '(1.000e+00)']:
-                    variables = [var.split("^") for var in monomial.split("*")]
-                    for e in variables:
-                        var = e[0]
-                        if len(e) == 2:
-                            power = int(e[1])
-                        else:
-                            power = 1
-                        exp[var_dict[var]] = power
+            for mono, coeff in singular_poly_list:
+                exp = tuple(int(e) for e in mono.leadexp())
+                # coeff = coeff.leadcoef()  # convert to "number" type
+                if remove_par:
+                    coeff = str(coeff).replace('(', '').replace(')', '')
+                else:
+                    coeff = str(coeff)
 
                 if kcache is None:
-                    sage_repr[ETuple(exp, ngens)] = k(singular_poly_list[coeff_start + i])
+                    sage_repr[ETuple(exp, ngens)] = k(coeff)
                 else:
-                    elem = singular_poly_list[coeff_start + i]
+                    elem = coeff
                     if elem not in kcache:
                         kcache[elem] = k(elem)
                     sage_repr[ETuple(exp, ngens)] = kcache[elem]
 
             return R(sage_repr)
 
-        elif is_PolynomialRing(R) and (ring_is_fine or can_convert_to_singular(R)):
+        elif is_PolynomialRing(R) and ring_is_fine:
 
-            sage_repr = [0] * int(self.deg() + 1)
+            sage_repr = [0] * (int(self.deg()) + 1)
 
-            for i in range(coeff_start):
-                monomial = singular_poly_list[i]
-                exp = 0
-
-                if monomial not in ['1', '(1.000e+00)']:
-                    term = monomial.split("^")
-                    if len(term) == 2:
-                        exp = int(term[1])
-                    else:
-                        exp = 1
+            for mono, coeff in singular_poly_list:
+                exp = int(mono.deg())
+                # coeff = coeff.leadcoeff()  # convert to "number" type
+                if remove_par:
+                    coeff = str(coeff).replace('(', '').replace(')', '')
+                else:
+                    coeff = str(coeff)
 
                 if kcache is None:
-                    sage_repr[exp] = k(singular_poly_list[coeff_start + i])
+                    sage_repr[exp] = k(coeff)
                 else:
-                    elem = singular_poly_list[coeff_start + i]
+                    elem = coeff
                     if elem not in kcache:
                         kcache[elem] = k(elem)
                     sage_repr[exp] = kcache[elem]
@@ -2037,6 +2033,15 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
             sage: singular('hilb((ideal(x)), 1)').sage()
             (1, -1, 0, 0, -1, 1, 0)
+
+        Test for vector type::
+
+            sage: x, y = polygens(QQ, 'x,y')
+            sage: singular.set_ring(singular(x.parent()))
+            sage: v = singular.vector([x, y]); v.type()
+            'vector'
+            sage: singular.vector([x,y]).sage()
+            [x, y]
         """
         typ = self.type()
         if typ == 'poly':
@@ -2047,7 +2052,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             return self.sage_matrix(R, sparse=True)
         elif typ == 'matrix':
             return self.sage_matrix(R, sparse=False)
-        elif typ == 'list':
+        elif typ == 'list' or typ == 'vector':
             return [f._sage_(R) for f in self]
         elif typ == 'intvec':
             from sage.modules.free_module_element import vector
@@ -2074,9 +2079,11 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             R = self.sage_global_ring()
             br.set_ring()
             return R
-        raise NotImplementedError("Coercion of this datatype not implemented yet")
+        # what to do with "number" type ? it can contain fractions !
+        msg = f"coercion of the datatype {typ} not implemented yet"
+        raise NotImplementedError(msg)
 
-    def is_string(self):
+    def is_string(self) -> bool:
         """
         Tell whether this element is a string.
 
@@ -2086,7 +2093,6 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             True
             sage: singular('1').is_string()
             False
-
         """
         return self.type() == 'string'
 
