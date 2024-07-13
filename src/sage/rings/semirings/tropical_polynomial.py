@@ -1,23 +1,28 @@
 r"""
 Univariate Tropical Polynomials
 
-Tropical polynomial is a polynomial with coefficients from tropical semiring.
-Tropical polynomial induces a function which is piecewise-linear and each 
-piece has an integer slope. Tropical roots (zeros) of polynomial `P(x)` is 
-defined as all points ``x_0`` for which the graph of ``P(x)`` change its 
-slope. The difference in the slopes of the two pieces adjacent to this root 
-gives the order of the root. This module provides the implementation
-of parent and element class for sparse tropical polynomials in one variable.
-
 AUTHORS:
 
 - Verrel Rievaldo Wijaya (2024-06): initial version
 
+EXAMPLES::
+
+    sage: T = TropicalSemiring(QQ, use_min=False)
+    sage: R.<x> = PolynomialRing(T)
+    sage: R.0
+    0*x
+    sage: x.parent()
+    Univariate Tropical Polynomial Semiring in x over Rational Field
+    sage: x + R(3)*x
+    3*x
+    sage: (x^2 + R(1)*x + R(-1))^2
+    0*x^4 + 1*x^3 + 2*x^2 + 0*x + (-2)
+
 REFERENCES:
 
-    - [Bru2014]_
-    - [Fil2017]_
-    - [Hun2021]_
+- [Bru2014]_
+- [Fil2017]_
+- [Hun2021]_
 """
 
 # ****************************************************************************
@@ -43,12 +48,19 @@ from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
 
 class TropicalPolynomial(Polynomial_generic_sparse):
-    """
+    r"""
     A univariate tropical polynomial.
 
-    The tropical polynomials are implemented with a sparse format
-    by using a ``dict`` whose keys are the exponent and values the
-    corresponding coefficients.
+    Tropical polynomial is a polynomial with coefficients from tropical
+    semiring. Tropical polynomial induces a function which is piecewise
+    linear and each piece has an integer slope. Tropical roots (zeros) of
+    polynomial `P(x)` is defined as all points ``x_0`` for which the graph
+    of ``P(x)`` change its slope. The difference in the slopes of the two
+    pieces adjacent to this root gives the order of the root.
+
+    The tropical polynomials are implemented with a sparse format by using
+    a ``dict`` whose keys are the exponent and values the corresponding
+    coefficients. Each coefficient is a tropical number.
 
     EXAMPLES:
 
@@ -78,8 +90,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         0*x^3 + 1*x^2 + 4*x + 3
         sage: p1 * p2
         1*x^5 + 2*x^4 + 5*x^3 + 6*x^2 + 7*x + 4
-        sage: p1^2
-        0*x^6 + 4*x^4 + 1*x^3 + 8*x^2 + 5*x + 2
         sage: 2 * p1
         Traceback (most recent call last):
         ...
@@ -146,26 +156,24 @@ class TropicalPolynomial(Polynomial_generic_sparse):
     
     def roots(self):
         r"""
-        Return the list of all tropical roots of this tropical polynomial, 
+        Return the list of all tropical roots of this tropical polynomial,
         counted with multiplicity.
 
-        OUTPUT:
-
-        - ``tropical_roots`` -- a list of tropical numbers
+        OUTPUT: a list of tropical numbers
 
         ALGORITHM:
 
-        For each pair of monomials in the polynomial, we find the point where 
-        their values are equal.  This is the same as solving the equation 
-        `c1 + a1*x = c2 + a2*x` for `x`, where `(c1, a1)` and `(c2, a2)` are 
-        the coefficients and exponents of the two monomials.
+        For each pair of monomials in the polynomial, we find the point
+        where their values are equal.  This is the same as solving the
+        equation `c_1 + a_1*x = c_2 + a_2*x` for `x`, where `(c_1, a_1)`
+        and `(c_2, a_2)` are the coefficients and exponents of monomials.
 
-        The solution to this equation is `x = (c2 - c1) / (a1 - a2)`. We
-        substitute this `x` to each monomials in polynomial and check if the
-        maximum (minimum) is achieved by the previous two monomials. If it 
-        is, then `x` is the root of tropical polynomial. In this case, the 
-        order of the root at `x` is the maximum of `|i-j|` for all possible 
-        pairs `i,j` which realise this maximum (minimum) at `x`.
+        The solution to this equation is `x = (c_2-c_1)/(a_1-a_2)`. We
+        substitute this `x` to each monomials in polynomial and check if
+        the maximum (minimum) is achieved by the previous two monomials.
+        If it is, then `x` is the root of tropical polynomial. In this
+        case, the order of the root at `x` is the maximum of `|i-j|` for
+        all possible pairs `i,j` which realise this maximum (minimum).
 
         EXAMPLES::
 
@@ -231,13 +239,13 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         Return the tropical polynomial which has the same roots as ``self`` 
         but which can be reduced to its linear factors.
 
-        If a tropical polynomial has roots at `x_1, x_2, \dots, x_n`, then
+        If a tropical polynomial has roots at `x_1, x_2, \ldots, x_n`, then
         its split form is the tropical product of linear terms of the form 
-        `(x + x_i)` for all `i=1,2,\dots,n`.
+        `(x + x_i)` for all `i=1,2,\ldots,n`.
 
-        OUTPUT: TropicalPolynomial
+        OUTPUT: new :class:`TropicalPolynomial`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R.<x> = PolynomialRing(T)
@@ -256,8 +264,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         TESTS:
 
-        Checking that the roots of tropical polynomial and its split form is 
-        really the same::
+        Checking that the roots of tropical polynomial and its split form
+        is really the same::
 
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R.<x> = PolynomialRing(T)
@@ -282,7 +290,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         `x + x_0` is `x_0` and not `-x_0`. However, similar to classical 
         algebra, not every tropical polynomial can be factored.
 
-        OUTPUT: Factorization
+        OUTPUT: :class:`Factorization`
 
         EXAMPLES::
 
@@ -316,8 +324,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             form = self.split_form()
 
         unit = self.dict()[self.degree()]
-        if self != form or self.roots() == []:
-            factor = [(self*self.parent(-unit.lift()), 1)]
+        if self != form or not self.roots():
+            factor = [(self * self.parent(-unit.lift()), 1)]
             return Factorization(factor, unit=unit)
 
         R = self.parent()
@@ -342,9 +350,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         its corresponding linear function. Next, we must determine which 
         term achieves the minimum (maximum) at each interval. 
 
-        OUTPUT:
-
-        - ``f`` -- a piecewise function.
+        OUTPUT: A piecewise function
 
         EXAMPLES::
 
@@ -371,14 +377,14 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         from sage.functions.piecewise import piecewise
 
         x = SR.var('x')
-        if self.roots() == []:
+        if not self.roots():
             f = self.dict()[0].lift()
             return f
         
         if len(self.dict()) == 1:
             gradient = list(self.dict())[0]
             intercept = self.dict()[gradient].lift()
-            f = intercept+gradient*x
+            f = intercept + gradient * x
             return f
 
         unique_root = sorted(list(set(self.roots())))
@@ -390,17 +396,17 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             elif i == len(unique_root):
                 test_number = self.base_ring()(unique_root[i-1]+1)
             else:
-                test_number = self.base_ring()((unique_root[i] + \
+                test_number = self.base_ring()((unique_root[i] +
                                                 unique_root[i-1])/2)
 
-            terms = {i:c*(test_number**i) for i, c in self.dict().items()}
+            terms = {i: c * test_number**i for i, c in self.dict().items()}
             if self.base_ring()._use_min:
-                maximum = min(terms.values())
+                critical = min(terms.values())
             else:
-                maximum = max(terms.values())
+                critical = max(terms.values())
             found_key = None
             for key, value in terms.items():
-                if value == maximum:
+                if value == critical:
                     found_key = key
                     break
             gradient = found_key
@@ -437,13 +443,13 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         INPUT:
 
-        - ``xmin`` -- real number (default: ``None``).
-        - ``xmax`` -- real number (default: ``None``).
+        - ``xmin`` -- (optional) real number
+        - ``xmax`` -- (optional) real number
 
         OUTPUT:
 
-        If ``xmin`` and ``xmax`` is given, then it will return a plot
-        of piecewise linear function of ``self`` with the axes start from
+        If ``xmin`` and ``xmax`` is given, then it return a plot of
+        piecewise linear function of ``self`` with the axes start from
         ``xmin`` to ``xmax``. Otherwise, the domain will start from the
         the minimum root of ``self`` minus 1 to maximum root of ``self``
         plus 1. If the function of ``self`` is constant or linear, then 
@@ -496,7 +502,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         f = self.piecewise_function()
         if xmin is None and xmax is None:
             roots = sorted(self.roots())
-            if roots==[] or self.parent().base().zero() in roots:
+            if (not roots) or self.parent().base().zero() in roots:
                 return plot(f, xmin=-1, xmax=1)
             else:
                 return plot(f, xmin=roots[0]-1, xmax=roots[-1]+1)
@@ -571,10 +577,18 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         return s[1:].lstrip().rstrip()
     
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
-    """
-    Semiring structure of tropical polynomials in one variable.
-    """
+    r"""
+    The semiring of univariate tropical polynomials.
 
+    The set of tropical polynomials form a semiring because it satisfy
+    the following properties. Tropical addition is associative and
+    commutative, with the identity element being `+\infty` (or `-\infty`).
+    Tropical multiplication is associative, with the identity element
+    being `0`, and it distributes over tropical addition. Furthermore,
+    multiplication by the additive identity results in the additive
+    identity, preserving the annihilation property. However, it fails to
+    become a ring because it lacks additive inverses.
+    """
     @staticmethod
     def __classcall_private__(cls, base_semiring, names=None):
         """
@@ -582,10 +596,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: T = TropicalSemiring(QQ)
-            sage: R = PolynomialRing(T, names='xyz')
-            sage: R.names
-            ('xyz',)
+            sage: T = TropicalSemiring(ZZ)
+            sage: R = TropicalPolynomialSemiring(T); R                                      # needs sage.rings.semirings.tropical_polynomial
+            Univariate Tropical Polynomial Semiring in x over Integer Ring
         """
         if names is None:
            names = 'x'
@@ -597,14 +610,8 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: T = TropicalSemiring(QQ, use_min=False)
-            sage: R.<x> = PolynomialRing(T)
-            sage: x.parent()
-            Univariate Tropical Polynomial Semiring in x over Rational Field
-            sage: R(2)*x + R(3)*x
-            3*x
-            sage: (x + T(1)*x^2) * R(3)
-            4*x^2 + 3*x
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x')
             sage: TestSuite(R).run()
 
         TESTS::
@@ -617,7 +624,6 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
-        self.names = names
 
     Element = TropicalPolynomial
 
@@ -683,7 +689,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             Univariate Tropical Polynomial Semiring in abc over Integer Ring
         """
         return (f"Univariate Tropical Polynomial Semiring in {self.variable_name()}"
-            f" over {self.base_ring().base_ring()}")
+                f" over {self.base_ring().base_ring()}")
 
     def gen(self, n=0):
         """
@@ -740,9 +746,11 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         """
         Return a random tropical polynomial of given degrees (bounds).
 
+        OUTPUT: new :class:`TropicalPolynomial`
+
         SEEALSO:: 
         
-            :meth:`src.sage.rings.polynomial.polynomial_ring.PolynomialRing_general.random_element`
+            :meth:`PolynomialRing_general.random_element`
         
         EXAMPLES::
 
@@ -758,7 +766,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     
     def is_sparse(self):
         """
-        Returns True to indicate that the object is a sparse polynomial.
+        Return ``True`` to indicate that the objects are sparse polynomials.
 
         EXAMPLES::
 
@@ -780,7 +788,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - points -- a list of tuple (x,y)
+        - points -- a list of tuples ``(x, y)``
+
+        OUTPUT: :class:`TropicalPolynomial` object
 
         EXAMPLES::
 

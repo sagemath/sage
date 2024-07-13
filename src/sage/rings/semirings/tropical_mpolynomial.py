@@ -16,9 +16,9 @@ EXAMPLES::
 
 REFERENCES:
 
-    - [Bru2014]_
-    - [Fil2017]_
-    - [Hun2021]_
+- [Bru2014]_
+- [Fil2017]_
+- [Hun2021]_
 """
 
 # ****************************************************************************
@@ -51,18 +51,12 @@ class TropicalMPolynomial(MPolynomial_polydict):
     possibly including repetitions: `x_1^{i_1}\dots x_n^{i_n}` where
     `i_j \in \{0,1,\dots}`, for all `j\in \{1,dots,n}`. A multivariate
     tropical polynomial is a finite linear combination of tropical monomials,
-    `p(x_1, \dots, x_n) = \sum_{i=1}^n c_i x_1^{i_1}\dots x_n^{i_n}`, where
-    the standard addition and multiplication operations are replaced by
-    tropical addition (taking the minimum or maximum) and tropical
-    multiplication (ordinary addition).
+    `p(x_1, \dots, x_n) = \sum_{i=1}^n c_i x_1^{i_1}\dots x_n^{i_n}`.
 
     In classical arithmetic, we can rewrite the general form of a tropical
     monomial: `x_1^{i_1}\dots x_n^{i_n} = i_1 x_1 + \dots + i_n x_n`. Thus,
     the tropical polynomial can be viewed as the minimum (maximum) of a
-    finite collection of linear functions. So, each tropical polynomial
-    can be regarded as a piecewise-linear function from `\mathbb{R}^n` to
-    `\mathbb{R}`. This function is often referred to as a tropical
-    polynomial function.
+    finite collection of linear functions.
 
     EXAMPLES:
 
@@ -305,14 +299,11 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
     Semiring of tropical polynomials in multiple variables.
 
-    The set of tropical polynomials form a semiring because it satisfy
-    the following properties. Tropical addition is associative and
-    commutative, with the identity element being `+\infty` (or `-\infty).
-    Tropical multiplication is associative, with the identity element
-    being zero, and it distributes over tropical addition. Furthermore,
-    multiplication by the additive identity results in the additive
-    identity, preserving the annihilation property. However, it fails to
-    become a ring because it lacks additive inverses.
+    Similar to the single-variable case, the set of multivariate tropical
+    polynomials `R` also form a semiring because `(R,+)` is a commutative
+    monoid and `(R,\cdot)` is a monoid. Additionally, R satisfy the
+    distributive and annihilation property. Therefore, this semiring
+    extends the concepts to polynomials with multiple variables.
     """
 
     def __init__(self, base_semiring, n, names, order='degrevlex'):
@@ -338,7 +329,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     
     def term_order(self):
         """
-        Return the defined term order of this tropical polynomial semiring.
+        Return the defined term order of ``self``.
         
         EXAMPLES::
 
@@ -353,7 +344,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, x):
         r""""
-        Convert ``x`` into this tropical multivariate polynomial semiring.
+        Convert ``x`` into ``self``.
 
         INPUT:
 
@@ -401,7 +392,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     
     def one(self):
         r"""
-        Return the multiplicative identity of this semiring.
+        Return the multiplicative identity of ``self``.
 
         EXAMPLES::
 
@@ -414,7 +405,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
     def zero(self):
         r"""
-        Return the additive identity of this semiring.
+        Return the additive identity of ``self``.
 
         EXAMPLES::
 
@@ -427,7 +418,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
     def _repr_(self):
         r"""
-        Return a string representation of this polynomial semiring.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -445,7 +436,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     def random_element(self, degree=2, terms=None, choose_degree=False,
                        *args, **kwargs):
         r"""
-        Return a random multivariate tropical polynomial.
+        Return a random multivariate tropical polynomial from ``self``.
 
         SEEALSO::
 
@@ -466,7 +457,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     
     def gen(self, n=0):
         r"""
-        Return the indeterminate generator of this polynomial semiring.
+        Return the ``n``-th generator of ``self``.
 
         EXAMPLES::
 
