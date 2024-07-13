@@ -423,7 +423,7 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
          '+       ****   ***   *',
          '+              **',
          '+              *',
-         '     sage: PartitionTuples.options(convention='French')',
+         '     sage: PartitionTuples.options(convention="French")',
          '     sage: mu.pp()         # fix doctest with uneven indentation',
          '+    *',
          '+    **',
