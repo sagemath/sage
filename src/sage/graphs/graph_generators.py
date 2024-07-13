@@ -367,6 +367,7 @@ __append_to_doc(
      "RandomPartialKTree",
      "RandomLobster",
      "RandomNewmanWattsStrogatz",
+     "RandomProperIntervalGraph",
      "RandomRegular",
      "RandomShell",
      "RandomToleranceGraph",
