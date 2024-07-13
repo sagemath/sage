@@ -767,6 +767,15 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: R(1).factor()
             1
 
+        An example for ``check=True``::
+
+            sage: F = GF(127, impl='modn')
+            sage: t = F.primitive_element()
+            sage: t.log(t, 57, check=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: base does not have the provided order
+
         AUTHORS:
 
         - David Joyner and William Stein (2005-11)
@@ -791,7 +800,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         if check:
             from sage.groups.generic import has_order
             if not has_order(b, order, '*'):
-                raise ValueError('b does not have the provided order')
+                raise ValueError('base does not have the provided order')
 
         cdef Integer n = Integer()
         cdef Integer m = one_Z
