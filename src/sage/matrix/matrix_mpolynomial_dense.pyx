@@ -24,9 +24,7 @@ from sage.matrix.matrix2 cimport Matrix
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
-from sage.libs.singular.function import singular_function, lib
-
-from cysignals.signals cimport sig_on, sig_off
+from sage.libs.singular.function import singular_function
 
 
 cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
@@ -518,7 +516,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
     def determinant(self, algorithm=None):
         """
-        Return the determinant of this matrix
+        Return the determinant of this matrix.
 
         INPUT:
 

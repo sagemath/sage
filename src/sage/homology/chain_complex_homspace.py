@@ -116,9 +116,17 @@ def is_ChainComplexHomspace(x):
         sage: C = T.chain_complex(augmented=True, cochain=True)
         sage: G = Hom(C, C)
         sage: is_ChainComplexHomspace(G)
+        doctest:warning...
+        DeprecationWarning: The function is_ChainComplexHomspace is deprecated;
+        use 'isinstance(..., ChainComplexHomspace)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
 
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ChainComplexHomspace is deprecated; "
+                "use 'isinstance(..., ChainComplexHomspace)' instead.")
     return isinstance(x, ChainComplexHomspace)
 
 

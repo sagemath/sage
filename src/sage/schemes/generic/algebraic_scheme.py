@@ -118,7 +118,7 @@ from sage.categories.number_fields import NumberFields
 
 from sage.rings.ideal import is_Ideal
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.misc.latex import latex
@@ -873,7 +873,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             F = self.base_ring()
 
         if bound == 0:
-            if is_RationalField(F):
+            if isinstance(F, RationalField):
                 raise TypeError("A positive bound (= %s) must be specified." % bound)
             if not isinstance(F, FiniteField):
                 raise TypeError("Argument F (= %s) must be a finite field." % F)
