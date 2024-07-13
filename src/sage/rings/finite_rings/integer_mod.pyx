@@ -638,7 +638,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         else:
             return sib(self.parent())(v)
 
-    def log(self, b=None):
+    def log(self, b=None, order=None):
         r"""
         Compute the discrete logarithm of this element to base `b`,
         that is,
@@ -653,6 +653,10 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         -  ``b`` -- a unit modulo `n`. If ``b`` is not given,
            ``R.multiplicative_generator()`` is used, where
            ``R`` is the parent of ``self``.
+        
+        -  ``order`` -- integer (unused), the order of ``b``.
+           This argument is unused, only there for coherence of
+           api with finite field elements.
 
 
         OUTPUT:
