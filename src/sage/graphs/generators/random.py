@@ -883,7 +883,6 @@ def RandomProperIntervalGraph(n, seed=None):
     vertices being adjacent if the two corresponding (closed) intervals
     intersect. An interval graph is proper if no interval of the list properly
     contains another interval.
-
     Observe that proper interval graphs coincide with unit interval graphs.
     See the :wikipedia:`Interval_graph` for more details.
 
@@ -904,7 +903,7 @@ def RandomProperIntervalGraph(n, seed=None):
 
     INPUT:
 
-    - ``n`` -- positive integer; the number of versitces of the graph
+    - ``n`` -- positive integer; the number of vertices of the graph
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
