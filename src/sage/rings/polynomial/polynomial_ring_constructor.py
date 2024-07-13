@@ -537,7 +537,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: PolynomialRing(4)
         Traceback (most recent call last):
         ...
-        TypeError: base_ring 4 must be a ring
+        TypeError: base_ring 4 must be a ring or the tropical semiring
         sage: PolynomialRing(QQ, -1)
         Traceback (most recent call last):
         ...
