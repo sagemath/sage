@@ -1018,7 +1018,7 @@ def RandomProperIntervalGraph(n, seed=None):
         return compute_C(n - 1, h - 1) + compute_C(n - 1, h + 1)
 
     # We first fill an array hx of length n, backward, and then use it to choose
-    # the symbols x_1x_2...x_n. Symbols y_n...y_2y_1 are 
+    # the symbols x_1x_2...x_n (and so symbols y_n...y_2y_1).
     hx = [0] * n
     hx[1] = 1
     # Set hx[np] = h with probability C(np, h) / binomial(np, np // 2)
@@ -1060,7 +1060,7 @@ def RandomProperIntervalGraph(n, seed=None):
         else:
             intervals[R][1] = pos
             R += 1
-            
+
     # We finally return the resulting interval graph
     return IntervalGraph(intervals)
 
