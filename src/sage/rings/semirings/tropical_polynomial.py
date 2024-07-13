@@ -18,7 +18,6 @@ REFERENCES:
     - [Bru2014]_
     - [Fil2017]_
     - [Hun2021]_
-
 """
 
 # ****************************************************************************
@@ -38,19 +37,18 @@ from sage.misc.cachefunc import cached_method
 from sage.sets.real_set import RealSet
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.categories.sets_cat import Sets
+from sage.categories.semirings import Semirings
 
 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
 
 class TropicalPolynomial(Polynomial_generic_sparse):
     """
-    A generic sparse tropical polynomial.
+    A univariate tropical polynomial.
 
-    The `TropicalPolynomial`` class defines functionality for sparse
-    polynomials over any tropical semiring. A sparse polynomial is 
-    represented using a dictionary which maps each exponent to the
-    corresponding coefficient. The coefficients is a tropical number.
+    The tropical polynomials are implemented with a sparse format
+    by using a ``dict`` whose keys are the exponent and values the
+    corresponding coefficients.
 
     EXAMPLES:
 
@@ -520,6 +518,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: R([-3,-1,2,-1])
             (-1)*x^3 + 2*x^2 + (-1)*x + (-3)
         """
+        if not self.dict():
+            return str(self.parent().base().zero())
+        
         def replace_negatives(match):
             return f'({match.group(0)})'
         
@@ -532,6 +533,42 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         s = s.replace("-"+var, "-1*"+var)
         s = re.sub(r'-\d+', replace_negatives, s)
         return s
+
+    def _latex_(self):
+        r"""
+        Return the latex representation of this tropical polynomial.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x')
+            sage: p1 = R([-1,2,None,-3])
+            sage: latex(p1)
+            \left(-3\right) x^{3} + 2 x + \left(-1\right)
+        """
+        s = " "
+        coeffs = self.list(copy=False)
+        m = len(coeffs)
+        name = self.parent().latex_variable_names()[0]
+        for n in reversed(range(m)):
+            x = coeffs[n]
+            x = x._latex_()
+            if x != self.parent().base().zero()._latex_():
+                if n != m-1:
+                    s += " + "
+                if x.find("-") == 0:
+                    x = "\\left(" + x + "\\right)"
+                if n > 1:
+                    var = "|%s^{%s}" % (name, n)
+                elif n==1:
+                    var = "|%s" % name
+                else:
+                    var = ""
+                s += "%s %s" % (x, var)
+        s = s.replace("|", "")
+        if s == " ":
+            return self.parent().base().zero()._latex_()
+        return s[1:].lstrip().rstrip()
     
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     """
@@ -542,6 +579,13 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     def __classcall_private__(cls, base_semiring, names=None):
         """
         Ensures the names parameter is a tuple.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, names='xyz')
+            sage: R.names
+            ('xyz',)
         """
         if names is None:
            names = 'x'
@@ -562,10 +606,18 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: (x + T(1)*x^2) * R(3)
             4*x^2 + 3*x
             sage: TestSuite(R).run()
+
+        TESTS::
+
+            sage: TropicalPolynomialSemiring(ZZ)                                            # needs sage.rings.semirings.tropical_polynomial
+            Traceback (most recent call last):
+            ...
+            ValueError: Integer Ring is not a tropical semiring
         """
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
-        Parent.__init__(self, base=base_semiring, names=names, category=Sets())
+        Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
+        self.names = names
 
     Element = TropicalPolynomial
 
@@ -575,7 +627,8 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- a list or tuple of coefficients, or a polynomial
+        - ``x`` -- a list or tuple of coefficients, a polynomial, or a
+          dictionary
 
         EXAMPLES::
 
@@ -587,12 +640,37 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R(x^2 - x + 1)
             1*x^2 + (-1)*x + 1
         """
-        C = self.element_class
         if isinstance(x, (list, tuple)):
             for i, coeff in enumerate(x):
                 if coeff == 0:
                     x[i] = self.base()(0)
-        return C(self, x, check=check)
+        return self.element_class(self, x, check=check)
+    
+    def one(self):
+        """
+        Return the multiplicative identity of this semiring.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x')
+            sage: R.one()
+            0
+        """
+        return self(0)
+
+    def zero(self):
+        """
+        Return the additive identity of this semiring.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x')
+            sage: R.zero()
+            +infinity
+        """
+        return self(self.base().zero())
 
     def _repr_(self):
         """
@@ -662,6 +740,10 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         """
         Return a random tropical polynomial of given degrees (bounds).
 
+        SEEALSO:: 
+        
+            :meth:`src.sage.rings.polynomial.polynomial_ring.PolynomialRing_general.random_element`
+        
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
