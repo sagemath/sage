@@ -87,7 +87,7 @@ class SubgroupStore():
             sage: P[H1]
             PMD[(4, ((3,4), (1,2)))]
             sage: P[H2]
-            PMD[(4, ((3,4), (1,2)))]    #indirect doctest
+            PMD[(4, ((3,4), (1,2)))]
 
             sage: G = SymmetricGroup(4)
             sage: B = BurnsideRing(G)
@@ -96,7 +96,7 @@ class SubgroupStore():
             sage: B[H1]
             B[((3,4), (1,2))]
             sage: B[H2]
-            B[((3,4), (1,2))]   #indirect doctest
+            B[((3,4), (1,2))]
         """
         # H is of type self.element_class
         G = H.subgroup_of()
@@ -131,6 +131,7 @@ class SubgroupStore():
             C3
             sage: P._indices.get_name(Z3)
             'C3'
+            sage: P._indices.unset_name(Z3)
         """
         key = self.element_class(self, H)
         G = self._normalize(key)
@@ -152,6 +153,7 @@ class SubgroupStore():
             C3
             sage: P._indices.get_name(Z3)
             'C3'
+            sage: P._indices.unset_name(Z3)
         """
         if not isinstance(name, str):
             raise ValueError("name must be a string")
@@ -248,7 +250,7 @@ class ConjugacyClassOfSubgroups(Element):
 
     def __le__(self, other):
         r"""
-        Return if this element is less or equal to ``other``.
+        Return if this element is less than or equal to ``other``.
 
         ``self`` is less or equal to ``other`` if it is conjugate to
         a subgroup of ``other`` in the parent group.
@@ -291,6 +293,22 @@ class ConjugacyClassOfSubgroups(Element):
     def __lt__(self, other):
         r"""
         Return if this element is less than ``other``.
+
+        TESTS::
+
+            sage: G = SymmetricGroup(4)
+            sage: B = BurnsideRing(G)
+            sage: H1 = PermutationGroup([(1,2)])
+            sage: H2 = PermutationGroup([(2,3)])
+            sage: H3 = PermutationGroup([(1,2),(3,4)])
+            sage: B[H1] < B[H2]
+            False
+            sage: B[H1] == B[H2]
+            True
+            sage: B[H1] < B[H3]
+            True
+            sage: B[H2] < B[H3]
+            True
         """
         return self <= other and self != other
 
@@ -413,7 +431,7 @@ class ConjugacyClassesOfSubgroups(Parent, SubgroupStore):
     Element = ConjugacyClassOfSubgroups
 
 class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
-    def __init__(self, parent, n, C):
+    def __init__(self, parent, C):
         r"""
         Initialize the conjugacy class of ``C`` in SymmetricGroup(n).
 
@@ -423,9 +441,9 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
             sage: Z4 = CyclicPermutationGroup(4)
             sage: TestSuite(P(Z4)).run()
         """
-        self._degree = n
         ConjugacyClassOfSubgroups.__init__(self, parent, C)
     
+    @cached_method
     def subgroup_of(self):
         r"""
         Return the symmetric group which this conjugacy class
@@ -444,7 +462,7 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
             sage: CZ2.subgroup_of()
             Symmetric group of order 3! as a permutation group
         """
-        return SymmetricGroup(self._degree)
+        return SymmetricGroup(self._C.degree())
 
     def _repr_(self):
         r"""
@@ -459,6 +477,7 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
         """
         return f"({self.grade()}, {super()._repr_()})"
 
+    @cached_method
     def grade(self):
         r"""
         Return the degree of this subgroup (which is the degree
@@ -471,7 +490,7 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
             sage: P._indices(D2).grade()
             8
         """
-        return self._degree
+        return self._C.degree()
 
     def __hash__(self):
         r"""
@@ -496,8 +515,8 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
         TESTS::
 
             sage: P = PolynomialMolecularDecomposition()
-            sage: H1 = P(PermutationGroup([(1,2)],domain=[1,2,3]))
-            sage: H2 = P(PermutationGroup([(2,3)],domain=[1,2,3]))
+            sage: H1 = PermutationGroup([(1,2)],domain=[1,2,3])
+            sage: H2 = PermutationGroup([(2,3)],domain=[1,2,3])
             sage: P[H1] == P[H2]
             True
         """
@@ -508,9 +527,19 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
     def __le__(self, other):
         r"""
         Return if this element is less than or equal to ``other``.
+
+        If ``self and ``other`` belong to the same symmetric group, then
+        ``self`` is less than or equal to ``other`` if it is conjugate to
+        a subgroup of ``other`` in the parent group.
+
+        Otherwise, ``self`` is less than ``other`` if the degree of ``self``
+        is less than the degree of ``other``.
         """
         return (isinstance(other, ConjugacyClassOfSubgroups_SymmetricGroup)
-                and (self.grade() < other.grade() or self == other))
+                and (self.grade() < other.grade() or
+                     (GAP_FAIL != libgap.ContainedConjugates(self.subgroup_of(),
+                                                            other._C, self._C,
+                                                            True))))
 
     def __lt__(self, other):
         r"""
@@ -548,7 +577,7 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups, Su
             (4, ((1,2,3,4),))
         """
         if x.is_subgroup(self._G):
-            key = self.element_class(self, self._G.degree(), x)
+            key = self.element_class(self, self._G.subgroup(x))
             return self._normalize(key)
         raise ValueError(f"unable to convert {x} into {self}: not a subgroup of {self._G}")
 
@@ -571,6 +600,10 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, category=category)
         SubgroupStore.__init__(self)
+
+    @cached_method
+    def an_element(self):
+        return self.element_class(self, SymmetricGroup(0))
 
     def _group_invariant(self, H):
         r"""
@@ -617,7 +650,7 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
         TESTS::
 
             sage: from sage.rings.burnside import ConjugacyClassesOfSubgroups_SymmetricGroup_all
-            sage: C = ConjugacyClassesOfSubgroups_SymmetricGroup()
+            sage: C = ConjugacyClassesOfSubgroups_SymmetricGroup_all()
             sage: Z4 = CyclicPermutationGroup(4)
             sage: C(Z4)
             (4, ((1,2,3,4),))
@@ -625,9 +658,12 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
             sage: C(S3)
             (3, ((1,2,3), (1,2)))
         """
+        if parent(x) == self:
+            return x
+
         G = SymmetricGroup(x.degree())
         if x.is_subgroup(G):
-            key = self.element_class(self, x.degree(), x)
+            key = self.element_class(self, x)
             return self._normalize(key)
         raise ValueError(f"unable to convert {x} into {self}: not a subgroup of {G}")
 
@@ -699,10 +735,9 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: X = Subsets(4, 2)
             sage: b = B.construct_from_action(lambda g, x: X([g(e) for e in x]), X)
             sage: b.tensor(b)
-            B[((3,4), (1,2)(3,4))] # B[((3,4), (1,2)(3,4))]
+            B[((3,4), (1,2))] # B[((3,4), (1,2))]
             sage: (b.tensor(b))^2
-            B[((),)] # B[((),)] + 2*B[((),)] # B[((3,4), (1,2)(3,4))]
-            + 2*B[((3,4), (1,2)(3,4))] # B[((),)] + 4*B[((3,4), (1,2)(3,4))] # B[((3,4), (1,2)(3,4))]
+            B[((),)] # B[((),)] + 2*B[((),)] # B[((3,4), (1,2))] + 2*B[((3,4), (1,2))] # B[((),)] + 4*B[((3,4), (1,2))] # B[((3,4), (1,2))]
 
         TESTS::
 
@@ -753,14 +788,14 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: X = Subsets(4, 2)
             sage: a = lambda g, x: X([g(e) for e in x])
             sage: B.construct_from_action(a, X)
-            B[((3,4), (1,2)(3,4))]
+            B[((3,4), (1,2))]
 
         Next, we create a group action of `S_4` on itself via conjugation::
 
             sage: X = G
             sage: a = lambda g, x: g*x*g.inverse()
             sage: B.construct_from_action(a, X)
-            B[((3,4), (1,3)(2,4), (1,4)(2,3))] + B[((2,4,3),)] + B[((3,4), (1,2)(3,4))] + B[((1,2,3,4),)] + 1
+            B[((3,4), (1,3)(2,4), (1,4)(2,3))] + B[((2,4,3),)] + B[((3,4), (1,2))] + B[((1,2,3,4),)] + 1
 
         TESTS::
 
@@ -926,7 +961,15 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
         Let `H` be a subgroup of `\mathfrak{G}_n` and `K` be a subgroup of `\mathfrak{G}_m`.
         Then we define their Cauchy product as the subgroup of `\mathfrak{G}_{n+m}` given by
         `H \ast K = \{h \dot k \vert h \in H_{\{1 \ldots n\}}, K_{\{n+1 \ldots n+m\}}\}` where
-        the subscripts denote the domains on which H and K act.
+        the subscripts denote the domains on which H and K act. Note that this is isomorphic to
+        the direct product of `H` and `K`.
+
+        EXAMPLES::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: matrix([[P.product_on_basis(x,y) for x in P._indices.subset(3)] for y in P._indices.subset(2)])
+            [                  PMD[(5, ((),))]                PMD[(5, ((2,3),))]              PMD[(5, ((1,2,3),))]        PMD[(5, ((1,3,2), (2,3)))]]
+            [               PMD[(5, ((2,3),))]          PMD[(5, ((4,5), (2,3)))]        PMD[(5, ((1,2,3), (4,5)))] PMD[(5, ((1,3,2), (4,5), (2,3)))]]
         """        
         n, m = H.grade(), K.grade()
         # There is no way to create SymmetricGroup(0) using the
