@@ -1,21 +1,24 @@
 r"""
 Multivariate Tropical Polynomials
 
-This module provides the implementation of parent and element class for 
-multivariate tropical polynomials. When working with multivariate case, the
-tropical roots is no longer a point. Instead it become a curve in 2d, a
-surface in 3d, and a hypersurface in higher dimension.
-
 AUTHORS:
 
 - Verrel Rievaldo Wijaya (2024-06): initial version
+
+EXAMPLES::
+
+    sage: T = TropicalSemiring(QQ, use_min=True)
+    sage: R.<x,y,z> = PolynomialRing(T)
+    sage: R(-1)*x + R(-1)*x + R(-10)*y + R(-3)
+    (-1)*x + (-10)*y + (-3)
+    sage: (x+y+z)^2
+    0*x^2 + 0*x*y + 0*y^2 + 0*x*z + 0*y*z + 0*z^2
 
 REFERENCES:
 
     - [Bru2014]_
     - [Fil2017]_
     - [Hun2021]_
-
 """
 
 # ****************************************************************************
@@ -33,17 +36,33 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.plot.plot3d.list_plot3d import list_plot3d
-from sage.categories.sets_cat import Sets
+from sage.categories.semirings import Semirings
 
-from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
-from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalSurface, TropicalVariety
 
 class TropicalMPolynomial(MPolynomial_polydict):
     r"""
-    Generic multivariate tropical polynomial.
+    A multivariate tropical polynomial.
+
+    Let `x1, x2, \dots , xn` be variables which represent elements in the 
+    tropical semiring. A tropical monomial is any product of these variables,
+    possibly including repetitions: `x_1^{i_1}\dots x_n^{i_n}` where
+    `i_j \in \{0,1,\dots}`, for all `j\in \{1,dots,n}`. A multivariate
+    tropical polynomial is a finite linear combination of tropical monomials,
+    `p(x_1, \dots, x_n) = \sum_{i=1}^n c_i x_1^{i_1}\dots x_n^{i_n}`, where
+    the standard addition and multiplication operations are replaced by
+    tropical addition (taking the minimum or maximum) and tropical
+    multiplication (ordinary addition).
+
+    In classical arithmetic, we can rewrite the general form of a tropical
+    monomial: `x_1^{i_1}\dots x_n^{i_n} = i_1 x_1 + \dots + i_n x_n`. Thus,
+    the tropical polynomial can be viewed as the minimum (maximum) of a
+    finite collection of linear functions. So, each tropical polynomial
+    can be regarded as a piecewise-linear function from `\mathbb{R}^n` to
+    `\mathbb{R}`. This function is often referred to as a tropical
+    polynomial function.
 
     EXAMPLES:
 
@@ -66,8 +85,6 @@ class TropicalMPolynomial(MPolynomial_polydict):
         3*a*b + 1*a + 1*b
         sage: p1 * p2
         4*a^2*b^2 + 4*a^2*b + 4*a*b^2 + 1*a^2 + 1*a*b + 0*b^2
-        sage: p2^2
-        2*a^2*b^2 + 2*a^2*b + 2*a*b^2 + 2*a^2 + 2*a*b + 2*b^2
         sage: T(2) * p1
         5*a*b + 2*a + 1*b
         sage: p1(T(1),T(2))
@@ -113,8 +130,59 @@ class TropicalMPolynomial(MPolynomial_polydict):
         Traceback (most recent call last):
         ...
         ArithmeticError: cannot negate any non-infinite element
-
     """
+    def subs(self, fixed=None, **kwds):
+        """
+        Fix some given variables in a given tropical multivariate polynomial
+        and return the changed tropical multivariate polynomials.
+        
+        The polynomial itself is not affected. The variable, value pairs
+        for fixing are to be provided as a dictionary of the form
+        ``{variable: value}``. This is a special case of evaluating the
+        tropical polynomial with with some of the variables set to constants
+        while the remaining variables retain their original values.
+
+        INPUT:
+
+        -  ``fixed`` -- (optional) dictionary of inputs
+
+        -  ``**kwds`` -- named parameters
+
+        OUTPUT: new :class:`TropicalMPolynomial`
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = x^2 + y + R(3)
+            sage: p1((R(4),y))
+            0*y + 8
+            sage: p1.subs({x: 4})
+            0*y + 8
+        """
+        def check_type(dict, var):
+            try:
+                variables[i] = T(dict[var])
+            except TypeError:
+                variables[i] = dict[var]
+        
+        variables = list(self.parent().gens())
+        T = self.parent().base()
+        for i in range(len(variables)):
+            if str(variables[i]) in kwds:
+                check_type(kwds, str(variables[i]))
+            elif fixed:
+                if variables[i] in fixed:
+                    check_type(fixed, variables[i])
+                elif i in fixed:
+                    check_type(fixed, i)
+        if len(kwds) < len(variables):
+            for i, var in enumerate(variables):
+                if var.parent() is T:
+                    variables[i] = self.parent()(var.lift())
+                else:
+                    variables[i] = self.parent()(var)
+        return self(tuple(variables))
 
     def plot3d(self):
         """
@@ -146,14 +214,14 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1.plot3d()
             Traceback (most recent call last):
             ...
-            NotImplementedError: can only plot the graph of tropical 
+            NotImplementedError: can only plot the graph of tropical
             multivariate polynomial in two variables
         """
         from sage.arith.srange import srange
 
         if len(self.parent().variable_names()) != 2:
-            raise NotImplementedError("can only plot the graph of tropical" \
-                                " multivariate polynomial in two variables")
+            raise NotImplementedError("can only plot the graph of tropical "
+                                      "multivariate polynomial in two variables")
         axes = self.tropical_variety()._axes()
         xmin, xmax = axes[0][0], axes[0][1]
         ymin, ymax = axes[1][0], axes[1][1]
@@ -204,44 +272,92 @@ class TropicalMPolynomial(MPolynomial_polydict):
             [(2*t1 - t2 + 3, t2, t1), [t2 + 3/2 <= t1], 1]
             [(t1 + 9/2, t2, t1), [t1 <= t2 + 3/2], 1]]
         """
+        from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalSurface, TropicalVariety
+
         if self.parent().ngens() == 2:
             return TropicalCurve(self)
         if self.parent().ngens() == 3:
             return TropicalSurface(self)
         return TropicalVariety(self)
+    
+    def _repr_(self):
+        r"""
+        Return a nice tropical polynomial string representation.
+        
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: x + R(-1)*y + R(-3)
+            0*x + (-1)*y + (-3)
+        """
+        if not self.dict():
+            return str(self.parent().base().zero())
+        s = super()._repr_()
+        if self.monomials()[-1].is_constant():
+            if self.monomial_coefficient(self.parent()(0)) < 0:
+                s = s.replace(" - ", " + -")
+                const = str(self.monomial_coefficient(self.parent(0)))
+                s = s.replace(f" {const}", f" ({const})")
+        return s
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
-    """
-    Semiring structure of tropical polynomials in multiple variables.
+    r"""
+    Semiring of tropical polynomials in multiple variables.
+
+    The set of tropical polynomials form a semiring because it satisfy
+    the following properties. Tropical addition is associative and
+    commutative, with the identity element being `+\infty` (or `-\infty).
+    Tropical multiplication is associative, with the identity element
+    being zero, and it distributes over tropical addition. Furthermore,
+    multiplication by the additive identity results in the additive
+    identity, preserving the annihilation property. However, it fails to
+    become a ring because it lacks additive inverses.
     """
 
     def __init__(self, base_semiring, n, names, order='degrevlex'):
-        """
+        r"""
+        Initialize ``self``.
+
         EXAMPLES::
 
-            sage: T = TropicalSemiring(QQ, use_min=True)
-            sage: R.<x,y,z> = PolynomialRing(T)
-            sage: R(-1)*x + R(1)*x + y
-            (-1)*x + 0*y
-            sage: (x+y+z)^2
-            0*x^2 + 0*x*y + 0*y^2 + 0*x*z + 0*y*z + 0*z^2
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 5, 'x'); R
+            Multivariate Tropical Polynomial Semiring in x0, x1, x2, x3, x4 
+            over Rational Field
+            sage: TestSuite(R).run()
         """
+        from sage.rings.polynomial.term_order import TermOrder
+
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
-        Parent.__init__(self, base=base_semiring, names=names, category=Sets())
+        Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
         self._ngens = n
         order = TermOrder(order, n)
         self._term_order = order
+    
+    def term_order(self):
+        """
+        Return the defined term order of this tropical polynomial semiring.
+        
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: R.term_order()
+            Degree reverse lexicographic term order
+        """
+        return self._term_order
         
     Element = TropicalMPolynomial
 
     def _element_constructor_(self, x):
-        """"
+        r""""
         Convert ``x`` into this tropical multivariate polynomial semiring.
 
         INPUT:
 
-        - ``x`` -- dict or MPolynomial
+        - ``x`` -- ``dict``, constant, or :class:`MPolynomial`
 
         EXAMPLES::
 
@@ -254,26 +370,66 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: f = -x*y + 1
             sage: R(f)
             (-1)*x*y + 1
-        """
-        C = self.element_class
-        new_dict = {}
-        if isinstance(x, MPolynomial):
-            x = x.dict()
-        elif x in self.base().base_ring(): # constant
-            term = [0 for _ in range(self.ngens())]
-            x = {tuple(term):x}
         
-        if isinstance(x, dict):
-            for key, value in x.items(): # convert each coefficient to tropical
-                new_dict[key] = self.base()(value)
+        TESTS::
 
-        return C(self, new_dict)
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: S.<a,b> = PolynomialRing(T)
+            sage: R(a + b)
+            Traceback (most recent call last):
+            ...
+            ValueError: can not convert 0*a + 0*b to Multivariate Tropical 
+            Polynomial Semiring in x, y over Rational Field
+        """
+        new_dict = {}
+        if isinstance(x, TropicalMPolynomial):
+            if x.parent() is not self:
+                raise ValueError(f"can not convert {x} to {self}")
+        if isinstance(x, MPolynomial):
+            if x.parent().variable_names() == self.variable_names():
+                x = x.dict()
+            else:
+                raise ValueError(f"can not convert {x} to {self}")
+        elif x in self.base().base_ring(): # constant
+            term = [0]*self.ngens()
+            x = {tuple(term): x}
+        if isinstance(x, dict):
+            for key, value in x.items(): # convert coefficient to tropical
+                new_dict[key] = self.base()(value)
+        return self.element_class(self, new_dict)
+    
+    def one(self):
+        r"""
+        Return the multiplicative identity of this semiring.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x')
+            sage: R.one()
+            0
+        """
+        return self(0)
+
+    def zero(self):
+        r"""
+        Return the additive identity of this semiring.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R = PolynomialRing(T, 'x')
+            sage: R.zero()
+            +infinity
+        """
+        return self(self.base().zero())
 
     def _repr_(self):
-        """
+        r"""
         Return a string representation of this polynomial semiring.
 
-            EXAMPLES::
+        EXAMPLES::
 
             sage: T = TropicalSemiring(RR)
             sage: R.<u,v,w> = PolynomialRing(T); R
@@ -286,23 +442,14 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         return (f"Multivariate Tropical Polynomial Semiring in {', '.join(self.variable_names())}"
             f" over {self.base_ring().base_ring()}")
     
-    def term_order(self):
-        """
-        Return the term order of this polynomial semiring.
-
-        EXAMPLES::
-
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<x,y,z> = PolynomialRing(T)
-            sage: R.term_order()
-            Degree reverse lexicographic term order
-        """
-        return self._term_order
-    
     def random_element(self, degree=2, terms=None, choose_degree=False,
                        *args, **kwargs):
-        """
+        r"""
         Return a random multivariate tropical polynomial.
+
+        SEEALSO::
+
+            :meth:`MPolynomialRing_base.random_element`
 
         EXAMPLES::
 
@@ -318,7 +465,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
                                      *args, **kwargs))
     
     def gen(self, n=0):
-        """
+        r"""
         Return the indeterminate generator of this polynomial semiring.
 
         EXAMPLES::
@@ -341,9 +488,8 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     
     @cached_method
     def gens(self):
-        """
-        Return a tuple whose entries are the generators for this object,
-        in order.
+        r"""
+        Return the generators of ``self``.
 
         EXAMPLES::
         
@@ -360,8 +506,8 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         return tuple(gens)
     
     def ngens(self):
-        """
-        Return the number of generators of this polynomial semiring.
+        r"""
+        Return the number of generators of ``self``.
 
         EXAMPLES::
         
