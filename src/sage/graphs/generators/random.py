@@ -825,7 +825,7 @@ def RandomHolmeKim(n, m, p, seed=None):
 
 def RandomIntervalGraph(n, seed=None):
     r"""
-    Returns a random interval graph.
+    Return a random interval graph.
 
     An interval graph is built from a list `(a_i,b_i)_{1\leq i \leq n}`
     of intervals : to each interval of the list is associated one
@@ -845,6 +845,11 @@ def RandomIntervalGraph(n, seed=None):
         used to create the graph are saved with the graph and can
         be recovered using ``get_vertex()`` or ``get_vertices()``.
 
+    .. SEEALSO::
+
+        - :meth:`sage.graphs.generators.intersection.IntervalGraph`
+        - :meth:`sage.graphs.generators.random.RandomProperIntervalGraph`
+
     INPUT:
 
     - ``n`` -- integer; the number of vertices in the random graph
@@ -863,7 +868,6 @@ def RandomIntervalGraph(n, seed=None):
     """
     if seed is not None:
         set_random_seed(seed)
-    from sage.misc.prandom import random
     from sage.graphs.generators.intersection import IntervalGraph
 
     intervals = [tuple(sorted((random(), random()))) for i in range(n)]
@@ -892,6 +896,11 @@ def RandomProperIntervalGraph(n, seed=None):
         The vertices are named 0, 1, 2, and so on. The intervals
         used to create the graph are saved with the graph and can
         be recovered using ``get_vertex()`` or ``get_vertices()``.
+
+    .. SEEALSO::
+
+        - :meth:`sage.graphs.generators.intersection.IntervalGraph`
+        - :meth:`sage.graphs.generators.random.RandomIntervalGraph`
 
     INPUT:
 
