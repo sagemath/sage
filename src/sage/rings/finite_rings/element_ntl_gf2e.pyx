@@ -1281,7 +1281,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             Traceback (most recent call last):
             ...
             ValueError: no logarithm of z50 exists to base z50^49 + z50^46 + z50^45 + z50^44 + z50^41 + z50^34 + z50^33 + z50^32 + z50^27 + z50^25 + z50^24 + z50^21 + z50^18 + z50^17 + z50^16 + z50^15 + z50^12 + z50^11 + z50^10 + z50^8 + z50^7 + z50^3 + z50^2
-        
+
         An example for ``check=True``::
 
             sage: F.<t> = GF(2^5, impl='ntl')

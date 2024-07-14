@@ -1436,7 +1436,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: a = b^7
             sage: a.log(b)
             7
-        
+
         TESTS:
 
         An example for ``check=True``::
