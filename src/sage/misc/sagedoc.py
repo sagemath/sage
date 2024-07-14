@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Format Sage documentation for viewing with IPython and the notebook
 
@@ -16,7 +17,7 @@ AUTHORS:
 TESTS:
 
 Check that argspecs of extension function/methods appear correctly,
-see :trac:`12849`::
+see :issue:`12849`::
 
     sage: from sage.env import SAGE_DOC
     sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')
@@ -126,13 +127,13 @@ def _rmcmd(s, cmd, left='', right=''):
 
     INPUT:
 
-    - ``s`` - (string) string from which to remove the command
+    - ``s`` -- (string) string from which to remove the command
 
-    - ``cmd`` - (string) command to be removed.  This should be a
+    - ``cmd`` -- (string) command to be removed.  This should be a
       command which takes a single argument, like 'emph' or 'url'; the
       command is removed, but its argument is not.
 
-    - ``left``, ``right`` - (string, optional, default '') add these
+    - ``left``, ``right`` -- (string, default: '') add these
       strings at the left and right ends of the command. See the
       examples.
 
@@ -196,8 +197,8 @@ def detex(s, embedded=False):
 
     INPUT:
 
-    - ``s`` - string
-    - ``embedded`` - boolean (optional, default False)
+    - ``s`` -- string
+    - ``embedded`` -- boolean (default: ``False``)
 
     If ``embedded`` is False, then do the replacements in both
     ``math_substitutes`` and ``nonmath_substitutes``.  If True, then
@@ -338,7 +339,7 @@ def skip_TESTS_block(docstring):
         sage: skip_TESTS_block(start + test + another_fake).rstrip() == start.rstrip()
         True
 
-    Double colons ``::`` are also not considered as headers (:trac:`27896`)::
+    Double colons ``::`` are also not considered as headers (:issue:`27896`)::
 
         sage: colons = ' ::\n\n     sage: 2+2\n     4\n\n'
         sage: skip_TESTS_block(start + test2 + colons).rstrip() == start.rstrip()
@@ -502,18 +503,35 @@ def process_dollars(s):
     return s
 
 
-# Sage github issue shortcuts. For example, :trac:`7549` .
+# When adding roles here, also add them to SAGE_ROOT/src/tox.ini [flake8]
+# and document them in SAGE_ROOT/src/doc/en/developer/sage_manuals.rst
+#
+# Sage github issue shortcuts. For example, :issue:`7549`.
 pythonversion = sys.version.split(' ')[0]
 extlinks = {
     'python': (f'https://docs.python.org/release/{pythonversion}/%s', None),
-    'trac': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'), # support :trac: for backward compatibility
-    'issue': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'),
+    'issue': ('https://github.com/sagemath/sage/issues/%s', 'Issue #%s'),
+    'sage_root': ('https://github.com/sagemath/sage/tree/develop/%s', 'SAGE_ROOT/%s'),
     'wikipedia': ('https://en.wikipedia.org/wiki/%s', 'Wikipedia article %s'),
     'arxiv': ('https://arxiv.org/abs/%s', 'arXiv %s'),
     'oeis': ('https://oeis.org/%s', 'OEIS sequence %s'),
     'doi': ('https://doi.org/%s', 'doi:%s'),
     'pari': ('https://pari.math.u-bordeaux.fr/dochtml/help/%s', 'pari:%s'),
-    'mathscinet': ('https://www.ams.org/mathscinet-getitem?mr=%s', 'MathSciNet %s')
+    'mathscinet': ('https://www.ams.org/mathscinet-getitem?mr=%s', 'MathSciNet %s'),
+    'common_lisp': ('https://www.lispworks.com/documentation/lw50/CLHS/Body/%s.htm', 'Common Lisp: %s'),
+    'ecl': ('https://ecl.common-lisp.dev/static/manual/%s.html', 'ECL: %s'),
+    'gap': ('https://docs.gap-system.org/doc/ref/%s_mj.html', 'GAP: %s'),
+    'gap_package': ('https://docs.gap-system.org/pkg/%s', 'GAP package %s'),
+    'giac_cascmd': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac/doc/en/cascmd_en/%s.html', 'Giac: %s'),
+    'giac_us': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac_us.html#%s', 'Giac API: %s'),
+    'maxima': ('https://maxima.sourceforge.io/docs/manual/maxima_singlepage.html#%s', 'Maxima: %s'),
+    'meson': ('https://mesonbuild.com/%s', 'Meson: %s'),
+    'polymake': ('https://polymake.org/doku.php/documentation/latest/%s', 'polymake: %s'),
+    'ppl': ('https://www.bugseng.com/products/ppl/documentation/user/ppl-user-1.2-html/%s.html', 'PPL: %s'),
+    'qepcad': ('https://www.usna.edu/CS/qepcadweb/B/%s.html', 'QEPCAD: %s'),
+    'scip': ('https://scipopt.org/doc/html/%s.php', 'SCIP: %s'),
+    'singular': ('https://www.singular.uni-kl.de/Manual/4-3-2/%s.htm', 'Singular: %s'),
+    'soplex': ('https://soplex.zib.de/doc/html/%s.php', 'SoPlex: %s'),
 }
 
 
@@ -533,7 +551,7 @@ def process_extlinks(s, embedded=False):
     INPUT:
 
     - ``s`` -- string, in practice a docstring
-    - ``embedded`` -- boolean (optional, default False)
+    - ``embedded`` -- boolean (default: ``False``)
 
     This function is called by :func:`format`, and if in the notebook,
     it sets ``embedded`` to be ``True``, otherwise ``False``.
@@ -541,7 +559,7 @@ def process_extlinks(s, embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import process_extlinks
-        sage: process_extlinks('See :trac:`1234`, :wikipedia:`Wikipedia <Sage_(mathematics_software)>`, and :trac:`4321` ...')
+        sage: process_extlinks('See :issue:`1234`, :wikipedia:`Wikipedia <Sage_(mathematics_software)>`, and :issue:`4321` ...')
         'See https://github.com/sagemath/sage/issues/1234, https://en.wikipedia.org/wiki/Sage_(mathematics_software), and https://github.com/sagemath/sage/issues/4321 ...'
         sage: process_extlinks('See :issue:`1234` for more information.', embedded=True)
         'See :issue:`1234` for more information.'
@@ -571,7 +589,7 @@ def process_mathtt(s):
 
     INPUT:
 
-    - ``s`` - string, in practice a docstring
+    - ``s`` -- string, in practice a docstring
 
     This function is called by :func:`format`.
 
@@ -623,7 +641,7 @@ def format(s, embedded=False):
     r"""noreplace
     Format Sage documentation ``s`` for viewing with IPython.
 
-    This calls ``detex`` on ``s`` to convert LaTeX commands to plain
+    This calls :func:`detex` on ``s`` to convert LaTeX commands to plain
     text, unless the directive ``nodetex`` is given in the first line
     of the string.
 
@@ -637,13 +655,13 @@ def format(s, embedded=False):
 
     INPUT:
 
-    - ``s`` - string
-    - ``embedded`` - boolean (optional, default False)
+    - ``s`` -- string
+    - ``embedded`` -- boolean (default: ``False``)
 
     OUTPUT: string
 
-    Set ``embedded`` equal to True if formatting for use in the
-    notebook; this just gets passed as an argument to ``detex``.
+    Set ``embedded`` equal to ``True`` if formatting for use in the
+    notebook; this just gets passed as an argument to :func:`detex`.
 
     .. SEEALSO::
 
@@ -684,7 +702,7 @@ def format(s, embedded=False):
         "   Returns ...  Todo: add tests as in combinat::rankers\n"
 
     In the following use case, the ``nodetex`` directive would have been ignored prior
-    to :trac:`11815`::
+    to :issue:`11815`::
 
         sage: cython_code = ["def testfunc(x):",
         ....: "    '''",
@@ -704,7 +722,7 @@ def format(s, embedded=False):
         <BLANKLINE>
 
     We check that the ``noreplace`` directive works, even combined with
-    ``nodetex`` (see :trac:`11817`)::
+    ``nodetex`` (see :issue:`11817`)::
 
         sage: print(format('''nodetex, noreplace\n<<<identity_matrix>>>`\\not= 0`'''))
         <<<identity_matrix>>>`\not= 0`
@@ -722,7 +740,7 @@ def format(s, embedded=False):
            Return the n x n identity matrix over the given ring.
         ...
 
-    Check that backslashes are preserved in code blocks (:trac:`29140`)::
+    Check that backslashes are preserved in code blocks (:issue:`29140`)::
 
         sage: format('::\n'                                                             # needs sphinx
         ....:        '\n'
@@ -759,7 +777,7 @@ def format(s, embedded=False):
     except ImportError:
         pass
 
-    docs = set([])
+    docs = set()
     if 'noreplace' not in directives:
         i_0 = 0
         while True:
@@ -812,7 +830,9 @@ def format_src(s):
     If ``s`` contains a string of the form "<<<obj>>>", then it
     replaces it with the source code for "obj".
 
-    INPUT: ``s`` - string
+    INPUT:
+
+    - ``s`` -- string
 
     OUTPUT: string
 
@@ -826,7 +846,7 @@ def format_src(s):
     """
     if not isinstance(s, str):
         raise TypeError("s must be a string")
-    docs = set([])
+    docs = set()
 
     try:
         import sage.all
@@ -1033,34 +1053,34 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     INPUT:
 
-    - ``string`` - a string to find in the Sage source code.
+    - ``string`` -- a string to find in the Sage source code.
 
-    - ``extra1``, ..., ``extra5`` - additional strings to require when
+    - ``extra1``, ..., ``extra5`` -- additional strings to require when
       searching.  Lines must match all of these, as well as ``string``.
 
-    - ``whole_word`` (optional, default False) - if True, search for
+    - ``whole_word`` (default: ``False``) -- if True, search for
       ``string`` and ``extra1`` (etc.) as whole words only.  This
       assumes that each of these arguments is a single word, not a
       regular expression, and it might have unexpected results if used
       with regular expressions.
 
-    - ``ignore_case`` (optional, default True) - if False, perform a
+    - ``ignore_case`` (default: ``True``) -- if False, perform a
       case-sensitive search
 
-    - ``multiline`` (optional, default False) - if True, search more
+    - ``multiline`` (default: ``False``) -- if True, search more
       than one line at a time.  In this case, print any matching file
       names, but don't print line numbers.
 
-    - ``interact`` (optional, default ``True``) - if ``False``, return
+    - ``interact`` (default: ``True``) -- if ``False``, return
       a string with all the matches. Otherwise, this function returns
       ``None``, and the results are displayed appropriately, according
       to whether you are using the notebook or the command-line
       interface. You should not ordinarily need to use this.
 
-    - ``path_re`` (optional, default '') - regular expression which
+    - ``path_re`` (default: '') -- regular expression which
       the filename (including the path) must match.
 
-    - ``module`` (optional, default 'sage') - the module in which to
+    - ``module`` (default: 'sage') -- the module in which to
       search.  The default is 'sage', the entire Sage library.  If
       ``module`` doesn't start with "sage", then the links in the
       notebook output may not function.
@@ -1141,7 +1161,8 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
         sage: s = search_src('MatRiX', path_re='matrix', interact=False); s.find('x') > 0
         True
 
-        sage: s = search_src('MatRiX', path_re='matrix', interact=False, ignore_case=False); s.find('x') > 0
+        sage: s = search_src('MatRiX', path_re='matrix',
+        ....:                interact=False, ignore_case=False); s.find('x') > 0
         False
 
     Searches are by default restricted to single lines, but this can
@@ -1153,7 +1174,8 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
         sage: len(search_src('log', 'derivative', interact=False).splitlines()) < 40
         True
-        sage: len(search_src('log', 'derivative', interact=False, multiline=True).splitlines()) > 70
+        sage: len(search_src('log', 'derivative',
+        ....:                interact=False, multiline=True).splitlines()) > 70
         True
 
     A little recursive narcissism: let's do a doctest that searches for
@@ -1303,11 +1325,11 @@ def format_search_as_html(what, results, search):
 
     INPUT:
 
-    - ``what`` - (string) what was searched (source code or
+    - ``what`` -- (string) what was searched (source code or
       documentation)
-    - ``results`` - (string or list) the results of the search as a string or list of
+    - ``results`` -- (string or list) the results of the search as a string or list of
       search results
-    - ``search`` - (string or list) what was being searched for, either as a
+    - ``search`` -- (string or list) what was being searched for, either as a
       string which is taken verbatim, or a list of multiple search terms if
       there were more than one
 
@@ -1355,7 +1377,7 @@ def format_search_as_html(what, results, search):
     if not isinstance(results, list):
         results = results.splitlines()
 
-    files = set([])
+    files = set()
     for L in results:
         filename = L.strip().split(':', 1)[0]
         if filename:
@@ -1456,9 +1478,9 @@ class _sage_doc:
 
         INPUT:
 
-        - ``obj`` - a Sage object
-        - ``output`` - 'html', 'rst', or 'text': return documentation in this form
-        - ``view`` - only has an effect if output is 'html': in this
+        - ``obj`` -- a Sage object
+        - ``output`` -- 'html', 'rst', or 'text': return documentation in this form
+        - ``view`` -- only has an effect if output is 'html': in this
           case, if ``view`` is ``True``, display the documentation in
           a web browser.  Otherwise, return the documentation as a
           string.
@@ -1599,9 +1621,9 @@ class _sage_doc:
 
         INPUT:
 
-        - ``name`` - string, name of the documentation
+        - ``name`` -- string, name of the documentation
 
-        - ``testing`` - boolean (optional, default False): if True,
+        - ``testing`` -- boolean (default: ``False``): if True,
           then just return the URL and path-name for this document;
           don't open the web browser.
 

@@ -181,7 +181,7 @@ def matching(A, B):
     """
     answer = []
     if len(A) == 0 or len(B) == 0:
-        return [set([])]
+        return [set()]
     for v in A:
         for w in B:
             for M in matching(set(A).difference([v]), set(B).difference([w])):
@@ -195,7 +195,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
     """
     This combines :class:`SimplicialComplex` and
     :class:`UniqueRepresentation`. It is intended to be used to make
-    standard examples of simplicial complexes unique. See :trac:`13566`.
+    standard examples of simplicial complexes unique. See :issue:`13566`.
 
     INPUT:
 
@@ -437,7 +437,7 @@ def SurfaceOfGenus(g, orientable=True):
 
     -  ``g`` -- a non-negative integer.  The desired genus
 
-    -  ``orientable`` -- boolean (optional, default ``True``). If
+    -  ``orientable`` -- boolean (default: ``True``). If
        ``True``, return an orientable surface, and if ``False``,
        return a non-orientable surface.
 
@@ -476,7 +476,7 @@ def SurfaceOfGenus(g, orientable=True):
 
 
 def MooreSpace(q):
-    """
+    r"""
     Triangulation of the mod `q` Moore space.
 
     INPUT:
@@ -842,7 +842,7 @@ def RealProjectiveSpace(n):
         V = set(range(0, n+2))
         S = Sphere(n).barycentric_subdivision()
         X = S.facets()
-        facets = set([])
+        facets = set()
         for f in X:
             new = []
             for v in f:
@@ -1243,7 +1243,7 @@ def RandomComplex(n, d, p=0.5):
     - ``d`` -- dimension of the complex
 
     -  ``p`` -- floating point number between 0 and 1
-       (optional, default 0.5)
+       (default: 0.5)
 
     A random `d`-dimensional simplicial complex on `n` vertices,
     as defined for example by Meshulam and Wallach [MW2009]_, is
@@ -1485,7 +1485,7 @@ def ShiftedComplex(generators):
     from sage.combinat.partition import Partitions
     Facets = []
     for G in generators:
-        G = list(reversed(sorted(G)))
+        G = sorted(G, reverse=True)
         L = len(G)
         for k in range(L * (L+1) // 2, sum(G) + 1):
             for P in Partitions(k, length=L, max_slope=-1, outer=G):

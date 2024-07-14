@@ -33,7 +33,6 @@ AUTHORS:
 - Robert Bradshaw (2007-04): generalization to hyperelliptic curves
 
 - Julian Rueth (2014-05-09): improved caching
-
 """
 
 # ****************************************************************************
@@ -48,6 +47,7 @@ AUTHORS:
 
 from sage.arith.misc import integer_ceil as ceil
 from sage.arith.misc import binomial
+from sage.categories.algebras import Algebras
 from sage.functions.log import log
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
@@ -56,7 +56,7 @@ from sage.misc.profiler import Profiler
 from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
-from sage.modules.free_module_element import is_FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
 from sage.rings.integer import Integer
@@ -67,22 +67,22 @@ from sage.rings.rational import Rational
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import IntegralDomain
+from sage.categories.integral_domains import IntegralDomains
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.ring import CommutativeAlgebra
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
-from sage.structure.element import CommutativeAlgebraElement, ModuleElement
+from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import HyperellipticCurve_generic
+from sage.structure.element import ModuleElement
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
+class SpecialCubicQuotientRingElement(ModuleElement):
     """
     An element of a :class:`SpecialCubicQuotientRing`.
     """
@@ -95,10 +95,10 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
 
         - ``parent`` -- a :class:`SpecialCubicQuotientRing`
 
-        - ``p0, p1, p2`` -- coefficients; must be coercible
+        - ``p0``, ``p1``, ``p2`` -- coefficients; must be coercible
           into parent.poly_ring()
 
-        - ``check`` -- bool (default True): whether to carry
+        - ``check`` -- bool (default: ``True``): whether to carry
           out coercion
 
         EXAMPLES::
@@ -108,11 +108,20 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
             sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialCubicQuotientRingElement
             sage: SpecialCubicQuotientRingElement(R, 2, 3, 4)
             (2) + (3)*x + (4)*x^2
+
+        TESTS::
+
+            sage: B.<t> = PolynomialRing(Integers(125))
+            sage: R = monsky_washnitzer.SpecialCubicQuotientRing(t^3 - t + B(1/4))
+            sage: TestSuite(R).run()
+            sage: p = R.create_element(t, t^2 - 2, 3)
+            sage: -p
+            (124*T) + (124*T^2 + 2)*x + (122)*x^2
         """
         if not isinstance(parent, SpecialCubicQuotientRing):
             raise TypeError(f"parent (={parent}) must be a SpecialCubicQuotientRing")
 
-        CommutativeAlgebraElement.__init__(self, parent)
+        ModuleElement.__init__(self, parent)
 
         if check:
             poly_ring = parent._poly_ring
@@ -145,7 +154,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
             column.extend([base_ring(0)] * (degree - len(column)))
         return coeffs
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         EXAMPLES::
 
@@ -161,7 +170,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
         """
         return bool(self._triple[0]) or bool(self._triple[1]) or bool(self._triple[2])
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         EXAMPLES::
 
@@ -176,7 +185,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
         """
         return richcmp(self._triple, other._triple, op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -188,7 +197,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
         """
         return "(%s) + (%s)*x + (%s)*x^2" % self._triple
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         EXAMPLES::
 
@@ -387,7 +396,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
                                     check=False)
 
 
-class SpecialCubicQuotientRing(CommutativeAlgebra):
+class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
     r"""
     Specialised class for representing the quotient ring
     `R[x,T]/(T - x^3 - ax - b)`, where `R` is an
@@ -419,6 +428,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
         sage: R
         SpecialCubicQuotientRing over Ring of integers modulo 125
         with polynomial T = x^3 + 124*x + 94
+        sage: TestSuite(R).run()
 
     Get generators::
 
@@ -513,13 +523,6 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
             raise ArithmeticError("2 and 3 must be invertible in the "
                                   "coefficient ring (=%s) of Q" % base_ring)
 
-        # CommutativeAlgebra.__init__ tries to establish a coercion
-        # from the base ring, by github issue #9138. The corresponding
-        # hom set is cached.  In order to use self as cache key, its
-        # string representation is used. In otder to get the string
-        # representation, we need to know the attributes _a and
-        # _b. Hence, in #9138, we have to move CommutativeAlgebra.__init__
-        # further down:
         self._a = Q[1]
         self._b = Q[0]
         if laurent_series:
@@ -527,7 +530,8 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
         else:
             self._poly_ring = PolynomialRing(base_ring, 'T')    # R[T]
         self._poly_generator = self._poly_ring.gen(0)    # the generator T
-        CommutativeAlgebra.__init__(self, base_ring)
+        Parent.__init__(self, base=base_ring,
+                        category=Algebras(base_ring).Commutative())
 
         # Precompute a matrix that is used in the Toom-Cook multiplication.
         # This is where we need 2 and 3 invertible.
@@ -537,7 +541,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
         m = matrix(QQ, [[1, -12, 2], [-3, 30, -3], [2, -12, 1]]) / 6
         self._speedup_matrix = m.change_ring(base_ring).list()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -599,10 +603,10 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
 
         INPUT:
 
-        - ``p0, p1, p2`` -- coefficients; must be coercible
+        - ``p0``, ``p1``, ``p2`` -- coefficients; must be coercible
           into poly_ring()
 
-        - ``check`` -- bool (default True): whether to carry
+        - ``check`` -- bool (default: ``True``): whether to carry
           out coercion
 
         EXAMPLES::
@@ -654,7 +658,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
     Element = SpecialCubicQuotientRingElement
 
 
-def transpose_list(input):
+def transpose_list(input) -> list[list]:
     """
     INPUT:
 
@@ -1019,7 +1023,7 @@ def reduce_all(Q, p, coeffs, offset, compute_exact_form=False):
 
     OUTPUT:
 
-    - ``A, B`` - pair such that the input differential is
+    - ``A``, ``B`` -- pair such that the input differential is
       cohomologous to (A + Bx) dx/y.
 
     .. NOTE::
@@ -1105,7 +1109,7 @@ def frobenius_expansion_by_newton(Q, p, M):
 
     OUTPUT:
 
-    - ``F0, F1`` -- elements of
+    - ``F0``, ``F1`` -- elements of
       ``SpecialCubicQuotientRing(Q)``, as described above
 
     - ``r`` -- non-negative integer, as described above
@@ -1293,7 +1297,7 @@ def frobenius_expansion_by_series(Q, p, M):
 
     OUTPUT:
 
-    - ``F0, F1`` -- elements of
+    - ``F0``, ``F1`` -- elements of
       ``SpecialCubicQuotientRing(Q)``, as described above
 
     - ``r`` -- non-negative integer, as described above
@@ -1854,7 +1858,7 @@ def matrix_of_frobenius_hyperelliptic(Q, p=None, prec=None, M=None):
     return M.transpose(), [f for f, a in reduced]
 
 
-class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
+class SpecialHyperellipticQuotientElement(ModuleElement):
     r"""
     Element in the Hyperelliptic quotient ring.
 
@@ -1880,7 +1884,7 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: elt = MW(x + x**2 + y - 77)
             sage: TestSuite(elt).run()
         """
-        CommutativeAlgebraElement.__init__(self, parent)
+        ModuleElement.__init__(self, parent)
         if not check:
             self._f = parent._poly_ring(val, check=False)
             return
@@ -1890,13 +1894,13 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             return
         if isinstance(val, tuple):
             val, offset = val
-        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+        if isinstance(val, list) and val and isinstance(val[0], FreeModuleElement):
             val = transpose_list(val)
         self._f = parent._poly_ring(val)
         if offset != 0:
             self._f = self._f.parent()([a << offset for a in self._f], check=False)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare the elements.
 
@@ -2358,7 +2362,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
         coeffs = transpose_list(coeffs)
         return [V(a) for a in coeffs], y_offset
 
-class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra):
+
+class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
     """
     The special hyperelliptic quotient ring.
     """
@@ -2380,27 +2385,19 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
 
             sage: HQR is SpecialHyperellipticQuotientRing(E)
             True
-
         """
         if R is None:
             R = Q.base_ring()
 
-        # Github issue #9138: CommutativeAlgebra.__init__ must not be
-        # done so early.  It tries to register a coercion, but that
-        # requires the hash being available.  But the hash, in its
-        # default implementation, relies on the string representation,
-        # which is not available at this point.
-        # CommutativeAlgebra.__init__(self, R)  # moved to below.
-
         x = PolynomialRing(R, 'xx').gen()
-        if is_EllipticCurve(Q):
+        if isinstance(Q, EllipticCurve_generic):
             E = Q
             if E.a1() != 0 or E.a2() != 0:
                 raise NotImplementedError("curve must be in Weierstrass normal form")
             Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
             self._curve = E
 
-        elif is_HyperellipticCurve(Q):
+        elif isinstance(Q, HyperellipticCurve_generic):
             C = Q
             if C.hyperelliptic_polynomials()[1] != 0:
                 raise NotImplementedError("curve must be of form y^2 = Q(x)")
@@ -2428,10 +2425,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         self._series_ring_y = self._series_ring.gen(0)
         self._series_ring_0 = self._series_ring.zero()
 
-        # Github issue #9138: Initialise the commutative algebra here!
-        # Below, we do self(self._poly_ring.gen(0)), which requires
-        # the initialisation being finished.
-        CommutativeAlgebra.__init__(self, R)
+        Parent.__init__(self, base=R, category=Algebras(R).Commutative())
 
         self._poly_ring = PolynomialRing(self._series_ring, 'x')
 
@@ -2445,7 +2439,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         self._monomial_diffs = {}
         self._monomial_diff_coeffs = {}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation.
 
@@ -2495,7 +2489,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
             over Integer Ring
         """
         return SpecialHyperellipticQuotientRing(self._Q.change_ring(R), R,
-            is_LaurentSeriesRing(self._series_ring))
+                                                is_LaurentSeriesRing(self._series_ring))
 
     def _element_constructor_(self, val, offset=0, check=True):
         r"""
@@ -2787,7 +2781,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         """
         return self._monsky_washnitzer
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``False`` as ``self`` is not a field.
 
@@ -3842,13 +3836,11 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             pass
 
         # The smallest y term of (1/j) d(x^i y^j) is constant for all j.
-        L = []
         x, y = self.base_ring().gens()
         n = self.degree()
-        for i in range(n):
-            L.append((y*x**i).diff().extract_pow_y(0))
+        L = [(y * x**i).diff().extract_pow_y(0) for i in range(n)]
         A = matrix(L).transpose()
-        if not isinstance(A.base_ring(), IntegralDomain):
+        if A.base_ring() not in IntegralDomains():
             # must be using integer_mod or something to approximate
             self._helper_matrix = (~A.change_ring(QQ)).change_ring(A.base_ring())
         else:

@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 r"""
 Abstract base class for Sage objects
 """
@@ -346,7 +346,7 @@ cdef class SageObject:
             sage: type(_)
             <class 'sage.typeset.unicode_art.UnicodeArt'>
 
-        Check that breakpoints and baseline are preserved (:trac:`29202`)::
+        Check that breakpoints and baseline are preserved (:issue:`29202`)::
 
             sage: # needs sage.groups
             sage: F = FreeAbelianMonoid(index_set=ZZ)
@@ -626,7 +626,7 @@ cdef class SageObject:
             AssertionError: Not implemented method: bla
 
         Check that only errors triggered by ``AbstractMethod`` are caught
-        (:trac:`29694`)::
+        (:issue:`29694`)::
 
             sage: class NotAbstract(SageObject):
             ....:     @lazy_attribute
@@ -755,14 +755,7 @@ cdef class SageObject:
 
     def _libgap_(self):
         from sage.libs.gap.libgap import libgap
-        return libgap.eval(self._libgap_init_())
-
-    def _libgap_init_(self):
-        """
-        For consistency's sake we provide a ``_libgap_init_`` but in most cases
-        we can use the same as ``_gap_init_`` here.
-        """
-        return self._gap_init_()
+        return libgap.eval(self)
 
     def _gp_(self, G=None):
         if G is None:

@@ -155,6 +155,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.polymake import polymake
             sage: loads(dumps(polymake)) is polymake
             True
 
@@ -277,17 +278,17 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             cls = self._object_class()
 
             def convert(y):
-                if isinstance(y, cls):
-                    return y
-                else:
-                    return self(y)
+                return y if isinstance(y, cls) else self(y)
+
             for k, v in x.items():
                 k = convert(k)
                 v = convert(v)
                 z[k] = v
-                A.append("{}=>{}".format(k.name(), v.name()))
+                A.append(f"{k.name()}=>{v.name()}")
             r = self.new("{" + ",".join(A) + "}")
-            r.__sage_dict = z # do this to avoid having the entries of the list be garbage collected
+
+            # this to avoid having the entries of the list be garbage collected
+            r.__sage_dict = z
             return r
 
         import sage.rings.abc
@@ -567,7 +568,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             sage: polymake.get('$myvar[0]')                     # optional - jupymake
             'Polymake::polytope::Polytope__Rational=ARRAY(...)'
 
-        The following tests against :trac:`22658`::
+        The following tests against :issue:`22658`::
 
             sage: P = polymake.new_object("Polytope", FACETS=[[12, -2, -3, -5, -8, -13, -21, -34, -55],   # optional - jupymake
             ....:  [0, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -850,8 +851,9 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         return f(*args, **kwds)
 
 
-########################################
-## Elements
+# --------
+# Elements
+# --------
 
 class PolymakeElement(ExtraTabCompletion, InterfaceElement):
     """
@@ -957,7 +959,7 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
             sage: p.TWO_FACE_SIZES                              # optional - jupymake
             {(3 20)}
 
-    """
+        """
         T1, T2 = self.typeof()
         P = self._check_valid()
         name = self._name
@@ -1690,7 +1692,7 @@ class PolymakeFunctionElement(InterfaceFunctionElement):
         - Polymake object that this function is bound to
         - name (string): It actually says how to call this function in polymake.
           So, if it is a member function, it will look like `"$SAGE123[0]->func_name"`.
-        - ``memberfunction`` (bool, default False): Whether this is a member function
+        - ``memberfunction`` (bool, default: ``False``): Whether this is a member function
           or a plain function applied with this element as first argument.
 
         EXAMPLES::

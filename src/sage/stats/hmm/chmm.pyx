@@ -23,7 +23,7 @@ cdef double sqrt2pi = sqrt(2*M_PI)
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.misc.flatten  import flatten
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from sage.stats.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
@@ -220,7 +220,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         # B should be a matrix of N rows, with column 0 the mean and 1
         # the standard deviation.
-        if is_Matrix(B):
+        if isinstance(B, Matrix):
             B = B.list()
         else:
             B = flatten(B)
@@ -336,7 +336,6 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         s += '\nInitial probabilities: %s'%self.initial_probabilities()
         return s
 
-
     def generate_sequence(self, Py_ssize_t length, starting_state=None):
         r"""
         Return a sample of the given length from this HMM.
@@ -382,7 +381,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: add_samples(10^5)
             sage: while abs(counter*1.0 / n - 0.1) > 0.01: add_samples(10^5)
 
-        Example in which the starting state is 0 (see :trac:`11452`)::
+        Example in which the starting state is 0 (see :issue:`11452`)::
 
             sage: set_random_seed(23);  m.generate_sequence(2)
             ([0.6501, -2.0151], [0, 1])
@@ -446,7 +445,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         return obs, states
 
-    cdef probability_init(self) noexcept:
+    cdef probability_init(self):
         r"""
         Used internally to compute caching information that makes
         certain computations in the Baum-Welch algorithm faster.  This
@@ -716,7 +715,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         return state_sequence, mx
 
-    cdef TimeSeries _backward_scale_all(self, TimeSeries obs, TimeSeries scale) noexcept:
+    cdef TimeSeries _backward_scale_all(self, TimeSeries obs, TimeSeries scale):
         r"""
         This function returns the matrix beta_t(i), and is used
         internally as part of the Baum-Welch algorithm.
@@ -756,7 +755,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             t -= 1
         return beta
 
-    cdef _forward_scale_all(self, TimeSeries obs) noexcept:
+    cdef _forward_scale_all(self, TimeSeries obs):
         r"""
         Return scaled values alpha_t(i), the sequence of scalings, and
         the log probability.
@@ -821,7 +820,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         # Termination
         return alpha, scale, log_probability
 
-    cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, TimeSeries obs) noexcept:
+    cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, TimeSeries obs):
         r"""
         Used internally to compute the scaled quantity xi_t(i,j)
         appearing in the Baum-Welch reestimation algorithm.
@@ -1165,7 +1164,6 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         return unpickle_gaussian_mixture_hmm_v1, \
                (self.A, self.B, self.pi, self.mixture)
 
-
     def __richcmp__(self, other, op):
         r"""
         Compare self and other, which must both be GaussianMixtureHiddenMarkovModel's.
@@ -1292,7 +1290,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         return G.prob(observation)
 
     cdef TimeSeries _baum_welch_mixed_gamma(self, TimeSeries alpha, TimeSeries beta,
-                                            TimeSeries obs, int j) noexcept:
+                                            TimeSeries obs, int j):
         r"""
         Let gamma_t(j,m) be the m-component (in the mixture) of the
         probability of being in state j at time t, given the
@@ -1583,6 +1581,7 @@ def unpickle_gaussian_hmm_v1(A, B, pi, prob, n_out):
     m.prob = prob
     m.n_out = n_out
     return m
+
 
 def unpickle_gaussian_mixture_hmm_v1(A, B, pi, mixture):
     r"""

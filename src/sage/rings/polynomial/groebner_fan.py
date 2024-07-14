@@ -124,7 +124,7 @@ def _cone_parse(fan_dict_cone):
 
     INPUT:
 
-    -  ``fan_dict_cone`` - the value of a fan_dict with
+    -  ``fan_dict_cone`` -- the value of a fan_dict with
        key 'CONES'
 
     EXAMPLES::
@@ -290,7 +290,7 @@ class PolyhedralFan(SageObject):
 
         INPUT:
 
-        -  ``gfan_polyhedral_fan`` - output from gfan of a
+        -  ``gfan_polyhedral_fan`` -- output from gfan of a
            polyhedral fan.
 
         EXAMPLES::
@@ -643,11 +643,7 @@ def verts_for_normal(normal, poly):
     expmat = matrix(exps)
     vals = expmat * vector(QQ, normal)
     maxval = max(vals)
-    outverts = []
-    for i in range(len(exps)):
-        if vals[i] == maxval:
-            outverts.append(exps[i])
-    return outverts
+    return [exps[i] for i in range(len(exps)) if vals[i] == maxval]
 
 
 class TropicalPrevariety(PolyhedralFan):
@@ -764,7 +760,7 @@ def ideal_to_gfan_format(input_ring, polys):
 
         TESTS:
 
-        Test that :trac:`20146` is fixed::
+        Test that :issue:`20146` is fixed::
 
             sage: P = PolynomialRing(QQ,"x11,x12,x13,x14,x15,x21,x22,x23,x24,x25,x31,x32,x33,x34,x35"); x = P.gens(); M = Matrix(3,x)
             sage: I = P.ideal(M.minors(2))
@@ -1316,16 +1312,13 @@ class GroebnerFan(SageObject):
             xs = x.split(' ')
             y = []
             if x[0:3] != '2 3' and len(xs) > 1:
-                for q in xs:
-                    if q != '':
-                        y.append(q)
+                y.extend(q for q in xs if q)
                 sp2.append(y)
         sp3 = []
         for j in range(len(sp2)):
-            temp = []
-            for i in range(0, len(sp2[j]) - 1, 2):
-                temp.append([float(sp2[j][i]) / 1200.0,
-                             float(sp2[j][i + 1]) / 1200.0])
+            temp = [[float(sp2[j][i]) / 1200.0,
+                     float(sp2[j][i + 1]) / 1200.0]
+                    for i in range(0, len(sp2[j]) - 1, 2)]
             sp3.append(temp)
         r_lines = Graphics()
         for x in sp3:
@@ -1370,10 +1363,7 @@ class GroebnerFan(SageObject):
             sage: gf._cone_to_ieq([[1,2,3,4]])
             [[0, 1, 2, 3, 4]]
         """
-        ieq_list = []
-        for q in facet_list:
-            ieq_list.append([0] + q)
-        return ieq_list
+        return [[0] + q for q in facet_list]
 
     def _embed_tetra(self, fpoint):
         """
@@ -1383,7 +1373,7 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``fpoint`` - a list of four numbers
+        -  ``fpoint`` -- a list of four numbers
 
         EXAMPLES::
 
@@ -1412,7 +1402,7 @@ class GroebnerFan(SageObject):
 
         OUTPUT:
 
-        - ``edges`` -- a list of edges in 3d - each list item is a pair of
+        - ``edges`` -- a list of edges in 3d; each list item is a pair of
           points
 
         EXAMPLES::
@@ -1505,8 +1495,7 @@ class GroebnerFan(SageObject):
             except Exception:
                 print(cone_data._rays)
                 raise RuntimeError
-            for a_line in cone_lines:
-                all_lines.append(a_line)
+            all_lines.extend(a_line for a_line in cone_lines)
         return sum([line3d(a_line) for a_line in all_lines])
 
     def _gfan_stats(self):
@@ -1619,7 +1608,7 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``check`` - bool (default: True); if True raises a
+        -  ``check`` -- bool (default: ``True``); if True raises a
            ValueError exception if this ideal does not define a tropical curve
            (i.e., the condition that R/I has dimension equal to 1 + the
            dimension of the homogeneity space is not satisfied).
@@ -1683,9 +1672,9 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        - ``parameters`` (optional) - a list of variables to be
+        - ``parameters`` (optional) -- a list of variables to be
           considered as parameters
-        - ``symmetry_generators`` (optional) - generators of the symmetry group
+        - ``symmetry_generators`` (optional) -- generators of the symmetry group
 
         OUTPUT: a TropicalPrevariety object
 
@@ -1787,12 +1776,12 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``groebner_fan`` - a GroebnerFan object from an
+        -  ``groebner_fan`` -- a GroebnerFan object from an
            ideal
 
-        -  ``gens`` - the generators of the ideal
+        -  ``gens`` -- the generators of the ideal
 
-        -  ``gfan_gens`` - the generators as a gfan string
+        -  ``gfan_gens`` -- the generators as a gfan string
 
         EXAMPLES::
 
@@ -1899,7 +1888,7 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``restrict`` - bool (default: False); if True, add
+        -  ``restrict`` -- bool (default: ``False``); if True, add
            an inequality for each coordinate, so that the cone is restricted
            to the positive orthant.
 

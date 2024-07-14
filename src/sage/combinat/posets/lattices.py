@@ -1368,7 +1368,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_meet_semidistributive()
             False
 
-        Confirm that :trac:`21340` is fixed::
+        Confirm that :issue:`21340` is fixed::
 
             sage: posets.BooleanLattice(4).is_meet_semidistributive()
             True
@@ -1460,7 +1460,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_join_semidistributive()
             False
 
-        Confirm that :trac:`21340` is fixed::
+        Confirm that :issue:`21340` is fixed::
 
             sage: posets.BooleanLattice(3).is_join_semidistributive()
             True
@@ -1782,7 +1782,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_relatively_complemented()
             False
 
-        Confirm that :trac:`22292` is fixed::
+        Confirm that :issue:`22292` is fixed::
 
             sage: L = LatticePoset(DiGraph('IYOS`G?CE?@?C?_@??'))
             sage: L.is_relatively_complemented(certificate=True)
@@ -2003,7 +2003,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                                 return (B, [self._vertex_to_element(e) for e in A])
                             else:
                                 return B
-        assert False, "BUG: breadth() in lattices.py have an error."
+        raise RuntimeError("BUG: breadth() in lattices.py have an error")
 
     def complements(self, element=None):
         r"""
@@ -2958,10 +2958,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``labels`` -- a string (default ``'pairs'``); can be one of
           the following:
 
-          * ``'pairs'`` - each element ``v`` in this poset will be
+          * ``'pairs'`` -- each element ``v`` in this poset will be
             named ``(0, v)`` and each element ``u`` in ``other`` will
             be named ``(1, u)`` in the result
-          * ``'integers'`` - the elements of the result will be
+          * ``'integers'`` -- the elements of the result will be
             relabeled with consecutive integers
 
         EXAMPLES::
@@ -3049,7 +3049,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``elements_only`` - if ``True``, return the list of decomposing
+        - ``elements_only`` -- if ``True``, return the list of decomposing
           elements as defined above; if ``False`` (the default),
           return the list of sublattices so that the lattice is a
           vertical composition of them.
@@ -3089,11 +3089,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 self._hasse_diagram.vertical_decomposition(return_list=True) +
                 [self.cardinality() - 1])
         n = len(elms)
-        result = []
-        for i in range(n - 1):
-            result.append(LatticePoset(
-                self.subposet([self[e] for e in range(elms[i], elms[i + 1] + 1)])))
-        return result
+        return [LatticePoset(self.subposet([self[e]
+                                            for e in range(elms[i],
+                                                           elms[i + 1] + 1)]))
+                for i in range(n - 1)]
 
     def is_vertically_decomposable(self, certificate=False):
         r"""
@@ -3311,10 +3310,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
           * ``'lattice'`` (default) elements of the lattice will be
             lattices that correspond to sublattices of the original lattice
 
-          * ``'tuple'`` - elements are tuples of elements of the sublattices
+          * ``'tuple'`` -- elements are tuples of elements of the sublattices
             of the original lattice
 
-          * ``'integer'`` - elements are plain integers
+          * ``'integer'`` -- elements are plain integers
 
         EXAMPLES::
 
@@ -3461,8 +3460,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: sorted(L.frattini_sublattice().list())
             [1, 2, 4, 10, 19, 22, 33]
         """
-        return LatticePoset(self.subposet([self[x] for x in
-                self._hasse_diagram.frattini_sublattice()]))
+        return LatticePoset(self.subposet([self[x]
+                for x in self._hasse_diagram.frattini_sublattice()]))
 
     def moebius_algebra(self, R):
         """
@@ -3616,7 +3615,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: PP.atoms()
             [(0, 1), (0, 2), (1, 'a')]
             sage: PP.coatoms()
-            [(0, 3), (0, 1)]
+            [(0, 1), (0, 3)]
 
         TESTS::
 
@@ -3634,9 +3633,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if not isinstance(other, FiniteLatticePoset):
             raise ValueError("other is not a finite lattice")
         if not self.is_greater_than(b, a):
-            raise ValueError("element %s is not greater than %s in the lattice" % (b, a))
+            raise ValueError(f"element {b} is not greater than {a} in the lattice")
         if self.covers(a, b):
-            raise ValueError("element %s covers element %s in the lattice" % (b, a))
+            raise ValueError(f"element {b} covers element {a} in the lattice")
 
         if other.cardinality() == 0:
             return self.relabel(lambda e: (0, e))
@@ -4225,13 +4224,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``type`` -- a string; can be one of the following:
 
-          * ``'interval'`` - allow only doublings of an interval
-          * ``'lower'`` - allow doublings of lower pseudo-interval; that is, a
+          * ``'interval'`` -- allow only doublings of an interval
+          * ``'lower'`` -- allow doublings of lower pseudo-interval; that is, a
             subset of the lattice with a unique minimal element
-          * ``'upper'`` - allow doublings of upper pseudo-interval; that is, a
+          * ``'upper'`` -- allow doublings of upper pseudo-interval; that is, a
             subset of the lattice with a unique maximal element
-          * ``'convex'`` - allow doubling of any convex set
-          * ``'any'`` - allow doubling of any set
+          * ``'convex'`` -- allow doubling of any convex set
+          * ``'any'`` -- allow doubling of any set
 
         EXAMPLES:
 
@@ -4818,10 +4817,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``labels`` -- string; the elements of the resulting
           lattice and can be one of the following:
 
-          * ``'tuple'`` - elements are tuples of elements of the original
+          * ``'tuple'`` -- elements are tuples of elements of the original
             lattice
-          * ``'lattice'`` - elements are sublattices of the original lattice
-          * ``'integer'`` - elements are labeled by integers
+          * ``'lattice'`` -- elements are sublattices of the original lattice
+          * ``'integer'`` -- elements are labeled by integers
 
         .. WARNING::
 

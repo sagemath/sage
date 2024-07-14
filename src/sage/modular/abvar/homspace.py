@@ -183,6 +183,7 @@ from copy import copy
 
 from sage.categories.homset import HomsetWithBase
 from sage.structure.all import parent
+from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 
 
@@ -190,10 +191,9 @@ from . import morphism
 
 from sage.rings.infinity import Infinity
 
-from sage.rings.ring import Ring
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.constructor import Matrix, identity_matrix
-from sage.structure.element import is_Matrix
+from sage.matrix.constructor import matrix, identity_matrix
+from sage.structure.element import Matrix
 
 from sage.rings.integer_ring import ZZ
 
@@ -211,9 +211,9 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``domain, codomain`` - modular abelian varieties
+        -  ``domain, codomain`` -- modular abelian varieties
 
-        -  ``cat`` - category
+        -  ``cat`` -- category
 
 
         EXAMPLES::
@@ -228,10 +228,10 @@ class Homspace(HomsetWithBase):
             sage: H.homset_category()
             Category of modular abelian varieties over Rational Field
         """
-        from .abvar import is_ModularAbelianVariety
-        if not is_ModularAbelianVariety(domain):
+        from .abvar import ModularAbelianVariety_abstract
+        if not isinstance(domain, ModularAbelianVariety_abstract):
             raise TypeError("domain must be a modular abelian variety")
-        if not is_ModularAbelianVariety(codomain):
+        if not isinstance(codomain, ModularAbelianVariety_abstract):
             raise TypeError("codomain must be a modular abelian variety")
         self._gens = None
         HomsetWithBase.__init__(self, domain, codomain, category=cat)
@@ -268,7 +268,7 @@ class Homspace(HomsetWithBase):
 
             During unpickling, the domain and codomain may be unable to
             provide the necessary information. This is why this is a lazy
-            attribute. See :trac:`14793`.
+            attribute. See :issue:`14793`.
 
         EXAMPLES::
 
@@ -356,7 +356,7 @@ class Homspace(HomsetWithBase):
                 M = M.matrix()
             else:
                 raise ValueError("cannot convert %s into %s" % (M, self))
-        elif is_Matrix(M):
+        elif isinstance(M, Matrix):
             if M.base_ring() != ZZ:
                 M = M.change_ring(ZZ)
             if side == "left":
@@ -410,7 +410,7 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``g`` - a matrix or morphism or object with a list
+        -  ``g`` -- a matrix or morphism or object with a list
            method
 
 
@@ -482,13 +482,11 @@ class Homspace(HomsetWithBase):
 
     def gen(self, i=0):
         """
-        Return i-th generator of self.
+        Return i-th generator of ``self``.
 
         INPUT:
 
-
-        -  ``i`` - an integer
-
+        -  ``i`` -- an integer
 
         OUTPUT: a morphism
 
@@ -508,7 +506,7 @@ class Homspace(HomsetWithBase):
 
     def ngens(self):
         """
-        Return number of generators of self.
+        Return number of generators of ``self``.
 
         OUTPUT: integer
 
@@ -661,10 +659,12 @@ class Homspace(HomsetWithBase):
 
     def _calculate_simple_gens(self):
         """
-        Calculate generators for self, where both the domain and codomain
-        for self are assumed to be simple abelian varieties. The saturation
-        of the span of these generators in self will be the full space of
-        homomorphisms from the domain of self to its codomain.
+        Calculate generators for ``self``, where both the domain and codomain
+        for ``self`` are assumed to be simple abelian varieties.
+
+        The saturation of the span of these generators in ``self``
+        will be the full space of homomorphisms from the domain of
+        ``self`` to its codomain.
 
         EXAMPLES::
 
@@ -749,9 +749,9 @@ class Homspace(HomsetWithBase):
 
 
 # NOTE/WARNING/TODO:  Below in the __init__, etc. we do *not* check
-# that the input gens are give something that spans a sub*ring*, as apposed
+# that the input gens are give something that spans a sub*ring*, as opposed
 # to just a subgroup.
-class EndomorphismSubring(Homspace, Ring):
+class EndomorphismSubring(Homspace):
 
     def __init__(self, A, gens=None, category=None):
         """
@@ -759,12 +759,10 @@ class EndomorphismSubring(Homspace, Ring):
 
         INPUT:
 
+        -  ``A`` -- an abelian variety
 
-        -  ``A`` - an abelian variety
-
-        -  ``gens`` - (default: None); optional; if given
+        -  ``gens`` -- (default: ``None``); optional; if given
            should be a tuple of the generators as matrices
-
 
         EXAMPLES::
 
@@ -786,12 +784,12 @@ class EndomorphismSubring(Homspace, Ring):
         TESTS:
 
         The following tests against a problem on 32 bit machines that
-        occurred while working on :trac:`9944`::
+        occurred while working on :issue:`9944`::
 
             sage: sage.modular.abvar.homspace.EndomorphismSubring(J1(12345))
             Endomorphism ring of Abelian variety J1(12345) of dimension 5405473
 
-        :trac:`16275` removed the custom ``__reduce__`` method, since
+        :issue:`16275` removed the custom ``__reduce__`` method, since
         :meth:`Homset.__reduce__` already implements appropriate
         unpickling by construction::
 
@@ -808,14 +806,13 @@ class EndomorphismSubring(Homspace, Ring):
         self._A = A
 
         # Initialise self with the correct category.
-        # We need to initialise it as a ring first
         if category is None:
             homset_cat = A.category()
         else:
             homset_cat = category
-        # Remark: Ring.__init__ will automatically form the join
+        # Remark: Parent.__init__ will automatically form the join
         # of the category of rings and of homset_cat
-        Ring.__init__(self, A.base_ring(), category=homset_cat.Endsets())
+        Parent.__init__(self, A.base_ring(), category=homset_cat.Endsets())
         Homspace.__init__(self, A, A, cat=homset_cat)
         if gens is None:
             self._gens = None
@@ -825,7 +822,7 @@ class EndomorphismSubring(Homspace, Ring):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -853,17 +850,15 @@ class EndomorphismSubring(Homspace, Ring):
 
     def index_in(self, other, check=True):
         """
-        Return the index of self in other.
+        Return the index of ``self`` in ``other``.
 
         INPUT:
 
-
-        -  ``other`` - another endomorphism subring of the
+        -  ``other`` -- another endomorphism subring of the
            same abelian variety
 
-        -  ``check`` - bool (default: True); whether to do some
+        -  ``check`` -- bool (default: ``True``); whether to do some
            type and other consistency checks
-
 
         EXAMPLES::
 
@@ -934,7 +929,7 @@ class EndomorphismSubring(Homspace, Ring):
             2
         """
         g = self.gens()
-        M = Matrix(ZZ, len(g), [(g[i]*g[j]).trace()
+        M = matrix(ZZ, len(g), [(g[i]*g[j]).trace()
                                 for i in range(len(g)) for j in range(len(g))])
         return M.determinant()
 

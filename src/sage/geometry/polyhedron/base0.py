@@ -117,7 +117,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             TypeError: ..._init_Hrepresentation() takes 3 positional arguments but 9 were given
 
         The empty polyhedron is detected when the Vrepresentation is given with generator;
-        see :trac:`29899`::
+        see :issue:`29899`::
 
             sage: from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd
             sage: from sage.geometry.polyhedron.parent import Polyhedra_QQ_cdd
@@ -316,7 +316,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='polymake') # optional - jupymake
             sage: sage_input(P)                                                                    # optional - jupymake
             Polyhedron(backend='polymake', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(1), QQ(0)), (QQ(0), QQ(1))])
-       """
+        """
         kwds = dict()
         kwds['base_ring'] = sib(self.base_ring())
         kwds['backend'] = sib(self.backend())
@@ -359,7 +359,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         TESTS:
 
-        Test that :trac:`22575` is fixed::
+        Test that :issue:`22575` is fixed::
 
             sage: Q = P.base_extend(ZZ, backend='field')
             sage: Q.backend()
@@ -577,10 +577,10 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         EXAMPLES::
 
-            sage: p = polytopes.icosahedron()                                           # needs sage.rings.number_field
-            sage: p.is_compact()                                                        # needs sage.rings.number_field
+            sage: p = polytopes.icosahedron()                                           # needs sage.groups sage.rings.number_field
+            sage: p.is_compact()                                                        # needs sage.groups sage.rings.number_field
             True
-            sage: p = Polyhedron(ieqs = [[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,-1,0,0]])
+            sage: p = Polyhedron(ieqs=[[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,-1,0,0]])
             sage: p.is_compact()
             False
         """
@@ -1142,7 +1142,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
                 sage: P.vertices_matrix().is_immutable()
                 True
@@ -1314,11 +1314,11 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         EXAMPLES::
 
-            sage: triangle = Polyhedron(vertices = [[1, 0], [0, 1], [1, 1]])
+            sage: triangle = Polyhedron(vertices=[[1, 0], [0, 1], [1, 1]])
             sage: triangle.backend()
             'ppl'
-            sage: D = polytopes.dodecahedron()                                          # needs sage.rings.number_field
-            sage: D.backend()                                                           # needs sage.rings.number_field
+            sage: D = polytopes.dodecahedron()                                          # needs sage.groups sage.rings.number_field
+            sage: D.backend()                                                           # needs sage.groups sage.rings.number_field
             'field'
             sage: P = Polyhedron([[1.23]])
             sage: P.backend()

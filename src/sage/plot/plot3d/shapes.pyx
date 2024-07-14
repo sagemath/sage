@@ -39,7 +39,6 @@ EXAMPLES::
 
     from sage.plot.plot3d.shapes import *
     sphinx_plot(Torus(.7, .2, color=(0,.3,0)))
-
 """
 
 # ****************************************************************************
@@ -498,7 +497,7 @@ cdef class Cylinder(ParametricSurface):
             base_cap = """Ring Center %s %s %s Normal %s %s %s Inner 0 Outer %s %s"""  \
                        % (base[0], base[1], base[2], normal[0], normal[1], normal[2], rad, self.texture.id)
             top_cap  = """Ring Center %s %s %s Normal %s %s %s Inner 0 Outer %s %s"""  \
-                       % ( top[0],  top[1],  top[2], normal[0], normal[1], normal[2], rad, self.texture.id)
+                       % (top[0], top[1], top[2], normal[0], normal[1], normal[2], rad, self.texture.id)
             return [base_cap, cyl, top_cap]
         else:
             return cyl
@@ -974,7 +973,7 @@ cdef class Sphere(ParametricSurface):
         if u == -10:
             res.x, res.y, res.z = 0, 0, -self.radius
         elif u == 10:
-            res.x, res.y, res.z = 0, 0,  self.radius
+            res.x, res.y, res.z = 0, 0, self.radius
         else:
             res.x = self.radius * cos(v) * cos(u)
             res.y = self.radius * sin(v) * cos(u)

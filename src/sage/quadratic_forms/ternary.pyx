@@ -13,7 +13,7 @@ Helper code for ternary quadratic forms
 # ****************************************************************************
 
 from sage.arith.misc import gcd, inverse_mod, xgcd
-from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
+from sage.matrix.constructor import matrix
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ
@@ -971,9 +971,9 @@ def extend(v):
     """
     if v[0] == v[1] == 0:
         if v[2] < 0:
-            return v[0], 0, 1,  v[1], 1, 0,  v[2], 0, 0
+            return v[0], 0, 1, v[1], 1, 0, v[2], 0, 0
         else:
-            return v[0], 1, 0,  v[1], 0, 1,  v[2], 0, 0
+            return v[0], 1, 0, v[1], 0, 1, v[2], 0, 0
 
     b1 = xgcd(v[0], v[1])
     b2 = xgcd(b1[1], b1[2])

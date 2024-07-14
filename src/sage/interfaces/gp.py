@@ -136,7 +136,7 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ##########################################################################
 import os
@@ -270,7 +270,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: gp # indirect doctest
+            sage: gp  # indirect doctest
             PARI/GP interpreter
         """
         return 'PARI/GP interpreter'
@@ -279,6 +279,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.gp import gp
             sage: gp.__reduce__()
             (<function reduce_load_GP at 0x...>, ())
             sage: f, args = _
@@ -438,7 +439,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         TESTS:
 
-        We verify that :trac:`11617` is fixed::
+        We verify that :issue:`11617` is fixed::
 
             sage: gp._eval_line('a='+str(list(range(2*10^5))))[:70]
             '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,'
@@ -466,7 +467,7 @@ class Gp(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``t`` - (default: None); if not None, then returns
+        -  ``t`` -- (default: None); if not None, then returns
            time since t
 
 

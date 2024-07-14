@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Factory for cached representations
 
@@ -40,7 +41,6 @@ AUTHORS:
 - Robert Bradshaw (2008): initial version.
 - Simon King (2013): extended documentation.
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
-
 """
 
 #*****************************************************************************
@@ -372,7 +372,7 @@ cdef class UniqueFactory(SageObject):
         version = self.get_version(sage_version)
         return self.get_object(version, key, kwds)
 
-    cpdef get_object(self, version, key, extra_args) noexcept:
+    cpdef get_object(self, version, key, extra_args):
         """
         Returns the object corresponding to ``key``, creating it with
         ``extra_args`` if necessary (for example, it isn't in the cache
@@ -395,7 +395,7 @@ cdef class UniqueFactory(SageObject):
 
         TESTS:
 
-        Check that :trac:`16317` has been fixed, i.e., caching works for
+        Check that :issue:`16317` has been fixed, i.e., caching works for
         unhashable objects::
 
             sage: K.<u> = Qq(4)                                                         # needs sage.rings.padics
@@ -436,7 +436,7 @@ cdef class UniqueFactory(SageObject):
             pass
         return obj
 
-    cpdef get_version(self, sage_version) noexcept:
+    cpdef get_version(self, sage_version):
         """
         This is provided to allow more or less granular control over
         pickle versioning. Objects pickled in the same version of Sage
@@ -507,7 +507,7 @@ cdef class UniqueFactory(SageObject):
         """
         raise NotImplementedError
 
-    cpdef other_keys(self, key, obj) noexcept:
+    cpdef other_keys(self, key, obj):
         """
         Sometimes during object creation, certain defaults are chosen which
         may result in a new (more specific) key. This allows the more specific
@@ -518,9 +518,9 @@ cdef class UniqueFactory(SageObject):
         EXAMPLES:
 
         The ``GF`` factory used to have a custom :meth:`other_keys`
-        method, but this was removed in :trac:`16934`::
+        method, but this was removed in :issue:`16934`::
 
-            sage: # needs sage.libs.linbox sage.ring.finite_rings
+            sage: # needs sage.libs.linbox sage.rings.finite_rings
             sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
             (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True, True, True)
             sage: K = GF.create_object(0, key); K
@@ -534,7 +534,7 @@ cdef class UniqueFactory(SageObject):
         """
         return []
 
-    cpdef reduce_data(self, obj) noexcept:
+    cpdef reduce_data(self, obj):
         """
         The results of this function can be returned from
         :meth:`__reduce__`. This is here so the factory internals can
@@ -569,6 +569,7 @@ cdef class UniqueFactory(SageObject):
 
 # This is used to handle old UniqueFactory pickles
 factory_unpickles = {}
+
 
 def register_factory_unpickle(name, callable):
     """
@@ -632,6 +633,7 @@ def register_factory_unpickle(name, callable):
     #global factory_unpickles
     factory_unpickles[name] = callable
 
+
 def generic_factory_unpickle(factory, *args):
     """
     Method used for unpickling the object.
@@ -653,7 +655,7 @@ def generic_factory_unpickle(factory, *args):
 
     TESTS:
 
-    The following was enabled in :trac:`16349`. Suppose we have defined
+    The following was enabled in :issue:`16349`. Suppose we have defined
     (somewhere in the library of an old Sage version) a unique factory; in our
     example below, it returns polynomial rings. Now suppose that we want to
     replace the factory by something else, say, a class that provides the
@@ -722,12 +724,13 @@ def generic_factory_unpickle(factory, *args):
             return F.get_object(*args)
         except TypeError:
             pass
-    # See trac #16349: When replacing a UniqueFactory by something else (e.g.,
+    # See Issue #16349: When replacing a UniqueFactory by something else (e.g.,
     # a UniqueRepresentation), then we get the object by calling.
     #
     # The first argument of a UniqueFactory pickle is a version number. We
     # strip this.
     return factory(*args[1], **args[2])
+
 
 def generic_factory_reduce(self, proto):
     """
@@ -743,6 +746,7 @@ def generic_factory_reduce(self, proto):
         raise NotImplementedError("__reduce__ not implemented for %s" % type(self))
     else:
         return self._factory_data[0].reduce_data(self)
+
 
 def lookup_global(name):
     """

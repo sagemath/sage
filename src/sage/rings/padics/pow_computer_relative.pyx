@@ -4,7 +4,6 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-# -*- coding: utf-8 -*-
 r"""
 A ``PowComputer`` for relative extensions
 
@@ -15,7 +14,6 @@ working on linkages or other low-level `p`-adics code within the Sage library.
 AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
@@ -228,7 +226,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
         PowComputer_relative.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed)
         self._inv_shift_seed = self.invert(shift_seed, self.ram_prec_cap)
 
-    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense a, long prec) noexcept:
+    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense a, long prec):
         r"""
         Return the inverse of ``a``.
 
@@ -374,10 +372,11 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
             return self.poly_ring.one()
         elif r < self.e:
             return self.poly_ring.one() << r
-        elif r%2:
+        elif r % 2:
             return (self.uniformizer_pow(r-1) << 1) % self.modulus
         else:
             return (self.uniformizer_pow(r//2) * self.uniformizer_pow(r//2)) % self.modulus
+
 
 def PowComputer_relative_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed, prec_type):
     r"""

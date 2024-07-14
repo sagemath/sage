@@ -762,6 +762,12 @@ class RegularSequence(RecognizableSeries):
 
             sage: S.regenerated().subsequence(1, -4)
             2-regular sequence 0, 0, 0, 0, 1, 3, 6, 9, 12, 18, ...
+
+        Check that the zero sequence is handled correctly (issue:`37282`)
+        ::
+
+            sage: Seq2.zero().subsequence(1, 1)
+            2-regular sequence 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
         """
         from itertools import chain
         from sage.rings.integer_ring import ZZ
@@ -835,14 +841,16 @@ class RegularSequence(RecognizableSeries):
             d, f = rule[r, c]
             return [self.mu[f] if d == j else zero_M for j in kernel]
 
+        # We explicitly set the ring when creating vectors in order to avoid
+        # problems with the zero sequence, see issue:`37282`.
         result = P.element_class(
             P,
             {r: Matrix.block([matrix_row(r, c) for c in kernel])
              for r in A},
-            vector(chain.from_iterable(
+            vector(P.coefficient_ring(), chain.from_iterable(
                 b.get(c, 0) * self.left
                 for c in kernel)),
-            vector(chain.from_iterable(
+            vector(P.coefficient_ring(), chain.from_iterable(
                 (self.coefficient_of_n(c, multiply_left=False) if c >= 0 else zero_R)
                 for c in kernel)))
 
@@ -1105,9 +1113,9 @@ class RegularSequence(RecognizableSeries):
 
         def linear_representation_morphism_recurrence_order_1(C, D):
             r"""
-                Return the morphism of a linear representation
-                for the sequence `z_n` satisfying
-                `z_{kn+r} = C_r z_n + D_r z_{n-1}`.
+            Return the morphism of a linear representation
+            for the sequence `z_n` satisfying
+            `z_{kn+r} = C_r z_n + D_r z_{n-1}`.
             """
             Z = zero_matrix(C[0].dimensions()[0])
 
@@ -1870,8 +1878,8 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         def values(m, lines):
             """
-                Return current (as defined by ``lines``) right vector valued
-                sequence for argument ``m``.
+            Return current (as defined by ``lines``) right vector valued
+            sequence for argument ``m``.
             """
             return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R in lines)
 
@@ -1880,17 +1888,17 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         # (we allow appending of new lines)
         def some_inverse_U_matrix(lines):
             r"""
-                Find an invertible `d \times d` submatrix of the matrix
-                ``A`` described in the algorithm section of the docstring.
+            Find an invertible `d \times d` submatrix of the matrix
+            ``A`` described in the algorithm section of the docstring.
 
-                The output is the inverse of the invertible submatrix and
-                the corresponding list of column indices (i.e., arguments to
-                the current right vector valued sequence).
+            The output is the inverse of the invertible submatrix and
+            the corresponding list of column indices (i.e., arguments to
+            the current right vector valued sequence).
             """
             d = len(seq(0)) + len(lines)
 
             # The following search for an inverse works but is inefficient;
-            # see :trac:`35748` for details.
+            # see :issue:`35748` for details.
             for m_indices in cantor_product(xsrange(n_verify), repeat=d, min_slope=1):
                 # Iterate over all increasing lists of length d consisting
                 # of non-negative integers less than `n_verify`.
@@ -1905,11 +1913,11 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         def linear_combination_candidate(t_L, r_L, lines):
             r"""
-                Based on an invertible submatrix of ``A`` as described in the
-                algorithm section of the docstring, find a candidate for a
-                linear combination of the rows of ``A`` yielding the subsequence
-                with parameters ``t_L`` and ``r_L``, i.e.,
-                `m \mapsto f(k**t_L * m + r_L)`.
+            Based on an invertible submatrix of ``A`` as described in the
+            algorithm section of the docstring, find a candidate for a
+            linear combination of the rows of ``A`` yielding the subsequence
+            with parameters ``t_L`` and ``r_L``, i.e.,
+            `m \mapsto f(k**t_L * m + r_L)`.
             """
             iU, m_indices = some_inverse_U_matrix(lines)
             X_L = vector(f(k**t_L * m + r_L) for m in m_indices)
@@ -1917,18 +1925,18 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         def verify_linear_combination(t_L, r_L, linear_combination, lines):
             r"""
-                Determine whether the subsequence with parameters ``t_L`` and
-                ``r_L``, i.e., `m \mapsto f(k**t_L * m + r_L)`, is the linear
-                combination ``linear_combination`` of the current vector valued
-                sequence.
+            Determine whether the subsequence with parameters ``t_L`` and
+            ``r_L``, i.e., `m \mapsto f(k**t_L * m + r_L)`, is the linear
+            combination ``linear_combination`` of the current vector valued
+            sequence.
 
-                Note that we only evaluate the subsequence of ``f`` where arguments
-                of ``f`` are at most ``n_verify``. This might lead to detection of
-                linear dependence which would not be true for higher values, but this
-                coincides with the documentation of ``n_verify``.
-                However, this is not a guarantee that the given function will never
-                be evaluated beyond ``n_verify``, determining an invertible submatrix
-                in ``some_inverse_U_matrix`` might require us to do so.
+            Note that we only evaluate the subsequence of ``f`` where arguments
+            of ``f`` are at most ``n_verify``. This might lead to detection of
+            linear dependence which would not be true for higher values, but this
+            coincides with the documentation of ``n_verify``.
+            However, this is not a guarantee that the given function will never
+            be evaluated beyond ``n_verify``, determining an invertible submatrix
+            in ``some_inverse_U_matrix`` might require us to do so.
             """
             return all(f(k**t_L * m + r_L) ==
                        linear_combination * vector(values(m, lines))
@@ -2737,7 +2745,7 @@ class RecurrenceParser:
             sage: RP.parse_recurrence([f(2*n) == 0, f(2*n + 1) == 0], f, n)
             (1, 0, {}, {})
 
-        We check that the output is of the correct type (:trac:`33158`)::
+        We check that the output is of the correct type (:issue:`33158`)::
 
             sage: RP = RecurrenceParser(2, QQ)
             sage: equations = [
@@ -2756,7 +2764,7 @@ class RecurrenceParser:
             sage: all(v.parent() == QQ for v in initial_values.values())
             True
 
-        This results in giving the correct (see :trac:`33158`) minimization in::
+        This results in giving the correct (see :issue:`33158`) minimization in::
 
             sage: Seq2 = RegularSequenceRing(2, QQ)
             sage: P = Seq2.from_recurrence(equations, f, n)

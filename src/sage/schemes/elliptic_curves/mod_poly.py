@@ -85,7 +85,24 @@ def classical_modular_polynomial(l, j=None):
         sage: j = GF(q).random_element()
         sage: l = random_prime(50)
         sage: Y = polygen(parent(j), 'Y')
-        sage: classical_modular_polynomial(l,j) == classical_modular_polynomial(l)(j,Y)
+        sage: classical_modular_polynomial(l, j) == classical_modular_polynomial(l)(j, Y)
+        True
+        sage: p = 2^216 * 3^137 - 1
+        sage: F.<i> = GF((p,2), modulus=[1,0,1])
+        sage: l = random_prime(50)
+        sage: j = F.random_element()
+        sage: Y = polygen(parent(j), 'Y')
+        sage: classical_modular_polynomial(l, j) == classical_modular_polynomial(l)(j, Y)
+        True
+        sage: E = EllipticCurve(F, [0, 6, 0, 1, 0])
+        sage: j = E.j_invariant()
+        sage: l = random_prime(50)
+        sage: classical_modular_polynomial(l, j) == classical_modular_polynomial(l)(j, Y)
+        True
+        sage: R.<Y> = QQ['Y']
+        sage: j = QQ(1/2)
+        sage: l = random_prime(50)
+        sage: classical_modular_polynomial(l, j) == classical_modular_polynomial(l)(j, Y)
         True
     """
     l = ZZ(l)
@@ -133,12 +150,14 @@ def classical_modular_polynomial(l, j=None):
     # Now try to get the instantiated modular polynomial directly from PARI.
     # This should be slightly more efficient (in particular regarding memory
     # usage) than computing and evaluating the generic modular polynomial.
+    # This currently only works if we are over Z/nZ.
     try:
         pari_Phi = pari.polmodular(l, 0, j)
+        return R(pari_Phi)
     except PariError:
         pass
-    else:
-        return R(pari_Phi)
+    except TypeError:
+        return R(ZZ['Y'](pari_Phi))
 
     # Nothing worked. Fall back to computing the generic modular polynomial
     # and simply evaluating it.

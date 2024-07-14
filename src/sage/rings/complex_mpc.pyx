@@ -1,11 +1,11 @@
 """
-Arbitrary Precision Complex Numbers using GNU MPC
+Arbitrary precision floating point complex numbers using GNU MPC
 
-This is a binding for the MPC arbitrary-precision floating point library.
-It is adaptated from ``real_mpfr.pyx`` and ``complex_mpfr.pyx``.
+This is a binding for the arbitrary-precision floating point library
+:ref:`GNU MPC <spkg_mpc>`.
 
-We define a class :class:`MPComplexField`, where each instance of
-``MPComplexField`` specifies a field of floating-point complex numbers with
+We define a class :class:`MPComplexField`, each instance of which
+specifies a field of floating-point complex numbers with
 a specified precision shared by the real and imaginary part and a rounding
 mode stating the rounding mode directions specific to real and imaginary
 parts.
@@ -17,7 +17,8 @@ documentation for the :mod:`sage.rings.real_mpfr`.
 
 AUTHORS:
 
-- Philippe Theveny (2008-10-13): initial version.
+- Philippe Theveny (2008-10-13): initial version, adapted from
+  :mod:`sage.rings.real_mpfr` and :mod:`sage.rings.complex_mpfr`.
 
 - Alex Ghitza (2008-11): cache, generators, random element, and many doctests.
 
@@ -71,8 +72,11 @@ from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
-from sage.libs.pari.all import pari
-from sage.rings.ring import Ring
+
+try:
+    from sage.libs.pari.all import pari, pari_gen, PariError
+except ImportError:
+    pari_gen = PariError = ()
 
 from sage.rings.integer cimport Integer
 from sage.rings.complex_mpfr cimport ComplexNumber
@@ -91,6 +95,7 @@ AA = None
 QQbar = None
 CDF = CLF = RLF = None
 
+
 def late_import():
     """
     Import the objects/modules after build (when needed).
@@ -107,6 +112,7 @@ def late_import():
         QQbar = sage.rings.qqbar.QQbar
         from sage.rings.real_lazy import CLF, RLF
         from sage.rings.complex_double import CDF
+
 
 _mpfr_rounding_modes = ['RNDN', 'RNDZ', 'RNDU', 'RNDD']
 
@@ -145,7 +151,7 @@ complex_ten = '(?P<im_first>(?P<im_first_im_sign>' + sign + r')?\s*(?P<im_first_
     r'(\s*(?P<re_first_im_sign>' + sign + r')\s*(?P<re_first_im_abs>' + imaginary_ten + '))?)'
 re_complex_ten = re.compile(r'^\s*(?:' + complex_ten + r')\s*$', re.I)
 
-cpdef inline split_complex_string(string, int base=10) noexcept:
+cpdef inline split_complex_string(string, int base=10):
     """
     Split and return in that order the real and imaginary parts
     of a complex in a string.
@@ -229,6 +235,8 @@ cpdef inline split_complex_string(string, int base=10) noexcept:
 # their parent via direct C calls, which will be faster.
 
 cache = {}
+
+
 def MPComplexField(prec=53, rnd="RNDNN", names=None):
     """
     Return the complex field with real and imaginary parts having
@@ -258,7 +266,7 @@ def MPComplexField(prec=53, rnd="RNDNN", names=None):
     return C
 
 
-cdef class MPComplexField_class(sage.rings.ring.Field):
+cdef class MPComplexField_class(Field):
     def __init__(self, int prec=53, rnd="RNDNN"):
         """
         Initialize ``self``.
@@ -319,10 +327,11 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         self.__real_field = real_mpfr.RealField(prec, rnd=_mpfr_rounding_modes[rnd_re(n)])
         self.__imag_field = real_mpfr.RealField(prec, rnd=_mpfr_rounding_modes[rnd_im(n)])
 
-        Ring.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite())
+        Parent.__init__(self, self._real_field(), names=('I',), normalize=False,
+                        category=Fields().Infinite())
         self._populate_coercion_lists_(coerce_list=[MPFRtoMPC(self._real_field(), self)])
 
-    cdef MPComplexNumber _new(self) noexcept:
+    cdef MPComplexNumber _new(self):
         """
         Return a new complex number with parent ``self`.
         """
@@ -436,7 +445,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         zz._set(z)
         return zz
 
-    cpdef _coerce_map_from_(self, S) noexcept:
+    cpdef _coerce_map_from_(self, S):
         """
         Canonical coercion of `z` to this mpc complex field.
 
@@ -538,7 +547,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         """
         return 1
 
-    cpdef _an_element_(self) noexcept:
+    cpdef _an_element_(self):
         """
         Return an element of this complex field.
 
@@ -698,7 +707,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
     A floating point approximation to a complex number using any specified
     precision common to both real and imaginary part.
     """
-    cdef MPComplexNumber _new(self) noexcept:
+    cdef MPComplexNumber _new(self):
         """
         Return a new complex number with same parent as ``self``.
         """
@@ -841,7 +850,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             elif isinstance(z, ComplexNumber):
                 mpc_set_fr_fr(self.value, (<ComplexNumber>z).__re, (<ComplexNumber>z).__im, rnd)
                 return
-            elif isinstance(z, sage.libs.pari.all.pari_gen):
+            elif isinstance(z, pari_gen):
                 real, imag = z.real(), z.imag()
             elif isinstance(z, (list, tuple)):
                 real, imag = z
@@ -1258,7 +1267,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         return gmpy2.GMPy_MPC_From_mpfr(self.value.re, self.value.im)
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare ``self`` to ``other``.
 
@@ -1375,7 +1384,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
     # Basic Arithmetic
     ################################
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two complex numbers with the same parent.
 
@@ -1390,7 +1399,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         mpc_add(z.value, self.value, (<MPComplexNumber>right).value, (<MPComplexField_class>self._parent).__rnd)
         return z
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract two complex numbers with the same parent.
 
@@ -1405,7 +1414,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         mpc_sub(z.value, self.value, (<MPComplexNumber>right).value, (<MPComplexField_class>self._parent).__rnd)
         return z
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply two complex numbers with the same parent.
 
@@ -1420,7 +1429,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         mpc_mul(z.value, self.value, (<MPComplexNumber>right).value, (<MPComplexField_class>self._parent).__rnd)
         return z
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Divide two complex numbers with the same parent.
 
@@ -1439,7 +1448,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             mpc_div(z.value, self.value, x.value, (<MPComplexField_class>self._parent).__rnd)
         return z
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         Return the negative of this complex number.
 
@@ -2122,7 +2131,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``all`` - bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- bool (default: ``False``); if ``True``, return a
            list of all `n`-th roots.
 
         EXAMPLES::
@@ -2218,10 +2227,10 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``self`` - element of the upper half plane (if not,
+        -  ``self`` -- element of the upper half plane (if not,
            raises a ``ValueError``).
 
-        -  ``omit_frac`` - (bool, default: ``False``), if ``True``,
+        -  ``omit_frac`` -- (bool, default: ``False``), if ``True``,
            omit the `e^{\pi i z / 12}` factor.
 
         OUTPUT: a complex number
@@ -2237,7 +2246,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().eta(not omit_frac))
-        except sage.libs.pari.all.PariError:
+        except PariError:
             raise ValueError("value must be in the upper half plane")
 
     def gamma(self):
@@ -2263,7 +2272,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().gamma())
-        except sage.libs.pari.all.PariError:
+        except PariError:
             from sage.rings.infinity import UnsignedInfinityRing
             return UnsignedInfinityRing.gen()
 
@@ -2407,6 +2416,7 @@ cdef inline mp_exp_t max_exp(MPComplexNumber z) noexcept:
         return mpfr_get_exp(z.value.im)
     return max_exp_t(mpfr_get_exp(z.value.re), mpfr_get_exp(z.value.im))
 
+
 def __create__MPComplexField_version0 (prec, rnd):
     """
     Create a :class:`MPComplexField`.
@@ -2418,6 +2428,7 @@ def __create__MPComplexField_version0 (prec, rnd):
 
     """
     return MPComplexField(prec, rnd)
+
 
 def __create__MPComplexNumber_version0 (parent, s, base=10):
     """
@@ -2434,6 +2445,7 @@ def __create__MPComplexNumber_version0 (parent, s, base=10):
     """
     return MPComplexNumber(parent, s, base=base)
 
+
 # original version of the file had this with only 1 underscore - TCS
 __create_MPComplexNumber_version0 = __create__MPComplexNumber_version0
 
@@ -2444,7 +2456,7 @@ __create_MPComplexNumber_version0 = __create__MPComplexNumber_version0
 #*****************************************************************************
 
 cdef class MPCtoMPC(Map):
-    cpdef Element _call_(self, z) noexcept:
+    cpdef Element _call_(self, z):
         """
         EXAMPLES::
 
@@ -2481,7 +2493,7 @@ cdef class MPCtoMPC(Map):
         return MPCtoMPC(self.codomain(), self.domain())
 
 cdef class INTEGERtoMPC(Map):
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -2504,7 +2516,7 @@ cdef class INTEGERtoMPC(Map):
         return y
 
 cdef class MPFRtoMPC(Map):
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -2528,7 +2540,7 @@ cdef class MPFRtoMPC(Map):
         return y
 
 cdef class CCtoMPC(Map):
-    cpdef Element _call_(self, z) noexcept:
+    cpdef Element _call_(self, z):
         """
         EXAMPLES::
 

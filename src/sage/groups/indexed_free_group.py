@@ -24,7 +24,8 @@ from sage.categories.groups import Groups
 from sage.categories.poor_man_map import PoorManMap
 from sage.groups.group import Group, AbelianGroup
 from sage.monoids.indexed_free_monoid import (IndexedMonoid,
-        IndexedFreeMonoidElement, IndexedFreeAbelianMonoidElement)
+                                              IndexedFreeMonoidElement,
+                                              IndexedFreeAbelianMonoidElement)
 from sage.misc.cachefunc import cached_method
 import sage.data_structures.blas_dict as blas
 from sage.rings.integer import Integer
@@ -165,7 +166,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
 
     def _repr_(self):
         """
-        Return a string representation of ``self``
+        Return a string representation of ``self``.
 
         TESTS::
 

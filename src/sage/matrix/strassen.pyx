@@ -44,13 +44,13 @@ def strassen_window_multiply(C, A,B, cutoff):
     AUTHORS:
 
     - David Harvey
-    - Simon King (2011-07): Improve memory efficiency; :trac:`11610`
+    - Simon King (2011-07): Improve memory efficiency; :issue:`11610`
     """
     strassen_window_multiply_c(C, A, B, cutoff)
 
 
 cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
-                                MatrixWindow B, Py_ssize_t cutoff) noexcept:
+                                MatrixWindow B, Py_ssize_t cutoff):
     # todo -- I'm not sure how to interpret "cutoff". Should it be...
     # (a) the minimum side length of the matrices (currently implemented below)
     # (b) the maximum side length of the matrices
@@ -235,7 +235,7 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
         C_bulk = C.matrix_window(0, 0, A_sub_nrows << 1, B_sub_ncols << 1)
         C_bulk.add_prod(A_last_col, B_last_row)
 
-cdef subtract_strassen_product(MatrixWindow result, MatrixWindow A, MatrixWindow B, Py_ssize_t cutoff) noexcept:
+cdef subtract_strassen_product(MatrixWindow result, MatrixWindow A, MatrixWindow B, Py_ssize_t cutoff):
     cdef MatrixWindow to_sub
     if (cutoff == -1 or result.ncols() <= cutoff or result.nrows() <= cutoff):
         result.subtract_prod(A, B)
@@ -253,9 +253,9 @@ def strassen_echelon(MatrixWindow A, cutoff):
 
     INPUT:
 
-    -  ``A`` - matrix window
+    -  ``A`` -- matrix window
 
-    -  ``cutoff`` - size at which algorithm reverts to
+    -  ``cutoff`` -- size at which algorithm reverts to
        naive Gaussian elimination and multiplication must be at least 1.
 
     OUTPUT: The list of pivot columns
@@ -311,7 +311,7 @@ def strassen_echelon(MatrixWindow A, cutoff):
     sig_off()
 
 
-cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff) noexcept:
+cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff):
     # The following notation will be used in the comments below, which should be understood to give
     # the general idea of what's going on, as if there were no inconvenient non-pivot columns.
     # The original matrix is given by [ A B ]
@@ -472,10 +472,10 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
     return pivots
 
 
-
 ################################
 # lots of room for optimization....
-# eventually, should I just pass these around rather than lists of ints for pivots?
+# eventually, should I just pass these around
+# rather than lists of ints for pivots?
 # would need new from_cols
 class int_range:
     r"""
@@ -492,16 +492,16 @@ class int_range:
 
     It can be one of the following:
 
-    - ``indices`` - integer, start of the unique interval
-    - ``range`` - integer, length of the unique interval
+    - ``indices`` -- integer, start of the unique interval
+    - ``range`` -- integer, length of the unique interval
 
     OR
 
-    - ``indices`` - list of integers, the integers to wrap into intervals
+    - ``indices`` -- list of integers, the integers to wrap into intervals
 
     OR
 
-    - ``indices`` - None (default), shortcut for an empty list
+    - ``indices`` -- None (default), shortcut for an empty list
 
     OUTPUT:
 
@@ -695,7 +695,7 @@ class int_range:
 
         INPUT:
 
-        - ``right`` - an instance of ``int_range``
+        - ``right`` -- an instance of ``int_range``
 
         OUTPUT:
 
@@ -725,7 +725,7 @@ class int_range:
 
         INPUT:
 
-        - ``right`` - an instance of ``int_range``.
+        - ``right`` -- an instance of ``int_range``.
 
         OUTPUT:
 
@@ -757,7 +757,7 @@ class int_range:
 
         INPUT:
 
-        - ``right`` - an instance of ``int_range``.
+        - ``right`` -- an instance of ``int_range``.
 
         OUTPUT:
 
@@ -784,10 +784,10 @@ def test(n, m, R, c=2):
     r"""
     INPUT:
 
-    - ``n`` - integer
-    - ``m`` - integer
-    - ``R`` - ring
-    - ``c`` - integer (optional, default:2)
+    - ``n`` -- integer
+    - ``m`` -- integer
+    - ``R`` -- ring
+    - ``c`` -- integer (default:2)
 
     EXAMPLES::
 

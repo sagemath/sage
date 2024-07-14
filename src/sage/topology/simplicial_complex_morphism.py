@@ -126,9 +126,17 @@ def is_SimplicialComplexMorphism(x):
         sage: f = {0:0,1:1,3:3,4:4}
         sage: x = H(f)
         sage: is_SimplicialComplexMorphism(x)
+        doctest:warning...
+        DeprecationWarning: The function is_SimplicialComplexMorphism is deprecated;
+        use 'isinstance(..., SimplicialComplexMorphism)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
 
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_SimplicialComplexMorphism is deprecated; "
+                "use 'isinstance(..., SimplicialComplexMorphism)' instead.")
     return isinstance(x, SimplicialComplexMorphism)
 
 
@@ -161,17 +169,14 @@ class SimplicialComplexMorphism(Morphism):
         """
         if not isinstance(X, SimplicialComplex) or not isinstance(Y, SimplicialComplex):
             raise ValueError("X and Y must be SimplicialComplexes")
-        if not set(f.keys()) == set(X.vertices()):
+        if set(f.keys()) != set(X.vertices()):
             raise ValueError("f must be a dictionary from the vertex set of X to single values in the vertex set of Y")
         dim = X.dimension()
         Y_faces = Y.faces()
-        for k in range(dim+1):
+        for k in range(dim + 1):
             for i in X.faces()[k]:
-                tup = i.tuple()
-                fi = []
-                for j in tup:
-                    fi.append(f[j])
-                v = Simplex(set(fi))
+                fi = {f[j] for j in i.tuple()}
+                v = Simplex(fi)
             if v not in Y_faces[v.dimension()]:
                 raise ValueError("f must be a dictionary from the vertices of X to the vertices of Y")
         self._vertex_dictionary = f
@@ -587,7 +592,7 @@ class SimplicialComplexMorphism(Morphism):
         if self.domain() != self.codomain():
             return False
         else:
-            f = dict()
+            f = {}
             for i in self.domain().vertices():
                 f[i] = i
             if self._vertex_dictionary != f:
@@ -684,19 +689,19 @@ class SimplicialComplexMorphism(Morphism):
         for facet in self.domain()._facets:
             left = [("I0", v) for v in facet]
             right = [("I2", map_dict[v]) for v in facet]
-            for i in range(facet.dimension()+1):
-                facets.append(tuple(left[:i+1]+right[i:]))
+            facets.extend(tuple(left[:i + 1] + right[i:])
+                          for i in range(facet.dimension() + 1))
         return SimplicialComplex(facets)
 
     def induced_homology_morphism(self, base_ring=None, cohomology=False):
         """
-        The map in (co)homology induced by this map
+        Return the map in (co)homology induced by this map.
 
         INPUT:
 
-        - ``base_ring`` -- must be a field (optional, default ``QQ``)
+        - ``base_ring`` -- must be a field (default: ``QQ``)
 
-        - ``cohomology`` -- boolean (optional, default ``False``). If
+        - ``cohomology`` -- boolean (default: ``False``). If
           ``True``, the map induced in cohomology rather than homology.
 
         EXAMPLES::

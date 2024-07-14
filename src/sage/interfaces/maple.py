@@ -556,7 +556,7 @@ connection to a server running Maple; for hints, type
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding Maple command completion list (this takes")
@@ -751,7 +751,7 @@ connection to a server running Maple; for hints, type
         INPUT:
 
 
-        -  ``s`` - a string representing the function whose
+        -  ``s`` -- a string representing the function whose
            source code you want
 
 
@@ -785,7 +785,7 @@ connection to a server running Maple; for hints, type
 
         INPUT:
 
-        -  ``string`` - a string to search for in the maple help
+        -  ``string`` -- a string to search for in the maple help
            system
 
         EXAMPLES::

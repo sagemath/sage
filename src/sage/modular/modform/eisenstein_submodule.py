@@ -326,7 +326,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             [q + 7*zeta4*q^2 - 26*zeta4*q^3 - 57*q^4 + O(q^6),
              q - 9*q^2 - 28*q^3 + 73*q^4 + O(q^6),
              q - 7*zeta4*q^2 + 26*zeta4*q^3 - 57*q^4 + O(q^6)]
-         """
+        """
 
         return [x for x in self.eisenstein_series() if x.new_level() == self.level()]
 

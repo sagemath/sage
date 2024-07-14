@@ -305,7 +305,7 @@ class Posets(metaclass=ClasscallMetaclass):
             ....:         if C.covers(C(i),C(j)) and j != i+1:
             ....:             print("TEST FAILED")
 
-        Check that :trac:`8422` is solved::
+        Check that :issue:`8422` is solved::
 
             sage: posets.ChainPoset(0)
             Finite lattice containing 0 elements
@@ -353,7 +353,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         TESTS:
 
-        Check that :trac:`8422` is solved::
+        Check that :issue:`8422` is solved::
 
             sage: posets.AntichainPoset(0)
             Finite poset containing 0 elements
@@ -426,7 +426,7 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         n = check_int(n, 3)
         c = [[n - 1] for x in range(n)]
-        c[0] = [x for x in range(1, n - 1)]
+        c[0] = list(range(1, n - 1))
         c[n - 1] = []
         D = DiGraph({v: c[v] for v in range(n)}, format='dict_of_lists')
         return FiniteLatticePoset(hasse_diagram=D,
@@ -719,9 +719,9 @@ class Posets(metaclass=ClasscallMetaclass):
         try:
             l = [Integer(x) for x in chain_lengths]
         except TypeError:
-            raise TypeError("parameter chain_lengths must be a list of integers, not {0}".format(chain_lengths))
+            raise TypeError("parameter chain_lengths must be a list of integers, not {}".format(chain_lengths))
         if any(x < 0 for x in l):
-            raise TypeError("parameter chain_lengths must be a list of nonnegative integers, not {0}".format(l))
+            raise TypeError("parameter chain_lengths must be a list of nonnegative integers, not {}".format(l))
 
         # given the empty list, we expect the empty poset.
         if not chain_lengths:
@@ -741,9 +741,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` - number of elements, a non-negative integer
+        - ``n`` -- number of elements, a non-negative integer
 
-        - ``p`` - a probability, a real number between 0 and 1 (inclusive)
+        - ``p`` -- a probability, a real number between 0 and 1 (inclusive)
 
         OUTPUT:
 
@@ -781,9 +781,9 @@ class Posets(metaclass=ClasscallMetaclass):
         try:
             p = float(p)
         except (TypeError, ValueError):
-            raise TypeError("probability must be a real number, not {0}".format(p))
+            raise TypeError(f"probability must be a real number, not {p}")
         if p < 0 or p > 1:
-            raise ValueError("probability must be between 0 and 1, not {0}".format(p))
+            raise ValueError(f"probability must be between 0 and 1, not {p}")
 
         D = DiGraph(loops=False, multiedges=False)
         D.add_vertices(range(n))
@@ -867,9 +867,9 @@ class Posets(metaclass=ClasscallMetaclass):
         try:
             p = float(p)
         except Exception:
-            raise TypeError("probability must be a real number, not {0}".format(p))
+            raise TypeError(f"probability must be a real number, not {p}")
         if p < 0 or p >= 1:
-            raise ValueError("probability must be a positive real number and below 1, not {0}".format(p))
+            raise ValueError("probability must be a positive real number and below 1, not {}".format(p))
 
         if properties is None:
             # Basic case, no special properties for lattice asked.
@@ -882,11 +882,11 @@ class Posets(metaclass=ClasscallMetaclass):
             return LatticePoset(D, cover_relations=True)
 
         if isinstance(properties, str):
-            properties = set([properties])
+            properties = {properties}
         else:
             properties = set(properties)
 
-        known_properties = set(['planar', 'dismantlable', 'distributive', 'stone'])
+        known_properties = {'planar', 'dismantlable', 'distributive', 'stone'}
         errors = properties.difference(known_properties)
         if errors:
             raise ValueError("unknown value %s for 'properties'" % errors.pop())
@@ -907,22 +907,22 @@ class Posets(metaclass=ClasscallMetaclass):
         if 'stone' in properties and len(properties) > 1:
             raise NotImplementedError("combining 'stone' with other properties is not implemented")
 
-        if properties == set(['planar']):
+        if properties == {'planar'}:
             D = _random_planar_lattice(n)
             D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
-        if properties == set(['dismantlable']):
+        if properties == {'dismantlable'}:
             D = _random_dismantlable_lattice(n)
             D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
-        if properties == set(['stone']):
+        if properties == {'stone'}:
             D = _random_stone_lattice(n)
             D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
-        if properties == set(['distributive']):
+        if properties == {'distributive'}:
             tmp = Poset(_random_distributive_lattice(n)).order_ideals_lattice(as_ideals=False)
             D = copy(tmp._hasse_diagram)
             D.relabel([i - 1 for i in Permutations(n).random_element()])
@@ -969,11 +969,10 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``s`` - shape of the tableaux
+        - ``s`` -- shape of the tableaux
 
-        - ``f`` - maximum fill number.  This is an optional
-          argument.  If no maximal number is given, it will use
-          the number of cells in the shape.
+        - ``f`` -- integer (default: ``None``); the maximum fill number.
+          By default (``None``), the method uses the number of cells in the shape.
 
         .. NOTE::
 
@@ -1010,8 +1009,8 @@ class Posets(metaclass=ClasscallMetaclass):
     @staticmethod
     def StandardExample(n, facade=None):
         r"""
-        Return the partially ordered set on ``2n`` elements with
-        dimension ``n``.
+        Return the partially ordered set on `2n` elements with
+        dimension `n`.
 
         Let `P` be the poset on `\{0, 1, 2, \ldots, 2n-1\}` whose defining
         relations are that `i < j` for every `0 \leq i < n \leq j < 2n`
@@ -1021,7 +1020,8 @@ class Posets(metaclass=ClasscallMetaclass):
         INPUT:
 
         - ``n`` -- an integer `\ge 2`, dimension of the constructed poset
-        - ``facade`` (boolean) -- whether to make the returned poset a
+
+        - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
@@ -1034,7 +1034,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
             sage: A = posets.StandardExample(3); A
             Finite poset containing 6 elements
-            sage: A.dimension()
+            sage: A.dimension()                                                         # needs networkx
             3
 
         REFERENCES:
@@ -1081,9 +1081,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``start`` - list permutation
+        - ``start`` -- list permutation
 
-        - ``end`` - list permutation (same n, of course)
+        - ``end`` -- list permutation (same n, of course)
 
         .. note::
 
@@ -1106,18 +1106,17 @@ class Posets(metaclass=ClasscallMetaclass):
         start = Permutation(start)
         end = Permutation(end)
         if len(start) != len(end):
-            raise TypeError("start (%s) and end (%s) must have same length" % (start, end))
+            raise TypeError(f"start ({start}) and end ({end}) must have same length")
         if not start.bruhat_lequal(end):
-            raise TypeError("must have start (%s) <= end (%s) in Bruhat order" % (start, end))
+            raise TypeError(f"must have start ({start}) <= end ({end}) in Bruhat order")
         unseen = [start]
         nodes = {}
         while unseen:
             perm = unseen.pop(0)
             nodes[perm] = [succ_perm for succ_perm in perm.bruhat_succ()
                            if succ_perm.bruhat_lequal(end)]
-            for succ_perm in nodes[perm]:
-                if succ_perm not in nodes:
-                    unseen.append(succ_perm)
+            unseen.extend(succ_perm for succ_perm in nodes[perm]
+                          if succ_perm not in nodes)
         return Poset(nodes)
 
     @staticmethod
@@ -1168,7 +1167,7 @@ class Posets(metaclass=ClasscallMetaclass):
         r"""
         Return the tetrahedral poset based on the input colors.
 
-        This method will return the tetrahedral poset with n-1 layers and
+        This method will return the tetrahedral poset with `n-1` layers and
         covering relations based on the input colors of 'green', 'red',
         'orange', 'silver', 'yellow' and 'blue' as defined in [Striker2011]_.
         For particular color choices, the order ideals of the resulting
@@ -1184,13 +1183,13 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` - Defines the number (n-1) of layers in the poset.
+        - ``n`` -- Defines the number (n-1) of layers in the poset.
 
-        - ``colors`` - The colors that define the covering relations of the
+        - ``colors`` -- The colors that define the covering relations of the
           poset. Colors used are 'green', 'red', 'yellow', 'orange', 'silver',
           and 'blue'.
 
-        - ``labels`` - Keyword variable used to determine whether the poset
+        - ``labels`` -- Keyword variable used to determine whether the poset
           is labeled with integers or tuples.  To label with integers, the
           method should be called with ``labels='integers'``.  Otherwise, the
           labeling will default to tuples.
@@ -1200,7 +1199,8 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange')
             Finite poset containing 10 elements
 
-            sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange', labels='integers')
+            sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange',
+            ....:                         labels='integers')
             Finite poset containing 10 elements
 
             sage: A = AlternatingSignMatrices(3)
@@ -1287,8 +1287,8 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         if use_reduced_words:
             element_labels = {s: tuple(s.reduced_word()) for s in W}
-            return Poset({s: s.absolute_covers() for s in W}, element_labels)
-        return Poset({s: s.absolute_covers() for s in W})
+            return Poset({s: list(s.absolute_covers()) for s in W}, element_labels)
+        return Poset({s: list(s.absolute_covers()) for s in W})
 
     @staticmethod
     def NoncrossingPartitions(W):
@@ -1323,11 +1323,11 @@ class Posets(metaclass=ClasscallMetaclass):
         - ``label`` -- (default: ``'permutations'``) a label for the elements
           of the poset returned by the function; the options are
 
-          * ``'permutations'`` - labels the elements are given by their
+          * ``'permutations'`` -- labels the elements by their
             one-line notation
-          * ``'reduced_words'`` - labels the elements by the
+          * ``'reduced_words'`` -- labels the elements by the
             lexicographically minimal reduced word
-          * ``'cycles'`` - labels the elements by their expression
+          * ``'cycles'`` -- labels the elements by their expression
             as a product of cycles
 
         EXAMPLES::
@@ -1349,7 +1349,7 @@ class Posets(metaclass=ClasscallMetaclass):
             element_labels = {s: "".join(x for x in s.cycle_string() if x != ',')
                               for s in W}
 
-        return Poset({s: s.absolute_covers() for s in W}, element_labels)
+        return Poset({s: list(s.absolute_covers()) for s in W}, element_labels)
 
     @staticmethod
     def UpDownPoset(n, m=1):
@@ -1362,8 +1362,8 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` - nonnegative integer, number of elements in the poset
-        - ``m`` - nonnegative integer (default 1), how frequently down
+        - ``n`` -- nonnegative integer, number of elements in the poset
+        - ``m`` -- nonnegative integer (default 1), how frequently down
           steps occur
 
         OUTPUT:
@@ -1393,9 +1393,9 @@ class Posets(metaclass=ClasscallMetaclass):
         try:
             m = Integer(m)
         except TypeError:
-            raise TypeError("parameter m must be an integer, not {0}".format(m))
+            raise TypeError(f"parameter m must be an integer, not {m}")
         if m < 1:
-            raise ValueError("parameter m must be positive, not {0}".format(m))
+            raise ValueError(f"parameter m must be positive, not {m}")
 
         covers = [[i, i + 1] if (i + 1) % (m + 1) else [i + 1, i]
                   for i in range(n - 1)]
@@ -1551,7 +1551,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         covers = []
         current_level = ['']
-        for i in range(1, n + 1):
+        for _ in range(1, n + 1):
             new_level = set()
             for low in current_level:
                 ind = low.find('1')
@@ -1602,7 +1602,7 @@ class Posets(metaclass=ClasscallMetaclass):
     def PermutationPattern(n):
         r"""
         Return the poset of permutations under pattern containment
-        up to rank ``n``.
+        up to rank `n`.
 
         INPUT:
 
@@ -1681,7 +1681,7 @@ class Posets(metaclass=ClasscallMetaclass):
         top = P(top)
         bottom = P(bottom)
         if not top.has_pattern(bottom):
-            raise ValueError("{} doesn't contain {} as a pattern".format(top, bottom))
+            raise ValueError(f"{top} doesn't contain {bottom} as a pattern")
         # Make a list of lists of elements in the interval divided by rank.
         # List will be flattened at the end
         elem = [[top]]
@@ -1820,9 +1820,9 @@ class Posets(metaclass=ClasscallMetaclass):
             7
 
             sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
-            ....: {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
-            ....: 3: [posets.DoubleTailedDiamond(6)]},
-            ....: anchor=(4, 2, posets.ChainPoset(6)))
+            ....:         {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
+            ....:          3: [posets.DoubleTailedDiamond(6)]},
+            ....:         anchor=(4, 2, posets.ChainPoset(6)))
             sage: len(P.cover_relations())
             33
         """
@@ -1833,19 +1833,17 @@ class Posets(metaclass=ClasscallMetaclass):
         elements.extend(ribbon._elements)
 
         if anchor:
-            for cr in anchor[2].cover_relations():
-                cover_relations.append(((anchor[0], cr[0]), (anchor[0], cr[1])))
+            cover_relations.extend(((anchor[0], cr[0]), (anchor[0], cr[1]))
+                                   for cr in anchor[2].cover_relations())
             cover_relations.append((anchor[0], (anchor[0], anchor[1])))
 
-            for elmt in anchor[2]._elements:
-                elements.append((anchor[0], elmt))
+            elements.extend((anchor[0], elmt) for elmt in anchor[2]._elements)
 
         for r, hangs in hangers.items():
             for i, h in enumerate(hangs):
-                for v in h._elements:
-                    elements.append((r, i, v))
-                for cr in h.cover_relations():
-                    cover_relations.append(((r, i, cr[0]), (r, i, cr[1])))
+                elements.extend((r, i, v) for v in h._elements)
+                cover_relations.extend(((r, i, cr[0]), (r, i, cr[1]))
+                                       for cr in h.cover_relations())
                 cover_relations.append(((r, i, h.top()), r))
 
         return Mobile(DiGraph([elements, cover_relations]))
@@ -1889,14 +1887,14 @@ def _random_lattice(n, p):
         meet for `e, m` for all `m \in M`. We do that by keeping
         track of meet matrix and list of maximal elements.
     """
-    from sage.functions.other import floor
+    from sage.arith.misc import integer_floor as floor
     from sage.misc.functional import sqrt
     from sage.misc.prandom import random
 
     n = n - 1
     meets = [[None] * n for _ in range(n)]
     meets[0][0] = 0
-    maxs = set([0])
+    maxs = {0}
     lc_all = [[]]  # No lower covers for the bottom element.
 
     for i in range(1, n):

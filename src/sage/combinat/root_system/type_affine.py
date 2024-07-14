@@ -271,9 +271,9 @@ class AmbientSpace(CombinatorialFreeModule):
             sage: B31wl.fundamental_weights().map(attrcall("level"))                    # needs sage.graphs
             Finite family {0: 1, 1: 1, 2: 2, 3: 1}
 
-       In type `BC` dual, the coefficient of '\delta^\vee' is the level
-       divided by `2` to take into account that the null coroot is
-       `2\delta^\vee`::
+        In type `BC` dual, the coefficient of '\delta^\vee' is the level
+        divided by `2` to take into account that the null coroot is
+        `2\delta^\vee`::
 
             sage: R = CartanType(['BC',3,2]).dual().root_system()
             sage: R.ambient_space().fundamental_weights()                               # needs sage.graphs

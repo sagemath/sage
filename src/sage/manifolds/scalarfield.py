@@ -25,7 +25,6 @@ REFERENCES:
 
 - [Lee2011]_
 - [KN1963]_
-
 """
 
 # *****************************************************************************
@@ -2201,7 +2200,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         else:
             field_name = str(field)
             field_latex_name = latex(field)
-        #
+
         result = FormattedExpansion()
         if self._name is None:
             symbol = ""
@@ -2418,7 +2417,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
         TESTS:
 
-        Check that :trac:`28072` has been fixed::
+        Check that :issue:`28072` has been fixed::
 
             sage: c_ab.<a,b> = W.chart()
             sage: xy_to_ab = c_xy_W.transition_map(c_ab, (3*y, x-y))

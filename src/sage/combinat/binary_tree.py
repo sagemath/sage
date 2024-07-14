@@ -166,9 +166,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         `\QQ` (or any number field) has a ``list()`` method that
         returns itself as a `\QQ`-vector represented as a list.
-        Before :trac:`23961`, this would cause an infinite recursion
+        Before :issue:`23961`, this would cause an infinite recursion
         because `\QQ` elements give a list of length 1. For more
-        details, see :trac:`23961`. We test that constructing
+        details, see :issue:`23961`. We test that constructing
         binary trees from elements from `\QQ` terminates with
         an appropriate error::
 
@@ -1617,7 +1617,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t = from_hexacode('2020222002000', BinaryTrees())
             sage: print(t.to_tilting())
             [(0, 1), (2, 3), (4, 5), (6, 7), (4, 7), (8, 9), (10, 11),
-            (8, 11), (4, 11), (12, 13), (4, 13), (2, 13), (0, 13)]
+             (8, 11), (4, 11), (12, 13), (4, 13), (2, 13), (0, 13)]
 
             sage: w = DyckWord([1,1,1,1,0,1,1,0,0,0,1,1,0,1,0,1,1,0,1,1,0,0,0,0,0,0])   # needs sage.combinat
             sage: t2 = w.to_binary_tree()                                               # needs sage.combinat
@@ -1634,7 +1634,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        ``shift`` -- an integer (default 0)
+        - ``shift`` -- an integer (default 0)
 
         OUTPUT:
 
@@ -4099,7 +4099,7 @@ class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
             sage: B is BinaryTrees_all()
             True
             sage: TestSuite(B).run() # long time
-            """
+        """
         DisjointUnionEnumeratedSets.__init__(
             self, Family(NonNegativeIntegers(), BinaryTrees_size),
             facade=True, keepkey=False)
@@ -4697,7 +4697,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
         sage: t1 == t1c
         False
 
-    We check for :trac:`16314`::
+    We check for :issue:`16314`::
 
         sage: t1 = LBT([ LBT([LBT([], label=2),
         ....:                 LBT([], label=5)], label=6),

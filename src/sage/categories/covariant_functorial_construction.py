@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Covariant Functorial Constructions
 
@@ -49,6 +50,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.dynamic_class import DynamicMetaclass
 
+
 class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
     r"""
     An abstract class for construction functors `F` (eg `F` = Cartesian
@@ -91,12 +93,12 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
     In practice, each subclass of this class should provide the
     following attributes:
 
-     - ``_functor_category`` - a string which should match the name of
+     - ``_functor_category`` -- a string which should match the name of
        the nested category class to be used in each category to
        specify information and generic operations for elements of this
        category.
 
-     - ``_functor_name`` - a string which specifies the name of the
+     - ``_functor_name`` -- a string which specifies the name of the
        functor, and also (when relevant) of the method on parents and
        elements used for calling the construction.
 
@@ -269,7 +271,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
              got <...GradedAlgebrasWithBasis'>
 
         We note that because ``Algebras.WithBasis`` is not lazily imported
-        on startup (see :trac:`22955`), the test fails at a different
+        on startup (see :issue:`22955`), the test fails at a different
         point in the code. However, if this import becomes lazy again, then
         the following error will be generated and can replace the above::
 
@@ -345,7 +347,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
             sage: Sets.Subquotients._base_category_class
             (<class 'sage.categories.sets_cat.Sets'>,)
 
-        It also forces the resolution of lazy imports (see :trac:`15648`)::
+        It also forces the resolution of lazy imports (see :issue:`15648`)::
 
             sage: type(Algebras.__dict__["Graded"])
             <class 'sage.misc.lazy_import.LazyImport'>
@@ -510,6 +512,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         from sage.misc.latex import latex
         return "\\mathbf{%s}(%s)" % (self._short_name(), latex(self.base_category()))
 
+
 class CovariantConstructionCategory(FunctorialConstructionCategory):
     """
     Abstract class for categories `F_{Cat}` obtained through a
@@ -654,6 +657,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
             return self
         else:
             return None
+
 
 class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):
     """

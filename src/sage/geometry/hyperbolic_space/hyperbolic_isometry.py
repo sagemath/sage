@@ -559,7 +559,7 @@ class HyperbolicIsometry(Morphism):
             sage: A.fixed_point_set()
             Geodesic in KM from (1, 0) to (-1, 0)
 
-       ::
+        ::
 
             sage: B = KM.get_isometry(identity_matrix(3))
             sage: B.fixed_point_set()
@@ -781,7 +781,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             sage: A.fixed_point_set()
             Geodesic in UHP from 1 to -1
 
-       ::
+        ::
 
             sage: B = UHP.get_isometry(identity_matrix(2))
             sage: B.fixed_point_set()

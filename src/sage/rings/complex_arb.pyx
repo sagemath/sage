@@ -1,17 +1,16 @@
-# -*- coding: utf-8
 r"""
-Arbitrary precision complex balls using Arb
+Arbitrary precision complex balls
 
-This is a binding to the `Arb library <http://arblib.org>`_; it
-may be useful to refer to its documentation for more details.
+This is an incomplete interface to the `acb module of FLINT <https://flintlib.org/doc/acb.html>`_;
+it may be useful to refer to its documentation for more details.
 
-Parts of the documentation for this module are copied or adapted from
-Arb's own documentation, licenced under the GNU General Public License
-version 2, or later.
+Parts of the documentation for this module are copied or adapted from Arb's
+(now FLINT's) own documentation, licenced at the time under the GNU General
+Public License version 2, or later.
 
 .. SEEALSO::
 
-    - :mod:`Real balls using Arb <sage.rings.real_arb>`
+    - :mod:`Real balls <sage.rings.real_arb>`
     - :mod:`Complex interval field (using MPFI) <sage.rings.complex_interval_field>`
     - :mod:`Complex intervals (using MPFI) <sage.rings.complex_interval>`
 
@@ -19,12 +18,12 @@ Data Structure
 ==============
 
 A :class:`ComplexBall` represents a complex number with error bounds. It wraps
-an Arb object of type ``acb_t``, which  consists of a pair of real number balls
+an object of type ``acb_t``, which  consists of a pair of real number balls
 representing the real and imaginary part with separate error bounds. (See the
 documentation of :mod:`sage.rings.real_arb` for more information.)
 
 A :class:`ComplexBall` thus represents a rectangle `[m_1-r_1, m_1+r_1] +
-[m_2-r_2, m_2+r_2] i` in the complex plane. This is used in Arb instead of a
+[m_2-r_2, m_2+r_2] i` in the complex plane. This is used instead of a
 disk or square representation (consisting of a complex floating-point midpoint
 with a single radius), since it allows implementing many operations more
 conveniently by splitting into ball operations on the real and imaginary parts.
@@ -43,7 +42,7 @@ Comparison
 
 .. WARNING::
 
-    In accordance with the semantics of Arb, identical :class:`ComplexBall`
+    In accordance with the semantics of FLINT/Arb, identical :class:`ComplexBall`
     objects are understood to give permission for algebraic simplification.
     This assumption is made to improve performance. For example, setting ``z =
     x*x`` sets `z` to a ball enclosing the set `\{t^2 : t \in x\}` and not the
@@ -121,12 +120,12 @@ TESTS::
     sage: SR.coerce(CBF(0.42 + 3.33*I))                                                 # needs sage.symbolic
     [0.4200000000000000 +/- ...e-17] + [3.330000000000000 +/- ...e-17]*I
 
-Check that :trac:`19839` is fixed::
+Check that :issue:`19839` is fixed::
 
     sage: log(SR(CBF(0.42))).pyobject().parent()                                        # needs sage.symbolic
     Complex ball field with 53 bits of precision
 
-:trac:`24621`::
+:issue:`24621`::
 
     sage: CBF(NumberField(polygen(QQ, 'y')^3 + 20, 'a', embedding=CC(1.35,2.35)).gen())
     [1.35720880829745...] + [2.35075461245119...]*I
@@ -161,16 +160,16 @@ from cpython.complex cimport PyComplex_FromDoubles
 from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.mpfr cimport MPFR_RNDU, MPFR_RNDD, MPFR_PREC_MIN, mpfr_get_d_2exp
-from sage.libs.arb.types cimport ARF_RND_NEAR
-from sage.libs.arb.arb cimport *
-from sage.libs.arb.acb cimport *
-from sage.libs.arb.acb_calc cimport *
-from sage.libs.arb.acb_hypgeom cimport *
-from sage.libs.arb.acb_elliptic cimport *
-from sage.libs.arb.acb_modular cimport *
-from sage.libs.arb.acb_poly cimport *
-from sage.libs.arb.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_clear, arf_set, arf_is_nan
-from sage.libs.arb.mag cimport (mag_init, mag_clear, mag_set_d,
+from sage.libs.flint.types cimport ARF_RND_NEAR, arf_t, mag_t
+from sage.libs.flint.arb cimport *
+from sage.libs.flint.acb cimport *
+from sage.libs.flint.acb_calc cimport *
+from sage.libs.flint.acb_hypgeom cimport *
+from sage.libs.flint.acb_elliptic cimport *
+from sage.libs.flint.acb_modular cimport *
+from sage.libs.flint.acb_poly cimport *
+from sage.libs.flint.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_clear, arf_set, arf_is_nan
+from sage.libs.flint.mag cimport (mag_init, mag_clear, mag_set_d,
         MAG_BITS, mag_zero, mag_set_ui_2exp_si,
         mag_mul_2exp_si)
 from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_get_mpz, fmpz_set_mpz, fmpz_clear
@@ -180,6 +179,8 @@ from sage.libs.gsl.complex cimport gsl_complex_rect
 from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.complex_double cimport ComplexDoubleElement
 from sage.rings.integer cimport Integer
+from sage.rings.rational_field import QQ
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.polynomial.polynomial_complex_arb cimport Polynomial_complex_arb
 from sage.rings.real_arb cimport mpfi_to_arb, arb_to_mpfi
 from sage.rings.real_arb import RealBallField
@@ -336,6 +337,13 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         sage: loads(dumps(ComplexBallField(60))) is ComplexBallField(60)
         True
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.complex_arb`
+        - :mod:`sage.rings.complex_mpfr`
+        - :mod:`sage.rings.complex_mpfi`
+        - :mod:`sage.rings.real_arb`
     """
     Element = ComplexBall
 
@@ -371,7 +379,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: CBF.base_ring()
             Real ball field with 53 bits of precision
 
-        There are direct coercions from ZZ and QQ (for which arb provides
+        There are direct coercions from ZZ and QQ (for which FLINT provides
         construction functions)::
 
             sage: CBF.coerce_map_from(ZZ)
@@ -562,8 +570,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
         elif isinstance(other, ComplexBallField):
             return other._prec >= self._prec
 
-        import sage.rings.number_field.number_field as number_field
-        if isinstance(other, number_field.NumberField_generic):
+        if other is not QQ and isinstance(other, NumberField):
             emb = other.coerce_embedding()
             return emb is not None and self.has_coerce_map_from(emb.codomain())
 
@@ -1022,14 +1029,14 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
           balls, or elements of any parent that coerces into this ball field,
           e.g. rational or algebraic numbers.
 
-        - ``rel_tol`` (optional, default `2^{-p}` where `p` is the precision of
+        - ``rel_tol`` (default: `2^{-p}` where `p` is the precision of
           the ball field) -- relative accuracy goal
 
-        - ``abs_tol`` (optional, default `2^{-p}` where `p` is the precision of
+        - ``abs_tol`` (default: `2^{-p}` where `p` is the precision of
           the ball field) -- absolute accuracy goal
 
         Additionally, the following optional parameters can be used to control
-        the integration algorithm. See the `Arb documentation <http://arblib.org/acb_calc.html>`_
+        the integration algorithm. See the `FLINT documentation <https://flintlib.org/doc/acb_calc.html>`_
         for more information.
 
         - ``deg_limit`` -- maximum quadrature degree for each
@@ -1150,8 +1157,8 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         ALGORITHM:
 
-        Uses the `acb_calc <http://arblib.org/acb_calc.html>`_ module of the Arb
-        library.
+        Uses the `acb_calc <https://flintlib.org/doc/acb_calc.html>`_ module of
+        the FLINT library.
 
         TESTS::
 
@@ -1254,9 +1261,10 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         return res
 
+
 cdef inline bint _do_sig(long prec) noexcept:
     """
-    Whether signal handlers should be installed for calls to arb.
+    Whether signal handlers should be installed for calls to FLINT.
     """
     return (prec > 1000)
 
@@ -1293,13 +1301,12 @@ cdef bint arb_gt_neg_one(arb_t b) noexcept:
     arb_clear(neg_one)
     return res
 
-cdef inline real_ball_field(ComplexBall ball) noexcept:
+cdef inline real_ball_field(ComplexBall ball):
     return ball._parent._base
 
 cdef class ComplexBall(RingElement):
     """
-    Hold one ``acb_t`` of the `Arb library
-    <http://arblib.org>`_
+    Hold one ``acb_t`` of the `FLINT library <https://flintlib.org>`_
 
     EXAMPLES::
 
@@ -1546,7 +1553,7 @@ cdef class ComplexBall(RingElement):
 
     # Conversions
 
-    cpdef ComplexIntervalFieldElement _complex_mpfi_(self, parent) noexcept:
+    cpdef ComplexIntervalFieldElement _complex_mpfi_(self, parent):
         """
         Return :class:`ComplexIntervalFieldElement` of the same value.
 
@@ -1611,7 +1618,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``parent`` - :class:`~sage.rings.complex_mpfr.ComplexField_class`,
+        - ``parent`` -- :class:`~sage.rings.complex_mpfr.ComplexField_class`,
           target parent.
 
         EXAMPLES::
@@ -1639,7 +1646,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``parent`` - :class:`~sage.rings.real_mpfi.RealIntervalField_class`,
+        - ``parent`` -- :class:`~sage.rings.real_mpfi.RealIntervalField_class`,
           target parent.
 
         EXAMPLES::
@@ -1664,7 +1671,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``parent`` - :class:`~sage.rings.real_mpfr.RealField_class`,
+        - ``parent`` -- :class:`~sage.rings.real_mpfr.RealField_class`,
           target parent.
 
         EXAMPLES::
@@ -1805,7 +1812,7 @@ cdef class ComplexBall(RingElement):
 
     # Real and imaginary part, midpoint, radius
 
-    cpdef RealBall real(self) noexcept:
+    cpdef RealBall real(self):
         """
         Return the real part of this ball.
 
@@ -1826,7 +1833,7 @@ cdef class ComplexBall(RingElement):
         arb_set(r.value, acb_realref(self.value))
         return r
 
-    cpdef RealBall imag(self) noexcept:
+    cpdef RealBall imag(self):
         """
         Return the imaginary part of this ball.
 
@@ -2198,7 +2205,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``ampl`` - A **real** ball (or an object that can be coerced to a
+        - ``ampl`` -- A **real** ball (or an object that can be coerced to a
           real ball).
 
         OUTPUT:
@@ -2331,7 +2338,7 @@ cdef class ComplexBall(RingElement):
         """
         return acb_is_real(self.value)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare ``left`` and ``right``.
 
@@ -2618,7 +2625,7 @@ cdef class ComplexBall(RingElement):
         acb_conj(res.value, self.value)
         return res
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         Return the sum of two balls, rounded to the ambient field's precision.
 
@@ -2636,7 +2643,7 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         Return the difference of two balls, rounded to the ambient field's
         precision.
@@ -2677,7 +2684,7 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Return the product of two balls, rounded to the ambient field's
         precision.
@@ -2777,7 +2784,7 @@ cdef class ComplexBall(RingElement):
             raise TypeError("unsupported operand type(s) for >>: '{}' and '{}'"
                             .format(type(val).__name__, type(shift).__name__))
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Return the quotient of two balls, rounded to the ambient field's
         precision.
@@ -2844,7 +2851,7 @@ cdef class ComplexBall(RingElement):
         else:
             return sage.structure.element.bin_op(base, expo, operator.pow)
 
-    cpdef pow(self, expo, analytic=False) noexcept:
+    cpdef pow(self, expo, analytic=False):
         r"""
         Raise this ball to the power of ``expo``.
 
@@ -4704,7 +4711,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``m`` - complex ball
+        - ``m`` -- complex ball
 
         EXAMPLES::
 
@@ -4742,7 +4749,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``m`` - complex ball
+        - ``m`` -- complex ball
 
         EXAMPLES::
 
@@ -4779,9 +4786,9 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``phi`` - complex ball
+        - ``phi`` -- complex ball
 
-        - ``m`` - complex ball
+        - ``m`` -- complex ball
 
         EXAMPLES::
 
@@ -4792,18 +4799,14 @@ cdef class ComplexBall(RingElement):
 
             sage: n = CBF(1,1)
             sage: m = CBF(-2/3, 3/5)
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb216
-            [0.8934793755173 +/- ...e-14] + [0.95707868710750 +/- ...e-15]*I
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb218 - this is a regression, see :trac:28623
+            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # this is a regression, see :issue:28623
             nan + nan*I
             sage: n.elliptic_pi(m)
             [0.8934793755173...] + [0.957078687107...]*I
 
             sage: n = CBF(2, 3/7)
             sage: m = CBF(-1/3, 2/9)
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb216
-            [0.2969588746419 +/- ...e-14] + [1.3188795332738 +/- ...e-14]*I
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb218 -  this is a regression, see :trac:28623
+            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # this is a regression, see :issue:28623
             nan + nan*I
             sage: n.elliptic_pi(m)
             [0.296958874641...] + [1.318879533273...]*I
@@ -4823,9 +4826,9 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``y`` - complex ball
+        - ``y`` -- complex ball
 
-        - ``z`` - complex ball
+        - ``z`` -- complex ball
 
         EXAMPLES::
 
@@ -4848,9 +4851,9 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``y`` - complex ball
+        - ``y`` -- complex ball
 
-        - ``z`` - complex ball
+        - ``z`` -- complex ball
 
         EXAMPLES::
 
@@ -4873,11 +4876,11 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``y`` - complex ball
+        - ``y`` -- complex ball
 
-        - ``z`` - complex ball
+        - ``z`` -- complex ball
 
-        - ``p`` - complex bamm
+        - ``p`` -- complex bamm
 
         EXAMPLES::
 
@@ -4900,7 +4903,7 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-        - ``tau`` - a complex ball with positive imaginary part
+        - ``tau`` -- a complex ball with positive imaginary part
 
         EXAMPLES::
 
@@ -4920,7 +4923,7 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-        - ``tau`` - a complex ball with positive imaginary part
+        - ``tau`` -- a complex ball with positive imaginary part
 
         EXAMPLES::
 

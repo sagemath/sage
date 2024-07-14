@@ -40,7 +40,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: e = RootSystem(['E',8]).ambient_space()
             sage: [e.weyl_dimension(v) for v in e.fundamental_weights()]
             [3875, 147250, 6696000, 6899079264, 146325270, 2450240, 30380, 248]
-           """
+        """
         v = ZZ(1)/ZZ(2)
         self.rank = root_system.cartan_type().rank()
         ambient_space.AmbientSpace.__init__(self, root_system, baseRing)

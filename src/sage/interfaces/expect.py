@@ -26,7 +26,7 @@ AUTHORS:
   synchronisation of the GAP interface.
 
 - François Bissey, Bill Page, Jeroen Demeyer (2015-12-09): Upgrade to
-  pexpect 4.0.1 + patches, see :trac:`10295`.
+  pexpect 4.0.1 + patches, see :issue:`10295`.
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -158,7 +158,7 @@ class Expect(Interface):
         else:
             self.__path = os.path.join(SAGE_EXTCODE, name, script_subdirectory)
         if not os.path.isdir(self.__path):
-            raise EnvironmentError("path %r does not exist" % self.__path)
+            raise OSError("path %r does not exist" % self.__path)
         self.__initialized = False
         self.__seq = -1
         self._session_number = 0
@@ -407,7 +407,6 @@ This thus requires passwordless authentication to be setup, which can be done wi
 
 In many cases, the server that can actually run "slave" is not accessible from the internet directly, but you have to hop through an intermediate trusted server, say "gate".
 If that is your case, get help with _install_hints_ssh_through_gate().
-
 """
 
     def _install_hints_ssh_through_gate(self):
@@ -450,7 +449,6 @@ their own way.
 
 If this all works, you can then make calls like:
          math = Mathematica(server="remote_for_sage")
-
 """
 
     def _do_cleaner(self):
@@ -718,7 +716,7 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        ``e`` -- an expect interface instance
+        - ``e`` -- an expect interface instance
 
         OUTPUT:
 
@@ -732,7 +730,7 @@ If this all works, you can then make calls like:
             sage: gap._local_tmpfile() is gap._local_tmpfile()
             True
 
-        The following two problems were fixed in :trac:`10004`.
+        The following two problems were fixed in :issue:`10004`.
 
         1. Different interfaces have different temp-files::
 
@@ -821,7 +819,7 @@ If this all works, you can then make calls like:
         INPUT:
 
         - ``line`` -- (string) a command.
-        - ``restart_if_needed`` - (optional bool, default ``True``) --
+        - ``restart_if_needed`` -- (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
           :class:`EOFError` occurred.
@@ -930,6 +928,7 @@ If this all works, you can then make calls like:
 
         TESTS::
 
+            sage: from sage.interfaces.singular import singular
             sage: singular._eval_line('def a=3;')
             ''
             sage: singular('a')
@@ -1234,8 +1233,8 @@ If this all works, you can then make calls like:
             '...10\r\n> '
 
         We test interrupting ``_expect_expr`` using the GP interface,
-        see :trac:`6661`.  Unfortunately, this test doesn't work reliably using
-        Singular, see :trac:`9163` and the follow-up :trac:`10476`.
+        see :issue:`6661`.  Unfortunately, this test doesn't work reliably using
+        Singular, see :issue:`9163` and the follow-up :issue:`10476`.
         The ``gp.eval('0')`` in this test makes sure that ``gp`` is
         running, so a timeout of 1 second should be sufficient. ::
 
@@ -1372,7 +1371,7 @@ If this all works, you can then make calls like:
         - ``locals``      -- None (ignored); this is used for compatibility
                              with the Sage notebook's generic system interface.
 
-        - ``allow_use_file`` -- bool (default: True); if True and ``code`` exceeds an
+        - ``allow_use_file`` -- bool (default: ``True``); if True and ``code`` exceeds an
                                 interface-specific threshold then ``code`` will be communicated
                                 via a temporary file rather that the character-based interface.
                                 If False then the code will be communicated via the character interface.

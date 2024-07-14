@@ -453,7 +453,7 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``projection_point`` - The projection point. This must be
+        - ``projection_point`` -- The projection point. This must be
           distinct from the polyhedron's vertices. Default is `(1,0,\dots,0)`
 
         EXAMPLES::
@@ -711,7 +711,7 @@ class Projection(SageObject):
             sage: pp.arrows
             [[0, 1], [0, 2], [0, 3], [0, 4]]
 
-        We check that :trac:`31802` is fixed::
+        We check that :issue:`31802` is fixed::
 
             sage: x = Polyhedron(lines=[(1, 0, 0), (0, 1, 0)], rays=[(0, 0, 1)])
             sage: y = x.projection()
@@ -1143,7 +1143,7 @@ class Projection(SageObject):
             sage: q4 = p4.projection()
             sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()                         # needs sage.plot
             Graphics object consisting of 18 graphics primitives
-         """
+        """
         plt = Graphics()
         if point_opts is None:
             point_opts = {}
@@ -1202,7 +1202,7 @@ class Projection(SageObject):
             sage: Polyhedron(vertices=[[1,1,1]]).plot()      # point in R^3
             Graphics3d Object
 
-        The origin is not included, if it is not in the polyhedron (:trac:`23555`)::
+        The origin is not included, if it is not in the polyhedron (:issue:`23555`)::
 
             sage: Q = Polyhedron([[100],[101]])
             sage: P = Q*Q*Q; P
@@ -1263,7 +1263,7 @@ class Projection(SageObject):
           recognize.
         - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
           the front facets.
-        - ``axis`` -- Boolean (default: False) draw the axes at the origin or not.
+        - ``axis`` -- Boolean (default: ``False``) draw the axes at the origin or not.
         - ``output_type`` -- string (default: ``None``), valid values
           are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
           whether to return a :class:`LatexExpr` object (which inherits from Python
@@ -1507,7 +1507,7 @@ class Projection(SageObject):
             sage: with open('polytope-tikz2.tex', 'w') as f:  # not tested
             ....:     _ = f.write(Image)
 
-        Scientific notation is not used in the output (:trac:`16519`)::
+        Scientific notation is not used in the output (:issue:`16519`)::
 
             sage: P = Polyhedron([[2*10^-10,0], [0,1], [1,0]], base_ring=QQ)
             sage: tikz = P.projection().tikz(output_type='TikzPicture')

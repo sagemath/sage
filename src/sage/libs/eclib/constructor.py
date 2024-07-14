@@ -8,8 +8,8 @@ def CremonaModularSymbols(level, sign=0, cuspidal=False, verbose=0):
 
     - ``level`` -- an integer >= 2  (at least 2, not just positive!)
     - ``sign`` -- an integer either 0 (the default) or 1 or -1.
-    - ``cuspidal`` -- (default: False); if True, compute only the cuspidal subspace
-    - ``verbose`` -- (default: False): if True, print verbose information while creating space
+    - ``cuspidal`` -- (default: ``False``); if True, compute only the cuspidal subspace
+    - ``verbose`` -- (default: ``False``): if True, print verbose information while creating space
 
     EXAMPLES::
 
@@ -62,7 +62,7 @@ def CremonaModularSymbols(level, sign=0, cuspidal=False, verbose=0):
         ...
         ValueError: sign (= -2) is not supported; use 0, +1 or -1
 
-    We do allow -1 as a sign (see :trac:`9476`)::
+    We do allow -1 as a sign (see :issue:`9476`)::
 
         sage: CremonaModularSymbols(10, sign = -1)
         Cremona Modular Symbols space of dimension 0 for Gamma_0(10) of weight 2 with sign -1

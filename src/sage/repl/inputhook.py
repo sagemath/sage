@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 The Sage Input Hook
 
@@ -37,7 +38,7 @@ def sage_inputhook(context):
             r, _, _ = select.select([f], [], [], TIMEOUT)
             if f in r:
                 return  # IPython signalled us to stop
-        except select.error as e:
+        except OSError as e:
             if e[0] != errno.EINTR:
                 raise
 
@@ -57,7 +58,7 @@ def install():
         sage: get_test_shell()
         <sage.repl.interpreter.SageTestShell object at ...>
 
-    Run the function twice, to check it is idempotent (see :trac:`35235`)::
+    Run the function twice, to check it is idempotent (see :issue:`35235`)::
 
         sage: from sage.repl.inputhook import install
         sage: install()

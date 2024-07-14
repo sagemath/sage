@@ -121,7 +121,6 @@ AUTHORS:
 
 - Paul Scurek (2013-08-08): added
   :meth:`~sage.logic.boolformula.BooleanFormula.implies()`
-
 """
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein.gmail.com>
@@ -148,7 +147,7 @@ latex_operators = [('&', '\\wedge '),
                    ('->', '\\rightarrow ')]
 
 
-class BooleanFormula():
+class BooleanFormula:
     """
     Boolean formulas.
 
@@ -673,10 +672,7 @@ class BooleanFormula():
             False
         """
         table = self.truthtable().get_table_list()
-        for row in table[1:]:
-            if row[-1] is True:
-                return True
-        return False
+        return any(row[-1] is True for row in table[1:])
 
     def is_tautology(self):
         r"""
@@ -756,10 +752,10 @@ class BooleanFormula():
 
         A boolean value to be determined as follows:
 
-        - ``True`` - if ``self`` (the desired conclusion) is a logical consequence
+        - ``True`` -- if ``self`` (the desired conclusion) is a logical consequence
           of the set of hypotheses
 
-        - ``False`` - if ``self`` (the desired conclusion) is not a logical consequence
+        - ``False`` -- if ``self`` (the desired conclusion) is not a logical consequence
           of the set of hypotheses
 
         EXAMPLES::
@@ -840,9 +836,9 @@ class BooleanFormula():
 
         A boolean value to be determined as follows:
 
-        - ``True`` - if ``self`` implies ``other``
+        - ``True`` -- if ``self`` implies ``other``
 
-        - ``False`` - if ``self does not imply ``other``
+        - ``False`` -- if ``self does not imply ``other``
 
         EXAMPLES:
 
@@ -1309,11 +1305,11 @@ class BooleanFormula():
         if tree[0] == '<->':
             # parse tree for (~tree[1]|tree[2])&(~tree[2]|tree[1])
             new_tree = ['&', ['|', ['~', tree[1], None], tree[2]],
-                       ['|', ['~', tree[2], None], tree[1]]]
+                        ['|', ['~', tree[2], None], tree[1]]]
         elif tree[0] == '^':
             # parse tree for (tree[1]|tree[2])&~(tree[1]&tree[2])
             new_tree = ['&', ['|', tree[1], tree[2]],
-                       ['~', ['&', tree[1], tree[2]], None]]
+                        ['~', ['&', tree[1], tree[2]], None]]
         elif tree[0] == '->':
             # parse tree for ~tree[1]|tree[2]
             new_tree = ['|', ['~', tree[1], None], tree[2]]
@@ -1354,10 +1350,7 @@ class BooleanFormula():
         if tree[0] == '~' and isinstance(tree[1], list):
             op = tree[1][0]
             if op != '~':
-                if op == '&':
-                    op = '|'
-                else:
-                    op = '&'
+                op = '|' if op == '&' else '&'
                 new_tree = [op, ['~', tree[1][1], None], ['~', tree[1][2], None]]
                 return logicparser.apply_func(new_tree, self.dist_not)
             else:
@@ -1554,7 +1547,7 @@ class BooleanFormula():
         return len(flatten(self.full_tree()))
 
     # For backward compatibility, we allow `self.length()` to be called as
-    # `len(self)`, but this may be deprecated in the future (see :trac:`32148`):
+    # `len(self)`, but this may be deprecated in the future (see :issue:`32148`):
     __len__ = length
 
 

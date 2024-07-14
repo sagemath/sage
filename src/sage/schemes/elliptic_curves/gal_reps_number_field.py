@@ -35,7 +35,6 @@ REFERENCES:
 
 - [Ser1972]_
 - [Sut2012]_
-
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Eric Larson <elarson3@gmail.com>
@@ -80,7 +79,9 @@ class GaloisRepresentation(SageObject):
         sage: E = EllipticCurve('11a1').change_ring(K)
         sage: rho = E.galois_representation()
         sage: rho
-        Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
+        Compatible family of Galois representations associated to the Elliptic Curve
+         defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
+         over Number Field in a with defining polynomial x^2 + 1
     """
 
     def __init__(self, E):
@@ -94,7 +95,9 @@ class GaloisRepresentation(SageObject):
             sage: E = EllipticCurve('11a1').change_ring(K)
             sage: rho = E.galois_representation()
             sage: rho
-            Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
+            Compatible family of Galois representations associated to the Elliptic Curve
+             defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
+             over Number Field in a with defining polynomial x^2 + 1
             sage: loads(rho.dumps()) == rho
             True
         """
@@ -111,12 +114,16 @@ class GaloisRepresentation(SageObject):
             sage: E = EllipticCurve('11a1').change_ring(K)
             sage: rho = E.galois_representation()
             sage: rho
-            Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
+            Compatible family of Galois representations associated to the Elliptic Curve
+             defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
+             over Number Field in a with defining polynomial x^2 + 1
 
             sage: K.<a> = NumberField(x^2-x+1)
             sage: E = EllipticCurve([0,0,0,a,0])
             sage: E.galois_representation()
-            Compatible family of Galois representations associated to the CM Elliptic Curve defined by y^2 = x^3 + a*x over Number Field in a with defining polynomial x^2 - x + 1
+            Compatible family of Galois representations associated to the
+             CM Elliptic Curve defined by y^2 = x^3 + a*x
+             over Number Field in a with defining polynomial x^2 - x + 1
         """
         if self.E.has_cm():
             return "Compatible family of Galois representations associated to the CM " + repr(self.E)
@@ -205,7 +212,7 @@ class GaloisRepresentation(SageObject):
 
         TESTS:
 
-        An example which failed until fixed at :trac:`19229`::
+        An example which failed until fixed at :issue:`19229`::
 
             sage: K.<a> = NumberField(x^2-x+1)
             sage: E = EllipticCurve([a+1,1,1,0,0])
@@ -225,10 +232,10 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        * ``p`` - int - a prime number.
+        * ``p`` -- a prime number.
 
-        * ``A`` - int - a bound on the number of traces of Frobenius to use
-                     while trying to prove surjectivity.
+        * ``A`` -- (integer) a bound on the number of traces of Frobenius to use
+          while trying to prove surjectivity.
 
         EXAMPLES::
 
@@ -258,7 +265,7 @@ class GaloisRepresentation(SageObject):
 
         For CM curves, the mod-p representation is never surjective::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: E.has_cm()
             True
@@ -320,7 +327,7 @@ class GaloisRepresentation(SageObject):
         `p` for which the mod-`p` representation is reducible, and [0]
         is returned::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: E.has_rational_cm()
             True
@@ -330,7 +337,7 @@ class GaloisRepresentation(SageObject):
 
         An example (an elliptic curve with everywhere good reduction
         over an imaginary quadratic field with quite large
-        discriminant), which failed until fixed at :trac:`21776`::
+        discriminant), which failed until fixed at :issue:`21776`::
 
             sage: K.<a> = NumberField(x^2 - x + 112941801)
             sage: E = EllipticCurve([a+1,a-1,a,-23163076*a + 266044005933275,57560769602038*a - 836483958630700313803])
@@ -403,7 +410,7 @@ class GaloisRepresentation(SageObject):
         `p` for which the mod-`p` representation is reducible, and [0]
         is returned::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: E.has_rational_cm()
             True
@@ -426,7 +433,7 @@ def _non_surjective(E, patience=100):
     - ``E`` -- EllipticCurve (over a number field).
 
     - ``A`` -- int (a bound on the number of traces of Frobenius to use
-                 while trying to prove surjectivity).
+      while trying to prove surjectivity).
 
     OUTPUT:
 
@@ -731,9 +738,7 @@ def _exceptionals(E, L, patience=1000):
         if (not D) or (patience == 0):
             break
 
-    for l in D:
-        output.append(l)
-
+    output.extend(D)
     output.sort()
     return output
 
@@ -844,11 +849,12 @@ def _semistable_reducible_primes(E, verbose=False):
         True
 
     This example, over a quintic field with Galois group `S_5`, took a
-    very long time before :trac:`22343`::
+    very long time before :issue:`22343`::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^5 - 6*x^3 + 8*x - 1)
-        sage: E = EllipticCurve(K, [a^3 - 2*a, a^4 - 2*a^3 - 4*a^2 + 6*a + 1, a + 1, -a^3 + a + 1, -a])
+        sage: E = EllipticCurve(K, [a^3 - 2*a, a^4 - 2*a^3 - 4*a^2 + 6*a + 1,
+        ....:                       a + 1, -a^3 + a + 1, -a])
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import _semistable_reducible_primes
         sage: _semistable_reducible_primes(E)
         [2, 5, 53, 1117]
@@ -884,8 +890,8 @@ def _semistable_reducible_primes(E, verbose=False):
     EmodPy = E.reduction(Py) if d > 1 else E.reduction(y)
     fxpol = EmodPx.frobenius_polynomial()
     fypol = EmodPy.frobenius_polynomial()
-    fx12pol = fxpol.adams_operator(12) # roots are 12th powers of those of fxpol
-    fy12pol = fypol.adams_operator(12)
+    fx12pol = fxpol.adams_operator_on_roots(12) # roots are 12th powers of those of fxpol
+    fy12pol = fypol.adams_operator_on_roots(12)
     px = x.norm() if d > 1 else x
     py = y.norm() if d > 1 else x
     Zx = fxpol.parent()
@@ -898,8 +904,8 @@ def _semistable_reducible_primes(E, verbose=False):
     for w in range(1 + d // 2):
         if verbose:
             print("w = {}".format(w))
-        gx = xpol.symmetric_power(w).adams_operator(12).resultant(fx12pol)
-        gy = ypol.symmetric_power(w).adams_operator(12).resultant(fy12pol)
+        gx = xpol.symmetric_power(w).adams_operator_on_roots(12).resultant(fx12pol)
+        gy = ypol.symmetric_power(w).adams_operator_on_roots(12).resultant(fy12pol)
         if verbose:
             print("computed gx and gy")
 
@@ -965,8 +971,8 @@ def _semistable_reducible_primes(E, verbose=False):
             if verbose:
                 print("...good reduction, frobenius poly = {}".format(fpol))
             x = iso(P.gens_reduced()[0]).relative_norm()
-            xpol = x.charpoly().adams_operator(12)
-            div2 = Integer(xpol.resultant(fpol.adams_operator(12)) // x.norm()**12)
+            xpol = x.charpoly().adams_operator_on_roots(12)
+            div2 = Integer(xpol.resultant(fpol.adams_operator_on_roots(12)) // x.norm()**12)
             if div2:
                 div = div2.isqrt()
                 assert div2 == div**2
@@ -1182,7 +1188,7 @@ def Billerey_P_l(E, l):
     P = polygen(ZZ)-1
     for q in qq:
         e = K(l).valuation(q)
-        P = P.composed_op(E.reduction(q).frobenius_polynomial().adams_operator(12*e), mul, monic=True)
+        P = P.composed_op(E.reduction(q).frobenius_polynomial().adams_operator_on_roots(12*e), mul, monic=True)
     return P
 
 def Billerey_B_l(E,l,B=0):
@@ -1255,8 +1261,8 @@ def Billerey_R_q(E, q, B=0):
     K = E.base_field()
     d = K.absolute_degree()
     h = K.class_number()
-    P = E.reduction(q).frobenius_polynomial().adams_operator(12*h)
-    Q = ((q**h).gens_reduced()[0]).absolute_minpoly().adams_operator(12)
+    P = E.reduction(q).frobenius_polynomial().adams_operator_on_roots(12*h)
+    Q = ((q**h).gens_reduced()[0]).absolute_minpoly().adams_operator_on_roots(12)
 
     # We compute the factors one at a time since if any is 0 we quit:
     R_q = ZZ(1)
@@ -1266,7 +1272,7 @@ def Billerey_R_q(E, q, B=0):
         if factor:
             R_q *= factor.gcd(B)
         else:
-            return ZZ(0)
+            return ZZ.zero()
     return R_q
 
 
@@ -1406,7 +1412,7 @@ def Billerey_R_bound(E, max_l=200, num_l=8, small_prime_bound=None, debug=False)
 
     .. NOTE::
 
-        The purpose of the small_prime_bound is that it is faster to
+        The purpose of the ``small_prime_bound`` is that it is faster to
         deal with these using the local test; by ignoring them here,
         we enable the algorithm to terminate sooner when there are no
         large reducible primes, which is always the case in practice.
@@ -1544,7 +1550,7 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
 
     TESTS:
 
-    Test that this function works with non-integral models (see :trac:`34174`)::
+    Test that this function works with non-integral models (see :issue:`34174`)::
 
         sage: K.<a> = QuadraticField(4569)
         sage: j = 46969655/32768

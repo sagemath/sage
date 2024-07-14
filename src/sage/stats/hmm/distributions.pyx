@@ -33,7 +33,6 @@ from sage.misc.randstate cimport current_randstate, randstate
 from sage.stats.time_series cimport TimeSeries
 
 
-
 cdef double random_normal(double mean, double std, randstate rstate) noexcept:
     r"""
     Return a floating point number chosen from the normal distribution
@@ -182,8 +181,9 @@ cdef class GaussianMixtureDistribution(Distribution):
             sage: hmm.GaussianMixtureDistribution([(1,-1,0)], eps=1e-3)
             1.0*N(-1.0,0.001)
         """
-        B = [[c if c>=0 else 0,  mu,  std if std>0 else eps] for c,mu,std in B]
-        if len(B) == 0:
+        B = [[(c if c >= 0 else 0), mu, (std if std > 0 else eps)]
+             for c, mu, std in B]
+        if not B:
             raise ValueError("must specify at least one component of the mixture model")
         cdef double s
         if normalize:
@@ -196,9 +196,9 @@ cdef class GaussianMixtureDistribution(Distribution):
                 else:
                     for a in B:
                         a[0] /= s
-        self.c0 = TimeSeries([c/(sqrt2pi*std) for c,_,std in B])
-        self.c1 = TimeSeries([-1.0/(2*std*std) for _,_,std in B])
-        self.param = TimeSeries(sum([list(x) for x in B],[]))
+        self.c0 = TimeSeries([c/(sqrt2pi*std) for c, _, std in B])
+        self.c1 = TimeSeries([-1.0/(2*std*std) for _, _, std in B])
+        self.param = TimeSeries(sum([list(x) for x in B], []))
         self.fixed = IntList(self.c0._length)
 
     def __getitem__(self, Py_ssize_t i):
@@ -282,7 +282,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         """
         return self.c0._length
 
-    cpdef is_fixed(self, i=None) noexcept:
+    cpdef is_fixed(self, i=None):
         r"""
         Return whether or not this :class:`GaussianMixtureDistribution` is
         fixed when using Baum-Welch to update the corresponding HMM.
@@ -369,7 +369,6 @@ cdef class GaussianMixtureDistribution(Distribution):
                 self.fixed[j] = 0
         else:
             self.fixed[i] = 0
-
 
     def __repr__(self):
         r"""
@@ -523,6 +522,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             raise IndexError("index out of range")
         mu = self.param._values[3*m+1]
         return self.c0._values[m]*exp((x-mu)*(x-mu)*self.c1._values[m])
+
 
 def unpickle_gaussian_mixture_distribution_v1(TimeSeries c0, TimeSeries c1,
                                               TimeSeries param, IntList fixed):

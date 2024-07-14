@@ -155,7 +155,7 @@ dominance and so::
        *   **        *
        *             *
                      *
-    sage: lam=PartitionTuples(3)([[3,2],[],[1,1,1,1]]); lam
+    sage: lam = PartitionTuples(3)([[3,2],[],[1,1,1,1]]); lam
     ([3, 2], [], [1, 1, 1, 1])
     sage: lam.level()
     3
@@ -200,7 +200,7 @@ dominance and so::
 
 Every partition tuple behaves every much like a tuple of partitions::
 
-    sage: mu=PartitionTuple([[4,1],[],[2,2,1],[3]])
+    sage: mu = PartitionTuple([[4,1],[],[2,2,1],[3]])
     sage: [ nu for nu in mu ]
     [[4, 1], [], [2, 2, 1], [3]]
     sage: Set([ type(nu) for nu in mu ])
@@ -228,9 +228,11 @@ Every partition tuple behaves every much like a tuple of partitions::
     sage: len(mu)
     4
     sage: mu.cells()
-    [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 0, 3), (0, 1, 0), (2, 0, 0), (2, 0, 1), (2, 1, 0), (2, 1, 1), (2, 2, 0), (3, 0, 0), (3, 0, 1), (3, 0, 2)]
+    [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 0, 3), (0, 1, 0), (2, 0, 0), (2, 0, 1),
+     (2, 1, 0), (2, 1, 1), (2, 2, 0), (3, 0, 0), (3, 0, 1), (3, 0, 2)]
     sage: mu.addable_cells()
-    [(0, 0, 4), (0, 1, 1), (0, 2, 0), (1, 0, 0), (2, 0, 2), (2, 2, 1), (2, 3, 0), (3, 0, 3), (3, 1, 0)]
+    [(0, 0, 4), (0, 1, 1), (0, 2, 0), (1, 0, 0), (2, 0, 2), (2, 2, 1),
+     (2, 3, 0), (3, 0, 3), (3, 1, 0)]
     sage: mu.removable_cells()
     [(0, 0, 3), (0, 1, 0), (2, 1, 1), (2, 2, 0), (3, 0, 2)]
 
@@ -242,7 +244,6 @@ subgroup::
      [(), (12,13), (11,12), (8,9), (6,7), (3,4), (2,3), (1,2)]
     sage: mu.young_subgroup_generators()                                                # needs sage.groups
     [1, 2, 3, 6, 8, 11, 12]
-
 """
 
 # ****************************************************************************
@@ -263,9 +264,8 @@ from .partition import (Partition, Partitions, Partitions_n, _Partitions,
                         RegularPartitions_all, RegularPartitions_n)
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.libs.pari.all import pari
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
@@ -273,6 +273,9 @@ from sage.rings.integer import Integer
 from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
+lazy_import('sage.libs.pari.all', 'pari')
 
 # -------------------------------------------------
 # Partition tuple - element class
@@ -765,7 +768,7 @@ class PartitionTuple(CombinatorialElement):
             ***
             **
         """
-        return [t for t in self]
+        return list(self)
 
     def diagram(self):
         r"""
@@ -881,7 +884,7 @@ class PartitionTuple(CombinatorialElement):
         """
         for c in range(len(self)):
             for nu in self[c].up():
-                up = [tau for tau in self]
+                up = list(self)
                 up[c] = nu
                 yield PartitionTuple(up)
 
@@ -898,7 +901,7 @@ class PartitionTuple(CombinatorialElement):
             [([1], [], [], []), ([], [1], [], []), ([], [], [1], []), ([], [], [], [1])]
 
         """
-        return [mu for mu in self.up()]
+        return list(self.up())
 
     def down(self):
         r"""
@@ -915,7 +918,7 @@ class PartitionTuple(CombinatorialElement):
         """
         for c in range(len(self)):
             for nu in self[c].down():
-                down = [tau for tau in self]
+                down = list(self)
                 down[c] = nu
                 yield PartitionTuple(down)
 
@@ -931,7 +934,7 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[],[],[]]).down_list()
             []
         """
-        return [mu for mu in self.down()]
+        return list(self.down())
 
     def cells(self):
         """
@@ -1513,7 +1516,7 @@ class PartitionTuple(CombinatorialElement):
         m = 0
         for comp in self:
             for row in comp:
-                gens.extend([c for c in range(m + 1, m + row)])
+                gens.extend(list(range(m + 1, m + row)))
                 m += row
         return gens
 
@@ -1642,8 +1645,8 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[2,1],[2,2]]).prime_degree(7)
             0
 
-       Therefore, the Gram determinant of `S(2,1|2,2)` when `q=1` is
-       `2^{728} 3^{259}5^{105}`. Compare with :meth:`degree`.
+        Therefore, the Gram determinant of `S(2,1|2,2)` when `q=1` is
+        `2^{728} 3^{259}5^{105}`. Compare with :meth:`degree`.
         """
         ps = [p]
 
@@ -1811,7 +1814,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
         sage: PartitionTuples(level=1, size=3, regular=(0,))
         Partitions of the integer 3
 
-    Check that :trac:`14145` has been fixed::
+    Check that :issue:`14145` has been fixed::
 
         sage: 1 in PartitionTuples()
         False
@@ -1969,7 +1972,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
             sage: PT(la)
             ([3, 3, 1])
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in PartitionTuples()
             False
@@ -2189,7 +2192,7 @@ class PartitionTuples_level(PartitionTuples):
             sage: all(mu in PartitionTuples(3) for mu in PartitionTuples(3,8))          # needs sage.libs.flint
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in PartitionTuples(level=2)
             False
@@ -2295,7 +2298,7 @@ class PartitionTuples_size(PartitionTuples):
             sage: [3, 2, 1] in PartitionTuples(size=7)
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in PartitionTuples(size=7)
             False
@@ -2376,7 +2379,7 @@ class PartitionTuples_level_size(PartitionTuples):
 
             sage: PartitionTuples(4,2)
             Partition tuples of level 4 and size 2
-            sage: PartitionTuples(size=2,level=4)
+            sage: PartitionTuples(size=2, level=4)
             Partition tuples of level 4 and size 2
         """
         return 'Partition tuples of level {} and size {}'.format(self._level, self._size)
@@ -2398,7 +2401,7 @@ class PartitionTuples_level_size(PartitionTuples):
             sage: all(mu in PartitionTuples(3,8) for mu in PartitionTuples(3,8))        # needs sage.libs.flint
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in PartitionTuples(5,7)
             False
@@ -2472,7 +2475,7 @@ class PartitionTuples_level_size(PartitionTuples):
 
         TESTS:
 
-        The following calls used to fail (:trac:`11476`)::
+        The following calls used to fail (:issue:`11476`)::
 
             sage: # needs sage.libs.pari
             sage: PartitionTuples(17,2).cardinality()
@@ -3037,7 +3040,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
             (2, 1, 4)-Regular partition tuples of level 3 and size 7
             sage: PartitionTuples(4,2,3)
             3-Regular partition tuples of level 4 and size 2
-            sage: PartitionTuples(size=2,level=4,regular=3)
+            sage: PartitionTuples(size=2, level=4, regular=3)
             3-Regular partition tuples of level 4 and size 2
         """
         if self._ell[1:] == self._ell[:-1]:

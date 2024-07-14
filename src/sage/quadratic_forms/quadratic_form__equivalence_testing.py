@@ -85,7 +85,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
 
     TESTS:
 
-    :trac:`27749` is fixed::
+    :issue:`27749` is fixed::
 
         sage: Q = QuadraticForm(ZZ, 2, [2, 3, 5])
         sage: P = QuadraticForm(ZZ, 2, [8, 6, 5])
@@ -658,7 +658,7 @@ def _gram_schmidt(m, fixed_vector_index, inner_product):
     - ``m`` -- a square matrix whose columns represent vectors
     - ``fixed_vector_index`` -- any vectors preceding the vector (i.e. to its left)
         at this index are not changed.
-    - ``inner_product`` - a function that takes two vector arguments and returns a scalar,
+    - ``inner_product`` -- a function that takes two vector arguments and returns a scalar,
         representing an inner product.
 
     OUTPUT:

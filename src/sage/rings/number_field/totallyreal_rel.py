@@ -73,7 +73,7 @@ discriminant `\le 17 \times 10^9`.
 
 TESTS:
 
-Check that :trac:`27646` is fixed::
+Check that :issue:`27646` is fixed::
 
     sage: L = enumerate_totallyreal_fields_all(6,435000) # long time
 
@@ -287,7 +287,7 @@ class tr_data_rel:
         Z_Fbasis = self.Z_F.basis()
 
         # Initialize variables.
-        if a == []:
+        if not a:
             # No starting input, all polynomials will be found; initialize to zero.
             self.a = [0]*m + [1]
             self.amaxvals = [[]]*m
@@ -301,7 +301,7 @@ class tr_data_rel:
             import numpy
             for i in range(len(anm1s)):
                 Q = [[v(m*x) for v in self.Foo] + [0] for x in Z_Fbasis] + [[v(anm1s[i]) for v in self.Foo] + [10**6]]
-                pari_string = '['+';'.join([','.join(["%s" % ii for ii in row]) for row in zip(*Q)])+']'
+                pari_string = '[' + ';'.join(','.join("%s" % ii for ii in row) for row in zip(*Q)) + ']'
                 adj = pari(pari_string).qflll()[self.d]
                 anm1s[i] += sum([m*Z_Fbasis[ii]*int(adj[ii])//int(adj[self.d]) for ii in range(self.d)])
 
@@ -453,15 +453,13 @@ class tr_data_rel:
                     # Enumerate all elements of Z_F with T_2 <= br
                     T2s = []
                     trace_elts_found = False
-                    for i in range(len(self.trace_elts)):
-                        tre = self.trace_elts[i]
+                    for tre in self.trace_elts:
                         if tre[0] <= bl and tre[1] >= br:
                             trace_elts_found = True
                             if verbose >= 2:
                                 print("  found copy!")
-                            for theta in tre[2]:
-                                if theta.trace() >= bl and theta.trace() <= br:
-                                    T2s.append(theta)
+                            T2s.extend(theta for theta in tre[2]
+                                       if bl <= theta.trace() <= br)
                             break
                     if not trace_elts_found:
                         T2s = self.F._positive_integral_elements_with_trace([bl,br])
@@ -923,7 +921,7 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
-    - ``return_pari_objects`` -- (boolean, default: True) if both
+    - ``return_pari_objects`` -- (boolean, default: ``True``) if both
       ``return_seqs`` and ``return_pari_objects`` are ``False`` then it
       returns the elements as Sage objects; otherwise it returns PARI
       objects.
@@ -959,7 +957,7 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
     :func:`~sage.rings.number_field.totallyreal.enumerate_totallyreal_fields_prim`
     finds four out of the five (the exception being `x^4 - 6x^2 + 4`).
 
-    The following was fixed in :trac:`13101`::
+    The following was fixed in :issue:`13101`::
 
         sage: enumerate_totallyreal_fields_all(8, 10^6)  # long time (about 2 s)
         []

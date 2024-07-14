@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Additive magmas
 """
@@ -241,16 +242,16 @@ class AdditiveMagmas(Category_singleton):
 
             - ``names`` -- the type of names used:
 
-              * ``'letters'`` - lowercase ASCII letters are used
+              * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
                 positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading 'a's.
-              * ``'digits'`` - base 10 representation of the
+              * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading zeros.
-              * ``'elements'`` - the string representations
+              * ``'elements'`` -- the string representations
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
@@ -787,7 +788,7 @@ class AdditiveMagmas(Category_singleton):
                     False
                     sage: bool(S.an_element())
                     True
-                 """
+                """
 
             def _test_nonzero_equal(self, **options):
                 r"""
@@ -817,7 +818,7 @@ class AdditiveMagmas(Category_singleton):
 
                 TESTS:
 
-                Check that :trac:`18275` is fixed::
+                Check that :issue:`18275` is fixed::
 
                     sage: C = GF(5).cartesian_product(GF(5))
                     sage: C.one() - C.one()

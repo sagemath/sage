@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions (Cython)
 
@@ -22,6 +23,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
 from cpython.sequence cimport *
 from cpython.list cimport *
@@ -147,7 +149,7 @@ def prod(x, z=None, Py_ssize_t recursion_cutoff=5):
     return prod
 
 
-cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff) noexcept:
+cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff):
     """
     INPUT:
 
@@ -182,7 +184,7 @@ cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutof
         return balanced_list_prod(L, offset, k, cutoff) * balanced_list_prod(L, offset + k, count - k, cutoff)
 
 
-cpdef iterator_prod(L, z=None) noexcept:
+cpdef iterator_prod(L, z=None):
     """
     Attempt to do a balanced product of an arbitrary and unknown length
     sequence (such as a generator). Intermediate multiplications are always
@@ -304,8 +306,6 @@ class NonAssociative:
         """
         return NonAssociative(self, other)
 
-from copy import copy
-
 
 def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
     """
@@ -397,7 +397,8 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
 
     return sum
 
-cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff) noexcept:
+
+cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff):
     """
     INPUT:
 
@@ -432,7 +433,7 @@ cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff
         return balanced_list_sum(L, offset, k, cutoff) + balanced_list_sum(L, offset + k, count - k, cutoff)
 
 
-cpdef list normalize_index(object key, int size) noexcept:
+cpdef list normalize_index(object key, int size):
     """
     Normalize an index key and return a valid index or list of indices
     within the range(0, size).
@@ -735,7 +736,7 @@ def cyflush():
     Starting with Python 3, some output from external libraries (like
     FLINT) is not flushed, and so if a doctest produces such output,
     the output may not appear until a later doctest. See
-    :trac:`28649`.
+    :issue:`28649`.
 
     Use this function after a doctest which produces potentially
     unflushed output to force it to be flushed.

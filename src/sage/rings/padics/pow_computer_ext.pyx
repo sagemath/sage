@@ -298,6 +298,7 @@ def ZZ_pX_eis_shift_test(_shifter, _a, _n, _finalprec):
     ZZ_pX_eis_shift_p(shifter, &x.x, &a.x, n, finalprec)
     return x
 
+
 cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
     """
     Eis-shifts a over by n and puts the result into x.
@@ -674,7 +675,6 @@ cdef class PowComputer_ext(PowComputer_class):
         ZZ_mul(ans.x, self.pow_ZZ_tmp(mpz_get_ui((<Integer>m).value))[0], self.pow_ZZ_tmp(mpz_get_ui((<Integer>n).value))[0])
         return ans
 
-
     cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
         Returns self.prime^self.prec_cap as an ``mpz_srcptr``.
@@ -760,7 +760,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         r.x = (self.get_top_modulus()[0]).val()
         return r
 
-    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept:
+    cdef ntl_ZZ_pContext_class get_context(self, long n):
         """
         Returns a ZZ_pContext for self.prime^(abs(n)).
 
@@ -793,7 +793,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         cdef Integer _n = Integer(n)
         return self.get_context(mpz_get_si(_n.value))
 
-    cdef ntl_ZZ_pContext_class get_context_capdiv(self, long n) noexcept:
+    cdef ntl_ZZ_pContext_class get_context_capdiv(self, long n):
         """
         Returns a ZZ_pContext for self.prime^((n-1) // self.e + 1)
 
@@ -853,7 +853,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
             self.get_modulus(_n)
         return cputime(t)
 
-    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
+    cdef ntl_ZZ_pContext_class get_top_context(self):
         """
         Returns a ZZ_pContext for self.prime^self.prec_cap
 
@@ -877,7 +877,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         """
         return self.get_top_context()
 
-    cdef restore_context(self, long n) noexcept:
+    cdef restore_context(self, long n):
         """
         Restores the contest corresponding to self.prime^n
 
@@ -900,7 +900,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         cdef Integer _n = Integer(n)
         self.restore_context(mpz_get_si(_n.value))
 
-    cdef restore_context_capdiv(self, long n) noexcept:
+    cdef restore_context_capdiv(self, long n):
         """
         Restores the context for self.prime^((n-1) // self.e + 1)
 
@@ -1248,7 +1248,7 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
         else:
             raise NotImplementedError("NOT IMPLEMENTED IN PowComputer_ZZ_pX_FM")
 
-    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
+    cdef ntl_ZZ_pContext_class get_top_context(self):
         """
         Returns a ZZ_pContext for self.prime^self.prec_cap
 
@@ -1620,7 +1620,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         """
         Delete_ZZ_pX_Modulus_array(self.mod)
 
-    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept:
+    cdef ntl_ZZ_pContext_class get_context(self, long n):
         """
         Return the context for p^n.  This will use the cache if
         ``abs(n) <= self.cache_limit``.
@@ -1646,7 +1646,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         except IndexError:
             return PowComputer_ZZ_pX.get_context(self, n)
 
-    cdef restore_context(self, long n) noexcept:
+    cdef restore_context(self, long n):
         """
         Restore the context for p^n.  This will use the cache if
         ``abs(n) <= self.cache_limit``.
@@ -1667,7 +1667,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         except IndexError:
             (<ntl_ZZ_pContext_class>PowComputer_ZZ_pX.get_context(self, n)).restore_c()
 
-    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
+    cdef ntl_ZZ_pContext_class get_top_context(self):
         """
         Returns a ZZ_pContext for self.prime^self.prec_cap
 
@@ -1839,7 +1839,6 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
             return ans
         else:
             raise IndexError
-
 
     def __dealloc__(self):
         """
@@ -2043,7 +2042,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
         """
         return self.modulus_dict
 
-    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept:
+    cdef ntl_ZZ_pContext_class get_context(self, long n):
         """
         Returns the context for p^n.
 
@@ -2079,7 +2078,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
                 self.context_dict[n] = PowComputer_ZZ_pX.get_context(self, n)
                 return self.context_dict[n]
 
-    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
+    cdef ntl_ZZ_pContext_class get_top_context(self):
         """
         Returns a ZZ_pContext for self.prime^self.prec_cap
 
@@ -2271,7 +2270,6 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
         else:
             raise IndexError
 
-
     def __dealloc__(self):
         """
         Deallocates low_shifter and high_shifter.
@@ -2323,6 +2321,7 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
             [316 53 3123 3]
         """
         return ZZ_pX_eis_shift_p(self, x, a, n, finalprec)
+
 
 def PowComputer_ext_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, prec_type = "small", ext_type = "u", shift_seed = None):
     r"""

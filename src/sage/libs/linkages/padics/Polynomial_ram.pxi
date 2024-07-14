@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 This linkage file implements the padics API for ramified extensions using Sage
 Polynomials.
@@ -16,7 +15,6 @@ is independent of ramification is in Polynomial_shared.pxi.
 AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
@@ -318,7 +316,7 @@ cdef inline int cpow(celement out, celement a, mpz_t n, long prec, PowComputer_ 
 _expansion_zero = []
 
 # the expansion_mode enum is defined in padic_template_element_header.pxi
-cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, PowComputer_ prime_pow) noexcept:
+cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, PowComputer_ prime_pow):
     if mode == teichmuller_mode:
         raise NotImplementedError
     # This is not very efficient, but there's no clear better way.
@@ -339,7 +337,7 @@ cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, 
     cshift_notrunc(value, value, -1, curpower, prime_pow, False)
     return term
 
-cdef inline cexpansion_getitem(celement value, long m, PowComputer_ prime_pow) noexcept:
+cdef inline cexpansion_getitem(celement value, long m, PowComputer_ prime_pow):
     """
     Return the `m`th `p`-adic digit in the ``simple_mode`` expansion.
 
@@ -383,7 +381,7 @@ cdef int cteichmuller(celement out, celement value, long prec, PowComputer_ prim
     else:
         out._coeffs = [value[0].parent().teichmuller(value[0])]
 
-cdef list ccoefficients(celement x, long valshift, long prec, PowComputer_ prime_pow) noexcept:
+cdef list ccoefficients(celement x, long valshift, long prec, PowComputer_ prime_pow):
     """
     Return a list of coefficients, as elements that can be converted into the base ring.
 

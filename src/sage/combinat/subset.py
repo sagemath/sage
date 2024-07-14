@@ -535,7 +535,7 @@ class Subsets_s(Parent):
             sage: Subsets([2,4,5]).an_element()
             {2, 4}
 
-         Check that :trac:`33988` is fixed::
+         Check that :issue:`33988` is fixed::
 
             sage: Subsets([1,2,3]).an_element() == Subsets([1,2,3])._an_element_()
             True
@@ -741,7 +741,8 @@ class Subsets_sk(Subsets_s):
         if self._k > self._s.cardinality():
             raise EmptySetError
 
-        return self.element_class([i for i in itertools.islice(reversed(self._s), int(self._k))])
+        return self.element_class(list(itertools.islice(reversed(self._s),
+                                                        int(self._k))))
 
     def _fast_iterator(self):
         r"""
@@ -1184,7 +1185,7 @@ class SubMultiset_sk(SubMultiset_s):
         [3, 3]
         sage: [sub for sub in S]
         [[1, 2], [1, 3], [2, 3], [3, 3]]
-        """
+    """
 
     def __init__(self, s, k):
         """
@@ -1318,7 +1319,7 @@ class SubMultiset_sk(SubMultiset_s):
             sage: S.list()
             [[1, 2], [1, 3], [2, 2], [2, 3]]
 
-        Check that :trac:`28588` is fixed::
+        Check that :issue:`28588` is fixed::
 
             sage: Subsets([3,2,2], submultiset=True).list()
             [[], [3], [2], [3, 2], [2, 2], [3, 2, 2]]
@@ -1478,7 +1479,7 @@ def powerset(X):
 
     INPUT:
 
-    -  ``X`` - an iterable
+    -  ``X`` -- an iterable
 
     OUTPUT: iterator of lists
 

@@ -44,7 +44,7 @@ from sage.schemes.plane_conics.con_field import ProjectiveConic_field
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD as gcd
 from sage.modules.free_module_element import vector
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 
 class ProjectiveConic_rational_function_field(ProjectiveConic_field):
@@ -219,7 +219,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
              ((-2/117*t^8 + 304/1053*t^7 + 40/117*t^6 - 1/27*t^5 - 110/351*t^4 - 2/195*t^3 + 11/351*t^2 + 1/117)/(t^4 + 2/39*t^3 + 4/117*t^2 + 2/39*t + 14/39) : -5/3*t^4 + 19*t^3 : 1))
 
         ``has_rational_point`` used to fail for some conics over function fields
-        over finite fields, due to :trac:`20003`::
+        over finite fields, due to :issue:`20003`::
 
             sage: K.<t> = PolynomialRing(GF(7))
             sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,
@@ -392,7 +392,7 @@ for function field of characteristic 2.")
 
         # remove squares
         for i, x in enumerate(coeff):
-            if is_FractionField(x.parent()):
+            if isinstance(x.parent(), FractionField_generic):
                 # go to base ring of fraction field
                 x = self.base().base()(x)
 

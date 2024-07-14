@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Examples of finite Weyl groups
 """
@@ -153,7 +154,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
             sage: s = FiniteWeylGroups().example().simple_reflections()
             sage: s[1] * s[2]
             (0, 2, 3, 1)
-            """
+        """
         assert x in self
         assert y in self
         return self(tuple(x.value[i] for i in y.value))

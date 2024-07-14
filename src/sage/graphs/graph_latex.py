@@ -60,7 +60,7 @@ As a broad overview, the following options are supported:
   the four compass points
 
 To use LaTeX in Sage you of course need a working TeX installation and it will
-work best if you have the ``dvipng`` and ``convert`` utilities.  For graphs you
+work best if you have the ``dvipng`` and ``magick`` utilities.  For graphs you
 need the ``tkz-graph.sty`` and ``tkz-berge.sty`` style files of the tkz-graph
 package.  TeX, dvipng, and convert should be widely available through package
 managers or installers.  You may need to install the tkz-graph style files in
@@ -69,7 +69,7 @@ Primary locations for these programs are:
 
 - TeX: http://ctan.org/
 - dvipng: http://sourceforge.net/projects/dvipng/
-- convert: http://www.imagemagick.org (the ImageMagick suite)
+- magick: http://www.imagemagick.org (the ImageMagick suite)
 - tkz-graph: https://www.ctan.org/pkg/tkz-graph
 
 Customizing the output is accomplished in several ways.  Suppose ``g`` is a
@@ -589,10 +589,9 @@ class GraphLatex(SageObject):
             sage: opts1 == opts2
             False
         """
-        if not(isinstance(other, GraphLatex)):
+        if not isinstance(other, GraphLatex):
             return False
-        else:
-            return self._options == other._options
+        return self._options == other._options
 
     def _repr_(self):
         r"""
@@ -1128,9 +1127,9 @@ class GraphLatex(SageObject):
                 raise ValueError('%s option must be one of: tkz_graph, dot2tex not %s' % (name, value))
             elif name == 'units' and value not in unit_names:
                 raise ValueError('%s option must be one of: in, mm, cm, pt, em, ex, not %s' % (name, value))
-            elif name == 'graphic_size' and not(isinstance(value, tuple) and (len(value) == 2)):
+            elif name == 'graphic_size' and not (isinstance(value, tuple) and (len(value) == 2)):
                 raise ValueError('%s option must be an ordered pair, not %s' % (name, value))
-            elif name == 'margins' and not((isinstance(value, tuple)) and (len(value) == 4)):
+            elif name == 'margins' and not ((isinstance(value, tuple)) and (len(value) == 4)):
                 raise ValueError('%s option must be 4-tuple, not %s' % (name, value))
             elif name in color_options:
                 try:
@@ -1204,14 +1203,14 @@ class GraphLatex(SageObject):
                     raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
-                        if not(type(p) in [float, RealLiteral] and (0 <= p) and (p <= 1)) and not(p in label_places):
+                        if not (type(p) in [float, RealLiteral] and (0 <= p) and (p <= 1)) and (p not in label_places):
                             raise ValueError('%s option for %s needs to be a number between 0.0 and 1.0 or a place (like "above"), not %s' % (name, key, p))
             elif name == 'loop_placements':
                 if not isinstance(value, dict):
                     raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
-                        if not((isinstance(p, tuple)) and (len(p) == 2) and (p[0] >= 0) and (p[1] in compass_points)):
+                        if not ((isinstance(p, tuple)) and (len(p) == 2) and (p[0] >= 0) and (p[1] in compass_points)):
                             raise ValueError('%s option for %s needs to be a positive number and a compass point (like "EA"), not %s' % (name, key, p))
             # These have been verified as tuples before going into this next check
             elif name in positive_tuples:
@@ -1322,7 +1321,7 @@ class GraphLatex(SageObject):
             %
             \end{tikzpicture}
 
-        We check that :trac:`22070` is fixed::
+        We check that :issue:`22070` is fixed::
 
             sage: edges = [(i,(i+1)%3,a) for i,a in enumerate('abc')]
             sage: G_with_labels = DiGraph(edges)
@@ -1383,7 +1382,7 @@ class GraphLatex(SageObject):
             %
             \end{tikzpicture}
 
-        We make sure :trac:`13624` is fixed::
+        We make sure :issue:`13624` is fixed::
 
             sage: G = DiGraph()
             sage: G.add_edge(3333, 88, 'my_label')
@@ -1400,7 +1399,7 @@ class GraphLatex(SageObject):
             %
             \end{tikzpicture}
 
-        Check that :trac:`25120` is fixed::
+        Check that :issue:`25120` is fixed::
 
             sage: G = Graph([(0,1)])
             sage: G.set_latex_options(edge_colors = {(0,1): 'red'})
@@ -1715,34 +1714,34 @@ class GraphLatex(SageObject):
                 vl_color = {}
                 vl_placement = {}
             for u in vertex_list:
-                #
+
                 c = dvc
                 if u in vertex_colors:
                     c = cc.to_rgb(vertex_colors[u])
                 v_color[u] = c
-                #
+
                 c = dvfc
                 if u in vertex_fill_colors:
                     c = cc.to_rgb(vertex_fill_colors[u])
                 vf_color[u] = c
-                #
+
                 sh = dsh
                 if u in vertex_shapes:
                     sh = vertex_shapes[u]
                 v_shape[u] = sh
-                #
+
                 vs = dvs
                 if u in vertex_sizes:
                     vs = vertex_sizes[u]
                 v_size[u] = vs
-                #
+
                 if vertex_labels:
-                    #
+
                     c = dvlc
                     if u in vertex_label_colors:
                         c = cc.to_rgb(vertex_label_colors[u])
                     vl_color[u] = c
-                    #
+
                     vlp = dvlp
                     if u in vertex_label_placements:
                         vlp = vertex_label_placements[u]
@@ -1767,14 +1766,14 @@ class GraphLatex(SageObject):
             # We collect options for edges, default values and for-some-edges
             # information.  These are combined into dictionaries on a per-edge
             # basis, for all edges
-            #
+
             # Defaults
-            #
+
             dec = cc.to_rgb(self.get_option('edge_color'))
             if edge_fills:
                 defc = cc.to_rgb(self.get_option('edge_fill_color'))
             det = self.get_option('edge_thickness')
-            #
+
             if edge_labels:
                 edge_labels_math = self.get_option('edge_labels_math')
                 delc = cc.to_rgb(self.get_option('edge_label_color'))
@@ -1797,7 +1796,7 @@ class GraphLatex(SageObject):
             # an undirected graph in the "wrong" order, so we use a "reverse" to
             # test for this case.  Everything formed here conforms to the order
             # used in the graph.
-            #
+
             e_color = {}
             if edge_fills:
                 ef_color = {}
@@ -1810,7 +1809,7 @@ class GraphLatex(SageObject):
             for e in self._graph.edges(sort=False):
                 edge = (e[0], e[1])
                 reverse = (e[1], e[0])
-                #
+
                 c = dec
                 if edge in edge_colors or (not is_directed and reverse in edge_colors):
                     if edge in edge_colors:
@@ -1818,7 +1817,7 @@ class GraphLatex(SageObject):
                     else:
                         c = cc.to_rgb(edge_colors[reverse])
                 e_color[edge] = c
-                #
+
                 if edge_fills:
                     c = defc
                     if edge in edge_fill_colors or (not is_directed and reverse in edge_fill_colors):
@@ -1827,7 +1826,7 @@ class GraphLatex(SageObject):
                         else:
                             c = cc.to_rgb(edge_fill_colors[reverse])
                     ef_color[edge] = c
-                #
+
                 et = det
                 if edge in edge_thicknesses or (not is_directed and reverse in edge_thicknesses):
                     if edge in edge_thicknesses:
@@ -1835,7 +1834,7 @@ class GraphLatex(SageObject):
                     else:
                         et = edge_thicknesses[reverse]
                 e_thick[edge] = et
-                #
+
                 if edge_labels:
                     c = delc
                     if edge in edge_label_colors or (not is_directed and reverse in edge_label_colors):
@@ -1844,7 +1843,7 @@ class GraphLatex(SageObject):
                         else:
                             c = cc.to_rgb(edge_label_colors[reverse])
                     el_color[edge] = c
-                    #
+
                     els = dels
                     if edge in edge_label_slopes or (not is_directed and reverse in edge_label_slopes):
                         if edge in edge_label_slopes:
@@ -1852,7 +1851,7 @@ class GraphLatex(SageObject):
                         else:
                             els = edge_label_slopes[reverse]
                     el_slope[edge] = els
-                    #
+
                     elp = delp
                     if edge in edge_label_placements or (not is_directed and reverse in edge_label_placements):
                         if edge in edge_label_placements:

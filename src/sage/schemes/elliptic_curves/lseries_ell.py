@@ -9,7 +9,6 @@ AUTHORS:
   instead of floats.
 
 - William Stein et al. (2005 and later)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein
@@ -313,8 +312,8 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        - ``x``-- positive floating point number
-        - ``y``-- positive floating point number
+        - ``x`` -- positive floating point number
+        - ``y`` -- positive floating point number
         - ``stepsize`` -- positive floating point number
 
         OUTPUT:
@@ -842,7 +841,7 @@ class Lseries_ell(SageObject):
             sage: E.lseries().L_ratio()
             2
 
-        See :trac:`3651` and :trac:`15299`::
+        See :issue:`3651` and :issue:`15299`::
 
             sage: EllipticCurve([0,0,0,-193^2,0]).sha().an()
             4

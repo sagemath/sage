@@ -31,7 +31,6 @@ And the Texture objects keep track of all their data::
 AUTHOR:
 
 - Robert Bradshaw (2007-07-07) Initial version.
-
 """
 from textwrap import dedent
 
@@ -89,8 +88,8 @@ def parse_color(info, base=None):
 
     INPUT:
 
-    - ``info`` - color, valid color str or number
-    - ``base`` - tuple of length 3 (optional, default: ``None``)
+    - ``info`` -- color, valid color str or number
+    - ``base`` -- tuple of length 3 (default: ``None``)
 
     OUTPUT:
 
@@ -184,18 +183,18 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``id`` - a texture (optional, default: None), a dict, a color, a
+        - ``id`` -- a texture (default: None), a dict, a color, a
           str, a tuple, None or any other type acting as an ID. If ``id`` is
           None and keyword ``texture`` is empty, then it returns a unique texture object.
-        - ``texture`` - a texture
-        - ``color`` - tuple or str, (optional, default: (.4, .4, 1))
-        - ``opacity`` - number between 0 and 1 (optional, default: 1)
-        - ``ambient`` - number (optional, default: 0.5)
-        - ``diffuse`` - number (optional, default: 1)
-        - ``specular`` - number (optional, default: 0)
-        - ``shininess`` - number (optional, default: 1)
-        - ``name`` - str (optional, default: None)
-        - ``**kwds`` - other valid keywords
+        - ``texture`` -- a texture
+        - ``color`` -- tuple or str, (default: (.4, .4, 1))
+        - ``opacity`` -- number between 0 and 1 (default: 1)
+        - ``ambient`` -- number (default: 0.5)
+        - ``diffuse`` -- number (default: 1)
+        - ``specular`` -- number (default: 0)
+        - ``shininess`` -- number (default: 1)
+        - ``name`` -- str (default: None)
+        - ``**kwds`` -- other valid keywords
 
         OUTPUT:
 
@@ -339,9 +338,9 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
             Texture(texture..., ffff00)
         """
         if self.name is not None:
-            return "Texture(%s, %s, %s)" % (self.id, self.name, self.hex_rgb())
+            return f"Texture({self.id}, {self.name}, {self.hex_rgb()})"
         else:
-            return "Texture(%s, %s)" % (self.id, self.hex_rgb())
+            return f"Texture({self.id}, {self.hex_rgb()})"
 
     def hex_rgb(self):
         """
@@ -353,7 +352,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
             sage: Texture((1, .5, 0)).hex_rgb()
             'ff7f00'
         """
-        return "%02x%02x%02x" % tuple(int(255 * s) for s in self.color)
+        return "{:02x}{:02x}{:02x}".format(*tuple(int(255 * s) for s in self.color))
 
     def tachyon_str(self):
         r"""
@@ -437,7 +436,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``obj`` - str
+        - ``obj`` -- str
 
         EXAMPLES::
 
@@ -451,7 +450,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
             sage: sum([dodecahedron(center=[2.5*x, 0, 0], color=(1, 0, 0, x/10)) for x in range(11)]).show(aspect_ratio=[1,1,1], frame=False, zoom=2)
         """
         translucent = "translucent %s" % float(1 - self.opacity) if self.opacity < 1 else ""
-        return "color %s %s [%s,%s,%s]" % (obj, translucent,
+        return "color {} {} [{},{},{}]".format(obj, translucent,
                                            int(255 * self.color[0]),
                                            int(255 * self.color[1]),
                                            int(255 * self.color[2]))

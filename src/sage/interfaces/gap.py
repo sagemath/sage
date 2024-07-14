@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Interface to GAP
 
@@ -10,13 +9,13 @@ computer; this should be the case, since GAP is included with Sage.
 The interface offers three pieces of functionality:
 
 
-#. ``gap_console()`` - A function that dumps you into
+#. ``gap_console()`` -- A function that dumps you into
    an interactive command-line GAP session.
 
-#. ``gap(expr)`` - Evaluation of arbitrary GAP
+#. ``gap(expr)`` -- Evaluation of arbitrary GAP
    expressions, with the result returned as a string.
 
-#. ``gap.new(expr)`` - Creation of a Sage object that
+#. ``gap.new(expr)`` -- Creation of a Sage object that
    wraps a GAP object. This provides a Pythonic interface to GAP. For
    example, if ``f=gap.new(10)``, then
    ``f.Factors()`` returns the prime factorization of
@@ -206,7 +205,6 @@ import sage.interfaces.abc
 
 import re
 import os
-import io
 import pexpect
 import time
 import platform
@@ -221,7 +219,7 @@ if SAGE_GAP_COMMAND is None:
     # Passing -A allows us to use a minimal GAP installation without
     # producing errors at start-up. The files sage.g and sage.gaprc are
     # used to load any additional packages that may be available.
-    gap_cmd  = f'gap -A -l "{GAP_ROOT_PATHS}"'
+    gap_cmd = f'gap -A -l "{GAP_ROOT_PATHS}"'
     if SAGE_GAP_MEMORY is not None:
         gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
 else:
@@ -463,15 +461,15 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``s`` - string containing GAP code.
+        -  ``s`` -- string containing GAP code.
 
-        -  ``newlines`` - bool (default: True); if False,
+        -  ``newlines`` -- bool (default: ``True``); if False,
            remove all backslash-newlines inserted by the GAP output
            formatter.
 
-        -  ``strip`` - ignored
+        -  ``strip`` -- ignored
 
-        -  ``split_lines`` -- bool (default: True); if True then each
+        -  ``split_lines`` -- bool (default: ``True``); if True then each
            line is evaluated separately.  If False, then the whole
            block of code is evaluated all at once.
 
@@ -501,7 +499,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         TESTS:
 
         Whitespace is not stripped from the front of the result
-        (:trac:`28439`)::
+        (:issue:`28439`)::
 
             sage: gap.eval(r'Print("  -\n\\\\-  ")')
             '  -\n\\\\-'
@@ -591,7 +589,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         except pexpect.EOF:
             if not expect_eof:
                 raise RuntimeError("Unexpected EOF from %s executing %s" % (self, line))
-        except IOError:
+        except OSError:
             raise RuntimeError("IO Error from %s executing %s" % (self, line))
         return (b"".join(normal_outputs), b"".join(error_outputs))
 
@@ -646,6 +644,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         TESTS::
 
+            sage: from sage.interfaces.gap import gap
             sage: gap._eval_line('2+2;')
             '4'
 
@@ -663,7 +662,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             sage: rc = gap.interrupt(timeout=1)
             sage: gap._eval_using_file_cutoff = cutoff
 
-        The following tests against a bug fixed at :trac:`10296`::
+        The following tests against a bug fixed at :issue:`10296`::
 
             sage: gap(3)
             3
@@ -1126,6 +1125,7 @@ class Gap(Gap_generic):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.gap import gap
             sage: gap.__reduce__()
             (<function reduce_load_GAP at 0x...>, ())
             sage: f, args = _
@@ -1258,7 +1258,7 @@ class Gap(Gap_generic):
 
         TESTS:
 
-        We make sure that :trac:`9938` (GAP does not start if the path
+        We make sure that :issue:`9938` (GAP does not start if the path
         to the GAP workspace file contains more than 82 characters) is
         fixed::
 
@@ -1320,8 +1320,8 @@ class Gap(Gap_generic):
             sline = int(sline) - 1
             if self.is_remote():
                 self._get_tmpfile()
-            with io.open(self._local_tmpfile(), "r",
-                         encoding=gap_encoding) as fobj:
+            with open(self._local_tmpfile(), "r",
+                      encoding=gap_encoding) as fobj:
                 help = fobj.read()
             if pager:
                 from IPython.core.page import page
@@ -1491,21 +1491,15 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
     default when Sage first starts GAP.
 
     The first time you start GAP from Sage, it saves the startup state
-    of GAP in a file ``$HOME/.sage/gap/workspace-gap-HASH``, where ``HASH``
-    is a hash of the directory where Sage is installed.
-
-    This is useful, since then subsequent startup of GAP is at least 10
-    times as fast. Unfortunately, if you install any new code for GAP,
-    it won't be noticed unless you explicitly load it, e.g., with
-    gap.load_package("my_package")
-
-    The packages sonata, guava, factint, gapdoc, grape, design, toric,
-    and laguna are loaded in all cases before the workspace is saved,
-    if they are available.
+    of GAP in a file ``$HOME/.sage/gap/workspace-gap-HASH``, where
+    ``HASH`` is a hash of the directory where Sage is installed. This
+    is useful because the subsequent startup of GAP is at least ten
+    times as fast. But if you update GAP or any of its packages, those
+    changes won't take effect until the workspace is reset.
 
     TESTS:
 
-    Check that the race condition from :trac:`14242` has been fixed.
+    Check that the race condition from :issue:`14242` has been fixed.
     We temporarily need to change the worksheet filename, and to set
     ``first_try=True`` to ensure that the new workspace is created::
 
@@ -1527,19 +1521,9 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
         sage: sage.interfaces.gap.WORKSPACE = ORIGINAL_WORKSPACE
         sage: sage.interfaces.gap.first_try = saved_first_try
     """
-    # Create new workspace with filename WORKSPACE
+    # The use_workspace_cache=False causes a new workspace to
+    # be created, and we save it immediately thereafter.
     g = Gap(use_workspace_cache=False, max_workspace_size=None)
-    g.eval('ColorPrompt(false)')
-    g.eval('SetUserPreference("UseColorPrompt", false)')
-    g.eval('SetUserPreference("HistoryMaxLines", 30)')
-    from sage.tests.gap_packages import all_installed_packages
-    for pkg in all_installed_packages(gap=g):
-        try:
-            g.load_package(pkg, verbose=verbose)
-        except RuntimeError as msg:
-            if verbose:
-                print('*** %s' % msg)
-    # end for
     g.save_workspace()
     g.quit()
 
@@ -1579,16 +1563,10 @@ class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
 
             sage: s = gap("[[1,2], [3/4, 5/6]]")
             sage: latex(s)
-            \left(\begin{array}{rr} 1&2\\ 3/4&\frac{5}{6}\\ \end{array}\right)
+            \left[\left[1, 2\right], \left[\frac{3}{4}, \frac{5}{6}\right]\right]
         """
-        P = self._check_valid()
-        try:
-            s = P.eval('LaTeXObj(%s)' % self.name())
-            s = s.replace('\\\\', '\\').replace('"', '')
-            s = s.replace('%\\n', ' ')
-            return s
-        except RuntimeError:
-            return str(self)
+        from sage.misc.latex import latex
+        return latex(self._sage_())
 
     @cached_method
     def _tab_completion(self):
@@ -1705,7 +1683,7 @@ def gfq_gap_to_sage(x, F):
 
     TESTS:
 
-    Check that :trac:`18048` is fixed::
+    Check that :issue:`18048` is fixed::
 
         sage: K.<a> = GF(16)
         sage: b = a^2 + a

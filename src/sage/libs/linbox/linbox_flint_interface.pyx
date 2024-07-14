@@ -37,7 +37,8 @@ from sage.libs.gmp.types cimport mpz_t
 from sage.libs.flint.types cimport fmpz_t
 from sage.libs.flint.fmpz cimport fmpz_get_mpz, fmpz_set_mpz
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry, fmpz_mat_nrows, fmpz_mat_ncols
-from sage.libs.flint.fmpz_poly cimport fmpz_poly_set_coeff_mpz, fmpz_poly_fit_length, _fmpz_poly_set_length
+from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, _fmpz_poly_set_length
+from sage.libs.flint.fmpz_poly_sage cimport fmpz_poly_set_coeff_mpz
 
 cimport sage.libs.linbox.givaro as givaro
 cimport sage.libs.linbox.linbox as linbox

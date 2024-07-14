@@ -59,7 +59,7 @@ def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
       integer. The latter is interpreted as the vector space
       dimension, and the indexing set of the filtrations is empty.
 
-    - ``base_ring`` -- a field (optional, default ``'None'``). The
+    - ``base_ring`` -- a field (default: ``'None'``). The
       base field of the vector space. Must be a field. If not
       specified, the base field is derived from the filtrations.
 
@@ -77,7 +77,7 @@ def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
         Filtrations
             1: QQ^2 >=  0   >=  0   >= 0
             2: QQ^2 >= QQ^2 >= QQ^2 >= 0
-   """
+    """
     if arg in ZZ:
         dim = ZZ(arg)
         filtration = {}

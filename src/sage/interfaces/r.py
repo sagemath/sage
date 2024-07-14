@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs rpy2
 r"""
 Interfaces to R
 
@@ -25,21 +25,21 @@ consists of an ordered collection of numbers.  To create a
 vector named `x` using the R interface in Sage, you pass the
 R interpreter object a list or tuple of numbers::
 
-    sage: x = r([10.4,5.6,3.1,6.4,21.7]); x  # optional - rpy2
+    sage: x = r([10.4,5.6,3.1,6.4,21.7]); x
     [1] 10.4  5.6  3.1  6.4 21.7
 
 You can invert elements of a vector x in R by using the
 invert operator or by doing 1/x::
 
-    sage: ~x  # optional - rpy2
+    sage: ~x
     [1] 0.09615385 0.17857143 0.32258065 0.15625000 0.04608295
-    sage: 1/x  # optional - rpy2
+    sage: 1/x
     [1] 0.09615385 0.17857143 0.32258065 0.15625000 0.04608295
 
 The following assignment creates a vector `y` with 11 entries which
 consists of two copies of `x` with a 0 in between::
 
-    sage: y = r([x,0,x]); y  # optional - rpy2
+    sage: y = r([x,0,x]); y
     [1] 10.4  5.6  3.1  6.4 21.7  0.0 10.4  5.6  3.1  6.4 21.7
 
 Vector Arithmetic
@@ -48,25 +48,24 @@ The following command generates a new vector `v` of length 11 constructed
 by adding together (element by element) `2x` repeated 2.2 times, `y`
 repeated just once, and 1 repeated 11 times::
 
-    sage: v = 2*x+y+1; v  # optional - rpy2
+    sage: v = 2*x+y+1; v
     [1] 32.2 17.8 10.3 20.2 66.1 21.8 22.6 12.8 16.9 50.8 43.5
 
 One can compute the sum of the elements of an R vector in the following
 two ways::
 
-    sage: sum(x)  # optional - rpy2
+    sage: sum(x)
     [1] 47.2
-    sage: x.sum()  # optional - rpy2
+    sage: x.sum()
     [1] 47.2
 
 One can calculate the sample variance of a list of numbers::
 
-    sage: ((x-x.mean())^2/(x.length()-1)).sum()  # optional - rpy2
+    sage: ((x-x.mean())^2/(x.length()-1)).sum()
     [1] 53.853
-    sage: x.var()  # optional - rpy2
+    sage: x.var()
     [1] 53.853
 
-    sage: # optional - rpy2
     sage: x.sort()
     [1] 3.1  5.6  6.4 10.4 21.7
     sage: x.min()
@@ -76,24 +75,23 @@ One can calculate the sample variance of a list of numbers::
     sage: x
     [1] 10.4  5.6  3.1  6.4 21.7
 
-    sage: r(-17).sqrt()  # optional - rpy2
+    sage: r(-17).sqrt()
     [1] NaN
-    sage: r('-17+0i').sqrt()  # optional - rpy2
+    sage: r('-17+0i').sqrt()
     [1] 0+4.123106i
 
 Generating an arithmetic sequence::
 
-    sage: r('1:10')  # optional - rpy2
+    sage: r('1:10')
     [1] 1  2  3  4  5  6  7  8  9 10
 
 Because ``from`` is a keyword in Python, it can't be used
 as a keyword argument.  Instead, ``from_`` can be passed, and
 R will recognize it as the correct thing::
 
-    sage: r.seq(length=10, from_=-1, by=.2)  # optional - rpy2
+    sage: r.seq(length=10, from_=-1, by=.2)
     [1] -1.0 -0.8 -0.6 -0.4 -0.2  0.0  0.2  0.4  0.6  0.8
 
-    sage: # optional - rpy2
     sage: x = r([10.4,5.6,3.1,6.4,21.7])
     sage: x.rep(2)
     [1] 10.4  5.6  3.1  6.4 21.7 10.4  5.6  3.1  6.4 21.7
@@ -104,7 +102,6 @@ R will recognize it as the correct thing::
 
 Missing Values::
 
-    sage: # optional - rpy2
     sage: na = r('NA')
     sage: z = r([1,2,3,na])
     sage: z
@@ -136,19 +133,18 @@ Missing Values::
 
 Character Vectors::
 
-    sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs  # optional - rpy2
+    sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs
     [1] "X1"  "Y2"  "X3"  "Y4"  "X5"  "Y6"  "X7"  "Y8"  "X9"  "Y10"
 
 
 Index vectors; selecting and modifying subsets of a data set::
 
-    sage: na = r('NA')  # optional - rpy2
-    sage: x = r([10.4,5.6,3.1,6.4,21.7,na]); x  # optional - rpy2
+    sage: na = r('NA')
+    sage: x = r([10.4,5.6,3.1,6.4,21.7,na]); x
     [1] 10.4  5.6  3.1  6.4 21.7   NA
-    sage: x['!is.na(self)']  # optional - rpy2
+    sage: x['!is.na(self)']
     [1] 10.4  5.6  3.1  6.4 21.7
 
-    sage: # optional - rpy2
     sage: x = r([10.4,5.6,3.1,6.4,21.7,na]); x
     [1] 10.4  5.6  3.1  6.4 21.7   NA
     sage: (x+1)['(!is.na(self)) & self>0']
@@ -160,12 +156,12 @@ Index vectors; selecting and modifying subsets of a data set::
 
 Distributions::
 
-    sage: r.options(width="60")  # optional - rpy2
+    sage: r.options(width="60")
     $width
     [1] 80
 
-    sage: rr = r.dnorm(r.seq(-3,3,0.1))  # optional - rpy2
-    sage: rr  # optional - rpy2
+    sage: rr = r.dnorm(r.seq(-3,3,0.1))
+    sage: rr
      [1] 0.004431848 0.005952532 0.007915452 0.010420935
      [5] 0.013582969 0.017528300 0.022394530 0.028327038
      [9] 0.035474593 0.043983596 0.053990967 0.065615815
@@ -185,13 +181,12 @@ Distributions::
 
 Convert R Data Structures to Python/Sage::
 
-    sage: rr = r.dnorm(r.seq(-3,3,0.1))  # optional - rpy2
-    sage: sum(rr._sage_())  # optional - rpy2
+    sage: rr = r.dnorm(r.seq(-3,3,0.1))
+    sage: sum(rr._sage_())
     9.9772125168981...
 
 Or you get a dictionary to be able to access all the information::
 
-    sage: # optional - rpy2
     sage: rs = r.summary(r.c(1,4,3,4,3,2,5,1))
     sage: rs
        Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
@@ -258,7 +253,7 @@ AUTHORS:
 - Emmanuel Charpentier (2015-12-12, RPy2 interface)
 """
 
-##########################################################################
+# ************************************************************************
 #
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #                     2007 Mike Hansen   <mhansen@gmail.com>
@@ -266,9 +261,10 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
-##########################################################################
+# ************************************************************************
+import os
 
 from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
 from sage.env import DOT_SAGE
@@ -279,23 +275,29 @@ from sage.misc.instancedoc import instancedoc
 
 # see the _lazy_init for some reasoning behind the lazy imports
 from sage.misc.lazy_import import lazy_import
-lazy_import("rpy2", "robjects")
-lazy_import("rpy2.robjects", "packages", "rpy2_packages")
-lazy_import("rpy2.robjects.conversion", "localconverter")
+from sage.features import PythonModule
+
+rpy2_feature = PythonModule('rpy2', spkg='rpy2', type='standard')
+
+lazy_import("rpy2", "robjects", feature=rpy2_feature)
+lazy_import("rpy2.robjects", "packages", "rpy2_packages", feature=rpy2_feature)
+lazy_import("rpy2.robjects.conversion", ["localconverter", "Converter"], feature=rpy2_feature)
 
 # for help page fetching
-lazy_import("rpy2.robjects.help", "Package")
-lazy_import("rpy2", "rinterface")
+lazy_import("rpy2.robjects.help", "Package", feature=rpy2_feature)
+lazy_import("rpy2", "rinterface", feature=rpy2_feature)
+
 
 COMMANDS_CACHE = '%s/r_commandlist.sobj' % DOT_SAGE
 
-#there is a mirror network, but lets take #1 for now
+# there is a mirror network, but lets take #1 for now
 RRepositoryURL = "http://cran.r-project.org/"
 RFilteredPackages = ['.GlobalEnv']
 
 # crosscheck with https://svn.r-project.org/R/trunk/src/main/names.c
 # but package:base should cover this. i think.
 RBaseCommands = ['c', "NULL", "NA", "True", "False", "Inf", "NaN"]
+
 
 def _setup_r_to_sage_converter():
     """
@@ -309,49 +311,48 @@ def _setup_r_to_sage_converter():
     length 1 to simple values, whether or not they "originally" were
     simple values or not::
 
-        sage: r([42]).sage()  # optional - rpy2
+        sage: r([42]).sage()
         42
 
-        sage: r(42).sage()  # optional - rpy2
+        sage: r(42).sage()
         42
 
-        sage: r('c("foo")').sage()  # optional - rpy2
+        sage: r('c("foo")').sage()
         'foo'
 
     Arrays of length greater than one are treated normally::
 
-        sage: r([42, 43]).sage()  # optional - rpy2
+        sage: r([42, 43]).sage()
         [42, 43]
 
     We also convert all numeric values to integers if that is possible without
     loss of precision::
 
-        sage: type(r([1.0]).sage()) == int  # optional - rpy2
+        sage: type(r([1.0]).sage()) == int
         True
 
-        sage: r([1.0, 42.5]).sage()  # optional - rpy2
+        sage: r([1.0, 42.5]).sage()
         [1, 42.5]
 
     Matrices are converted to sage matrices::
 
-        sage: r('matrix(c(2,4,3,1,5,7), nrow=2, ncol=3)').sage()  # optional - rpy2
+        sage: r('matrix(c(2,4,3,1,5,7), nrow=2, ncol=3)').sage()
         [2 3 5]
         [4 1 7]
 
     More complex r structures are represented by dictionaries::
 
-        sage: r.summary(1).sage()  # optional - rpy2
+        sage: r.summary(1).sage()
         {'DATA': [1, 1, 1, 1, 1, 1],
          '_Names': ['Min.', '1st Qu.', 'Median', 'Mean', '3rd Qu.', 'Max.'],
          '_r_class': ['summaryDefault', 'table']}
 
-        sage: r.options(width="60").sage()  # optional - rpy2
+        sage: r.options(width="60").sage()
         {'DATA': {'width': 60}, '_Names': 'width'}
 
     The conversion can handle "not a number", infinity, imaginary values and
     missing values::
 
-        sage: # optional - rpy2
         sage: r(-17).sqrt().sage()
         nan
         sage: r('-17+0i').sqrt().sage()
@@ -363,11 +364,10 @@ def _setup_r_to_sage_converter():
 
     Character Vectors are represented by regular python arrays::
 
-        sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs.sage()  # optional - rpy2
+        sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs.sage()
         ['X1', 'Y2', 'X3', 'Y4', 'X5', 'Y6', 'X7', 'Y8', 'X9', 'Y10']
     """
     from rpy2.rinterface import SexpVector, ListSexpVector, FloatSexpVector
-    from rpy2.robjects.conversion import Converter
 
     # convert rpy2's representation of r objects to the one sage expects (as defined by the old
     # expect interface)
@@ -402,7 +402,7 @@ def _setup_r_to_sage_converter():
         attrs = vec.list_attrs()
         # Recursive calls have to be made explicitly
         # https://bitbucket.org/rpy2/rpy2/issues/363/custom-converters-are-not-applied
-        data = list_to_singleton_if_possible([ rpy2py(val) for val in vec ])
+        data = list_to_singleton_if_possible([rpy2py(val) for val in vec])
         rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
 
         if 'names' in attrs:
@@ -440,7 +440,7 @@ def _setup_r_to_sage_converter():
         # we have a R list (vector of arbitrary elements)
         attrs = vec.list_attrs()
         names = vec.do_slot('names')
-        values = [ rpy2py(val) for val in vec ]
+        values = [rpy2py(val) for val in vec]
         rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
         data = zip(names, values)
         return {
@@ -452,6 +452,7 @@ def _setup_r_to_sage_converter():
     rpy2py.register(ListSexpVector, _list_vector)
 
     return cv
+
 
 class R(ExtraTabCompletion, Interface):
     def __init__(self,
@@ -473,18 +474,18 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-             sage: r.summary(r.c(1,2,3,111,2,3,2,3,2,5,4))  # optional - rpy2
+             sage: r.summary(r.c(1,2,3,111,2,3,2,3,2,5,4))
              Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
              1.00    2.00    3.00   12.55    3.50  111.00
 
         TESTS::
 
-            sage: r == loads(dumps(r))  # optional - rpy2
+            sage: r == loads(dumps(r))
             True
         """
         Interface.__init__(
-                self,
-                name='r', # The capitalized version of this is used for printing.
+            self,
+            name='r',  # The capitalized version of this is used for printing.
         )
         self._seed = seed
         self._initialized = False  # done lazily
@@ -510,7 +511,6 @@ class R(ExtraTabCompletion, Interface):
 
         Initialization happens on eval::
 
-             sage: # optional - rpy2
              sage: my_r = R()
              sage: my_r._initialized
              False
@@ -521,7 +521,6 @@ class R(ExtraTabCompletion, Interface):
 
         And on package import::
 
-             sage: # optional - rpy2
              sage: my_r = R()
              sage: my_r._initialized
              False
@@ -531,7 +530,6 @@ class R(ExtraTabCompletion, Interface):
 
         And when fetching help pages::
 
-             sage: # optional - rpy2
              sage: my_r = R()
              sage: my_r._initialized
              False
@@ -550,9 +548,9 @@ class R(ExtraTabCompletion, Interface):
         """
         TESTS:
 
-        Check conversion of Booleans (:trac:`28705`)::
+        Check conversion of Booleans (:issue:`28705`)::
 
-            sage: repr(r(True)) == r._true_symbol()  # indirect doctest  # optional - rpy2
+            sage: repr(r(True)) == r._true_symbol()  # indirect doctest
             True
         """
         # We overwrite _coerce_impl here because r._true_symbol() and
@@ -570,10 +568,10 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r = R()  # optional - rpy2
-            sage: r.set_seed(1)  # optional - rpy2
+            sage: r = R()
+            sage: r.set_seed(1)
             1
-            sage: r.sample("1:10", 5) # random  # optional - rpy2
+            sage: r.sample("1:10", 5) # random
             [1] 3 4 5 7 2
         """
         if seed is None:
@@ -590,8 +588,8 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r = R()  # optional - rpy2
-            sage: r._start()  # optional - rpy2
+            sage: r = R()
+            sage: r._start()
         """
         # pager needed to replace help view from less to printout
         # option device= is for plotting, is set to x11, NULL would be better?
@@ -620,26 +618,25 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: # optional - rpy2
             sage: filename = tmp_filename() + '.png'
-            sage: r.png(filename='"%s"'%filename)       # optional - rgraphics
+            sage: r.png(filename='"%s"'%filename)               # optional - rgraphics
             NULL
             sage: x = r([1,2,3])
             sage: y = r([4,5,6])
-            sage: r.plot(x,y)                   # optional - rgraphics
+            sage: r.plot(x,y)                                   # optional - rgraphics
             null device
                       1
-            sage: import os; os.unlink(filename)        # optional - rgraphics
+            sage: import os; os.unlink(filename)                # optional - rgraphics
 
         We want to make sure that we actually can view R graphics, which happens
         differently on different platforms::
 
-            sage: s = r.eval('capabilities("png")') # Should be on Linux and Solaris  # optional - rpy2
-            sage: t = r.eval('capabilities("aqua")') # Should be on all supported Mac versions  # optional - rpy2
-            sage: "TRUE" in s+t                      # optional -- rgraphics  # optional - rpy2
+            sage: s = r.eval('capabilities("png")')   # should be on Linux and Solaris
+            sage: t = r.eval('capabilities("aqua")')  # should be on all supported Mac versions
+            sage: "TRUE" in s+t                                 # optional - rgraphics
             True
         """
-        #Check to see if R has PNG support
+        # Check to see if R has PNG support
         s = self.eval('capabilities("png")')
         t = self.eval('capabilities("aqua")')
         if "TRUE" not in s + t:
@@ -652,8 +649,8 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: s = 'c(".GlobalEnv", "package:stats", "package:graphics", "package:grDevices", \n"package:utils", "package:datasets", "package:methods", "Autoloads", \n"package:base")'  # optional - rpy2
-            sage: r.convert_r_list(s)  # optional - rpy2
+            sage: s = 'c(".GlobalEnv", "package:stats", "package:graphics", "package:grDevices", \n"package:utils", "package:datasets", "package:methods", "Autoloads", \n"package:base")'
+            sage: r.convert_r_list(s)
             ['.GlobalEnv',
              'package:stats',
              'package:graphics',
@@ -675,7 +672,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.install_packages('aaMI')       # not tested  # optional - rpy2
+            sage: r.install_packages('aaMI')       # not tested
             ...
             R is free software and comes with ABSOLUTELY NO WARRANTY.
             You are welcome to redistribute it under certain conditions.
@@ -693,7 +690,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r                 # indirect doctest  # optional - rpy2
+            sage: r                 # indirect doctest
             R Interpreter
         """
         return 'R Interpreter'
@@ -704,8 +701,9 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: rlr, t = r.__reduce__()  # optional - rpy2
-            sage: rlr(*t)  # optional - rpy2
+            sage: from sage.interfaces.r import r
+            sage: rlr, t = r.__reduce__()
+            sage: rlr(*t)
             R Interpreter
         """
         return reduce_load_R, tuple([])
@@ -718,9 +716,9 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: c = r.c; c  # optional - rpy2
+            sage: c = r.c; c
             c
-            sage: type(c)  # optional - rpy2
+            sage: type(c)
             <class 'sage.interfaces.r.RFunction'>
         """
         try:
@@ -741,7 +739,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._read_in_file_command('file.txt')  # optional - rpy2
+            sage: r._read_in_file_command('file.txt')
             'file=file("file.txt",open="r")\nsource(file)'
         """
         return 'file=file("%s",open="r")\nsource(file)' % filename
@@ -753,7 +751,6 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: # optional - rpy2
             sage: filename = tmp_filename()
             sage: f = open(filename, 'w')
             sage: _ = f.write('a <- 2+2\n')
@@ -762,13 +759,13 @@ class R(ExtraTabCompletion, Interface):
             sage: r.get('a')
             '[1] 4'
         """
-        self.eval( self._read_in_file_command(filename) )
+        self.eval(self._read_in_file_command(filename))
 
     def _install_hints(self):
         """
         EXAMPLES::
 
-            sage: print(r._install_hints())  # optional - rpy2
+            sage: print(r._install_hints())
             R is currently installed with Sage.
         """
         return "R is currently installed with Sage.\n"
@@ -783,7 +780,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: print(r._source("c"))  # optional - rpy2
+            sage: print(r._source("c"))
             function (...)  .Primitive("c")
         """
         if s[-2:] == "()":
@@ -802,7 +799,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: print(r.source("c"))  # optional - rpy2
+            sage: print(r.source("c"))
             function (...)  .Primitive("c")
         """
         return self._source(s)
@@ -815,7 +812,6 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: # optional - rpy2
             sage: r.version()                   # not tested
             ((3, 0, 1), 'R version 3.0.1 (2013-05-16)')
             sage: rint, rstr = r.version()
@@ -830,11 +826,11 @@ class R(ExtraTabCompletion, Interface):
 
         s = self.eval('version')
 
-        major = int( major_re.findall(s)[0].strip() )
-        minor = tuple(int(i) for i in minor_re.findall(s)[0].strip().split(".") )
+        major = int(major_re.findall(s)[0].strip())
+        minor = tuple(int(i) for i in minor_re.findall(s)[0].strip().split("."))
         version_string = version_string_re.findall(s)[0].strip()
 
-        return ( (major,) + minor, version_string )
+        return ((major,) + minor, version_string)
 
     def library(self, library_name):
         """
@@ -849,10 +845,10 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.library('grid')  # optional - rpy2
-            sage: 'grid' in r.eval('(.packages())')  # optional - rpy2
+            sage: r.library('grid')
+            sage: 'grid' in r.eval('(.packages())')
             True
-            sage: r.library('foobar')  # optional - rpy2
+            sage: r.library('foobar')
             Traceback (most recent call last):
             ...
             ImportError: ...
@@ -870,7 +866,7 @@ class R(ExtraTabCompletion, Interface):
             pass
         self._tab_completion(verbose=False, use_disk_cache=False)
 
-    require = library #overwrites require
+    require = library  # overwrites require
 
     def available_packages(self):
         """
@@ -887,19 +883,19 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: ap = r.available_packages()   # optional - internet  # optional - rpy2
-            sage: len(ap) > 20                  # optional - internet  # optional - rpy2
+            sage: ap = r.available_packages()                   # optional - internet
+            sage: len(ap) > 20                                  # optional - internet
             True
         """
         p = self.new('available.packages("%s/src/contrib")' % RRepositoryURL)
         s = str(p).splitlines()[1:]
         v = [x.split()[0].strip("'") for x in s]
         return v
-        #The following was more structural, but breaks on my machine.  (stein)
-        #p = p._sage_()
-        #s = p['_Dim'][0]
-        #l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(0,s)]
-        #return l
+        # The following was more structural, but breaks on my machine.  (stein)
+        # p = p._sage_()
+        # s = p['_Dim'][0]
+        # l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(0,s)]
+        # return l
 
     def _object_class(self):
         """
@@ -909,7 +905,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._object_class()  # optional - rpy2
+            sage: r._object_class()
             <class 'sage.interfaces.r.RElement'>
         """
         return RElement
@@ -922,7 +918,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._true_symbol()  # optional - rpy2
+            sage: r._true_symbol()
             '[1] TRUE'
         """
         # return the string rep of truth, i.e., what the system outputs
@@ -937,7 +933,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._false_symbol()  # optional - rpy2
+            sage: r._false_symbol()
             '[1] FALSE'
         """
         # return the string rep of false, i.e., what the system outputs
@@ -948,7 +944,7 @@ class R(ExtraTabCompletion, Interface):
         """
         EXAMPLES::
 
-            sage: r._equality_symbol()  # optional - rpy2
+            sage: r._equality_symbol()
             '=='
         """
         # return the symbol for checking equality, e.g., == or eq.
@@ -984,7 +980,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.help('c')  # optional - rpy2
+            sage: r.help('c')
             title
             -----
             <BLANKLINE>
@@ -1013,7 +1009,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._assign_symbol()  # optional - rpy2
+            sage: r._assign_symbol()
             ' <- '
         """
         return " <- "
@@ -1026,7 +1022,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._left_list_delim()  # optional - rpy2
+            sage: r._left_list_delim()
             'c('
         """
         return "c("
@@ -1039,7 +1035,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._right_list_delim()  # optional - rpy2
+            sage: r._right_list_delim()
             ')'
         """
         return ")"
@@ -1050,7 +1046,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.console()                    # not tested  # optional - rpy2
+            sage: r.console()                    # not tested
                 R version 2.6.1 (2007-11-26)
                 Copyright (C) 2007 The R Foundation for Statistical Computing
                 ISBN 3-900051-07-0
@@ -1066,13 +1062,13 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.function_call('length', args=[ [1,2,3] ])  # optional - rpy2
+            sage: r.function_call('length', args=[ [1,2,3] ])
             [1] 3
         """
         args, kwds = self._convert_args_kwds(args, kwds)
         self._check_valid_function_name(function)
         return self.new("%s(%s)" % (function, ",".join([s.name() for s in args] +
-                                                     [self._sage_to_r_name(key)+'='+kwds[key].name() for key in kwds ] )))
+                                                       [self._sage_to_r_name(key) + '=' + kwds[key].name() for key in kwds])))
 
     def call(self, function_name, *args, **kwds):
         r"""
@@ -1080,7 +1076,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.call('length', [1,2,3])  # optional - rpy2
+            sage: r.call('length', [1,2,3])
             [1] 3
         """
         return self.function_call(function_name, args=args, kwds=kwds)
@@ -1094,9 +1090,9 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._an_element_()  # optional - rpy2
+            sage: r._an_element_()
             [1] 0
-            sage: type(_)  # optional - rpy2
+            sage: type(_)
             <class 'sage.interfaces.r.RElement'>
         """
         return self(0)
@@ -1112,13 +1108,11 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.set('a', '2 + 3')  # optional - rpy2
-            sage: r.get('a')  # optional - rpy2
+            sage: r.set('a', '2 + 3')
+            sage: r.get('a')
             '[1] 5'
-
         """
-        cmd = '%s <- %s' % (var,value)
-        out = self.eval(cmd)
+        _ = self.eval(f'{var} <- {value}')
 
     def get(self, var):
         """
@@ -1132,8 +1126,8 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.set('a', 2)  # optional - rpy2
-            sage: r.get('a')  # optional - rpy2
+            sage: r.set('a', 2)
+            sage: r.get('a')
             '[1] 2'
         """
         return self.eval('%s' % var)
@@ -1146,7 +1140,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.na()  # optional - rpy2
+            sage: r.na()
             [1] NA
         """
         return self('NA')
@@ -1164,8 +1158,8 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: dummy = r._tab_completion(use_disk_cache=False)    #clean doctest  # optional - rpy2
-            sage: 'testInheritedMethods' in r.completions('tes')  # optional - rpy2
+            sage: dummy = r._tab_completion(use_disk_cache=False)  # clean doctest
+            sage: 'testInheritedMethods' in r.completions('tes')
             True
         """
         return [name for name in self._tab_completion() if name[:len(s)] == s]
@@ -1178,34 +1172,35 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: l = r._commands()  # optional - rpy2
-            sage: 'AIC' in l  # optional - rpy2
+            sage: l = r._commands()
+            sage: 'AIC' in l
             True
-            sage: len(l) > 200  # optional - rpy2
+            sage: len(l) > 200
             True
         """
         v = RBaseCommands
 
-        ll = self('search()')._sage_() # loaded libs
+        ll = self('search()')._sage_()  # loaded libs
 
         for lib in ll:
             if lib in RFilteredPackages:
                 continue
 
             if lib.find("package:") != 0:
-                continue #only packages
+                continue  # only packages
 
             raw = self('objects("%s")' % lib)._sage_()
 
-            #TODO are there others? many of them are shortcuts or
-            #should be done on another level, like selections in lists
-            #instead of calling obj.[[( fun-args) or other crazy stuff like that
+            # TODO are there others? many of them are shortcuts or
+            # should be done on another level, like selections in lists
+            # instead of calling obj.[[( fun-args) or
+            # other crazy stuff like that
 
-            #TODO further filtering, check if strings are now
-            #really functions, in R: exists(s, mode = "function"))
+            # TODO further filtering, check if strings are now
+            # really functions, in R: exists(s, mode = "function"))
             # (apply to vector with sapply(vec,func))
 
-            #filter only python compatible identifiers
+            # filter only python compatible identifiers
             valid = re.compile('[^a-zA-Z0-9_]+')
             raw = [x for x in raw if valid.search(x) is None]
             v += raw
@@ -1219,16 +1214,16 @@ class R(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - verbose -- bool (default: True); if True, display debugging information
-        - use_disk_cache -- bool (default: True); if True, use the disk cache of
+        - verbose -- bool (default: ``True``); if True, display debugging information
+        - use_disk_cache -- bool (default: ``True``); if True, use the disk cache of
           tab completions to save time.
 
         OUTPUT: list -- list of string
 
         EXAMPLES::
 
-            sage: t = r._tab_completion(verbose=False)  # optional - rpy2
-            sage: len(t) > 200  # optional - rpy2
+            sage: t = r._tab_completion(verbose=False)
+            sage: len(t) > 200
             True
         """
         try:
@@ -1239,7 +1234,7 @@ class R(ExtraTabCompletion, Interface):
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose and use_disk_cache:
                 print("\nBuilding R command completion list (this takes")
@@ -1273,7 +1268,7 @@ class R(ExtraTabCompletion, Interface):
         persistent in your own code::
 
             sage: from tempfile import TemporaryDirectory
-            sage: with TemporaryDirectory() as d: # optional - rpy2, rgraphics
+            sage: with TemporaryDirectory() as d:               # optional - rgraphics
             ....:     _ = r.setwd(d)
             ....:     r.plot("1:10")
             null device
@@ -1283,16 +1278,15 @@ class R(ExtraTabCompletion, Interface):
         the output device to that file.  If this is done in the notebook, it
         must be done in the same cell as the plot itself::
 
-            sage: # optional - rpy2
             sage: filename = tmp_filename() + '.png'
-            sage: r.png(filename='"%s"'%filename)       # optional - rgraphics
+            sage: r.png(filename='"%s"'%filename)               # optional - rgraphics
             NULL
             sage: x = r([1,2,3])
             sage: y = r([4,5,6])
-            sage: r.plot(x,y)                   # optional - rgraphics
+            sage: r.plot(x,y)                                   # optional - rgraphics
             null device
                       1
-            sage: import os; os.unlink(filename)        # optional - rgraphics
+            sage: import os; os.unlink(filename)                # optional - rgraphics
 
         Please note that for more extensive use of R's plotting
         capabilities (such as the lattices package), it is advisable
@@ -1300,7 +1294,7 @@ class R(ExtraTabCompletion, Interface):
         notebook.  The following examples are not tested, because they
         differ depending on operating system::
 
-            sage: # not tested, optional - rpy2
+            sage: # not tested
             sage: r.X11()
             sage: r.quartz()
             sage: r.hist("rnorm(100)")
@@ -1312,13 +1306,12 @@ class R(ExtraTabCompletion, Interface):
         would need to use the following since R lattice graphics do
         not automatically print away from the command line::
 
-            sage: # optional - rpy2
-            sage: filename = tmp_filename() + '.png' # Not needed in notebook, used for doctesting
-            sage: r.png(filename='"%s"'%filename)       # optional - rgraphics
+            sage: filename = tmp_filename() + '.png'  # not needed in notebook, used for doctesting
+            sage: r.png(filename='"%s"'%filename)               # optional - rgraphics
             NULL
             sage: r.library("lattice")
             sage: r("print(histogram(~wt | cyl, data=mtcars))")         # optional - rgraphics
-            sage: import os; os.unlink(filename)        # optional - rgraphics
+            sage: import os; os.unlink(filename)                # optional - rgraphics
         """
         # We have to define this to override the plot function defined in the
         # superclass.
@@ -1332,7 +1325,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r.eval('1+1')  # optional - rpy2
+            sage: r.eval('1+1')
             '[1] 2'
         """
         self._lazy_init()
@@ -1352,7 +1345,6 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: # optional - rpy2
             sage: f = r._r_to_sage_name
             sage: f('t.test')
             't_test'
@@ -1376,7 +1368,6 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: # optional - rpy2
             sage: f = r._sage_to_r_name
             sage: f('t_test')
             't.test'
@@ -1408,9 +1399,9 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r['as.data.frame']  # optional - rpy2
+            sage: r['as.data.frame']
             as.data.frame
-            sage: r['print']  # optional - rpy2
+            sage: r['print']
             print
         """
         return RFunction(self, s, r_name=True)
@@ -1425,17 +1416,17 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: import tempfile  # optional - rpy2
-            sage: tmpdir = tempfile.mkdtemp()  # optional - rpy2
-            sage: r.chdir(tmpdir)  # optional - rpy2
+            sage: import tempfile
+            sage: tmpdir = tempfile.mkdtemp()
+            sage: r.chdir(tmpdir)
 
         Check that ``tmpdir`` and ``r.getwd()`` refer to the same
         directory.  We need to use ``realpath()`` in case ``$TMPDIR``
-        (by default ``/tmp``) is a symbolic link (see :trac:`10264`).
+        (by default ``/tmp``) is a symbolic link (see :issue:`10264`).
 
         ::
 
-            sage: os.path.realpath(tmpdir) == sageobj(r.getwd())  # known bug (trac #9970)  # optional - rpy2
+            sage: os.path.realpath(tmpdir) == sageobj(r.getwd())  # known bug (issue #9970)
             True
         """
         self.execute('setwd(%r)' % dir)
@@ -1454,9 +1445,9 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: a = r([1,2,3])  # optional - rpy2
-            sage: t = a._tab_completion()  # optional - rpy2
-            sage: len(t) > 200  # optional - rpy2
+            sage: a = r([1,2,3])
+            sage: t = a._tab_completion()
+            sage: len(t) > 200
             True
         """
         # TODO: rewrite it, just take methods(class=class(self))
@@ -1468,7 +1459,6 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: # optional - rpy2
             sage: x = r([1,2,3,4,5])
             sage: y = r([3,5,7,9,11])
             sage: a = r.lm( y.tilde(x) ) # lm( y ~ x )
@@ -1488,9 +1478,9 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: r('"abc"').is_string()  # optional - rpy2
+            sage: r('"abc"').is_string()
             True
-            sage: r([1,2,3]).is_string()  # optional - rpy2
+            sage: r([1,2,3]).is_string()
             False
 
         """
@@ -1504,8 +1494,8 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: x = r([10.4,5.6,3.1,6.4,21.7])  # optional - rpy2
-            sage: len(x)  # optional - rpy2
+            sage: x = r([10.4,5.6,3.1,6.4,21.7])
+            sage: len(x)
             5
         """
         return self.parent()('length(%s)' % self.name()).sage()
@@ -1523,7 +1513,6 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: # optional - rpy2
             sage: x = r([1,2,3])
             sage: length = x.length
             sage: type(length)
@@ -1554,7 +1543,6 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: # optional - rpy2
             sage: x = r([10.4,5.6,3.1,6.4,21.7])
             sage: x[0]
             numeric(0)
@@ -1592,7 +1580,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
             return P.new('%s[%s]' % (self._name, n))
         elif parent(n) is P:  # the key is RElement itself
             return P.new('%s[%s]' % (self._name, n.name()))
-        elif not isinstance(n,tuple):
+        elif not isinstance(n, tuple):
             return P.new('%s[%s]' % (self._name, n))
         else:
             L = []
@@ -1613,7 +1601,6 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: # optional - rpy2
             sage: x = r([10.4,5.6,3.1,6.4,21.7])
             sage: bool(x)
             True
@@ -1640,8 +1627,8 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         TESTS::
 
-            sage: x = r([10.4,5.6,3.1,6.4,21.7])  # optional - rpy2
-            sage: x._comparison(10.4, "==")  # optional - rpy2
+            sage: x = r([10.4,5.6,3.1,6.4,21.7])
+            sage: x._comparison(10.4, "==")
             [1] TRUE FALSE FALSE FALSE FALSE
         """
         P = self.parent()
@@ -1662,8 +1649,8 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         Notice that comparison is term by term and returns an R element. ::
 
-            sage: x = r([10.4,5.6,3.1,6.4,21.7])  # optional - rpy2
-            sage: x == 10.4  # optional - rpy2
+            sage: x = r([10.4,5.6,3.1,6.4,21.7])
+            sage: x == 10.4
             [1] TRUE FALSE FALSE FALSE FALSE
         """
         return self._comparison(other, "==")
@@ -1682,8 +1669,8 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         Notice that comparison is term by term and returns an R element. ::
 
-            sage: x = r([10.4,5.6,3.1,6.4,21.7])  # optional - rpy2
-            sage: x < 7  # optional - rpy2
+            sage: x = r([10.4,5.6,3.1,6.4,21.7])
+            sage: x < 7
             [1] FALSE  TRUE  TRUE  TRUE FALSE
         """
         return self._comparison(other, "<")
@@ -1702,8 +1689,8 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         Notice that comparison is term by term and returns an R element. ::
 
-            sage: x = r([10.4,5.6,3.1,6.4,21.7])  # optional - rpy2
-            sage: x > 8  # optional - rpy2
+            sage: x = r([10.4,5.6,3.1,6.4,21.7])
+            sage: x > 8
             [1] TRUE FALSE FALSE FALSE  TRUE
         """
         return self._comparison(other, ">")
@@ -1720,8 +1707,8 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: x = r([10.4,5.6,3.1,6.4,21.7])  # optional - rpy2
-            sage: x <= 10.4  # optional - rpy2
+            sage: x = r([10.4,5.6,3.1,6.4,21.7])
+            sage: x <= 10.4
             [1] TRUE  TRUE  TRUE  TRUE FALSE
         """
         return self._comparison(other, "<=")
@@ -1738,8 +1725,8 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: x = r([10.4,5.6,3.1,6.4,21.7])  # optional - rpy2
-            sage: x >= 10.4  # optional - rpy2
+            sage: x = r([10.4,5.6,3.1,6.4,21.7])
+            sage: x >= 10.4
             [1] TRUE FALSE FALSE FALSE  TRUE
         """
         return self._comparison(other, ">=")
@@ -1756,8 +1743,8 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: x = r([10.4,5.6,3.1,6.4,21.7])  # optional - rpy2
-            sage: x != 10.4  # optional - rpy2
+            sage: x = r([10.4,5.6,3.1,6.4,21.7])
+            sage: x != 10.4
             [1] FALSE  TRUE  TRUE  TRUE  TRUE
 
         """
@@ -1775,16 +1762,16 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: c = r.c(1,2,3,4)  # optional - rpy2
-            sage: c.dot_product(c.t())  # optional - rpy2
+            sage: c = r.c(1,2,3,4)
+            sage: c.dot_product(c.t())
                  [,1] [,2] [,3] [,4]
             [1,]    1    2    3    4
             [2,]    2    4    6    8
             [3,]    3    6    9   12
             [4,]    4    8   12   16
 
-            sage: v = r([3,-1,8])  # optional - rpy2
-            sage: v.dot_product(v)  # optional - rpy2
+            sage: v = r([3,-1,8])
+            sage: v.dot_product(v)
                  [,1]
             [1,]   74
         """
@@ -1807,9 +1794,9 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: rs = r.summary(r.c(1,4,3,4,3,2,5,1))  # optional - rpy2
-            sage: d = rs._sage_()  # optional - rpy2
-            sage: sorted(d.items())  # optional - rpy2
+            sage: rs = r.summary(r.c(1,4,3,4,3,2,5,1))
+            sage: d = rs._sage_()
+            sage: sorted(d.items())
             [('DATA', [1, 1.75, 3, 2.875, 4, 5]),
              ('_Names', ['Min.', '1st Qu.', 'Median', 'Mean', '3rd Qu.', 'Max.']),
              ('_r_class', ['summaryDefault', 'table'])]
@@ -1818,8 +1805,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         P = self.parent()
 
         with localconverter(P._r_to_sage_converter) as cv:
-            parsed = robjects.r(self.name())
-            return parsed
+            return robjects.r(self.name())
 
     def _latex_(self):
         r"""
@@ -1831,7 +1817,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: latex(r(2))  # optional - Hmisc (R package)  # optional - rpy2
+            sage: latex(r(2))  # optional - Hmisc (R package)
             2
         """
         from sage.misc.latex import LatexExpr
@@ -1851,10 +1837,10 @@ class RFunctionElement(InterfaceFunctionElement):
         """
         EXAMPLES::
 
-            sage: a = r([1,2,3])  # optional - rpy2
-            sage: a.mean  # optional - rpy2
+            sage: a = r([1,2,3])
+            sage: a.mean
             mean
-            sage: dumps(a.mean)  # optional - rpy2
+            sage: dumps(a.mean)
             Traceback (most recent call last):
             ...
             NotImplementedError: pickling of R element methods is not yet supported
@@ -1867,9 +1853,9 @@ class RFunctionElement(InterfaceFunctionElement):
 
         EXAMPLES::
 
-            sage: a = r([1,2,3])  # optional - rpy2
-            sage: length = a.length  # optional - rpy2
-            sage: print(length.__doc__)  # optional - rpy2
+            sage: a = r([1,2,3])
+            sage: length = a.length
+            sage: print(length.__doc__)
             title
             -----
             <BLANKLINE>
@@ -1890,9 +1876,9 @@ class RFunctionElement(InterfaceFunctionElement):
 
         EXAMPLES::
 
-            sage: a = r([1,2,3])  # optional - rpy2
-            sage: length = a.length  # optional - rpy2
-            sage: print(length._sage_src_())  # optional - rpy2
+            sage: a = r([1,2,3])
+            sage: length = a.length
+            sage: print(length._sage_src_())
             function (x)  .Primitive("length")
         """
         M = self._obj.parent()
@@ -1902,9 +1888,9 @@ class RFunctionElement(InterfaceFunctionElement):
         """
         EXAMPLES::
 
-            sage: a = r([1,2,3])  # optional - rpy2
-            sage: length = a.length  # optional - rpy2
-            sage: length()  # optional - rpy2
+            sage: a = r([1,2,3])
+            sage: length = a.length
+            sage: length()
             [1] 3
         """
         return self._obj.parent().function_call(self._name, args=[self._obj] + list(args), kwds=kwds)
@@ -1924,10 +1910,10 @@ class RFunction(InterfaceFunction):
 
         EXAMPLES::
 
-            sage: length = r.length  # optional - rpy2
-            sage: type(length)  # optional - rpy2
+            sage: length = r.length
+            sage: type(length)
             <class 'sage.interfaces.r.RFunction'>
-            sage: loads(dumps(length))  # optional - rpy2
+            sage: loads(dumps(length))
             length
         """
         self._parent = parent
@@ -1940,9 +1926,9 @@ class RFunction(InterfaceFunction):
         """
         EXAMPLES::
 
-            sage: r.mean == loads(dumps(r.mean))  # optional - rpy2
+            sage: r.mean == loads(dumps(r.mean))
             True
-            sage: r.mean == r.lr  # optional - rpy2
+            sage: r.mean == r.lr
             False
         """
         return (isinstance(other, RFunction) and
@@ -1952,9 +1938,9 @@ class RFunction(InterfaceFunction):
         """
         EXAMPLES::
 
-            sage: r.mean != loads(dumps(r.mean))  # optional - rpy2
+            sage: r.mean != loads(dumps(r.mean))
             False
-            sage: r.mean != r.lr  # optional - rpy2
+            sage: r.mean != r.lr
             True
         """
         return not (self == other)
@@ -1965,8 +1951,8 @@ class RFunction(InterfaceFunction):
 
         EXAMPLES::
 
-            sage: length = r.length  # optional - rpy2
-            sage: print(length.__doc__)  # optional - rpy2
+            sage: length = r.length
+            sage: print(length.__doc__)
             title
             -----
             <BLANKLINE>
@@ -1987,8 +1973,8 @@ class RFunction(InterfaceFunction):
 
         EXAMPLES::
 
-            sage: length = r.length  # optional - rpy2
-            sage: print(length._sage_src_())  # optional - rpy2
+            sage: length = r.length
+            sage: print(length._sage_src_())
             function (x)  .Primitive("length")
 
         """
@@ -1999,11 +1985,12 @@ class RFunction(InterfaceFunction):
         """
         EXAMPLES::
 
-            sage: length = r.length  # optional - rpy2
-            sage: length([1,2,3])  # optional - rpy2
+            sage: length = r.length
+            sage: length([1,2,3])
             [1] 3
         """
         return self._parent.function_call(self._name, args=list(args), kwds=kwds)
+
 
 def is_RElement(x):
     """
@@ -2017,12 +2004,12 @@ def is_RElement(x):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.r import is_RElement  # optional - rpy2
-        sage: is_RElement(2)  # optional - rpy2
+        sage: from sage.interfaces.r import is_RElement
+        sage: is_RElement(2)
         doctest:...: DeprecationWarning: the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead
         See https://github.com/sagemath/sage/issues/34804 for details.
         False
-        sage: is_RElement(r(2))  # optional - rpy2
+        sage: is_RElement(r(2))
         True
     """
     from sage.misc.superseded import deprecation
@@ -2034,27 +2021,27 @@ def is_RElement(x):
 # An instance of R
 r = R()
 
+
 def reduce_load_R():
     """
     Used for reconstructing a copy of the R interpreter from a pickle.
 
     EXAMPLES::
 
-        sage: from sage.interfaces.r import reduce_load_R  # optional - rpy2
-        sage: reduce_load_R()  # optional - rpy2
+        sage: from sage.interfaces.r import reduce_load_R
+        sage: reduce_load_R()
         R Interpreter
     """
     return r
 
 
-import os
 def r_console():
     """
     Spawn a new R command-line session.
 
     EXAMPLES::
 
-        sage: r.console()                    # not tested  # optional - rpy2
+        sage: r.console()                    # not tested
             R version 2.6.1 (2007-11-26)
             Copyright (C) 2007 The R Foundation for Statistical Computing
             ISBN 3-900051-07-0
@@ -2066,13 +2053,13 @@ def r_console():
     # This will only spawn local processes
     os.system('R --vanilla')
 
+
 def r_version():
     """
     Return the R version.
 
     EXAMPLES::
 
-        sage: # optional - rpy2
         sage: r_version()                       # not tested
         ((3, 0, 1), 'R version 3.0.1 (2013-05-16)')
         sage: rint, rstr = r_version()
@@ -2096,10 +2083,10 @@ class HelpExpression(str):
 
         EXAMPLES::
 
-            sage: a = sage.interfaces.r.HelpExpression("This\nis\nR!")  # optional - rpy2
-            sage: type(a)  # optional - rpy2
+            sage: a = sage.interfaces.r.HelpExpression("This\nis\nR!")
+            sage: type(a)
             <class 'sage.interfaces.r.HelpExpression'>
-            sage: a  # optional - rpy2
+            sage: a
             This
             is
             R!

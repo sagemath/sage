@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Class to flatten polynomial rings over polynomial ring
 
@@ -41,7 +40,7 @@ from sage.misc.cachefunc import cached_method
 from .polynomial_ring_constructor import PolynomialRing
 from .polynomial_ring import is_PolynomialRing
 from .multi_polynomial_ring_base import is_MPolynomialRing
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.polynomial.polydict import ETuple
 
@@ -488,7 +487,7 @@ class SpecializationMorphism(Morphism):
             ...
             TypeError: no conversion of this rational to integer
 
-        The following was fixed in :trac:`23811`::
+        The following was fixed in :issue:`23811`::
 
             sage: R.<c> = RR[]
             sage: P.<z> = AffineSpace(R, 1)
@@ -539,8 +538,8 @@ class SpecializationMorphism(Morphism):
         # Construct unflattened codomain R
         new_vars = []
         R = domain
-        while is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R):
-            if is_FractionField(R):
+        while is_PolynomialRing(R) or is_MPolynomialRing(R) or isinstance(R, FractionField_generic):
+            if isinstance(R, FractionField_generic):
                 # We've hit base_ring, so set _sub_specialization and exit the loop
                 field_over = R.base()
                 applicable_vars = {key: val for key, val in D.items()
@@ -680,7 +679,7 @@ class FractionSpecializationMorphism(Morphism):
               To:   Fraction Field of Multivariate Polynomial Ring in x, y
                     over Univariate Polynomial Ring in a over Rational Field
         """
-        if not is_FractionField(domain):
+        if not isinstance(domain, FractionField_generic):
             raise TypeError("domain must be a fraction field")
         self._specialization = SpecializationMorphism(domain.base(), D)
         self._repr_type_str = 'Fraction Specialization'

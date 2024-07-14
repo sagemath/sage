@@ -257,7 +257,7 @@ def p_part(f, p):
 
     TESTS:
 
-    Return value is supposed to be a polynomial, see :trac:`22402`
+    Return value is supposed to be a polynomial, see :issue:`22402`
 
         sage: g = p_part(X+1, 2)
         sage: g.parent()
@@ -541,8 +541,8 @@ class ComputeMinimalPolynomials(SageObject):
             sage: x = polygen(ZZ, 'x')
             sage: nu_4 = x^2 + 3*x + 2
             sage: g = C.mccoy_column(2, 2, nu_4)
-            sage: b = matrix(9, 1, (x-B).adjugate().list())
-            sage: M = matrix.block([[b , -B.charpoly(x)*matrix.identity(9)]])
+            sage: b = matrix(9, 1, (x - B).adjugate().list())
+            sage: M = matrix.block([[b, -B.charpoly(x)*matrix.identity(9)]])
             sage: (M*g % 4).is_zero()
             True
 
@@ -897,9 +897,9 @@ class ComputeMinimalPolynomials(SageObject):
         """
         from sage.arith.misc import factor
 
-        F, T = self._B.frobenius(2)
+        _, T = self._B.frobenius_form(2)
 
-        return [p for (p, t) in factor(T.det())]
+        return [p for p, _ in factor(T.det())]
 
     def integer_valued_polynomials_generators(self):
         r"""

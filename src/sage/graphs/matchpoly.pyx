@@ -45,6 +45,8 @@ from sage.rings.integer cimport Integer
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
+
 
 x = polygen(ZZ, 'x')
 
@@ -62,11 +64,11 @@ def matching_polynomial(G, complement=True, name=None):
 
     INPUT:
 
-    - ``complement`` - (default: ``True``) whether to use Godsil's duality
+    - ``complement`` -- (default: ``True``) whether to use Godsil's duality
       theorem to compute the matching polynomial from that of the graphs
       complement (see ALGORITHM).
 
-    - ``name`` - optional string for the variable name in the polynomial
+    - ``name`` -- optional string for the variable name in the polynomial
 
     .. NOTE::
 
@@ -204,7 +206,7 @@ def matching_polynomial(G, complement=True, name=None):
 
     TESTS:
 
-    Non-integer labels should work, (:trac:`15545`)::
+    Non-integer labels should work, (:issue:`15545`)::
 
         sage: G = Graph(10)
         sage: G.add_vertex((0,1))

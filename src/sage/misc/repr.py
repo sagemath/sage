@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Repr formatting support
 """
@@ -63,7 +64,7 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
 
     OUTPUT:
 
-    -  ``str`` - a string
+    -  ``str`` -- a string
 
     EXAMPLES::
 
@@ -129,7 +130,7 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
 
     TESTS:
 
-    Verify that :trac:`31672` is fixed::
+    Verify that :issue:`31672` is fixed::
 
         sage: # needs sage.symbolic
         sage: alpha = var("alpha")

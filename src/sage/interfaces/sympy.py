@@ -28,12 +28,12 @@ is needed for them::
 
 TESTS:
 
-Check that :trac:`24212` is fixed::
+Check that :issue:`24212` is fixed::
 
     sage: integrate(sin(x^2), x, algorithm='sympy')
     3/8*sqrt(2)*sqrt(pi)*fresnel_sin(sqrt(2)*x/sqrt(pi))*gamma(3/4)/gamma(7/4)
 
-Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+Test that conversion of symbolic functions with latex names works (:issue:`31047`)::
 
     sage: var('phi')
     phi
@@ -504,7 +504,7 @@ def _sympysage_function(self):
         Traceback (most recent call last):
         ...
         AttributeError...
-        """
+    """
     fname = self.func.__name__
     func = _sympysage_function_by_name(fname)
     args = [arg._sage_() for arg in self.args]
@@ -550,7 +550,7 @@ def _sympysage_derivative(self):
 
     TESTS:
 
-    Check that :trac:`28964` is fixed::
+    Check that :issue:`28964` is fixed::
 
         sage: f = function('f')
         sage: _ = var('x,t')
@@ -1041,7 +1041,7 @@ def _sympysage_relational(self):
         sage: assert (x < 0) == Lt(x, 0)._sage_()
         sage: assert (x <= 0)._sympy_() == Le(sx, 0)
         sage: assert (x <= 0) == Le(x, 0)._sage_()
-     """
+    """
     from operator import eq, ne, gt, lt, ge, le
     from sympy import Eq, Ne, Gt, Ge, Lt, Le
     ops = {Eq: eq, Ne: ne, Gt: gt, Lt: lt, Ge: ge, Le: le}

@@ -41,7 +41,7 @@ AUTHORS:
 
 from sage.libs.ntl.ntl_lzz_pX import ntl_zz_pX
 from sage.structure.element cimport parent
-from sage.structure.element import coerce_binop
+from sage.structure.element import coerce_binop, canonical_coercion, have_same_parent
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 
 from sage.misc.superseded import deprecated_function_alias
@@ -62,6 +62,7 @@ include "sage/libs/flint/nmod_poly_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
+from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.nmod_poly cimport *
 
@@ -122,7 +123,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
                 pass
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
-    cdef Polynomial_template _new(self) noexcept:
+    cdef Polynomial_template _new(self):
         """
         EXAMPLES::
 
@@ -137,7 +138,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         e._cparent = self._cparent
         return e
 
-    cpdef Polynomial _new_constant_poly(self, x, Parent P) noexcept:
+    cpdef Polynomial _new_constant_poly(self, x, Parent P):
         r"""
         Quickly creates a new constant polynomial with value x in parent P.
 
@@ -175,7 +176,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         INPUT:
 
-        - ``x`` - a list of coefficients - the coefficients are assumed to be
+        - ``x`` -- a list of coefficients; the coefficients are assumed to be
           reduced already and the list contains no trailing zeroes.
 
 
@@ -216,7 +217,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         INPUT:
 
-        - ``x`` - an ``fmpz_poly_t`` element
+        - ``x`` -- an ``fmpz_poly_t`` element
 
         EXAMPLES::
 
@@ -227,7 +228,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         TESTS:
 
-        The following test from :trac:`12173` used to be horribly slow::
+        The following test from :issue:`12173` used to be horribly slow::
 
             sage: a = ZZ['x'](range(100000))
             sage: R = Integers(3)['x']
@@ -244,7 +245,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         sig_off()
         return 0
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         Return the `i`-th coefficient of ``self``.
 
@@ -346,7 +347,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: r.parent() is GF(19)
             True
 
-        The following example shows that :trac:`11782` has been fixed::
+        The following example shows that :issue:`11782` has been fixed::
 
             sage: R.<x> = ZZ.quo(9)['x']
             sage: f = 2*x^3 + x^2 + x;  g = 6*x^2 + 2*x + 1
@@ -412,7 +413,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         else:
             raise IndexError("Polynomial coefficient index must be nonnegative.")
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n) noexcept:
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         """
         Return the product of this polynomial and other truncated to the
         given length `n`.
@@ -445,7 +446,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     _mul_short = _mul_trunc_
 
-    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, n) noexcept:
+    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, n):
         """
         Return the product of this polynomial and other ignoring the least
         significant `n` terms of the result which may be set to anything.
@@ -482,7 +483,96 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     _mul_short_opposite = _mul_trunc_opposite
 
-    cpdef Polynomial _power_trunc(self, unsigned long n, long prec) noexcept:
+    def __pow__(self, exp, modulus):
+        r"""
+        Exponentiation of ``self``.
+
+        If ``modulus`` is not ``None``, the exponentiation is performed
+        modulo the polynomial ``modulus``.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(5)[]
+            sage: pow(x+1, 5**50, x^5 + 4*x + 3)
+            x + 1
+            sage: pow(x+1, 5**64, x^5 + 4*x + 3)
+            x + 4
+            sage: pow(x, 5**64, x^5 + 4*x + 3)
+            x + 3
+
+        The modulus can have smaller degree than ``self``::
+
+            sage: R.<x> = PolynomialRing(GF(5), implementation="FLINT")
+            sage: pow(x^4, 6, x^2 + x + 1)
+            1
+
+        TESTS:
+
+        Canonical coercion applies::
+
+            sage: R.<x> = PolynomialRing(GF(5), implementation="FLINT")
+            sage: x_ZZ = ZZ["x"].gen()
+            sage: pow(x+1, 25, 2)
+            0
+            sage: pow(x+1, 4, x_ZZ^2 + x_ZZ + 1)
+            4*x + 4
+            sage: pow(x+1, int(4), x_ZZ^2 + x_ZZ + 1)
+            4*x + 4
+            sage: xx = polygen(GF(97))
+            sage: pow(x + 1, 3, xx^3 + xx + 1)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: ...
+        """
+        exp = Integer(exp)
+        if modulus is not None:
+            # Similar to coerce_binop
+            if not have_same_parent(self, modulus):
+                a, m = canonical_coercion(self, modulus)
+                if a is not self:
+                    return pow(a, exp, m)
+                modulus = m
+            self = self % modulus
+            if exp > 0 and exp.bit_length() >= 32:
+                return (<Polynomial_zmod_flint>self)._powmod_bigexp(exp, modulus)
+
+        return Polynomial_template.__pow__(self, exp, modulus)
+
+    cdef Polynomial _powmod_bigexp(Polynomial_zmod_flint self, Integer exp, Polynomial_zmod_flint m):
+        r"""
+        Modular exponentiation with a large integer exponent.
+
+        It is assumed that checks and coercions have been already performed on arguments.
+
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(GF(5), implementation="FLINT")
+            sage: f = x+1
+            sage: pow(f, 5**50, x^5 + 4*x + 3) # indirect doctest
+            x + 1
+            sage: pow(x, 5**64, x^5 + 4*x + 3) # indirect doctest
+            x + 3
+        """
+        cdef Polynomial_zmod_flint ans = self._new()
+        # Preconditioning is useful for large exponents: the inverse
+        # power series helps computing fast quotients.
+        cdef Polynomial_zmod_flint minv = self._new()
+        cdef fmpz_t exp_fmpz
+
+        fmpz_init(exp_fmpz)
+        fmpz_set_mpz(exp_fmpz, (<Integer>exp).value)
+        nmod_poly_reverse(&minv.x, &m.x, nmod_poly_length(&m.x))
+        nmod_poly_inv_series(&minv.x, &minv.x, nmod_poly_length(&m.x))
+
+        if self == self._parent.gen():
+            nmod_poly_powmod_x_fmpz_preinv(&ans.x, exp_fmpz, &m.x, &minv.x)
+        else:
+            nmod_poly_powmod_fmpz_binexp_preinv(&ans.x, &self.x, exp_fmpz, &m.x, &minv.x)
+
+        fmpz_clear(exp_fmpz)
+        return ans
+
+    cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
         r"""
         TESTS::
 
@@ -519,7 +609,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         nmod_poly_pow_trunc(&ans.x, &self.x, n, prec)
         return ans
 
-    cpdef rational_reconstruction(self, m, n_deg=0, d_deg=0) noexcept:
+    cpdef rational_reconstruction(self, m, n_deg=0, d_deg=0):
         """
         Construct a rational function `n/d` such that `p*d` is equivalent to `n`
         modulo `m` where `p` is this polynomial.
@@ -532,6 +622,16 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             (3*x^4 + 2*x^3 + x^2 + 2*x, x^4 + 3*x^3 + x^2 + x)
             sage: (p*d % x^9) == n
             True
+
+        Check that :issue:`37169` is fixed - it does not throw an error::
+
+            sage: R.<x> = Zmod(4)[]
+            sage: _.<z> = R.quotient_ring(x^2 - 1)
+            sage: c = 2 * z + 1
+            sage: c * Zmod(2).zero()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Aborted
         """
         if n_deg < 0 or d_deg < 0:
             raise ValueError("The degree bounds n_deg and d_deg should be positive.")
@@ -554,7 +654,11 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         while nmod_poly_length(&t1.x) != 0 and n_deg < nmod_poly_degree(&t1.x):
             q = self._new()
             r1 = self._new()
+
+            sig_on()
             nmod_poly_divrem(&q.x, &r1.x, &s1.x, &t1.x)
+            sig_off()
+
             r0 = s0 - q*t0
             s0 = t0
             s1 = t1
@@ -658,7 +762,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             NotImplementedError: square free factorization of polynomials over rings with composite characteristic is not implemented
 
-        :trac:`20003`::
+        :issue:`20003`::
 
             sage: P.<x> = GF(7)[]
             sage: (6*x+3).squarefree_decomposition()
@@ -743,9 +847,12 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             ValueError: leading coefficient must be invertible
         """
-        if self.base_ring().characteristic().gcd(
-                self.leading_coefficient().lift()) != 1:
+        cdef unsigned long leadcoeff, modulus
+        leadcoeff = nmod_poly_get_coeff_ui(&self.x, nmod_poly_degree(&self.x))
+        modulus = nmod_poly_modulus(&self.x)
+        if leadcoeff > 1 and n_gcd(modulus, leadcoeff) != 1:
             raise ValueError("leading coefficient must be invertible")
+
         cdef Polynomial_zmod_flint res = self._new()
         nmod_poly_make_monic(&res.x, &self.x)
         return res
@@ -815,9 +922,11 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         cdef Polynomial_zmod_flint res = self._new()
         cdef unsigned long d
         if degree is not None:
+            if degree < 0:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             d = degree
             if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s"%(degree))
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             nmod_poly_reverse(&res.x, &self.x, d+1) # FLINT expects length
         else:
             nmod_poly_reverse(&res.x, &self.x, nmod_poly_length(&self.x))

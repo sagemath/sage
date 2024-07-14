@@ -94,8 +94,7 @@ cimported in Cython modules:
 
 AUTHORS:
 
-- Simon King, Jeroen Demeyer (2014-10): initial version (:trac:`15820`)
-
+- Simon King, Jeroen Demeyer (2014-10): initial version (:issue:`15820`)
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Simon King <simon.king@uni-jena.de>
@@ -125,6 +124,7 @@ cimport cython
 #
 # (De)allocation, copying
 #
+
 
 @cython.overflowcheck
 cdef bint biseq_init(biseq_t R, mp_size_t l, mp_bitcnt_t itemsize) except -1:
@@ -161,7 +161,7 @@ cdef bint biseq_init_copy(biseq_t R, biseq_t S) except -1:
 # Pickling
 #
 
-cdef tuple biseq_pickle(biseq_t S) noexcept:
+cdef tuple biseq_pickle(biseq_t S):
     return (bitset_pickle(S.data), S.itembitsize, S.length)
 
 cdef bint biseq_unpickle(biseq_t R, tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length) except -1:
@@ -288,7 +288,7 @@ cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index) noexcept:
         out |= (S.data.bits[limb_index+1]) << (GMP_LIMB_BITS - bit_index)
     return out & S.mask_item
 
-cdef biseq_getitem_py(biseq_t S, mp_size_t index) noexcept:
+cdef biseq_getitem_py(biseq_t S, mp_size_t index):
     """
     Get item ``S[index]`` as a Python ``int``, without
     checking margins.
@@ -736,7 +736,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following is a good test::
+        The discussion at :issue:`15820` explains why the following is a good test::
 
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
@@ -837,7 +837,7 @@ cdef class BoundedIntegerSequence:
             sage: list(BoundedIntegerSequence(1, []))
             []
 
-        The discussion at :trac:`15820` explains why this is a good test::
+        The discussion at :issue:`15820` explains why this is a good test::
 
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
@@ -995,7 +995,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following are good tests::
+        The discussion at :issue:`15820` explains why the following are good tests::
 
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
@@ -1041,7 +1041,7 @@ cdef class BoundedIntegerSequence:
             return False
         return biseq_contains(self.data, right.data, 0) >= 0
 
-    cpdef list list(self) noexcept:
+    cpdef list list(self):
         """
         Converts this bounded integer sequence to a list
 
@@ -1058,7 +1058,7 @@ cdef class BoundedIntegerSequence:
             sage: S.list() == list(S) == L
             True
 
-        The discussion at :trac:`15820` explains why the following is a good test::
+        The discussion at :issue:`15820` explains why the following is a good test::
 
             sage: (BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0])).list()
             [0, 0, 0, 0]
@@ -1215,7 +1215,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following are good tests::
+        The discussion at :issue:`15820` explains why the following are good tests::
 
             sage: BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0])
             <0, 0, 0, 0>
@@ -1236,7 +1236,7 @@ cdef class BoundedIntegerSequence:
         biseq_init_concat(out.data, myself.data, right.data)
         return out
 
-    cpdef BoundedIntegerSequence maximal_overlap(self, BoundedIntegerSequence other) noexcept:
+    cpdef BoundedIntegerSequence maximal_overlap(self, BoundedIntegerSequence other):
         """
         Return ``self``'s maximal trailing sub-sequence that ``other`` starts with.
 
@@ -1355,7 +1355,7 @@ cdef class BoundedIntegerSequence:
             return 0
         return h
 
-cpdef BoundedIntegerSequence NewBISEQ(tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length) noexcept:
+cpdef BoundedIntegerSequence NewBISEQ(tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length):
     """
     Helper function for unpickling of :class:`BoundedIntegerSequence`.
 
@@ -1387,6 +1387,7 @@ cpdef BoundedIntegerSequence NewBISEQ(tuple bitset_data, mp_bitcnt_t itembitsize
     cdef BoundedIntegerSequence out = BoundedIntegerSequence.__new__(BoundedIntegerSequence)
     biseq_unpickle(out.data, bitset_data, itembitsize, length)
     return out
+
 
 def _biseq_stresstest():
     """

@@ -164,13 +164,13 @@ class EuclideanGroup(AffineGroup):
 
         INPUT:
 
-        - ``A`` -- an element of :meth:`matrix_space`.
+        - ``A`` -- an element of :meth:`matrix_space`
 
-        - ``b`` -- an element of :meth:`vector_space`.
+        - ``b`` -- an element of :meth:`vector_space`
 
         OUTPUT:
 
-        The return value is ignored. You must raise a ``TypeError`` if
+        The return value is ignored. You must raise a :class:`TypeError` if
         the input does not define a valid group element.
 
         TESTS::

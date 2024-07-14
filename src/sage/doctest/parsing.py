@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 Parsing docstrings
 
@@ -9,7 +9,7 @@ AUTHORS:
 - David Roe (2012-03-27) -- initial version, based on Robert Bradshaw's code.
 
 - Jeroen Demeyer(2014-08-28) -- much improved handling of tolerances
-  using interval arithmetic (:trac:`16889`).
+  using interval arithmetic (:issue:`16889`).
 """
 
 # ****************************************************************************
@@ -35,10 +35,11 @@ AUTHORS:
 
 import collections.abc
 import doctest
+import platform
 import re
-
 from collections import defaultdict
 from functools import reduce
+from typing import Literal, Union, overload
 
 from sage.misc.cachefunc import cached_function
 from sage.repl.preparse import preparse, strip_string_literals
@@ -91,22 +92,41 @@ def RIFtol(*args):
 
 
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
-ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
+ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])")
 
-special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug'
-tag_with_explanation_regex = r'((?:\w|[.])+)\s*(?:\((.*?)\))?'
-optional_regex = re.compile(fr'(?P<cmd>{special_optional_regex})\s*(?:\((?P<cmd_explanation>.*?)\))?|'
-                            fr'[^ a-z]\s*(optional|needs)(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)',
-                            re.IGNORECASE)
+special_optional_regex = (
+    "py2|long time|not implemented|not tested|optional|needs|known bug"
+)
+tag_with_explanation_regex = r"((?:\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
+optional_regex = re.compile(
+    rf"[^ a-z]\s*(?P<cmd>{special_optional_regex})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)",
+    re.IGNORECASE,
+)
 special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
 tag_with_explanation_regex = re.compile(tag_with_explanation_regex, re.IGNORECASE)
 
 nodoctest_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*nodoctest')
-optionaltag_regex = re.compile(r'^(\w|[.])+$')
-optionalfiledirective_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctest: (.*)')
+optionaltag_regex = re.compile(r"^(\w|[.])+$")
+optionalfiledirective_regex = re.compile(
+    r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctest: (.*)'
+)
 
 
-def parse_optional_tags(string, *, return_string_sans_tags=False):
+@overload
+def parse_optional_tags(string: str) -> dict[str, Union[str, None]]:
+    pass
+
+
+@overload
+def parse_optional_tags(
+    string: str, *, return_string_sans_tags: Literal[True]
+) -> tuple[dict[str, Union[str, None]], str, bool]:
+    pass
+
+
+def parse_optional_tags(
+    string: str, *, return_string_sans_tags: bool = False
+) -> Union[tuple[dict[str, Union[str, None]], str, bool], dict[str, Union[str, None]]]:
     r"""
     Return a dictionary whose keys are optional tags from the following
     set that occur in a comment on the first line of the input string.
@@ -114,11 +134,9 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
     - ``'long time'``
     - ``'not implemented'``
     - ``'not tested'``
-    - ``'known bug'``
+    - ``'known bug'`` (possible values are ``None``, ``linux`` and ``macos``)
     - ``'py2'``
-    - ``'arb216'``
-    - ``'arb218'``
-    - ``'optional - FEATURE...'`` or ``'needs FEATURE...'`` --
+    - ``'optional -- FEATURE...'`` or ``'needs FEATURE...'`` --
       the dictionary will just have the key ``'FEATURE'``
 
     The values, if non-``None``, are strings with optional explanations
@@ -219,17 +237,31 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
             # no tag comment
             return {}, string, False
 
-    tags = {}
+    tags: dict[str, Union[str, None]] = {}
     for m in optional_regex.finditer(comment):
-        cmd = m.group('cmd')
-        if cmd and cmd.lower() == 'known bug':
-            tags['bug'] = None  # so that such tests will be run by sage -t ... -only-optional=bug
-        elif cmd:
-            tags[cmd.lower()] = m.group('cmd_explanation') or None
+        cmd = m.group("cmd").lower().strip()
+        if cmd == "":
+            # skip empty tags
+            continue
+        if cmd == "known bug":
+            value = None
+            if m.groups("tags") and m.group("tags").strip().lower().startswith("linux"):
+                value = "linux"
+            if m.groups("tags") and m.group("tags").strip().lower().startswith("macos"):
+                value = "macos"
+
+            # rename 'known bug' to 'bug' so that such tests will be run by sage -t ... -only-optional=bug
+            tags["bug"] = value
+        elif cmd not in ["optional", "needs"]:
+            tags[cmd] = m.group("cmd_explanation") or None
         else:
-            # optional/needs
-            tags.update({m.group(1).lower(): m.group(2) or None
-                         for m in tag_with_explanation_regex.finditer(m.group('tags'))})
+            # other tags with additional values
+            tags_with_value = {
+                m.group(1).lower().strip(): m.group(2) or None
+                for m in tag_with_explanation_regex.finditer(m.group("tags"))
+            }
+            tags_with_value.pop("", None)
+            tags.update(tags_with_value)
 
     if return_string_sans_tags:
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) tag
@@ -750,10 +782,8 @@ class OriginalSource():
 
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.control import DocTestDefaults
-        sage: from sage.env import SAGE_SRC
-        sage: import os
-        sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-        sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+        sage: filename = sage.doctest.forker.__file__
+        sage: FDS = FileDocTestSource(filename, DocTestDefaults())
         sage: doctests, extras = FDS.create_doctests(globals())
         sage: ex = doctests[0].examples[0]
         sage: ex.sage_source
@@ -777,10 +807,8 @@ class OriginalSource():
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: from sage.doctest.parsing import OriginalSource
@@ -795,10 +823,8 @@ class OriginalSource():
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: from sage.doctest.parsing import OriginalSource
@@ -815,10 +841,8 @@ class OriginalSource():
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: from sage.doctest.parsing import OriginalSource
@@ -837,6 +861,14 @@ class SageDocTestParser(doctest.DocTestParser):
     A version of the standard doctest parser which handles Sage's
     custom options and tolerances in floating point arithmetic.
     """
+
+    long: bool
+    file_optional_tags: set[str]
+    optional_tags: Union[bool, set[str]]
+    optional_only: bool
+    optionals: dict[str, int]
+    probed_tags: Union[bool, set[str]]
+
     def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
         r"""
         INPUT:
@@ -874,7 +906,10 @@ class SageDocTestParser(doctest.DocTestParser):
                 self.optional_tags.remove('sage')
             else:
                 self.optional_only = True
-        self.probed_tags = probed_tags
+        if probed_tags is True:
+            self.probed_tags = True
+        else:
+            self.probed_tags = set(probed_tags)
         self.file_optional_tags = set(file_optional_tags)
 
     def __eq__(self, other):
@@ -1003,7 +1038,7 @@ class SageDocTestParser(doctest.DocTestParser):
             ...
             ValueError: the order of a finite field must be a prime power
 
-        Test that :trac:`26575` is resolved::
+        Test that :issue:`26575` is resolved::
 
             sage: example3 = 'sage: Zp(5,4,print_mode="digits")(5)\n...00010'
             sage: parsed3 = DTP.parse(example3)
@@ -1178,8 +1213,8 @@ class SageDocTestParser(doctest.DocTestParser):
 
         for item in res:
             if isinstance(item, doctest.Example):
-                optional_tags, source_sans_tags, is_persistent = parse_optional_tags(item.source, return_string_sans_tags=True)
-                optional_tags = set(optional_tags)
+                optional_tags_with_values, _, is_persistent = parse_optional_tags(item.source, return_string_sans_tags=True)
+                optional_tags = set(optional_tags_with_values)
                 if is_persistent:
                     check_and_clear_tag_counts()
                     persistent_optional_tags = optional_tags
@@ -1210,11 +1245,24 @@ class SageDocTestParser(doctest.DocTestParser):
                             continue
 
                     if self.optional_tags is not True:
-                        extra = {tag
-                                 for tag in optional_tags
-                                 if (tag not in self.optional_tags
-                                     and tag not in available_software)}
-                        if extra:
+                        extra = {
+                            tag
+                            for tag in optional_tags
+                            if (
+                                tag not in self.optional_tags
+                                and tag not in available_software
+                            )
+                        }
+                        if extra and any(tag in ["bug"] for tag in extra):
+                            # Bug only occurs on a specific platform?
+                            bug_platform = optional_tags_with_values.get("bug")
+                            # System platform as either linux or macos
+                            system_platform = (
+                                platform.system().lower().replace("darwin", "macos")
+                            )
+                            if not bug_platform or bug_platform == system_platform:
+                                continue
+                        elif extra:
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
                                 continue
@@ -1483,7 +1531,7 @@ class SageOutputChecker(doctest.OutputChecker):
             sage: c = 'you'; c
             'you'
 
-        This illustrates that :trac:`33588` is fixed::
+        This illustrates that :issue:`33588` is fixed::
 
             sage: from sage.doctest.parsing import SageOutputChecker, SageDocTestParser
             sage: import doctest
@@ -1604,19 +1652,19 @@ class SageOutputChecker(doctest.OutputChecker):
             # Version 4.65 of glpk prints the warning "Long-step dual
             # simplex will be used" frequently. When Sage uses a system
             # installation of glpk which has not been patched, we need to
-            # ignore that message. See :trac:`29317`.
+            # ignore that message. See :issue:`29317`.
             glpk_simplex_warning_regex = re.compile(r'(Long-step dual simplex will be used)')
             got = glpk_simplex_warning_regex.sub('', got)
             did_fixup = True
 
         if "chained fixups" in got:
-            # :trac:`34533` -- suppress warning on OS X 12.6 about chained fixups
+            # :issue:`34533` -- suppress warning on OS X 12.6 about chained fixups
             chained_fixup_warning_regex = re.compile(r'ld: warning: -undefined dynamic_lookup may not work with chained fixups')
             got = chained_fixup_warning_regex.sub('', got)
             did_fixup = True
 
         if "newer macOS version" in got:
-            # :trac:`34741` -- suppress warning arising after
+            # :issue:`34741` -- suppress warning arising after
             # upgrading from macOS 12.X to 13.X.
             newer_macOS_version_regex = re.compile(r'.*dylib \(.*\) was built for newer macOS version \(.*\) than being linked \(.*\)')
             got = newer_macOS_version_regex.sub('', got)
@@ -1628,14 +1676,14 @@ class SageOutputChecker(doctest.OutputChecker):
             did_fixup = True
 
         if "dylib" in got:
-            # :trac:`31204` -- suppress warning about ld and OS version for
+            # :issue:`31204` -- suppress warning about ld and OS version for
             # dylib files.
             ld_warning_regex = re.compile(r'^.*dylib.*was built for newer macOS version.*than being linked.*')
             got = ld_warning_regex.sub('', got)
             did_fixup = True
 
         if "pie being ignored" in got:
-            # :trac:`30845` -- suppress warning on conda about ld
+            # :issue:`30845` -- suppress warning on conda about ld
             ld_pie_warning_regex = re.compile(r'ld: warning: -pie being ignored. It is only used when linking a main executable')
             got = ld_pie_warning_regex.sub('', got)
             did_fixup = True

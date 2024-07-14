@@ -63,8 +63,12 @@ def is_LaurentSeriesRing(x):
         sage: K.<q> = LaurentSeriesRing(QQ)
         sage: is_LaurentSeriesRing(K)
         True
+        sage: L.<z> = LazyLaurentSeriesRing(QQ)
+        sage: is_LaurentSeriesRing(L)
+        True
     """
-    return isinstance(x, LaurentSeriesRing)
+    from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
+    return isinstance(x, (LaurentSeriesRing, LazyLaurentSeriesRing))
 
 
 class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
@@ -138,7 +142,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     TESTS:
 
     Check if changing global series precision does it right (and
-    that :trac:`17955` is fixed)::
+    that :issue:`17955` is fixed)::
 
         sage: set_series_precision(3)
         sage: R.<x> = LaurentSeriesRing(ZZ)
@@ -150,11 +154,12 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         1 + 2*x + 4*x^2 + 8*x^3 + 16*x^4 + O(x^5)
         sage: set_series_precision(20)
 
-    Check categories (:trac:`24420`)::
+    Check categories (:issue:`24420`)::
 
         sage: LaurentSeriesRing(ZZ, 'x').category()
         Category of infinite commutative no zero divisors algebras
-         over (euclidean domains and infinite enumerated sets and metric spaces)
+         over (Dedekind domains and euclidean domains
+         and noetherian rings and infinite enumerated sets and metric spaces)
         sage: LaurentSeriesRing(QQ, 'x').category()
         Join of Category of complete discrete valuation fields and Category of commutative algebras
          over (number fields and quotient fields and metric spaces) and Category of infinite sets
@@ -162,7 +167,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         Category of infinite commutative algebras
          over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
 
-    Check coercions (:trac:`24431`)::
+    Check coercions (:issue:`24431`)::
 
         sage: pts = [LaurentSeriesRing,
         ....:        PolynomialRing,
@@ -225,7 +230,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: RZZ = LaurentSeriesRing(ZZ, 't')
             sage: RZZ.category()
             Category of infinite commutative no zero divisors algebras
-             over (euclidean domains and infinite enumerated sets and metric spaces)
+             over (Dedekind domains and euclidean domains
+             and noetherian rings and infinite enumerated sets
+             and metric spaces)
             sage: TestSuite(RZZ).run()
 
             sage: R1 = LaurentSeriesRing(Zmod(1), 't')
@@ -437,9 +444,20 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             1/64*I*u^10 - 1/128*u^12 - 1/256*I*u^14 + 1/512*u^16 +
             1/1024*I*u^18 + O(u^20)
 
+        Lazy series::
+
+            sage: L.<z> = LazyLaurentSeriesRing(ZZ)
+            sage: R = LaurentSeriesRing(QQ, names='z')
+            sage: R(z^-5 + 1/(1-z))
+            z^-5 + 1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + z^7 + z^8 + z^9 + z^10
+             + z^11 + z^12 + z^13 + z^14 + z^15 + z^16 + z^17 + z^18 + z^19 + O(z^20)
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: R(5 + z - 5*z^7)
+            5 + z - 5*z^7
+
         TESTS:
 
-        Check that :trac:`28993` is fixed::
+        Check that :issue:`28993` is fixed::
 
             sage: from sage.modular.etaproducts import qexp_eta                         # needs sage.modular
             sage: S.<t> = LaurentSeriesRing(RationalField())
@@ -447,7 +465,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             1 - t - t^2 + t^5 + t^7 - t^12 - t^15 + t^22 + t^26 + O(t^30)
 
         When converting from `R((z))` to `R((z))((w))`, the variable
-        `z` is sent to `z` rather than to `w` (see :trac:`7085`)::
+        `z` is sent to `z` rather than to `w` (see :issue:`7085`)::
 
             sage: A.<z> = LaurentSeriesRing(QQ)
             sage: B.<w> = LaurentSeriesRing(A)
@@ -456,7 +474,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: z/w
             z*w^-1
 
-        Various conversions from PARI (see also :trac:`2508`)::
+        Various conversions from PARI (see also :issue:`2508`)::
 
             sage: # needs sage.libs.pari
             sage: L.<q> = LaurentSeriesRing(QQ, default_prec=10)
@@ -479,13 +497,14 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: L(pari('O(x^-10)'))
             O(q^-10)
 
-        Check that :trac:`30073` is fixed::
+        Check that :issue:`30073` is fixed::
 
             sage: P.<x> = LaurentSeriesRing(QQ)
             sage: P({-3: 1})
             x^-3
         """
-        from sage.rings.fraction_field_element import is_FractionFieldElement
+        from sage.rings.fraction_field_element import FractionFieldElement
+        from sage.rings.lazy_series import LazyPowerSeries, LazyLaurentSeries
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.structure.element import parent
@@ -517,11 +536,19 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
                 return (x << n).add_bigoh(bigoh)
             else:  # General case, pretend to be a polynomial
                 return (self(self.polynomial_ring()(x)) << n).add_bigoh(prec)
-        elif (is_FractionFieldElement(x)
+        elif (isinstance(x, FractionFieldElement)
               and (x.base_ring() is self.base_ring() or x.base_ring() == self.base_ring())
               and isinstance(x.numerator(), (Polynomial, MPolynomial))):
             x = self(x.numerator()) / self(x.denominator())
             return (x << n).add_bigoh(prec)
+        elif isinstance(x, (LazyPowerSeries, LazyLaurentSeries)):
+            if prec is infinity:
+                try:
+                    x = self.power_series_ring()(x.polynomial())
+                except ValueError:
+                    x = x.add_bigoh(self.default_prec())
+            else:
+                x = x.add_bigoh(prec)
         return self.element_class(self, x, n).add_bigoh(prec)
 
     def random_element(self, algorithm='default'):
@@ -615,6 +642,10 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
             sage: S.has_coerce_map_from(S)
             True
+            sage: S.has_coerce_map_from(LazyLaurentSeriesRing(ZZ, 't'))
+            True
+            sage: S.has_coerce_map_from(LazyPowerSeriesRing(ZZ, 't'))
+            True
 
             sage: S.has_coerce_map_from(QQ)
             False
@@ -637,6 +668,10 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: R.has_coerce_map_from(ZZ['t']['x'])
             False
             sage: R.has_coerce_map_from(ZZ['x'])
+            True
+            sage: R.has_coerce_map_from(LazyLaurentSeriesRing(ZZ, 't'))
+            True
+            sage: R.has_coerce_map_from(LazyLaurentSeriesRing(ZZ['x'], 't'))
             True
         """
         A = self.base_ring()

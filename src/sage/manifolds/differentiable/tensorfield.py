@@ -38,7 +38,6 @@ REFERENCES:
 - [KN1963]_
 - [Lee2013]_
 - [ONe1983]_
-
 """
 
 # *****************************************************************************
@@ -476,8 +475,9 @@ class TensorField(ModuleElementWithMutability):
         self._vmodule = vector_field_module
         self._tensor_type = tuple(tensor_type)
         self._tensor_rank = self._tensor_type[0] + self._tensor_type[1]
-        self._is_zero = False # a priori, may be changed below or via
-                              # method __bool__()
+        self._is_zero = False
+        # a priori, may be changed below or via  method __bool__()
+
         self._name = name
         if latex_name is None:
             self._latex_name = self._name
@@ -503,7 +503,7 @@ class TensorField(ModuleElementWithMutability):
         # Initialization of derived quantities:
         self._init_derived()
 
-    ####### Required methods for ModuleElement (beside arithmetic) #######
+    # ###### Required methods for ModuleElement (beside arithmetic) #######
 
     def __bool__(self):
         r"""
@@ -547,7 +547,7 @@ class TensorField(ModuleElementWithMutability):
         self._is_zero = True
         return False
 
-    ##### End of required methods for ModuleElement (beside arithmetic) #####
+    # #### End of required methods for ModuleElement (beside arithmetic) #####
 
     def _repr_(self):
         r"""
@@ -776,7 +776,7 @@ class TensorField(ModuleElementWithMutability):
 
         TESTS:
 
-        Check that :trac:`29639` is fixed::
+        Check that :issue:`29639` is fixed::
 
             sage: v = M.vector_field()
             sage: v._init_components(1/2, -1)
@@ -2739,7 +2739,7 @@ class TensorField(ModuleElementWithMutability):
             sage: s == 2*a
             True
 
-       Test with SymPy as calculus engine::
+        Test with SymPy as calculus engine::
 
             sage: M.set_calculus_method('sympy')
             sage: f.add_expr_by_continuation(c_uv, U.intersection(V))
@@ -3742,7 +3742,7 @@ class TensorField(ModuleElementWithMutability):
         self,
         non_degenerate_form: Union[PseudoRiemannianMetric, SymplecticForm, PoissonTensorField],
         pos: Optional[int] = None,
-    ) -> "TensorField":
+    ) -> TensorField:
         r"""
         Compute a dual of the tensor field by raising some index with the
         given tensor field (usually, a pseudo-Riemannian metric, a symplectic form or a Poisson tensor).
@@ -4694,6 +4694,20 @@ class TensorField(ModuleElementWithMutability):
             sage: v.display(X.frame(), X)
             (x + y)*(x - y) ∂/∂x + 2*pi*(pi - 1)*x ∂/∂y
 
+        TESTS:
+
+        Check that the cached quantities derived from the components are
+        erased::
+
+            sage: w = M.vector_field(a*x, 0)
+            sage: diff(w[[0]]).display()
+            a dx
+            sage: w.apply_map(lambda t: t.subs(a=-2))
+            sage: w.display()
+            -2*x ∂/∂x
+            sage: diff(w[[0]]).display()
+            -2 dx
+
         """
         # The dictionary of components w.r.t. frame:
         if keep_other_components:
@@ -4711,3 +4725,4 @@ class TensorField(ModuleElementWithMutability):
                 for ch, fct in scalar._express.items():
                     cfunc_dict[ch] = ch.function(fun(fct.expr()))
                 scalar._express = cfunc_dict
+                scalar._del_derived()

@@ -12,9 +12,9 @@ from sage.rings.fast_arith cimport prime_range
 from cpython.list cimport PyList_GET_ITEM
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.gmp.mpz cimport *
-from sage.libs.flint.fmpz_poly cimport Fmpz_poly
+from sage.libs.flint.fmpz_poly_sage cimport Fmpz_poly, fmpz_poly_set_coeff_mpz, fmpz_poly_scalar_mul_mpz
 
-cpdef Ek_ZZ(int k, int prec=10) noexcept:
+cpdef Ek_ZZ(int k, int prec=10):
     """
     Return list of prec integer coefficients of the weight k
     Eisenstein series of level 1, normalized so the coefficient of q
@@ -140,7 +140,7 @@ cpdef Ek_ZZ(int k, int prec=10) noexcept:
     return val
 
 
-cpdef eisenstein_series_poly(int k, int prec = 10)  noexcept:
+cpdef eisenstein_series_poly(int k, int prec=10):
     r"""
     Return the q-expansion up to precision ``prec`` of the weight `k`
     Eisenstein series, as a FLINT :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly`

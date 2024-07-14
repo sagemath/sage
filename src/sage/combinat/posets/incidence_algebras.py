@@ -52,7 +52,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
     - :wikipedia:`Incidence_algebra`
     """
-    def __init__(self, R, P, prefix='I'):
+    def __init__(self, R, P, prefix='I') -> None:
         """
         Initialize ``self``.
 
@@ -438,7 +438,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
     `[x, y]` is isomorphic to `[x', y']` as posets. Thus the delta, Möbius,
     and zeta functions are all elements of `R_P`.
     """
-    def __init__(self, I, prefix='R'):
+    def __init__(self, I, prefix='R') -> None:
         """
         Initialize ``self``.
 

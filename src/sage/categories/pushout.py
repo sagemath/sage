@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Coercion via construction functors
 """
@@ -35,7 +36,7 @@ lazy_import('sage.categories.commutative_additive_groups', 'CommutativeAdditiveG
 lazy_import('sage.categories.commutative_rings', 'CommutativeRings')
 lazy_import('sage.categories.groups', 'Groups')
 lazy_import('sage.categories.objects', 'Objects')
-lazy_import('sage.categories.rings', 'Rings', at_startup=True)
+lazy_import('sage.categories.rings', 'Rings')
 
 # TODO, think through the rankings, and override pushout where necessary.
 
@@ -821,7 +822,7 @@ class PolynomialFunctor(ConstructionFunctor):
         sage: P(f)((x+y) * P(R).0)
         (-x + y)*t
 
-    By :trac:`9944`, the construction functor distinguishes sparse and
+    By :issue:`9944`, the construction functor distinguishes sparse and
     dense polynomial rings. Before, the following example failed::
 
         sage: R.<x> = PolynomialRing(GF(5), sparse=True)
@@ -1408,7 +1409,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
         """
         if isinstance(other, IdentityConstructionFunctor):
             return self
-        if isinstance(other, self.__class__): #
+        if isinstance(other, self.__class__):
             INT = set(self._gens).intersection(other._gens)
             if INT:
                 # if there is overlap of generators, it must only be at the ends, so that
@@ -1644,7 +1645,7 @@ class MatrixFunctor(ConstructionFunctor):
 
         TESTS:
 
-        The following is a test against a bug discussed at :trac:`8800`::
+        The following is a test against a bug discussed at :issue:`8800`::
 
             sage: F = MatrixSpace(ZZ, 2, 3).construction()[0]                           # needs sage.modules
             sage: F(RR)         # indirect doctest                                      # needs sage.modules
@@ -1866,7 +1867,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             LaurentPolynomialFunctor
             sage: F1.merge(F2)(LaurentPolynomialRing(GF(2), 'a'))                       # needs sage.modules
             Multivariate Laurent Polynomial Ring in a, t over Finite Field of size 2
-            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2), 'a'))                       # needs sage.modules
+            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2), 'a'))
             Univariate Laurent Polynomial Ring in t over
              Univariate Laurent Polynomial Ring in a over Finite Field of size 2
 
@@ -2736,7 +2737,7 @@ class CompletionFunctor(ConstructionFunctor):
 
         TESTS:
 
-        We check that :trac:`12353` has been resolved::
+        We check that :issue:`12353` has been resolved::
 
             sage: RIF(1) > RR(1)                                                        # needs sage.rings.real_interval_field
             Traceback (most recent call last):
@@ -2846,8 +2847,8 @@ class CompletionFunctor(ConstructionFunctor):
             sage: (C*F)(ZZ['x']) is (F*C)(ZZ['x'])
             True
 
-        The following was fixed in :trac:`15329` (it used to result
-        in an infinite recursion. In :trac:`23218` the construction
+        The following was fixed in :issue:`15329` (it used to result
+        in an infinite recursion. In :issue:`23218` the construction
         of `p`-adic fields changed, so there is no longer an
         Ambiguous base extension error raised)::
 
@@ -2970,7 +2971,7 @@ class QuotientFunctor(ConstructionFunctor):
 
         Note that the ``quo()`` method of a field used to return the
         integer zero. That strange behaviour was removed in github
-        issue :trac:`9138`. It now returns a trivial quotient ring
+        issue :issue:`9138`. It now returns a trivial quotient ring
         when applied to a field::
 
             sage: F = ZZ.quo([5]*ZZ).construction()[0]
@@ -2990,7 +2991,7 @@ class QuotientFunctor(ConstructionFunctor):
                 R = I.ring()
             else:
                 R = pushout(R, I.ring().base_ring())
-                I = [R.one() * t for t in I.gens()] * R
+                I = R.ideal([R.one() * t for t in I.gens()], warn=False)
         try:
             Q = R.quo(I, names=self.names, **self.kwds)
         except IndexError:  # That may happen!
@@ -3070,7 +3071,7 @@ class QuotientFunctor(ConstructionFunctor):
             Univariate Quotient Polynomial Ring in xbar over Rational Field
              with modulus x^4 + 2*x^2 + 1
 
-        The following was fixed in :trac:`8800`::
+        The following was fixed in :issue:`8800`::
 
             sage: pushout(GF(5), Integers(5))                                           # needs sage.libs.pari
             Finite Field of size 5
@@ -3157,7 +3158,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
     field, similar to the behaviour of ``ZZ.extension(...)``::
 
         sage: F(ZZ)                                                                     # needs sage.rings.number_field
-        Order in Number Field in a with defining polynomial x^3 + x^2 + 1
+        Order generated by a in Number Field in a with defining polynomial x^3 + x^2 + 1
 
     This also holds for non-absolute number fields::
 
@@ -3166,8 +3167,10 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         sage: K.<a,b> = NumberField([x^3 + x^2 + 1, x^2 + x + 1])
         sage: F = K.construction()[0]
         sage: O = F(ZZ); O
-        Relative Order in Number Field in a
-         with defining polynomial x^3 + x^2 + 1 over its base field
+        Relative Order
+         generated by [(b - 2)*a^2 + (3*b - 1)*a + 3*b + 4, a - b]
+         in Number Field in a with defining polynomial x^3 + x^2 + 1
+         over its base field
         sage: O.ambient() is K
         True
 
@@ -3183,7 +3186,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         sage: F(R)
         Cyclotomic Field of order 8 and degree 4
         sage: F(ZZ)
-        Maximal Order in Cyclotomic Field of order 8 and degree 4
+        Maximal Order generated by zeta8 in Cyclotomic Field of order 8 and degree 4
 
     ::
 
@@ -3290,7 +3293,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         returned, similar to the behaviour of ``ZZ.extension``::
 
             sage: F1(ZZ)                                                                # needs sage.rings.number_field
-            Order in Number Field in a with defining polynomial x^3 - x^2 + 1
+            Order generated by a in Number Field in a with defining polynomial x^3 - x^2 + 1
 
         The cyclotomic fields form a special case of number fields
         with prescribed embeddings::
@@ -3305,10 +3308,10 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             sage: F(R)
             Cyclotomic Field of order 8 and degree 4
             sage: F(ZZ)
-            Maximal Order in Cyclotomic Field of order 8 and degree 4
+            Maximal Order generated by zeta8 in Cyclotomic Field of order 8 and degree 4
 
         The data stored in this construction includes structural
-        morphisms of number fields (see :trac:`20826`)::
+        morphisms of number fields (see :issue:`20826`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = ZZ[]
@@ -3370,7 +3373,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             sage: K.<a> = NumberField(x^3 + x^2 + 1)
             sage: F = K.construction()[0]
             sage: F(ZZ)       # indirect doctest
-            Order in Number Field in a with defining polynomial x^3 + x^2 + 1
+            Order generated by a in Number Field in a with defining polynomial x^3 + x^2 + 1
             sage: F(ZZ['t'])  # indirect doctest
             Univariate Quotient Polynomial Ring in a over
              Univariate Polynomial Ring in t over Integer Ring with modulus a^3 + a^2 + 1
@@ -3378,7 +3381,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             Univariate Quotient Polynomial Ring in a over
              Real Field with 53 bits of precision with modulus a^3 + a^2 + 1.00000000000000
 
-        Check that :trac:`13538` is fixed::
+        Check that :issue:`13538` is fixed::
 
             sage: # needs sage.rings.padics
             sage: from sage.categories.pushout import AlgebraicExtensionFunctor
@@ -3463,7 +3466,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        ``other`` -- Construction Functor.
+        - ``other`` -- Construction Functor.
 
         OUTPUT:
 
@@ -3795,7 +3798,7 @@ class PermutationGroupFunctor(ConstructionFunctor):
         return PermutationGroup([g for g in (R.gens() + self.gens()) if not g.is_one()],
                                 domain=self._domain)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         EXAMPLES::
 
@@ -3923,7 +3926,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         """
         EXAMPLES::
 
-            sage: # needs sage.groups sage.modules
+            sage: # needs sage.combinat sage.groups sage.modules
             sage: G = SymmetricGroup(3); G.rename('S3')
             sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')
             sage: action = lambda g, x: M.term(g(x))
@@ -3973,14 +3976,20 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+
+        sage: # needs sage.libs.gap
+        sage: from sage.interfaces.gap import gap
         sage: FG = BlackBoxConstructionFunctor(gap)
-        sage: FS = BlackBoxConstructionFunctor(singular)
         sage: FG
         BlackBoxConstructionFunctor
-        sage: FG(ZZ)                                                                    # needs sage.libs.gap
+        sage: FG(ZZ)
         Integers
-        sage: FG(ZZ).parent()                                                           # needs sage.libs.gap
+        sage: FG(ZZ).parent()
         Gap
+        sage: FG == loads(dumps(FG))
+        True
+
+        sage: FS = BlackBoxConstructionFunctor(singular)
         sage: FS(QQ['t'])                                                               # needs sage.libs.singular
         polynomial ring, over a field, global ordering
         //   coefficients: QQ
@@ -3990,8 +3999,6 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         //        block   2 : ordering C
         sage: FG == FS                                                                  # needs sage.libs.gap sage.libs.singular
         False
-        sage: FG == loads(dumps(FG))                                                    # needs sage.libs.gap
-        True
     """
     rank = 100
 

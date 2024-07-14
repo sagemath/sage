@@ -17,7 +17,6 @@ AUTHORS:
 
 - Julian Rueth (2013-04-09) - Collected common code in
   :class:`Set_object_binary`, fixed ``__hash__``.
-
 """
 
 # ****************************************************************************
@@ -184,7 +183,7 @@ def Set(X=None, category=None):
         sage: S = Set([])
         sage: TestSuite(S).run()
 
-    Check that :trac:`16090` is fixed::
+    Check that :issue:`16090` is fixed::
 
         sage: Set()
         {}
@@ -461,7 +460,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
     TESTS:
 
-    See :trac:`14486`::
+    See :issue:`14486`::
 
         sage: 0 == Set([1]), Set([1]) == 0
         (False, False)
@@ -492,8 +491,8 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             '<class 'sage.sets.set.Set_object_enumerated_with_category'>'
             and 'Integer Ring'
         """
-        from sage.rings.integer import is_Integer
-        if isinstance(X, int) or is_Integer(X):
+        from sage.rings.integer import Integer
+        if isinstance(X, int) or isinstance(X, Integer):
             # The coercion model will try to call Set_object(0)
             raise ValueError('underlying object cannot be an integer')
 
@@ -1361,7 +1360,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
         TESTS:
 
-        Test that :trac:`14432` has been resolved::
+        Test that :issue:`14432` has been resolved::
 
             sage: S = Set(ZZ).union(Set([infinity]))
             sage: T = Set(ZZ).union(Set([infinity]))
@@ -1645,7 +1644,7 @@ class Set_object_intersection(Set_object_binary):
             2
 
         Check that known finite intersections have finite iterators (see
-        :trac:`18159`)::
+        :issue:`18159`)::
 
             sage: P = Set(ZZ).intersection(Set(range(10,20)))
             sage: list(P)
@@ -1720,7 +1719,9 @@ class Set_object_difference(Set_object_binary):
             sage: S = Set(QQ)
             sage: T = Set(ZZ)
             sage: X = S.difference(T); X
-            Set-theoretic difference of Set of elements of Rational Field and Set of elements of Integer Ring
+            Set-theoretic difference of
+             Set of elements of Rational Field and
+             Set of elements of Integer Ring
             sage: X.category()
             Category of sets
             sage: latex(X)

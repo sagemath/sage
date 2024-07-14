@@ -73,7 +73,9 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         14
         sage: G = OS.algebra_generators()
         sage: M.broken_circuits()
-        frozenset({frozenset({1, 2, 3})})
+        SetSystem of 1 sets over 4 elements
+        sage: M.broken_circuits()[0]
+        frozenset({1, 2, 3})
         sage: G[1] * G[2] * G[3]
         OS{0, 1, 2} - OS{0, 1, 3} + OS{0, 2, 3}
 
@@ -132,7 +134,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             self._broken_circuits[frozenset(L[1:])] = L[0]
 
         cat = Algebras(R).FiniteDimensional().WithBasis().Graded()
-        CombinatorialFreeModule.__init__(self, R, M.no_broken_circuits_sets(ordering),
+        CombinatorialFreeModule.__init__(self, R, list(M.no_broken_circuits_sets(ordering)),
                                          prefix='OS', bracket='{',
                                          sorting_key=self._sort_key,
                                          category=cat)
@@ -468,7 +470,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
         ::
 
-            sage: N = matroids.named_matroids.Fano()
+            sage: N = matroids.catalog.Fano()
             sage: O = N.orlik_solomon_algebra(QQ)
             sage: O.as_gca()                                                            # needs sage.libs.singular
             Graded Commutative Algebra with generators ('e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6')
@@ -492,7 +494,6 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             20*x^3 + 29*x^2 + 10*x + 1
             sage: [len(A.basis(i)) for i in range(5)]
             [1, 10, 29, 20, 0]
-
         """
         from sage.algebras.commutative_dga import GradedCommutativeAlgebra
         gens = self.algebra_generators()
@@ -519,8 +520,8 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
     def as_cdga(self):
         r"""
-        Return the commutative differential graded algebra corresponding to ``self``
-        with the trivial differential.
+        Return the commutative differential graded algebra corresponding
+        to ``self`` with the trivial differential.
 
         EXAMPLES::
 
@@ -536,6 +537,76 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
                e2 --> 0
         """
         return self.as_gca().cdg_algebra({})
+
+    def aomoto_complex(self, omega):
+        r"""
+        Return the Aomoto complex of ``self`` defined by ``omega``.
+
+        Let `A(M)` be an Orlik-Solomon algebra of a matroid `M`. Let
+        `\omega \in A(M)_1` be an element of (homogeneous) degree 1.
+        The Aomoto complete is the chain complex defined on `A(M)`
+        with the differential defined by `\omega \wedge`.
+
+        EXAMPLES::
+
+            sage: OS = hyperplane_arrangements.braid(3).orlik_solomon_algebra(QQ)
+            sage: gens = OS.algebra_generators()
+            sage: AC = OS.aomoto_complex(gens[0])
+            sage: ascii_art(AC)
+                                      [0]
+                        [1 0 0]       [0]
+                        [0 1 0]       [1]
+             0 <-- C_2 <-------- C_1 <---- C_0 <-- 0
+            sage: AC.homology()
+            {0: Vector space of dimension 0 over Rational Field,
+             1: Vector space of dimension 0 over Rational Field,
+             2: Vector space of dimension 0 over Rational Field}
+
+            sage: AC = OS.aomoto_complex(-2*gens[0] + gens[1] + gens[2]); ascii_art(AC)
+                                         [ 1]
+                        [-1 -1 -1]       [ 1]
+                        [-1 -1 -1]       [-2]
+             0 <-- C_2 <----------- C_1 <----- C_0 <-- 0
+            sage: AC.homology()
+            {0: Vector space of dimension 0 over Rational Field,
+             1: Vector space of dimension 1 over Rational Field,
+             2: Vector space of dimension 1 over Rational Field}
+
+        TESTS::
+
+            sage: OS = hyperplane_arrangements.braid(4).orlik_solomon_algebra(QQ)
+            sage: gens = OS.algebra_generators()
+            sage: OS.aomoto_complex(gens[0] * gens[1] * gens[3])
+            Traceback (most recent call last):
+            ...
+            ValueError: omega must be a homogeneous element of degree 1
+
+        REFERENCES:
+
+        - [BY2016]_
+        """
+        if not omega.is_homogeneous() or omega.degree() != 1:
+            raise ValueError("omega must be a homogeneous element of degree 1")
+        from sage.homology.chain_complex import ChainComplex
+        R = self.base_ring()
+        from collections import defaultdict
+        from sage.matrix.constructor import matrix
+        graded_basis = defaultdict(list)
+        B = self.basis()
+        for k in B.keys():
+            graded_basis[len(k)].append(k)
+        degrees = list(graded_basis)
+        data = {i: matrix.zero(R, len(graded_basis[i+1]), len(graded_basis[i]))
+                for i in degrees}
+        for i in degrees:
+            mat = data[i]
+            for j, key in enumerate(graded_basis[i]):
+                ret = (omega * B[key]).monomial_coefficients(copy=False)
+                for k, imkey in enumerate(graded_basis[i+1]):
+                    if imkey in ret:
+                        mat[k,j] = ret[imkey]
+            mat.set_immutable()
+        return ChainComplex(data, R)
 
 
 class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):

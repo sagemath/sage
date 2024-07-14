@@ -73,7 +73,7 @@ def _smallscale_present_linearlayer(nsboxes=16):
     .. TODO::
 
         switch to sage.crypto.linearlayer
-        (:trac:`25735`) as soon as it is included in sage
+        (:issue:`25735`) as soon as it is included in sage
 
     EXAMPLES::
 
@@ -473,7 +473,7 @@ class PRESENT(SageObject):
             sage: c4 = 0x3333DCD3213210D2
             sage: present.decrypt(c4, k4) == p4
             True
-       """
+        """
         if isinstance(ciphertext, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(ciphertext, (Integer, int)):

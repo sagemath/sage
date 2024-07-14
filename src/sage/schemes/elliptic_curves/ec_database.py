@@ -65,7 +65,6 @@ AUTHORS:
 
 See also the functions :func:`cremona_curves` and :func:`cremona_optimal_curves`
 which enable easy looping through the Cremona elliptic curve database.
-
 """
 
 import os
@@ -87,7 +86,7 @@ class EllipticCurves:
 
         - ``n`` (int, default 10) -- the maximum number of curves returned.
 
-        - ``labels`` (bool, default False) -- if True, return Cremona
+        - ``labels`` (bool, default: ``False``) -- if True, return Cremona
           labels instead of curves.
 
         OUTPUT:
@@ -132,8 +131,10 @@ class EllipticCurves:
             sage: elliptic_curves.rank(6, n=3, labels=True)
             []
         """
-        from sage.env import ELLCURVE_DATA_DIR
-        data = os.path.join(ELLCURVE_DATA_DIR, 'rank%s' % rank)
+        from sage.features.databases import DatabaseEllcurves
+        db = DatabaseEllcurves()
+        data = os.path.join(os.path.dirname(db.absolute_filename()),
+                            f'rank{rank}')
         try:
             f = open(data)
         except OSError:

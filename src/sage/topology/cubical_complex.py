@@ -545,13 +545,12 @@ class Cube(SageObject):
         if self.dimension() < 0:  # the empty cube
             return [Simplex(())]  # the empty simplex
         v = tuple([max(j) for j in self.tuple()])
+        Sv = Simplex((v,))
         if self.dimension() == 0:  # just v
-            return [Simplex((v,))]
-        simplices = []
-        for i in range(self.dimension()):
-            for S in self.face(i, upper=False)._triangulation_():
-                simplices.append(S.join(Simplex((v,)), rename_vertices=False))
-        return simplices
+            return [Sv]
+        return [S.join(Sv, rename_vertices=False)
+                for i in range(self.dimension())
+                for S in self.face(i, upper=False)._triangulation_()]
 
     def alexander_whitney(self, dim):
         r"""
@@ -719,7 +718,7 @@ class Cube(SageObject):
             sage: C1._repr_()
             '[1,1] x [2,3] x [4,5]'
         """
-        s = ("[%s,%s]" % (str(x), str(y)) for x, y in self.__tuple)
+        s = ("[{},{}]".format(str(x), str(y)) for x, y in self.__tuple)
         return " x ".join(s)
 
     def _latex_(self):
@@ -744,7 +743,7 @@ class CubicalComplex(GenericCellComplex):
 
     :param maximal_faces: set of maximal faces
     :param maximality_check: see below
-    :type maximality_check: boolean; optional, default True
+    :type maximality_check: boolean; optional, default: ``True``
     :return: a cubical complex
 
     ``maximal_faces`` should be a list or tuple or set (or anything
@@ -1077,8 +1076,8 @@ class CubicalComplex(GenericCellComplex):
             dimension = max([cube.dimension() for cube in self._facets])
             # initialize the lists: add each maximal cube to Cells and sub_facets
             for i in range(-1, dimension+1):
-                Cells[i] = set([])
-                sub_facets[i] = set([])
+                Cells[i] = set()
+                sub_facets[i] = set()
             for f in self._facets:
                 Cells[f.dimension()].add(f)
             if subcomplex is not None:
@@ -1150,17 +1149,17 @@ class CubicalComplex(GenericCellComplex):
            (that is, include a class in dimension `-1` corresponding
            to the empty cell).  This is ignored if ``dimensions`` is
            specified.
-        :type augmented: boolean; optional, default False
+        :type augmented: boolean; optional, default: ``False``
         :param cochain: If True, return the cochain complex (that is,
            the dual of the chain complex).
-        :type cochain: boolean; optional, default False
+        :type cochain: boolean; optional, default: ``False``
         :param verbose: If True, print some messages as the chain
            complex is computed.
-        :type verbose: boolean; optional, default False
+        :type verbose: boolean; optional, default: ``False``
         :param check: If True, make sure that the chain complex
            is actually a chain complex: the differentials are
            composable and their product is zero.
-        :type check: boolean; optional, default False
+        :type check: boolean; optional, default: ``False``
 
         .. note::
 
@@ -1187,7 +1186,7 @@ class CubicalComplex(GenericCellComplex):
             sage: C1.homology(subcomplex=S0)
             {0: 0, 1: Z}
 
-        Check that :trac:`32203` has been fixed::
+        Check that :issue:`32203` has been fixed::
 
             sage: # needs sage.modules
             sage: Square = CubicalComplex([([0,1],[0,1])])
@@ -1229,7 +1228,7 @@ class CubicalComplex(GenericCellComplex):
                     differentials[dim] = self._complex[(dim, subcomplex)].change_ring(base_ring)
                     mat = differentials[dim]
                 if verbose:
-                    print("    boundary matrix (cached): it's %s by %s." % (mat.nrows(), mat.ncols()))
+                    print("    boundary matrix (cached): it's {} by {}.".format(mat.nrows(), mat.ncols()))
             else:
                 # 'current' is the list of cells in dimension n
                 #
@@ -1271,7 +1270,7 @@ class CubicalComplex(GenericCellComplex):
                 else:
                     differentials[dim] = mat.change_ring(base_ring)
                 if verbose:
-                    print("    boundary matrix computed: it's %s by %s." % (mat.nrows(), mat.ncols()))
+                    print("    boundary matrix computed: it's {} by {}.".format(mat.nrows(), mat.ncols()))
         # finally, return the chain complex
         if cochain:
             return ChainComplex(data=differentials, base_ring=base_ring,
@@ -1452,7 +1451,7 @@ class CubicalComplex(GenericCellComplex):
 
     def product(self, other):
         r"""
-        The product of this cubical complex with another one.
+        Return the product of this cubical complex with another one.
 
         :param other: another cubical complex
 
@@ -1463,10 +1462,7 @@ class CubicalComplex(GenericCellComplex):
             sage: RP2.product(S1).homology()[1] # long time: 5 seconds
             Z x C2
         """
-        facets = []
-        for f in self._facets:
-            for g in other._facets:
-                facets.append(f.product(g))
+        facets = [f.product(g) for f in self._facets for g in other._facets]
         return CubicalComplex(facets)
 
     def disjoint_union(self, other):
@@ -1490,11 +1486,12 @@ class CubicalComplex(GenericCellComplex):
         embedded_left = len(tuple(self.maximal_cells()[0]))
         embedded_right = len(tuple(other.maximal_cells()[0]))
         zero = [0] * max(embedded_left, embedded_right)
-        facets = []
-        for f in self.maximal_cells():
-            facets.append(Cube([[0, 0]]).product(f._translate(zero)))
-        for f in other.maximal_cells():
-            facets.append(Cube([[1, 1]]).product(f._translate(zero)))
+        C00 = Cube([[0, 0]])
+        facets = [C00.product(f._translate(zero))
+                  for f in self.maximal_cells()]
+        C11 = Cube([[1, 1]])
+        facets.extend(C11.product(f._translate(zero))
+                      for f in other.maximal_cells())
         return CubicalComplex(facets)
 
     def wedge(self, other):
@@ -1528,11 +1525,9 @@ class CubicalComplex(GenericCellComplex):
         translate_right = [-a[0] for a in other.maximal_cells()[0]]
         point_right = Cube([[0, 0]] * embedded_left)
 
-        facets = []
-        for f in self.maximal_cells():
-            facets.append(f._translate(translate_left))
-        for f in other.maximal_cells():
-            facets.append(point_right.product(f._translate(translate_right)))
+        facets = [f._translate(translate_left) for f in self.maximal_cells()]
+        facets.extend(point_right.product(f._translate(translate_right))
+                      for f in other.maximal_cells())
         return CubicalComplex(facets)
 
     def connected_sum(self, other):
@@ -1645,7 +1640,7 @@ class CubicalComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``). Must be a field.
 
         Denote by `C` the chain complex associated to this cubical
@@ -1693,30 +1688,6 @@ class CubicalComplex(GenericCellComplex):
         if base_ring is None:
             base_ring = QQ
         return algebraic_topological_model(self, base_ring)
-
-    def _chomp_repr_(self):
-        r"""
-        String representation of self suitable for use by the CHomP
-        program.  This lists each maximal cube on its own line.
-
-        This function is deprecated.
-
-        EXAMPLES::
-
-            sage: C = cubical_complexes.Cube(0).product(cubical_complexes.Cube(2))
-            sage: C.maximal_cells()
-            {[0,0] x [0,1] x [0,1]}
-            sage: C._chomp_repr_()
-            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://github.com/sagemath/sage/issues/33777 for details.
-            '[0,0] x [0,1] x [0,1]\n'
-        """
-        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
-        s = ""
-        for c in self.maximal_cells():
-            s += str(c)
-            s += "\n"
-        return s
 
     def _simplicial_(self):
         r"""
@@ -1794,7 +1765,7 @@ class CubicalComplex(GenericCellComplex):
         return ('Cubical', 'cube', 'cubes')
 
 
-class CubicalComplexExamples():
+class CubicalComplexExamples:
     r"""
     Some examples of cubical complexes.
 
@@ -1900,7 +1871,7 @@ class CubicalComplexExamples():
         :param g: the genus
         :type g: non-negative integer
         :param orientable: whether the surface should be orientable
-        :type orientable: bool, optional, default True
+        :type orientable: bool, optional, default: ``True``
 
         In the orientable case, return a sphere if `g` is zero, and
         otherwise return a `g`-fold connected sum of a torus with

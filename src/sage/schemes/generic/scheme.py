@@ -44,11 +44,16 @@ def is_Scheme(x):
 
         sage: from sage.schemes.generic.scheme import is_Scheme
         sage: is_Scheme(5)
+        doctest:warning...
+        DeprecationWarning: The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: X = Spec(QQ)
         sage: is_Scheme(X)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.")
     return isinstance(x, Scheme)
 
 
@@ -77,7 +82,7 @@ class Scheme(Parent):
         sage: ProjectiveSpace(4, QQ).category()
         Category of schemes over Rational Field
 
-    There is a special and unique `Spec(\ZZ)` that is the default base
+    There is a special and unique `\mathrm{Spec}(\ZZ)` that is the default base
     scheme::
 
         sage: Spec(ZZ).base_scheme() is Spec(QQ).base_scheme()
@@ -90,7 +95,7 @@ class Scheme(Parent):
 
         TESTS:
 
-        The full test suite works since :trac:`7946`::
+        The full test suite works since :issue:`7946`::
 
             sage: R.<x, y> = QQ[]
             sage: I = (x^2 - y^2)*R
@@ -105,7 +110,7 @@ class Scheme(Parent):
 
         if X is None:
             self._base_ring = ZZ
-        elif is_Scheme(X):
+        elif isinstance(X, Scheme):
             self._base_scheme = X
         elif is_SchemeMorphism(X):
             self._base_morphism = X
@@ -162,7 +167,7 @@ class Scheme(Parent):
 
         TESTS:
 
-        This shows that issue at :trac:`7389` is solved::
+        This shows that issue at :issue:`7389` is solved::
 
             sage: S = Spec(ZZ)
             sage: f = S.identity_morphism()
@@ -243,7 +248,7 @@ class Scheme(Parent):
             sage: A(1, 0)
             (1, 0)
 
-        Check that :trac:`16832` is fixed::
+        Check that :issue:`16832` is fixed::
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: X = P.subscheme(x^2 - y^2)
@@ -255,7 +260,7 @@ class Scheme(Parent):
             S = args[0]
             if S in CommutativeRings():
                 return self.point_homset(S)
-            elif is_Scheme(S):
+            elif isinstance(S, Scheme):
                 return S.Hom(self)
             elif isinstance(S, (list, tuple)):
                 args = S
@@ -267,7 +272,7 @@ class Scheme(Parent):
 
     @cached_method
     def point_homset(self, S=None):
-        """
+        r"""
         Return the set of S-valued points of this scheme.
 
         INPUT:
@@ -276,7 +281,7 @@ class Scheme(Parent):
 
         OUTPUT:
 
-        The set of morphisms `Spec(S)\to X`.
+        The set of morphisms `\mathrm{Spec}(S) \to X`.
 
         EXAMPLES::
 
@@ -312,7 +317,7 @@ class Scheme(Parent):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT:
@@ -331,8 +336,8 @@ class Scheme(Parent):
             (0 : 0 : 1)
         """
         # todo: update elliptic curve stuff to take point_homset as argument
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(self):
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+        if isinstance(self, EllipticCurve_generic):
             try:
                 return self._point(self.point_homset(), v, check=check)
             except AttributeError:  # legacy code without point_homset
@@ -590,7 +595,7 @@ class Scheme(Parent):
         - ``Y`` -- the codomain scheme (optional); if ``Y`` is not
           given, try to determine ``Y`` from context
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT:
@@ -607,7 +612,7 @@ class Scheme(Parent):
               Defn: Structure map
         """
         if Y is None:
-            if is_Scheme(x):
+            if isinstance(x, Scheme):
                 return self.Hom(x).natural_map()
             else:
                 raise TypeError("unable to determine codomain")
@@ -624,7 +629,7 @@ class Scheme(Parent):
         - ``category`` -- a category (optional); the category of the
           Hom-set
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency.
 
         OUTPUT:
@@ -644,10 +649,6 @@ class Scheme(Parent):
 
             sage: S._Hom_(P).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category'>
-
-            sage: E = EllipticCurve('37a1')                                             # needs sage.schemes
-            sage: Hom(E, E).__class__                                                   # needs sage.schemes
-            <class 'sage.schemes.projective.projective_homset.SchemeHomset_polynomial_projective_space_with_category'>
 
             sage: Hom(Spec(ZZ), Spec(ZZ)).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category_with_equality_by_id'>
@@ -747,7 +748,7 @@ class Scheme(Parent):
         provide the required approximation.
         Otherwise this function depends on ``count_points``, which is only
         defined for prime order fields for general schemes.
-        Nonetheless, since :trac:`15108` and :trac:`15148`, it supports
+        Nonetheless, since :issue:`15108` and :issue:`15148`, it supports
         hyperelliptic curves over non-prime fields::
 
             sage: C.base_extend(GF(9, 'a')).zeta_series(4, t)                           # needs sage.rings.finite_rings sage.schemes
@@ -798,12 +799,18 @@ def is_AffineScheme(x):
 
         sage: from sage.schemes.generic.scheme import is_AffineScheme
         sage: is_AffineScheme(5)
+        doctest:warning...
+        DeprecationWarning: The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: E = Spec(QQ)
         sage: is_AffineScheme(E)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.")
     return isinstance(x, AffineScheme)
+
 
 class AffineScheme(UniqueRepresentation, Scheme):
     """
@@ -965,7 +972,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
              in x, y, z over Rational Field defined by the Ideal (x, y, z)
               of Multivariate Polynomial Ring in x, y, z over Rational Field
 
-        This indicates the fix of :trac:`12734`::
+        This indicates the fix of :issue:`12734`::
 
             sage: S = Spec(ZZ)
             sage: S(ZZ)
@@ -1178,7 +1185,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         - ``Y`` -- the codomain scheme (optional); if ``Y`` is not
           given, try to determine ``Y`` from context
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT:
@@ -1202,7 +1209,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
 
         TESTS:
 
-        We can construct a morphism to an affine curve (:trac:`7956`)::
+        We can construct a morphism to an affine curve (:issue:`7956`)::
 
             sage: S.<p,q> = QQ[]
             sage: A1.<r> = AffineSpace(QQ, 1)
@@ -1216,7 +1223,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         from sage.categories.map import Map
         from sage.categories.rings import Rings
 
-        if is_Scheme(x):
+        if isinstance(x, Scheme):
             return self.Hom(x).natural_map()
         if Y is None and isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
             # x is a morphism of Rings

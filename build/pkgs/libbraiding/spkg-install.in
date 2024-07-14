@@ -1,4 +1,5 @@
 cd src
+cp "$SAGE_ROOT"/config/config.* build-aux/
 sdh_configure $LIBBRAIDING_CONFIGURE
 sdh_make
 sdh_make_install -j1

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Ideals of commutative rings
 
@@ -53,12 +54,12 @@ def Ideal(*args, **kwds):
 
     INPUT:
 
-    -  ``R`` - A ring (optional; if not given, will try to infer it from
+    -  ``R`` -- A ring (optional; if not given, will try to infer it from
        ``gens``)
 
-    -  ``gens`` - list of elements generating the ideal
+    -  ``gens`` -- list of elements generating the ideal
 
-    -  ``coerce`` - bool (optional, default: ``True``);
+    -  ``coerce`` -- bool (default: ``True``);
        whether ``gens`` need to be coerced into the ring.
 
 
@@ -98,7 +99,7 @@ def Ideal(*args, **kwds):
         sage: ideal(1/2,t,t^2)
         Principal ideal (1) of Univariate Polynomial Ring in t over Rational Field
 
-    This shows that the issues at :trac:`1104` are resolved::
+    This shows that the issues at :issue:`1104` are resolved::
 
         sage: Ideal(3, 5)
         Principal ideal (1) of Integer Ring
@@ -156,7 +157,7 @@ def Ideal(*args, **kwds):
         sage: I == loads(dumps(I))
         True
 
-    This shows that the issue at :trac:`5477` is fixed::
+    This shows that the issue at :issue:`5477` is fixed::
 
         sage: R.<x> = QQ[]
         sage: I = R.ideal([x + x^2])
@@ -248,7 +249,7 @@ class Ideal_generic(MonoidElement):
 
     See :func:`Ideal()`.
     """
-    def __init__(self, ring, gens, coerce=True):
+    def __init__(self, ring, gens, coerce=True, **kwds):
         """
         Initialize this ideal.
 
@@ -539,8 +540,8 @@ class Ideal_generic(MonoidElement):
             sage: taus[1](B)                                                            # needs sage.rings.number_fields
             Fractional ideal (2, a + 1)
         """
-        from sage.categories.morphism import is_Morphism
-        if not is_Morphism(phi):
+        from sage.categories.morphism import Morphism
+        if not isinstance(phi, Morphism):
             raise TypeError("phi must be a morphism")
         # delegate: morphisms know how to apply themselves to ideals
         return phi(self)
@@ -741,7 +742,7 @@ class Ideal_generic(MonoidElement):
 
         INPUT:
 
-        - ``P`` - (default: ``None``) a prime ideal in the same ring
+        - ``P`` -- (default: ``None``) a prime ideal in the same ring
 
         EXAMPLES::
 
@@ -973,7 +974,7 @@ class Ideal_generic(MonoidElement):
             sage: I.is_trivial()                                                        # needs sage.rings.real_mpfr
             True
 
-        This test addresses issue :trac:`20514`::
+        This test addresses issue :issue:`20514`::
 
             sage: R = QQ['x', 'y']
             sage: I = R.ideal(R.gens())
@@ -1077,7 +1078,7 @@ class Ideal_generic(MonoidElement):
         ``self.ngens() * other.ngens()``. So if used repeatedly this method
         will create an ideal with a uselessly large amount of generators.
         Therefore it is advisable to overwrite this method with a method that
-        takes advantage of the structure of the ring your working in.
+        takes advantage of the structure of the ring you are working in.
 
         Example::
 
@@ -1201,7 +1202,7 @@ class Ideal_generic(MonoidElement):
 
         TESTS:
 
-        Check that a cached base ring is used (:trac:`28074`)::
+        Check that a cached base ring is used (:issue:`28074`)::
 
             sage: R.<x,y> = QQ[]
             sage: R1 = macaulay2(R)                        # optional - macaulay2
@@ -1461,19 +1462,13 @@ class Ideal_pid(Ideal_principal):
     An ideal of a principal ideal domain.
 
     See :func:`Ideal()`.
+
+    EXAMPLES::
+
+        sage: I = 8*ZZ
+        sage: I
+        Principal ideal (8) of Integer Ring
     """
-    def __init__(self, ring, gen):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: I = 8*ZZ
-            sage: I
-            Principal ideal (8) of Integer Ring
-        """
-        Ideal_principal.__init__(self, ring, gen)
-
     def __add__(self, other):
         """
         Add the two ideals.

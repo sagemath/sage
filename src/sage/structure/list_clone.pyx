@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Elements, Array and Lists With Clone Protocol
 
@@ -350,7 +351,7 @@ cdef class ClonableElement(Element):
         """
         return self._is_immutable
 
-    cpdef set_immutable(self) noexcept:
+    cpdef set_immutable(self):
         """
         Makes ``self`` immutable, so it can never again be changed.
 
@@ -369,7 +370,7 @@ cdef class ClonableElement(Element):
         """
         self._is_immutable = True
 
-    cpdef _set_mutable(self) noexcept:
+    cpdef _set_mutable(self):
         """
         Makes ``self`` mutable, so it can be changed.
 
@@ -415,7 +416,7 @@ cdef class ClonableElement(Element):
                 self._hash = self._hash_()
         return self._hash
 
-    cpdef ClonableElement clone(self, bint check=True) noexcept:
+    cpdef ClonableElement clone(self, bint check=True):
         """
         Return a clone that is mutable copy of ``self``.
 
@@ -578,7 +579,7 @@ cdef class ClonableArray(ClonableElement):
         """
         return bool(self._list)
 
-    cpdef list _get_list(self) noexcept:
+    cpdef list _get_list(self):
         """
         Return the list embedded in ``self``.
 
@@ -594,7 +595,7 @@ cdef class ClonableArray(ClonableElement):
         """
         return self._list
 
-    cpdef _set_list(self, list lst) noexcept:
+    cpdef _set_list(self, list lst):
         """
         Set the list embedded in ``self``.
 
@@ -676,7 +677,7 @@ cdef class ClonableArray(ClonableElement):
         self._require_mutable()
         self._list[key] = value
 
-    cpdef object _getitem(self, int key) noexcept:
+    cpdef object _getitem(self, int key):
         """
         Same as :meth:`__getitem__`
 
@@ -695,7 +696,7 @@ cdef class ClonableArray(ClonableElement):
         """
         return self._list[key]
 
-    cpdef _setitem(self, int key, value) noexcept:
+    cpdef _setitem(self, int key, value):
         """
         Same as :meth:`__setitem__`
 
@@ -822,7 +823,7 @@ cdef class ClonableArray(ClonableElement):
         return self._hash
 
     # See protocol in comment in sage/structure/element.pyx
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         TESTS::
 
@@ -845,7 +846,7 @@ cdef class ClonableArray(ClonableElement):
         cdef ClonableArray rgt = <ClonableArray>right
         return richcmp(left._list, rgt._list, op)
 
-    cpdef ClonableArray __copy__(self) noexcept:
+    cpdef ClonableArray __copy__(self):
         """
         Return a copy of ``self``
 
@@ -889,7 +890,7 @@ cdef class ClonableArray(ClonableElement):
             res.__dict__ = self.__dict__.copy()
         return res
 
-    cpdef check(self) noexcept:
+    cpdef check(self):
         """
         Check that ``self`` fulfill the invariants
 
@@ -1006,7 +1007,7 @@ cdef class ClonableList(ClonableArray):
     .. SEEALSO:: :class:`~sage.structure.list_clone_demo.IncreasingList` for
                  an example of usage.
     """
-    cpdef append(self, el) noexcept:
+    cpdef append(self, el):
         """
         Appends ``el`` to ``self``
 
@@ -1035,7 +1036,7 @@ cdef class ClonableList(ClonableArray):
         self._require_mutable()
         self._list.append(el)
 
-    cpdef extend(self, it) noexcept:
+    cpdef extend(self, it):
         """
         Extends ``self`` by the content of the iterable ``it``
 
@@ -1070,7 +1071,7 @@ cdef class ClonableList(ClonableArray):
         self._require_mutable()
         self._list.extend(it)
 
-    cpdef insert(self, int index, el) noexcept:
+    cpdef insert(self, int index, el):
         """
         Inserts ``el`` in ``self`` at position ``index``
 
@@ -1100,11 +1101,11 @@ cdef class ClonableList(ClonableArray):
         self._require_mutable()
         self._list.insert(index, el)
 
-    cpdef pop(self, int index=-1) noexcept:
+    cpdef pop(self, int index=-1):
         """
         Remove ``self[index]`` from ``self`` and returns it
 
-        INPUT: ``index`` - any int, default to -1
+        INPUT: ``index`` -- any int, default to -1
 
         EXAMPLES::
 
@@ -1128,11 +1129,11 @@ cdef class ClonableList(ClonableArray):
         self._require_mutable()
         return self._list.pop(index)
 
-    cpdef remove(self, el) noexcept:
+    cpdef remove(self, el):
         """
         Remove the first occurrence of ``el`` from ``self``
 
-        INPUT: ``el`` - any object
+        INPUT: ``el`` -- any object
 
         EXAMPLES::
 
@@ -1285,13 +1286,13 @@ cdef class ClonableIntArray(ClonableElement):
         if check:
             self.check()
 
-    cpdef _alloc_(self, int size) noexcept:
+    cpdef _alloc_(self, int size):
         """
         Allocate the array part of ``self`` for a given size
 
         This can be used to initialize ``self`` without passing a list
 
-        INPUT: ``size`` - an int
+        INPUT: ``size`` -- an int
 
         EXAMPLES::
 
@@ -1371,7 +1372,7 @@ cdef class ClonableIntArray(ClonableElement):
         """
         return iter(self.list())
 
-    cpdef list list(self) noexcept:
+    cpdef list list(self):
         """
         Convert self into a Python list.
 
@@ -1469,7 +1470,7 @@ cdef class ClonableIntArray(ClonableElement):
         else:
             raise IndexError("list index out of range")
 
-    cpdef object _getitem(self, int key) noexcept:
+    cpdef object _getitem(self, int key):
         """
         Same as :meth:`__getitem__`
 
@@ -1487,7 +1488,7 @@ cdef class ClonableIntArray(ClonableElement):
         else:
             raise IndexError("list index out of range")
 
-    cpdef _setitem(self, int key, value) noexcept:
+    cpdef _setitem(self, int key, value):
         """
         Same as :meth:`__setitem__`
 
@@ -1575,7 +1576,7 @@ cdef class ClonableIntArray(ClonableElement):
         return self._hash
 
     # See protocol in comment in sage/structure/element.pyx
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         TESTS::
 
@@ -1623,7 +1624,7 @@ cdef class ClonableIntArray(ClonableElement):
                     return rich_to_bool(op, 1)
         return rich_to_bool(op, reslen)
 
-    cpdef ClonableIntArray __copy__(self) noexcept:
+    cpdef ClonableIntArray __copy__(self):
         """
         Return a copy of ``self``
 
@@ -1670,7 +1671,7 @@ cdef class ClonableIntArray(ClonableElement):
             res.__dict__ = self.__dict__.copy()
         return res
 
-    cpdef check(self) noexcept:
+    cpdef check(self):
         """
         Check that ``self`` fulfill the invariants
 
@@ -1774,7 +1775,6 @@ def _make_int_array_clone(clas, parent, lst, needs_check, is_immutable, dic):
     return res
 
 
-
 cdef class NormalizedClonableList(ClonableList):
     """
     List with clone protocol and normal form
@@ -1832,7 +1832,7 @@ cdef class NormalizedClonableList(ClonableList):
         self.normalize()
         return ClonableList.__exit__(self, typ, value, tracback)
 
-    cpdef normalize(self) noexcept:
+    cpdef normalize(self):
         """
         Normalize ``self``
 

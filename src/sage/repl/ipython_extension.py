@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Sage's IPython Extension
 
@@ -489,7 +490,7 @@ class SageCustomizations():
         try:
             with open(SAGE_STARTUP_FILE, 'r') as f:
                 self.shell.run_cell(f.read(), store_history=False)
-        except IOError:
+        except OSError:
             pass
 
     def init_inspector(self):
@@ -509,7 +510,7 @@ class SageCustomizations():
 
         TESTS:
 
-        Check that :trac:`31951` is fixed::
+        Check that :issue:`31951` is fixed::
 
              sage: from IPython import get_ipython
              sage: ip = get_ipython()

@@ -133,7 +133,7 @@ class EnumeratedSetFromIterator(Parent):
         3
 
     The following warning is due to ``E`` being a facade parent. For more,
-    see the discussion on :trac:`16239`::
+    see the discussion on :issue:`16239`::
 
         sage: TestSuite(E).run()
         doctest:...: UserWarning: Testing equality of infinite sets which will not end in case of equality
@@ -482,7 +482,7 @@ class Decorator():
                 filename = sage_getfile_relative(f)
                 file_info = "File: %s (starting at line %d)\n" % (filename, sourcelines[1])
                 doc = file_info + doc
-            except IOError:
+            except OSError:
                 pass
         return doc
 

@@ -3,9 +3,8 @@ Splitting fields of polynomials over number fields
 
 AUTHORS:
 
-- Jeroen Demeyer (2014-01-02): initial version for :trac:`2217`
-- Jeroen Demeyer (2014-01-03): added ``abort_degree`` argument, :trac:`15626`
-
+- Jeroen Demeyer (2014-01-02): initial version for :issue:`2217`
+- Jeroen Demeyer (2014-01-03): added ``abort_degree`` argument, :issue:`15626`
 """
 
 #*****************************************************************************
@@ -22,7 +21,7 @@ from sage.rings.integer import Integer
 from sage.arith.misc import factorial
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import RationalField, is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.libs.pari.all import pari, PariError
 
 
@@ -147,7 +146,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     - ``simplify`` -- (default: ``True``) during the algorithm, try
       to find a simpler defining polynomial for the intermediate
-      number fields using PARI's ``polred()``.  This usually speeds
+      number fields using PARI's ``polredbest()``.  This usually speeds
       up the computation but can also considerably slow it down.
       Try and see what works best in the given situation.
 
@@ -383,7 +382,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     # Kpol = PARI polynomial in y defining the extension found so far
     F = poly.base_ring()
-    if is_RationalField(F):
+    if isinstance(F, RationalField):
         Kpol = pari("'y")
     else:
         Kpol = F.pari_polynomial("y")
@@ -549,11 +548,9 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
             # Find a simpler defining polynomial Lpol for Mpol
             verbose("New field before simplifying: %s" % Mpol, t)
             t = cputime()
-            M = Mpol.polred(flag=3)
-            n = len(M[0])-1
-            Lpol = M[1][n].change_variable_name("y")
-            LtoM = M[0][n].change_variable_name("y").Mod(Mpol.change_variable_name("y"))
-            MtoL = LtoM.modreverse()
+            M = Mpol.polredbest(1)
+            Lpol = M[0].change_variable_name("y")
+            MtoL = M[1].lift().change_variable_name("y").Mod(Lpol)
         else:
             # Lpol = Mpol
             Lpol = Mpol.change_variable_name("y")

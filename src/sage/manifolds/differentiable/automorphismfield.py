@@ -12,7 +12,6 @@ AUTHORS:
 
 - Eric Gourgoulhon (2015): initial version
 - Travis Scrimshaw (2016): review tweaks
-
 """
 
 # *****************************************************************************
@@ -805,7 +804,7 @@ class AutomorphismField(TensorField):
             sage: a == s
             True
 
-       """
+        """
         return self.__mul__(other)
 
     def restrict(self, subdomain, dest_map=None):

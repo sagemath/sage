@@ -4,7 +4,6 @@ Cartesian products of Posets
 AUTHORS:
 
 - Daniel Krenn (2015)
-
 """
 # ****************************************************************************
 #  Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>
@@ -81,7 +80,7 @@ class CartesianProductPoset(CartesianProduct):
         :class:`CartesianProduct`
     """
 
-    def __init__(self, sets, category, order=None, **kwargs):
+    def __init__(self, sets, category, order=None, **kwargs) -> None:
         r"""
         See :class:`CartesianProductPoset` for details.
 
@@ -102,7 +101,7 @@ class CartesianProductPoset(CartesianProduct):
             try:
                 self._le_ = getattr(self, 'le_' + order)
             except AttributeError:
-                raise ValueError("no order '%s' known" % (order,))
+                raise ValueError(f"no order '{order}' known")
         else:
             self._le_ = order
 
@@ -193,7 +192,7 @@ class CartesianProductPoset(CartesianProduct):
 
         TESTS:
 
-        Check that :trac:`19999` is resolved::
+        Check that :issue:`19999` is resolved::
 
             sage: P = Poset((srange(2), lambda left, right: left <= right))
             sage: Q = cartesian_product((P, P), order='product')
@@ -360,7 +359,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::
@@ -377,7 +376,7 @@ class CartesianProductPoset(CartesianProduct):
                 True
 
             The following example tests that the coercion gets involved in
-            comparisons; it can be simplified once :trac:`18182` is merged.
+            comparisons; it can be simplified once :issue:`18182` is merged.
             ::
 
                 sage: class MyCP(CartesianProductPoset):
@@ -423,7 +422,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::
@@ -458,7 +457,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::
@@ -493,7 +492,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::

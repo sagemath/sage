@@ -48,7 +48,7 @@ def Spec(R, S=None):
         sage: TestSuite(X).run()                                                        # needs sage.rings.finite_rings
 
     Applying ``Spec`` twice to the same ring gives identical output
-    (see :trac:`17008`)::
+    (see :issue:`17008`)::
 
         sage: A = Spec(ZZ); B = Spec(ZZ)
         sage: A is B

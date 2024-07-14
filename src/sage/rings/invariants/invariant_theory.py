@@ -599,7 +599,7 @@ class AlgebraicForm(FormsBase):
             sage: quartic._check_covariant('EisensteinE', invariant=True)
             sage: quartic._check_covariant('h_covariant')
 
-            sage: quartic._check_covariant('h_covariant', invariant=True)  # not tested, known bug (see :trac:`32118`)
+            sage: quartic._check_covariant('h_covariant', invariant=True)  # not tested, known bug (see :issue:`32118`)
             Traceback (most recent call last):
             ...
             AssertionError: not invariant
@@ -804,7 +804,7 @@ class AlgebraicForm(FormsBase):
 
         TESTS:
 
-        Check for :trac:`30035`::
+        Check for :issue:`30035`::
 
             sage: R.<a,b,c> = QQ[]
             sage: f = 3*a**3 + b**3 + a*b*c
@@ -964,7 +964,7 @@ class QuadraticForm(AlgebraicForm):
 
         sage: invariant_theory.inhomogeneous_quadratic_form(p.subs(z=1), x,y)
         Ternary quadratic with coefficients (a, b, c, d, e, f)
-   """
+    """
 
     def __init__(self, n, d, polynomial, *args):
         """
@@ -1038,18 +1038,15 @@ class QuadraticForm(AlgebraicForm):
         def prod(a, b):
             if a is None and b is None:
                 return self._ring.one()
-            elif a is None:
+            if a is None:
                 return b
-            elif b is None:
+            if b is None:
                 return a
-            else:
-                return a * b
-        squares = tuple( prod(x,x) for x in var )
-        mixed = []
-        for i in range(self._n):
-            for j in range(i+1, self._n):
-                mixed.append(prod(var[i], var[j]))
-        mixed = tuple(mixed)
+            return a * b
+
+        squares = tuple(prod(x, x) for x in var)
+        mixed = tuple([prod(var[i], var[j]) for i in range(self._n)
+                       for j in range(i + 1, self._n)])
         return squares + mixed
 
     @cached_method
@@ -1306,7 +1303,7 @@ class QuadraticForm(AlgebraicForm):
             [ * * 1 ]
             sage: _.polynomial('X,Y,Z')
             X^2 + 2*X*Y + Y^2 + 3*X*Z + Z^2
-       """
+        """
         R = self._ring
         B = 2*self._matrix_()
         import sage.quadratic_forms.quadratic_form
@@ -4375,7 +4372,7 @@ class InvariantTheoryFactory():
             True
 
         For binary forms of other degrees, no reconstruction has been
-        implemented yet. For forms of degree 6, see :trac:`26462`::
+        implemented yet. For forms of degree 6, see :issue:`26462`::
 
             sage: invariant_theory.binary_form_from_invariants(6, invariants)
             Traceback (most recent call last):
@@ -4644,7 +4641,7 @@ class InvariantTheoryFactory():
             2*a^2 + 2*b^2 + 2*c^2 - 3*r1^2 - 3*r2^2
             sage: inv.J_covariant()
             0
-       """
+        """
         q1 = QuadraticForm(4, 2, quadratic1, *args, **kwds)
         q2 = QuadraticForm(4, 2, quadratic2, *args, **kwds)
         return TwoQuaternaryQuadratics([q1, q2])

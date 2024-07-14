@@ -68,7 +68,7 @@ class DeltaComplex(GenericCellComplex):
 
     :param data: see below for a description of the options
     :param check_validity: If True, check that the simplicial identities hold.
-    :type check_validity: boolean; optional, default True
+    :type check_validity: boolean; optional, default: ``True``
     :return: a `\Delta`-complex
 
     Use ``data`` to define a `\Delta`-complex.  It may be in any of
@@ -367,7 +367,7 @@ class DeltaComplex(GenericCellComplex):
                     for j in range(d+1):
                         if not all(faces[s[j]][i] == faces[s[i]][j-1] for i in range(j)):
                             msg = "simplicial identity d_i d_j = d_{j-1} d_i fails"
-                            msg += " for j=%s, in dimension %s" % (j, d)
+                            msg += " for j={}, in dimension {}".format(j, d)
                             raise ValueError(msg)
         # self._cells_dict: dictionary indexed by dimension d: for
         # each d, have list or tuple of simplices, and for each
@@ -453,7 +453,7 @@ class DeltaComplex(GenericCellComplex):
             try:
                 cells_to_add = set(new_data[d-1])  # begin to populate the (d-1)-cells
             except KeyError:
-                cells_to_add = set([])
+                cells_to_add = set()
             for x in d_cells:
                 if d+1 in new_dict:
                     old = new_dict[d+1]
@@ -587,17 +587,17 @@ class DeltaComplex(GenericCellComplex):
            (that is, include a class in dimension `-1` corresponding
            to the empty cell).  This is ignored if ``dimensions`` is
            specified or if ``subcomplex`` is nonempty.
-        :type augmented: boolean; optional, default False
+        :type augmented: boolean; optional, default: ``False``
         :param cochain: If True, return the cochain complex (that is,
            the dual of the chain complex).
-        :type cochain: boolean; optional, default False
+        :type cochain: boolean; optional, default: ``False``
         :param verbose: If True, print some messages as the chain
            complex is computed.
-        :type verbose: boolean; optional, default False
+        :type verbose: boolean; optional, default: ``False``
         :param check: If True, make sure that the chain complex
            is actually a chain complex: the differentials are
            composable and their product is zero.
-        :type check: boolean; optional, default False
+        :type check: boolean; optional, default: ``False``
 
         .. note::
 
@@ -757,11 +757,8 @@ class DeltaComplex(GenericCellComplex):
         """
         if n >= self.dimension():
             return self
-        else:
-            data = []
-            for d in range(n+1):
-                data.append(self._cells_dict[d])
-            return DeltaComplex(data)
+        data = [self._cells_dict[d] for d in range(n + 1)]
+        return DeltaComplex(data)
 
     def graph(self):
         r"""
@@ -1106,16 +1103,12 @@ class DeltaComplex(GenericCellComplex):
         """
         data = self.disjoint_union(right).cells()
         left_verts = len(self.n_cells(0))
-        translate = {}
-        for i in range(left_verts):
-            translate[i] = i
+        translate = {i: i for i in range(left_verts)}
         translate[left_verts] = 0
         for i in range(left_verts + 1, left_verts + len(right.n_cells(0))):
-            translate[i] = i-1
+            translate[i] = i - 1
         data[0] = data[0][:-1]
-        edges = []
-        for e in data[1]:
-            edges.append([translate[a] for a in e])
+        edges = [[translate[a] for a in e] for e in data[1]]
         data[1] = edges
         return DeltaComplex(data)
 
@@ -1444,7 +1437,7 @@ class DeltaComplex(GenericCellComplex):
         while not_glued and i > 0:
             # count the (i-1) cells and compare to (n+1) choose i.
             old_faces = i_faces
-            i_faces = set([])
+            i_faces = set()
             all_cells = self.n_cells(i)
             for face in old_faces:
                 i_faces.update(all_cells[face])
@@ -1472,7 +1465,7 @@ class DeltaComplex(GenericCellComplex):
         for n in range(dim, 0, -1):
             idx = 0
             for s in self.n_cells(n):
-                covers[(n, idx)] = list(set([(n-1, i) for i in s]))
+                covers[(n, idx)] = list({(n-1, i) for i in s})
                 idx += 1
         # deal with vertices separately: they have no covers (in the
         # dual poset).
@@ -1506,8 +1499,8 @@ class DeltaComplex(GenericCellComplex):
         INPUT:
 
         - ``n`` -- integer
-        - ``base_ring`` -- ring (optional, default `\ZZ`)
-        - ``cochains`` -- boolean (optional, default ``False``); if
+        - ``base_ring`` -- ring (default: `\ZZ`)
+        - ``cochains`` -- boolean (default: ``False``); if
           ``True``, return cochains instead
 
         Since the list of `n`-cells for a `\Delta`-complex may have
@@ -1558,7 +1551,7 @@ class DeltaComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``). Must be a field.
 
         Denote by `C` the chain complex associated to this
@@ -1622,7 +1615,7 @@ class DeltaComplex(GenericCellComplex):
         return ('Delta', 'simplex', 'simplices')
 
 
-class DeltaComplexExamples():
+class DeltaComplexExamples:
     r"""
     Some examples of `\Delta`-complexes.
 

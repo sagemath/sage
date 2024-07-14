@@ -293,7 +293,7 @@ class FiniteWord_class(Word_class):
         if word_options['old_repr']:
             if word_options['truncate'] and \
                     self.length() > word_options['truncate_length']:
-                return "Finite word of length %s over %s" % (self.length(), str(self.parent().alphabet())[17:])
+                return "Finite word of length {} over {}".format(self.length(), str(self.parent().alphabet())[17:])
         return word_options['identifier'] + self.string_rep()
 
     def coerce(self, other):
@@ -331,7 +331,7 @@ class FiniteWord_class(Word_class):
                     self = other.parent()(self)
                     self.parent()._check(self, length=None)
                 except Exception:
-                    raise TypeError("no coercion rule between %r and %r" % (self.parent(), other.parent()))
+                    raise TypeError("no coercion rule between {!r} and {!r}".format(self.parent(), other.parent()))
         return self, other
 
     def __hash__(self):
@@ -1261,7 +1261,7 @@ class FiniteWord_class(Word_class):
         elif algorithm == 'naive':
             return ZZ(len(self.factor_set(n, algorithm='naive')))
         else:
-            raise ValueError('Unknown algorithm (={})'.format(algorithm))
+            raise ValueError(f'Unknown algorithm (={algorithm})')
 
     def factor_iterator(self, n=None):
         r"""
@@ -1426,7 +1426,7 @@ class FiniteWord_class(Word_class):
             return Set(self.factor_iterator(n))
         elif algorithm == 'naive':
             if n is None:
-                S = set([self[0:0]])
+                S = {self[0:0]}
                 for n in range(1, self.length()+1):
                     for i in range(self.length()-n+1):
                         S.add(self[i:i+n])
@@ -1437,7 +1437,7 @@ class FiniteWord_class(Word_class):
                     S.add(self[i:i+n])
                 return Set(S)
         else:
-            raise ValueError('Unknown algorithm (={})'.format(algorithm))
+            raise ValueError(f'Unknown algorithm (={algorithm})')
 
     def topological_entropy(self, n):
         r"""
@@ -1719,7 +1719,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           an iterator over all left special factors.
 
         EXAMPLES::
@@ -1755,7 +1755,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it
+        - ``n`` -- integer (default: ``None``). If ``None``, it
           returns all left special factors.
 
         OUTPUT:
@@ -1786,7 +1786,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           an iterator over all right special factors.
 
         EXAMPLES::
@@ -1822,7 +1822,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           all right special factors.
 
         OUTPUT:
@@ -1851,7 +1851,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           an iterator over all bispecial factors.
 
         EXAMPLES::
@@ -1914,7 +1914,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           all bispecial factors.
 
         OUTPUT:
@@ -2067,8 +2067,7 @@ class FiniteWord_class(Word_class):
             [word: a]
         """
         S = [self]
-        for i in range(1, self.length()):
-            S.append(self.conjugate(i))
+        S.extend(self.conjugate(i) for i in range(1, self.length()))
         return S
 
     def conjugates_iterator(self):
@@ -2134,7 +2133,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        We check that :trac:`11128` is fixed::
+        We check that :issue:`11128` is fixed::
 
             sage: w = Word([0,0,1,0,2,1])
             sage: [w.conjugate(i).conjugate_position(w) for i in range(w.length())]
@@ -2199,7 +2198,7 @@ class FiniteWord_class(Word_class):
             sage: Word('12131').is_conjugate_with(Word('11213'))
             True
 
-        We make sure that :trac:`11128` is fixed::
+        We make sure that :issue:`11128` is fixed::
 
             sage: Word('abaa').is_conjugate_with(Word('aaba'))
             True
@@ -2912,7 +2911,7 @@ class FiniteWord_class(Word_class):
             [word: , word: ab, word: abbabaab, word: ba, word: baba, word: bbabaa]
         """
         lpsLengths = self.lps_lengths(f=f)
-        return set(self[i - lpsLengths[i]: i] for i in range(len(self) + 1))
+        return {self[i - lpsLengths[i]: i] for i in range(len(self) + 1)}
 
     def palindromic_complexity(self, n, f=None):
         r"""
@@ -4475,7 +4474,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        ``other`` -- a finite word
+        - ``other`` -- a finite word
 
         EXAMPLES::
 
@@ -4569,8 +4568,7 @@ class FiniteWord_class(Word_class):
                             if len(m) == 1:
                                 temp.append([j]+m[0])
                             if len(m) > 1:
-                                for sw in m:
-                                    temp.append([j]+sw)
+                                temp.extend([j] + sw for sw in m)
                     Mpos[i][j] = temp
 
         # Create the list of positions for occurrences of `self` as a subword
@@ -4586,7 +4584,7 @@ class FiniteWord_class(Word_class):
             comp_words.append(Word([other[i] for i in comp_pos]))
         return comp_words
 
-    def is_lyndon(self):
+    def is_lyndon(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a Lyndon word, and ``False``
         otherwise.
@@ -5051,7 +5049,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        Check that :trac:`12804` is fixed::
+        Check that :issue:`12804` is fixed::
 
             sage: w = Word(iter("ababab"), length="finite")
             sage: w.find("ab")
@@ -5132,7 +5130,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        Check that :trac:`12804` is fixed::
+        Check that :issue:`12804` is fixed::
 
             sage: w = Word(iter("abab"), length="finite")
             sage: w.rfind("ab")
@@ -5331,7 +5329,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        ``other`` -- a non empty word
+        - ``other`` -- a non empty word
 
         EXAMPLES::
 
@@ -5431,7 +5429,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``letter`` - a letter
+        - ``letter`` -- a letter
 
         OUTPUT:
 
@@ -5751,10 +5749,10 @@ class FiniteWord_class(Word_class):
 
         -  ``other`` -- word on the same alphabet as ``self``
         -  ``delay`` -- integer (default: ``0``)
-        -  ``p`` -- disjoint sets data structure (optional, default: ``None``),
+        -  ``p`` -- disjoint sets data structure (default: ``None``),
            a partition of the alphabet into disjoint sets to start with.
            If ``None``, each letter start in distinct equivalence classes.
-        -  ``involution`` -- callable (optional, default: ``None``), an
+        -  ``involution`` -- callable (default: ``None``), an
            involution on the alphabet. If ``involution`` is not ``None``, the relation
            `R_{u,v,d} \cup R_{involution(u),involution(v),d}` is considered.
 
@@ -7126,7 +7124,7 @@ class FiniteWord_class(Word_class):
             return Words()([])
         ss = self[0]
         c = 0
-        v = list()
+        v = []
         max_c = 0
         for s in self:
             if s == ss:
@@ -7680,7 +7678,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        We make sure that :trac:`8490` is fixed::
+        We make sure that :issue:`8490` is fixed::
 
             sage: Word('11').is_square_free()
             False
@@ -7746,7 +7744,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        We make sure that :trac:`8490` is fixed::
+        We make sure that :issue:`8490` is fixed::
 
             sage: Word('111').is_cube_free()
             False

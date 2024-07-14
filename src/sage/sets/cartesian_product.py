@@ -126,7 +126,6 @@ class CartesianProduct(UniqueRepresentation, Parent):
         if self in _Rings and isinstance(x, numbers.Integral):
             return x * self.one()
 
-        from builtins import zip
         x = tuple(x)
 
         if len(x) != len(self._sets):

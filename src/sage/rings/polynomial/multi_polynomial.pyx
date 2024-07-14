@@ -2,13 +2,15 @@ r"""
 Base class for elements of multivariate polynomial rings
 """
 
-#*****************************************************************************
+# ********************************************************************
+#       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ********************************************************************
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
@@ -18,11 +20,13 @@ from itertools import chain
 
 from sage.misc.misc_c import prod
 
+
 def is_MPolynomial(x):
     from sage.misc.superseded import deprecation
     deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial) instead")
 
     return isinstance(x, MPolynomial)
+
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.map cimport Map
@@ -33,9 +37,9 @@ from sage.rings.polynomial.polynomial_element cimport Polynomial
 
 cdef class MPolynomial(CommutativePolynomial):
 
-    ####################
+    # -------------------------
     # Some standard conversions
-    ####################
+    # -------------------------
     def _scalar_conversion(self, R):
         r"""
         TESTS::
@@ -360,7 +364,6 @@ cdef class MPolynomial(CommutativePolynomial):
         """
         return multi_derivative(self, args)
 
-
     def polynomial(self, var):
         r"""
         Let ``var`` be one of the variables of the parent of ``self``.  This
@@ -433,7 +436,7 @@ cdef class MPolynomial(CommutativePolynomial):
             z *= var
         return ring(v)
 
-    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None) noexcept:
+    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None):
         r"""
         Return a ``dict`` of coefficient entries suitable for construction
         of a ``MPolynomial_polydict`` with the given variables.
@@ -464,7 +467,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R(S.0)
             p
 
-        See :trac:`2601`::
+        See :issue:`2601`::
 
             sage: R.<a,b,c> = PolynomialRing(QQ, 3)
             sage: a._mpoly_dict_recursive(('c', 'b', 'a'))
@@ -561,7 +564,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS:
 
-        Verify that :trac:`16251` has been resolved, i.e., polynomials with
+        Verify that :issue:`16251` has been resolved, i.e., polynomials with
         unhashable coefficients are unhashable::
 
             sage: K.<a> = Qq(9)                                                         # needs sage.rings.padics
@@ -812,7 +815,7 @@ cdef class MPolynomial(CommutativePolynomial):
                 d[e.unweighted_degree()][e] = c
         return {k: self._parent(d[k]) for k in d}
 
-    cpdef _mod_(self, other) noexcept:
+    cpdef _mod_(self, other):
         r"""
         EXAMPLES::
 
@@ -840,12 +843,14 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def change_ring(self, R):
         r"""
-        Return a copy of this polynomial but with coefficients in ``R``,
-        if at all possible.
+        Return this polynomial with coefficients converted to ``R``.
 
         INPUT:
 
-        - ``R`` -- a ring or morphism.
+        - ``R`` -- a ring or morphism; if a morphism, the coefficients
+          are mapped to the codomain of ``R``
+
+        OUTPUT: a new polynomial with the base ring changed to ``R``.
 
         EXAMPLES::
 
@@ -853,12 +858,27 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f = x^3 + 3/5*y + 1
             sage: f.change_ring(GF(7))
             x^3 + 2*y + 1
+            sage: g = x^2 + 5*y
+            sage: g.change_ring(GF(5))
+            x^2
 
         ::
 
-            sage: R.<x,y> = GF(9,'a')[]                                                 # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y> = GF(9,'a')[]
             sage: (x+2*y).change_ring(GF(3))
             x - y
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(7^2)
+            sage: R.<x,y> = F[]
+            sage: f = x^2 + a^2*y^2 + a*x + a^3*y
+            sage: g = f.change_ring(F.frobenius_endomorphism()); g
+            x^2 + (-a - 2)*y^2 + (-a + 1)*x + (2*a + 2)*y
+            sage: g.change_ring(F.frobenius_endomorphism()) == f
+            True
 
         ::
 
@@ -869,21 +889,35 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f.change_ring(K.embeddings(CC)[1])
             x^2 + (-0.500000000000000 - 0.866025403784438*I)*y
 
+        ::
+
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = CyclotomicField(5)
+            sage: R.<x,y> = K[]
+            sage: f = x^2 + w*y
+            sage: f.change_ring(K.embeddings(QQbar)[1])
+            x^2 + (-0.8090169943749474? + 0.5877852522924731?*I)*y
+
         TESTS:
 
-        Check that :trac:`25022` is fixed::
+        Check that :issue:`25022` is fixed::
 
+            sage: # needs sage.rings.number_field sage.symbolic
             sage: K.<x,y> = ZZ[]
-            sage: (x*y).change_ring(SR).monomials()                                     # needs sage.rings.number_field sage.symbolic
+            sage: (x*y).change_ring(SR).monomials()
             [x*y]
+
+        Check that :issue:`36832` is fixed::
+
+            sage: F = GF(11)
+            sage: phi = Hom(F,F).an_element()
+            sage: R.<x,y> = F[]
+            sage: x.change_ring(phi)
+            x
         """
         if isinstance(R, Map):
-        #if we're given a hom of the base ring extend to a poly hom
-            if R.domain() == self.base_ring():
-                R = self.parent().hom(R, self.parent().change_ring(R.codomain()))
-            return R(self)
-        else:
-            return self.parent().change_ring(R)(self.dict())
+            return self.map_coefficients(R)
+        return self.parent().change_ring(R)(self.dict())
 
     def is_symmetric(self, group=None):
         r"""
@@ -1221,7 +1255,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS:
 
-        Since :trac:`10771`, the gcd in QQ restricts to the gcd in ZZ::
+        Since :issue:`10771`, the gcd in QQ restricts to the gcd in ZZ::
 
             sage: R.<x,y> = QQ[]
             sage: f = 4*x+6*y
@@ -1527,7 +1561,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``variable`` - The variable with respect to which we compute
+        - ``variable`` -- The variable with respect to which we compute
           the discriminant
 
         OUTPUT: An element of the base ring of the polynomial ring.
@@ -1557,7 +1591,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS:
 
-        Test polynomials over QQbar (:trac:`25265`)::
+        Test polynomials over QQbar (:issue:`25265`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
@@ -1799,7 +1833,7 @@ cdef class MPolynomial(CommutativePolynomial):
             1.00000000000000
 
         Check that the denominator is an element over the base whenever the base
-        has no denominator function. This closes :trac:`9063`::
+        has no denominator function. This closes :issue:`9063`::
 
             sage: R.<a,b,c> = GF(5)[]
             sage: x = R(0)
@@ -1965,7 +1999,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``weights`` - Either individual numbers, an iterable or a dictionary,
+        - ``weights`` -- Either individual numbers, an iterable or a dictionary,
           specifying the weights of each variable. If it is a dictionary, it
           maps each variable of ``self`` to its weight. If it is a sequence of
           individual numbers or a tuple, the weights are specified in the order
@@ -2101,13 +2135,17 @@ cdef class MPolynomial(CommutativePolynomial):
             Traceback (most recent call last):
             ...
             NotImplementedError: GCD is not implemented for multivariate polynomials over
-            Gaussian Integers in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+            Gaussian Integers generated by I in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
         TESTS::
 
             sage: Pol = QQ['x']['x','y']
             sage: Pol.one().gcd(1)
             1
+
+            sage: P = PolynomialRing(QQ, 'x', 0)
+            sage: P.gens()
+            ()
         """
         flatten = self._parent.flattening_morphism()
         tgt = flatten.codomain()
@@ -2122,7 +2160,13 @@ cdef class MPolynomial(CommutativePolynomial):
         except (TypeError, AttributeError):
             pass
 
-        x = self._parent.gens()[-1]
+        gens = self.parent().gens()
+        if not gens:
+            # no variables
+            base = self.parent().base_ring()
+            return base(self).gcd(base(other))
+
+        x = gens[-1]
         uniself = self.polynomial(x)
         unibase = uniself.base_ring()
         try:
@@ -2194,7 +2238,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``root`` - if set to ``True``, return a pair ``(True, root)``
+        - ``root`` -- if set to ``True``, return a pair ``(True, root)``
           where ``root`` is a square root or ``(False, None)`` if
           it is not a square.
 
@@ -2306,11 +2350,11 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - ``prec`` --  integer, sets the precision (default: 300)
 
-        - ``return_conjugation`` -- boolean. Returns element of `SL(2, \ZZ)` (default: True)
+        - ``return_conjugation`` -- boolean. Returns element of `SL(2, \ZZ)` (default: ``True``)
 
         - ``error_limit`` -- sets the error tolerance (default: 0.000001)
 
-        - ``smallest_coeffs`` -- (default: True), boolean, whether to find the
+        - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
           model with smallest coefficients
 
         - ``norm_type`` -- either ``'norm'`` or ``'height'``. What type of norm
@@ -2563,7 +2607,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R(2).is_unit()
             True
 
-        Check that :trac:`22454` is fixed::
+        Check that :issue:`22454` is fixed::
 
             sage: _.<x,y> = Zmod(4)[]
             sage: (1 + 2*x).is_unit()
@@ -2894,7 +2938,7 @@ def _is_M_convex_(points):
     return True
 
 
-cdef remove_from_tuple(e, int ind) noexcept:
+cdef remove_from_tuple(e, int ind):
     w = list(e)
     del w[ind]
     if len(w) == 1:

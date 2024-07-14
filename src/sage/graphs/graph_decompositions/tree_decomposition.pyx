@@ -87,7 +87,6 @@ The treewidth of a clique is `n-1` and its treelength is 1::
 
     - Approximation of treelength based on :meth:`~sage.graphs.graph.Graph.lex_M`
     - Approximation of treelength based on BFS Layering
-    - upgrade tdlib to 0.9.0 :trac:`30813`
 
 
 Methods
@@ -105,7 +104,6 @@ Methods
 
 from sage.sets.set import Set
 from sage.misc.cachefunc import cached_function
-from sage.features import PythonModule
 from sage.sets.disjoint_set import DisjointSet
 from sage.rings.infinity import Infinity
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
@@ -455,7 +453,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
       tree-decomposition itself.
 
     - ``algorithm`` -- whether to use ``"sage"`` or ``"tdlib"`` (requires the
-      installation of the 'tdlib' package). The default behaviour is to use
+      installation of the :ref:`spkg_sagemath_tdlib` package). The default behaviour is to use
       'tdlib' if it is available, and Sage's own algorithm when it is not.
 
     - ``nice`` -- boolean (default: ``False``); whether or not to return the
@@ -577,7 +575,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         sage: is_valid_tree_decomposition(g, T)
         True
 
-    All edges do appear (:trac:`17893`)::
+    All edges do appear (:issue:`17893`)::
 
         sage: from itertools import combinations
         sage: g = graphs.PathGraph(10)
@@ -587,7 +585,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         sage: g.size()
         0
 
-    :trac:`19358`::
+    :issue:`19358`::
 
         sage: g = Graph()
         sage: for i in range(3):
@@ -596,7 +594,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         sage: g.treewidth()
         2
 
-    The decomposition is a tree (:trac:`23546`)::
+    The decomposition is a tree (:issue:`23546`)::
 
         sage: g = Graph({0:[1,2], 3:[4,5]})
         sage: t = g.treewidth(certificate=True)
@@ -609,7 +607,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         True
 
     Check that the use of atoms and clique separators is correct
-    (:trac:`30993`)::
+    (:issue:`30993`)::
 
         sage: g = 2 * graphs.Grid2dGraph(2, 3)
         sage: g.treewidth(algorithm='sage')
@@ -618,6 +616,12 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         Tree decomposition: Graph on 8 vertices
         sage: g.treewidth(algorithm='sage', certificate=True, kmin=4)
         Tree decomposition: Graph on 4 vertices
+
+    Check that :issue:`38159` is fixed ::
+
+        sage: G = Graph('I~~}vPlr_')
+        sage: G.treewidth(algorithm='sage') == G.treewidth(algorithm='tdlib')  # optional - tdlib
+        True
 
     Trivially true::
 
@@ -671,8 +675,8 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
     if algorithm == 'tdlib':
         if not tdlib_found:
             from sage.features import FeatureNotPresentError
-            raise FeatureNotPresentError(PythonModule('sage.graphs.graph_decompositions.tdlib',
-                                                      spkg='tdlib'))
+            from sage.features.tdlib import Tdlib
+            raise FeatureNotPresentError(Tdlib())
 
         tree_decomp = tdlib.treedecomposition_exact(g, -1 if k is None else k)
         width = tdlib.get_width(tree_decomp)
@@ -797,6 +801,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         tree_decomp = make_nice_tree_decomposition(g, tree_decomp)
 
     return tree_decomp
+
 
 def make_nice_tree_decomposition(graph, tree_decomp):
     r"""

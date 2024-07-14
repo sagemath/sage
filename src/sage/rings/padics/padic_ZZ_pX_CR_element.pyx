@@ -175,7 +175,6 @@ AUTHORS:
 - Robert Harron (2011-09): fixes/enhancements
 
 - Julian Rueth (2014-05-09): enable caching through ``_cache_key``
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
@@ -204,7 +203,7 @@ from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.libs.pari.all import pari_gen
 from sage.interfaces.abc import GpElement
-from sage.rings.finite_rings.integer_mod import is_IntegerMod
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
 from sage.rings.padics.precision_error import PrecisionError
 
@@ -268,13 +267,13 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`3865` is fixed::
+        Check that :issue:`3865` is fixed::
 
             sage: W(gp('3 + O(5^10)'))
             3 + O(w^3125)
 
 
-        Check that :trac:`13612` has been fixed::
+        Check that :issue:`13612` has been fixed::
 
             sage: R = Zp(3)
             sage: S.<a> = R[]
@@ -355,7 +354,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
-        elif is_IntegerMod(x):
+        elif isinstance(x, IntegerMod_abstract):
             mpz_init(tmp)
             ctx_prec = mpz_remove(tmp, (<Integer>x.modulus()).value, self.prime_pow.prime.value)
             if mpz_cmp_ui(tmp, 1) == 0:
@@ -1469,7 +1468,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                     shift = shift >> 1
                     i += 1
 
-    cdef pAdicZZpXCRElement _new_c(self, long relprec) noexcept:
+    cdef pAdicZZpXCRElement _new_c(self, long relprec):
         """
         Return a new element with the same parent as ``self`` and
         relative precision ``relprec``
@@ -1594,7 +1593,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cdef pAdicZZpXCRElement _lshift_c(self, long n) noexcept:
+    cdef pAdicZZpXCRElement _lshift_c(self, long n):
         """
         Multiplies ``self`` by the uniformizer raised to the power ``n``.  If
         ``n`` is negative, right shifts by ``-n``.
@@ -1661,7 +1660,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 return ans
         return self._lshift_c(mpz_get_si((<Integer>shift).value))
 
-    cdef pAdicZZpXCRElement _rshift_c(self, long n) noexcept:
+    cdef pAdicZZpXCRElement _rshift_c(self, long n):
         """
         Divides self by the uniformizer raised to the power ``n``.  If
         parent is not a field, throws away the non-positive part of
@@ -1764,7 +1763,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 return ans
         return self._rshift_c(mpz_get_si((<Integer>shift).value))
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         Negation
 
@@ -1795,7 +1794,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 #                                             / 1 + \alpha^p \pi_K^{p \lambda}                      mod \mathfrak{p}_K^{p \lambda + 1}   if 1 \le \lambda < \frac{e_K}{p-1}
 #        (1 + \alpha \pi^{\lambda})^p \equiv {  1 + (\alpha^p - \epsilon \alpha) \pi_K^{p \lambda}  mod \mathfrak{p}_K^{p \lambda + 1}   if \lambda = \frac{e_K}{p-1}
 #                                             \ 1 - \epsilon \alpha \pi_K^{\lambda + e}             mod \mathfrak{p}_K^{\lambda + e + 1} if \lambda > \frac{e_K}{p-1}
-
 
     def __pow__(pAdicZZpXCRElement self, _right, m): # m ignored
         r"""
@@ -1889,7 +1887,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-            We define ``0^0`` to be unity, :trac:`13786`::
+            We define ``0^0`` to be unity, :issue:`13786`::
 
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
@@ -2044,7 +2042,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cpdef _add_(self, _right) noexcept:
+    cpdef _add_(self, _right):
         """
         Compute the sum of ``self`` and ``right``.
 
@@ -2161,7 +2159,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 ans.relprec = -ans.relprec
         return ans
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Return the difference of two elements
 
@@ -2187,7 +2185,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         # For now, a simple implementation
         return self + (-right)
 
-    cpdef _mul_(self, _right) noexcept:
+    cpdef _mul_(self, _right):
         """
         Return the product of two elements
 
@@ -2240,7 +2238,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sig_off()
         return ans
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Return the quotient of two elements
 
@@ -2384,7 +2382,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                     ans = (self.ordp >= aprec)
         return ans
 
-    cpdef ntl_ZZ_pX _ntl_rep_unnormalized(self) noexcept:
+    cpdef ntl_ZZ_pX _ntl_rep_unnormalized(self):
         """
         Return an ``ntl_ZZ_pX`` holding the current unit part of this element
 
@@ -2413,7 +2411,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ans.x = self.unit
         return ans
 
-    cpdef ntl_ZZ_pX _ntl_rep(self) noexcept:
+    cpdef ntl_ZZ_pX _ntl_rep(self):
         """
         Return an ``ntl_ZZ_pX`` that holds the unit part of this element
 
@@ -2434,7 +2432,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         self._normalize()
         return self._ntl_rep_unnormalized()
 
-    cpdef _ntl_rep_abs(self) noexcept:
+    cpdef _ntl_rep_abs(self):
         """
         Return a pair ``(f, k)`` where ``f`` is an ``ntl_ZZ_pX`` and ``k`` is a
         non-positive integer such that ``self = f(self.parent.gen())*p^k``
@@ -2620,7 +2618,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 #        """
 #        raise NotImplementedError
 
-    cpdef pAdicZZpXCRElement lift_to_precision(self, absprec=None) noexcept:
+    cpdef pAdicZZpXCRElement lift_to_precision(self, absprec=None):
         """
         Return a ``pAdicZZpXCRElement`` congruent to this element but with
         absolute precision at least ``absprec``.
@@ -2774,7 +2772,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        We check that :trac:`24949` is fixed::
+        We check that :issue:`24949` is fixed::
 
             sage: R = Zp(2)
             sage: S.<x> = R[]
@@ -2851,7 +2849,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`13617` has been fixed::
+        Check that :issue:`13617` has been fixed::
 
             sage: W.zero().matrix_mod_pn()
             [0 0 0 0 0]
@@ -3050,7 +3048,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        We check that :trac:`8239` is resolved::
+        We check that :issue:`8239` is resolved::
 
             sage: K.<a> = Qq(25)
             sage: K.teichmuller(K(2/5))
@@ -3168,7 +3166,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         self._normalize()
         return self.ordp
 
-    cpdef pAdicZZpXCRElement unit_part(self) noexcept:
+    cpdef pAdicZZpXCRElement unit_part(self):
         """
         Return the unit part of this element, ie ``self / uniformizer^(self.valuation())``.
 
@@ -3191,7 +3189,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        We check that :trac:`13616` is resolved::
+        We check that :issue:`13616` is resolved::
 
             sage: z = (1+w)^5
             sage: y = z - 1
@@ -3206,7 +3204,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             ans.unit = self.unit
         return ans
 
-    cdef ext_p_list(self, bint pos) noexcept:
+    cdef ext_p_list(self, bint pos):
         """
         Return a list of integers (in the Eisenstein case) or a list
         of lists of integers (in the unramified case).  ``self`` can be
@@ -3248,6 +3246,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         self._normalize()
         return self.ext_p_list_precs(pos, self.relprec)
+
 
 def make_ZZpXCRElement(parent, unit, ordp, relprec, version):
     """

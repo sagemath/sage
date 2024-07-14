@@ -82,7 +82,6 @@ finite polynomial rings are merged with infinite polynomial rings::
     Infinite polynomial ring in b, c over Infinite polynomial ring in a over Integer Ring
     sage: 1/2*b_1*a[4] + c[3]
     1/2*a_4*b_1 + c_3
-
 """
 
 # ****************************************************************************
@@ -316,7 +315,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     def _getAttributeNames(self):
         """
-        This method implements tab completion, see :trac:`6854`.
+        This method implements tab completion, see :issue:`6854`.
 
         EXAMPLES::
 
@@ -334,7 +333,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     def __dir__(self):
         """
-        This method implements tab completion, see :trac:`6854`.
+        This method implements tab completion, see :issue:`6854`.
 
         TESTS::
 
@@ -371,7 +370,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: latex(alpha[3]*alpha[2]^2) # indirect doctest
             \alpha_{3} \alpha_{2}^{2}
 
-        Related with issues :trac:`6854` and :trac:`7580`, the attribute
+        Related with issues :issue:`6854` and :issue:`7580`, the attribute
         ``__methods__`` is treated in a special way, which
         makes introspection and tab completion work::
 
@@ -516,7 +515,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: (1 + a[2]).is_unit()
             False
 
-        Check that :trac:`22454` is fixed::
+        Check that :issue:`22454` is fixed::
 
             sage: _.<x> = InfinitePolynomialRing(Zmod(4))
             sage: (1 + 2*x[0]).is_unit()
@@ -1144,7 +1143,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         INPUT:
 
-        ``k`` -- an integer.
+        - ``k`` -- an integer.
 
         OUTPUT:
 

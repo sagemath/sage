@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Bialgebras with basis
 """
@@ -11,6 +12,7 @@ Bialgebras with basis
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import tensor
+from sage.misc.superseded import deprecated_function_alias
 
 
 class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
@@ -108,9 +110,10 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             symmetric functions in non-commuting variables. This is the
             composition of the counit with the unit::
 
-                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()               # needs sage.combinat sage.modules
-                sage: T = m.convolution_product()                                       # needs sage.combinat sage.modules
-                sage: [T(m(lam))                                                        # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.graphs sage.modules
+                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()
+                sage: T = m.convolution_product()
+                sage: [T(m(lam))
                 ....:  for lam in SetPartitions(0).list() + SetPartitions(2).list()]
                 [m{}, 0, 0]
 
@@ -118,8 +121,8 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             the identity on the Hopf algebra of symmetric functions in
             non-commuting variables::
 
-                sage: T = m.convolution_product(Proj2, Id)                              # needs sage.combinat sage.modules
-                sage: [T(m(lam)) for lam in SetPartitions(3)]                           # needs sage.combinat sage.modules
+                sage: T = m.convolution_product(Proj2, Id)                              # needs sage.combinat sage.graphs sage.modules
+                sage: [T(m(lam)) for lam in SetPartitions(3)]                           # needs sage.combinat sage.graphs sage.modules
                 [0,
                  m{{1, 2}, {3}} + m{{1, 2, 3}},
                  m{{1, 2}, {3}} + m{{1, 2, 3}},
@@ -129,7 +132,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Compute the convolution product of the antipode with itself and the
             identity map on group algebra of the symmetric group::
 
-                sage: # needs sage.combinat sage.groups
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: G = SymmetricGroup(3)
                 sage: QG = GroupAlgebra(G, QQ)
                 sage: x = QG.sum_of_terms(
@@ -146,7 +149,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
     class ElementMethods:
 
-        def adams_operator(self, n):
+        def convolution_power_of_id(self, n):
             r"""
             Compute the `n`-th convolution power of the identity morphism
             `\mathrm{Id}` on ``self``.
@@ -176,31 +179,31 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.combinat sage.modules
                 sage: h = SymmetricFunctions(QQ).h()
-                sage: h[5].adams_operator(2)
+                sage: h[5].convolution_power_of_id(2)
                 2*h[3, 2] + 2*h[4, 1] + 2*h[5]
                 sage: h[5].plethysm(2*h[1])
                 2*h[3, 2] + 2*h[4, 1] + 2*h[5]
-                sage: h([]).adams_operator(0)
+                sage: h([]).convolution_power_of_id(0)
                 h[]
-                sage: h([]).adams_operator(1)
+                sage: h([]).convolution_power_of_id(1)
                 h[]
-                sage: h[3,2].adams_operator(0)
+                sage: h[3,2].convolution_power_of_id(0)
                 0
-                sage: h[3,2].adams_operator(1)
+                sage: h[3,2].convolution_power_of_id(1)
                 h[3, 2]
 
             ::
 
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # needs sage.combinat sage.modules
-                sage: S[4].adams_operator(5)                                            # needs sage.combinat sage.modules
+                sage: S[4].convolution_power_of_id(5)                                   # needs sage.combinat sage.modules
                 5*S[1, 1, 1, 1] + 10*S[1, 1, 2] + 10*S[1, 2, 1]
                  + 10*S[1, 3] + 10*S[2, 1, 1] + 10*S[2, 2] + 10*S[3, 1] + 5*S[4]
 
 
             ::
 
-                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()               # needs sage.combinat sage.modules
-                sage: m[[1,3],[2]].adams_operator(-2)                                   # needs sage.combinat sage.modules
+                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()               # needs sage.combinat sage.graphs sage.modules
+                sage: m[[1,3],[2]].convolution_power_of_id(-2)                          # needs sage.combinat sage.graphs sage.modules
                 3*m{{1}, {2, 3}} + 3*m{{1, 2}, {3}} + 6*m{{1, 2, 3}} - 2*m{{1, 3}, {2}}
             """
             if n < 0:
@@ -212,6 +215,9 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             else:
                 T = lambda x: x
             return self.convolution_product([T] * n)
+
+        adams_operator = deprecated_function_alias(36396,
+                                                   convolution_power_of_id)
 
         def convolution_product(self, *maps):
             r"""
@@ -260,20 +266,21 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We compute convolution products of the identity and antipode maps
             on Schur functions::
 
+                sage: # needs sage.combinat sage.modules
                 sage: Id = lambda x: x
                 sage: Antipode = lambda x: x.antipode()
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: s[3].convolution_product(Id, Id)                                  # needs sage.combinat sage.modules
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: s[3].convolution_product(Id, Id)                                  # needs lrcalc_python
                 2*s[2, 1] + 4*s[3]
-                sage: s[3,2].convolution_product(Id) == s[3,2]                          # needs sage.combinat sage.modules
+                sage: s[3,2].convolution_product(Id) == s[3,2]
                 True
 
             The method accepts multiple arguments, or a single argument
             consisting of a list of maps::
 
-                sage: s[3,2].convolution_product(Id, Id)                                # needs sage.combinat sage.modules
+                sage: s[3,2].convolution_product(Id, Id)                                # needs lrcalc_python sage.combinat sage.modules
                 2*s[2, 1, 1, 1] + 6*s[2, 2, 1] + 6*s[3, 1, 1] + 12*s[3, 2] + 6*s[4, 1] + 2*s[5]
-                sage: s[3,2].convolution_product([Id, Id])                              # needs sage.combinat sage.modules
+                sage: s[3,2].convolution_product([Id, Id])                              # needs lrcalc_python sage.combinat sage.modules
                 2*s[2, 1, 1, 1] + 6*s[2, 2, 1] + 6*s[3, 1, 1] + 12*s[3, 2] + 6*s[4, 1] + 2*s[5]
 
             We test the defining property of the antipode morphism; namely,
@@ -281,7 +288,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             convolution algebra whose identity element is the composition of
             the counit and unit::
 
-                sage: (s[3,2].convolution_product()                                     # needs sage.combinat sage.modules
+                sage: (s[3,2].convolution_product()                                     # needs lrcalc_python sage.combinat sage.modules
                 ....:   == s[3,2].convolution_product(Antipode, Id)
                 ....:   == s[3,2].convolution_product(Id, Antipode))
                 True
@@ -296,7 +303,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: G = SymmetricGroup(3)
                 sage: QG = GroupAlgebra(G, QQ)
                 sage: x = QG.sum_of_terms([(p, p.length())
@@ -337,7 +344,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.graphs sage.modules
                 sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()
                 sage: m[[1,3],[2]].convolution_product([Antipode, Antipode])
                 3*m{{1}, {2, 3}} + 3*m{{1, 2}, {3}} + 6*m{{1, 2, 3}} - 2*m{{1, 3}, {2}}
@@ -348,7 +355,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: QS = SymmetricGroupAlgebra(QQ, 5)
                 sage: x = QS.sum_of_terms(zip(Permutations(5)[3:6], [1,2,3])); x
                 [1, 2, 4, 5, 3] + 2*[1, 2, 5, 3, 4] + 3*[1, 2, 5, 4, 3]
@@ -359,7 +366,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: G = SymmetricGroup(3)
                 sage: QG = GroupAlgebra(G, QQ)
                 sage: x = QG.sum_of_terms([(p, p.length())

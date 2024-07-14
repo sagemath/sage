@@ -429,7 +429,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             sage: Q = SymmetricFunctions(QQ['t'].fraction_field()).kBoundedQuotient(3)
             sage: Q.lift([2,1])
             HLP[2, 1]
-       """
+        """
         km = self.a_realization()
         return km.lift(la)
 
@@ -1092,7 +1092,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` - a partition
+        - ``la`` -- a partition
 
         OUTPUT:
 
@@ -1141,7 +1141,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` - a partition
+        - ``la`` -- a partition
 
         OUTPUT:
 

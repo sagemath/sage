@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Finite Coxeter Groups
@@ -66,7 +67,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         is preferable to that of :class:`FiniteGroups`. The same holds
         for ``__iter__``, although a breadth first search would be more
         natural; at least this maintains backward compatibility after
-        :trac:`13589`.
+        :issue:`13589`.
 
         TESTS::
 
@@ -554,9 +555,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             - `c` -- a Coxeter element of ``self`` (as a tuple, or
               as an element of ``self``)
 
-            - `m` -- a positive integer (optional, default 1)
+            - `m` -- a positive integer (default: 1)
 
-            - ``on_roots`` (optional, default ``False``) -- if
+            - ``on_roots`` (default: ``False``) -- if
               ``on_roots`` is ``True``, the lattice is realized on
               roots rather than on reflections. In order for this to
               work, the ElementMethod ``reflection_to_root`` must be
@@ -643,7 +644,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             - ``c`` -- a standard Coxeter element in ``self``
               (as a tuple, or as an element of ``self``)
 
-            - ``on_roots`` (optional, default ``False``) -- if
+            - ``on_roots`` (default: ``False``) -- if
               ``on_roots`` is ``True``, the lattice is realized on
               roots rather than on reflections. In order for this to
               work, the ElementMethod ``reflection_to_root`` must be
@@ -906,6 +907,38 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             return SimplicialComplex(result)
 
     class ElementMethods:
+
+        def absolute_length(self):
+            """
+            Return the absolute length of ``self``.
+
+            The absolute length is the length of the shortest expression
+            of the element as a product of reflections. For finite Coxeter
+            groups, the absolute length is the codimension of the
+            1-eigenspace of the element (Lemmas 1-3 in [Car1972a]_).
+
+            For permutations in the symmetric groups, the absolute
+            length is the size minus the number of its disjoint
+            cycles.
+
+            .. SEEALSO::
+
+                :meth:`~sage.categories.coxeter_groups.absolute_le`
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(["A", 3])                                           # needs sage.combinat sage.groups
+                sage: s = W.simple_reflections()                                        # needs sage.combinat sage.groups
+                sage: (s[1]*s[2]*s[3]).absolute_length()                                # needs sage.combinat sage.groups
+                3
+
+                sage: W = SymmetricGroup(4)                                             # needs sage.groups
+                sage: s = W.simple_reflections()                                        # needs sage.groups
+                sage: (s[3]*s[2]*s[1]).absolute_length()                                # needs sage.combinat sage.groups
+                3
+            """
+            M = self.canonical_matrix()
+            return (M - 1).image().dimension()
 
         @cached_in_parent_method
         def bruhat_upper_covers(self):

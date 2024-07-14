@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Finite Drinfeld modules
 
@@ -247,7 +247,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             Endomorphism of Drinfeld module defined by T |--> z6*t^2 + 1
               Defn: t^2
 
-       TESTS::
+        TESTS::
 
             sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
             sage: isinstance(phi.frobenius_endomorphism(), DrinfeldModuleMorphism)

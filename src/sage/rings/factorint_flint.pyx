@@ -20,6 +20,7 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_set_mpz
 from sage.libs.flint.fmpz_factor cimport *
+from sage.libs.flint.fmpz_factor_sage cimport *
 from sage.rings.integer cimport Integer
 
 

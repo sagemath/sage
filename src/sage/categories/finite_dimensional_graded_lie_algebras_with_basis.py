@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite Dimensional Graded Lie Algebras With Basis
 
@@ -19,6 +20,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 
+
 class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     r"""
     Category of finite dimensional graded Lie algebras with a basis.
@@ -32,6 +34,7 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
         Category of finite dimensional graded Lie algebras with basis over Integer Ring
         sage: C.super_categories()
         [Category of graded Lie algebras with basis over Integer Ring,
+         Category of finite dimensional filtered modules with basis over Integer Ring,
          Category of finite dimensional Lie algebras with basis over Integer Ring]
 
         sage: C is LieAlgebras(ZZ).WithBasis().FiniteDimensional().Graded()

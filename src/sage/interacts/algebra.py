@@ -3,9 +3,8 @@ Interacts for Algebra and Number Theory
 
 AUTHORS:
 
-- Harald Schilly (2011-01-16): initial version (:trac:`9623`)
+- Harald Schilly (2011-01-16): initial version (:issue:`9623`)
   partially based on work by Lauri Ruotsalainen
-
 """
 
 #*****************************************************************************

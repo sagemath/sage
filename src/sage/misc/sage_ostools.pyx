@@ -16,9 +16,9 @@ def have_program(program, path=None):
 
     INPUT:
 
-    - ``program`` - a string, the name of the program to check.
+    - ``program`` -- a string, the name of the program to check.
 
-    - ``path`` - string or None. Paths to search for ``program``,
+    - ``path`` -- string or None. Paths to search for ``program``,
       separated by ``os.pathsep``. If ``None``, use the :envvar:`PATH`
       environment variable.
 
@@ -80,7 +80,7 @@ def restore_cwd(chdir=None):
         os.chdir(orig_cwd)
 
 
-cdef file_and_fd(x, int* fd) noexcept:
+cdef file_and_fd(x, int* fd):
     """
     If ``x`` is a file, return ``x`` and set ``*fd`` to its file
     descriptor. If ``x`` is an integer, return ``None`` and set

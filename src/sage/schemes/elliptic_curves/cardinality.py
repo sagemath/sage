@@ -106,7 +106,7 @@ def _cardinality_with_j_invariant_1728(self):
 
     TESTS:
 
-    Check that a bug noted at :trac:`15667` is fixed::
+    Check that a bug noted at :issue:`15667` is fixed::
 
         sage: F.<a> = GF(3^6,'a')
         sage: EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1]).cardinality()
@@ -421,7 +421,7 @@ def cardinality_bsgs(self, verbose=False):
         sage: E = EllipticCurve([2*a^2 + 48*a + 27, 89*a^2 + 76*a + 24])
         sage: E.cardinality_bsgs()
         1031352
-     """
+    """
     E1 = self
     k = self.base_field()
     q = k.order()

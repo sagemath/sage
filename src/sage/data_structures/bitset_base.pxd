@@ -13,9 +13,9 @@ AUTHORS:
 - Rudi Pendavingh, Stefan van Zwam (2013-06-06): added functions map, lex_cmp,
   pickle, unpickle
 - Jeroen Demeyer (2014-09-05): use mpn_* functions from MPIR in the
-  implementation (:trac:`13352` and :trac:`16937`)
+  implementation (:issue:`13352` and :issue:`16937`)
 - Simon King (2014-10-28): ``bitset_rshift`` and ``bitset_lshift`` respecting
-  the size of the given bitsets (:trac:`15820`)
+  the size of the given bitsets (:issue:`15820`)
 """
 
 #*****************************************************************************
@@ -455,7 +455,9 @@ cdef inline bint bitset_not_in(fused_bitset_t bits, mp_bitcnt_t n) noexcept:
 
 cdef inline bint bitset_remove(fused_bitset_t bits, mp_bitcnt_t n) except -1:
     """
-    Remove n from bits.  Raise KeyError if n is not contained in bits.
+    Remove ``n`` from ``bits``.
+
+    This raises a :class:`KeyError` if ``n`` is not contained in ``bits``.
     """
     if not bitset_in(bits, n):
         raise KeyError(n)
@@ -558,8 +560,9 @@ cdef inline long bitset_first_in_complement(fused_bitset_t a) noexcept:
 
 cdef inline long bitset_pop(fused_bitset_t a) except -1:
     """
-    Remove and return an arbitrary element from the set. Raise
-    KeyError if the set is empty.
+    Remove and return an arbitrary element from the set.
+
+    This raises a :class:`KeyError` if the set is empty.
     """
     cdef long i = bitset_first(a)
     if i == -1:
@@ -911,12 +914,12 @@ cdef int bitset_from_char(bitset_t bits, char* s, char zero=*, char one=*) excep
 
 cdef int bitset_from_str(bitset_t bits, object s, char zero=*, char one=*) except -1
 
-cdef bitset_string(fused_bitset_t bits) noexcept
+cdef bitset_string(fused_bitset_t bits)
 
-cdef bitset_bytes(fused_bitset_t bits) noexcept
+cdef bitset_bytes(fused_bitset_t bits)
 
-cdef list bitset_list(fused_bitset_t bits) noexcept
+cdef list bitset_list(fused_bitset_t bits)
 
-cdef bitset_pickle(bitset_t bs) noexcept
+cdef bitset_pickle(bitset_t bs)
 
-cdef bitset_unpickle(bitset_t bs, tuple input) noexcept
+cdef bitset_unpickle(bitset_t bs, tuple input)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 FindStat - the search engine for combinatorial statistics and maps
 
@@ -189,7 +188,6 @@ AUTHORS:
 
 - Martin Rubey (2015): initial version
 - Martin Rubey (2020): rewrite, adapt to new FindStat API
-
 """
 # ****************************************************************************
 #       Copyright (C) 2015 Martin Rubey <martin.rubey@tuwien.ac.at>,
@@ -841,7 +839,7 @@ def _generating_functions_from_dict(gfs, style):
     if style == "polynomial":
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.integer_ring import ZZ
-        P = PolynomialRing(ZZ, "q")
+        P = PolynomialRing(ZZ, "q", sparse=True)
         q = P.gen()
         return {level: sum(coefficient * q**exponent
                            for exponent, coefficient in gen_dict.items())
@@ -881,7 +879,7 @@ def _get_code_from_callable(function):
                 code = inspect.getsource(function.f)
             else:
                 code = inspect.getsource(function)
-        except (IOError, TypeError):
+        except (OSError, TypeError):
             verbose("inspect.getsource could not get code from function provided",
                     caller_name='FindStat')
     return code
@@ -2051,7 +2049,7 @@ class FindStatCombinatorialStatistic(SageObject):
           sequence. If this is chosen too big, the OEIS result may be
           corrupted.
 
-        - ``verbose`` (default:True) if true, some information about
+        - ``verbose`` (default: ``True``) if true, some information about
           the search are printed.
 
         OUTPUT:
@@ -3654,9 +3652,9 @@ class FindStatCompoundMap(Element, FindStatCombinatorialMap):
 
         - ``id`` -- a padded identifier
 
-        - ``domain``-- (optional), the domain of the compound map
+        - ``domain`` -- (optional), the domain of the compound map
 
-        - ``codomain``-- (optional), the codomain of the compound map
+        - ``codomain`` -- (optional), the codomain of the compound map
 
         - ``check`` -- whether to check that domains and codomains fit
 
@@ -3841,9 +3839,9 @@ class FindStatMatchingMap(FindStatCompoundMap):
 
         - ``quality``, the quality of the match, as provided by FindStat
 
-        - ``domain``-- (optional), the domain of the compound map
+        - ``domain`` -- (optional), the domain of the compound map
 
-        - ``codomain``-- (optional), the codomain of the compound map
+        - ``codomain`` -- (optional), the codomain of the compound map
 
         EXAMPLES::
 
@@ -3974,7 +3972,7 @@ def _plane_partitions_by_size(n):
 
     .. TODO::
 
-        This can be replaced when :trac:`28244` is merged.
+        This can be replaced when :issue:`28244` is merged.
 
     INPUT:
 
@@ -4318,6 +4316,7 @@ class FindStatCollection(Element,
             Cc0027: Signed permutations 4282 True
             Cc0028: Skew partitions 1250 True
             Cc0029: Lattices 1378 True
+            Cc0030: Ordered set partitions 5316 True
         """
         return self._data["Code"].element_level(element) in self._data["LevelsWithSizes"]
 
@@ -4711,7 +4710,8 @@ class FindStatCollections(UniqueRepresentation, Parent):
          Cc0026: Decorated permutations,
          Cc0027: Signed permutations,
          Cc0028: Skew partitions,
-         Cc0029: Lattices]
+         Cc0029: Lattices,
+         Cc0030: Ordered set partitions]
     """
     def __init__(self):
         """
@@ -4787,7 +4787,8 @@ class FindStatCollections(UniqueRepresentation, Parent):
              Cc0026: Decorated permutations,
              Cc0027: Signed permutations,
              Cc0028: Skew partitions,
-             Cc0029: Lattices]
+             Cc0029: Lattices,
+             Cc0030: Ordered set partitions]
 
             sage: FindStatCollection(Permutation([1,2,3]))                      # optional -- internet
             Cc0001: Permutations

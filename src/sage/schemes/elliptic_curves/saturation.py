@@ -36,7 +36,6 @@ AUTHORS:
 - Robert Bradshaw
 
 - John Cremona
-
 """
 #*****************************************************************************
 #       Copyright (C) 2017 Robert Bradshaw <robertwb@math.washington.edu>
@@ -373,7 +372,7 @@ class EllipticCurveSaturator(SageObject):
 
         TESTS:
 
-        See :trac:`27387`::
+        See :issue:`27387`::
 
             sage: K.<a> = NumberField(x^2 - x - 26)
             sage: E = EllipticCurve([a, 1 - a, 0, 93 - 16*a, 3150 - 560*a])
@@ -385,7 +384,7 @@ class EllipticCurveSaturator(SageObject):
             Using sieve method to saturate...
             ...
             -- points were not 2-saturated, gaining index 2
-            (0, (-1/4*a + 3/4 : 59/8*a - 317/8 : 1))
+            (1, (0 : 1 : 0))
 
         A CM example where large siecing primes are needed (LMFDB
         label 2.0.3.1-50625.1-CMb2)::
