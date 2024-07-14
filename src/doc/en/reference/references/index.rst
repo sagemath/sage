@@ -5589,9 +5589,9 @@ REFERENCES:
              *Exceptional and modern intervals of the Tamari lattice*.
              :arxiv:`1801.04097`
 
-.. [Rom2023] Romanenko Ivan. *Algorithms related to generalized palindromes in SageMath*.
-             Bachelor's thesis. Czech Technical University in Prague, Faculty of Information Technology, 2023
-             https://dspace.cvut.cz/bitstream/handle/10467/109827/F8-BP-2023-Romanenko-Ivan-thesis.pdf
+.. [Rom2024] Romanenko Ivan. *Algorithms related to generalized palindromes in SageMath*.
+             Bachelor's thesis. Czech Technical University in Prague, Faculty of Information Technology, 2024
+             https://dspace.cvut.cz/bitstream/handle/10467/113746/F8-BP-2024-Romanenko-Ivan-thesis.pdf
 
 .. [Ros1999] \K. Rosen *Handbook of Discrete and Combinatorial
              Mathematics* (1999), Chapman and Hall.

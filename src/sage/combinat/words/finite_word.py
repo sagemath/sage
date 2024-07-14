@@ -3121,7 +3121,7 @@ class FiniteWord_class(Word_class):
 
         ALGORITHM:
 
-        Algorithm is described in [Rom2023]_.
+        Algorithm is described in [Rom2024]_.
 
         Time complexity of this algorithm is `O(|G| \cdot self.length())`
         plus time to generate `G` from `morphisms` and `antimorphisms`.
@@ -3858,12 +3858,12 @@ class FiniteWord_class(Word_class):
         - ``list`` -- list of lengths of the maximal palindromes (or ``f``-palindrome)
             for each symmetry axis (letter or space between two letters).
         - ``tree`` -- tree graph, which contains data about palindromic
-            (or ``f``-palindromic) factors as described in [Rom2023]_.
+            (or ``f``-palindromic) factors as described in [Rom2024]_.
             Represented as Python list, the first node is the root.
 
         ALGORITHM:
 
-        Algorithm is described in [Rom2023]_.
+        Algorithm is described in [Rom2024]_.
 
         Time complexity is linear from length of ``self``.
         """
