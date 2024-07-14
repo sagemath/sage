@@ -6080,9 +6080,9 @@ class SemistandardTableaux(Tableaux):
                 raise ValueError("shape must be a (skew) partition")
 
         if mu is not None:
-            if mu not in Compositions() and mu not in _Partitions:
-                raise ValueError("mu must be a composition")
-            mu = Composition(mu)
+            if mu not in IntegerVectors() and mu not in Compositions() and mu not in _Partitions:
+                raise ValueError("mu must be an integer vector with non-negative entries")
+            mu = IntegerVectors()(mu)
 
         is_inf = max_entry is PlusInfinity()
 
@@ -6428,10 +6428,10 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
                     for k in range(1, self.size+1):
                         for c in integer_vectors_nk_fast_iter(self.size - k, i-1):
                             c.append(k)
-                            for sst in SemistandardTableaux_shape_weight(part, Composition(c)):
+                            for sst in SemistandardTableaux_shape_weight(part, IntegerVectors()(c)):
                                 yield self.element_class(self, sst)
                 else:
-                    for sst in SemistandardTableaux_shape_weight(part, Composition([self.size])):
+                    for sst in SemistandardTableaux_shape_weight(part, IntegerVectors()([self.size])):
                         yield self.element_class(self, sst)
             i += 1
 
@@ -6527,10 +6527,10 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
                 for k in range(1, n+1):
                     for c in integer_vectors_nk_fast_iter(n - k, i-1):
                         c.append(k)
-                        for sst in SemistandardTableaux_shape_weight(self.shape, Composition(c)):
+                        for sst in SemistandardTableaux_shape_weight(self.shape, IntegerVectors()(c)):
                             yield self.element_class(self, sst)
             else:
-                for sst in SemistandardTableaux_shape_weight(self.shape, Composition([n])):
+                for sst in SemistandardTableaux_shape_weight(self.shape, IntegerVectors()([n])):
                     yield self.element_class(self, sst)
             i += 1
 
@@ -6809,7 +6809,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             True
         """
         for c in integer_vectors_nk_fast_iter(sum(self.shape), self.max_entry):
-            for sst in SemistandardTableaux_shape_weight(self.shape, Composition(c)):
+            for sst in SemistandardTableaux_shape_weight(self.shape, IntegerVectors()(c)):
                 yield self.element_class(self, sst)
 
     def __contains__(self, x):
@@ -6946,7 +6946,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
         elif algorithm == 'sum':
             c = 0
             for comp in integer_vectors_nk_fast_iter(sum(self.shape), self.max_entry):
-                c += SemistandardTableaux_shape_weight(self.shape, Composition(comp)).cardinality()
+                c += SemistandardTableaux_shape_weight(self.shape, IntegerVectors()(comp)).cardinality()
             return c
         raise ValueError("unknown algorithm {}".format(algorithm))
 
@@ -7011,10 +7011,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         for key in content:
             content_list[key-1] = content[key]
 
-        if content_list != self.weight:
-            return False
-
-        return True
+        return content_list == list(self.weight)
 
     def cardinality(self):
         """
