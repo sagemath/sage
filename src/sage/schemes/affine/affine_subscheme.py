@@ -20,6 +20,9 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.fields import Fields
+from sage.libs.singular.function import (singular_function,
+                                         lib as singular_lib,
+                                         get_printlevel, set_printlevel)
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 from .affine_morphism import SchemeMorphism_polynomial_affine_subscheme_field
@@ -415,15 +418,20 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         Iloc = R.ideal([f(chng_coords) for f in I.gens()])
         Jloc = R.ideal([f(chng_coords) for f in J.gens()])
         # compute the intersection multiplicity with Serre's Tor formula using Singular
-        from sage.interfaces.singular import singular
-        singular.lib("homolog.lib")
+        singular_lib("homolog.lib")
+        Tor = singular_function("Tor")
+        std = singular_function("std")
+        hilb = singular_function("hilb")
+        saved_printlevel = get_printlevel()
+        set_printlevel(-1)
         i = 0
         s = 0
-        t = sum(singular.Tor(i, Iloc, Jloc).std().hilb(2).sage())
+        t = sum(hilb(std(Tor(i, Iloc, Jloc)), 2))
         while t != 0:
             s += (-1)**i * t
             i += 1
-            t = sum(singular.Tor(i, Iloc, Jloc).std().hilb(2).sage())
+            t = sum(hilb(std(Tor(i, Iloc, Jloc)), 2))
+        set_printlevel(saved_printlevel)
         return s
 
     def multiplicity(self, P):
@@ -497,7 +505,13 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         chng_coords = [AA.gens()[i] + P[i] for i in range(AA.dimension_relative())]
         R = AA.coordinate_ring().change_ring(order='negdegrevlex')
         I = R.ideal([f(chng_coords) for f in self.defining_polynomials()])
-        return singular.mult(singular.std(I)).sage()
+        std = singular_function("std")
+        mult = singular_function("mult")
+        saved_printlevel = get_printlevel()
+        set_printlevel(-1)
+        result = mult(std(I))
+        set_printlevel(saved_printlevel)
+        return result
 
 
 class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
