@@ -27,7 +27,8 @@ from abc import ABC, abstractmethod, ABCMeta
 from sage.structure.sage_object import SageObject
 
 class ChowRingIdeal(MPolynomialIdeal):
-    r"""
+    def __init__(self, M, R):
+        """
     The class of Chow ring ideal, a multi-polynomial ideal. 
     Base class - ``MPolynomialIdeal``.
 
@@ -50,8 +51,6 @@ class ChowRingIdeal(MPolynomialIdeal):
         sage: ch = ChowRingIdeal(M=matroids.catalog.Fano(), R=QQ)
         Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
     """
-
-    def __init__(self, M, R):
         self._matroid = M
         flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
@@ -87,7 +86,7 @@ class ChowRingIdeal(MPolynomialIdeal):
         return "Chow ring ideal of {}".format(self._matroid)
 
     def groebner_basis(self):
-        r"""
+        """
         Returns the Groebner basis of the Chow ring ideal of consideration.
         Return type - ``PolynomialSequence``.
 
@@ -151,7 +150,8 @@ class AugmentedChowRingIdeal(SageObject):
         return dict(self.flats_generator)
 
 class AugmentedChowRingIdeal_fy(AugmentedChowRingIdeal, MPolynomialIdeal):
-    r"""
+    def __init__(self, M, R):
+        """
     The class of augmented Chow ring ideal of Feitchner-Yuzvinsky
     presentation, a multi-polynomial ideal.
     Base class - ``MPolynomialIdeal``.
@@ -174,7 +174,6 @@ class AugmentedChowRingIdeal_fy(AugmentedChowRingIdeal, MPolynomialIdeal):
         Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
         6 elements with 16 bases of Feitchner-Yuzvinsky presentation
     """
-    def __init__(self, M, R):
         self._matroid = M
         self.flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
@@ -217,7 +216,7 @@ class AugmentedChowRingIdeal_fy(AugmentedChowRingIdeal, MPolynomialIdeal):
         return "Augmented Chow ring ideal of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
     
     def groebner_basis(self):
-        r"""
+        """
         Returns the Groebner basis of the augmented Chow ring ideal.
         Return type - ``PolynomialSequence``.
 
@@ -259,7 +258,8 @@ class AugmentedChowRingIdeal_fy(AugmentedChowRingIdeal, MPolynomialIdeal):
         return g_basis
 
 class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal, MPolynomialIdeal):
-    r"""
+    def __init__(self, M, R):
+        """
     The class of augmented Chow ring ideal of atom-free
     presentation, a multi-polynomial ideal.
     Base class - ``MPolynomialIdeal``.
@@ -282,7 +282,6 @@ class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal, MPolynomialIdeal)
         Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
         6 elements with 16 bases of atom-free presentation
     """
-    def __init__(self, M, R):
         self._matroid = M
         self.flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
@@ -328,7 +327,7 @@ class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal, MPolynomialIdeal)
         return "Augmented Chow ring ideal of {} of atom-free presentation".format(self._matroid)
     
     def groebner_basis(self):
-        r"""
+        """
         Returns the Groebner basis of the augmented Chow ring ideal.
         Return type - ``PolynomialSequence``.
 
