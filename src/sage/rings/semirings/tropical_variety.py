@@ -9,7 +9,6 @@ REFERENCES:
 
 - [Bru2014]_
 - [Fil2017]_
-- [Hun2021]_
 """
 
 # ****************************************************************************
@@ -91,12 +90,12 @@ class TropicalVariety(SageObject):
         Tropical curve of (-3)*x^2 + 4*x*y + 3*y^2 + 4*x + 0*y + 7
         sage: tv.components()
         [[(3, t1), [t1 <= 0], 1],
-         [(-t1 + 3, t1), [0 <= t1, t1 <= 2], 1],
-         [(t1, 2), [t1 <= 1], 2],
-         [(t1, 0), [3 <= t1, t1 <= 7], 1],
-         [(7, t1), [t1 <= 0], 1],
-         [(t1 - 1, t1), [2 <= t1], 1],
-         [(t1 + 7, t1), [0 <= t1], 1]]
+        [(-t1 + 3, t1), [0 <= t1, t1 <= 2], 1],
+        [(t1, 2), [t1 <= 1], 2],
+        [(t1, 0), [3 <= t1, t1 <= 7], 1],
+        [(7, t1), [t1 <= 0], 1],
+        [(t1 - 1, t1), [2 <= t1], 1],
+        [(t1 + 7, t1), [0 <= t1], 1]]
 
     .. PLOT::
         :width: 300 px
@@ -150,23 +149,23 @@ class TropicalVariety(SageObject):
 
         ALGORITHM:
 
-        We need to determine a corner locus of this tropical polynomial 
-        function, which is all points `(x_1, x_2, \ldots, x_n)` for which 
-        the maximum (minimum) is obtained at least twice. First, we convert 
-        each monomial to its corresponding linear function. Then for each two 
-        monomials of polynomial, we find the points where their values are 
-        equal. Since we attempt to solve the equality of two equations in `n` 
+        We need to determine a corner locus of this tropical polynomial
+        function, which is all points `(x_1, x_2, \ldots, x_n)` for which
+        the maximum (minimum) is obtained at least twice. First, we convert
+        each monomial to its corresponding linear function. Then for each two
+        monomials of polynomial, we find the points where their values are
+        equal. Since we attempt to solve the equality of two equations in `n`
         variables, the solution set will be described by `n-1` parameters.
 
-        Next, we need to check if the value of previous two monomials at the 
+        Next, we need to check if the value of previous two monomials at the
         points in solution set is really the maximum (minimum) of function.
-        We do this by solving the inequality of the previous monomial with all 
-        other monomials in the polynomial after substituting the parameter. 
-        This will give us the condition of parameters. Each of this condition 
-        is then combined by union operator. If this final condition is not an 
+        We do this by solving the inequality of the previous monomial with all
+        other monomials in the polynomial after substituting the parameter.
+        This will give us the condition of parameters. Each of this condition
+        is then combined by union operator. If this final condition is not an
         empty set, we calculate the weight of this particular component by
         the maximum of gcd of the numbers `|i-k|` and `|j-l|` for all pairs
-        `(i,j)` and `(k,l)` such that the value of on this component is given 
+        `(i,j)` and `(k,l)` such that the value of on this component is given
         by the corresponding monomials.
         
         EXAMPLES:
@@ -384,9 +383,12 @@ class TropicalSurface(TropicalVariety):
     r""""
     A tropical surface in `\RR^3`. 
     
-    The representation is in 
-    the form of list of lists, where the inner list represent each surface
-    of tropical roots.
+    The tropical surface consists of planar regions and facets, which we
+    can call cells. These cells are connected in such a way that they form
+    a piecewise linear structure embedded in three-dimensional space. These
+    cells meet along edges, where the balancing condition is satisfied.
+    This balancing condition ensures that the sum of the outgoing normal
+    vectors at each edge is zero, reflecting the equilibrium.
     """   
 
     def _axes(self):
@@ -402,7 +404,7 @@ class TropicalSurface(TropicalVariety):
 
         OUTPUT: 
         
-        A list of two lists, where the first inner list represent value of 
+        A list of two lists, where the first inner list represent value of
         x-axis and the second inner list represent value of y-axis.
 
         EXAMPLES::
@@ -541,11 +543,13 @@ class TropicalCurve(TropicalVariety):
     r""""
     A tropical curve in `\RR^2`. 
     
-    The representation is in 
-    the form of list of lists, where the inner list represent each component 
-    of tropical roots. The tropical curve consists of line segments and 
-    half-lines, which we call edges.
-    """      
+    The tropical curve consists of line segments and half-lines, which we
+    call edges. These edges are connected in such a way that they form a
+    piecewise linear graph embedded in the plane. These edges meet at
+    a vertices, where the balancing condition is satisfied. This balancing
+    condition ensures that the sum of the outgoing slopes at each vertex
+    is zero, reflecting the equilibrium.
+    """     
     
     def _axes(self):
         """
@@ -553,13 +557,13 @@ class TropicalCurve(TropicalVariety):
         
         This default axes is used for plot of tropical curve and also the
         3d plot of tropical polynomial function. The axes is chosen by first
-        find all vertices of this tropical curve. Then we choose the minimum 
+        find all vertices of this tropical curve. Then we choose the minimum
         and maximum of all x-component in this vertices to be the x-axis.
         The same apply to the y-axis.
 
         OUTPUT: 
         
-        A list of two lists, where the first inner list represent value of 
+        A list of two lists, where the first inner list represent value of
         x-axis and the second inner list represent value of y-axis.
 
         EXAMPLES::
@@ -603,7 +607,7 @@ class TropicalCurve(TropicalVariety):
     
     def vertices(self):
         r"""
-        Return all vertices of ``self``, which is the point where three or 
+        Return all vertices of ``self``, which is the point where three or
         more edges intersect.
 
         OUTPUT: A set of `(x,y)` points
@@ -677,13 +681,13 @@ class TropicalCurve(TropicalVariety):
         """
         Return the plot of ``self``.
 
-        Generates a visual representation of the tropical curve in cartesian 
-        coordinates. The plot shows piecewise-linear segments representing  
+        Generates a visual representation of the tropical curve in cartesian
+        coordinates. The plot shows piecewise-linear segments representing
         each components. The axes are centered around the vertices.
 
         OUTPUT: 
         
-        A Graphics object. The weight of the component will be written if it 
+        A Graphics object. The weight of the component will be written if it
         is greater or equal than 2. The weight is written near the vertex.
 
         EXAMPLES::

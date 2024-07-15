@@ -18,7 +18,6 @@ REFERENCES:
 
 - [Bru2014]_
 - [Fil2017]_
-- [Hun2021]_
 """
 
 # ****************************************************************************
@@ -48,13 +47,13 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
     Let `x_1, x_2, \ldots, x_n` be indeterminants. A tropical monomial is
     any product of these variables, possibly including repetitions:
-    `x_1^{i_1}\dots x_n^{i_n}` where `i_j \in \{0,1,\ldots\}`, for all
+    `x_1^{i_1}\ldots x_n^{i_n}` where `i_j \in \{0,1,\ldots\}`, for all
     `j\in \{1,\ldots,n\}`. A multivariate tropical polynomial is a finite
     linear combination of tropical monomials,
-    `p(x_1, \dots, x_n) = \sum_{i=1}^n c_i x_1^{i_1}\dots x_n^{i_n}`.
+    `p(x_1, \ldots, x_n) = \sum_{i=1}^n c_i x_1^{i_1}\ldots x_n^{i_n}`.
 
     In classical arithmetic, we can rewrite the general form of a tropical
-    monomial: `x_1^{i_1}\dots x_n^{i_n} = i_1 x_1 + \dots + i_n x_n`. Thus,
+    monomial: `x_1^{i_1}\ldots x_n^{i_n} = i_1 x_1 + \ldots + i_n x_n`. Thus,
     the tropical polynomial can be viewed as the minimum (maximum) of a
     finite collection of linear functions.
 

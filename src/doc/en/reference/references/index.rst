@@ -3493,8 +3493,6 @@ REFERENCES:
               Trans. Am. Math. Soc. 375, No. 6, 4411-4427 (2022).
               :arxiv:`1906.09633`, :doi:`10.1090/tran/8606`.
 
-.. [Hun2021] Joel Hunter. *Tropical Geometry*. University of Bath, 2021.
-
 .. [Hutz2007] \B. Hutz. Arithmetic Dynamics on Varieties of dimension greater
               than one. PhD Thesis, Brown University 2007
 

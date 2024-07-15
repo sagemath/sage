@@ -20,7 +20,6 @@ REFERENCES:
 
 - [Bru2014]_
 - [Fil2017]_
-- [Hun2021]_
 """
 
 # ****************************************************************************
@@ -62,7 +61,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
     EXAMPLES:
 
-    First, we construct a tropical polynomial semiring by defining a base 
+    First, we construct a tropical polynomial semiring by defining a base
     tropical semiring and then inputting it to ``PolynomialRing``::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
@@ -71,8 +70,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         sage: R.0
         0*x
 
-    One way to construct an element is to provide a list or tuple of 
-    coefficients. Another way to define an element is to write a polynomial 
+    One way to construct an element is to provide a list or tuple of
+    coefficients. Another way to define an element is to write a polynomial
     equation with each coefficient converted to the semiring::
 
         sage: p1 = R([1,4,None,0]); p1
@@ -81,7 +80,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         1*x^2 + 2*x + 3
 
     We can do some basic arithmetic operations for these tropical polynomials.
-    Remember that any number given have to be tropical. If not, then it will 
+    Remember that any number given have to be tropical. If not, then it will
     raise an error::
 
         sage: p1 + p2
@@ -118,8 +117,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         sage: p2.factor()
         (1) * (0*x + 1)^2
 
-    Every tropical polynomial `p(x)` have a corresponding unique tropical 
-    polynomial `\bar{p}(x)` with the same roots which can be factored. We 
+    Every tropical polynomial `p(x)` have a corresponding unique tropical
+    polynomial `\bar{p}(x)` with the same roots which can be factored. We
     call `\bar{p}(x)` the tropical polynomial split form of `p(x)`::
 
         sage: p1.split_form()
@@ -127,7 +126,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         sage: p2.split_form()
         1*x^2 + 2*x + 3
 
-    Every tropical polynomial induce a piecewise linear function that can be 
+    Every tropical polynomial induce a piecewise linear function that can be
     invoked in the following way::
 
         sage: p1.piecewise_function()
@@ -156,7 +155,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
     TESTS:
 
-    There is no subtraction for tropical polynomials because element in 
+    There is no subtraction for tropical polynomials because element in
     tropical semiring doesn't necessarily have additive inverse::
 
         sage: -p1
@@ -197,7 +196,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         
         There will be no tropical root for constant polynomial. Additionaly,
         for a monomial, the tropical root is assumed to be the additive
-        identity of its base tropical semiring:: 
+        identity of its base tropical semiring::
         
             sage: p2 = R(2)
             sage: p2.roots()
@@ -610,7 +609,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     `+\infty` (or `-\infty`). Tropical multiplication is associative,
     with the identity element being `0`, and it distributes over tropical
     addition. Furthermore, multiplication by the additive identity results
-    in the additive identity, preserving the annihilation property. 
+    in the additive identity, preserving the annihilation property.
     However, it fails to become a ring because it lacks additive inverses.
     """
     @staticmethod
