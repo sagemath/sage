@@ -9,7 +9,9 @@ REFERENCES:
 :ref:`E <ref-E>`
 :ref:`F <ref-F>`
 :ref:`G <ref-G>`
-:ref:`H <ref-H>` :ref:`I <ref-I>` :ref:`J <ref-J>`
+:ref:`H <ref-H>`
+:ref:`I <ref-I>`
+:ref:`J <ref-J>`
 :ref:`K <ref-K>`
 :ref:`L <ref-L>`
 :ref:`M <ref-M>`
