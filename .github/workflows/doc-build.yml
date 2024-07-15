@@ -196,7 +196,7 @@ jobs:
             (cd doc && git commit -a -m 'new')
             # Wipe out chronic diffs of new doc against old doc before creating CHANGES.html
             (cd doc && \
-             find . -name "*.html" | xargs sed -i -e '/This is documentation of/ s/ built with GitHub PR .* for development/ for development/' \
+             find . -name "*.html" | xargs sed -i -e '/This is documentation/ s/ built with GitHub PR .* for development/ for development/' \
                                                   -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/' \
                                                   -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d' \
              && git commit -a -m 'wipe-out')
