@@ -92,10 +92,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         sage: R.<a,b> = PolynomialRing(T)
         sage: p1 = R(3)*a*b + a + R(-1)*b
         sage: p1.tropical_variety()
-        Tropical curve of 3*a*b + 0*a + (-1)*b are 
-        [[(t1, -3), [t1 <= -4], 1]
-        [(-4, t1), [t1 <= -3], 1]
-        [(t1 - 1, t1), [t1 >= -3], 1]]
+        Tropical curve of 3*a*b + 0*a + (-1)*b
 
     .. PLOT::
         :width: 300 px
@@ -120,10 +117,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         sage: R.<a,b> = PolynomialRing(T)
         sage: p1 = R(3)*a*b + a + R(-1)*b
         sage: p1.tropical_variety()
-        Tropical curve of 3*a*b + 0*a + (-1)*b are 
-        [[(t1, -3), [t1 >= -4], 1]
-        [(-4, t1), [t1 >= -3], 1]
-        [(t1 - 1, t1), [t1 <= -3], 1]]
+        Tropical curve of 3*a*b + 0*a + (-1)*b
     
     .. PLOT::
         :width: 300 px
@@ -289,23 +283,17 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1 = x + y + R(0); p1
             0*x + 0*y + 0
             sage: p1.tropical_variety()
-            Tropical curve of 0*x + 0*y + 0 are 
-            [[(t1, t1), [t1 >= 0], 1]
-            [(0, t1), [t1 <= 0], 1]
-            [(t1, 0), [t1 <= 0], 1]]
+            Tropical curve of 0*x + 0*y + 0
 
-        Finding tropical hypersurface for tropical polynomials in more than
-        two variables::
+        Tropical hypersurface for tropical polynomials in more than two
+        variables::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = R(1)*x*y + R(-1/2)*x*z + R(4)*z^2; p1
             1*x*y + (-1/2)*x*z + 4*z^2
             sage: p1.tropical_variety()
-            Tropical surface of 1*x*y + (-1/2)*x*z + 4*z^2 are 
-            [[(t1, t2 - 3/2, t2), [t1 <= t2 + 9/2], 1]
-            [(2*t1 - t2 + 3, t2, t1), [t2 + 3/2 <= t1], 1]
-            [(t1 + 9/2, t2, t1), [t1 <= t2 + 3/2], 1]]
+            Tropical surface of 1*x*y + (-1/2)*x*z + 4*z^2
         """
         from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalSurface, TropicalVariety
 

@@ -48,16 +48,11 @@ class TropicalVariety(SageObject):
         sage: R.<x,y> = PolynomialRing(T)
         sage: p1 = R(1)*x + x*y + R(0); p1
         0*x*y + 1*x + 0
-        sage: tv1 = p1.tropical_variety(); tv1
-        Tropical curve of 0*x*y + 1*x + 0 are 
-        [[(t1, 1), [t1 >= -1], 1]
-        [(-1, t1), [t1 <= 1], 1]
-        [(-t1, t1), [t1 >= 1], 1]]
-        sage: tv1.dimension()
-        2
-        sage: tv1.number_of_components()
-        3
-        sage: tv1.vertices()
+        sage: tv = p1.tropical_variety(); tv
+        Tropical curve of 0*x*y + 1*x + 0
+        sage: tv.components()
+        [[(t1, 1), [t1 >= -1], 1], [(-1, t1), [t1 <= 1], 1], [(-t1, t1), [t1 >= 1], 1]]
+        sage: tv.vertices()
         {(-1, 1)}
 
     .. PLOT::
@@ -74,11 +69,10 @@ class TropicalVariety(SageObject):
         sage: T = TropicalSemiring(QQ, use_min=True)
         sage: R.<x,y> = PolynomialRing(T)
         sage: p1 = R(1)*x + x*y + R(0)
-        sage: tv1 = p1.tropical_variety(); tv1
-        Tropical curve of 0*x*y + 1*x + 0 are 
-        [[(t1, 1), [t1 <= -1], 1]
-        [(-1, t1), [t1 >= 1], 1]
-        [(-t1, t1), [t1 <= 1], 1]]
+        sage: tv = p1.tropical_variety(); tv
+        Tropical curve of 0*x*y + 1*x + 0
+        sage: tv.components()
+        [[(t1, 1), [t1 <= -1], 1], [(-1, t1), [t1 >= 1], 1], [(-t1, t1), [t1 <= 1], 1]]
 
     .. PLOT::
         :width: 300 px
@@ -93,15 +87,16 @@ class TropicalVariety(SageObject):
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<x,y> = PolynomialRing(T)
         sage: p1 = R(7) + T(4)*x + y + R(4)*x*y + R(3)*y^2 + R(-3)*x^2
-        sage: p1.tropical_variety()
-        Tropical curve of (-3)*x^2 + 4*x*y + 3*y^2 + 4*x + 0*y + 7 are 
-        [[(3, t1), [t1 <= 0], 1]
-        [(-t1 + 3, t1), [0 <= t1, t1 <= 2], 1]
-        [(t1, 2), [t1 <= 1], 2]
-        [(t1, 0), [3 <= t1, t1 <= 7], 1]
-        [(7, t1), [t1 <= 0], 1]
-        [(t1 - 1, t1), [2 <= t1], 1]
-        [(t1 + 7, t1), [0 <= t1], 1]]
+        sage: tv = p1.tropical_variety(); tv
+        Tropical curve of (-3)*x^2 + 4*x*y + 3*y^2 + 4*x + 0*y + 7
+        sage: tv.components()
+        [[(3, t1), [t1 <= 0], 1],
+         [(-t1 + 3, t1), [0 <= t1, t1 <= 2], 1],
+         [(t1, 2), [t1 <= 1], 2],
+         [(t1, 0), [3 <= t1, t1 <= 7], 1],
+         [(7, t1), [t1 <= 0], 1],
+         [(t1 - 1, t1), [2 <= t1], 1],
+         [(t1 + 7, t1), [0 <= t1], 1]]
 
     .. PLOT::
         :width: 300 px
@@ -117,15 +112,16 @@ class TropicalVariety(SageObject):
         sage: T = TropicalSemiring(QQ)
         sage: R.<a,x,y,z> = PolynomialRing(T)
         sage: p1 = x*y + R(-1/2)*x*z + R(4)*z^2 + a*x
-        sage: p1.tropical_variety()
-        Tropical hypersurface of 0*a*x + 0*x*y + (-1/2)*x*z + 4*z^2 are 
-        [[(t1, t2, t3 - 1/2, t3), [t2 - 9/2 <= t3, t3 <= t1 + 1/2, t2 - 5 <= t1], 1]
-        [(t1, 2*t2 - t3 + 4, t3, t2), [t3 + 1/2 <= t2, t3 <= t1], 1]
-        [(t1, t2, t1, t3), [max(t1 + 1/2, 1/2*t1 + 1/2*t2 - 2) <= t3], 1]
-        [(t1, t2 + 9/2, t3, t2), [t2 <= min(t3 + 1/2, t1 + 1/2)], 1]
-        [(t1 - 1/2, t2, t3, t1), [t2 - 9/2 <= t1, t1 <= t3 + 1/2, t2 - 5 <= t3], 1]
+        sage: tv = p1.tropical_variety(); tv
+        Tropical hypersurface of 0*a*x + 0*x*y + (-1/2)*x*z + 4*z^2
+        sage: tv.components()
+        [[(t1, t2, t3 - 1/2, t3), [t2 - 9/2 <= t3, t3 <= t1 + 1/2, t2 - 5 <= t1], 1],
+        [(t1, 2*t2 - t3 + 4, t3, t2), [t3 + 1/2 <= t2, t3 <= t1], 1],
+        [(t1, t2, t1, t3), [max(t1 + 1/2, 1/2*t1 + 1/2*t2 - 2) <= t3], 1],
+        [(t1, t2 + 9/2, t3, t2), [t2 <= min(t3 + 1/2, t1 + 1/2)], 1],
+        [(t1 - 1/2, t2, t3, t1), [t2 - 9/2 <= t1, t1 <= t3 + 1/2, t2 - 5 <= t3], 1],
         [(2*t1 - t2 + 4, t2, t3, t1), [t1 <= min(1/2*t2 + 1/2*t3 - 2, t2 - 9/2)], 1]]
-
+    
     TESTS:
 
     The input to ``TropicalVariety`` should be a tropical polynomial::
@@ -179,18 +175,20 @@ class TropicalVariety(SageObject):
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
-            sage: (x+y).tropical_variety()
-            Tropical curve of 0*x + 0*y are 
+            sage: tv = (x+y).tropical_variety(); tv
+            Tropical curve of 0*x + 0*y
+            sage: tv.components()
             [[(t1, t1), [-Infinity < t1, t1 < +Infinity], 1]]
 
         A basic illustration of a tropical surface::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
-            sage: (x+y+z).tropical_variety()
-            Tropical surface of 0*x + 0*y + 0*z are 
-            [[(t1, t1, t2), [t1 <= t2], 1]
-            [(t1, t2, t1), [t1 <= t2], 1]
+            sage: tv = (x+y+z).tropical_variety(); tv
+            Tropical surface of 0*x + 0*y + 0*z
+            sage: tv.components()
+            [[(t1, t1, t2), [t1 <= t2], 1],
+            [(t1, t2, t1), [t1 <= t2], 1],
             [(t1, t2, t2), [t2 <= t1], 1]]
 
         TESTS:
@@ -199,11 +197,9 @@ class TropicalVariety(SageObject):
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
-            sage: R(3).tropical_variety()
-            Tropical curve of 3 are 
+            sage: R(3).tropical_variety().components()
             []
-            sage: x.tropical_variety()
-            Tropical curve of 0*x are 
+            sage: x.tropical_variety().components()
             []
         """
         from sage.symbolic.relation import solve
@@ -361,16 +357,28 @@ class TropicalVariety(SageObject):
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,x,y,z> = PolynomialRing(T)
             sage: (a+x+y+z).tropical_variety()
-            Tropical hypersurface of 0*a + 0*x + 0*y + 0*z are 
-            [[(t1, t1, t2, t3), [t1 <= t3, t1 <= t2], 1]
-            [(t1, t2, t1, t3), [t1 <= t3, t1 <= t2], 1]
-            [(t1, t2, t3, t1), [t1 <= min(t3, t2)], 1]
-            [(t1, t2, t2, t3), [t2 <= t3, t2 <= t1], 1]
-            [(t1, t2, t3, t2), [t2 <= min(t3, t1)], 1]
+            Tropical hypersurface of 0*a + 0*x + 0*y + 0*z
+        """
+        return (f"Tropical hypersurface of {self._poly}")
+
+    def components(self):
+        """
+        Return all components of ``self``.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<a,x,y,z> = PolynomialRing(T)
+            sage: tv = (a+x+y+z).tropical_variety()
+            sage: tv.components()
+            [[(t1, t1, t2, t3), [t1 <= t3, t1 <= t2], 1],
+            [(t1, t2, t1, t3), [t1 <= t3, t1 <= t2], 1],
+            [(t1, t2, t3, t1), [t1 <= min(t3, t2)], 1],
+            [(t1, t2, t2, t3), [t2 <= t3, t2 <= t1], 1],
+            [(t1, t2, t3, t2), [t2 <= min(t3, t1)], 1],
             [(t1, t2, t3, t3), [t3 <= min(t1, t2)], 1]]
         """
-        components = "\n".join([f"{row}" for row in self._hypersurface])
-        return (f"Tropical hypersurface of {self._poly} are \n[{components}]")
+        return self._hypersurface
 
 class TropicalSurface(TropicalVariety):
     r""""
@@ -452,16 +460,15 @@ class TropicalSurface(TropicalVariety):
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = x + y + z + x^2 + R(1)
-            sage: p1.tropical_variety()
-            Tropical surface of 0*x^2 + 0*x + 0*y + 0*z + 1 are 
-            [[(t1, t1, t2), [t1 <= t2, 0 <= t1, t1 <= 1], 1]
-            [(t1, t2, t1), [0 <= t1, t1 <= min(1, t2), 0 <= t2], 1]
-            [(0, t1, t2), [0 <= t2, 0 <= t1], 1]
-            [(1, t1, t2), [1 <= t2, 1 <= t1], 1]
-            [(t1, t2, t2), [t2 <= min(1, t1, 2*t1)], 1]
-            [(1/2*t1, t1, t2), [t1 <= t2, t1 <= 0], 1]
-            [(t1, 1, t2), [1 <= t2, 1 <= t1], 1]
-            [(1/2*t1, t2, t1), [t1 <= min(0, t2)], 1]
+            sage: p1.tropical_variety().components()
+            [[(t1, t1, t2), [t1 <= t2, 0 <= t1, t1 <= 1], 1],
+            [(t1, t2, t1), [0 <= t1, t1 <= min(1, t2), 0 <= t2], 1],
+            [(0, t1, t2), [0 <= t2, 0 <= t1], 1],
+            [(1, t1, t2), [1 <= t2, 1 <= t1], 1],
+            [(t1, t2, t2), [t2 <= min(1, t1, 2*t1)], 1],
+            [(1/2*t1, t1, t2), [t1 <= t2, t1 <= 0], 1],
+            [(t1, 1, t2), [1 <= t2, 1 <= t1], 1],
+            [(1/2*t1, t2, t1), [t1 <= min(0, t2)], 1],
             [(t1, t2, 1), [1 <= t1, 1 <= t2], 1]]
 
         .. PLOT::
@@ -526,13 +533,9 @@ class TropicalSurface(TropicalVariety):
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: (x^4+y^2+z^2).tropical_variety()
-            Tropical surface of 0*x^4 + 0*y^2 + 0*z^2 are 
-            [[(1/2*t1, t1, t2), [t1 <= t2], 2]
-            [(1/2*t1, t2, t1), [t1 <= t2], 2]
-            [(t1, t2, t2), [1/2*t2 <= t1], 2]]
+            Tropical surface of 0*x^4 + 0*y^2 + 0*z^2
         """
-        components = "\n".join([f"{row}" for row in self._hypersurface])
-        return (f"Tropical surface of {self._poly} are \n[{components}]")
+        return (f"Tropical surface of {self._poly}")
 
 class TropicalCurve(TropicalVariety):
     r""""
@@ -689,14 +692,20 @@ class TropicalCurve(TropicalVariety):
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
-            sage: (x).tropical_variety()
-            Graphics object consisting of 0 graphics primitives
+            sage: (x).tropical_variety().components()
+            []
+        
+        .. PLOT::
+            :width: 300 px
 
+            T = TropicalSemiring(QQ)
+            R.<x,y> = PolynomialRing(T)
+            (x).tropical_variety().plot()
 
         A polynomial with only two terms will give one straight line::
 
-            sage: (y+R(1)).tropical_variety()
-            Graphics object consisting of 1 graphics primitive
+            sage: (y+R(1)).tropical_variety().components()
+            [[(t1, 1), [-Infinity < t1, t1 < +Infinity], 1]]
 
         .. PLOT::
         :width: 300 px
@@ -705,15 +714,14 @@ class TropicalCurve(TropicalVariety):
             R.<x,y> = PolynomialRing(T)
             (y+R(1)).tropical_variety().plot()
 
-        An intriguing and fascinating tropical curve can be obtained with a 
-        more complex tropical polynomial::
+        An intriguing and fascinating tropical curve can be obtained with
+        a more complex tropical polynomial::
 
             sage: p1 = R(1) + R(2)*x + R(3)*y + R(6)*x*y + R(10)*x*y^2
-            sage: p1.tropical_variety()
-            Tropical curve of 10*x*y^2 + 6*x*y + 2*x + 3*y + 1 are 
-            [[(-1, t1), [-2 <= t1], 1]
-            [(t1, -2), [-1 <= t1], 1]
-            [(t1 + 1, t1), [-4 <= t1, t1 <= -2], 1]
+            sage: p1.tropical_variety().components() 
+            [[(-1, t1), [-2 <= t1], 1],
+            [(t1, -2), [-1 <= t1], 1],
+            [(t1 + 1, t1), [-4 <= t1, t1 <= -2], 1],
             [(-t1 - 7, t1), [t1 <= -4], 1]]
 
         .. PLOT::
@@ -801,10 +809,6 @@ class TropicalCurve(TropicalVariety):
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: (x^2+y^2+R(0)).tropical_variety()
-            Tropical curve of 0*x^2 + 0*y^2 + 0 are 
-            [[(t1, t1), [t1 <= 0], 2]
-            [(0, t1), [t1 >= 0], 2]
-            [(t1, 0), [t1 >= 0], 2]]
+            Tropical curve of 0*x^2 + 0*y^2 + 0
         """
-        components = "\n".join([f"{row}" for row in self._hypersurface])
-        return (f"Tropical curve of {self._poly} are \n[{components}]")
+        return (f"Tropical curve of {self._poly}")
