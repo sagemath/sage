@@ -9,9 +9,7 @@ REFERENCES:
 :ref:`E <ref-E>`
 :ref:`F <ref-F>`
 :ref:`G <ref-G>`
-:ref:`H <ref-H>`
-:ref:`I <ref-I>`
-:ref:`J <ref-J>`
+:ref:`H <ref-H>` :ref:`I <ref-I>` :ref:`J <ref-J>`
 :ref:`K <ref-K>`
 :ref:`L <ref-L>`
 :ref:`M <ref-M>`
@@ -5342,6 +5340,11 @@ REFERENCES:
              Minimal Terminal Q-Factorial Models of Drinfeld Coarse Moduli Schemes.
              Mathematical Physics, Analysis and Geometry 1, 171-191 (1998).
              :doi:`10.1023/A:1009724323513`
+
+.. [PP2010] \C. Paar and J. Pelzl.
+            *Understanding Cryptography*.
+            Springer Berlin, Heidelberg, 2010.
+            :doi:`10.1007/978-3-642-04101-3`
 
 .. [PPW2013] \D. Perkinson, J. Perlman, and J. Wilmes.
              *Primer for the algebraic geometry of sandpiles*.
