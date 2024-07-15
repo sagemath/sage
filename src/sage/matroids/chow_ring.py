@@ -20,7 +20,6 @@ from sage.matroids.chow_ring_ideal import ChowRingIdeal, AugmentedChowRingIdeal
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
-import sage.misc.latex as latex
 
 class ChowRing(QuotientRing_nc):
     r"""
@@ -57,4 +56,5 @@ class ChowRing(QuotientRing_nc):
         return "Chow ring of {}".format(self._matroid)    
 
     def _latex_(self):
+        import sage.misc.latex as latex
         return "%s/%s" % (latex.latex(self.poly_ring), latex.latex(self._ideal))
