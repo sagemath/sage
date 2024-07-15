@@ -8,7 +8,7 @@ implement specific cryptosystems.
 
 AUTHORS:
 
-- Vincent Macri (2024-07-12): initial version
+- Vincent Macri (2024-07-15): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2024 Vincent Macri <vincent.macri@ucalgary.ca>

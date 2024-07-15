@@ -55,7 +55,7 @@ class DiffieHellman(KeyExchangeScheme):
         REFERENCES:
 
         For more information, see [PP2010]_, section 8.1.
-        
+
         EXAMPLES::
 
             sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
@@ -68,7 +68,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         self._p = p
         self._g = self._field(g)
-        
+
         # While these values won't cause mathematical problems, they do completely
         # break the security of the Diffie-Hellman scheme.
         # g = 0 makes every secret key and shared secret 0
