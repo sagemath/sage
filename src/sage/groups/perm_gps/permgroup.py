@@ -1581,6 +1581,74 @@ class PermutationGroup_generic(FiniteGroup):
         p = self._libgap_().SmallestMovedPoint()
         return self._domain_from_gap[Integer(p)]
 
+    @cached_method
+    def disjoint_direct_product_decomposition(self):
+        r"""
+        Returns the finest partition of `self.domain()` such that `self`
+        is isomorphic to the direct product of the projections of `self`
+        onto each part of the partition. Each part is a union of orbits
+        of `self`.
+
+        EXAMPLES::
+            sage: H = PermutationGroup([[(1,2,3),(7,9,8),(10,12,11)],[(4,5,6),(7,8,9),(10,11,12)],[(5,6),(8,9),(11,12)],[(7,8,9),(10,11,12)]])
+            sage: S = H.disjoint_direct_product_decomposition();S
+            {{1, 2, 3}, {4, 5, 6, 7, 8, 9, 10, 11, 12}}
+            sage: A = libgap.Stabilizer(H, list(S[0]), libgap.OnTuples);A
+            Group([ (7,8,9)(10,11,12), (5,6)(8,9)(11,12), (4,5,6)(7,8,9)(10,11,12) ])
+            sage: B = libgap.Stabilizer(H, list(S[1]), libgap.OnTuples);B
+            Group([ (1,2,3) ])
+            sage: T = PermutationGroup(gap_group=libgap.DirectProduct(A,B))
+            sage T.is_isomorphic(H)
+            True
+        """
+        from sage.combinat.set_partition import SetPartition
+        from sage.sets.disjoint_set import DisjointSet
+        H = self._libgap_()
+        if self.is_trivial():
+            return SetPartition(DisjointSet(self.domain()))
+        if libgap.NrMovedPoints(H) == self.degree() and libgap.IsTransitive(H):
+            return SetPartition([self.domain()])
+        O = libgap.Orbits(H)
+        k = len(O)
+        OrbitMapping = dict()
+        for i in range(k):
+            for x in O[i]:
+                OrbitMapping[x]=i
+        C = libgap.StabChain(H,libgap.Concatenation(O))
+        X = libgap.StrongGeneratorsStabChain(C)
+        P = DisjointSet(k)
+        R = libgap.List([])
+        identity = libgap.Identity(H)
+        for i in range(k-1):
+            libgap.Append(R,O[i])
+            Xp = libgap.List([])
+            while True:
+                try:
+                    if libgap.IsSubset(O[i],C['orbit']):
+                        C = C['stabilizer']
+                    else:
+                        break
+                except ValueError:  #this should catch a GAPError but I don't know how to make it work
+                    break
+            for x in X:
+                xs = libgap.SiftedPermutation(C,x)
+                if xs != identity:
+                    cj = OrbitMapping[libgap.SmallestMovedPoint(libgap.RestrictedPerm(x,R))]
+                    libgap.Add(Xp,xs)
+                    if libgap.RestrictedPerm(xs,O[i+1]) != identity:
+                        P.union(i+1,cj)
+                else:
+                    libgap.Add(Xp,x)
+            X = Xp
+        final_partition = DisjointSet(self.domain())
+        for part in P:
+            grp = [self._domain_from_gap[Integer(x)]
+                   for i in part
+                   for x in O[i]]
+            for i in range(1,len(grp)):
+                final_partition.union(grp[0],grp[i])
+        return SetPartition(final_partition)
+
     def representative_action(self, x, y):
         r"""
         Return an element of ``self`` that maps `x` to `y` if it exists.
