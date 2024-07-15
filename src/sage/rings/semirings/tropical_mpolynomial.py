@@ -46,11 +46,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
     r"""
     A multivariate tropical polynomial.
 
-    Let `x1, x2, \dots , xn` be variables which represent elements in the 
-    tropical semiring. A tropical monomial is any product of these variables,
-    possibly including repetitions: `x_1^{i_1}\dots x_n^{i_n}` where
-    `i_j \in \{0,1,\dots}`, for all `j\in \{1,dots,n}`. A multivariate
-    tropical polynomial is a finite linear combination of tropical monomials,
+    Let `x_1, x_2, \ldots, x_n` be indeterminants. A tropical monomial is
+    any product of these variables, possibly including repetitions:
+    `x_1^{i_1}\dots x_n^{i_n}` where `i_j \in \{0,1,\ldots\}`, for all
+    `j\in \{1,\ldots,n\}`. A multivariate tropical polynomial is a finite
+    linear combination of tropical monomials,
     `p(x_1, \dots, x_n) = \sum_{i=1}^n c_i x_1^{i_1}\dots x_n^{i_n}`.
 
     In classical arithmetic, we can rewrite the general form of a tropical
@@ -84,9 +84,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
         sage: p1(T(1),T(2))
         6
 
-    Let us look at the different result for tropical curve and 3d graph of
-    tropical polynomial in two variables when the min-plus or max-plus algebra
-    is used::
+    Let us look at the different result for tropical curve and 3d graph
+    of tropical polynomial in two variables when the min-plus or max-plus
+    algebra is used::
 
         sage: T = TropicalSemiring(QQ, use_min=True)
         sage: R.<a,b> = PolynomialRing(T)
@@ -96,10 +96,25 @@ class TropicalMPolynomial(MPolynomial_polydict):
         [[(t1, -3), [t1 <= -4], 1]
         [(-4, t1), [t1 <= -3], 1]
         [(t1 - 1, t1), [t1 >= -3], 1]]
-        sage: plot(p1.tropical_variety())
-        Graphics object consisting of 3 graphics primitives
-        sage: p1.plot3d()
-        Graphics3d Object
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=True)
+        R.<a,b> = PolynomialRing(T)
+        p1 = R(3)*a*b + a + R(-1)*b
+        tv1 = p1.tropical_variety()
+        tv1.plot()
+        
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=True)
+        R.<a,b> = PolynomialRing(T)
+        p1 = R(3)*a*b + a + R(-1)*b
+        p1.plot3d()
+    
+    ::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<a,b> = PolynomialRing(T)
@@ -109,10 +124,23 @@ class TropicalMPolynomial(MPolynomial_polydict):
         [[(t1, -3), [t1 >= -4], 1]
         [(-4, t1), [t1 >= -3], 1]
         [(t1 - 1, t1), [t1 <= -3], 1]]
-        sage: plot(p1.tropical_variety())
-        Graphics object consisting of 3 graphics primitives
-        sage: p1.plot3d()
-        Graphics3d Object
+    
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R.<a,b> = PolynomialRing(T)
+        p1 = R(3)*a*b + a + R(-1)*b
+        tv1 = p1.tropical_variety()
+        tv1.plot()
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R.<a,b> = PolynomialRing(T)
+        p1 = R(3)*a*b + a + R(-1)*b
+        p1.plot3d()
 
     TESTS:
 
@@ -127,14 +155,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
     """
     def subs(self, fixed=None, **kwds):
         """
-        Fix some given variables in a given tropical multivariate polynomial
-        and return the changed tropical multivariate polynomials.
-        
-        The polynomial itself is not affected. The variable, value pairs
-        for fixing are to be provided as a dictionary of the form
-        ``{variable: value}``. This is a special case of evaluating the
-        tropical polynomial with with some of the variables set to constants
-        while the remaining variables retain their original values.
+        Fix some given variables in ``self`` and return the changed
+        tropical multivariate polynomials.
 
         INPUT:
 
@@ -143,6 +165,10 @@ class TropicalMPolynomial(MPolynomial_polydict):
         -  ``**kwds`` -- named parameters
 
         OUTPUT: new :class:`TropicalMPolynomial`
+
+        .. SEEALSO::
+        
+            :meth:`sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict.subs
 
         EXAMPLES::
 
@@ -180,11 +206,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
     def plot3d(self):
         """
-        Return the 3d plot of this multivariate tropical polynomial.
+        Return the 3d plot of ``self``.
 
-        Can only be implemented for tropical polynomial in two variables.
-        The x-y axes for this 3d plot is the same as the x-y axes of the
-        corresponding tropical curve.
+        Only implemented for tropical polynomial in two variables.
+        The `x`-`y` axes for this 3d plot is the same as the `x-y`
+        axes of the corresponding tropical curve.
 
         OUTPUT: Graphics3d Object
 
@@ -192,13 +218,28 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R.<x,y> = PolynomialRing(T)
-            sage: p1 = R(3)+R(2)*x+R(2)*y+R(3)*x*y; p1
+            sage: p1 = x^2
+        
+        .. PLOT::
+        :width: 300 px
+
+            T = TropicalSemiring(QQ, use_min=False)
+            R.<x,y> = PolynomialRing(T)
+            p1 = x^2
+            p1.plot3d()
+
+        ::
+
+            sage: p2 = R(3)+R(2)*x+R(2)*y+R(3)*x*y; p2
             3*x*y + 2*x + 2*y + 3
-            sage: p1.plot3d()
-            Graphics3d Object
-            sage: p2 = x^2
-            sage: p2.plot3d()
-            Graphics3d Object
+
+        .. PLOT::
+        :width: 300 px
+
+            T = TropicalSemiring(QQ, use_min=False)
+            R.<x,y> = PolynomialRing(T)
+            p2 = R(3)+R(2)*x+R(2)*y+R(3)*x*y
+            p2.plot3d()
 
         TESTS::
 
@@ -237,7 +278,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         In multivariate case, the roots can be represented by a tropical
         variety. For 2 dimensions, it is also called a tropical curve.
 
-        OUTPUT: ``TropicalVariety`` object
+        OUTPUT: a :class:`sage.rings.semirings.tropical_variety.TropicalVariety`
         
         EXAMPLES:
 
@@ -372,7 +413,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- ``dict``, constant, or :class:`MPolynomial`
+        - ``x`` -- ``dict``, constant, or :class:`MPolynomial` #edit
 
         EXAMPLES::
 
@@ -453,9 +494,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         """
         if self._ngens == 0:
             return (f"Multivariate Tropical Polynomial Semiring in no variables"
-            f" over {self.base_ring().base_ring()}")
+                    f" over {self.base_ring().base_ring()}")
         return (f"Multivariate Tropical Polynomial Semiring in {', '.join(self.variable_names())}"
-            f" over {self.base_ring().base_ring()}")
+                f" over {self.base_ring().base_ring()}")
     
     def random_element(self, degree=2, terms=None, choose_degree=False,
                        *args, **kwargs):
@@ -464,7 +505,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
         SEEALSO::
 
-            :meth:`MPolynomialRing_base.random_element`
+            :meth:`sage.rings.polynomial.multi_polynomial_ring_base.MPolynomialRing_base.random_element`
 
         EXAMPLES::
 
@@ -476,7 +517,8 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
-        return self(R.random_element(degree=degree, terms=terms, choose_degree=choose_degree, 
+        return self(R.random_element(degree=degree, terms=terms,
+                                     choose_degree=choose_degree, 
                                      *args, **kwargs))
     
     def gen(self, n=0):
