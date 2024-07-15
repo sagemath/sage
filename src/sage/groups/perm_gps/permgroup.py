@@ -1605,6 +1605,10 @@ class PermutationGroup_generic(FiniteGroup):
             sage: T = PermutationGroup(gap_group=libgap.DirectProduct(A,B))
             sage: T.is_isomorphic(H)
             True
+            sage: PermutationGroup(PermutationGroup(gap_group=A).gens(),domain=list(S[1])).disjoint_direct_product_decomposition()
+            {{4, 5, 6, 7, 8, 9, 10, 11, 12}}
+            sage: PermutationGroup(PermutationGroup(gap_group=B).gens(),domain=list(S[0])).disjoint_direct_product_decomposition()
+            {{1, 2, 3}}
         """
         from sage.combinat.set_partition import SetPartition
         from sage.sets.disjoint_set import DisjointSet
