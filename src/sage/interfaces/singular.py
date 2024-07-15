@@ -1490,9 +1490,12 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
         For matrices, the length is the number of columns::
 
-            sage: A = singular.matrix(2,4)
+            sage: A = singular.matrix(2, 4)
             sage: len(A)
             4
+            sage: A = singular.matrix(2, 2)
+            sage: len(A)
+            2
         """
         if self.type() == 'matrix':
             return int(self.ncols())
