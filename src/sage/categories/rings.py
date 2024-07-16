@@ -644,13 +644,6 @@ class Rings(CategoryWithAxiom):
             """
             The monoid of the ideals of this ring.
 
-            .. NOTE::
-
-                The code is copied from the base class of rings.
-                This is since there are rings that do not inherit
-                from that class, such as matrix algebras.  See
-                :issue:`7797`.
-
             EXAMPLES::
 
                 sage: # needs sage.modules
