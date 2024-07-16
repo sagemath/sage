@@ -26,7 +26,7 @@ from sage.arith.misc import is_prime
 from sage.misc.prandom import randint
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn_with_category
+from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.finite_rings.integer_mod import IntegerMod_int
 from sage.structure.sage_object import SageObject
 
@@ -42,7 +42,8 @@ class DiffieHellman(KeyExchangeScheme):
 
         INPUT:
 
-        - ``p`` -- prime integer that the key exchanges will be performed over `\\GF{p}`
+        - ``p`` -- prime integer defining the field `\\GF{p}`` that the key exchanges
+          will be performed over, must be at least 5
 
         - ``g`` -- base for the key exchange, (coerceable to) an element of `\\GF{p}` from `2` to `p - 2`
 
@@ -63,6 +64,10 @@ class DiffieHellman(KeyExchangeScheme):
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/37305 for details.
         """
+
+        if p < 5:
+            raise ValueError('p must be at least 5')
+
         # The modn implementation takes care of checking that ``p`` is prime
         self._field = GF(p, impl='modn')
 
@@ -77,7 +82,7 @@ class DiffieHellman(KeyExchangeScheme):
         if self._g == 0 or self._g == 1 or self._g == p - 1:
             raise ValueError('g cannot be 0, 1, or p - 1 (mod p)')
 
-    def field(self) -> FiniteField_prime_modn_with_category:
+    def field(self) -> FiniteField_prime_modn:
         """
         Return the field this Diffie-Hellman instance is working over.
 
