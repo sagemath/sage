@@ -20,7 +20,7 @@ AUTHORS:
 
 from sage.misc.superseded import experimental
 
-from sage.crypto.key_exchange.pke import KeyExchangeScheme
+from sage.crypto.key_exchange.key_exchange import KeyExchangeScheme
 
 from sage.arith.misc import is_prime
 from sage.misc.prandom import randint
