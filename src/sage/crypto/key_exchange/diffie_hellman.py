@@ -308,5 +308,6 @@ class DiffieHellman(KeyExchangeScheme):
             sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(7, 3)
             sage: latex(DH)
+            \text{Diffie-Hellman key exchange over }\Bold{F}_{7}\text{ with generator }3
         """
         return f'\\text{{Diffie-Hellman key exchange over }}{self._field._latex_()}\\text{{ with generator }}{self._g}'
