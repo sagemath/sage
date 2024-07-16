@@ -21,8 +21,9 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.superseded import experimental
+from sage.structure.sage_object import SageObject
 
-class KeyExchangeScheme:
+class KeyExchangeScheme(SageObject):
 
     @experimental(37305)
     def __init__(self):
