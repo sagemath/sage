@@ -42,7 +42,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         INPUT:
 
-        - ``p`` -- prime integer defining the field `\\GF{p}`` that the key exchanges
+        - ``p`` -- prime integer defining the field `\\GF{p}` that the key exchanges
           will be performed over, must be at least 5
 
         - ``g`` -- base for the key exchange, (coerceable to) an element of `\\GF{p}` from `2` to `p - 2`
