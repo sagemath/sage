@@ -4082,7 +4082,6 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             if not T:
                 return x0, y0
 
-            from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
             try:
                 x1 = (n//n1 * T).log(o*P1, n1)
                 y1 = (n//n2 * T).log(o*P2, n2)
