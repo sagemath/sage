@@ -1584,7 +1584,7 @@ class PermutationGroup_generic(FiniteGroup):
     @cached_method
     def disjoint_direct_product_decomposition(self):
         r"""
-        Returns the finest partition of the underlying set such that ``self``
+        Return the finest partition of the underlying set such that ``self``
         is isomorphic to the direct product of the projections of ``self``
         onto each part of the partition. Each part is a union of orbits
         of ``self``.
@@ -1612,6 +1612,13 @@ class PermutationGroup_generic(FiniteGroup):
             sage: PermutationGroup(PermutationGroup(gap_group=B).gens(),domain=list(S[0])).disjoint_direct_product_decomposition()
             {{1, 2, 3}}
 
+        An example with a different domain::
+
+            sage: PermutationGroup([[('a','c','d'),('b','e')]]).disjoint_direct_product_decomposition()
+            {{'a', 'c', 'd'}, {'b', 'e'}}
+            sage: PermutationGroup([[('a','c','d','b','e')]]).disjoint_direct_product_decomposition()
+            {{'a', 'b', 'c', 'd', 'e'}}
+
         Counting the number of "connected" permutation groups of degree `n`::
 
             sage: seq = [sum(1 for G in SymmetricGroup(n).conjugacy_classes_subgroups() if len(G.disjoint_direct_product_decomposition()) == 1) for n in range(1,8)]; seq
@@ -1622,22 +1629,22 @@ class PermutationGroup_generic(FiniteGroup):
         from sage.combinat.set_partition import SetPartition
         from sage.sets.disjoint_set import DisjointSet
         H = self._libgap_()
-        if self.is_trivial():
-            return SetPartition(DisjointSet(self.domain()))
-        if libgap.NrMovedPoints(H) == self.degree() and libgap.IsTransitive(H):
-            return SetPartition([self.domain()])
-        O = libgap.Orbits(H)
-        k = len(O)
+        # sort each orbit and order list by smallest element of each orbit
+        O = libgap.List([libgap.ShallowCopy(orbit) for orbit in libgap.Orbits(H)])
+        for orbit in O:
+            libgap.Sort(orbit)
+        O.Sort()
+        num_orbits = len(O)
         OrbitMapping = dict()
-        for i in range(k):
+        for i in range(num_orbits):
             for x in O[i]:
                 OrbitMapping[x] = i
         C = libgap.StabChain(H, libgap.Concatenation(O))
         X = libgap.StrongGeneratorsStabChain(C)
-        P = DisjointSet(k)
+        P = DisjointSet(num_orbits)
         R = libgap.List([])
         identity = libgap.Identity(H)
-        for i in range(k-1):
+        for i in range(num_orbits-1):
             libgap.Append(R, O[i])
             Xp = libgap.List([])
             while True:
@@ -1646,14 +1653,14 @@ class PermutationGroup_generic(FiniteGroup):
                         C = C['stabilizer']
                     else:
                         break
-                except ValueError:  #this should catch a GAPError but I don't know how to make it work
+                except ValueError:
                     break
             for x in X:
                 xs = libgap.SiftedPermutation(C, x)
                 if xs != identity:
-                    cj = OrbitMapping[libgap.SmallestMovedPoint(libgap.RestrictedPerm(x, R))]
                     libgap.Add(Xp, xs)
                     if libgap.RestrictedPerm(xs, O[i+1]) != identity:
+                        cj = OrbitMapping[libgap.SmallestMovedPoint(libgap.RestrictedPerm(x, R))]
                         P.union(i+1, cj)
                 else:
                     libgap.Add(Xp, x)
