@@ -6887,7 +6887,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             (
             [              1 19/24*a + 19/24]
             [              0               1],
-            Elliptic Curve defined by y^2 = x^3 + 95/96*a*x + (-1169/3456*a+1169/3456) 
+            Elliptic Curve defined by y^2 = x^3 + 95/96*a*x + (-1169/3456*a+1169/3456)
             over Number Field in a with defining polynomial y^2 + 1
             )
 
@@ -6902,7 +6902,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             (
             [11/1602*a^2 41/3204*a^2]
             [     -2/5*a      -1/5*a],
-            Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696) 
+            Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696)
             over Number Field in a with defining polynomial y^3 - 267
             )
 
@@ -6955,7 +6955,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: E=EllipticCurve([1,x])
             sage: f=P.Lattes_map(E,2)
             sage: f.Lattes_to_curve()
-            Elliptic Curve defined by y^2 = x^3 + x + a 
+            Elliptic Curve defined by y^2 = x^3 + x + a
             over Number Field in a with defining polynomial y^2 - 2
 
         """
