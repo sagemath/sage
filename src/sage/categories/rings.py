@@ -667,6 +667,28 @@ class Rings(CategoryWithAxiom):
 
                 sage: MS.ideal_monoid() is MS.ideal_monoid()                            # needs sage.modules
                 True
+
+            More examples::
+
+                sage: # needs sage.combinat sage.modules
+                sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)
+                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
+                sage: Q = F.quotient(I)
+                sage: Q.ideal_monoid()
+                Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z)
+                 over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
+                sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')
+                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
+                sage: Q = F.quo(I)
+                sage: Q.ideal_monoid()
+                Monoid of ideals of Quotient of Free Associative Unital Algebra
+                 on 3 generators (x, y, z) over Integer Ring
+                 by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
+
+                sage: ZZ.ideal_monoid()
+                Monoid of ideals of Integer Ring
+                sage: R.<x> = QQ[]; R.ideal_monoid()
+                Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
             """
             try:
                 from sage.rings.ideal_monoid import IdealMonoid
