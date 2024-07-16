@@ -1612,9 +1612,9 @@ class PermutationGroup_generic(FiniteGroup):
             sage: PermutationGroup(PermutationGroup(gap_group=B).gens(),domain=list(S[0])).disjoint_direct_product_decomposition()
             {{1, 2, 3}}
 
-        Counting the number of connected subgroups::
+        Counting the number of "connected" permutation groups of degree `n`::
 
-            sage: seq = [sum(1 for G in SymmetricGroup(n).conjugacy_classes_subgroups() if len(G.disjoint_direct_product_decomposition()) == 1) for n in range(1,8)];seq
+            sage: seq = [sum(1 for G in SymmetricGroup(n).conjugacy_classes_subgroups() if len(G.disjoint_direct_product_decomposition()) == 1) for n in range(1,8)]; seq
             [1, 1, 2, 6, 6, 27, 20]
             sage: oeis(seq) # optional -- internet
             0: A005226: Number of atomic species of degree n; also number of connected permutation groups of degree n.
