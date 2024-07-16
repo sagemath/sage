@@ -300,7 +300,7 @@ class DiffieHellman(KeyExchangeScheme):
         return f'Diffie-Hellman key exchange over {self._field} with generator {self._g}'
 
     def _latex_(self):
-        """
+        r"""
         Get the LaTeX representation of the Diffie-Hellman instance.
 
         TESTS::
