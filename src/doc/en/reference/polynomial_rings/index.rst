@@ -63,7 +63,7 @@ Infinite Polynomial Rings
    sage/rings/polynomial/symmetric_reduction
 
 Tropical Polynomials
--------------------
+--------------------
 
 .. toctree::
    :maxdepth: 1
