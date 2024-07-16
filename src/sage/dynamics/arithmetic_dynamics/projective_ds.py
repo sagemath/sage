@@ -109,7 +109,8 @@ from sage.schemes.projective.projective_morphism import (
 from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
-
+from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
@@ -6837,7 +6838,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r_vals = sorted([val for val in r.values() if val != 1])
         return r_vals in r_lattes_cases
 
-    def Lattes_to_curve(self, return_conjugation=False):
+    def Lattes_to_curve(self, return_conjugation=False, check_lattes=False):
         r"""
         Finds a Short Weierstrass Model Elliptic curve of self
         self assumed to be Lattes map and not in charateristic 2 or 3
@@ -6847,9 +6848,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         `return_conjugation`` -- (default: ``False``) if ``True``, then
         return the conjugation that moves self to a map that comes from a
         Short Weierstrass Model Elliptic curve
+        `check_lattes``.-.(default:.``False``) if ``True``, then  will ValueError if not Lattes
 
         OUTPUT: a Short Weierstrass Model Elliptic curve which is isogenous to
-        the Elliptic curve of 'self' and the defining polynomial of any required extension,
+        the Elliptic curve of 'self',
         If ``return_conjugation`` is ``True``
         then also returns conjugation of 'self' to short form as a matrix
 
@@ -6869,7 +6871,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.Lattes_to_curve(return_conjugation = True)
             (
             [  -7/36*a^2 + 7/12*a + 7/3 -17/18*a^2 + 17/6*a + 34/3]
-            [    -1/8*a^2 + 1/4*a + 3/2        1/4*a^2 - 1/2*a - 3], Elliptic Curve defined by y^2 = x^3 + (-94/27*a^2+94/9*a+376/9)*x + 12232/243 over Number Field in a with defining polynomial y^3 - 18*y - 30
+            [    -1/8*a^2 + 1/4*a + 3/2        1/4*a^2 - 1/2*a - 3],
+            Elliptic Curve defined by y^2 = x^3 + (-94/27*a^2+94/9*a+376/9)*x +
+            12232/243 over Number Field in a with defining polynomial y^3 - 18*y - 30
             )
 
         ::
@@ -6881,8 +6885,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f = f.conjugate(M)
             sage: f.Lattes_to_curve(return_conjugation = True)
             (
-            [              1 19/24*I + 19/24]
-            [              0               1], Elliptic Curve defined by y^2 = x^3 + 95/96*I*x + (-1169/3456*I+1169/3456) over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+            [              1 19/24*a + 19/24]
+            [              0               1],
+            Elliptic Curve defined by y^2 = x^3 + 95/96*a*x + (-1169/3456*a+1169/3456) 
+            over Number Field in a with defining polynomial y^2 + 1
             )
 
         ::
@@ -6895,7 +6901,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.Lattes_to_curve(return_conjugation = True)
             (
             [11/1602*a^2 41/3204*a^2]
-            [     -2/5*a      -1/5*a], Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696) over Number Field in a with defining polynomial y^3 - 267
+            [     -2/5*a      -1/5*a],
+            Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696) 
+            over Number Field in a with defining polynomial y^3 - 267
             )
 
         ::
@@ -6913,22 +6921,60 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: K == f.change_ring(K.base_ring())
             True
 
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: F = DynamicalSystem_projective([x^4,y^4])
+            sage: F.Lattes_to_curve(check_lattes=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: Map is not Lattes
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQbar,1)
+            sage: F = DynamicalSystem_projective([x^4,y^4])
+            sage: F.Lattes_to_curve(check_lattes=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Base ring must be a number field
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: F = DynamicalSystem_projective([x^3,y^3])
+            sage: F.Lattes_to_curve(check_lattes=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Map is not Lattes or is Complex Lattes
+
+        ::
+
+            sage: K.<x>=QuadraticField(2)
+            sage: P.<a,y>=ProjectiveSpace(K,1)
+            sage: E=EllipticCurve([1,x])
+            sage: f=P.Lattes_map(E,2)
+            sage: f.Lattes_to_curve()
+            Elliptic Curve defined by y^2 = x^3 + x + a 
+            over Number Field in a with defining polynomial y^2 - 2
+
         """
-        if self.base_ring() not in NumberFields():
-                raise NotImplementedError("Base ring must be a number field")
+        if self.base_ring() is not QQbar:
+            if self.base_ring() not in NumberFields():
+                    raise NotImplementedError("Base ring must be a number field")
     #The Complex case is hard to implement and needs to be done later
         if sqrt(self.degree()) != int(sqrt(self.degree())):
             raise NotImplementedError("Map is not Lattes or is Complex Lattes")
-        from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
-        from sage.schemes.elliptic_curves.constructor import EllipticCurve
-        d = self.degree()
+        if check_lattes:
+            V = self.is_Lattes()
+            if not V:
+                raise ValueError("Map is not Lattes")
         n = int(sqrt(self.degree()))
     #Creating a Symbolic Lattes map f_sym from a short Elliptic curve
-        R = PolynomialRing(self.base_ring(),6,"a, b, u, v, w, t")
+        R = PolynomialRing(self.base_ring(), 6, "avar, bvar, uvar, vvar, wvar, tvar")
         a, b, u, v, w, t = R.gens()
+        P = ProjectiveSpace(R, 1, self.domain().gens())
         E_sym = EllipticCurve([a, b])
-        P = ProjectiveSpace(R,1,"x, y")
-        x, y = P.gens()
         f_sym = P.Lattes_map(E_sym, n)
     # Conjugating f_sym map to have the right form so we can solve for the conjugating matrix later
         m = matrix(R, 2, [u, v, t, w])
@@ -6936,12 +6982,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         f_sym.scale_by(u*w - v*t)
         F_sym = f_sym.dehomogenize(1)
     #extracting the base variables to do term by term matching
-        P = ProjectiveSpace(self.base_ring(), 1, "x, y")
-        x, y = P.gens()
         self.scale_by(1/self[0].lc())
         F = self.dehomogenize(1)
-        x = F[0].parent().gen(0)
-        z = F_sym[0].parent().gen(0)
     #Creating a set of equations, eq, from term by term matching
         eq = [u*w - v*t-1]
         for j in range(2):
@@ -6951,25 +6993,27 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             else:
                 g = F[0].denominator()
                 g_sym = F_sym[0].denominator()
-            for i in range(d + 1):
-                eq += [g.coefficient({x:i}) - g_sym.coefficient({z:i})]
+            eq += (g - g_sym).coefficients()
     #Solving the equations
-        I = R.ideal(eq)
-        pts = I.variety(ring=QQbar)
-        a = pts[0]['a']
-        b = pts[0]['b']
-        u = pts[0]['u']
-        v = pts[0]['v']
-        t = pts[0]['t']
-        w = pts[0]['w']
+        phi = QQbar.coerce_map_from(R.base_ring())
+        if phi is None:
+            phi = R.base_ring().embeddings(QQbar)[0]
+        eq = [poly.numerator().change_ring(phi) for poly in eq]
+        I = eq[0].parent().ideal(eq)
+        pts = I.variety()
+        a = pts[0]['avar']
+        b = pts[0]['bvar']
+        u = pts[0]['uvar']
+        v = pts[0]['vvar']
+        t = pts[0]['tvar']
+        w = pts[0]['wvar']
         K, [a, b, u, v, t, w], phi = number_field_elements_from_algebraics([a, b, u, v, t, w])
     #creating our end products
         E = EllipticCurve([a, b])
         if return_conjugation:
             M = matrix(K, 2, 2, [u, v, t, w])
             return (M, E)
-        else:
-            return E
+        return E
 
 class DynamicalSystem_projective_field(DynamicalSystem_projective,
                                        SchemeMorphism_polynomial_projective_space_field):
