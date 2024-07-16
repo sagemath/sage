@@ -30,13 +30,11 @@ AUTHORS:
 # ****************************************************************************
 
 from copy import copy
-from sage.arith.misc import factor
-from sage.arith.misc import gcd
+from sage.arith.misc import factor, gcd
 from sage.graphs.graph import Graph
 from sage.rings.fraction_field import FractionField
 from sage.rings.infinity import infinity
-from sage.rings.integer_ring import IntegerRing_class
-from sage.rings.integer_ring import ZZ
+from sage.rings.integer_ring import IntegerRing_class, ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
 from sage.structure.sage_object import SageObject
@@ -117,6 +115,7 @@ class LPASeed(SageObject):
         Initialize an LP seed.
 
         EXAMPLES::
+
             sage: var('x1, x2, x3')
             (x1, x2, x3)
             sage: S = LPASeed({x1: 1 + x2 + x3, x2: 1 + x1 + x3, x3: 1 + x1 + x2})
@@ -548,7 +547,7 @@ class LPASeed(SageObject):
 
         new_seeds_found = True
 
-        while (new_seeds_found and current_depth < depth):
+        while new_seeds_found and current_depth < depth:
 
             current_depth += 1
             new_seeds = []  # reset new seed list
@@ -574,10 +573,9 @@ class LPASeed(SageObject):
                         else:
                             yield seed2
 
-            new_seeds_found = (len(new_seeds) != 0)
             seeds_to_check = new_seeds
 
-            if new_seeds_found and verbose:
+            if new_seeds and verbose:
                 dc = str(current_depth)
                 dc += ' ' * (5 - len(dc))
                 nr = str(len(seeds_found))
@@ -1120,7 +1118,7 @@ class LPASeed(SageObject):
 
     def _copy_(self):
         r"""
-        Returns a copy of ``self``.
+        Return a copy of ``self``.
 
         TESTS::
 
@@ -1176,7 +1174,7 @@ class LPASeed(SageObject):
 
     def _latex_(self):
         r"""
-        Returns a `\LaTeX` representation of this seed.
+        Return a `\LaTeX` representation of this seed.
 
         TESTS::
 
@@ -1184,7 +1182,6 @@ class LPASeed(SageObject):
             (x1, x2)
             sage: latex(LPASeed({x1: 1 + x2, x2: 1 + x1}))
             \left(\left(x_{1}, x_{2} + 1\right), \left(x_{2}, x_{1} + 1\right)\right)
-
         """
         cvars = self.cluster()
         polys = self.exchange_polys()
@@ -1196,7 +1193,7 @@ class LPASeed(SageObject):
 
     def are_laurent_polys_trivial(self):
         r"""
-        Returns whether this seed has Laurent polynomials with nontrivial denominators.
+        Return whether this seed has Laurent polynomials with nontrivial denominators.
         """
         for poly in self.laurent_polys():
 
@@ -1208,7 +1205,8 @@ class LPASeed(SageObject):
 
     def is_mutation_infinite(self, give_reason=True):
         r"""
-        Performs some heuristic checks on the mutation class of this seed to work out if it is mutation infinite or not.
+        Perform some heuristic checks on the mutation class of this seed to work out if it is mutation infinite or not.
+
         Completely probabilistic and may false positive; do not use in research setting.
         Warning: This could take a long time for some seeds!
         """
@@ -1258,7 +1256,7 @@ class LPASeed(SageObject):
 
     def get_laurent_poly_denominators(self):
         r"""
-        Returns a list containing the denominators of the Laurent polynomials for this seed.
+        Return a list containing the denominators of the Laurent polynomials for this seed.
         """
         return [poly.denominator() for poly in self.laurent_polys()]
 
@@ -1283,9 +1281,11 @@ class LPASeed(SageObject):
 def _remove_repeat_indices(L):
     r"""
     Remove mutations twice at the same index from the list of indices ``L``.
+
     This will result in a list with no consecutive entries equal.
 
     TESTS::
+
         sage: var('x1, x2, x3, x4, x5')
         (x1, x2, x3, x4, x5)
         sage: S = LPASeed({x1:x2+x3,x2:x1+x4,x3:x1+x2,x4:x1+x3,x5:x1+x4})
