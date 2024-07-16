@@ -1593,16 +1593,16 @@ class PermutationGroup_generic(FiniteGroup):
         `n \cdot |X|`, where `n` is the degree of the group and `|X|` is
         the size of a generating set, see Theorem 4.5.
 
-        EXAMPLES::
+        EXAMPLES:
 
         The example from the original paper::
 
             sage: H = PermutationGroup([[(1,2,3),(7,9,8),(10,12,11)],[(4,5,6),(7,8,9),(10,11,12)],[(5,6),(8,9),(11,12)],[(7,8,9),(10,11,12)]])
-            sage: S = H.disjoint_direct_product_decomposition();S
+            sage: S = H.disjoint_direct_product_decomposition(); S
             {{1, 2, 3}, {4, 5, 6, 7, 8, 9, 10, 11, 12}}
-            sage: A = libgap.Stabilizer(H, list(S[0]), libgap.OnTuples);A
+            sage: A = libgap.Stabilizer(H, list(S[0]), libgap.OnTuples); A
             Group([ (7,8,9)(10,11,12), (5,6)(8,9)(11,12), (4,5,6)(7,8,9)(10,11,12) ])
-            sage: B = libgap.Stabilizer(H, list(S[1]), libgap.OnTuples);B
+            sage: B = libgap.Stabilizer(H, list(S[1]), libgap.OnTuples); B
             Group([ (1,2,3) ])
             sage: T = PermutationGroup(gap_group=libgap.DirectProduct(A,B))
             sage: T.is_isomorphic(H)
@@ -1614,10 +1614,9 @@ class PermutationGroup_generic(FiniteGroup):
 
         Counting the number of connected subgroups::
 
-            sage: # optional -- internet
             sage: seq = [sum(1 for G in SymmetricGroup(n).conjugacy_classes_subgroups() if len(G.disjoint_direct_product_decomposition()) == 1) for n in range(1,8)];seq
             [1, 1, 2, 6, 6, 27, 20]
-            sage: oeis(seq)
+            sage: oeis(seq) # optional -- internet
             0: A005226: Number of atomic species of degree n; also number of connected permutation groups of degree n.
         """
         from sage.combinat.set_partition import SetPartition
@@ -1659,14 +1658,11 @@ class PermutationGroup_generic(FiniteGroup):
                 else:
                     libgap.Add(Xp, x)
             X = Xp
-        final_partition = DisjointSet(self.domain())
-        for part in P:
-            grp = [self._domain_from_gap[Integer(x)]
-                   for i in part
-                   for x in O[i]]
-            for i in range(1, len(grp)):
-                final_partition.union(grp[0], grp[i])
-        return SetPartition(final_partition)
+        return SetPartition([
+            [self._domain_from_gap[Integer(x)]
+             for i in part
+             for x in O[i]] for part in P] +
+             [[x] for x in self.fixed_points()])
 
     def representative_action(self, x, y):
         r"""
