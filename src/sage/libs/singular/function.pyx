@@ -1832,18 +1832,35 @@ def get_printlevel():
 
     EXAMPLES::
 
-        sage: from sage.libs.singular.function import singular_function
-        sage: from sage.libs.singular.function import get_printlevel
+        sage: from sage.libs.singular.function import get_printlevel, set_printlevel
         sage: l = get_printlevel()
-        sage: exec = singular_function('execute')
-        sage: exec("printlevel=-1")
+        sage: set_printlevel(-1)
         sage: get_printlevel()
         -1
-        sage: exec(f"printlevel={l}")
+        sage: set_printlevel(l)
     """
     global printlevel
     cdef int pl = printlevel
     return pl
+
+
+def set_printlevel(l):
+    """
+    Set the  value of the variable ``printlevel``.
+
+    This is useful to switch off and back the comments.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.function import get_printlevel, set_printlevel
+        sage: l = get_printlevel()
+        sage: set_printlevel(2)
+        sage: get_printlevel()
+        2
+        sage: set_printlevel(l)
+    """
+    global printlevel
+    printlevel = <int>l
 
 
 def list_of_functions(packages=False):

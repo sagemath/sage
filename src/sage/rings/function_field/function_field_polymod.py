@@ -2390,17 +2390,17 @@ def _singular_normal(ideal):
         sage: _singular_normal(ideal(f))
         [[1]]
     """
-    from sage.libs.singular.function import (singular_function, lib,
-                                             get_printlevel)
-    lib('normal.lib')
+    from sage.libs.singular.function import (singular_function,
+                                             lib as singular_lib,
+                                             get_printlevel, set_printlevel)
+    singular_lib('normal.lib')
     normal = singular_function('normal')
-    execute = singular_function('execute')
 
     # verbose unless printlevel is -1.
     saved_printlevel = get_printlevel()
-    execute('printlevel=-1')
+    set_printlevel(-1)
     nor = normal(ideal)
-    execute(f'printlevel={saved_printlevel}')
+    set_printlevel(saved_printlevel)
 
     return nor[1]
 

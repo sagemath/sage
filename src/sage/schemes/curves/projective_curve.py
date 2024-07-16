@@ -144,7 +144,7 @@ from sage.categories.homset import hom, Hom, End
 from sage.categories.number_fields import NumberFields
 
 from sage.interfaces.singular import singular
-from sage.libs.singular.function import singular_function, lib as singular_lib, get_printlevel
+from sage.libs.singular.function import singular_function, lib as singular_lib, get_printlevel, set_printlevel
 from sage.matrix.constructor import matrix
 from builtins import sum as add
 from sage.misc.sage_eval import sage_eval
@@ -1667,14 +1667,13 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
         singular_lib("sing.lib")
         simplify = singular_function("simplify")
         is_ci = singular_function("is_ci")
-        execute = singular_function('execute')
 
         # verbose unless printlevel is -1.
         saved_printlevel = get_printlevel()
-        execute('printlevel=-1')
+        set_printlevel(-1)
         id = simplify(self.defining_ideal(), 10)
         L = is_ci(id)[-1]
-        execute(f'printlevel={saved_printlevel}')
+        set_printlevel(saved_printlevel)
 
         return len(self.ambient_space().gens()) - len(id) == L
 
