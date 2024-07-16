@@ -700,6 +700,9 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
             sage: SH2 in P._indices
             True
         """
+        if parent(H) == self:
+            return True
+
         return H in self.subset(H.degree())
 
     Element = ConjugacyClassOfSubgroups_SymmetricGroup
