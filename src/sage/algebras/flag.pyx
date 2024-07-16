@@ -519,7 +519,7 @@ cdef class Flag(Element):
         self._not_ftype_points = [ii for ii in range(self.size()) if ii not in self._ftype_points]
         return self._not_ftype_points
     
-    def unique(self):
+    def unique(self, weak=False):
         r"""
         This returns a unique identifier that can equate isomorphic
         objects
@@ -547,6 +547,8 @@ cdef class Flag(Element):
             :func:`CombinatorialTheory.identify`
             :func:`__eq__`
         """
+        if weak:
+            return self.theory().identify(self._n, [self._ftype_points], **self._blocks)
         if self._unique==None:
             self._unique = self.theory().identify(
                 self._n, self._ftype_points, **self._blocks)
@@ -731,6 +733,9 @@ cdef class Flag(Element):
     def __eq__(self, other):
         r"""
         Compare two flags for == (equality)
+        
+        This is the isomorphism defined by the identifiers,
+        respecting the types.
 
         .. SEEALSO::
 
@@ -743,6 +748,25 @@ cdef class Flag(Element):
         if self.parent()!=other.parent():
             return False
         return self.unique() == other.unique()
+    
+    def weak_eq(self, other):
+        r"""
+        Compare two flags for weak equality
+        
+        This is the isomorphism where type permutations
+        are allowed.
+
+        .. SEEALSO::
+
+            :func:`unique`
+            :func:`theory`
+            :func:`CombinatorialTheory.identify`
+        """
+        if type(other)!=type(self):
+            return False
+        if self.parent()!=other.parent():
+            return False
+        return self.unique(weak=True) == other.unique(weak=True)
     
     def __lt__(self, other):
         r"""
