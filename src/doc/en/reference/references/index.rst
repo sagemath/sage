@@ -5344,7 +5344,7 @@ REFERENCES:
              :doi:`10.1023/A:1009724323513`
 
 .. [PP2010] \C. Paar and J. Pelzl.
-            *Understanding Cryptography*.
+            *Understanding Cryptography: A Textbook for Students and Practitioners*.
             Springer Berlin, Heidelberg, 2010.
             :doi:`10.1007/978-3-642-04101-3`
 
