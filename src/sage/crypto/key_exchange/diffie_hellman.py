@@ -63,6 +63,29 @@ class DiffieHellman(KeyExchangeScheme):
             sage: DH = DiffieHellman(13, 2)
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/37305 for details.
+
+        TESTS::
+
+            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
+            sage: DH = DiffieHellman(3, 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: p must be at least 5
+
+            sage: DH = DiffieHellman(5, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: g cannot be 0, 1, or p - 1 (mod p)
+
+            sage: DH = DiffieHellman(5, 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: g cannot be 0, 1, or p - 1 (mod p)
+
+            sage: DH = DiffieHellman(5, 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: g cannot be 0, 1, or p - 1 (mod p)
         """
 
         if p < 5:
@@ -207,10 +230,33 @@ class DiffieHellman(KeyExchangeScheme):
         return int(self.subgroup_size())
 
     def __eq__(self, other):
-        return self._p == other._p and self._g == other._g
+        """
+        Check if two Diffie-Hellman instances have the same parameter set.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
+            sage: DH1 = DiffieHellman(5, 2)
+            sage: DH2 = DiffieHellman(5, 2)
+            sage: DH1 == DH2
+            True
+        """
+        return self.parameters() == other.parameters()
 
     def __hash__(self):
-        return hash((self._p, other._g))
+        """
+        Compute the hash value of a Diffie-Hellman instance.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
+            sage: DH1 = DiffieHellman(7, 3)
+            sage: DH2 = DiffieHellman(7, 3)
+            sage: s = set([DH1, DH2])
+            sage: len(s)
+            1
+        """
+        return hash((self._p, self._g))
 
     def _repr_(self):
         return f'Diffie-Hellman key exchange over {self._field} with generator {self._g}'
