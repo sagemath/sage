@@ -11,8 +11,8 @@ EXAMPLES::
     sage: R.<x> = PolynomialRing(T)
     sage: x.parent()
     Univariate Tropical Polynomial Semiring in x over Rational Field
-    sage: x + R(3)*x
-    3*x
+    sage: (x + R(3)*x) * (x^2 + x)
+    3*x^3 + 3*x^2
     sage: (x^2 + R(1)*x + R(-1))^2
     0*x^4 + 1*x^3 + 2*x^2 + 0*x + (-2)
 
@@ -32,17 +32,10 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import re
-from itertools import combinations
 from sage.misc.cachefunc import cached_method
-
-from sage.sets.real_set import RealSet
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.categories.semirings import Semirings
-
 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse
-from sage.rings.semirings.tropical_semiring import TropicalSemiring
 
 class TropicalPolynomial(Polynomial_generic_sparse):
     r"""
@@ -138,7 +131,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         T = TropicalSemiring(QQ, use_min=False)
         R.<x> = PolynomialRing(T)
         p1 = R([1,4,None,0])
-        p1.plot()
+        sphinx_plot(p1.plot())
         
     ::
         
@@ -151,7 +144,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         T = TropicalSemiring(QQ, use_min=False)
         R.<x> = PolynomialRing(T)
         p2 = R(1)*x^2 + R(2)*x + R(3)
-        plot(p2, xmin=-1, xmax=3)
+        sphinx_plot(plot(p2, xmin=-1, xmax=3))
 
     TESTS:
 
@@ -205,6 +198,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p3.roots()
             [+infinity, +infinity, +infinity]
         """
+        from itertools import combinations
         tropical_roots = []
         if len(self.dict()) == 1:
             exponent = list(self.dict())[0]
@@ -385,6 +379,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         from sage.symbolic.ring import SR
         from sage.functions.piecewise import piecewise
+        from sage.sets.real_set import RealSet
 
         x = SR.var('x')
         if not self.roots():
@@ -483,7 +478,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             T = TropicalSemiring(QQ, use_min=False)
             R.<x> = PolynomialRing(T)
             p1 = p1 = R([4,2,1,3])
-            p1.plot()
+            sphinx_plot(p1.plot())
         
         A different result will be obtained if the tropical semiring employs
         a min-plus algebra. Rather, a graph of the piecewise linear concave
@@ -501,7 +496,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             T = TropicalSemiring(QQ, use_min=True)
             R.<x> = PolynomialRing(T)
             p1 = R([4,2,1,3])
-            plot(p1, xmin=-4, xmax=4)
+            sphinx_plot(plot(p1, xmin=-4, xmax=4))
         
         TESTS:
 
@@ -546,6 +541,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: R([-3,-1,2,-1])
             (-1)*x^3 + 2*x^2 + (-1)*x + (-3)
         """
+        import re
         if not self.dict():
             return str(self.parent().base().zero())
         
@@ -611,20 +607,36 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     addition. Furthermore, multiplication by the additive identity results
     in the additive identity, preserving the annihilation property.
     However, it fails to become a ring because it lacks additive inverses.
+
+    EXAMPLES::
+        
+        sage: T = TropicalSemiring(QQ)
+        sage: R.<x> = PolynomialRing(T)
+        sage: f = T(1)*x
+        sage: g = T(2)*x
+        sage: f + g
+        1*x
+        sage: f * g
+        3*x^2
+        sage: f + R.zero() == f
+        True
+        sage: f * R.zero() == R.zero()
+        True
+        sage: f * R.one() == f
+        True
     """
     @staticmethod
-    def __classcall_private__(cls, base_semiring, names=None):
+    def __classcall_private__(cls, base_semiring, names):
         """
         Ensures the names parameter is a tuple.
 
         EXAMPLES::
 
             sage: T = TropicalSemiring(ZZ)
-            sage: R = TropicalPolynomialSemiring(T); R                                      # needs sage.rings.semirings.tropical_polynomial
-            Univariate Tropical Polynomial Semiring in x over Integer Ring
+            sage: TPS = TropicalPolynomialSemiring                                      # needs sage.rings.semirings.tropical_polynomial                
+            sage: TPS(T, 'x') == TPS(T, ('x'))                                          # needs sage.rings.semirings.tropical_polynomial
+            True
         """
-        if names is None:
-           names = 'x'
         if isinstance(names, str):
             names = (names,)
         return super().__classcall__(cls, base_semiring, tuple(names))
@@ -637,24 +649,28 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
             sage: T = TropicalSemiring(QQ)
             sage: R = PolynomialRing(T, 'x')
+            sage: category(R)
+            Category of semirings
             sage: TestSuite(R).run()
 
         TESTS::
 
-            sage: TropicalPolynomialSemiring(ZZ)                                            # needs sage.rings.semirings.tropical_polynomial
+            sage: TropicalPolynomialSemiring(ZZ)                                        # needs sage.rings.semirings.tropical_polynomial
             Traceback (most recent call last):
             ...
             ValueError: Integer Ring is not a tropical semiring
         """
+        from sage.categories.semirings import Semirings
+        from sage.rings.semirings.tropical_semiring import TropicalSemiring
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
 
     Element = TropicalPolynomial
 
-    def _element_constructor_(self, x, check=True):
+    def _element_constructor_(self, x=None, check=True):
         """
-        Convert ``x`` into ``self``.
+        Convert ``x`` into ``self``, possibly non-canonically.
 
         INPUT:
 
@@ -670,11 +686,28 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: S.<x> = PolynomialRing(QQ)
             sage: R(x^2 - x + 1)
             1*x^2 + (-1)*x + 1
+
+        If ``x`` is a tropical polynomial from different semiring, then it
+        will converted to constant::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x> = PolynomialRing(T)
+            sage: S.<y> = PolynomialRing(T)
+            sage: p1 = R(y); p1
+            0*y
+            sage: p1.parent()
+            Univariate Tropical Polynomial Semiring in x over Rational Field
+            sage: p1.degree()
+            0
         """
         if isinstance(x, (list, tuple)):
             for i, coeff in enumerate(x):
                 if coeff == 0:
                     x[i] = self.base()(0)
+        elif isinstance(x, TropicalPolynomial):
+            if x.parent() is not self:
+                x = {0:x}
+                check = False
         return self.element_class(self, x, check=check)
     
     def one(self):
@@ -832,7 +865,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             R = PolynomialRing(T, 'x')
             points = [(-2,-3),(1,3),(2,4)]
             p1 = R.interpolation(points)
-            p1.plot()
+            sphinx_plot(p1.plot())
 
         ::
 
@@ -849,7 +882,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             R = PolynomialRing(T, 'x')
             points = [(0,0),(1,1),(2,4)]
             p1 = R.interpolation(points)
-            p1.plot()
+            sphinx_plot(p1.plot())
         
         TESTS:
 

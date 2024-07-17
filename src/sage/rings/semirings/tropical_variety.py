@@ -21,12 +21,7 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import operator
-import random
 from sage.structure.sage_object import SageObject
-from sage.plot.graphics import Graphics
-from sage.plot.plot import parametric_plot
-from sage.symbolic.ring import SR
 from sage.rings.infinity import infinity
 
 class TropicalVariety(SageObject):
@@ -41,7 +36,7 @@ class TropicalVariety(SageObject):
     EXAMPLES:
 
     We construct a tropical variety in `\RR^2`, where it is called a
-    tropical curve:: 
+    tropical curve::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<x,y> = PolynomialRing(T)
@@ -57,12 +52,12 @@ class TropicalVariety(SageObject):
     .. PLOT::
         :width: 300 px
 
-            T = TropicalSemiring(QQ, use_min=False)
-            R.<x,y> = PolynomialRing(T)
-            p1 = R(1)*x + x*y + R(0)
-            p1.tropical_variety().plot()
+        T = TropicalSemiring(QQ, use_min=False)
+        R.<x,y> = PolynomialRing(T)
+        p1 = R(1)*x + x*y + R(0)
+        sphinx_plot(p1.tropical_variety().plot())
 
-    A slightly different result will be obtained if we use min-plus algebra 
+    A slightly different result will be obtained if we use min-plus algebra
     for the base tropical semiring::
 
         sage: T = TropicalSemiring(QQ, use_min=True)
@@ -76,10 +71,10 @@ class TropicalVariety(SageObject):
     .. PLOT::
         :width: 300 px
 
-            T = TropicalSemiring(QQ, use_min=True)
-            R.<x,y> = PolynomialRing(T)
-            p1 = R(1)*x + x*y + R(0)
-            p1.tropical_variety().plot()
+        T = TropicalSemiring(QQ, use_min=True)
+        R.<x,y> = PolynomialRing(T)
+        p1 = R(1)*x + x*y + R(0)
+        sphinx_plot(p1.tropical_variety().plot())
 
     A tropical curve can consist of many rays or lines with different orders::
 
@@ -100,10 +95,10 @@ class TropicalVariety(SageObject):
     .. PLOT::
         :width: 300 px
 
-            T = TropicalSemiring(QQ, use_min=False)
-            R.<x,y> = PolynomialRing(T)
-            p1 = R(7) + T(4)*x + y + R(4)*x*y + R(3)*y^2 + R(-3)*x^2
-            p1.tropical_variety().plot()
+        T = TropicalSemiring(QQ, use_min=False)
+        R.<x,y> = PolynomialRing(T)
+        p1 = R(7) + T(4)*x + y + R(4)*x*y + R(3)*y^2 + R(-3)*x^2
+        sphinx_plot(p1.tropical_variety().plot())
 
     If the tropical polynomial have `n>2` variables, then the result will be 
     a tropical hypersurface embedded in a real space `\RR^n`::
@@ -201,8 +196,11 @@ class TropicalVariety(SageObject):
             sage: x.tropical_variety().components()
             []
         """
-        from sage.symbolic.relation import solve
+        import operator
         from itertools import combinations
+        from sage.symbolic.ring import SR
+        from sage.symbolic.relation import solve
+        
         from sage.arith.misc import gcd
         from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomial
 
@@ -381,7 +379,7 @@ class TropicalVariety(SageObject):
 
 class TropicalSurface(TropicalVariety):
     r""""
-    A tropical surface in `\RR^3`. 
+    A tropical surface in `\RR^3`.
     
     The tropical surface consists of planar regions and facets, which we
     can call cells. These cells are connected in such a way that they form
@@ -389,7 +387,7 @@ class TropicalSurface(TropicalVariety):
     cells meet along edges, where the balancing condition is satisfied.
     This balancing condition ensures that the sum of the outgoing normal
     vectors at each edge is zero, reflecting the equilibrium.
-    """   
+    """
 
     def _axes(self):
         """
@@ -474,13 +472,15 @@ class TropicalSurface(TropicalVariety):
             [(t1, t2, 1), [1 <= t1, 1 <= t2], 1]]
 
         .. PLOT::
-        :width: 300 px
+            :width: 300 px
 
             T = TropicalSemiring(QQ, use_min=False)
             R.<x,y,z> = PolynomialRing(T)
             p1 = x + y + z + x^2 + R(1)
-            p1.tropical_variety().plot()
+            sphinx_plot(p1.tropical_variety().plot())
         """
+        import random
+        from sage.plot.graphics import Graphics
         from sage.arith.srange import srange
         from sage.plot.plot3d.shapes2 import point3d, text3d
         
@@ -541,7 +541,7 @@ class TropicalSurface(TropicalVariety):
 
 class TropicalCurve(TropicalVariety):
     r""""
-    A tropical curve in `\RR^2`. 
+    A tropical curve in `\RR^2`.
     
     The tropical curve consists of line segments and half-lines, which we
     call edges. These edges are connected in such a way that they form a
@@ -549,7 +549,7 @@ class TropicalCurve(TropicalVariety):
     a vertices, where the balancing condition is satisfied. This balancing
     condition ensures that the sum of the outgoing slopes at each vertex
     is zero, reflecting the equilibrium.
-    """     
+    """
     
     def _axes(self):
         """
@@ -704,7 +704,7 @@ class TropicalCurve(TropicalVariety):
 
             T = TropicalSemiring(QQ)
             R.<x,y> = PolynomialRing(T)
-            (x).tropical_variety().plot()
+            sphinx_plot((x).tropical_variety().plot())
 
         A polynomial with only two terms will give one straight line::
 
@@ -712,11 +712,11 @@ class TropicalCurve(TropicalVariety):
             [[(t1, 1), [-Infinity < t1, t1 < +Infinity], 1]]
 
         .. PLOT::
-        :width: 300 px
+            :width: 300 px
 
             T = TropicalSemiring(QQ)
             R.<x,y> = PolynomialRing(T)
-            (y+R(1)).tropical_variety().plot()
+            sphinx_plot((y+R(1)).tropical_variety().plot())
 
         An intriguing and fascinating tropical curve can be obtained with
         a more complex tropical polynomial::
@@ -729,12 +729,12 @@ class TropicalCurve(TropicalVariety):
             [(-t1 - 7, t1), [t1 <= -4], 1]]
 
         .. PLOT::
-        :width: 300 px
+            :width: 300 px
 
             T = TropicalSemiring(QQ)
             R.<x,y> = PolynomialRing(T)
             p1 = R(1) + R(2)*x + R(3)*y + R(6)*x*y + R(10)*x*y^2
-            p1.tropical_variety().plot()
+            sphinx_plot(p1.tropical_variety().plot())
 
         ::
 
@@ -742,16 +742,18 @@ class TropicalCurve(TropicalVariety):
             x*y^5 + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10)
 
         .. PLOT::
-        :width: 300 px
+            :width: 300 px
 
             T = TropicalSemiring(QQ)
             R.<x,y> = PolynomialRing(T)
             p2 = x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4 + \
             x*y^5 + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10)
-            p2.tropical_variety().plot()
+            sphinx_plot(p2.tropical_variety().plot())
         """
         from sage.plot.plot import plot
         from sage.plot.text import text
+        from sage.plot.graphics import Graphics
+        from sage.plot.plot import parametric_plot
 
         if self._hypersurface == []:
             return plot(lambda x: float('nan'), {-1, 1})

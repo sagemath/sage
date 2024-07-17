@@ -9,8 +9,10 @@ EXAMPLES::
 
     sage: T = TropicalSemiring(QQ, use_min=True)
     sage: R.<x,y,z> = PolynomialRing(T)
-    sage: R(-1)*x + R(-1)*x + R(-10)*y + R(-3)
-    (-1)*x + (-10)*y + (-3)
+    sage: z.parent()
+    Multivariate Tropical Polynomial Semiring in x, y, z over Rational Field
+    sage: R(2)*x + R(-1)*x + R(5)*y + R(-3)
+    (-1)*x + 5*y + (-3)
     sage: (x+y+z)^2
     0*x^2 + 0*x*y + 0*y^2 + 0*x*z + 0*y*z + 0*z^2
 
@@ -34,12 +36,9 @@ from sage.misc.cachefunc import cached_method
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.plot.plot3d.list_plot3d import list_plot3d
-from sage.categories.semirings import Semirings
 
-from sage.rings.polynomial.multi_polynomial import MPolynomial
+
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
-from sage.rings.semirings.tropical_semiring import TropicalSemiring
 
 class TropicalMPolynomial(MPolynomial_polydict):
     r"""
@@ -47,13 +46,13 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
     Let `x_1, x_2, \ldots, x_n` be indeterminants. A tropical monomial is
     any product of these variables, possibly including repetitions:
-    `x_1^{i_1}\ldots x_n^{i_n}` where `i_j \in \{0,1,\ldots\}`, for all
+    `x_1^{i_1}\cdots x_n^{i_n}` where `i_j \in \{0,1,\ldots\}`, for all
     `j\in \{1,\ldots,n\}`. A multivariate tropical polynomial is a finite
     linear combination of tropical monomials,
-    `p(x_1, \ldots, x_n) = \sum_{i=1}^n c_i x_1^{i_1}\ldots x_n^{i_n}`.
+    `p(x_1, \ldots, x_n) = \sum_{i=1}^n c_i x_1^{i_1}\cdots x_n^{i_n}`.
 
     In classical arithmetic, we can rewrite the general form of a tropical
-    monomial: `x_1^{i_1}\ldots x_n^{i_n} = i_1 x_1 + \ldots + i_n x_n`. Thus,
+    monomial: `x_1^{i_1}\cdots x_n^{i_n} = i_1 x_1 + \ldots + i_n x_n`. Thus,
     the tropical polynomial can be viewed as the minimum (maximum) of a
     finite collection of linear functions.
 
@@ -100,7 +99,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         R.<a,b> = PolynomialRing(T)
         p1 = R(3)*a*b + a + R(-1)*b
         tv1 = p1.tropical_variety()
-        tv1.plot()
+        sphinx_plot(tv1.plot())
         
     .. PLOT::
         :width: 300 px
@@ -108,7 +107,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         T = TropicalSemiring(QQ, use_min=True)
         R.<a,b> = PolynomialRing(T)
         p1 = R(3)*a*b + a + R(-1)*b
-        p1.plot3d()
+        sphinx_plot(p1.plot3d())
     
     ::
 
@@ -125,7 +124,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         R.<a,b> = PolynomialRing(T)
         p1 = R(3)*a*b + a + R(-1)*b
         tv1 = p1.tropical_variety()
-        tv1.plot()
+        sphinx_plot(tv1.plot())
 
     .. PLOT::
         :width: 300 px
@@ -133,7 +132,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         T = TropicalSemiring(QQ, use_min=False)
         R.<a,b> = PolynomialRing(T)
         p1 = R(3)*a*b + a + R(-1)*b
-        p1.plot3d()
+        sphinx_plot(p1.plot3d())
 
     TESTS:
 
@@ -214,12 +213,12 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1 = x^2
         
         .. PLOT::
-        :width: 300 px
+            :width: 300 px
 
             T = TropicalSemiring(QQ, use_min=False)
             R.<x,y> = PolynomialRing(T)
             p1 = x^2
-            p1.plot3d()
+            sphinx_plot(p1.plot3d())
 
         ::
 
@@ -227,12 +226,12 @@ class TropicalMPolynomial(MPolynomial_polydict):
             3*x*y + 2*x + 2*y + 3
 
         .. PLOT::
-        :width: 300 px
+            :width: 300 px
 
             T = TropicalSemiring(QQ, use_min=False)
             R.<x,y> = PolynomialRing(T)
             p2 = R(3)+R(2)*x+R(2)*y+R(3)*x*y
-            p2.plot3d()
+            sphinx_plot(p2.plot3d())
 
         TESTS::
 
@@ -246,6 +245,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             multivariate polynomial in two variables
         """
         from sage.arith.srange import srange
+        from sage.plot.plot3d.list_plot3d import list_plot3d
 
         if len(self.parent().variable_names()) != 2:
             raise NotImplementedError("can only plot the graph of tropical "
@@ -351,32 +351,50 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
     Semiring of tropical polynomials in multiple variables.
 
+    The tropical additive operation is defined as min/max and the
+    tropical multiplicative operation is defined as classical addition.
     Similar to the single-variable case, the set of multivariate tropical
     polynomials `R` also form a semiring because `(R,+)` is a commutative
     monoid and `(R,\cdot)` is a monoid. Additionally, R satisfy the
     distributive and annihilation property. Therefore, this semiring
     extends the concepts to polynomials with multiple variables.
+
+    EXAMPLES::
+        
+        sage: T = TropicalSemiring(QQ)
+        sage: R.<x,y> = PolynomialRing(T)
+        sage: f = T(1)*x + T(-1)*y
+        sage: g = T(2)*x + T(-2)*y
+        sage: f + g
+        1*x + (-2)*y
+        sage: f * g
+        3*x^2 + (-1)*x*y + (-3)*y^2
+        sage: f + R.zero() == f
+        True
+        sage: f * R.zero() == R.zero()
+        True
+        sage: f * R.one() == f
+        True
     """
 
-    def __init__(self, base_semiring, n, names, order='degrevlex'):
+    def __init__(self, base_semiring, n, names, order):
         r"""
         Initialize ``self``.
 
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
-            sage: R = PolynomialRing(T, 5, 'x'); R
-            Multivariate Tropical Polynomial Semiring in x0, x1, x2, x3, x4 
-            over Rational Field
+            sage: R = PolynomialRing(T, 5, 'x')
+            sage: category(R)
+            Category of semirings
             sage: TestSuite(R).run()
         """
-        from sage.rings.polynomial.term_order import TermOrder
-
+        from sage.rings.semirings.tropical_semiring import TropicalSemiring
+        from sage.categories.semirings import Semirings
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
         self._ngens = n
-        order = TermOrder(order, n)
         self._term_order = order
     
     def term_order(self):
@@ -425,6 +443,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             ValueError: can not convert 0*a + 0*b to Multivariate Tropical 
             Polynomial Semiring in x, y over Rational Field
         """
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
         new_dict = {}
         if isinstance(x, TropicalMPolynomial):
             if x.parent() is not self:
