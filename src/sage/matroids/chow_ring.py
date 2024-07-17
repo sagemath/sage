@@ -18,7 +18,6 @@ REFERENCES
 
 from sage.matroids.chow_ring_ideal import ChowRingIdeal, AugmentedChowRingIdeal
 from sage.rings.quotient_ring import QuotientRing_nc
-from sage.rings.quotient_ring_element import QuotientRingElement
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 
 class ChowRing(QuotientRing_nc):
@@ -37,6 +36,8 @@ class ChowRing(QuotientRing_nc):
     OUTPUT: Chow ring of matroid `M`.
 
     EXAMPLES::
+
+        sage: from sage.matroids.chow_ring import ChowRing
 
         sage: M1 = matroids.catalog.P8pp()
         sage: ch = ChowRing(M=M1, R=QQ, augmented=False)
