@@ -74,7 +74,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         This is an example of a full key exchange using a cryptographically
         large prime. This is the prime from the 8192-bit MODP group in
-        RFC3526.::
+        RFC3526::
 
             sage: p = 2^8192 - 2^8128 - 1 + 2^64 * (round(2^8062 * pi) + 4743158)
             sage: DH = DiffieHellman(p, 2, proof=False)
@@ -134,7 +134,7 @@ class DiffieHellman(KeyExchangeScheme):
 
     def field(self) -> FiniteField_prime_modn:
         """
-        Return the field this Diffie-Hellman instance is working over.
+        Return the field this ``DiffieHellman`` instance is working over.
 
         EXAMPLES::
 
@@ -147,7 +147,7 @@ class DiffieHellman(KeyExchangeScheme):
 
     def prime(self) -> Integer:
         """
-        Return the prime ``p`` for this Diffie-Hellman instance.
+        Return the prime ``p`` for this ``DiffieHellman`` instance.
 
         EXAMPLES::
 
@@ -160,7 +160,7 @@ class DiffieHellman(KeyExchangeScheme):
 
     def generator(self) -> IntegerMod_int:
         """
-        Return the generator ``g`` for this Diffie-Hellman instance.
+        Return the generator ``g`` for this ``DiffieHellman`` instance.
 
         EXAMPLES::
 
@@ -173,7 +173,7 @@ class DiffieHellman(KeyExchangeScheme):
 
     def parameters(self) -> tuple[Integer, IntegerMod_int]:
         """
-        Output the parameters ``(p, g)`` for this Diffie-Hellman instance.
+        Output the parameters ``(p, g)`` for this ``DiffieHellman`` instance.
 
         EXAMPLES::
 
@@ -241,6 +241,8 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES:
 
+        This is an example of a ``DiffieHellman`` instance where the subgroup size is `(p - 1) / 2`
+
             sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(47, 2)
             sage: DH.subgroup_size()
@@ -262,7 +264,7 @@ class DiffieHellman(KeyExchangeScheme):
 
     def __eq__(self, other):
         """
-        Check if two Diffie-Hellman instances have the same parameter set.
+        Check if two ``DiffieHellman`` instances have the same parameter set.
 
         TESTS::
 
@@ -276,7 +278,7 @@ class DiffieHellman(KeyExchangeScheme):
 
     def __hash__(self):
         """
-        Compute the hash value of a Diffie-Hellman instance.
+        Compute the hash value of a ``DiffieHellman`` instance.
 
         TESTS::
 
@@ -291,7 +293,7 @@ class DiffieHellman(KeyExchangeScheme):
 
     def _repr_(self):
         """
-        Get the string representation of the Diffie-Hellman instance.
+        Get the string representation of the ``DiffieHellman`` instance.
 
         TESTS::
 
@@ -304,7 +306,7 @@ class DiffieHellman(KeyExchangeScheme):
 
     def _latex_(self):
         r"""
-        Get the LaTeX representation of the Diffie-Hellman instance.
+        Get the LaTeX representation of the ``DiffieHellman`` instance.
 
         TESTS::
 
