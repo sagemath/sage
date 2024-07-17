@@ -640,40 +640,16 @@ class Rings(CategoryWithAxiom):
                 return FreeModule(self, n)
 
         @cached_method
-        def ideal_monoid(self):
+        def unit_ideal(self):
             """
-            The monoid of the ideals of this ring.
-
-            .. NOTE::
-
-                The code is copied from the base class of rings.
-                This is since there are rings that do not inherit
-                from that class, such as matrix algebras.  See
-                :issue:`7797`.
+            Return the unit ideal of this ring.
 
             EXAMPLES::
 
-                sage: # needs sage.modules
-                sage: MS = MatrixSpace(QQ, 2, 2)
-                sage: isinstance(MS, Ring)
-                False
-                sage: MS in Rings()
-                True
-                sage: MS.ideal_monoid()
-                Monoid of ideals of Full MatrixSpace of 2 by 2 dense matrices
-                over Rational Field
-
-            Note that the monoid is cached::
-
-                sage: MS.ideal_monoid() is MS.ideal_monoid()                            # needs sage.modules
-                True
+                sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
+                Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
             """
-            try:
-                from sage.rings.ideal_monoid import IdealMonoid
-                return IdealMonoid(self)
-            except TypeError:
-                from sage.rings.noncommutative_ideals import IdealMonoid_nc
-                return IdealMonoid_nc(self)
+            return self.principal_ideal(self.one(), coerce=False)
 
         def _ideal_class_(self, n=0):
             r"""

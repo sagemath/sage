@@ -145,7 +145,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         category = IntegralDomains().or_subcategory(category).Infinite()
         Parent.__init__(self, category=category, facade=field)
 
-        self._ideal_class = ideal_class # element class for parent ideal monoid
+        self._ideal_class_ = ideal_class  # element class for parent ideal monoid
         self._field = field
 
     def is_field(self, proof=True):
