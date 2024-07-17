@@ -51,7 +51,6 @@ from sage.schemes.generic.homset import SchemeHomset_points
 from sage.schemes.hyperelliptic_curves.jacobian_morphism import JacobianMorphism_divisor_class_field
 
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 
 class JacobianHomset_divisor_classes(SchemeHomset_points):
@@ -141,13 +140,12 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
                 if isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
                     return JacobianMorphism_divisor_class_field(self, tuple(P))
-                if (isinstance(P1, (SchemeMorphism, EllipticCurvePoint_field))
-                        and isinstance(P2, (SchemeMorphism, EllipticCurvePoint_field))):
+                if isinstance(P1, SchemeMorphism) and isinstance(P2, SchemeMorphism):
                     return self(P1) - self(P2)
             raise TypeError("argument P (= %s) must have length 2" % P)
         elif isinstance(P, JacobianMorphism_divisor_class_field) and self == P.parent():
             return P
-        elif isinstance(P, (SchemeMorphism, EllipticCurvePoint_field)):
+        elif isinstance(P, SchemeMorphism):
             x0 = P[0]
             y0 = P[1]
             R, x = PolynomialRing(self.value_ring(), 'x').objgen()

@@ -51,7 +51,6 @@ from sage.schemes.projective.projective_space import ProjectiveSpace_ring
 from sage.structure.formal_sum import FormalSum
 
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 
 def CurvePointToIdeal(C,P):
@@ -360,7 +359,7 @@ class Divisor_curve(Divisor_generic):
                 else:
                     n = ZZ(1)
                     I = t
-                if isinstance(I, (SchemeMorphism, EllipticCurvePoint_field)):
+                if isinstance(I, SchemeMorphism):
                     I = CurvePointToIdeal(C,I)
                 else:
                     know_points = False

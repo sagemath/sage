@@ -27,7 +27,6 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.categories.map', 'Map')
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 lazy_import('sage.schemes.generic.scheme', 'Scheme')
 
@@ -146,7 +145,7 @@ class Schemes(Category):
                       To:   Rational Field
 
         """
-        if isinstance(x, (EllipticCurvePoint_field, SchemeMorphism, Scheme)):
+        if isinstance(x, (SchemeMorphism, Scheme)):
             return x
         from sage.categories.commutative_rings import CommutativeRings
         from sage.schemes.generic.spec import Spec

@@ -378,8 +378,6 @@ from sage.schemes.generic.morphism import (
     SchemeMorphism, SchemeMorphism_point, SchemeMorphism_polynomial
 )
 
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
-
 
 ############################################################################
 # A points on a toric variety determined by homogeneous coordinates.
@@ -431,7 +429,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
         if check:
             # Verify that there are the right number of coords
             # Why is it not done in the parent?
-            if isinstance(coordinates, (SchemeMorphism, EllipticCurvePoint_field)):
+            if isinstance(coordinates, SchemeMorphism):
                 coordinates = list(coordinates)
             if not isinstance(coordinates, (list, tuple)):
                 raise TypeError("coordinates must be a scheme point, list, "

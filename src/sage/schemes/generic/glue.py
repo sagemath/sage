@@ -12,7 +12,6 @@ from sage.misc.lazy_import import lazy_import
 from sage.schemes.generic.scheme import Scheme
 
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 
 class GluedScheme(Scheme):
@@ -52,9 +51,9 @@ class GluedScheme(Scheme):
     """
     def __init__(self, f, g, check=True):
         if check:
-            if not isinstance(f, (SchemeMorphism, EllipticCurvePoint_field)):
+            if not isinstance(f, SchemeMorphism):
                 raise TypeError("f (=%s) must be a scheme morphism" % f)
-            if not isinstance(g, (SchemeMorphism, EllipticCurvePoint_field)):
+            if not isinstance(g, SchemeMorphism):
                 raise TypeError("g (=%s) must be a scheme morphism" % g)
             if f.domain() != g.domain():
                 raise ValueError("f (=%s) and g (=%s) must have the same domain" % (f,g))

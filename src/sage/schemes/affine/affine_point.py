@@ -27,8 +27,6 @@ from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.morphism import SchemeMorphism_point, SchemeMorphism
 from sage.structure.sequence import Sequence
 
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
-
 _NumberFields = NumberFields()
 
 
@@ -72,7 +70,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         SchemeMorphism.__init__(self, X)
         if check:
             from sage.categories.commutative_rings import CommutativeRings
-            if isinstance(v, (SchemeMorphism, EllipticCurvePoint_field)):
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:

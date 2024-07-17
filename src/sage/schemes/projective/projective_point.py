@@ -47,8 +47,6 @@ from sage.structure.element import AdditiveGroupElement
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
 
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
-
 # --------------------
 # Projective varieties
 # --------------------
@@ -162,10 +160,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         SchemeMorphism.__init__(self, X)
 
         if check:
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
-            if isinstance(v, (SchemeMorphism, EllipticCurvePoint_field)):
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:
@@ -1141,7 +1138,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         if check:
             from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
-            if isinstance(v, (SchemeMorphism, EllipticCurvePoint_field)):
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:

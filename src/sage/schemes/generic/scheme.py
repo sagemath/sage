@@ -29,7 +29,6 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 
 def is_Scheme(x):
@@ -115,7 +114,7 @@ class Scheme(Parent):
             self._base_ring = ZZ
         elif isinstance(X, Scheme):
             self._base_scheme = X
-        elif isinstance(X, (SchemeMorphism, EllipticCurvePoint_field)):
+        elif isinstance(X, SchemeMorphism):
             self._base_morphism = X
         elif X in CommutativeRings():
             self._base_ring = X

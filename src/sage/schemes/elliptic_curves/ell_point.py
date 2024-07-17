@@ -145,7 +145,6 @@ from sage.schemes.projective.projective_point import (SchemeMorphism_point_proje
 from .constructor import EllipticCurve
 
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 try:
     from sage.libs.pari.all import pari, PariError
@@ -298,7 +297,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         point_homset = curve.point_homset()
         R = point_homset.value_ring()
-        if isinstance(v, (SchemeMorphism, EllipticCurvePoint_field)):
+        if isinstance(v, SchemeMorphism):
             v = list(v)
         elif v == 0:
             v = (R.zero(), R.one(), R.zero())

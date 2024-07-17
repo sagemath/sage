@@ -90,8 +90,6 @@ from sage.structure.element import Element, parent, coercion_model
 from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
-
 
 def is_SchemeMorphism(f):
     """
@@ -116,15 +114,15 @@ def is_SchemeMorphism(f):
         sage: is_SchemeMorphism(f)
         doctest:warning...
         DeprecationWarning: The function is_SchemeMorphism is deprecated;
-        use 'isinstance(..., (SchemeMorphism, EllipticCurvePoint_field))' instead.
+        use 'isinstance(..., SchemeMorphism)' instead.
         See https://github.com/sagemath/sage/issues/38296 for details.
         True
     """
     from sage.misc.superseded import deprecation
     deprecation(38296,
                 "The function is_SchemeMorphism is deprecated; "
-                "use 'isinstance(..., (SchemeMorphism, EllipticCurvePoint_field))' instead.")
-    return isinstance(f, (SchemeMorphism, EllipticCurvePoint_field))
+                "use 'isinstance(..., SchemeMorphism)' instead.")
+    return isinstance(f, SchemeMorphism)
 
 
 class SchemeMorphism(Element):
