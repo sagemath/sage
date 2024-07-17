@@ -316,9 +316,9 @@ class DiffieHellman(KeyExchangeScheme):
             sage: DH
             Diffie-Hellman key exchange over Finite Field of size 7 with generator 3
         """
-        return ('Diffie-Hellman key exchange over'
-                f'{self._field}'
-                'with generator'
+        return ('Diffie-Hellman key exchange over '
+                f'{self._field} '
+                'with generator '
                 f'{self._g}')
 
     def _latex_(self) -> str:
