@@ -3396,7 +3396,7 @@ class QuotientMap:
         w = v * self.__M_OK_change
         return self.__Q( list(w) )
 
-    def _repr_(self):
+    def __repr__(self):
         r"""
         Return a string representation of this QuotientMap.
 
@@ -3464,7 +3464,7 @@ class LiftMap:
         z = (w * self.__M_OK_map).list()
         return self.__OK(sum(z[i] * self.__Kgen ** i for i in range(len(z))))
 
-    def _repr_(self):
+    def __repr__(self):
         r"""
         Return a string representation of this QuotientMap.
 
