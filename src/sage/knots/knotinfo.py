@@ -1520,14 +1520,16 @@ class KnotInfoBase(Enum):
         of the positive crossings of the right-handed trefoil)::
 
             sage: K3_1  = KnotInfo.K3_1
-            sage: K3_1j = K3_1.jones_polynomial()                                       # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: K3_1j = K3_1.jones_polynomial()
             sage: L2a1_1j = Ljt     # see note above
             sage: R = L2a1_1j.parent()
             sage: Oj = R(1)
             sage: t = R('t')
-            sage: lhs = expand(~t*K3_1j - t*Oj)                                         # needs sage.symbolic
+            sage: lhs = expand(~t*K3_1j - t*Oj)
             sage: rhs = expand((sqrt(t) - ~sqrt(t))*L2a1_1j)
-            sage: bool(lhs == rhs)                                                      # needs sage.symbolic
+            sage: bool(lhs == rhs)
             True
 
         The same with the Puiseux series version::
