@@ -6,7 +6,7 @@ exchange scheme.
 
 AUTHORS:
 
-- Vincent Macri (2024-07-15): initial version
+- Vincent Macri (2024-07-17): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2024 Vincent Macri <vincent.macri@ucalgary.ca>
@@ -174,7 +174,7 @@ class DiffieHellman(KeyExchangeScheme):
 
     def parameters(self) -> tuple[Integer, IntegerMod_abstract]:
         """
-        Output the parameters ``(p, g)`` for this ``DiffieHellman`` instance.
+        Get the parameters ``(p, g)`` for this ``DiffieHellman`` instance.
 
         EXAMPLES::
 
