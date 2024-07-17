@@ -82,7 +82,6 @@ from sage.categories.map import FormalCompositeMap, Map
 from sage.categories.morphism import SetMorphism
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.lazy_import import lazy_import
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme

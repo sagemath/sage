@@ -368,7 +368,6 @@ from sage.rings.integer_ring import ZZ
 from sage.arith.misc import GCD as gcd
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix, identity_matrix
-from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import vector
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan

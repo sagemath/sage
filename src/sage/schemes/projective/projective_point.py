@@ -38,7 +38,6 @@ from sage.rings.rational_field import QQ
 from sage.arith.misc import GCD as gcd
 from sage.arith.functions import lcm
 from sage.misc.misc_c import prod
-from sage.misc.lazy_import import lazy_import
 
 from copy import copy
 from sage.schemes.generic.morphism import (SchemeMorphism,
