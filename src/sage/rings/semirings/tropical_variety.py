@@ -404,17 +404,25 @@ class TropicalSurface(TropicalVariety):
         
         A list of two lists, where the first inner list represent value of
         x-axis and the second inner list represent value of y-axis.
+        If there are either no components or only one component, the axis
+        will be set to [[-1, 1], [-1, 1]].
 
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
-            sage: p1 = x + y + z + x^2 + R(1)
+            sage: p1 = x + y
             sage: p1.tropical_variety()._axes()
+            [[-1, 1], [-1, 1]]
+            sage: p2 = x + y + z + x^2 + R(1)
+            sage: p2.tropical_variety()._axes()
             [[-1, 2], [-1, 2]]
+            
         """
         from sage.symbolic.relation import solve
 
+        if not self._hypersurface: # no components
+            return [[-1, 1], [-1, 1]]
         u_set = set()
         v_set = set()
         for comp in self._hypersurface:
@@ -441,10 +449,16 @@ class TropicalSurface(TropicalVariety):
             for expr in list_expr:
                 for u in temp_u:
                     sol = solve(expr.subs(self._vars[0]==u), self._vars[1])
-                    temp_v.add(sol[0][0].rhs())
+                    if (not sol[0]) or (not isinstance(sol[0], list)):
+                        temp_v.add(0)
+                    else:
+                        temp_v.add(sol[0][0].rhs())
                 for v in temp_v:
                     sol = solve(expr.subs(self._vars[1]==v), self._vars[0])
-                    temp_u.add(sol[0][0].rhs())
+                    if (not sol[0]) or (not isinstance(sol[0], list)):
+                        temp_u.add(0)
+                    else:
+                        temp_u.add(sol[0][0].rhs())
             u_set = u_set.union(temp_u)
             v_set = v_set.union(temp_v)
         return [[min(u_set)-1, max(u_set)+1], [min(v_set)-1, max(v_set)+1]]
