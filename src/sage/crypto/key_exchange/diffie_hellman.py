@@ -1,8 +1,8 @@
 r"""
 Diffie-Hellman Public Key Exchange Scheme
 
-This module contains a toy implementation of the Diffie-Hellman public key exchange
-scheme.
+This module contains a toy implementation of the Diffie-Hellman public key
+exchange scheme.
 
 AUTHORS:
 
@@ -26,7 +26,8 @@ from sage.arith.misc import is_prime
 from sage.misc.prandom import randint
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
+from sage.rings.finite_rings.finite_field_prime_modn import \
+    FiniteField_prime_modn
 from sage.rings.finite_rings.integer_mod import IntegerMod_int
 from sage.structure.proof.proof import WithProof
 
@@ -42,10 +43,11 @@ class DiffieHellman(KeyExchangeScheme):
 
         INPUT:
 
-        - ``p`` -- prime integer defining the field `\\GF{p}` that the key exchanges
-          will be performed over, must be at least 5
+        - ``p`` -- prime integer defining the field `\\GF{p}` that the key
+          exchanges will be performed over, must be at least 5
 
-        - ``g`` -- base for the key exchange, (coerceable to) an element of `\\GF{p}` from `2` to `p - 2`
+        - ``g`` -- base for the key exchange, (coerceable to) an element of
+          `\\GF{p}` from `2` to `p - 2`
 
         - ``proof`` -- (default: ``True``) whether to require a proof that
           ``p`` is prime. If ``False``, a probabilistic test can be used for
@@ -122,8 +124,8 @@ class DiffieHellman(KeyExchangeScheme):
         self._p = p
         self._g = self._field(g)
 
-        # While these values won't cause mathematical problems, they do completely
-        # break the security of the Diffie-Hellman scheme.
+        # While these values won't cause mathematical problems, they do
+        # completely break the security of the Diffie-Hellman scheme.
         # g = 0 makes every secret key and shared secret 0
         # g = 1 makes every secret key and shared secret 1
         # g = -1 makes every secret key and shared secret 1 or -1
