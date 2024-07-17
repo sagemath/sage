@@ -623,9 +623,6 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
     """
     from sage.rings.semirings.tropical_semiring import TropicalSemiring
-    from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
-    from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomialSemiring
-
     if base_ring not in Rings() and not isinstance(base_ring, TropicalSemiring):
         raise TypeError("base_ring {!r} must be a ring or the tropical semiring".format(base_ring))
 
@@ -720,12 +717,8 @@ def PolynomialRing(base_ring, *args, **kwds):
             raise TypeError("variable names specified twice inconsistently: %r and %r" % (names, kwnames))
 
     if multivariate or len(names) != 1:
-        if isinstance(base_ring, TropicalSemiring):
-            return TropicalMPolynomialSemiring(base_ring, len(names), names, **kwds)
         return _multi_variate(base_ring, names, **kwds)
     else:
-        if isinstance(base_ring, TropicalSemiring):
-            return TropicalPolynomialSemiring(base_ring, names)
         return _single_variate(base_ring, names, **kwds)
 
 
@@ -757,6 +750,9 @@ def _save_in_cache(key, R):
 def _single_variate(base_ring, name, sparse=None, implementation=None, order=None):
     # The "order" argument is unused, but we allow it (and ignore it)
     # for consistency with the multi-variate case.
+    from sage.rings.semirings.tropical_semiring import TropicalSemiring
+    from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
+    
     sparse = bool(sparse)
 
     # "implementation" must be last
@@ -800,7 +796,9 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
 
     # Generic implementations
     if constructor is None:
-        if base_ring not in _CommutativeRings:
+        if isinstance(base_ring, TropicalSemiring):
+            constructor = TropicalPolynomialSemiring
+        elif base_ring not in _CommutativeRings:
             constructor = polynomial_ring.PolynomialRing_general
         elif base_ring in _CompleteDiscreteValuationRings:
             constructor = polynomial_ring.PolynomialRing_cdvr
@@ -812,7 +810,11 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
             constructor = polynomial_ring.PolynomialRing_integral_domain
         else:
             constructor = polynomial_ring.PolynomialRing_commutative
-        implementation_names = constructor._implementation_names(implementation, base_ring, sparse)
+
+        if isinstance(base_ring, TropicalSemiring):
+            implementation_names = [None]
+        else:
+            implementation_names = constructor._implementation_names(implementation, base_ring, sparse)
 
         # Only use names which are not supported by the specialized class.
         if specialized is not None:
@@ -831,6 +833,9 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
 
 
 def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementation=None):
+    from sage.rings.semirings.tropical_semiring import TropicalSemiring
+    from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomialSemiring
+
     if sparse is None:
         sparse = True
     if not sparse:
@@ -869,7 +874,9 @@ def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementat
 
     if R is None and implementation == "generic":
         from . import multi_polynomial_ring
-        if base_ring in _Domains:
+        if isinstance(base_ring, TropicalSemiring):
+            constructor = TropicalMPolynomialSemiring
+        elif base_ring in _Domains:
             constructor = multi_polynomial_ring.MPolynomialRing_polydict_domain
         else:
             constructor = multi_polynomial_ring.MPolynomialRing_polydict
