@@ -99,7 +99,7 @@ class AlgebraicConverter(Converter):
             sage: bool(L.gen() == -sqrt(3))
             True
 
-        Test that :issue:`36735` is fixed:
+        Test that :issue:`36735` is fixed::
 
             sage: AA((-1)^(2/3))
             Traceback (most recent call last):
