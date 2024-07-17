@@ -4,14 +4,14 @@ import base64 as uu
 import re
 from types import ModuleType
 from .PyPolyBoRi import Polynomial
+
 AUTO = "auto"
 SINGLE = "single"
 
-
-# def ref_file_name(f):
-#     name=re.sub("data/","",f)
-#     name=sub(r"\.py","",name)
-#     l=name.split("/")[:-1]
+# NOTE (07/2024)
+# This file is not documented.
+# This file has no doctests.
+# This file is not used anywhere in sage.
 
 
 def reencode_blocks(block_str):
@@ -87,13 +87,14 @@ def convert_refs(ref_file_orig):
 
 def dyn_generate(content, name):
     module = ModuleType(name)
-    import_header = """from .PyPolyBoRi import Variable,Monomial, Polynomial, Ring, OrderCode
+    import_header = """from .PyPolyBoRi import Variable, Monomial, Polynomial, Ring, OrderCode
 from itertools import chain
-from .blocks import AlternatingBlock,Block,AdderBlock,if_then,HigherOrderBlock,declare_ring as orig_declare_ring,declare_block_scheme,MacroBlock\n
+from .blocks import AlternatingBlock, Block, AdderBlock, if_then, HigherOrderBlock, declare_ring as orig_declare_ring, declare_block_scheme, MacroBlock
+
 def declare_ring(blocks, context=None):
-  if context is None:
-    context=globals()
-  return orig_declare_ring(blocks,context)
+    if context is None:
+        context = globals()
+    return orig_declare_ring(blocks, context)
 """
     exec(import_header + content, module.__dict__)
     if hasattr(module, "ideal"):

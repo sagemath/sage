@@ -39,5 +39,4 @@ from .nf import normal_form
 # Import some high-level modelling functionality
 from .blocks import declare_ring
 from .blocks import HigherOrderBlock, AlternatingBlock, Block
-from .gbrefs import load_file
 from .specialsets import all_monomials_of_degree_d, power_set
