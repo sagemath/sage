@@ -91,7 +91,7 @@ cdef int c_f(double t, const double *y, double *dydt, void *params) noexcept:
     for i in range(y_n):
         y_list.append(y[i])
     try:
-        if len(wrapper.the_parameters)!=0:
+        if len(wrapper.the_parameters) != 0:
             dydt_list = wrapper.the_function(t, y_list, wrapper.the_parameters)
         else:
             dydt_list = wrapper.the_function(t, y_list)
@@ -497,7 +497,7 @@ class ode_solver():
                 c = gsl_odeiv_control_standard_new(self.error_abs, self.error_rel, self.a, self.a_dydt)
             elif hasattr(self.scale_abs, '__len__'):
                 if len(self.scale_abs) == dim:
-                    scale_abs_array =<double *> sig_malloc(dim * sizeof(double))
+                    scale_abs_array = <double *> sig_malloc(dim * sizeof(double))
                     for i in range(dim):
                         scale_abs_array[i] = self.scale_abs[i]
                     c = gsl_odeiv_control_scaled_new(self.error_abs, self.error_rel, self.a, self.a_dydt, scale_abs_array, dim)
