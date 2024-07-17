@@ -4,7 +4,6 @@ Partition backtrack functions for lists -- a simple example of using partn_ref
 EXAMPLES::
 
     sage: import sage.groups.perm_gps.partn_ref.refinement_lists
-
 """
 
 #*****************************************************************************
@@ -15,13 +14,13 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-from .data_structures cimport *
-from .double_coset cimport double_coset, int_cmp
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
+from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset, int_cmp
 
 
 def is_isomorphic(self, other):
@@ -62,20 +61,22 @@ def is_isomorphic(self, other):
     sig_free(output)
     return output_py
 
-cdef bint all_list_children_are_equivalent(PartitionStack *PS, void *S):
+
+cdef bint all_list_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0
 
-cdef int refine_list(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_list(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     return 0
 
-cdef int compare_lists(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_lists(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     r"""
     Compare two lists according to the lexicographic order.
     """
     cdef list MS1 = <list> S1
     cdef list MS2 = <list> S2
     cdef int i, j
-    for i from 0 <= i < degree:
+    for i in range(degree):
         j = int_cmp(MS1[gamma_1[i]], MS2[gamma_2[i]])
-        if j != 0: return j
+        if j != 0:
+            return j
     return 0

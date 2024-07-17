@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Valuations on polynomial rings based on `\phi`-adic expansions
 
@@ -39,7 +38,6 @@ Here, the expansion lists the remainders of repeated division by `x^2 + x + 1`::
 
     sage: list(w.coefficients(f))
     [x + 1, 1]
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
@@ -68,7 +66,7 @@ class DevelopingValuation(DiscretePseudoValuation):
 
     TESTS::
 
-        sage: TestSuite(v).run() # long time
+        sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
 
     """
     def __init__(self, parent, phi):
@@ -102,9 +100,9 @@ class DevelopingValuation(DiscretePseudoValuation):
         EXAMPLES::
 
             sage: R = Zp(2,5)
-            sage: S.<x> = R[]
-            sage: v = GaussValuation(S)
-            sage: v.phi()
+            sage: S.<x> = R[]                                                           # needs sage.libs.ntl
+            sage: v = GaussValuation(S)                                                 # needs sage.libs.ntl
+            sage: v.phi()                                                               # needs sage.libs.ntl
             (1 + O(2^5))*x
 
         """
@@ -124,6 +122,7 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Zp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -156,6 +155,7 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Zp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -189,11 +189,12 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 3
-            sage: list(v.coefficients(f)) # note that these constants are in the polynomial ring
+            sage: list(v.coefficients(f))  # note that these constants are in the polynomial ring
             [1 + 2 + O(2^5), 2 + O(2^6), 1 + O(2^5)]
             sage: v = v.augmentation( x^2 + x + 1, 1)
             sage: list(v.coefficients(f))
@@ -239,17 +240,17 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 3
-            sage: v.newton_polygon(f)
+            sage: v.newton_polygon(f)                                                   # needs sage.geometry.polyhedron
             Finite Newton polygon with 2 vertices: (0, 0), (2, 0)
-
             sage: v = v.augmentation( x^2 + x + 1, 1)
-            sage: v.newton_polygon(f)
+            sage: v.newton_polygon(f)                                                   # needs sage.geometry.polyhedron
             Finite Newton polygon with 2 vertices: (0, 0), (1, 1)
-            sage: v.newton_polygon( f * v.phi()^3 )
+            sage: v.newton_polygon( f * v.phi()^3 )                                     # needs sage.geometry.polyhedron
             Finite Newton polygon with 2 vertices: (3, 3), (4, 4)
 
         """
@@ -270,6 +271,7 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -277,6 +279,7 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v(f)
             0
 
+            sage: # needs sage.libs.ntl
             sage: v = v.augmentation( x^2 + x + 1, 1)
             sage: v(f)
             0
@@ -315,6 +318,7 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S, R.valuation())
@@ -331,9 +335,9 @@ class DevelopingValuation(DiscretePseudoValuation):
         EXAMPLES::
 
             sage: R = Zp(2,5)
-            sage: S.<x> = R[]
-            sage: v = GaussValuation(S)
-            sage: v._test_effective_degree()
+            sage: S.<x> = R[]                                                           # needs sage.libs.ntl
+            sage: v = GaussValuation(S)                                                 # needs sage.libs.ntl
+            sage: v._test_effective_degree()                                            # needs sage.libs.ntl
         """
         tester = self._tester(**options)
         S = tester.some_elements(self.domain().base_ring().some_elements())

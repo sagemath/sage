@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Set of words
 
@@ -10,8 +9,8 @@ AUTHORS:
     - Franco Saliola (2008-12-17): merged into sage
     - Sebastien Labbe (2008-12-17): merged into sage
     - Arnaud Bergeron (2008-12-17): merged into sage
-    - Sebastien Labbe (2009-07-21): Improved morphism iterator (:trac:`6571`).
-    - Vincent Delecroix (2015): classes simplifications (:trac:`19619`)
+    - Sebastien Labbe (2009-07-21): Improved morphism iterator (:issue:`6571`).
+    - Vincent Delecroix (2015): classes simplifications (:issue:`19619`)
 
 EXAMPLES::
 
@@ -118,7 +117,7 @@ class AbstractLanguage(Parent):
     Abstract base class
 
     This is *not* to be used by any means. This class gather previous features
-    of set of words (prior to :trac:`19619`). In the future that class might
+    of set of words (prior to :issue:`19619`). In the future that class might
     simply disappear or become a common base class for all languages. In the
     latter case, its name would possibly change to ``Language``.
     """
@@ -446,7 +445,7 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` - word
+        -  ``data`` -- word
 
         EXAMPLES::
 
@@ -509,9 +508,9 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` - callable
-        -  ``length`` - integer or ``None`` or "infinite" or ``Infinity``
-        -  ``caching`` - (default: True) True or False. Whether to keep a cache
+        -  ``data`` -- callable
+        -  ``length`` -- integer or ``None`` or "infinite" or ``Infinity``
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by the callable.
 
         EXAMPLES::
@@ -534,11 +533,11 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` - iterable
+        -  ``data`` -- iterable
 
-        -  ``length`` - (optional) integer
+        -  ``length`` -- (optional) integer
 
-        -  ``caching`` - (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by the iterator.
 
         EXAMPLES::
@@ -562,20 +561,20 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` - (default: None) list, string, tuple, iterator, None
+        -  ``data`` -- (default: None) list, string, tuple, iterator, None
            (shorthand for []), or a callable defined on [0,1,...,length].
 
-        -  ``length`` - integer (default: None). Only used if the data is an iterator or
+        -  ``length`` -- integer (default: None). Only used if the data is an iterator or
            a callable. It determines the length of the word.
 
-        -  ``datatype`` - (default: None) None, "char", "list", "str",
+        -  ``datatype`` -- (default: None) None, "char", "list", "str",
            "tuple", "iter", "callable" or "pickled_function". If None, then
            the function tries to guess this from the data.
 
-        -  ``caching`` - (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by an iterator or callable.
 
-        -  ``check`` - (default: True) True or False. Whether to check if
+        -  ``check`` -- (default: ``True``) True or False. Whether to check if
            the 40 first letters are in the parent alphabet. This is a
            check done to test for small programming errors. Since we also
            support infinite words, we cannot really implement a more
@@ -705,9 +704,9 @@ class FiniteWords(AbstractLanguage):
         Construction of a word path from a finite word::
 
             sage: W = FiniteWords('abcd')
-            sage: P = WordPaths('abcd')
+            sage: P = WordPaths('abcd')                                                 # needs sage.modules
             sage: w = W('aaab')
-            sage: P(w)
+            sage: P(w)                                                                  # needs sage.modules
             Path: aaab
 
         Construction of a word path from a Christoffel word::
@@ -715,8 +714,8 @@ class FiniteWords(AbstractLanguage):
             sage: w = words.ChristoffelWord(5,8)
             sage: w
             word: 0010010100101
-            sage: P = WordPaths([0,1,2,3])
-            sage: P(w)
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: P(w)                                                                  # needs sage.modules
             Path: 0010010100101
 
         Construction of a word represented by a list from a word
@@ -744,19 +743,19 @@ class FiniteWords(AbstractLanguage):
 
             sage: w = words.FibonacciWord()
             sage: f = w[:100]
-            sage: P = WordPaths([0,1,2,3])
-            sage: p = P(f); p
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: p = P(f); p                                                           # needs sage.modules
             Path: 0100101001001010010100100101001001010010...
-            sage: p.length()
+            sage: p.length()                                                            # needs sage.modules
             100
 
         Creation of a word path from a FiniteWord_callable::
 
             sage: g = W(lambda n:n%2, length = 100)
-            sage: P = WordPaths([0,1,2,3])
-            sage: p = P(g); p
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: p = P(g); p                                                           # needs sage.modules
             Path: 0101010101010101010101010101010101010101...
-            sage: p.length()
+            sage: p.length()                                                            # needs sage.modules
             100
 
         Creation of a word from a pickled function::
@@ -891,7 +890,7 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        - ``l`` - integer (default: 1), the length of the desired words
+        - ``l`` -- integer (default: 1), the length of the desired words
 
         EXAMPLES::
 
@@ -960,8 +959,7 @@ class FiniteWords(AbstractLanguage):
             word: 444
         """
         for l in itertools.count():
-            for w in self.iterate_by_length(l):
-                yield w
+            yield from self.iterate_by_length(l)
 
     def __contains__(self, x):
         """
@@ -1018,7 +1016,7 @@ class FiniteWords(AbstractLanguage):
 
         TESTS::
 
-            sage: _ = FiniteWords(GF(5)).random_element()
+            sage: _ = FiniteWords(GF(5)).random_element()                               # needs sage.rings.finite_rings
         """
         if length is None:
             length = ZZ.random_element(0, 10)
@@ -1032,23 +1030,23 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        - ``arg`` - (optional, default: ``None``) It can be one of the following:
+        - ``arg`` -- (default: ``None``) It can be one of the following:
 
-          - ``None`` - then the method iterates through all morphisms.
+          - ``None`` -- then the method iterates through all morphisms.
 
-          - tuple `(a, b)` of two integers  - It specifies the range
+          - tuple `(a, b)` of two integers  -- It specifies the range
             ``range(a, b)`` of values to consider for the sum of the length
             of the image of each letter in the alphabet.
 
-          - list of nonnegative integers - The length of the list must be
+          - list of nonnegative integers -- The length of the list must be
             equal to the size of the alphabet, and the i-th integer of
             ``arg`` determines the length of the word mapped to by the i-th
             letter of the (ordered) alphabet.
 
-        - ``codomain`` - (default: ``None``) a combinatorial class of words.
+        - ``codomain`` -- (default: ``None``) a combinatorial class of words.
           By default, ``codomain`` is ``self``.
 
-        - ``min_length`` - (default: 1) nonnegative integer. If ``arg`` is
+        - ``min_length`` -- (default: 1) nonnegative integer. If ``arg`` is
           not specified, then iterate through all the morphisms where the
           length of the images of each letter in the alphabet is at least
           ``min_length``. This is ignored if ``arg`` is a list.
@@ -1386,7 +1384,7 @@ class InfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` - word
+        -  ``data`` -- word
 
         EXAMPLES::
 
@@ -1432,9 +1430,9 @@ class InfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` - callable
+        -  ``data`` -- callable
 
-        -  ``caching`` - (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by the callable.
 
         EXAMPLES::
@@ -1455,9 +1453,9 @@ class InfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` - iterable
+        -  ``data`` -- iterable
 
-        -  ``caching`` - (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by the iterator.
 
         EXAMPLES::
@@ -1476,16 +1474,16 @@ class InfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` - iterator or a callable
+        -  ``data`` -- iterator or a callable
 
-        -  ``datatype`` - (default: None) None, "iter", "callable" or
+        -  ``datatype`` -- (default: None) None, "iter", "callable" or
            "pickled_function". If None, then the function tries to guess
            this from the data.
 
-        -  ``caching`` - (default: True) True or False. Whether to keep a
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a
            cache of the letters computed by an iterator or callable.
 
-        -  ``check`` - (default: True) True or False. Whether to check if
+        -  ``check`` -- (default: ``True``) True or False. Whether to check if
            the 40 first letters are in the parent alphabet. This is a
            check done to test for small programming errors. Since we also
            support infinite words, we cannot really implement a more
@@ -1635,11 +1633,12 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         r"""
         TESTS::
 
-            sage: import os
+            sage: import os, tempfile
             sage: W = Words('ab')
-            sage: filename = os.path.join(tmp_dir(), 'test.sobj')
-            sage: W.save(filename)
-            sage: load(filename)
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     filename = os.path.join(d, 'test.sobj')
+            ....:     W.save(filename)
+            ....:     load(filename)
             Finite and infinite words over {'a', 'b'}
         """
         # add a default to support old pickles from #19619
@@ -1776,10 +1775,10 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` - (default: None) list, string, tuple, iterator, None
+        -  ``data`` -- (default: None) list, string, tuple, iterator, None
            (shorthand for []), or a callable defined on [0,1,...,length].
 
-        -  ``length`` - (default: None) This is dependent on the type of data.
+        -  ``length`` -- (default: None) This is dependent on the type of data.
            It is ignored for words defined by lists, strings, tuples,
            etc., because they have a naturally defined length.
            For callables, this defines the domain of definition,
@@ -1789,14 +1788,14 @@ class FiniteOrInfiniteWords(AbstractLanguage):
            iterator terminates; "finite" if you know that the iterator
            terminates, but do not know the length.
 
-        -  ``datatype`` - (default: None) None, "char", "list", "str",
+        -  ``datatype`` -- (default: None) None, "char", "list", "str",
            "tuple", "iter", "callable" or "pickled_function". If None, then
            the function tries to guess this from the data.
 
-        -  ``caching`` - (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by an iterator or callable.
 
-        -  ``check`` - (default: True) True or False. Whether to check if
+        -  ``check`` -- (default: ``True``) True or False. Whether to check if
            the 40 first letters are in the parent alphabet. This is a
            check done to test for small programming errors. Since we also
            support infinite words, we cannot really implement a more
@@ -1928,9 +1927,9 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         Construction of a word path from a finite word::
 
             sage: W = Words('abcd')
-            sage: P = WordPaths('abcd')
+            sage: P = WordPaths('abcd')                                                 # needs sage.modules
             sage: w = W('aaab')
-            sage: P(w)
+            sage: P(w)                                                                  # needs sage.modules
             Path: aaab
 
         Construction of a word path from a Christoffel word::
@@ -1938,8 +1937,8 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             sage: w = words.ChristoffelWord(5,8)
             sage: w
             word: 0010010100101
-            sage: P = WordPaths([0,1,2,3])
-            sage: P(w)
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: P(w)                                                                  # needs sage.modules
             Path: 0010010100101
 
         Construction of a word represented by a list from a word
@@ -1967,24 +1966,24 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
             sage: w = words.FibonacciWord()
             sage: f = w[:100]
-            sage: P = WordPaths([0,1,2,3])
-            sage: p = P(f); p
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: p = P(f); p                                                           # needs sage.modules
             Path: 0100101001001010010100100101001001010010...
-            sage: p.length()
+            sage: p.length()                                                            # needs sage.modules
             100
 
-        Creation of a word path from a FiniteWord_callable::
+        Creation of a word path from a :class:`FiniteWord_callable`::
 
-            sage: g = Word(lambda n:n%2, length = 100)
-            sage: P = WordPaths([0,1,2,3])
-            sage: p = P(g); p
+            sage: g = Word(lambda n: n%2, length=100)
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: p = P(g); p                                                           # needs sage.modules
             Path: 0101010101010101010101010101010101010101...
-            sage: p.length()
+            sage: p.length()                                                            # needs sage.modules
             100
 
         Creation of a word from a pickled function::
 
-            sage: f = lambda n : n % 10
+            sage: f = lambda n: n % 10
             sage: from sage.misc.fpickle import pickle_function
             sage: s = pickle_function(f)
             sage: Word(s, datatype='pickled_function')
@@ -2100,11 +2099,12 @@ class Words_n(Parent):
         r"""
         TESTS::
 
-            sage: import os
+            sage: import os, tempfile
             sage: W = Words('ab', 10)
-            sage: filename = os.path.join(tmp_dir(), 'test.sobj')
-            sage: W.save(filename)
-            sage: load(filename)
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     filename = os.path.join(d, 'test.sobj')
+            ....:     W.save(filename)
+            ....:     load(filename)
             Words of length 10 over {'a', 'b'}
         """
         # add a default to support old pickles from #19619
@@ -2215,9 +2215,9 @@ class Words_n(Parent):
 
         TESTS::
 
-            sage: _ = Words(GF(5),4).random_element()
+            sage: _ = Words(GF(5),4).random_element()                                   # needs sage.rings.finite_rings
 
-        Check that :trac:`18283` is fixed::
+        Check that :issue:`18283` is fixed::
 
             sage: w = Words('abc', 5).random_element()
             sage: w.length()

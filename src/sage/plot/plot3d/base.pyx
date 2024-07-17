@@ -52,7 +52,6 @@ AUTHORS:
 from cpython.list cimport *
 
 import os
-import sys
 import zipfile
 
 from functools import reduce
@@ -63,8 +62,8 @@ from sage.misc.temporary_file import tmp_filename
 from sage.misc.fast_methods cimport hash_by_id
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
-from .texture import Texture
-from .transform cimport Transformation, point_c, face_c
+from sage.plot.plot3d.texture import Texture
+from sage.plot.plot3d.transform cimport Transformation, point_c, face_c
 include "point_c.pxi"
 
 from sage.interfaces.tachyon import tachyon_rt
@@ -278,19 +277,14 @@ cdef class Graphics3d(SageObject):
         T.export_jmol(scene_zip, **opts)
         from sage.interfaces.jmoldata import JmolData
         jdata = JmolData()
-        if not jdata.is_jvm_available():
+        if not jdata.is_jmol_available():
             # We can only use JMol to generate preview if a jvm is installed
             from sage.repl.rich_output.output_graphics import OutputImagePng
             tachyon = self._rich_repr_tachyon(OutputImagePng, **opts)
             tachyon.png.save_as(preview_png)
         else:
             # Java needs absolute paths
-            # On cygwin, they should be native ones
             scene_native = scene_zip
-
-            if sys.platform == 'cygwin':
-                import cygwin
-                scene_native = cygwin.cygpath(scene_native, 'w')
 
             script = '''set defaultdirectory "{0}"\nscript SCRIPT\n'''.format(scene_native)
             jdata.export_image(targetfile=preview_png, datafile=script,
@@ -502,7 +496,7 @@ cdef class Graphics3d(SageObject):
             js_options['axesLabelsStyle'] = None
 
         if js_options['axesLabelsStyle'] is not None:
-            from .shapes import _validate_threejs_text_style
+            from sage.plot.plot3d.shapes import _validate_threejs_text_style
             style = js_options['axesLabelsStyle']
             if isinstance(style, dict):
                 style = _validate_threejs_text_style(style)
@@ -841,6 +835,7 @@ cdef class Graphics3d(SageObject):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: from sage.plot.plot3d.shapes import Cone
             sage: v = (1,2,3)
             sage: G = arrow3d((0, 0, 0), v)
@@ -861,6 +856,7 @@ cdef class Graphics3d(SageObject):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: from sage.plot.plot3d.shapes import Cone
             sage: G = Cone(1/5, 1) + Cone(1/5, 1, opacity=.25).rotateX(pi/2)
             sage: G.show(aspect_ratio=1)
@@ -873,6 +869,7 @@ cdef class Graphics3d(SageObject):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: from sage.plot.plot3d.shapes import Cone
             sage: G = Cone(1/5, 1) + Cone(1/5, 1, opacity=.25).rotateY(pi/3)
             sage: G.show(aspect_ratio=1)
@@ -885,6 +882,7 @@ cdef class Graphics3d(SageObject):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: from sage.plot.plot3d.shapes import Box
             sage: G = Box(1/2, 1/3, 1/5) + Box(1/2, 1/3, 1/5, opacity=.25).rotateZ(pi/5)
             sage: G.show(aspect_ratio=1)
@@ -983,7 +981,6 @@ cdef class Graphics3d(SageObject):
 </Scene>
 </X3D>
 """%(self.viewpoint().x3d_str(), self.x3d_str())
-
 
     ################ TACHYON ################
 
@@ -1548,7 +1545,7 @@ end_scene""".format(
         T = [xyz_min[i] - a_min[i] for i in range(3)]
         X = X.translate(T)
         if frame:
-            from .shapes2 import frame3d, frame_labels
+            from sage.plot.plot3d.shapes2 import frame3d, frame_labels
             F = frame3d(xyz_min, xyz_max, opacity=0.5, color=(0,0,0), thickness=thickness)
             if labels:
                 F += frame_labels(xyz_min, xyz_max, a_min_orig, a_max_orig)
@@ -1557,7 +1554,7 @@ end_scene""".format(
 
         if axes:
             # draw axes
-            from .shapes import arrow3d
+            from sage.plot.plot3d.shapes import arrow3d
             A = (arrow3d((min(0,a_min[0]),0, 0), (max(0,a_max[0]), 0,0),
                              thickness, color="blue"),
                  arrow3d((0,min(0,a_min[1]), 0), (0, max(0,a_max[1]), 0),
@@ -1671,10 +1668,10 @@ end_scene""".format(
 
         -  ``zoom`` -- (default: 1) how zoomed in
 
-        -  ``frame`` -- (default: True) if True, draw a
+        -  ``frame`` -- (default: ``True``) if True, draw a
            bounding frame with labels
 
-        -  ``axes`` -- (default: False) if True, draw coordinate
+        -  ``axes`` -- (default: ``False``) if True, draw coordinate
            axes
 
         -  ``camera_position`` (for tachyon) -- (default: (2.3, 2.4, 2.0))
@@ -1693,7 +1690,7 @@ end_scene""".format(
         -  ``light_position`` (for tachyon) -- (default: (4,3,2)) the position
            of the single light source in the scene (in addition to ambient light)
 
-        -  ``antialiasing`` (for tachyon) -- (default: False)
+        -  ``antialiasing`` (for tachyon) -- (default: ``False``)
 
         -  ``raydepth`` (for tachyon) -- (default: 8)
            see the :class:`sage.plot.plot3d.tachyon.Tachyon` class
@@ -1761,17 +1758,17 @@ end_scene""".format(
 
         EXAMPLES: We illustrate use of the ``aspect_ratio`` option::
 
-            sage: x, y = var('x,y')
-            sage: p = plot3d(2*sin(x*y), (x, -pi, pi), (y, -pi, pi))
-            sage: p.show(aspect_ratio=[1,1,1])
+            sage: x, y = var('x,y')                                                     # needs sage.symbolic
+            sage: p = plot3d(2*sin(x*y), (x, -pi, pi), (y, -pi, pi))                    # needs sage.symbolic
+            sage: p.show(aspect_ratio=[1,1,1])                                          # needs sage.symbolic
 
         This looks flattened, but filled with the plot::
 
-            sage: p.show(frame_aspect_ratio=[1,1,1/16])
+            sage: p.show(frame_aspect_ratio=[1,1,1/16])                                 # needs sage.symbolic
 
         This looks flattened, but the plot is square and smaller::
 
-            sage: p.show(aspect_ratio=[1,1,1], frame_aspect_ratio=[1,1,1/8])
+            sage: p.show(aspect_ratio=[1,1,1], frame_aspect_ratio=[1,1,1/8])            # needs sage.symbolic
 
         This example shows indirectly that the defaults
         from :func:`~sage.plot.plot.plot` are dealt with properly::
@@ -1782,17 +1779,17 @@ end_scene""".format(
         We use the 'canvas3d' backend from inside the notebook to get a view of
         the plot rendered inline using HTML canvas::
 
-            sage: p.show(viewer='canvas3d')
+            sage: p.show(viewer='canvas3d')                                             # needs sage.symbolic
 
         Sometimes shadows in Tachyon-produced images can lead to confusing
         plots. To remove them::
 
-            sage: p.show(viewer="tachyon", shade="medium")
+            sage: p.show(viewer="tachyon", shade="medium")                              # needs sage.symbolic
 
         One can also pass Tachyon command line flags directly. For example,
         the following line produces the same result as the previous one::
 
-            sage: p.show(viewer="tachyon", extra_opts="-mediumshade")
+            sage: p.show(viewer="tachyon", extra_opts="-mediumshade")                   # needs sage.symbolic
         """
         from sage.repl.rich_output import get_display_manager
         dm = get_display_manager()
@@ -1986,6 +1983,7 @@ end_scene""".format(
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
             sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
             sage: astl = a.stl_binary()
@@ -1998,6 +1996,7 @@ end_scene""".format(
 
         This works when faces have more then 3 sides::
 
+            sage: # needs sage.geometry.polyhedron sage.groups
             sage: P = polytopes.dodecahedron()
             sage: Q = P.plot().all[-1]
             sage: print(Q.stl_binary()[:40].decode('ascii'))
@@ -2033,6 +2032,7 @@ end_scene""".format(
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
             sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
             sage: astl = a.stl_ascii_string()
@@ -2059,6 +2059,7 @@ end_scene""".format(
 
         Now works when faces have more then 3 sides::
 
+            sage: # needs sage.geometry.polyhedron sage.groups
             sage: P = polytopes.dodecahedron()
             sage: Q = P.plot().all[-1]
             sage: print(Q.stl_ascii_string().splitlines()[:7])
@@ -2128,6 +2129,7 @@ end_scene""".format(
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
             sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
             sage: astl = a.ply_ascii_string()
@@ -2202,6 +2204,7 @@ end_scene""".format(
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
             sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
             sage: a_amf = a.amf_ascii_string()
@@ -2239,7 +2242,7 @@ end_scene""".format(
         """
         Draw a 3D plot of this graphics object, which just returns this
         object since this is already a 3D graphics object.
-        Needed to support PLOT in docstrings, see :trac:`17498`
+        Needed to support PLOT in docstrings, see :issue:`17498`
 
         EXAMPLES::
 
@@ -2292,7 +2295,7 @@ class Graphics3dGroup(Graphics3d):
             sage: len(G.all)
             10
 
-        We check that :trac:`17258` is solved::
+        We check that :issue:`17258` is solved::
 
             sage: g = point3d([0,-2,-2]); g += point3d([2,-2,-2])
             sage: len(g.all)
@@ -2520,7 +2523,7 @@ class Graphics3dGroup(Graphics3d):
 
         TESTS:
 
-        Check that :trac:`23200` is fixed::
+        Check that :issue:`23200` is fixed::
 
             sage: G = sage.plot.plot3d.base.Graphics3dGroup()
             sage: G.texture_set()
@@ -2601,6 +2604,7 @@ class TransformGroup(Graphics3dGroup):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: G = cube()
             sage: G.bounding_box()
             ((-0.5, -0.5, -0.5), (0.5, 0.5, 0.5))
@@ -3364,6 +3368,7 @@ def optimal_extra_kwds(v):
         a.update(b)
     return a
 
+
 def _flip_orientation(v):
     """
     Switch from LH to RH coords to be consistent with Java rendition
@@ -3374,4 +3379,4 @@ def _flip_orientation(v):
             sage: _flip_orientation((1, 2, 3))
             (1, -2, 3)
     """
-    return (v[0],-v[1],v[2])
+    return (v[0], -v[1], v[2])

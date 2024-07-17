@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Integer partitions
 
@@ -54,7 +53,7 @@ AUTHORS:
   longer than the length of the inner partition, it would include 0's.
 
 - Andrew Mathas (2012-06-01): Removed deprecated functions and added
-  compatibility with the PartitionTuple classes.  See :trac:`13072`
+  compatibility with the PartitionTuple classes.  See :issue:`13072`
 
 - Travis Scrimshaw (2012-10-12): Added options. Made
   ``Partition_class`` to the element ``Partition``. ``Partitions*`` are now
@@ -67,7 +66,7 @@ EXAMPLES:
 
 There are `5` partitions of the integer `4`::
 
-    sage: Partitions(4).cardinality()
+    sage: Partitions(4).cardinality()                                                   # needs sage.libs.flint
     5
     sage: Partitions(4).list()
     [[4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
@@ -284,17 +283,10 @@ from copy import copy
 from itertools import accumulate
 
 from sage.arith.misc import binomial, factorial, gcd, multinomial
-from sage.libs.pari.all import pari
-from sage.libs.flint.arith import number_of_partitions as flint_number_of_partitions
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.symbolic.ring import var
-
 from sage.misc.lazy_import import lazy_import
-lazy_import('sage.combinat.skew_partition', 'SkewPartition')
-lazy_import('sage.combinat.partition_tuple', 'PartitionTuple')
-
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randrange
 from sage.misc.cachefunc import cached_method, cached_function
@@ -315,15 +307,19 @@ from .combinat import CombinatorialElement
 from . import tableau
 from . import permutation
 from . import composition
-from sage.combinat.partitions import ZS1_iterator, ZS1_iterator_nk
+from sage.combinat.partitions import ZS1_iterator, ZS1_iterator_nk, ZS1_next, ZS2_next
 from sage.combinat.integer_lists import IntegerListsLex
 from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
 from sage.combinat.integer_vector_weighted import iterator_fast as weighted_iterator_fast
 from sage.combinat.combinat_cython import conjugate
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.graphs.dot2tex_utils import have_dot2tex
+
+lazy_import('sage.combinat.skew_partition', 'SkewPartition')
+lazy_import('sage.combinat.partition_tuple', 'PartitionTuple')
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
+lazy_import("sage.symbolic.ring", "var")
 
 
 class Partition(CombinatorialElement):
@@ -668,23 +664,23 @@ class Partition(CombinatorialElement):
         from sage.typeset.unicode_art import UnicodeArt
 
         if not self._list:
-            return UnicodeArt(u'∅', baseline=0)
+            return UnicodeArt('∅', baseline=0)
         if self.parent().options.convention == "English":
             data = list(self)
         else:
             data = list(reversed(self))
 
-        txt = [u'┌' + u'┬' * (data[0] - 1) + u'┐']
+        txt = ['┌' + '┬' * (data[0] - 1) + '┐']
         for i in range(len(data) - 1):
             p = data[i]
             q = data[i + 1]
             if p < q:
-                txt += [u'├' + u'┼' * p + u'┬' * (q - p - 1) + u'┐']
+                txt += ['├' + '┼' * p + '┬' * (q - p - 1) + '┐']
             elif p == q:
-                txt += [u'├' + u'┼' * (p - 1) + u'┤']
+                txt += ['├' + '┼' * (p - 1) + '┤']
             else:
-                txt += [u'├' + u'┼' * q + u'┴' * (p - q - 1) + u'┘']
-        txt += [u'└' + u'┴' * (data[-1] - 1) + u'┘']
+                txt += ['├' + '┼' * q + '┴' * (p - q - 1) + '┘']
+        txt += ['└' + '┴' * (data[-1] - 1) + '┘']
 
         return UnicodeArt(txt, baseline=0)
 
@@ -714,8 +710,8 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()
-        return '%s' % ', '.join('%s%s' % (m+1, '' if e==1 else '^%s'%e)
-                                 for (m,e) in enumerate(exp) if e > 0)
+        return ', '.join('{}{}'.format(m, '' if e == 1 else '^%s' % e)
+                         for m, e in enumerate(exp, start=1) if e)
 
     def _repr_exp_high(self):
         """
@@ -734,8 +730,8 @@ class Partition(CombinatorialElement):
             return '-'
         exp = self.to_exp()[::-1]         # reversed list of exponents
         M = max(self)
-        return ', '.join('%s%s' % (M - m, '' if e == 1 else '^%s' % e)
-                         for m, e in enumerate(exp) if e > 0)
+        return ', '.join('{}{}'.format(M - m, '' if e == 1 else '^%s' % e)
+                         for m, e in enumerate(exp) if e)
 
     def _repr_compact_low(self):
         """
@@ -752,8 +748,8 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()
-        return '%s' % ','.join('%s%s' % (m+1, '' if e==1 else '^%s'%e)
-                                 for (m,e) in enumerate(exp) if e > 0)
+        return ','.join('{}{}'.format(m, '' if e == 1 else '^%s' % e)
+                        for m, e in enumerate(exp, start=1) if e)
 
     def _repr_compact_high(self):
         """
@@ -770,9 +766,9 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()[::-1]         # reversed list of exponents
-        M=max(self)
-        return '%s' % ','.join('%s%s' % (M-m, '' if e==1 else '^%s'%e)
-                                 for (m,e) in enumerate(exp) if e>0)
+        M = max(self)
+        return ','.join('{}{}'.format(M - m, '' if e == 1 else '^%s' % e)
+                        for m, e in enumerate(exp) if e)
 
     def _repr_diagram(self):
         r"""
@@ -797,7 +793,7 @@ class Partition(CombinatorialElement):
         """
         return self.ferrers_diagram()
 
-    def level(self):
+    def level(self) -> int:
         """
         Return the level of ``self``, which is always 1.
 
@@ -811,7 +807,7 @@ class Partition(CombinatorialElement):
         """
         return 1
 
-    def components(self):
+    def components(self) -> list:
         """
         Return a list containing the shape of ``self``.
 
@@ -823,9 +819,9 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2]).components()
             [[3, 2]]
         """
-        return [ self ]
+        return [self]
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX version of ``self``.
 
@@ -874,7 +870,7 @@ class Partition(CombinatorialElement):
         """
         return self.parent().options._dispatch(self, '_latex_', 'latex')
 
-    def _latex_young_diagram(self):
+    def _latex_young_diagram(self) -> str:
         r"""
         LaTeX output as a Young diagram.
 
@@ -894,9 +890,10 @@ class Partition(CombinatorialElement):
             return "{\\emptyset}"
 
         from sage.combinat.output import tex_from_array
-        return tex_from_array([ ["\\phantom{x}"]*row_size for row_size in self._list ])
+        return tex_from_array([["\\phantom{x}"] * row_size
+                               for row_size in self._list])
 
-    def _latex_diagram(self):
+    def _latex_diagram(self) -> str:
         r"""
         LaTeX output as a Ferrers' diagram.
 
@@ -917,9 +914,10 @@ class Partition(CombinatorialElement):
 
         entry = self.parent().options("latex_diagram_str")
         from sage.combinat.output import tex_from_array
-        return tex_from_array([ [entry]*row_size for row_size in self._list ], False)
+        return tex_from_array([[entry] * row_size
+                               for row_size in self._list], False)
 
-    def _latex_list(self):
+    def _latex_list(self) -> str:
         r"""
         LaTeX output as a list.
 
@@ -932,7 +930,7 @@ class Partition(CombinatorialElement):
         """
         return repr(self._list)
 
-    def _latex_exp_low(self):
+    def _latex_exp_low(self) -> str:
         r"""
         LaTeX output in exponential notation (lowest first).
 
@@ -946,8 +944,8 @@ class Partition(CombinatorialElement):
         if not self._list:
             return "{\\emptyset}"
         exp = self.to_exp()
-        return '%s' % ','.join('%s%s' % (m+1, '' if e==1 else '^{%s}'%e)
-                                 for (m,e) in enumerate(exp) if e > 0)
+        return '%s' % ','.join('{}{}'.format(m + 1, '' if e == 1 else '^{%s}' % e)
+                               for (m, e) in enumerate(exp) if e > 0)
 
     def _latex_exp_high(self):
         r"""
@@ -964,10 +962,10 @@ class Partition(CombinatorialElement):
             return "{\\emptyset}"
         exp = self.to_exp()[::-1]  # reversed list of exponents
         M = max(self)
-        return '%s' % ','.join('%s%s' % (M-m, '' if e==1 else '^{%s}'%e)
-                                 for (m,e) in enumerate(exp) if e>0)
+        return ','.join('{}{}'.format(M - m, '' if e == 1 else '^{%s}' % e)
+                        for m, e in enumerate(exp) if e)
 
-    def ferrers_diagram(self):
+    def ferrers_diagram(self) -> str:
         r"""
         Return the Ferrers diagram of ``self``.
 
@@ -980,18 +978,18 @@ class Partition(CombinatorialElement):
             *****
             **
             *
-            sage: Partitions.options(diagram_str='#')
+            sage: Partitions.options(diagram_str='▉')
             sage: print(mu.ferrers_diagram())
-            #####
-            #####
-            ##
-            #
+            ▉▉▉▉▉
+            ▉▉▉▉▉
+            ▉▉
+            ▉
             sage: Partitions.options.convention="french"
             sage: print(mu.ferrers_diagram())
-            #
-            ##
-            #####
-            #####
+            ▉
+            ▉▉
+            ▉▉▉▉▉
+            ▉▉▉▉▉
             sage: print(Partition([]).ferrers_diagram())
             -
             sage: Partitions.options(diagram_str='-')
@@ -1004,10 +1002,9 @@ class Partition(CombinatorialElement):
             return '-' if diag_str != '-' else "(/)"
         if self.parent().options.convention == "English":
             return '\n'.join(diag_str * p for p in self)
-        else:
-            return '\n'.join(diag_str * p for p in reversed(self))
+        return '\n'.join(diag_str * p for p in reversed(self))
 
-    def pp(self):
+    def pp(self) -> None:
         r"""
         Print the Ferrers diagram.
 
@@ -1088,9 +1085,9 @@ class Partition(CombinatorialElement):
 
         Now let us compare this to the power map on `S_8`::
 
+            sage: # needs sage.groups
             sage: G = SymmetricGroup(8)
-            sage: g = G([(1,2,3,4,5),(6,7,8)])
-            sage: g
+            sage: g = G([(1,2,3,4,5),(6,7,8)]); g
             (1,2,3,4,5)(6,7,8)
             sage: g^2
             (1,3,5,2,4)(6,8,7)
@@ -1106,8 +1103,8 @@ class Partition(CombinatorialElement):
         """
         res = []
         for i in self:
-            g = gcd(i, k)
-            res.extend( [ZZ(i//g)]*int(g) )
+            g = int(gcd(i, k))
+            res.extend([i // g] * g)
         res.sort(reverse=True)
         return Partition(res)
 
@@ -1132,16 +1129,16 @@ class Partition(CombinatorialElement):
 
         next_p = p[:] + [1]*(n - len(p))
 
-        #Check to see if we are at the last (all ones) partition
-        if p == [1]*n:
+        # Check to see if we are at the last (all ones) partition
+        if p == [1] * n:
             return False
 
         #
-        #If we are not, then run the ZS1 algorithm.
+        # If we are not, then run the ZS1 algorithm.
         #
 
-        #Let h be the number of non-one  entries in the
-        #partition
+        # Let h be the number of non-one  entries in the
+        # partition
         h = 0
         for i in next_p:
             if i != 1:
@@ -1215,10 +1212,10 @@ class Partition(CombinatorialElement):
 
         ::
 
-            sage: F = GF(11)
-            sage: a = F.multiplicative_generator();a
+            sage: F = GF(11)                                                            # needs sage.rings.finite_rings
+            sage: a = F.multiplicative_generator();a                                    # needs sage.rings.finite_rings
             2
-            sage: plist = [int(a*F(x)) for x in range(1,11)]; plist
+            sage: plist = [int(a*F(x)) for x in range(1,11)]; plist                     # needs sage.rings.finite_rings
             [2, 4, 6, 8, 10, 1, 3, 5, 7, 9]
 
         This corresponds to the permutation (1, 2, 4, 8, 5, 10, 9, 7, 3, 6)
@@ -1227,8 +1224,8 @@ class Partition(CombinatorialElement):
 
         ::
 
-            sage: p = PermutationGroupElement('(1, 2, 4, 8, 5, 10, 9, 7, 3, 6)')
-            sage: p.sign()
+            sage: p = PermutationGroupElement('(1, 2, 4, 8, 5, 10, 9, 7, 3, 6)')        # needs sage.groups
+            sage: p.sign()                                                              # needs sage.groups
             -1
             sage: Partition([10]).sign()
             -1
@@ -1237,12 +1234,12 @@ class Partition(CombinatorialElement):
 
         Now replace `2` by `3`::
 
-            sage: plist = [int(F(3*x)) for x in range(1,11)]; plist
+            sage: plist = [int(F(3*x)) for x in range(1,11)]; plist                     # needs sage.rings.finite_rings
             [3, 6, 9, 1, 4, 7, 10, 2, 5, 8]
             sage: list(range(1, 11))
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-            sage: p = PermutationGroupElement('(3,4,8,7,9)')
-            sage: p.sign()
+            sage: p = PermutationGroupElement('(3,4,8,7,9)')                            # needs sage.groups
+            sage: p.sign()                                                              # needs sage.groups
             1
             sage: kronecker_symbol(3,11)
             1
@@ -1255,7 +1252,7 @@ class Partition(CombinatorialElement):
 
         - :wikipedia:`Zolotarev%27s_lemma`
         """
-        return (-1)**(self.size()-self.length())
+        return (-1)**(self.size() - self.length())
 
     def k_size(self, k):
         r"""
@@ -1342,8 +1339,7 @@ class Partition(CombinatorialElement):
                 stop_x = bdy[-1][0]
                 y = start_y  # y never changes
                 h_piece = [(x, y) for x in range(start_x, stop_x)]
-            h_piece = list(reversed(h_piece))
-            return h_piece
+            return list(reversed(h_piece))
         bdy = []
         for i, part in enumerate(self):
             (cell_x, cell_y) = (part - 1, i)
@@ -1460,7 +1456,7 @@ class Partition(CombinatorialElement):
         """
         return self.k_boundary(k).column_lengths()
 
-    def has_rectangle(self, h, w):
+    def has_rectangle(self, h, w) -> bool:
         r"""
         Return ``True`` if the Ferrer's diagram of ``self`` has ``h``
         (*or more*) rows of length ``w`` (*exactly*).
@@ -1506,10 +1502,9 @@ class Partition(CombinatorialElement):
         """
         assert h >= 1
         assert w >= 1
-        num_rows_of_len_w = self.to_exp(w)[w - 1]
-        return num_rows_of_len_w >= h
+        return self.to_exp(w)[w - 1] >= h
 
-    def has_k_rectangle(self, k):
+    def has_k_rectangle(self, k) -> bool:
         r"""
         Return ``True`` if the Ferrer's diagram of ``self`` contains `k-i+1`
         rows (*or more*) of length `i` (*exactly*) for any `i` in `[1, k]`.
@@ -1556,10 +1551,10 @@ class Partition(CombinatorialElement):
             :meth:`is_k_irreducible`, :meth:`is_k_reducible`,
             :meth:`has_rectangle`
         """
-        return any(self.has_rectangle(a, b) for (a, b) in
-                   [(k-i+1, i) for i in range(1, k+1)])
+        return any(self.has_rectangle(k - i + 1, i)
+                   for i in range(1, k + 1))
 
-    def is_k_bounded(self, k):
+    def is_k_bounded(self, k) -> bool:
         r"""
         Return ``True`` if the partition ``self`` is bounded by ``k``.
 
@@ -1819,7 +1814,7 @@ class Partition(CombinatorialElement):
 
         TESTS:
 
-        We check that :trac:`11435` is fixed::
+        We check that :issue:`11435` is fixed::
 
             sage: Partition([]).down_list() #indirect doctest
             []
@@ -1828,13 +1823,13 @@ class Partition(CombinatorialElement):
         l = len(p)
         for i in range(l-1):
             if p[i] > p[i+1]:
-                yield Partition(p[:i] + [ p[i]-1 ] + p[i+1:])
+                yield Partition(p[:i] + [p[i]-1] + p[i+1:])
         if l >= 1:
             last = p[-1]
             if last == 1:
                 yield Partition(p[:-1])
             else:
-                yield Partition(p[:-1] + [ p[-1] - 1 ])
+                yield Partition(p[:-1] + [p[-1] - 1])
 
     def down_list(self):
         """
@@ -1849,10 +1844,10 @@ class Partition(CombinatorialElement):
             [[2, 2], [3, 1]]
             sage: Partition([3,2,1]).down_list()
             [[2, 2, 1], [3, 1, 1], [3, 2]]
-            sage: Partition([]).down_list()  #checks :trac:`11435`
+            sage: Partition([]).down_list()  #checks :issue:`11435`
             []
         """
-        return [p for p in self.down()]
+        return list(self.down())
 
     @combinatorial_map(name="cell poset")
     def cell_poset(self, orientation="SE"):
@@ -1884,6 +1879,7 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: p = Partition([3,3,1])
             sage: Q = p.cell_poset(); Q
             Finite poset containing 7 elements
@@ -1898,6 +1894,7 @@ class Partition(CombinatorialElement):
             sage: Q.upper_covers((1, 1))
             [(1, 2)]
 
+            sage: # needs sage.graphs
             sage: P = p.cell_poset(orientation="NW"); P
             Finite poset containing 7 elements
             sage: sorted(P)
@@ -1915,6 +1912,7 @@ class Partition(CombinatorialElement):
             sage: sorted([len(P.upper_covers(v)) for v in P])
             [0, 1, 1, 1, 1, 2, 2]
 
+            sage: # needs sage.graphs
             sage: R = p.cell_poset(orientation="NE"); R
             Finite poset containing 7 elements
             sage: sorted(R)
@@ -1933,7 +1931,7 @@ class Partition(CombinatorialElement):
         Linear extensions of ``p.cell_poset()`` are in 1-to-1 correspondence
         with standard Young tableaux of shape `p`::
 
-            sage: all( len(p.cell_poset().linear_extensions())
+            sage: all( len(p.cell_poset().linear_extensions())                          # needs sage.graphs
             ....:      == len(p.standard_tableaux())
             ....:      for n in range(8) for p in Partitions(n) )
             True
@@ -1941,7 +1939,7 @@ class Partition(CombinatorialElement):
         This is not the case for northeast orientation::
 
             sage: q = Partition([3, 1])
-            sage: q.cell_poset(orientation="NE").is_chain()
+            sage: q.cell_poset(orientation="NE").is_chain()                             # needs sage.graphs
             True
 
         TESTS:
@@ -1958,7 +1956,7 @@ class Partition(CombinatorialElement):
             ....:                                   and c[1] >= d[1]):
             ....:                     return False
             ....:     return True
-            sage: all( check_NW(n) for n in range(8) )
+            sage: all( check_NW(n) for n in range(8) )                                  # needs sage.graphs
             True
 
             sage: def check_NE(n):
@@ -1970,7 +1968,7 @@ class Partition(CombinatorialElement):
             ....:                                   and c[1] <= d[1]):
             ....:                     return False
             ....:     return True
-            sage: all( check_NE(n) for n in range(8) )
+            sage: all( check_NE(n) for n in range(8) )                                  # needs sage.graphs
             True
 
             sage: def test_duality(n, ori1, ori2):
@@ -1982,11 +1980,11 @@ class Partition(CombinatorialElement):
             ....:                 if P.lt(c, d) != Q.lt(d, c):
             ....:                     return False
             ....:     return True
-            sage: all( test_duality(n, "NW", "SE") for n in range(8) )
+            sage: all( test_duality(n, "NW", "SE") for n in range(8) )                  # needs sage.graphs
             True
-            sage: all( test_duality(n, "NE", "SW") for n in range(8) )
+            sage: all( test_duality(n, "NE", "SW") for n in range(8) )                  # needs sage.graphs
             True
-            sage: all( test_duality(n, "NE", "SE") for n in range(4) )
+            sage: all( test_duality(n, "NE", "SE") for n in range(4) )                  # needs sage.graphs
             False
         """
         from sage.combinat.posets.posets import Poset
@@ -2069,12 +2067,12 @@ class Partition(CombinatorialElement):
         mu = self
         muconj = mu.conjugate()     # Naive implementation
         if len(mu) <= len(muconj):
-            a = [x for x in (val-i-1 for i, val in enumerate(mu)) if x>=0]
-            b = [x for x in (muconj[i]-i-1 for i in range(len(a))) if x>=0]
+            a = [x for x in (val-i-1 for i, val in enumerate(mu)) if x >= 0]
+            b = [x for x in (muconj[i]-i-1 for i in range(len(a))) if x >= 0]
         else:
-            b = [x for x in (val-i-1 for i, val in enumerate(muconj)) if x>=0]
-            a = [x for x in (mu[i]-i-1 for i in range(len(b))) if x>=0]
-        return (a,b)
+            b = [x for x in (val-i-1 for i, val in enumerate(muconj)) if x >= 0]
+            a = [x for x in (mu[i]-i-1 for i in range(len(b))) if x >= 0]
+        return (a, b)
 
     def frobenius_rank(self):
         r"""
@@ -2150,9 +2148,9 @@ class Partition(CombinatorialElement):
             length = true_length
         elif length < true_length:
             raise ValueError("length must be at least the length of the partition")
-        beta = [l + length - i - 1 for (i, l) in enumerate(self)]
+        beta = [l + length - i for i, l in enumerate(self, start=1)]
         if length > true_length:
-            beta.extend(list(range(length-true_length-1,-1,-1)))
+            beta.extend(range(length - true_length - 1, -1, -1))
         return beta
 
     def crank(self):
@@ -2317,7 +2315,7 @@ class Partition(CombinatorialElement):
         sum2 = 0
         min_length = min(len(p1), len(p2))
         if min_length == 0:
-            return not p2 # equivalent to len(p1) >= len(p2) = 0
+            return not p2  # equivalent to len(p1) >= len(p2) = 0
 
         for i in range(min_length):
             sum1 += p1[i]
@@ -2337,11 +2335,7 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2]).cells()
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1)]
         """
-        res = []
-        for i in range(len(self)):
-            for j in range(self[i]):
-                res.append( (i,j) )
-        return res
+        return [(i, j) for i, si in enumerate(self) for j in range(si)]
 
     def generalized_pochhammer_symbol(self, a, alpha):
         r"""
@@ -2355,7 +2349,7 @@ class Partition(CombinatorialElement):
             12
         """
         res = 1
-        for (i,j) in self.cells():
+        for (i, j) in self.cells():
             res *= (a - (i-1)/alpha + j-1)
         return res
 
@@ -2483,6 +2477,118 @@ class Partition(CombinatorialElement):
         par = Partitions_n(sum(self))
         return par.element_class(par, conjugate(self))
 
+    def glaisher_franklin(self, s):
+        r"""
+        Apply the Glaisher-Franklin bijection to ``self``.
+
+        The Franklin-Glaisher bijection, with parameter `s`, returns
+        a partition whose set of parts that are repeated at least `s`
+        times equals the set of parts divisible by `s` in ``self``,
+        after dividing each part by `s`.
+
+        INPUT:
+
+        - ``s`` -- positive integer
+
+        EXAMPLES::
+
+            sage: Partition([4, 3, 2, 2, 1]).glaisher_franklin(2)
+            [3, 2, 2, 1, 1, 1, 1, 1]
+
+        TESTS:
+
+        The map preserves the size::
+
+            sage: all(mu.glaisher_franklin(s).size() == n
+            ....:     for n in range(20) for mu in Partitions(n)
+            ....:     for s in range(1, 5))
+            True
+
+        The map is bijective::
+
+            sage: l = [[mu.glaisher_franklin(s)
+            ....:      for n in range(20) for mu in Partitions(n)]
+            ....:     for s in range(1, 5)]
+            sage: all(len(set(ls)) == len(ls) for ls in l)
+            True
+
+        The map transports the statistics::
+
+            sage: d = lambda la, s: set(p / s for p in la if p % s == 0)
+            sage: r = lambda la, s: set(p for p in la if list(la).count(p) >= s)
+            sage: all(d(mu, s) == r(mu.glaisher_franklin(s), s)
+            ....:     for n in range(20) for mu in Partitions(n)
+            ....:     for s in range(1, 5))
+            True
+
+        For `s=2`, the map is known to findstat::
+
+            sage: findmap(Partitions, lambda mu: mu.glaisher_franklin(2))       # optional - internet
+            0: Mp00312 (quality [100])
+        """
+        s = ZZ(s)
+        if s.is_one():
+            return self
+        mu = []
+        for p, m in enumerate(self.to_exp(), 1):
+            if not p % s:
+                mu.extend([p // s] * (m*s))
+            else:
+                for i, v in enumerate(m.digits(s)):
+                    mu.extend([p * s**i]*v)
+
+        P = self.parent()
+        return P.element_class(P, sorted(mu, reverse=True))
+
+    def glaisher_franklin_inverse(self, s):
+        r"""
+        Apply the inverse of the Glaisher-Franklin bijection to ``self``.
+
+        The inverse of the Franklin-Glaisher bijection, with
+        parameter `s`, returns a partition whose set of parts that
+        are divisible by `s`, after dividing each by `s`, equals the
+        equals the set of parts repeated at least `s` times in
+        ``self``.
+
+        INPUT:
+
+        - ``s`` -- positive integer
+
+        EXAMPLES::
+
+            sage: Partition([4, 3, 2, 2, 1]).glaisher_franklin(2)
+            [3, 2, 2, 1, 1, 1, 1, 1]
+            sage: Partition([3, 2, 2, 1, 1, 1, 1, 1]).glaisher_franklin_inverse(2)
+            [4, 3, 2, 2, 1]
+
+        TESTS:
+
+        The map is inverse to :meth:`glaisher_franklin`::
+
+            sage: all(mu.glaisher_franklin(s).glaisher_franklin_inverse(s) == mu
+            ....:     and mu.glaisher_franklin_inverse(s).glaisher_franklin(s) == mu
+            ....:     for n in range(20) for mu in Partitions(n)
+            ....:     for s in range(1, 5))
+            True
+
+        For `s=2`, the map is known to findstat::
+
+            sage: findmap(Partitions, lambda mu: mu.glaisher_franklin_inverse(2))         # optional - internet
+            0: Mp00313 (quality [100])
+        """
+        s = ZZ(s)
+        if s.is_one():
+            return self
+        mu = []
+        for p, m in enumerate(self.to_exp(), 1):
+            p = ZZ(p)
+            mu.extend([p * s] * (m // s))
+            m1, p1 = p.val_unit(s)
+            mu.extend([p1] * ((m % s) * s**m1))
+
+        P = self.parent()
+        return P.element_class(P, sorted(mu, reverse=True))
+
     def suter_diagonal_slide(self, n, exp=1):
         r"""
         Return the image of ``self`` in `Y_n` under Suter's diagonal slide
@@ -2591,11 +2697,11 @@ class Partition(CombinatorialElement):
             ValueError: the hook length must be less than n
         """
         # Check for valid input
-        if len(self) > 0 and len(self) + self._list[0] > n: # >, not >=, since we double count the (0,0) cell
+        if len(self) > 0 and len(self) + self._list[0] > n:  # >, not >=, since we double count the (0,0) cell
             raise ValueError("the hook length must be less than n")
         ret = self
         # Arbitrary exp
-        exp = exp % n # It is at most order n
+        exp = exp % n  # It is at most order n
         if exp > n / 2:
             exp -= n
         while exp != 0:
@@ -2610,7 +2716,7 @@ class Partition(CombinatorialElement):
                 res += [1] * (n - leng - ret._list[0])
                 ret = Partition(res)
                 exp -= 1
-            else: # exp < 0 since if exp == 0, we would exit the while loop
+            else:  # exp < 0 since if exp == 0, we would exit the while loop
                 # inverse map \sigma_n^{-1}
                 if leng == 0:   # Taking extra care about the empty partition.
                     ret = Partition([n - 1])
@@ -2743,15 +2849,15 @@ class Partition(CombinatorialElement):
 
         if row + 1 >= len(self) or col >= self[row+1]:
             raise ValueError('(row+1, col) must be inside the diagram')
-        g=self.initial_tableau().to_list()
-        a=g[row][col]
-        g[row][col:] = list(range(a+col+1,g[row+1][col]+1))
-        g[row+1][:col+1] = list(range(a,a+col+1))
-        g=tableau.Tableau(g)
+        g = self.initial_tableau().to_list()
+        a = g[row][col]
+        g[row][col:] = list(range(a+col+1, g[row+1][col]+1))
+        g[row+1][:col+1] = list(range(a, a+col+1))
+        g = tableau.Tableau(g)
         g._garnir_cell = (row, col)
         return g
 
-    def top_garnir_tableau(self,e,cell):
+    def top_garnir_tableau(self, e, cell):
         r"""
         Return the most dominant *standard* tableau which dominates the
         corresponding Garnir tableau and has the same ``e``-residue.
@@ -2809,27 +2915,131 @@ class Partition(CombinatorialElement):
 
         - [KMR2012]_
         """
-        (row,col)=cell
-        if row+1>=len(self) or col>=self[row+1]:
-            raise ValueError('(%s,%s)=(row+1,col) must be inside the diagram' %(row+1,col))
+        (row, col) = cell
+        if row+1 >= len(self) or col >= self[row+1]:
+            raise ValueError(f'({row+1},{col})=(row+1,col) must be inside the diagram')
 
-        g=self.garnir_tableau(cell)   # start with the Garnir tableau and modify
+        g = self.garnir_tableau(cell)   # start with the Garnir tableau and modify
 
-        if e==0:
+        if e == 0:
             return g             # no more dominant tableau of the same residue
 
-        a=e*int((self[row]-col)/e)    # number of cells in the e-bricks in row `row`
-        b=e*int((col+1)/e)            # number of cells in the e-bricks in row `row+1`
+        a = e*int((self[row]-col)/e)    # number of cells in the e-bricks in row `row`
+        b = e*int((col+1)/e)            # number of cells in the e-bricks in row `row+1`
 
-        if a==0 or b==0:
+        if a == 0 or b == 0:
             return g
 
-        t=g.to_list()
-        m=g[row+1][0]                 # smallest  number in 0-Garnir belt
+        t = g.to_list()
+        m = g[row+1][0]                 # smallest  number in 0-Garnir belt
         # now we will put the number m,m+1,...,t[row+1][col] in order into t
-        t[row][col:a+col]=[m+col-b+1+i for i in range(a)]
-        t[row+1][col-b+1:col+1]=[m+a+col-b+1+i for i in range(b)]
+        t[row][col:a+col] = [m+col-b+1+i for i in range(a)]
+        t[row+1][col-b+1:col+1] = [m+a+col-b+1+i for i in range(b)]
         return tableau.StandardTableau(t)
+
+    def ladder_tableau(self, e, ladder_lengths=False):
+        r"""
+        Return the ladder tableau of shape ``self``.
+
+        The `e`-*ladder tableau* is the standard Young tableau obtained
+        by reading the *ladders*, the set of cells `(i, j)` that differ
+        from `(i+e-1, j-1)`, of the partition `\lambda` from left-to-right.
+
+        INPUT:
+
+        - ``e`` -- a nonnegative integer; ``0`` is considered as `\infty`
+          (analogous to the characteristic of a ring)
+        - ``ladder_sizes`` -- (default: ``False``) if ``True``, also return
+          the sizes of the ladders
+
+        .. SEEALSO::
+
+            :meth:`ladders`
+
+        EXAMPLES::
+
+            sage: la = Partition([6, 5, 3, 1])
+            sage: ascii_art(la.ladder_tableau(3))
+              1  2  3  5  7 10
+              4  6  8 11 13
+              9 12 14
+             15
+            sage: la.ladder_tableau(3, ladder_lengths=True)[1]
+            [1, 1, 2, 2, 3, 3, 3]
+
+            sage: ascii_art(la.ladder_tableau(0))
+              1  2  3  4  5  6
+              7  8  9 10 11
+             12 13 14
+             15
+            sage: all(ll == 1 for ll in la.ladder_tableau(0, ladder_lengths=True)[1])
+            True
+        """
+        Tlad = [[None] * val for val in self]
+        counter = 0
+        start = 0
+        n = sum(self)
+        sizes = []
+        e = e - 1 if e > 0 else n  # change to the slope
+        while counter < n:
+            cur = start
+            size = 0
+            for i, val in enumerate(self):
+                if cur < 0:
+                    break
+                if cur < val:
+                    counter += 1
+                    Tlad[i][cur] = counter
+                    size += 1
+                cur -= e
+            if ladder_lengths and size:
+                sizes.append(size)
+            start += 1
+        ret = tableau.StandardTableaux(self)(Tlad)
+        if ladder_lengths:
+            return (ret, sizes)
+        return ret
+
+    def ladders(self, e):
+        r"""
+        Return a dictionary containing the ladders in the diagram of ``self``.
+
+        For `e > 0`, a node `(i, j)` in a partition belongs to the `l`-th
+        `e`-ladder if `l = (e - 1) r + c`.
+
+        INPUT:
+
+        - ``e`` -- a nonnegative integer; if ``0``, then we
+          set ``e = self.size() + 1``
+
+        EXAMPLES::
+
+            sage: Partition([3, 2]).ladders(3)
+            {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2), (1, 0)], 3: [(1, 1)]}
+
+        When ``e`` is ``0``, the cells are in bijection with the ladders,
+        but the index of the ladder depends on the size of the partition::
+
+            sage: Partition([3, 2]).ladders(0)
+            {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2)], 5: [(1, 0)], 6: [(1, 1)]}
+            sage: Partition([3, 2, 1]).ladders(0)
+            {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2)], 6: [(1, 0)], 7: [(1, 1)],
+             12: [(2, 0)]}
+            sage: Partition([3, 1, 1]).ladders(0)
+            {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2)], 5: [(1, 0)], 10: [(2, 0)]}
+            sage: Partition([1, 1, 1]).ladders(0)
+            {0: [(0, 0)], 3: [(1, 0)], 6: [(2, 0)]}
+        """
+        if e == 0:
+            e = sum(self) + 1
+        ladders = {}
+        for row, val in enumerate(self):
+            for col in range(val):
+                ell = col + row * (e - 1)
+                if ell not in ladders:
+                    ladders[ell] = []
+                ladders[ell].append((row, col))
+        return ladders
 
     @cached_method
     def young_subgroup(self):
@@ -2853,16 +3063,16 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([4,2]).young_subgroup()
+            sage: Partition([4,2]).young_subgroup()                                     # needs sage.groups
             Permutation Group with generators [(), (5,6), (3,4), (2,3), (1,2)]
         """
-        gens=[]
-        m=0
+        gens = []
+        m = 0
         for row in self:
-            gens.extend([ (c,c+1) for c in range(m+1,m+row)])
-            m+=row
-        gens.append(list(range(1,self.size() + 1)))  # to ensure we get a subgroup of Sym_n
-        return PermutationGroup( gens )
+            gens.extend([(c, c+1) for c in range(m+1, m+row)])
+            m += row
+        gens.append(list(range(1, self.size() + 1)))  # to ensure we get a subgroup of Sym_n
+        return PermutationGroup(gens)
 
     def young_subgroup_generators(self):
         r"""
@@ -2886,7 +3096,7 @@ class Partition(CombinatorialElement):
         gens = []
         m = 0
         for row in self:
-            gens.extend(list(range(m + 1, m + row)))
+            gens.extend(range(m + 1, m + row))
             m += row
         return gens
 
@@ -3011,11 +3221,11 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``i, j`` -- two integers
+        - ``i``, ``j`` -- two integers
 
         OUTPUT:
 
-        An integer or a ``ValueError``
+        An integer or a :class:`ValueError`
 
         EXAMPLES::
 
@@ -3072,7 +3282,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``i, j`` -- two integers
+        - ``i``, ``j`` -- two integers
 
         OUTPUT:
 
@@ -3105,11 +3315,11 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``i, j`` -- two integers
+        - ``i``, ``j`` -- two integers
 
         OUTPUT:
 
-        An integer or a ``ValueError``
+        An integer or a :class:`ValueError`
 
         EXAMPLES::
 
@@ -3167,7 +3377,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``i, j`` -- two integers
+        - ``i``, ``j`` -- two integers
 
         OUTPUT:
 
@@ -3222,16 +3432,16 @@ class Partition(CombinatorialElement):
         attacking_pairs = []
         for i, r in enumerate(self):
             for j in range(r):
-                #c is in position (i,j)
-                #Find the d that satisfy condition 1
-                for k in range(j+1, r):
-                    attacking_pairs.append( ((i,j),(i,k)) )
+                # c is in position (i,j)
+                # Find the d that satisfy condition 1
+                attacking_pairs.extend(((i, j), (i, k))
+                                       for k in range(j + 1, r))
 
-                #Find the d that satisfy condition 2
+                # Find the d that satisfy condition 2
                 if i == 0:
                     continue
-                for k in range(j):
-                    attacking_pairs.append( ((i,j),(i-1,k)) )
+                attacking_pairs.extend(((i, j), (i - 1, k))
+                                       for k in range(j))
 
         return attacking_pairs
 
@@ -3248,7 +3458,7 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2,1]).dominated_partitions(rows=3)
             [[3, 2, 1], [2, 2, 2]]
         """
-        #Naive implementation because iteration is so fast
+        # Naive implementation because iteration is so fast
         n = sum(self)
         P = Partitions_n(n)
         if rows:
@@ -3279,9 +3489,9 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([3,2,1]).hook_product(x)
+            sage: Partition([3,2,1]).hook_product(x)                                    # needs sage.symbolic
             (2*x + 3)*(x + 2)^2
-            sage: Partition([2,2]).hook_product(x)
+            sage: Partition([2,2]).hook_product(x)                                      # needs sage.symbolic
             2*(x + 2)*(x + 1)
         """
 
@@ -3343,7 +3553,7 @@ class Partition(CombinatorialElement):
             sage: cell = [0,0]; Partition([3,3]).hook_length(*cell)
             4
         """
-        return self.leg_length(i,j)+self.arm_length(i,j)+1
+        return self.leg_length(i, j) + self.arm_length(i, j) + 1
 
     def hooks(self):
         """
@@ -3422,7 +3632,7 @@ class Partition(CombinatorialElement):
             3
             sage: p.hook_length(0,0)
             3
-            sage: [ p.upper_hook(i,j,x) for i,j in p.cells() ]
+            sage: [ p.upper_hook(i,j,x) for i,j in p.cells() ]                          # needs sage.symbolic
             [2*x + 1, x, x]
         """
         p = self
@@ -3444,7 +3654,7 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([3,2,1]).upper_hook_lengths(x)
+            sage: Partition([3,2,1]).upper_hook_lengths(x)                              # needs sage.symbolic
             [[3*x + 2, 2*x + 1, x], [2*x + 1, x], [x]]
             sage: Partition([3,2,1]).upper_hook_lengths(1)
             [[5, 3, 1], [3, 1], [1]]
@@ -3474,7 +3684,7 @@ class Partition(CombinatorialElement):
             3
             sage: p.hook_length(0,0)
             3
-            sage: [ p.lower_hook(i,j,x) for i,j in p.cells() ]
+            sage: [ p.lower_hook(i,j,x) for i,j in p.cells() ]                          # needs sage.symbolic
             [x + 2, 1, 1]
         """
         p = self
@@ -3496,7 +3706,7 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([3,2,1]).lower_hook_lengths(x)
+            sage: Partition([3,2,1]).lower_hook_lengths(x)                              # needs sage.symbolic
             [[2*x + 3, x + 2, 1], [x + 2, 1], [1]]
             sage: Partition([3,2,1]).lower_hook_lengths(1)
             [[5, 3, 1], [3, 1], [1]]
@@ -3784,7 +3994,7 @@ class Partition(CombinatorialElement):
         """
         block = {}
         Ie = IntegerModRing(e)
-        for (r,c) in self.cells():
+        for (r, c) in self.cells():
             i = Ie(multicharge[0] + c - r)
             block[i] = block.get(i, 0) + 1
         return block
@@ -3901,9 +4111,9 @@ class Partition(CombinatorialElement):
           False
         """
         return (not self
-                or ( self[-1] < e and all(self[r]-self[r+1] < e for r in range(len(self)-1)) ))
+                or (self[-1] < e and all(self[r] - self[r+1] < e for r in range(len(self) - 1))))
 
-    def is_regular(self, e, multicharge=(0,)):
+    def is_regular(self, e, multicharge=(0,)) -> bool:
         """
         Return ``True`` is this is an ``e``-regular partition.
 
@@ -3935,9 +4145,9 @@ class Partition(CombinatorialElement):
             sage: Partition([2,1,1]).conjugacy_class_size()
             6
         """
-        return factorial(sum(self))/self.centralizer_size()
+        return factorial(sum(self)) / self.centralizer_size()
 
-    def corners(self):
+    def corners(self) -> list:
         r"""
         Return a list of the corners of the partition ``self``.
 
@@ -3966,7 +4176,7 @@ class Partition(CombinatorialElement):
         if p.is_empty():
             return []
 
-        lcors = [[0,p[0]-1]]
+        lcors = [[0, p[0]-1]]
         nn = len(p)
         if nn == 1:
             return [tuple(c) for c in lcors]
@@ -3976,7 +4186,7 @@ class Partition(CombinatorialElement):
             if p[i] == p[i-1]:
                 lcors[lcors_index][0] += 1
             else:
-                lcors.append([i,p[i]-1])
+                lcors.append([i, p[i]-1])
                 lcors_index += 1
 
         return [tuple(c) for c in lcors]
@@ -4042,7 +4252,7 @@ class Partition(CombinatorialElement):
         """
         p = self._list
         if not p:
-            return [(0,0)]
+            return [(0, 0)]
         res = [(0, p[0])]
         res.extend((n, j) for n, (i, j) in enumerate(zip(p[:-1], p[1:]), start=1) if i != j)
         res.append((len(p), 0))
@@ -4110,9 +4320,8 @@ class Partition(CombinatorialElement):
         p = self
         res = []
         prevLen = 1
-        for i in range(len(p)-1, -1, -1):
-            for c in range(prevLen-1, p[i]):
-                res.append((i,c))
+        for i in range(len(p) - 1, -1, -1):
+            res.extend((i, c) for c in range(prevLen - 1, p[i]))
             prevLen = p[i]
         return res
 
@@ -4149,9 +4358,8 @@ class Partition(CombinatorialElement):
         p = self
         res = []
         prevLen = 0
-        for i in range(len(p)-1, -1, -1):
-            for c in range(prevLen, p[i]+1):
-                res.append((i+1,c))
+        for i in range(len(p) - 1, -1, -1):
+            res.extend((i + 1, c) for c in range(prevLen, p[i] + 1))
             prevLen = p[i]
         res.append((0, prevLen))
         return res
@@ -4202,8 +4410,9 @@ class Partition(CombinatorialElement):
             sage: all(Partitions().from_zero_one(mu.zero_one_sequence()) == mu for n in range(10) for mu in Partitions(n))
             True
         """
-        tmp = [self[i]-i for i in range(len(self))]
-        return ([Integer(not (i in tmp)) for i in range(-len(self)+1,self.get_part(0)+1)])
+        tmp = {si - i for i, si in enumerate(self)}
+        return [Integer(i not in tmp)
+                for i in range(-len(self) + 1, self.get_part(0) + 1)]
 
     def core(self, length):
         r"""
@@ -4235,25 +4444,25 @@ class Partition(CombinatorialElement):
             []
         """
         p = self
-        #Normalize the length
+        # Normalize the length
         remainder = len(p) % length
         part = p[:] + [0]*remainder
 
-        #Add the canonical vector to the partition
+        # Add the canonical vector to the partition
         part = [part[i-1] + len(part)-i for i in range(1, len(part)+1)]
 
         for e in range(length):
             k = e
-            for i in reversed(range(1,len(part)+1)):
+            for i in reversed(range(1, len(part)+1)):
                 if part[i-1] % length == e:
                     part[i-1] = k
                     k += length
         part.sort()
         part.reverse()
 
-        #Remove the canonical vector
+        # Remove the canonical vector
         part = [part[i-1]-len(part)+i for i in range(1, len(part)+1)]
-        #Select the r-core
+        # Select the r-core
         return Partition([x for x in part if x != 0])
 
     def quotient(self, length):
@@ -4301,15 +4510,15 @@ class Partition(CombinatorialElement):
             True
         """
         p = self
-        #Normalize the length
+        # Normalize the length
         remainder = len(p) % length
         part = p[:] + [0]*(length-remainder)
 
-        #Add the canonical vector to the partition
+        # Add the canonical vector to the partition
         part = [part[i-1] + len(part)-i for i in range(1, len(part)+1)]
         result = [None]*length
 
-        #Reducing vector
+        # Reducing vector
         for e in range(length):
             k = e
             tmp = []
@@ -4323,7 +4532,7 @@ class Partition(CombinatorialElement):
             result[e] = a
 
         from .partition_tuple import PartitionTuple
-        return PartitionTuple(result)  #tuple(map(Partition, result))
+        return PartitionTuple(result)  # tuple(map(Partition, result))
 
     def is_core(self, k):
         r"""
@@ -4422,7 +4631,7 @@ class Partition(CombinatorialElement):
             else:
                 j = self[i]
 
-        if (i,j) in self.outside_corners():
+        if (i, j) in self.outside_corners():
             pl = self.to_list()
             if i == len(pl):
                 pl.append(1)
@@ -4458,13 +4667,13 @@ class Partition(CombinatorialElement):
         if j is None:
             j = self[i] - 1
 
-        if (i,j) not in self.corners():
-            raise ValueError("[%d,%d] is not a corner of the partition" % (i,j))
+        if (i, j) not in self.corners():
+            raise ValueError("[%d,%d] is not a corner of the partition" % (i, j))
 
         if self[i] == 1:
             return Partition(self[:-1])
         else:
-            return Partition(self[:i] + [ self[i:i+1][0] - 1 ] + self[i+1:])
+            return Partition(self[:i] + [self[i:i+1][0] - 1] + self[i+1:])
 
     def k_irreducible(self, k):
         r"""
@@ -4494,7 +4703,7 @@ class Partition(CombinatorialElement):
             [2, 1]
         """
         pexp = self.to_exp()
-        return Partition(sum(([r+1] for r in range(len(pexp)-1,-1,-1) for m in range(pexp[r] % (k-r))),[]))
+        return Partition(sum(([r+1] for r in range(len(pexp)-1, -1, -1) for m in range(pexp[r] % (k-r))), []))
 
     def k_skew(self, k):
         r"""
@@ -4522,20 +4731,20 @@ class Partition(CombinatorialElement):
         """
 
         if len(self) == 0:
-            return SkewPartition([[],[]])
+            return SkewPartition([[], []])
 
         if self[0] > k:
             raise ValueError(f"the partition must be {k}-bounded")
 
-        #Find the k-skew diagram of the partition formed
-        #by removing the first row
+        # Find the k-skew diagram of the partition formed
+        # by removing the first row
         s = Partition(self[1:]).k_skew(k)
 
         s_inner = list(s.inner())
         s_outer = list(s.outer())
         s_conj_rl = s.conjugate().row_lengths()
 
-        #Find the leftmost column with less than
+        # Find the leftmost column with less than
         # or equal to kdiff cells
         kdiff = k - self[0]
 
@@ -4549,9 +4758,9 @@ class Partition(CombinatorialElement):
                 spot = i
                 break
 
-        outer = [ self[0] + spot ] + s_outer[:]
+        outer = [self[0] + spot] + s_outer[:]
         if spot > 0:
-            inner = [ spot ] + s_inner[:]
+            inner = [spot] + s_inner[:]
         else:
             inner = s_inner[:]
 
@@ -4574,7 +4783,7 @@ class Partition(CombinatorialElement):
             True
         """
         from sage.combinat.core import Core
-        return Core(self.k_skew(k)[0],k+1)
+        return Core(self.k_skew(k)[0], k+1)
 
     def from_kbounded_to_reduced_word(self, k):
         r"""
@@ -4605,9 +4814,9 @@ class Partition(CombinatorialElement):
         result = []
         while not p.is_empty():
             corners = p.corners()
-            c = p.content(corners[0][0],corners[0][1])%(k+1)
+            c = p.content(corners[0][0], corners[0][1]) % (k+1)
             result.append(Integer(c))
-            list = [x for x in corners if p.content(x[0],x[1])%(k+1) ==c]
+            list = [x for x in corners if p.content(x[0], x[1]) % (k+1) == c]
             for x in list:
                 p = p.remove_cell(x[0])
         return result
@@ -4623,17 +4832,17 @@ class Partition(CombinatorialElement):
         EXAMPLES::
 
             sage: p = Partition([2,1,1])
-            sage: p.from_kbounded_to_grassmannian(2)
+            sage: p.from_kbounded_to_grassmannian(2)                                    # needs sage.modules
             [-1  1  1]
             [-2  2  1]
             [-2  1  2]
             sage: p = Partition([])
-            sage: p.from_kbounded_to_grassmannian(2)
+            sage: p.from_kbounded_to_grassmannian(2)                                    # needs sage.modules
             [1 0 0]
             [0 1 0]
             [0 0 1]
         """
-        return WeylGroup(['A', k,1 ]).from_reduced_word(self.from_kbounded_to_reduced_word(k))
+        return WeylGroup(['A', k, 1]).from_reduced_word(self.from_kbounded_to_reduced_word(k))
 
     def to_list(self):
         r"""
@@ -4843,7 +5052,7 @@ class Partition(CombinatorialElement):
              [(3, 0), (3, 1)]]
         """
         if k == 0:
-            return list()
+            return []
 
         L = self._list
         shelf = [k]  # the number of boxes which will fit in a row
@@ -4860,7 +5069,7 @@ class Partition(CombinatorialElement):
             mapping.append(len(L))
             shelf.append(L[-1])
 
-        L.append(0) # add room on the bottom
+        L.append(0)  # add room on the bottom
         # list all of the positions for cells
         # filling each self from the top to bottom
         for iv in IntegerListsBackend_invlex(k, length=len(shelf), ceiling=shelf, check=False)._iter():
@@ -4896,14 +5105,14 @@ class Partition(CombinatorialElement):
         :class:`Partitions_with_constraints`::
 
             sage: Partition([5,3,1]).remove_horizontal_border_strip(5)
-            The subpartitions of [5, 3, 1] obtained by removing an horizontal border strip of length 5
+            The subpartitions of [5, 3, 1] obtained by removing a horizontal border strip of length 5
 
         TESTS::
 
             sage: Partition([3,2,2]).remove_horizontal_border_strip(2).list()
             [[3, 2], [2, 2, 1]]
             sage: Partition([3,2,2]).remove_horizontal_border_strip(2).first().parent()
-            The subpartitions of [3, 2, 2] obtained by removing an horizontal border strip of length 2
+            The subpartitions of [3, 2, 2] obtained by removing a horizontal border strip of length 2
             sage: Partition([]).remove_horizontal_border_strip(0).list()
             [[]]
             sage: Partition([]).remove_horizontal_border_strip(6).list()
@@ -4915,7 +5124,7 @@ class Partition(CombinatorialElement):
                                            floor=self[1:] + [0],
                                            ceiling=self[:],
                                            max_slope=0,
-                                           name=f"The subpartitions of {self} obtained by removing an horizontal border strip of length {k}")
+                                           name=f"The subpartitions of {self} obtained by removing a horizontal border strip of length {k}")
 
     def k_conjugate(self, k):
         r"""
@@ -4967,8 +5176,8 @@ class Partition(CombinatorialElement):
         QQqt = PolynomialRing(QQ, ['q', 't'])
         (q, t) = QQqt.gens()
         if i < len(self) and j < self[i]:
-            res = (1-q**self.arm_length(i,j) * t**(self.leg_length(i,j)+1))
-            res /= (1-q**(self.arm_length(i,j)+1) * t**self.leg_length(i,j))
+            res = 1 - q**self.arm_length(i, j) * t**(self.leg_length(i, j)+1)
+            res /= 1 - q**(self.arm_length(i, j)+1) * t**self.leg_length(i, j)
             return res
         return ZZ.one()
 
@@ -4984,11 +5193,8 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2,1]).atom()
             [[[1, 2, 3, 6], [4, 5]], [[1, 2, 3], [4, 5], [6]]]
         """
-        res = []
-        for tab in tableau.StandardTableaux_size(self.size()):
-            if tab.atom() == self:
-                res.append(tab)
-        return res
+        return [tab for tab in tableau.StandardTableaux_size(self.size())
+                if tab.atom() == self]
 
     def k_atom(self, k):
         r"""
@@ -5068,6 +5274,7 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: part = Partition([3,2,1])
             sage: jt = part.jacobi_trudi(); jt
             [h[3] h[1]    0]
@@ -5080,7 +5287,7 @@ class Partition(CombinatorialElement):
             sage: jt.det()
             h[3, 2, 1] - h[3, 3] - h[4, 1, 1] + h[5, 1]
         """
-        return SkewPartition([ self, [] ]).jacobi_trudi()
+        return SkewPartition([self, []]).jacobi_trudi()
 
     def character_polynomial(self):
         r"""
@@ -5108,11 +5315,11 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([1]).character_polynomial()
+            sage: Partition([1]).character_polynomial()                                 # needs sage.modules
             x - 1
-            sage: Partition([1,1]).character_polynomial()
+            sage: Partition([1,1]).character_polynomial()                               # needs sage.modules
             1/2*x0^2 - 3/2*x0 - x1 + 1
-            sage: Partition([2,1]).character_polynomial()
+            sage: Partition([2,1]).character_polynomial()                               # needs sage.modules
             1/3*x0^3 - 2*x0^2 + 8/3*x0 - x2
         """
         # Create the polynomial ring we will use
@@ -5120,23 +5327,23 @@ class Partition(CombinatorialElement):
         P = PolynomialRing(QQ, k, 'x')
         x = P.gens()
 
-        #Expand s_mu in the power sum basis
+        # Expand s_mu in the power sum basis
         from sage.combinat.sf.sf import SymmetricFunctions
         Sym = SymmetricFunctions(QQ)
         s = Sym.schur()
         p = Sym.power()
         ps_mu = p(s(self))
 
-        #Replace each p_i by i*x_i-1
-        items = ps_mu.monomial_coefficients().items()  #items contains a list of (partition, coeff) pairs
-        partition_to_monomial = lambda part: prod([ (i*x[i-1]-1) for i in part ])
-        res = [ [partition_to_monomial(mc[0]), mc[1]] for mc in items ]
+        # Replace each p_i by i*x_i-1
+        items = ps_mu.monomial_coefficients().items()  # items contains a list of (partition, coeff) pairs
+        partition_to_monomial = lambda part: prod([i*x[i-1] - 1 for i in part])
+        res = [[partition_to_monomial(mc[0]), mc[1]] for mc in items]
 
-        #Write things in the monomial basis
-        res = [ prod(pair) for pair in res ]
-        res = sum( res )
+        # Write things in the monomial basis
+        res = [prod(pair) for pair in res]
+        res = sum(res)
 
-        #Apply the umbral operator and return the result
+        # Apply the umbral operator and return the result
         from sage.combinat.misc import umbral_operation
         return umbral_operation(res)
 
@@ -5193,7 +5400,8 @@ class Partition(CombinatorialElement):
         Checks that the sum of squares of dimensions of characters of the
         symmetric group is the order of the group::
 
-            sage: all(sum(mu.dimension()^2 for mu in Partitions(i))==factorial(i) for i in range(10))
+            sage: all(sum(mu.dimension()^2 for mu in Partitions(i)) == factorial(i)
+            ....:     for i in range(10))
             True
 
         A check coming from the theory of `k`-differentiable posets::
@@ -5241,30 +5449,30 @@ class Partition(CombinatorialElement):
                     def inv_factorial(i):
                         if i < 0:
                             return 0
-                        else:
-                            return 1/factorial(i)
-                    len_range = list(range(larger.length()))
+                        return 1/factorial(i)
+
+                    len_range = range(larger.length())
                     from sage.matrix.constructor import matrix
-                    M = matrix(QQ,[[inv_factorial(larger.get_part(i)-smaller.get_part(j)-i+j) for i in len_range] for j in len_range])
+                    M = matrix(QQ, [[inv_factorial(larger.get_part(i)-smaller.get_part(j)-i+j) for i in len_range] for j in len_range])
                     return factorial(larger.size()-smaller.size())*M.determinant()
         else:
             larger_core = larger.core(k)
             smaller_core = smaller.core(k)
-            if smaller_core != larger_core:     #   easy case
+            if smaller_core != larger_core:  # easy case
                 return 0
             larger_quotients = larger.quotient(k)
             smaller_quotients = smaller.quotient(k)
 
-            def multinomial_with_partitions(sizes,path_counts):
-            # count the number of ways of performing the k paths in parallel,
-            # if we know the total length allotted for each of the paths (sizes), and the number
-            # of paths for each component. A multinomial picks the ordering of the components where
-            # each step is taken.
+            def multinomial_with_partitions(sizes, path_counts):
+                # count the number of ways of performing the k paths in parallel,
+                # if we know the total length allotted for each of the paths (sizes), and the number
+                # of paths for each component. A multinomial picks the ordering of the components where
+                # each step is taken.
                 return prod(path_counts) * multinomial(sizes)
 
             sizes = [larger_quotients[i].size()-smaller_quotients[i].size() for i in range(k)]
             path_counts = [larger_quotients[i].dimension(smaller_quotients[i]) for i in range(k)]
-            return multinomial_with_partitions(sizes,path_counts)
+            return multinomial_with_partitions(sizes, path_counts)
 
     def plancherel_measure(self):
         r"""
@@ -5310,22 +5518,21 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: [Partition([5,4]).outline()(x=i) for i in range(-10,11)]
             [10, 9, 8, 7, 6, 5, 6, 5, 6, 5, 4, 3, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
             sage: Partition([]).outline()
             abs(x)
-
             sage: Partition([1]).outline()
             abs(x + 1) + abs(x - 1) - abs(x)
-
             sage: y = SR.var("y")
             sage: Partition([6,5,1]).outline(variable=y)
-            abs(y + 6) - abs(y + 5) + abs(y + 4) - abs(y + 3) + abs(y - 1) - abs(y - 2) + abs(y - 3)
+            abs(y + 6) - abs(y + 5) + abs(y + 4) - abs(y + 3)
+             + abs(y - 1) - abs(y - 2) + abs(y - 3)
 
         TESTS::
 
-            sage: integrate(Partition([1]).outline()-abs(x),(x,-10,10))
+            sage: integrate(Partition([1]).outline()-abs(x),(x,-10,10))                 # needs sage.symbolic
             2
         """
         if variable is None:
@@ -5333,7 +5540,7 @@ class Partition(CombinatorialElement):
         outside_contents = [self.content(*c) for c in self.outside_corners()]
         inside_contents = [self.content(*c) for c in self.corners()]
         return sum(abs(variable+c) for c in outside_contents)\
-                       -sum(abs(variable+c) for c in inside_contents)
+            - sum(abs(variable+c) for c in inside_contents)
 
     def dual_equivalence_graph(self, directed=False, coloring=None):
         r"""
@@ -5388,6 +5595,7 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: P = Partition([3,1,1])
             sage: G = P.dual_equivalence_graph()
             sage: G.edges(sort=True)
@@ -5408,16 +5616,17 @@ class Partition(CombinatorialElement):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: G = Partition([1]).dual_equivalence_graph()
             sage: G.vertices(sort=False)
             [[[1]]]
             sage: G = Partition([]).dual_equivalence_graph()
             sage: G.vertices(sort=False)
             [[]]
-
             sage: P = Partition([3,1,1])
             sage: G = P.dual_equivalence_graph(coloring=lambda x: 'red')
-            sage: G2 = P.dual_equivalence_graph(coloring={2: 'black', 3: 'blue', 4: 'cyan', 5: 'grey'})
+            sage: G2 = P.dual_equivalence_graph(coloring={2: 'black', 3: 'blue',
+            ....:                                         4: 'cyan', 5: 'grey'})
             sage: G is G2
             False
             sage: G == G2
@@ -5430,7 +5639,14 @@ class Partition(CombinatorialElement):
                 G = self._DDEG.copy(immutable=False)
             else:
                 G = self._DEG.copy(immutable=False)
-            if have_dot2tex():
+
+            try:
+                from sage.graphs.dot2tex_utils import have_dot2tex
+                have = have_dot2tex()
+            except ImportError:
+                have = False
+
+            if have:
                 if coloring is None:
                     d = {2: 'red', 3: 'blue', 4: 'green', 5: 'purple',
                          6: 'brown', 7: 'orange', 8: 'yellow'}
@@ -5489,11 +5705,9 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: SM = Partition([2,2,1]).specht_module(QQ)
-            sage: SM
-            Specht module of [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0)] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: s(SM.frobenius_image())
+            sage: SM = Partition([2,2,1]).specht_module(QQ); SM                         # needs sage.modules
+            Specht module of [2, 2, 1] over Rational Field
+            sage: SM.frobenius_image()                                                  # needs sage.modules
             s[2, 2, 1]
         """
         from sage.combinat.specht_module import SpechtModule
@@ -5504,6 +5718,35 @@ class Partition(CombinatorialElement):
         R = SymmetricGroupAlgebra(base_ring, sum(self))
         return SpechtModule(R, self)
 
+    def garsia_procesi_module(self, base_ring=None):
+        r"""
+        Return the :class:`Garsia-Procesi module
+        <sage.combinat.symmetric_group_representations.GarsiaProcesiModule>`
+        corresponding to ``self``.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: GP = Partition([3,2,1]).garsia_procesi_module(QQ); GP
+            Garsia-Procesi module of shape [3, 2, 1] over Rational Field
+            sage: GP.graded_frobenius_image()
+            q^4*s[3, 2, 1] + q^3*s[3, 3] + q^3*s[4, 1, 1] + (q^3+q^2)*s[4, 2]
+             + (q^2+q)*s[5, 1] + s[6]
+
+            sage: Partition([3,2,1]).garsia_procesi_module(GF(3))
+            Garsia-Procesi module of shape [3, 2, 1] over Finite Field of size 3
+        """
+        from sage.combinat.symmetric_group_representations import GarsiaProcesiModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        return GarsiaProcesiModule(R, self)
+
     def specht_module_dimension(self, base_ring=None):
         r"""
         Return the dimension of the Specht module corresponding to ``self``.
@@ -5513,13 +5756,13 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``BR`` -- (default: `\QQ`) the base ring
+        - ``base_ring`` -- (default: `\QQ`) the base ring
 
         EXAMPLES::
 
             sage: Partition([2,2,1]).specht_module_dimension()
             5
-            sage: Partition([2,2,1]).specht_module_dimension(GF(2))
+            sage: Partition([2,2,1]).specht_module_dimension(GF(2))                     # needs sage.rings.finite_rings
             5
         """
         from sage.categories.fields import Fields
@@ -5528,6 +5771,62 @@ class Partition(CombinatorialElement):
             return StandardTableaux(self).cardinality()
         from sage.combinat.specht_module import specht_module_rank
         return specht_module_rank(self, base_ring)
+
+    def simple_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the simple module corresponding to ``self``.
+
+        When the base ring is a field of characteristic `0`, this is equal
+        to the dimension of the Specht module.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: Partition([2,2,1]).simple_module_dimension()
+            5
+            sage: Partition([2,2,1]).specht_module_dimension(GF(3))                     # needs sage.rings.finite_rings
+            5
+            sage: Partition([2,2,1]).simple_module_dimension(GF(3))                     # needs sage.rings.finite_rings
+            4
+
+            sage: for la in Partitions(6, regular=3):
+            ....:     print(la, la.specht_module_dimension(), la.simple_module_dimension(GF(3)))
+            [6] 1 1
+            [5, 1] 5 4
+            [4, 2] 9 9
+            [4, 1, 1] 10 6
+            [3, 3] 5 1
+            [3, 2, 1] 16 4
+            [2, 2, 1, 1] 9 9
+        """
+        from sage.categories.fields import Fields
+        if base_ring is None or (base_ring in Fields() and base_ring.characteristic() == 0):
+            from sage.combinat.tableau import StandardTableaux
+            return StandardTableaux(self).cardinality()
+        from sage.combinat.specht_module import simple_module_rank
+        return simple_module_rank(self, base_ring)
+
+    def tabloid_module(self, base_ring=None):
+        r"""
+        Return the tabloid module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: TM = Partition([2,2,1]).tabloid_module(QQ); TM
+            Tabloid module of [2, 2, 1] over Rational Field
+            sage: TM.frobenius_image()
+            s[2, 2, 1] + s[3, 1, 1] + 2*s[3, 2] + 2*s[4, 1] + s[5]
+        """
+        from sage.combinat.specht_module import TabloidModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        return TabloidModule(R, self)
 
 
 ##############
@@ -5547,11 +5846,11 @@ class Partitions(UniqueRepresentation, Parent):
 
     - ``starting=p`` specifies that the partitions should all be less
       than or equal to `p` in lex order. This argument cannot be combined
-      with any other (see :trac:`15467`).
+      with any other (see :issue:`15467`).
 
     - ``ending=p`` specifies that the partitions should all be greater than
       or equal to `p` in lex order. This argument cannot be combined with any
-      other (see :trac:`15467`).
+      other (see :issue:`15467`).
 
     - ``length=k`` specifies that the partitions have
       exactly `k` parts.
@@ -5575,7 +5874,7 @@ class Partitions(UniqueRepresentation, Parent):
     - ``parts_in=S`` specifies that the partitions have parts in the set
       `S`, which can be any sequence of pairwise distinct positive
       integers. This argument cannot be combined with any other
-      (see :trac:`15467`).
+      (see :issue:`15467`).
 
     - ``regular=ell`` specifies that the partitions are `\ell`-regular,
       and can only be combined with the ``max_length`` or ``max_part``, but
@@ -5639,29 +5938,33 @@ class Partitions(UniqueRepresentation, Parent):
     The number of partitions of `n` into odd parts equals the number of
     partitions into distinct parts. Let's test that for `n` from 10 to 20::
 
-        sage: test = lambda n: Partitions(n, max_slope=-1).cardinality() == Partitions(n, parts_in=[1,3..n]).cardinality()
-        sage: all(test(n) for n in [10..20])
+        sage: def test(n):
+        ....:     return (Partitions(n, max_slope=-1).cardinality()
+        ....:              == Partitions(n, parts_in=[1,3..n]).cardinality())
+        sage: all(test(n) for n in [10..20])                                            # needs sage.libs.gap
         True
 
     The number of partitions of `n` into distinct parts that differ by
     at least 2 equals the number of partitions into parts that equal 1
     or 4 modulo 5; this is one of the Rogers-Ramanujan identities::
 
-        sage: test = lambda n: Partitions(n, max_slope=-2).cardinality() == Partitions(n, parts_in=([1,6..n] + [4,9..n])).cardinality()
-        sage: all(test(n) for n in [10..20])
+        sage: def test(n):
+        ....:     return (Partitions(n, max_slope=-2).cardinality()
+        ....:              == Partitions(n, parts_in=([1,6..n] + [4,9..n])).cardinality())
+        sage: all(test(n) for n in [10..20])                                            # needs sage.libs.gap
         True
 
     Here are some more examples illustrating ``min_part``, ``max_part``,
     and ``length``::
 
-        sage: Partitions(5,min_part=2)
+        sage: Partitions(5, min_part=2)
         Partitions of the integer 5 satisfying constraints min_part=2
-        sage: Partitions(5,min_part=2).list()
+        sage: Partitions(5, min_part=2).list()
         [[5], [3, 2]]
 
     ::
 
-        sage: Partitions(3,max_length=2).list()
+        sage: Partitions(3, max_length=2).list()
         [[3], [2, 1]]
 
     ::
@@ -5719,7 +6022,7 @@ class Partitions(UniqueRepresentation, Parent):
         [[6, 5], [6, 4, 1], [6, 3, 2], [5, 4, 2]]
 
     Note that if you specify ``min_part=0``, then it will treat the minimum
-    part as being 1 (see :trac:`13605`)::
+    part as being 1 (see :issue:`13605`)::
 
         sage: [x for x in Partitions(4, length=3, min_part=0)]
         [[2, 1, 1]]
@@ -5741,9 +6044,9 @@ class Partitions(UniqueRepresentation, Parent):
 
     TESTS::
 
-        sage: TestSuite(Partitions(0)).run()
-        sage: TestSuite(Partitions(5)).run()
-        sage: TestSuite(Partitions(5, min_part=2)).run()
+        sage: TestSuite(Partitions(0)).run()                                            # needs sage.libs.flint
+        sage: TestSuite(Partitions(5)).run()                                            # needs sage.libs.flint
+        sage: TestSuite(Partitions(5, min_part=2)).run()                                # needs sage.libs.flint
 
         sage: repr( Partitions(5, min_part=2) )
         'Partitions of the integer 5 satisfying constraints min_part=2'
@@ -5774,15 +6077,15 @@ class Partitions(UniqueRepresentation, Parent):
         ...
         ValueError: the size must be specified with any keyword argument
 
-        sage: Partitions(max_part = 3)
+        sage: Partitions(max_part=3)
         3-Bounded Partitions
 
-    Check that :trac:`14145` has been fixed::
+    Check that :issue:`14145` has been fixed::
 
         sage: 1 in Partitions()
         False
 
-    Check :trac:`15467`::
+    Check :issue:`15467`::
 
         sage: Partitions(5,parts_in=[1,2,3,4], length=4)
         Traceback (most recent call last):
@@ -5806,7 +6109,7 @@ class Partitions(UniqueRepresentation, Parent):
         ValueError: n must be an integer or be equal to one of None, NN, NonNegativeIntegers()
 
     Check that calling ``Partitions`` with ``outer=a`` no longer
-    mutates ``a`` (:trac:`16234`)::
+    mutates ``a`` (:issue:`16234`)::
 
         sage: a = [4,3,2,1,1,1,1]
         sage: for p in Partitions(8, outer=a, min_slope=-1):
@@ -5821,7 +6124,7 @@ class Partitions(UniqueRepresentation, Parent):
         [4, 3, 2, 1, 1, 1, 1]
 
     Check that ``inner`` and ``outer`` indeed accept a partition as
-    argument (:trac:`18423`)::
+    argument (:issue:`18423`)::
 
         sage: P = Partitions(5, inner=Partition([2,1]), outer=Partition([3,2])); P
         Partitions of the integer 5 satisfying constraints inner=[2, 1], outer=[3, 2]
@@ -5847,7 +6150,7 @@ class Partitions(UniqueRepresentation, Parent):
             sage: P is P2
             True
 
-        Check that :trac:`17898` is fixed::
+        Check that :issue:`17898` is fixed::
 
             sage: P = Partitions(5, min_slope=0)
             sage: list(P)
@@ -5855,7 +6158,7 @@ class Partitions(UniqueRepresentation, Parent):
         """
         if n == infinity:
             raise ValueError("n cannot be infinite")
-        if isinstance(n, (int,Integer)):
+        if isinstance(n, (int, Integer)):
             if len(kwargs) == 0:
                 return Partitions_n(n)
 
@@ -5869,7 +6172,7 @@ class Partitions(UniqueRepresentation, Parent):
                 ('parts_in' in kwargs or
                  'starting' in kwargs or
                  'ending' in kwargs)):
-                raise ValueError("the parameters 'parts_in', 'starting' and "+
+                raise ValueError("the parameters 'parts_in', 'starting' and " +
                                  "'ending' cannot be combined with anything else")
 
             if 'parts_in' in kwargs:
@@ -5884,7 +6187,7 @@ class Partitions(UniqueRepresentation, Parent):
                 return RestrictedPartitions_n(n, kwargs['restricted'])
 
             # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
-            kwargs['name'] = "Partitions of the integer %s satisfying constraints %s"%(n, ", ".join( ["%s=%s"%(key, kwargs[key]) for key in sorted(kwargs)] ))
+            kwargs['name'] = "Partitions of the integer {} satisfying constraints {}".format(n, ", ".join(["{}={}".format(key, kwargs[key]) for key in sorted(kwargs)]))
 
             # min_part is at least 1, and it is 1 by default
             kwargs['min_part'] = max(1, kwargs.get('min_part', 1))
@@ -5906,7 +6209,7 @@ class Partitions(UniqueRepresentation, Parent):
                 inner = [x for x in kwargs['inner'] if x > 0]
                 kwargs['floor'] = inner
                 kwargs['min_length'] = max(len(inner),
-                                           kwargs.get('min_length',0))
+                                           kwargs.get('min_length', 0))
                 del kwargs['inner']
             return Partitions_with_constraints(n, **kwargs)
         elif n is None or n is NN or n is NonNegativeIntegers():
@@ -6020,34 +6323,34 @@ class Partitions(UniqueRepresentation, Parent):
         """
         NAME = 'Partitions'
         module = 'sage.combinat.partition'
-        display = dict(default="list",
-                     description='Specifies how partitions should be printed',
-                     values=dict(list='displayed as a list',
-                               exp_low='in exponential form (lowest first)',
-                               exp_high='in exponential form (highest first)',
-                               diagram='as a Ferrers diagram',
-                               compact_low='compact form of ``exp_low``',
-                               compact_high='compact form of ``exp_high``'),
-                     alias=dict(exp="exp_low", compact="compact_low", array="diagram",
-                               ferrers_diagram="diagram", young_diagram="diagram"),
-                     case_sensitive=False)
-        latex = dict(default="young_diagram",
-                   description='Specifies how partitions should be latexed',
-                   values=dict(diagram='latex as a Ferrers diagram',
-                               young_diagram='latex as a Young diagram',
-                               list='latex as a list',
-                               exp_high='latex as a list in exponential notation (highest first)',
-                               exp_low='as a list latex in exponential notation (lowest first)'),
-                   alias=dict(exp="exp_low", array="diagram", ferrers_diagram="diagram"),
-                   case_sensitive=False)
-        diagram_str = dict(default="*",
-                         description='The character used for the cells when printing Ferrers diagrams',
-                         checker=lambda char: isinstance(char,str))
-        latex_diagram_str = dict(default="\\ast",
-                         description='The character used for the cells when latexing Ferrers diagrams',
-                         checker=lambda char: isinstance(char,str))
-        convention = dict(link_to=(tableau.Tableaux.options,'convention'))
-        notation = dict(alt_name='convention')
+        display = {'default': "list",
+                   'description': 'Specifies how partitions should be printed',
+                   'values': {'list': 'displayed as a list',
+                              'exp_low': 'in exponential form (lowest first)',
+                              'exp_high': 'in exponential form (highest first)',
+                              'diagram': 'as a Ferrers diagram',
+                              'compact_low': 'compact form of ``exp_low``',
+                              'compact_high': 'compact form of ``exp_high``'},
+                   'alias': {'exp': "exp_low", 'compact': "compact_low", 'array': "diagram",
+                             'ferrers_diagram': "diagram", 'young_diagram': "diagram"},
+                   'case_sensitive': False}
+        latex = {'default': "young_diagram",
+                 'description': 'Specifies how partitions should be latexed',
+                 'values': {'diagram': 'latex as a Ferrers diagram',
+                            'young_diagram': 'latex as a Young diagram',
+                            'list': 'latex as a list',
+                            'exp_high': 'latex as a list in exponential notation (highest first)',
+                            'exp_low': 'as a list latex in exponential notation (lowest first)'},
+                 'alias': {'exp': "exp_low", 'array': "diagram", 'ferrers_diagram': "diagram"},
+                 'case_sensitive': False}
+        diagram_str = {'default': "*",
+                       'description': 'The character used for the cells when printing Ferrers diagrams',
+                       'checker': lambda char: isinstance(char, str)}
+        latex_diagram_str = {'default': "\\ast",
+                             'description': 'The character used for the cells when latexing Ferrers diagrams',
+                             'checker': lambda char: isinstance(char, str)}
+        convention = {'link_to': (tableau.Tableaux.options, 'convention')}
+        notation = {'alt_name': 'convention'}
 
     def __reversed__(self):
         """
@@ -6107,7 +6410,7 @@ class Partitions(UniqueRepresentation, Parent):
             # trailing zeros are removed in Partition.__init__
             return self.element_class(self, lst)
 
-        raise ValueError('%s is not an element of %s' % (lst, self))
+        raise ValueError(f'{lst} is not an element of {self}')
 
     def __contains__(self, x):
         """
@@ -6156,8 +6459,9 @@ class Partitions(UniqueRepresentation, Parent):
 
     def subset(self, *args, **kwargs):
         r"""
-        Return ``self`` if no arguments are given, otherwise raises a
-        ``ValueError``.
+        Return ``self`` if no arguments are given.
+
+        Otherwise, it raises a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -6325,7 +6629,7 @@ class Partitions_all(Partitions):
         beta.sort()  # put them into increasing order just in case
         offset = 0
         while offset < len(beta)-1 and beta[offset] == offset:
-            offset+=1
+            offset += 1
         beta = beta[offset:]
         mu = [beta[i]-offset-i for i in range(len(beta))]
         return self.element_class(self, list(reversed(mu)))
@@ -6386,7 +6690,7 @@ class Partitions_all(Partitions):
             True
         """
         tmp = [i for i in range(len(seq)) if seq[i] == 0]
-        return self.element_class(self,[tmp[i]-i for i in range(len(tmp)-1,-1,-1)])
+        return self.element_class(self, [tmp[i]-i for i in range(len(tmp)-1, -1, -1)])
 
     def from_core_and_quotient(self, core, quotient):
         """
@@ -6406,7 +6710,7 @@ class Partitions_all(Partitions):
             ...
             ValueError: the quotient [[2, 1], [2, 3, 1], [1, 1, 1]] must be a tuple of partitions
 
-        We check that :trac:`11412` is actually fixed::
+        We check that :issue:`11412` is actually fixed::
 
             sage: test = lambda x, k: x == Partition(core=x.core(k),
             ....:                                    quotient=x.quotient(k))
@@ -6428,20 +6732,20 @@ class Partitions_all(Partitions):
         """
         from .partition_tuple import PartitionTuple, PartitionTuples
         if quotient not in PartitionTuples():
-            raise ValueError('the quotient %s must be a tuple of partitions'%quotient)
+            raise ValueError('the quotient %s must be a tuple of partitions' % quotient)
         components = PartitionTuple(quotient).components()
         length = len(components)
         k = length*max(len(q) for q in components) + len(core)
         # k needs to be large enough. this seems to me like the smallest it can be
-        v = [core[i]-i for i in range(len(core))] + [ -i for i in range(len(core),k) ]
-        w = [ [x for x in v if (x-i) % length == 0] for i in range(1, length+1) ]
+        v = [core[i]-i for i in range(len(core))] + [-i for i in range(len(core), k)]
+        w = [[x for x in v if (x-i) % length == 0] for i in range(1, length+1)]
         new_w = []
         for i in range(length):
             lw = len(w[i])
             lq = len(components[i])
             # k needs to be chosen so lw >= lq
-            new_w += [ w[i][j] + length*components[i][j] for j in range(lq)]
-            new_w += [ w[i][j] for j in range(lq,lw)]
+            new_w += [w[i][j] + length*components[i][j] for j in range(lq)]
+            new_w += [w[i][j] for j in range(lq, lw)]
         new_w.sort(reverse=True)
         return self.element_class(self, [new_w[i]+i for i in range(len(new_w))])
 
@@ -6512,8 +6816,8 @@ class Partitions_n(Partitions):
 
     TESTS::
 
-        sage: TestSuite( sage.combinat.partition.Partitions_n(0) ).run()
-        sage: TestSuite( sage.combinat.partition.Partitions_n(0) ).run()
+        sage: TestSuite( sage.combinat.partition.Partitions_n(0) ).run()                # needs sage.libs.flint
+        sage: TestSuite( sage.combinat.partition.Partitions_n(0) ).run()                # needs sage.libs.flint
     """
 
     def __init__(self, n):
@@ -6545,7 +6849,7 @@ class Partitions_n(Partitions):
         """
         return x in _Partitions and sum(x) == self.n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -6574,7 +6878,7 @@ class Partitions_n(Partitions):
         elif self.n == 1:
             lst = [1]
         else:
-            lst = [self.n-1, 1]
+            lst = [self.n - 1, 1]
         return self.element_class(self, lst)
 
     def cardinality(self, algorithm='flint'):
@@ -6583,7 +6887,7 @@ class Partitions_n(Partitions):
 
         INPUT:
 
-        - ``algorithm``  - (default: ``'flint'``)
+        - ``algorithm``  -- (default: ``'flint'``)
 
           - ``'flint'`` -- use FLINT (currently the fastest)
           - ``'gap'`` -- use GAP (VERY *slow*)
@@ -6601,29 +6905,32 @@ class Partitions_n(Partitions):
             [[5], [4, 1], [3, 2], [3, 1, 1], [2, 2, 1], [2, 1, 1, 1], [1, 1, 1, 1, 1]]
             sage: len(v)
             7
-            sage: Partitions(5).cardinality(algorithm='gap')
-            7
-            sage: Partitions(5).cardinality(algorithm='pari')
-            7
-            sage: number_of_partitions(5, algorithm='flint')
+            sage: Partitions(5).cardinality(algorithm='gap')                            # needs sage.libs.gap
             7
 
         ::
 
-            sage: Partitions(10).cardinality()
-            42
+            sage: # needs sage.libs.flint
             sage: Partitions(3).cardinality()
             3
+            sage: number_of_partitions(5, algorithm='flint')
+            7
             sage: Partitions(10).cardinality()
-            42
-            sage: Partitions(3).cardinality(algorithm='pari')
-            3
-            sage: Partitions(10).cardinality(algorithm='pari')
             42
             sage: Partitions(40).cardinality()
             37338
             sage: Partitions(100).cardinality()
             190569292
+
+        ::
+
+            sage: # needs sage.libs.pari
+            sage: Partitions(3).cardinality(algorithm='pari')
+            3
+            sage: Partitions(5).cardinality(algorithm='pari')
+            7
+            sage: Partitions(10).cardinality(algorithm='pari')
+            42
 
         A generating function for `p_n` is given by the reciprocal of
         Euler's function:
@@ -6638,12 +6945,13 @@ class Partitions_n(Partitions):
             sage: q = PowerSeriesRing(QQ, 'q', default_prec=9).gen()
             sage: prod([(1-q^k)^(-1) for k in range(1,9)])  # partial product of
             1 + q + 2*q^2 + 3*q^3 + 5*q^4 + 7*q^5 + 11*q^6 + 15*q^7 + 22*q^8 + O(q^9)
-            sage: [Partitions(k).cardinality() for k in range(2,10)]
+            sage: [Partitions(k).cardinality() for k in range(2,10)]                    # needs sage.libs.flint
             [2, 3, 5, 7, 11, 15, 22, 30]
 
         Another consistency test for ``n`` up to 500::
 
-            sage: len([n for n in [1..500] if Partitions(n).cardinality() != Partitions(n).cardinality(algorithm='pari')])
+            sage: len([n for n in [1..500]                                              # needs sage.libs.flint sage.libs.pari
+            ....:     if Partitions(n).cardinality() != Partitions(n).cardinality(algorithm='pari')])
             0
 
         For negative inputs, the result is zero (the algorithm is ignored)::
@@ -6686,9 +6994,9 @@ class Partitions_n(Partitions):
 
         EXAMPLES::
 
-            sage: Partitions(5).random_element() # random
+            sage: Partitions(5).random_element()  # random                              # needs sage.libs.flint
             [2, 1, 1, 1]
-            sage: Partitions(5).random_element(measure='Plancherel') # random
+            sage: Partitions(5).random_element(measure='Plancherel')  # random          # needs sage.libs.flint
             [2, 1, 1, 1]
         """
         if measure == 'uniform':
@@ -6704,22 +7012,22 @@ class Partitions_n(Partitions):
 
         EXAMPLES::
 
-            sage: Partitions(5).random_element_uniform()  # random
+            sage: Partitions(5).random_element_uniform()  # random                      # needs sage.libs.flint
             [2, 1, 1, 1]
-            sage: Partitions(20).random_element_uniform() # random
+            sage: Partitions(20).random_element_uniform()  # random                     # needs sage.libs.flint
             [9, 3, 3, 2, 2, 1]
 
         TESTS::
 
-            sage: all(Part.random_element_uniform() in Part
+            sage: all(Part.random_element_uniform() in Part                             # needs sage.libs.flint
             ....:     for Part in map(Partitions, range(10)))
             True
 
-        Check that :trac:`18752` is fixed::
+        Check that :issue:`18752` is fixed::
 
             sage: P = Partitions(5)
-            sage: la = P.random_element_uniform()
-            sage: la.parent() is P
+            sage: la = P.random_element_uniform()                                       # needs sage.libs.flint
+            sage: la.parent() is P                                                      # needs sage.libs.flint
             True
 
         ALGORITHM:
@@ -6739,7 +7047,7 @@ class Partitions_n(Partitions):
         - Florent Hivert (2009-11-23)
         """
         n = self.n
-        res = [] # A dictionary of multiplicities could be faster.
+        res = []  # A dictionary of multiplicities could be faster.
         while n > 0:
             # Choose a pair d,j = 1,2..., with d*j <= n with probability
             #        d*numpart(n-d*j) / n / numpart(n)
@@ -6758,7 +7066,7 @@ class Partitions_n(Partitions):
                     rand -= d * cached_number_of_partitions(r)
                     if rand < 0:
                         break
-                    d +=1
+                    d += 1
                     r -= j
                 else:
                     continue
@@ -6791,7 +7099,7 @@ class Partitions_n(Partitions):
             ....:     for Part in map(Partitions, range(10)))
             True
 
-        Check that :trac:`18752` is fixed::
+        Check that :issue:`18752` is fixed::
 
             sage: P = Partitions(5)
             sage: la = P.random_element_plancherel()
@@ -6835,12 +7143,29 @@ class Partitions_n(Partitions):
             sage: Partitions(4).next([1,1,1,1]) is None
             True
         """
-        found = False
-        for i in self:
-            if found:
-                return i
-            if i == p:
-                found = True
+        if p is None:
+            return None
+        q = ZS1_next(list(p))
+        if q:
+            return self.element_class(self, q)
+        return None
+
+    def prev(self, p):
+        r"""
+        Return the lexicographically previous partition before partition ``p``.
+
+        EXAMPLES::
+
+            sage: Partitions(4).prev([3, 1])
+            [4]
+            sage: Partitions(4).prev([4]) is None
+            True
+        """
+        if p is None:
+            return None
+        q = ZS2_next(p)
+        if q:
+            return self.element_class(self, q)
         return None
 
     def last(self):
@@ -6942,7 +7267,7 @@ class Partitions_nk(Partitions):
             sage: Partitions(5, length=2) # indirect doctest
             Partitions of the integer 5 of length 2
         """
-        return "Partitions of the integer {} of length {}".format(self.n, self.k)
+        return f"Partitions of the integer {self.n} of length {self.k}"
 
     def _an_element_(self):
         """
@@ -6998,7 +7323,7 @@ class Partitions_nk(Partitions):
             [[]]
 
             sage: from sage.combinat.partition import number_of_partitions_length
-            sage: all( len(Partitions(n, length=k).list())
+            sage: all( len(Partitions(n, length=k).list())                              # needs sage.libs.flint
             ....:      == number_of_partitions_length(n, k)
             ....:      for n in range(9) for k in range(n+2) )
             True
@@ -7025,9 +7350,9 @@ class Partitions_nk(Partitions):
         - ``algorithm`` -- (default: ``'hybrid'``) the algorithm to compute
           the cardinality and can be one of the following:
 
-          * ``'hybrid'`` - use a hybrid algorithm which uses heuristics to
+          * ``'hybrid'`` -- use a hybrid algorithm which uses heuristics to
             reduce the complexity
-          * ``'gap'`` - use GAP
+          * ``'gap'`` -- use GAP
 
         EXAMPLES::
 
@@ -7054,6 +7379,7 @@ class Partitions_nk(Partitions):
 
         Further examples::
 
+            sage: # needs sage.libs.flint
             sage: Partitions(5, length=3).cardinality()
             2
             sage: Partitions(6, length=3).cardinality()
@@ -7079,11 +7405,12 @@ class Partitions_nk(Partitions):
 
             sage: N = [0, 1, 2, 3, 5, 10, 20, 500, 850]
             sage: K = [0, 1, 2, 3, 5, 10, 11, 20, 21, 250, 499, 500]
-            sage: all(Partitions(n,length=k).cardinality() == Partitions(n,length=k).cardinality('gap')
+            sage: all(Partitions(n, length=k).cardinality()                             # needs sage.libs.flint
+            ....:       == Partitions(n,length=k).cardinality('gap')
             ....:     for n in N for k in K)
             True
             sage: P = Partitions(4562, length=2800)
-            sage: P.cardinality() == P.cardinality('gap')
+            sage: P.cardinality() == P.cardinality('gap')                               # needs sage.libs.flint
             True
         """
         return number_of_partitions_length(self.n, self.k, algorithm)
@@ -7112,7 +7439,7 @@ class Partitions_parts_in(Partitions):
 
     TESTS::
 
-        sage: TestSuite( sage.combinat.partition.Partitions_parts_in(6, parts=[2,1]) ).run()
+        sage: TestSuite( sage.combinat.partition.Partitions_parts_in(6, parts=[2,1]) ).run()        # needs sage.libs.gap
     """
 
     @staticmethod
@@ -7136,7 +7463,7 @@ class Partitions_parts_in(Partitions):
 
         TESTS::
 
-            sage: TestSuite(Partitions(5, parts_in=[1,2,3])).run()
+            sage: TestSuite(Partitions(5, parts_in=[1,2,3])).run()                      # needs sage.libs.gap
         """
         Partitions.__init__(self)
         self.n = n
@@ -7162,7 +7489,7 @@ class Partitions_parts_in(Partitions):
             sage: Partitions(5, parts_in=[1,2,3]) # indirect doctest
             Partitions of the integer 5 with parts in [1, 2, 3]
         """
-        return "Partitions of the integer %s with parts in %s" % (self.n, self.parts)
+        return f"Partitions of the integer {self.n} with parts in {self.parts}"
 
     def cardinality(self):
         r"""
@@ -7171,12 +7498,13 @@ class Partitions_parts_in(Partitions):
 
         EXAMPLES::
 
-            sage: Partitions(15, parts_in=[2,3,7]).cardinality()
+            sage: Partitions(15, parts_in=[2,3,7]).cardinality()                        # needs sage.libs.gap
             5
 
         If you can use all parts 1 through `n`, we'd better get `p(n)`::
 
-            sage: Partitions(20, parts_in=[1..20]).cardinality() == Partitions(20).cardinality()
+            sage: (Partitions(20, parts_in=[1..20]).cardinality()                       # needs sage.libs.gap
+            ....:   == Partitions(20).cardinality())
             True
 
         TESTS:
@@ -7184,6 +7512,7 @@ class Partitions_parts_in(Partitions):
         Let's check the consistency of GAP's function and our own
         algorithm that actually generates the partitions::
 
+            sage: # needs sage.libs.gap
             sage: ps = Partitions(15, parts_in=[1,2,3])
             sage: ps.cardinality() == len(ps.list())
             True
@@ -7529,7 +7858,7 @@ class Partitions_starting(Partitions):
             mu = list(self._starting) + [1] * (self.n - k)
             return next(Partition(mu))
 
-        #if self._starting.size() > self.n:
+        # if self._starting.size() > self.n:
         return self.element_class(self, Partitions(self.n, outer=self._starting).first())
 
     def next(self, part):
@@ -7693,7 +8022,7 @@ class PartitionsInBox(Partitions):
             sage: PartitionsInBox(2,2) # indirect doctest
             Integer partitions which fit in a 2 x 2 box
         """
-        return "Integer partitions which fit in a %s x %s box" % (self.h, self.w)
+        return f"Integer partitions which fit in a {self.h} x {self.w} box"
 
     def __contains__(self, x):
         """
@@ -7715,7 +8044,7 @@ class PartitionsInBox(Partitions):
             True
         """
         return x in _Partitions and len(x) <= self.h \
-               and (len(x) == 0 or x[0] <= self.w)
+            and (len(x) == 0 or x[0] <= self.w)
 
     def list(self):
         """
@@ -7731,7 +8060,7 @@ class PartitionsInBox(Partitions):
 
         TESTS:
 
-        Check :trac:`10890`::
+        Check :issue:`10890`::
 
             sage: type(PartitionsInBox(0,0)[0])
             <class 'sage.combinat.partition.PartitionsInBox_with_category.element_class'>
@@ -7749,7 +8078,7 @@ class PartitionsInBox(Partitions):
                     new_list += add(element)
                 l = new_list
 
-            return [self.element_class(self, [x for x in p if x!=0]) for p in l]
+            return [self.element_class(self, [x for x in p if x != 0]) for p in l]
 
     def cardinality(self):
         """
@@ -7818,7 +8147,7 @@ class Partitions_with_constraints(IntegerListsLex):
         sage: P = Partitions(6, min_part=2, max_slope=-1)
         sage: TestSuite(P).run()
 
-    Test that :trac:`15525` is fixed::
+    Test that :issue:`15525` is fixed::
 
         sage: loads(dumps(P)) == P
         True
@@ -7977,7 +8306,7 @@ class RegularPartitions_all(RegularPartitions):
             sage: RegularPartitions_all(3)
             3-Regular Partitions
         """
-        return "{}-Regular Partitions".format(self._ell)
+        return f"{self._ell}-Regular Partitions"
 
     def __iter__(self):
         """
@@ -7990,7 +8319,7 @@ class RegularPartitions_all(RegularPartitions):
             sage: [next(it) for x in range(10)]
             [[], [1], [2], [1, 1], [3], [2, 1], [4], [3, 1], [2, 2], [2, 1, 1]]
 
-        Check that 1-regular partitions works (:trac:`20584`)::
+        Check that 1-regular partitions works (:issue:`20584`)::
 
             sage: P = Partitions(regular=1)
             sage: list(P)
@@ -8067,7 +8396,7 @@ class RegularPartitions_truncated(RegularPartitions):
             sage: RegularPartitions_truncated(4, 3)
             4-Regular Partitions with max length 3
         """
-        return "{}-Regular Partitions with max length {}".format(self._ell, self._max_len)
+        return f"{self._ell}-Regular Partitions with max length {self._max_len}"
 
     def __iter__(self):
         """
@@ -8080,7 +8409,7 @@ class RegularPartitions_truncated(RegularPartitions):
             sage: [next(it) for x in range(10)]
             [[], [1], [2], [1, 1], [3], [2, 1], [4], [3, 1], [2, 2], [5]]
 
-        Check that 1-regular partitions works (:trac:`20584`)::
+        Check that 1-regular partitions works (:issue:`20584`)::
 
             sage: P = Partitions(regular=1, max_length=2)
             sage: list(P)
@@ -8185,7 +8514,7 @@ class RegularPartitions_bounded(RegularPartitions):
             sage: RegularPartitions_bounded(4, 3)
             4-Regular 3-Bounded  Partitions
         """
-        return "{}-Regular {}-Bounded Partitions".format(self._ell, self.k)
+        return f"{self._ell}-Regular {self.k}-Bounded Partitions"
 
     def __iter__(self):
         """
@@ -8197,7 +8526,7 @@ class RegularPartitions_bounded(RegularPartitions):
             sage: list(P)
             [[3, 2, 1], [3, 2], [3, 1], [3], [2, 1], [2], [1], []]
 
-        Check that 1-regular partitions works (:trac:`20584`)::
+        Check that 1-regular partitions works (:issue:`20584`)::
 
             sage: P = Partitions(regular=1, max_part=3)
             sage: list(P)
@@ -8248,7 +8577,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
             sage: RegularPartitions_n(3, 5)
             5-Regular Partitions of the integer 3
         """
-        return "{}-Regular Partitions of the integer {}".format(self._ell, self.n)
+        return f"{self._ell}-Regular Partitions of the integer {self.n}"
 
     def __contains__(self, x):
         """
@@ -8282,12 +8611,12 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
         EXAMPLES::
 
             sage: P = Partitions(5, regular=3)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # needs sage.libs.flint
             5
             sage: P = Partitions(5, regular=6)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # needs sage.libs.flint
             7
-            sage: P.cardinality() == Partitions(5).cardinality()
+            sage: P.cardinality() == Partitions(5).cardinality()                        # needs sage.libs.flint
             True
 
         TESTS:
@@ -8295,16 +8624,16 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
         Check the corner case::
 
             sage: P = Partitions(0, regular=3)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # needs sage.libs.flint
             1
 
         Check for 1-regular partitions::
 
             sage: P = Partitions(0, regular=1)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # needs sage.libs.flint
             1
             sage: P = Partitions(5, regular=1)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # needs sage.libs.flint
             0
 
         """
@@ -8360,16 +8689,16 @@ class OrderedPartitions(Partitions):
 
         sage: OrderedPartitions(3)
         Ordered partitions of 3
-        sage: OrderedPartitions(3).list()
+        sage: OrderedPartitions(3).list()                                               # needs sage.libs.gap
         [[3], [2, 1], [1, 2], [1, 1, 1]]
         sage: OrderedPartitions(3,2)
         Ordered partitions of 3 of length 2
-        sage: OrderedPartitions(3,2).list()
+        sage: OrderedPartitions(3,2).list()                                             # needs sage.libs.gap
         [[2, 1], [1, 2]]
 
-        sage: OrderedPartitions(10,k=2).list()
+        sage: OrderedPartitions(10, k=2).list()                                         # needs sage.libs.gap
         [[9, 1], [8, 2], [7, 3], [6, 4], [5, 5], [4, 6], [3, 7], [2, 8], [1, 9]]
-        sage: OrderedPartitions(4).list()
+        sage: OrderedPartitions(4).list()                                               # needs sage.libs.gap
         [[4], [3, 1], [2, 2], [2, 1, 1], [1, 3], [1, 2, 1], [1, 1, 2], [1, 1, 1, 1]]
 
     """
@@ -8400,7 +8729,7 @@ class OrderedPartitions(Partitions):
 
         TESTS::
 
-            sage: TestSuite( OrderedPartitions(5,3) ).run()
+            sage: TestSuite( OrderedPartitions(5,3) ).run()                             # needs sage.libs.gap
         """
         Partitions.__init__(self)
         self.n = n
@@ -8445,9 +8774,9 @@ class OrderedPartitions(Partitions):
 
         EXAMPLES::
 
-            sage: OrderedPartitions(3).list()
+            sage: OrderedPartitions(3).list()                                           # needs sage.libs.gap
             [[3], [2, 1], [1, 2], [1, 1, 1]]
-            sage: OrderedPartitions(3,2).list()
+            sage: OrderedPartitions(3,2).list()                                         # needs sage.libs.gap
             [[2, 1], [1, 2]]
         """
         from sage.libs.gap.libgap import libgap
@@ -8467,6 +8796,7 @@ class OrderedPartitions(Partitions):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: OrderedPartitions(3).cardinality()
             4
             sage: OrderedPartitions(3,2).cardinality()
@@ -8539,7 +8869,7 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
             sage: PartitionsGreatestLE(10, 2) # indirect doctest
             Partitions of 10 having parts less than or equal to 2
         """
-        return "Partitions of %s having parts less than or equal to %s" % (self.n, self.k)
+        return f"Partitions of {self.n} having parts less than or equal to {self.k}"
 
     def cardinality(self):
         """
@@ -8547,12 +8877,12 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
 
         EXAMPLES::
 
-            sage: PartitionsGreatestLE(9, 5).cardinality()
+            sage: PartitionsGreatestLE(9, 5).cardinality()                              # needs sage.libs.gap
             23
 
         TESTS::
 
-            sage: all(PartitionsGreatestLE(n, a).cardinality() ==
+            sage: all(PartitionsGreatestLE(n, a).cardinality() ==                       # needs sage.libs.gap
             ....:     len(PartitionsGreatestLE(n, a).list())
             ....:     for n in range(20) for a in range(6))
             True
@@ -8629,7 +8959,7 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
             sage: PartitionsGreatestEQ(10, 2) # indirect doctest
             Partitions of 10 having greatest part equal to 2
         """
-        return "Partitions of %s having greatest part equal to %s" % (self.n, self.k)
+        return f"Partitions of {self.n} having greatest part equal to {self.k}"
 
     def cardinality(self):
         """
@@ -8642,7 +8972,7 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
 
         TESTS::
 
-            sage: all(PartitionsGreatestEQ(n, a).cardinality() ==
+            sage: all(PartitionsGreatestEQ(n, a).cardinality() ==                       # needs sage.libs.flint
             ....:     len(PartitionsGreatestEQ(n, a).list())
             ....:     for n in range(20) for a in range(6))
             True
@@ -8811,7 +9141,7 @@ class RestrictedPartitions_all(RestrictedPartitions_generic):
             sage: RestrictedPartitions_all(3)
             3-Restricted Partitions
         """
-        return "{}-Restricted Partitions".format(self._ell)
+        return f"{self._ell}-Restricted Partitions"
 
     def __iter__(self):
         """
@@ -8866,7 +9196,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
             sage: RestrictedPartitions_n(3, 5)
             5-Restricted Partitions of the integer 3
         """
-        return "{}-Restricted Partitions of the integer {}".format(self._ell, self.n)
+        return f"{self._ell}-Restricted Partitions of the integer {self.n}"
 
     def __contains__(self, x):
         """
@@ -8900,12 +9230,12 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
         EXAMPLES::
 
             sage: P = Partitions(5, restricted=3)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # needs sage.libs.flint
             5
             sage: P = Partitions(5, restricted=6)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # needs sage.libs.flint
             7
-            sage: P.cardinality() == Partitions(5).cardinality()
+            sage: P.cardinality() == Partitions(5).cardinality()                        # needs sage.libs.flint
             True
         """
         if self._ell > self.n:
@@ -8940,7 +9270,7 @@ def number_of_partitions(n, algorithm='default'):
     parts.
 
     The options of :meth:`number_of_partitions()` are being deprecated
-    :trac:`13072` in favour of :meth:`Partitions_n.cardinality()` so that
+    :issue:`13072` in favour of :meth:`Partitions_n.cardinality()` so that
     :meth:`number_of_partitions()` can become a stripped down version of
     the fastest algorithm available (currently this is using FLINT).
 
@@ -8963,7 +9293,7 @@ def number_of_partitions(n, algorithm='default'):
         sage: len(v)
         7
 
-    The input must be a nonnegative integer or a ``ValueError`` is raised.
+    The input must be a nonnegative integer or a :class:`ValueError` is raised.
 
     ::
 
@@ -8974,6 +9304,7 @@ def number_of_partitions(n, algorithm='default'):
 
     ::
 
+        sage: # needs sage.libs.flint
         sage: number_of_partitions(10)
         42
         sage: number_of_partitions(3)
@@ -9001,7 +9332,7 @@ def number_of_partitions(n, algorithm='default'):
         sage: q = PowerSeriesRing(QQ, 'q', default_prec=9).gen()
         sage: prod([(1-q^k)^(-1) for k in range(1,9)])  # partial product of
         1 + q + 2*q^2 + 3*q^3 + 5*q^4 + 7*q^5 + 11*q^6 + 15*q^7 + 22*q^8 + O(q^9)
-        sage: [number_of_partitions(k) for k in range(2,10)]
+        sage: [number_of_partitions(k) for k in range(2,10)]                            # needs sage.libs.flint
         [2, 3, 5, 7, 11, 15, 22, 30]
 
     REFERENCES:
@@ -9010,6 +9341,7 @@ def number_of_partitions(n, algorithm='default'):
 
     TESTS::
 
+        sage: # needs sage.libs.flint
         sage: n = 500 + randint(0,500)
         sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
@@ -9035,7 +9367,7 @@ def number_of_partitions(n, algorithm='default'):
         sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
         sage: n = 100000000 + randint(0,100000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0  # long time (4s on sage.math, 2011)
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0     # long time (4s on sage.math, 2011)
         True
 
     """
@@ -9062,6 +9394,7 @@ def number_of_partitions_length(n, k, algorithm='hybrid'):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.gap
         sage: from sage.combinat.partition import number_of_partitions_length
         sage: number_of_partitions_length(5, 2)
         2
@@ -9111,15 +9444,19 @@ def number_of_partitions_length(n, k, algorithm='hybrid'):
 
 
 ##########
-# trac 14225: Partitions() is frequently used, but only weakly cached. Hence,
-# establish a strong reference to it.
+# issue 14225: Partitions() is frequently used, but only weakly cached.
+# Hence, establish a strong reference to it.
 
 _Partitions = Partitions()
 
 # Rather than caching an under-used function I have cached the default
 # number_of_partitions functions which is currently using FLINT.
-# AM trac #13072
-cached_number_of_partitions = cached_function(flint_number_of_partitions)
+# AM issue #13072
+try:
+    from sage.libs.flint.arith_sage import number_of_partitions as flint_number_of_partitions
+    cached_number_of_partitions = cached_function(flint_number_of_partitions)
+except ImportError:
+    pass
 
 # October 2012: fixing outdated pickles which use classes being deprecated
 from sage.misc.persist import register_unpickle_override

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fast Rank Two Crystals
 """
@@ -153,14 +154,14 @@ class FastCrystal(UniqueRepresentation, Parent):
         self.shape = shape
 
         for i in range(self.size):
-            target = [x for x in self.delpat[i]]
+            target = list(self.delpat[i])
 
             target[0] = target[0]-1
             e1 = None if target not in self.delpat else self.delpat.index(target)
             target[0] = target[0]+1+1
             f1 = None if target not in self.delpat else self.delpat.index(target)
 
-            target = [x for x in self.gampat[i]]
+            target = list(self.gampat[i])
             target[0] = target[0]-1
             e2 = None if target not in self.gampat else self.gampat.index(target)
             target[0] = target[0]+1+1
@@ -168,14 +169,14 @@ class FastCrystal(UniqueRepresentation, Parent):
 
             self._rootoperators.append([e1,f1,e2,f2])
 
-        if int(2*l1)%2 == 0:
-            l1_str = "%d"%l1
-            l2_str = "%d"%l2
+        if int(2*l1) % 2 == 0:
+            l1_str = "%d" % l1
+            l2_str = "%d" % l2
         else:
-            assert self._cartan_type[0] == 'B' and int(2*l2)%2 == 1
-            l1_str = "%d/2"%int(2*l1)
-            l2_str = "%d/2"%int(2*l2)
-        self.rename("The fast crystal for %s2 with shape [%s,%s]"%(ct[0],l1_str,l2_str))
+            assert self._cartan_type[0] == 'B' and int(2*l2) % 2 == 1
+            l1_str = "%d/2" % int(2*l1)
+            l2_str = "%d/2" % int(2*l2)
+        self.rename("The fast crystal for %s2 with shape [%s,%s]" % (ct[0],l1_str,l2_str))
         self.module_generators = [self(0)]
         # self._digraph = ClassicalCrystal.digraph(self)
         self._digraph = super().digraph()

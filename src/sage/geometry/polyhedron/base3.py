@@ -135,8 +135,9 @@ class Polyhedron_base3(Polyhedron_base2):
             [1 0 1 0 0 1]
             [1 0 0 0 1 1]
 
-            sage: P = polytopes.dodecahedron().faces(2)[0].as_polyhedron()                          # optional - sage.rings.number_field
-            sage: P.slack_matrix()                                                                  # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = polytopes.dodecahedron().faces(2)[0].as_polyhedron()
+            sage: P.slack_matrix()
             [1/2*sqrt5 - 1/2               0               0               1 1/2*sqrt5 - 1/2               0]
             [              0               0 1/2*sqrt5 - 1/2 1/2*sqrt5 - 1/2               1               0]
             [              0 1/2*sqrt5 - 1/2               1               0 1/2*sqrt5 - 1/2               0]
@@ -153,7 +154,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: Polyhedron().slack_matrix()
             []
-            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()                # optional - sage.rings.number_field
+            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()    # needs sage.rings.number_field
             Number Field in a with defining polynomial x^2 - 2 with a = 1.41...
         """
         if not self.n_Vrepresentation() or not self.n_Hrepresentation():
@@ -274,12 +275,12 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: P = polytopes.twenty_four_cell()
             sage: M = P.incidence_matrix()
-            sage: sum(sum(x) for x in M) == P.flag_f_vector(0, 3)           # optional - sage.combinat
+            sage: sum(sum(x) for x in M) == P.flag_f_vector(0, 3)                       # needs sage.combinat
             True
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: R.incidence_matrix().is_immutable()
             True
@@ -287,10 +288,11 @@ class Polyhedron_base3(Polyhedron_base2):
         Test that this method works for inexact base ring
         (``cdd`` sets the cache already)::
 
-            sage: P = polytopes.dodecahedron(exact=False)                   # optional - sage.groups
-            sage: M = P.incidence_matrix.cache                              # optional - sage.groups
-            sage: P.incidence_matrix.clear_cache()                          # optional - sage.groups
-            sage: M == P.incidence_matrix()                                 # optional - sage.groups
+            sage: # needs sage.groups
+            sage: P = polytopes.dodecahedron(exact=False)
+            sage: M = P.incidence_matrix.cache
+            sage: P.incidence_matrix.clear_cache()
+            sage: M == P.incidence_matrix()
             True
         """
         if self.base_ring() in (ZZ, QQ):
@@ -370,7 +372,7 @@ class Polyhedron_base3(Polyhedron_base2):
                                                        prefix=tester._prefix+"  ")
         tester.info(tester._prefix + " ", newline=False)
 
-    def face_generator(self, face_dimension=None, algorithm=None, **kwds):
+    def face_generator(self, face_dimension=None, algorithm=None):
         r"""
         Return an iterator over the faces of given dimension.
 
@@ -581,28 +583,12 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: list(Polyhedron().face_generator())
             [A -1-dimensional face of a Polyhedron in ZZ^0]
 
-        Check that :trac:`29155` is fixed::
+        Check that :issue:`29155` is fixed::
 
             sage: P = polytopes.permutahedron(3)
             sage: [f] = P.face_generator(2)
             sage: f.ambient_Hrepresentation()
             (An equation (1, 1, 1) x - 6 == 0,)
-
-        The ``dual`` keyword is deprecated::
-
-             sage: P = polytopes.hypercube(4)
-             sage: list(P.face_generator(dual=False))[:4]
-             doctest:...: DeprecationWarning: the keyword dual is deprecated; use algorithm instead
-             See https://github.com/sagemath/sage/issues/33646 for details.
-             [A 4-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 16 vertices,
-              A -1-dimensional face of a Polyhedron in ZZ^4,
-              A 3-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 8 vertices,
-              A 3-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 8 vertices]
-             sage: list(P.face_generator(True))[:4]
-             [A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices,
-              A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices,
-              A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices,
-              A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices]
 
         Check that we catch incorrect algorithms::
 
@@ -616,18 +602,8 @@ class Polyhedron_base3(Polyhedron_base2):
             dual = False
         elif algorithm == 'dual':
             dual = True
-        elif algorithm in (False, True):
-            from sage.misc.superseded import deprecation
-            deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
-            dual = algorithm
         elif algorithm is not None:
             raise ValueError("algorithm must be 'primal', 'dual' or None")
-
-        if kwds:
-            from sage.misc.superseded import deprecation
-            deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
-            if 'dual' in kwds and dual is None:
-                dual = kwds['dual']
 
         from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator import FaceIterator_geom
         return FaceIterator_geom(self, output_dimension=face_dimension, dual=dual)
@@ -842,7 +818,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: P.f_vector().is_immutable()
             True
@@ -1008,13 +984,13 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: M = Q.vertex_adjacency_matrix()
             sage: sum(M)
             (4, 4, 3, 3, 4, 4, 4, 3, 3)
-            sage: G = Q.vertex_graph()  # optional - sage.graphs
-            sage: G.degree()            # optional - sage.graphs
+            sage: G = Q.vertex_graph()                                                  # needs sage.graphs
+            sage: G.degree()                                                            # needs sage.graphs
             [4, 4, 3, 3, 4, 4, 4, 3, 3]
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
                 sage: P.adjacency_matrix().is_immutable()
                 True
@@ -1065,12 +1041,12 @@ class Polyhedron_base3(Polyhedron_base2):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: s4.facet_adjacency_matrix().is_immutable()
             True
 
-        Checks that :trac:`22455` is fixed::
+        Checks that :issue:`22455` is fixed::
 
             sage: s = polytopes.simplex(2)
             sage: s.facet_adjacency_matrix()
@@ -1154,11 +1130,11 @@ class Polyhedron_base3(Polyhedron_base2):
 
         EXAMPLES::
 
-            sage: polytopes.hypersimplex(4,2).simplicity()              # optional - sage.combinat
+            sage: polytopes.hypersimplex(4,2).simplicity()
             1
-            sage: polytopes.hypersimplex(5,2).simplicity()              # optional - sage.combinat
+            sage: polytopes.hypersimplex(5,2).simplicity()
             2
-            sage: polytopes.hypersimplex(6,2).simplicity()              # optional - sage.combinat
+            sage: polytopes.hypersimplex(6,2).simplicity()
             3
             sage: polytopes.simplex(3).simplicity()
             3
@@ -1207,7 +1183,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: polytopes.cyclic_polytope(10,4).simpliciality()
             3
-            sage: polytopes.hypersimplex(5,2).simpliciality()           # optional - sage.combinat
+            sage: polytopes.hypersimplex(5,2).simpliciality()
             2
             sage: polytopes.cross_polytope(4).simpliciality()
             3
@@ -1293,8 +1269,8 @@ class Polyhedron_base3(Polyhedron_base2):
             True
             sage: P.is_pyramid(certificate=True)
             (True, A vertex at (1, 0, 0, 0))
-            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()     # optional - sage.rings.number_field
-            sage: egyptian_pyramid.is_pyramid()                                 # optional - sage.rings.number_field
+            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()             # needs sage.rings.number_field
+            sage: egyptian_pyramid.is_pyramid()                                         # needs sage.rings.number_field
             True
             sage: Q = polytopes.octahedron()
             sage: Q.is_pyramid()
@@ -1463,13 +1439,13 @@ class Polyhedron_base3(Polyhedron_base2):
 
         EXAMPLES::
 
-            sage: P = polytopes.hypersimplex(5,2)                               # optional - sage.combinat
-            sage: L = P.lawrence_polytope()                                     # optional - sage.combinat
-            sage: L.is_lattice_polytope()                                       # optional - sage.combinat
+            sage: P = polytopes.hypersimplex(5,2)
+            sage: L = P.lawrence_polytope()
+            sage: L.is_lattice_polytope()
             True
 
-            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()     # optional - sage.number_field
-            sage: egyptian_pyramid.is_lawrence_polytope()                       # optional - sage.number_field
+            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()             # needs sage.number_field
+            sage: egyptian_pyramid.is_lawrence_polytope()                               # needs sage.number_field
             True
 
             sage: polytopes.octahedron().is_lawrence_polytope()

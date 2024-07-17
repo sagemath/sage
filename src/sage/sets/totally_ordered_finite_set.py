@@ -5,7 +5,7 @@ AUTHORS:
 
 - Stepan Starosta (2012): Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Stepan Starosta <stepan.starosta@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -45,7 +45,7 @@ class TotallyOrderedFiniteSetElement(Element):
         r"""
         TESTS::
 
-            sage: T = TotallyOrderedFiniteSet([3,2,1],facade=False)
+            sage: T = TotallyOrderedFiniteSet([3,2,1], facade=False)
             sage: TestSuite(T.an_element()).run()
         """
         Element.__init__(self, parent)
@@ -173,8 +173,8 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
         sage: T1 = TotallyOrderedFiniteSet([3,2,5,1])
         sage: T1(3) < T1(1)
         False
-        sage: T2 = TotallyOrderedFiniteSet([3,var('x')])
-        sage: T2(3) < T2(var('x'))
+        sage: T2 = TotallyOrderedFiniteSet([3, x])                                      # needs sage.symbolic
+        sage: T2(3) < T2(x)                                                             # needs sage.symbolic
         3 < x
 
     To make the above example work, you should set the argument facade to
@@ -212,7 +212,7 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
         sage: A('a') == 'a'
         False
 
-    Since :trac:`16280`, totally ordered sets support elements that do
+    Since :issue:`16280`, totally ordered sets support elements that do
     not inherit from :class:`sage.structure.element.Element`, whether
     they are facade or not::
 
@@ -254,9 +254,9 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
                 elements.append(x)
                 seen.add(x)
         return super(FiniteEnumeratedSet, cls).__classcall__(
-                cls,
-                tuple(elements),
-                facade)
+            cls,
+            tuple(elements),
+            facade)
 
     def __init__(self, elements, facade=True):
         """
@@ -269,13 +269,13 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
             sage: TestSuite(TotallyOrderedFiniteSet([1,3,2],facade=False)).run()
             sage: TestSuite(TotallyOrderedFiniteSet([])).run()
         """
-        Parent.__init__(self, facade=facade, category=(Posets(),FiniteEnumeratedSets()))
+        Parent.__init__(self, facade=facade, category=(Posets(), FiniteEnumeratedSets()))
         self._elements = elements
         if facade:
             self._facade_elements = None
         else:
             self._facade_elements = self._elements
-            self._elements = [self.element_class(self,x) for x in elements]
+            self._elements = [self.element_class(self, x) for x in elements]
 
     def _element_constructor_(self, data):
         r"""
@@ -306,7 +306,7 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
         try:
             i = self._facade_elements.index(data)
         except ValueError:
-            raise ValueError("%s not in %s"%(data, self))
+            raise ValueError("%s not in %s" % (data, self))
 
         return self._elements[i]
 

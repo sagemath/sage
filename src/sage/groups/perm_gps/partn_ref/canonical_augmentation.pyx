@@ -154,7 +154,6 @@ REFERENCE:
 
 - [1] McKay, Brendan D. Isomorph-free exhaustive generation. J Algorithms,
   Vol. 26 (1998), pp. 306-324.
-
 """
 
 #*****************************************************************************
@@ -169,10 +168,10 @@ REFERENCE:
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-from .data_structures cimport*
+from sage.groups.perm_gps.partn_ref.data_structures cimport*
 
 
-cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_err):
+cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_err) noexcept:
     r"""
     This function is part of the iterator struct which will iterate over
     objects. Return value of ``NULL`` indicates termination.
@@ -183,13 +182,9 @@ cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_e
     cdef void *next_candidate
     cdef void *parent_cand
     cdef void *aug
-    cdef int i, next_cand_deg, parent_cand_deg
-    cdef int *isom
+    cdef int next_cand_deg, parent_cand_deg
     cdef PartitionStack *part
     cdef bint augmentation_is_canonical
-    cdef aut_gp_and_can_lab *output
-    cdef agcl_work_space *agcl_ws
-    cdef dc_work_space *dc_ws
 
     if cgd.level == 0:
         if cgd.mem_err:
@@ -211,7 +206,8 @@ cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_e
                 aug, cgd.object_stack[cgd.level], &cgd.degree_stack[cgd.level],
                 &cgd.mem_err)
             cgd.object_stack[cgd.level] = next_candidate
-            if cgd.mem_err: continue
+            if cgd.mem_err:
+                continue
             next_cand_deg = cgd.degree_stack[cgd.level]
             if cgd.agcl_work_spaces[cgd.level] is NULL:
                 # allocate a work space if it hasn't been allocated already
@@ -284,7 +280,7 @@ cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_e
         cgd.level -= 1
         return cgd.object_stack[cgd.level]
 
-cdef canonical_generator_data *allocate_cgd(int max_depth, int degree):
+cdef canonical_generator_data *allocate_cgd(int max_depth, int degree) noexcept:
     r"""
     Allocate the data part of the canonical generation iterator struct.
     """
@@ -343,15 +339,14 @@ cdef canonical_generator_data *allocate_cgd(int max_depth, int degree):
     cgd.degree_stack[0] = degree
     return cgd
 
-cdef void deallocate_cgd(canonical_generator_data *cgd):
+
+cdef void deallocate_cgd(canonical_generator_data *cgd) noexcept:
     r"""
     Deallocate the data part of the canonical generation iterator struct.
     """
     if cgd is NULL:
         return
     cdef int i
-    cdef void *thingy
-    cdef void (*clearer)(void*)
     for i from 0 <= i < cgd.allocd_levels:
         if cgd.agcl_work_spaces[i] is not NULL:
             deallocate_agcl_work_space(cgd.agcl_work_spaces[i])
@@ -382,28 +377,28 @@ cdef void deallocate_cgd(canonical_generator_data *cgd):
 
 
 cdef iterator *setup_canonical_generator(int degree,
-    bint (*all_children_are_equivalent)(PartitionStack *PS, void *S),
+    bint (*all_children_are_equivalent)(PartitionStack *PS, void *S) noexcept,
     int (*refine_and_return_invariant)(PartitionStack *PS, void *S,
-                                       int *cells_to_refine_by, int ctrb_len),
+                                       int *cells_to_refine_by, int ctrb_len) noexcept,
     int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2,
-                              int degree),
-    int (*generate_children)(void *, aut_gp_and_can_lab *, iterator *),
-    void *(*apply_augmentation)(void *, void *, void *, int *, bint *),
-    void (*free_object)(void *),
-    void (*free_iter_data)(void *),
-    void (*free_aug)(void *),
-    void *(*canonical_parent)(void *child, void *parent, int *permutation, int *degree, bint *mem_err),
+                              int degree) noexcept,
+    int (*generate_children)(void *, aut_gp_and_can_lab *, iterator *) noexcept,
+    void *(*apply_augmentation)(void *, void *, void *, int *, bint *) noexcept,
+    void (*free_object)(void *) noexcept,
+    void (*free_iter_data)(void *) noexcept,
+    void (*free_aug)(void *) noexcept,
+    void *(*canonical_parent)(void *child, void *parent, int *permutation, int *degree, bint *mem_err) noexcept,
     int max_depth, bint reduce_children, iterator *cangen_prealloc) except NULL:
     """
     Canonical generation of isomorphism classes of objects.
 
     INPUT:
 
-    - ``S`` - pointer to the seed object
+    - ``S`` -- pointer to the seed object
 
-    - ``degree`` - the degree of S
+    - ``degree`` -- the degree of S
 
-    - ``all_children_are_equivalent`` - pointer to a function
+    - ``all_children_are_equivalent`` -- pointer to a function
         INPUT:
         PS -- pointer to a partition stack
         S -- pointer to the structure
@@ -411,7 +406,7 @@ cdef iterator *setup_canonical_generator(int degree,
         bint -- returns True if it can be determined that all refinements below
             the current one will result in an equivalent discrete partition
 
-    - ``refine_and_return_invariant`` - pointer to a function
+    - ``refine_and_return_invariant`` -- pointer to a function
         INPUT:
         PS -- pointer to a partition stack
         S -- pointer to the structure
@@ -420,7 +415,7 @@ cdef iterator *setup_canonical_generator(int degree,
         OUTPUT:
         int -- returns an invariant under application of arbitrary permutations
 
-    - ``compare_structures`` - pointer to a function
+    - ``compare_structures`` -- pointer to a function
         INPUT:
         gamma_1, gamma_2 -- (list) permutations of the points of S1 and S2
         S1, S2 -- pointers to the structures
@@ -429,7 +424,7 @@ cdef iterator *setup_canonical_generator(int degree,
         int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
             such that the set of all structures is well-ordered
 
-    - ``generate_children`` - pointer to a function
+    - ``generate_children`` -- pointer to a function
         INPUT:
         S -- pointer to the structure
         group -- pointer to an automorphism group (canonical relabeling is not guaranteed)
@@ -437,7 +432,7 @@ cdef iterator *setup_canonical_generator(int degree,
         OUTPUT:
         iterator * -- pointer to an iterator over inequivalent augmentations of S
 
-    - ``apply_augmentation`` - pointer to a function
+    - ``apply_augmentation`` -- pointer to a function
         INPUT:
         parent -- object to augment
         aug -- the augmentation
@@ -447,19 +442,19 @@ cdef iterator *setup_canonical_generator(int degree,
         OUTPUT:
         pointer to child
 
-    - ``free_object`` - pointer to a function
+    - ``free_object`` -- pointer to a function
         INPUT:
         child -- object to be freed
 
-    - ``free_iter_data`` - pointer to a function
+    - ``free_iter_data`` -- pointer to a function
         INPUT:
         data -- data part of an iterator struct
 
-    - ``free_aug`` - pointer to a function
+    - ``free_aug`` -- pointer to a function
         INPUT:
         aug -- augmentation to be freed
 
-    - ``canonical_parent`` - pointer to a function
+    - ``canonical_parent`` -- pointer to a function
         INPUT:
         child -- pointer to the structure
         parent -- space to store the canonical parent
@@ -469,11 +464,9 @@ cdef iterator *setup_canonical_generator(int degree,
         OUTPUT:
         pointer to the parent
 
-    - ``max_depth`` - maximum depth of augmentations to be made from the seed object S
+    - ``max_depth`` -- maximum depth of augmentations to be made from the seed object S
 
-    OUTPUT:
-
-    pointer to an iterator of objects
+    OUTPUT: a pointer to an iterator of objects
 
     """
     if max_depth <= 1:

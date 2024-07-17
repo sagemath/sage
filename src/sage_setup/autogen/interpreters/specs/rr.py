@@ -31,6 +31,7 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_class_members()
             ''
@@ -45,6 +46,7 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_call_locals()
             '        cdef RealNumber retval = (self.domain)()\n'
@@ -62,6 +64,7 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_parameter()
             'mpfr_t retval'
@@ -76,6 +79,7 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.pass_argument()
             'retval.value'
@@ -90,6 +94,7 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.pass_call_c_argument()
             'result'
@@ -112,6 +117,7 @@ class RRInterpreter(StackInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: interp = RRInterpreter()
             sage: interp.name
             'rr'
@@ -142,7 +148,7 @@ class RRInterpreter(StackInterpreter):
             sage: print(interp.c_header)
             <BLANKLINE>
             #include <mpfr.h>
-            #include "sage/ext/interpreters/wrapper_rr.h"
+            #include "wrapper_rr.h"
             <BLANKLINE>
 
         The function ``rr_py_call_helper`` is implemented in Cython::
@@ -182,7 +188,7 @@ class RRInterpreter(StackInterpreter):
         self.c_header = ri(0,
             '''
             #include <mpfr.h>
-            #include "sage/ext/interpreters/wrapper_rr.h"
+            #include "wrapper_rr.h"
             ''')
 
         self.pxd_header = ri(0,

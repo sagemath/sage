@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Iterators over finite submodules of a `\ZZ`-module
 
@@ -82,8 +83,8 @@ cdef class FiniteZZsubmodule_iterator:
 
     INPUT:
 
-        - ``basis``  - the elements `(g_0, \ldots, g_n)`
-        - ``order`` (optional) - the additive_orders `m_i` of `g_i`.
+        - ``basis``  -- the elements `(g_0, \ldots, g_n)`
+        - ``order`` (optional) -- the additive_orders `m_i` of `g_i`.
         - ``coset_rep`` (optional) -- an element of g,
           if one aims to compute a coset of the `\ZZ`-submodule `M`.
         - ``immutable`` (optional; default: ``False``)  -- set it to
@@ -282,7 +283,7 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
             sage: all(Y[i]-X[i] == v for i in range(len(X)))
             True
         """
-        cdef Py_ssize_t d, i, p
+        cdef Py_ssize_t i, p
         cdef list pows, order
 
         F = basis[0].base_ring()
@@ -365,7 +366,6 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
             85
         """
         from sage.matrix.constructor import matrix
-        cdef i
         self._basis = list(basis)
         self._basis_length = len(self._basis)
         self._immutable = immutable

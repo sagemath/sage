@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fully commutative elements of Coxeter groups
 
@@ -27,15 +28,18 @@ Natalie Schoenhals for their contribution to the project and the code.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.structure.parent import Parent
-from sage.structure.list_clone import NormalizedClonableList
-from sage.categories.enumerated_sets import EnumeratedSets
-from sage.structure.unique_representation import UniqueRepresentation
-from .root_system.coxeter_matrix import CoxeterMatrix
 from collections import deque
-from sage.combinat.posets.posets import Poset
+
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.misc.lazy_import import lazy_import
+from sage.structure.list_clone import NormalizedClonableList
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.combinat.posets.posets', 'Poset')
+lazy_import('sage.combinat.root_system.coxeter_group', 'CoxeterGroup')
+lazy_import('sage.combinat.root_system.coxeter_matrix', 'CoxeterMatrix')
 
 
 class FullyCommutativeElement(NormalizedClonableList):
@@ -153,44 +157,23 @@ class FullyCommutativeElement(NormalizedClonableList):
             sage: x = FC.element_class(FC, [1, 2, 1], check=False); x.is_fully_commutative()
             False
         """
-        matrix = self.parent().coxeter_group().coxeter_matrix()
-        w = tuple(self)
+        word = list(self)
+        from sage.combinat.root_system.braid_orbit import is_fully_commutative as is_fully_comm
 
-        # The following function detects 'braid' words.
-        def contains_long_braid(w):
-            for i in range(len(w) - 2):
-                a = w[i]
-                b = w[i + 1]
-                m = matrix[a, b]
-                if m > 2 and i + m <= len(w):
-                    ab_braid = (a, b) * (m // 2) + ((a,) if m % 2 else ())
-                    if w[i:i + m] == ab_braid:
-                        return True
-            return False
+        group = self.parent().coxeter_group()
+        braid_rels = group.braid_relations()
+        I = group.index_set()
 
-        # The following function applies a commutation relation on a word.
-        def commute_once(word, i):
-            return word[:i] + (word[i + 1], word[i]) + word[i + 2:]
+        from sage.rings.integer_ring import ZZ
+        be_careful = any(i not in ZZ for i in I)
 
-        # A word is the reduced word of an FC element iff no sequence of
-        # commutation relations on it yields a word with a 'braid' word:
-        if contains_long_braid(w):
-            return False
-        else:
-            l, checked, queue = len(w), {w}, deque([w])
-            while queue:
-                word = queue.pop()
-                for i in range(l - 1):
-                    a, b = word[i], word[i + 1]
-                    if matrix[a, b] == 2:
-                        new_word = commute_once(word, i)
-                        if new_word not in checked:
-                            if contains_long_braid(new_word):
-                                return False
-                            else:
-                                checked.add(new_word)
-                                queue.appendleft(new_word)
-            return True
+        if be_careful:
+            Iinv = {i: j for j, i in enumerate(I)}
+            word = [Iinv[i] for i in word]
+            braid_rels = [[[Iinv[i] for i in l],
+                           [Iinv[i] for i in r]] for l, r in braid_rels]
+
+        return is_fully_comm(word, braid_rels)
 
     # Representing FC elements: Heaps
     def heap(self, **kargs):
@@ -208,10 +191,10 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         - ``self`` -- list, a reduced word `w=s_0... s_{k-1}` of an FC element
 
-        - ``one_index`` -- boolean (default: False). Setting the value to True
+        - ``one_index`` -- boolean (default: ``False``). Setting the value to True
           will change the underlying set of the poset to `\{1, 2, \dots, n\}`
 
-        - ``display_labeling`` -- boolean (default: False). Setting the value to
+        - ``display_labeling`` -- boolean (default: ``False``). Setting the value to
           True will display the label `s_i` for each element `i` of the poset
 
         OUTPUT:
@@ -268,7 +251,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         EXAMPLES::
 
             sage: FC = CoxeterGroup(['B', 5]).fully_commutative_elements()
-            sage: FC([3,2,4,3,1]).plot_heap()
+            sage: FC([3,2,4,3,1]).plot_heap()                                           # needs sage.plot
             Graphics object consisting of 15 graphics primitives
 
         .. PLOT::
@@ -628,13 +611,13 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         # Find the first letter in that doesn't commute with s.
         try:
-            (j, t) = next((i, x) for (i, x) in enumerate(self) if m[s, x] >= 3)
+            j, t = next((i, x) for i, x in enumerate(self) if m[s, x] >= 3)
         except StopIteration:
             return True
 
         u = self.clone()
         u._set_list(self[j:])
-        x, y = u.coset_decomposition({s, t})
+        x, _ = u.coset_decomposition({s, t})
         return len(x) != m[s, t] - 1
 
     ###########################################################################
@@ -820,7 +803,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         True
 
     Attempting to create an element from an input that is not the reduced word
-    of a fully commutative element throws a ``ValueError``::
+    of a fully commutative element throws a :class:`ValueError`::
 
         sage: FC([1,2,1])
         Traceback (most recent call last):

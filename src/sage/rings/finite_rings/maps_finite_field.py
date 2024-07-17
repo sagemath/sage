@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
 Structure maps for finite fields
 
@@ -6,7 +7,6 @@ This module provides classes for isomorphisms between finite fields and vector s
 AUTHORS:
 
 - Kwankyu Lee (2017-11-07): initial version
-
 """
 
 #*****************************************************************************

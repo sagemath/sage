@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystals of letters
 """
@@ -318,6 +318,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
 
     # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
+
 
 # Utility. Note: much of this class should be factored out at some point!
 cdef class Letter(Element):
@@ -646,7 +647,7 @@ cdef class EmptyLetter(Element):
         """
         return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -658,7 +659,7 @@ cdef class EmptyLetter(Element):
         """
         return 0
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -740,7 +741,7 @@ cdef class Crystal_of_letters_type_A_element(Letter):
         else:
             return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -754,7 +755,7 @@ cdef class Crystal_of_letters_type_A_element(Letter):
             return 1
         return 0
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -861,7 +862,7 @@ cdef class Crystal_of_letters_type_B_element(Letter):
         else:
             return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -882,7 +883,7 @@ cdef class Crystal_of_letters_type_B_element(Letter):
             return 1
         return 0
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -982,7 +983,7 @@ cdef class Crystal_of_letters_type_C_element(Letter):
         else:
             return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -996,7 +997,7 @@ cdef class Crystal_of_letters_type_C_element(Letter):
             return 1
         return 0
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -1112,7 +1113,7 @@ cdef class Crystal_of_letters_type_D_element(Letter):
         else:
             return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -1129,7 +1130,7 @@ cdef class Crystal_of_letters_type_D_element(Letter):
             return 1
         return 0
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -1255,7 +1256,7 @@ cdef class Crystal_of_letters_type_G_element(Letter):
             else:
                 return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -1275,7 +1276,7 @@ cdef class Crystal_of_letters_type_G_element(Letter):
             return 1
         return 0
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -1437,7 +1438,7 @@ cdef class LetterTuple(Element):
                 ret+= repr(v)
         return ret + "\\right)"
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -1453,7 +1454,7 @@ cdef class LetterTuple(Element):
             return 1
         return 0
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -1494,7 +1495,7 @@ cdef class Crystal_of_letters_type_E6_element(LetterTuple):
         sage: all(b.e(i).f(i) == b for i in C.index_set() for b in C if b.e(i) is not None)
         True
         sage: G = C.digraph()
-        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)
+        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)                       # needs sage.plot
     """
 
     def _repr_(self):
@@ -1751,7 +1752,7 @@ cdef class Crystal_of_letters_type_E6_element_dual(LetterTuple):
         sage: all(b.e(i).f(i) == b for i in C.index_set() for b in C if b.e(i) is not None)
         True
         sage: G = C.digraph()
-        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)
+        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)                       # needs sage.plot
     """
 
     def _repr_(self):
@@ -1911,7 +1912,7 @@ cdef class Crystal_of_letters_type_E7_element(LetterTuple):
         sage: all(b.e(i).f(i) == b for i in C.index_set() for b in C if b.e(i) is not None)
         True
         sage: G = C.digraph()
-        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)
+        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)                       # needs sage.plot
     """
 
     def weight(self):
@@ -2571,6 +2572,7 @@ class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
 
     Element = BKKLetter
 
+
 #################
 # Type q(n) queer
 #################
@@ -2745,7 +2747,7 @@ cdef class QueerLetter_element(Letter):
             return self._parent._element_constructor_(self.value+1)
         return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -2759,7 +2761,7 @@ cdef class QueerLetter_element(Letter):
             return 1
         return 0
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -2953,7 +2955,7 @@ cdef class LetterWrapped(Element):
             return None
         return type(self)(self._parent, ret)
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -2967,7 +2969,7 @@ cdef class LetterWrapped(Element):
         """
         return self.value.epsilon(i)
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -2980,6 +2982,7 @@ cdef class LetterWrapped(Element):
             0
         """
         return self.value.phi(i)
+
 
 class ClassicalCrystalOfLettersWrapped(ClassicalCrystalOfLetters):
     r"""

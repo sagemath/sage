@@ -11,7 +11,6 @@ AUTHORS:
 
 - Florian Bouyer
 - Marco Streng
-
 """
 #*****************************************************************************
 #       Copyright (C) 2011, 2012, 2013
@@ -43,17 +42,17 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     INPUT:
 
-    - ``i`` - list or tuple of length 4 containing the four Igusa-Clebsch
+    - ``i`` -- list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2,I4,I6,I10.
-    - ``reduced`` - Boolean (default = True) If True, tries to reduce the
+    - ``reduced`` -- Boolean (default = True) If True, tries to reduce the
       polynomial defining the hyperelliptic curve using the function
       :func:`reduce_polynomial` (see the :func:`reduce_polynomial`
       documentation for more details).
-    - ``precision`` - integer (default = None) Which precision for real and
+    - ``precision`` -- integer (default = None) Which precision for real and
       complex numbers should the reduction use. This only affects the
       reduction, not the correctness. If None, the algorithm uses the default
       53 bit precision.
-    - ``algorithm`` - ``'default'`` or ``'magma'``. If set to ``'magma'``, uses
+    - ``algorithm`` -- ``'default'`` or ``'magma'``. If set to ``'magma'``, uses
       Magma to parameterize Mestre's conic (needs Magma to be installed).
 
     OUTPUT:
@@ -82,17 +81,17 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     An example over a finite field::
 
-        sage: H = HyperellipticCurve_from_invariants([GF(13)(1), 3, 7, 5]); H           # optional - sage.rings.finite_rings
+        sage: H = HyperellipticCurve_from_invariants([GF(13)(1), 3, 7, 5]); H
         Hyperelliptic Curve over Finite Field of size 13 defined by ...
-        sage: H.igusa_clebsch_invariants()                                              # optional - sage.rings.finite_rings
+        sage: H.igusa_clebsch_invariants()
         (4, 9, 6, 11)
 
     An example over a number field::
 
-        sage: K = QuadraticField(353, 'a')                                              # optional - sage.rings.number_field
-        sage: H = HyperellipticCurve_from_invariants([21, 225/64, 22941/512, 1],        # optional - sage.rings.number_field
+        sage: K = QuadraticField(353, 'a')                                              # needs sage.rings.number_field
+        sage: H = HyperellipticCurve_from_invariants([21, 225/64, 22941/512, 1],        # needs sage.rings.number_field
         ....:                                        reduced=false)
-        sage: f = K['x'](H.hyperelliptic_polynomials()[0])                              # optional - sage.rings.number_field
+        sage: f = K['x'](H.hyperelliptic_polynomials()[0])                              # needs sage.rings.number_field
 
     If the Mestre Conic defined by the Igusa-Clebsch invariants has no rational
     points, then there exists no hyperelliptic curve over the base field with
@@ -108,7 +107,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     Mestre's algorithm only works for generic curves of genus two, so another
     algorithm is needed for those curves with extra automorphism. See also
-    :trac:`12199`::
+    :issue:`12199`::
 
         sage: P.<x> = QQ[]
         sage: C = HyperellipticCurve(x^6 + 1)
@@ -121,15 +120,15 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     Igusa-Clebsch invariants also only work over fields of characteristic
     different from 2, 3, and 5, so another algorithm will be needed for fields
-    of those characteristics. See also :trac:`12200`::
+    of those characteristics. See also :issue:`12200`::
 
-        sage: P.<x> = GF(3)[]                                                           # optional - sage.rings.finite_rings
-        sage: HyperellipticCurve(x^6 + x + 1).igusa_clebsch_invariants()                # optional - sage.rings.finite_rings
+        sage: P.<x> = GF(3)[]
+        sage: HyperellipticCurve(x^6 + x + 1).igusa_clebsch_invariants()
         Traceback (most recent call last):
         ...
         NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves
         not implemented in characteristics 2, 3, and 5
-        sage: HyperellipticCurve_from_invariants([GF(5)(1), 1, 0, 1])                   # optional - sage.rings.finite_rings
+        sage: HyperellipticCurve_from_invariants([GF(5)(1), 1, 0, 1])
         Traceback (most recent call last):
         ...
         ZeroDivisionError: inverse of Mod(0, 5) does not exist
@@ -188,7 +187,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     # setting the cijk from Mestre's algorithm
     c111 = 12*x*y - 2*y/3 - 4*z
     c112 = -18*x**3 - 12*x*y - 36*y**2 - 2*z
-    c113 = -9*x**3 - 36*x**2*y -4*x*y - 6*x*z - 18*y**2
+    c113 = -9*x**3 - 36*x**2*y - 4*x*y - 6*x*z - 18*y**2
     c122 = c113
     c123 = -54*x**4 - 36*x**2*y - 36*x*y**2 - 6*x*z - 4*y**2 - 24*y*z
     c133 = -27*x**4/2 - 72*x**3*y - 6*x**2*y - 9*x**2*z - 39*x*y**2 - \
@@ -227,11 +226,11 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     INPUT:
 
-    - ``i`` - list or tuple of length 4 containing the four Igusa-Clebsch
+    - ``i`` -- list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2, I4, I6, I10
-    - ``xyz`` - Boolean (default: False) if True, the algorithm also
-      returns three invariants x,y,z used in Mestre's algorithm
-    - ``names`` (default: 'u,v,w') - the variable names for the conic
+    - ``xyz`` -- Boolean (default: ``False``) if ``True``, the algorithm also
+      returns three invariants `x`,`y`,`z` used in Mestre's algorithm
+    - ``names`` (default: ``'u,v,w'``) -- the variable names for the conic
 
     OUTPUT:
 
@@ -249,9 +248,9 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
     Note that the algorithm works over number fields as well::
 
         sage: x = polygen(ZZ, 'x')
-        sage: k = NumberField(x^2 - 41, 'a')                                            # optional - sage.rings.number_field
-        sage: a = k.an_element()                                                        # optional - sage.rings.number_field
-        sage: Mestre_conic([1, 2 + a, a, 4 + a])                                        # optional - sage.rings.number_field
+        sage: k = NumberField(x^2 - 41, 'a')                                            # needs sage.rings.number_field
+        sage: a = k.an_element()                                                        # needs sage.rings.number_field
+        sage: Mestre_conic([1, 2 + a, a, 4 + a])                                        # needs sage.rings.number_field
         Projective Conic Curve over Number Field in a with defining polynomial x^2 - 41
          defined by (-801900000*a + 343845000)*u^2 + (855360000*a + 15795864000)*u*v
           + (312292800000*a + 1284808579200)*v^2 + (624585600000*a + 2569617158400)*u*w
@@ -259,7 +258,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     And over finite fields::
 
-        sage: Mestre_conic([GF(7)(10), GF(7)(1), GF(7)(2), GF(7)(3)])                   # optional - sage.rings.finite_rings
+        sage: Mestre_conic([GF(7)(10), GF(7)(1), GF(7)(2), GF(7)(3)])
         Projective Conic Curve over Finite Field of size 7
         defined by -2*u*v - v^2 - 2*u*w + 2*v*w - 3*w^2
 

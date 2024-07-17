@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Modular symbols attached to elliptic curves over `\QQ`
 
@@ -71,7 +70,6 @@ AUTHORS:
 - Chris Wuthrich (2008): add scaling and reference to eclib
 
 - John Cremona (2016): reworked eclib interface
-
 """
 
 #*****************************************************************************
@@ -129,8 +127,8 @@ def modular_symbol_space(E, sign, base_ring, bound=None):
 
         sage: from sage.schemes.elliptic_curves.ell_modular_symbols import modular_symbol_space
         sage: E = EllipticCurve('11a1')
-        sage: M = modular_symbol_space(E, -1, GF(37))                                   # optional - sage.rings.finite_rings
-        sage: M                                                                         # optional - sage.rings.finite_rings
+        sage: M = modular_symbol_space(E, -1, GF(37))
+        sage: M
         Modular Symbols space of dimension 1 for Gamma_0(11) of weight 2 with sign -1
          over Finite Field of size 37
     """
@@ -275,7 +273,7 @@ class ModularSymbolECLIB(ModularSymbol):
             sage: [C.modular_symbol(implementation="eclib")(0) for C in E.isogeny_class()]
             [1/4, 1/8, 1/4, 1/2, 1/8, 1/16, 1/2, 1]
 
-        Since :trac:`10256`, the interface for negative modular symbols in eclib is available::
+        Since :issue:`10256`, the interface for negative modular symbols in eclib is available::
 
             sage: E = EllipticCurve('11a1')
             sage: Mplus = E.modular_symbol(+1); Mplus
@@ -296,7 +294,7 @@ class ModularSymbolECLIB(ModularSymbol):
             sage: [E.modular_symbol()._scaling for E in cremona_curves([14])]
             [1/2, 1, 1/2, 1/2, 1, 1]
 
-        TESTS (for :trac:`10236`)::
+        TESTS (for :issue:`10236`)::
 
             sage: E = EllipticCurve('11a1')
             sage: m = E.modular_symbol(implementation="eclib")
@@ -306,7 +304,7 @@ class ModularSymbolECLIB(ModularSymbol):
             1/5
 
         If ``nap`` is too small, the normalization in eclib used to be
-        incorrect (see :trac:`31317`), but since ``eclib`` version
+        incorrect (see :issue:`31317`), but since ``eclib`` version
         v20210310 the value of ``nap`` is increased automatically by
         ``eclib``::
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Golay code
 
@@ -261,17 +262,17 @@ class GolayCode(AbstractLinearCode):
             True
 
             sage: C = codes.GolayCode(GF(3))
-            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()
+            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()        # needs sage.libs.gap
             True
 
             sage: C = codes.GolayCode(GF(3), extended=False)
-            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()
+            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()        # needs sage.libs.gap
             True
         """
         n = self.length()
         if n == 23:
             return ([1]+[0]*6+[253]+[506]+[0]*2+[1288]*2+[0]*2+[506]
-                    +[253]+[0]*6+[1])
+                    + [253]+[0]*6+[1])
         if n == 24:
             return ([1]+[0]*7+[759]+[0]*3+[2576]+[0]*3+[759]+[0]*7+[1])
         if n == 11:

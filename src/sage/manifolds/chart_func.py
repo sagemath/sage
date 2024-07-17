@@ -22,7 +22,6 @@ AUTHORS:
   calculus (CoordFunctionSymb)
 - Florentin Jaffredo (2018) : series expansion with respect to a given
   parameter
-
 """
 # ****************************************************************************
 #  Copyright (C) 2017 Marco Mancini <marco.mancini@obspm.fr>
@@ -40,9 +39,14 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.manifolds.utilities import ExpressionNice
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.symbolic.ring import SR
 from sage.structure.mutability import Mutability
-import sympy
+
+try:
+    import sympy
+except ImportError:
+    pass
 
 
 class ChartFunction(AlgebraElement, ModuleElementWithMutability):
@@ -1308,9 +1312,6 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
              (x, y) ↦ 2*x + y**2
             sage: (f + -f).display()
             (x, y) ↦ 0
-
-
-
         """
         curr = self._calc_method._current
         if other._expansion_symbol is not None:

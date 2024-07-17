@@ -115,13 +115,14 @@ some coordinates changes::
 
 Let us compute the induced metric (or first fundamental form)::
 
-    sage: gamma = N.induced_metric()  # long time
-    sage: gamma.display()  # long time
+    sage: # long time
+    sage: gamma = N.induced_metric()
+    sage: gamma.display()
     gamma = b^2 drh⊗drh + b^2*sinh(rh)^2 dth⊗dth
-    sage: gamma[:]  # long time
+    sage: gamma[:]
     [           b^2              0]
     [             0 b^2*sinh(rh)^2]
-    sage: gamma[1,1]  # long time
+    sage: gamma[1,1]
     b^2
 
 the normal vector::
@@ -175,7 +176,6 @@ REFERENCES:
 
 - \B. O'Neill : *Semi-Riemannian Geometry* [ONe1983]_
 - \J. M. Lee : *Riemannian Manifolds* [Lee1997]_
-
 """
 
 # *****************************************************************************
@@ -302,7 +302,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         :mod:`~sage.manifolds.manifold` and
         :mod:`~sage.manifolds.differentiable.differentiable_submanifold`
 
-   """
+    """
     def __init__(self, n, name, ambient=None, metric_name=None,
                  signature=None, base_manifold=None, diff_degree=infinity,
                  latex_name=None, metric_latex_name=None, start_index=0,
@@ -1730,7 +1730,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
         EXAMPLES:
 
-       A unit circle embedded in the Euclidean plane::
+        A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
             sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")

@@ -16,7 +16,7 @@ AUTHOR:
 # to make sure the function get_cparent is found since it is used in
 # 'polynomial_template.pxi'.
 
-cdef inline cparent get_cparent(parent):
+cdef inline cparent get_cparent(parent) noexcept:
     return 0
 
 # first we include the definitions
@@ -53,7 +53,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             sage: x^3 + x^2 + 1
             x^3 + x^2 + 1
 
-        We check that the bug noted at :trac:`12724` is fixed::
+        We check that the bug noted at :issue:`12724` is fixed::
 
             sage: R.<x> = Zmod(2)[]
             sage: R([2^80])
@@ -143,7 +143,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
         if g.parent() is not self.parent() or h.parent() is not self.parent():
             raise TypeError("Parents of the first three parameters must match.")
 
-        from sage.misc.misc import cputime
+        from sage.misc.timing import cputime
         from sage.misc.verbose import verbose
         from sage.arith.misc import integer_ceil as ceil
         from sage.matrix.constructor import Matrix
@@ -308,7 +308,7 @@ def GF2X_BuildIrred_list(n):
     cdef GF2X_c f
     GF2 = FiniteField(2)
     GF2X_BuildIrred(f, int(n))
-    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in xrange(n + 1)]
+    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
 
 def GF2X_BuildSparseIrred_list(n):
     """
@@ -328,7 +328,7 @@ def GF2X_BuildSparseIrred_list(n):
     cdef GF2X_c f
     GF2 = FiniteField(2)
     GF2X_BuildSparseIrred(f, int(n))
-    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in xrange(n + 1)]
+    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
 
 def GF2X_BuildRandomIrred_list(n):
     """
@@ -350,4 +350,4 @@ def GF2X_BuildRandomIrred_list(n):
     current_randstate().set_seed_ntl(False)
     GF2X_BuildSparseIrred(tmp, int(n))
     GF2X_BuildRandomIrred(f, tmp)
-    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in xrange(n + 1)]
+    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]

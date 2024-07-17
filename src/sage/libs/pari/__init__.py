@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.real_mpfr
 """
 Interface between Sage and PARI
 
@@ -51,6 +52,7 @@ to be done by the user (or by Sage functions that use PARI library
 functions). For instance, if we want to use the PARI library to compute
 ``sqrt(pi)`` with a precision of 100 bits::
 
+    sage: # needs sage.symbolic
     sage: R = RealField(100)
     sage: s = R(pi); s
     3.1415926535897932384626433833
@@ -169,7 +171,6 @@ call individually::
     sage: eta1.sage()
     3.605463601432652085915820564207726774810268996598024745444380641429820491740 # 64-bit
     3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
-
 """
 
 def _get_pari_instance():
@@ -201,5 +202,6 @@ def _get_pari_instance():
     P.default("nbthreads", 1)
 
     return P
+
 
 pari = _get_pari_instance()

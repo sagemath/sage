@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Functors
 
@@ -14,7 +15,6 @@ AUTHORS:
   making functors applicable to morphisms (not only to objects)
 
 - Simon King (2010-12): Pickling of functors without losing domain and codomain
-
 """
 
 # ****************************************************************************
@@ -33,7 +33,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import category
+from sage.categories import category
 
 
 def _Functor_unpickle(Cl, D, domain, codomain):
@@ -42,7 +42,7 @@ def _Functor_unpickle(Cl, D, domain, codomain):
 
     AUTHOR:
 
-    - Simon King (2010-12): :trac:`10460`
+    - Simon King (2010-12): :issue:`10460`
 
     EXAMPLES::
 
@@ -55,7 +55,7 @@ def _Functor_unpickle(Cl, D, domain, codomain):
 
     """
     F = Functor.__new__(Cl)
-    Functor.__init__(F,domain,codomain)
+    Functor.__init__(F, domain, codomain)
     for s, v in D:
         setattr(F, s, v)
     return F
@@ -74,9 +74,9 @@ cdef class Functor(SageObject):
       default call method:
 
       - ``_coerce_into_domain(self, x)``: Return an object of ``self``'s
-        domain, corresponding to ``x``, or raise a ``TypeError``.
+        domain, corresponding to ``x``, or raise a :class:`TypeError`.
 
-        - Default: Raise ``TypeError`` if ``x`` is not in ``self``'s domain.
+        - Default: Raise :class:`TypeError` if ``x`` is not in ``self``'s domain.
 
       - ``_apply_functor(self, x)``: Apply ``self`` to an object ``x`` of
         ``self``'s domain.
@@ -96,15 +96,15 @@ cdef class Functor(SageObject):
         Category of rings
         sage: F.codomain()
         Category of commutative additive groups
-        sage: from sage.categories.functor import is_Functor
-        sage: is_Functor(F)
+        sage: from sage.categories.functor import Functor
+        sage: isinstance(F, Functor)
         True
         sage: I = IdentityFunctor(abgrps)
         sage: I
         The identity functor on Category of commutative additive groups
         sage: I.domain()
         Category of commutative additive groups
-        sage: is_Functor(I)
+        sage: isinstance(I, Functor)
         True
 
     Note that by default, an instance of the class Functor is coercion
@@ -117,7 +117,7 @@ cdef class Functor(SageObject):
         Functor from Category of rings to Category of fields
         sage: F(ZZ)
         Rational Field
-        sage: F(GF(2))                                                                  # optional - sage.rings.finite_rings
+        sage: F(GF(2))
         Finite Field of size 2
 
     Functors are not only about the objects of a category, but also about
@@ -175,13 +175,13 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
             sage: F(ZZ)
             Rational Field
-            sage: F(GF(2))                                                              # optional - sage.rings.finite_rings
+            sage: F(GF(2))
             Finite Field of size 2
 
         """
-        if not category.is_Category(domain):
+        if not isinstance(domain, category.Category):
             raise TypeError("domain (=%s) must be a category" % domain)
-        if not category.is_Category(codomain):
+        if not isinstance(codomain, category.Category):
             raise TypeError("codomain (=%s) must be a category" % codomain)
         self.__domain = domain
         self.__codomain = codomain
@@ -203,7 +203,7 @@ cdef class Functor(SageObject):
 
         AUTHOR:
 
-        - Simon King (2010-12):  :trac:`10460`
+        - Simon King (2010-12):  :issue:`10460`
 
         TESTS::
 
@@ -250,14 +250,15 @@ cdef class Functor(SageObject):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.categories.functor import Functor
             sage: F = Functor(Rings(), Fields())
-            sage: k.<a> = GF(25)                                                        # optional - sage.rings.finite_rings
-            sage: f = k.hom([-a - 4])                                                   # optional - sage.rings.finite_rings
-            sage: R.<t> = k[]                                                           # optional - sage.rings.finite_rings
-            sage: fR = R.hom(f, R)                                                      # optional - sage.rings.finite_rings
-            sage: fF = F(fR)         # indirect doctest                                 # optional - sage.rings.finite_rings
-            sage: fF                                                                    # optional - sage.rings.finite_rings
+            sage: k.<a> = GF(25)
+            sage: f = k.hom([-a - 4])
+            sage: R.<t> = k[]
+            sage: fR = R.hom(f, R)
+            sage: fF = F(fR)         # indirect doctest
+            sage: fF
             Ring endomorphism of Fraction Field of
              Univariate Polynomial Ring in t over Finite Field in a of size 5^2
               Defn: Induced from base ring by
@@ -266,14 +267,13 @@ cdef class Functor(SageObject):
                       Defn: Induced from base ring by
                             Ring endomorphism of Finite Field in a of size 5^2
                               Defn: a |--> 4*a + 1
-            sage: fF((a^2+a)*t^2/(a*t - a^2))                                           # optional - sage.rings.finite_rings
+            sage: fF((a^2+a)*t^2/(a*t - a^2))
             ((4*a + 2)*t^2)/(t + a + 4)
-
         """
         try:
             return self(f.domain()).hom(f, self(f.codomain()))
         except Exception:
-            raise TypeError('unable to transform %s into a morphism in %s' % (f,self.codomain()))
+            raise TypeError(f'unable to transform {f} into a morphism in {self.codomain()}')
 
     def _coerce_into_domain(self, x):
         """
@@ -282,11 +282,12 @@ cdef class Functor(SageObject):
         NOTE:
 
         A subclass of :class:`Functor` may overload this method. It should
-        return an object of self's domain, and should raise a ``TypeError``
-        if this is impossible.
+        return an object of self's domain, and should raise a
+        :class:`TypeError` if this is impossible.
 
-        By default, the argument will not be changed, but a ``TypeError``
-        will be raised if the argument does not belong to the domain.
+        By default, the argument will not be changed, but a
+        :class:`TypeError` will be raised if the argument does not
+        belong to the domain.
 
         TESTS::
 
@@ -313,7 +314,7 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
 
         A functor can be renamed if its type is a Python class
-        (see :trac:`16156`)::
+        (see :issue:`16156`)::
 
             sage: I = IdentityFunctor(Rings()); I
             The identity functor on Category of rings
@@ -339,13 +340,13 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
             sage: F(ZZ)
             Rational Field
-            sage: F(GF(2))                                                              # optional - sage.rings.finite_rings
+            sage: F(GF(2))
             Finite Field of size 2
 
         Two subclasses::
 
             sage: F1 = ForgetfulFunctor(FiniteFields(), Fields())
-            sage: F1(GF(5))  # indirect doctest                                         # optional - sage.rings.finite_rings
+            sage: F1(GF(5))  # indirect doctest
             Finite Field of size 5
             sage: F1(ZZ)
             Traceback (most recent call last):
@@ -363,7 +364,7 @@ cdef class Functor(SageObject):
         The last example shows that it is tested whether the result of
         applying the functor lies in the functor's codomain. Note that
         the matrix functor used to be defined similar to this example,
-        which was fixed in :trac:`8807`::
+        which was fixed in :issue:`8807`::
 
             sage: class IllFunctor(Functor):
             ....:   def __init__(self, m, n):
@@ -373,10 +374,10 @@ cdef class Functor(SageObject):
             ....:   def _apply_functor(self, R):
             ....:       return MatrixSpace(R, self._m, self._n)
             sage: F = IllFunctor(2, 2)
-            sage: F(QQ)                                                                 # optional - sage.modules
+            sage: F(QQ)                                                                 # needs sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
             sage: F = IllFunctor(2, 3)
-            sage: F(QQ)                                                                 # optional - sage.modules
+            sage: F(QQ)                                                                 # needs sage.modules
             Traceback (most recent call last):
             ...
             TypeError: Functor from Category of rings to Category of rings
@@ -384,8 +385,8 @@ cdef class Functor(SageObject):
             that is not in Category of rings.
 
         """
-        from sage.categories.morphism import is_Morphism
-        if is_Morphism(x):
+        from sage.categories.morphism import Morphism
+        if isinstance(x, Morphism):
             return self._apply_functor_to_morphism(x)
         y = self._apply_functor(self._coerce_into_domain(x))
         if not ((y in self.__codomain) or (y in self.__codomain.Homsets())):
@@ -421,12 +422,9 @@ cdef class Functor(SageObject):
 
 def is_Functor(x):
     """
-    Test whether the argument is a functor
+    Test whether the argument is a functor.
 
-    NOTE:
-
-    There is a deprecation warning when using it from top level.
-    Therefore we import it in our doc test.
+    This function is deprecated.
 
     EXAMPLES::
 
@@ -435,6 +433,10 @@ def is_Functor(x):
         sage: F1
         FractionField
         sage: is_Functor(F1)
+        doctest:warning...
+        DeprecationWarning: The function is_Functor is deprecated;
+        use 'isinstance(..., Functor)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_Functor(FractionField)
         False
@@ -445,6 +447,10 @@ def is_Functor(x):
         True
 
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_Functor is deprecated; "
+                "use 'isinstance(..., Functor)' instead.")
     return isinstance(x, Functor)
 
 
@@ -469,7 +475,7 @@ class ForgetfulFunctor_generic(Functor):
         The forgetful functor
          from Category of finite enumerated fields
            to Category of fields
-        sage: F(GF(3))                                                                  # optional - sage.rings.finite_rings
+        sage: F(GF(3))
         Finite Field of size 3
 
     """
@@ -511,7 +517,7 @@ class ForgetfulFunctor_generic(Functor):
             sage: F1 = ForgetfulFunctor(FiniteFields(), Fields())
 
         This is to test against a bug occurring in a previous version
-        (see :trac:`8800`)::
+        (see :issue:`8800`)::
 
             sage: F1 == QQ #indirect doctest
             False
@@ -541,7 +547,7 @@ class ForgetfulFunctor_generic(Functor):
             sage: F1 != QQ
             True
         """
-        return not self ==  other
+        return not self == other
 
 
 class IdentityFunctor_generic(ForgetfulFunctor_generic):
@@ -659,7 +665,7 @@ def ForgetfulFunctor(domain, codomain):
 
     INPUT:
 
-    ``C``, ``D`` - two categories
+    ``C``, ``D`` -- two categories
 
     OUTPUT:
 

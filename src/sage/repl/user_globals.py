@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-repl
+# sage.doctest: needs sage.modules
 r"""
 User-interface globals
 
@@ -47,7 +49,7 @@ available as global::
 
 AUTHORS:
 
-- Jeroen Demeyer (2015-03-30): initial version (:trac:`12446`)
+- Jeroen Demeyer (2015-03-30): initial version (:issue:`12446`)
 """
 
 # ****************************************************************************
@@ -162,8 +164,9 @@ def initialize_globals(all, g=None):
 
 def get_global(name):
     """
-    Return the value of global variable ``name``. Raise ``NameError``
-    if there is no such global variable.
+    Return the value of global variable ``name``.
+
+    Raise :class:`NameError` if there is no such global variable.
 
     INPUT:
 

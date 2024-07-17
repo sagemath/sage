@@ -104,9 +104,9 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
     and we can compute the lattice as ::
 
         sage: from sage.geometry.cone import lattice_from_incidences
-        sage: L = lattice_from_incidences(atom_to_coatoms, coatom_to_atoms); L          # optional - sage.graphs
+        sage: L = lattice_from_incidences(atom_to_coatoms, coatom_to_atoms); L          # needs sage.graphs
         Finite lattice containing 8 elements with distinguished linear extension
-        sage: for level in L.level_sets(): print(level)                                 # optional - sage.graphs
+        sage: for level in L.level_sets(): print(level)                                 # needs sage.graphs
         [((), (0, 1, 2))]
         [((0,), (0, 1)), ((1,), (0, 2)), ((2,), (1, 2))]
         [((0, 1), (0,)), ((0, 2), (1,)), ((1, 2), (2,))]

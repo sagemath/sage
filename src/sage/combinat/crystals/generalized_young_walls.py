@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystals of Generalized Young Walls
 
@@ -285,7 +285,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         strsig = ''.join( x[0] for x in sig)
         reducedsig = strsig
         while re.search(r"\+\s*-",reducedsig):
-            reducedsig = re.sub(r"\+\s*-", lambda match : str().ljust(len(match.group(int(0)))) , reducedsig)
+            reducedsig = re.sub(r"\+\s*-", lambda match : ''.ljust(len(match.group(0))) , reducedsig)
         return (sig,reducedsig)
 
     def signature(self, i):
@@ -392,9 +392,9 @@ class GeneralizedYoungWall(CombinatorialElement):
             r = new[i]
             if r == [] or r in new[i+1:]:
                 new.pop(i)
-            elif r[0] == n and len(r)%(n+1) == 0:
+            elif r[0] == n and len(r) % (n+1) == 0:
                 for j in range(n+1):
-                    temp = [k%(n+1) for k in range(j+len(r)/(n+1)-1,j-1,-1)]
+                    temp = [k % (n+1) for k in range(j+len(r)/(n+1)-1,j-1,-1)]
                     if temp not in new:
                         new.insert(i+1, temp)
                 new.pop(i)
@@ -425,7 +425,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             15
         """
         n = self.parent().cartan_type().rank() - 1
-        m = lambda i: len([1 for r in self.data if r and r[0] == (i-1)%(n+1)])
+        m = lambda i: len([1 for r in self.data if r and r[0] == (i-1) % (n+1)])
         for r in self.data:
             if r and r[0] == n:
                 raise ValueError('Statistic only valid for generalized Young walls in Y_0')
@@ -633,7 +633,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: x = crystals.infinity.GeneralizedYoungWalls(3)([[],[1,0,3,2],[2,1],[3,2,1,0,3,2],[],[],[2]])
             sage: x.Phi()
             2*Lambda[0] + Lambda[1] - Lambda[2] + Lambda[3]
-            """
+        """
         La = self.cartan_type().root_system().weight_lattice(extended=True).fundamental_weights()
         return sum(self.phi(i)*La[i] for i in self.index_set())
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # cython: binding=True
 # distutils: language = c++
 r"""
@@ -257,7 +256,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
       - ``"fast"`` -- This algorithm uses the notion of *slices* to refine the
         position of the vertices in the ordering. The time complexity of this
         algorithm is in `O(n + m)`, and our implementation follows that
-        complexity. See [HMPV2000]_ and next section for more details.
+        complexity for ``SparseGraph``. For ``DenseGraph``, the complexity is
+        `O(n^2)`. See [HMPV2000]_ and next section for more details.
 
     ALGORITHM:
 
@@ -338,16 +338,17 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: G.lex_BFS(initial_vertex='000', algorithm="fast")                         # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: G.lex_BFS(initial_vertex='000', algorithm="fast")
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_BFS(initial_vertex='000', algorithm="slow")                         # optional - sage.combinat
+        sage: G.lex_BFS(initial_vertex='000', algorithm="slow")
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
+        sage: G.lex_UP(initial_vertex='000')
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
+        sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -428,7 +429,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Initialize the predecessors array
     cdef MemoryAllocator mem = MemoryAllocator()
@@ -443,7 +445,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     cdef int now, v, vi, int_neighbor
 
     # Perform Lex BFS
-    if algorithm is "fast":
+    if algorithm == "fast":
         lex_BFS_fast_short_digraph(sd, sigma_int, pred)
         sigma = [int_to_v[sigma_int[i]] for i in range(n)]
 
@@ -474,8 +476,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(n) if pred[i] != i]
         g = DiGraph([G, edges], format='vertices_and_edges', sparse=True)
         return sigma, g
-    else:
-        return sigma
+    return sigma
 
 
 def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
@@ -505,8 +506,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     appended to the codes of all neighbors of the selected vertex that are left
     in the graph.
 
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
 
     See [Mil2017]_ for more details on the algorithm.
 
@@ -541,14 +543,15 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: G.lex_BFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
+        sage: G.lex_UP(initial_vertex='000')
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
+        sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -595,14 +598,14 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
             from sage.graphs.digraph import DiGraph
             g = DiGraph(sparse=True)
             return [], g
-        else:
-            return []
+        return []
 
     # Build adjacency list of G
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex UP
 
@@ -647,9 +650,7 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
         g.add_edges(edges)
         return value, g
-
-    else:
-        return value
+    return value
 
 
 def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
@@ -678,8 +679,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     codes are updated. Lex DFS differs from Lex BFS only in the way codes are
     updated after each iteration.
 
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
 
     See [CK2008]_ for more details on the algorithm.
 
@@ -714,14 +716,15 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: G.lex_BFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
+        sage: G.lex_UP(initial_vertex='000')
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
+        sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -768,14 +771,14 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
             from sage.graphs.digraph import DiGraph
             g = DiGraph(sparse=True)
             return [], g
-        else:
-            return []
+        return []
 
     # Build adjacency list of G
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex DFS
 
@@ -821,9 +824,7 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
         g.add_edges(edges)
         return value, g
-
-    else:
-        return value
+    return value
 
 
 def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
@@ -853,8 +854,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     prepended to the codes of all neighbors of the selected vertex that are left
     in the graph.
 
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
 
     See [Mil2017]_ for more details on the algorithm.
 
@@ -889,14 +891,15 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: G.lex_BFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
+        sage: G.lex_UP(initial_vertex='000')
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
+        sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -943,14 +946,14 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
             from sage.graphs.digraph import DiGraph
             g = DiGraph(sparse=True)
             return [], g
-        else:
-            return []
+        return []
 
     # Build adjacency list of G
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex DOWN
 
@@ -996,9 +999,7 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
         g.add_edges(edges)
         return value, g
-
-    else:
-        return value
+    return value
 
 
 def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorithm=None):
@@ -1147,10 +1148,9 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
 
     if algorithm == "lex_M_slow":
         return lex_M_slow(self, triangulation=triangulation, labels=labels, initial_vertex=initial_vertex)
-    else:
-        if labels:
-            raise ValueError("'{}' cannot return labels assigned to vertices".format(algorithm))
-        return lex_M_fast(self, triangulation=triangulation, initial_vertex=initial_vertex)
+    if labels:
+        raise ValueError("'{}' cannot return labels assigned to vertices".format(algorithm))
+    return lex_M_fast(self, triangulation=triangulation, initial_vertex=initial_vertex)
 
 
 def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
@@ -1313,8 +1313,7 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
         return alpha, F
     elif labels:
         return alpha, label
-    else:
-        return alpha
+    return alpha
 
 
 def lex_M_fast(G, triangulation=False, initial_vertex=None):
@@ -1420,7 +1419,8 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
         int_to_v[0], int_to_v[i] = int_to_v[i], int_to_v[0]
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
 
@@ -1518,8 +1518,7 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
 
     if triangulation:
         return ordering, F
-    else:
-        return ordering
+    return ordering
 
 
 def is_valid_lex_M_order(G, alpha, F):
@@ -1587,6 +1586,10 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     chosen at each step `i` to be placed in position `n - i` in `\alpha`. This
     ordering can be computed in time `O(n + m)`.
 
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
+
     When the graph is chordal, the ordering returned by MCS is a *perfect
     elimination ordering*, like :meth:`~sage.graphs.traversals.lex_BFS`. So
     this ordering can be used to recognize chordal graphs. See [He2006]_ for
@@ -1598,7 +1601,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     INPUT:
 
-    - ``G`` -- a Sage Graph
+    - ``G`` -- a Sage graph
 
     - ``reverse`` -- boolean (default: ``False``); whether to return the
       vertices in discovery order, or the reverse
@@ -1613,8 +1616,8 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     By default, return the ordering `\alpha` as a list. When ``tree`` is
     ``True``, the method returns a tuple `(\alpha, T)`, where `T` is a directed
-    tree with the same set of vertices as `G`and a directed edge from `u` to `v`
-    if `u` was the first vertex to saw `v`.
+    tree with the same set of vertices as `G` and a directed edge from `u` to `v`
+    if `u` was the first vertex to see `v`.
 
     EXAMPLES:
 
@@ -1680,7 +1683,8 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
         raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
     cdef uint32_t** p_vertices = sd.neighbors
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
@@ -1744,7 +1748,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     return alpha
 
 
-cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u):
+cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u) noexcept:
     """
     Swap positions of u and v in alpha, where v is be the vertex occupying cell
     new_pos_u in alpha.
@@ -2009,7 +2013,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
         ....:     if len(X) < k - 1:
         ....:         raise ValueError("something goes wrong")
         sage: G = graphs.RandomGNP(10, .2)
-        sage: cc = G.connected_components()
+        sage: cc = G.connected_components(sort=False)
         sage: _, _, X = G.maximum_cardinality_search_M()
         sage: len(X) >= len(cc) - 1
         True
@@ -2054,7 +2058,8 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* alpha = <int*>mem.calloc(N, sizeof(int))

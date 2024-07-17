@@ -19,8 +19,6 @@ to slow code.
 
 For those willing to sacrifice a (very small) amount of
 speed, we provide a class that wraps our struct.
-
-
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>
@@ -54,7 +52,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 #
 ##########################################################
 
-cdef void reset_swap(int n, int *c, int *o):
+cdef void reset_swap(int n, int *c, int *o) noexcept:
     """
     Reset the plain_swapper to the initial state.
     """
@@ -63,7 +61,7 @@ cdef void reset_swap(int n, int *c, int *o):
         c[i] = -1
         o[i] = 1
 
-cdef int next_swap(int n, int *c, int *o):
+cdef int next_swap(int n, int *c, int *o) noexcept:
     """
     Here's the translation of Algorithm P.  We've modified
     it to
@@ -174,7 +172,7 @@ def permutation_iterator_transposition_list(int n):
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cpdef bint next_perm(array l):
+cpdef bint next_perm(array l) noexcept:
     """
     Obtain the next permutation under lex order of ``l``
     by mutating ``l``.

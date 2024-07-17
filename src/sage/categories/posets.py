@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.graphs, sage.combinat
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.graphs, sage.combinat
 r"""
 Posets
 """
@@ -68,16 +69,17 @@ class Posets(Category):
         True
 
     At this point, this has to be implemented by hand. Once
-    :trac:`10130` will be resolved, this will be automatically
+    :issue:`10130` will be resolved, this will be automatically
     provided by this category::
 
-        sage: x < y      # todo: not implemented
+        sage: # not implemented
+        sage: x < y
         True
-        sage: x < x      # todo: not implemented
+        sage: x < x
         False
-        sage: x <= x     # todo: not implemented
+        sage: x <= x
         True
-        sage: y >= x     # todo: not implemented
+        sage: y >= x
         True
 
     .. SEEALSO:: :func:`Poset`, :class:`FinitePosets`, :class:`LatticePosets`
@@ -149,8 +151,7 @@ class Posets(Category):
         from sage.combinat.posets.posets import FinitePosets_n
         n = 0
         while True:
-            for P in FinitePosets_n(n):
-                yield P
+            yield from FinitePosets_n(n)
             n += 1
 
     Finite = LazyImport('sage.categories.finite_posets', 'FinitePosets')
@@ -400,7 +401,7 @@ class Posets(Category):
 
                 sage: P = Poset({1: [2,3], 2: [4], 3: []})
                 sage: I = Set({1, 2})
-                sage: I in P.order_ideals_lattice()
+                sage: I in P.order_ideals_lattice()                                     # needs sage.modules
                 True
                 sage: P.order_ideal_toggle(I, 1)
                 {1, 2}
@@ -411,7 +412,7 @@ class Posets(Category):
                 sage: P.order_ideal_toggle(I, 4)
                 {1, 2, 4}
                 sage: P4 = Posets(4)
-                sage: all(all(all(P.order_ideal_toggle(P.order_ideal_toggle(I, i), i) == I
+                sage: all(all(all(P.order_ideal_toggle(P.order_ideal_toggle(I, i), i) == I          # needs sage.modules
                 ....:               for i in range(4))
                 ....:          for I in P.order_ideals_lattice(facade=True))
                 ....:     for P in P4)

@@ -1,10 +1,10 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Lie Conformal Algebras With Structure Coefficients
 
 AUTHORS:
 
 - Reimundo Heluani (2019-08-09): Initial implementation.
-
 """
 
 # *****************************************************************************
@@ -25,6 +25,7 @@ from .finitely_freely_generated_lca import FinitelyFreelyGeneratedLCA
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.structure.indexed_generators import (IndexedGenerators,
                                                standardize_names_index_set)
+
 
 class LieConformalAlgebraWithStructureCoefficients(
                                         FinitelyFreelyGeneratedLCA):
@@ -144,23 +145,23 @@ class LieConformalAlgebraWithStructureCoefficients(
             Finite family {('L', 'L'): ((0, ((('L', 1), 1),)),               (1, ((('L', 0), 2),)),               (3, ((('C', 0), 1/2),)))}
         """
         if parity is None:
-            parity = (0,)*index_set.cardinality()
-        index_to_parity = {i:p for (i,p) in zip(index_set,parity)}
+            parity = (0,) * index_set.cardinality()
+        index_to_parity = dict(zip(index_set, parity))
         sc = {}
-        #mypair has a pair of generators
+        # mypair has a pair of generators
         for mypair in s_coeff.keys():
-            #e.g.  v = { 0: { (L,2):3, (G,3):1}, 1:{(L,1),2} }
+            # e.g.  v = { 0: { (L,2):3, (G,3):1}, 1:{(L,1),2} }
             v = s_coeff[mypair]
             key = tuple(mypair)
-            vals={}
-            for l in v.keys():
-                lth_product = {k:y for k,y in v[l].items() if y}
+            vals = {}
+            for l in v:
+                lth_product = {k: y for k, y in v[l].items() if y}
                 if lth_product:
-                    vals[l]=lth_product
+                    vals[l] = lth_product
 
             myvals = tuple((k, tuple(v.items())) for k, v in vals.items() if v)
 
-            if key in sc.keys() and sorted(sc[key]) != sorted(myvals):
+            if key in sc and sorted(sc[key]) != sorted(myvals):
                 raise ValueError("two distinct values given for one "
                                  "and the same bracket, skew-symmetry"
                                  "is not satisfied?")
@@ -174,26 +175,26 @@ class LieConformalAlgebraWithStructureCoefficients(
                 parsgn = -1
             else:
                 parsgn = 1
-            maxpole = max(v.keys())
-            vals={}
+            maxpole = max(v)
+            vals = {}
             for k in range(maxpole+1):
                 kth_product = {}
                 for j in range(maxpole+1-k):
                     if k+j in v.keys():
                         for i in v[k+j]:
                             if (i[0] not in ce) or (
-                                i[0] in ce and i[1] + j == 0):
-                                kth_product[(i[0],i[1]+j)] = \
-                                        kth_product.get((i[0], i[1]+j), 0)
-                                kth_product[(i[0],i[1]+j)] += parsgn*\
-                                v[k+j][i]*(-1)**(k+j+1)*binomial(i[1]+j,j)
-                kth_product = {k:v for k,v in kth_product.items() if v}
+                                    i[0] in ce and i[1] + j == 0):
+                                kth_product[(i[0], i[1] + j)] = \
+                                    kth_product.get((i[0], i[1] + j), 0)
+                                kth_product[(i[0], i[1] + j)] += parsgn *\
+                                    v[k+j][i]*(-1)**(k+j+1)*binomial(i[1]+j,j)
+                kth_product = {k: v for k, v in kth_product.items() if v}
                 if kth_product:
-                    vals[k]=kth_product
+                    vals[k] = kth_product
 
             myvals = tuple((k, tuple(v.items())) for k, v in vals.items() if v)
 
-            if key in sc.keys() and sorted(sc[key]) != sorted(myvals):
+            if key in sc and sorted(sc[key]) != sorted(myvals):
                 raise ValueError("two distinct values given for one "
                                  "and the same bracket. "
                                  "Skew-symmetry is not satisfied?")
@@ -214,7 +215,7 @@ class LieConformalAlgebraWithStructureCoefficients(
         """
         names, index_set = standardize_names_index_set(names,index_set)
         if central_elements is None:
-            central_elements= tuple()
+            central_elements = ()
 
         if names is not None and names != tuple(index_set):
             names2 = names + tuple(central_elements)
@@ -266,14 +267,14 @@ class LieConformalAlgebraWithStructureCoefficients(
             category = default_category.or_subcategory(category)
 
         if element_class is None:
-            element_class=LCAStructureCoefficientsElement
+            element_class = LCAStructureCoefficientsElement
 
         FinitelyFreelyGeneratedLCA.__init__(
             self, R, index_set=index_set, central_elements=central_elements,
             category=category, element_class=element_class,
             prefix=prefix, names=names, latex_names=latex_names, **kwds)
 
-        s_coeff=dict(s_coeff)
+        s_coeff = dict(s_coeff)
         self._s_coeff = Family({k: tuple((j, sum(c*self.monomial(i)
                 for i,c in v )) for j,v in s_coeff[k]) for k in s_coeff})
         self._parity = dict(zip(self.gens(),parity+(0,)*len(central_elements)))

@@ -83,7 +83,7 @@ def parity(self, allow_rescaling_flag=True):
 
     # Identify the correct Jordan component to use.
     Jordan_list = self.jordan_blocks_by_scale_and_unimodular(2)
-    scale_pow_list = [J[0]  for J in Jordan_list]
+    scale_pow_list = [J[0] for J in Jordan_list]
     min_scale_pow = min(scale_pow_list)
     if allow_rescaling_flag:
         ind = scale_pow_list.index(min_scale_pow)
@@ -104,13 +104,12 @@ def parity(self, allow_rescaling_flag=True):
     # convention of the local_normal_form routine will appear first).
     if Q0.dim() == 1:
         return "odd"
-    elif Q0[0,1] == 0:
+    if Q0[0, 1] == 0:
         return "odd"
-    else:
-        return "even"
+    return "even"
 
 
-def is_even(self, allow_rescaling_flag=True):
+def is_even(self, allow_rescaling_flag=True) -> bool:
     r"""
     Return true iff after rescaling by some appropriate factor, the
     form represents no odd integers.  For more details, see :meth:`parity`.
@@ -125,7 +124,6 @@ def is_even(self, allow_rescaling_flag=True):
         sage: Q = QuadraticForm(ZZ, 2, [1, 1, 1])
         sage: Q.is_even()
         True
-
     """
     return self.parity(allow_rescaling_flag) == "even"
 
@@ -206,9 +204,9 @@ def conway_species_list_at_odd_prime(self, p):
         d = tmp_Q.det()
 
         # Determine the species
-        if (n % 2 != 0):                            # Deal with odd dim'l forms
+        if n % 2 != 0:                          # Deal with odd dim'l forms
             species = n
-        elif (n % 4 == 2) and (p % 4 == 3):         # Deal with even dim'l forms
+        elif n % 4 == 2 and p % 4 == 3:         # Deal with even dim'l forms
             species = (-1) * legendre_symbol(d, p) * n
         else:
             species = legendre_symbol(d, p) * n
@@ -274,17 +272,17 @@ def conway_species_list_at_2(self):
         if jordan_list[i].is_even():
             two_t = d
         else:
-            two_t = ZZ(2) * ((d-1) // 2)
+            two_t = ZZ(2) * ((d - 1) // 2)
 
         # Determine if the form is bound
         if len(jordan_list) == 1:
             is_bound = False
         elif i == 0:
-            is_bound = jordan_list[i+1].is_odd()
+            is_bound = jordan_list[i + 1].is_odd()
         elif i == len(jordan_list) - 1:
-            is_bound = jordan_list[i-1].is_odd()
+            is_bound = jordan_list[i - 1].is_odd()
         else:
-            is_bound = jordan_list[i-1].is_odd() or jordan_list[i+1].is_odd()
+            is_bound = jordan_list[i - 1].is_odd() or jordan_list[i + 1].is_odd()
 
         # Determine the species
         octane = jordan_list[i].conway_octane_of_this_unimodular_Jordan_block_at_2()
@@ -331,23 +329,23 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     # Deal with 'even' forms
     if self.parity() == "even":
         d = self.Gram_matrix().det()
-        if (d % 8 == 1) or (d % 8 == 7):
+        if d % 8 == 1 or d % 8 == 7:
             return 0
         else:
             return 4
 
     # Deal with 'odd' forms by diagonalizing, and then computing the octane.
     n = self.dim()
-    u = self[0,0]
-    tmp_diag_vec = [None  for i in range(n)]
+    u = self[0, 0]
+    tmp_diag_vec = [None] * n
     tmp_diag_vec[0] = u       # This should be an odd integer!
-    ind = 1                  # The next index to diagonalize
+    ind = 1                   # The next index to diagonalize
 
     # Use u to diagonalize the form -- WHAT ARE THE POSSIBLE LOCAL NORMAL FORMS?
     while ind < n:
 
         # Check for a 1x1 block and diagonalize it
-        if (ind == (n-1)) or (self[ind, ind+1] == 0):
+        if ind == n - 1 or self[ind, ind + 1] == 0:
             tmp_diag_vec[ind] = self[ind, ind]
             ind += 1
 
@@ -406,7 +404,7 @@ def conway_diagonal_factor(self, p):
         sage: Q.conway_diagonal_factor(3)
         81/256
     """
-     # Get the species list at p
+    # Get the species list at p
     if p == 2:
         species_list = self.conway_species_list_at_2()
     else:
@@ -418,9 +416,11 @@ def conway_diagonal_factor(self, p):
         if s == 0:
             pass
         elif s % 2 == 1:                   # Note: Here always s > 0.
-            diag_factor = diag_factor / (2 * prod([1 - QQ(p)**(-i)  for i in range(2, s, 2)]))
+            diag_factor = diag_factor / (2 * prod([1 - QQ(p)**(-i)
+                                                   for i in range(2, s, 2)]))
         else:
-            diag_factor = diag_factor / (2 * prod([1 - QQ(p)**(-i)  for i in range(2, abs(s), 2)]))
+            diag_factor = diag_factor / (2 * prod([1 - QQ(p)**(-i)
+                                                   for i in range(2, abs(s), 2)]))
             s_sign = ZZ(s / abs(s))
             diag_factor = diag_factor / (ZZ(1) - s_sign * QQ(p) ** ZZ(-abs(s) / ZZ(2)))
 
@@ -455,13 +455,10 @@ def conway_cross_product_doubled_power(self, p):
         sage: Q.conway_cross_product_doubled_power(13)
         0
     """
-    doubled_power = 0
-    dim_list = [J.dim()  for J in self.jordan_blocks_in_unimodular_list_by_scale_power(p)]
-    for i in range(len(dim_list)):
-        for j in range(i):
-            doubled_power += (i-j) * dim_list[i] * dim_list[j]
-
-    return doubled_power
+    dim_list = [J.dim() for J in self.jordan_blocks_in_unimodular_list_by_scale_power(p)]
+    return sum((i - j) * dimi * dim_list[j]
+               for i, dimi in enumerate(dim_list)
+               for j in range(i))
 
 
 def conway_type_factor(self):
@@ -477,8 +474,9 @@ def conway_type_factor(self):
         4
     """
     jordan_list = self.jordan_blocks_in_unimodular_list_by_scale_power(2)
-    n2 = sum([J.dim()  for J in jordan_list  if J.is_even()])
-    n11 = sum([1  for i in range(len(jordan_list) - 1)  if jordan_list[i].is_odd() and jordan_list[i+1].is_odd()])
+    n2 = sum([J.dim() for J in jordan_list if J.is_even()])
+    n11 = sum([1 for i in range(len(jordan_list) - 1)
+               if jordan_list[i].is_odd() and jordan_list[i + 1].is_odd()])
 
     return ZZ(2)**(n11 - n2)
 
@@ -533,18 +531,19 @@ def conway_standard_p_mass(self, p):
     if n % 2 == 0:
         s = n // 2
     else:
-        s = (n+1) // 2
+        s = (n + 1) // 2
 
     # Compute the inverse of the generic p-mass
-    p_mass_inv = 2 * prod([1-p**(-i)  for i in range(2, 2*s, 2)])
+    p_mass_inv = 2 * prod([1 - p**(-i) for i in range(2, 2 * s, 2)])
     if n % 2 == 0:
-        D = (-1)**s * self.det() * (2**n)   #   We should have something like  D = (-1)**s * self.det() / (2**n), but that's not an integer and here we only care about the square-class.
-        #d = self.det()   # Note: No normalizing power of 2 is needed since the power is even.
-        #if not ((p == 2) or (d % p == 0)):
+        D = (-1)**s * self.det() * (2**n)
+        #   We should have something like  D = (-1)**s * self.det() / (2**n), but that's not an integer and here we only care about the square-class.
+        # d = self.det()   # Note: No normalizing power of 2 is needed since the power is even.
+        # if not ((p == 2) or (d % p == 0)):
         p_mass_inv *= (1 - kronecker_symbol(fundamental_discriminant(D), p) * p**(-s))
 
     # Return the standard p-mass
-    return ZZ(1) / p_mass_inv
+    return ZZ.one() / p_mass_inv
 
 
 def conway_standard_mass(self):
@@ -556,13 +555,13 @@ def conway_standard_mass(self):
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 3, [2, -2, 0, 3, -5, 4])
-        sage: Q.conway_standard_mass()                                              # optional - sage.symbolic
+        sage: Q.conway_standard_mass()                                                  # needs sage.symbolic
         1/6
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.conway_standard_mass()                                              # optional - sage.symbolic
+        sage: Q.conway_standard_mass()                                                  # needs sage.symbolic
         1/6
     """
     from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
@@ -572,14 +571,16 @@ def conway_standard_mass(self):
     if n % 2 == 0:
         s = n // 2
     else:
-        s = (n+1) // 2
+        s = (n + 1) // 2
 
-    generic_mass = 2 * pi**((-1) * n * (n+1) / ZZ(4)) \
-            * prod([gamma__exact(j / ZZ(2))  for j in range(1, n+1)]) \
-            * prod([zeta__exact(2*k)  for k in range(1, s)])
+    generic_mass = 2 * pi**((-1) * n * (n + 1) / ZZ(4)) \
+        * prod([gamma__exact(j / ZZ(2)) for j in range(1, n + 1)]) \
+        * prod([zeta__exact(2 * k) for k in range(1, s)])
 
     if n % 2 == 0:
-        D = (-1)**s * self.det() * (2**n)   #   We should have something like  D = (-1)**s * self.det() / (2**n), but that's not an integer and here we only care about the square-class.
+        D = (-1)**s * self.det() * (2**n)
+        # We should have something like D = (-1)**s * self.det() / (2**n), but
+        # that's not an integer and here we only care about the square-class.
         generic_mass *= quadratic_L_function__exact(s, D)
 
     return generic_mass
@@ -594,19 +595,19 @@ def conway_mass(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.conway_mass()                                                       # optional - sage.symbolic
+        sage: Q.conway_mass()                                                           # needs sage.symbolic
         1/48
 
         sage: Q = DiagonalQuadraticForm(ZZ, [7,1,1])
-        sage: Q.conway_mass()                                                       # optional - sage.symbolic
+        sage: Q.conway_mass()                                                           # needs sage.symbolic
         3/16
 
         sage: Q = QuadraticForm(ZZ, 3, [7, 2, 2, 2, 0, 2]) + DiagonalQuadraticForm(ZZ, [1])
-        sage: Q.conway_mass()                                                       # optional - sage.symbolic
+        sage: Q.conway_mass()                                                           # needs sage.symbolic
         3/32
 
         sage: Q = QuadraticForm(Matrix(ZZ, 2, [2,1,1,2]))
-        sage: Q.conway_mass()                                                       # optional - sage.symbolic
+        sage: Q.conway_mass()                                                           # needs sage.symbolic
         1/12
     """
     # Try to use the cached result
@@ -621,7 +622,7 @@ def conway_mass(self):
 
         # Adjust the p-masses when p|2d
         d = self.det()
-        for p in prime_divisors(2*d):
+        for p in prime_divisors(2 * d):
             mass *= (Q.conway_p_mass(p) / Q.conway_standard_p_mass(p))
 
         # Cache and return the (simplified) result
@@ -629,7 +630,7 @@ def conway_mass(self):
         return self.__conway_mass
 
 
-#def conway_generic_mass(self):
+# def conway_generic_mass(self):
 #    """
 #    Computes the generic mass given as
 #         2 \pi^{-n(n+1)/4} \prod_{j=1}^{n} \Gamma\(\tfrac{j}{2}\)
@@ -664,10 +665,3 @@ def conway_mass(self):
 #
 #    # Return the answer
 #    return ans
-
-
-#def conway_p_mass_adjustment(self, p):
-#    """
-#    Computes the adjustment to give the p-mass from the generic mass.
-#    """
-#    pass

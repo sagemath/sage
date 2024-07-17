@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Rigged Configuration Elements
 
@@ -155,7 +156,7 @@ class RiggedConfigurationElement(ClonableArray):
             if the rigged partitions comes from another rigged configuration,
             a deep copy should be made before being passed here. We do not
             make a deep copy here because the crystal operators generate
-            their own rigged partitions. See :trac:`17054`.
+            their own rigged partitions. See :issue:`17054`.
 
         EXAMPLES::
 
@@ -198,9 +199,7 @@ class RiggedConfigurationElement(ClonableArray):
             if len(data) == 0:
                 # Create a size n array of empty rigged tableau since no tableau
                 #   were given
-                nu = []
-                for i in range(n):
-                    nu.append(RiggedPartition())
+                nu = [RiggedPartition() for _ in range(n)]
             else:
                 if len(data) != n:  # otherwise n should be equal to the number of tableaux
                     raise ValueError("incorrect number of partitions")
@@ -1307,9 +1306,8 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
             shape_data = data[0]
             rigging_data = data[1]
             vac_data = data[2]
-            nu = []
-            for i in range(n):
-                nu.append(RiggedPartition(shape_data[i], rigging_data[i], vac_data[i]))
+            nu = [RiggedPartition(a, b, c)
+                  for a, b, c in zip(shape_data, rigging_data, vac_data)]
             # Special display case
             if parent.cartan_type().type() == 'B':
                 nu[-1] = RiggedPartitionTypeB(nu[-1])
@@ -2037,7 +2035,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         TESTS:
 
-        We check that :trac:`18898` is fixed::
+        We check that :issue:`18898` is fixed::
 
             sage: RC = RiggedConfigurations(['D',4,1], [[2,1], [2,1], [2,3]])
             sage: x = RC(partition_list=[[1], [1,1], [1], [1]], rigging_list=[[0], [2,1], [0], [0]])

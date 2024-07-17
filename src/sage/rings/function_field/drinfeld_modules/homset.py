@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Set of morphisms between two Drinfeld modules
 
@@ -20,11 +20,114 @@ AUTHORS:
 #                   http://www.gnu.org/licenses/
 # *****************************************************************************
 
+import operator
+
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Homset
+from sage.categories.action import Action
 from sage.misc.latex import latex
 from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
 from sage.structure.parent import Parent
+
+
+class DrinfeldModuleMorphismAction(Action):
+    r"""
+    Action of the function ring on the homset of a Drinfeld module.
+
+    EXAMPLES::
+
+        sage: Fq = GF(5)
+        sage: A.<T> = Fq[]
+        sage: K.<z> = Fq.extension(3)
+        sage: phi = DrinfeldModule(A, [z, 1, z])
+        sage: psi = DrinfeldModule(A, [z, z^2 + 4*z + 3, 2*z^2 + 4*z + 4])
+        sage: H = Hom(phi, psi)
+        sage: t = phi.ore_variable()
+        sage: f = H(t + 2)
+
+    Left action::
+
+        sage: (T + 1) * f
+        Drinfeld Module morphism:
+          From: Drinfeld module defined by T |--> z*t^2 + t + z
+          To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^2 + (z^2 + 4*z + 3)*t + z
+          Defn: (2*z^2 + 4*z + 4)*t^3 + (2*z + 1)*t^2 + (2*z^2 + 4*z + 2)*t + 2*z + 2
+
+    Right action currently does not work (it is a known bug, due to an
+    incompatibility between multiplication of morphisms and the coercion
+    system)::
+
+        sage: f * (T + 1)
+        Traceback (most recent call last):
+        ...
+        TypeError: right (=T + 1) must be a map to multiply it by Drinfeld Module morphism:
+          From: Drinfeld module defined by T |--> z*t^2 + t + z
+          To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^2 + (z^2 + 4*z + 3)*t + z
+          Defn: t + 2
+
+    """
+    def __init__(self, A, H, is_left, op):
+        r"""
+        Initialize this action.
+
+        INPUT:
+
+        - ``A`` -- the function ring of the underlying Drinfeld module
+
+        - ``H`` -- a homset between Drinfeld modules
+
+        - ``is_left`` -- a boolean
+
+        - ``op`` -- an operator
+
+        TESTS::
+
+            sage: Fq = GF(27)
+            sage: A.<T> = Fq[]
+            sage: K.<z6> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z6, z6, 2])
+            sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: H = Hom(phi, psi)
+
+            sage: from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleMorphismAction
+            sage: left_action = DrinfeldModuleMorphismAction(A, H, True, operator.mul)
+            sage: TestSuite(left_action).run(skip='_test_pickling')
+
+            sage: right_action = DrinfeldModuleMorphismAction(A, H, False, operator.mul)
+            sage: TestSuite(right_action).run(skip='_test_pickling')
+
+        """
+        Action.__init__(self, A, H, is_left, op)
+        if is_left:
+            self._phi = H.codomain()
+        else:
+            self._phi = H.domain()
+
+    def _act_(self, a, f):
+        r"""
+        Return the action of `a` on `f`.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: t = phi.ore_variable()
+            sage: f = phi.hom(t + 1)
+            sage: T*f  # indirect doctest
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^3 + (3*z^2 + 2*z + 2)*t^2 + (2*z^2 + 3*z + 4)*t + z
+              Defn: (2*z^2 + 4*z + 4)*t^4 + (z + 1)*t^3 + t^2 + (2*z^2 + 4*z + 4)*t + z
+
+        """
+        u = f.ore_polynomial()
+        if self._is_left:
+            u = self._phi(a) * u
+        else:
+            u = u * self._phi(a)
+        return f.parent()(u)
 
 
 class DrinfeldModuleHomset(Homset):
@@ -131,10 +234,9 @@ class DrinfeldModuleHomset(Homset):
         False
         sage: frobenius_endomorphism in H
         False
-    """
 
+    """
     Element = DrinfeldModuleMorphism
-    __contains__ = Parent.__contains__
 
     def __init__(self, X, Y, category=None, check=True):
         """
@@ -169,12 +271,18 @@ class DrinfeldModuleHomset(Homset):
         if check:
             if X.category() != Y.category() \
                     or not isinstance(X.category(), DrinfeldModules):
-                raise ValueError('Drinfeld modules must be in the same '
-                                 'category')
+                raise ValueError('Drinfeld modules must be in the same category')
             if category != X.category():
                 raise ValueError('category should be DrinfeldModules')
         base = category.base()
         super().__init__(X, Y, category=category, base=base, check=check)
+        A = X.function_ring()
+        self.register_action(DrinfeldModuleMorphismAction(A, self, True, operator.mul))
+        # ARGH: the next line does not work
+        # because Map.__mul__ does not call the coercion system
+        self.register_action(DrinfeldModuleMorphismAction(A, self, False, operator.mul))
+        if X is Y:
+            self.register_coercion(A)
 
     def _latex_(self):
         r"""
@@ -272,8 +380,6 @@ class DrinfeldModuleHomset(Homset):
         Return the Drinfeld module morphism defined by the given Ore
         polynomial.
 
-        INPUT: an Ore polynomial
-
         EXAMPLES::
 
             sage: Fq = GF(27)
@@ -287,6 +393,13 @@ class DrinfeldModuleHomset(Homset):
             sage: identity_morphism = E(1)
             sage: identity_morphism
             Identity morphism of Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
+
+        ::
+
+            sage: scalar_multiplication = E(T)
+            sage: scalar_multiplication
+            Endomorphism of Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
+              Defn: 2*t^2 + z6*t + z6
 
         ::
 

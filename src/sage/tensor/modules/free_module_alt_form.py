@@ -26,7 +26,6 @@ REFERENCES:
 
 - Chap. 23 of R. Godement : *Algebra* [God1968]_
 - Chap. 15 of S. Lang : *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -552,13 +551,14 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: b.display(format_spec=10)  # 10 bits of precision
             b = 0.33 e^1∧e^2 + 2.5 e^1∧e^3 + 4.0 e^2∧e^3
 
-        Check that the bug reported in :trac:`22520` is fixed::
+        Check that the bug reported in :issue:`22520` is fixed::
 
-            sage: M = FiniteRankFreeModule(SR, 2, name='M')  # optional - sage.symbolic
-            sage: e = M.basis('e')                           # optional - sage.symbolic
-            sage: a = M.alternating_form(2)                  # optional - sage.symbolic
-            sage: a[0,1] = SR.var('t', domain='real')        # optional - sage.symbolic
-            sage: a.display()                                # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: M = FiniteRankFreeModule(SR, 2, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.alternating_form(2)
+            sage: a[0,1] = SR.var('t', domain='real')
+            sage: a.display()
             t e^0∧e^1
 
         """

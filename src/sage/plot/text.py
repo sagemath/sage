@@ -81,11 +81,11 @@ class Text(GraphicPrimitive):
 
         EXAMPLES::
 
-            sage: T = text("I like cool constants", (pi,e))
-            sage: t=T[0];t
+            sage: T = text("I like cool constants", (pi,e))                             # needs sage.symbolic
+            sage: t = T[0];t                                                            # needs sage.symbolic
             Text 'I like cool constants' at the point (3.1415926535...,2.7182818284...)
         """
-        return "Text '%s' at the point (%s,%s)" % (self.string, self.x, self.y)
+        return f"Text '{self.string}' at the point ({self.x},{self.y})"
 
     def _allowed_options(self):
         """
@@ -227,39 +227,39 @@ def text(string, xy, **options):
 
     2D OPTIONS:
 
-    - ``fontsize`` - How big the text is. Either an integer that
+    - ``fontsize`` -- How big the text is. Either an integer that
       specifies the size in points or a string which specifies a size (one of
       'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large')
 
-    - ``fontstyle`` - A string either 'normal', 'italic' or 'oblique'
+    - ``fontstyle`` -- A string either 'normal', 'italic' or 'oblique'
 
-    - ``fontweight`` - A numeric value in the range 0-1000 or a string (one of
+    - ``fontweight`` -- A numeric value in the range 0-1000 or a string (one of
       'ultralight', 'light', 'normal', 'regular', 'book',' 'medium', 'roman',
       'semibold', 'demibold', 'demi', 'bold', 'heavy', 'extra bold', 'black')
 
-    - ``rgbcolor`` - The color as an RGB tuple
+    - ``rgbcolor`` -- The color as an RGB tuple
 
-    - ``hue`` - The color given as a hue
+    - ``hue`` -- The color given as a hue
 
-    - ``alpha`` - A float (0.0 transparent through 1.0 opaque)
+    - ``alpha`` -- A float (0.0 transparent through 1.0 opaque)
 
-    - ``background_color`` - The background color
+    - ``background_color`` -- The background color
 
-    - ``rotation`` - How to rotate the text: angle in degrees, vertical, horizontal
+    - ``rotation`` -- How to rotate the text: angle in degrees, vertical, horizontal
 
-    - ``vertical_alignment`` - How to align vertically: top, center, bottom
+    - ``vertical_alignment`` -- How to align vertically: top, center, bottom
 
-    - ``horizontal_alignment`` - How to align horizontally: left, center, right
+    - ``horizontal_alignment`` -- How to align horizontally: left, center, right
 
-    - ``zorder`` - The layer level in which to draw
+    - ``zorder`` -- The layer level in which to draw
 
-    - ``clip`` - (default: False) Whether to clip or not
+    - ``clip`` -- (default: ``False``) Whether to clip or not
 
-    - ``axis_coords`` - (default: False) If True, use axis coordinates, so that
+    - ``axis_coords`` -- (default: ``False``) If True, use axis coordinates, so that
       (0,0) is the lower left and (1,1) upper right, regardless of the x and y
       range of plotted values.
 
-    - ``bounding_box`` - A dictionary specifying a bounding box. Currently the text location.
+    - ``bounding_box`` -- A dictionary specifying a bounding box. Currently the text location.
 
     EXAMPLES::
 
@@ -273,7 +273,8 @@ def text(string, xy, **options):
 
     Larger font, bold, colored red and transparent text::
 
-        sage: text("I had a dream!", (2,12), alpha=0.3, fontsize='large', fontweight='bold', color='red')
+        sage: text("I had a dream!", (2,12), alpha=0.3,
+        ....:      fontsize='large', fontweight='bold', color='red')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -283,7 +284,8 @@ def text(string, xy, **options):
     By setting ``horizontal_alignment`` to 'left' the text is guaranteed to be
     in the lower left no matter what::
 
-        sage: text("I got a horse and he lives in a tree", (0,0), axis_coords=True, horizontal_alignment='left')
+        sage: text("I got a horse and he lives in a tree", (0,0),
+        ....:      axis_coords=True, horizontal_alignment='left')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -293,7 +295,8 @@ def text(string, xy, **options):
 
     Various rotations::
 
-        sage: text("noitator", (0,0), rotation=45.0, horizontal_alignment='left', vertical_alignment='bottom')
+        sage: text("noitator", (0,0), rotation=45.0,
+        ....:      horizontal_alignment='left', vertical_alignment='bottom')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -311,7 +314,7 @@ def text(string, xy, **options):
 
     You can also align text differently::
 
-        sage: t1 = text("Hello",(1,1), vertical_alignment="top")
+        sage: t1 = text("Hello", (1,1), vertical_alignment="top")
         sage: t2 = text("World", (1,0.5), horizontal_alignment="left")
         sage: t1 + t2   # render the sum
         Graphics object consisting of 2 graphics primitives
@@ -330,7 +333,7 @@ def text(string, xy, **options):
 
     Some examples of bounding box::
 
-        sage: bbox = {'boxstyle':"rarrow,pad=0.3", 'fc':"cyan", 'ec':"b", 'lw':2}
+        sage: bbox = {'boxstyle': "rarrow,pad=0.3", 'fc': "cyan", 'ec': "b", 'lw': 2}
         sage: text("I feel good", (1,2), bounding_box=bbox)
         Graphics object consisting of 1 graphics primitive
 
@@ -341,7 +344,7 @@ def text(string, xy, **options):
 
     ::
 
-        sage: text("So good", (0,0), bounding_box={'boxstyle':'round', 'fc':'w'})
+        sage: text("So good", (0,0), bounding_box={'boxstyle': 'round', 'fc': 'w'})
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -371,8 +374,10 @@ def text(string, xy, **options):
         sage: PQ = point2d([(-a, a), (a, a)])
         sage: botleft = dict(horizontal_alignment='left', vertical_alignment='bottom')
         sage: botright = dict(horizontal_alignment='right', vertical_alignment='bottom')
-        sage: tp = text(r'$z_P = e^{3i\pi/4}$', (-a, a), **botright)
-        sage: tq = text(r'$Q = (\frac{\sqrt{2}}{2}, \frac{\sqrt{2}}{2})$', (a, a), **botleft)
+        sage: tp = text(r'$z_P = e^{3i\pi/4}$',
+        ....:           (-a, a), **botright)
+        sage: tq = text(r'$Q = (\frac{\sqrt{2}}{2}, \frac{\sqrt{2}}{2})$',
+        ....:           (a, a), **botleft)
         sage: A + PQ + tp + tq
         Graphics object consisting of 4 graphics primitives
 

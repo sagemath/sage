@@ -306,7 +306,6 @@ REFERENCES:
 - [Lee2013]_
 - [KN1963]_
 - [Huy2005]_
-
 """
 
 # ****************************************************************************
@@ -455,7 +454,7 @@ class TopologicalManifold(ManifoldSubset):
 
     A manifold over `\QQ_5`, the field of 5-adic numbers::
 
-        sage: N = Manifold(2, 'N', structure='topological', field=Qp(5)); N
+        sage: N = Manifold(2, 'N', structure='topological', field=Qp(5)); N             # needs sage.rings.padics
         2-dimensional topological manifold N over the 5-adic Field with capped
          relative precision 20
 
@@ -474,7 +473,7 @@ class TopologicalManifold(ManifoldSubset):
         True
         sage: M in Manifolds(RR)
         True
-        sage: N in Manifolds(Qp(5))
+        sage: N in Manifolds(Qp(5))                                                     # needs sage.rings.padics
         True
 
     The corresponding Sage *elements* are points::
@@ -583,11 +582,11 @@ class TopologicalManifold(ManifoldSubset):
                                 category=category)
         self._is_open = True
         self._open_covers.append([self])  # list of open covers of self
-        #
+
         if not isinstance(start_index, (int, Integer)):
             raise TypeError("the starting index must be an integer")
         self._sindex = start_index
-        #
+
         self._atlas = []  # list of charts defined on subsets of self
         self._top_charts = []  # list of charts defined on subsets of self
                         # that are not subcharts of charts on larger subsets
@@ -2720,8 +2719,9 @@ class TopologicalManifold(ManifoldSubset):
             chart.calculus_method().set_simplify_function(simplifying_func,
                                                           method=method)
 
-##############################################################################
-## Constructor function
+
+###########################################################
+# Constructor function
 
 _manifold_id = Integer(0)
 

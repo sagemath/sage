@@ -383,33 +383,6 @@ IPython documentation <http://ipython.scipy.org/moin/Documentation>`_.
 Meanwhile, here are some fun tricks -- these are called "Magic
 commands" in IPython:
 
-- You can use ``%bg`` to run a command in the background, and then use
-  ``jobs`` to access the results, as follows.  (The comments ``not
-  tested`` are here because the ``%bg`` syntax doesn't work well with
-  Sage's automatic testing facility.  If you type this in yourself, it
-  should work as written.  This is of course most useful with commands
-  which take a while to complete.)
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  Note that jobs run in the background don't use the Sage preparser --
-  see :ref:`section-mathannoy` for more information.  One
-  (perhaps awkward) way to get around this would be to run ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  It is safer and easier, though, to just use ``%bg`` on commands
-  which don't require the preparser.
-
 - You can use ``%edit`` (or ``%ed`` or ``ed``) to open an editor, if
   you want to type in some complex code.  Before you start Sage, make
   sure that the :envvar:`EDITOR` environment variable is set to your
@@ -453,7 +426,7 @@ Errors and Exceptions
 When something goes wrong, you will usually see a Python
 "exception". Python even tries to suggest what raised the
 exception. Often you see the name of the exception, e.g.,
-``NameError`` or ``ValueError`` (see the Python Library Reference [PyLR]_
+:class:`NameError` or :class:`ValueError` (see the Python Library Reference [PyLR]_
 for a complete list of exceptions). For example,
 
 .. skip
@@ -583,7 +556,6 @@ coordinates function, type ``V.coordinates?`` for help or
 section.
 
 
-
 Integrated Help System
 ======================
 
@@ -696,15 +668,25 @@ manpage-like help file about a given class.
 ::
 
     sage: help(VectorSpace)
-    Help on class VectorSpace ...
+    Help on function VectorSpace in module sage.modules.free_module:
 
-    class VectorSpace(__builtin__.object)
-     |  Create a Vector Space.
-     |
-     |  To create an ambient space over a field with given dimension
-     |  using the calling syntax ...
-     :
-     :
+    VectorSpace(K, dimension_or_basis_keys=None, sparse=False, inner_product_matrix=None, *,
+                with_basis='standard', dimension=None, basis_keys=None, **args)
+    EXAMPLES:
+
+    The base can be complicated, as long as it is a field.
+
+    ::
+
+        sage: V = VectorSpace(FractionField(PolynomialRing(ZZ,'x')),3)
+        sage: V
+        Vector space of dimension 3 over Fraction Field of Univariate Polynomial Ring in x
+         over Integer Ring
+        sage: V.basis()
+        [
+        (1, 0, 0),
+        (0, 1, 0),
+    --More--
 
 When you type ``q`` to exit the help system, your session appears
 just as it was. The help listing does not clutter up your session,

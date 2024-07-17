@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings sage.schemes
+# sage.doctest: needs sage.rings.finite_rings sage.schemes
 """
 AG codes
 
@@ -57,7 +57,6 @@ EXAMPLES::
 AUTHORS:
 
 - Kwankyu Lee (2019-03): initial version
-
 """
 
 # ****************************************************************************
@@ -332,7 +331,7 @@ class EvaluationAGCode(AGCode):
         """
         Return the designed distance of the AG code.
 
-        If the code is of dimension zero, then a ``ValueError`` is raised.
+        If the code is of dimension zero, then a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -576,7 +575,7 @@ class DifferentialAGCode(AGCode):
         """
         Return the designed distance of the differential AG code.
 
-        If the code is of dimension zero, then a ``ValueError`` is raised.
+        If the code is of dimension zero, then a :class:`ValueError` is raised.
 
         EXAMPLES::
 

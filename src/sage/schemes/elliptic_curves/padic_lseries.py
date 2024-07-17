@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 r"""
 `p`-adic `L`-functions of elliptic curves
 
@@ -43,7 +43,6 @@ AUTHORS:
 - Chris Wuthrich (11/2008): added quadratic_twists
 
 - David Loeffler (01/2011): added nontrivial Teichmueller components
-
 """
 
 ######################################################################
@@ -61,7 +60,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-import sage.matrix.all as matrix
+from sage.matrix.constructor import matrix
 import sage.schemes.hyperelliptic_curves.monsky_washnitzer
 
 from sage.arith.functions import lcm as LCM
@@ -224,7 +223,7 @@ class pAdicLseries(SageObject):
             sage: lp1 == lp3
             False
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self._E, self._p), (other._E, other._p), op)
 
@@ -807,7 +806,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: L.series(3)
             O(3^5) + O(3^2)*T + (2 + 2*3 + O(3^2))*T^2 + (2 + O(3))*T^3 + (1 + O(3))*T^4 + O(T^5)
 
-        Checks if the precision can be changed (:trac:`5846`)::
+        Checks if the precision can be changed (:issue:`5846`)::
 
             sage: L.series(3,prec=4)
             O(3^5) + O(3^2)*T + (2 + 2*3 + O(3^2))*T^2 + (2 + O(3))*T^3 + O(T^4)
@@ -835,7 +834,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             2 + O(5^6) + (1 + 5 + O(5^3))*T + (2 + 4*5 + 3*5^2 + O(5^3))*T^2 + (4 + 5 + 2*5^2 + O(5^3))*T^3 + (4 + O(5^3))*T^4 + O(T^5)
             3 + 5 + 2*5^2 + 5^3 + 3*5^4 + 4*5^5 + O(5^6) + (1 + 2*5 + 4*5^2 + O(5^3))*T + (1 + 4*5 + O(5^3))*T^2 + (3 + 2*5 + 2*5^2 + O(5^3))*T^3 + (5 + 5^2 + O(5^3))*T^4 + O(T^5)
 
-        It should now also work with `p=2` (:trac:`20798`)::
+        It should now also work with `p=2` (:issue:`20798`)::
 
             sage: E = EllipticCurve("53a1")
             sage: lp = E.padic_lseries(2)
@@ -847,7 +846,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: lp.series(6)
             2^2 + 2^6 + O(2^7) + (2 + O(2^4))*T + O(2^3)*T^2 + (2^2 + O(2^3))*T^3 + (2 + O(2^2))*T^4 + O(T^5)
 
-        Check that twists by odd Teichmuller characters are ok (:trac:`32258`)::
+        Check that twists by odd Teichmuller characters are ok (:issue:`32258`)::
 
             sage: E = EllipticCurve("443c1")
             sage: lp = E.padic_lseries(17, implementation="num")
@@ -1197,7 +1196,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
             sage: L.alpha(2).parent()
             3-adic Eisenstein Extension Field in alpha defined by x^2 + 3*x + 3
 
-        An example where we only compute the leading term (:trac:`15737`)::
+        An example where we only compute the leading term (:issue:`15737`)::
 
             sage: E = EllipticCurve("17a1")
             sage: L = E.padic_lseries(3)
@@ -1449,7 +1448,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         H = QpT(Hli, prec)
 
         # now compute phi
-        phi = matrix.matrix([[0, -1 / p], [1, E.ap(p) / p]])
+        phi = matrix([[0, -1 / p], [1, E.ap(p) / p]])
         lpv = vector([G + (E.ap(p)) * H, - R(p) * H])  # this is L_p
         eps = (1 - phi)**(-2)
         resu = lpv * eps.transpose()
@@ -1498,7 +1497,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         Q = x**3 + modprecring(Ew.a4()) * x + modprecring(Ew.a6())
         trace = Ew.ap(p)
         fr = sage.schemes.hyperelliptic_curves.monsky_washnitzer.matrix_of_frobenius(Q, p, adjusted_prec, trace)
-        fr = matrix.matrix(output_ring,2,2,fr)
+        fr = matrix(output_ring,2,2,fr)
 
         # return a vector for PARI's ellchangecurve to pass from e1 to e2
         def isom(e1, e2):
@@ -1516,7 +1515,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         r = v[1]
 
         # change basis
-        A = matrix.matrix([[u, -r/u], [0, 1/u]])
+        A = matrix([[u, -r/u], [0, 1/u]])
         frn = A * fr * A**(-1)
         return 1 / p*frn
 
@@ -1554,7 +1553,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         if prec > 10:
             print("Warning: Very large value for the precision.")
         if prec == 0:
-            prec = floor((log(10000)/log(p)))
+            prec = floor(log(10000)/log(p))
             verbose("prec set to %s" % prec)
         eh = E.formal()
         om = eh.differential(prec=p**prec+3)
@@ -1610,7 +1609,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         c = -gamma
         d = E.ap(p) - a
         b = (-1/p+a*d)/c
-        phi = matrix.matrix([[a,b],[c,d]])
+        phi = matrix([[a,b],[c,d]])
         return phi
 
     def bernardi_sigma_function(self, prec=20):
@@ -1748,7 +1747,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         basis = E.gens()
 
         def regv(vec):
-            M = matrix.matrix(K, rk, rk, 0)
+            M = matrix(K, rk, rk, 0)
             point_height = [hv(vec, P) for P in basis]
             for i in range(rk):
                 for j in range(i+1, rk):

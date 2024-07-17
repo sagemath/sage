@@ -27,11 +27,11 @@ Product Projective, over `\QQ`::
 
 Product projective over finite field::
 
-    sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1, 1], GF(7))                         # optional - sage.rings.finite_rings
-    sage: X = P1.subscheme([2*x + 3*y])                                                 # optional - sage.rings.finite_rings
+    sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1, 1], GF(7))
+    sage: X = P1.subscheme([2*x + 3*y])
     sage: from sage.schemes.product_projective.rational_point import \
             enum_product_projective_finite_field
-    sage: enum_product_projective_finite_field(X)                                       # optional - sage.rings.finite_rings
+    sage: enum_product_projective_finite_field(X)
     [(2 : 1 , 0 : 1), (2 : 1 , 1 : 0), (2 : 1 , 1 : 1),
      (2 : 1 , 2 : 1), (2 : 1 , 3 : 1), (2 : 1 , 4 : 1),
      (2 : 1 , 5 : 1), (2 : 1 , 6 : 1)]
@@ -41,7 +41,6 @@ AUTHORS:
 - Volker Braun and Ben Hutz (2014): initial version
 
 - Raghukul Raman (2018): code cleanup and added support for rational fields
-
 """
 
 # ****************************************************************************
@@ -55,17 +54,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.generic.scheme import is_Scheme
-from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
+from sage.schemes.generic.scheme import Scheme
+from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+from sage.misc.lazy_import import lazy_import
 from sage.misc.mrange import xmrange
 from sage.misc.misc_c import prod
 from sage.arith.misc import next_prime, previous_prime, crt
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
-from sage.matrix.constructor import matrix
+
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def enum_product_projective_rational_field(X, B):
@@ -122,12 +123,12 @@ def enum_product_projective_rational_field(X, B):
          (0 : 0 : 1 , 0 : 1), (0 : 0 : 1 , 1 : 1), (0 : 1 : 0 , 0 : 1),
          (0 : 1 : 0 , 1 : 1), (1 : -1/2 : 1 , 0 : 1), (1 : -1/2 : 1 , 1 : 1)]
     """
-    if is_Scheme(X):
-        if (not is_ProductProjectiveSpaces(X.ambient_space())):
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
     else:
-        if (not is_ProductProjectiveSpaces(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
@@ -194,11 +195,11 @@ def enum_product_projective_number_field(X, **kwds):
 
     kwds:
 
-    - ``bound`` - a real number
+    - ``bound`` -- a real number
 
-    - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+    - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
-    - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
+    - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
 
     OUTPUT:
 
@@ -207,13 +208,14 @@ def enum_product_projective_number_field(X, **kwds):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 2, 'v')                                             # optional - sage.rings.number_field
-        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)                         # optional - sage.rings.number_field
-        sage: X = PP.subscheme([x^2 + 2*y^2])                                           # optional - sage.rings.number_field
+        sage: K = NumberField(u^2 + 2, 'v')
+        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)
+        sage: X = PP.subscheme([x^2 + 2*y^2])
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_number_field
-        sage: enum_product_projective_number_field(X, bound=1.5)                        # optional - sage.rings.number_field
+        sage: enum_product_projective_number_field(X, bound=1.5)
         [(-v : 1 , -1 : 1), (-v : 1 , -v : 1), (-v : 1 , -1/2*v : 1),
          (-v : 1 , 0 : 1), (-v : 1 , 1/2*v : 1), (-v : 1 , v : 1),
          (-v : 1 , 1 : 0), (-v : 1 , 1 : 1), (v : 1 , -1 : 1),
@@ -225,12 +227,12 @@ def enum_product_projective_number_field(X, **kwds):
     tol = kwds.pop('tolerance', 1e-2)
     prec = kwds.pop('precision', 53)
 
-    if is_Scheme(X):
-        if (not is_ProductProjectiveSpaces(X.ambient_space())):
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
     else:
-        if (not is_ProductProjectiveSpaces(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
@@ -251,7 +253,7 @@ def enum_product_projective_finite_field(X):
 
     INPUT:
 
-    - ``X`` -  a scheme defined over a finite field or a set of abstract
+    - ``X`` --  a scheme defined over a finite field or a set of abstract
       rational points of such a scheme.
 
     OUTPUT:
@@ -261,10 +263,10 @@ def enum_product_projective_finite_field(X):
 
     EXAMPLES::
 
-        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(3))                     # optional - sage.rings.finite_rings
+        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(3))
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_finite_field
-        sage: enum_product_projective_finite_field(PP)                                  # optional - sage.rings.finite_rings
+        sage: enum_product_projective_finite_field(PP)
         [(0 : 1 , 0 : 1), (0 : 1 , 1 : 0), (0 : 1 , 1 : 1),
          (0 : 1 , 2 : 1), (1 : 0 , 0 : 1), (1 : 0 , 1 : 0),
          (1 : 0 , 1 : 1), (1 : 0 , 2 : 1), (1 : 1 , 0 : 1),
@@ -274,19 +276,19 @@ def enum_product_projective_finite_field(X):
 
     ::
 
-        sage: PP.<x0,x1,x2,x3> = ProductProjectiveSpaces([1, 1], GF(17))                # optional - sage.rings.finite_rings
-        sage: X = PP.subscheme([x0^2 + 2*x1^2])                                         # optional - sage.rings.finite_rings
+        sage: PP.<x0,x1,x2,x3> = ProductProjectiveSpaces([1, 1], GF(17))
+        sage: X = PP.subscheme([x0^2 + 2*x1^2])
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_finite_field
-        sage: len(enum_product_projective_finite_field(X))                              # optional - sage.rings.finite_rings
+        sage: len(enum_product_projective_finite_field(X))
         36
     """
-    if is_Scheme(X):
-        if (not is_ProductProjectiveSpaces(X.ambient_space())):
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
     else:
-        if (not is_ProductProjectiveSpaces(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
@@ -322,9 +324,9 @@ def sieve(X, bound):
 
     INPUT:
 
-    - ``X`` - a scheme with ambient space defined over a product of projective spaces
+    - ``X`` -- a scheme with ambient space defined over a product of projective spaces
 
-    - ``bound`` - a positive integer bound
+    - ``bound`` -- a positive integer bound
 
     OUTPUT:
 
@@ -336,7 +338,7 @@ def sieve(X, bound):
         sage: from sage.schemes.product_projective.rational_point import sieve
         sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], QQ)
         sage: X = PP.subscheme([x^2 + y^2 - x*z, u*u - v*u])
-        sage: sieve(X, 2)
+        sage: sieve(X, 2)                                                               # needs sage.libs.singular
         [(0 : 0 : 1 , 0 : 1), (0 : 0 : 1 , 1 : 1), (1/2 : -1/2 : 1 , 0 : 1),
          (1/2 : -1/2 : 1 , 1 : 1), (1/2 : 1/2 : 1 , 0 : 1), (1/2 : 1/2 : 1 , 1 : 1),
          (1 : 0 : 1 , 0 : 1), (1 : 0 : 1 , 1 : 1)]
@@ -390,7 +392,7 @@ def sieve(X, bound):
         of the ambient space.
         """
 
-        M = dict() # stores optimal list of primes, corresponding to list size
+        M = {}  # stores optimal list of primes, corresponding to list size
         small_primes = sufficient_primes(B)
         max_length = len(small_primes)
         M[max_length] = small_primes

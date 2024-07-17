@@ -2,14 +2,23 @@ r"""
 Elements of function fields: rational
 """
 
-# ****************************************************************************
-#       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
+# *****************************************************************************
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2010      Robert Bradshaw <robertwb@math.washington.edu>
+#                     2011-2020 Julian Rueth <julian.rueth@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2015      Nils Bruin
+#                     2016      Frédéric Chapoton
+#                     2017-2019 Kwankyu Lee
+#                     2018-2020 Travis Scrimshaw
+#                     2019      Brent Baccala
+#                     2021      Saher Amasha
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# ****************************************************************************
+# *****************************************************************************
 
 from sage.structure.richcmp cimport richcmp, richcmp_not_equal
 from sage.structure.element cimport FieldElement
@@ -50,7 +59,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<a> = FunctionField(QQ)
-            sage: ((a+1)/(a-1)).__pari__()                                              # optional - sage.rings.finite_rings
+            sage: ((a+1)/(a-1)).__pari__()                                              # needs sage.libs.pari
             (a + 1)/(a - 1)
 
         """
@@ -62,16 +71,17 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
-            sage: t.element()                                                           # optional - sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(7))
+            sage: t.element()
             t
-            sage: type(t.element())                                                     # optional - sage.rings.finite_rings
+            sage: type(t.element())                                                     # needs sage.libs.ntl
             <... 'sage.rings.fraction_field_FpT.FpTElement'>
 
-            sage: K.<t> = FunctionField(GF(131101))                                     # optional - sage.rings.finite_rings
-            sage: t.element()                                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(131101))
+            sage: t.element()
             t
-            sage: type(t.element())                                                     # optional - sage.rings.finite_rings
+            sage: type(t.element())
             <... 'sage.rings.fraction_field_element.FractionFieldElement_1poly_field'>
         """
         return self._x
@@ -288,12 +298,12 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: f.valuation(t^2 - 1/3)
             -3
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: p = K.places_finite()[0]                                              # optional - sage.rings.finite_rings
-            sage: (1/x^2).valuation(p)                                                  # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(2))
+            sage: p = K.places_finite()[0]                                              # needs sage.libs.pari
+            sage: (1/x^2).valuation(p)                                                  # needs sage.libs.pari
             -2
         """
-        from .place import FunctionFieldPlace
+        from sage.rings.function_field.place import FunctionFieldPlace
 
         if not isinstance(place, FunctionFieldPlace):
             # place is an irreducible polynomial
@@ -318,10 +328,10 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: f = 9 * (t+1)^6 / (t^2 - 2*t + 1); f.is_square()
             True
 
-            sage: K.<t> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
-            sage: (-t^2).is_square()                                                    # optional - sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(5))
+            sage: (-t^2).is_square()                                                    # needs sage.libs.pari
             True
-            sage: (-t^2).sqrt()                                                         # optional - sage.rings.finite_rings
+            sage: (-t^2).sqrt()                                                         # needs sage.libs.pari
             2*t
         """
         return self._x.is_square()
@@ -350,7 +360,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         else:
             return self._parent(self._x.sqrt())
 
-    cpdef bint is_nth_power(self, n):
+    cpdef bint is_nth_power(self, n) noexcept:
         r"""
         Return whether this element is an ``n``-th power in the rational
         function field.
@@ -376,15 +386,16 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.rings.finite_rings
-            sage: f = (x+1)/(x-1)                                                       # optional - sage.rings.finite_rings
-            sage: f.is_nth_power(1)                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(3))
+            sage: f = (x+1)/(x-1)
+            sage: f.is_nth_power(1)
             True
-            sage: f.is_nth_power(3)                                                     # optional - sage.rings.finite_rings
+            sage: f.is_nth_power(3)                                                     # needs sage.modules
             False
-            sage: (f^3).is_nth_power(3)                                                 # optional - sage.rings.finite_rings
+            sage: (f^3).is_nth_power(3)                                                 # needs sage.modules
             True
-            sage: (f^9).is_nth_power(-9)                                                # optional - sage.rings.finite_rings
+            sage: (f^9).is_nth_power(-9)                                                # needs sage.modules
             True
         """
         if n == 1:
@@ -427,17 +438,17 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.rings.finite_rings
-            sage: f = (x+1)/(x+2)                                                       # optional - sage.rings.finite_rings
-            sage: f.nth_root(1)                                                         # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(3))
+            sage: f = (x+1)/(x+2)
+            sage: f.nth_root(1)
             (x + 1)/(x + 2)
-            sage: f.nth_root(3)                                                         # optional - sage.rings.finite_rings
+            sage: f.nth_root(3)
             Traceback (most recent call last):
             ...
             ValueError: element is not an n-th power
-            sage: (f^3).nth_root(3)                                                     # optional - sage.rings.finite_rings
+            sage: (f^3).nth_root(3)                                                     # needs sage.modules
             (x + 1)/(x + 2)
-            sage: (f^9).nth_root(-9)                                                    # optional - sage.rings.finite_rings
+            sage: (f^9).nth_root(-9)                                                    # needs sage.modules
             (x + 2)/(x + 1)
         """
         if n == 0:
@@ -464,15 +475,16 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: K.<t> = FunctionField(QQ)
             sage: f = (t+1) / (t^2 - 1/3)
-            sage: f.factor()                                                            # optional - sage.rings.finite_rings
+            sage: f.factor()
             (t + 1) * (t^2 - 1/3)^-1
-            sage: (7*f).factor()                                                        # optional - sage.rings.finite_rings
+            sage: (7*f).factor()
             (7) * (t + 1) * (t^2 - 1/3)^-1
-            sage: ((7*f).factor()).unit()                                               # optional - sage.rings.finite_rings
+            sage: ((7*f).factor()).unit()
             7
-            sage: (f^3).factor()                                                        # optional - sage.rings.finite_rings
+            sage: (f^3).factor()
             (t + 1)^3 * (t^2 - 1/3)^-3
         """
         P = self.parent()

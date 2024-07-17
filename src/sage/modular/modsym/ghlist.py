@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 List of coset representatives for `\Gamma_H(N)` in `\SL_2(\ZZ)`
 """
@@ -15,7 +16,7 @@ List of coset representatives for `\Gamma_H(N)` in `\SL_2(\ZZ)`
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###########################################################################
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
@@ -47,7 +48,7 @@ class GHlist(SageObject):
         N = group.level()
         v = group._coset_reduction_data()[0]
         N = group.level()
-        coset_reps = set([a for a, b, _ in v if b == 1])
+        coset_reps = {a for a, b, _ in v if b == 1}
         w = [group._reduce_coset(x*u, x*v) for x in coset_reps for u,v in p1list.P1List(N).list()]
         w = sorted(set(w))
         self.__list = w
@@ -173,7 +174,8 @@ class _GHlist_old_pickle(GHlist):
         # We don't really want this class, but we want to handle new
         #   pickles without creating a new class
         self.__class__ = GHlist
-        self.__dict__ = state # Default pickling is ``state = self.__dict__``
+        self.__dict__ = state  # Default pickling is ``state = self.__dict__``
+
 
 register_unpickle_override('sage.modular.modsym.ghlist', 'GHlist',
                            _GHlist_old_pickle)

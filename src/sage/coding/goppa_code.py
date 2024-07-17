@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Goppa code
 
@@ -20,7 +20,6 @@ EXAMPLES::
 AUTHORS:
 
 - Filip Ion, Marketa Slukova (2019-06): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2019 Filip Ion <filip.alexandru.ion@gmail.com>,
@@ -308,7 +307,7 @@ class GoppaCode(AbstractLinearCode):
             [8, 2] Goppa code over GF(2)
             sage: C.distance_bound()
             3
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             5
         """
         return 1 + (self._generating_pol).degree()
@@ -435,5 +434,6 @@ class GoppaCodeEncoder(Encoder):
         pmat = c.parity_check_matrix()
         aux = codes.from_parity_check_matrix(pmat)
         return aux.generator_matrix()
+
 
 GoppaCode._registered_encoders["GoppaEncoder"] = GoppaCodeEncoder

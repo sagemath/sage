@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.gap sage.libs.flint sage.libs.pari sage.modules
 r"""
 Functions that compute some of the sequences in Sloane's tables
 
@@ -129,14 +129,16 @@ import inspect
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
 from sage.rings.integer_ring import ZZ
-from sage.functions.all import prime_pi
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer as Integer_class
 # You may have to import more here when defining new sequences
 import sage.arith.all as arith
-from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
 from sage.combinat import combinat
 from sage.misc.misc_c import prod
+
+lazy_import("sage.functions.all", "prime_pi")
+lazy_import('sage.matrix.matrix_space', 'MatrixSpace')
 
 
 class SloaneSequence(SageObject):
@@ -454,7 +456,7 @@ class A000004(SloaneSequence):
 
         INPUT:
 
-        - ``n`` - non negative integer
+        - ``n`` -- non negative integer
 
         EXAMPLES::
 
@@ -503,7 +505,7 @@ class A000005(SloaneSequence):
 
         INPUT:
 
-        - ``n`` - positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -600,10 +602,8 @@ class A000008(SloaneSequence):
             sage: [sloane.A000008._eval(n) for n in range(14)]
             [1, 1, 2, 2, 3, 4, 5, 6, 7, 8, 11, 12, 15, 16]
         """
-        from sage.rings.big_oh import O
-        R, x = QQ[['x']].objgen()
-        p = 1/((1-x)*(1-x**2)*(1-x**5)*(1-x**10)+O(x**(n+4)))
-        return ZZ(p.coefficients()[n])
+        from sage.combinat.partition import Partitions
+        return Partitions(n, parts_in=[1, 2, 5, 10]).cardinality()
 
 
 class A000009(SloaneSequence):
@@ -657,7 +657,7 @@ class A000009(SloaneSequence):
             sage: [next(it) for i in range(14)]
             [1, 1, 1, 2, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18]
         """
-        R, x = QQ['x'].objgen()
+        _, x = QQ['x'].objgen()
         k = 0
         yield ZZ.one()
         p = 1
@@ -861,7 +861,7 @@ class A003418(SloaneSequence):
             sage: [sloane.A003418._eval(n) for n in range(1,11)]
             [1, 2, 6, 12, 60, 60, 420, 840, 2520, 2520]
         """
-        return arith.lcm([i for i in range(1, n+1)])
+        return arith.lcm(range(1, n + 1))
 
 
 class A007318(SloaneSequence):
@@ -8327,7 +8327,7 @@ def perm_mh(m, h):
     for i in range(m):
         for j in range(n):
             if i <= j and j <= i + h:
-                A[i,j] = 1
+                A[i, j] = 1
     return A.permanent()
 
 
@@ -9171,7 +9171,7 @@ class Sloane(SageObject):
         ::
 
             sage: sloane.__repr__
-            <method-wrapper '__repr__' of Sloane object at 0x...>
+            <built-in method __repr__ of Sloane object at 0x...>
             sage: sloane.__name__
             Traceback (most recent call last):
             ...

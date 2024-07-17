@@ -5,7 +5,7 @@
 #       Copyright (C) 2010 Burcin Erocal <burcin@erocal.org>
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###############################################################################
 
 from sage.structure.sage_object import SageObject
@@ -158,4 +158,4 @@ class MaximaWrapper(SageObject):
             sage: u._repr_()
             'MaximaWrapper(log(sqrt(2) + 1) + log(sqrt(2) - 1))'
         """
-        return "MaximaWrapper(%s)"%(self._exp)
+        return "MaximaWrapper(%s)" % (self._exp)

@@ -15,6 +15,202 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.misc.unknown import Unknown
 
+
+def is_covering_array(array, strength=None, levels=None, verbose=False, parameters=False):
+    r"""
+    Check if the input is a covering array with given strength.
+
+    See :mod:`sage.combinat.designs.covering_array` for a definition.
+
+    INPUT:
+
+    - ``array`` -- the Covering Array to be tested.
+
+    - ``strength`` (integer) -- the parameter `t` of the covering array,
+      such that in any selection of `t` columns of the array, every `t`
+      -tuple appears at least once. If set to None then all t > 0 are
+      tested to and the maximal strength is used.
+
+    - ``levels`` -- the number of symbols that appear in ``array``.
+      If set to None, then each unique entry in ``array`` is counted.
+
+    - ``verbose`` (boolean) -- whether to display some information about
+      the covering array.
+
+    - ``parameters`` (boolean) -- whether to return the parameters of
+      the Covering Array. If set to ``True``, the function returns a
+      pair ``(boolean_answer,(N,t,k,v))``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: C = [[1, 1, 1, 0],
+        ....:      [1, 1, 0, 0],
+        ....:      [0, 0, 0]]
+        sage: is_covering_array(C)
+        Traceback (most recent call last):
+        ...
+        ValueError: Not all rows are the same length, row 2 is not the same length as row 0
+
+        sage: C = [[0, 1, 1],
+        ....:      [1, 1, 0],
+        ....:      [1, 0, 1],
+        ....:      [0, 0, 0,]]
+        sage: is_covering_array(C,strength=4)
+        Traceback (most recent call last):
+        ...
+        ValueError: Strength must be equal or less than number of columns
+
+        sage: C = [[0, 1, 1],
+        ....:      [1, 1, 1],
+        ....:      [1, 0, 1]]
+        sage: is_covering_array(C,verbose=True)
+        A 3 by 3 Covering Array with strength 0 with entries from a symbol set of size 2
+        True
+
+        sage: C = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ....:      [0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+        ....:      [0, 1, 1, 1, 0, 0, 0, 1, 1, 1],
+        ....:      [1, 0, 1, 1, 0, 1, 1, 0, 0, 1],
+        ....:      [1, 1, 0, 1, 1, 0, 1, 0, 1, 0],
+        ....:      [1, 1, 1, 0, 1, 1, 0, 1, 2, 0]]
+        sage: is_covering_array(C,levels=2)
+        Traceback (most recent call last):
+        ...
+        ValueError: Array should contain integer symbols from 0 to 1
+
+        sage: C = [[1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2],
+        ....:      [1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2],
+        ....:      [1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0],
+        ....:      [0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1],
+        ....:      [2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2],
+        ....:      [1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2],
+        ....:      [1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1],
+        ....:      [2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2],
+        ....:      [1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0],
+        ....:      [0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2],
+        ....:      [1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0],
+        ....:      [0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0],
+        ....:      [0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1],
+        ....:      [2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1],
+        ....:      [2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1],
+        ....:      [2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0],
+        ....:      [0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2],
+        ....:      [1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1],
+        ....:      [2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1],
+        ....:      [2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2],
+        ....:      [1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1],
+        ....:      [2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0],
+        ....:      [0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1],
+        ....:      [2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0],
+        ....:      [0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0],
+        ....:      [0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2],
+        ....:      [1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2],
+        ....:      [1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0],
+        ....:      [0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0],
+        ....:      [0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1],
+        ....:      [2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0],
+        ....:      [0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1],
+        ....:      [2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2],
+        ....:      [1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1],
+        ....:      [2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1],
+        ....:      [2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2],
+        ....:      [1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0],
+        ....:      [0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1],
+        ....:      [2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1],
+        ....:      [2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1],
+        ....:      [2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0],
+        ....:      [0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0],
+        ....:      [0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2],
+        ....:      [1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0],
+        ....:      [0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2],
+        ....:      [1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1],
+        ....:      [2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2],
+        ....:      [1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2],
+        ....:      [1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1],
+        ....:      [2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0],
+        ....:      [0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2],
+        ....:      [1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2],
+        ....:      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+        sage: is_covering_array(C,parameters=True)
+        (True, (53, 3, 13, 3))
+
+        sage: C = [[1, 0, 1, 1, 2, 0, 2, 2],
+        ....:      [2, 1, 0, 1, 1, 2, 0, 2],
+        ....:      [2, 2, 1, 0, 1, 1, 2, 0],
+        ....:      [0, 2, 2, 1, 0, 1, 1, 2],
+        ....:      [2, 0, 2, 2, 1, 0, 1, 1],
+        ....:      [1, 2, 0, 2, 2, 1, 0, 1],
+        ....:      [1, 1, 2, 0, 2, 2, 1, 0],
+        ....:      [0, 1, 1, 2, 0, 2, 2, 1]]
+        sage: is_covering_array(C,strength=2,parameters=True)
+        (False, (8, 0, 8, 3))
+
+    """
+    from itertools import product, combinations
+
+    if levels is None:
+        symbol_list = list({x for l in array for x in l})
+        levels = len(symbol_list)
+    else:
+        symbol_list = range(levels)
+
+    number_rows = len(array)
+    number_columns = len(array[0])
+
+    for row in array:
+        if len(row) != number_columns:
+            raise ValueError("Not all rows are the same length, row {} is not the same length as row 0".format(array.index(row)))
+        else:
+            for entry in row:
+                if int(entry) != entry or entry < -1 or entry >= levels:
+                    raise ValueError("Array should contain integer symbols from 0 to {}".format(levels-1))
+
+    result = True
+
+    # If strength t is inputted, check that for every selection of t
+    # columns, each v^t t-tuple is found in some row.
+    if strength:
+        if strength > number_columns:
+            raise ValueError("Strength must be equal or less than number of columns")
+        wstrength = strength
+        for comb in combinations(range(number_columns), wstrength):
+            existing_ttuples = set(tuple([row[ti] for ti in comb]) for row in array)
+            if len(existing_ttuples) != levels ** wstrength:
+                wstrength = 0
+                result = False
+                break
+
+    # If no strength t is inputted, starting at t=1 check all t until
+    # one of the v^t t-tuples does not appear.
+    else:
+        wstrength = 1
+        finished = False
+        do_iterate = True
+        while finished is False:
+            for comb in combinations(range(number_columns), wstrength):
+                tuple_dictionary = {item: 0 for item in product(symbol_list, repeat=wstrength)}
+                for row in array:
+                    tuple_dictionary[tuple([row[ti] for ti in comb])] += 1
+                if 0 in tuple_dictionary.values():
+                    wstrength -= 1
+                    finished = True
+                    break
+                elif do_iterate and any(value < levels for value in tuple_dictionary.values()):
+                    do_iterate = False
+                    finished = True
+            if finished is False and wstrength < number_columns and do_iterate:
+                wstrength += 1
+
+    if verbose:
+            print('A {} by {} Covering Array with strength {} with entries from a symbol set of size {}'.format(number_rows, number_columns, wstrength, levels))
+
+    if parameters:
+        return (result, (number_rows, wstrength, number_columns, levels))
+    else:
+        return result
+
+
 def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="OA"):
     r"""
     Check that the integer matrix `OA` is an `OA(k,n,t)`.
@@ -26,7 +222,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
 
     - ``OA`` -- the Orthogonal Array to be tested
 
-    - ``k,n,t`` (integers) -- only implemented for `t=2`.
+    - ``k``, ``n``, ``t`` (integers) -- only implemented for `t=2`.
 
     - ``verbose`` (boolean) -- whether to display some information when ``OA``
       is not an orthogonal array `OA(k,n)`.
@@ -36,6 +232,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
 
     EXAMPLES::
 
+        sage: # needs sage.schemes
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: OA = designs.orthogonal_arrays.build(8,9)
         sage: is_orthogonal_array(OA,8,9)
@@ -48,26 +245,27 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
         sage: is_orthogonal_array(OA,8,9,verbose=True)
         Columns 0 and 3 are not orthogonal
         False
-        sage: is_orthogonal_array(OA,8,9,verbose=True,terminology="MOLS")
+        sage: is_orthogonal_array(OA,8,9, verbose=True, terminology="MOLS")
         Squares 0 and 3 are not orthogonal
         False
 
     TESTS::
 
-        sage: is_orthogonal_array(OA,8,9,t=3)
+        sage: # needs sage.schemes
+        sage: is_orthogonal_array(OA,8,9, t=3)
         Traceback (most recent call last):
         ...
         NotImplementedError: only implemented for t=2
-        sage: is_orthogonal_array([[3]*8],8,9,verbose=True)
+        sage: is_orthogonal_array([[3]*8],8,9, verbose=True)
         The number of rows is 1 instead of 9^2=81
         False
-        sage: is_orthogonal_array([[3]*8],8,9,verbose=True,terminology="MOLS")
+        sage: is_orthogonal_array([[3]*8],8,9, verbose=True, terminology="MOLS")
         All squares do not have dimension n^2=9^2
         False
-        sage: is_orthogonal_array([[3]*7],8,9,verbose=True)
+        sage: is_orthogonal_array([[3]*7],8,9, verbose=True)
         Some row does not have length 8
         False
-        sage: is_orthogonal_array([[3]*7],8,9,verbose=True,terminology="MOLS")
+        sage: is_orthogonal_array([[3]*7],8,9, verbose=True, terminology="MOLS")
         The number of squares is not 6
         False
 
@@ -77,7 +275,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
 
         sage: from itertools import product
         sage: n = 0
-        sage: for a in product(product((0,1), repeat=3), repeat=4):
+        sage: for a in product(product((0,1), repeat=3), repeat=4):                     # needs sage.schemes
         ....:     if is_orthogonal_array(a,3,2):
         ....:          n += 1
         sage: n
@@ -152,6 +350,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
     bitset_free(seen)
     return True
 
+
 def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=False):
     r"""
     Checks that input is a Group Divisible Design on `\{0,...,v-1\}`
@@ -183,16 +382,16 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_group_divisible_design
-        sage: TD = designs.transversal_design(4,10)
+        sage: TD = designs.transversal_design(4,10)                                     # needs sage.modules
         sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
-        sage: is_group_divisible_design(groups,TD,40,lambd=1)
+        sage: is_group_divisible_design(groups,TD,40,lambd=1)                           # needs sage.modules
         True
 
     TESTS::
 
-        sage: TD = designs.transversal_design(4,10)
+        sage: TD = designs.transversal_design(4,10)                                     # needs sage.modules
         sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
-        sage: is_group_divisible_design(groups,TD,40,lambd=2,verbose=True)
+        sage: is_group_divisible_design(groups, TD, 40, lambd=2, verbose=True)          # needs sage.modules
         the pair (0,10) has been seen 1 times but lambda=2
         False
         sage: is_group_divisible_design([[1,2],[3,4]],[[1,2]],40,lambd=1,verbose=True)
@@ -214,6 +413,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         a block has size 2 while K=[1]
         False
 
+        sage: # needs sage.schemes
         sage: p = designs.projective_plane(3)
         sage: is_group_divisible_design(None, p.blocks(), 13)
         (True, [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]])
@@ -362,24 +562,24 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
         sage: sts = designs.steiner_triple_system(9)
         sage: is_pairwise_balanced_design(sts,9,[3],1)
         True
-        sage: TD = designs.transversal_design(4,10).blocks()
+        sage: TD = designs.transversal_design(4,10).blocks()                            # needs sage.modules
         sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]
-        sage: is_pairwise_balanced_design(TD+groups,40,[4,10],1,verbose=True)
+        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 1, verbose=True)     # needs sage.modules
         True
 
     TESTS::
 
         sage: from sage.combinat.designs.designs_pyx import is_pairwise_balanced_design
-        sage: is_pairwise_balanced_design(TD+groups,40,[4,10],2,verbose=True)
+        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 2, verbose=True)     # needs sage.modules
         the pair (0,1) has been seen 1 times but lambda=2
         False
-        sage: is_pairwise_balanced_design(TD+groups,40,[10],1,verbose=True)
+        sage: is_pairwise_balanced_design(TD + groups, 40, [10], 1, verbose=True)       # needs sage.modules
         a block has size 4 while K=[10]
         False
-        sage: is_pairwise_balanced_design([[2,2]],40,[2],1,verbose=True)
+        sage: is_pairwise_balanced_design([[2,2]], 40, [2], 1, verbose=True)
         The following block has repeated elements: [2, 2]
         False
-        sage: is_pairwise_balanced_design([["e",2]],40,[2],1,verbose=True)
+        sage: is_pairwise_balanced_design([["e",2]], 40, [2], 1, verbose=True)
         e does not belong to [0,...,39]
         False
     """
@@ -389,6 +589,7 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
                                      K=K,
                                      lambd=lambd,
                                      verbose=verbose)
+
 
 def is_projective_plane(blocks, verbose=False):
     r"""
@@ -415,11 +616,12 @@ def is_projective_plane(blocks, verbose=False):
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_projective_plane
-        sage: p = designs.projective_plane(4)
-        sage: b = p.blocks()
-        sage: is_projective_plane(b, verbose=True)
+        sage: p = designs.projective_plane(4)                                           # needs sage.schemes
+        sage: b = p.blocks()                                                            # needs sage.schemes
+        sage: is_projective_plane(b, verbose=True)                                      # needs sage.schemes
         True
 
+        sage: # needs sage.schemes
         sage: p = designs.projective_plane(2)
         sage: b = p.blocks()
         sage: is_projective_plane(b)
@@ -437,6 +639,7 @@ def is_projective_plane(blocks, verbose=False):
         First block has less than 3 points.
         False
 
+        sage: # needs sage.schemes
         sage: p = designs.projective_plane(2)
         sage: b = p.blocks()
         sage: b[2].append(4)
@@ -460,6 +663,7 @@ def is_projective_plane(blocks, verbose=False):
                                      K=[k+1],
                                      lambd=1,
                                      verbose=verbose)
+
 
 def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
     r"""
@@ -486,9 +690,9 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
 
         sage: from sage.combinat.designs.designs_pyx import is_difference_matrix
         sage: q = 3**3
-        sage: F = GF(q,'x')
-        sage: M = [[x*y for y in F] for x in F]
-        sage: is_difference_matrix(M,F,q,verbose=1)
+        sage: F = GF(q,'x')                                                             # needs sage.rings.finite_rings
+        sage: M = [[x*y for y in F] for x in F]                                         # needs sage.rings.finite_rings
+        sage: is_difference_matrix(M,F,q,verbose=1)                                     # needs sage.rings.finite_rings
         True
 
         sage: B = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -501,6 +705,7 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
 
     Bad input::
 
+        sage: # needs sage.rings.finite_rings
         sage: for R in M: R.append(None)
         sage: is_difference_matrix(M,F,q,verbose=1)
         The matrix has 28 columns but k=27
@@ -518,10 +723,12 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
         sage: for R in M: R[-1] = 1
         sage: M[-1][-1] = 0
         sage: is_difference_matrix(M,F,q,verbose=1)
-        Columns 0 and 26 do not generate all elements of G exactly lambda(=1) times. The element x appeared 0 times as a difference.
+        Columns 0 and 26 do not generate all elements of G exactly lambda(=1) times.
+        The element x appeared 0 times as a difference.
         False
     """
     return is_quasi_difference_matrix(M,G,k,lmbda=lmbda,mu=lmbda,u=0,verbose=verbose)
+
 
 def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
     r"""
@@ -548,7 +755,7 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
 
     - ``G`` -- a group
 
-    - ``k,lmbda,mu,u`` -- integers
+    - ``k``, ``lmbda``, ``mu``, ``u`` -- integers
 
     - ``verbose`` (boolean) -- whether to print some information when the answer
       is ``False``.
@@ -559,9 +766,9 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
 
         sage: from sage.combinat.designs.designs_pyx import is_quasi_difference_matrix
         sage: q = 3**3
-        sage: F = GF(q,'x')
-        sage: M = [[x*y for y in F] for x in F]
-        sage: is_quasi_difference_matrix(M,F,q,1,1,0,verbose=1)
+        sage: F = GF(q,'x')                                                             # needs sage.rings.finite_rings
+        sage: M = [[x*y for y in F] for x in F]                                         # needs sage.rings.finite_rings
+        sage: is_quasi_difference_matrix(M,F,q,1,1,0,verbose=1)                         # needs sage.rings.finite_rings
         True
 
         sage: B = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -597,7 +804,7 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
         Column 1 contains 2 empty entries instead of the expected lambda.u=1.1=1
         False
     """
-    from .difference_family import group_law
+    from sage.combinat.designs.difference_family import group_law
 
     assert k>=2
     assert lmbda >=1
@@ -736,6 +943,7 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
     sig_free(M_c)
     return True
 
+
 # Cached information for OA constructions (see .pxd file for more info)
 
 _OA_cache = <cache_entry *> sig_malloc(2*sizeof(cache_entry))
@@ -752,7 +960,7 @@ cpdef _OA_cache_set(int k,int n,truth_value):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` (integers)
 
     - ``truth_value`` -- one of ``True,False,Unknown``
     """
@@ -787,7 +995,7 @@ cpdef _OA_cache_get(int k,int n):
 
     INPUT:
 
-    ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
     """
     if n>=_OA_cache_size:
         return None
@@ -806,7 +1014,7 @@ cpdef _OA_cache_construction_available(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
     """
     if n>=_OA_cache_size:
         return Unknown

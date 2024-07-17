@@ -34,6 +34,7 @@ class CDFInterpreter(StackInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cdf import *
             sage: interp = CDFInterpreter()
             sage: interp.name
             'cdf'
@@ -84,7 +85,7 @@ class CDFInterpreter(StackInterpreter):
         self.c_header = ri(0,"""
             #include <stdlib.h>
             #include <complex.h>
-            #include "sage/ext/interpreters/wrapper_cdf.h"
+            #include "wrapper_cdf.h"
 
             /* On Solaris, we need to define _Imaginary_I when compiling with GCC,
              * otherwise the constant I doesn't work. The definition below is based
@@ -167,7 +168,7 @@ class CDFInterpreter(StackInterpreter):
                 cdef double cimag(double_complex)
                 cdef double_complex _Complex_I
 
-            cdef inline double_complex CDE_to_dz(zz):
+            cdef inline double_complex CDE_to_dz(zz) noexcept:
                 cdef ComplexDoubleElement z = <ComplexDoubleElement>(zz if isinstance(zz, ComplexDoubleElement) else CDF(zz))
                 return GSL_REAL(z._complex) + _Complex_I * GSL_IMAG(z._complex)
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Functions to construct widgets, based on the old SageNB interface.
 
@@ -29,12 +29,12 @@ EXAMPLES::
 # ****************************************************************************
 
 from ipywidgets.widgets import (IntSlider, IntRangeSlider, FloatSlider,
-        FloatRangeSlider, SelectionSlider,
-        Checkbox, ToggleButtons, Dropdown)
+                                FloatRangeSlider, SelectionSlider,
+                                Checkbox, ToggleButtons, Dropdown)
 from .widgets import (TransformText, TransformTextarea,
-        TransformIntSlider, TransformIntRangeSlider,
-        TransformFloatSlider, TransformFloatRangeSlider,
-        EvalText, EvalTextarea, SageColorPicker, Grid)
+                      TransformIntSlider, TransformIntRangeSlider,
+                      TransformFloatSlider, TransformFloatRangeSlider,
+                      EvalText, EvalTextarea, SageColorPicker, Grid)
 from ipywidgets.widgets.interaction import _get_min_max_value
 from collections.abc import Iterable, Sequence
 from numbers import Integral, Rational, Real
@@ -43,9 +43,9 @@ from sage.structure.all import parent
 from sage.arith.srange import srange
 import sage.rings.abc
 
-Color = None
-
 from .widgets import HTMLText as text_control
+
+Color = None
 
 
 def input_box(default=None, label=None, type=None, width=80, height=1):
@@ -153,7 +153,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
     if label is not None:
         kwds["description"] = label
     w = cls(**kwds)
-    w.layout.max_width = str(width+1) + "em"
+    w.layout.max_width = str(width + 1) + "em"
     return w
 
 

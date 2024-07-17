@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.groups sage.modules
 """
 Weyl Groups
 
@@ -16,14 +17,14 @@ The Cayley graph of the Weyl Group of type ['A', 3]::
     sage: w = WeylGroup(['A',3])
     sage: d = w.cayley_graph(); d
     Digraph on 24 vertices
-    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)
+    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)               # needs sage.plot
 
 The Cayley graph of the Weyl Group of type ['D', 4]::
 
     sage: w = WeylGroup(['D',4])
     sage: d = w.cayley_graph(); d
     Digraph on 192 vertices
-    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03) #long time (less than one minute)
+    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)       # long time (less than one minute), needs sage.plot
 
 .. TODO::
 
@@ -44,7 +45,7 @@ from sage.groups.matrix_gps.group_element_gap import MatrixGroupElement_gap
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.interfaces.gap import gap
+from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
@@ -76,8 +77,9 @@ def WeylGroup(x, prefix=None, implementation='matrix'):
       to products of simple reflections
 
     - ``implementation`` -- one of the following:
-      * ``'matrix'`` - as matrices acting on a root system
-      * ``"permutation"`` - as a permutation group acting on the roots
+
+      * ``'matrix'`` -- as matrices acting on a root system
+      * ``"permutation"`` -- as a permutation group acting on the roots
 
     EXAMPLES:
 
@@ -250,7 +252,6 @@ class WeylGroup_gens(UniqueRepresentation,
         # FinitelyGeneratedMatrixGroup_gap takes plain matrices as input
         gens_matrix = [self.morphism_matrix(self.domain().simple_reflection(i))
                        for i in self.index_set()]
-        from sage.libs.gap.libgap import libgap
         if not gens_matrix:
             libgap_group = libgap.Group([], matrix(ZZ, 1, 1, [1]))
         else:
@@ -362,7 +363,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
         .. NOTE::
 
-            Prior to :trac:`20027`, the reflections were the keys
+            Prior to :issue:`20027`, the reflections were the keys
             of the family and the values were the positive roots.
 
         EXAMPLES::
@@ -433,8 +434,8 @@ class WeylGroup_gens(UniqueRepresentation,
             X.4     3 -1  1  . -1
             X.5     1  1  1  1  1
         """
-        gens_str = ', '.join(str(g.gap()) for g in self.gens())
-        ctbl = gap('CharacterTable(Group({0}))'.format(gens_str))
+        G = libgap.Group([libgap(g) for g in self.gens()])
+        ctbl = libgap.CharacterTable(G)
         return ctbl.Display()
 
     @cached_method
@@ -582,7 +583,7 @@ class ClassicalWeylSubgroup(WeylGroup_gens):
         sage: G
         Parabolic Subgroup of the Weyl Group of type ['A', 3, 1] (as a matrix group acting on the root space)
         sage: G.category()
-        Category of finite irreducible weyl groups
+        Category of finite irreducible Weyl groups
         sage: G.cardinality()
         24
         sage: G.index_set()
@@ -1054,9 +1055,9 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
         - ``algorithm`` (default: ``'breadth'``) -- must be one of
           the following:
 
-          * ``'breadth'`` - iterate over in a linear extension of the
+          * ``'breadth'`` -- iterate over in a linear extension of the
             weak order
-          * ``'depth'`` - iterate by a depth-first-search
+          * ``'depth'`` -- iterate by a depth-first-search
 
         - ``tracking_words`` (default: ``True``) -- whether or not to keep
           track of the reduced words and store them in ``_reduced_word``

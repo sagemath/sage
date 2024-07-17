@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Subfield subcode
 
@@ -38,7 +38,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     - ``subfield`` -- the base field of ``self``.
 
-    - ``embedding`` -- (default: ``None``) an homomorphism from ``subfield`` to
+    - ``embedding`` -- (default: ``None``) a homomorphism from ``subfield`` to
       ``original_code``'s base field. If ``None`` is provided, it will default
       to the first homomorphism of the list of homomorphisms Sage can build.
 
@@ -254,10 +254,7 @@ class SubfieldSubcode(AbstractLinearCode):
                     H[i*m+k, j] = h_vec[k]
 
         H = H.echelon_form()
-        delete = []
-        for i in range(H.nrows()):
-            if H.row(i) == 0:
-                delete.append(i)
+        delete = [i for i in range(H.nrows()) if H.row(i) == 0]
         M = H.delete_rows(delete)
         M.set_immutable()
         return M
@@ -418,6 +415,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
             4
         """
         return self.original_decoder().decoding_radius(**kwargs)
+
 
 ####################### registration ###############################
 

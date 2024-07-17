@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat
 """
 Lie Algebra Elements
 
@@ -17,7 +17,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy
 from cpython.object cimport Py_EQ, Py_NE, Py_GT, Py_GE
 
 from sage.misc.repr import repr_lincomb
@@ -119,9 +118,11 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
             return s
         names = self.parent().variable_names()
         if base_map is None:
-            base_map = lambda x: x
+            def base_map(x):
+                return x
+
         return codomain.sum(base_map(c) * t._im_gens_(codomain, im_gens, names)
-                            for t, c in self._monomial_coefficients.iteritems())
+                            for t, c in self._monomial_coefficients.items())
 
     cpdef lift(self):
         """
@@ -155,10 +156,6 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
             PBW[-1] + PBW[0] - 3*PBW[1]
         """
         UEA = self._parent.universal_enveloping_algebra()
-        try:
-            gen_dict = UEA.algebra_generators()
-        except (TypeError, AttributeError):
-            gen_dict = UEA.gens_dict()
         s = UEA.zero()
         if not self:
             return s
@@ -166,10 +163,15 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
         #   does not match the generators index set of the UEA.
         if hasattr(self._parent, '_UEA_names_map'):
             names_map = self._parent._UEA_names_map
-            for t, c in self._monomial_coefficients.iteritems():
+            gen_dict = UEA.gens_dict()
+            for t, c in self._monomial_coefficients.items():
                 s += c * gen_dict[names_map[t]]
         else:
-            for t, c in self._monomial_coefficients.iteritems():
+            try:
+                gen_dict = UEA.algebra_generators()
+            except (TypeError, AttributeError):
+                gen_dict = UEA.gens_dict()
+            for t, c in self._monomial_coefficients.items():
                 s += c * gen_dict[t]
         return s
 
@@ -459,7 +461,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
              ((1,3,2), 1), ((1,3), 1)]
         """
         cdef dict d = self.value.monomial_coefficients(copy=False)
-        yield from d.iteritems()
+        yield from d.items()
 
 
 # TODO: Also used for vectors, find a better name
@@ -541,7 +543,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         x_lift = (<LieSubalgebraElementWrapper> x).value
         return type(self)(self._parent, self.value._bracket_(x_lift))
 
-    def to_vector(self, order=None, sparse=False):
+    def _vector_(self, sparse=False, order=None):
         r"""
         Return the vector in ``g.module()`` corresponding to the
         element ``self`` of ``g`` (where ``g`` is the parent of ``self``).
@@ -571,6 +573,8 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         """
         return self._parent.module()(self.value.to_vector(sparse=sparse))
 
+    to_vector = _vector_
+
     cpdef dict monomial_coefficients(self, bint copy=True):
         r"""
         Return a dictionary whose keys are indices of basis elements
@@ -598,7 +602,8 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         if self._monomial_coefficients is None:
             sm = self.parent().module()
             v = sm.coordinate_vector(self.to_vector())
-            self._monomial_coefficients = {k: v[k] for k in range(len(v)) if v[k]}
+            self._monomial_coefficients = {k: v[k] for k in range(len(v))
+                                           if v[k]}
         if copy:
             return dict(self._monomial_coefficients)
         return self._monomial_coefficients
@@ -830,7 +835,22 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             if v != zero:
                 yield (I[i], v)
 
-    cpdef to_vector(self, bint sparse=False):
+    cpdef _vector_(self, bint sparse=False, order=None):
+        """
+        Return ``self`` as a vector.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: a = x + 3*y - z/5
+            sage: vector(a)
+            (1, 3, -1/5)
+        """
+        if sparse:
+            return self.value.sparse_vector()
+        return self.value
+
+    cpdef to_vector(self, bint sparse=False, order=None):
         """
         Return ``self`` as a vector.
 
@@ -841,9 +861,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             sage: a.to_vector()
             (1, 3, -1/2)
         """
-        if sparse:
-            return self.value.sparse_vector()
-        return self.value
+        return self._vector_(sparse=sparse)
 
     def lift(self):
         """
@@ -861,7 +879,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
         """
         UEA = self._parent.universal_enveloping_algebra()
         gens = UEA.gens()
-        return UEA.sum(c * gens[i] for i, c in self.value.iteritems())
+        return UEA.sum(c * gens[i] for i, c in self.value.items())
 
     cpdef dict monomial_coefficients(self, bint copy=True):
         """
@@ -878,7 +896,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             {'x': 2, 'z': -3/2}
         """
         I = self._parent._indices
-        return {I[i]: v for i, v in self.value.iteritems()}
+        return {I[i]: v for i, v in self.value.items()}
 
     def __getitem__(self, i):
         """
@@ -1066,7 +1084,8 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             ( alpha[1] - alphacheck[1] + 2·-alpha[1] )⊗t⁰ + ( -alpha[1] )⊗t¹ + 3⋅c + -2⋅d
         """
         from sage.typeset.unicode_art import unicode_art, unicode_superscript
-        return self._repr_generic(unicode_art, unicode_art, lambda t: "t" + unicode_superscript(t),
+        return self._repr_generic(unicode_art, unicode_art,
+                                  lambda t: "t" + unicode_superscript(t),
                                   unicode_art('⋅'), unicode_art('⊗'))
 
     cpdef dict t_dict(self):
@@ -1229,9 +1248,9 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         return type(self)(self._parent, negate(self._t_dict),
                           -self._c_coeff, -self._d_coeff)
 
-    cpdef _acted_upon_(self, x, bint self_on_left):
+    cpdef _acted_upon_(self, scalar, bint self_on_left):
         """
-        Return ``self`` acted upon by ``x``.
+        Return ``self`` acted upon by ``scalar``.
 
         EXAMPLES::
 
@@ -1243,9 +1262,21 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             sage: -2 * x
             (-2*E[alpha[1]])#t^0 + (-2*h1)#t^-1 + -6*c + 4/5*d
         """
-        return type(self)(self._parent, scal(x, self._t_dict, self_on_left),
-                          x * self._c_coeff,
-                          x * self._d_coeff)
+        # This was copied and IDK if it still applies (TCS):
+        # With the current design, the coercion model does not have
+        # enough information to detect apriori that this method only
+        # accepts scalars; so it tries on some elements(), and we need
+        # to make sure to report an error.
+        scalar_parent = parent(scalar)
+        if scalar_parent != self._parent.base_ring():
+            # Temporary needed by coercion (see Polynomial/FractionField tests).
+            if self._parent.base_ring().has_coerce_map_from(scalar_parent):
+                scalar = self._parent.base_ring()(scalar)
+            else:
+                return None
+        return type(self)(self._parent, scal(scalar, self._t_dict, self_on_left),
+                          scalar * self._c_coeff,
+                          scalar * self._d_coeff)
 
     cpdef monomial_coefficients(self, bint copy=True):
         """
@@ -1269,7 +1300,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         """
         cdef dict d = {}
         for t, g in self._t_dict.items():
-            for k, c in g.monomial_coefficients(copy=False).iteritems():
+            for k, c in g.monomial_coefficients(copy=False).items():
                 d[k, t] = c
         if self._c_coeff:
             d['c'] = self._c_coeff
@@ -1437,7 +1468,7 @@ class FreeLieAlgebraElement(LieAlgebraElement):
         if not self:
             return s
         gen_dict = UEA.gens_dict()
-        for t, c in self._monomial_coefficients.iteritems():
+        for t, c in self._monomial_coefficients.items():
             s += c * t.lift(gen_dict)
         return s
 
@@ -1446,6 +1477,7 @@ class FreeLieAlgebraElement(LieAlgebraElement):
         Return ``self`` as a list of pairs ``(m, c)`` where ``m`` is a
         basis key (i.e., a key of one of the basis elements)
         and ``c`` is its coefficient.
+
         This list is sorted from highest to lowest degree.
 
         EXAMPLES::
@@ -1455,8 +1487,10 @@ class FreeLieAlgebraElement(LieAlgebraElement):
             sage: elt.list()
             [([x, y], -1), (x, 1)]
         """
-        k = lambda x: (-x[0]._grade, x[0]) if isinstance(x[0], GradedLieBracket) else (-1, x[0])
-        return sorted((<dict>self._monomial_coefficients).iteritems(), key=k)
+        def k(x):
+            y = x[0]
+            return (-y._grade, y) if isinstance(y, GradedLieBracket) else (-1, y)
+        return sorted((<dict>self._monomial_coefficients).items(), key=k)
 
     def _bracket_(self, y):
         """
@@ -1479,8 +1513,8 @@ class FreeLieAlgebraElement(LieAlgebraElement):
 
         cdef dict d = {}
         zero = self.base_ring().zero()
-        for ml, cl in self._monomial_coefficients.iteritems():  # The left monomials
-            for mr, cr in y._monomial_coefficients.iteritems():  # The right monomials
+        for ml, cl in self._monomial_coefficients.items():  # The left monomials
+            for mr, cr in y._monomial_coefficients.items():  # The right monomials
                 if ml == mr:
                     continue
                 if ml < mr:  # Make sure ml < mr
@@ -1488,7 +1522,7 @@ class FreeLieAlgebraElement(LieAlgebraElement):
                 else:
                     a, b = mr, ml
                     cr = -cr
-                for b_elt, coeff in self.parent()._rewrite_bracket(a, b).iteritems():
+                for b_elt, coeff in self.parent()._rewrite_bracket(a, b).items():
                     d[b_elt] = d.get(b_elt, zero) + cl * cr * coeff
                     if d[b_elt] == zero:
                         del d[b_elt]
@@ -1654,6 +1688,25 @@ cdef class LieGenerator(LieObject):
             ('x',)
         """
         return self._word
+
+    cpdef lift(self, dict UEA_gens_dict):
+        """
+        Lift ``self`` to the universal enveloping algebra.
+
+        ``UEA_gens_dict`` should be the dictionary for the
+        generators of the universal enveloping algebra.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, 'x,y,z')
+            sage: Lyn = L.Lyndon()
+            sage: x,y,z = Lyn.gens()
+            sage: x.lift()
+            x
+            sage: x.lift().parent()
+            Free Algebra on 3 generators (x, y, z) over Rational Field
+        """
+        return UEA_gens_dict[self._name]
 
 cdef class LieBracket(LieObject):
     """

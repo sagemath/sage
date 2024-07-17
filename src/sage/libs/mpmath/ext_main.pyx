@@ -14,13 +14,12 @@ context class, and related utilities.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cpython.int cimport *
 from cpython.long cimport *
 from cpython.float cimport *
 from cpython.complex cimport *
 from cpython.number cimport *
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_check
 
 from sage.ext.stdsage cimport PY_NEW
 
@@ -39,7 +38,7 @@ DEF S_INF = 3
 DEF S_NINF = 4
 DEF S_NAN = 5
 
-from .ext_impl cimport *
+from sage.libs.mpmath.ext_impl cimport *
 
 import mpmath.rational as rationallib
 import mpmath.libmp as libmp
@@ -176,7 +175,7 @@ cdef int MPF_set_any(MPF *re, MPF *im, x, MPopts opts, bint str_tuple_ok) except
             elif len(x) == 4:
                 MPF_set_tuple(re, x)
                 return 1
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             try:
                 st = libmp.from_str(x, opts.prec,
                     rndmode_to_python(opts.rounding))
@@ -287,7 +286,6 @@ cdef binop(int op, x, y, MPopts opts):
                 MPF_mul(&tmp1,  &xim,   &yre,  opts_exact)
                 MPF_add(&rc.im, &rc.im, &tmp1, opts)
             return rc
-
 
     elif op == OP_DIV:
         if typx == 1 and typy == 1:
@@ -708,7 +706,6 @@ cdef class Context:
             False
             sage: isint(3+2j, gaussian=True)
             True
-
         """
         cdef MPF v
         cdef MPF w
@@ -746,6 +743,9 @@ cdef class Context:
         faster and produces more accurate results than the builtin
         Python function :func:`sum`.
 
+        With ``squared=True`` each term is squared, and with ``absolute=True``
+        the absolute value of each term is used.
+
         TESTS ::
 
             sage: from mpmath import mp, fsum
@@ -753,8 +753,13 @@ cdef class Context:
             sage: fsum([1, 2, 0.5, 7])
             mpf('10.5')
 
-        With squared=True each term is squared, and with absolute=True
-        the absolute value of each term is used.
+        Check that the regression from `mpmath/issues/723 <https://github.com/mpmath/mpmath/issues/723>`__
+        has been fixed::
+
+            sage: from mpmath import *
+            sage: mp.dps=16
+            sage: zeta(-0.01 + 1000j)
+            mpc(real='-8.9714595...', imag='8.7321793...')
         """
         cdef MPF sre, sim, tre, tim, tmp
         cdef mpf rr
@@ -765,8 +770,8 @@ cdef class Context:
         workopts.prec = workopts.prec * 2 + 50
         workopts.rounding = ROUND_D
         unknown = global_context.zero
-        sig_on()
-        try:  # Way down, there is a ``finally`` with sig_off()
+        try:
+            sig_check()
             MPF_init(&sre)
             MPF_init(&sim)
             MPF_init(&tre)
@@ -849,8 +854,8 @@ cdef class Context:
                 MPF_clear(&sre)
                 MPF_clear(&sim)
                 return +unknown
-        finally:
-            sig_off()
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt('Ctrl-C pressed while running fsum')
 
     def fdot(ctx, A, B=None, bint conjugate=False):
         r"""
@@ -1007,7 +1012,7 @@ cdef class Context:
             if not p % q:
                 return p // q, 'Z'
             return rationallib.mpq((p,q)), 'Q'
-        if isinstance(x, basestring) and '/' in x:
+        if isinstance(x, str) and '/' in x:
             p, q = x.split('/')
             p = int(p)
             q = int(q)
@@ -1172,7 +1177,7 @@ cdef class Context:
         f_wrapped.__doc__ = doc
         setattr(cls, name, f_wrapped)
 
-    cdef MPopts _fun_get_opts(ctx, kwargs):
+    cdef MPopts _fun_get_opts(ctx, kwargs) noexcept:
         """
         Helper function that extracts precision and rounding information
         from kwargs, or returns the global working precision and rounding
@@ -1479,7 +1484,6 @@ cdef class wrapped_libmp_function:
         #    if self.mpi_f:
         #        return global_context.make_mpi(self.mpi_f(x._mpi_, prec))
         raise NotImplementedError("%s of a %s" % (self.name, type(x)))
-
 
 
 cdef class wrapped_specfun:
@@ -2146,7 +2150,6 @@ cdef class mpf(mpf_base):
         return binop(OP_RICHCMP+op, self, other, global_opts)
 
 
-
 cdef class constant(mpf_base):
     """
     Represents a mathematical constant with dynamic precision.
@@ -2502,7 +2505,7 @@ cdef class mpc(mpnumber):
 
         TESTS:
 
-        Check that :trac:`31676` is fixed::
+        Check that :issue:`31676` is fixed::
 
             sage: from mpmath import mpc
             sage: hash(mpc(1, -1)) == hash(mpc(-1, -1))  # should not return OverflowError: Python int too large to convert to C ssize_t

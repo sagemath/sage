@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 r"""
 Dense integer matrices using a NumPy backend
 

@@ -1,7 +1,7 @@
 """
 Dancing links C++ wrapper
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,13 +13,14 @@ Dancing links C++ wrapper
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # OneExactCover and AllExactCovers are almost exact copies of the
 # functions with the same name in sage/combinat/dlx.py by Tom Boothby.
 
 from .dancing_links import dlx_solver
+
 
 def DLXCPP(rows):
     """
@@ -85,6 +86,7 @@ def DLXCPP(rows):
     while x.search():
         yield x.get_solution()
 
+
 def AllExactCovers(M):
     """
     Solves the exact cover problem on the matrix M (treated as a dense
@@ -92,14 +94,14 @@ def AllExactCovers(M):
 
     EXAMPLES: No exact covers::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])
-        sage: [cover for cover in AllExactCovers(M)]
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])                                     # needs sage.modules
+        sage: [cover for cover in AllExactCovers(M)]                                    # needs sage.modules
         []
 
     Two exact covers::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]])
-        sage: [cover for cover in AllExactCovers(M)]
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]])                             # needs sage.modules
+        sage: [cover for cover in AllExactCovers(M)]                                    # needs sage.modules
         [[(1, 1, 0), (0, 0, 1)], [(1, 0, 1), (0, 1, 0)]]
     """
     rows = []
@@ -112,6 +114,7 @@ def AllExactCovers(M):
     for s in DLXCPP(rows):
         yield [M.row(i) for i in s]
 
+
 def OneExactCover(M):
     """
     Solves the exact cover problem on the matrix M (treated as a dense
@@ -119,10 +122,11 @@ def OneExactCover(M):
 
     EXAMPLES::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  #no exact covers
+        sage: # needs sage.modules
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers
         sage: print(OneExactCover(M))
         None
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) #two exact covers
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) # two exact covers
         sage: OneExactCover(M)
         [(1, 1, 0), (0, 0, 1)]
     """

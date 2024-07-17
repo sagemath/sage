@@ -1,5 +1,5 @@
 from sage.data_structures.bitset cimport bitset_t
-from .basis_matroid cimport BasisMatroid
+from sage.matroids.basis_matroid cimport BasisMatroid
 
 cdef class CutNode:
     cdef LinearSubclasses _MC
@@ -7,8 +7,8 @@ cdef class CutNode:
     cdef long _ml
 
     cdef CutNode copy(self)
-    cdef bint insert_plane(self, long p0)
-    cdef bint remove_plane(self, long p0)
+    cdef bint insert_plane(self, long p0) noexcept
+    cdef bint remove_plane(self, long p0) noexcept
     cdef select_plane(self)
 
     cdef list planes(self)

@@ -13,9 +13,8 @@
 #
 # * Print a list of all available packages
 #
-#   $ sage-package list | sort
+#   $ sage-package list
 #   4ti2
-#   arb
 #   autotools
 #   [...]
 #   zlib

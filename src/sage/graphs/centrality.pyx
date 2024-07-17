@@ -99,11 +99,12 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
 
     Compare with NetworkX::
 
-        sage: import networkx                                                           # optional - networkx
-        sage: g = graphs.RandomGNP(100, .2)                                             # optional - networkx
-        sage: nw = networkx.betweenness_centrality(g.networkx_graph())                  # optional - networkx
-        sage: sg = centrality_betweenness(g)                                            # optional - networkx
-        sage: max(abs(nw[x] - sg[x]) for x in g)  # abs tol 1e-10                       # optional - networkx
+        sage: # needs networkx
+        sage: import networkx
+        sage: g = graphs.RandomGNP(100, .2)
+        sage: nw = networkx.betweenness_centrality(g.networkx_graph())
+        sage: sg = centrality_betweenness(g)
+        sage: max(abs(nw[x] - sg[x]) for x in g)  # abs tol 1e-10
         0
 
     Stupid cases::
@@ -118,8 +119,7 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
     """
     if exact:
         return centrality_betweenness_C(G, <mpq_t> 0, normalize=normalize)
-    else:
-        return centrality_betweenness_C(G, <double>0, normalize=normalize)
+    return centrality_betweenness_C(G, <double>0, normalize=normalize)
 
 
 @cython.cdivision(True)
@@ -179,7 +179,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
         mpq_init(mpq_tmp)
 
     try:
-        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
         init_reverse(bfs_dag, g)
 
         queue = <uint32_t*> check_allocarray(n, sizeof(uint32_t))
@@ -327,7 +327,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
     return {vv: betweenness_list[i] for i, vv in enumerate(int_to_vertex)}
 
 
-cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* reachU):
+cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* reachU) noexcept:
     r"""
     For each vertex ``v``, bounds the number of vertices reachable from ``v``.
 
@@ -460,7 +460,7 @@ cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* re
         reachU[i] = min(<int>reachU_scc[scc[i]], g.n)
 
 
-cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
+cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable) noexcept:
     r"""
     For each vertex ``v``, compute the number of vertices reachable from ``v``.
 
@@ -513,7 +513,7 @@ cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
             reachable[v] = len(currentcc)
 
 
-cdef void _sort_vertices_degree(short_digraph g, int* sorted_verts):
+cdef void _sort_vertices_degree(short_digraph g, int* sorted_verts) noexcept:
     r"""
     Sort vertices in decreasing order of degree.
 
@@ -637,34 +637,36 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
 
     The result is correct::
 
+        sage: # needs networkx
         sage: from sage.graphs.centrality import centrality_closeness_top_k
         sage: import random
         sage: n = 20
         sage: m = random.randint(1, n * (n - 1) / 2)
         sage: k = random.randint(1, n)
-        sage: g = graphs.RandomGNM(n, m)                                                # optional - networkx
-        sage: topk = centrality_closeness_top_k(g, k)                                   # optional - networkx
-        sage: centr = g.centrality_closeness(algorithm='BFS')                           # optional - networkx
-        sage: sorted_centr = sorted(centr.values(), reverse=True)                       # optional - networkx
-        sage: len(topk) == min(k, len(sorted_centr))                                    # optional - networkx
+        sage: g = graphs.RandomGNM(n, m)
+        sage: topk = centrality_closeness_top_k(g, k)
+        sage: centr = g.centrality_closeness(algorithm='BFS')
+        sage: sorted_centr = sorted(centr.values(), reverse=True)
+        sage: len(topk) == min(k, len(sorted_centr))
         True
-        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))  # optional - networkx
+        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))
         True
 
     Directed case::
 
+        sage: # needs networkx
         sage: from sage.graphs.centrality import centrality_closeness_top_k
         sage: import random
         sage: n = 20
         sage: m = random.randint(1, n * (n - 1))
         sage: k = random.randint(1, n)
-        sage: g = digraphs.RandomDirectedGNM(n, m)                                      # optional - networkx
-        sage: topk = centrality_closeness_top_k(g, k)                                   # optional - networkx
-        sage: centr = g.centrality_closeness(algorithm='BFS')                           # optional - networkx
-        sage: sorted_centr = sorted(centr.values(), reverse=True)                       # optional - networkx
-        sage: len(topk) == min(k, len(sorted_centr))                                    # optional - networkx
+        sage: g = digraphs.RandomDirectedGNM(n, m)
+        sage: topk = centrality_closeness_top_k(g, k)
+        sage: centr = g.centrality_closeness(algorithm='BFS')
+        sage: sorted_centr = sorted(centr.values(), reverse=True)
+        sage: len(topk) == min(k, len(sorted_centr))
         True
-        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))  # optional - networkx
+        sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))
         True
     """
     cdef list res
@@ -688,13 +690,13 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef list V = list(G)
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=V)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=V, sort_neighbors=False)
     cdef int n = sd.n
     cdef int* reachL = <int*> mem.malloc(n * sizeof(int))
     cdef int* reachU
     cdef int* pred = <int*> mem.calloc(n, sizeof(int))
     cdef double *farness = <double*> mem.malloc(n * sizeof(double))
-    cdef int d, nd, x, v, w
+    cdef int d, nd, x, v
     cdef long f, gamma
     cdef int* queue = <int*> mem.malloc(n * sizeof(int))
     cdef double tildefL, tildefU
@@ -941,7 +943,7 @@ def centrality_closeness_random_k(G, int k=1):
         # Copying the whole graph as a static_sparse_graph for fast shortest
         # paths computation in unweighted graph. This data structure is well
         # documented in module sage.graphs.base.static_sparse_graph
-        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
         distance = <uint32_t*> mem.malloc(n * sizeof(uint32_t))
         waiting_list = <uint32_t*> mem.malloc(n * sizeof(uint32_t))
         bitset_init(seen, n)

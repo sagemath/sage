@@ -72,6 +72,7 @@ Test hashing::
 
 from libc.string cimport strcpy, strlen
 
+from sage.categories.rings import Rings
 from sage.cpython.string cimport char_to_str, str_to_bytes
 
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
@@ -104,17 +105,16 @@ cimport sage.structure.element
 
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.rational cimport Rational
-from .matrix cimport Matrix
-from .args cimport SparseEntry, MatrixArgs_init
-from .matrix_integer_dense cimport Matrix_integer_dense, _lift_crt
+from sage.matrix.matrix cimport Matrix
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense, _lift_crt
 from sage.structure.element cimport Element, Vector
 from sage.rings.integer cimport Integer
-from sage.rings.ring import is_Ring
-from sage.rings.integer_ring import ZZ, is_IntegerRing
+from sage.rings.integer_ring import ZZ, IntegerRing_class
 import sage.rings.abc
 from sage.rings.rational_field import QQ
 
-from .matrix2 import decomp_seq
+from sage.matrix.matrix2 import decomp_seq
 from sage.misc.verbose import verbose
 
 # ########################################################
@@ -308,7 +308,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``base`` - an optional integer (default is ``10``)
+        - ``base`` -- an optional integer (default is ``10``)
 
         EXAMPLES::
 
@@ -661,7 +661,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'iml'``: uses IML library
 
-        -  ``check_invertible`` - only used when ``algorithm=iml``. Whether to
+        -  ``check_invertible`` -- only used when ``algorithm=iml``. Whether to
            check that matrix is invertible
 
         EXAMPLES::
@@ -771,7 +771,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'generic'``: calls the generic Sage implementation
 
-        -  ``proof`` - bool or None; if None use
+        -  ``proof`` -- bool or None; if None use
            proof.linear_algebra(); only relevant for the padic algorithm.
 
         .. NOTE::
@@ -1005,7 +1005,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         TESTS:
 
         The cached polynomial should be independent of the ``var``
-        argument (:trac:`12292`). We check (indirectly) that the
+        argument (:issue:`12292`). We check (indirectly) that the
         second call uses the cached value by noting that its result is
         not cached::
 
@@ -1057,9 +1057,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``var`` - (optional) the variable name as a string (default is 'x')
+        -  ``var`` -- (optional) the variable name as a string (default is 'x')
 
-        -  ``algorithm`` - an optional specification of an algorithm. It can
+        -  ``algorithm`` -- an optional specification of an algorithm. It can
            be one of
 
            - ``None``: (default) will use linbox
@@ -1348,7 +1348,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
+        - ``kwds`` -- these are provided for consistency with other versions
           of this method.  Here they are ignored as there is no optional
           behavior available.
 
@@ -1406,7 +1406,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         tm = verbose("computing right kernel matrix over the rationals for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
         # _rational_kernel_flint() gets the zero-row case wrong, fix it there
         if self.nrows()==0:
-            from .constructor import identity_matrix
+            from sage.matrix.constructor import identity_matrix
             K = identity_matrix(QQ, self.ncols())
         else:
             A, _ = self._clear_denom()
@@ -1459,13 +1459,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [-+---]
             [0|1 2]
         """
-        if not is_Ring(R):
+        if R not in Rings():
             raise TypeError("R must be a ring")
         if R == self._base_ring:
             if self._is_immutable:
                 return self
             return self.__copy__()
-        if is_IntegerRing(R):
+        if isinstance(R, IntegerRing_class):
             A, d = self._clear_denom()
             if not d.is_one():
                 raise TypeError("matrix has denominators so can't change to ZZ")
@@ -1473,7 +1473,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
                 A.subdivide(self.subdivisions())
             return A
 
-        from .matrix_modn_dense_double import MAX_MODULUS
+        from sage.matrix.matrix_modn_dense_double import MAX_MODULUS
         if isinstance(R, sage.rings.abc.IntegerModRing) and R.order() < MAX_MODULUS:
             b = R.order()
             A, d = self._clear_denom()
@@ -1513,10 +1513,10 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'classical'``: just clear each column using Gauss elimination.
 
-        -  ``height_guess``, ``**kwds`` - all passed to the
+        -  ``height_guess``, ``**kwds`` -- all passed to the
            multimodular algorithm; ignored by other algorithms.
 
-        -  ``proof`` - bool or None (default: None, see
+        -  ``proof`` -- bool or None (default: None, see
            proof.linear_algebra or sage.structure.proof). Passed to the
            multimodular algorithm. Note that the Sage global default is
            ``proof=True``.
@@ -1548,7 +1548,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         TESTS:
 
         Echelonizing a matrix in place throws away the cache of
-        the old matrix (:trac:`14506`)::
+        the old matrix (:issue:`14506`)::
 
             sage: for algo in ["flint", "padic", "multimodular", "classical"]:
             ....:      a = Matrix(QQ, [[1,2],[3,4]])
@@ -1617,7 +1617,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [      0       0       0       0]
 
         The result is an immutable matrix, so if you want to modify the result
-        then you need to make a copy.  This checks that :trac:`10543` is
+        then you need to make a copy.  This checks that :issue:`10543` is
         fixed.::
 
             sage: A = matrix(QQ, 2, range(6))
@@ -1778,9 +1778,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``height_guess`` - integer or None
+        -  ``height_guess`` -- integer or None
 
-        -  ``proof`` - boolean (default: None, see
+        -  ``proof`` -- boolean (default: None, see
            proof.linear_algebra or sage.structure.proof) Note that the Sage
            global default is proof=True.
 
@@ -1803,7 +1803,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [   0    0    1    1    3    0]
             [   0    0    0    0    0    1]
         """
-        from .misc import matrix_rational_echelon_form_multimodular
+        from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         E, pivots = matrix_rational_echelon_form_multimodular(self, height_guess, proof=proof)
         self.clear_cache()
         fmpq_mat_swap(self._matrix, (<Matrix_rational_dense>E)._matrix)
@@ -1866,23 +1866,23 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``is_diagonalizable`` - ignored
+        -  ``is_diagonalizable`` -- ignored
 
-        -  ``dual`` - whether to also return decompositions for
+        -  ``dual`` -- whether to also return decompositions for
            the dual
 
-        -  ``algorithm`` - an optional specification of an algorithm
+        -  ``algorithm`` -- an optional specification of an algorithm
 
-           - ``None`` - (default) use default algorithm for computing Echelon
+           - ``None`` -- (default) use default algorithm for computing Echelon
              forms
 
            - 'multimodular': much better if the answers
              factors have small height
 
-        -  ``height_guess`` - positive integer; only used by
+        -  ``height_guess`` -- positive integer; only used by
            the multimodular algorithm
 
-        -  ``proof`` - bool or None (default: None, see
+        -  ``proof`` -- bool or None (default: None, see
            proof.linear_algebra or sage.structure.proof); only used by the
            multimodular algorithm. Note that the Sage global default is
            proof=True.
@@ -1939,16 +1939,16 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``self`` - a square matrix over the rational
+        -  ``self`` -- a square matrix over the rational
            numbers
 
-        -  ``echelon_algorithm`` - an optional algorithm to be passed to the
+        -  ``echelon_algorithm`` -- an optional algorithm to be passed to the
            method ``echelon_form``
 
-        -  ``'multimodular'`` - use this if the answers have
+        -  ``'multimodular'`` -- use this if the answers have
            small height
 
-        -  ``**kwds`` - passed on to echelon function.
+        -  ``**kwds`` -- passed on to echelon function.
 
         .. NOTE::
 
@@ -1963,7 +1963,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         OUTPUT:
 
 
-        -  ``Sequence`` - list of tuples (V,t), where V is a
+        -  ``Sequence`` -- list of tuples (V,t), where V is a
            vector spaces and t is True if and only if the charpoly of self on
            V is irreducible. The tuples are in order corresponding to the
            elements of the sorted list self.charpoly().factor().
@@ -2209,13 +2209,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``density`` - number between 0 and 1 (default: 1)
+        -  ``density`` -- number between 0 and 1 (default: 1)
 
-        -  ``num_bound`` - numerator bound (default: 2)
+        -  ``num_bound`` -- numerator bound (default: 2)
 
-        -  ``den_bound`` - denominator bound (default: 2)
+        -  ``den_bound`` -- denominator bound (default: 2)
 
-        -  ``distribution`` - ``None`` or '1/n' (default: ``None``); if '1/n'
+        -  ``distribution`` -- ``None`` or '1/n' (default: ``None``); if '1/n'
            then ``num_bound``, ``den_bound`` are ignored and numbers are chosen
            using the GMP function ``mpq_randomize_entry_recip_uniform``
 
@@ -2329,7 +2329,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         TESTS:
 
-        Check that the option ``nonzero`` is meaningful (:trac:`22970`)::
+        Check that the option ``nonzero`` is meaningful (:issue:`22970`)::
 
             sage: a = matrix(QQ, 10, 10, 1)
             sage: b = a.__copy__()
@@ -2339,7 +2339,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sage: any(b[i,j].is_zero() for i in range(10) for j in range(10))
             False
 
-        Check that :trac:`34103` is fixed::
+        Check that :issue:`34103` is fixed::
 
             sage: a = matrix(QQ, 10, 10, 1)
             sage: a.randomize(nonzero=True, distribution='1/n')
@@ -2472,7 +2472,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``algorithm`` - an optional specification of an algorithm. One of
+        - ``algorithm`` -- an optional specification of an algorithm. One of
 
           - ``None``: (default) will use flint
 
@@ -2672,13 +2672,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``i`` - integer, index into the rows of self
+        -  ``i`` -- integer, index into the rows of self
 
-        -  ``A`` - a matrix
+        -  ``A`` -- a matrix
 
-        -  ``r`` - integer, index into rows of A
+        -  ``r`` -- integer, index into rows of A
 
-        -  ``cols`` - a *sorted* list of integers.
+        -  ``cols`` -- a *sorted* list of integers.
 
 
         EXAMPLES::
@@ -2841,9 +2841,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``i`` - integer
+        -  ``i`` -- integer
 
-        -  ``from_list`` - ignored
+        -  ``from_list`` -- ignored
 
         EXAMPLES::
 
@@ -2885,9 +2885,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``i`` - integer
+        -  ``i`` -- integer
 
-        -  ``from_list`` - ignored
+        -  ``from_list`` -- ignored
 
         EXAMPLES::
 
@@ -2927,13 +2927,39 @@ cdef class Matrix_rational_dense(Matrix_dense):
     # LLL
     # ###############################################
 
+    def BKZ(self, *args, **kwargs):
+        """
+        Return the result of running Block Korkin-Zolotarev reduction on
+        ``self`` interpreted as a lattice.
+
+        The arguments ``*args`` and ``**kwargs`` are passed onto
+        :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.BKZ`,
+        see there for more details.
+
+        EXAMPLES::
+
+            sage: A = Matrix(QQ, 3, 3, [1/n for n in range(1, 10)])
+            sage: A.BKZ()
+            [ 1/28 -1/40 -1/18]
+            [ 1/28 -1/40  1/18]
+            [-1/14 -1/40     0]
+
+            sage: A = random_matrix(QQ, 10, 10)
+            sage: d = lcm(a.denom() for a in A.list())
+            sage: A.BKZ() == (A * d).change_ring(ZZ).BKZ() / d
+            True
+        """
+        A, d = self._clear_denom()
+        return A.BKZ(*args, **kwargs) / d
+
     def LLL(self, *args, **kwargs):
         """
         Return an LLL reduced or approximated LLL reduced lattice for
         ``self`` interpreted as a lattice.
 
-        For details on input parameters, see
-        :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL`.
+        The arguments ``*args`` and ``**kwargs`` are passed onto
+        :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL`,
+        see there for more details.
 
         EXAMPLES::
 
@@ -2942,9 +2968,32 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [ 1/28 -1/40 -1/18]
             [ 1/28 -1/40  1/18]
             [    0 -3/40     0]
+
+            sage: A = random_matrix(QQ, 10, 10)
+            sage: d = lcm(a.denom() for a in A.list())
+            sage: A.LLL() == (A * d).change_ring(ZZ).LLL() / d
+            True
         """
         A, d = self._clear_denom()
         return A.LLL(*args, **kwargs) / d
+
+    def is_LLL_reduced(self, delta=None, eta=None):
+        r"""
+        Return ``True`` if this lattice is `(\delta, \eta)`-LLL reduced.
+        For a definition of LLL reduction, see
+        :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL`.
+
+        EXAMPLES::
+
+            sage: A = random_matrix(QQ, 10, 10)
+            sage: L = A.LLL()
+            sage: A.is_LLL_reduced()
+            False
+            sage: L.is_LLL_reduced()
+            True
+        """
+        A, _ = self._clear_denom()
+        return A.is_LLL_reduced(delta, eta)
 
 
 cdef new_matrix_from_pari_GEN(parent, GEN d):

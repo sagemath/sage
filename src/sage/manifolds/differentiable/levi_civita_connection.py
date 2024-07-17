@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Levi-Civita Connections
 
@@ -18,7 +17,6 @@ REFERENCES:
 - [KN1963]_
 - [Lee1997]_
 - [ONe1983]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -520,7 +518,7 @@ class LeviCivitaConnection(AffineConnection):
                             for i,j,k in local_list_ijk:
                                 rsum = 0
                                 for s in manif.irange():
-                                    if ginv[i,s, chart]!=0:
+                                    if ginv[i,s, chart] != 0:
                                         rsum += ginv[i,s, chart] * (
                                                         gg[s,k, chart].diff(j)
                                                       + gg[j,s, chart].diff(k)

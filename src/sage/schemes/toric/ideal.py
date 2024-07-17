@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs sage.libs.singular
 r"""
 Toric ideals
 
@@ -160,7 +161,7 @@ class ToricIdeal(MPolynomialIdeal):
 
       You may specify the ambient polynomial ring via the
       ``polynomial_ring`` parameter or via the ``names`` and
-      ``base_ring`` parameter. A ``ValueError`` is raised if you
+      ``base_ring`` parameter. A :class:`ValueError` is raised if you
       specify both.
 
     - ``algorithm`` -- string (optional). The algorithm to use. For
@@ -217,7 +218,7 @@ class ToricIdeal(MPolynomialIdeal):
             sage: ToricIdeal(A)
             Ideal (-z1^2 + z0*z2) of Multivariate Polynomial Ring
             in z0, z1, z2 over Rational Field
-            sage: ToricIdeal(A, names='x', base_ring=GF(101))                           # optional - sage.rings.finite_rings
+            sage: ToricIdeal(A, names='x', base_ring=GF(101))
             Ideal (-x1^2 + x0*x2) of Multivariate Polynomial Ring
             in x0, x1, x2 over Finite Field of size 101
             sage: ToricIdeal(A, names='x', base_ring=FractionField(QQ['t']))
@@ -227,9 +228,9 @@ class ToricIdeal(MPolynomialIdeal):
         """
         self._A = matrix(ZZ, A)
         if polynomial_ring:
-            if (names!='z') or (base_ring is not QQ):
+            if names != 'z' or base_ring is not QQ:
                 raise ValueError('you must not specify both variable names and a polynomial ring')
-            self._names = [str(_) for _ in polynomial_ring.gens()]
+            self._names = [str(g) for g in polynomial_ring.gens()]
             self._base_ring = polynomial_ring.base_ring()
             ring = polynomial_ring
         else:
@@ -237,7 +238,7 @@ class ToricIdeal(MPolynomialIdeal):
             self._base_ring = base_ring
             ring = self._init_ring('degrevlex')
 
-        if algorithm=='HostenSturmfels':
+        if algorithm == 'HostenSturmfels':
             ideal = self._ideal_HostenSturmfels()
         else:
             raise ValueError(f'algorithm = {algorithm} is not known')
@@ -396,9 +397,9 @@ class ToricIdeal(MPolynomialIdeal):
         """
         N = self.nvariables()
         y = list(ring.gens())
-        x = [ y[i-n] for i in range(N) ]
-        y_to_x = dict(zip(x,y))
-        x_to_y = dict(zip(y,x))
+        x = [y[i - n] for i in range(N)]
+        y_to_x = dict(zip(x, y))
+        x_to_y = dict(zip(y, x))
         # swap variables such that the n-th variable becomes the last one
         J = ideal.subs(y_to_x)
 
@@ -410,7 +411,7 @@ class ToricIdeal(MPolynomialIdeal):
         # x_n = y[0]   # the cheapest variable in the revlex order
         def subtract(e, power):
             l = list(e)
-            return tuple([l[0]-power] + l[1:])
+            return tuple([l[0] - power] + l[1:])
 
         def divide_by_x_n(p):
             d_old = p.dict()

@@ -3,7 +3,7 @@
     "name": "archlinux:latest downstream Sage",
     "image": "archlinux:latest",
     // Create an empty bashrc to avoid the error "No such file or directory" when opening a terminal.
-    "onCreateCommand": "EXTRA_SYSTEM_PACKAGES='sagemath sagemath-doc' EXTRA_SAGE_PACKAGES='notebook pip' .devcontainer/onCreate.sh && touch ~/.bashrc",
+    "onCreateCommand": "sed -i '/^NoExtract/d' /etc/pacman.conf; EXTRA_SYSTEM_PACKAGES='sagemath sagemath-doc' EXTRA_SAGE_PACKAGES='notebook pip' .devcontainer/onCreate.sh && touch ~/.bashrc",
     // There's no SAGE_LOCAL, so remove the symlink 'prefix'.
     "updateContentCommand": "rm -f prefix && ln -sf /usr venv",
     "extensions": [

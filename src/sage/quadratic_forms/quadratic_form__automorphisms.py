@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari
 """
 Automorphisms of Quadratic Forms
 """
@@ -78,10 +78,8 @@ def basis_of_short_vectors(self, show_lengths=False):
         vector_list_by_length[l].append(vector([-x for x in v]))
 
     # Make a matrix from the column vectors (in order of ascending length).
-    sorted_list = []
-    for i in range(len(vector_list_by_length)):
-        for v in vector_list_by_length[i]:
-            sorted_list.append(v)
+    sorted_list = [v for i in range(len(vector_list_by_length))
+                   for v in vector_list_by_length[i]]
     sorted_matrix = Matrix(sorted_list).transpose()
 
     # Determine a basis of vectors of minimal length
@@ -115,7 +113,6 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     A list of lists of vectors such that entry `[i]` contains all
     vectors of length `i`.
 
-
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
@@ -143,13 +140,13 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
          [],
          [(0, 1, 0, 0)],
          [(1, 1, 0, 0), (1, -1, 0, 0), (2, 0, 0, 0)]]
-        sage: Q = QuadraticForm(matrix(6, [2, 1, 1, 1, -1, -1, 1, 2, 1, 1, -1, -1, 1, 1, 2, 0, -1, -1, 1, 1, 0, 2, 0, -1, -1, -1, -1, 0, 2, 1, -1, -1, -1, -1, 1, 2]))
+        sage: m6 = matrix(6, [2, 1, 1, 1, -1, -1, 1, 2, 1, 1, -1, -1,
+        ....:                 1, 1, 2, 0, -1, -1, 1, 1, 0, 2, 0, -1,
+        ....:                 -1, -1, -1, 0, 2, 1, -1, -1, -1, -1, 1, 2])
+        sage: Q = QuadraticForm(m6)
         sage: vs = Q.short_vector_list_up_to_length(8)
         sage: [len(vs[i]) for i in range(len(vs))]
         [1, 72, 270, 720, 936, 2160, 2214, 3600]
-        sage: vs = Q.short_vector_list_up_to_length(30)  # long time (28s on sage.math, 2014)
-        sage: [len(vs[i]) for i in range(len(vs))]       # long time
-        [1, 72, 270, 720, 936, 2160, 2214, 3600, 4590, 6552, 5184, 10800, 9360, 12240, 13500, 17712, 14760, 25920, 19710, 26064, 28080, 36000, 25920, 47520, 37638, 43272, 45900, 59040, 46800, 75600]
 
     The cases of ``len_bound < 2`` led to exception or infinite runtime before.
 
@@ -206,7 +203,7 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     parilens = pari(r"(M,v) -> vector(#v, i, (v[i]~ * M * v[i])\2)")(self, parilist)
 
     # Sort the vectors into lists by their length
-    vec_sorted_list = [list() for i in range(len_bound)]
+    vec_sorted_list = [[] for i in range(len_bound)]
     for i in range(len(parilist)):
         length = int(parilens[i])
         # In certain trivial cases, PARI can sometimes return longer
@@ -350,7 +347,7 @@ def automorphisms(self):
         48
         sage: 2^3 * factorial(3)
         48
-        sage: len(Q.automorphisms())
+        sage: len(Q.automorphisms())                                                    # needs sage.libs.gap
         48
 
     ::
@@ -358,14 +355,14 @@ def automorphisms(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
         sage: Q.number_of_automorphisms()
         16
-        sage: aut = Q.automorphisms()
-        sage: len(aut)
+        sage: aut = Q.automorphisms()                                                   # needs sage.libs.gap
+        sage: len(aut)                                                                  # needs sage.libs.gap
         16
-        sage: all(Q(M) == Q for M in aut)
+        sage: all(Q(M) == Q for M in aut)                                               # needs sage.libs.gap
         True
 
         sage: Q = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
-        sage: sorted(Q.automorphisms())
+        sage: sorted(Q.automorphisms())                                                 # needs sage.libs.gap
         [
         [-1  0  0]  [1 0 0]
         [ 0 -1  0]  [0 1 0]

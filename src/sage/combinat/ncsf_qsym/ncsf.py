@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 """
 Non-Commutative Symmetric Functions
 """
@@ -66,7 +66,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
     one generator in each degree::
 
         sage: NCSF.category()
-        Join of Category of hopf algebras over Rational Field
+        Join of Category of Hopf algebras over Rational Field
             and Category of graded algebras over Rational Field
             and Category of monoids with realizations
             and Category of graded coalgebras over Rational Field
@@ -409,8 +409,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: NCSF2 = NonCommutativeSymmetricFunctions(Integers(23))
             sage: TestSuite(NonCommutativeSymmetricFunctions(QQ)).run()
         """
-        # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings())  # side effect of this statement assures MRO exists for R
+        # change the line below to assert R in Rings() once MRO issues from #15536, #15475 are resolved
+        assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
         self._base = R  # Won't be needed once CategoryObject won't override base_ring
         cat = GradedHopfAlgebras(R).WithRealizations().Cocommutative()
         Parent.__init__(self, category=cat)
@@ -771,8 +771,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 .. SEEALSO::
 
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 
@@ -825,7 +825,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     sage: QSym = QuasiSymmetricFunctions(ZZ)
                     sage: M = QSym.M()
-                    sage: all( all( M(I).frobenius(3).duality_pairing(S(J))
+                    sage: all( all( M(I).adams_operator(3).duality_pairing(S(J))
                     ....:           == M(I).duality_pairing(S(J).verschiebung(3))
                     ....:           for I in Compositions(2) )
                     ....:      for J in Compositions(3) )
@@ -1999,7 +1999,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     return x[i-1] * image_of_L_k(k - 1, i - 1) + image_of_L_k(k, i - 1)
 
                 def on_basis(comp):
-                    return P.prod((image_of_L_k(k, n) for k in comp))
+                    return P.prod(image_of_L_k(k, n) for k in comp)
                 return L._apply_module_morphism(L(self), on_basis, codomain=P)
 
     class MultiplicativeBases(Category_realization_of_parent):
@@ -2134,7 +2134,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     sage: f(2*Psi[[]] + 3 * Psi[1,3,2] + Psi[2,4] )
                     2*Psi[] - 3*Psi[1, 3, 2] + Psi[2, 4]
                     sage: f.category()
-                    Category of endsets of hopf algebras over Rational Field and graded modules over Rational Field
+                    Category of endsets of Hopf algebras over Rational Field and graded modules over Rational Field
 
                 If ``anti`` is true, this returns an anti-algebra morphism::
 
@@ -2767,8 +2767,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     :meth:`verschiebung method of NCSF
                     <sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.verschiebung>`,
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 
@@ -3343,8 +3343,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     :meth:`verschiebung method of NCSF
                     <sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.verschiebung>`,
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 
@@ -3984,8 +3984,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     :meth:`verschiebung method of NCSF
                     <sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.verschiebung>`,
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 
@@ -4245,8 +4245,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     :meth:`verschiebung method of NCSF
                     <sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.verschiebung>`,
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 
@@ -4574,8 +4574,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``self`` - the Monomial basis of non-commutative symmetric functions
-            - ``I`` - a composition
+            - ``self`` -- the Monomial basis of non-commutative symmetric functions
+            - ``I`` -- a composition
 
             OUTPUT:
 

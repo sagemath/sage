@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Graded rings of modular forms
 
@@ -27,7 +28,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
+from sage.modular.arithgroup.all import Gamma0, CongruenceSubgroupBase
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -39,8 +40,8 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
 
 from .constructor import ModularForms
-from .element import is_ModularFormElement, GradedModularFormElement
-from .space import is_ModularFormsSpace
+from .element import ModularFormElement, GradedModularFormElement
+from .space import ModularFormsSpace
 
 
 def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=False):
@@ -103,7 +104,7 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
         [          0           1           0      195660    12080128]
         [          0           0           1         -48        1080]
     """
-    t = verbose('multiplying forms up to weight %s'%weight)
+    t = verbose('multiplying forms up to weight %s' % weight)
     # Algorithm: run through the monomials of the appropriate weight, and build
     # up the vector space they span.
 
@@ -205,13 +206,13 @@ class ModularFormsRing(Parent):
 
         TESTS:
 
-        Check that :trac:`15037` is fixed::
+        Check that :issue:`15037` is fixed::
 
             sage: ModularFormsRing(3.4)
             Traceback (most recent call last):
             ...
             ValueError: group (=3.40000000000000) should be a congruence subgroup
-            sage: ModularFormsRing(Gamma0(2), base_ring=PolynomialRing(ZZ,x))
+            sage: ModularFormsRing(Gamma0(2), base_ring=PolynomialRing(ZZ, 'x'))
             Traceback (most recent call last):
             ...
             ValueError: base ring (=Univariate Polynomial Ring in x over Integer Ring) should be QQ, ZZ or a finite prime field
@@ -230,7 +231,7 @@ class ModularFormsRing(Parent):
         """
         if isinstance(group, (int, Integer)):
             group = Gamma0(group)
-        elif not is_CongruenceSubgroup(group):
+        elif not isinstance(group, CongruenceSubgroupBase):
             raise ValueError("group (=%s) should be a congruence subgroup" % group)
 
         if base_ring != ZZ and not base_ring.is_field() and not base_ring.is_finite():
@@ -396,7 +397,7 @@ class ModularFormsRing(Parent):
         nb_var = poly_parent.ngens()
         nb_gens = self.ngens()
         if nb_var != nb_gens:
-            raise ValueError('the number of variables (%s) must be equal to the number of generators of the modular forms ring (%s)'%(nb_var, self.ngens()))
+            raise ValueError('the number of variables (%s) must be equal to the number of generators of the modular forms ring (%s)' % (nb_var, self.ngens()))
         return {poly_parent.gen(i): self(gens[i]) for i in range(0, nb_var)}
 
     def from_polynomial(self, polynomial, gens=None):
@@ -516,11 +517,11 @@ class ModularFormsRing(Parent):
             forms_dictionary = forms_datum
         elif isinstance(forms_datum, self.element_class):
             forms_dictionary = forms_datum._forms_dictionary
-        elif is_ModularFormElement(forms_datum):
+        elif isinstance(forms_datum, ModularFormElement):
             if self.group().is_subgroup(forms_datum.group()) and self.base_ring().has_coerce_map_from(forms_datum.base_ring()):
                 forms_dictionary = {forms_datum.weight(): forms_datum}
             else:
-                raise ValueError('the group (%s) and/or the base ring (%s) of the given modular form is not consistant with the base space: %s'%(forms_datum.group(), forms_datum.base_ring(), self))
+                raise ValueError('the group (%s) and/or the base ring (%s) of the given modular form is not consistant with the base space: %s' % (forms_datum.group(), forms_datum.base_ring(), self))
         elif forms_datum in self.base_ring():
             forms_dictionary = {0:forms_datum}
         elif isinstance(forms_datum, MPolynomial):
@@ -591,7 +592,7 @@ class ModularFormsRing(Parent):
             sage: M(D) + 53
             54 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)
         """
-        if is_ModularFormsSpace(M):
+        if isinstance(M, ModularFormsSpace):
             if M.group() == self.group() and self.has_coerce_map_from(M.base_ring()):
                 return True
         if self.base_ring().has_coerce_map_from(M):
@@ -984,7 +985,7 @@ class ModularFormsRing(Parent):
         - ``prec`` (integer or ``None``, default: ``None``) -- power series
           precision. If ``None``, the precision defaults to the Sturm bound for
           the requested level and weight.
-        - ``use_random`` (boolean, default: True) -- whether or not to use a
+        - ``use_random`` (boolean, default: ``True``) -- whether or not to use a
           randomized algorithm when building up the space of forms at the given
           weight from known generators of small weight.
 
@@ -1021,7 +1022,7 @@ class ModularFormsRing(Parent):
             return []
 
         if prec is None:
-            prec=self.modular_forms_of_weight(weight).sturm_bound()
+            prec = self.modular_forms_of_weight(weight).sturm_bound()
 
         working_prec = max(prec, self.modular_forms_of_weight(weight).sturm_bound())
 

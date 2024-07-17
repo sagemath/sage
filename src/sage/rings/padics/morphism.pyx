@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.ntl
 """
 Frobenius endomorphisms on p-adic fields
 """
@@ -20,7 +21,7 @@ from sage.structure.richcmp cimport (richcmp, rich_to_bool,
                                      richcmp_not_equal)
 
 from sage.rings.morphism cimport RingHomomorphism
-from .padic_generic import pAdicGeneric
+from sage.rings.padics.padic_generic import pAdicGeneric
 
 
 cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
@@ -157,7 +158,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             sage: Frob._repr_short()
             'Frob'
         """
-        name = self.domain().variable_name()
         if self._power == 0:
             s = "Identity"
         elif self._power == 1:
@@ -218,7 +218,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return self._power
 
-
     def __pow__(self,n,modulus):
         """
         Return the `n`-th iterate of this endomorphism.
@@ -239,8 +238,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return self.__class__(self.domain(), self.power()*n)
 
-
-    def _composition(self,right):
+    def _composition(self, right):
         """
         Return self o right.
 
@@ -280,7 +278,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return True
 
-
     def is_surjective(self):
         """
         Return ``True`` since any power of the Frobenius endomorphism
@@ -294,7 +291,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             True
         """
         return True
-
 
     def is_identity(self):
         """

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Arithmetic subgroups defined by permutations of cosets
 
@@ -150,49 +151,49 @@ def sl2z_word_problem(A):
     output = []
 
     # If A00 is zero
-    if A[0,0]==0:
-        c=A[1,1]
+    if A[0,0] == 0:
+        c = A[1,1]
         if c != 1:
-            A=A*Lm**(c-1)*Rm*Lmi
+            A = A*Lm**(c-1)*Rm*Lmi
             output.extend([(0,1-c),(1,-1),(0,1)])
         else:
-            A=A*Rm*Lmi
+            A = A*Rm*Lmi
             output.extend([(1,-1),(0,1)])
 
-    if A[0,0]<0:   # Make sure A00 is positive
-        A=SL2Z(-1)*A
+    if A[0,0] < 0:   # Make sure A00 is positive
+        A = SL2Z(-1)*A
         output.extend([(1,-1), (0,1), (1,-1), (0,1), (1,-1), (0,1)])
 
-    if A[0,1]<0:   # if A01 is negative make it positive
-        n=(-A[0,1]/A[0,0]).ceil()  #n s.t. 0 <= A[0,1]+n*A[0,0] < A[0,0]
-        A=A*Lm**n
+    if A[0,1] < 0:   # if A01 is negative make it positive
+        n = (-A[0,1]/A[0,0]).ceil()  #n s.t. 0 <= A[0,1]+n*A[0,0] < A[0,0]
+        A = A*Lm**n
         output.append((0, -n))
     # At this point A00>0 and A01>=0
-    while not (A[0,0]==0 or A[0,1]==0):
-        if A[0,0]>A[0,1]:
-            n=(A[0,0]/A[0,1]).floor()
-            A=A*SL2Z([1,0,-n,1])
+    while not (A[0,0] == 0 or A[0,1] == 0):
+        if A[0,0] > A[0,1]:
+            n = (A[0,0]/A[0,1]).floor()
+            A = A*SL2Z([1,0,-n,1])
             output.append((1, n))
 
         else:      # A[0,0]<=A[0,1]
-            n=(A[0,1]/A[0,0]).floor()
-            A=A*SL2Z([1,-n,0,1])
+            n = (A[0,1]/A[0,0]).floor()
+            A = A*SL2Z([1,-n,0,1])
             output.append((0, n))
 
-    if A==SL2Z(1):
+    if A == SL2Z(1):
         pass       # done, so don't add R^0
-    elif A[0,0]==0:
-        c=A[1,1]
+    elif A[0,0] == 0:
+        c = A[1,1]
         if c != 1:
-            A=A*Lm**(c-1)*Rm*Lmi
+            A = A*Lm**(c-1)*Rm*Lmi
             output.extend([(0,1-c),(1,-1),(0, 1)])
         else:
-            A=A*Rm*Lmi
+            A = A*Rm*Lmi
             output.extend([(1,-1),(0,1)])
     else:
-        c=A[1,0]
+        c = A[1,0]
         if c:
-            A=A*Rm**(-c)
+            A = A*Rm**(-c)
             output.append((1,c))
 
     output.reverse()
@@ -255,7 +256,7 @@ def word_of_perms(w, p1, p2):
     m = [p1.order(),p2.order()]
 
     for i,j in w:
-        M *= p[i]**(j%m[i])
+        M *= p[i]**(j % m[i])
 
     return M
 
@@ -309,14 +310,14 @@ def ArithmeticSubgroup_Permutation(
 
     INPUT:
 
-    - ``S2``, ``S3``, ``L``, ``R`` - permutations - action of matrices on the
+    - ``S2``, ``S3``, ``L``, ``R`` -- permutations; action of matrices on the
       right cosets (each coset is identified to an element of `\{1,\dots,n\}`
       where `1` is reserved for the identity coset).
 
-    - ``relabel`` - boolean (default: False) - if True, renumber the cosets in a
+    - ``relabel`` -- boolean (default: ``False``); if True, renumber the cosets in a
       canonical way.
 
-    - ``check`` - boolean (default: True) - check that the input is valid (it
+    - ``check`` -- boolean (default: ``True``); check that the input is valid (it
       may be time efficient but less safe to set it to False)
 
     EXAMPLES::
@@ -586,11 +587,11 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             'Arithmetic subgroup of index 24'
         """
         if self.index() < 20:
-            return "Arithmetic subgroup with permutations of right cosets\n S2=%s\n S3=%s\n L=%s\n R=%s" %(
+            return "Arithmetic subgroup with permutations of right cosets\n S2=%s\n S3=%s\n L=%s\n R=%s" % (
                 self.S2(), self.S3(), self.L(), self.R())
 
         else:
-            return "Arithmetic subgroup of index %d" %self.index()
+            return "Arithmetic subgroup of index %d" % self.index()
 
     #
     # Attribute access
@@ -815,7 +816,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         """
         if hasattr(self,'_canonical_label_group'):
             if inplace:
-                if not (self is self._canonical_label_group):
+                if self is not self._canonical_label_group:
                     self.__dict__ = self._canonical_label_group.__dict__
                     self._canonical_label_group = self
             else:
@@ -1002,13 +1003,13 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         l_cycle_length = [None]*self.index()
         for c in l.cycle_tuples(singletons=True):
             for i in c:
-                l_cycle_length[i-1]=len(c)
+                l_cycle_length[i-1] = len(c)
 
         r = G.R()
         r_cycle_length = [None]*self.index()
         for c in r.cycle_tuples(singletons=True):
             for i in c:
-                r_cycle_length[i-1]=len(c)
+                r_cycle_length[i-1] = len(c)
 
         return (l_cycle_length, r_cycle_length)
 
@@ -1060,7 +1061,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
         INPUT:
 
-        - ``initial_steps`` - positive integer (default: 30)
+        - ``initial_steps`` -- positive integer (default: 30)
 
         EXAMPLES::
 
@@ -1187,17 +1188,17 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
         INPUT:
 
-        - ``right_cosets`` - bool (default: False) - right or left coset graph
+        - ``right_cosets`` -- bool (default: ``False``); right or left coset graph
 
-        - ``s2_edges`` - bool (default: True) - put edges associated to s2
+        - ``s2_edges`` -- bool (default: ``True``); put edges associated to s2
 
-        - ``s3_edges`` - bool (default: True) - put edges associated to s3
+        - ``s3_edges`` -- bool (default: ``True``); put edges associated to s3
 
-        - ``l_edges`` - bool (default: False) - put edges associated to l
+        - ``l_edges`` -- bool (default: ``False``); put edges associated to l
 
-        - ``r_edges`` - bool (default: False) - put edges associated to r
+        - ``r_edges`` -- bool (default: ``False``); put edges associated to r
 
-        - ``s2_label``, ``s3_label``, ``l_label``, ``r_label`` - the labels to
+        - ``s2_label``, ``s3_label``, ``l_label``, ``r_label`` -- the labels to
           put on the edges corresponding to the generators action. Use ``None``
           for no label.
 
@@ -1484,7 +1485,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             s = l**20 * r**onefifth * l**(-4) * ~r
 
             #Congruence if the seven permutations below are trivial:
-            rel =~a*~r*a*r
+            rel = ~a*~r*a*r
             if not rel.is_one():
                 verbose("Failed relation B1")
                 return False
@@ -1551,13 +1552,14 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             sage: l
             [6, 3, 4, 8, 4, 8, 4, 12, 4, 6, 6, 8, 8]
         """
-        from sage.interfaces.gap import gap
-        P = self.perm_group()._gap_()
+        from sage.libs.gap.libgap import libgap
+        P = libgap(self.perm_group())
         for b in P.AllBlocks():
-            orbit = P.Orbit(b, gap.OnSets)
-            action = P.Action(orbit, gap.OnSets)
-            S2,S3,L,R = action.GeneratorsOfGroup()
+            orbit = P.Orbit(b, libgap.OnSets)
+            action = P.Action(orbit, libgap.OnSets)
+            S2, S3, L, R = action.GeneratorsOfGroup()
             yield ArithmeticSubgroup_Permutation(S2=S2, S3=S3, L=L, R=R, check=False)
+
 
 class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
     r"""
@@ -1576,7 +1578,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         R=(1,4,3,2)
         sage: type(G)
         <class 'sage.modular.arithgroup.arithgroup_perm.OddArithmeticSubgroup_Permutation_with_category'>
-        """
+    """
 
     def __init__(self, S2, S3, L, R, canonical_labels=False):
         r"""
@@ -1782,9 +1784,9 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
 
         INPUT:
 
-        ``exp`` - boolean (default: False) - if True, return a dictionary with
-        keys the possible widths and with values the number of cusp with that
-        width.
+        - ``exp`` -- boolean (default: ``False``) - if True, return a dictionary with
+          keys the possible widths and with values the number of cusp with that
+          width.
 
         EXAMPLES::
 
@@ -1796,7 +1798,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         inv = self.S2()**2
         L = self.L()
-        cusps = set(c[0] for c in L.cycle_tuples(singletons=True))
+        cusps = {c[0] for c in L.cycle_tuples(singletons=True)}
         if exp:
             widths = {}
         else:
@@ -1809,7 +1811,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
                 c1 = min(L.orbit(inv(c0)))
                 cusps.remove(c1)
                 if exp:
-                    if not len(c) in widths:
+                    if len(c) not in widths:
                         widths[len(c)] = 0
                     widths[len(c)] += 1
                 else:
@@ -2013,7 +2015,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
 
         INPUT:
 
-        - ``on_right`` -- boolean (default: ``True``) - if ``False``,
+        - ``on_right`` -- boolean (default: ``True``); if ``False``,
           return spanning tree for the left cosets.
 
         OUTPUT:
@@ -2021,13 +2023,13 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         - ``tree`` -- a spanning tree (with an embedding) of the graph
           associated to the action of ``S2`` and ``S3`` on the cosets
 
-        - ``reps`` -- list of matrices in `\SL_2(\ZZ)` - representatives
+        - ``reps`` -- list of matrices in `\SL_2(\ZZ)`; representatives
           of the cosets with respect to the spanning tree
 
-        - ``word_reps`` -- list of lists with ``s2`` and ``s3`` - word
+        - ``word_reps`` -- list of lists with ``s2`` and ``s3``; word
           representatives of the cosets with respect to the spanning tree.
 
-        - ``gens`` -- list of 3-tuples ``(in,out,label)`` - the list of edges in
+        - ``gens`` -- list of 3-tuples ``(in,out,label)``; the list of edges in
           the graph which are not in the spanning tree.
 
         EXAMPLES::
@@ -2147,16 +2149,16 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
 
         OUTPUT:
 
-        - ``tree`` - a spanning tree of the graph associated to the action of
+        - ``tree`` -- a spanning tree of the graph associated to the action of
           ``L`` and ``S2`` on the cosets
 
-        - ``reps`` - list of matrices in `\SL_2(\ZZ)` - representatives of the
+        - ``reps`` -- list of matrices in `\SL_2(\ZZ)`; representatives of the
           cosets with respect to the spanning tree
 
-        - ``word_reps`` - list of string with ``s`` and ``l`` - word
+        - ``word_reps`` -- list of string with ``s`` and ``l`` -- word
           representatives of the cosets with respect to the spanning tree.
 
-        - ``gens`` - list of 3-tuples ``(in,out,label)`` - the list of edges in
+        - ``gens`` -- list of 3-tuples ``(in,out,label)``; the list of edges in
           the graph which are not in the spanning tree.
 
         EXAMPLES::
@@ -2601,7 +2603,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         s3 = PermutationConstructor([x + tuple(y + n for y in x) for x in s3cycs])
         H = ArithmeticSubgroup_Permutation(S2=s2,S3=s3)
 
-        bucket = set([H])
+        bucket = {H}
         res = [H]
         # We use a set *and* a list since checking whether an element is in a
         # set is very fast, but on the other hand we want the order the results
@@ -2635,6 +2637,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
 
         return res
 
+
 def HsuExample10():
     r"""
     An example of an index 10 arithmetic subgroup studied by Tim Hsu.
@@ -2653,6 +2656,7 @@ def HsuExample10():
             L="(1,4)(2,5,9,10,8)(3,7,6)",
             R="(1,7,9,10,6)(2,3)(4,5,8)",
             relabel=False)
+
 
 def HsuExample18():
     r"""

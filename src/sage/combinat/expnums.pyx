@@ -21,9 +21,9 @@ def expnums(int n, int aa):
     INPUT:
 
 
-    -  ``n`` - C machine int
+    -  ``n`` -- C machine int
 
-    -  ``aa`` - C machine int
+    -  ``aa`` -- C machine int
 
 
     OUTPUT: A list of length `n`.
@@ -116,6 +116,7 @@ def expnums(int n, int aa):
 #     od;
 #     return bell[1];
 # end);
+
 
 def expnums2(n, aa):
     r"""

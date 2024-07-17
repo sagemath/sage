@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Linear code constructors that do not preserve the structural information
 
@@ -29,7 +29,6 @@ AUTHORS:
 - David Joyner (2008-09) fix for bug in BCHCode reported by F. Voloch
 
 - David Joyner (2008-10) small docstring changes to WalshCode and walsh_matrix
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 David Joyner <wdjoyner@gmail.com>
@@ -72,12 +71,12 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
 
     INPUT:
 
-    - ``S1, S2`` -- disjoint sublists partitioning ``[1, 2, ..., n-1]``
+    - ``S1``, ``S2`` -- disjoint sublists partitioning ``[1, 2, ..., n-1]``
 
-    - ``n`` (integer)
+    - ``n`` -- integer
 
-    - ``return_automorphism`` (boolean) -- whether to return the automorphism
-      exchanging `S_1` and `S_2`.
+    - ``return_automorphism`` -- boolean (default: ``False``); whether to
+      return the automorphism exchanging `S_1` and `S_2`
 
     OUTPUT:
 
@@ -155,8 +154,8 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
     This is a special case of Theorem 6.4.3 in [HP2003]_.
     """
     R = IntegerModRing(n)
-    S1 = set(R(x) for x in S1)
-    S2 = set(R(x) for x in S2)
+    S1 = {R(x) for x in S1}
+    S2 = {R(x) for x in S2}
 
     # we first check whether (S1,S2) is a partition of R - {0}
     if (len(S1) + len(S2) != n-1 or len(S1) != len(S2) or
@@ -227,47 +226,49 @@ def permutation_action(g, v):
 
     EXAMPLES::
 
+        sage: # needs sage.groups
         sage: V = VectorSpace(GF(3),5)
         sage: v = V([0,1,2,0,1])
-        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
-        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
-        sage: permutation_action(g,v)                                                   # optional - sage.groups
+        sage: G = SymmetricGroup(5)
+        sage: g = G([(1,2,3)])
+        sage: permutation_action(g,v)
         (1, 2, 0, 0, 1)
-        sage: g = G([()])                                                               # optional - sage.groups
-        sage: permutation_action(g,v)                                                   # optional - sage.groups
+        sage: g = G([()])
+        sage: permutation_action(g,v)
         (0, 1, 2, 0, 1)
-        sage: g = G([(1,2,3,4,5)])                                                      # optional - sage.groups
-        sage: permutation_action(g,v)                                                   # optional - sage.groups
+        sage: g = G([(1,2,3,4,5)])
+        sage: permutation_action(g,v)
         (1, 2, 0, 1, 0)
         sage: L = Sequence([1,2,3,4,5])
-        sage: permutation_action(g,L)                                                   # optional - sage.groups
+        sage: permutation_action(g,L)
         [2, 3, 4, 5, 1]
         sage: MS = MatrixSpace(GF(3),3,7)
         sage: A = MS([[1,0,0,0,1,1,0],[0,1,0,1,0,1,0],[0,0,0,0,0,0,1]])
-        sage: S5 = SymmetricGroup(5)                                                    # optional - sage.groups
-        sage: g = S5([(1,2,3)])                                                         # optional - sage.groups
+        sage: S5 = SymmetricGroup(5)
+        sage: g = S5([(1,2,3)])
         sage: A
         [1 0 0 0 1 1 0]
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
-        sage: permutation_action(g,A)                                                   # optional - sage.groups
+        sage: permutation_action(g,A)
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
         [1 0 0 0 1 1 0]
 
     It also works on lists and is a "left action"::
 
+        sage: # needs sage.groups
         sage: v = [0,1,2,0,1]
-        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
-        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
-        sage: gv = permutation_action(g,v); gv                                          # optional - sage.groups
+        sage: G = SymmetricGroup(5)
+        sage: g = G([(1,2,3)])
+        sage: gv = permutation_action(g,v); gv
         [1, 2, 0, 0, 1]
-        sage: permutation_action(g,v) == g(v)                                           # optional - sage.groups
+        sage: permutation_action(g,v) == g(v)
         True
-        sage: h = G([(3,4)])                                                            # optional - sage.groups
-        sage: gv = permutation_action(g,v)                                              # optional - sage.groups
-        sage: hgv = permutation_action(h,gv)                                            # optional - sage.groups
-        sage: hgv == permutation_action(h*g,v)                                          # optional - sage.groups
+        sage: h = G([(3,4)])
+        sage: gv = permutation_action(g,v)
+        sage: hgv = permutation_action(h,gv)
+        sage: hgv == permutation_action(h*g,v)
         True
 
     AUTHORS:
@@ -283,12 +284,11 @@ def permutation_action(g, v):
     else:
         V = v.parent()
     n = len(list(v))
-    gv = []
-    for i in range(n):
-        gv.append(v[g(i+1)-1])
+    gv = [v[g(i + 1) - 1] for i in range(n)]
     if v_type_list:
         return gv
     return V(gv)
+
 
 def walsh_matrix(m0):
     """
@@ -321,7 +321,7 @@ def walsh_matrix(m0):
     if m > 1:
         row2 = [x.list() for x in walsh_matrix(m-1).augment(walsh_matrix(m-1)).rows()]
         return matrix(GF(2), m, 2**m, [[0]*2**(m-1) + [1]*2**(m-1)] + row2)
-    raise ValueError("%s must be an integer > 0."%m0)
+    raise ValueError("%s must be an integer > 0." % m0)
 
 ##################### main constructions #####################
 
@@ -356,7 +356,7 @@ def DuadicCodeEvenPair(F,S1,S2):
     from .cyclic_code import CyclicCode
     n = len(S1) + len(S2) + 1
     if not _is_a_splitting(S1,S2,n):
-        raise TypeError("%s, %s must be a splitting of %s."%(S1,S2,n))
+        raise TypeError("%s, %s must be a splitting of %s." % (S1,S2,n))
     q = F.order()
     k = Mod(q,n).multiplicative_order()
     FF = GF(q**k,"z")
@@ -406,7 +406,7 @@ def DuadicCodeOddPair(F,S1,S2):
     from .cyclic_code import CyclicCode
     n = len(S1) + len(S2) + 1
     if not _is_a_splitting(S1,S2,n):
-        raise TypeError("%s, %s must be a splitting of %s."%(S1,S2,n))
+        raise TypeError("%s, %s must be a splitting of %s." % (S1,S2,n))
     q = F.order()
     k = Mod(q,n).multiplicative_order()
     FF = GF(q**k,"z")
@@ -729,18 +729,17 @@ def ToricCode(P,F):
          sage: C = codes.ToricCode([[0,0],[1,0],[2,0],[0,1],[1,1]], GF(7))
          sage: C
          [36, 5] linear code over GF(7)
-         sage: C.minimum_distance()
+         sage: C.minimum_distance()                                                     # needs sage.groups
          24
-         sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
-         ...
-         24
+         sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
+         ...24
          sage: C = codes.ToricCode([[-2,-2],[-1,-2],[-1,-1],[-1,0],
          ....:                      [0,-1],[0,0],[0,1],[1,-1],[1,0]], GF(5))
          sage: C
          [16, 9] linear code over GF(5)
-         sage: C.minimum_distance()
+         sage: C.minimum_distance()                                                     # needs sage.groups
          6
-         sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
+         sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
          6
          sage: C = codes.ToricCode([[0,0],[1,1],[1,2],[1,3],[1,4],[2,1],
          ....:                      [2,2],[2,3],[3,1],[3,2],[4,1]], GF(8,"a"))
@@ -787,9 +786,9 @@ def WalshCode(m):
         [8, 3] linear code over GF(2)
         sage: C.spectrum()
         [1, 0, 0, 0, 7, 0, 0, 0, 0]
-        sage: C.minimum_distance()
+        sage: C.minimum_distance()                                                      # needs sage.libs.gap
         4
-        sage: C.minimum_distance(algorithm='gap')  # check d=2^(m-1)
+        sage: C.minimum_distance(algorithm='gap')  # check d=2^(m-1)                    # needs sage.libs.gap
         4
 
     REFERENCES:

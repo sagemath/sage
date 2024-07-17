@@ -24,7 +24,7 @@ EXAMPLES::
 TESTS:
 
 Check that the outcome of arithmetic with symbolic vectors is again
-a symbolic vector (:trac:`11549`)::
+a symbolic vector (:issue:`11549`)::
 
     sage: v = vector(SR, [1, 2], sparse=True)
     sage: w = vector(SR, [sin(x), 0], sparse=True)
@@ -44,19 +44,18 @@ Test pickling/unpickling::
     sage: u = vector(SR, [sin(x^2)], sparse=True)
     sage: loads(dumps(u)) == u
     True
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Joris Vankerschaver (jv@caltech.edu)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from . import free_module_element
+from sage.modules import free_module_element
 from sage.symbolic.expression import Expression
 
 
@@ -109,6 +108,7 @@ def apply_map(phi):
 
 class Vector_symbolic_sparse(free_module_element.FreeModuleElement_generic_sparse):
     pass
+
 
 # Add elementwise methods.
 for method in ['simplify', 'simplify_factorial',

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Hall-Littlewood Polynomials
 
@@ -76,7 +77,25 @@ class HallLittlewood(UniqueRepresentation):
         """
         return self._name + " over %s" % self._sym.base_ring()
 
-    def __init__(self, Sym, t='t'):
+    @staticmethod
+    def __classcall__(cls, Sym, t='t'):
+        """
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).hall_littlewood()
+            sage: B2 = SymmetricFunctions(R).hall_littlewood(t)
+            sage: B3 = SymmetricFunctions(R).hall_littlewood(q)
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(t))
+
+    def __init__(self, Sym, t):
         """
         Initialize ``self``.
 
@@ -88,8 +107,8 @@ class HallLittlewood(UniqueRepresentation):
         self._sym = Sym
         self.t = Sym.base_ring()(t)
         self._name_suffix = ""
-        if str(t) !='t':
-            self._name_suffix += " with t=%s"%t
+        if str(t) != 't':
+            self._name_suffix += " with t=%s" % t
         self._name = "Hall-Littlewood polynomials"+self._name_suffix
 
     def symmetric_function_ring( self ):
@@ -370,7 +389,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         sfa.SymmetricFunctionAlgebra_generic.__init__(
             self, hall_littlewood._sym,
             basis_name="Hall-Littlewood " + s + hall_littlewood._name_suffix,
-            prefix="HL" +s)
+            prefix="HL" + s)
         self.t = hall_littlewood.t
         self._sym = hall_littlewood._sym
         self._hall_littlewood = hall_littlewood
@@ -385,6 +404,25 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
             self   .register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
             self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: P = SymmetricFunctions(QQ).hall_littlewood(t=2).P()
+            sage: P.construction()
+            (SymmetricFunctionsFunctor[Hall-Littlewood P with t=2], Rational Field)
+        """
+
+        return (sfa.SymmetricFunctionsFamilyFunctor(self,
+                                                    HallLittlewood,
+                                                    self.basis_name(),
+                                                    self.t),
+                self.base_ring())
 
     def _s_to_self(self, x):
         r"""

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap sage.libs.pari sage.libs.singular sage.symbolic
 r"""
 Common Interface Functionality
 
@@ -23,7 +24,7 @@ AUTHORS:
 - Simon King (2015): Improve pickling for InterfaceElement
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -36,7 +37,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import operator
 
@@ -272,7 +273,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         TESTS:
 
-        Check conversion of Booleans (:trac:`28705`)::
+        Check conversion of Booleans (:issue:`28705`)::
 
             sage: giac(True)
             true
@@ -281,14 +282,14 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         cls = self._object_class()
 
-        #Handle the case when x is an object
-        #in some interface.
+        # Handle the case when x is an object
+        # in some interface.
         if isinstance(x, InterfaceElement):
             if x.parent() is self:
                 return x
 
-            #We convert x into an object in this
-            #interface by first going through Sage.
+            # We convert x into an object in this
+            # interface by first going through Sage.
             try:
                 return self(x._sage_())
             except (NotImplementedError, TypeError):
@@ -324,7 +325,7 @@ class Interface(WithEqualityById, ParentWithBase):
         If no such method is defined, raises an AttributeError instead of a
         TypeError.
         """
-        s = '_%s_'%self.name()
+        s = '_%s_' % self.name()
         if s == '_maxima_lib_':
             s = '_maxima_'
         if s == '_pari_':
@@ -340,7 +341,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         TESTS:
 
-        Check that python type ``complex`` can be converted (:trac:`31775`)::
+        Check that python type ``complex`` can be converted (:issue:`31775`)::
 
             sage: giac(complex(I))**2  # should not return `j^2`
             -1
@@ -348,14 +349,14 @@ class Interface(WithEqualityById, ParentWithBase):
         if isinstance(x, bool):
             return self(self._true_symbol() if x else self._false_symbol())
         elif isinstance(x, int):
-            import sage.rings.all
-            return self(sage.rings.all.Integer(x))
+            from sage.rings.integer import Integer
+            return self(Integer(x))
         elif isinstance(x, float):
-            import sage.rings.all
-            return self(sage.rings.all.RDF(x))
+            from sage.rings.real_double import RDF
+            return self(RDF(x))
         elif isinstance(x, complex):
-            import sage.rings.all
-            return self(sage.rings.all.CDF(x))
+            from sage.rings.complex_double import CDF
+            return self(CDF(x))
         if use_special:
             try:
                 return self._coerce_from_special_method(x)
@@ -375,11 +376,11 @@ class Interface(WithEqualityById, ParentWithBase):
                     A.append(w.name())
                     z.append(w)
             X = ','.join(A)
-            r = self.new('%s%s%s'%(self._left_list_delim(), X, self._right_list_delim()))
+            r = self.new('%s%s%s' % (self._left_list_delim(), X, self._right_list_delim()))
             r.__sage_list = z   # do this to avoid having the entries of the list be garbage collected
             return r
 
-        raise TypeError("unable to coerce element into %s"%self.name())
+        raise TypeError("unable to coerce element into %s" % self.name())
 
     def new(self, code):
         return self(code)
@@ -412,14 +413,14 @@ class Interface(WithEqualityById, ParentWithBase):
         try:
             return self.__true_symbol
         except AttributeError:
-            self.__true_symbol = self.get('1 %s 1'%self._equality_symbol())
+            self.__true_symbol = self.get('1 %s 1' % self._equality_symbol())
             return self.__true_symbol
 
     def _false_symbol(self):
         try:
             return self.__false_symbol
         except AttributeError:
-            self.__false_symbol = self.get('1 %s 2'%self._equality_symbol())
+            self.__false_symbol = self.get('1 %s 2' % self._equality_symbol())
             return self.__false_symbol
 
     def _lessthan_symbol(self):
@@ -470,7 +471,7 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s%s%s;'%(var,self._assign_symbol(), value)
+        cmd = '%s%s%s;' % (var, self._assign_symbol(), value)
         self.eval(cmd)
 
     def get(self, var):
@@ -509,7 +510,7 @@ class Interface(WithEqualityById, ParentWithBase):
             del self._available_vars[0]
             return v
         self.__seq += 1
-        return "sage%s"%self.__seq
+        return "sage%s" % self.__seq
 
     def _create(self, value, name=None):
         name = self._next_var_name() if name is None else name
@@ -612,7 +613,7 @@ class Interface(WithEqualityById, ParentWithBase):
         self._check_valid_function_name(function)
         s = self._function_call_string(function,
                                        [s.name() for s in args],
-                                       ['%s=%s'%(key,value.name()) for key, value in kwds.items()])
+                                       ['%s=%s' % (key, value.name()) for key, value in kwds.items()])
         return self.new(s)
 
     def _function_call_string(self, function, args, kwds):
@@ -624,7 +625,7 @@ class Interface(WithEqualityById, ParentWithBase):
             sage: maxima._function_call_string('diff', ['f(x)', 'x'], [])
             'diff(f(x),x)'
         """
-        return "%s(%s)"%(function, ",".join(list(args) + list(kwds)))
+        return "%s(%s)" % (function, ",".join(list(args) + list(kwds)))
 
     def call(self, function_name, *args, **kwds):
         return self.function_call(function_name, args, kwds)
@@ -637,6 +638,7 @@ class Interface(WithEqualityById, ParentWithBase):
         TESTS::
 
             sage: from sage.structure.parent_base import ParentWithBase
+            sage: from sage.interfaces.singular import singular
             sage: ParentWithBase.__getattribute__(singular, '_coerce_map_from_')
             <bound method Singular._coerce_map_from_ of Singular>
         """
@@ -881,11 +883,12 @@ class InterfaceElement(Element):
         by the doctests because the original identifier was reused. This test makes sure
         that does not happen again::
 
-            sage: a = r("'abc'")                                                  # optional - rpy2
-            sage: b = dumps(a)                                                    # optional - rpy2
-            sage: r.set(a.name(), 0) # make sure that identifier reuse            # optional - rpy2
+            sage: # optional - rpy2
+            sage: a = r("'abc'")
+            sage: b = dumps(a)
+            sage: r.set(a.name(), 0) # make sure that identifier reuse
             ....:                    # does not accidentally lead to success
-            sage: loads(b)                                                        # optional - rpy2
+            sage: loads(b)
             [1] "abc"
 
         """
@@ -953,7 +956,7 @@ class InterfaceElement(Element):
 
         Here, GAP fails to compare, and so ``False`` is returned.
         In previous Sage versions, this example actually resulted
-        in an error; compare :trac:`5962`.
+        in an error; compare :issue:`5962`.
         ::
 
             sage: gap('DihedralGroup(8)')==gap('DihedralGroup(8)')
@@ -962,18 +965,18 @@ class InterfaceElement(Element):
         """
         P = self._check_valid()
         try:
-            if P.eval("%s %s %s"%(self.name(), P._equality_symbol(),
+            if P.eval("%s %s %s" % (self.name(), P._equality_symbol(),
                                      other.name())) == P._true_symbol():
                 return rich_to_bool(op, 0)
         except RuntimeError:
             pass
         try:
-            if P.eval("%s %s %s"%(self.name(), P._lessthan_symbol(), other.name())) == P._true_symbol():
+            if P.eval("%s %s %s" % (self.name(), P._lessthan_symbol(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, -1)
         except RuntimeError:
             pass
         try:
-            if P.eval("%s %s %s"%(self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
+            if P.eval("%s %s %s" % (self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, 1)
         except Exception:
             pass
@@ -1004,7 +1007,7 @@ class InterfaceElement(Element):
         try:
             P = self.parent()
             if P is None:
-                raise ValueError("The %s session in which this object was defined is no longer running."%P.name())
+                raise ValueError("The %s session in which this object was defined is no longer running." % P.name())
         except AttributeError:
             raise ValueError("The session in which this object was defined is no longer running.")
         return P
@@ -1014,9 +1017,9 @@ class InterfaceElement(Element):
             self._check_valid()
         except ValueError:
             return
-        if hasattr(self,'_name'):
+        if hasattr(self, '_name'):
             P = self.parent()
-            if not (P is None):
+            if P is not None:
                 P.clear(self._name)
 
     def _sage_repr(self):
@@ -1051,9 +1054,9 @@ class InterfaceElement(Element):
 
         - Felix Lawrence (2009-08-21)
         """
-        #TO DO: this could use file transfers when self.is_remote()
+        # TO DO: this could use file transfers when self.is_remote()
 
-        string = repr(self).replace('\n',' ').replace('\r', '')
+        string = repr(self).replace('\n', ' ').replace('\r', '')
         # Translate the external program's function notation to Sage's
         lfd = self.parent()._left_func_delim()
         if '(' != lfd:
@@ -1169,11 +1172,8 @@ class InterfaceElement(Element):
             s = cr
         else:
             s = self._repr_()
-        if self._name in s:
-            try:
-                s = s.replace(self._name, getattr(self, '__custom_name'))
-            except AttributeError:
-                pass
+        if self._name in s and self.get_custom_name() is not None:
+            s = s.replace(self._name, self.get_custom_name())
         if cr:
             self._cached_repr = s
         return s
@@ -1188,7 +1188,7 @@ class InterfaceElement(Element):
 
         TESTS:
 
-        In :trac:`22501`, several string representation methods have been
+        In :issue:`22501`, several string representation methods have been
         removed in favour of using the default implementation. The corresponding
         tests have been moved here::
 
@@ -1288,14 +1288,14 @@ class InterfaceElement(Element):
             -122023936/161051
         """
         P = self._check_valid()
-        return P('%s.%s'%(self.name(), attrname))
+        return P('%s.%s' % (self.name(), attrname))
 
     def __getitem__(self, n):
         P = self._check_valid()
         if not isinstance(n, tuple):
-            return P.new('%s[%s]'%(self._name, n))
+            return P.new('%s[%s]' % (self._name, n))
         else:
-            return P.new('%s[%s]'%(self._name, str(n)[1:-1]))
+            return P.new('%s[%s]' % (self._name, str(n)[1:-1]))
 
     def __int__(self):
         """
@@ -1342,7 +1342,7 @@ class InterfaceElement(Element):
         TESTS:
 
         By default this returns ``True`` for elements that are considered to be
-        not ``False`` by the interface (:trac:`28705`)::
+        not ``False`` by the interface (:issue:`28705`)::
 
             sage: bool(giac('"a"'))
             True
@@ -1376,8 +1376,8 @@ class InterfaceElement(Element):
             sage: QQ(m)
             1
         """
-        import sage.rings.all
-        return sage.rings.all.Integer(repr(self))
+        from sage.rings.integer import Integer
+        return Integer(repr(self))
 
     def _rational_(self):
         """
@@ -1391,8 +1391,8 @@ class InterfaceElement(Element):
             sage: QQ(m)
             1/2
         """
-        import sage.rings.all
-        return sage.rings.all.Rational(repr(self))
+        from sage.rings.rational import Rational
+        return Rational(repr(self))
 
     def name(self, new_name=None):
         """
@@ -1404,13 +1404,14 @@ class InterfaceElement(Element):
 
         EXAMPLES::
 
-            sage: x = r([1,2,3]); x                                               # optional - rpy2
+            sage: # optional - rpy2
+            sage: x = r([1,2,3]); x
             [1] 1 2 3
-            sage: x.name()                                                        # optional - rpy2
+            sage: x.name()
             'sage...'
-            sage: x = r([1,2,3]).name('x'); x                                     # optional - rpy2
+            sage: x = r([1,2,3]).name('x'); x
             [1] 1 2 3
-            sage: x.name()                                                        # optional - rpy2
+            sage: x.name()
             'x'
 
         ::
@@ -1432,7 +1433,7 @@ class InterfaceElement(Element):
 
     def gen(self, n):
         P = self._check_valid()
-        return P.new('%s.%s'%(self._name, int(n)))
+        return P.new('%s.%s' % (self._name, int(n)))
 
     def _operation(self, operation, other=None):
         r"""
@@ -1469,9 +1470,9 @@ class InterfaceElement(Element):
         """
         P = self._check_valid()
         if other is None:
-            cmd = '%s %s'%(operation, self._name)
+            cmd = '%s %s' % (operation, self._name)
         else:
-            cmd = '%s %s %s'%(self._name, operation, other._name)
+            cmd = '%s %s %s' % (self._name, operation, other._name)
         try:
             return P.new(cmd)
         except Exception as msg:
@@ -1579,20 +1580,20 @@ class InterfaceElement(Element):
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)') # not a function!
+            sage: g = maxima('cos(x)') # not a function!
             sage: f*g
-            -cos(x)*sin(x)
+            cos(x)*sin(x)
             sage: _(2)
-            -cos(2)*sin(2)
+            cos(2)*sin(2)
 
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
+            sage: g = maxima('cos(x)')
             sage: g*f
-            -cos(x)*sin(x)
+            cos(x)*sin(x)
             sage: _(2)
-            -cos(2)*sin(2)
+            cos(2)*sin(2)
             sage: 2*f
             2*sin(x)
         """
@@ -1612,20 +1613,20 @@ class InterfaceElement(Element):
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
+            sage: g = maxima('cos(x)')
             sage: f/g
-            -sin(x)/cos(x)
+            sin(x)/cos(x)
             sage: _(2)
-            -sin(2)/cos(2)
+            sin(2)/cos(2)
 
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
+            sage: g = maxima('cos(x)')
             sage: g/f
-            -cos(x)/sin(x)
+            cos(x)/sin(x)
             sage: _(2)
-            -cos(2)/sin(2)
+            cos(2)/sin(2)
             sage: 2/f
             2/sin(x)
         """

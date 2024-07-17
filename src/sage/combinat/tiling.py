@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Tiling Solver
 
@@ -47,9 +47,11 @@ solutions::
     sage: T = TilingSolver([p,q], box=[3,2])
     sage: it = T.solve()
     sage: next(it)
-    [Polyomino: [(0, 0), (0, 1), (1, 0), (1, 1)], Color: gray, Polyomino: [(2, 0), (2, 1)], Color: gray]
+    [Polyomino: [(0, 0), (0, 1), (1, 0), (1, 1)], Color: gray,
+     Polyomino: [(2, 0), (2, 1)], Color: gray]
     sage: next(it)
-    [Polyomino: [(1, 0), (1, 1), (2, 0), (2, 1)], Color: gray, Polyomino: [(0, 0), (0, 1)], Color: gray]
+    [Polyomino: [(1, 0), (1, 1), (2, 0), (2, 1)], Color: gray,
+     Polyomino: [(0, 0), (0, 1)], Color: gray]
     sage: next(it)
     Traceback (most recent call last):
     ...
@@ -108,9 +110,9 @@ It has 65 different solutions up to isometries::
 
 Showing one solution::
 
-    sage: solution = next(T.solve())                                  # long time
-    sage: G = sum([piece.show2d() for piece in solution], Graphics()) # long time
-    sage: G.show(aspect_ratio=1, axes=False)                          # long time
+    sage: solution = next(T.solve())                                    # long time
+    sage: G = sum([piece.show2d() for piece in solution], Graphics())   # long time, needs sage.plot
+    sage: G.show(aspect_ratio=1, axes=False)                            # long time, needs sage.plot
 
 1d Easy Example
 ---------------
@@ -126,9 +128,13 @@ length 6 with three sticks of length 1, 2 and 3. There are six solutions::
     15
     sage: it = T.solve()
     sage: next(it)
-    [Polyomino: [(0)], Color: gray, Polyomino: [(1), (2)], Color: gray, Polyomino: [(3), (4), (5)], Color: gray]
+    [Polyomino: [(0)], Color: gray,
+     Polyomino: [(1), (2)], Color: gray,
+     Polyomino: [(3), (4), (5)], Color: gray]
     sage: next(it)
-    [Polyomino: [(0)], Color: gray, Polyomino: [(1), (2), (3)], Color: gray, Polyomino: [(4), (5)], Color: gray]
+    [Polyomino: [(0)], Color: gray,
+     Polyomino: [(1), (2), (3)], Color: gray,
+     Polyomino: [(4), (5)], Color: gray]
     sage: T.number_of_solutions()
     6
 
@@ -154,20 +160,20 @@ By default, rotations are allowed and reflections are not. In this case,
 there are no solution for tiling a `8 \times 8` rectangular box::
 
     sage: T = TilingSolver(L, box=(8,8))
-    sage: T.number_of_solutions()                       # long time (2.5 s)
+    sage: T.number_of_solutions()                                       # long time (2.5s)
     0
 
 If reflections are allowed, there are solutions. Solve the puzzle and show
 one solution::
 
     sage: T = TilingSolver(L, box=(8,8), reflection=True)
-    sage: solution = next(T.solve())                                  # long time (7s)
-    sage: G = sum([piece.show2d() for piece in solution], Graphics()) # long time (<1s)
-    sage: G.show(aspect_ratio=1, axes=False)                          # long time (2s)
+    sage: solution = next(T.solve())                                    # long time (7s)
+    sage: G = sum([piece.show2d() for piece in solution], Graphics())   # long time (<1s), needs sage.plot
+    sage: G.show(aspect_ratio=1, axes=False)                            # long time (2s), needs sage.plot
 
 Compute the number of solutions::
 
-    sage: T.number_of_solutions()                         # long time (2.6s)
+    sage: T.number_of_solutions()                                       # long time (2.6s)
     328
 
 Create a animation of all the solutions::
@@ -197,13 +203,13 @@ The same thing done in 3d *without* allowing reflections this time::
 Solve the puzzle and show one solution::
 
     sage: T = TilingSolver(L, box=(8,8,1))
-    sage: solution = next(T.solve())                                   # long time (8s)
-    sage: G = sum([p.show3d(size=0.85) for p in solution], Graphics()) # long time (<1s)
-    sage: G.show(aspect_ratio=1, viewer='tachyon')                     # long time (2s)
+    sage: solution = next(T.solve())                                    # long time (8s)
+    sage: G = sum([p.show3d(size=0.85) for p in solution], Graphics())  # long time (<1s), needs sage.plot
+    sage: G.show(aspect_ratio=1, viewer='tachyon')                      # long time (2s), needs sage.plot
 
 Let us compute the number of solutions::
 
-    sage: T.number_of_solutions()                              # long time (3s)
+    sage: T.number_of_solutions()                                       # long time (3s)
     328
 
 Donald Knuth example : the Y pentamino
@@ -218,8 +224,8 @@ Donald Knuth [Knuth1]_ considered the problem of packing 45 Y pentaminoes into a
     sage: T.number_of_solutions()
     10
     sage: solution = next(T.solve())
-    sage: G = sum([p.show2d() for p in solution], Graphics())
-    sage: G.show(aspect_ratio=1)                       # long time (2s)
+    sage: G = sum([p.show2d() for p in solution], Graphics())                           # needs sage.plot
+    sage: G.show(aspect_ratio=1)                                        # long time (2s), needs sage.plot
 
 ::
 
@@ -240,16 +246,14 @@ Animation of the solutions::
     sage: from sage.combinat.tiling import Polyomino, TilingSolver
     sage: Y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='yellow')
     sage: T = TilingSolver([Y], box=(15,15), reusable=True, reflection=True)
-    sage: a = T.animate(stop=40)            # long time  # optional -- ImageMagick
-    sage: a                                 # long time  # optional -- ImageMagick
+    sage: a = T.animate(stop=40); a                     # long time, optional - imagemagick, needs sage.plot
     Animation with 40 frames
 
 Incremental animation of the solutions (one piece is removed/added at a time)::
 
-    sage: a = T.animate('incremental', stop=40)   # long time  # optional -- ImageMagick
-    sage: a                                       # long time  # optional -- ImageMagick
+    sage: a = T.animate('incremental', stop=40); a      # long time, optional - imagemagick, needs sage.plot
     Animation with 40 frames
-    sage: a.show(delay=50, iterations=1)          # long time  # optional -- ImageMagick
+    sage: a.show(delay=50, iterations=1)                # long time, optional - imagemagick, needs sage.plot
 
 5d Easy Example
 ---------------
@@ -263,14 +267,15 @@ rectangles. Obviously, there is one solution::
     sage: T = TilingSolver([p], box=(2,2,2,2,2), reusable=True)
     sage: rows = T.rows()                               # long time (3s)
     sage: rows                                          # long time (fast)
-    [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12], [13], [14], [15], [16], [17], [18], [19], [20], [21], [22], [23], [24], [25], [26], [27], [28], [29], [30], [31]]
+    [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12],
+     [13], [14], [15], [16], [17], [18], [19], [20], [21], [22], [23], [24],
+     [25], [26], [27], [28], [29], [30], [31]]
     sage: T.number_of_solutions()                       # long time (fast)
     1
 
 REFERENCES:
 
 .. [Knuth1] Knuth, Donald (2000). "Dancing links". :arxiv:`cs/0011047`.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2011-2015 Sébastien Labbé <slabqc@gmail.com>
@@ -299,7 +304,7 @@ def ncube_isometry_group(n, orientation_preserving=True):
     INPUT:
 
     - ``n`` -- positive integer, dimension of the space
-    - ``orientation_preserving`` -- bool (optional, default: ``True``),
+    - ``orientation_preserving`` -- bool (default: ``True``),
       whether the orientation is preserved
 
     OUTPUT:
@@ -367,7 +372,7 @@ def ncube_isometry_group_cosets(n, orientation_preserving=True):
     INPUT:
 
     - ``n`` -- positive integer, dimension of the space
-    - ``orientation_preserving`` -- bool (optional, default: ``True``),
+    - ``orientation_preserving`` -- bool (default: ``True``),
       whether the orientation is preserved
 
     OUTPUT:
@@ -659,7 +664,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``other`` - a polyomino
+        - ``other`` -- a polyomino
 
         OUTPUT:
 
@@ -684,7 +689,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``other`` - a polyomino
+        - ``other`` -- a polyomino
 
         OUTPUT:
 
@@ -709,7 +714,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``other`` - a polyomino
+        - ``other`` -- a polyomino
 
         OUTPUT:
 
@@ -733,7 +738,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``other`` - a polyomino
+        - ``other`` -- a polyomino
 
         OUTPUT:
 
@@ -757,7 +762,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``other`` - a polyomino
+        - ``other`` -- a polyomino
 
         OUTPUT:
 
@@ -781,7 +786,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``other`` - a polyomino
+        - ``other`` -- a polyomino
 
         OUTPUT:
 
@@ -805,7 +810,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``other`` - a polyomino
+        - ``other`` -- a polyomino
 
         OUTPUT:
 
@@ -833,7 +838,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``v`` - tuple
+        - ``v`` -- tuple
 
         OUTPUT:
 
@@ -855,7 +860,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``v`` - tuple
+        - ``v`` -- tuple
 
         OUTPUT:
 
@@ -878,7 +883,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``m`` - square matrix, matching the dimension of self.
+        - ``m`` -- square matrix, matching the dimension of ``self``.
 
         OUTPUT:
 
@@ -931,18 +936,18 @@ class Polyomino(SageObject):
             sage: (p + (3,4,5)).canonical()
             Polyomino: [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 2, 0)], Color: deeppink
         """
-        minxyz, maxxyz = self.bounding_box()
+        minxyz, _ = self.bounding_box()
         return self - minxyz
 
     def canonical_isometric_copies(self, orientation_preserving=True,
-            mod_box_isometries=False):
+                                   mod_box_isometries=False):
         r"""
         Return the list of image of ``self`` under isometries of the `n`-cube
         where the coordinates are all nonnegative and minimal.
 
         INPUT:
 
-        - ``orientation_preserving`` -- bool (optional, default: ``True``);
+        - ``orientation_preserving`` -- bool (default: ``True``);
           if ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -985,12 +990,13 @@ class Polyomino(SageObject):
         """
         if mod_box_isometries:
             L = ncube_isometry_group_cosets(self._dimension, orientation_preserving)
-            P_cosets = set(frozenset((m * self).canonical() for m in coset) for coset in L)
+            P_cosets = {frozenset((m * self).canonical() for m in coset)
+                        for coset in L}
             P_cosets_representents = [min(s, key=lambda a: a.sorted_list()) for s in P_cosets]
-            return sorted(P_cosets_representents, key=lambda a:a.sorted_list())
+            return sorted(P_cosets_representents, key=lambda a: a.sorted_list())
         else:
             L = ncube_isometry_group(self._dimension, orientation_preserving)
-            P_images = set((m * self).canonical() for m in L)
+            P_images = {(m * self).canonical() for m in L}
             return sorted(P_images, key=lambda a: a.sorted_list())
 
     def translated_copies(self, box):
@@ -1040,10 +1046,12 @@ class Polyomino(SageObject):
 
             sage: q = Polyomino([(0,0,0), (1,0,0)])
             sage: list(q.translated_copies((2,2,1)))
-            [Polyomino: [(0, 0, 0), (1, 0, 0)], Color: gray, Polyomino: [(0, 1, 0), (1, 1, 0)], Color: gray]
+            [Polyomino: [(0, 0, 0), (1, 0, 0)], Color: gray,
+             Polyomino: [(0, 1, 0), (1, 1, 0)], Color: gray]
             sage: q = Polyomino([(34,7,-9), (35,7,-9)])
             sage: list(q.translated_copies((2,2,1)))
-            [Polyomino: [(0, 0, 0), (1, 0, 0)], Color: gray, Polyomino: [(0, 1, 0), (1, 1, 0)], Color: gray]
+            [Polyomino: [(0, 0, 0), (1, 0, 0)], Color: gray,
+             Polyomino: [(0, 1, 0), (1, 1, 0)], Color: gray]
 
         Inside smaller boxes::
 
@@ -1113,7 +1121,8 @@ class Polyomino(SageObject):
 
             sage: from sage.combinat.tiling import Polyomino
             sage: p = Polyomino([(0,0),(1,0)], color='deeppink')
-            sage: sorted(sorted(a.frozenset()) for a in p.translated_copies_intersection(box=(2,3)))
+            sage: sorted(sorted(a.frozenset())
+            ....:        for a in p.translated_copies_intersection(box=(2,3)))
             [[(0, 0)],
              [(0, 0), (1, 0)],
              [(0, 1)],
@@ -1128,7 +1137,8 @@ class Polyomino(SageObject):
 
             sage: b = Polyomino([(0,0), (0,1), (0,2), (1,0), (2,0)])
             sage: p = Polyomino([(0,0), (1,0)])
-            sage: sorted(sorted(a.frozenset()) for a in p.translated_copies_intersection(b))
+            sage: sorted(sorted(a.frozenset())
+            ....:        for a in p.translated_copies_intersection(b))
             [[(0, 0)], [(0, 0), (1, 0)], [(0, 1)], [(0, 2)], [(1, 0), (2, 0)], [(2, 0)]]
 
         """
@@ -1163,7 +1173,7 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        - ``orientation_preserving`` -- bool (optional, default: ``True``);
+        - ``orientation_preserving`` -- bool (default: ``True``);
           If ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -1212,8 +1222,8 @@ class Polyomino(SageObject):
             raise ValueError("Dimension of input box must match the "
                              "dimension of the polyomino")
         box_min_coords, box_max_coords = box.bounding_box()
-        if mod_box_isometries and len(set(b-a for (a,b) in zip(box_min_coords,
-                                      box_max_coords))) < box._dimension:
+        if mod_box_isometries and len({b - a for a, b in zip(box_min_coords,
+                                                             box_max_coords)}) < box._dimension:
             raise NotImplementedError("The code below assumes that the"
                     " sizes of the box (={}) are all distinct when"
                     " argument `mod_box_isometries` is True.".format(box))
@@ -1231,7 +1241,7 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        - ``orientation_preserving`` -- bool (optional, default: ``True``);
+        - ``orientation_preserving`` -- bool (default: ``True``);
           if ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -1257,8 +1267,8 @@ class Polyomino(SageObject):
         """
         all_distinct_cano = self.canonical_isometric_copies(orientation_preserving,
                                                             mod_box_isometries=False)
-        return set([t for cano in all_distinct_cano
-                    for t in cano.translated_copies_intersection(box=box)])
+        return {t for cano in all_distinct_cano
+                for t in cano.translated_copies_intersection(box=box)}
 
     def neighbor_edges(self):
         r"""
@@ -1332,7 +1342,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``self`` - a 2d polyomino
+        - ``self`` -- a 2d polyomino
 
         OUTPUT:
 
@@ -1343,12 +1353,16 @@ class Polyomino(SageObject):
             sage: from sage.combinat.tiling import Polyomino
             sage: p = Polyomino([(0,0), (1,0), (0,1), (1,1)])
             sage: sorted(p.boundary())
-            [((-0.5, -0.5), (-0.5, 0.5)), ((-0.5, -0.5), (0.5, -0.5)), ((-0.5, 0.5), (-0.5, 1.5)), ((-0.5, 1.5), (0.5, 1.5)), ((0.5, -0.5), (1.5, -0.5)), ((0.5, 1.5), (1.5, 1.5)), ((1.5, -0.5), (1.5, 0.5)), ((1.5, 0.5), (1.5, 1.5))]
+            [((-0.5, -0.5), (-0.5, 0.5)), ((-0.5, -0.5), (0.5, -0.5)),
+             ((-0.5, 0.5), (-0.5, 1.5)), ((-0.5, 1.5), (0.5, 1.5)),
+             ((0.5, -0.5), (1.5, -0.5)), ((0.5, 1.5), (1.5, 1.5)),
+             ((1.5, -0.5), (1.5, 0.5)), ((1.5, 0.5), (1.5, 1.5))]
             sage: len(_)
             8
             sage: p = Polyomino([(5,5)])
             sage: sorted(p.boundary())
-            [((4.5, 4.5), (4.5, 5.5)), ((4.5, 4.5), (5.5, 4.5)), ((4.5, 5.5), (5.5, 5.5)), ((5.5, 4.5), (5.5, 5.5))]
+            [((4.5, 4.5), (4.5, 5.5)), ((4.5, 4.5), (5.5, 4.5)),
+             ((4.5, 5.5), (5.5, 5.5)), ((5.5, 4.5), (5.5, 5.5))]
         """
         if self._dimension != 2:
             raise NotImplementedError("The method boundary is currently "
@@ -1379,8 +1393,8 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``self`` - a polyomino of dimension 3
-        - ``size`` - number (optional, default: ``1``), the size of each
+        - ``self`` -- a polyomino of dimension 3
+        - ``size`` -- number (default: ``1``), the size of each
           ``1 \times 1 \times 1`` cube. This does a homothety with respect
           to the center of the polyomino.
 
@@ -1388,7 +1402,7 @@ class Polyomino(SageObject):
 
             sage: from sage.combinat.tiling import Polyomino
             sage: p = Polyomino([(0,0,0), (0,1,0), (1,1,0), (1,1,1)], color='blue')
-            sage: p.show3d()                # long time (2s)
+            sage: p.show3d()                    # long time (2s)                        # needs sage.plot
             Graphics3d Object
         """
         assert self._dimension == 3, "Dimension of the polyomino must be 3."
@@ -1409,19 +1423,19 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``self`` - a polyomino of dimension 2
-        - ``size`` - number (optional, default: ``0.7``), the size of each
+        - ``self`` -- a polyomino of dimension 2
+        - ``size`` -- number (default: ``0.7``), the size of each
           square.
-        - ``color`` - color (optional, default: ``'black'``), color of
+        - ``color`` -- color (default: ``'black'``), color of
           the boundary line.
-        - ``thickness`` - number (optional, default: ``1``), how thick the
+        - ``thickness`` -- number (default: ``1``), how thick the
           boundary line is.
 
         EXAMPLES::
 
             sage: from sage.combinat.tiling import Polyomino
             sage: p = Polyomino([(0,0),(1,0),(1,1),(1,2)], color='deeppink')
-            sage: p.show2d()              # long time (0.5s)
+            sage: p.show2d()                    # long time (0.5s)                      # needs sage.plot
             Graphics object consisting of 17 graphics primitives
         """
         assert self._dimension == 2, "Dimension of the polyomino must be 2."
@@ -1450,8 +1464,8 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``self`` - a polyomino of dimension 2
-        - ``radius`` - integer
+        - ``self`` -- a polyomino of dimension 2
+        - ``radius`` -- integer
         - ``remove_incomplete_copies`` -- bool (default: ``True``), whether
           to keep only complete copies of ``self`` in the output
         - ``ncpus`` -- integer (default: ``None``), maximal number of
@@ -1472,12 +1486,12 @@ class Polyomino(SageObject):
             ....: (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (2, 0), (2, 2),
             ....: (2, 3), (2, 5), (2, 6), (2, 8)])
             sage: solution = H.self_surrounding(8)
-            sage: G = sum([p.show2d() for p in solution], Graphics())
+            sage: G = sum([p.show2d() for p in solution], Graphics())                   # needs sage.plot
 
         ::
 
             sage: solution = H.self_surrounding(8, remove_incomplete_copies=False)
-            sage: G = sum([p.show2d() for p in solution], Graphics())
+            sage: G = sum([p.show2d() for p in solution], Graphics())                   # needs sage.plot
 
         """
         # Define the box to tile
@@ -1540,13 +1554,13 @@ class TilingSolver(SageObject):
 
     - ``pieces`` -- iterable of Polyominoes
     - ``box`` -- Polyomino or tuple of integers (size of a box)
-    - ``rotation`` -- bool (optional, default: ``True``), whether to allow
+    - ``rotation`` -- bool (default: ``True``), whether to allow
       rotations
-    - ``reflection`` -- bool (optional, default: ``False``), whether to allow
+    - ``reflection`` -- bool (default: ``False``), whether to allow
       reflections
-    - ``reusable`` -- bool (optional, default: ``False``), whether to allow
+    - ``reusable`` -- bool (default: ``False``), whether to allow
       the pieces to be reused
-    - ``outside`` -- bool (optional, default: ``False``), whether to allow
+    - ``outside`` -- bool (default: ``False``), whether to allow
       pieces to partially go outside of the box (all non-empty intersection
       of the pieces with the box are considered)
 
@@ -1738,7 +1752,8 @@ class TilingSolver(SageObject):
             sage: T = TilingSolver([p,q,r], box=(1,1,6))
             sage: A = T.coord_to_int_dict()
             sage: sorted(A.items())
-            [((0, 0, 0), 3), ((0, 0, 1), 4), ((0, 0, 2), 5), ((0, 0, 3), 6), ((0, 0, 4), 7), ((0, 0, 5), 8)]
+            [((0, 0, 0), 3), ((0, 0, 1), 4), ((0, 0, 2), 5),
+             ((0, 0, 3), 6), ((0, 0, 4), 7), ((0, 0, 5), 8)]
 
         Reusable pieces::
 
@@ -1747,14 +1762,14 @@ class TilingSolver(SageObject):
             sage: T = TilingSolver([p,q], box=[3,2], reusable=True)
             sage: B = T.coord_to_int_dict()
             sage: sorted(B.items())
-            [((0, 0), 0), ((0, 1), 1), ((1, 0), 2), ((1, 1), 3), ((2, 0), 4), ((2, 1), 5)]
+            [((0, 0), 0), ((0, 1), 1), ((1, 0), 2), ((1, 1), 3),
+             ((2, 0), 4), ((2, 1), 5)]
         """
         if self._reusable:
-            return dict((c, i) for i, c in enumerate(self.space()))
-        else:
-            number_of_pieces = len(self._pieces)
-            return dict((c, i+number_of_pieces)
-                        for i, c in enumerate(self.space()))
+            return {c: i for i, c in enumerate(self.space())}
+
+        number_of_pieces = len(self._pieces)
+        return {c: i + number_of_pieces for i, c in enumerate(self.space())}
 
     @cached_method
     def int_to_coord_dict(self):
@@ -1770,7 +1785,8 @@ class TilingSolver(SageObject):
             sage: T = TilingSolver([p,q,r], box=(1,1,6))
             sage: B = T.int_to_coord_dict()
             sage: sorted(B.items())
-            [(3, (0, 0, 0)), (4, (0, 0, 1)), (5, (0, 0, 2)), (6, (0, 0, 3)), (7, (0, 0, 4)), (8, (0, 0, 5))]
+            [(3, (0, 0, 0)), (4, (0, 0, 1)), (5, (0, 0, 2)),
+             (6, (0, 0, 3)), (7, (0, 0, 4)), (8, (0, 0, 5))]
 
         Reusable pieces::
 
@@ -1780,7 +1796,8 @@ class TilingSolver(SageObject):
             sage: T = TilingSolver([p,q], box=[3,2], reusable=True)
             sage: B = T.int_to_coord_dict()
             sage: sorted(B.items())
-            [(0, (0, 0)), (1, (0, 1)), (2, (1, 0)), (3, (1, 1)), (4, (2, 0)), (5, (2, 1))]
+            [(0, (0, 0)), (1, (0, 1)), (2, (1, 0)),
+             (3, (1, 1)), (4, (2, 0)), (5, (2, 1))]
 
         TESTS:
 
@@ -1793,23 +1810,19 @@ class TilingSolver(SageObject):
             True
             sage: all(B[A[i]] == i for i in A)
             True
-
         """
         if self._reusable:
-            return dict((i, c) for i, c in enumerate(self.space()))
-        else:
-            number_of_pieces = len(self._pieces)
-            return dict((i+number_of_pieces, c)
-                        for i, c in enumerate(self.space()))
+            return dict(enumerate(self.space()))
+        return dict(enumerate(self.space(), start=len(self._pieces)))
 
     @cached_method
     def rows_for_piece(self, i, mod_box_isometries=False):
         r"""
-        Return the rows for the i-th piece.
+        Return the rows for the `i`-th piece.
 
         INPUT:
 
-        - ``i`` -- integer, the i-th piece
+        - ``i`` -- integer, the `i`-th piece
 
         - ``mod_box_isometries`` -- bool (default: ``False``), whether to
           consider only rows for positions up to the action of the
@@ -1920,7 +1933,7 @@ class TilingSolver(SageObject):
         Return a list of rows representing the solutions up to isometries of
         the box.
 
-        The positions of the ``i``-th pieces are chosen up to isometries of
+        The positions of the `i`-th pieces are chosen up to isometries of
         the box. In dimension 3, there are four times less rows for that
         piece.
 
@@ -1928,13 +1941,14 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``i`` - integer, the i-th piece to consider, that piece must not
+        - ``i`` -- integer, the `i`-th piece to consider, that piece must not
           be isometric to itself by a isometry that preserve the box.
 
         EXAMPLES::
 
             sage: from sage.combinat.tiling import TilingSolver, Polyomino
-            sage: p = Polyomino([(0,0,0), (1,0,0), (1,1,0), (1,0,1), (2,0,1)], color='red')
+            sage: p = Polyomino([(0,0,0), (1,0,0), (1,1,0), (1,0,1), (2,0,1)],
+            ....:               color='red')
             sage: T = TilingSolver([p], box=(3,4,2))
             sage: T._rows_mod_box_isometries(0)
             [[0, 1, 3, 4, 11, 13],
@@ -2035,7 +2049,7 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``row_number`` -- integer, the i-th row
+        - ``row_number`` -- integer, the `i`-th row
 
         OUTPUT:
 
@@ -2062,7 +2076,7 @@ class TilingSolver(SageObject):
 
         TESTS:
 
-        We check that issue :trac:`32252` is fixed and that colors of
+        We check that issue :issue:`32252` is fixed and that colors of
         polyominoes are properly recovered::
 
             sage: v = Polyomino([(0, 0), (0, 1)], color="blue")
@@ -2275,13 +2289,13 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``partial`` - string (optional, default: ``None``), whether to
+        - ``partial`` -- string (default: ``None``), whether to
           include partial (incomplete) solutions. It can be one of the
           following:
 
-          - ``None`` - include only complete solution
-          - ``'common_prefix'`` - common prefix between two consecutive solutions
-          - ``'incremental'`` - one piece change at a time
+          - ``None`` -- include only complete solution
+          - ``'common_prefix'`` -- common prefix between two consecutive solutions
+          - ``'incremental'`` -- one piece change at a time
 
         OUTPUT:
 
@@ -2402,21 +2416,21 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``partial`` - string (optional, default: ``None``), whether to
+        - ``partial`` -- string (default: ``None``), whether to
           include partial (incomplete) solutions. It can be one of the
           following:
 
-          - ``None`` - include only complete solutions
-          - ``'common_prefix'`` - common prefix between two consecutive solutions
-          - ``'incremental'`` - one piece change at a time
+          - ``None`` -- include only complete solutions
+          - ``'common_prefix'`` -- common prefix between two consecutive solutions
+          - ``'incremental'`` -- one piece change at a time
 
-        - ``stop`` - integer (optional, default:``None``), number of frames
+        - ``stop`` -- integer (default:``None``), number of frames
 
-        - ``size`` - number (optional, default: ``0.75``), the size of each
+        - ``size`` -- number (default: ``0.75``), the size of each
           ``1 \times 1`` square. This does a homothety with respect
           to the center of each polyomino.
 
-        - ``axes`` - bool (optional, default:``False``), whether the x and
+        - ``axes`` -- bool (default:``False``), whether the x and
           y axes are shown.
 
         EXAMPLES::
@@ -2424,38 +2438,37 @@ class TilingSolver(SageObject):
             sage: from sage.combinat.tiling import Polyomino, TilingSolver
             sage: y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='cyan')
             sage: T = TilingSolver([y], box=(5,10), reusable=True, reflection=True)
-            sage: a = T.animate()
-            sage: a          # optional -- ImageMagick    # long time
+            sage: a = T.animate()                                                       # needs sage.plot
+            sage: a                             # long time, optional - imagemagick, needs sage.plot
             Animation with 10 frames
 
         Include partial solutions (common prefix between two consecutive
         solutions)::
 
-            sage: a = T.animate('common_prefix')
-            sage: a          # optional -- ImageMagick    # long time
+            sage: a = T.animate('common_prefix')                                        # needs sage.plot
+            sage: a                             # long time, optional - imagemagick, needs sage.plot
             Animation with 19 frames
 
         Incremental solutions (one piece removed or added at a time)::
 
-            sage: a = T.animate('incremental')      # long time (2s)
-            sage: a                                 # long time (2s)  # optional -- ImageMagick
+            sage: a = T.animate('incremental')  # long time (2s)                        # needs sage.plot
+            sage: a                             # long time (2s), optional - imagemagick, needs sage.plot
             Animation with 123 frames
 
         ::
 
-            sage: a.show()           # optional -- ImageMagick   # long time
+            sage: a.show()                      # long time, optional - imagemagick, needs sage.plot
 
         The ``show`` function takes arguments to specify the delay between
         frames (measured in hundredths of a second, default value 20) and
         the number of iterations (default value 0, which means to iterate
         forever). To iterate 4 times with half a second between each frame::
 
-            sage: a.show(delay=50, iterations=4)  # optional -- ImageMagick # long time
+            sage: a.show(delay=50, iterations=4)        # long time, optional - imagemagick, needs sage.plot
 
         Limit the number of frames::
 
-            sage: a = T.animate('incremental', stop=13)     # not tested
-            sage: a                                         # not tested
+            sage: a = T.animate('incremental', stop=13); a      # not tested            # needs sage.plot
             Animation with 13 frames
         """
         dimension = self._box._dimension

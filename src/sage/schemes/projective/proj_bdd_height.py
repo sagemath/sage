@@ -14,7 +14,6 @@ AUTHORS:
 REFERENCES:
 
 - [Krumm2016]
-
 """
 
 import itertools
@@ -22,10 +21,12 @@ import itertools
 from math import floor
 
 from sage.schemes.projective.projective_space import ProjectiveSpace
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.rings.number_field.unit_group import UnitGroup
-from sage.arith.misc import GCD as gcd
+from sage.arith.misc import gcd
+from sage.arith.functions import lcm
 from sage.matrix.constructor import matrix, column_matrix
 from sage.libs.pari.all import pari
 from sage.modules.free_module_element import vector
@@ -33,60 +34,130 @@ from sage.rings.integer import Integer
 from sage.geometry.polyhedron.constructor import Polyhedron
 
 
-def QQ_points_of_bounded_height(dim, bound):
+def ZZ_points_of_bounded_height(PS, dim, bound):
     r"""
     Return an iterator of the points in ``self`` of absolute multiplicative
     height of at most ``bound`` in the rational field.
 
     INPUT:
 
+    - ``PS`` -- a projective space
+
     - ``dim`` -- a positive integer
 
-    - ``bound`` -- a real number
+    - ``bound`` -- a positive integer
 
     OUTPUT:
 
     - an iterator of points of bounded height
 
-    EXAMPLES:
+    EXAMPLES::
+
+        sage: from sage.schemes.projective.proj_bdd_height import ZZ_points_of_bounded_height
+        sage: PS = ProjectiveSpace(ZZ, 1)
+        sage: sorted(list(ZZ_points_of_bounded_height(PS, 1, 1)))
+        [(-1 : -1), (-1 : 0), (-1 : 1), (0 : -1)]
+        sage: len(list(ZZ_points_of_bounded_height(PS, 1, 5)))
+        40
+        sage: sorted(list(ZZ_points_of_bounded_height(PS, 1, 2)))
+        [(-2 : -1), (-2 : 1), (-1 : -2), (-1 : -1),
+         (-1 : 0), (-1 : 1), (-1 : 2), (0 : -1)]
+        sage: PS = ProjectiveSpace(ZZ, 2)
+        sage: sorted(list(ZZ_points_of_bounded_height(PS, 2, 1)))
+        [(-1 : -1 : -1), (-1 : -1 : 0), (-1 : -1 : 1), (-1 : 0 : -1),
+         (-1 : 0 : 0), (-1 : 0 : 1), (-1 : 1 : -1), (-1 : 1 : 0),
+         (-1 : 1 : 1), (0 : -1 : -1), (0 : -1 : 0), (0 : -1 : 1),
+         (0 : 0 : -1)]
+
+    There are no points of negative height::
+
+        sage: from sage.schemes.projective.proj_bdd_height import ZZ_points_of_bounded_height
+        sage: PS = ProjectiveSpace(ZZ, 1)
+        sage: list(ZZ_points_of_bounded_height(PS, 1, -3))
+        []
+    """
+    if bound < 1:
+        return iter(set())
+
+    points_of_bounded_height = set()
+
+    for t in itertools.product(range(-bound, bound+1), repeat=dim+1):
+        if gcd(t) == 1:
+            point = PS(t)
+            if point not in points_of_bounded_height:
+                points_of_bounded_height.add(point)
+                yield point
+
+
+def QQ_points_of_bounded_height(PS, dim, bound, normalize=False):
+    r"""
+    Return an iterator of the points in ``self`` of absolute multiplicative
+    height of at most ``bound`` in the rational field.
+
+    INPUT:
+
+    - ``PS`` -- a projective space
+
+    - ``dim`` -- a positive integer
+
+    - ``bound`` -- a real number
+
+    - ``normalize`` -- boolean (default: ``False``); whether to
+      normalize the coordinates of returned points
+
+    OUTPUT:
+
+    - an iterator of points of bounded height
+
+    EXAMPLES::
 
         sage: from sage.schemes.projective.proj_bdd_height import QQ_points_of_bounded_height
-        sage: sorted(list(QQ_points_of_bounded_height(1, 1)))
+        sage: PS = ProjectiveSpace(QQ, 1)
+        sage: sorted(list(QQ_points_of_bounded_height(PS, 1, 1)))
         [(-1 : 1), (0 : 1), (1 : 0), (1 : 1)]
-        sage: len(list(QQ_points_of_bounded_height(1, 5)))
+        sage: len(list(QQ_points_of_bounded_height(PS, 1, 5)))
         40
+        sage: sorted(list(QQ_points_of_bounded_height(PS, 1, 2)))
+        [(-2 : 1), (-1 : 1), (-1/2 : 1), (0 : 1),
+         (1/2 : 1), (1 : 0), (1 : 1), (2 : 1)]
+        sage: sorted(list(QQ_points_of_bounded_height(PS, 1, 2, normalize=True)))
+        [(-2 : 1), (-1 : 1), (-1 : 2), (0 : 1),
+         (1 : 0), (1 : 1), (1 : 2), (2 : 1)]
 
     There are no points of negative height::
 
         sage: from sage.schemes.projective.proj_bdd_height import QQ_points_of_bounded_height
-        sage: list(QQ_points_of_bounded_height(1, -3))
+        sage: PS = ProjectiveSpace(QQ, 1)
+        sage: list(QQ_points_of_bounded_height(PS, 1, -3))
         []
     """
     if bound < 1:
-        return iter(set([]))
+        return iter(set())
 
-    PN = ProjectiveSpace(QQ, dim)
     unit_tuples = list(itertools.product([-1, 1], repeat=dim))
-    points_of_bounded_height = set([])
+    points_of_bounded_height = set()
     increasing_tuples = itertools.combinations_with_replacement(range(floor(bound + 1)), dim + 1)
     for t in increasing_tuples:
         if gcd(t) == 1:
             for p in itertools.permutations(t):
                 for u in unit_tuples:
-                    point = PN([a*b for a, b in zip(u, p)] + [p[dim]])
+                    point = PS([a*b for a, b in zip(u, p)] + [p[dim]])
                     if point not in points_of_bounded_height:
+                        if normalize:
+                            point.scale_by(lcm([point[i].denominator() for i in range(dim + 1)]))
+
                         points_of_bounded_height.add(point)
                         yield point
 
 
-def IQ_points_of_bounded_height(PN, K, dim, bound):
+def IQ_points_of_bounded_height(PS, K, dim, bound):
     r"""
     Return an iterator of the points in ``self`` of absolute multiplicative
     height of at most ``bound`` in the imaginary quadratic field ``K``.
 
     INPUT:
 
-    - ``PN`` -- a projective space
+    - ``PS`` -- a projective space
 
     - ``K`` -- a number field
 
@@ -100,12 +171,13 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
 
     EXAMPLES:
 
+        sage: # needs sage.rings.number_field
         sage: from sage.schemes.projective.proj_bdd_height import IQ_points_of_bounded_height
-        sage: CF.<a> = CyclotomicField(3)                                                           # optional - sage.rings.number_field
-        sage: P.<x,y,z> = ProjectiveSpace(CF, 2)                                                    # optional - sage.rings.number_field
-        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, -1)))                                  # optional - sage.rings.number_field
+        sage: CF.<a> = CyclotomicField(3)
+        sage: P.<x,y,z> = ProjectiveSpace(CF, 2)
+        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, -1)))
         0
-        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, 1)))                                   # optional - sage.rings.number_field
+        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, 1)))
         57
     """
     if bound < 1:
@@ -117,12 +189,12 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
     class_group_ideal_norms = [i.norm() for i in class_group_ideals]
     class_number = len(class_group_ideals)
 
-    possible_norm_set = set([])
+    possible_norm_set = set()
     for i in range(class_number):
         for k in range(1, floor(bound + 1)):
             possible_norm_set.add(k*class_group_ideal_norms[i])
 
-    coordinate_space = dict()
+    coordinate_space = {}
     coordinate_space[0] = [K(0)]
     for m in possible_norm_set:
         coordinate_space[m] = K.elements_of_norm(m)
@@ -139,7 +211,7 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
                     if x in a:
                         a_coordinates.append(x)
 
-        points_in_class_a = set([])
+        points_in_class_a = set()
         t = len(a_coordinates) - 1
         increasing_tuples = itertools.combinations_with_replacement(range(t + 1), dim + 1)
         for index_tuple in increasing_tuples:
@@ -147,13 +219,14 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
             if a == K.ideal(point_coordinates):
                 for p in itertools.permutations(point_coordinates):
                     for u in unit_tuples:
-                        point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
+                        point = PS([i*j for i, j in zip(u, p)] + [p[dim]])
+
                         if point not in points_in_class_a:
                             points_in_class_a.add(point)
                             yield point
 
 
-def points_of_bounded_height(PN, K, dim, bound, prec=53):
+def points_of_bounded_height(PS, K, dim, bound, prec=53):
     r"""
     Return an iterator of the points in ``K`` with dimension ``dim`` of
     absolute multiplicative height of at most ``bound``.
@@ -164,11 +237,11 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
 
     INPUT:
 
-    - ``PN`` -- a projective space
+    - ``PS`` -- a projective space
 
     - ``K`` -- a number field
 
-    - ``dim`` -- a positive interger
+    - ``dim`` -- a positive integer
 
     - ``bound`` -- a real number
 
@@ -178,14 +251,50 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
 
     - an iterator of points of bounded height
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.projective.proj_bdd_height import points_of_bounded_height
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 7)                                                          # optional - sage.rings.number_field
-        sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
-        sage: len(list(points_of_bounded_height(P, K, 2, 1)))                                       # optional - sage.rings.number_field
-        13
+
+        sage: # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 7)
+        sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+        sage: sorted(list(points_of_bounded_height(P, K, 2, 1)))
+        [(0 : 0 : 1), (0 : 1 : 0), (1 : 0 : 0), (0 : -1 : 1), (0 : 1 : 1),
+         (-1 : 0 : 1), (1 : 0 : 1), (1 : 1 : 0), (-1 : 1 : 0), (-1 : -1 : 1),
+         (-1 : 1 : 1), (1 : -1 : 1), (1 : 1 : 1)]
+
+    ::
+
+        sage: # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
+        sage: R.<x> = QQ[]
+        sage: K.<a> = NumberField(3*x^2 + 1)
+        sage: O = K.maximal_order()
+        sage: P.<z,w> = ProjectiveSpace(O, 1)
+        sage: len(list(P.points_of_bounded_height(bound=2)))
+        44
+
+    ::
+
+        sage: # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
+        sage: R.<x> = QQ[]
+        sage: K.<a> = NumberField(3*x^2 + 1)
+        sage: O = K.maximal_order()
+        sage: P.<z,w> = ProjectiveSpace(O, 1)
+        sage: sorted(list(P.points_of_bounded_height(bound=1)))
+        [(-1 : 1), (-3/2*a - 1/2 : 1), (3/2*a - 1/2 : 1), (0 : 1),
+         (-3/2*a + 1/2 : 0), (-3/2*a + 1/2 : 1), (3/2*a + 1/2 : 1), (1 : 1)]
+
+    ::
+
+        sage: # needs sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
+        sage: R.<x> = QQ[]
+        sage: K.<z> = NumberField(x^2 - 2)
+        sage: R2.<y> = K[]
+        sage: L.<w> = K.extension(y^2 - 3)
+        sage: P.<a,b> = ProjectiveSpace(L, 1)
+        sage: len(list(P.points_of_bounded_height(bound=2)))
+        256
     """
     if bound < 1:
         return iter([])
@@ -235,12 +344,12 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
     fundamental_units = lll_fund_units
     fund_unit_logs = list(map(log_embed, fundamental_units))
 
-    possible_norm_set = set([])
+    possible_norm_set = set()
     for i in range(class_number):
         for k in range(1, floor(bound + 1)):
             possible_norm_set.add(k*class_group_ideal_norms[i])
 
-    principal_ideal_gens = dict()
+    principal_ideal_gens = {}
     negative_norm_units = K.elements_of_norm(-1)
     if len(negative_norm_units) == 0:
         for m in possible_norm_set:
@@ -249,7 +358,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
         for m in possible_norm_set:
             principal_ideal_gens[m] = K.elements_of_norm(m)
 
-    pr_ideal_gen_logs = dict()
+    pr_ideal_gen_logs = {}
     for key in principal_ideal_gens:
         for y in principal_ideal_gens[key]:
             pr_ideal_gen_logs[y] = log_embed(y)
@@ -288,11 +397,11 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
     T_it = T.inverse().transpose()
     unit_polytope = Polyhedron([v*T_it for v in vertices])
 
-    coordinate_space = dict()
+    coordinate_space = {}
     coordinate_space[0] = [[K(0), log_embed(0)]]
     int_points = unit_polytope.integral_points()
 
-    units_with_logs = dict()
+    units_with_logs = {}
     for n in int_points:
         new_unit = 1
         for j in range(r):
@@ -334,7 +443,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
                             a_coordinates.append(pair)
 
         t = len(a_coordinates) - 1
-        points_in_class_a = set([])
+        points_in_class_a = set()
         increasing_tuples = itertools.combinations_with_replacement(range(t + 1), dim + 1)
         log_arch_height_bound = logB + log_a_norm
         for index_tuple in increasing_tuples:
@@ -344,7 +453,8 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
             if log_arch_height <= log_arch_height_bound and a == K.ideal(point_coordinates):
                 for p in itertools.permutations(point_coordinates):
                     for u in unit_tuples:
-                        point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
+                        point = PS([i*j for i, j in zip(u, p)] + [p[dim]])
+
                         if point not in points_in_class_a:
                             points_in_class_a.add(point)
                             yield point

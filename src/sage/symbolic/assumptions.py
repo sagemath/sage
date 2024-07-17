@@ -261,7 +261,7 @@ class GenericDeclaration(UniqueRepresentation):
             cur = maxima.get("context")
             # Redeclaring on the existing context does not seem to trigger
             # inconsistency checking.
-            ## maxima.set("context", self._context._maxima_init_())
+            # maxima.set("context", self._context._maxima_init_())
             # Instead, use a temporary context for this purpose
             context = maxima.newcontext('context' + maxima._next_var_name())
             must_declare = True
@@ -272,7 +272,7 @@ class GenericDeclaration(UniqueRepresentation):
             try:
                 maxima.eval("declare(%s, %s)" % (self._var._maxima_init_(), self._assumption))
             except RuntimeError as mess:
-                if 'inconsistent' in str(mess): # note Maxima doesn't tell you if declarations are redundant
+                if 'inconsistent' in str(mess):  # note Maxima doesn't tell you if declarations are redundant
                     # Inconsistency with one of the active contexts.
                     raise ValueError("Assumption is inconsistent")
                 else:
@@ -316,9 +316,9 @@ class GenericDeclaration(UniqueRepresentation):
             except KeyError:
                 return
             maxima.deactivate(self._context)
-        else: # trying to forget a declaration explicitly rather than implicitly
+        else:  # trying to forget a declaration explicitly rather than implicitly
             for x in _assumptions:
-                if repr(self) == repr(x): # so by implication x is also a GenericDeclaration
+                if repr(self) == repr(x):  # so by implication x is also a GenericDeclaration
                     x.forget()
                     break
             return
@@ -372,7 +372,7 @@ class GenericDeclaration(UniqueRepresentation):
             True
             sage: GenericDeclaration(x, 'rational').contradicts({z: pi, y: pi})
             False
-       """
+        """
         if isinstance(soln, dict):
             value = soln.get(self._var)
             if value is None:
@@ -595,7 +595,7 @@ def assume(*args):
     TESTS:
 
     Test that you can do two non-relational
-    declarations at once (fixing :trac:`7084`)::
+    declarations at once (fixing :issue:`7084`)::
 
         sage: var('m,n')
         (m, n)
@@ -610,7 +610,7 @@ def assume(*args):
         sage: sin(m*pi).simplify()
         sin(pi*m)
 
-    Check that positive integers can be created (:trac:`20132`)
+    Check that positive integers can be created (:issue:`20132`)
 
         sage: x = SR.var('x', domain='positive')
         sage: assume(x, 'integer')
@@ -636,7 +636,7 @@ def assume(*args):
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no
-        attribute 'assume'
+        attribute 'assume'...
 
     Ensure that we can combine the two types of assumptions, as documented::
 
@@ -662,7 +662,7 @@ def assume(*args):
         [0 < x]
         sage: forget()
 
-    Check that :trac:`28538` is fixed::
+    Check that :issue:`28538` is fixed::
 
         sage: x, y = SR.var('x, y')
         sage: assume(x > 0)
@@ -815,7 +815,7 @@ def _forget_all():
 
     TESTS:
 
-    Check that :trac:`7315` is fixed::
+    Check that :issue:`7315` is fixed::
 
         sage: var('m,n')
         (m, n)
@@ -945,8 +945,8 @@ class assuming:
             sage: bool(x>-1)
             False
         """
-        self.replace=kwds.pop("replace",False)
-        self.Ass=args
+        self.replace = kwds.pop("replace", False)
+        self.Ass = args
 
     def __enter__(self):
         r"""
@@ -964,7 +964,7 @@ class assuming:
             False
         """
         if self.replace:
-            self.OldAss=assumptions()
+            self.OldAss = assumptions()
             forget(assumptions())
         assume(self.Ass)
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 """
 GLPK Backend for access to GLPK graph functions
 
@@ -1005,7 +1006,7 @@ cdef class GLPKGraphBackend():
         for edge in edges:
             self.delete_edge(*edge)
 
-    cpdef int _find_vertex(self, name):
+    cpdef int _find_vertex(self, name) noexcept:
         """
         Returns the index of a vertex specified by a name
 
@@ -1032,7 +1033,7 @@ cdef class GLPKGraphBackend():
         glp_create_v_index(self.graph)
         return glp_find_vertex(self.graph, str_to_bytes(name)) - 1
 
-    cpdef int write_graph(self, fname):
+    cpdef int write_graph(self, fname) noexcept:
         r"""
         Writes the graph to a plain text file
 
@@ -1060,7 +1061,7 @@ cdef class GLPKGraphBackend():
         fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_graph(self.graph, fname)
 
-    cpdef int write_ccdata(self, fname):
+    cpdef int write_ccdata(self, fname) noexcept:
         r"""
         Writes the graph to a text file in DIMACS format.
 
@@ -1092,7 +1093,7 @@ cdef class GLPKGraphBackend():
         fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_ccdata(self.graph, 0, fname)
 
-    cpdef int write_mincost(self, fname):
+    cpdef int write_mincost(self, fname) noexcept:
         """
         Writes the mincost flow problem data to a text file in DIMACS format
 
@@ -1321,7 +1322,7 @@ cdef class GLPKGraphBackend():
 
         return graph_sol
 
-    cpdef double cpp(self):
+    cpdef double cpp(self) noexcept:
         r"""
         Solves the critical path problem of a project network.
 

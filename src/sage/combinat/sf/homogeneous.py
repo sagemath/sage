@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Homogeneous symmetric functions
 
@@ -280,7 +281,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 sage: x.principal_specialization(3)
                 q^6 + 2*q^5 + 4*q^4 + 4*q^3 + 4*q^2 + 2*q + 1
                 sage: x = 3*h[2] + 2*h[1] + 1
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 2*(q^3 - 1)/(q - 1) + 3*(q^4 - 1)*(q^3 - 1)/((q^2 - 1)*(q - 1)) + 1
 
             TESTS::
@@ -384,7 +385,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(h[3].exponential_specialization(q=var("q"), t=var("t")))
+                sage: factor(h[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 t^3/((q^2 + q + 1)*(q + 1))
 
             TESTS::

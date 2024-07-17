@@ -24,7 +24,7 @@ These functions can be plotted, but not differentiated or integrated.
        Graphics object consisting of 1 graphics primitive
 
 In the last line, note the syntax. Using ``plot(f(z), 0, 2)`` instead
-will give a ``NameError``, because ``z`` is a dummy variable in the
+will give a :class:`NameError`, because ``z`` is a dummy variable in the
 definition of ``f`` and is not defined outside of that definition.
 In order to be able to use ``f(z)`` in the plot command, ``z``
 (or whatever is desired) needs to be defined as a variable.  We

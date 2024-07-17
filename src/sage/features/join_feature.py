@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Join features
 """
@@ -46,7 +47,9 @@ class JoinFeature(Feature):
         sage: F.is_present()
         FeatureTestResult('xxyyyy', False)
     """
-    def __init__(self, name, features, spkg=None, url=None, description=None):
+
+    def __init__(self, name, features, spkg=None, url=None, description=None, type=None,
+                 **kwds):
         """
         TESTS:
 
@@ -68,7 +71,15 @@ class JoinFeature(Feature):
                 raise ValueError('given features have more than one url; provide url argument')
             elif len(urls) == 1:
                 url = next(iter(urls))
-        super().__init__(name, spkg=spkg, url=url, description=description)
+        if type is None:
+            if any(f._spkg_type() == 'experimental' for f in features):
+                type = 'experimental'
+            elif any(f._spkg_type() == 'optional' for f in features):
+                type = 'optional'
+            else:
+                type = 'standard'
+
+        super().__init__(name, spkg=spkg, url=url, description=description, type=type, **kwds)
         self._features = features
 
     def _is_present(self):
@@ -87,32 +98,49 @@ class JoinFeature(Feature):
                 return test
         return FeatureTestResult(self, True)
 
-    def is_functional(self):
+    def hide(self):
         r"""
-        Test whether the join feature is functional.
-
-        This method is deprecated. Use :meth:`Feature.is_present` instead.
+        Hide this feature and all its joined features.
 
         EXAMPLES::
 
-            sage: from sage.features.latte import Latte
-            sage: Latte().is_functional()  # optional - latte_int
-            doctest:warning...
-            DeprecationWarning: method JoinFeature.is_functional; use is_present instead
-            See https://github.com/sagemath/sage/issues/33114 for details.
-            FeatureTestResult('latte_int', True)
+            sage: from sage.features.sagemath import sage__groups
+            sage: f = sage__groups()
+            sage: f.hide()
+            sage: f._features[0].is_present()
+            FeatureTestResult('sage.groups.perm_gps.permgroup', False)
+
+            sage: f.require()
+            Traceback (most recent call last):
+            ...
+            FeatureNotPresentError: sage.groups is not available.
+            Feature `sage.groups` is hidden.
+            Use method `unhide` to make it available again.
         """
-        try:
-            from sage.misc.superseded import deprecation
-        except ImportError:
-            # The import can fail because sage.misc.superseded is provided by
-            # the distribution sagemath-objects, which is not an
-            # install-requires of the distribution sagemath-environment.
-            pass
-        else:
-            deprecation(33114, 'method JoinFeature.is_functional; use is_present instead')
         for f in self._features:
-            test = f.is_functional()
-            if not test:
-                return test
-        return FeatureTestResult(self, True)
+            f.hide()
+        super().hide()
+
+    def unhide(self):
+        r"""
+        Revert what :meth:`hide` did.
+
+        EXAMPLES::
+
+            sage: from sage.features.sagemath import sage__groups
+            sage: f = sage__groups()
+            sage: f.hide()
+            sage: f.is_present()
+            FeatureTestResult('sage.groups', False)
+            sage: f._features[0].is_present()
+            FeatureTestResult('sage.groups.perm_gps.permgroup', False)
+
+            sage: f.unhide()
+            sage: f.is_present()    # optional sage.groups
+            FeatureTestResult('sage.groups', True)
+            sage: f._features[0].is_present() # optional sage.groups
+            FeatureTestResult('sage.groups.perm_gps.permgroup', True)
+        """
+        for f in self._features:
+            f.unhide()
+        super().unhide()

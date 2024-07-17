@@ -1,3 +1,4 @@
+# sage.doctest: optional - pplpy
 """
 PPL Backend
 
@@ -6,7 +7,7 @@ AUTHORS:
 - Risan (2012-02): initial implementation
 
 - Jeroen Demeyer (2014-08-04) allow rational coefficients for
-  constraints and objective function (:trac:`16755`)
+  constraints and objective function (:issue:`16755`)
 """
 
 # ****************************************************************************
@@ -23,7 +24,7 @@ from sage.numerical.mip import MIPSolverException
 from ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from .generic_backend cimport GenericBackend
+from sage.numerical.backends.generic_backend cimport GenericBackend
 from copy import copy
 
 
@@ -61,7 +62,7 @@ cdef class PPLBackend(GenericBackend):
 
         Raise an error if a ``base_ring`` is requested that is not supported::
 
-            sage: p = MixedIntegerLinearProgram(solver = "PPL", base_ring=AA)
+            sage: p = MixedIntegerLinearProgram(solver="PPL", base_ring=AA)             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The PPL backend only supports rational data.
@@ -790,7 +791,7 @@ cdef class PPLBackend(GenericBackend):
         g = self.mip.optimizing_point()
         return Integer(g.coefficient(Variable(variable))) / Integer(g.divisor())
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -807,7 +808,7 @@ cdef class PPLBackend(GenericBackend):
         """
         return len(self.objective_function)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -823,7 +824,7 @@ cdef class PPLBackend(GenericBackend):
         """
         return len(self.Matrix)
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -954,8 +955,7 @@ cdef class PPLBackend(GenericBackend):
         """
         return (self.col_lower_bound[index], self.col_upper_bound[index])
 
-
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         """
         Test whether the given variable is of binary type.
 
@@ -976,7 +976,7 @@ cdef class PPLBackend(GenericBackend):
         """
         return index in self.integer_variables and self.col_bounds(index) == (0, 1)
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         """
         Test whether the given variable is of integer type.
 
@@ -997,7 +997,7 @@ cdef class PPLBackend(GenericBackend):
         """
         return index in self.integer_variables and self.col_bounds(index) != (0, 1)
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         """
         Test whether the given variable is of continuous/real type.
 
@@ -1062,7 +1062,7 @@ cdef class PPLBackend(GenericBackend):
             return self.col_name_var[index]
         return "x_" + repr(index)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable
 
@@ -1094,7 +1094,7 @@ cdef class PPLBackend(GenericBackend):
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable
 

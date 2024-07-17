@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 '''
 Tests for the IPython integration
 
@@ -44,7 +45,7 @@ Next, test the pinfo magic for Cython code::
     Type:           type
     ...
 
-Next, test the ``pinfo`` magic for ``R`` interface code, see :trac:`26906`::
+Next, test the ``pinfo`` magic for ``R`` interface code, see :issue:`26906`::
 
     sage: from sage.repl.interpreter import get_test_shell   # optional - rpy2
     sage: shell = get_test_shell()                           # optional - rpy2
@@ -53,7 +54,7 @@ Next, test the ``pinfo`` magic for ``R`` interface code, see :trac:`26906`::
     ...
     String form:     lm
     File:            .../sage/interfaces/r.py
-    Docstring:
+    Docstring:...
     title
     *****
     <BLANKLINE>
@@ -120,7 +121,7 @@ Next, test the pinfo2 magic for Cython code::
     Type:   type
     ...
 
-Next, test the ``pinfo2`` magic for ``R`` interface code, see :trac:`26906`::
+Next, test the ``pinfo2`` magic for ``R`` interface code, see :issue:`26906`::
 
     sage: from sage.repl.interpreter import get_test_shell   # optional - rpy2
     sage: shell = get_test_shell()                           # optional - rpy2

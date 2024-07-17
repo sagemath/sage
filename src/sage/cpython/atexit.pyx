@@ -1,16 +1,16 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 
 """Utilities for interfacing with the standard library's atexit module."""
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Erik M. Bray <erik.bray@lri.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import atexit
 
@@ -25,7 +25,7 @@ cdef class restore_atexit:
 
     INPUT:
 
-    - ``run`` (bool, default: False) -- if True, when exiting the
+    - ``run`` (bool, default: ``False``) -- if True, when exiting the
       context (but before restoring the old exit functions), run all
       atexit functions which were added inside the context.
 
@@ -51,7 +51,8 @@ cdef class restore_atexit:
         sage: import atexit
         sage: from sage.cpython.atexit import restore_atexit
         sage: def handler(*args, **kwargs):
-        ....:     import sys # see https://github.com/sagemath/sage/issues/25270#comment:56
+        ....:     import sys
+        ....:     # see https://github.com/sagemath/sage/issues/25270#comment:56
         ....:     sys.stdout.write(str((args, kwargs)))
         ....:     sys.stdout.write('\n')
         sage: atexit.register(handler, 1, 2, c=3)
@@ -153,6 +154,10 @@ cdef extern from *:
     #undef _PyGC_FINALIZED
     #include "internal/pycore_interp.h"
     #include "internal/pycore_pystate.h"
+    #if PY_VERSION_HEX >= 0x030c0000
+    // struct atexit_callback was renamed in 3.12 to atexit_py_callback
+    #define atexit_callback atexit_py_callback
+    #endif
     static atexit_callback ** _atexit_callbacks(PyObject *self) {
         PyInterpreterState *interp = _PyInterpreterState_GET();
         struct atexit_state state = interp->atexit;
@@ -188,6 +193,7 @@ cdef extern from *:
         PyObject* kwargs
     atexit_callback** _atexit_callbacks(object module)
 
+
 def _get_exithandlers():
     """Return list of exit handlers registered with the atexit module."""
     cdef atexit_callback ** callbacks
@@ -206,9 +212,10 @@ def _get_exithandlers():
         else:
             kwargs = {}
         exithandlers.append((<object>callback.func,
-                                <object>callback.args,
-                                kwargs))
+                             <object>callback.args,
+                             kwargs))
     return exithandlers
+
 
 def _set_exithandlers(exithandlers):
     """

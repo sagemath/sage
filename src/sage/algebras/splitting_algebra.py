@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari sage.modules
 r"""
 Splitting Algebras
 
@@ -229,11 +229,11 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             if not base_ring.is_integral_domain():
                 raise TypeError("base_ring must be an integral domain")
         except NotImplementedError:
-            from sage.rings.ring import Ring
-            if not isinstance(base_ring, Ring):
-                raise TypeError("base_ring must be an instance of ring")
+            from sage.categories.rings import Rings
+            if base_ring not in Rings():
+                raise TypeError("base_ring must be a ring")
             if warning:
-                warn('Assuming %s to be an integral domain!' % (base_ring))
+                warn('Assuming %s to be an integral domain!' % base_ring)
 
         if deg < 1:
             raise ValueError("the degree of the polynomial must positive")
@@ -274,16 +274,16 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
             verbose("base_ring_step %s defined:" % (base_ring_step))
 
-            # ------------------------------------------------------------------------------------
+            # -------------------------------------------------------------
             # splitting first root off
-            # ------------------------------------------------------------------------------------
+            # -------------------------------------------------------------
             from copy import copy
             root_names_reduces = copy(root_names)
             root_names_reduces.remove(root_name)
 
             P = base_ring_step[root_names_reduces[0]]
             p = P(monic_polynomial.dict())
-            q, _ = p.quo_rem((P.gen() - first_root))
+            q, _ = p.quo_rem(P.gen() - first_root)
 
             verbose("Invoking recursion with: %s" % (q,))
 
@@ -332,10 +332,10 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             try:
                 cf0_inv = ~(cf[0])
                 cf0_inv = self(cf0_inv)
-                verbose("invertible coefficient: %s found" %(cf0_inv))
+                verbose("invertible coefficient: %s found" % (cf0_inv))
                 break
             except NotImplementedError:
-                verbose("constant coefficient: %s not invertibe" %(cf0))
+                verbose("constant coefficient: %s not invertibe" % (cf0))
 
         # ------------------------------------------------------------------
         # assuming that cf splits into linear factors over self
@@ -355,7 +355,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
                 root_inv = (-1 )**(deg_cf) * cf0_inv * root_inv
                 self._invertible_elements.update({root:root_inv})
                 verbose("adding inverse %s of root %s" % (root_inv, root))
-            invert_items = [(k,v) for k, v in self._invertible_elements.items()]
+            invert_items = list(self._invertible_elements.items())
             for k, v in invert_items:
                 self._invertible_elements.update({v: k})
         return

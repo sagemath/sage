@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 DES
 
@@ -77,7 +78,7 @@ from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.modules.vector_mod2_dense import Vector_mod2_dense
+from sage.structure.element import Vector
 from sage.rings.integer import Integer
 from sage.crypto.sboxes import DES_S1_1, DES_S1_2, DES_S1_3, DES_S1_4
 from sage.crypto.sboxes import DES_S2_1, DES_S2_2, DES_S2_3, DES_S2_4
@@ -511,7 +512,7 @@ class DES(SageObject):
             sage: des.encrypt(P, K56) == C
             True
         """
-        if isinstance(plaintext, (list, tuple, Vector_mod2_dense)):
+        if isinstance(plaintext, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(plaintext, (Integer, int)):
             inputType = 'integer'
@@ -568,7 +569,7 @@ class DES(SageObject):
             sage: des.decrypt(C, K56).hex() == P
             True
         """
-        if isinstance(ciphertext, (list, tuple, Vector_mod2_dense)):
+        if isinstance(ciphertext, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(ciphertext, (Integer, int)):
             inputType = 'integer'
@@ -868,7 +869,7 @@ class DES_KS(SageObject):
             pass a ``masterKey`` value on initialisation. Otherwise you can
             omit ``masterKey`` and pass a key when you call the object.
         """
-        if isinstance(key, (list, tuple, Vector_mod2_dense)):
+        if isinstance(key, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(key, (Integer, int)):
             inputType = 'integer'
@@ -948,7 +949,7 @@ class DES_KS(SageObject):
             '6f26cc480fc6'
             sage: K[15].hex() # indirect doctest
             '9778f17524a'
-       """
+        """
         if self._masterKey is None:
             raise ValueError('Key not set during initialisation')
         return iter(self(self._masterKey))

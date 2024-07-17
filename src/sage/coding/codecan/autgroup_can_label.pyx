@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Canonical forms and automorphisms for linear codes over finite fields
 
@@ -129,6 +130,7 @@ def _cyclic_shift(n, p):
         x[p[i - 1]] = p[i] + 1
     x[p[len(p) - 1]] = p[0] + 1
     return Permutation(x)
+
 
 class LinearCodeAutGroupCanLabel:
     r"""
@@ -377,7 +379,6 @@ class LinearCodeAutGroupCanLabel:
             normalization_inverse, z, [pos2P[x] for x in z], zero_column_case=True)
         self._full_autom_order *= a
 
-
         for i in range(len(col2P)):
             if len(col2P[i]) > 1:
                 A, a = self._compute_trivial_automs(normalization,
@@ -581,7 +582,6 @@ class LinearCodeAutGroupCanLabel:
             168
         """
         return self._full_autom_order
-
 
     def get_PGammaL_gens(self):
         r"""

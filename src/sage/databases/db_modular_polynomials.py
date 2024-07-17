@@ -1,5 +1,25 @@
 """
-Database of Modular Polynomials
+Database of modular polynomials
+
+This module gives access to the database of modular polynomials. To use the
+database, you need to install the optional :ref:`database_kohel
+<spkg_database_kohel>` package by the Sage command ::
+
+    sage -i database_kohel
+
+EXAMPLES::
+
+    sage: # optional - database_kohel
+    sage: DBMP = ClassicalModularPolynomialDatabase()
+    sage: f = DBMP[29]
+    sage: f.degree()
+    58
+    sage: f.coefficient([28,28])
+    400152899204646997840260839128
+
+AUTHORS:
+
+- David Kohel (2006-08-04): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -20,16 +40,17 @@ def _dbz_to_string(name):
     r"""
     TESTS::
 
+        sage: # optional - database_kohel
         sage: from sage.databases.db_modular_polynomials import _dbz_to_string
-        sage: _dbz_to_string('PolMod/Atk/pol.002.dbz')                      # optional - database_kohel
+        sage: _dbz_to_string('PolMod/Atk/pol.002.dbz')
         '3 0 1 \n2 1 -1 \n2 0 744 \n1 1 -1 \n1 0 184512 \n0 2 1 \n0 1 7256 \n0 0 15252992 \n'
-        sage: _dbz_to_string('PolMod/Cls/pol.001.dbz')                      # optional - database_kohel
+        sage: _dbz_to_string('PolMod/Cls/pol.001.dbz')
         '1 0 1 \n'
-        sage: _dbz_to_string('PolMod/Eta/pol.002.dbz')                      # optional - database_kohel
+        sage: _dbz_to_string('PolMod/Eta/pol.002.dbz')
         '3 0 1 \n2 0 48 \n1 1 -1 \n1 0 768 \n0 0 4096 \n'
-        sage: _dbz_to_string('PolMod/EtaCrr/crr.02.002.dbz')                # optional - database_kohel
+        sage: _dbz_to_string('PolMod/EtaCrr/crr.02.002.dbz')
         '2 1 1 \n2 0 -48 \n1 1 2304 \n0 2 -4096 \n0 1 196608 \n'
-        sage: _dbz_to_string('PolHeeg/Cls/0000001-0005000/pol.0000003.dbz') # optional - database_kohel
+        sage: _dbz_to_string('PolHeeg/Cls/0000001-0005000/pol.0000003.dbz')
         '0\n1\n'
     """
     from sage.env import SAGE_SHARE
@@ -38,7 +59,7 @@ def _dbz_to_string(name):
     try:
         with open(filename, 'rb') as f:
             data = bz2.decompress(f.read())
-    except IOError:
+    except OSError:
         raise ValueError('file not found in the Kohel database')
     return bytes_to_str(data)
 
@@ -47,8 +68,9 @@ def _dbz_to_integer_list(name):
     r"""
     TESTS::
 
+        sage: # optional - database_kohel
         sage: from sage.databases.db_modular_polynomials import _dbz_to_integer_list
-        sage: _dbz_to_integer_list('PolMod/Atk/pol.002.dbz') # optional - database_kohel
+        sage: _dbz_to_integer_list('PolMod/Atk/pol.002.dbz')
         [[3, 0, 1],
          [2, 1, -1],
          [2, 0, 744],
@@ -57,9 +79,9 @@ def _dbz_to_integer_list(name):
          [0, 2, 1],
          [0, 1, 7256],
          [0, 0, 15252992]]
-        sage: _dbz_to_integer_list('PolMod/Cls/pol.001.dbz') # optional - database_kohel
+        sage: _dbz_to_integer_list('PolMod/Cls/pol.001.dbz')
         [[1, 0, 1]]
-        sage: _dbz_to_integer_list('PolMod/Eta/pol.002.dbz') # optional - database_kohel
+        sage: _dbz_to_integer_list('PolMod/Eta/pol.002.dbz')
         [[3, 0, 1], [2, 0, 48], [1, 1, -1], [1, 0, 768], [0, 0, 4096]]
     """
     from sage.rings.integer import Integer
@@ -129,14 +151,14 @@ class ModularPolynomialDatabase:
 
         EXAMPLES::
 
+            sage: # optional - database_kohel
             sage: DBMP = ClassicalModularPolynomialDatabase()
-            sage: f = DBMP[29]                                 # optional - database_kohel
-            sage: f.degree()                                   # optional - database_kohel
+            sage: f = DBMP[29]
+            sage: f.degree()
             58
-            sage: f.coefficient([28,28])                       # optional - database_kohel
+            sage: f.coefficient([28,28])
             400152899204646997840260839128
-
-            sage: DBMP[50]                                     # optional - database_kohel
+            sage: DBMP[50]
             Traceback (most recent call last):
             ...
             ValueError: file not found in the Kohel database

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Functional notation support for common calculus methods
 
@@ -25,24 +26,40 @@ EXAMPLES: We illustrate each of the calculus functional functions.
     sage: expand((x - a)^3)
     -a^3 + 3*a^2*x - 3*a*x^2 + x^3
 """
-
 from sage.structure.element import Expression
 
 
-def simplify(f):
+def simplify(f, algorithm="maxima", **kwds):
     r"""
     Simplify the expression `f`.
 
-    EXAMPLES: We simplify the expression `i + x - x`.
+    See the documentation of the
+    :meth:`~sage.symbolic.expression.Expression.simplify` method of symbolic
+    expressions for details on options.
 
-    ::
+    EXAMPLES:
+
+    We simplify the expression `i + x - x`::
 
         sage: f = I + x - x; simplify(f)
         I
 
     In fact, printing `f` yields the same thing - i.e., the
     simplified form.
+
+    Some simplifications are algorithm-specific::
+
+        sage: x, t = var("x, t")
+        sage: ex = 1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
+        sage: simplify(ex)
+        1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
+        sage: simplify(ex, algorithm="giac")
+        I*sqrt(x^2 - 1)
     """
+    try:
+        return f.simplify(algorithm=algorithm, **kwds)
+    except (TypeError, AttributeError):
+        pass
     try:
         return f.simplify()
     except AttributeError:
@@ -198,8 +215,8 @@ def integral(f, *args, **kwds):
     symbolically::
 
         sage: f(x) = 1/(sqrt(2*pi)) * e^(-x^2/2)
-        sage: P = plot(f, -4, 4, hue=0.8, thickness=2)
-        sage: P.show(ymin=0, ymax=0.4)
+        sage: P = plot(f, -4, 4, hue=0.8, thickness=2)                                  # needs sage.plot
+        sage: P.show(ymin=0, ymax=0.4)                                                  # needs sage.plot
         sage: numerical_integral(f, -4, 4)                    # random output
         (0.99993665751633376, 1.1101527003413533e-14)
         sage: integrate(f, x)
@@ -226,7 +243,7 @@ def integral(f, *args, **kwds):
         0
         sage: restore('x,y')   # restore the symbolic variables x and y
 
-    Sage is now (:trac:`27958`) able to compute the following integral::
+    Sage is now (:issue:`27958`) able to compute the following integral::
 
         sage: integral(exp(-x^2)*log(x), x)  # long time
         1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
@@ -319,16 +336,16 @@ def limit(f, dir=None, taylor=False, **argv):
 
     INPUT:
 
-    - ``dir`` - (default: None); dir may have the value
+    - ``dir`` -- (default: None); dir may have the value
        'plus' (or 'above') for a limit from above, 'minus' (or 'below')
        for a limit from below, or may be omitted (implying a two-sided
        limit is to be computed).
 
-    - ``taylor`` - (default: False); if True, use Taylor
+    - ``taylor`` -- (default: ``False``); if True, use Taylor
        series, which allows more limits to be computed (but may also
        crash in some obscure cases due to bugs in Maxima).
 
-    - ``\*\*argv`` - 1 named parameter
+    - ``\*\*argv`` -- 1 named parameter
 
     ALIAS: You can also use lim instead of limit.
 
@@ -371,11 +388,12 @@ def taylor(f, *args):
 
     INPUT:
 
-    - ``*args`` - the following notation is supported
+    - ``*args`` -- the following notation is supported
 
-    - ``x, a, n`` - variable, point, degree
+    - ``x``, ``a``, ``n`` -- variable, point, degree
 
-    - ``(x, a), (y, b), ..., n`` - variables with points, degree of polynomial
+    - ``(x, a)``, ``(y, b)``, ..., ``n`` -- variables with points, degree of
+      polynomial
 
     EXAMPLES::
 

@@ -32,9 +32,9 @@ otimizado cujo foco primário é teoria de números. Existem duas
 interfaces distintas que podem ser usadas no Sage:
 
 
--  ``gp`` - o "**G** do **P** ARI" interpretador, e
+-  ``gp`` -- o "**G** do **P** ARI" interpretador, e
 
--  ``pari`` - a biblioteca C do PARI.
+-  ``pari`` -- a biblioteca C do PARI.
 
 Por exemplo, os seguintes comandos são duas formas de realizar a mesma
 coisa. Eles parecem idênticos, mas o resultado é na verdade
@@ -269,8 +269,8 @@ entrada :math:`i,j` é :math:`i/j`, para :math:`i,j=1,\ldots,4`.
     matrix([1,1/2,1/3,1/4],[0,0,0,0],[0,0,0,0],[0,0,0,0])
     sage: A.eigenvalues()
     [[0,4],[3,1]]
-    sage: A.eigenvectors()
-    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-4/3]],[[1,2,3,4]]]]
+    sage: A.eigenvectors().sage()
+    [[[0, 4], [3, 1]], [[[1, 0, 0, -4], [0, 1, 0, -2], [0, 0, 1, -4/3]], [[1, 2, 3, 4]]]]
 
 Aqui vai outro exemplo:
 
@@ -330,13 +330,10 @@ E agora a famosa garrafa de Klein:
 
 ::
 
-    sage: maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)"
+    sage: _ = maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)"
     ....:        "- 10.0")
-    5*cos(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)-10.0
-    sage: maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
-    -5*sin(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)
-    sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
-    5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
+    sage: _ = maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
+    sage: _ = maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     sage: maxima.plot3d("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]", # not tested
     ....:               "[y, -%pi, %pi]", "['grid, 40, 40]",
     ....:               '[plot_format, openmath]')

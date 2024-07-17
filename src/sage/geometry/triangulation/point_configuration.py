@@ -65,7 +65,7 @@ A triangulation of it::
     (2, 3, 4)
     sage: list(t)
     [(1, 3, 4), (2, 3, 4)]
-    sage: t.plot(axes=False)                                                            # optional - sage.plot
+    sage: t.plot(axes=False)                                                            # needs sage.plot
     Graphics object consisting of 12 graphics primitives
 
 .. PLOT::
@@ -95,7 +95,7 @@ A 3-dimensional point configuration::
     sage: p = [[0,-1,-1], [0,0,1], [0,1,0], [1,-1,-1], [1,0,1], [1,1,0]]
     sage: points = PointConfiguration(p)
     sage: triang = points.triangulate()
-    sage: triang.plot(axes=False)  # optional - sage.plot
+    sage: triang.plot(axes=False)                                                       # needs sage.plot
     Graphics3d Object
 
 .. PLOT::
@@ -108,18 +108,19 @@ A 3-dimensional point configuration::
 
 The standard example of a non-regular triangulation (requires TOPCOM)::
 
-    sage: PointConfiguration.set_engine('topcom')                       # optional - topcom
+    sage: # optional - topcom
+    sage: PointConfiguration.set_engine('topcom')
     sage: p = PointConfiguration([[-1,-5/9], [0,10/9], [1,-5/9],
     ....:                         [-2,-10/9], [0,20/9], [2,-10/9]])
-    sage: p_regular = p.restrict_to_regular_triangulations(True)        # optional - topcom
-    sage: regular = p_regular.triangulations_list()                     # optional - topcom
-    sage: p_nonregular = p.restrict_to_regular_triangulations(False)    # optional - topcom
-    sage: nonregular = p_nonregular.triangulations_list()               # optional - topcom
-    sage: len(regular)                                                  # optional - topcom
+    sage: p_regular = p.restrict_to_regular_triangulations(True)
+    sage: regular = p_regular.triangulations_list()
+    sage: p_nonregular = p.restrict_to_regular_triangulations(False)
+    sage: nonregular = p_nonregular.triangulations_list()
+    sage: len(regular)
     16
-    sage: len(nonregular)                                               # optional - topcom
+    sage: len(nonregular)
     2
-    sage: nonregular[0].plot(aspect_ratio=1, axes=False)                # optional - topcom sage.plot
+    sage: nonregular[0].plot(aspect_ratio=1, axes=False)                                # needs sage.plot
     Graphics object consisting of 25 graphics primitives
     sage: PointConfiguration.set_engine('internal')   # to make doctests independent of TOPCOM
 
@@ -181,10 +182,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
+import itertools
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 
-from sage.combinat.combination import Combinations
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
@@ -286,7 +289,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             out = next(PointConfiguration._TOPCOM_exec('points2placingtriang',
                                                   '[[0,1],[1,1]]', verbose=False))
             PointConfiguration._have_TOPCOM_cached = True
-            assert out=='{{0,1}}',\
+            assert out == '{{0,1}}',\
                 'TOPCOM ran but did not produce the correct output!'
         except pexpect.ExceptionPexpect:
             PointConfiguration._have_TOPCOM_cached = False
@@ -319,7 +322,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             defined_affine = True
         if star is not None and star not in ZZ:
             star_point = tuple(star)
-            if len(star_point)<len(points[0]):
+            if len(star_point) < len(points[0]):
                 star_point = tuple(star)+(1,)
             star = points.index(star_point)
         return super().__classcall__(cls, points, connected, fine,
@@ -375,14 +378,15 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         EXAMPLES::
 
+            sage: # optional - topcom
             sage: p = PointConfiguration([[0,0], [0,1], [1,0], [1,1], [-1,-1]])
             sage: p.set_engine('internal')   # to make doctests independent of TOPCOM
             sage: p.triangulate()
             (<1,3,4>, <2,3,4>)
-            sage: p.set_engine('topcom')   # optional - topcom
-            sage: p.triangulate()          # optional - topcom
+            sage: p.set_engine('topcom')
+            sage: p.triangulate()
             (<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>)
-            sage: p.set_engine('internal') # optional - topcom
+            sage: p.set_engine('internal')
         """
         engine = engine.lower()
         if engine not in ['auto', 'topcom', 'internal']:
@@ -499,8 +503,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: [p.point(i) for i in range(p.n_points())]
             [P(1, 1), P(2, 2), P(3, 3)]
         """
-        for p in self.points():
-            yield p
+        yield from self.points()
 
     def _repr_(self):
         r"""
@@ -528,8 +531,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             s += ' affine'
         else:
             s += ' projective'
-        s += " %s-space over %s"%(self.ambient_dim(),self.base_ring())
-        if len(self)==1:
+        s += " %s-space over %s" % (self.ambient_dim(),self.base_ring())
+        if len(self) == 1:
             s += ' consisting of '+str(len(self))+' point. '
         else:
             s += ' consisting of '+str(len(self))+' points. '
@@ -681,7 +684,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
             if self._star is not None:
                 o = self._star
-                if not all( t.count(o)>0 for t in triangulation):
+                if not all( t.count(o) > 0 for t in triangulation):
                     continue
 
             yield self(triangulation)
@@ -717,8 +720,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         if self._regular is False:
             command += ' --nonregular'
 
-        for t in self._TOPCOM_communicate(command, verbose):
-            yield t
+        yield from self._TOPCOM_communicate(command, verbose)
 
     def _TOPCOM_triangulate(self, verbose=True):
         r"""
@@ -733,18 +735,19 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         OUTPUT:
 
         A :class:`~sage.geometry.triangulation.element.Triangulation`
-        satisfying all restrictions imposed. Raises a ``ValueError``
+        satisfying all restrictions imposed. This raises a :class:`ValueError`
         if no such triangulation exists.
 
         EXAMPLES::
 
+            sage: # optional - topcom
             sage: p = PointConfiguration([[0,0], [0,1], [1,0], [1,1], [-1,-1]])
-            sage: p.set_engine('topcom')                 # optional - topcom
-            sage: p._TOPCOM_triangulate(verbose=False)   # optional - topcom
+            sage: p.set_engine('topcom')
+            sage: p._TOPCOM_triangulate(verbose=False)
             (<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>)
-            sage: list( p.triangulate() )                # optional - topcom
+            sage: list( p.triangulate() )
             [(0, 1, 2), (0, 1, 4), (0, 2, 4), (1, 2, 3)]
-            sage: p.set_engine('internal')               # optional - topcom
+            sage: p.set_engine('internal')
         """
         assert self._regular is not False, \
             'When asked for a single triangulation TOPCOM ' + \
@@ -787,7 +790,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             fine, not necessarily regular.
             sage: len(p.triangulations_list())
             4
-            sage: PointConfiguration.set_engine('topcom')            # optional - topcom
+            sage: PointConfiguration.set_engine('topcom')
             sage: p_regular = p.restrict_to_regular_triangulations() # optional - topcom
             sage: len(p_regular.triangulations_list())               # optional - topcom
             4
@@ -831,7 +834,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             fine, not necessarily regular.
             sage: len(p.triangulations_list())
             4
-            sage: PointConfiguration.set_engine('topcom')                          # optional - topcom
+            sage: PointConfiguration.set_engine('topcom')
             sage: p_all = p.restrict_to_connected_triangulations(connected=False)  # optional - topcom
             sage: len(p_all.triangulations_list())                                 # optional - topcom
             4
@@ -961,31 +964,31 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
          compute the triangulations. Using TOPCOM, we obtain the same
          triangulations but in a different order::
 
-            sage: p.set_engine('topcom')                       # optional - topcom
-            sage: iter = p.triangulations()                    # optional - topcom
-            sage: next(iter)                                   # optional - topcom
+            sage: # optional - topcom
+            sage: p.set_engine('topcom')
+            sage: iter = p.triangulations()
+            sage: next(iter)
             (<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>)
-            sage: next(iter)                                   # optional - topcom
+            sage: next(iter)
             (<0,1,3>, <0,1,4>, <0,2,3>, <0,2,4>)
-            sage: next(iter)                                   # optional - topcom
+            sage: next(iter)
             (<1,2,3>, <1,2,4>)
-            sage: next(iter)                                   # optional - topcom
+            sage: next(iter)
             (<1,3,4>, <2,3,4>)
-            sage: p.triangulations_list()                      # optional - topcom
+            sage: p.triangulations_list()
             [(<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>),
              (<0,1,3>, <0,1,4>, <0,2,3>, <0,2,4>),
              (<1,2,3>, <1,2,4>),
              (<1,3,4>, <2,3,4>)]
-            sage: p_fine = p.restrict_to_fine_triangulations() # optional - topcom
-            sage: p_fine.set_engine('topcom')                  # optional - topcom
-            sage: p_fine.triangulations_list()                 # optional - topcom
+            sage: p_fine = p.restrict_to_fine_triangulations()
+            sage: p_fine.set_engine('topcom')
+            sage: p_fine.triangulations_list()
             [(<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>),
              (<0,1,3>, <0,1,4>, <0,2,3>, <0,2,4>)]
-            sage: p.set_engine('internal')                     # optional - topcom
+            sage: p.set_engine('internal')
         """
         if self._use_TOPCOM:
-            for triangulation in self._TOPCOM_triangulations(verbose):
-                yield triangulation
+            yield from self._TOPCOM_triangulations(verbose)
         else:
             if not self._connected:
                 raise ValueError('Need TOPCOM to find disconnected triangulations.')
@@ -1017,10 +1020,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             [(<0,1,2>, <1,2,3>), (<0,1,3>, <0,2,3>)]
             sage: list(map(list, p.triangulations_list()))
             [[(0, 1, 2), (1, 2, 3)], [(0, 1, 3), (0, 2, 3)]]
-            sage: p.set_engine('topcom')       # optional - topcom
+            sage: p.set_engine('topcom')
             sage: p.triangulations_list()      # optional - topcom
             [(<0,1,2>, <1,2,3>), (<0,1,3>, <0,2,3>)]
-            sage: p.set_engine('internal')     # optional - topcom
+            sage: p.set_engine('internal')
         """
         return list(self.triangulations(verbose))
 
@@ -1036,7 +1039,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         OUTPUT:
 
         A :class:`~sage.geometry.triangulation.element.Triangulation`
-        satisfying all restrictions imposed. Raises a ``ValueError``
+        satisfying all restrictions imposed. This raises a :class:`ValueError`
         if no such triangulation exists.
 
         EXAMPLES::
@@ -1049,12 +1052,13 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         Using TOPCOM yields a different, but equally good, triangulation::
 
-            sage: p.set_engine('topcom')           # optional - topcom
-            sage: p.triangulate()                  # optional - topcom
+            sage: # optional - topcom
+            sage: p.set_engine('topcom')
+            sage: p.triangulate()
             (<0,1,2>, <0,1,4>, <0,2,4>, <1,2,3>)
-            sage: list(p.triangulate())            # optional - topcom
+            sage: list(p.triangulate())
             [(0, 1, 2), (0, 1, 4), (0, 2, 4), (1, 2, 3)]
-            sage: p.set_engine('internal')         # optional - topcom
+            sage: p.set_engine('internal')
         """
         if self._use_TOPCOM and self._regular is not False:
             try:
@@ -1127,10 +1131,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
             sage: pyramid = PointConfiguration([[1,0,0], [0,1,1], [0,1,-1],
             ....:                               [0,-1,-1], [0,-1,1]])
-            sage: G = pyramid.restricted_automorphism_group()                           # optional - sage.graphs sage.groups
-            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])              # optional - sage.graphs sage.groups
+            sage: G = pyramid.restricted_automorphism_group()                           # needs sage.graphs sage.groups
+            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])              # needs sage.graphs sage.groups
             True
-            sage: DihedralGroup(4).is_isomorphic(G)                                     # optional - sage.graphs sage.groups
+            sage: DihedralGroup(4).is_isomorphic(G)                                     # needs sage.graphs sage.groups
             True
 
         The square with an off-center point in the middle. Note that
@@ -1138,9 +1142,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         `D_4` of the convex hull::
 
             sage: square = PointConfiguration([(3/4,3/4), (1,1), (1,-1), (-1,-1), (-1,1)])
-            sage: square.restricted_automorphism_group()                                # optional - sage.graphs sage.groups
+            sage: square.restricted_automorphism_group()                                # needs sage.graphs sage.groups
             Permutation Group with generators [(3,5)]
-            sage: DihedralGroup(1).is_isomorphic(_)                                     # optional - sage.graphs sage.groups
+            sage: DihedralGroup(1).is_isomorphic(_)                                     # needs sage.graphs sage.groups
             True
         """
         v_list = [ vector(p.projective()) for p in self ]
@@ -1223,7 +1227,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         d = [ self.face_codimension(i) for i in range(self.n_points()) ]
 
-        return tuple( tuple(i for i in range(self.n_points()) if d[i]==codim )
+        return tuple( tuple(i for i in range(self.n_points()) if d[i] == codim )
                       for codim in range(self.dim()+1) )
 
     def exclude_points(self, point_idx_list):
@@ -1403,12 +1407,12 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             independent_k = []
             for idx in possible_dependency:
                 rk = matrix([ U[i] for i in idx ]).rank()
-                if rk==k:
+                if rk == k:
                     independent_k.append(idx)
                 else:
                     supports_k.append(idx)
                     yield idx
-        assert independent_k==[]  # there are no independent (self.dim()+3)-tuples
+        assert independent_k == []  # there are no independent (self.dim()+3)-tuples
 
     def circuits(self):
         r"""
@@ -1471,9 +1475,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         for support in self.circuits_support():
             m = matrix([ U[i] for i in support ]).transpose()
             ker = m.right_kernel().basis()[0]
-            assert len(ker)==len(support)
-            Cplus = [ support[i] for i in range(len(support)) if ker[i]>0 ]
-            Cminus = [ support[i] for i in range(len(support)) if ker[i]<0 ]
+            assert len(ker) == len(support)
+            Cplus = [ support[i] for i in range(len(support)) if ker[i] > 0 ]
+            Cminus = [ support[i] for i in range(len(support)) if ker[i] < 0 ]
             Czero = set( range(n) ).difference(support)
             Circuits += ( (tuple(Cplus), tuple(Czero), tuple(Cminus)), )
         self._circuits = Circuits
@@ -1530,9 +1534,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)                                                 # optional - sage.plot
+            sage: Tpos.plot(axes=False)                                                 # needs sage.plot
             Graphics object consisting of 11 graphics primitives
-            sage: Tneg.plot(axes=False)                                                 # optional - sage.plot
+            sage: Tneg.plot(axes=False)                                                 # needs sage.plot
             Graphics object consisting of 11 graphics primitives
 
         The 3d analog::
@@ -1547,7 +1551,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)                                                 # optional - sage.plot
+            sage: Tpos.plot(axes=False)                                                 # needs sage.plot
             Graphics3d Object
         """
         flips = []
@@ -1622,7 +1626,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         basepts = [ b[1:] for b in basepts ]           # undecorate
 
         def make_cotriang(basepts):
-            if len(basepts)==0:
+            if len(basepts) == 0:
                 return [frozenset()]
             triangulation = set()
             for tail in make_cotriang(basepts[1:]):
@@ -1630,7 +1634,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                     triangulation.update([ frozenset([head]).union(tail) ])
 
             nonminimal = set()
-            for rel in Combinations(triangulation, 2):
+            for rel in itertools.combinations(triangulation, 2):
                 if rel[0].issubset(rel[1]):
                     nonminimal.update([rel[1]])
                 if rel[1].issubset(rel[0]):
@@ -1777,7 +1781,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.farthest_point([pc.point(0)])
             P(1, 1)
         """
-        if len(points)==0:
+        if len(points) == 0:
             return self.point(0)
         if among is None:
             among = self.points()
@@ -1790,7 +1794,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 d_max = min(self.distance(p,q) for q in points)
                 continue
             d = min(self.distance(p,q) for q in points)
-            if d>d_max:
+            if d > d_max:
                 p_max = p
         return p_max
 
@@ -2085,7 +2089,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: p = PointConfiguration([[0,0], [0,1], [1,0], [1,1], [-1,-1]])
-            sage: p.plot(axes=False)                                                    # optional - sage.plot
+            sage: p.plot(axes=False)                                                    # needs sage.plot
             Graphics object consisting of 5 graphics primitives
 
         .. PLOT::

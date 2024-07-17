@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of :class:`MixedIntegerLinearProgram` backends
 """
@@ -102,7 +103,8 @@ class CVXOPT(JoinFeature):
         JoinFeature.__init__(self, 'cvxopt',
                              [MIPBackend('CVXOPT'),
                               PythonModule('cvxopt')],
-                             spkg='cvxopt')
+                             spkg='cvxopt',
+                             type='standard')
 
 
 def all_features():

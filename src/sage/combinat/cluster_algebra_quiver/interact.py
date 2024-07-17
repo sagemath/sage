@@ -10,8 +10,8 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
 
     Only in *Jupyter notebook mode*.
 
-    Not to be called directly. Use the interact methods
-    of ClusterSeed and ClusterQuiver instead.
+    Not to be called directly. Use the :meth:`interact` methods
+    of :class:`ClusterSeed` and :class:`ClusterQuiver` instead.
 
     INPUT:
 
@@ -25,8 +25,8 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
 
     TESTS::
 
-        sage: S = ClusterSeed(['A',4])
-        sage: S.interact()   # indirect doctest
+        sage: S = ClusterSeed(['A',4])                                                  # needs sage.graphs sage.modules
+        sage: S.interact()   # indirect doctest                                         # needs sage.graphs sage.modules sage.symbolic
         ...VBox(children=...
     """
     if kind not in ['seed', 'quiver']:

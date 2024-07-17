@@ -67,7 +67,7 @@ inequalities as less or equal::
 
 TESTS:
 
-This was fixed in :trac:`24423`::
+This was fixed in :issue:`24423`::
 
     sage: p.<x> = MixedIntegerLinearProgram()
     sage: from sage.numerical.linear_functions import LinearFunctionsParent
@@ -75,7 +75,7 @@ This was fixed in :trac:`24423`::
     sage: 3 <= x[0] <= LF(4)
     3 <= x_0 <= 4
 
-See :trac:`12091`::
+See :issue:`12091`::
 
     sage: p = MixedIntegerLinearProgram()
     sage: b = p.new_variable()
@@ -132,10 +132,18 @@ cpdef is_LinearFunction(x):
         sage: x = p.new_variable()
         sage: from sage.numerical.linear_functions import is_LinearFunction
         sage: is_LinearFunction(x[0] - 2*x[2])
+        doctest:warning...
+        DeprecationWarning: The function is_LinearFunction is deprecated;
+        use 'isinstance(..., LinearFunction)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_LinearFunction('a string')
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_LinearFunction is deprecated; "
+                       "use 'isinstance(..., LinearFunction)' instead.")
     return isinstance(x, LinearFunction)
 
 
@@ -158,17 +166,26 @@ def is_LinearConstraint(x):
         sage: ieq = (x[0] <= x[1])
         sage: from sage.numerical.linear_functions import is_LinearConstraint
         sage: is_LinearConstraint(ieq)
+        doctest:warning...
+        DeprecationWarning: The function is_LinearConstraint is deprecated;
+        use 'isinstance(..., LinearConstraint)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_LinearConstraint('a string')
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_LinearConstraint is deprecated; "
+                       "use 'isinstance(..., LinearConstraint)' instead.")
     return isinstance(x, LinearConstraint)
 
-#*****************************************************************************
+
+# ****************************************************************************
 #
 # Factory functions for the parents to ensure uniqueness
 #
-#*****************************************************************************
+# ****************************************************************************
 
 @cached_function
 def LinearFunctionsParent(base_ring):
@@ -336,7 +353,7 @@ cdef class LinearFunctionOrConstraint(ModuleElement):
             sage: 1 >= x[0]
             x_0 <= 1
 
-        This works with non-Sage types too, see :trac:`14540`::
+        This works with non-Sage types too, see :issue:`14540`::
 
             sage: p.<b> = MixedIntegerLinearProgram()
             sage: int(1) <= b[0] <= int(2)
@@ -689,7 +706,7 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: LF_QQ(f) is f
             False
         """
-        if is_LinearFunction(x):
+        if isinstance(x, LinearFunction):
             return LinearFunction(self, (<LinearFunction>x)._f)
         return LinearFunction(self, x)
 
@@ -890,7 +907,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             ...
             ValueError: x is from a different linear functions module
         """
-        if is_LinearFunction(x):
+        if isinstance(x, LinearFunction):
             if self.parent() != x.parent():
                 raise ValueError('x is from a different linear functions module')
             if len((<LinearFunction>x)._f) != 1:
@@ -1318,7 +1335,7 @@ cdef class LinearConstraintsParent_class(Parent):
             sage: LC_QQ(inequality) is inequality
             False
         """
-        if right is None and is_LinearConstraint(left):
+        if right is None and isinstance(left, LinearConstraint):
             if (left.parent() is self) and (left.is_equation() == equality):
                 return left
             else:
@@ -1579,7 +1596,10 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         while True:
             yield (lhs, rhs)
             lhs = rhs
-            rhs = next(term_iter)
+            try:
+                rhs = next(term_iter)
+            except StopIteration:
+                return
 
     def inequalities(self):
         """
@@ -1612,7 +1632,10 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         while True:
             yield (lhs, rhs)
             lhs = rhs
-            rhs = next(term_iter)
+            try:
+                rhs = next(term_iter)
+            except StopIteration:
+                return
 
     def _repr_(self):
         r"""

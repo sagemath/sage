@@ -16,7 +16,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Constraint_System',
                     'Linear_Expression', 'line', 'ray', 'point'],
-                    feature=PythonModule("ppl", spkg="pplpy"))
+                    feature=PythonModule("ppl", spkg="pplpy", type="standard"))
 
 
 #########################################################################
@@ -162,7 +162,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         TESTS:
 
-        Check that :trac:`33666` is fixed::
+        Check that :issue:`33666` is fixed::
 
             sage: cube = polytopes.cube()
             sage: parent = cube.parent()
@@ -234,7 +234,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         TESTS:
 
-        Check that :trac:`33666` is fixed::
+        Check that :issue:`33666` is fixed::
 
             sage: cube = polytopes.cube()
             sage: parent = cube.parent()

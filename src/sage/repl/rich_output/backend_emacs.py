@@ -1,20 +1,19 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Emacs sage-mode Backend for the Sage Rich Output System
 
 This module defines the Emacs backend for :mod:`sage.repl.rich_output`
 based on the IPython shell version.
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Ivan Andrus <darthandrus@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
 from sage.repl.rich_output.output_catalog import *

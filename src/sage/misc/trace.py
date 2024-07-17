@@ -14,9 +14,9 @@ def trace(code, preparse=True):
     INPUT:
 
 
-    -  ``code`` - str
+    -  ``code`` -- str
 
-    -  ``preparse`` - bool (default: True); if True, run
+    -  ``preparse`` -- bool (default: ``True``); if True, run
        expression through the Sage preparser.
 
 
@@ -26,6 +26,7 @@ def trace(code, preparse=True):
 
     ::
 
+        sage: from sage.misc.trace import trace
         sage: trace("factor(100)")             # not tested
 
     then at the (Pdb) prompt type ``s`` (or ``step``), then press :kbd:`Return`
@@ -45,7 +46,7 @@ def trace(code, preparse=True):
 
     TESTS:
 
-    For tests we disable garbage collection, see :trac:`21258` ::
+    For tests we disable garbage collection, see :issue:`21258` ::
 
         sage: import gc
         sage: gc.disable()
@@ -53,9 +54,10 @@ def trace(code, preparse=True):
     The only real way to test this is via pexpect spawning a
     sage subprocess that uses IPython::
 
+        sage: # needs pexpect sage.all
         sage: import pexpect
         sage: s = pexpect.spawn('sage')
-        sage: _ = s.sendline("trace('print(factor(10))'); print(3+97)")
+        sage: _ = s.sendline("from sage.misc.trace import trace; trace('print(factor(10))'); print(3+97)")
         sage: _ = s.expect('ipdb>', timeout=90)
         sage: _ = s.sendline("s"); _ = s.sendline("c")
         sage: _ = s.expect('100', timeout=90)
@@ -63,7 +65,7 @@ def trace(code, preparse=True):
     Seeing the ipdb prompt and the 2 \* 5 in the output below is a
     strong indication that the trace command worked correctly::
 
-        sage: print(s.before[s.before.find(b'--'):].decode())
+        sage: print(s.before[s.before.find(b'--'):].decode())                           # needs pexpect sage.all
         --...
         ...ipdb> c
         ...2 * 5...

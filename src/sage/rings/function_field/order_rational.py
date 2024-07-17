@@ -2,14 +2,18 @@ r"""
 Orders of function fields: rational
 """
 
-#*****************************************************************************
-#       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
+# ****************************************************************************
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2011      Julian Rueth <julian.rueth@gmail.com>
+#                     2017-2020 Kwankyu Lee
+#                     2019      Brent Baccala
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import sage.rings.abc
 
@@ -34,9 +38,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
     EXAMPLES::
 
-        sage: K.<t> = FunctionField(GF(19)); K                                                      # optional - sage.rings.finite_rings
+        sage: K.<t> = FunctionField(GF(19)); K
         Rational function field in t over Finite Field of size 19
-        sage: R = K.maximal_order(); R                                                              # optional - sage.rings.finite_rings
+        sage: R = K.maximal_order(); R
         Maximal order of Rational function field in t over Finite Field of size 19
     """
     def __init__(self, field):
@@ -80,7 +84,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             raise TypeError("unable to convert to an element of {}".format(F))
 
         if not f.denominator() in self.function_field().constant_base_field():
-            raise TypeError("%r is not an element of %r"%(f,self))
+            raise TypeError("%r is not an element of %r" % (f,self))
 
         return f
 
@@ -95,9 +99,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.rings.function_field
-            sage: O.ideal_with_gens_over_base([x^3 + 1, -y])                                        # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # needs sage.rings.function_field
+            sage: O = L.equation_order()                                                            # needs sage.rings.function_field
+            sage: O.ideal_with_gens_over_base([x^3 + 1, -y])                                        # needs sage.rings.function_field
             Ideal (x^3 + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
         """
         return self.ideal(gens)
@@ -125,60 +129,63 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                                      # optional - sage.rings.finite_rings
-            sage: O = F.maximal_order()                                                             # optional - sage.rings.finite_rings
-            sage: I = O.ideal(x^2 + x + 1)                                                          # optional - sage.rings.finite_rings
-            sage: R, fr_R, to_R = O._residue_field(I)                                               # optional - sage.rings.finite_rings
-            sage: R                                                                                 # optional - sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
+            sage: F.<x> = FunctionField(GF(2))
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x^2 + x + 1)
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
             Finite Field in z2 of size 2^2
-            sage: [to_R(fr_R(e)) == e for e in R]                                                   # optional - sage.rings.finite_rings
+            sage: [to_R(fr_R(e)) == e for e in R]
             [True, True, True, True]
-            sage: [to_R(fr_R(e)).parent() is R for e in R]                                          # optional - sage.rings.finite_rings
+            sage: [to_R(fr_R(e)).parent() is R for e in R]
             [True, True, True, True]
-            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # optional - sage.rings.finite_rings
-            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # optional - sage.rings.finite_rings
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
             True
-            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # optional - sage.rings.finite_rings
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
             True
-            sage: to_R(e1).parent() is R                                                            # optional - sage.rings.finite_rings
+            sage: to_R(e1).parent() is R
             True
-            sage: to_R(e2).parent() is R                                                            # optional - sage.rings.finite_rings
+            sage: to_R(e2).parent() is R
             True
 
-            sage: F.<x> = FunctionField(GF(2))                                                      # optional - sage.rings.finite_rings
-            sage: O = F.maximal_order()                                                             # optional - sage.rings.finite_rings
-            sage: I = O.ideal(x + 1)                                                                # optional - sage.rings.finite_rings
-            sage: R, fr_R, to_R = O._residue_field(I)                                               # optional - sage.rings.finite_rings
-            sage: R                                                                                 # optional - sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
+            sage: F.<x> = FunctionField(GF(2))
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x + 1)
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
             Finite Field of size 2
-            sage: [to_R(fr_R(e)) == e for e in R]                                                   # optional - sage.rings.finite_rings
+            sage: [to_R(fr_R(e)) == e for e in R]
             [True, True]
-            sage: [to_R(fr_R(e)).parent() is R for e in R]                                          # optional - sage.rings.finite_rings
+            sage: [to_R(fr_R(e)).parent() is R for e in R]
             [True, True]
-            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # optional - sage.rings.finite_rings
-            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # optional - sage.rings.finite_rings
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
             True
-            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # optional - sage.rings.finite_rings
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
             True
-            sage: to_R(e1).parent() is R                                                            # optional - sage.rings.finite_rings
+            sage: to_R(e1).parent() is R
             True
-            sage: to_R(e2).parent() is R                                                            # optional - sage.rings.finite_rings
+            sage: to_R(e2).parent() is R
             True
 
+            sage: # needs sage.modules sage.rings.number_field
             sage: F.<x> = FunctionField(QQ)
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2 + x + 1)
-            sage: R, fr_R, to_R = O._residue_field(I)                                               # optional - sage.rings.number_field
-            sage: R                                                                                 # optional - sage.rings.number_field
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
             Number Field in a with defining polynomial x^2 + x + 1
-            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # optional - sage.rings.number_field
-            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # optional - sage.rings.number_field
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
             True
-            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # optional - sage.rings.number_field
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
             True
-            sage: to_R(e1).parent() is R                                                            # optional - sage.rings.number_field
+            sage: to_R(e1).parent() is R
             True
-            sage: to_R(e2).parent() is R                                                            # optional - sage.rings.number_field
+            sage: to_R(e2).parent() is R
             True
 
             sage: F.<x> = FunctionField(QQ)
@@ -251,32 +258,34 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(4)                                                                     # optional - sage.rings.finite_rings
-            sage: F.<x> = FunctionField(k)                                                          # optional - sage.rings.finite_rings
-            sage: O = F.maximal_order()                                                             # optional - sage.rings.finite_rings
-            sage: O._ring                                                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(4)
+            sage: F.<x> = FunctionField(k)
+            sage: O = F.maximal_order()
+            sage: O._ring
             Univariate Polynomial Ring in x over Finite Field in a of size 2^2
-            sage: f = x^3 + x + 1                                                                   # optional - sage.rings.finite_rings
-            sage: _f = f.numerator()                                                                # optional - sage.rings.finite_rings
-            sage: _f.is_irreducible()                                                               # optional - sage.rings.finite_rings
+            sage: f = x^3 + x + 1
+            sage: _f = f.numerator()
+            sage: _f.is_irreducible()
             True
-            sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # optional - sage.rings.finite_rings sage.modules
-            sage: K                                                                                 # optional - sage.rings.finite_rings sage.modules
+            sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # needs sage.modules
+            sage: K                                                                                 # needs sage.modules
             Finite Field in z6 of size 2^6
-            sage: all(to_K(fr_K(e)) == e for e in K)                                                # optional - sage.rings.finite_rings sage.modules
+            sage: all(to_K(fr_K(e)) == e for e in K)                                                # needs sage.modules
             True
 
-            sage: k.<a> = GF(2)                                                                     # optional - sage.rings.finite_rings
-            sage: F.<x> = FunctionField(k)                                                          # optional - sage.rings.finite_rings
-            sage: O = F.maximal_order()                                                             # optional - sage.rings.finite_rings
-            sage: O._ring                                                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(2)
+            sage: F.<x> = FunctionField(k)
+            sage: O = F.maximal_order()
+            sage: O._ring                                                                           # needs sage.libs.ntl
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
-            sage: f = x^3 + x + 1                                                                   # optional - sage.rings.finite_rings
-            sage: _f = f.numerator()                                                                # optional - sage.rings.finite_rings
-            sage: _f.is_irreducible()                                                               # optional - sage.rings.finite_rings
+            sage: f = x^3 + x + 1
+            sage: _f = f.numerator()
+            sage: _f.is_irreducible()
             True
-            sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # optional - sage.rings.finite_rings sage.modules
-            sage: all(to_K(fr_K(e)) == e for e in K)                                                # optional - sage.rings.finite_rings sage.modules
+            sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # needs sage.modules
+            sage: all(to_K(fr_K(e)) == e for e in K)                                                # needs sage.modules
             True
 
         """
@@ -337,9 +346,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.rings.finite_rings
-            sage: O = K.maximal_order()                                                             # optional - sage.rings.finite_rings
-            sage: O.basis()                                                                         # optional - sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(19))
+            sage: O = K.maximal_order()
+            sage: O.basis()
             (1,)
         """
         return self._basis
@@ -425,9 +434,9 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
     EXAMPLES::
 
-        sage: K.<t> = FunctionField(GF(19)); K                                                      # optional - sage.rings.finite_rings
+        sage: K.<t> = FunctionField(GF(19)); K
         Rational function field in t over Finite Field of size 19
-        sage: R = K.maximal_order_infinite(); R                                                     # optional - sage.rings.finite_rings
+        sage: R = K.maximal_order_infinite(); R
         Maximal infinite order of Rational function field in t over Finite Field of size 19
     """
     def __init__(self, field, category=None):
@@ -436,9 +445,9 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
         TESTS::
 
-            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.rings.finite_rings
-            sage: O = K.maximal_order_infinite()                                                    # optional - sage.rings.finite_rings
-            sage: TestSuite(O).run(skip='_test_gcd_vs_xgcd')                                        # optional - sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(19))
+            sage: O = K.maximal_order_infinite()
+            sage: TestSuite(O).run(skip='_test_gcd_vs_xgcd')
         """
         FunctionFieldMaximalOrderInfinite.__init__(self, field, ideal_class=FunctionFieldIdealInfinite_rational,
                                                    category=PrincipalIdealDomains().or_subcategory(category))
@@ -476,9 +485,9 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.rings.finite_rings
-            sage: O = K.maximal_order()                                                             # optional - sage.rings.finite_rings
-            sage: O.basis()                                                                         # optional - sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(19))
+            sage: O = K.maximal_order()
+            sage: O.basis()
             (1,)
         """
         return 1/self.function_field().gen()
@@ -518,9 +527,9 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.rings.finite_rings
-            sage: O = K.maximal_order_infinite()                                                    # optional - sage.rings.finite_rings
-            sage: O.prime_ideal()                                                                   # optional - sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(19))
+            sage: O = K.maximal_order_infinite()
+            sage: O.prime_ideal()
             Ideal (1/t) of Maximal infinite order of Rational function field in t
             over Finite Field of size 19
         """

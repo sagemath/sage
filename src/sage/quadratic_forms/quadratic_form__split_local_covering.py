@@ -14,8 +14,6 @@ import sage.rings.abc
 from sage.rings.real_double import RDF
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.all", "floor")
 from sage.rings.integer_ring import ZZ
 from sage.arith.misc import GCD
 
@@ -94,19 +92,19 @@ def cholesky_decomposition(self, bit_prec=53):
 
     # 2. Loop on i
     for i in range(n):
-        for j in range(i+1, n):
-            Q[j,i] = Q[i,j]             # Is this line redundant?
-            Q[i,j] = Q[i,j] / Q[i,i]
+        for j in range(i + 1, n):
+            Q[j, i] = Q[i, j]             # Is this line redundant?
+            Q[i, j] = Q[i, j] / Q[i, i]
 
         # 3. Main Loop
-        for k in range(i+1, n):
+        for k in range(i + 1, n):
             for l in range(k, n):
-                Q[k,l] = Q[k,l] - Q[k,i] * Q[i,l]
+                Q[k, l] = Q[k, l] - Q[k, i] * Q[i, l]
 
     # 4. Zero out the strictly lower-triangular entries
     for i in range(n):
         for j in range(i):
-            Q[i,j] = 0
+            Q[i, j] = 0
 
     return Q
 
@@ -143,7 +141,7 @@ def vectors_by_length(self, bound):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.vectors_by_length(5)                                                # optional - sage.symbolic
+        sage: Q.vectors_by_length(5)                                                    # needs sage.symbolic
         [[[0, 0]],
          [[0, -1], [-1, 0]],
          [[-1, -1], [1, -1]],
@@ -154,7 +152,7 @@ def vectors_by_length(self, bound):
     ::
 
         sage: Q1 = DiagonalQuadraticForm(ZZ, [1,3,5,7])
-        sage: Q1.vectors_by_length(5)                                               # optional - sage.symbolic
+        sage: Q1.vectors_by_length(5)                                                   # needs sage.symbolic
         [[[0, 0, 0, 0]],
          [[-1, 0, 0, 0]],
          [],
@@ -165,20 +163,20 @@ def vectors_by_length(self, bound):
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,1,1,1, 1,0,0, 1,0, 1])
-        sage: list(map(len, Q.vectors_by_length(2)))                                # optional - sage.symbolic
+        sage: list(map(len, Q.vectors_by_length(2)))                                    # needs sage.symbolic
         [1, 12, 12]
 
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,-1,-1,-1, 1,0,0, 4,-3, 4])
-        sage: list(map(len, Q.vectors_by_length(3)))                                # optional - sage.symbolic
+        sage: list(map(len, Q.vectors_by_length(3)))                                    # needs sage.symbolic
         [1, 3, 0, 3]
     """
     # pari uses eps = 1e-6 ; nothing bad should happen if eps is too big
     # but if eps is too small, roundoff errors may knock off some
     # vectors of norm = bound (see #7100)
     eps = RDF(1e-6)
-    bound = ZZ(floor(max(bound, 0)))
+    bound = ZZ(max(bound, 0))  # bound is an integer
     Theta_Precision = bound + eps
     n = self.dim()
 
@@ -192,7 +190,7 @@ def vectors_by_length(self, bound):
     # 1. Initialize
     T = n * [RDF(0)]    # Note: We index the entries as 0 --> n-1
     U = n * [RDF(0)]
-    i = n-1
+    i = n - 1
     T[i] = RDF(Theta_Precision)
     U[i] = RDF(0)
 
@@ -201,27 +199,27 @@ def vectors_by_length(self, bound):
 
     # 2. Compute bounds
     Z = (T[i] / Q[i][i]).sqrt(extend=False)
-    L[i] = ( Z - U[i]).floor()
+    L[i] = (Z - U[i]).floor()
     x[i] = (-Z - U[i]).ceil()
 
     done_flag = False
-    Q_val = 0 # WARNING: Still need a good way of checking overflow for this value...
+    Q_val = 0  # WARNING: Still need a good way of checking overflow for this value...
 
     # Big loop which runs through all vectors
     while not done_flag:
 
         # 3b. Main loop -- try to generate a complete vector x (when i=0)
         while (i > 0):
-            T[i-1] = T[i] - Q[i][i] * (x[i] + U[i]) * (x[i] + U[i])
+            T[i - 1] = T[i] - Q[i][i] * (x[i] + U[i]) * (x[i] + U[i])
             i = i - 1
             U[i] = 0
-            for j in range(i+1, n):
+            for j in range(i + 1, n):
                 U[i] = U[i] + Q[i][j] * x[j]
 
             # Now go back and compute the bounds...
             # 2. Compute bounds
             Z = (T[i] / Q[i][i]).sqrt(extend=False)
-            L[i] = ( Z - U[i]).floor()
+            L[i] = (Z - U[i]).floor()
             x[i] = (-Z - U[i]).ceil()
 
             # carry if we go out of bounds -- when Z is so small that
@@ -241,20 +239,20 @@ def vectors_by_length(self, bound):
             print(" Float = ", Q_val_double, "   Long = ", Q_val)
             raise RuntimeError("The roundoff error is bigger than 0.001, so we should use more precision somewhere...")
 
-        if (Q_val <= bound):
+        if Q_val <= bound:
             theta_vec[Q_val].append(deepcopy(x))
 
         # 5. Check if x = 0, for exit condition. =)
         j = 0
         done_flag = True
-        while (j < n):
-            if (x[j] != 0):
+        while j < n:
+            if x[j] != 0:
                 done_flag = False
             j += 1
 
         # 3a. Increment (and carry if we go out of bounds)
         x[i] += 1
-        while (x[i] > L[i]) and (i < n-1):
+        while i < n - 1 and x[i] > L[i]:
             i += 1
             x[i] += 1
 
@@ -283,7 +281,6 @@ def complementary_subform_to_vector(self, v):
     - ``v`` -- a list of ``self.dim()`` integers
 
     OUTPUT: a :class:`QuadraticForm` over `\ZZ`
-
 
     EXAMPLES::
 
@@ -317,7 +314,7 @@ def complementary_subform_to_vector(self, v):
 
     # Find the first non-zero component of v, and call it nz  (Note: 0 <= nz < n)
     nz = 0
-    while (nz < n) and (v[nz] == 0):
+    while nz < n and v[nz] == 0:
         nz += 1
 
     # Abort if v is the zero vector
@@ -334,27 +331,27 @@ def complementary_subform_to_vector(self, v):
     d = Q1[0, 0]
 
     # For each row/column, perform elementary operations to cancel them out.
-    for i in range(1,n):
+    for i in range(1, n):
 
         # Check if the (i,0)-entry is divisible by d,
         # and stretch its row/column if not.
-        if Q1[i,0] % d != 0:
-            Q1 = Q1.multiply_variable(d / GCD(d, Q1[i, 0]//2), i)
+        if Q1[i, 0] % d:
+            Q1 = Q1.multiply_variable(d / GCD(d, Q1[i, 0] // 2), i)
 
         # Now perform the (symmetric) elementary operations to cancel out the (i,0) entries/
-        Q1 = Q1.add_symmetric(-(Q1[i,0]/2) / (GCD(d, Q1[i,0]//2)), i, 0)
+        Q1 = Q1.add_symmetric(-(Q1[i, 0] // 2) / (GCD(d, Q1[i, 0] // 2)), i, 0)
 
     # Check that we're done!
     done_flag = True
     for i in range(1, n):
-        if Q1[0,i] != 0:
+        if Q1[0, i] != 0:
             done_flag = False
 
     if not done_flag:
         raise RuntimeError("There is a problem cancelling out the matrix entries! =O")
 
     # Return the complementary matrix
-    return Q1.extract_variables(range(1,n))
+    return Q1.extract_variables(range(1, n))
 
 
 def split_local_cover(self):
@@ -377,7 +374,7 @@ def split_local_cover(self):
     EXAMPLES::
 
         sage: Q1 = DiagonalQuadraticForm(ZZ, [7,5,3])
-        sage: Q1.split_local_cover()                                                # optional - sage.symbolic
+        sage: Q1.split_local_cover()                                                    # needs sage.symbolic
         Quadratic form in 3 variables over Integer Ring with coefficients:
         [ 3 0 0 ]
         [ * 5 0 ]

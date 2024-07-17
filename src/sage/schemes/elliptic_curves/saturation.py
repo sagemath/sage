@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings sage.rings.number_field
+# sage.doctest: needs sage.rings.finite_rings sage.rings.number_field
 r"""
 Saturation of Mordell-Weil groups of elliptic curves over number fields
 
@@ -36,7 +36,6 @@ AUTHORS:
 - Robert Bradshaw
 
 - John Cremona
-
 """
 #*****************************************************************************
 #       Copyright (C) 2017 Robert Bradshaw <robertwb@math.washington.edu>
@@ -128,10 +127,10 @@ class EllipticCurveSaturator(SageObject):
         else:
             self._Kpol = K.defining_polynomial()
         self._D = self._Kpol.discriminant()
-        self._reductions = dict()
-        self._lincombs = dict()
+        self._reductions = {}
+        self._lincombs = {}
         self._torsion_gens = [t.element() for t in E.torsion_subgroup().gens()]
-        self._reductions = dict()
+        self._reductions = {}
         # This will hold a dictionary with keys (q,aq) with q prime
         # and aq a root of K's defining polynomial mod q, and values
         # (n,gens) where n is the cardinality of the reduction of E
@@ -198,7 +197,7 @@ class EllipticCurveSaturator(SageObject):
         """
         if q in self._reductions:
             return
-        self._reductions[q] = redmodq = dict()
+        self._reductions[q] = redmodq = {}
         if q.divides(self._N) or q.divides(self._D):
             return
         from sage.schemes.elliptic_curves.constructor import EllipticCurve
@@ -373,7 +372,7 @@ class EllipticCurveSaturator(SageObject):
 
         TESTS:
 
-        See :trac:`27387`::
+        See :issue:`27387`::
 
             sage: K.<a> = NumberField(x^2 - x - 26)
             sage: E = EllipticCurve([a, 1 - a, 0, 93 - 16*a, 3150 - 560*a])
@@ -385,7 +384,7 @@ class EllipticCurveSaturator(SageObject):
             Using sieve method to saturate...
             ...
             -- points were not 2-saturated, gaining index 2
-            (0, (-1/4*a + 3/4 : 59/8*a - 317/8 : 1))
+            (1, (0 : 1 : 0))
 
         A CM example where large siecing primes are needed (LMFDB
         label 2.0.3.1-50625.1-CMb2)::

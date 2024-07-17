@@ -6,25 +6,24 @@ Description
 
 The Boehm-Demers-Weiser conservative garbage collector.
 
+
 License
 -------
 
--  Permissive BSD + GPL 2.0+
+-  MIT-style (https://github.com/ivmai/bdwgc/blob/master/LICENSE)
 
 
 Upstream Contact
 ----------------
 
-Webpage: http://www.hboehm.info/gc/
+-  Ivan Maidanski
 
-Email List: bdwgc@lists.opendylan.org
+Webpage:
+-  https://github.com/ivmai/bdwgc/
+-  https://www.hboehm.info/gc/
+
 
 Special Update/Build Instructions
 ---------------------------------
 
 None.
-
-Patches
-~~~~~~~
-
--  cygwin64.patch: let libgc build on Cygwin64.

@@ -523,7 +523,7 @@ cdef class CGraph:
         if self.has_vertex(v):
             self.del_vertex_unsafe(v)
 
-    cpdef int current_allocation(self):
+    cpdef int current_allocation(self) noexcept:
         r"""
         Report the number of vertices allocated.
 
@@ -624,8 +624,8 @@ cdef class CGraph:
 
         OUTPUT:
 
-        - Raise a ``NotImplementedError``. This method is not implemented in
-          this base class. A child class should provide a suitable
+        - Raise a :class:`NotImplementedError`. This method is not implemented
+          in this base class. A child class should provide a suitable
           implementation.
 
         .. SEEALSO::
@@ -891,13 +891,13 @@ cdef class CGraph:
     cdef int all_arcs_unsafe(self, int u, int v, int* arc_labels, int size) except -1:
         raise NotImplementedError()
 
-    cpdef int arc_label(self, int u, int v):
+    cpdef int arc_label(self, int u, int v) noexcept:
         """
         Retrieves the first label found associated with ``(u, v)``.
 
         INPUT:
 
-         - ``u, v`` -- non-negative integers, must be in self
+         - ``u``, ``v`` -- non-negative integers, must be in self
 
         OUTPUT: one of
 
@@ -979,7 +979,7 @@ cdef class CGraph:
 
         INPUT:
 
-         - ``u, v`` -- non-negative integers, must be in self
+         - ``u``, ``v`` -- non-negative integers, must be in self
 
          - ``l`` -- a positive integer label, or zero for no label
 
@@ -1006,13 +1006,13 @@ cdef class CGraph:
             raise ValueError("Label ({0}) must be a nonnegative integer.".format(l))
         self.del_arc_label_unsafe(u, v, l)
 
-    cpdef bint has_arc_label(self, int u, int v, int l):
+    cpdef bint has_arc_label(self, int u, int v, int l) noexcept:
         """
         Indicates whether there is an arc ``(u, v)`` with label ``l``.
 
         INPUT:
 
-         - ``u, v`` -- non-negative integers, must be in self
+         - ``u``, ``v`` -- non-negative integers, must be in self
 
          - ``l`` -- a positive integer label, or zero for no label
 
@@ -1267,7 +1267,7 @@ cdef class CGraph:
 
         OUTPUT:
 
-        - Raise ``NotImplementedError``. This method is not implemented at
+        - Raise :class:`NotImplementedError`. This method is not implemented at
           the :class:`CGraph` level. A child class should provide a suitable
           implementation.
 
@@ -1456,7 +1456,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS:
 
-        Ensure that :trac:`8395` is fixed. ::
+        Ensure that :issue:`8395` is fixed. ::
 
             sage: G = Graph({1:[1]}); G
             Looped graph on 1 vertex
@@ -1553,7 +1553,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         """
         return self.cg().num_verts
 
-    cdef bint _delete_edge_before_adding(self):
+    cdef bint _delete_edge_before_adding(self) noexcept:
         """
         Return whether we should delete edges before adding any.
 
@@ -1574,17 +1574,18 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS:
 
-        We check that the bug described in :trac:`8406` is gone::
+        We check that the bug described in :issue:`8406` is gone::
 
+            sage: # needs sage.rings.finite_rings
             sage: G = Graph()
-            sage: R.<a> = GF(3**3)                                                      # optional - sage.rings.finite_rings
-            sage: S.<x> = R[]                                                           # optional - sage.rings.finite_rings
-            sage: G.add_vertex(a**2)                                                    # optional - sage.rings.finite_rings
-            sage: G.add_vertex(x)                                                       # optional - sage.rings.finite_rings
-            sage: G.vertices(sort=True)                                                 # optional - sage.rings.finite_rings
+            sage: R.<a> = GF(3**3)
+            sage: S.<x> = R[]
+            sage: G.add_vertex(a**2)
+            sage: G.add_vertex(x)
+            sage: G.vertices(sort=True)
             [a^2, x]
 
-        And that the bug described in :trac:`9610` is gone::
+        And that the bug described in :issue:`9610` is gone::
 
             sage: n = 20
             sage: k = 3
@@ -1595,7 +1596,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: g.strongly_connected_components()
             [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]]
 
-        The bug in :trac:`14967` and :trac:`14853` is fixed::
+        The bug in :issue:`14967` and :issue:`14853` is fixed::
 
             sage: DiGraph({0: {}, 1/2: {}})
             Digraph on 2 vertices
@@ -2010,7 +2011,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS:
 
-        Ensure that issue :trac:`8395` is fixed. ::
+        Ensure that issue :issue:`8395` is fixed. ::
 
             sage: def my_add_edges(G, m, n):
             ....:     for i in range(m):
@@ -2105,11 +2106,11 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.degree(1)
             3
 
-        Ensure that :trac:`13664` is fixed ::
+        Ensure that :issue:`13664` is fixed ::
 
-            sage: W = WeylGroup(["A",1])                                                # optional - sage.combinat sage.groups
-            sage: G = W.cayley_graph()                                                  # optional - sage.combinat sage.groups
-            sage: Graph(G).degree()                                                     # optional - sage.combinat sage.groups
+            sage: W = WeylGroup(["A",1])                                                # needs sage.combinat sage.groups
+            sage: G = W.cayley_graph()                                                  # needs sage.combinat sage.groups
+            sage: Graph(G).degree()                                                     # needs sage.combinat sage.groups
             [1, 1]
             sage: h = Graph()
             sage: h.add_edge(1,2,"a")
@@ -2362,7 +2363,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-         - ``u,v`` -- the vertices of the edge
+         - ``u``, ``v`` -- the vertices of the edge
 
          - ``l`` -- the edge label
 
@@ -2395,7 +2396,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: D.edges(sort=True)
             [(0, 1, 3)]
 
-        Check :trac:`22991` for sparse backend::
+        Check :issue:`22991` for sparse backend::
 
             sage: G = Graph(3, sparse=True)
             sage: G.add_edge(0,0)
@@ -2406,7 +2407,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.add_edge(0,0); G.edges(sort=True)
             [(0, 0, None)]
 
-        Check :trac:`22991` for dense backend::
+        Check :issue:`22991` for dense backend::
 
             sage: G = Graph(3, sparse=False)
             sage: G.add_edge(0,0)
@@ -2417,7 +2418,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.add_edge(0, 0); G.edges(sort=True)
             [(0, 0, None)]
 
-        Remove edges correctly when multiedges are not allowed (:trac:`28077`)::
+        Remove edges correctly when multiedges are not allowed (:issue:`28077`)::
 
             sage: D = DiGraph(multiedges=False)
             sage: D.add_edge(1, 2, 'A')
@@ -2494,7 +2495,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-        - ``u, v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         - ``l`` -- the edge label
 
@@ -2558,7 +2559,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.edges(sort=True)
             [(0, 1, 2)]
 
-        Do we remove loops correctly? (:trac:`12135`)::
+        Do we remove loops correctly? (:issue:`12135`)::
 
             sage: g=Graph({0:[0,0,0]}, sparse=True)
             sage: g.edges(sort=True, labels=False)
@@ -2910,7 +2911,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-            - ``other`` - a subclass of :class:`CGraphBackend`
+            - ``other`` -- a subclass of :class:`CGraphBackend`
             - ``vertices`` -- a iterable over the vertex labels
             - ``ignore_labels`` -- boolean (default: ``False``); whether to ignore the labels
 
@@ -3945,19 +3946,19 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS:
 
-        Bugfix from :trac:`7673` ::
+        Bugfix from :issue:`7673` ::
 
             sage: G = Graph([(0, 1, 9), (0, 2, 8), (1, 2, 7)])
             sage: G.shortest_path_length(0, 1, by_weight=True)
             9
 
-        Bugfix from :trac:`28221` ::
+        Bugfix from :issue:`28221` ::
 
             sage: G = Graph([(0, 1, 9.2), (0, 2, 4.5), (1, 2, 4.6)])
             sage: G.shortest_path_length(0, 1, by_weight=True)
             9.1
 
-        Bugfix from :trac:`27464` ::
+        Bugfix from :issue:`27464` ::
 
             sage: G = DiGraph({0: [1, 2], 1: [4], 2: [3, 4], 4: [5], 5: [6]}, multiedges=True)
             sage: for u, v in list(G.edges(labels=None, sort=False)):
@@ -4406,9 +4407,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
-            sage: H = P._hasse_diagram                                                  # optional - sage.modules
-            sage: H._backend.is_connected()                                             # optional - sage.modules
+            sage: P = posets.PentagonPoset()                                            # needs sage.modules
+            sage: H = P._hasse_diagram                                                  # needs sage.modules
+            sage: H._backend.is_connected()                                             # needs sage.modules
             True
         """
         cdef int v_int
@@ -4548,7 +4549,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         At first, the following graph is acyclic::
 
             sage: D = DiGraph({ 0:[1,2,3], 4:[2,5], 1:[8], 2:[7], 3:[7], 5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
-            sage: D.plot(layout='circular').show()                                      # optional - sage.plot
+            sage: D.plot(layout='circular').show()                                      # needs sage.plot
             sage: D.is_directed_acyclic()
             True
 
@@ -4589,9 +4590,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS::
 
-            sage: m = Matrix(3,[0, 1, 1, 0, 0, 0, 0, 1, 0])                             # optional - sage.modules
-            sage: g = DiGraph(m)                                                        # optional - sage.modules
-            sage: g.is_directed_acyclic(certificate=True)                               # optional - sage.modules
+            sage: m = Matrix(3,[0, 1, 1, 0, 0, 0, 0, 1, 0])                             # needs sage.modules
+            sage: g = DiGraph(m)                                                        # needs sage.modules
+            sage: g.is_directed_acyclic(certificate=True)                               # needs sage.modules
             (True, [0, 2, 1])
         """
         if not self._directed:
@@ -4817,9 +4818,9 @@ cdef class Search_iterator:
             ...
             LookupError: vertex ('') is not a vertex of the graph
 
-        Immutable graphs (see :trac:`16019`)::
+        Immutable graphs (see :issue:`16019`)::
 
-            sage: DiGraph([[1,2]], immutable=True).connected_components()
+            sage: DiGraph([(1, 2)], immutable=True).connected_components(sort=True)
             [[1, 2]]
 
         """
@@ -5008,7 +5009,7 @@ cdef class Search_iterator:
 # Functions to simplify edge iterator.
 ##############################
 
-cdef inline bint _reorganize_edge(object v, object u, const int modus):
+cdef inline bint _reorganize_edge(object v, object u, const int modus) noexcept:
     """
     Return ``True`` if ``v`` and ``u`` should be exchanged according to the modus.
 
@@ -5021,8 +5022,8 @@ cdef inline bint _reorganize_edge(object v, object u, const int modus):
     - ``modus`` -- integer representing the modus of the iterator:
       - ``0`` -- outgoing edges
       - ``1`` -- ingoing edges
-      - ``3`` -- unsorted edges of an undirected graph
-      - ``4`` -- sorted edges of an undirected graph
+      - ``2`` -- unsorted edges of an undirected graph
+      - ``3`` -- sorted edges of an undirected graph
 
     OUTPUT: Boolean according the modus:
 
@@ -5033,12 +5034,11 @@ cdef inline bint _reorganize_edge(object v, object u, const int modus):
     """
     if modus == 0:
         return False
-    if modus == 1 or modus == 2:
-        return True
+    elif modus == 3:
+        try:
+            if v <= u:
+                return False
+        except TypeError:
+            pass
 
-    try:
-        if v <= u:
-            return False
-    except TypeError:
-        pass
     return True

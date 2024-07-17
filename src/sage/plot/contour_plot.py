@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Contour plots
 """
@@ -32,14 +33,14 @@ class ContourPlot(GraphicPrimitive):
 
     INPUT:
 
-    - ``xy_data_array`` - list of lists giving evaluated values of the function
+    - ``xy_data_array`` -- list of lists giving evaluated values of the function
       on the grid
 
-    - ``xrange`` - tuple of 2 floats indicating range for horizontal direction
+    - ``xrange`` -- tuple of 2 floats indicating range for horizontal direction
 
-    - ``yrange`` - tuple of 2 floats indicating range for vertical direction
+    - ``yrange`` -- tuple of 2 floats indicating range for vertical direction
 
-    - ``options`` - dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -241,10 +242,10 @@ def contour_plot(f, xrange, yrange, **options):
 
     - ``f`` -- a function of two variables
 
-    - ``(xmin,xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
+    - ``(xmin, xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
       ``(x,xmin,xmax)``
 
-    - ``(ymin,ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
+    - ``(ymin, ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
       ``(y,ymin,ymax)``
 
     The following inputs must all be passed in as named parameters:
@@ -280,7 +281,7 @@ def contour_plot(f, xrange, yrange, **options):
       ``"-."``, ``":"``.  If the list is shorter than the number of
       contours, then the styles will be repeated cyclically.
 
-    - ``labels`` -- boolean (default: False) Show level labels or not.
+    - ``labels`` -- boolean (default: ``False``) Show level labels or not.
 
       The following options are to adjust the style and placement of
       labels, they have no effect if no labels are shown.
@@ -294,7 +295,7 @@ def contour_plot(f, xrange, yrange, **options):
         labels.  A color is a string giving the name of one or a
         3-tuple of floats.
 
-      - ``label_inline`` -- boolean (default: False if fill is True,
+      - ``label_inline`` -- boolean (default: ``False`` if fill is True,
         otherwise True), controls whether the underlying contour is
         removed or not.
 
@@ -308,7 +309,7 @@ def contour_plot(f, xrange, yrange, **options):
         text string labels as values.  It can also be any callable which
         returns a string when called with a numeric contour level.
 
-    - ``colorbar`` -- boolean (default: False) Show a colorbar or not.
+    - ``colorbar`` -- boolean (default: ``False``) Show a colorbar or not.
 
       The following options are to adjust the style and placement of
       colorbars.  They have no effect if a colorbar is not shown.
@@ -327,7 +328,7 @@ def contour_plot(f, xrange, yrange, **options):
 
     - ``legend_label`` -- the label for this item in the legend
 
-    -  ``region`` - (default: None) If region is given, it must be a function
+    -  ``region`` -- (default: None) If region is given, it must be a function
         of two variables. Only segments of the surface where region(x,y)
         returns a number >0 will be included in the plot.
 
@@ -823,7 +824,7 @@ def contour_plot(f, xrange, yrange, **options):
         sphinx_plot(g)
 
     If you are plotting a sole contour and if all of your data lie on
-    one side of it, then (as part of :trac:`21042`) a heuristic may be
+    one side of it, then (as part of :issue:`21042`) a heuristic may be
     used to improve the result; in that case, a warning is emitted::
 
         sage: contour_plot(lambda x,y: abs(x^2-y^2), (-1,1), (-1,1),
@@ -844,7 +845,7 @@ def contour_plot(f, xrange, yrange, **options):
         sphinx_plot(g)
 
     Constant functions (with a single contour) can be plotted as well;
-    this was not possible before :trac:`21042`::
+    this was not possible before :issue:`21042`::
 
         sage: contour_plot(lambda x,y: 0, (-1,1), (-1,1),
         ....:              contours=[0], fill=False, cmap=['blue'])
@@ -861,7 +862,7 @@ def contour_plot(f, xrange, yrange, **options):
 
     TESTS:
 
-    To check that :trac:`5221` is fixed, note that this has three curves, not
+    To check that :issue:`5221` is fixed, note that this has three curves, not
     two::
 
         sage: x,y = var('x,y')
@@ -869,12 +870,12 @@ def contour_plot(f, xrange, yrange, **options):
         ....:              contours=[-4,-2,0], fill=False)
         Graphics object consisting of 1 graphics primitive
 
-    Check that :trac:`18074` is fixed::
+    Check that :issue:`18074` is fixed::
 
         sage: contour_plot(0, (0,1), (0,1))
         ...Graphics object consisting of 1 graphics primitive
 
-    Domain points in :trac:`11648` with complex output are now skipped::
+    Domain points in :issue:`11648` with complex output are now skipped::
 
         sage: x,y = SR.var('x,y', domain='real')
         sage: contour_plot(log(x) + log(y), (-1, 5), (-1, 5))
@@ -890,7 +891,7 @@ def contour_plot(f, xrange, yrange, **options):
     F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
                                        options['plot_points'])
     h = F[0]
-    xrange, yrange = [r[:2] for r in ranges]
+    xrange, yrange = (r[:2] for r in ranges)
 
     xy_data_array = [[h(x, y) for x in xsrange(*ranges[0],
                                                include_endpoint=True)]
@@ -999,7 +1000,7 @@ def contour_plot(f, xrange, yrange, **options):
                 F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
                                                    options['plot_points'])
                 h = F[0]
-                xrange, yrange = [r[:2] for r in ranges]
+                xrange, yrange = (r[:2] for r in ranges)
 
                 # ...and a function whose values are shifted towards
                 # z0 by "tol".
@@ -1045,10 +1046,10 @@ def implicit_plot(f, xrange, yrange, **options):
 
     - ``f`` -- a function of two variables or equation in two variables
 
-    - ``(xmin,xmax)`` -- 2-tuple, the range of ``x``
+    - ``(xmin, xmax)`` -- 2-tuple, the range of ``x``
       values or ``(x,xmin,xmax)``
 
-    - ``(ymin,ymax)`` -- 2-tuple, the range of ``y``
+    - ``(ymin, ymax)`` -- 2-tuple, the range of ``y``
       values or ``(y,ymin,ymax)``
 
     The following inputs must all be passed in as named parameters:
@@ -1338,7 +1339,7 @@ def implicit_plot(f, xrange, yrange, **options):
         ...
         ValueError: fill=5 is not supported
 
-    To check that :trac:`9654` is fixed::
+    To check that :issue:`9654` is fixed::
 
         sage: f(x,y) = x^2 + y^2 - 2
         sage: implicit_plot(f, (-3,3), (-3,3), rgbcolor=(1,0,0))
@@ -1393,8 +1394,7 @@ def implicit_plot(f, xrange, yrange, **options):
 @options(plot_points=100, incol='blue', outcol=None, bordercol=None,
          borderstyle=None, borderwidth=None, frame=False, axes=True,
          legend_label=None, aspect_ratio=1, alpha=1)
-def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
-                borderstyle, borderwidth, alpha, **options):
+def region_plot(f, xrange, yrange, **options):
     r"""
     ``region_plot`` takes a boolean function of two variables, `f(x, y)`
     and plots the region where f is True over the specified
@@ -1407,10 +1407,10 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
     - ``f`` -- a boolean function or a list of boolean functions of
       two variables
 
-    - ``(xmin,xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
+    - ``(xmin, xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
       ``(x,xmin,xmax)``
 
-    - ``(ymin,ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
+    - ``(ymin, ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
       ``(y,ymin,ymax)``
 
     - ``plot_points``  -- integer (default: 100); number of points to plot
@@ -1441,7 +1441,7 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
 
     - ``legend_label`` -- the label for this item in the legend
 
-    - ``base`` - (default: 10) the base of the logarithm if
+    - ``base`` -- (default: 10) the base of the logarithm if
       a logarithmic scale is set. This must be greater than 1. The base
       can be also given as a list or tuple ``(basex, basey)``.
       ``basex`` sets the base of the logarithm along the horizontal
@@ -1636,7 +1636,7 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
 
     TESTS:
 
-    To check that :trac:`16907` is fixed::
+    To check that :issue:`16907` is fixed::
 
         sage: x, y = var('x, y')
         sage: disc1 = region_plot(x^2 + y^2 < 1, (x,-1,1), (y,-1,1), alpha=0.5)
@@ -1644,7 +1644,7 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
         sage: disc1 + disc2
         Graphics object consisting of 2 graphics primitives
 
-    To check that :trac:`18286` is fixed::
+    To check that :issue:`18286` is fixed::
 
         sage: x, y = var('x, y')
         sage: region_plot([x == 0], (x,-1,1), (y,-1,1))
@@ -1657,6 +1657,14 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
     from sage.structure.element import Expression
     from warnings import warn
     import numpy
+
+    plot_points = options['plot_points']
+    incol = options.pop('incol')
+    outcol = options.pop('outcol')
+    bordercol = options.pop('bordercol')
+    borderstyle = options.pop('borderstyle')
+    borderwidth = options.pop('borderwidth')
+    alpha = options.pop('alpha')
 
     if not isinstance(f, (list, tuple)):
         f = [f]
@@ -1676,13 +1684,13 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
     if neqs and not bordercol:
         bordercol = incol
     if not f:
-        return implicit_plot(feqs[0], xrange, yrange, plot_points=plot_points,
-                             fill=False, linewidth=borderwidth,
-                             linestyle=borderstyle, color=bordercol, **options)
+        return implicit_plot(feqs[0], xrange, yrange, fill=False,
+                             linewidth=borderwidth, linestyle=borderstyle,
+                             color=bordercol, **options)
     f_all, ranges = setup_for_eval_on_grid(feqs + f,
                                            [xrange, yrange],
                                            plot_points)
-    xrange, yrange = [r[:2] for r in ranges]
+    xrange, yrange = (r[:2] for r in ranges)
 
     xy_data_arrays = numpy.asarray([[[func(x, y)
                                       for x in xsrange(*ranges[0],

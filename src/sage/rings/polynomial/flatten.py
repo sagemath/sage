@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Class to flatten polynomial rings over polynomial ring
 
@@ -41,7 +40,7 @@ from sage.misc.cachefunc import cached_method
 from .polynomial_ring_constructor import PolynomialRing
 from .polynomial_ring import is_PolynomialRing
 from .multi_polynomial_ring_base import is_MPolynomialRing
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.polynomial.polydict import ETuple
 
@@ -111,37 +110,41 @@ class FlatteningMorphism(Morphism):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<v> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
-            sage: R = K['x','y']['a','b']                                               # optional - sage.rings.number_field
+            sage: K.<v> = NumberField(x^3 - 2)
+            sage: R = K['x','y']['a','b']
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                             # optional - sage.rings.number_field
-            sage: f(R('v*a*x^2 + b^2 + 1/v*y'))                                         # optional - sage.rings.number_field
+            sage: f = FlatteningMorphism(R)
+            sage: f(R('v*a*x^2 + b^2 + 1/v*y'))
             v*x^2*a + b^2 + (1/2*v^2)*y
 
         ::
 
-            sage: R = QQbar['x','y']['a','b']                                           # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R = QQbar['x','y']['a','b']
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                             # optional - sage.rings.number_field
-            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                       # optional - sage.rings.number_field
+            sage: f = FlatteningMorphism(R)
+            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                       # needs sage.symbolic
             1.414213562373095?*x^2*a + b^2 + I*y
 
         ::
 
-            sage: R.<z> = PolynomialRing(QQbar, 1)                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<z> = PolynomialRing(QQbar, 1)
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                             # optional - sage.rings.number_field
-            sage: f.domain(), f.codomain()                                              # optional - sage.rings.number_field
+            sage: f = FlatteningMorphism(R)
+            sage: f.domain(), f.codomain()
             (Multivariate Polynomial Ring in z over Algebraic Field,
              Multivariate Polynomial Ring in z over Algebraic Field)
 
         ::
 
-            sage: R.<z> = PolynomialRing(QQbar)                                         # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<z> = PolynomialRing(QQbar)
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                             # optional - sage.rings.number_field
-            sage: f.domain(), f.codomain()                                              # optional - sage.rings.number_field
+            sage: f = FlatteningMorphism(R)
+            sage: f.domain(), f.codomain()
             (Univariate Polynomial Ring in z over Algebraic Field,
              Univariate Polynomial Ring in z over Algebraic Field)
 
@@ -376,9 +379,9 @@ class UnflatteningMorphism(Morphism):
 
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: rings = [ZZ['x']['y']['a,b,c']]
-            sage: rings += [GF(4)['x','y']['a','b']]                                    # optional - sage.rings.finite_rings
-            sage: rings += [AA['x']['a','b']['y'], QQbar['a1','a2']['t']['X','Y']]      # optional - sage.rings.number_field
-            sage: for R in rings:
+            sage: rings += [GF(4)['x','y']['a','b']]                                    # needs sage.rings.finite_rings
+            sage: rings += [AA['x']['a','b']['y'], QQbar['a1','a2']['t']['X','Y']]      # needs sage.rings.number_field
+            sage: for R in rings:                                                       # needs sage.modules
             ....:    f = FlatteningMorphism(R)
             ....:    g = f.section()
             ....:    for _ in range(10):
@@ -484,14 +487,15 @@ class SpecializationMorphism(Morphism):
             ...
             TypeError: no conversion of this rational to integer
 
-        The following was fixed in :trac:`23811`::
+        The following was fixed in :issue:`23811`::
 
             sage: R.<c> = RR[]
             sage: P.<z> = AffineSpace(R, 1)
             sage: H = End(P)
             sage: f = H([z^2 + c])
-            sage: f.specialization({c:1})
-            Scheme endomorphism of Affine Space of dimension 1 over Real Field with 53 bits of precision
+            sage: f.specialization({c:1})                                               # needs sage.modules
+            Scheme endomorphism of
+             Affine Space of dimension 1 over Real Field with 53 bits of precision
               Defn: Defined on coordinates by sending (z) to
                     (z^2 + 1.00000000000000)
         """
@@ -534,8 +538,8 @@ class SpecializationMorphism(Morphism):
         # Construct unflattened codomain R
         new_vars = []
         R = domain
-        while is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R):
-            if is_FractionField(R):
+        while is_PolynomialRing(R) or is_MPolynomialRing(R) or isinstance(R, FractionField_generic):
+            if isinstance(R, FractionField_generic):
                 # We've hit base_ring, so set _sub_specialization and exit the loop
                 field_over = R.base()
                 applicable_vars = {key: val for key, val in D.items()
@@ -675,7 +679,7 @@ class FractionSpecializationMorphism(Morphism):
               To:   Fraction Field of Multivariate Polynomial Ring in x, y
                     over Univariate Polynomial Ring in a over Rational Field
         """
-        if not is_FractionField(domain):
+        if not isinstance(domain, FractionField_generic):
             raise TypeError("domain must be a fraction field")
         self._specialization = SpecializationMorphism(domain.base(), D)
         self._repr_type_str = 'Fraction Specialization'

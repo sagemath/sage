@@ -39,7 +39,6 @@ AUTHORS:
 - Martin Albrecht <malb@informatik.uni-bremen.de> (2006-06-05)
 - William Stein (2006-12-07): editing, lots of docs, etc.
 - Robert Bradshaw (2007-05-23): is_square/sqrt, pow.
-
 """
 
 # ****************************************************************************
@@ -56,45 +55,42 @@ from cysignals.signals cimport sig_on, sig_off
 
 from cypari2.paridecl cimport *
 
+import sage.arith.misc
+
 from sage.misc.randstate cimport current_randstate
-from .element_pari_ffelt cimport FiniteFieldElement_pari_ffelt
+from sage.rings.finite_rings.element_pari_ffelt cimport FiniteFieldElement_pari_ffelt
 from sage.structure.richcmp cimport richcmp
-import sage.arith.all
 
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
 from sage.structure.parent cimport Parent
+from sage.structure.element cimport Vector
 
 from sage.interfaces.abc import GapElement
 
-cdef object is_IntegerMod
+cdef object IntegerMod_abstract
 cdef object Integer
 cdef object Rational
-cdef object ConwayPolynomials
-cdef object conway_polynomial
 cdef object MPolynomial
 cdef object Polynomial
-cdef object FreeModuleElement
 
-cdef void late_import():
+
+cdef void late_import() noexcept:
     """
     Late import of modules
     """
-    global is_IntegerMod, \
+    global IntegerMod_abstract, \
            Integer, \
            Rational, \
-           ConwayPolynomials, \
-           conway_polynomial, \
            MPolynomial, \
-           Polynomial, \
-           FreeModuleElement
+           Polynomial
 
-    if is_IntegerMod is not None:
+    if IntegerMod_abstract is not None:
         return
 
     import sage.rings.finite_rings.integer_mod
-    is_IntegerMod = sage.rings.finite_rings.integer_mod.is_IntegerMod
+    IntegerMod_abstract = sage.rings.finite_rings.integer_mod.IntegerMod_abstract
 
     import sage.rings.integer
     Integer = sage.rings.integer.Integer
@@ -102,20 +98,12 @@ cdef void late_import():
     import sage.rings.rational
     Rational = sage.rings.rational.Rational
 
-    import sage.databases.conway
-    ConwayPolynomials = sage.databases.conway.ConwayPolynomials
-
-    import sage.rings.finite_rings.finite_field_constructor
-    conway_polynomial = sage.rings.finite_rings.conway_polynomials.conway_polynomial
-
     import sage.rings.polynomial.multi_polynomial_element
     MPolynomial = sage.rings.polynomial.multi_polynomial_element.MPolynomial
 
     import sage.rings.polynomial.polynomial_element
     Polynomial = sage.rings.polynomial.polynomial_element.Polynomial
 
-    import sage.modules.free_module_element
-    FreeModuleElement = sage.modules.free_module_element.FreeModuleElement
 
 cdef class Cache_givaro(Cache_base):
     def __init__(self, parent, unsigned int p, unsigned int k, modulus, repr="poly", cache=False):
@@ -238,7 +226,7 @@ cdef class Cache_givaro(Cache_base):
         """
         delete(self.objectptr)
 
-    cpdef int characteristic(self):
+    cpdef int characteristic(self) noexcept:
         """
         Return the characteristic of this field.
 
@@ -261,7 +249,7 @@ cdef class Cache_givaro(Cache_base):
         """
         return Integer(self.order_c())
 
-    cpdef int order_c(self):
+    cpdef int order_c(self) noexcept:
         """
         Return the order of this field.
 
@@ -273,7 +261,7 @@ cdef class Cache_givaro(Cache_base):
         """
         return self.objectptr.cardinality()
 
-    cpdef int exponent(self):
+    cpdef int exponent(self) noexcept:
         r"""
         Return the degree of this field over `\GF{p}`.
 
@@ -373,7 +361,7 @@ cdef class Cache_givaro(Cache_base):
             else:
                 raise TypeError("unable to coerce from a finite field other than the prime subfield")
 
-        elif isinstance(e, (int, Integer)) or is_IntegerMod(e):
+        elif isinstance(e, (int, Integer)) or isinstance(e, IntegerMod_abstract):
             try:
                 e_int = e % self.characteristic()
                 self.objectptr.initi(res, e_int)
@@ -391,7 +379,7 @@ cdef class Cache_givaro(Cache_base):
             return self.parent(eval(e.replace("^", "**"),
                                     self.parent.gens_dict()))
 
-        elif isinstance(e, FreeModuleElement):
+        elif isinstance(e, Vector):
             if self.parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ret = self._zero_element
@@ -426,9 +414,6 @@ cdef class Cache_givaro(Cache_base):
             # Reduce to pari
             e = e.__pari__()
 
-        elif isinstance(e, sage.libs.gap.element.GapElement_FiniteField):
-            return e.sage(ring=self.parent)
-
         elif isinstance(e, GapElement):
             from sage.libs.gap.libgap import libgap
             return libgap(e).sage(ring=self.parent)
@@ -446,6 +431,13 @@ cdef class Cache_givaro(Cache_base):
             return ret
 
         else:
+            try:
+                from sage.libs.gap.element import GapElement_FiniteField
+            except ImportError:
+                pass
+            else:
+                if isinstance(e, GapElement_FiniteField):
+                    return e.sage(ring=self.parent)
             raise TypeError("unable to coerce %r" % type(e))
 
         cdef GEN t
@@ -536,7 +528,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``n`` -- integer representation of an finite field element
+        - ``n`` -- integer representation of a finite field element
 
         OUTPUT:
 
@@ -693,7 +685,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -714,7 +706,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -735,7 +727,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -1191,7 +1183,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         TESTS:
 
         Check that trying to invert zero raises an error
-        (see :trac:`12217`)::
+        (see :issue:`12217`)::
 
             sage: F = GF(25, 'a')
             sage: z = F(0)
@@ -1225,14 +1217,14 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
         TESTS:
 
-        The following checks that :trac:`7923` is resolved::
+        The following checks that :issue:`7923` is resolved::
 
             sage: K.<a> = GF(3^10)
             sage: b = a^9 + a^7 + 2*a^6 + a^4 + a^3 + 2*a^2 + a + 2
             sage: b^(71*7381) == (b^71)^7381
             True
 
-        We define ``0^0`` to be unity, :trac:`13897`::
+        We define ``0^0`` to be unity, :issue:`13897`::
 
             sage: K.<a> = GF(3^10)
             sage: K(0)^0
@@ -1580,7 +1572,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
                 raise ArithmeticError("Multiplicative order of 0 not defined.")
             n = (self._cache).order_c() - 1
             order = Integer(1)
-            for p, e in sage.arith.all.factor(n):
+            for p, e in sage.arith.misc.factor(n):
                 # Determine the power of p that divides the order.
                 a = self**(n / (p**e))
                 while a != 1:
@@ -1746,6 +1738,7 @@ def unpickle_FiniteField_givaroElement(parent, int x):
         sage: TestSuite(e).run() # indirect doctest
     """
     return make_FiniteField_givaroElement(parent._cache, x)
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_givaro', 'unpickle_FiniteField_givaroElement', unpickle_FiniteField_givaroElement)

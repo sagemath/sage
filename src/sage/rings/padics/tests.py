@@ -2,8 +2,8 @@
 TESTS::
 
     sage: R = Zp(5, prec=5, type='fixed-mod')
-    sage: a = random_matrix(R,5)
-    sage: a.determinant().parent() is R
+    sage: a = random_matrix(R,5)                                                        # needs sage.geometry.polyhedron
+    sage: a.determinant().parent() is R                                                 # needs sage.geometry.polyhedron
     True
     sage: K = Qp(3, 10,'capped-rel'); K.krull_dimension()
     0
@@ -26,8 +26,8 @@ TESTS::
     sage: a = Zp(5)(-3); loads(dumps(a)) == a
     True
 
-    sage: M = MatrixSpace(pAdicField(3,100),2)
-    sage: (M([1,0,0,90]) - (1+O(3^100)) * M(1)).left_kernel()
+    sage: M = MatrixSpace(pAdicField(3,100),2)                                          # needs sage.geometry.polyhedron
+    sage: (M([1,0,0,90]) - (1+O(3^100)) * M(1)).left_kernel()                           # needs sage.geometry.polyhedron
     Vector space of degree 2 and dimension 1 over 3-adic Field with capped relative precision 100
     Basis matrix:
     [1 + O(3^100)            0]

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Similarity class types of matrices with entries in a finite field
 
@@ -202,7 +203,7 @@ from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.structure.element import Element, is_Matrix
+from sage.structure.element import Element, Matrix
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -806,7 +807,7 @@ class SimilarityClassType(CombinatorialElement):
             sage: tau.parent().size()
             24
         """
-        if is_Matrix(tau):
+        if isinstance(tau, Matrix):
             n = tau.nrows()
             F = tau.base_ring()
             R = PolynomialRing(F, 't')
@@ -1421,15 +1422,15 @@ def input_parsing(data):
         try:
             data = Partition(data)
             case = 'par'
-        except(TypeError, ValueError):
+        except (TypeError, ValueError):
             try:
                 data = SimilarityClassType(data)
                 case = 'sim'
-            except(TypeError, ValueError):
+            except (TypeError, ValueError):
                 try:
                     data = PrimarySimilarityClassType(*data)
                     case = 'pri'
-                except(TypeError, ValueError):
+                except (TypeError, ValueError):
                     raise ValueError("expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
     return case, data
 
@@ -1686,7 +1687,7 @@ def ext_orbit_centralizers(input_data, q=None, selftranspose=False):
         for item in product(*[IterableFunctionCall(lambda x: ext_orbit_centralizers(x, q=q, selftranspose=selftranspose), PT) for PT in tau]):
             size = prod([list(entry)[0] for entry in item])
             freq = prod([list(entry)[1] for entry in item])
-            yield(size, freq)
+            yield (size, freq)
 
 
 def matrix_centralizer_cardinalities_length_two(n, q=None, selftranspose=False, invertible=False):

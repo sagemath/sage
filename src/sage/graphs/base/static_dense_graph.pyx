@@ -175,7 +175,7 @@ def is_strongly_regular(g, parameters=False):
         sage: g.is_strongly_regular()
         False
 
-    Complete graphs are not strongly regular. (:trac:`14297`) ::
+    Complete graphs are not strongly regular. (:issue:`14297`) ::
 
         sage: g = graphs.CompleteGraph(5)
         sage: g.is_strongly_regular()
@@ -344,7 +344,7 @@ def triangles_count(G):
         sage: from sage.graphs.base.static_dense_graph import triangles_count
         sage: triangles_count(graphs.PetersenGraph())
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
-        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3 * binomial(15, 3)
+        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3 * binomial(15, 3)        # needs sage.symbolic
         True
     """
     from sage.rings.integer import Integer
@@ -745,7 +745,8 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
 
 
 def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
-                                edges_only=False, labels=False, induced=True):
+                                edges_only=False, labels=False, induced=True,
+                                exactly_k=False):
     r"""
     Return an terator over the induced connected subgraphs of order at most `k`.
 
@@ -783,6 +784,10 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
       connected sub(di)graph only or also non-induced sub(di)graphs.
       This parameter can be set to ``False`` for simple (di)graphs only.
 
+    - ``exactly_k`` -- boolean (default: ``False``); ``True`` if we only
+      return graphs of order `k`, ``False`` if we return graphs of order
+      at most `k`.
+
     EXAMPLES::
 
         sage: G = DiGraph([(1, 2), (2, 3), (3, 4), (4, 2)])
@@ -811,6 +816,8 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
          Subgraph of (): Digraph on 1 vertex,
          Subgraph of (): Digraph on 2 vertices,
          Subgraph of (): Digraph on 1 vertex]
+        sage: list(G.connected_subgraph_iterator(k=3, vertices_only=True, exactly_k=True))
+        [[1, 2, 3], [1, 2, 4], [2, 3, 4]]
         sage: list(G.connected_subgraph_iterator(k=2, vertices_only=True))
         [[1], [1, 2], [2], [2, 3], [2, 4], [3], [3, 4], [4]]
 
@@ -921,14 +928,15 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
         sig_check()
 
         vertices = [int_to_vertex[u]]
-        if vertices_only:
-            yield vertices
-        else:
-            H = G.subgraph(vertices)
-            if edges_only:
-                yield H.edges(sort=False, labels=labels)
+        if not exactly_k or mk == 1:
+            if vertices_only:
+                yield vertices
             else:
-                yield H
+                H = G.subgraph(vertices)
+                if edges_only:
+                    yield H.edges(sort=False, labels=labels)
+                else:
+                    yield H
 
         # We initialize the loop with vertices u in current, {u+1, ..., n-1}
         # in left, and N(u) in boundary
@@ -970,45 +978,46 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
                 # We yield that new subset
                 vertices = [int_to_vertex[a] for a in range(u, n)
                             if bitset_in(stack.rows[level], a)]
-                if vertices_only:
-                    yield vertices
-                else:
-                    H = G.subgraph(vertices)
-                    if induced:
-                        if edges_only:
-                            yield H.edges(sort=False, labels=labels)
-                        else:
-                            yield H
+                if not exactly_k or bitset_len(current) == mk - 1:
+                    if vertices_only:
+                        yield vertices
                     else:
-                        # We use a decomposition into biconnected components to
-                        # work on smaller graphs.
-                        if H.is_directed():
-                            blocks = H.to_undirected().blocks_and_cut_vertices()[0]
+                        H = G.subgraph(vertices)
+                        if induced:
+                            if edges_only:
+                                yield H.edges(sort=False, labels=labels)
+                            else:
+                                yield H
                         else:
-                            blocks = H.blocks_and_cut_vertices()[0]
-                        if len(blocks) == 1:
-                            # H is strongly connected or biconnected
-                            yield from connected_full_subgraphs(H, edges_only=edges_only,
-                                                                labels=labels)
-                        else:
-                            L = []
-                            for bloc in blocks:
-                                if len(bloc) == 2:
-                                    bb = [[e] for e in H.edge_boundary(bloc, bloc, labels=labels)]
-                                    if len(bb) == 2:
-                                        # H is directed with edges (u, v) and (v, u)
-                                        bb.append(H.edge_boundary(bloc, bloc, labels=labels))
-                                    L.append(bb)
-                                else:
-                                    L.append(connected_full_subgraphs(H.subgraph(vertices=bloc),
-                                                                      edges_only=True, labels=labels))
+                            # We use a decomposition into biconnected components to
+                            # work on smaller graphs.
+                            if H.is_directed():
+                                blocks = H.to_undirected().blocks_and_cut_vertices()[0]
+                            else:
+                                blocks = H.blocks_and_cut_vertices()[0]
+                            if len(blocks) == 1:
+                                # H is strongly connected or biconnected
+                                yield from connected_full_subgraphs(H, edges_only=edges_only,
+                                                                    labels=labels)
+                            else:
+                                L = []
+                                for bloc in blocks:
+                                    if len(bloc) == 2:
+                                        bb = [[e] for e in H.edge_boundary(bloc, bloc, labels=labels)]
+                                        if len(bb) == 2:
+                                            # H is directed with edges (u, v) and (v, u)
+                                            bb.append(H.edge_boundary(bloc, bloc, labels=labels))
+                                        L.append(bb)
+                                    else:
+                                        L.append(connected_full_subgraphs(H.subgraph(vertices=bloc),
+                                                                          edges_only=True, labels=labels))
 
-                            for edges in product(*L):
-                                good_edges = flatten(edges, ltypes=list)
-                                if edges_only:
-                                    yield list(good_edges)
-                                else:
-                                    yield H.subgraph(vertices=H, edges=good_edges)
+                                for edges in product(*L):
+                                    good_edges = flatten(edges, ltypes=list)
+                                    if edges_only:
+                                        yield list(good_edges)
+                                    else:
+                                        yield H.subgraph(vertices=H, edges=good_edges)
 
             else:
                 # We cannot extend the current subset, either due to a lack of

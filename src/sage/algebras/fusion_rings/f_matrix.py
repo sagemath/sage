@@ -41,6 +41,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polydict import ETuple
 from sage.rings.qqbar import AA, QQbar, number_field_elements_from_algebraics
 
+
 class FMatrix(SageObject):
     r"""
     An F-matrix for a :class:`FusionRing`.
@@ -280,7 +281,7 @@ class FMatrix(SageObject):
         n_vars = self.findcases()
         self._poly_ring = PolynomialRing(self._FR.field(), n_vars, var_prefix)
         if inject_variables:
-            print("creating variables %s%s..%s%s"%(var_prefix, 1, var_prefix, n_vars))
+            print("creating variables %s%s..%s%s" % (var_prefix, 1, var_prefix, n_vars))
             self._poly_ring.inject_variables(get_main_globals())
         self._idx_to_sextuple, self._fvars = self.findcases(output=True)
 
@@ -297,7 +298,7 @@ class FMatrix(SageObject):
         self.pool = None
 
     #######################
-    ### Class utilities ###
+    #   Class utilities   #
     #######################
 
     def _repr_(self):
@@ -309,7 +310,7 @@ class FMatrix(SageObject):
             sage: FusionRing("B2", 1).get_fmatrix()
             F-Matrix factory for The Fusion Ring of Type B2 and level 1 with Integer Ring coefficients
         """
-        return "F-Matrix factory for %s"%self._FR
+        return "F-Matrix factory for %s" % self._FR
 
     def clear_equations(self):
         r"""
@@ -434,26 +435,22 @@ class FMatrix(SageObject):
              (-zeta60^14 + zeta60^6 + zeta60^4 - 1),
              (zeta60^14 - zeta60^6 - zeta60^4 + 1)]
         """
-        if (self._FR.Nk_ij(a, b, x) == 0 or self._FR.Nk_ij(x, c, d) == 0
-            or self._FR.Nk_ij(b, c, y) == 0 or self._FR.Nk_ij(a, y, d) == 0):
+        if (self._FR.Nk_ij(a, b, x) == 0
+                or self._FR.Nk_ij(x, c, d) == 0
+                or self._FR.Nk_ij(b, c, y) == 0
+                or self._FR.Nk_ij(a, y, d) == 0):
             return 0
 
         # Some known zero F-symbols
         if a == self._FR.one():
-            if x == b and y == d:
-                return 1
-            else:
-                return 0
+            return 1 if x == b and y == d else 0
+
         if b == self._FR.one():
-            if x == a and y == c:
-                return 1
-            else:
-                return 0
+            return 1 if x == a and y == c else 0
+
         if c == self._FR.one():
-            if x == d and y == b:
-                return 1
-            else:
-                return 0
+            return 1 if x == d and y == b else 0
+
         if data:
             # Better to use try/except for speed. Somewhat trivial, but worth
             # hours when method is called ~10^11 times
@@ -461,8 +458,8 @@ class FMatrix(SageObject):
                 return self._fvars[a, b, c, d, x, y]
             except KeyError:
                 return 0
-        else:
-            return (a, b, c, d, x, y)
+
+        return (a, b, c, d, x, y)
 
     def fmatrix(self, a, b, c, d):
         r"""
@@ -470,7 +467,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -580,10 +578,10 @@ class FMatrix(SageObject):
         """
         i = 0
         if output:
-            idx_map = dict()
-            ret = dict()
+            idx_map = {}
+            ret = {}
         id_anyon = self._FR.one()
-        for (a, b, c, d) in product(self._FR.basis(), repeat=4):
+        for a, b, c, d in product(self._FR.basis(), repeat=4):
             if a == id_anyon or b == id_anyon or c == id_anyon:
                 continue
             for x in self.f_from(a, b, c, d):
@@ -593,10 +591,8 @@ class FMatrix(SageObject):
                         ret[(a, b, c, d, x, y)] = v
                         idx_map[i] = (a, b, c, d, x, y)
                     i += 1
-        if output:
-            return idx_map, ret
-        else:
-            return i
+
+        return (idx_map, ret) if output else i
 
     def f_from(self, a, b, c, d):
         r"""
@@ -605,7 +601,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -629,7 +626,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -649,7 +647,7 @@ class FMatrix(SageObject):
                 if self._FR.Nk_ij(b, c, y) != 0 and self._FR.Nk_ij(a, y, d) != 0]
 
     ####################
-    ### Data getters ###
+    #   Data getters   #
     ####################
 
     def get_fvars(self):
@@ -855,7 +853,7 @@ class FMatrix(SageObject):
         return {sextuple: val.radical_expression() for sextuple, val in self.get_fvars_in_alg_field().items()}
 
     #######################
-    ### Private helpers ###
+    #   Private helpers   #
     #######################
 
     def _get_known_vals(self):
@@ -894,12 +892,12 @@ class FMatrix(SageObject):
              100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100)
         """
         nonz = {idx: 100 for idx in self._singles}
-        for idx, v in self._ks.items():
+        for idx, _ in self._ks.items():
             nonz[idx] = 100
         return ETuple(nonz, self._poly_ring.ngens())
 
     ##############################
-    ### Variables partitioning ###
+    #   Variables partitioning   #
     ##############################
 
     def largest_fmat_size(self):
@@ -967,7 +965,7 @@ class FMatrix(SageObject):
         return var_set
 
     ############################
-    ### Checkpoint utilities ###
+    #   Checkpoint utilities   #
     ############################
 
     def save_fvars(self, filename):
@@ -1009,12 +1007,10 @@ class FMatrix(SageObject):
             True
             sage: os.remove(filename)
         """
-        final_state = [
-            self._fvars,
-            self._non_cyc_roots,
-            self.get_coerce_map_from_fr_cyclotomic_field(),
-            self._qqbar_embedding,
-            ]
+        final_state = [self._fvars,
+                       self._non_cyc_roots,
+                       self.get_coerce_map_from_fr_cyclotomic_field(),
+                       self._qqbar_embedding]
         with open(filename, 'wb') as f:
             pickle.dump(final_state, f)
 
@@ -1053,7 +1049,7 @@ class FMatrix(SageObject):
             self._fvars, self._non_cyc_roots, self._coerce_map_from_cyc_field, self._qqbar_embedding = pickle.load(f)
         # Update state attributes
         self._chkpt_status = 7
-        self._solved = list(True for v in self._fvars)
+        self._solved = [True for v in self._fvars]
         self._field = self._qqbar_embedding.domain()
 
     def get_fr_str(self):
@@ -1212,7 +1208,7 @@ class FMatrix(SageObject):
         self._update_reduction_params()
 
     #################
-    ### MapReduce ###
+    #   MapReduce   #
     #################
 
     def start_worker_pool(self, processes=None):
@@ -1228,11 +1224,6 @@ class FMatrix(SageObject):
         When you are done using the worker pool, use
         :meth:`shutdown_worker_pool` to close the pool and properly dispose
         of shared memory resources.
-
-        .. NOTE::
-
-            Python 3.8+ is required, since the ``multiprocessing.shared_memory``
-            module must be imported.
 
         INPUT:
 
@@ -1280,7 +1271,7 @@ class FMatrix(SageObject):
             self._reset_solver_state()
         # Set up shared memory resource handlers
         n_proc = cpu_count() if processes is None else processes
-        self._pid_list = shared_memory.ShareableList([0]*(n_proc+1))
+        self._pid_list = shared_memory.ShareableList([0] * (n_proc+1))
         pids_name = self._pid_list.shm.name
         self._solved = shared_memory.ShareableList(self._solved)
         s_name = self._solved.shm.name
@@ -1309,7 +1300,7 @@ class FMatrix(SageObject):
         self.pool = Pool(processes=n_proc, initializer=init, initargs=args)
         self._pid_list[0] = getpid()
         for i, p in enumerate(self.pool._pool):
-            self._pid_list[i+1] = p.pid
+            self._pid_list[i + 1] = p.pid
         # return True
 
     def shutdown_worker_pool(self):
@@ -1399,7 +1390,7 @@ class FMatrix(SageObject):
         return results
 
     ########################
-    ### Equations set up ###
+    #   Equations set up   #
     ########################
 
     def get_orthogonality_constraints(self, output=True):
@@ -1456,10 +1447,10 @@ class FMatrix(SageObject):
 
         - ``option`` -- a string determining equations to be set up:
 
-          * ``'hexagons'`` - get equations imposed on the F-matrix by
+          * ``'hexagons'`` -- get equations imposed on the F-matrix by
             the hexagon relations in the definition of a braided category
 
-          * ``'pentagons'`` - get equations imposed on the F-matrix by
+          * ``'pentagons'`` -- get equations imposed on the F-matrix by
             the pentagon relations in the definition of a monoidal category
 
         - ``output`` -- (default: ``True``) a boolean indicating whether
@@ -1499,7 +1490,9 @@ class FMatrix(SageObject):
             self._reset_solver_state()
         n_proc = self.pool._processes if self.pool is not None else 1
         params = [(child_id, n_proc, output) for child_id in range(n_proc)]
-        eqns = self._map_triv_reduce('get_reduced_'+option, params, worker_pool=self.pool, chunksize=1, mp_thresh=0)
+        eqns = self._map_triv_reduce('get_reduced_' + option, params,
+                                     worker_pool=self.pool, chunksize=1,
+                                     mp_thresh=0)
         if output:
             F = self._field
             for i, eq_tup in enumerate(eqns):
@@ -1508,7 +1501,7 @@ class FMatrix(SageObject):
         self.ideal_basis.extend(eqns)
 
     ############################
-    ### Equations processing ###
+    #   Equations processing   #
     ############################
 
     def _tup_to_fpoly(self, eq_tup):
@@ -1605,7 +1598,7 @@ class FMatrix(SageObject):
                 n = self.pool._processes
                 chunks = [[] for i in range(n)]
                 for i, eq_tup in enumerate(eqns):
-                    chunks[i%n].append(eq_tup)
+                    chunks[i % n].append(eq_tup)
                 eqns = chunks
             else:
                 eqns = [eqns]
@@ -1616,7 +1609,7 @@ class FMatrix(SageObject):
         self.ideal_basis = eqns
 
     #####################
-    ### Graph methods ###
+    #   Graph methods   #
     #####################
 
     def equations_graph(self, eqns=None):
@@ -1680,12 +1673,12 @@ class FMatrix(SageObject):
         for eq in eqns:
             # Eqns could be a list of poly objects or poly tuples stored in internal repn
             if isinstance(eq, tuple):
-                s = [v for v in variables(eq)]
+                s = list(variables(eq))
             else:
-                s = [v for v in eq.variables()]
+                s = list(eq.variables())
             for x in s:
                 for y in s:
-                    if y!=x:
+                    if y != x:
                         G.add_edge(x, y)
         return G
 
@@ -1726,11 +1719,11 @@ class FMatrix(SageObject):
         if eqns is None:
             eqns = self.ideal_basis
         graph = self.equations_graph(eqns)
-        partition = {tuple(c): [] for c in graph.connected_components()}
+        partition = {tuple(c): [] for c in graph.connected_components(sort=True)}
         for eq_tup in eqns:
-            partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0]))].append(eq_tup)
+            partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0], sort=True))].append(eq_tup)
         if verbose:
-            print("Partitioned {} equations into {} components of size:".format(len(eqns), len(graph.connected_components())))
+            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.connected_components_number()))
             print(graph.connected_components_sizes())
         return partition
 
@@ -1770,8 +1763,8 @@ class FMatrix(SageObject):
         """
         if eqns is None:
             eqns = self.ideal_basis
-        small_comps = list()
-        temp_eqns = list()
+        small_comps = []
+        temp_eqns = []
         for comp, comp_eqns in self._partition_eqns(eqns=eqns, verbose=verbose).items():
             # Check if component is too large to process
             if len(comp) > largest_comp:
@@ -1825,7 +1818,7 @@ class FMatrix(SageObject):
         return [{inv_idx_map[i]: value for i, (key, value) in enumerate(sorted(soln.items()))} for soln in var_in_R]
 
     #######################
-    ### Solution method ###
+    #   Solution method   #
     #######################
 
     # TODO: this can probably be improved by constructing a set of defining polynomials
@@ -1924,13 +1917,13 @@ class FMatrix(SageObject):
             for fx, rhs in self._ks.items():
                 if not self._solved[fx]:
                     lt = (ETuple({fx: 2}, n), one)
-                    eqns.append(((lt, (ETuple({}, n), -rhs))))
+                    eqns.append((lt, (ETuple({}, n), -rhs)))
         eqns_partition = self._partition_eqns(verbose=verbose)
 
         F = self._field
         R = F['x']
-        numeric_fvars = dict()
-        non_cyclotomic_roots = list()
+        numeric_fvars = {}
+        non_cyclotomic_roots = []
         must_change_base_field = False
         phi = F.hom([F.gen()], F)
         for comp, part in eqns_partition.items():
@@ -1961,20 +1954,20 @@ class FMatrix(SageObject):
             if self.attempt_number_field_computation():
                 if verbose:
                     print("Computing appropriate NumberField...")
-                roots = [self._FR.field().gen()]+[r[1] for r in non_cyclotomic_roots]
+                roots = [self._FR.field().gen()] + [r[1] for r in non_cyclotomic_roots]
                 self._field, bf_elts, self._qqbar_embedding = number_field_elements_from_algebraics(roots, minimal=True)
             else:
                 self._field = QQbar
                 bf_elts = [self._qqbar_embedding(F.gen())]
                 bf_elts += [rhs for fx, rhs in non_cyclotomic_roots]
-                self._qqbar_embedding = lambda x : x
+                self._qqbar_embedding = lambda x: x
             self._non_cyc_roots = bf_elts[1:]
 
             # Embed cyclotomic field into newly constructed base field
             cyc_gen_as_bf_elt = bf_elts.pop(0)
             phi = self._FR.field().hom([cyc_gen_as_bf_elt], self._field)
             self._coerce_map_from_cyc_field = phi
-            numeric_fvars = {k : phi(v) for k, v in numeric_fvars.items()}
+            numeric_fvars = {k: phi(v) for k, v in numeric_fvars.items()}
             for i, elt in enumerate(bf_elts):
                 numeric_fvars[non_cyclotomic_roots[i][0]] = elt
             # Update polynomial ring
@@ -2119,7 +2112,7 @@ class FMatrix(SageObject):
                 print("Set up {} hex and orthogonality constraints...".format(len(self.ideal_basis)))
 
         # Unzip _fvars and link to shared_memory structure if using multiprocessing
-        if use_mp:# and loads_shared_memory:
+        if use_mp:  # and loads_shared_memory:
             self._fvars = self._shared_fvars
         else:
             n = self._poly_ring.ngens()
@@ -2169,12 +2162,12 @@ class FMatrix(SageObject):
         self._chkpt_status = 7
         self.clear_equations()
         if checkpoint:
-            remove("fmatrix_solver_checkpoint_"+self.get_fr_str()+".pickle")
+            remove("fmatrix_solver_checkpoint_" + self.get_fr_str() + ".pickle")
         if save_results:
             self.save_fvars(save_results)
 
     #########################
-    ### Cyclotomic method ###
+    #   Cyclotomic method   #
     #########################
 
     def _fix_gauge(self, algorithm=""):
@@ -2207,8 +2200,8 @@ class FMatrix(SageObject):
                     break
 
             # Fix var = 1, substitute, and solve equations
-            self.ideal_basis.add(var-1)
-            print("adding equation...", var-1)
+            self.ideal_basis.add(var - 1)
+            print("adding equation...", var - 1)
             self.ideal_basis = set(Ideal(list(self.ideal_basis)).groebner_basis(algorithm=algorithm))
             self._substitute_degree_one()
             self._update_equations()
@@ -2275,7 +2268,7 @@ class FMatrix(SageObject):
             {fx3}
         """
         special_values = {known: self._fvars[self._var_to_sextuple[known]] for known in self._solved if known}
-        self.ideal_basis = set(eq.subs(special_values) for eq in self.ideal_basis)
+        self.ideal_basis = {eq.subs(special_values) for eq in self.ideal_basis}
         self.ideal_basis.discard(0)
 
     def find_cyclotomic_solution(self, equations=None, algorithm="", verbose=True, output=False):
@@ -2341,7 +2334,7 @@ class FMatrix(SageObject):
         if equations is None:
             if verbose:
                 print("Setting up hexagons and pentagons...")
-            equations = self.get_defining_equations("hexagons")+self.get_defining_equations("pentagons")
+            equations = self.get_defining_equations("hexagons") + self.get_defining_equations("pentagons")
         if verbose:
             print("Finding a Groebner basis...")
         self.ideal_basis = set(Ideal(equations).groebner_basis(algorithm=algorithm))
@@ -2357,7 +2350,7 @@ class FMatrix(SageObject):
             return self._fvars
 
     #####################
-    ### Verifications ###
+    #   Verifications   #
     #####################
 
     def fmats_are_orthogonal(self):

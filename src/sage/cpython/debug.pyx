@@ -1,28 +1,28 @@
+# sage_setup: distribution = sagemath-objects
 """
 Various functions to debug Python internals
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport (PyObject, PyTypeObject, Py_TYPE,
-        descrgetfunc, descrsetfunc)
+                             descrgetfunc, descrsetfunc)
 
 cdef extern from "Python.h":
     # Helper to get a pointer to an object's __dict__ slot, if any
     PyObject** _PyObject_GetDictPtr(obj)
 
-cdef extern from "sage/cpython/debugimpl.c":
+cdef extern from "debugimpl.c":
     void _type_debug(PyTypeObject*)
 
-from .getattr cimport AttributeErrorMessage
+from sage.cpython.getattr cimport AttributeErrorMessage
 
 
 # Determine subtype_traverse, subtype_clear, subtype_dealloc functions
@@ -58,6 +58,7 @@ def shortrepr(obj, max=50):
 
 cdef object _no_default = object()  # Unique object
 
+
 def getattr_debug(obj, name, default=_no_default):
     r"""
     A re-implementation of ``getattr()`` with lots of debugging info.
@@ -78,7 +79,7 @@ def getattr_debug(obj, name, default=_no_default):
 
     EXAMPLES::
 
-        sage: _ = getattr_debug(list, "reverse")
+        sage: _ = getattr_debug(list, "reverse")  # not tested - broken in python 3.12
         getattr_debug(obj=<class 'list'>, name='reverse'):
           type(obj) = <class 'type'>
           object has __dict__ slot (<class 'dict'>)
@@ -101,7 +102,7 @@ def getattr_debug(obj, name, default=_no_default):
           found '__doc__' in dict of <class 'list'>
           got ... 'str'>)
           returning ... 'str'>)
-        sage: _ = getattr_debug(gp(1), "log")
+        sage: _ = getattr_debug(gp(1), "log")                                           # needs sage.libs.pari
         getattr_debug(obj=1, name='log'):
           type(obj) = <class 'sage.interfaces.gp.GpElement'>
           object has __dict__ slot (<class 'dict'>)
@@ -123,7 +124,7 @@ def getattr_debug(obj, name, default=_no_default):
         sage: _ = getattr_debug(1, "foo")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'foo'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'foo'...
         sage: _ = getattr_debug(1, "foo", "xyz")
         getattr_debug(obj=1, name='foo'):
           type(obj) = <class 'sage.rings.integer.Integer'>
@@ -153,9 +154,9 @@ def getattr_debug(obj, name, default=_no_default):
             dct = <object>(dictptr[0])
             print(f"  object has __dict__ slot ({type(dct)})")
         else:
-            print(f"  object has uninitialized __dict__ slot")
+            print("  object has uninitialized __dict__ slot")
     else:
-        print(f"  object does not have __dict__ slot")
+        print("  object does not have __dict__ slot")
 
     cdef descrgetfunc get = NULL
     cdef descrsetfunc set = NULL
@@ -172,15 +173,15 @@ def getattr_debug(obj, name, default=_no_default):
             set = Py_TYPE(attr).tp_descr_set
             if get is not NULL:
                 if set is not NULL:
-                    print(f"  attribute is data descriptor (has __get__ and __set__)")
+                    print("  attribute is data descriptor (has __get__ and __set__)")
                     if dct is not None:
-                        print(f"  ignoring __dict__ because we have a data descriptor")
-                    print(f"  calling __get__()")
+                        print("  ignoring __dict__ because we have a data descriptor")
+                    print("  calling __get__()")
                     attr = get(attr, obj, type(obj))
                     print(f"  returning {shortrepr(attr)} ({type(attr)})")
                     return attr
                 else:
-                    print(f"  attribute is ordinary descriptor (has __get__)")
+                    print("  attribute is ordinary descriptor (has __get__)")
             attr_in_class = True
             break
 
@@ -198,7 +199,7 @@ def getattr_debug(obj, name, default=_no_default):
 
     if attr_in_class:
         if get is not NULL:
-            print(f"  calling __get__()")
+            print("  calling __get__()")
             attr = get(attr, obj, type(obj))
         print(f"  returning {shortrepr(attr)} ({type(attr)})")
         return attr
@@ -206,14 +207,14 @@ def getattr_debug(obj, name, default=_no_default):
     try:
         tpgetattr = type(obj).__getattr__
     except AttributeError:
-        print(f"  class does not have __getattr__")
+        print("  class does not have __getattr__")
     else:
-        print(f"  calling __getattr__()")
+        print("  calling __getattr__()")
         attr = tpgetattr(obj, name)
         print(f"  returning {shortrepr(attr)} ({type(attr)})")
         return attr
 
-    print(f"  attribute not found")
+    print("  attribute not found")
     raise AttributeError(AttributeErrorMessage(obj, name))
 
 

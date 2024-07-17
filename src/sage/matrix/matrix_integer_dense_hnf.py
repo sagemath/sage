@@ -10,7 +10,7 @@ from copy import copy
 
 from sage.arith.misc import CRT_list, previous_prime
 from sage.matrix.constructor import identity_matrix, matrix, random_matrix
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -99,7 +99,7 @@ def det_given_divisor(A, d, proof=True, stabilize=2):
 
     - ``A`` -- a square integer matrix
     - ``d`` -- a nonzero integer that is assumed to divide the determinant of A
-    - ``proof`` -- bool (default: True) compute det modulo enough primes
+    - ``proof`` -- bool (default: ``True``) compute det modulo enough primes
       so that the determinant is computed provably correctly (via the
       Hadamard bound).  It would be VERY hard for ``det()`` to fail even
       with proof=False.
@@ -236,8 +236,8 @@ def double_det(A, b, c, proof):
     INPUT:
 
     - A -- an (n-1) x n matrix
-    - b -- an 1 x n matrix
-    - c -- an 1 x n matrix
+    - b -- a 1 x n matrix
+    - c -- a 1 x n matrix
     - proof -- whether or not to compute the det modulo enough times to
       provably compute the determinant.
 
@@ -1048,7 +1048,7 @@ def hnf(A, include_zero_rows=True, proof=True):
     INPUT:
 
     - A -- an n x m matrix A over the integers.
-    - include_zero_rows -- bool (default: True) whether or not to include zero
+    - include_zero_rows -- bool (default: ``True``) whether or not to include zero
       rows in the output matrix
     - proof -- whether or not to prove the result correct.
 

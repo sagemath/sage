@@ -387,34 +387,6 @@ celui-ci. Vous voudrez peut-être consulter la `documentation complète de IPyth
 astuces utiles -- qui reposent sur ce que IPython appelle des « commandes
 magiques » :
 
-- La commande magique ``%bg`` lance une commande en arrière-plan. Le résultat
-  sera ensuite accessible à travers l'objet ``jobs``, comme dans l'exemple
-  ci-dessous. (Les commentaires « not tested » sont là parce que ``%bg`` ne
-  fonctionne pas correctement dans l'infrastructure de test automatisé de Sage,
-  mais si vous reproduisez l'exemple, il devrait fonctionner comme indiqué.
-  Naturellement, ``%bg`` est surtout utile pour les commandes dont l'exécution
-  prend beaucoup de temps.)
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  Attention, les tâches lancées en arrière-plan ignorent le préprocesseur Sage
-  (voir section :ref:`section-mathannoy`). Une manière (certes pas très
-  commode) de contourner le problème est la suivante ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  Mais il est plus simple et plus sûr de réserver ``%bg`` aux commandes en pur
-  Python, qui ne font pas appel au préprocesseur.
-
 - Lorsque l'on souhaite saisir un morceau de code complexe, on peut utiliser
   ``%edit`` (ou ``%ed``, ou ``ed``) pour ouvrir un éditeur de texte.
   Assurez-vous que la variable d'environnement :envvar:`EDITOR` est réglée à
@@ -424,7 +396,7 @@ magiques » :
   exemple ``.profile``). La commande ``%edit`` à l'invite de Sage ouvrira
   l'éditeur sélectionné. Vous pouvez alors par exemple saisir une définition de
   fonction::
-  
+
     def some_function(n):
         return n**2 + 3*n + 2
 
@@ -460,8 +432,9 @@ Erreurs et exceptions
 Quand quelque chose ne marche pas, cela se manifeste habituellement par
 une « exception » Python. Python essaie de plus de donner une idée de ce
 qui a pu déclencher l'exception. Bien souvent, il affiche le nom de
-l'exception (par exemple ``NameError`` ou ``ValueError``, voir le manuel
-de référence de la bibliothèque de Python [PyLR]_ pour une liste complète). Par exemple :
+l'exception (par exemple :class:`NameError` ou :class:`ValueError`, voir
+le manuel de référence de la bibliothèque de Python [PyLR]_ pour une liste
+complète). Par exemple :
 
 .. skip
 
@@ -590,7 +563,6 @@ fonction coordinates, ``V.coordinates?`` affiche un message d'aide et
 la section suivante.
 
 
-
 Aide en ligne
 =============
 
@@ -706,15 +678,25 @@ classe.
 ::
 
     sage: help(VectorSpace)
-    Help on class VectorSpace ...
+    Help on function VectorSpace in module sage.modules.free_module:
 
-    class VectorSpace(__builtin__.object)
-     |  Create a Vector Space.
-     |
-     |  To create an ambient space over a field with given dimension
-     |  using the calling syntax ...
-     :
-     :
+    VectorSpace(K, dimension_or_basis_keys=None, sparse=False, inner_product_matrix=None, *,
+                with_basis='standard', dimension=None, basis_keys=None, **args)
+    EXAMPLES:
+
+    The base can be complicated, as long as it is a field.
+
+    ::
+
+        sage: V = VectorSpace(FractionField(PolynomialRing(ZZ,'x')),3)
+        sage: V
+        Vector space of dimension 3 over Fraction Field of Univariate Polynomial Ring in x
+         over Integer Ring
+        sage: V.basis()
+        [
+        (1, 0, 0),
+        (0, 1, 0),
+    --More--
 
 Pour quitter la page d'aide, appuyez sur ``q``. Votre session revient à
 l'écran comme elle était : contrairement à la sortie de ``fonction?``,

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Octonion Algebras
 
@@ -389,7 +390,6 @@ cdef class Octonion_generic(AlgebraElement):
             0
         """
         cdef int i
-        a, b, c = self._parent._params
         cdef tuple table = self._parent._mult_table
         ret = self.vec.get_unsafe(0) ** 2
         for i in range(1, 8):
@@ -416,7 +416,7 @@ cdef class Octonion_generic(AlgebraElement):
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.norm()
+            sage: elt.norm()                                                            # needs sage.symbolic
             2*sqrt(-61)
             sage: elt = sum(O.basis())
             sage: elt.norm()
@@ -439,7 +439,7 @@ cdef class Octonion_generic(AlgebraElement):
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.abs()
+            sage: elt.abs()                                                             # needs sage.symbolic
             2*sqrt(-61)
             sage: elt = sum(O.basis())
             sage: elt.abs()
@@ -577,10 +577,10 @@ cdef class Octonion(Octonion_generic):
 
             sage: O = OctonionAlgebra(QQ)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.norm()
+            sage: elt.norm()                                                            # needs sage.symbolic
             2*sqrt(71)
             sage: elt = sum(O.basis())
-            sage: elt.norm()
+            sage: elt.norm()                                                            # needs sage.symbolic
             2*sqrt(2)
         """
         return self.vec.norm()
@@ -751,7 +751,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: O = OctonionAlgebra(QQ)
-            sage: TestSuite(O).run()
+            sage: TestSuite(O).run()                                                    # needs sage.symbolic
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: TestSuite(O).run()
@@ -782,13 +782,13 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         g = a * b * c
         self._mult_table = (
           ((0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1)),
-          ((1, 1), (0, a), (3,-1), (2,-a), (5,-1), (4,-a), (7, 1), (6, a)),
-          ((2, 1), (3, 1), (0, b), (1, b), (6,-1), (7,-1), (4,-b), (5,-b)),
-          ((3, 1), (2, a), (1,-b), (0,-d), (7,-1), (6,-a), (5, b), (4, d)),
+          ((1, 1), (0, a), (3, -1), (2, -a), (5, -1), (4, -a), (7, 1), (6, a)),
+          ((2, 1), (3, 1), (0, b), (1, b), (6, -1), (7, -1), (4, -b), (5, -b)),
+          ((3, 1), (2, a), (1, -b), (0, -d), (7, -1), (6, -a), (5, b), (4, d)),
           ((4, 1), (5, 1), (6, 1), (7, 1), (0, c), (1, c), (2, c), (3, c)),
-          ((5, 1), (4, a), (7, 1), (6, a), (1,-c), (0,-e), (3,-c), (2,-e)),
-          ((6, 1), (7,-1), (4, b), (5,-b), (2,-c), (3, c), (0,-f), (1, f)),
-          ((7, 1), (6,-a), (5, b), (4,-d), (3,-c), (2, e), (1,-f), (0, g)),
+          ((5, 1), (4, a), (7, 1), (6, a), (1, -c), (0, -e), (3, -c), (2, -e)),
+          ((6, 1), (7, -1), (4, b), (5, -b), (2, -c), (3, c), (0, -f), (1, f)),
+          ((7, 1), (6, -a), (5, b), (4, -d), (3, -c), (2, e), (1, -f), (0, g)),
         )
 
     def _test_alternative(self, **options):

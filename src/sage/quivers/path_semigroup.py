@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Path Semigroups
 """
@@ -295,8 +294,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: Q(P(['c','d']))
             c*d
 
-        A ``TypeError`` or a ``ValueError`` is raised appropriately if the input
-        is wrong::
+        A :class:`TypeError` or a :class:`ValueError` is raised appropriately
+        if the input is wrong::
 
             sage: G = DiGraph([(0,0,'a'), (0,1,'b'), (1,0,'c')], loops=True)
             sage: P = G.path_semigroup()
@@ -468,7 +467,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         return self.gens()[i]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators.
 
@@ -487,7 +486,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         return self.idempotents() + self.arrows()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         This partial semigroup is finite if and only if the underlying
         quiver is acyclic.
@@ -1079,7 +1078,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             ...
             ValueError: the end vertex 4 is not a vertex of the quiver
 
-        If the underlying quiver is cyclic, a ``ValueError``
+        If the underlying quiver is cyclic, a :class:`ValueError`
         is raised::
 
             sage: Q = DiGraph({1:{2:['a','b'], 3:['c']}, 3:{1:['d']}})

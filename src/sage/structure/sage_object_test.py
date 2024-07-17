@@ -1,6 +1,8 @@
+# sage_setup: distribution = sagemath-objects
 
 import pytest
-from .sage_object import SageObject
+from sage.structure.sage_object import SageObject
+
 
 class SageObjectTests:
 

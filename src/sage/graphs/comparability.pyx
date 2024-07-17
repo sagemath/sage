@@ -257,7 +257,7 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
     # Each vertex can partition its neighbors into equivalence classes
     equivalence_classes = {}
     for v in g:
-        equivalence_classes[v] = g.subgraph(vertices=g.neighbors(v)).complement().connected_components()
+        equivalence_classes[v] = g.subgraph(vertices=g.neighbors(v)).complement().connected_components(sort=False)
 
     # We build a graph h with one vertex per (vertex of g + equivalence class)
     from sage.graphs.graph import Graph
@@ -288,7 +288,7 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
         if equivalence_class:
 
             # Returning the largest equivalence class
-            cc = sorted(h.connected_components(), key=len)[-1]
+            cc = sorted(h.connected_components(sort=False), key=len)[-1]
 
             edges = []
             for v, sid in cc:
@@ -306,15 +306,13 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
             # added twice.
             return True, sorted(set(edges))
 
-        else:
-            return True
-    else:
-        if no_certificate:
-            certif.append(certif[0])
-            cycle = [v for v, _ in certif]
-            return False, cycle
-        else:
-            return False
+        return True
+
+    if no_certificate:
+        certif.append(certif[0])
+        cycle = [v for v, _ in certif]
+        return False, cycle
+    return False
 
 
 def greedy_is_comparability_with_certificate(g, certificate=False):
@@ -361,8 +359,7 @@ def greedy_is_comparability_with_certificate(g, certificate=False):
     if not isit:
         if certificate:
             return False, certif
-        else:
-            return False
+        return False
 
     elif not certificate:
         return True
@@ -417,20 +414,20 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
     The 5-cycle or the Petersen Graph are not transitively orientable::
 
       sage: from sage.graphs.comparability import is_comparability_MILP as is_comparability
-      sage: is_comparability(graphs.CycleGraph(5), certificate = True)
+      sage: is_comparability(graphs.CycleGraph(5), certificate=True)                    # needs sage.numerical.mip
       (False, None)
       sage: g = graphs.PetersenGraph()
-      sage: is_comparability(g, certificate = True)
+      sage: is_comparability(g, certificate=True)                                       # needs sage.numerical.mip
       (False, None)
 
     But the Bull graph is::
 
       sage: g = graphs.BullGraph()
-      sage: is_comparability(g)
+      sage: is_comparability(g)                                                         # needs sage.numerical.mip
       True
-      sage: is_comparability(g, certificate = True)
+      sage: is_comparability(g, certificate=True)                                       # needs sage.numerical.mip
       (True, Digraph on 5 vertices)
-      sage: is_comparability(g, certificate = True)[1].is_transitive()
+      sage: is_comparability(g, certificate=True)[1].is_transitive()                    # needs sage.numerical.mip
       True
     """
     from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
@@ -552,8 +549,7 @@ def is_comparability(g, algorithm="greedy", certificate=False, check=True,
         if certificate:
             from sage.graphs.digraph import DiGraph
             return True, DiGraph(g)
-        else:
-            return True
+        return True
 
     if algorithm == "greedy":
         comparability_test = greedy_is_comparability_with_certificate(g, certificate=certificate)
@@ -642,7 +638,7 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
         sage: p1 = Permutation([nn+1 for nn in perm[0]])
         sage: p2 = Permutation([nn+1 for nn in perm[1]])
         sage: p = p2 * p1.inverse()
-        sage: p.show(representation="braid")                                            # optional - sage.plot
+        sage: p.show(representation="braid")                                            # needs sage.plot
 
     TESTS:
 
@@ -664,7 +660,7 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
     Then with MILP::
 
        sage: from sage.graphs.comparability import is_permutation
-       sage: for i in range(20):
+       sage: for i in range(20):                                                        # needs sage.numerical.mip
        ....:     p = Permutations(10).random_element()
        ....:     g1 = graphs.PermutationGraph(p)
        ....:     isit, certif = is_permutation(g1, algorithm="MILP", certificate=True)
@@ -677,46 +673,43 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
        ....:        break
 
     """
-    from sage.graphs.comparability import is_comparability
-    if certificate:
-
-        # First poset, we stop if it fails
-        isit, certif = is_comparability(g, algorithm=algorithm, certificate=True,
-                                        solver=solver, verbose=verbose)
-        if not isit:
-            return False, certif
-
-        # Second poset
-        isit, co_certif = is_comparability(g.complement(), algorithm=algorithm, certificate=True,
-                                           solver=solver, verbose=verbose)
-        if not isit:
-            return False, co_certif
-
-        # Building the two orderings
-        tmp = list(co_certif.edges(labels=False, sort=False))
-        for u, v in certif.edge_iterator(labels=False):
-            co_certif.add_edge(v, u)
-        certif.add_edges(tmp)
-
-        ordering = certif.topological_sort()
-        co_ordering = co_certif.topological_sort()
-
-        # Try to build the Permutation graph from the permutations, just to make
-        # sure nothing weird happened !
-        if check:
-            from sage.graphs.graph_generators import GraphGenerators
-            pg = GraphGenerators().PermutationGraph(ordering, co_ordering)
-            if not pg.is_isomorphic(g):
-                raise ValueError("There is a mistake somewhere ! It looks like "
-                                 "the Permutation Graph model computed does "
-                                 "not match the input graph !")
-
-        return True, (ordering, co_ordering)
-
-    # No certificate... A piece of cake
-    else:
+    if not certificate:
+        # No certificate... A piece of cake
         return (is_comparability(g, algorithm=algorithm, solver=solver, verbose=verbose) and
                 is_comparability(g.complement(), algorithm=algorithm, solver=solver, verbose=verbose))
+
+    # First poset, we stop if it fails
+    isit, certif = is_comparability(g, algorithm=algorithm, certificate=True,
+                                    solver=solver, verbose=verbose)
+    if not isit:
+        return False, certif
+
+    # Second poset
+    isit, co_certif = is_comparability(g.complement(), algorithm=algorithm, certificate=True,
+                                       solver=solver, verbose=verbose)
+    if not isit:
+        return False, co_certif
+
+    # Building the two orderings
+    tmp = list(co_certif.edges(labels=False, sort=False))
+    for u, v in certif.edge_iterator(labels=False):
+        co_certif.add_edge(v, u)
+    certif.add_edges(tmp)
+
+    ordering = certif.topological_sort()
+    co_ordering = co_certif.topological_sort()
+
+    # Try to build the Permutation graph from the permutations, just to make
+    # sure nothing weird happened !
+    if check:
+        from sage.graphs.graph_generators import GraphGenerators
+        pg = GraphGenerators().PermutationGraph(ordering, co_ordering)
+        if not pg.is_isomorphic(g):
+            raise ValueError("There is a mistake somewhere ! It looks like "
+                             "the Permutation Graph model computed does "
+                             "not match the input graph !")
+
+    return True, (ordering, co_ordering)
 
 
 def is_transitive(g, certificate=False):
@@ -745,15 +738,15 @@ def is_transitive(g, certificate=False):
         (0, 2)
         sage: digraphs.RandomDirectedGNP(30,.2).is_transitive()
         False
-        sage: D = digraphs.DeBruijn(5, 2)                                               # optional - sage.combinat
-        sage: D.is_transitive()                                                         # optional - sage.combinat
+        sage: D = digraphs.DeBruijn(5, 2)                                               # needs sage.combinat
+        sage: D.is_transitive()                                                         # needs sage.combinat
         False
-        sage: cert = D.is_transitive(certificate=True)                                  # optional - sage.combinat
-        sage: D.has_edge(*cert)                                                         # optional - sage.combinat
+        sage: cert = D.is_transitive(certificate=True)                                  # needs sage.combinat
+        sage: D.has_edge(*cert)                                                         # needs sage.combinat
         False
-        sage: bool(D.shortest_path(*cert))                                              # optional - sage.combinat
+        sage: bool(D.shortest_path(*cert))                                              # needs sage.combinat
         True
-        sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()    # optional - networkx
+        sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()    # needs networkx
         True
     """
     cdef int n = g.order()

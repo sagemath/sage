@@ -1,15 +1,11 @@
-# This file, build/pkgs/fedora.txt, contains names of Fedora/Redhat/CentOS packages
-# needed for installation of Sage from source.
+# This file, build/pkgs/_prereq/distros/fedora.txt, contains names of
+# Fedora/Redhat/CentOS/AlmaLinux packages needed for installation
+# of Sage from source.
 #
-# In addition, the files build/pkgs/SPKG/fedora.txt contain the names
-# of packages that provide the equivalent of SPKG.
+# In addition, the files build/pkgs/SPKG/distros/fedora.txt contain
+# the names of packages that provide the equivalent of SPKG.
 #
-# If distinctions between different distributions need to be made,
-# files named fedora....txt, redhat...txt, or centos....txt can be used.
-#
-# See build/bin/sage-spkg, where this information is processed
-# for use in "sage -info SPKG".
-#
+# One package per line. No need to escape special characters.
 # Everything on a line after a # character is ignored.
 #
 binutils

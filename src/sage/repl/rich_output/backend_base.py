@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Base Class for Backends
 
@@ -39,14 +39,14 @@ EXAMPLES::
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import builtins
 from io import StringIO
@@ -319,7 +319,7 @@ class BackendBase(SageObject):
             sage: out = backend.plain_text_formatter(list(range(20)), concatenate=True)
             sage: out.text.get_str()
             '0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19'
-       """
+        """
         from sage.repl.display.pretty_print import SagePrettyPrinter
         if kwds.get('concatenate', False):
             plain_text = ' '.join(
@@ -459,6 +459,7 @@ class BackendBase(SageObject):
             sage: out.html.get_str()
             '<html>\\(\\displaystyle \\frac{1}{2}\\)</html>'
 
+            sage: # needs sage.symbolic
             sage: out = backend.latex_formatter([1/2, x, 3/4, ZZ], concatenate=False)
             sage: out.html.get_str()
             '<html>\\(\\displaystyle \\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\frac{1}{2}, x, \\frac{3}{4}, \\Bold{Z}\\right]\\)</html>'

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 """
 Klyachko bundles and sheaves
 
@@ -68,8 +69,13 @@ def is_KlyachkoBundle(X):
 
         sage: from sage.schemes.toric.sheaf.klyachko import is_KlyachkoBundle
         sage: is_KlyachkoBundle('test')
+        doctest:warning...
+        DeprecationWarning: The function is_KlyachkoBundle is deprecated; use 'isinstance(..., KlyachkoBundle_class)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_KlyachkoBundle is deprecated; use 'isinstance(..., KlyachkoBundle_class)' instead.")
     return isinstance(X, KlyachkoBundle_class)
 
 
@@ -684,7 +690,7 @@ class KlyachkoBundle_class(SageObject):
         C = self.cohomology_complex(weight)
         space_dim = self._variety.dimension()
         C_homology = C.homology()
-        HH = dict()
+        HH = {}
         for d in range(space_dim+1):
             try:
                 HH[d] = C_homology[d]

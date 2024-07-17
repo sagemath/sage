@@ -24,16 +24,17 @@ from copy import deepcopy
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
+from sage.categories.rings import Rings
+from sage.categories.fields import Fields
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.rings.integer_ring import IntegerRing, ZZ
-from sage.rings.ring import Ring
 from sage.misc.functional import denominator, is_even
 from sage.arith.misc import GCD
 from sage.arith.functions import lcm as LCM
 from sage.rings.ideal import Ideal
 from sage.rings.rational_field import QQ
-from sage.rings.ring import is_Ring, PrincipalIdealDomain
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -100,25 +101,24 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
     EXAMPLES::
 
         sage: P = [3,5]
-        sage: q = quadratic_form_from_invariants(QQ,2,-15,P,1)
-        sage: q
+        sage: q = quadratic_form_from_invariants(QQ,2,-15,P,1); q                       # needs sage.rings.padics
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 5 0 ]
         [ * -3 ]
-        sage: all(q.hasse_invariant(p) == -1 for p in P)
+        sage: all(q.hasse_invariant(p) == -1 for p in P)                                # needs sage.rings.padics
         True
 
     TESTS:
 
-    This shows that :trac:`28955` is fixed::
+    This shows that :issue:`28955` is fixed::
 
-        sage: quadratic_form_from_invariants(QQ,3,2,[2],2)
+        sage: quadratic_form_from_invariants(QQ,3,2,[2],2)                              # needs sage.rings.padics
         Quadratic form in 3 variables over Rational Field with coefficients:
         [ -1 0 0 ]
         [ * 1 0 ]
         [ * * -2 ]
 
-        sage: quadratic_form_from_invariants(QQ,4,2,[2],4)
+        sage: quadratic_form_from_invariants(QQ,4,2,[2],4)                              # needs sage.rings.padics
         Traceback (most recent call last):
         ...
         ValueError: invariants do not define a rational quadratic form
@@ -306,200 +306,200 @@ class QuadraticForm(SageObject):
 
     # Routines to compute the p-adic local normal form
     lazy_import("sage.quadratic_forms.quadratic_form__local_normal_form", [
-            "find_entry_with_minimal_scale_at_prime",
-            "local_normal_form",
-            "jordan_blocks_by_scale_and_unimodular",
-            "jordan_blocks_in_unimodular_list_by_scale_power"
-        ])
+        "find_entry_with_minimal_scale_at_prime",
+        "local_normal_form",
+        "jordan_blocks_by_scale_and_unimodular",
+        "jordan_blocks_in_unimodular_list_by_scale_power"
+    ])
 
     # Routines to perform elementary variable substitutions
     from sage.quadratic_forms.quadratic_form__variable_substitutions import \
-            swap_variables, \
-            multiply_variable, \
-            divide_variable, \
-            scale_by_factor, \
-            extract_variables, \
-            elementary_substitution, \
-            add_symmetric
+        swap_variables, \
+        multiply_variable, \
+        divide_variable, \
+        scale_by_factor, \
+        extract_variables, \
+        elementary_substitution, \
+        add_symmetric
 
     # Routines to compute p-adic field invariants
     from sage.quadratic_forms.quadratic_form__local_field_invariants import \
-            rational_diagonal_form, \
-            _rational_diagonal_form_and_transformation, \
-            signature_vector, \
-            signature, \
-            hasse_invariant, \
-            hasse_invariant__OMeara, \
-            is_hyperbolic, \
-            is_anisotropic, \
-            is_isotropic, \
-            anisotropic_primes, \
-            compute_definiteness, \
-            compute_definiteness_string_by_determinants, \
-            is_positive_definite, \
-            is_negative_definite, \
-            is_indefinite, \
-            is_definite
+        rational_diagonal_form, \
+        _rational_diagonal_form_and_transformation, \
+        signature_vector, \
+        signature, \
+        hasse_invariant, \
+        hasse_invariant__OMeara, \
+        is_hyperbolic, \
+        is_anisotropic, \
+        is_isotropic, \
+        anisotropic_primes, \
+        compute_definiteness, \
+        compute_definiteness_string_by_determinants, \
+        is_positive_definite, \
+        is_negative_definite, \
+        is_indefinite, \
+        is_definite
 
     # Routines to compute local densities by the reduction procedure
     from sage.quadratic_forms.quadratic_form__local_density_congruence import \
-            count_modp_solutions__by_Gauss_sum, \
-            local_good_density_congruence_odd, \
-            local_good_density_congruence_even, \
-            local_good_density_congruence, \
-            local_zero_density_congruence, \
-            local_badI_density_congruence, \
-            local_badII_density_congruence, \
-            local_bad_density_congruence, \
-            local_density_congruence, \
-            local_primitive_density_congruence
+        count_modp_solutions__by_Gauss_sum, \
+        local_good_density_congruence_odd, \
+        local_good_density_congruence_even, \
+        local_good_density_congruence, \
+        local_zero_density_congruence, \
+        local_badI_density_congruence, \
+        local_badII_density_congruence, \
+        local_bad_density_congruence, \
+        local_density_congruence, \
+        local_primitive_density_congruence
 
     # Routines to compute local densities by counting solutions of various types
     from sage.quadratic_forms.quadratic_form__count_local_2 import \
-            count_congruence_solutions_as_vector, \
-            count_congruence_solutions, \
-            count_congruence_solutions__good_type, \
-            count_congruence_solutions__zero_type, \
-            count_congruence_solutions__bad_type, \
-            count_congruence_solutions__bad_type_I, \
-            count_congruence_solutions__bad_type_II
+        count_congruence_solutions_as_vector, \
+        count_congruence_solutions, \
+        count_congruence_solutions__good_type, \
+        count_congruence_solutions__zero_type, \
+        count_congruence_solutions__bad_type, \
+        count_congruence_solutions__bad_type_I, \
+        count_congruence_solutions__bad_type_II
 
     # Routines to be called by the user to compute local densities
     lazy_import("sage.quadratic_forms.quadratic_form__local_density_interfaces", [
-            "local_density",
-            "local_primitive_density"
-        ])
+        "local_density",
+        "local_primitive_density"
+    ])
 
     # Routines for computing with ternary forms
     from sage.quadratic_forms.quadratic_form__ternary_Tornaria import \
-            disc, \
-            content, \
-            adjoint, \
-            antiadjoint, \
-            is_adjoint, \
-            reciprocal, \
-            omega, \
-            delta, \
-            level__Tornaria, \
-            discrec, \
-            hasse_conductor, \
-            clifford_invariant, \
-            clifford_conductor, \
-            basiclemma, \
-            basiclemmavec, \
-            xi, \
-            xi_rec, \
-            lll, \
-            representation_number_list, \
-            representation_vector_list, \
-            is_zero, \
-            is_zero_nonsingular, \
-            is_zero_singular
+        disc, \
+        content, \
+        adjoint, \
+        antiadjoint, \
+        is_adjoint, \
+        reciprocal, \
+        omega, \
+        delta, \
+        level__Tornaria, \
+        discrec, \
+        hasse_conductor, \
+        clifford_invariant, \
+        clifford_conductor, \
+        basiclemma, \
+        basiclemmavec, \
+        xi, \
+        xi_rec, \
+        lll, \
+        representation_number_list, \
+        representation_vector_list, \
+        is_zero, \
+        is_zero_nonsingular, \
+        is_zero_singular
 
     # Routines to compute the theta function
     from sage.quadratic_forms.quadratic_form__theta import \
-            theta_series, \
-            theta_series_degree_2, \
-            theta_by_pari, \
-            theta_by_cholesky
+        theta_series, \
+        theta_series_degree_2, \
+        theta_by_pari, \
+        theta_by_cholesky
 
     # Routines to compute the product of all local densities
     lazy_import("sage.quadratic_forms.quadratic_form__siegel_product", [
-            "siegel_product"
-        ])
+        "siegel_product"
+    ])
 
     # Routines to compute p-neighbors
     from sage.quadratic_forms.quadratic_form__neighbors import \
-            find_primitive_p_divisible_vector__random, \
-            find_primitive_p_divisible_vector__next, \
-            find_p_neighbor_from_vec, \
-            neighbor_iteration, \
-            orbits_lines_mod_p
+        find_primitive_p_divisible_vector__random, \
+        find_primitive_p_divisible_vector__next, \
+        find_p_neighbor_from_vec, \
+        neighbor_iteration, \
+        orbits_lines_mod_p
 
     # Routines to reduce a given quadratic form
     from sage.quadratic_forms.quadratic_form__reduction_theory import \
-            reduced_binary_form1, \
-            reduced_ternary_form__Dickson, \
-            reduced_binary_form, \
-            minkowski_reduction, \
-            minkowski_reduction_for_4vars__SP
+        reduced_binary_form1, \
+        reduced_ternary_form__Dickson, \
+        reduced_binary_form, \
+        minkowski_reduction, \
+        minkowski_reduction_for_4vars__SP
     # Wrappers for Conway-Sloane genus routines (in ./genera/)
     lazy_import("sage.quadratic_forms.quadratic_form__genus", [
-            "global_genus_symbol",
-            "local_genus_symbol",
-            "CS_genus_symbol_list"
-        ])
+        "global_genus_symbol",
+        "local_genus_symbol",
+        "CS_genus_symbol_list"
+    ])
 
     # Routines to compute local masses for ZZ.
     lazy_import("sage.quadratic_forms.quadratic_form__mass", [
-            "shimura_mass__maximal",
-            "GHY_mass__maximal"
-        ])
+        "shimura_mass__maximal",
+        "GHY_mass__maximal"
+    ])
     lazy_import("sage.quadratic_forms.quadratic_form__mass__Siegel_densities", [
-            "mass__by_Siegel_densities",
-            "Pall_mass_density_at_odd_prime",
-            "Watson_mass_at_2",
-            "Kitaoka_mass_at_2",
-            "mass_at_two_by_counting_mod_power"
-        ])
+        "mass__by_Siegel_densities",
+        "Pall_mass_density_at_odd_prime",
+        "Watson_mass_at_2",
+        "Kitaoka_mass_at_2",
+        "mass_at_two_by_counting_mod_power"
+    ])
     lazy_import("sage.quadratic_forms.quadratic_form__mass__Conway_Sloane_masses", [
-            "parity",
-            "is_even",
-            "is_odd",
-            "conway_species_list_at_odd_prime",
-            "conway_species_list_at_2",
-            "conway_octane_of_this_unimodular_Jordan_block_at_2",
-            "conway_diagonal_factor",
-            "conway_cross_product_doubled_power",
-            "conway_type_factor",
-            "conway_p_mass",
-            "conway_standard_p_mass",
-            "conway_standard_mass",
-            "conway_mass"
-#            conway_generic_mass, \
-#            conway_p_mass_adjustment
-        ])
+        "parity",
+        "is_even",
+        "is_odd",
+        "conway_species_list_at_odd_prime",
+        "conway_species_list_at_2",
+        "conway_octane_of_this_unimodular_Jordan_block_at_2",
+        "conway_diagonal_factor",
+        "conway_cross_product_doubled_power",
+        "conway_type_factor",
+        "conway_p_mass",
+        "conway_standard_p_mass",
+        "conway_standard_mass",
+        "conway_mass"
+        #            conway_generic_mass, \
+        #            conway_p_mass_adjustment
+    ])
 
     # Routines to check local representability of numbers
     lazy_import("sage.quadratic_forms.quadratic_form__local_representation_conditions", [
-            "local_representation_conditions",
-            "is_locally_universal_at_prime",
-            "is_locally_universal_at_all_primes",
-            "is_locally_universal_at_all_places",
-            "is_locally_represented_number_at_place",
-            "is_locally_represented_number"
-        ])
+        "local_representation_conditions",
+        "is_locally_universal_at_prime",
+        "is_locally_universal_at_all_primes",
+        "is_locally_universal_at_all_places",
+        "is_locally_represented_number_at_place",
+        "is_locally_represented_number"
+    ])
 
     # Routines to make a split local covering of the given quadratic form.
     from sage.quadratic_forms.quadratic_form__split_local_covering import \
-            cholesky_decomposition, \
-            vectors_by_length, \
-            complementary_subform_to_vector, \
-            split_local_cover
+        cholesky_decomposition, \
+        vectors_by_length, \
+        complementary_subform_to_vector, \
+        split_local_cover
 
     # Routines to make automorphisms of the given quadratic form.
     lazy_import("sage.quadratic_forms.quadratic_form__automorphisms", [
-            "basis_of_short_vectors",
-            "short_vector_list_up_to_length",
-            "short_primitive_vector_list_up_to_length",
-            "_compute_automorphisms",
-            "automorphism_group",
-            "automorphisms",
-            "number_of_automorphisms",
-            "set_number_of_automorphisms"
-        ])
+        "basis_of_short_vectors",
+        "short_vector_list_up_to_length",
+        "short_primitive_vector_list_up_to_length",
+        "_compute_automorphisms",
+        "automorphism_group",
+        "automorphisms",
+        "number_of_automorphisms",
+        "set_number_of_automorphisms"
+    ])
 
     # Routines to test the local and global equivalence/isometry of two quadratic forms.
     from sage.quadratic_forms.quadratic_form__equivalence_testing import \
-            is_globally_equivalent_to, \
-            is_locally_equivalent_to, \
-            has_equivalent_Jordan_decomposition_at_prime, \
-            is_rationally_isometric
+        is_globally_equivalent_to, \
+        is_locally_equivalent_to, \
+        has_equivalent_Jordan_decomposition_at_prime, \
+        is_rationally_isometric
 
     # Routines for solving equations of the form Q(x) = c.
     lazy_import("sage.quadratic_forms.qfsolve", [
-            "solve"
-        ])
+        "solve"
+    ])
 
     # Genus
     lazy_import("sage.quadratic_forms.genera.genus",
@@ -553,8 +553,8 @@ class QuadraticForm(SageObject):
         """
         # Deal with:  QuadraticForm(ring, matrix)
         matrix_init_flag = False
-        if isinstance(R, Ring):
-            if is_Matrix(n):
+        if R in Rings():
+            if isinstance(n, Matrix):
                 # Test if n is symmetric and has even diagonal
                 if not self._is_even_symmetric_matrix_(n, R):
                     raise TypeError("the matrix is not a symmetric with even diagonal defined over R")
@@ -564,7 +564,7 @@ class QuadraticForm(SageObject):
                 M_ring = R
                 matrix_init_flag = True
 
-        elif is_Matrix(R):
+        elif isinstance(R, Matrix):
             M = R
 
             # Test if R is symmetric and has even diagonal
@@ -618,7 +618,7 @@ class QuadraticForm(SageObject):
         # Verify the size of the matrix is an integer >= 0
         n = ZZ(n)
         if n < 0:
-            raise ValueError("the size must be a non-negative integer, not {}".format(n))
+            raise ValueError(f"the size must be a non-negative integer, not {n}")
 
         # Store the relevant variables
         N = n * (n + 1) // 2
@@ -669,23 +669,26 @@ class QuadraticForm(SageObject):
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
             sage: Q.list_external_initializations()
             []
-            sage: T = Q.theta_series()                                                  # optional - sage.libs.pari
-            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
+
+            sage: # needs sage.libs.pari
+            sage: T = Q.theta_series()
+            sage: Q.list_external_initializations()
             []
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,        # optional - sage.libs.pari
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,
             ....:                   number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
+            sage: Q.list_external_initializations()
             []
 
         ::
 
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,        # optional - sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,
             ....:                   number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
+            sage: Q.list_external_initializations()
             []
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=True,         # optional - sage.libs.pari
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=True,
             ....:                   number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
+            sage: Q.list_external_initializations()
             ['number_of_automorphisms', 'determinant']
         """
         return deepcopy(self._external_initialization_list)
@@ -697,7 +700,7 @@ class QuadraticForm(SageObject):
         EXAMPLES::
 
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
-            sage: Q.__pari__()                                                          # optional - sage.libs.pari
+            sage: Q.__pari__()                                                          # needs sage.libs.pari
             [2, 0; 0, 10]
 
         """
@@ -710,7 +713,7 @@ class QuadraticForm(SageObject):
         EXAMPLES::
 
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
-            sage: Q._pari_init_()                                                       # optional - sage.libs.pari
+            sage: Q._pari_init_()                                                       # needs sage.libs.pari
             'Mat([2,0;0,10])'
         """
         return self.matrix()._pari_init_()
@@ -736,7 +739,7 @@ class QuadraticForm(SageObject):
                 if (i > j):
                     out_str += "* "
                 else:
-                    out_str += str(self[i,j]) + " "
+                    out_str += str(self[i, j]) + " "
             out_str += "]"
         return out_str
 
@@ -760,7 +763,7 @@ class QuadraticForm(SageObject):
                 if (i > j):
                     out_str += " * & "
                 else:
-                    out_str += str(self[i,j]) + " & "
+                    out_str += str(self[i, j]) + " & "
 #            if i < (n-1):
 #                out_str += "\\"
         out_str += "\\end{array} \\right]"
@@ -837,10 +840,10 @@ class QuadraticForm(SageObject):
 
             sage: Q1 = QuadraticForm(QQ, 2, [1,1,1])
             sage: Q2 = QuadraticForm(QQ, 2, [1,1,1])
-            sage: Q3 = QuadraticForm(QuadraticField(2), 2, [1,1,1])                     # optional - sage.rings.number_field
+            sage: Q3 = QuadraticForm(QuadraticField(2), 2, [1,1,1])                     # needs sage.rings.number_field
             sage: hash(Q1) == hash(Q2)
             True
-            sage: hash(Q1) == hash(Q3)                                                  # optional - sage.rings.number_field
+            sage: hash(Q1) == hash(Q3)                                                  # needs sage.rings.number_field
             False
         """
         return hash(self.__base_ring) ^ hash(tuple(self.__coeffs))
@@ -1046,20 +1049,20 @@ class QuadraticForm(SageObject):
         # (In matrix notation: A^t * Q * A)
         n = self.dim()
 
-        if is_Matrix(v):
+        if isinstance(v, Matrix):
             # Check that v has the correct number of rows
             if v.nrows() != n:
-                raise TypeError("the matrix must have {} rows".format(n))
+                raise TypeError(f"the matrix must have {n} rows")
 
             # Create the new quadratic form
             m = v.ncols()
             Q2 = QuadraticForm(self.base_ring(), m)
             return QFEvaluateMatrix(self, v, Q2)
 
-        elif (is_Vector(v) or isinstance(v, (list, tuple))):
+        elif (isinstance(v, Vector) or isinstance(v, (list, tuple))):
             # Check the vector/tuple/list has the correct length
             if not (len(v) == n):
-                raise TypeError("your vector needs to have length {}".format(n))
+                raise TypeError(f"your vector needs to have length {n}")
 
             # TO DO:  Check that the elements can be coerced into the base ring of Q -- on first elt.
             if len(v) > 0:
@@ -1100,7 +1103,7 @@ class QuadraticForm(SageObject):
             False
 
         """
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             raise TypeError("A is not a matrix.")
 
         ring_coerce_test = True
@@ -1108,7 +1111,7 @@ class QuadraticForm(SageObject):
             R = A.base_ring()
             ring_coerce_test = False
 
-        if not isinstance(R, Ring):
+        if R not in Rings():
             raise TypeError("R is not a ring.")
 
         if not (A.is_square() and A.is_symmetric()):
@@ -1258,17 +1261,16 @@ class QuadraticForm(SageObject):
 
         """
         # Warning over fields
-        if self.base_ring().is_field():
+        if self.base_ring() in Fields():
             warn("Warning -- A quadratic form over a field always has integral Gram matrix.  Do you really want to do this?!?")
 
         # Determine integrality of the Gram matrix
-        flag = True
         try:
             self.Gram_matrix()
-        except Exception:
-            flag = False
-
-        return flag
+        except TypeError:
+            return False
+        else:
+            return True
 
     def gcd(self):
         """
@@ -1289,15 +1291,15 @@ class QuadraticForm(SageObject):
             raise TypeError("the given quadratic form must be defined over ZZ")
         return GCD(self.coefficients())
 
-    def polynomial(self,names='x'):
+    def polynomial(self, names='x'):
         r"""
         Return the quadratic form as a polynomial in `n` variables.
 
         INPUT:
 
-        - ``self`` - a quadratic form over a commutative ring
+        - ``self`` -- a quadratic form over a commutative ring
 
-        - ``names`` - specification of the names of the variables; see :func:`PolynomialRing`
+        - ``names`` -- specification of the names of the variables; see :func:`PolynomialRing`
 
         OUTPUT: The polynomial form of the quadratic form.
 
@@ -1309,37 +1311,36 @@ class QuadraticForm(SageObject):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: F.<a> = NumberField(x^2 - 5)                                          # optional - sage.rings.number_field
-            sage: Z = F.ring_of_integers()                                              # optional - sage.rings.number_field
-            sage: Q = QuadraticForm(Z, 3, [2*a, 3*a, 0, 1 - a, 0, 2*a + 4])             # optional - sage.rings.number_field
-            sage: P = Q.polynomial(names='y'); P                                        # optional - sage.rings.number_field
+            sage: F.<a> = NumberField(x^2 - 5)
+            sage: Z = F.ring_of_integers()
+            sage: Q = QuadraticForm(Z, 3, [2*a, 3*a, 0, 1 - a, 0, 2*a + 4])
+            sage: P = Q.polynomial(names='y'); P
             2*a*y0^2 + 3*a*y0*y1 + (-a + 1)*y1^2 + (2*a + 4)*y2^2
-            sage: Q = QuadraticForm(F, 4,                                               # optional - sage.rings.number_field
+            sage: Q = QuadraticForm(F, 4,
             ....:                   [a, 3*a, 0, 1 - a, a - 3, 0, 2*a + 4, 4 + a, 0, 1])
-            sage: Q.polynomial(names='z')                                               # optional - sage.rings.number_field
+            sage: Q.polynomial(names='z')
             a*z0^2 + (3*a)*z0*z1 + (a - 3)*z1^2 + (a + 4)*z2^2
             + (-a + 1)*z0*z3 + (2*a + 4)*z1*z3 + z3^2
-            sage: B.<i,j,k> = QuaternionAlgebra(F,-1,-1)                                # optional - sage.rings.number_field
-            sage: Q = QuadraticForm(B, 3, [2*a, 3*a, i, 1 - a, 0, 2*a + 4])             # optional - sage.rings.number_field
-            sage: Q.polynomial()                                                        # optional - sage.rings.number_field
+            sage: B.<i,j,k> = QuaternionAlgebra(F,-1,-1)
+            sage: Q = QuadraticForm(B, 3, [2*a, 3*a, i, 1 - a, 0, 2*a + 4])
+            sage: Q.polynomial()
             Traceback (most recent call last):
             ...
-            ValueError: Can only create polynomial rings over commutative rings.
+            ValueError: Can only create polynomial rings over commutative rings
         """
         B = self.base_ring()
+        if B not in Rings().Commutative():
+            raise ValueError('Can only create polynomial rings over commutative rings')
         n = self.dim()
         M = matrix(B, n)
         for i in range(n):
             for j in range(i, n):
-                M[i,j] = self[i,j]
-        try:
-            R = PolynomialRing(self.base_ring(), names, n)
-        except Exception:
-            raise ValueError('Can only create polynomial rings over commutative rings.')
+                M[i, j] = self[i, j]
+        R = PolynomialRing(self.base_ring(), names, n)
         V = vector(R.gens())
-        P = (V*M).dot_product(V)
-        return P
+        return (V * M).dot_product(V)
 
     @staticmethod
     def from_polynomial(poly):
@@ -1376,17 +1377,16 @@ class QuadraticForm(SageObject):
             raise ValueError('polynomial has monomials of degree != 2')
         base = R.base_ring()
         vs = R.gens()
-        coeffs = []
-        for i, v in enumerate(vs):
-            for w in vs[i:]:
-                coeffs.append(poly.monomial_coefficient(v*w))
+        coeffs = [poly.monomial_coefficient(v * w)
+                  for i, v in enumerate(vs) for w in vs[i:]]
         return QuadraticForm(base, len(vs), coeffs)
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         """
-        Determines if the given integer-valued form is primitive
-        (i.e. not an integer (`> 1`) multiple of another integer-valued
-        quadratic form).
+        Determine if the given integer-valued form is primitive.
+
+        This means not an integer (`> 1`) multiple of another integer-valued
+        quadratic form.
 
         EXAMPLES::
 
@@ -1396,9 +1396,8 @@ class QuadraticForm(SageObject):
             sage: Q = QuadraticForm(ZZ, 2, [2,4,8])
             sage: Q.is_primitive()
             False
-
         """
-        return (self.gcd() == 1)
+        return self.gcd() == 1
 
     def primitive(self):
         r"""
@@ -1567,7 +1566,7 @@ class QuadraticForm(SageObject):
             1
         """
         # Check that a canonical coercion is possible
-        if not is_Ring(R):
+        if R not in Rings():
             raise TypeError("R is not a ring")
         if not R.has_coerce_map_from(self.base_ring()):
             raise TypeError(f"there is no canonical coercion from {self.base_ring()} to R")
@@ -1608,11 +1607,11 @@ class QuadraticForm(SageObject):
         except AttributeError:
 
             # Check that the base ring is a PID
-            if not isinstance(self.base_ring(), PrincipalIdealDomain):
+            if self.base_ring() not in PrincipalIdealDomains():
                 raise TypeError("the level (as a number) is only defined over a Principal Ideal Domain ; try using level_ideal()")
 
             # Warn the user if the form is defined over a field!
-            if self.base_ring().is_field():
+            if self.base_ring() in Fields():
                 warn("Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?")
                 # raise RuntimeError("Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?")
 
@@ -1627,9 +1626,9 @@ class QuadraticForm(SageObject):
             for i in range(self.dim()):
                 for j in range(i, self.dim()):
                     if (i == j):
-                        inv_denoms += [denominator(mat_inv[i,j] / 2)]
+                        inv_denoms += [denominator(mat_inv[i, j] / 2)]
                     else:
-                        inv_denoms += [denominator(mat_inv[i,j])]
+                        inv_denoms += [denominator(mat_inv[i, j])]
             lvl = LCM(inv_denoms)
             lvl = Ideal(self.base_ring()(lvl)).gen()
             ##############################################################
@@ -1724,10 +1723,11 @@ class QuadraticForm(SageObject):
 
         This does not work if the characteristic is 2::
 
-            sage: Q = DiagonalQuadraticForm(GF(2), [1,1,1])                             # optional - sage.rings.finite_rings
-            sage: v = vector((1,1,1))                                                   # optional - sage.rings.finite_rings
-            sage: w = vector((1,1,1))                                                   # optional - sage.rings.finite_rings
-            sage: Q.bilinear_map(v, w)                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: Q = DiagonalQuadraticForm(GF(2), [1,1,1])
+            sage: v = vector((1,1,1))
+            sage: w = vector((1,1,1))
+            sage: Q.bilinear_map(v, w)
             Traceback (most recent call last):
             ...
             TypeError: not defined for rings of characteristic 2

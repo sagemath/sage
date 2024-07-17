@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Dimensions of spaces of modular forms
 
@@ -47,8 +47,8 @@ REFERENCES:
 
 from sage.arith.misc import factor, is_prime, valuation
 from sage.misc.misc_c import prod
-from sage.modular.arithgroup.all import (Gamma0, Gamma1, is_ArithmeticSubgroup,
-                                         is_GammaH)
+from sage.modular.arithgroup.all import (Gamma0, Gamma1, ArithmeticSubgroup,
+                                         GammaH_class)
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
@@ -227,6 +227,7 @@ def CohenOesterle(eps, k):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(3)
             sage: eps = DirichletGroup(7*43, K).0^2
             sage: sage.modular.dims.CohenOesterle(eps, 2)
@@ -290,14 +291,14 @@ def dimension_new_cusp_forms(X, k=2, p=0):
         sage: dimension_new_cusp_forms(Gamma1(30),3)
         12
 
-    Check that :trac:`12640` is fixed::
+    Check that :issue:`12640` is fixed::
 
         sage: dimension_new_cusp_forms(DirichletGroup(1)(1), 12)
         1
         sage: dimension_new_cusp_forms(DirichletGroup(2)(1), 24)
         1
     """
-    if is_GammaH(X):
+    if isinstance(X, GammaH_class):
         return X.dimension_new_cusp_forms(k, p=p)
     elif isinstance(X, dirichlet.DirichletCharacter):
         N = X.modulus()
@@ -387,7 +388,7 @@ def dimension_cusp_forms(X, k=2):
         sage: dimension_cusp_forms(e^2,2)
         1
 
-    Check that :trac:`12640` is fixed::
+    Check that :issue:`12640` is fixed::
 
         sage: dimension_cusp_forms(DirichletGroup(1)(1), 12)
         1
@@ -400,7 +401,7 @@ def dimension_cusp_forms(X, k=2):
             return Gamma0(N).dimension_cusp_forms(k)
         else:
             return Gamma1(N).dimension_cusp_forms(k, X)
-    elif is_ArithmeticSubgroup(X):
+    elif isinstance(X, ArithmeticSubgroup):
         return X.dimension_cusp_forms(k)
     elif isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_cusp_forms(k)
@@ -470,7 +471,7 @@ def dimension_eis(X, k=2):
         sage: dimension_modular_forms(Gamma1(4), 11)
         6
     """
-    if is_ArithmeticSubgroup(X):
+    if isinstance(X, ArithmeticSubgroup):
         return X.dimension_eis(k)
     elif isinstance(X, dirichlet.DirichletCharacter):
         return Gamma1(X.modulus()).dimension_eis(k, X)
@@ -520,7 +521,7 @@ def dimension_modular_forms(X, k=2):
     """
     if isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_modular_forms(k)
-    elif is_ArithmeticSubgroup(X):
+    elif isinstance(X, ArithmeticSubgroup):
         return X.dimension_modular_forms(k)
     elif isinstance(X, dirichlet.DirichletCharacter):
         return Gamma1(X.modulus()).dimension_modular_forms(k, eps=X)
@@ -559,7 +560,7 @@ def sturm_bound(level, weight=2):
         sage: sturm_bound(11)
         2
     """
-    if is_ArithmeticSubgroup(level):
+    if isinstance(level, ArithmeticSubgroup):
         if level.is_congruence():
             return level.sturm_bound(weight)
         raise ValueError("no Sturm bound defined for noncongruence subgroups")

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 Cactus Groups
 
@@ -42,7 +43,7 @@ class CactusGroup(UniqueRepresentation, Group):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     EXAMPLES:
 
@@ -217,7 +218,7 @@ class CactusGroup(UniqueRepresentation, Group):
         return Family(l, lambda x: self.element_class(self, [x]))
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self`` as a tuple.
 
@@ -942,7 +943,7 @@ class PureCactusGroup(KernelSubgroup):
         return self.gens()[i]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
@@ -970,7 +971,7 @@ class PureCactusGroup(KernelSubgroup):
             sage: gen == b
             True
         """
-        from sage.functions.other import factorial
+        from sage.arith.misc import factorial
         J = self.ambient()
         G = J.gens()
         one = J.one()

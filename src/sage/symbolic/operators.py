@@ -64,12 +64,13 @@ arithmetic_operators = {add_vararg: '+',
                         operator.floordiv: '//',
                         operator.pow: '^'}
 
-relation_operators = {operator.eq:'==',
-                      operator.lt:'<',
-                      operator.gt:'>',
-                      operator.ne:'!=',
-                      operator.le:'<=',
-                      operator.ge:'>='}
+relation_operators = {operator.eq: '==',
+                      operator.lt: '<',
+                      operator.gt: '>',
+                      operator.ne: '!=',
+                      operator.le: '<=',
+                      operator.ge: '>='}
+
 
 class FDerivativeOperator():
     r"""
@@ -115,7 +116,7 @@ class FDerivativeOperator():
         TESTS:
 
         We should be able to operate on functions evaluated at a
-        point, not just a symbolic variable, :trac:`12796`::
+        point, not just a symbolic variable, :issue:`12796`::
 
            sage: from sage.symbolic.operators import FDerivativeOperator
            sage: f = function('f')
@@ -200,6 +201,7 @@ class FDerivativeOperator():
         """
         return self._parameter_set
 
+
 class DerivativeOperator():
     """
     Derivative operator.
@@ -261,5 +263,6 @@ class DerivativeOperator():
         if not isinstance(args, tuple):
             args = (args,)
         return self.DerivativeOperatorWithParameters(args)
+
 
 D = DerivativeOperator()

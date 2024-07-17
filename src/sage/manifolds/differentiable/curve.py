@@ -21,7 +21,6 @@ REFERENCES:
 
 - Chap. 1 of [KN1963]_
 - Chap. 3 of [Lee2013]_
-
 """
 
 #*****************************************************************************
@@ -94,7 +93,7 @@ class DifferentiableCurve(DiffMap):
 
     A graphical view of the curve is provided by the method :meth:`plot`::
 
-        sage: c.plot(aspect_ratio=1)
+        sage: c.plot(aspect_ratio=1)                                                    # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -650,7 +649,7 @@ class DifferentiableCurve(DiffMap):
         if latex_name is None:
             if name is None:
                 if self._latex_name is not None:
-                    latex_name = r"{%s'}"%(self._latex_name)
+                    latex_name = r"{%s'}" % (self._latex_name)
             else:
                 latex_name = name
         if name is None and self._name is not None:
@@ -912,7 +911,7 @@ class DifferentiableCurve(DiffMap):
         if ambient_coords is None:
             ambient_coords = chart[:]  # all chart coordinates are used
         n_pc = len(ambient_coords)
-        if n_pc != 2 and n_pc !=3:
+        if n_pc != 2 and n_pc != 3:
             raise ValueError("the number of coordinates involved in the " +
                              "plot must be either 2 or 3, not {}".format(n_pc))
         # indices of plot coordinates

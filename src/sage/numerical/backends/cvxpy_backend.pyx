@@ -6,7 +6,6 @@ AUTHORS:
 
 - Nathann Cohen (2010-10)      : generic_backend template
 - Matthias Koeppe (2022-03)    : this backend
-
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
@@ -58,11 +57,11 @@ cdef class CVXPYBackend:
 
     Open-source solvers provided by optional packages::
 
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK"); p.solve()            # optional - cvxopt
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK"); p.solve()             # needs cvxopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK_MI"); p.solve()         # optional - cvxopt
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK_MI"); p.solve()          # needs cvxopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CVXOPT"); p.solve()          # optional - cvxopt
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CVXOPT"); p.solve()           # needs cvxopt
         0.0
         sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLOP"); p.solve()            # optional - ortools
         0.0
@@ -155,6 +154,8 @@ cdef class CVXPYBackend:
             sage: p.set_objective(b[1] + b[2])
             sage: cp = copy(p.get_backend())
             sage: cp.solve()
+            doctest:warning...:
+            FutureWarning:...
             0
             sage: cp.get_objective_value()  # abs tol 1e-7
             6.0
@@ -191,19 +192,19 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         - ``coefficients`` -- (optional) an iterable of pairs ``(i, v)``. In each
           pair, ``i`` is a row index (integer) and ``v`` is a
@@ -414,7 +415,7 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``coeff`` - a list of real values, whose ith element is the
+        - ``coeff`` -- a list of real values, whose ith element is the
           coefficient of the ith variable in the objective function.
 
         - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
@@ -597,7 +598,7 @@ cdef class CVXPYBackend:
         """
         return float(self.variables[variable].value)
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -614,7 +615,7 @@ cdef class CVXPYBackend:
         """
         return len(self.variables)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -630,7 +631,7 @@ cdef class CVXPYBackend:
         """
         return len(self.problem.constraints)
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -764,7 +765,7 @@ cdef class CVXPYBackend:
         """
         return (self.col_lower_bound[index], self.col_upper_bound[index])
 
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         """
         Test whether the given variable is of binary type.
 
@@ -785,7 +786,7 @@ cdef class CVXPYBackend:
         """
         return bool(self.variables[index].boolean_idx)
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         """
         Test whether the given variable is of integer type.
 
@@ -806,7 +807,7 @@ cdef class CVXPYBackend:
         """
         return bool(self.variables[index].integer_idx)
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         """
         Test whether the given variable is of continuous/real type.
 
@@ -867,7 +868,7 @@ cdef class CVXPYBackend:
         """
         return self.variables[index].name()
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable
 
@@ -899,7 +900,7 @@ cdef class CVXPYBackend:
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable
 

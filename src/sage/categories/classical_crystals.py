@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.graphs, sage.combinat
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.graphs sage.combinat
 r"""
 Classical Crystals
 """

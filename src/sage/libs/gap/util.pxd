@@ -8,7 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .gap_includes cimport Obj
+from sage.libs.gap.gap_includes cimport Obj
 
 ############################################################################
 ### Hooking into the GAP memory management #################################
@@ -24,11 +24,11 @@ cpdef get_owned_objects()
 
 # Reference count GAP objects that you want to prevent from being
 # garbage collected
-cdef void reference_obj(Obj obj)
-cdef void dereference_obj(Obj obj)
+cdef void reference_obj(Obj obj) noexcept
+cdef void dereference_obj(Obj obj) noexcept
 
 # callback from the GAP memory manager so we can mark all_gap_elements.values()
-cdef void gasman_callback() with gil
+cdef void gasman_callback() noexcept with gil
 
 
 ############################################################################

@@ -44,16 +44,27 @@ class FpT(FractionField_1poly_field):
         """
         INPUT:
 
-        - ``R`` -- A polynomial ring over a finite field of prime order `p` with `2 < p < 2^16`
+        - ``R`` -- a dense polynomial ring over a finite field of prime order
+          `p` with `2 < p < 2^{16}`
 
         EXAMPLES::
 
             sage: R.<x> = GF(31)[]
             sage: K = R.fraction_field(); K
             Fraction Field of Univariate Polynomial Ring in x over Finite Field of size 31
+
+        TESTS::
+
+            sage: from sage.rings.fraction_field_FpT import FpT
+            sage: FpT(PolynomialRing(GF(37), ['x'], sparse=True))
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported polynomial ring
         """
         cdef long p = R.base_ring().characteristic()
         assert 2 < p < FpT.INTEGER_LIMIT
+        if not issubclass(R.element_class, Polynomial_zmod_flint):
+            raise TypeError("unsupported polynomial ring")
         self.p = p
         self.poly_ring = R
         FractionField_1poly_field.__init__(self, R, element_class=FpTElement)
@@ -268,7 +279,7 @@ cdef class FpTElement(FieldElement):
         """
         return self.numer()(*args, **kwds) / self.denom()(*args, **kwds)
 
-    def subs(self, *args, **kwds):
+    def subs(self, in_dict=None, *args, **kwds):
         """
         EXAMPLES::
 
@@ -280,7 +291,7 @@ cdef class FpTElement(FieldElement):
             sage: f.subs(X=2)
             (t + 1)/(t + 10)
         """
-        return self.numer().subs(*args, **kwds) / self.denom().subs(*args, **kwds)
+        return self.numer().subs(in_dict, *args, **kwds) / self.denom().subs(in_dict, *args, **kwds)
 
     def valuation(self, v):
         """
@@ -735,7 +746,7 @@ cdef class FpTElement(FieldElement):
             nmod_poly_clear(denom)
             return None
 
-    cpdef bint is_square(self):
+    cpdef bint is_square(self) noexcept:
         """
         Return ``True`` if this element is the square of another element of the fraction field.
 
@@ -757,11 +768,11 @@ cdef class FpTElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` - bool (default: True); if True, return a
+        -  ``extend`` -- bool (default: ``True``); if True, return a
            square root in an extension ring, if necessary. Otherwise, raise a
            ValueError if the square is not in the base ring.
 
-        -  ``all`` - bool (default: False); if True, return all
+        -  ``all`` -- bool (default: ``False``); if True, return all
            square roots of self, instead of just one.
 
         EXAMPLES::
@@ -1128,7 +1139,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
 
         TESTS:
 
-        Check that :trac:`12217` and :trac:`16811` are fixed::
+        Check that :issue:`12217` and :issue:`16811` are fixed::
 
             sage: R.<t> = GF(5)[]
             sage: K = R.fraction_field()
@@ -1223,7 +1234,7 @@ cdef class FpT_Polyring_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Polyring_section`` objects is not currently
-        implemented. See :trac:`23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1525,7 +1536,7 @@ cdef class FpT_Fp_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Fp_section`` objects is not currently
-        implemented. See :trac:`23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1650,7 +1661,7 @@ cdef class FpT_Fp_section(Section):
                 raise ValueError("not constant")
         ans = IntegerMod_int.__new__(IntegerMod_int)
         ans._parent = self.codomain()
-        ans.__modulus = ans._parent._pyx_order
+        ans._modulus = ans._parent._pyx_order
         if nmod_poly_get_coeff_ui(x._denom, 0) != 1:
             normalize(x._numer, x._denom, self.p)
         ans.ivalue = nmod_poly_get_coeff_ui(x._numer, 0)
@@ -1842,7 +1853,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
         """
         return ZZ.convert_map_from(self.codomain().base_ring()) * Fp_FpT_coerce(self.codomain()).section()
 
-cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p):
+cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p) noexcept:
     """
     Put ``numer`` / ``denom`` into a normal form: denominator monic and sharing no common factor with the numerator.
 
@@ -1887,14 +1898,14 @@ cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p):
         nmod_poly_clear(g)
 
 
-cdef inline unsigned long nmod_poly_leading(nmod_poly_t poly):
+cdef inline unsigned long nmod_poly_leading(nmod_poly_t poly) noexcept:
     """
     Return the leading coefficient of ``poly``.
     """
     return nmod_poly_get_coeff_ui(poly, nmod_poly_degree(poly))
 
 
-cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic):
+cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic) noexcept:
     """
     Set poly to the "next" polynomial: this is just counting in base p.
 
@@ -1915,7 +1926,7 @@ cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic):
         nmod_poly_set_coeff_ui(poly, n + 1, 1)
 
 
-cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
+cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b) noexcept:
     """
     Compare `a` and `b`, returning 0 if they are equal.
 
@@ -1943,7 +1954,7 @@ cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
     return 0
 
 
-cdef bint nmod_poly_sqrt_check(nmod_poly_t poly):
+cdef bint nmod_poly_sqrt_check(nmod_poly_t poly) noexcept:
     """
     Quick check to see if ``poly`` could possibly be a square.
     """
@@ -1971,7 +1982,7 @@ def unpickle_FpT_element(K, numer, denom):
 
 #  Somehow this isn't in FLINT, evidently.  It could be moved
 #  elsewhere at some point.
-cdef int sage_cmp_nmod_poly_t(nmod_poly_t L, nmod_poly_t R):
+cdef int sage_cmp_nmod_poly_t(nmod_poly_t L, nmod_poly_t R) noexcept:
     """
     Compare two ``nmod_poly_t`` in a Pythonic way, so this returns `-1`, `0`,
     or `1`, and is consistent.

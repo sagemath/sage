@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Testing modular symbols spaces
 
@@ -30,7 +31,7 @@ import random
 from . import modsym
 import sage.modular.dirichlet as dirichlet
 import sage.modular.arithgroup.all as arithgroup
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 
 
 class Test:
@@ -111,7 +112,7 @@ class Test:
         elif self.onlychar:
             which = 2
         else:
-            which = random.randrange(0,3)
+            which = random.randrange(0, 3)
         if which == 0:
             print("gamma0")
             M = self._modular_symbols_space_gamma0()
@@ -187,10 +188,13 @@ class Test:
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: from sage.modular.modsym.tests import Test
             sage: Test()._modular_symbols_space_character() # random
             level = 18, weight = 3, sign = 0
-            Modular Symbols space of dimension 0 and level 18, weight 3, character [1, zeta6 - 1], sign 0, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols space of dimension 0
+            and level 18, weight 3, character [1, zeta6 - 1], sign 0,
+            over Cyclotomic Field of order 6 and degree 2
         """
         level, weight, sign = self._level_weight_sign()
         G = dirichlet.DirichletGroup(level)
@@ -251,9 +255,9 @@ class Test:
         total = cputime()
         n = 1
         while seconds == 0 or cputime(total) < seconds:
-            s = "** test_dimension: number %s"%n
+            s = "** test_dimension: number %s" % n
             if seconds > 0:
-                s += " (will stop after about %s seconds)"%seconds
+                s += " (will stop after about %s seconds)" % seconds
             t = cputime()
             self._do(name)
             print("\ttime=%s\telapsed=%s" % (cputime(t), cputime(total)))
@@ -270,7 +274,8 @@ class Test:
             sage: Test().test_cs_dimension() # random
             gamma0
             level = 16, weight = 3, sign = -1
-            Modular Symbols space of dimension 0 for Gamma_0(16) of weight 3 with sign -1 over Rational Field
+            Modular Symbols space of dimension 0 for Gamma_0(16) of weight 3
+            with sign -1 over Rational Field
         """
         self._modular_symbols_space().cuspidal_submodule()
 
@@ -285,14 +290,15 @@ class Test:
             sage: Test().test_csnew_dimension() # random
             gamma0
             level = 3, weight = 3, sign = 1
-            Modular Symbols space of dimension 0 for Gamma_0(3) of weight 3 with sign 1 over Rational Field
+            Modular Symbols space of dimension 0 for Gamma_0(3) of weight 3
+            with sign 1 over Rational Field
         """
         M = self._modular_symbols_space()
         V = M.cuspidal_submodule().new_submodule()
         d = V.dimension()
         d2 = M._cuspidal_new_submodule_dimension_formula()
         assert d == d2, \
-            "Test failed for M=\"%s\", where computed dimension is %s but formula dimension is %s."%(M, d, d2)
+            "Test failed for M=\"%s\", where computed dimension is %s but formula dimension is %s." % (M, d, d2)
 
     def test_csns_nscs(self):
         """

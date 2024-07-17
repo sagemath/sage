@@ -17,7 +17,7 @@ from shutil import rmtree
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
 from sage.interfaces.process import ContainChildren
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 
 
 class WorkerData():
@@ -65,10 +65,10 @@ class p_iter_fork():
         subprocesses to spawn
     - ``timeout`` -- (float, default: 0) wall time in seconds until
         a subprocess is automatically killed
-    - ``verbose`` -- (default: False) whether to print
+    - ``verbose`` -- (default: ``False``) whether to print
         anything about what the iterator does (e.g., killing
         subprocesses)
-    - ``reset_interfaces`` -- (default: True) whether to reset
+    - ``reset_interfaces`` -- (default: ``True``) whether to reset
         all pexpect interfaces
 
     EXAMPLES::
@@ -209,7 +209,7 @@ class p_iter_fork():
                         try:
                             with open(sobj, "rb") as file:
                                 data = file.read()
-                        except IOError:
+                        except OSError:
                             answer = "NO DATA" + W.failure
                         else:
                             os.unlink(sobj)
@@ -223,7 +223,7 @@ class p_iter_fork():
                             with open(out) as file:
                                 sys.stdout.write(file.read())
                             os.unlink(out)
-                        except IOError:
+                        except OSError:
                             pass
 
                         yield (W.input, answer)
@@ -301,7 +301,12 @@ class p_iter_fork():
         # The pexpect interfaces (and objects defined in them) are
         # not valid.
         if self.reset_interfaces:
-            sage.interfaces.quit.invalidate_all()
+            try:
+                from sage.interfaces.quit import invalidate_all
+            except ImportError:
+                pass
+            else:
+                invalidate_all()
 
         # Now evaluate the function f.
         value = f(*args, **kwds)

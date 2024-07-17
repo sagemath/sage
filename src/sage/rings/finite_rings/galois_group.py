@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Galois groups of Finite Fields
 """
@@ -109,7 +110,7 @@ class GaloisGroup_GF(GaloisGroup_cyc):
             Frob^2
             sage: G(G.gens()[0])
             Frob
-            sage: G([(1,3,2)])
+            sage: G([(1,3,2)])                                                          # needs sage.libs.gap
             Frob^2
             sage: G(k.hom(k.gen()^3, k))
             Frob

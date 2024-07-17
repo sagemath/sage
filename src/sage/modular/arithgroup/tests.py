@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Testing arithmetic subgroup
 """
@@ -19,7 +20,7 @@ from sage.modular.arithgroup.all import Gamma, Gamma0, Gamma1, GammaH
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 
 import sage.misc.prandom as prandom
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 
 
 def random_even_arithgroup(index, nu2_max=None, nu3_max=None):
@@ -100,9 +101,9 @@ class Test:
 
         INPUT:
 
-        - ``index`` - the index of random subgroup to test
+        - ``index`` -- the index of random subgroup to test
 
-        - ``index_max`` - the maximum index for congruence subgroup to test
+        - ``index_max`` -- the maximum index for congruence subgroup to test
 
         EXAMPLES::
 

@@ -1,4 +1,4 @@
-$(PYTHON) appdirs distlib filelock six importlib_metadata importlib_resources platformdirs | $(PYTHON_TOOLCHAIN)
+distlib filelock importlib_metadata platformdirs | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

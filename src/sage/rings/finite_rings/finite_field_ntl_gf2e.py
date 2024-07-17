@@ -33,14 +33,7 @@ def late_import():
     """
     if "GF2" in globals():
         return
-    global is_FiniteField, exists_conway_polynomial, conway_polynomial, Cache_ntl_gf2e, GF, GF2, is_Polynomial
-
-    import sage.rings.finite_rings.finite_field_base
-    is_FiniteField = sage.rings.finite_rings.finite_field_base.is_FiniteField
-
-    import sage.rings.finite_rings.conway_polynomials
-    exists_conway_polynomial = sage.rings.finite_rings.conway_polynomials.exists_conway_polynomial
-    conway_polynomial = sage.rings.finite_rings.conway_polynomials.conway_polynomial
+    global Cache_ntl_gf2e, GF, GF2
 
     import sage.rings.finite_rings.element_ntl_gf2e
     Cache_ntl_gf2e = sage.rings.finite_rings.element_ntl_gf2e.Cache_ntl_gf2e
@@ -48,9 +41,6 @@ def late_import():
     import sage.rings.finite_rings.finite_field_constructor
     GF = sage.rings.finite_rings.finite_field_constructor.GF
     GF2 = GF(2)
-
-    import sage.rings.polynomial.polynomial_element
-    is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
 
 
 class FiniteField_ntl_gf2e(FiniteField):
@@ -315,4 +305,4 @@ class FiniteField_ntl_gf2e(FiniteField):
             Mod(1, 2)*a^16 + Mod(1, 2)*a^5 + Mod(1, 2)*a^3 + Mod(1, 2)*a^2 + Mod(1, 2)
         """
         f = pari(str(self.modulus()))
-        return f.subst('x', 'a') * pari("Mod(1,%s)"%self.characteristic())
+        return f.subst('x', 'a') * pari("Mod(1,%s)" % self.characteristic())

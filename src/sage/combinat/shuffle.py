@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Shuffle product of iterables
 
@@ -137,7 +136,7 @@ class ShuffleProduct_abstract(Parent):
         """
         if not isinstance(other, type(self)):
             return False
-        return (self._l1 == other._l1 and self._l2 == other._l2)
+        return self._l1 == other._l1 and self._l2 == other._l2
 
     def __ne__(self, other):
         """
@@ -220,10 +219,9 @@ class SetShuffleProduct(ShuffleProduct_abstract):
             [[2, 3, 4, 5], [2, 5, 3, 4], [5, 2, 3, 4], [2, 3, 5, 4],
              [1, 2, 3, 5], [1, 5, 2, 3], [5, 1, 2, 3], [1, 2, 5, 3]]
         """
-        assert(isinstance(l1, Iterable) and
-               isinstance(l2, Iterable))
-        assert(all(isinstance(elem, Iterable) for elem in l1))
-        assert(all(isinstance(elem, Iterable) for elem in l2))
+        assert isinstance(l1, Iterable) and isinstance(l2, Iterable)
+        assert all(isinstance(elem, Iterable) for elem in l1)
+        assert all(isinstance(elem, Iterable) for elem in l2)
 
         if element_constructor is None:
             try:
@@ -255,7 +253,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
         TESTS::
 
             sage: from sage.combinat.shuffle import SetShuffleProduct
-            sage: ascii_art(SetShuffleProduct([[BinaryTree()], [BinaryTree([]), BinaryTree([[],[]])]],
+            sage: ascii_art(SetShuffleProduct([[BinaryTree()], [BinaryTree([]), BinaryTree([[],[]])]],                  # needs sage.graphs
             ....: [[1,4]]))
             Set shuffle product of:
             [       [ o,   o   ] ]
@@ -313,7 +311,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
             return (ll1 + ll2).binomial(ll2)
 
         return sum(comp_binom(el1, el2)
-                for (el1, el2) in itertools.product(self._l1, self._l2))
+                   for (el1, el2) in itertools.product(self._l1, self._l2))
 
 
 class ShuffleProduct(ShuffleProduct_abstract):
@@ -361,7 +359,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
             [word: aabbb, word: baabb, word: ababb, word: bbaab, word: babab, word: abbab,
              word: bbbaa, word: bbaba, word: babba, word: abbba]
         """
-        assert(isinstance(l1, Iterable) and isinstance(l2, Iterable))
+        assert isinstance(l1, Iterable) and isinstance(l2, Iterable)
 
         if element_constructor is None:
             try:
@@ -377,8 +375,8 @@ class ShuffleProduct(ShuffleProduct_abstract):
             sage: from sage.combinat.shuffle import ShuffleProduct
             sage: ShuffleProduct([1,2,3],[4,5])
             Shuffle product of: [1, 2, 3] and [4, 5]
-            sage: B = BinaryTree
-            sage: ShuffleProduct([B(), B([[],[]])], [])
+            sage: B = BinaryTree                                                        # needs sage.graphs
+            sage: ShuffleProduct([B(), B([[],[]])], [])                                 # needs sage.graphs
             Shuffle product of: [., [[., .], [., .]]] and []
         """
         return "Shuffle product of: %s and %s" % (self._l1, self._l2)
@@ -391,8 +389,8 @@ class ShuffleProduct(ShuffleProduct_abstract):
             sage: ascii_art(ShuffleProduct([1,2,3],[4,5]))
             Shuffle product of:
             [ 1, 2, 3 ] and [ 4, 5 ]
-            sage: B = BinaryTree
-            sage: ascii_art(ShuffleProduct([B([]), B([[],[]])],
+            sage: B = BinaryTree                                                        # needs sage.graphs
+            sage: ascii_art(ShuffleProduct([B([]), B([[],[]])],                         # needs sage.graphs
             ....:   [B([[[],[]],[[],None]])]))
             Shuffle product of:
                              [     __o__   ]
@@ -418,8 +416,8 @@ class ShuffleProduct(ShuffleProduct_abstract):
             sage: list(ShuffleProduct([1,2,3],[4,5]))
             [[1, 2, 3, 4, 5], [1, 4, 2, 3, 5], [4, 1, 2, 3, 5], [1, 2, 4, 3, 5], [1, 4, 5, 2, 3],
              [4, 1, 5, 2, 3], [4, 5, 1, 2, 3], [1, 4, 2, 5, 3], [4, 1, 2, 5, 3], [1, 2, 4, 5, 3]]
-            sage: B = BinaryTree
-            sage: ascii_art(list(ShuffleProduct([B([]), B([[],[]])],
+            sage: B = BinaryTree                                                        # needs sage.graphs
+            sage: ascii_art(list(ShuffleProduct([B([]), B([[],[]])],                    # needs sage.graphs
             ....:   [B([[[],[]],[[],None]])])))
             [ [ o,   o  ,     __o__   ]  [     __o__  , o,   o   ]
             [ [     / \      /     \  ]  [    /     \       / \  ]
@@ -519,7 +517,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
                 return iterable[i + 1:] == l2[i_l2:]
             if i_l2 == len_l2:
                 return iterable[i + 1:] == l1[i_l1:]
-        return (i_l1 + 1 == len_l1) and (i_l2 + 1 == len_l2)
+        return i_l1 + 1 == len_l1 and i_l2 + 1 == len_l2
 
     def cardinality(self):
         r"""
@@ -636,7 +634,7 @@ class ShuffleProduct_overlapping_r(ShuffleProduct_abstract):
         TESTS:
 
         We need to be explicitly more generic about the resulting parent
-        when shuffling two compositions `I` and `J` (:trac:`15131`)::
+        when shuffling two compositions `I` and `J` (:issue:`15131`)::
 
             sage: I, J = Compositions(4)([2, 2]), Composition([1, 1])
             sage: S = ShuffleProduct_overlapping_r(I, J, 1, Compositions())

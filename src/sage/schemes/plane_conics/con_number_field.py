@@ -1,11 +1,10 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 r"""
 Projective plane conics over a number field
 
 AUTHORS:
 
 - Marco Streng (2010-07-20)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
@@ -22,7 +21,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from .con_field import ProjectiveConic_field
 
@@ -306,7 +305,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                 if point or obstruction:
                     return True, pt
                 return True
-            if is_RationalField(B):
+            if isinstance(B, RationalField):
                 K = B
                 [KtoB, BtoK] = [K.hom(K) for i in range(2)]
             else:
@@ -355,8 +354,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: C.is_locally_solvable(p2)
             True
 
-            sage: O = K.maximal_order()
-            sage: f = (2*O).factor()
+            sage: f = (2*K).factor()
             sage: C.is_locally_solvable(f[0][0])
             True
 
@@ -442,10 +440,10 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                     for a in self.symmetric_matrix().list():
                         if a != 0:
                             for f in O.fractional_ideal(a).factor():
-                                if f[1] < 0 and not f[0] in candidates:
+                                if f[1] < 0 and f[0] not in candidates:
                                     candidates.append(f[0])
                     for f in O.fractional_ideal(2 * self.determinant()).factor():
-                        if f[1] > 0 and not f[0] in candidates:
+                        if f[1] > 0 and f[0] not in candidates:
                             candidates.append(f[0])
                 for b in candidates:
                     if not self.is_locally_solvable(b):

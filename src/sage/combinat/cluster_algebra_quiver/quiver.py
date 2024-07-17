@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Quiver
 
@@ -36,20 +36,18 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
+from itertools import product
 
 from sage.structure.sage_object import SageObject
-from copy import copy
 from sage.rings.integer_ring import ZZ
-from sage.rings.cc import CC
 from sage.rings.infinity import infinity
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 from sage.graphs.views import EdgesView
 from sage.arith.misc import gcd
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
-from sage.categories.cartesian_product import cartesian_product
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType, QuiverMutationType_Irreducible, QuiverMutationType_Reducible, _edge_list_to_matrix
@@ -57,6 +55,9 @@ from sage.combinat.cluster_algebra_quiver.mutation_class import _principal_part,
 from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type, _mutation_type_from_data, is_mutation_finite
 
 from sage.combinat.cluster_algebra_quiver.interact import cluster_interact
+
+lazy_import('sage.modules.free_module_element', 'vector')
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class ClusterQuiver(SageObject):
@@ -67,14 +68,14 @@ class ClusterQuiver(SageObject):
 
     - ``data`` -- can be any of the following::
 
-        * QuiverMutationType
-        * str - a string representing a QuiverMutationType or a common quiver type (see Examples)
-        * ClusterQuiver
-        * Matrix - a skew-symmetrizable matrix
-        * DiGraph - must be the input data for a quiver
-        * List of edges - must be the edge list of a digraph for a quiver
+      * :class:`QuiverMutationType`
+      * :class:`str` -- a string representing a :class:`QuiverMutationType` or a common quiver type (see Examples)
+      * :class:`ClusterQuiver`
+      * :class:`Matrix` -- a skew-symmetrizable matrix
+      * :class:`DiGraph` -- must be the input data for a quiver
+      * List of edges -- must be the edge list of a digraph for a quiver
 
-    - ``frozen`` -- (default:``None``) sets the list of frozen variables
+    - ``frozen`` -- (default: ``None``) sets the list of frozen variables
       if the input type is a :class:`DiGraph`, it is ignored otherwise
 
     - ``user_labels`` -- (default:``None``) sets the names of the labels for
@@ -221,14 +222,14 @@ class ClusterQuiver(SageObject):
             sage: TestSuite(Q).run()
         """
         from sage.combinat.cluster_algebra_quiver.cluster_seed import ClusterSeed
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
         if isinstance(user_labels, list):
             user_labels = [tuple(x) if isinstance(x, list) else x for x in user_labels]
         elif isinstance(user_labels, dict):
             values = [tuple(user_labels[x]) if isinstance(user_labels[x], list) else user_labels[x] for x in user_labels]
-            user_labels = {key: val for key, val in zip(user_labels.keys(),
-                                                        values)}
+            user_labels = dict(zip(user_labels.keys(),
+                                   values))
 
         # constructs a quiver from a mutation type
         if type( data ) in [QuiverMutationType_Irreducible,QuiverMutationType_Reducible]:
@@ -333,7 +334,7 @@ class ClusterQuiver(SageObject):
             self._description = data._description
 
         # constructs a quiver from a matrix
-        elif is_Matrix(data):
+        elif isinstance(data, Matrix):
             if not _principal_part(data).is_skew_symmetrizable( positive=True ):
                 raise ValueError('The principal part of the matrix data must be skew-symmetrizable.')
 
@@ -364,7 +365,7 @@ class ClusterQuiver(SageObject):
             elif n+m == 1:
                 self._description = 'Quiver on 1 vertex'
             else:
-                self._description = 'Quiver on %d vertices' %(n+m)
+                self._description = 'Quiver on %d vertices' % (n+m)
 
         # constructs a quiver from a digraph
         elif isinstance(data, DiGraph):
@@ -543,22 +544,23 @@ class ClusterQuiver(SageObject):
           highlighted.
         - ``save_pos`` -- (default: ``False``) if ``True``, the positions
           of the vertices are saved.
-        - ``greens`` -- (default: []) if set to a list, will display the green
+        - ``greens`` -- (default: ``[]``) if set to a list, will display the green
           vertices as green
 
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',5])
-            sage: Q.plot()
+            sage: Q.plot()                                                              # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True)
+            sage: Q.plot(circular=True)                                                 # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True, mark=1)
+            sage: Q.plot(circular=True, mark=1)                                         # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
         """
         from sage.plot.colors import rainbow
         from sage.graphs.graph_generators import GraphGenerators
         from sage.symbolic.constants import e, pi
+        from sage.rings.cc import CC
         from sage.rings.imaginary_unit import I
         graphs = GraphGenerators()
         # returns positions for graph vertices on two concentric cycles with radius 1 and 2
@@ -633,10 +635,10 @@ class ClusterQuiver(SageObject):
                              'lightgreen': partition[2]}
 
         options = {
-            'graph_border' : True,
+            'graph_border': True,
             'edge_colors': color_dict,
             'vertex_colors': vertex_color_dict,
-            'edge_labels' : True,
+            'edge_labels': True,
             'vertex_labels': True,
         }
         if circular:
@@ -660,12 +662,12 @@ class ClusterQuiver(SageObject):
 
         - ``fig_size`` -- (default: 1) factor by which the size of the plot
           is multiplied.
-        - ``circular`` -- (default: False) if True, the circular plot is
+        - ``circular`` -- (default: ``False``) if True, the circular plot is
           chosen, otherwise >>spring<< is used.
-        - ``directed`` -- (default: True) if True, the directed version is
+        - ``directed`` -- (default: ``True``) if True, the directed version is
           shown, otherwise the undirected.
         - ``mark`` -- (default: None) if set to i, the vertex i is highlighted.
-        - ``save_pos`` -- (default:False) if True, the positions of the
+        - ``save_pos`` -- (default: ``False``) if True, the positions of the
           vertices are saved.
         - ``greens`` -- (default:[]) if set to a list, will display the green
           vertices as green
@@ -699,7 +701,7 @@ class ClusterQuiver(SageObject):
         TESTS::
 
             sage: S = ClusterQuiver(['A',4])
-            sage: S.interact()
+            sage: S.interact()                                                          # needs sage.plot sage.symbolic
             ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind="quiver")
@@ -711,13 +713,13 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``filename`` -- the filename the image is saved to.
-        - ``circular`` -- (default: False) if True, the circular plot is chosen, otherwise >>spring<< is used.
+        - ``circular`` -- (default: ``False``) if True, the circular plot is chosen, otherwise >>spring<< is used.
 
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.plot sage.symbolic
             ....:     Q.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular)
@@ -742,25 +744,25 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
 
-        Make sure we can save quivers with `m != n` frozen variables, see :trac:`14851`::
+        Make sure we can save quivers with `m != n` frozen variables, see :issue:`14851`::
 
             sage: S = ClusterSeed(['A',3])
             sage: T1 = S.principal_extension()
             sage: Q = T1.quiver()
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
         """
         M = self.b_matrix()
         if self.m():
-            from sage.matrix.constructor import Matrix
+            from sage.matrix.constructor import matrix
             from sage.matrix.constructor import block_matrix
             M1 = M.matrix_from_rows(list(range(self.n())))
             M2 = M.matrix_from_rows(list(range(self.n(), self.n() + self.m())))
-            M3 = Matrix(self.m(), self.m())
+            M3 = matrix(self.m(), self.m())
             M = block_matrix([[M1, -M2.transpose()], [M2, M3]])
         dg = self.digraph()
         dg.plot(save_pos=True)
@@ -785,9 +787,8 @@ class ClusterQuiver(SageObject):
         string.append('1')
         string.append('//Matrix')
         string.append(str(m) + ' ' + str(m))
-        for i in range(m):
-            string.append(' '.join(str(M[i, j])
-                                   for j in range(m)))
+        string.extend(' '.join(str(M[i, j]) for j in range(m))
+                      for i in range(m))
         string.append('//Points')
 
         for i in range(m):
@@ -1004,7 +1005,7 @@ class ClusterQuiver(SageObject):
 
             # checking the type for each connected component
             mutation_type = []
-            connected_components = sorted(dg.connected_components())
+            connected_components = sorted(dg.connected_components(sort=False))
             for component in connected_components:
                 # constructing the digraph for this component
                 dg_component = dg.subgraph( component )
@@ -1118,7 +1119,7 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``certificate`` -- boolean (default: False) if True, the dictionary
+        - ``certificate`` -- boolean (default: ``False``) if True, the dictionary
           from ``self.vertices()`` to the vertices of the returned quiver
           is returned as well.
 
@@ -1154,7 +1155,7 @@ class ClusterQuiver(SageObject):
             if dg.is_connected():
                 Q._mutation_type = self._mutation_type
             else:
-                CC = sorted( self._digraph.connected_components() )
+                CC = sorted(self._digraph.connected_components(sort=False))
                 CC_new = sorted(zip([sorted(iso[i] for i in L) for L in CC],
                                     range(len(CC))))
                 comp_iso = [L[1] for L in CC_new]
@@ -1337,7 +1338,7 @@ class ClusterQuiver(SageObject):
           a function which takes in the ClusterQuiver and returns a vertex or an iterator of vertices,
           or a string of the parameter wanting to be called on ClusterQuiver that will return a vertex or
           an iterator of vertices.
-        - ``inplace`` -- (default: True) if False, the result is returned, otherwise ``self`` is modified.
+        - ``inplace`` -- (default: ``True``) if False, the result is returned, otherwise ``self`` is modified.
 
         EXAMPLES::
 
@@ -1475,14 +1476,16 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``sequence`` -- a list or tuple of vertices of ``self``.
-        - ``show_sequence`` -- (default: False) if True, a png containing the mutation sequence is shown.
+        - ``show_sequence`` -- (default: ``False``) if ``True``, a png containing the mutation sequence is shown.
         - ``fig_size`` -- (default: 1.2) factor by which the size of the sequence is expanded.
 
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',4])
             sage: seq = Q.mutation_sequence([0,1]); seq
-            [Quiver on 4 vertices of type ['A', 4], Quiver on 4 vertices of type ['A', 4], Quiver on 4 vertices of type ['A', 4]]
+            [Quiver on 4 vertices of type ['A', 4],
+             Quiver on 4 vertices of type ['A', 4],
+             Quiver on 4 vertices of type ['A', 4]]
             sage: [T.b_matrix() for T in seq]
             [
             [ 0  1  0  0]  [ 0 -1  0  0]  [ 0  1 -1  0]
@@ -1491,8 +1494,6 @@ class ClusterQuiver(SageObject):
             [ 0  0 -1  0], [ 0  0 -1  0], [ 0  0 -1  0]
             ]
         """
-        from sage.plot.plot import Graphics
-        from sage.plot.text import text
         n = self._n
         m = self._m
         if m == 0:
@@ -1509,7 +1510,7 @@ class ClusterQuiver(SageObject):
             raise ValueError('The quiver can only be mutated at a vertex or at a sequence of vertices')
         if any(v not in V for v in sequence):
             v = next(v for v in sequence if v not in V)
-            raise ValueError('The quiver can only be mutated at the vertex %s'%v )
+            raise ValueError('The quiver can only be mutated at the vertex %s' % v )
 
         quiver = copy( self )
         quiver_sequence = []
@@ -1520,9 +1521,13 @@ class ClusterQuiver(SageObject):
             quiver_sequence.append( copy( quiver ) )
 
         if show_sequence:
+            from sage.plot.plot import Graphics
+            from sage.plot.text import text
+
             def _plot_arrow( v, k, center=(0,0) ):
                 return text(r"$\longleftrightarrow$",(center[0],center[1]), fontsize=25) + text(r"$\mu_"+str(v)+"$",(center[0],center[1]+0.15), fontsize=15) \
                     + text("$"+str(k)+"$",(center[0],center[1]-0.2), fontsize=15)
+
             plot_sequence = [ quiver_sequence[i].plot( circular=True, center=(i*width_factor,0) ) for i in range(len(quiver_sequence)) ]
             arrow_sequence = [ _plot_arrow( sequence[i],i+1,center=((i+0.5)*width_factor,0) ) for i in range(len(sequence)) ]
             sequence = []
@@ -1619,8 +1624,8 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``depth`` -- (default: infinity) integer, only quivers with distance at most depth from self are returned.
-        - ``show_depth`` -- (default: False) if True, the actual depth of the mutation is shown.
-        - ``return_paths`` -- (default: False) if True, a shortest path of mutation sequences from self to the given quiver is returned as well.
+        - ``show_depth`` -- (default: ``False``) if True, the actual depth of the mutation is shown.
+        - ``return_paths`` -- (default: ``False``) if True, a shortest path of mutation sequences from self to the given quiver is returned as well.
         - ``data_type`` -- (default: "quiver") can be one of the following::
 
             * "quiver"
@@ -1629,8 +1634,8 @@ class ClusterQuiver(SageObject):
             * "dig6"
             * "path"
 
-        - ``up_to_equivalence`` -- (default: True) if True, only one quiver for each graph-isomorphism class is recorded.
-        - ``sink_source`` -- (default: False) if True, only mutations at sinks and sources are applied.
+        - ``up_to_equivalence`` -- (default: ``True``) if True, only one quiver for each graph-isomorphism class is recorded.
+        - ``sink_source`` -- (default: ``False``) if True, only mutations at sinks and sources are applied.
 
         EXAMPLES::
 
@@ -1848,11 +1853,11 @@ class ClusterQuiver(SageObject):
         if depth is infinity and not self.is_mutation_finite():
             raise ValueError('the mutation class can - for infinite mutation'
                              ' types - only be computed up to a given depth')
-        return [Q for Q in self.mutation_class_iter(depth=depth, show_depth=show_depth,
-                                                    return_paths=return_paths,
-                                                    data_type=data_type,
-                                                    up_to_equivalence=up_to_equivalence,
-                                                    sink_source=sink_source)]
+        return list(self.mutation_class_iter(depth=depth, show_depth=show_depth,
+                                             return_paths=return_paths,
+                                             data_type=data_type,
+                                             up_to_equivalence=up_to_equivalence,
+                                             sink_source=sink_source))
 
     def is_finite(self):
         """
@@ -1904,7 +1909,7 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``nr_of_checks`` -- (default: None) number of mutations applied. Standard is 500*(number of vertices of self).
-        - ``return_path`` -- (default: False) if True, in case of self not being mutation finite, a path from self to a quiver with an edge label (a,-b) and a*b > 4 is returned.
+        - ``return_path`` -- (default: ``False``) if True, in case of self not being mutation finite, a path from self to a quiver with an edge label (a,-b) and a*b > 4 is returned.
 
         ALGORITHM:
 
@@ -1980,7 +1985,7 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``relabelling`` -- Dictionary of labels to move around
-        - ``inplace`` -- (default:True) if True, will return a duplicate of the quiver
+        - ``inplace`` -- (default: ``True``) if True, will return a duplicate of the quiver
 
         EXAMPLES::
 
@@ -2102,8 +2107,8 @@ class ClusterQuiver(SageObject):
         mu_d = theta.dot_product(d) / sum(d)
 
         Li = [0 * d]
-        it = (vector(e) for e in cartesian_product([range(d_i + 1)
-                                                    for d_i in d]))
+        it = (vector(e) for e in product(*[range(d_i + 1)
+                                           for d_i in d]))
         Li += [e for e in it if e.dot_product(theta) > mu_d * sum(e)]
         Li.append(d)
         N = len(Li) - 1
@@ -2144,18 +2149,17 @@ class ClusterQuiver(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron sage.libs.singular
             sage: Fd = ClusterQuiver([[1,2]]).d_vector_fan(); Fd
             Rational polyhedral fan in 2-d lattice N
             sage: Fd.ngenerating_cones()
             5
-
             sage: Fd = ClusterQuiver([[1,2],[2,3]]).d_vector_fan(); Fd
             Rational polyhedral fan in 3-d lattice N
             sage: Fd.ngenerating_cones()
             14
             sage: Fd.is_smooth()
             True
-
             sage: Fd = ClusterQuiver([[1,2],[2,3],[3,1]]).d_vector_fan(); Fd
             Rational polyhedral fan in 3-d lattice N
             sage: Fd.ngenerating_cones()
@@ -2170,12 +2174,13 @@ class ClusterQuiver(SageObject):
             ...
             ValueError: only makes sense for quivers of finite type
         """
+        if not self.is_finite():
+            raise ValueError('only makes sense for quivers of finite type')
+
         from .cluster_seed import ClusterSeed
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
-        if not(self.is_finite()):
-            raise ValueError('only makes sense for quivers of finite type')
         seed = ClusterSeed(self)
         return Fan([Cone(s.d_matrix().columns())
                     for s in seed.mutation_class()])
@@ -2222,7 +2227,7 @@ class ClusterQuiver(SageObject):
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
-        if not(self.is_finite()):
+        if not (self.is_finite()):
             raise ValueError('only supported for quivers of finite type')
         seed = ClusterSeed(self).principal_extension()
         return Fan([Cone(s.g_matrix().columns())

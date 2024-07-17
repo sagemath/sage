@@ -1,4 +1,4 @@
-$(PYTHON) appdirs importlib_metadata urllib3 certifi | $(PYTHON_TOOLCHAIN)
+ appdirs importlib_metadata urllib3 certifi | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

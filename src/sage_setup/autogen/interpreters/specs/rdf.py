@@ -37,6 +37,7 @@ class RDFInterpreter(StackInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import *
             sage: interp = RDFInterpreter()
             sage: interp.name
             'rdf'
@@ -60,9 +61,11 @@ class RDFInterpreter(StackInterpreter):
 
         Make sure that pow behaves reasonably::
 
-            sage: var('x,y')
-            (x, y)
-            sage: ff = fast_callable(x^y, vars=[x,y], domain=RDF)
+            sage: from sage.ext.fast_callable import ExpressionTreeBuilder
+            sage: etb = ExpressionTreeBuilder(vars=('x','y'))
+            sage: x = etb.var('x')
+            sage: y = etb.var('y')
+            sage: ff = fast_callable(x^y, domain=RDF)
             sage: ff(1.5, 3)
             3.375
             sage: ff(-2, 3)

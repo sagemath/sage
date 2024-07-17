@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.combinat sage.graphs
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Example of a crystal
 """
@@ -117,7 +118,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
             sage: Crystals().example()
             Highest weight crystal of type A_3 of highest weight omega_1
         """
-        return "Highest weight crystal of type A_%s of highest weight omega_1"%(self.n)
+        return "Highest weight crystal of type A_%s of highest weight omega_1" % (self.n)
 
     # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_

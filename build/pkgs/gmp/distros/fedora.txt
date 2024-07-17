@@ -1,1 +1,2 @@
-gmp gmp-devel
+gmp
+gmp-devel

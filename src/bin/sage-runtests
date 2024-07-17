@@ -26,13 +26,16 @@ if __name__ == "__main__":
                                                  ".py, .pyx, .pxd, .pxi, .sage, .spyx, .tex, .rst.")
     parser.add_argument("-p", "--nthreads", dest="nthreads",
                         type=int, nargs='?', const=0, default=1, metavar="N",
-                        help="tests in parallel using N threads with 0 interpreted as max(2, min(8, cpu_count()))")
+                        help="test in parallel using N threads, with 0 interpreted as max(2, min(8, cpu_count())); "
+                        "when run under the control of the GNU make jobserver (make -j), request as most N job slots")
     parser.add_argument("-T", "--timeout", type=int, default=-1, help="timeout (in seconds) for doctesting one file, 0 for no timeout")
     what = parser.add_mutually_exclusive_group()
     what.add_argument("-a", "--all", action="store_true", default=False, help="test all files in the Sage library")
     what.add_argument("--installed", action="store_true", default=False, help="test all installed modules of the Sage library")
     parser.add_argument("--logfile", type=argparse.FileType('a'), metavar="FILE", help="log all output to FILE")
 
+    parser.add_argument("--format", choices=["sage", "github"], default="sage",
+                        help="set format of error messages and warnings")
     parser.add_argument("-l", "--long", action="store_true", default=False, help="include lines with the phrase 'long time'")
     parser.add_argument("-s", "--short", dest="target_walltime", nargs='?',
                         type=int, default=-1, const=300, metavar="SECONDS",
@@ -52,6 +55,13 @@ if __name__ == "__main__":
              'if set to "all", then all tests will be run; '
              'use "!FEATURE" to disable tests marked "# optional - FEATURE". '
              'Note that "!" needs to be quoted or escaped in the shell.')
+    parser.add_argument("--hide", metavar="FEATURES", default="",
+        help='run tests pretending that the software listed in FEATURES (separated by commas) is not installed; '
+             'if "all" is listed, will also hide features corresponding to all optional or experimental packages; '
+             'if "optional" is listed, will also hide features corresponding to optional packages.')
+    parser.add_argument("--probe", metavar="FEATURES", default="",
+        help='run tests that would not be run because one of the given FEATURES (separated by commas) is not installed; '
+             'report the tests that pass nevertheless')
     parser.add_argument("--randorder", type=int, metavar="SEED", help="randomize order of tests")
     parser.add_argument("--random-seed", dest="random_seed", type=int, metavar="SEED", help="random seed (integer) for fuzzing doctests",
                         default=os.environ.get("SAGE_DOCTEST_RANDOM_SEED"))
@@ -62,6 +72,7 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--initial", action="store_true", default=False, help="only show the first failure in each file")
     parser.add_argument("--exitfirst", action="store_true", default=False, help="end the test run immediately after the first failure or unexpected exception")
     parser.add_argument("--force_lib", "--force-lib", action="store_true", default=False, help="do not import anything from the tested file(s)")
+    parser.add_argument("--if-installed", action="store_true", default=False, help="skip Python/Cython files that are not installed as modules")
     parser.add_argument("--abspath", action="store_true", default=False, help="print absolute paths rather than relative paths")
     parser.add_argument("--verbose", action="store_true", default=False, help="print debugging output during the test")
     parser.add_argument("-d", "--debug", action="store_true", default=False, help="drop into a python debugger when an unexpected error is raised")
@@ -132,7 +143,8 @@ if __name__ == "__main__":
             in_filenames = True
             new_arguments.append('--')
         new_arguments.append(arg)
-        afterlog = bool(arg == '--logfile')
+        afterlog = arg in ['--logfile', '--stats_path', '--stats-path',
+                           '--baseline_stats_path', '--baseline-stats-path']
 
     args = parser.parse_args(new_arguments)
 
@@ -167,13 +179,18 @@ if __name__ == "__main__":
         pytest_options = []
         if args.verbose:
             pytest_options.append("-v")
-        # #31924: Do not run pytest on individual Python files unless
-        # they match the pytest file pattern.  However, pass names
-        # of directories. We use 'not os.path.isfile(f)' for this so that
-        # we do not silently hide typos.
-        filenames = [f for f in args.filenames
-                     if f.endswith("_test.py") or not os.path.isfile(f)]
-        if filenames or not args.filenames:
+
+        # #35999: no filename in arguments defaults to "src"
+        if not args.filenames:
+            filenames = [SAGE_SRC]
+        else:
+            # #31924: Do not run pytest on individual Python files unless
+            # they match the pytest file pattern.  However, pass names
+            # of directories. We use 'not os.path.isfile(f)' for this so that
+            # we do not silently hide typos.
+            filenames = [f for f in args.filenames
+                         if f.endswith("_test.py") or not os.path.isfile(f)]
+        if filenames:
             print(f"Running pytest on {filenames} with options {pytest_options}")
             exit_code_pytest = pytest.main(filenames + pytest_options)
             if exit_code_pytest == 5:

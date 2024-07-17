@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 D-Complete Posets
 
@@ -89,18 +90,20 @@ class DCompletePoset(FiniteJoinSemilattice):
 
                 # Check if any of these make a longer double tailed diamond
                 found_diamond = False
-                for (mn, mx) in [(i, j) for i in potential_min for j in potential_max]:
-                    if len(H.neighbors_in(mx)) != 1:
+                for mx in potential_max:
+                    if H.in_degree(mx) != 1:
                         continue
-                    if len(H.all_paths(mn, mx)) == 2:
-                        # Success
-                        min_elmt = mn
-                        max_elmt = mx
-
-                        min_diamond[mx] = mn
-                        max_diamond[mn] = mx
-                        diamond_index[mx] = index
-                        found_diamond = True
+                    for mn in potential_min:
+                        if len(H.all_paths(mn, mx)) == 2:
+                            # Success
+                            min_elmt = mn
+                            max_elmt = mx
+                            min_diamond[mx] = mn
+                            max_diamond[mn] = mx
+                            diamond_index[mx] = index
+                            found_diamond = True
+                            break
+                    if found_diamond:
                         break
                 if not found_diamond:
                     break
@@ -150,7 +153,8 @@ class DCompletePoset(FiniteJoinSemilattice):
             sage: P.get_hooks()
             {0: 1, 1: 2, 2: 2, 3: 3}
             sage: from sage.combinat.posets.poset_examples import Posets
-            sage: P = DCompletePoset(Posets.YoungDiagramPoset(Partition([3,2,1]))._hasse_diagram.reverse())
+            sage: YDP321 = Posets.YoungDiagramPoset(Partition([3,2,1]))
+            sage: P = DCompletePoset(YDP321._hasse_diagram.reverse())
             sage: P.get_hooks()
             {0: 5, 1: 3, 2: 1, 3: 3, 4: 1, 5: 1}
         """
@@ -166,7 +170,8 @@ class DCompletePoset(FiniteJoinSemilattice):
             sage: P = DCompletePoset(DiGraph({0: [1, 2], 1: [3], 2: [3], 3: []}))
             sage: P.hook_product()
             12
-            sage: P = DCompletePoset(posets.YoungDiagramPoset(Partition([3,2,1]), dual=True))
+            sage: P = DCompletePoset(posets.YoungDiagramPoset(Partition([3,2,1]),
+            ....:                    dual=True))
             sage: P.hook_product()
             45
         """

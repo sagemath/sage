@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Check for various standard packages (for modularized distributions)
 
@@ -18,19 +19,20 @@ from .join_feature import JoinFeature
 
 
 def all_features():
-    return [PythonModule('cvxopt', spkg='cvxopt'),
-            PythonModule('fpylll', spkg='fpylll'),
-            JoinFeature('ipython', (PythonModule('IPython'),), spkg='ipython'),
-            JoinFeature('lrcalc_python', (PythonModule('lrcalc'),), spkg='lrcalc_python'),
-            PythonModule('mpmath', spkg='mpmath'),
-            PythonModule('networkx', spkg='networkx'),
-            PythonModule('numpy', spkg='numpy'),
-            PythonModule('pexpect', spkg='pexpect'),
-            JoinFeature('pillow', (PythonModule('PIL'),), spkg='pillow'),
-            JoinFeature('pplpy', (PythonModule('ppl'),), spkg='pplpy'),
-            PythonModule('primecountpy', spkg='primecountpy'),
-            PythonModule('ptyprocess', spkg='ptyprocess'),
-            PythonModule('pyparsing', spkg='pyparsing'),
-            PythonModule('requests', spkg='requests'),
-            PythonModule('scipy', spkg='scipy'),
-            PythonModule('sympy', spkg='sympy')]
+    return [PythonModule('cvxopt', spkg='cvxopt', type='standard'),
+            PythonModule('fpylll', spkg='fpylll', type='standard'),
+            JoinFeature('ipython', (PythonModule('IPython'),), spkg='ipython', type='standard'),
+            JoinFeature('lrcalc_python', (PythonModule('lrcalc'),), spkg='lrcalc_python', type='standard'),
+            PythonModule('mpmath', spkg='mpmath', type='standard'),
+            PythonModule('networkx', spkg='networkx', type='standard'),
+            PythonModule('numpy', spkg='numpy', type='standard'),
+            PythonModule('pexpect', spkg='pexpect', type='standard'),
+            JoinFeature('pillow', (PythonModule('PIL'),), spkg='pillow', type='standard'),
+            JoinFeature('pplpy', (PythonModule('ppl'),), spkg='pplpy', type='standard'),
+            PythonModule('primecountpy', spkg='primecountpy', type='standard'),
+            PythonModule('ptyprocess', spkg='ptyprocess', type='standard'),
+            PythonModule('pyparsing', spkg='pyparsing', type='standard'),
+            PythonModule('requests', spkg='requests', type='standard'),
+            PythonModule('rpy2', spkg='rpy2', type='standard'),
+            PythonModule('scipy', spkg='scipy', type='standard'),
+            PythonModule('sympy', spkg='sympy', type='standard')]

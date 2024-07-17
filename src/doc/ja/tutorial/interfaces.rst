@@ -24,13 +24,12 @@ GP/PARI
 ========
 
 
-
 数論関係の演算処理を主目的とするPARIは，コンパクトで非常に練れたプログラムで，高度に最適化されている．
 SageからPARIを使うには，大きく異なる2種類のインターフェイスを選ぶことができる:
 
--  ``gp`` - "**G** o **P** ARI" インタープリタ
+-  ``gp`` -- "**G** o **P** ARI" インタープリタ
 
--  ``pari`` - PARI Cライブラリ
+-  ``pari`` -- PARI Cライブラリ
 
 以下の例では，同一の計算を二通りのやり方で実行している．
 一見同じように見えても実は出力内容は同一ではないし，画面の奥で実際に行なわれている処理過程は二つの方法で全くと言っていいほど異なっているのだ．
@@ -213,7 +212,6 @@ Singularは，グレブナー基底，多変数多項式のgcd，平面曲線の
     (9) * (-x^5 + y^2)^2 * (x^6 - 2*x^3*y^2 - x^2*y^3 + y^4)
 
 
-
 .. _section-maxima:
 
 Maxima
@@ -239,8 +237,8 @@ Sage/Maximaインターフェイスの使い方を例示するため，ここで
     matrix([1,1/2,1/3,1/4],[0,0,0,0],[0,0,0,0],[0,0,0,0])
     sage: A.eigenvalues()
     [[0,4],[3,1]]
-    sage: A.eigenvectors()
-    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-4/3]],[[1,2,3,4]]]]
+    sage: A.eigenvectors().sage()
+    [[[0, 4], [3, 1]], [[[1, 0, 0, -4], [0, 1, 0, -2], [0, 0, 1, -4/3]], [[1, 2, 3, 4]]]]
 
 
 使用例をもう一つ示す:
@@ -299,11 +297,8 @@ Sage/Maximaインターフェイスの使い方を例示するため，ここで
 
 ::
 
-    sage: maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0) - 10.0")
-    5*cos(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)-10.0
-    sage: maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
-    -5*sin(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)
-    sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
-    5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
+    sage: _ = maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0) - 10.0")
+    sage: _ = maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
+    sage: _ = maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     sage: maxima.plot3d ("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]",  # not tested
     ....:     "[y, -%pi, %pi]", "['grid, 40, 40]", '[plot_format, openmath]')

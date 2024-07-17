@@ -4,10 +4,10 @@ Derivations of function fields
 For global function fields, which have positive characteristics, the higher
 derivation is available::
 
-    sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                 # optional - sage.rings.finite_rings
-    sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                                      # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: h = L.higher_derivation()                                                                 # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: h(y^2, 2)                                                                                 # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+    sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                          # needs sage.rings.function_field
+    sage: h = L.higher_derivation()                                                     # needs sage.rings.function_field
+    sage: h(y^2, 2)                                                                     # needs sage.rings.function_field
     ((x^7 + 1)/x^2)*y^2 + x^3*y
 
 AUTHORS:
@@ -18,8 +18,8 @@ AUTHORS:
   derivation classes; morphisms to/from fraction fields
 
 - Kwankyu Lee (2017-04-30): added higher derivations and completions
-
 """
+
 # ****************************************************************************
 #       Copyright (C) 2010      William Stein <wstein@gmail.com>
 #                     2011-2017 Julian Rüth <julian.rueth@gmail.com>

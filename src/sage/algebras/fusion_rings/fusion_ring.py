@@ -53,7 +53,7 @@ class FusionRing(WeylCharacterRing):
     The cyclotomic order is an integer `N` such that all computations
     will return elements of the cyclotomic field of `N`-th roots of unity.
     Normally you will never need to change this but consider changing it
-    if :meth:`root_of_unity` raises a ``ValueError``.
+    if :meth:`root_of_unity` raises a :class:`ValueError`.
 
     This algebra has a basis (sometimes called *primary fields* but here
     called *simple objects*) indexed by the weights of level `\leq k`.
@@ -1175,13 +1175,13 @@ class FusionRing(WeylCharacterRing):
                 return [[]] if fr.Nk_ij(m1, m2, root) else []
             else:
                 m1, m2 = top_row[:2]
-                return [tuple([l, *b]) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
+                return [(l, *b) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
 
-        comp_basis = list()
+        comp_basis = []
         for top in product((a*a).monomials(), repeat=n_strands//2):
             # If the n_strands is odd, we must extend the top row by a fusing anyon
-            top_row = list(top)+[a]*(n_strands%2)
-            comp_basis.extend(tuple([*top, *levels]) for levels in _get_trees(self, top_row, b))
+            top_row = list(top)+[a]*(n_strands % 2)
+            comp_basis.extend((*top, *levels) for levels in _get_trees(self, top_row, b))
         return comp_basis
 
     def get_fmatrix(self, *args, **kwargs):
@@ -1248,7 +1248,7 @@ class FusionRing(WeylCharacterRing):
         no_mp = worker_pool is None
         # Map phase
         input_iter = zip_longest([], input_iter, fillvalue=(mapper, id(self)))
-        results = list()
+        results = []
         if no_mp:
             mapped = map(executor, input_iter)
         else:
@@ -1289,7 +1289,7 @@ class FusionRing(WeylCharacterRing):
           we don't run the solver again.
         - ``use_mp`` -- (default: ``True``) a boolean indicating whether
           to use multiprocessing to speed up the computation; this is
-          highly recommended. Python 3.8+ is required.
+          highly recommended.
         - ``verbose`` -- (default: ``True``) boolean indicating whether
           to be verbose with the computation
 

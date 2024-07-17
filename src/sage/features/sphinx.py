@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``sphinx``
 """
@@ -35,7 +36,7 @@ class Sphinx(PythonModule):
             sage: isinstance(Sphinx(), Sphinx)
             True
         """
-        PythonModule.__init__(self, 'sphinx', spkg='sphinx')
+        PythonModule.__init__(self, 'sphinx', spkg='sphinx', type='standard')
 
 
 def all_features():

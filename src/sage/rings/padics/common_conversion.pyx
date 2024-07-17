@@ -26,7 +26,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cpython.int cimport *
+from cpython.long cimport *
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
 from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
@@ -84,7 +84,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         if x == 0:
             return maxordp
         try:
-            n = PyInt_AsLong(x)
+            n = PyLong_AsLong(x)
         except OverflowError:
             return get_ordp(Integer(x), prime_pow)
         else:
@@ -148,7 +148,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
             k = valp(pari_tmp)
         else: # t_INT and t_FRAC were converted before this function
             raise TypeError("unsupported coercion from pari: only p-adics, integers and rationals allowed")
-    elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+    elif isinstance(x, sage.rings.finite_rings.integer_mod.IntegerMod_abstract):
         value = <Integer>x.lift()
         if mpz_sgn(value.value) == 0:
             return maxordp
@@ -221,7 +221,7 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
         pari_tmp = (<pari_gen>x).g
         # since get_ordp has been called typ(x.g) == t_PADIC
         k = valp(pari_tmp) + precp(pari_tmp)
-    elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+    elif isinstance(x, sage.rings.finite_rings.integer_mod.IntegerMod_abstract):
         k = mpz_remove(temp.value, (<Integer>x.modulus()).value, prime_pow.prime.value)
         if mpz_cmp_ui(temp.value, 1) != 0:
             raise TypeError("cannot coerce from the given integer mod ring (not a power of the same prime)")
@@ -250,7 +250,7 @@ cdef long comb_prec(iprec, long prec) except? -10000:
             raise OverflowError("precision overflow")
         return mpz_get_si(intprec.value)
     if isinstance(iprec, int):
-        return min(PyInt_AS_LONG(iprec), prec)
+        return min(PyLong_AsLong(iprec), prec)
     return comb_prec(Integer(iprec), prec)
 
 cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absolute, PowComputer_class prime_pow) except -1:
@@ -405,13 +405,13 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
     - ``prime_pow`` -- a PowComputer for the ring.
 
     """
-    if PyInt_Check(x):
+    if PyLong_Check(x):
         x = Integer(x)
     elif isinstance(x, pari_gen):
         x = x.sage()
     if isinstance(x, pAdicGenericElement) and x.parent().is_relaxed():
         x = x.lift(valshift + prec)
-    elif isinstance(x, pAdicGenericElement) or sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+    elif isinstance(x, pAdicGenericElement) or isinstance(x, sage.rings.finite_rings.integer_mod.IntegerMod_abstract):
         x = x.lift()
     if isinstance(x, Integer):
         if valshift > 0:

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Test the doctesting framework
 
@@ -13,7 +14,7 @@ EXAMPLES::
     sage: tests_dir = os.path.join(SAGE_SRC, 'sage', 'doctest', 'tests')
     sage: tests_env = dict(os.environ)
 
-Unset :envvar:`TERM` when running doctests, see :trac:`14370`::
+Unset :envvar:`TERM` when running doctests, see :issue:`14370`::
 
     sage: try:
     ....:     del tests_env['TERM']
@@ -21,7 +22,7 @@ Unset :envvar:`TERM` when running doctests, see :trac:`14370`::
     ....:     pass
     sage: kwds = {'cwd': tests_dir, 'env':tests_env}
 
-Check that :trac:`2235` has been fixed::
+Check that :issue:`2235` has been fixed::
 
     sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
     ....:       "--random-seed=0", "--optional=sage", "longtime.rst"], **kwds)
@@ -172,7 +173,7 @@ Test the ``--exitfirst`` option::
 
 Test a timeout using the ``SAGE_TIMEOUT`` environment variable.  Also set
 ``CYSIGNALS_CRASH_NDEBUG`` to help ensure the test times out in a timely
-manner (:trac:`26912`)::
+manner (:issue:`26912`)::
 
     sage: from copy import deepcopy
     sage: kwds2 = deepcopy(kwds)
@@ -253,11 +254,12 @@ Even though the doctester master process has exited, the child process
 is still alive, but it should be killed automatically
 after the ``die_timeout`` given above (10 seconds)::
 
-    sage: pid = int(open(F).read())    # long time
-    sage: time.sleep(2)                # long time
-    sage: os.kill(pid, signal.SIGQUIT) # long time; 2 seconds passed => still alive
-    sage: time.sleep(8)                # long time
-    sage: os.kill(pid, signal.SIGQUIT) # long time; 10 seconds passed => dead  # random
+    sage: # long time
+    sage: pid = int(open(F).read())
+    sage: time.sleep(2)
+    sage: os.kill(pid, signal.SIGQUIT)  # 2 seconds passed => still alive
+    sage: time.sleep(8)
+    sage: os.kill(pid, signal.SIGQUIT)  # 10 seconds passed => dead  # random
     Traceback (most recent call last):
     ...
     ProcessLookupError: ...
@@ -343,7 +345,7 @@ Test that ``sig_on_count`` is checked correctly::
     ...
     1
 
-Test logfiles in serial and parallel mode (see :trac:`19271`)::
+Test logfiles in serial and parallel mode (see :issue:`19271`)::
 
     sage: t = tmp_filename()
     sage: subprocess.call(["sage", "-t", "--serial", "--warn-long", "0",    # long time
@@ -464,13 +466,12 @@ Test the ``--show-skipped`` option::
     Running doctests ...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 show_skipped.rst
-        1 unlabeled test not run
         2 tests not run due to known bugs
         1 gap test not run
         1 long test not run
         1 not tested test not run
         0 tests not run because we ran out of time
-        [1 test, ... s]
+        [2 tests, ... s]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -484,11 +485,10 @@ Optional tests are run correctly::
     Running doctests ...
     Doctesting 1 file.
     sage -t --long --warn-long 0.0 --random-seed=0 show_skipped.rst
-        1 unlabeled test not run
         2 tests not run due to known bugs
         1 not tested test not run
         0 tests not run because we ran out of time
-        [3 tests, ... s]
+        [4 tests, ... s]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -500,10 +500,9 @@ Optional tests are run correctly::
     Running doctests ...
     Doctesting 1 file.
     sage -t --long --warn-long 0.0 --random-seed=0 show_skipped.rst
-        1 unlabeled test not run
         2 tests not run due to known bugs
         1 not tested test not run
-        1 sage test not run
+        2 sage tests not run
         0 tests not run because we ran out of time
         [2 tests, ... s]
     ----------------------------------------------------------------------

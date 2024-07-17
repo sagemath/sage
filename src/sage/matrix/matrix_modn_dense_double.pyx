@@ -4,7 +4,7 @@
 # distutils: include_dirs = CBLAS_INCDIR
 # distutils: extra_compile_args = -D_XPG6
 r"""
-Dense matrices over `\ZZ/n\ZZ` for `n < 2^{23}` using LinBox's ``Modular<double>``
+Dense matrices over `\ZZ/n\ZZ` for `n < 94906266` using LinBox's ``Modular<double>``
 
 AUTHORS:
 
@@ -38,7 +38,7 @@ from sage.libs.linbox.fflas cimport \
 ctypedef Poly1Dom[ModField, Dense] ModDensePolyRing
 
 # Limit for LinBox Modular<double>
-MAX_MODULUS = 2**23
+MAX_MODULUS = 94906266
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int64
 
@@ -47,11 +47,11 @@ include "matrix_modn_dense_template.pxi"
 
 cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
     r"""
-    Dense matrices over `\ZZ/n\ZZ` for `n < 2^{23}` using LinBox's ``Modular<double>``
+    Dense matrices over `\ZZ/n\ZZ` for `n < 94906266` using LinBox's ``Modular<double>``
 
     These are matrices with integer entries mod ``n`` represented as
     floating-point numbers in a 64-bit word for use with LinBox routines.
-    This allows for ``n`` up to `2^{23}`. By default, the analogous
+    This allows for ``n`` up to `94906266`. By default, the analogous
     ``Matrix_modn_dense_float`` class is used for smaller moduli, specifically
     for ``n`` up to `2^{8}`.
 
@@ -70,10 +70,10 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
         """
         self._get_template = self._base_ring.zero()
-        # note that INTEGER_MOD_INT32_LIMIT is ceil(sqrt(2^31-1)) < 2^23
+        # note that INTEGER_MOD_INT32_LIMIT is ceil(sqrt(2^31-1)) < 94906266
         self._fits_int32 = ((<Matrix_modn_dense_template>self).p <= INTEGER_MOD_INT32_LIMIT)
 
-    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         r"""
         Set the (i,j) entry of self to the int value.
 

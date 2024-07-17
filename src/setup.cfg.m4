@@ -1,84 +1,52 @@
-# -*- conf-unix -*-
+include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
 name = sagemath-standard
 version = file: VERSION.txt
 description = Sage: Open Source Mathematics Software: Standard Python Library
 long_description = file: README.rst
 long_description_content_type = text/x-rst
-license = GNU General Public License (GPL) v2 or later
 license_files = LICENSE.txt
-author = The Sage Developers
-author_email = sage-support@googlegroups.com
-url = https://www.sagemath.org
-
-classifiers =
-    Development Status :: 6 - Mature
-    Intended Audience :: Education
-    Intended Audience :: Science/Research
-    License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)
-    Operating System :: POSIX
-    Operating System :: MacOS :: MacOS X
-    Programming Language :: Python :: 3 :: Only
-    Programming Language :: Python :: 3.8
-    Programming Language :: Python :: 3.9
-    Programming Language :: Python :: 3.10
-    Programming Language :: Python :: 3.11
-    Programming Language :: Python :: Implementation :: CPython
-    Topic :: Scientific/Engineering :: Mathematics
+include(`setup_cfg_metadata.m4')dnl'
 
 [options]
-python_requires = >=3.8, <3.12
+python_requires = >=3.9, <3.13
 install_requires =
-    esyscmd(`sage-get-system-packages install-requires \
-        sage_conf \
-        six \
-        | sed "2,\$s/^/    /;"')dnl'
+    SPKG_INSTALL_REQUIRES_six
 dnl From build/pkgs/sagelib/dependencies
-    esyscmd(`sage-get-system-packages install-requires \
-        cypari         \
-        cysignals      \
-        cython         \
-        gmpy2          \
-        importlib_metadata \
-        importlib_resources \
-        jinja2         \
-        jupyter_core   \
-        lrcalc_python  \
-        memory_allocator \
-        numpy          \
-        pkgconfig      \
-        pplpy          \
-        primecountpy   \
-        requests       \
-        typing_extensions \
-        | sed "2,\$s/^/    /;"')dnl'
+    SPKG_INSTALL_REQUIRES_conway_polynomials
+    SPKG_INSTALL_REQUIRES_cypari
+    SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_cython
+    SPKG_INSTALL_REQUIRES_gmpy2
+    SPKG_INSTALL_REQUIRES_importlib_metadata
+    SPKG_INSTALL_REQUIRES_importlib_resources
+    SPKG_INSTALL_REQUIRES_jupyter_core
+    SPKG_INSTALL_REQUIRES_lrcalc_python
+    SPKG_INSTALL_REQUIRES_memory_allocator
+    SPKG_INSTALL_REQUIRES_numpy
+    SPKG_INSTALL_REQUIRES_pkgconfig
+    SPKG_INSTALL_REQUIRES_pplpy
+    SPKG_INSTALL_REQUIRES_primecountpy
+    SPKG_INSTALL_REQUIRES_requests
+    SPKG_INSTALL_REQUIRES_typing_extensions
 dnl From Makefile.in: SAGERUNTIME
-    esyscmd(`sage-get-system-packages install-requires \
-        ipython        \
-        pexpect        \
-        | sed "2,\$s/^/    /;"')dnl'
+    SPKG_INSTALL_REQUIRES_ipython
+    SPKG_INSTALL_REQUIRES_pexpect
 dnl From Makefile.in: DOC_DEPENDENCIES
-    esyscmd(`sage-get-system-packages install-requires \
-        sphinx         \
-        networkx       \
-        scipy          \
-        sympy          \
-        matplotlib     \
-        pillow         \
-        mpmath         \
-        ipykernel      \
-        jupyter_client \
-        ipywidgets     \
-        | sed "2,\$s/^/    /;"')dnl'
-dnl Other Python packages that are standard spkg, used in doctests
-    esyscmd(`sage-get-system-packages install-requires \
-        fpylll         \
-        | sed "2,\$s/^/    /;"')dnl'
+    SPKG_INSTALL_REQUIRES_sphinx
+    SPKG_INSTALL_REQUIRES_networkx
+    SPKG_INSTALL_REQUIRES_scipy
+    SPKG_INSTALL_REQUIRES_sympy
+    SPKG_INSTALL_REQUIRES_matplotlib
+    SPKG_INSTALL_REQUIRES_pillow
+    SPKG_INSTALL_REQUIRES_mpmath
+    SPKG_INSTALL_REQUIRES_ipykernel
+    SPKG_INSTALL_REQUIRES_jupyter_client
+    SPKG_INSTALL_REQUIRES_ipywidgets
+    SPKG_INSTALL_REQUIRES_fpylll
 dnl pycryptosat  # Sage distribution installs it as part of cryptominisat. According to its README on https://pypi.org/project/pycryptosat/: "The pycryptosat python package compiles while compiling CryptoMiniSat. It cannot be compiled on its own, it must be compiled at the same time as CryptoMiniSat."
 dnl Packages with important upper version bounds
-    esyscmd(`sage-get-system-packages install-requires \
-        ptyprocess     \
-        | sed "2,\$s/^/    /;"')dnl'
+    SPKG_INSTALL_REQUIRES_ptyprocess
 
 scripts =
     # The sage script
@@ -117,10 +85,6 @@ scripts =
     bin/sage-num-threads.py
     bin/sage-preparse
     bin/sage-python
-    bin/sage-rebase.bat
-    bin/sage-rebase.sh
-    bin/sage-rebaseall.bat
-    bin/sage-rebaseall.sh
     bin/sage-run
     bin/sage-run-cython
     bin/sage-startuptime.py
@@ -165,6 +129,10 @@ sage =
     ext_data/threejs/*
 
 [options.extras_require]
-R = esyscmd(`sage-get-system-packages install-requires \
-        rpy2           \
-        | sed "2,\$s/^/    /;"')dnl'
+R        = SPKG_INSTALL_REQUIRES_rpy2
+bliss    = SPKG_INSTALL_REQUIRES_sagemath_bliss
+coxeter3 = SPKG_INSTALL_REQUIRES_sagemath_coxeter3
+mcqd     = SPKG_INSTALL_REQUIRES_sagemath_mcqd
+meataxe  = SPKG_INSTALL_REQUIRES_sagemath_meataxe
+sirocco  = SPKG_INSTALL_REQUIRES_sagemath_sirocco
+tdlib    = SPKG_INSTALL_REQUIRES_sagemath_tdlib

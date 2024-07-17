@@ -12,7 +12,6 @@ AUTHORS:
 REFERENCES:
 
 - Chap. 3 of [Lee2013]_
-
 """
 
 # *****************************************************************************
@@ -261,12 +260,12 @@ class TangentVector(FiniteRankFreeModuleElement):
 
         Plot of the vector alone (arrow + label)::
 
-            sage: v.plot()
+            sage: v.plot()                                                              # needs sage.plot
             Graphics object consisting of 2 graphics primitives
 
         Plot atop of the chart grid::
 
-            sage: X.plot() + v.plot()
+            sage: X.plot() + v.plot()                                                   # needs sage.plot
             Graphics object consisting of 20 graphics primitives
 
         .. PLOT::
@@ -280,7 +279,7 @@ class TangentVector(FiniteRankFreeModuleElement):
 
         Plots with various options::
 
-            sage: X.plot() + v.plot(color='green', scale=2, label='V')
+            sage: X.plot() + v.plot(color='green', scale=2, label='V')                  # needs sage.plot
             Graphics object consisting of 20 graphics primitives
 
         .. PLOT::
@@ -294,7 +293,7 @@ class TangentVector(FiniteRankFreeModuleElement):
 
         ::
 
-            sage: X.plot() + v.plot(print_label=False)
+            sage: X.plot() + v.plot(print_label=False)                                  # needs sage.plot
             Graphics object consisting of 19 graphics primitives
 
         .. PLOT::
@@ -308,7 +307,7 @@ class TangentVector(FiniteRankFreeModuleElement):
 
         ::
 
-            sage: X.plot() + v.plot(color='green', label_color='black',
+            sage: X.plot() + v.plot(color='green', label_color='black',                 # needs sage.plot
             ....:                   fontsize=20, label_offset=0.2)
             Graphics object consisting of 20 graphics primitives
 
@@ -323,7 +322,7 @@ class TangentVector(FiniteRankFreeModuleElement):
 
         ::
 
-            sage: X.plot() + v.plot(linestyle=':', width=4, arrowsize=8,
+            sage: X.plot() + v.plot(linestyle=':', width=4, arrowsize=8,                # needs sage.plot
             ....:                   fontsize=20)
             Graphics object consisting of 20 graphics primitives
 
@@ -342,7 +341,7 @@ class TangentVector(FiniteRankFreeModuleElement):
             (a, b)
             sage: v = Tp((1+a, -b^2), name='v') ; v.display()
             v = (a + 1) ∂/∂x - b^2 ∂/∂y
-            sage: X.plot() + v.plot(parameters={a: -2, b: 3})
+            sage: X.plot() + v.plot(parameters={a: -2, b: 3})                           # needs sage.plot
             Graphics object consisting of 20 graphics primitives
 
         Special case of the zero vector::
@@ -350,7 +349,7 @@ class TangentVector(FiniteRankFreeModuleElement):
             sage: v = Tp.zero() ; v
             Tangent vector zero at Point p on the 2-dimensional differentiable
              manifold M
-            sage: X.plot() + v.plot()
+            sage: X.plot() + v.plot()                                                   # needs sage.plot
             Graphics object consisting of 19 graphics primitives
 
         Vector tangent to a 4-dimensional manifold::
@@ -365,7 +364,7 @@ class TangentVector(FiniteRankFreeModuleElement):
 
         We cannot make a 4D plot directly::
 
-            sage: v.plot()
+            sage: v.plot()                                                              # needs sage.plot
             Traceback (most recent call last):
             ...
             ValueError: the number of coordinates involved in the plot must
@@ -375,7 +374,7 @@ class TangentVector(FiniteRankFreeModuleElement):
         the argument ``ambient_coords``. For instance, for a 2-dimensional
         plot in terms of the coordinates `(x, y)`::
 
-            sage: v.plot(ambient_coords=(x,y))
+            sage: v.plot(ambient_coords=(x,y))                                          # needs sage.plot
             Graphics object consisting of 2 graphics primitives
 
         .. PLOT::
@@ -391,14 +390,14 @@ class TangentVector(FiniteRankFreeModuleElement):
         Similarly, for a 3-dimensional plot in terms of the coordinates
         `(t, x, y)`::
 
-            sage: g = v.plot(ambient_coords=(t,x,z))
-            sage: print(g)
+            sage: g = v.plot(ambient_coords=(t,x,z))                                    # needs sage.plot
+            sage: print(g)                                                              # needs sage.plot
             Graphics3d Object
 
         This plot involves only the components `v^t`,  `v^x` and `v^z` of `v`.
         A nice 3D view atop the coordinate grid is obtained via::
 
-            sage: (X.plot(ambient_coords=(t,x,z))  # long time
+            sage: (X.plot(ambient_coords=(t,x,z))  # long time                          # needs sage.plot
             ....:  + v.plot(ambient_coords=(t,x,z),
             ....:           label_offset=0.5, width=6))
             Graphics3d Object
@@ -431,9 +430,9 @@ class TangentVector(FiniteRankFreeModuleElement):
             sage: v = XS.frame()[1].at(p) ; v  # the coordinate vector ∂/∂phi at p
             Tangent vector ∂/∂ph at Point p on the 2-dimensional differentiable
              manifold S^2
-            sage: graph_v = v.plot(mapping=F)
-            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)  # long time
-            sage: graph_v + graph_S2  # long time
+            sage: graph_v = v.plot(mapping=F)                                           # needs sage.plot
+            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)  # long time, needs sage.plot
+            sage: graph_v + graph_S2                                        # long time, needs sage.plot
             Graphics3d Object
 
         .. PLOT::

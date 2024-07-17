@@ -7,10 +7,7 @@ if [ "x$UNAME" = xAIX ] ; then
 fi
 
 cd src
+cp "$SAGE_ROOT"/config/config.* build-aux/
 sdh_configure
 sdh_make
 sdh_make_install
-
-if [ "$UNAME" = "CYGWIN" ] ; then
-    cp ../patch.exe.manifest "$SAGE_DESTDIR$SAGE_LOCAL/bin/"
-fi

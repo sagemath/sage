@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hyperbolic Models
 
@@ -156,7 +155,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             sage: HyperbolicPlane().UHP()
             Hyperbolic plane in the Upper Half Plane Model
         """
-        return u'Hyperbolic plane in the {}'.format(self._name)
+        return 'Hyperbolic plane in the {}'.format(self._name)
 
     def _element_constructor_(self, x, is_boundary=None, **graphics_options):  # Abstract
         """
@@ -260,7 +259,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
     def point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
-        model, do nothing.  Otherwise, raise a ``ValueError``.
+        model, do nothing.  Otherwise, raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -298,7 +297,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
     def bdry_point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
-        model, do nothing; otherwise raise a ``ValueError``.
+        model, do nothing; otherwise raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -340,7 +339,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         Test whether an isometry ``A`` is in the model.
 
         If the isometry is in the model, do nothing. Otherwise, raise
-        a ``ValueError``.
+        a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -1173,7 +1172,7 @@ class HyperbolicModelPD(HyperbolicModel):
         # name should really be 'Poincaré Disk Model', but utf8 is not
         # accepted by repr
         HyperbolicModel.__init__(self, space,
-                                 name=u'Poincare Disk Model', short_name="PD",
+                                 name='Poincare Disk Model', short_name="PD",
                                  bounded=True, conformal=True, dimension=2,
                                  isometry_group="PU(1, 1)",
                                  isometry_group_is_projective=True)

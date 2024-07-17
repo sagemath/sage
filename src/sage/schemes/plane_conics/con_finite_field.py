@@ -1,11 +1,10 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Projective plane conics over finite fields
 
 AUTHORS:
 
 - Marco Streng (2010-07-20)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>

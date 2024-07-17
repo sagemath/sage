@@ -1,10 +1,16 @@
 # NOT ready to be used -- possibly should be deleted.
 
-from .power_series_ring_element cimport PowerSeries
+from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element
-from .infinity import infinity
-from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-from . import power_series_poly
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+from sage.rings import power_series_poly
+
+
+try:
+    from sage.libs.pari.all import PariError
+except ImportError:
+    PariError = ()
 
 
 cdef class PowerSeries_mpoly(PowerSeries):
@@ -65,7 +71,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
 
     def __reduce__(self):
         # do *not* delete old versions.
-        return make_powerseries_mpoly_v0, (self._parent, self.__f, self._prec, self.__is_gen)
+        return make_powerseries_mpoly_v0, (self._parent, self.__f, self._prec, self._is_gen)
 
     def __call__(self, *args, **kwds):
         if len(kwds) == 0 and len(args) == 1:
@@ -92,10 +98,10 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return self.__list
 
     def polynomial(self):
-        if self.__poly is None:
+        if self._poly is None:
             S = self.parent()._mpoly_ring()
-            self.__poly = self.__f.polynomial(S.gens()[-1])
-        return self.__poly
+            self._poly = self.__f.polynomial(S.gens()[-1])
+        return self._poly
 
     def _mpoly(self):
         return self.__f

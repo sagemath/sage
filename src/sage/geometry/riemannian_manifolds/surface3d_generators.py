@@ -4,7 +4,6 @@ Common parametrized surfaces in 3D.
 AUTHORS::
 
 - Joris Vankerschaver (2012-06-16)
-
 """
 #*****************************************************************************
 #       Copyright (C) 2010  Joris Vankerschaver <joris.vankerschaver@gmail.com>
@@ -23,7 +22,7 @@ from sage.geometry.riemannian_manifolds.parametrized_surface3d import \
     ParametrizedSurface3D
 
 
-class SurfaceGenerators():
+class SurfaceGenerators:
     """
     A class consisting of generators for several common parametrized surfaces
     in 3D.
@@ -53,7 +52,7 @@ class SurfaceGenerators():
 
             sage: cat = surfaces.Catenoid(); cat
             Parametrized surface ('Catenoid') with equation (cos(u)*cosh(v), cosh(v)*sin(u), v)
-            sage: cat.plot()  # optional - sage.plot
+            sage: cat.plot()                                                            # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')
@@ -86,7 +85,7 @@ class SurfaceGenerators():
 
             sage: crosscap = surfaces.Crosscap(); crosscap
             Parametrized surface ('Crosscap') with equation ((cos(v) + 1)*cos(u), (cos(v) + 1)*sin(u), -sin(v)*tanh(-pi + u))
-            sage: crosscap.plot()  # optional - sage.plot
+            sage: crosscap.plot()                                                       # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')
@@ -110,7 +109,7 @@ class SurfaceGenerators():
 
         INPUT:
 
-        - ``a, b`` -- surface parameters.
+        - ``a``, ``b`` -- surface parameters.
 
         - ``name`` -- string. Name of the surface.
 
@@ -120,7 +119,7 @@ class SurfaceGenerators():
 
             sage: dini = surfaces.Dini(a=3, b=4); dini
             Parametrized surface ('Dini's surface') with equation (3*cos(u)*sin(v), 3*sin(u)*sin(v), 4*u + 3*cos(v) + 3*log(tan(1/2*v)))
-            sage: dini.plot()  # optional - sage.plot
+            sage: dini.plot()                                                           # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')
@@ -158,7 +157,7 @@ class SurfaceGenerators():
 
             sage: ell = surfaces.Ellipsoid(axes=(1, 2, 3)); ell
             Parametrized surface ('Ellipsoid') with equation (cos(u)*cos(v), 2*cos(v)*sin(u), 3*sin(v))
-            sage: ell.plot()  # optional - sage.plot
+            sage: ell.plot()                                                            # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')
@@ -193,7 +192,7 @@ class SurfaceGenerators():
 
             sage: enn = surfaces.Enneper(); enn
             Parametrized surface ('Enneper's surface') with equation (-1/9*(u^2 - 3*v^2 - 3)*u, -1/9*(3*u^2 - v^2 + 3)*v, 1/3*u^2 - 1/3*v^2)
-            sage: enn.plot()  # optional - sage.plot
+            sage: enn.plot()                                                            # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')
@@ -227,7 +226,7 @@ class SurfaceGenerators():
 
             sage: helicoid = surfaces.Helicoid(h=2); helicoid
             Parametrized surface ('Helicoid') with equation (rho*cos(theta), rho*sin(theta), theta/pi)
-            sage: helicoid.plot()  # optional - sage.plot
+            sage: helicoid.plot()                                                       # needs sage.plot
             Graphics3d Object
         """
         rho, theta = var('rho, theta')
@@ -260,7 +259,7 @@ class SurfaceGenerators():
 
             sage: klein = surfaces.Klein(); klein
             Parametrized surface ('Klein bottle') with equation (-(sin(1/2*u)*sin(2*v) - cos(1/2*u)*sin(v) - 1)*cos(u), -(sin(1/2*u)*sin(2*v) - cos(1/2*u)*sin(v) - 1)*sin(u), cos(1/2*u)*sin(2*v) + sin(1/2*u)*sin(v))
-            sage: klein.plot()  # optional - sage.plot
+            sage: klein.plot()                                                          # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')
@@ -291,7 +290,7 @@ class SurfaceGenerators():
 
             sage: saddle = surfaces.MonkeySaddle(); saddle
             Parametrized surface ('Monkey saddle') with equation (u, v, u^3 - 3*u*v^2)
-            sage: saddle.plot()  # optional - sage.plot
+            sage: saddle.plot()                                                         # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')
@@ -316,7 +315,7 @@ class SurfaceGenerators():
 
         - ``a``, ``b``, ``c`` -- Surface parameters.
 
-        - ``elliptic`` (default: True) -- whether to create an elliptic or
+        - ``elliptic`` (default: ``True``) -- whether to create an elliptic or
           hyperbolic paraboloid.
 
         - ``name`` -- string. Name of the surface.
@@ -327,12 +326,12 @@ class SurfaceGenerators():
 
             sage: epar = surfaces.Paraboloid(1, 3, 2); epar
             Parametrized surface ('Elliptic paraboloid') with equation (u, v, 2*u^2 + 2/9*v^2)
-            sage: epar.plot()  # optional - sage.plot
+            sage: epar.plot()                                                           # needs sage.plot
             Graphics3d Object
 
             sage: hpar = surfaces.Paraboloid(2, 3, 1, elliptic=False); hpar
             Parametrized surface ('Hyperbolic paraboloid') with equation (u, v, -1/4*u^2 + 1/9*v^2)
-            sage: hpar.plot()  # optional - sage.plot
+            sage: hpar.plot()                                                           # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')
@@ -372,7 +371,7 @@ class SurfaceGenerators():
 
             sage: sphere = surfaces.Sphere(center=(0, 1, -1), R=2); sphere
             Parametrized surface ('Sphere') with equation (2*cos(u)*cos(v), 2*cos(v)*sin(u) + 1, 2*sin(v) - 1)
-            sage: sphere.plot()  # optional - sage.plot
+            sage: sphere.plot()                                                         # needs sage.plot
             Graphics3d Object
 
         Note that the radius of the sphere can be negative. The surface thus
@@ -382,14 +381,14 @@ class SurfaceGenerators():
 
             sage: octant1 = surfaces.Sphere(R=1); octant1
             Parametrized surface ('Sphere') with equation (cos(u)*cos(v), cos(v)*sin(u), sin(v))
-            sage: octant1.plot((0, pi/2), (0, pi/2))  # optional - sage.plot
+            sage: octant1.plot((0, pi/2), (0, pi/2))                                    # needs sage.plot
             Graphics3d Object
 
         with the first octant of the unit sphere with negative radius::
 
             sage: octant2 = surfaces.Sphere(R=-1); octant2
             Parametrized surface ('Sphere') with equation (-cos(u)*cos(v), -cos(v)*sin(u), -sin(v))
-            sage: octant2.plot((0, pi/2), (0, pi/2))  # optional - sage.plot
+            sage: octant2.plot((0, pi/2), (0, pi/2))                                    # needs sage.plot
             Graphics3d Object
         """
         return SurfaceGenerators.Ellipsoid(center, (R, R, R), name)
@@ -421,7 +420,7 @@ class SurfaceGenerators():
 
             sage: torus = surfaces.Torus(); torus
             Parametrized surface ('Torus') with equation ((2*cos(v) + 3)*cos(u), (2*cos(v) + 3)*sin(u), 2*sin(v))
-            sage: torus.plot()  # optional - sage.plot
+            sage: torus.plot()                                                          # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')
@@ -448,7 +447,7 @@ class SurfaceGenerators():
 
             sage: whitney = surfaces.WhitneyUmbrella(); whitney
             Parametrized surface ('Whitney's umbrella') with equation (u*v, u, v^2)
-            sage: whitney.plot()  # optional - sage.plot
+            sage: whitney.plot()                                                        # needs sage.plot
             Graphics3d Object
         """
         u, v = var('u, v')

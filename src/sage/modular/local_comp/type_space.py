@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Type spaces of newforms
 
@@ -11,7 +12,6 @@ space* of `f` is the span of the modular eigensymbols corresponding to all of
 these twists, which lie in a space of modular symbols for a suitable `\Gamma_H`
 subgroup. This space is the key to computing the isomorphism class of the local
 component of the newform at `p`.
-
 """
 
 import operator
@@ -370,7 +370,7 @@ class TypeSpace(SageObject):
             sage: TypeSpace(g, 7).is_minimal()
             True
 
-        Test that :trac:`13158` is fixed::
+        Test that :issue:`13158` is fixed::
 
             sage: f = Newforms(256,names='a')[0]
             sage: T = TypeSpace(f,2)                            # long time

@@ -131,7 +131,7 @@ y anillos de matrices. Veamos algunos de estos anillos::
     sage: GF(3)
     Finite Field of size 3
     sage:                 # es necesario dar un nombre al generador si el número
-    sage: GF(27, 'a')     # de elementos no es primo 
+    sage: GF(27, 'a')     # de elementos no es primo
     Finite Field in a of size 3^3
     sage: Zp(5)
     5-adic Ring with capped relative precision 20

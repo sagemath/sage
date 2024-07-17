@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Installing the SageMath Jupyter Kernel and Extensions
 
@@ -11,17 +12,17 @@ in the Jupyter notebook's kernel drop-down. This is done by
     directories might be different during runs of the tests and actual
     installation and because we might be lacking write permission to places
     such as ``/usr/share``.
-
 """
 
-import os
 import errno
+import os
 import warnings
 
 from sage.env import (
-    SAGE_DOC, SAGE_VENV, SAGE_EXTCODE,
+    SAGE_DOC,
+    SAGE_EXTCODE,
+    SAGE_VENV,
     SAGE_VERSION,
-    THREEJS_DIR,
 )
 
 
@@ -33,7 +34,7 @@ class SageKernelSpec():
 
         INPUT:
 
-        - ``prefix`` -- (optional, default: ``sys.prefix``)
+        - ``prefix`` -- (default: ``sys.prefix``)
           directory for the installation prefix
 
         EXAMPLES::
@@ -121,6 +122,7 @@ class SageKernelSpec():
 
         EXAMPLES::
 
+            sage: # needs threejs
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.use_local_threejs()
@@ -128,7 +130,10 @@ class SageKernelSpec():
             sage: os.path.isdir(threejs)
             True
         """
-        src = THREEJS_DIR
+        from sage.features.threejs import Threejs
+        if not Threejs().is_present():
+            return
+        src = os.path.dirname(os.path.dirname(Threejs().absolute_filename()))
         dst = os.path.join(self.nbextensions_dir, 'threejs-sage')
         self.symlink(src, dst)
 
@@ -257,20 +262,20 @@ class SageKernelSpec():
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: SageKernelSpec.check()  # random
         """
-        from jupyter_client.kernelspec import get_kernel_spec, NoSuchKernel
+        from jupyter_client.kernelspec import NoSuchKernel, get_kernel_spec
         ident = cls.identifier()
         try:
             spec = get_kernel_spec(ident)
         except NoSuchKernel:
             warnings.warn(f'no kernel named {ident} is accessible; '
-                           'check your Jupyter configuration '
-                           '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
+                          'check your Jupyter configuration '
+                          '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
         else:
             from pathlib import Path
             if Path(spec.argv[0]).resolve() != Path(os.path.join(SAGE_VENV, 'bin', 'sage')).resolve():
                 warnings.warn(f'the kernel named {ident} does not seem to correspond to this '
-                               'installation of SageMath; check your Jupyter configuration '
-                               '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
+                              'installation of SageMath; check your Jupyter configuration '
+                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
 
 
 def have_prerequisites(debug=True):
@@ -278,12 +283,12 @@ def have_prerequisites(debug=True):
     Check that we have all prerequisites to run the Jupyter notebook.
 
     In particular, the Jupyter notebook requires OpenSSL whether or
-    not you are using https. See :trac:`17318`.
+    not you are using https. See :issue:`17318`.
 
     INPUT:
 
-    ``debug`` -- boolean (default: ``True``). Whether to print debug
-    information in case that prerequisites are missing.
+    - ``debug`` -- boolean (default: ``True``). Whether to print debug
+      information in case that prerequisites are missing.
 
     OUTPUT:
 

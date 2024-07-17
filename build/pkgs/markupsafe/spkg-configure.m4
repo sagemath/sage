@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([markupsafe], [SAGE_PYTHON_PACKAGE_CHECK([markupsafe])])

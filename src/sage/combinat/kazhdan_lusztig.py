@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Kazhdan-Lusztig Polynomials
 
@@ -6,7 +7,6 @@ AUTHORS:
 - Daniel Bump (2008): initial version
 
 - Alan J.X. Guo (2014-03-18): ``R_tilde()`` method.
-
 """
 
 #*****************************************************************************

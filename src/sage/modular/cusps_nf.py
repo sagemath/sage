@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 The set `\mathbb{P}^1(K)` of cusps of a number field `K`
 
@@ -62,7 +63,7 @@ List representatives for Gamma_0(N) - equivalence classes of cusps::
 
     sage: Gamma0_NFCusps(N)
     [Cusp [0: 1] of Number Field in a with defining polynomial x^2 + 5,
-    Cusp [1: 3] of Number Field in a with defining polynomial x^2 + 5,
+     Cusp [1: 3] of Number Field in a with defining polynomial x^2 + 5,
     ...]
 """
 # ****************************************************************************
@@ -73,7 +74,7 @@ List representatives for Gamma_0(N) - equivalence classes of cusps::
 # ****************************************************************************
 
 from sage.structure.parent import Parent
-from sage.structure.element import Element, is_InfinityElement
+from sage.structure.element import Element, InfinityElement
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -460,7 +461,7 @@ class NFCusp(Element):
             elif a in number_field:
                 self.__b = R(a.denominator())
                 self.__a = R(a * self.__b)
-            elif is_InfinityElement(a):
+            elif isinstance(a, InfinityElement):
                 self.__a = R.one()
                 self.__b = R.zero()
             elif isinstance(a, int):
@@ -501,8 +502,8 @@ class NFCusp(Element):
                     raise TypeError("unable to convert %r to a cusp "
                                     "of the number field" % a)
         else:  # 'b' is given
-            if is_InfinityElement(b):
-                if is_InfinityElement(a) or (isinstance(a, NFCusp) and a.is_infinity()):
+            if isinstance(b, InfinityElement):
+                if isinstance(a, InfinityElement) or (isinstance(a, NFCusp) and a.is_infinity()):
                     raise TypeError("unable to convert (%r, %r) "
                                     "to a cusp of the number field" % (a, b))
                 self.__a = R.zero()
@@ -525,7 +526,7 @@ class NFCusp(Element):
             else:
                 if a in R or a in number_field:
                     r = a / b
-                elif is_InfinityElement(a):
+                elif isinstance(a, InfinityElement):
                     self.__a = R.one()
                     self.__b = R.zero()
                     return
@@ -859,7 +860,7 @@ class NFCusp(Element):
             sage: M = alpha.ABmatrix()
             sage: M # random
             [-a^2 - a - 1, -3*a - 7, 8, -2*a^2 - 3*a + 4]
-            sage: M[0] == alpha.numerator() and M[2]==alpha.denominator()
+            sage: M[0] == alpha.numerator() and M[2] == alpha.denominator()
             True
 
         An AB-matrix associated to a cusp alpha will send Infinity to alpha:
@@ -870,7 +871,7 @@ class NFCusp(Element):
             sage: M = alpha.ABmatrix()
             sage: (k.ideal(M[1], M[3])*alpha.ideal()).is_principal()
             True
-            sage: M[0] == alpha.numerator() and M[2]==alpha.denominator()
+            sage: M[0] == alpha.numerator() and M[2] == alpha.denominator()
             True
             sage: NFCusp(k, oo).apply(M) == alpha
             True
@@ -943,7 +944,7 @@ class NFCusp(Element):
 
         ::
 
-            sage: k.<a> = NumberField(x^2+23)
+            sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3)
             sage: alpha1 = NFCusp(k, a+1, 4)
             sage: alpha2 = NFCusp(k, a-8, 29)
@@ -1187,7 +1188,7 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
 
     ::
 
-        sage: k.<a> = NumberField(x^4 - x^3 -21*x^2 + 17*x + 133)
+        sage: k.<a> = NumberField(x^4 - x^3 - 21*x^2 + 17*x + 133)
         sage: N = k.ideal(6)
         sage: from sage.modular.cusps_nf import NFCusps_ideal_reps_for_levelN
         sage: NFCusps_ideal_reps_for_levelN(N)
@@ -1201,14 +1202,12 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
     """
     k = N.number_field()
     G = k.class_group()
-    L = []
-    for i in range(nlists):
-        L.append([k.ideal(1)])
+    L = [[k.ideal(1)] for _ in range(nlists)]
     it = k.primes_of_degree_one_iter()
     for I in G.list():
         check = 0
         if not I.is_principal():
-            Iinv = (I.ideal())**(-1)
+            Iinv = I.ideal()**(-1)
             while check < nlists:
                 J = next(it)
                 if (J * Iinv).is_principal() and J.is_coprime(N):
@@ -1249,7 +1248,8 @@ def units_mod_ideal(I):
         sage: from sage.modular.cusps_nf import units_mod_ideal
         sage: k.<a> = NumberField(x^3 + 11)
         sage: k.unit_group()
-        Unit group with structure C2 x Z of Number Field in a with defining polynomial x^3 + 11
+        Unit group with structure C2 x Z of
+         Number Field in a with defining polynomial x^3 + 11
         sage: I = k.ideal(5, a + 1)
         sage: units_mod_ideal(I)
         [1,
@@ -1261,7 +1261,8 @@ def units_mod_ideal(I):
         sage: from sage.modular.cusps_nf import units_mod_ideal
         sage: k.<a> = NumberField(x^4 - x^3 -21*x^2 + 17*x + 133)
         sage: k.unit_group()
-        Unit group with structure C6 x Z of Number Field in a with defining polynomial x^4 - x^3 - 21*x^2 + 17*x + 133
+        Unit group with structure C6 x Z of
+         Number Field in a with defining polynomial x^4 - x^3 - 21*x^2 + 17*x + 133
         sage: I = k.ideal(3)
         sage: U = units_mod_ideal(I)
         sage: all(U[j].is_unit() and (U[j] not in I) for j in range(len(U)))

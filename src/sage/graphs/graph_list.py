@@ -258,17 +258,17 @@ def to_graphics_array(graph_list, **kwds):
         sage: glist = []
         sage: for i in range(999):
         ....:     glist.append(graphs.RandomGNP(6, .45))
-        sage: garray = graphs_list.to_graphics_array(glist)                             # optional - sage.plot
-        sage: garray.nrows(), garray.ncols()                                            # optional - sage.plot
+        sage: garray = graphs_list.to_graphics_array(glist)                             # needs sage.plot
+        sage: garray.nrows(), garray.ncols()                                            # needs sage.plot
         (250, 4)
 
     See the .plot() or .show() documentation for an individual graph for
     options, all of which are available from :func:`to_graphics_array`::
 
         sage: glist = []
-        sage: for _ in range(10):                                                       # optional - networkx
+        sage: for _ in range(10):                                                       # needs networkx
         ....:     glist.append(graphs.RandomLobster(41, .3, .4))
-        sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)     # optional - networkx sage.plot
+        sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)     # needs networkx sage.plot
         Graphics Array of size 3 x 4
     """
     from sage.graphs import graph
@@ -342,7 +342,7 @@ def show_graphs(graph_list, **kwds):
 
     Show the graphs in a graphics array::
 
-        sage: graphs_list.show_graphs(glist)                                            # optional - sage.plot
+        sage: graphs_list.show_graphs(glist)                                            # needs sage.plot
 
     Example where more than one graphics array is used::
 
@@ -350,15 +350,15 @@ def show_graphs(graph_list, **kwds):
         sage: g = gq.get_graphs_list()
         sage: len(g)
         34
-        sage: graphs_list.show_graphs(g)                                                # optional - sage.plot
+        sage: graphs_list.show_graphs(g)                                                # needs sage.plot
 
     See the .plot() or .show() documentation for an individual graph for
     options, all of which are available from :func:`to_graphics_array`::
 
         sage: glist = []
-        sage: for _ in range(10):
+        sage: for _ in range(10):                                                       # needs networkx
         ....:     glist.append(graphs.RandomLobster(41, .3, .4))
-        sage: graphs_list.show_graphs(glist, layout='spring', vertex_size=20)           # optional - sage.plot
+        sage: graphs_list.show_graphs(glist, layout='spring', vertex_size=20)           # needs sage.plot
     """
     graph_list = list(graph_list)
     for i in range(len(graph_list) // 20 + 1):

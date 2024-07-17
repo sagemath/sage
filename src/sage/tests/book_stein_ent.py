@@ -1,9 +1,9 @@
+# sage.doctest: needs sage.libs.pari
 """
 This file contains all the example code from the published book
 'Elementary Number Theory: Primes, Congruences, and Secrets' by
 William Stein, Springer-Verlag, 2009.
 """
-
 
 """
 sage: prime_range(10,50)
@@ -21,10 +21,10 @@ sage: factor(2007)
 sage: factor(31415926535898)
 2 * 3 * 53 * 73 * 2531 * 534697
 sage: n = 7403756347956171282804679609742957314259318888\
-...9231289084936232638972765034028266276891996419625117\
-...8439958943305021275853701189680982867331732731089309\
-...0055250511687706329907239638078671008609696253793465\
-...0563796359
+....: 9231289084936232638972765034028266276891996419625117\
+....: 8439958943305021275853701189680982867331732731089309\
+....: 0055250511687706329907239638078671008609696253793465\
+....: 0563796359
 sage: len(n.str(2))
 704
 sage: len(n.str(10))
@@ -32,7 +32,7 @@ sage: len(n.str(10))
 sage: n.is_prime()              # this is instant
 False
 sage: p = 2^32582657 - 1
-sage: p.ndigits()
+sage: p.ndigits()                                                                       # needs sage.rings.real_interval_field
 9808358
 sage: s = p.str(10) # this takes a long time
 sage: len(s)        # s is a very long string  (long time)
@@ -41,18 +41,23 @@ sage: s[:20]        # the first 20 digits of p (long time)
 '12457502601536945540'
 sage: s[-20:]       # the last 20 digits       (long time)
 '11752880154053967871'
+
+sage: # needs sage.symbolic
 sage: prime_pi(6)
 3
 sage: prime_pi(100)
 25
 sage: prime_pi(3000000)
 216816
+
+sage: # needs sage.plot sage.symbolic
 sage: plot(prime_pi, 1,1000, rgbcolor=(0,0,1))
 Graphics object consisting of 1 graphics primitive
 sage: P = plot(Li, 2,10000, rgbcolor='purple')
 sage: Q = plot(prime_pi, 2,10000, rgbcolor='black')
-sage: R = plot(sqrt(x)*log(x),2,10000,rgbcolor='red')
-sage: show(P+Q+R,xmin=0, figsize=[8,3])
+sage: R = plot(sqrt(x)*log(x), 2,10000, rgbcolor='red')
+sage: show(P + Q + R, xmin=0, figsize=[8,3])
+
 sage: R = Integers(3)
 sage: list(R)
 [0, 1, 2]
@@ -157,15 +162,15 @@ sage: log(3.0)
 1.09861228866811
 sage: log(19683.0) / log(3.0)
 9.00000000000000
-sage: plot(log, 0.1,10, rgbcolor=(0,0,1))
+sage: plot(log, 0.1, 10, rgbcolor=(0,0,1))                                              # needs sage.plot
 Graphics object consisting of 1 graphics primitive
 sage: p = 53
 sage: R = Integers(p)
 sage: a = R.multiplicative_generator()
 sage: v = sorted([(a^n, n) for n in range(p-1)])
-sage: G = plot(point(v,pointsize=50,rgbcolor=(0,0,1)))
-sage: H = plot(line(v,rgbcolor=(0.5,0.5,0.5)))
-sage: G + H
+sage: G = plot(point(v,pointsize=50,rgbcolor=(0,0,1)))                                  # needs sage.plot
+sage: H = plot(line(v,rgbcolor=(0.5,0.5,0.5)))                                          # needs sage.plot
+sage: G + H                                                                             # needs sage.plot
 Graphics object consisting of 2 graphics primitives
 sage: q = 93450983094850938450983409623
 sage: q.is_prime()
@@ -193,7 +198,7 @@ sage: def rsa(bits):
 ....:                        proof=proof)
 ....:         q = next_prime(ZZ.random_element(2**(bits//2 +1)),
 ....:                        proof=proof)
-....:         if (p != q): break
+....:         if (p != q and p > 2 and q > 2): break
 ....:     n = p * q
 ....:     phi_n = (p-1) * (q-1)
 ....:     while True:
@@ -277,7 +282,7 @@ sage: factor(n)
 sage: e = 22601762315966221465875845336488389513
 sage: d = 31940292321834506197902778067109010093
 sage: n = 268494924039590992469444675130990465673
-sage: p = crack_given_decrypt(n, e*d - 1)  # not tested, known bug (see :trac:`32097`)
+sage: p = crack_given_decrypt(n, e*d - 1)  # not tested, known bug (see :issue:`32097`)
 sage: p   # random output (could be other prime divisor)  # not tested
 13432418150982799907
 sage: n % p  # not tested
@@ -421,11 +426,14 @@ sage: [c.q(n) for n in range(len(c))]
 [1, 2, 7, 30, 157]
 sage: c = continued_fraction([1,1,1,1,1,1,1,1])
 sage: v = [(i, c.p(i)/c.q(i)) for i in range(len(c))]
+
+sage: # needs sage.plot
 sage: P = point(v, rgbcolor=(0,0,1), pointsize=40)
 sage: L = line(v, rgbcolor=(0.5,0.5,0.5))
-sage: L2 = line([(0,c.value()),(len(c)-1,c.value())], \
-....:    thickness=0.5, rgbcolor=(0.7,0,0))
-sage: (L+L2+P).show(xmin=0,ymin=1)
+sage: L2 = line([(0,c.value()), (len(c)-1,c.value())],
+....:           thickness=0.5, rgbcolor=(0.7,0,0))
+sage: (L + L2 + P).show(xmin=0, ymin=1)
+
 sage: def cf(bits):
 ....:     x = (1 + sqrt(RealField(bits)(5))) / 2
 ....:     return continued_fraction(x)
@@ -497,13 +505,13 @@ sage: E = EllipticCurve([-5, 4])
 sage: E
 Elliptic Curve defined by y^2  = x^3 - 5*x + 4
 over Rational Field
-sage: P = E.plot(thickness=4,rgbcolor=(0.1,0.7,0.1))
-sage: P.show(figsize=[4,6])
+sage: P = E.plot(thickness=4,rgbcolor=(0.1,0.7,0.1))                                    # needs sage.plot
+sage: P.show(figsize=[4,6])                                                             # needs sage.plot
 sage: E = EllipticCurve(GF(37), [1,0])
 sage: E
 Elliptic Curve defined by y^2  = x^3 + x over
 Finite Field of size 37
-sage: E.plot(pointsize=45)
+sage: E.plot(pointsize=45)                                                              # needs sage.plot
 Graphics object consisting of 1 graphics primitive
 sage: E = EllipticCurve([-5,4])
 sage: P = E([1,0]); Q = E([0,2])

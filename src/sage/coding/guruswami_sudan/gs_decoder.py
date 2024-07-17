@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings sage.symbolic
 r"""
 Guruswami-Sudan decoder for (Generalized) Reed-Solomon codes
 
@@ -25,6 +25,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.arith.misc import integer_floor as floor
 from sage.coding.grs_code import GeneralizedReedSolomonCode
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
@@ -344,8 +345,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
           - ``tau`` is the obtained decoding radius, and
 
-          - ``s, ell`` are the multiplicity parameter, respectively list size
-            parameter giving this radius.
+          - ``(s, l)`` are the multiplicity parameter and the list size
+            parameter giving the radius
 
         EXAMPLES::
 
@@ -371,7 +372,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         def get_tau(s,l):
             "Return the decoding radius given this s and l"
-            if s<=0 or l<=0:
+            if s <= 0 or l <= 0:
                 return -1
             return gilt(n - n/2*(s+1)/(l+1) - (k-1)/2*l/s)
         if l is None and s is None:
@@ -482,7 +483,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         atau = n - tau
         smin = tau * w / (atau ** 2 - n * w)
         s = floor(1 + smin)
-        D = (s - smin) * (atau ** 2 - n * w) * s + (w**2) /4
+        D = (s - smin) * (atau ** 2 - n * w) * s + (w**2) / 4
         l = floor(atau / w * s + 0.5 - sqrt(D)/w)
         return (s, l)
 
@@ -754,7 +755,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def decode_to_message(self, r):
         r"""
-        Decodes ``r`` to the list of polynomials whose encoding by
+        Decode ``r`` to the list of polynomials whose encoding by
         :meth:`self.code()` is within Hamming distance
         :meth:`self.decoding_radius` of ``r``.
 
@@ -795,7 +796,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             Traceback (most recent call last):
             ...
             ValueError: The provided root-finding algorithm has a wrong signature.
-            See the documentation of `GSD.rootfinding_algorithm()` for details
+            See the documentation of `...rootfinding_algorithm()` for details
         """
         return [self.connected_encoder().unencode(c) for c in self.decode_to_code(r)]
 
@@ -827,7 +828,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         TESTS:
 
-        Check that :trac:`21347` is fixed::
+        Check that :issue:`21347` is fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(13).list()[:10], 3)
             sage: D = GSD(C, tau=4)

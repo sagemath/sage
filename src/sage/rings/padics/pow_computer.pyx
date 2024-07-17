@@ -35,7 +35,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 import weakref
@@ -65,7 +65,7 @@ cdef class PowComputer_class(SageObject):
         sig_on()
         mpz_init(self.temp_m)
         sig_off()
-        self.__allocated = 1
+        self._allocated = 1
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
@@ -153,7 +153,7 @@ cdef class PowComputer_class(SageObject):
         EXAMPLES::
 
             sage: PC = PowComputer(3, 5, 10)
-            sage: PC.pow_Integer_Integer(2) #indirect doctest
+            sage: PC.pow_Integer_Integer(2)  # indirect doctest
             9
         """
         cdef Integer ans = PY_NEW(Integer)
@@ -175,6 +175,8 @@ cdef class PowComputer_class(SageObject):
             1
             sage: PC.pow_Integer_Integer(10)
             59049
+
+            sage: # needs sage.libs.ntl
             sage: PC = PowComputer_ext_maker(3, 5, 10, 20, False, ntl.ZZ_pX([-3,0,1], 3^10), 'big','e',ntl.ZZ_pX([1],3^10))
             sage: PC.pow_Integer_Integer(4)
             81
@@ -186,7 +188,6 @@ cdef class PowComputer_class(SageObject):
             59049
         """
         cdef Integer _n = Integer(n)
-        cdef Integer ans
         if _n < 0:
             if mpz_fits_ulong_p((<Integer>-_n).value) == 0:
                 raise ValueError("result too big")
@@ -210,7 +211,7 @@ cdef class PowComputer_class(SageObject):
 
         See pow_mpz_t_tmp_demo for an example of this phenomenon.
         """
-        ## READ THE DOCSTRING
+        # READ THE DOCSTRING
         raise NotImplementedError
 
     def _pow_mpz_t_tmp_demo(self, m, n):
@@ -227,7 +228,7 @@ cdef class PowComputer_class(SageObject):
         to that mpz_t.  So if you try to use the results of two
         calls at once, things will break. ::
 
-            sage: PC._pow_mpz_t_tmp_demo(6, 8) # 244140625 on some architectures and 152587890625 on others: random
+            sage: PC._pow_mpz_t_tmp_demo(6, 8)  # 244140625 on some architectures and 152587890625 on others: random
             244140625
             sage: 5^6*5^8
             6103515625
@@ -266,6 +267,8 @@ cdef class PowComputer_class(SageObject):
             1
             sage: PC._pow_mpz_t_tmp_test(10)
             59049
+
+            sage: # needs sage.libs.ntl
             sage: PC = PowComputer_ext_maker(3, 5, 10, 20, False, ntl.ZZ_pX([-3,0,1], 3^10), 'big','e',ntl.ZZ_pX([1],3^10))
             sage: PC._pow_mpz_t_tmp_test(4)
             81
@@ -281,14 +284,14 @@ cdef class PowComputer_class(SageObject):
         mpz_set(ans.value, self.pow_mpz_t_tmp(mpz_get_si(_n.value)))
         return ans
 
-    cdef mpz_srcptr pow_mpz_t_top(self):
+    cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
         Returns a pointer to self.prime^self.prec_cap as an ``mpz_srcptr``.
 
         EXAMPLES::
 
             sage: PC = PowComputer(3, 5, 10)
-            sage: PC._pow_mpz_t_top_test() #indirect doctest
+            sage: PC._pow_mpz_t_top_test()  # indirect doctest
             59049
         """
         raise NotImplementedError
@@ -302,6 +305,8 @@ cdef class PowComputer_class(SageObject):
             sage: PC = PowComputer(3, 5, 10)
             sage: PC._pow_mpz_t_top_test()
             59049
+
+            sage: # needs sage.libs.ntl
             sage: PC = PowComputer_ext_maker(3, 5, 10, 20, False, ntl.ZZ_pX([-3,0,1], 3^10), 'big','e',ntl.ZZ_pX([1],3^10))
             sage: PC._pow_mpz_t_top_test()
             59049
@@ -319,7 +324,7 @@ cdef class PowComputer_class(SageObject):
             sage: PC = PowComputer(3, 5, 10); PC
             PowComputer for 3
         """
-        return "PowComputer for %s"%(self.prime)
+        return "PowComputer for %s" % (self.prime)
 
     def _prime(self):
         """
@@ -411,8 +416,7 @@ cdef class PowComputer_class(SageObject):
             sage: P(-2)
             1/9
         """
-        cdef Integer z, _n
-        cdef mpz_t tmp
+        cdef Integer _n
         if n is infinity:
             return Integer(0)
         if not isinstance(n, Integer):
@@ -425,6 +429,7 @@ cdef class PowComputer_class(SageObject):
             return ~self.pow_Integer(-mpz_get_si(_n.value))
         else:
             return self.pow_Integer(mpz_get_ui(_n.value))
+
 
 cdef class PowComputer_base(PowComputer_class):
     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
@@ -485,7 +490,7 @@ cdef class PowComputer_base(PowComputer_class):
         finally:
             sig_off()
 
-        self.__allocated = 2
+        self._allocated = 2
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
@@ -496,12 +501,10 @@ cdef class PowComputer_base(PowComputer_class):
             sage: PC = PowComputer(5, 7, 10)
             sage: PC(3)
             125
-
         """
         PowComputer_class.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed)
 
         cdef Py_ssize_t i
-        cdef Integer x
 
         mpz_set_ui(self.small_powers[0], 1)
         if cache_limit > 0:
@@ -529,7 +532,7 @@ cdef class PowComputer_base(PowComputer_class):
         """
         cdef Py_ssize_t i
 
-        if self.__allocated >= 2:
+        if self._allocated >= 2:
             for i in range(self.cache_limit + 1):
                 mpz_clear(self.small_powers[i])
             mpz_clear(self.top_power)
@@ -553,14 +556,14 @@ cdef class PowComputer_base(PowComputer_class):
         """
         return PowComputer, (self.prime, self.cache_limit, self.prec_cap, self.in_field)
 
-    cdef mpz_srcptr pow_mpz_t_top(self):
+    cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
         Returns a pointer to self.prime^self.prec_cap as an ``mpz_srcptr``.
 
         EXAMPLES::
 
             sage: PC = PowComputer(3, 5, 10)
-            sage: PC._pow_mpz_t_top_test() #indirect doctest
+            sage: PC._pow_mpz_t_top_test()  # indirect doctest
             59049
         """
         return self.top_power
@@ -604,7 +607,7 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
 
     EXAMPLES::
 
-        sage: PC = PowComputer(3, 5, 10) # indirect doctest
+        sage: PC = PowComputer(3, 5, 10)  # indirect doctest
         sage: PC(4)
         81
     """
@@ -621,18 +624,19 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
         if PC is not None:
             return PC
     if prec_type == 'capped-rel':
-        from .padic_capped_relative_element import PowComputer_ as PC_class
+        from sage.rings.padics.padic_capped_relative_element import PowComputer_ as PC_class
     elif prec_type == 'capped-abs':
-        from .padic_capped_absolute_element import PowComputer_ as PC_class
+        from sage.rings.padics.padic_capped_absolute_element import PowComputer_ as PC_class
     elif prec_type == 'fixed-mod':
-        from .padic_fixed_mod_element import PowComputer_ as PC_class
+        from sage.rings.padics.padic_fixed_mod_element import PowComputer_ as PC_class
     elif prec_type == 'floating-point':
-        from .padic_floating_point_element import PowComputer_ as PC_class
+        from sage.rings.padics.padic_floating_point_element import PowComputer_ as PC_class
     else:
         PC_class = PowComputer_base
     PC = PC_class(m, mpz_get_ui(cache_limit.value), mpz_get_ui(prec_cap.value), mpz_get_ui(prec_cap.value), in_field)
     pow_comp_cache[key] = weakref.ref(PC)
     return PC
+
 
 # To speed up the creation of PowComputers with the same m, we might eventually want to copy over data from an existing PowComputer.
 

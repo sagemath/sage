@@ -6,7 +6,6 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 - Nick Alexander (2008-01-08)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
@@ -115,6 +114,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: C = Conic(QQ, [1, 2, -3])
             sage: C.has_rational_point(point=True)
             (True, (1 : 1 : 1))
@@ -131,7 +131,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         ``algorithm = 'rnfisnorm'`` ::
 
             sage: C = Conic(QQ, [1, 113922743, -310146482690273725409])
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.pari
             (True, (-76842858034579/5424 : -5316144401/5424 : 1))
             sage: C.has_rational_point(algorithm='local', read_cache=False)
             True
@@ -144,10 +144,11 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         Create a bunch of conics over `\QQ`, check if ``has_rational_point`` runs without errors
         and returns consistent answers for all algorithms. Check if all points returned are valid. ::
 
+            sage: # needs sage.libs.pari
             sage: l = Sequence(cartesian_product_iterator([[-1, 0, 1] for i in range(6)]))
             sage: c = [Conic(QQ, a) for a in l if a != [0,0,0] and a != (0,0,0,0,0,0)]
             sage: d = []
-            sage: d = [[C] + [C.has_rational_point(algorithm=algorithm, read_cache=False,            # long time: 7 seconds
+            sage: d = [[C] + [C.has_rational_point(algorithm=algorithm, read_cache=False,            # long time (7 s)
             ....:                                  obstruction=(algorithm != 'rnfisnorm'),
             ....:                                  point=(algorithm != 'local'))
             ....:             for algorithm in ['local', 'qfsolve', 'rnfisnorm']]
@@ -214,6 +215,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: C = Conic(QQ, [1,2,3])
             sage: C.is_locally_solvable(-1)
             False
@@ -272,6 +274,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: Conic(QQ, [1, 1, 1]).local_obstructions()
             [2, -1]
             sage: Conic(QQ, [1, 2, -3]).local_obstructions()
@@ -297,11 +300,11 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                     for a in self.symmetric_matrix().list():
                         if a != 0:
                             for f in a.factor():
-                                if f[1] < 0 and not f[0] in candidates:
+                                if f[1] < 0 and f[0] not in candidates:
                                     candidates.append(f[0])
-                    for f in (2 * self.determinant()).factor():
-                        if f[1] > 0 and not f[0] in candidates:
-                            candidates.append(f[0])
+                    for f0, f1 in (2 * self.determinant()).factor():
+                        if f1 > 0 and f0 not in candidates:
+                            candidates.append(f0)
                 for b in candidates:
                     if not self.is_locally_solvable(b):
                         obs1.append(b)
@@ -330,6 +333,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: c = Conic([1,1,-1])
             sage: c.parametrization()
             (Scheme morphism:
@@ -345,6 +349,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
 
         An example with ``morphism = False`` ::
 
+            sage: # needs sage.libs.pari
             sage: R.<x,y,z> = QQ[]
             sage: C = Curve(7*x^2 + 2*y*z + z^2)
             sage: (p, i) = C.parametrization(morphism=False); (p, i)
@@ -354,8 +359,9 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: i[0](p) / i[1](p)
             x/y
 
-        A ``ValueError`` is raised if ``self`` has no rational point ::
+        A :class:`ValueError` is raised if ``self`` has no rational point ::
 
+            sage: # needs sage.libs.pari
             sage: C = Conic(x^2 + 2*y^2 + z^2)
             sage: C.parametrization()
             Traceback (most recent call last):
@@ -363,8 +369,9 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             ValueError: Conic Projective Conic Curve over Rational Field defined
             by x^2 + 2*y^2 + z^2 has no rational points over Rational Field!
 
-        A ``ValueError`` is raised if ``self`` is not smooth ::
+        A :class:`ValueError` is raised if ``self`` is not smooth ::
 
+            sage: # needs sage.libs.pari
             sage: C = Conic(x^2 + y^2)
             sage: C.parametrization()
             Traceback (most recent call last):

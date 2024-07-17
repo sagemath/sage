@@ -12,7 +12,7 @@ SAGE_SPKG_CONFIGURE([xz], [
             AS_IF([test -z "$ac_cv_path_XZ"], [sage_spkg_install_xz=yes])
         ])
 ], [dnl REQUIRED-CHECK
-        dnl Trac #30948: All dependencies on "xz" are merely build-time dependencies
+        dnl Issue #30948: All dependencies on "xz" are merely build-time dependencies
         dnl on the xz binary (for unpacking the tarball in sage_bootstrap.uncompress.tar_file
         dnl - when sage-bootstrap-python is so old that it cannot do that by itself).
         dnl Packages that depend on actual xz or liblzma should depend on the liblzma spkg.

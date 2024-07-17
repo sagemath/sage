@@ -18,7 +18,6 @@ REFERENCES:
 - [KN1963]_
 - [Lee2013]_
 - [ONe1983]_
-
 """
 
 #******************************************************************************
@@ -465,12 +464,11 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             'C^{\\infty}\\left(M\\right)'
             sage: latex(CM)  # indirect doctest
             C^{\infty}\left(M\right)
-
         """
         degree = self._domain.diff_degree()
         if degree == infinity:
             latex_degree = r"\infty"  # to skip the "+" in latex(infinity)
         else:
             latex_degree = "{}".format(degree)
-        return r"C^{" + latex_degree + r"}\left("  + self._domain._latex_() + \
+        return r"C^{" + latex_degree + r"}\left(" + self._domain._latex_() + \
                r"\right)"

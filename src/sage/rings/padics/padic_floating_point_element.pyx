@@ -25,7 +25,7 @@ from sage.libs.pari.all import pari
 from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 
-cdef extern from "sage/rings/padics/transcendantal.c":
+cdef extern from "transcendantal.c":
     cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
 
@@ -121,16 +121,16 @@ cdef class pAdicFloatingPointElement(FPElement):
     Construct from Pari objects::
 
         sage: R = ZpFP(5)
-        sage: x = pari(123123) ; R(x)
+        sage: x = pari(123123) ; R(x)                                                   # needs sage.libs.pari
         3 + 4*5 + 4*5^2 + 4*5^3 + 5^4 + 4*5^5 + 2*5^6 + 5^7
         sage: R(pari(R(5252)))
         2 + 2*5^3 + 3*5^4 + 5^5
         sage: R = ZpFP(5,prec=5)
         sage: R(pari(-1))
         4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4
-        sage: pari(R(-1))
+        sage: pari(R(-1))                                                               # needs sage.libs.pari
         4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5)
-        sage: pari(R(0))
+        sage: pari(R(0))                                                                # needs sage.libs.pari
         0
         sage: R(pari(R(0,5)))
         0
@@ -144,7 +144,8 @@ cdef class pAdicFloatingPointElement(FPElement):
         precision.  If a rational is returned, its denominator will equal
         ``p^ordp(self)``.
 
-        This method will raise a ValueError when this element is infinity.
+        This method will raise a :class:`ValueError` when this element
+        is infinity.
 
         EXAMPLES::
 
@@ -163,7 +164,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         TESTS::
 
-            sage: ZpFP(5)(0).lift() #indirect doctest
+            sage: ZpFP(5)(0).lift()  # indirect doctest
             0
             sage: R = QpFP(5); R(0).lift()
             0
@@ -196,9 +197,9 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         EXAMPLES::
 
-            sage: R = ZpFP(17, 10); a = ~R(14); pari(a) #indirect doctest
+            sage: R = ZpFP(17, 10); a = ~R(14); pari(a)  # indirect doctest
             11 + 3*17 + 17^2 + 6*17^3 + 13*17^4 + 15*17^5 + 10*17^6 + 3*17^7 + 17^8 + 6*17^9 + O(17^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             0
         """
         return self._to_gen()
@@ -209,9 +210,9 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         EXAMPLES::
 
-            sage: R = ZpFP(5, 10); a = R(17); pari(a) #indirect doctest
+            sage: R = ZpFP(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             0
         """
         if very_pos_val(self.ordp):
@@ -223,6 +224,7 @@ cdef class pAdicFloatingPointElement(FPElement):
                                       self.prime_pow.prime.value,
                                       self.prime_pow.pow_mpz_t_top(),
                                       self.unit)
+
     def _integer_(self, Z=None):
         r"""
         Return an integer congruent to this element modulo
@@ -417,6 +419,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest

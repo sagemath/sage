@@ -1,16 +1,20 @@
+# sage.doctest: needs sage.libs.pari
 """
 Submodules of spaces of modular forms
 
 EXAMPLES::
 
     sage: M = ModularForms(Gamma1(13),2); M
-    Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
+    Modular Forms space of dimension 13 for
+     Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
     sage: M.eisenstein_subspace()
-    Eisenstein subspace of dimension 11 of Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
+    Eisenstein subspace of dimension 11 of Modular Forms space of dimension 13 for
+     Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
     sage: M == loads(dumps(M))
     True
     sage: M.cuspidal_subspace()
-    Cuspidal subspace of dimension 2 of Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
+    Cuspidal subspace of dimension 2 of Modular Forms space of dimension 13 for
+     Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
 """
 
 #########################################################################
@@ -38,7 +42,7 @@ class ModularFormsSubmodule(ModularFormsSpace,
         - ambient_module -- ModularFormsSpace
         - submodule -- a submodule of the ambient space.
         - dual_module -- (default: None) ignored
-        - check -- (default: False) whether to check that the
+        - check -- (default: ``False``) whether to check that the
                    submodule is Hecke equivariant
 
         EXAMPLES::
@@ -61,7 +65,7 @@ class ModularFormsSubmodule(ModularFormsSpace,
           sage: ModularForms(Gamma1(13),2).eisenstein_subspace()._repr_()
           'Eisenstein subspace of dimension 11 of Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field'
         """
-        return "Modular Forms subspace of dimension %s of %s"%(self.dimension(), self.ambient_module())
+        return "Modular Forms subspace of dimension %s of %s" % (self.dimension(), self.ambient_module())
 
     def _compute_coefficients(self, element, X):
         """

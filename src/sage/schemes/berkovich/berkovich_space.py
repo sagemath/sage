@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.padics
 r"""
 Berkovich Space over `\CC_p`
 
@@ -20,22 +21,21 @@ involved exposition, see Chapter 1 and 2 of [BR2010]_.
 AUTHORS:
 
 - Alexander Galarraga (2020-06-22): initial implementation
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.schemes.berkovich.berkovich_cp_element import (Berkovich_Element_Cp_Affine,
                                                          Berkovich_Element_Cp_Projective)
 from sage.structure.parent import Parent
-from sage.schemes.affine.affine_space import is_AffineSpace
-from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
+from sage.schemes.affine.affine_space import AffineSpace_generic
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring, ProjectiveSpace
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.number_fields import NumberFields
 import sage.rings.abc
@@ -44,9 +44,10 @@ from sage.rings.rational_field import QQ
 from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
 from sage.categories.topological_spaces import TopologicalSpaces
 
-def is_Berkovich(space):
+
+def is_Berkovich(space) -> bool:
     """
-    Checks if ``space`` is a Berkovich space.
+    Check if ``space`` is a Berkovich space.
 
     OUTPUT:
 
@@ -55,16 +56,22 @@ def is_Berkovich(space):
 
     EXAMPLES::
 
-        sage: B = Berkovich_Cp_Projective(3)                                            # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Projective(3)
         sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich
-        sage: is_Berkovich(B)                                                           # optional - sage.rings.padics
+        sage: is_Berkovich(B)
+        doctest:warning...
+        DeprecationWarning: The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.")
     return isinstance(space, Berkovich)
 
-def is_Berkovich_Cp(space):
+
+def is_Berkovich_Cp(space) -> bool:
     """
-    Checks if ``space`` is a Berkovich space over ``Cp``.
+    Check if ``space`` is a Berkovich space over ``Cp``.
 
     OUTPUT:
 
@@ -73,18 +80,25 @@ def is_Berkovich_Cp(space):
 
     EXAMPLES::
 
-        sage: B = Berkovich_Cp_Projective(3)                                            # optional - sage.rings.padics
-        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich
-        sage: is_Berkovich(B)                                                           # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Projective(3)
+        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
+        sage: is_Berkovich_Cp(B)
+        doctest:warning...
+        DeprecationWarning: The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.")
     return isinstance(space, Berkovich_Cp)
+
 
 class Berkovich(UniqueRepresentation, Parent):
     """
     The parent class for any Berkovich space
     """
     pass
+
 
 class Berkovich_Cp(Berkovich):
     """
@@ -97,17 +111,18 @@ class Berkovich_Cp(Berkovich):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # optional - sage.rings.padics
-            sage: B.prime()                                                             # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: B.prime()
             3
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: A.<a> = NumberField(x^3 + 20)                                         # optional - sage.rings.number_field
-            sage: ideal = A.ideal(-1/2*a^2 + a - 3)                                     # optional - sage.rings.number_field
-            sage: B = Berkovich_Cp_Affine(A, ideal)                                     # optional - sage.rings.number_field
-            sage: B.residue_characteristic()                                            # optional - sage.rings.number_field
+            sage: A.<a> = NumberField(x^3 + 20)
+            sage: ideal = A.ideal(-1/2*a^2 + a - 3)
+            sage: B = Berkovich_Cp_Affine(A, ideal)
+            sage: B.residue_characteristic()
             7
         """
         return self._p
@@ -125,8 +140,8 @@ class Berkovich_Cp(Berkovich):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(Qp(3))                                        # optional - sage.rings.padics
-            sage: B.is_padic_base()                                                     # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(Qp(3))
+            sage: B.is_padic_base()
             True
 
         ::
@@ -148,8 +163,8 @@ class Berkovich_Cp(Berkovich):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(Qp(3))                                        # optional - sage.rings.padics
-            sage: B.is_number_field_base()                                              # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(Qp(3))
+            sage: B.is_number_field_base()
             False
 
         ::
@@ -177,11 +192,12 @@ class Berkovich_Cp(Berkovich):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<z> = QQ[]
-            sage: A.<a> = NumberField(z^2 + 1)                                          # optional - sage.rings.number_field
-            sage: ideal = A.prime_above(5)                                              # optional - sage.rings.number_field
-            sage: B = Berkovich_Cp_Projective(A, ideal)                                 # optional - sage.rings.number_field
-            sage: B.ideal()                                                             # optional - sage.rings.number_field
+            sage: A.<a> = NumberField(z^2 + 1)
+            sage: ideal = A.prime_above(5)
+            sage: B = Berkovich_Cp_Projective(A, ideal)
+            sage: B.ideal()
             Fractional ideal (-a - 2)
 
         ::
@@ -192,48 +208,49 @@ class Berkovich_Cp(Berkovich):
 
         ::
 
-            sage: B = Berkovich_Cp_Projective(Qp(3))                                    # optional - sage.rings.padics
-            sage: B.ideal() is None                                                     # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(Qp(3))
+            sage: B.ideal() is None
             True
         """
         return self._ideal
 
-    def __eq__(self,right):
+    def __eq__(self, right):
         """
         Equality operator.
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # optional - sage.rings.padics
-            sage: A.<x> = Qq(27)                                                        # optional - sage.rings.padics
-            sage: C = Berkovich_Cp_Affine(A)                                            # optional - sage.rings.padics
-            sage: B == C                                                                # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: A.<x> = Qq(27)
+            sage: C = Berkovich_Cp_Affine(A)
+            sage: B == C
             True
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: A.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
-            sage: A_ideal = A.prime_above(2)                                            # optional - sage.rings.number_field
-            sage: B.<b> = NumberField(x^4 + 1)                                          # optional - sage.rings.number_field
-            sage: B_ideal = B.prime_above(2)                                            # optional - sage.rings.number_field
-            sage: C = Berkovich_Cp_Projective(A, A_ideal)                               # optional - sage.rings.number_field
-            sage: D = Berkovich_Cp_Projective(B, B_ideal)                               # optional - sage.rings.number_field
-            sage: C == D                                                                # optional - sage.rings.number_field
+            sage: A.<a> = NumberField(x^2 + 1)
+            sage: A_ideal = A.prime_above(2)
+            sage: B.<b> = NumberField(x^4 + 1)
+            sage: B_ideal = B.prime_above(2)
+            sage: C = Berkovich_Cp_Projective(A, A_ideal)
+            sage: D = Berkovich_Cp_Projective(B, B_ideal)
+            sage: C == D
             False
 
         ::
 
-            sage: C = Berkovich_Cp_Affine(A, A_ideal)                                   # optional - sage.rings.number_field
-            sage: D = Berkovich_Cp_Affine(B, B_ideal)                                   # optional - sage.rings.number_field
-            sage: C == D                                                                # optional - sage.rings.number_field
+            sage: C = Berkovich_Cp_Affine(A, A_ideal)                                   # needs sage.rings.number_field
+            sage: D = Berkovich_Cp_Affine(B, B_ideal)                                   # needs sage.rings.number_field
+            sage: C == D                                                                # needs sage.rings.number_field
             False
 
         ::
 
-            sage: A_ideal_2 = A.prime_above(5)                                          # optional - sage.rings.number_field
-            sage: E = Berkovich_Cp_Affine(A, A_ideal_2)                                 # optional - sage.rings.number_field
-            sage: C == E
+            sage: A_ideal_2 = A.prime_above(5)                                          # needs sage.rings.number_field
+            sage: E = Berkovich_Cp_Affine(A, A_ideal_2)                                 # needs sage.rings.number_field
+            sage: C == E                                                                # needs sage.rings.number_field
             False
         """
         if not isinstance(right, Berkovich_Cp):
@@ -245,16 +262,16 @@ class Berkovich_Cp(Berkovich):
         else:
             return self.base() == right.base() and self.ideal() == right.ideal()
 
-    def __ne__(self,right):
+    def __ne__(self, right):
         """
         Inequality operator.
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(5)                                            # optional - sage.rings.padics
-            sage: A.<x> = Qq(25)                                                        # optional - sage.rings.padics
-            sage: C = Berkovich_Cp_Affine(A)                                            # optional - sage.rings.padics
-            sage: B != C                                                                # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(5)
+            sage: A.<x> = Qq(25)
+            sage: C = Berkovich_Cp_Affine(A)
+            sage: B != C
             False
         """
         return not (self == right)
@@ -265,21 +282,23 @@ class Berkovich_Cp(Berkovich):
 
         EXAMPLES::
 
-            sage: hash(Berkovich_Cp_Projective(3))                                      # optional - sage.rings.padics
+            sage: hash(Berkovich_Cp_Projective(3))
             3
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<z> = QQ[]
-            sage: A.<a> = NumberField(z^2 + 1)                                          # optional - sage.rings.number_field
-            sage: B = Berkovich_Cp_Projective(A, A.primes_above(5)[0])                  # optional - sage.rings.number_field
-            sage: C = Berkovich_Cp_Projective(A, A.primes_above(5)[1])                  # optional - sage.rings.number_field
-            sage: hash(B) != hash(C)                                                    # optional - sage.rings.number_field
+            sage: A.<a> = NumberField(z^2 + 1)
+            sage: B = Berkovich_Cp_Projective(A, A.primes_above(5)[0])
+            sage: C = Berkovich_Cp_Projective(A, A.primes_above(5)[1])
+            sage: hash(B) != hash(C)
             True
         """
         if self._base_type == 'padic field':
             return hash(self.prime())
         return hash(self.ideal())
+
 
 class Berkovich_Cp_Affine(Berkovich_Cp):
     r"""
@@ -314,57 +333,57 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
 
     EXAMPLES::
 
-        sage: B = Berkovich_Cp_Affine(3); B                                             # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Affine(3); B
         Affine Berkovich line over Cp(3) of precision 20
 
     We can create elements::
 
-        sage: B(-2)                                                                     # optional - sage.rings.padics
+        sage: B(-2)
         Type I point centered at 1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5
         + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13
         + 2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19 + O(3^20)
 
     ::
 
-        sage: B(1, 2)                                                                   # optional - sage.rings.padics
+        sage: B(1, 2)
         Type III point centered at 1 + O(3^20) of radius 2.00000000000000
 
     For details on element creation, see the documentation
     of :class:`Berkovich_Element_Cp_Affine`. Initializing by
     passing in `\QQ_p` looks the same::
 
-        sage: B = Berkovich_Cp_Affine(Qp(3)); B                                         # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Affine(Qp(3)); B
         Affine Berkovich line over Cp(3) of precision 20
 
     However, this method allows for more control over behind-the-scenes conversion::
 
-        sage: B = Berkovich_Cp_Affine(Qp(3, 1)); B                                      # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Affine(Qp(3, 1)); B
         Affine Berkovich line over Cp(3) of precision 1
 
-        sage: B(1/2)                                                                    # optional - sage.rings.padics
+        sage: B(1/2)
         Type I point centered at 2 + O(3)
 
     Note that this point has very low precision, as ``B`` was initialized
     with a p-adic field of capped-relative precision one. For high precision,
     pass in a high precision p-adic field::
 
-        sage: B = Berkovich_Cp_Affine(Qp(3, 1000)); B                                   # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Affine(Qp(3, 1000)); B
         Affine Berkovich line over Cp(3) of precision 1000
 
     Points of Berkovich space can be created from points of
     extensions of `\QQ_p`::
 
-        sage: B = Berkovich_Cp_Affine(3)                                                # optional - sage.rings.padics
-        sage: A.<a> = Qp(3).extension(x^3 - 3)                                          # optional - sage.rings.padics
-        sage: B(a)                                                                      # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Affine(3)
+        sage: A.<a> = Qp(3).extension(x^3 - 3)
+        sage: B(a)
         Type I point centered at a + O(a^61)
 
     For exact computation, a number field can be used::
 
         sage: R.<x> = QQ[]
-        sage: A.<a> = NumberField(x^3 + 20)                                             # optional - sage.rings.number_field
-        sage: ideal = A.prime_above(3)                                                  # optional - sage.rings.number_field
-        sage: B = Berkovich_Cp_Affine(A, ideal); B                                      # optional - sage.rings.number_field
+        sage: A.<a> = NumberField(x^3 + 20)                                             # needs sage.rings.number_field
+        sage: ideal = A.prime_above(3)                                                  # needs sage.rings.number_field
+        sage: B = Berkovich_Cp_Affine(A, ideal); B                                      # needs sage.rings.number_field
         Affine Berkovich line over Cp(3), with base
          Number Field in a with defining polynomial x^3 + 20
 
@@ -381,12 +400,13 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
     field, any point of a Berkovich space backed by a number field
     must be centered at a point of that number field::
 
+        sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]
-        sage: A.<a> = NumberField(x^3 + 20)                                             # optional - sage.rings.number_field
-        sage: ideal = A.prime_above(3)                                                  # optional - sage.rings.number_field
-        sage: B = Berkovich_Cp_Affine(A, ideal)                                         # optional - sage.rings.number_field
-        sage: C.<c> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
-        sage: B(c)                                                                      # optional - sage.rings.number_field
+        sage: A.<a> = NumberField(x^3 + 20)
+        sage: ideal = A.prime_above(3)
+        sage: B = Berkovich_Cp_Affine(A, ideal)
+        sage: C.<c> = NumberField(x^2 + 1)
+        sage: B(c)
         Traceback (most recent call last):
         ...
         ValueError: could not convert c to Number Field in a
@@ -394,14 +414,14 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
 
     TESTS::
 
-        sage: A.<x> = AffineSpace(Qp(3), 1)                                             # optional - sage.rings.padics
-        sage: Berkovich_Cp_Affine(A)                                                    # optional - sage.rings.padics
+        sage: A.<x> = AffineSpace(Qp(3), 1)
+        sage: Berkovich_Cp_Affine(A)
         Affine Berkovich line over Cp(3) of precision 20
 
     ::
 
-        sage: B = Berkovich_Cp_Projective(3)                                            # optional - sage.rings.padics
-        sage: TestSuite(B).run()                                                        # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Projective(3)
+        sage: TestSuite(B).run()
     """
 
     Element = Berkovich_Element_Cp_Affine
@@ -412,7 +432,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
 
         EXAMPLES::
 
-            sage: Berkovich_Cp_Affine(3)                                                # optional - sage.rings.padics
+            sage: Berkovich_Cp_Affine(3)
             Affine Berkovich line over Cp(3) of precision 20
         """
         if base in ZZ:
@@ -422,7 +442,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
                 base = Qp(base)  # change to Qpbar
             else:
                 raise ValueError("non-prime passed into Berkovich space")
-        if is_AffineSpace(base):
+        if isinstance(base, AffineSpace_generic):
             base = base.base_ring()
         if base in NumberFields():
             if ideal is None:
@@ -458,16 +478,15 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # optional - sage.rings.padics
-            sage: B                                                                     # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3); B
             Affine Berkovich line over Cp(3) of precision 20
 
         ::
 
             sage: R.<z> = QQ[]
-            sage: A.<a> = NumberField(z^2 + 1)                                          # optional - sage.rings.number_field
-            sage: ideal = A.prime_above(3)                                              # optional - sage.rings.number_field
-            sage: Berkovich_Cp_Affine(A, ideal)                                         # optional - sage.rings.number_field
+            sage: A.<a> = NumberField(z^2 + 1)                                          # needs sage.rings.number_field
+            sage: ideal = A.prime_above(3)                                              # needs sage.rings.number_field
+            sage: Berkovich_Cp_Affine(A, ideal)                                         # needs sage.rings.number_field
             Affine Berkovich line over Cp(3), with base
              Number Field in a with defining polynomial z^2 + 1
         """
@@ -484,8 +503,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
 
         EXAMPLES:
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # optional - sage.rings.padics
-            sage: latex(B)                                                              # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: latex(B)
             \text{Affine Berkovich line over } \Bold{C}_{3}
         """
         return r"\text{Affine Berkovich line over } \Bold{C}_{%s}" % (self.prime())
@@ -524,36 +543,36 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
     EXAMPLES::
 
-        sage: B = Berkovich_Cp_Projective(3); B                                         # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Projective(3); B
         Projective Berkovich line over Cp(3) of precision 20
 
     Elements can be constructed::
 
-        sage: B(1/2)                                                                    # optional - sage.rings.padics
+        sage: B(1/2)
         Type I point centered at (2 + 3 + 3^2 + 3^3 + 3^4 + 3^5
         + 3^6 + 3^7 + 3^8 + 3^9 + 3^10 + 3^11 + 3^12 + 3^13 + 3^14
         + 3^15 + 3^16 + 3^17 + 3^18 + 3^19 + O(3^20) : 1 + O(3^20))
 
     ::
 
-        sage: B(2, 1)                                                                   # optional - sage.rings.padics
+        sage: B(2, 1)
         Type II point centered at (2 + O(3^20) : 1 + O(3^20)) of radius 3^0
 
     For details about element construction, see the documentation of
     :class:`Berkovich_Element_Cp_Projective`. Initializing a Berkovich projective
     line by passing in a p-adic space looks the same::
 
-        sage: B = Berkovich_Cp_Projective(Qp(3)); B                                     # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Projective(Qp(3)); B
         Projective Berkovich line over Cp(3) of precision 20
 
     However, this method allows for more control over
     behind-the-scenes conversion::
 
-        sage: S = Qp(3, 1)                                                              # optional - sage.rings.padics
-        sage: B = Berkovich_Cp_Projective(S); B                                         # optional - sage.rings.padics
+        sage: S = Qp(3, 1)
+        sage: B = Berkovich_Cp_Projective(S); B
         Projective Berkovich line over Cp(3) of precision 1
 
-        sage: Q1 = B(1/2); Q1                                                           # optional - sage.rings.padics
+        sage: Q1 = B(1/2); Q1
         Type I point centered at (2 + O(3) : 1 + O(3))
 
     Note that this point has very low precision, as S has low
@@ -561,9 +580,9 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
     a number field, as long as an ideal is specified::
 
         sage: R.<x> = QQ[]
-        sage: A.<a> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
-        sage: ideal = A.prime_above(2)                                                  # optional - sage.rings.number_field
-        sage: B = Berkovich_Cp_Projective(A, ideal); B                                  # optional - sage.rings.number_field
+        sage: A.<a> = NumberField(x^2 + 1)                                              # needs sage.rings.number_field
+        sage: ideal = A.prime_above(2)                                                  # needs sage.rings.number_field
+        sage: B = Berkovich_Cp_Projective(A, ideal); B                                  # needs sage.rings.number_field
         Projective Berkovich line over Cp(2), with base
          Number Field in a with defining polynomial x^2 + 1
 
@@ -582,12 +601,13 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
     field, any point of a Berkovich space backed by a number field
     must be centered at a point of that number field::
 
+        sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]
-        sage: A.<a> = NumberField(x^3 + 20)                                             # optional - sage.rings.number_field
-        sage: ideal = A.prime_above(3)                                                  # optional - sage.rings.number_field
-        sage: B = Berkovich_Cp_Projective(A, ideal)                                     # optional - sage.rings.number_field
-        sage: C.<c> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
-        sage: B(c)                                                                      # optional - sage.rings.number_field
+        sage: A.<a> = NumberField(x^3 + 20)
+        sage: ideal = A.prime_above(3)
+        sage: B = Berkovich_Cp_Projective(A, ideal)
+        sage: C.<c> = NumberField(x^2 + 1)
+        sage: B(c)
         Traceback (most recent call last):
         ...
         TypeError: could not convert c to Projective Space
@@ -595,8 +615,8 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
     TESTS::
 
-        sage: B = Berkovich_Cp_Projective(3)                                            # optional - sage.rings.padics
-        sage: TestSuite(B).run()                                                        # optional - sage.rings.padics
+        sage: B = Berkovich_Cp_Projective(3)
+        sage: TestSuite(B).run()
     """
 
     Element = Berkovich_Element_Cp_Projective
@@ -607,7 +627,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
         EXAMPLES::
 
-            sage: Berkovich_Cp_Projective(3)                                            # optional - sage.rings.padics
+            sage: Berkovich_Cp_Projective(3)
             Projective Berkovich line over Cp(3) of precision 20
         """
         if base in ZZ:
@@ -619,7 +639,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
                 raise ValueError("non-prime passed into Berkovich space")
         if base in NumberFields() or isinstance(base, sage.rings.abc.pAdicField):
             base = ProjectiveSpace(base, 1)
-        if not is_ProjectiveSpace(base):
+        if not isinstance(base, ProjectiveSpace_ring):
             try:
                 base = ProjectiveSpace(base)
             except (TypeError, ValueError):
@@ -664,23 +684,24 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # optional - sage.rings.padics
-            sage: B.base_ring()                                                         # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: B.base_ring()
             3-adic Field with capped relative precision 20
 
         ::
 
-            sage: C = Berkovich_Cp_Projective(ProjectiveSpace(Qp(3, 1), 1))             # optional - sage.rings.padics
-            sage: C.base_ring()                                                         # optional - sage.rings.padics
+            sage: C = Berkovich_Cp_Projective(ProjectiveSpace(Qp(3, 1), 1))
+            sage: C.base_ring()
             3-adic Field with capped relative precision 1
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: A.<a> = NumberField(x^3 + 20)                                         # optional - sage.rings.number_field
-            sage: ideal = A.prime_above(3)                                              # optional - sage.rings.number_field
-            sage: D = Berkovich_Cp_Projective(A, ideal)                                 # optional - sage.rings.number_field
-            sage: D.base_ring()                                                         # optional - sage.rings.number_field
+            sage: A.<a> = NumberField(x^3 + 20)
+            sage: ideal = A.prime_above(3)
+            sage: D = Berkovich_Cp_Projective(A, ideal)
+            sage: D.base_ring()
             Number Field in a with defining polynomial x^3 + 20
         """
         return self.base().base_ring()
@@ -691,16 +712,15 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # optional - sage.rings.padics
-            sage: B                                                                     # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3); B
             Projective Berkovich line over Cp(3) of precision 20
 
         ::
 
             sage: R.<x> = QQ[]
-            sage: A.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
-            sage: v = A.ideal(a + 1)                                                    # optional - sage.rings.number_field
-            sage: Berkovich_Cp_Projective(A, v)                                         # optional - sage.rings.number_field
+            sage: A.<a> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
+            sage: v = A.ideal(a + 1)                                                    # needs sage.rings.number_field
+            sage: Berkovich_Cp_Projective(A, v)                                         # needs sage.rings.number_field
             Projective Berkovich line over Cp(2),
              with base Number Field in a with defining polynomial x^2 + 1
         """
@@ -717,8 +737,8 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
         EXAMPLES:
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # optional - sage.rings.padics
-            sage: latex(B)                                                              # optional - sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: latex(B)
             \text{Projective Berkovich line over } \Bold{C}_{3}
         """
-        return r"\text{Projective Berkovich line over } \Bold{C}_{%s}" %(self.prime())
+        return r"\text{Projective Berkovich line over } \Bold{C}_{%s}" % (self.prime())

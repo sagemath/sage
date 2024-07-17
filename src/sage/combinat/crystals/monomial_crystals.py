@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystals of Modified Nakajima Monomials
 
@@ -302,9 +303,9 @@ class NakajimaMonomial(Element):
         return_str = ''
         for x in L:
             if x[1] != 1:
-                return_str += "Y_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
+                return_str += "Y_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
             else:
-                return_str += "Y_{%s,%s} "%(x[0][0],x[0][1])
+                return_str += "Y_{%s,%s} " % (x[0][0],x[0][1])
         return return_str
 
     def _latex_A(self):
@@ -330,15 +331,15 @@ class NakajimaMonomial(Element):
         return_str = ''
         for x in L:
             if x[1] != 1:
-                return_str += "Y_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
+                return_str += "Y_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
             else:
-                return_str += "Y_{%s,%s} "%(x[0][0],x[0][1])
+                return_str += "Y_{%s,%s} " % (x[0][0],x[0][1])
         L = sorted(self._A.items(), key=lambda x:(x[0][0],x[0][1]))
         for x in L:
             if x[1] != 1:
-                return_str += "A_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
+                return_str += "A_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
             else:
-                return_str += "A_{%s,%s} "%(x[0][0],x[0][1])
+                return_str += "A_{%s,%s} " % (x[0][0],x[0][1])
         return return_str
 
     def _classical_weight(self):
@@ -972,8 +973,8 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
         - ``letter`` -- can be one of the following:
 
-          * ``'Y'`` - use `Y_{i,k}`, corresponds to fundamental weights
-          * ``'A'`` - use `A_{i,k}`, corresponds to simple roots
+          * ``'Y'`` -- use `Y_{i,k}`, corresponds to fundamental weights
+          * ``'A'`` -- use `A_{i,k}`, corresponds to simple roots
 
         EXAMPLES::
 

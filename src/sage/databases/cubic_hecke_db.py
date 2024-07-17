@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 r"""
-Cubic Hecke Database
+Cubic Hecke database
 
 This module contains the class :class:`CubicHeckeDataBase` which serves as an
 interface to `Ivan Marin's data files
@@ -31,10 +30,24 @@ The enum :class:`MarkovTraceModuleBasis` serves as basis for the submodule
 of linear forms on the cubic Hecke algebra on at most four strands
 satisfying the Markov trace condition for its cubic Hecke subalgebras.
 
+To use the database, you need to install the optional
+:ref:`database_cubic_hecke <spkg_database_cubic_hecke>` package by the Sage
+command ::
+
+    sage -i database_cubic_hecke
+
+EXAMPLES::
+
+    sage: # optional - database_cubic_hecke
+    sage: from sage.databases.cubic_hecke_db import CubicHeckeDataBase
+    sage: cha_db = CubicHeckeDataBase()
+    sage: cha_db
+    <sage.databases.cubic_hecke_db.CubicHeckeDataBase object at ...>
+
 AUTHORS:
 
-- Sebastian Oehms (May 2020): initial version
-- Sebastian Oehms (March 2022): PyPi version and Markov trace functionality
+- Sebastian Oehms (2020-05): initial version
+- Sebastian Oehms (2022-03): PyPi version and Markov trace functionality
 """
 
 ##############################################################################
@@ -223,7 +236,7 @@ class CubicHeckeDataBase(SageObject):
 
         INPUT:
 
-        ``section`` -- instance of enum :class:`CubicHeckeDataSection`
+        - ``section`` -- instance of enum :class:`CubicHeckeDataSection`
           to select the data to be read in
 
         OUTPUT:
@@ -903,7 +916,7 @@ class CubicHeckeFileCache(SageObject):
         try:
             data_lib[section] = load(fname)
             verbose('... finished!')
-        except IOError:
+        except OSError:
             self.reset_library(section)
             verbose('... not found!')
         except (ImportError, ModuleNotFoundError):
@@ -1163,7 +1176,6 @@ template = """def %s(%snum_strands=3):
     data[2] = %s
     data[3] = %s
     return data[num_strands]
-
 """
 
 
@@ -1493,6 +1505,7 @@ def read_markov(bas_ele, variables, num_strands=4):
 
     EXAMPLES::
 
+        sage: # needs sympy
         sage: from sage.databases.cubic_hecke_db import read_markov
         sage: from sympy import var
         sage: u, v, w, s = var('u, v, w, s')

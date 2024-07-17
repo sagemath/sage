@@ -28,7 +28,6 @@ The nonperiodic autocorrelation of a familiy of sequences `X=\{A_1, A_2, ..., A_
 AUTHORS:
 
 - Matteo Cati (2022-11-16): initial version
-
 """
 
 # ***************************************************************************
@@ -66,10 +65,11 @@ def _nonperiodic_autocorrelation(sequences, j):
 
     t = len(sequences[0])
     result = 0
-    for i in range(t-j):
+    for i in range(t - j):
         for seq in sequences:
-            result += seq[i]*seq[i+j]
+            result += seq[i] * seq[i + j]
     return result
+
 
 def is_skew(seq, verbose=False):
     r"""
@@ -102,10 +102,9 @@ def is_skew(seq, verbose=False):
         Sequence should be of even length
         False
     """
-
     n = len(seq)
 
-    if n%2 == 1:
+    if n % 2:
         if verbose:
             print('Sequence should be of even length')
         return False
@@ -117,7 +116,8 @@ def is_skew(seq, verbose=False):
             return False
     return True
 
-def is_symmetric(seq, verbose=False):
+
+def is_symmetric(seq, verbose=False) -> bool:
     r"""
     Check if the given sequence is symmetric.
 
@@ -148,10 +148,9 @@ def is_symmetric(seq, verbose=False):
         Sequence should be of odd length
         False
     """
-
     n = len(seq)
 
-    if n%2 == 0:
+    if n % 2 == 0:
         if verbose:
             print('Sequence should be of odd length')
         return False
@@ -239,6 +238,7 @@ def is_T_sequences_set(sequences, verbose=False):
 
     return True
 
+
 def turyn_sequences_smallcases(l, existence=False):
     r"""
     Construction of Turyn sequences for small values of `l`.
@@ -249,7 +249,7 @@ def turyn_sequences_smallcases(l, existence=False):
 
     - ``l`` -- integer, the length of the Turyn sequences.
 
-    - ``existence`` -- boolean (default False). If true, only return whether the
+    - ``existence`` -- boolean (default: ``False``). If true, only return whether the
       Turyn sequences are available for the given length.
 
     EXAMPLES:
@@ -295,6 +295,7 @@ def turyn_sequences_smallcases(l, existence=False):
         raise ValueError(f"Turyn sequence of length {l} is not implemented yet.")
 
     return list(map(Sequence, db[l]))
+
 
 def T_sequences_construction_from_base_sequences(base_sequences, check=True):
     r"""
@@ -374,6 +375,7 @@ def T_sequences_construction_from_base_sequences(base_sequences, check=True):
         assert is_T_sequences_set(res)
     return res
 
+
 def T_sequences_construction_from_turyn_sequences(turyn_sequences, check=True):
     r"""
     Construct T-sequences of length `4l-1` from Turyn sequences of length `l`.
@@ -430,13 +432,13 @@ def T_sequences_construction_from_turyn_sequences(turyn_sequences, check=True):
     def interleave(seq1, seq2):
         res = []
         for i in range(len(seq1) + len(seq2)):
-            if i%2 == 0:
+            if i % 2 == 0:
                 res.append(seq1[i//2])
             else:
                 res.append(seq2[i//2])
         return res
 
-    X1 = Sequence([1]+ zero_seq(4*l-2))
+    X1 = Sequence([1] + zero_seq(4*l-2))
     X2 = Sequence([0] + interleave(X, Y) + zero_seq(2*l-1))
     X3 = Sequence(zero_seq(2*l) + interleave(U, zero_seq(l-1)))
     X4 = Sequence(zero_seq(2*l) + interleave(zero_seq(l), V))
@@ -445,6 +447,7 @@ def T_sequences_construction_from_turyn_sequences(turyn_sequences, check=True):
     if check:
         assert is_T_sequences_set(res)
     return res
+
 
 def T_sequences_smallcases(t, existence=False, check=True):
     r"""
@@ -501,7 +504,7 @@ def T_sequences_smallcases(t, existence=False, check=True):
             [1,-1,-1,0,0,-1,1,-1]+[0]*8+[1,-1,-1,0,0,-1,-1]+[0]*24,
             [0,0,0,-1,1,0,0,0,-1,-1,-1,1,1,1,1,1,0,0,0,1,-1,0,0,1]+[0]*23,
             [0]*26+[-1,0,1,0,0,0,0,1,-1,1,1,1,0,0,0,0,1,0,-1,0,0],
-            [0]*24+ [1,1,0,-1,0,-1,1,1,-1,0,0,0,0,0,-1,1,-1,-1,0,-1,0,-1,1]
+            [0]*24 + [1,1,0,-1,0,-1,1,1,-1,0,0,0,0,0,-1,1,-1,-1,0,-1,0,-1,1]
         ],
         65: [
             [0]*33+[1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,1,-1,-1,1,1,1,1,1,-1,-1,1,-1,1,-1,1,-1,-1,1,1],
@@ -524,13 +527,13 @@ def T_sequences_smallcases(t, existence=False, check=True):
         if check:
             assert is_T_sequences_set(sequences)
         return sequences
-    if (t+1) %2 == 0 and turyn_sequences_smallcases((t+1)//2, existence=True):
+    if (t+1) % 2 == 0 and turyn_sequences_smallcases((t+1)//2, existence=True):
         if existence:
             return True
         turyn_seqs = turyn_sequences_smallcases((t+1)//2)
         return T_sequences_construction_from_base_sequences(turyn_seqs, check=check)
 
-    if (t+1)%4 == 0 and turyn_sequences_smallcases((t+1)//4, existence=True):
+    if (t+1) % 4 == 0 and turyn_sequences_smallcases((t+1)//4, existence=True):
         if existence:
             return True
         turyn_seqs = turyn_sequences_smallcases((t+1)//4)
@@ -538,7 +541,7 @@ def T_sequences_smallcases(t, existence=False, check=True):
 
     for p in range(1, t):
         n = (t-p)//2
-        if (t-p)%2 == 0 and base_sequences_smallcases(n, p, existence=True):
+        if (t-p) % 2 == 0 and base_sequences_smallcases(n, p, existence=True):
             if existence:
                 return True
             base_seqs = base_sequences_smallcases(n, p, check=False)
@@ -692,6 +695,7 @@ def is_base_sequences_tuple(base_sequences, verbose=False):
 
     return True
 
+
 def turyn_type_sequences_smallcases(n, existence=False):
     r"""
     Construction of Turyn type sequences for small values of `n`.
@@ -702,7 +706,7 @@ def turyn_type_sequences_smallcases(n, existence=False):
 
     - ``n`` -- integer, the length of the Turyn type sequences.
 
-    - ``existence`` -- boolean (default False). If true, only return whether the
+    - ``existence`` -- boolean (default: ``False``). If true, only return whether the
       Turyn type sequences are available for the given length.
 
     EXAMPLES:
@@ -748,10 +752,10 @@ def turyn_type_sequences_smallcases(n, existence=False):
                     seqs[i].append(-1)
         last = bin(int(hexstring[-1], 16))[2:].zfill(3)
         for i in range(3):
-                if last[i] == '0':
-                    seqs[i].append(1)
-                else:
-                    seqs[i].append(-1)
+            if last[i] == '0':
+                seqs[i].append(1)
+            else:
+                seqs[i].append(-1)
         return seqs
 
     db = {
@@ -782,6 +786,7 @@ def turyn_type_sequences_smallcases(n, existence=False):
 
     return convertLists(db[n])
 
+
 def base_sequences_smallcases(n, p, existence=False, check=True):
     r"""Construct base sequences of length `n+p, n+p, n, n` from available data.
 
@@ -798,7 +803,7 @@ def base_sequences_smallcases(n, p, existence=False, check=True):
 
     - ``p`` -- integer, `n+p` will be the length of the first two base sequences.
 
-    - ``existence`` -- boolean (default False). If True, the function will only check whether the base
+    - ``existence`` -- boolean (default: ``False``). If True, the function will only check whether the base
       sequences can be constructed.
 
     - ``check`` -- boolean, if True (default) check that the resulting sequences are base sequences
@@ -847,9 +852,9 @@ def base_sequences_smallcases(n, p, existence=False, check=True):
             return True
         turyn_type_seqs = turyn_type_sequences_smallcases(n)
         return base_sequences_construction(turyn_type_seqs, check=check)
-    if p == 1 and turyn_sequences_smallcases(n+p, existence=True):
+    if p == 1 and turyn_sequences_smallcases(n + p, existence=True):
         if existence:
             return True
-        return turyn_sequences_smallcases(n+p)
+        return turyn_sequences_smallcases(n + p)
 
     raise ValueError(f'Base sequences of order {n+p}, {n+p}, {n}, {n} not yet implemented.')

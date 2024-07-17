@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Listing Sage packages
 
@@ -24,7 +25,6 @@ command inside Sage::
     sage: sorted(pkgs.keys())  # optional - sage_spkg, random
     ['4ti2',
      'alabaster',
-     'arb',
      ...
      'zlib']
 
@@ -67,7 +67,7 @@ def pkgname_split(name):
         sage: pkgname_split('hello_world-1.2')
         ['hello_world', '1.2']
     """
-    return (name.split('-',1) + [''])[:2]
+    return (name.split('-', 1) + [''])[:2]
 
 
 def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
@@ -87,7 +87,7 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     EXAMPLES:
 
     The following test does fail if there is no TLS support (see e.g.
-    :trac:`19213`)::
+    :issue:`19213`)::
 
         sage: from sage.misc.package import pip_remote_version
         sage: pip_remote_version('beautifulsoup4') # optional - internet # not tested
@@ -125,6 +125,42 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     return max(stable_releases)
 
 
+def spkg_type(name):
+    r"""
+    Return the type of the Sage package with the given name.
+
+    INPUT:
+
+    - ``name`` -- string giving the subdirectory name of the package under
+      ``SAGE_PKGS``
+
+    EXAMPLES::
+
+        sage: from sage.misc.package import spkg_type
+        sage: spkg_type('pip')                                  # optional - sage_spkg
+        'standard'
+
+    OUTPUT:
+
+    The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
+    If no ``SPKG`` exists with the given name (or the directory ``SAGE_PKGS`` is
+    not avaialble), ``None`` is returned.
+    """
+    spkg_type = None
+    from sage.env import SAGE_PKGS
+    if not SAGE_PKGS:
+        return None
+    try:
+        f = open(os.path.join(SAGE_PKGS, name, "type"))
+    except OSError:
+        # Probably an empty directory => ignore
+        return None
+
+    with f:
+        spkg_type = f.read().strip()
+    return spkg_type
+
+
 def pip_installed_packages(normalization=None):
     r"""
     Return a dictionary `name->version` of installed pip packages.
@@ -133,25 +169,26 @@ def pip_installed_packages(normalization=None):
 
     INPUT:
 
-    - ``normalization`` -- (optional, default: ``None``) according to which rule to
+    - ``normalization`` -- (default: ``None``) according to which rule to
       normalize the package name, either ``None`` (as is) or ``'spkg'`` (format
       as in the Sage distribution in ``build/pkgs/``), i.e., lowercased and
       dots and dashes replaced by underscores.
 
     EXAMPLES::
 
+        sage: # optional - sage_spkg
         sage: from sage.misc.package import pip_installed_packages
-        sage: d = pip_installed_packages()                      # optional - sage_spkg
-        sage: 'scipy' in d or 'SciPy' in d                      # optional - sage_spkg
+        sage: d = pip_installed_packages()
+        sage: 'scipy' in d or 'SciPy' in d                                              # needs scipy
         True
-        sage: d['beautifulsoup4']                               # optional - sage_spkg beautifulsoup4
+        sage: 'beautifulsoup4' in d                             # needs beautifulsoup4
+        True
+        sage: 'prompt-toolkit' in d or 'prompt_toolkit' in d    # whether - or _ appears in the name depends on the setuptools version used for building the package
+        True
+        sage: d = pip_installed_packages(normalization='spkg')
+        sage: d['prompt_toolkit']
         '...'
-        sage: d['prompt-toolkit']                               # optional - sage_spkg
-        '...'
-        sage: d = pip_installed_packages(normalization='spkg')  # optional - sage_spkg
-        sage: d['prompt_toolkit']                               # optional - sage_spkg
-        '...'
-        sage: d['scipy']                                        # optional - sage_spkg
+        sage: d['scipy']                                                                # needs scipy
         '...'
     """
     with open(os.devnull, 'w') as devnull:
@@ -192,34 +229,6 @@ class PackageInfo(NamedTuple):
         """
         return self.installed_version is not None
 
-    def __getitem__(self, key: Union[int, str]):
-        r"""
-        Only for backwards compatibility to allow dict-like access.
-
-        TESTS::
-
-            sage: from sage.misc.package import PackageInfo
-            sage: package = PackageInfo("test_package")
-            sage: package["name"]
-            doctest:warning...
-            dict-like access is deprecated, use pkg.name instead of pkg['name'], for example
-            See https://github.com/sagemath/sage/issues/31013 for details.
-            'test_package'
-            sage: package[0]
-            'test_package'
-        """
-        if isinstance(key, str):
-            from sage.misc.superseded import deprecation
-
-            if key == "installed":
-                deprecation(31013, "dict-like access via 'installed' is deprecated, use method is_installed instead")
-                return self.is_installed()
-            else:
-                deprecation(31013, "dict-like access is deprecated, use pkg.name instead of pkg['name'], for example")
-                return self.__getattribute__(key)
-        else:
-            return tuple.__getitem__(self, key)
-
 
 def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 'script'],
                   local: bool = False, ignore_URLError: bool = False, exclude_pip: bool = False) -> Dict[str, PackageInfo]:
@@ -244,11 +253,11 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
       If provided, list only the packages with the given source(s), otherwise list all
       packages.
 
-    - ``local`` -- (optional, default: ``False``) if set to ``True``, then do not
+    - ``local`` -- (default: ``False``) if set to ``True``, then do not
       consult remote (PyPI) repositories for package versions (only applicable for
       ``'pip'`` type)
 
-    - ``exclude_pip`` -- (optional, default: ``False``) if set to ``True``, then
+    - ``exclude_pip`` -- (default: ``False``) if set to ``True``, then
       pip packages are not considered.  This is the same as removing ``'pip'``
       from ``pkg_sources``.
 
@@ -257,27 +266,28 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     EXAMPLES::
 
+        sage: # optional - sage_spkg
         sage: from sage.misc.package import list_packages
-        sage: L = list_packages('standard')    # optional - sage_spkg
-        sage: sorted(L.keys())                 # optional - sage_spkg, random
+        sage: L = list_packages('standard')
+        sage: sorted(L.keys())  # random
         ['alabaster',
-         'arb',
          'babel',
          ...
          'zlib']
-        sage: sage_conf_info = L['sage_conf']  # optional - sage_spkg
-        sage: sage_conf_info.type              # optional - sage_spkg
+        sage: sage_conf_info = L['sage_conf']
+        sage: sage_conf_info.type
         'standard'
-        sage: sage_conf_info.is_installed()    # optional - sage_spkg
+        sage: sage_conf_info.is_installed()
         True
-        sage: sage_conf_info.source            # optional - sage_spkg
+        sage: sage_conf_info.source
         'script'
 
-        sage: L = list_packages(pkg_sources=['pip'], local=True)  # optional - sage_spkg internet
-        sage: bp_info = L['biopython']         # optional - sage_spkg internet
-        sage: bp_info.type                     # optional - sage_spkg internet
+        sage: # optional - sage_spkg internet
+        sage: L = list_packages(pkg_sources=['pip'], local=True)
+        sage: bp_info = L['biopython']
+        sage: bp_info.type
         'optional'
-        sage: bp_info.source                   # optional - sage_spkg internet
+        sage: bp_info.source
         'pip'
 
     Check the option ``exclude_pip``::
@@ -310,14 +320,9 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     for p in lp:
 
-        try:
-            f = open(os.path.join(SAGE_PKGS, p, "type"))
-        except IOError:
-            # Probably an empty directory => ignore
+        typ = spkg_type(p)
+        if not typ:
             continue
-
-        with f:
-            typ = f.read().strip()
 
         if os.path.isfile(os.path.join(SAGE_PKGS, p, "requirements.txt")):
             src = 'pip'
@@ -352,11 +357,12 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     return pkgs
 
+
 def _spkg_inst_dirs():
     """
     Generator for the installation manifest directories as resolved paths.
 
-    It yields first ``SAGE_SPKG_INST``, then ``SAGE_VENV_SPKG_INST``,
+    It yields first ``SAGE_LOCAL_SPKG_INST``, then ``SAGE_VENV_SPKG_INST``,
     if defined; but it both resolve to the same directory, it only yields
     one element.
 
@@ -368,12 +374,13 @@ def _spkg_inst_dirs():
 
     """
     last_inst_dir = None
-    for inst_dir in (sage.env.SAGE_SPKG_INST, sage.env.SAGE_VENV_SPKG_INST):
+    for inst_dir in (sage.env.SAGE_LOCAL_SPKG_INST, sage.env.SAGE_VENV_SPKG_INST):
         if inst_dir:
             inst_dir = Path(inst_dir).resolve()
             if inst_dir.is_dir() and inst_dir != last_inst_dir:
                 yield inst_dir
                 last_inst_dir = inst_dir
+
 
 def installed_packages(exclude_pip=True):
     """
@@ -381,7 +388,7 @@ def installed_packages(exclude_pip=True):
 
     INPUT:
 
-    - ``exclude_pip`` -- (optional, default: ``True``) whether "pip" packages
+    - ``exclude_pip`` -- (default: ``True``) whether "pip" packages
       are excluded from the list
 
     EXAMPLES:
@@ -393,9 +400,11 @@ def installed_packages(exclude_pip=True):
     records of Python packages. Our ``SAGE_VENV`` is not necessarily the
     main Sage venv; it could be a user-created venv or a venv created by tox.)::
 
-        sage: sorted(installed_packages().keys())         # optional - sage_spkg
+        sage: # optional - sage_spkg
+        sage: from sage.misc.package import installed_packages
+        sage: sorted(installed_packages().keys())
         [...'conway_polynomials', ...]
-        sage: installed_packages()['conway_polynomials']  # optional - sage_spkg, random
+        sage: installed_packages()['conway_polynomials']  # random
         '0.5'
 
     .. SEEALSO::
@@ -425,12 +434,13 @@ def is_package_installed(package, exclude_pip=True):
 
     - ``package`` -- the name of the package
 
-    - ``exclude_pip`` -- (optional, default: ``True``) whether to consider pip
+    - ``exclude_pip`` -- (default: ``True``) whether to consider pip
       type packages
 
 
     EXAMPLES::
 
+        sage: from sage.misc.package import is_package_installed
         sage: is_package_installed('conway_polynomials')  # optional - sage_spkg
         True
 
@@ -501,116 +511,16 @@ def package_versions(package_type, local=False):
 
     EXAMPLES::
 
-        sage: std = package_versions('standard', local=True)  # optional - sage_spkg
-        sage: 'gap' in std  # optional - sage_spkg
+        sage: # optional - sage_spkg
+        sage: from sage.misc.package import package_versions
+        sage: std = package_versions('standard', local=True)
+        sage: 'gap' in std
         True
-        sage: std['zlib']  # optional - sage_spkg, random
+        sage: std['zlib']  # random
         ('1.2.11.p0', '1.2.11.p0')
     """
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
 
-
-def standard_packages():
-    """
-    Return two lists. The first contains the installed and the second
-    contains the not-installed standard packages that are available
-    from the Sage repository.
-
-    OUTPUT:
-
-    - installed standard packages (as a list)
-
-    - NOT installed standard packages (as a list)
-
-    Run ``sage -i package_name`` from a shell to install a given
-    package or ``sage -f package_name`` to re-install it.
-
-    .. SEEALSO:: :func:`sage.misc.package.list_packages`
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import standard_packages
-        sage: installed, not_installed = standard_packages()  # optional - sage_spkg
-        doctest:...: DeprecationWarning: ...
-        sage: 'numpy' in installed                            # optional - sage_spkg
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages '
-                'are deprecated, use sage.features instead')
-    pkgs = list_packages('standard', local=True).values()
-    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
-            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
-
-
-def optional_packages():
-    """
-    Return two lists. The first contains the installed and the second
-    contains the not-installed optional packages that are available
-    from the Sage repository.
-
-    OUTPUT:
-
-    - installed optional packages (as a list)
-
-    - NOT installed optional packages (as a list)
-
-    Run ``sage -i package_name`` from a shell to install a given
-    package or ``sage -f package_name`` to re-install it.
-
-    .. SEEALSO:: :func:`sage.misc.package.list_packages`
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import optional_packages
-        sage: installed, not_installed = optional_packages()  # optional - sage_spkg
-        doctest:...: DeprecationWarning: ...
-        sage: 'biopython' in installed + not_installed        # optional - sage_spkg
-        True
-        sage: 'biopython' in installed                        # optional - sage_spkg biopython
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages '
-                'are deprecated, use sage.features instead')
-    pkgs = list_packages('optional', local=True)
-    pkgs = pkgs.values()
-    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
-            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
-
-
-def experimental_packages():
-    """
-    Return two lists. The first contains the installed and the second
-    contains the not-installed experimental packages that are available
-    from the Sage repository.
-
-    OUTPUT:
-
-    - installed experimental packages (as a list)
-
-    - NOT installed experimental packages (as a list)
-
-    Run ``sage -i package_name`` from a shell to install a given
-    package or ``sage -f package_name`` to re-install it.
-
-    .. SEEALSO:: :func:`sage.misc.package.list_packages`
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import experimental_packages
-        sage: installed, not_installed = experimental_packages()  # optional - sage_spkg
-        doctest:...: DeprecationWarning: ...
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages '
-                'are deprecated, use sage.features instead')
-    pkgs = list_packages('experimental', local=True).values()
-    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
-            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
 
 def package_manifest(package):
     """
@@ -627,11 +537,12 @@ def package_manifest(package):
 
     EXAMPLES::
 
+        sage: # optional - sage_spkg
         sage: from sage.misc.package import package_manifest
-        sage: manifest = package_manifest('conway_polynomials')  # optional - sage_spkg
-        sage: manifest['package_name'] == 'conway_polynomials'   # optional - sage_spkg
+        sage: manifest = package_manifest('conway_polynomials')
+        sage: manifest['package_name'] == 'conway_polynomials'
         True
-        sage: 'files' in manifest                                # optional - sage_spkg
+        sage: 'files' in manifest
         True
 
     Test a nonexistent package::
@@ -652,68 +563,10 @@ def package_manifest(package):
             pass
     raise RuntimeError('package manifest directory changed at runtime')
 
-class PackageNotFoundError(RuntimeError):
-    """
-    This class defines the exception that should be raised when a
-    function, method, or class cannot detect a Sage package that it
-    depends on.
 
-    This exception should be raised with a single argument, namely
-    the name of the package.
-
-    When a ``PackageNotFoundError`` is raised, this means one of the
-    following:
-
-    - The required optional package is not installed.
-
-    - The required optional package is installed, but the relevant
-      interface to that package is unable to detect the package.
-
-    Raising a ``PackageNotFoundError`` is deprecated.  Use
-    :class:`sage.features.FeatureNotPresentError` instead.
-
-    User code can continue to catch ``PackageNotFoundError`` exceptions
-    for compatibility with older versions of the Sage library.
-    This does not cause deprecation warnings.
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import PackageNotFoundError
-        sage: try:
-        ....:     pass
-        ....: except PackageNotFoundError:
-        ....:     pass
-
-    """
-
-    def __init__(self, *args):
-        """
-        TESTS::
-
-            sage: from sage.misc.package import PackageNotFoundError
-            sage: raise PackageNotFoundError("my_package")
-            Traceback (most recent call last):
-            ...
-            PackageNotFoundError: the package 'my_package' was not found. You can install it by running 'sage -i my_package' in a shell
-        """
-        super().__init__(*args)
-        # We do not deprecate the whole class because we want
-        # to allow user code to handle this exception without causing
-        # a deprecation warning.
-        from sage.misc.superseded import deprecation
-        deprecation(30607, "Instead of raising PackageNotFoundError, raise sage.features.FeatureNotPresentError")
-
-    def __str__(self):
-        """
-        Return the actual error message.
-
-        EXAMPLES::
-
-            sage: from sage.misc.package import PackageNotFoundError
-            sage: str(PackageNotFoundError("my_package"))
-            doctest:warning...
-            "the package 'my_package' was not found. You can install it by running 'sage -i my_package' in a shell"
-        """
-        return ("the package {0!r} was not found. "
-            "You can install it by running 'sage -i {0}' in a shell"
-            .format(self.args[0]))
+# PackageNotFoundError used to be an exception class.
+# It was deprecated in #30607 and removed afterwards.
+# User code can continue to use PackageNotFoundError in
+# try...except statements using this definition, which
+# catches no exception.
+PackageNotFoundError = ()

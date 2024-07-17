@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Free Bosons Lie Conformal Algebra
 
@@ -34,6 +35,7 @@ AUTHORS:
 from sage.matrix.special import identity_matrix
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 from sage.structure.indexed_generators import standardize_names_index_set
+
 
 class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""

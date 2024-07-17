@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Bases for `NCSym`
 
@@ -73,8 +74,8 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
             sage: NCSymOrNCSymDualBases(NCSym).super_categories()
             [Category of realizations of Symmetric functions in
               non-commuting variables over the Rational Field,
-             Category of graded hopf algebras with basis over Rational Field,
-             Join of Category of realizations of hopf algebras over Rational Field
+             Category of graded Hopf algebras with basis over Rational Field,
+             Join of Category of realizations of Hopf algebras over Rational Field
               and Category of graded algebras over Rational Field
               and Category of graded coalgebras over Rational Field]
         """

@@ -286,7 +286,7 @@ automatically simplify even in trivial situations::
     sage: (SR(I)+1)^4 > 0
     -4 > 0
 
-Nevertheless, if you force the comparison, you get the right answer (:trac:`7160`)::
+Nevertheless, if you force the comparison, you get the right answer (:issue:`7160`)::
 
     sage: bool(SR(I)^2 == -1)
     True
@@ -355,9 +355,8 @@ AUTHORS:
 - William Stein: second version
 
 - William Stein (2007-07-16): added arithmetic with symbolic equations
-
 """
-
+from itertools import product
 import operator
 
 
@@ -427,7 +426,7 @@ def test_relation_maxima(relation):
     TESTS:
 
     Ensure that ``canonicalize_radical()`` and ``simplify_log`` are not
-    used inappropriately, :trac:`17389`. Either one would simplify ``f``
+    used inappropriately, :issue:`17389`. Either one would simplify ``f``
     to zero below::
 
         sage: x,y = SR.var('x,y')
@@ -502,7 +501,7 @@ def test_relation_maxima(relation):
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
-    elif relation.operator() == operator.ne: # operator is not equal
+    elif relation.operator() == operator.ne:  # operator is not equal
         try:
             s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),
                                                                 repr(m.rhs())))
@@ -518,7 +517,7 @@ def test_relation_maxima(relation):
     if s == 'true':
         return True
     elif s == 'false':
-        return False # if neither of these, s=='unknown' and we try a few other tricks
+        return False  # if neither of these, s=='unknown' and we try a few other tricks
 
     if relation.operator() != operator.eq:
         return False
@@ -591,12 +590,12 @@ def solve(f, *args, **kwds):
 
     INPUT:
 
-    -  ``f`` - equation or system of equations (given by a
+    -  ``f`` -- equation or system of equations (given by a
        list or tuple)
 
-    -  ``*args`` - variables to solve for.
+    -  ``*args`` -- variables to solve for.
 
-    -  ``solution_dict`` - bool (default: False); if True or non-zero,
+    -  ``solution_dict`` -- bool (default: ``False``); if True or non-zero,
        return a list of dictionaries containing the solutions. If there
        are no solutions, return an empty list (rather than a list containing
        an empty dictionary). Likewise, if there's only a single solution,
@@ -605,16 +604,16 @@ def solve(f, *args, **kwds):
     There are a few optional keywords if you are trying to solve a single
     equation.  They may only be used in that context.
 
-    -  ``multiplicities`` - bool (default: False); if True,
+    -  ``multiplicities`` -- bool (default: ``False``); if True,
        return corresponding multiplicities.  This keyword is
        incompatible with ``to_poly_solve=True`` and does not make
        any sense when solving inequalities.
 
-    -  ``explicit_solutions`` - bool (default: False); require that
+    -  ``explicit_solutions`` -- bool (default: ``False``); require that
        all roots be explicit rather than implicit. Not used
        when solving inequalities.
 
-    -  ``to_poly_solve`` - bool (default: False) or string; use
+    -  ``to_poly_solve`` -- bool (default: ``False``) or string; use
        Maxima's ``to_poly_solver`` package to search for more possible
        solutions, but possibly encounter approximate solutions.
        This keyword is incompatible with ``multiplicities=True``
@@ -622,11 +621,11 @@ def solve(f, *args, **kwds):
        to 'force' (string) omits Maxima's solve command (useful when
        some solutions of trigonometric equations are lost).
 
-    - ``algorithm`` - string (default: 'maxima'); to use SymPy's
+    - ``algorithm`` -- string (default: 'maxima'); to use SymPy's
       solvers set this to 'sympy'. Note that SymPy is always used
       for diophantine equations. Another choice is 'giac'.
 
-    - ``domain`` - string (default: 'complex'); setting this to 'real'
+    - ``domain`` -- string (default: 'complex'); setting this to 'real'
       changes the way SymPy solves single equations; inequalities
       are always solved in the real domain.
 
@@ -657,7 +656,7 @@ def solve(f, *args, **kwds):
     equations, at times approximations will be given by Maxima, due to the
     underlying algorithm::
 
-        sage: sols = solve([x^3==y,y^2==x], [x,y]); sols[-1], sols[0]
+        sage: sols = solve([x^3==y,y^2==x], [x,y]); sols[-1], sols[0] # abs tol 1e-15
         ([x == 0, y == 0],
          [x == (0.3090169943749475 + 0.9510565162951535*I),
           y == (-0.8090169943749475 - 0.5877852522924731*I)])
@@ -950,7 +949,7 @@ def solve(f, *args, **kwds):
         TypeError:  The first argument must be a symbolic expression or a list of symbolic expressions.
 
     Test if the empty list is returned, too, when (a list of)
-    dictionaries (is) are requested (:trac:`8553`)::
+    dictionaries (is) are requested (:issue:`8553`)::
 
         sage: solve([SR(0)==1],x)
         []
@@ -963,7 +962,7 @@ def solve(f, *args, **kwds):
         sage: solve((x==1,x==-1),x,solution_dict=0)
         []
 
-    Relaxed form, suggested by Mike Hansen (:trac:`8553`)::
+    Relaxed form, suggested by Mike Hansen (:issue:`8553`)::
 
         sage: solve([x^2-1],x,solution_dict=-1)
         [{x: -1}, {x: 1}]
@@ -974,12 +973,12 @@ def solve(f, *args, **kwds):
         sage: solve((x==1,x==-1),x,solution_dict=1)
         []
 
-    This inequality holds for any real ``x`` (:trac:`8078`)::
+    This inequality holds for any real ``x`` (:issue:`8078`)::
 
         sage: solve(x^4+2>0,x)
         [x < +Infinity]
 
-    Test for user friendly input handling :trac:`13645`::
+    Test for user friendly input handling :issue:`13645`::
 
         sage: poly.<a,b> = PolynomialRing(RR)
         sage: solve([a+b+a*b == 1], a)
@@ -1003,7 +1002,7 @@ def solve(f, *args, **kwds):
         TypeError: 1 is not a valid variable.
 
     Test that the original version of a system in the French Sage book
-    now works (:trac:`14306`)::
+    now works (:issue:`14306`)::
 
         sage: var('y,z')
         (y, z)
@@ -1014,13 +1013,13 @@ def solve(f, *args, **kwds):
           z == (0.9324722294... - 0.3612416661...*I)],
          ...]
 
-    :trac:`13286` fixed::
+    :issue:`13286` fixed::
 
         sage: solve([x-4], [x])
         [x == 4]
 
     Test for a list of non-symbolic expressions as first argument
-    (:trac:`31714`)::
+    (:issue:`31714`)::
 
         sage: solve([1], x)
         Traceback (most recent call last):
@@ -1064,7 +1063,7 @@ def solve(f, *args, **kwds):
                             "symbolic expression or a list of symbolic "
                             "expressions.")
 
-    if isinstance(f, Expression): # f is a single expression
+    if isinstance(f, Expression):  # f is a single expression
         return _solve_expression(f, x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
 
     if not isinstance(f, (list, tuple)):
@@ -1094,7 +1093,7 @@ def solve(f, *args, **kwds):
     if algorithm == 'sympy':
         from sympy import solve as ssolve
         from sage.interfaces.sympy import sympy_set_to_list
-        if isinstance(f, Expression): # f is a single expression
+        if isinstance(f, Expression):  # f is a single expression
             sympy_f = f._sympy_()
         else:
             sympy_f = [s._sympy_() for s in f]
@@ -1145,27 +1144,27 @@ def solve(f, *args, **kwds):
             else:
                 raise
 
-    if len(s) == 0: # if Maxima's solve gave no solutions, try its to_poly_solve
+    if len(s) == 0:  # if Maxima's solve gave no solutions, try its to_poly_solve
         try:
             s = m.to_poly_solve(variables)
-        except Exception: # if that gives an error, stick with no solutions
+        except Exception:  # if that gives an error, stick with no solutions
             s = []
 
-    if len(s) == 0: # if to_poly_solve gave no solutions, try use_grobner
+    if len(s) == 0:  # if to_poly_solve gave no solutions, try use_grobner
         try:
             s = m.to_poly_solve(variables, 'use_grobner=true')
-        except Exception: # if that gives an error, stick with no solutions
+        except Exception:  # if that gives an error, stick with no solutions
             s = []
 
     sol_list = string_to_list_of_solutions(repr(s))
 
     # Relaxed form suggested by Mike Hansen (#8553):
     if kwds.get('solution_dict', None):
-        if not sol_list: # fixes IndexError on empty solution list (#8553)
+        if not sol_list:  # fixes IndexError on empty solution list (#8553)
             return []
         if isinstance(sol_list[0], list):
             sol_dict = [{eq.left(): eq.right() for eq in solution}
-                    for solution in sol_list]
+                        for solution in sol_list]
         else:
             sol_dict = [{eq.left(): eq.right()} for eq in sol_list]
 
@@ -1175,7 +1174,7 @@ def solve(f, *args, **kwds):
 
 
 def _solve_expression(f, x, explicit_solutions, multiplicities,
-                     to_poly_solve, solution_dict, algorithm, domain):
+                      to_poly_solve, solution_dict, algorithm, domain):
     """
     Solve an expression ``f``. For more information, see :func:`solve`.
 
@@ -1186,7 +1185,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
 
     TESTS:
 
-    :trac:`7325` (solving inequalities)::
+    :issue:`7325` (solving inequalities)::
 
         sage: (x^2>1).solve(x)
         [[x < -1], [x > 1]]
@@ -1205,7 +1204,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         ...
         TypeError: ECL says: cot: argument 0 isn't in the domain of cot.
 
-    :trac:`7491` fixed::
+    :issue:`7491` fixed::
 
         sage: y = var('y')
         sage: solve(y==y,y)
@@ -1219,7 +1218,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         []
         sage: forget()
 
-    :trac:`8390` fixed::
+    :issue:`8390` fixed::
 
         sage: solve(sin(x)==1/2,x)
         [x == 1/6*pi]
@@ -1234,13 +1233,13 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         sage: solve(sin(x)==1/2, x, to_poly_solve='force')
         [x == 5/6*pi + 2*pi*z..., x == 1/6*pi + 2*pi*z...]
 
-    :trac:`11618` fixed::
+    :issue:`11618` fixed::
 
         sage: g(x)=0
         sage: solve(g(x)==0,x,solution_dict=True)
         [{x: r1}]
 
-    :trac:`17128`: fixed::
+    :issue:`17128`: fixed::
 
         sage: var('x,y')
         (x, y)
@@ -1249,7 +1248,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         sage: sol[0].get(x) + sol[0].get(y)
         0
 
-    :trac:`16651` fixed::
+    :issue:`16651` fixed::
 
         sage: (x^7-x-1).solve(x, to_poly_solve=True)     # abs tol 1e-6
         [x == 1.11277569705,
@@ -1260,7 +1259,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
          x == (0.617093477784 + 0.900864951949*I),
          x == (-0.363623519329 + 0.952561195261*I)]
 
-    :trac:`31452` fixed::
+    :issue:`31452` fixed::
 
         sage: solve([x==3], [x], solution_dict=True)
         [{x: 3}]
@@ -1305,7 +1304,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         alist = assumptions()
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
                    a._assumption in ['even', 'odd', 'integer', 'integervalued']
-            for a in alist)
+                   for a in alist)
     if len(ex.variables()) and all(has_integer_assumption(var) for var in ex.variables()):
         return f.solve_diophantine(x, solution_dict=solution_dict)
 
@@ -1332,13 +1331,13 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     m = ex._maxima_()
     P = m.parent()
     if explicit_solutions:
-        P.eval('solveexplicit: true') # switches Maxima to looking for only explicit solutions
+        P.eval('solveexplicit: true')  # switches Maxima to looking for only explicit solutions
     try:
         if to_poly_solve != 'force':
             s = m.solve(x).str()
-        else: # omit Maxima's solve command
+        else:  # omit Maxima's solve command
             s = str([])
-    except TypeError as mess: # if Maxima's solve has an error, we catch it
+    except TypeError as mess:  # if Maxima's solve has an error, we catch it
         if "Error executing code in Maxima" in str(mess):
             s = str([])
         else:
@@ -1356,9 +1355,9 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         else:
             return ans
 
-    X = string_to_list_of_solutions(s) # our initial list of solutions
+    X = string_to_list_of_solutions(s)  # our initial list of solutions
 
-    if multiplicities: # to_poly_solve does not return multiplicities, so in this case we end here
+    if multiplicities:  # to_poly_solve does not return multiplicities, so in this case we end here
         if len(X) == 0:
             return X, []
         else:
@@ -1397,7 +1396,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                      "unable to make sense of Maxima expression" in \
                      str(mess):
                     if not explicit_solutions:
-                        X.append(eq) # we keep this implicit solution
+                        X.append(eq)  # we keep this implicit solution
                 else:
                     raise
 
@@ -1479,11 +1478,11 @@ def solve_mod(eqns, modulus, solution_dict=False):
     INPUT:
 
 
-    -  ``eqns`` - equation or list of equations
+    -  ``eqns`` -- equation or list of equations
 
-    -  ``modulus`` - an integer
+    -  ``modulus`` -- an integer
 
-    -  ``solution_dict`` - bool (default: False); if True or non-zero,
+    -  ``solution_dict`` -- bool (default: ``False``); if True or non-zero,
        return a list of dictionaries containing the solutions. If there
        are no solutions, return an empty list (rather than a list containing
        an empty dictionary). Likewise, if there's only a single solution,
@@ -1565,14 +1564,11 @@ def solve_mod(eqns, modulus, solution_dict=False):
         [(0,)]
         sage: solve_mod([2*x^2+x*y, -x*y+2*y^2+x-2*y, -2*x^2+2*x*y-y^2-x-y], 1)
         [(0, 0)]
-
-
     """
     from sage.rings.finite_rings.integer_mod_ring import Integers
     from sage.rings.integer import Integer
     from sage.rings.integer_ring import crt_basis
     from sage.structure.element import Expression
-    from sage.misc.mrange import cartesian_product_iterator
     from sage.modules.free_module_element import vector
     from sage.matrix.constructor import matrix
 
@@ -1585,7 +1581,7 @@ def solve_mod(eqns, modulus, solution_dict=False):
     vars = list(set(sum([list(e.variables()) for e in eqns], [])))
     vars.sort(key=repr)
 
-    if modulus == 1: # degenerate case
+    if modulus == 1:  # degenerate case
         ans = [tuple(Integers(1)(0) for v in vars)]
         return ans
 
@@ -1604,17 +1600,15 @@ def solve_mod(eqns, modulus, solution_dict=False):
 
     ans = []
     if has_solution:
-        for solution in cartesian_product_iterator(solutions):
+        for solution in product(*solutions):
             solution_mat = matrix(Integers(modulus), solution)
             ans.append(tuple(c.dot_product(crt_basis) for c in solution_mat.columns()))
 
     # if solution_dict == True:
     # Relaxed form suggested by Mike Hansen (#8553):
     if solution_dict:
-        sol_dict = [dict(zip(vars, solution)) for solution in ans]
-        return sol_dict
-    else:
-        return ans
+        return [dict(zip(vars, solution)) for solution in ans]
+    return ans
 
 
 def _solve_mod_prime_power(eqns, p, m, vars):
@@ -1632,13 +1626,13 @@ def _solve_mod_prime_power(eqns, p, m, vars):
     INPUT:
 
 
-    -  ``eqns`` - equation or list of equations
+    -  ``eqns`` -- equation or list of equations
 
-    -  ``p`` - a prime
+    -  ``p`` -- a prime
 
-    -  ``i`` - an integer > 0
+    -  ``i`` -- an integer > 0
 
-    -  ``vars`` - a list of variables to solve for
+    -  ``vars`` -- a list of variables to solve for
 
 
     EXAMPLES::
@@ -1684,12 +1678,10 @@ def _solve_mod_prime_power(eqns, p, m, vars):
         sage: [sorted(_solve_mod_prime_power([x^2==41], 10, i, [x]))[0][0] for i in [1..13]]
         [1, 21, 71, 1179, 2429, 47571, 1296179, 8703821, 26452429, 526452429,
         13241296179, 19473547571, 2263241296179]
-
     """
     from sage.rings.finite_rings.integer_mod_ring import Integers
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.modules.free_module_element import vector
-    from sage.misc.mrange import cartesian_product_iterator
 
     mrunning = 1
     ans = []
@@ -1699,10 +1691,10 @@ def _solve_mod_prime_power(eqns, p, m, vars):
         S = PolynomialRing(R, len(vars), vars)
         eqns_mod = [S(eq) for eq in eqns]
         if mi == 0:
-            possibles = cartesian_product_iterator([range(len(R)) for _ in range(len(vars))])
+            possibles = product(*[range(len(R)) for _ in range(len(vars))])
         else:
-            shifts = cartesian_product_iterator([range(p) for _ in range(len(vars))])
-            pairs = cartesian_product_iterator([shifts, ans])
+            shifts = product(*[range(p) for _ in range(len(vars))])
+            pairs = product(shifts, ans)
             possibles = (tuple(vector(t) + vector(shift) * (mrunning // p))
                          for shift, t in pairs)
         ans = list(t for t in possibles if all(e(*t) == 0 for e in eqns_mod))
@@ -1718,7 +1710,7 @@ def solve_ineq_univar(ineq):
 
     INPUT:
 
-    - ``ineq`` - inequality in one variable
+    - ``ineq`` -- inequality in one variable
 
     OUTPUT:
 
@@ -1770,13 +1762,13 @@ def solve_ineq_fourier(ineq, vars=None):
 
     INPUT:
 
-    - ``ineq`` - list with system of inequalities
+    - ``ineq`` -- list with system of inequalities
 
-    - ``vars`` - optionally list with variables for Fourier elimination.
+    - ``vars`` -- optionally list with variables for Fourier elimination.
 
     OUTPUT:
 
-    - ``list`` - output is list of solutions as a list of simple inequalities
+    - ``list`` -- output is list of solutions as a list of simple inequalities
       output [A,B,C] means (A or B or C) each A, B, C is again a list and
       if A=[a,b], then A means (a and b). The list is empty if there is no
       solution.
@@ -1843,7 +1835,7 @@ def solve_ineq(ineq, vars=None):
 
     INPUT:
 
-    - ``ineq`` - one inequality or a list of inequalities
+    - ``ineq`` -- one inequality or a list of inequalities
 
       Case1: If ``ineq`` is one equality, then it should be rational
       expression in one variable. This input is passed to
@@ -1857,7 +1849,7 @@ def solve_ineq(ineq, vars=None):
       http://maxima.cvs.sourceforge.net/viewvc/maxima/maxima/share/contrib/fourier_elim/rtest_fourier_elim.mac
       for a big gallery of problems covered by this algorithm.
 
-    - ``vars`` - optional parameter with list of variables. This list
+    - ``vars`` -- optional parameter with list of variables. This list
       is used only if Fourier elimination is used. If omitted or if
       rational inequality is solved, then variables are determined
       automatically.

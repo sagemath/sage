@@ -7,7 +7,7 @@ by direct method not relying on factorisation.
 
 AUTHORS:
 
-- Vincent Delecroix (2014): first implementation (:trac:`16374`)
+- Vincent Delecroix (2014): first implementation (:issue:`16374`)
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -22,9 +22,9 @@ from libc.math cimport sqrt
 from cysignals.signals cimport sig_on, sig_off
 
 cimport sage.rings.integer as integer
-from . import integer
+from sage.rings import integer
 
-cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
+cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]) noexcept:
     r"""
     Return ``1`` if ``n`` is a sum of two squares and ``0`` otherwise.
 
@@ -94,7 +94,7 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
     return 0
 
 
-cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]):
+cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]) noexcept:
     r"""
     Return `1` if `n` is a sum of three squares and `0` otherwise.
 
@@ -166,7 +166,7 @@ def two_squares_pyx(uint32_t n):
     TESTS::
 
         sage: s = lambda t: sum(i^2 for i in t)
-        sage: for ij in Subsets(Subsets(45000, 15).random_element(), 2):                # optional - sage.combinat
+        sage: for ij in Subsets(Subsets(45000, 15).random_element(), 2):
         ....:     if s(two_squares_pyx(s(ij))) != s(ij):
         ....:         print("hey")
 
@@ -254,7 +254,7 @@ def three_squares_pyx(uint32_t n):
     TESTS::
 
         sage: s = lambda t: sum(i^2 for i in t)
-        sage: for ijk in Subsets(Subsets(35000,15).random_element(),3):                 # optional - sage.combinat
+        sage: for ijk in Subsets(Subsets(35000,15).random_element(),3):
         ....:     if s(three_squares_pyx(s(ijk))) != s(ijk):
         ....:         print("hey")
     """

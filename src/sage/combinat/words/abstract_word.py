@@ -225,7 +225,7 @@ class Word_class(SageObject):
             sage: len(Word(iter('a'*200), length='finite'))
             200
 
-        We make sure :trac:`8574` is fixed::
+        We make sure :issue:`8574` is fixed::
 
             sage: s = WordMorphism('0->000,1->%s'%('1'*100))
             sage: len(s('1'))
@@ -251,7 +251,7 @@ class Word_class(SageObject):
         """
         L = self.length()
         if L is None or L is Infinity:
-            msg = "Python len method cannot return a non integer value (=%s): "%L
+            msg = "Python len method cannot return a non integer value (=%s): " % L
             msg += "use length method instead."
             raise TypeError(msg)
         return int(L)
@@ -379,7 +379,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``other`` - word
+        -  ``other`` -- word
 
         OUTPUT:
 
@@ -409,9 +409,9 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``other`` - word
+        -  ``other`` -- word
 
-        -  ``length`` - string (optional, default: ``'unknown'``)
+        -  ``length`` -- string (default: ``'unknown'``)
            the length type of the resulting word if known. It may be one of
            the following:
 
@@ -506,7 +506,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``period`` - positive integer (optional, default 1)
+        - ``period`` -- positive integer (default: 1)
 
         OUTPUT:
 
@@ -541,7 +541,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``period`` - positive integer (optional, default 1)
+        - ``period`` -- positive integer (default: 1)
 
         OUTPUT:
 
@@ -600,7 +600,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``use_parent_alphabet`` - Bool (default: False). When True and if
+        - ``use_parent_alphabet`` -- Bool (default: ``False``). When True and if
           the self parent's alphabet is finite, it uses the index of
           the letters in the alphabet. Otherwise, the first letter occurring in
           self is mapped to zero, and every letter that hasn't yet occurred in
@@ -632,7 +632,7 @@ class Word_class(SageObject):
         """
         from sage.combinat.words.words import FiniteWords, InfiniteWords
         if use_parent_alphabet and\
-            isinstance(self.parent(), (FiniteWords, InfiniteWords)):
+                isinstance(self.parent(), (FiniteWords, InfiniteWords)):
             A = self.parent().alphabet()
             for letter in self:
                 yield A.rank(letter)
@@ -641,7 +641,7 @@ class Word_class(SageObject):
             mapping = {}
             next_value = 0
             for letter in self:
-                if not(letter in mapping):
+                if letter not in mapping:
                     mapping[letter] = next_value
                     next_value += 1
                 yield mapping[letter]
@@ -737,7 +737,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``morphism`` - Can be an instance of WordMorphism, or
+        -  ``morphism`` -- Can be an instance of WordMorphism, or
            anything that can be used to construct one.
 
         EXAMPLES::
@@ -842,7 +842,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of self. It must
+        -  ``f`` -- involution (default: None) on the alphabet of self. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
         OUTPUT:
@@ -900,8 +900,7 @@ class Word_class(SageObject):
             w = (w*par([letter])).palindromic_closure(f=f)
             length_after = w.length()
             d = length_after - length_before
-            for a in w[-d:]:
-                yield a
+            yield from w[-d:]
 
     def _iterated_right_palindromic_closure_recursive_iterator(self, f=None):
         r"""
@@ -909,7 +908,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of self. It must
+        -  ``f`` -- involution (default: None) on the alphabet of self. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
         OUTPUT:
@@ -991,8 +990,7 @@ class Word_class(SageObject):
             else:
                 to_append = ipcw[lengths[pos]:]
             ipcw += to_append
-            for a in to_append:
-                yield a
+            yield from to_append
 
     def iterated_right_palindromic_closure(self, f=None, algorithm='recursive'):
         r"""
@@ -1000,15 +998,15 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of self. It must
+        -  ``f`` -- involution (default: None) on the alphabet of self. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
-        -  ``algorithm`` - string (default: ``'recursive'``) specifying which
+        -  ``algorithm`` -- string (default: ``'recursive'``) specifying which
            algorithm to be used when computing the iterated palindromic closure.
            It must be one of the two following values:
 
-           - ``'definition'`` - computed using the definition
-           - ``'recursive'`` - computation based on an efficient formula
+           - ``'definition'`` -- computed using the definition
+           - ``'recursive'`` -- computation based on an efficient formula
              that recursively computes the iterated right palindromic closure
              without having to recompute the longest `f`-palindromic suffix
              at each iteration [2].
@@ -1117,7 +1115,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``max_length`` - non negative integer or None (optional,
+        - ``max_length`` -- non negative integer or None (optional,
           default: None) the maximum length of the prefixes
 
         OUTPUT:
@@ -1171,7 +1169,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``max_length`` - non negative integer or None (optional,
+        - ``max_length`` -- non negative integer or None (optional,
           default: None) the maximum length of the prefixes
 
         OUTPUT:
@@ -1212,9 +1210,9 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``start`` - integer, the first letter of the resulting word.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- A word over the integers.
+        - ``start`` -- integer, the first letter of the resulting word.
+        - ``mod`` -- (default: None) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1258,9 +1256,9 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``start`` - integer, the first letter of the resulting word.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- A word over the integers.
+        - ``start`` -- integer, the first letter of the resulting word.
+        - ``mod`` -- (default: None) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1319,8 +1317,8 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- A word over the integers.
+        - ``mod`` -- (default: None) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1395,8 +1393,8 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- A word over the integers.
+        - ``mod`` -- (default: None) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1457,16 +1455,16 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``self`` - word over natural numbers
+        -  ``self`` -- word over natural numbers
 
-        -  ``base`` - integer (default : 2), greater or equal to 2
+        -  ``base`` -- integer (default : 2), greater or equal to 2
 
-        -  ``mod`` - modulo (default: ``None``), can take the following
+        -  ``mod`` -- modulo (default: ``None``), can take the following
            values:
 
            - integer -- the modulo
 
-           - ``None`` - the value ``base`` is considered for the modulo.
+           - ``None`` -- the value ``base`` is considered for the modulo.
 
         EXAMPLES:
 
@@ -1478,24 +1476,24 @@ class Word_class(SageObject):
 
         Sum of digits modulo 2 of the prime numbers written in base 2::
 
-            sage: Word(primes(1000)).sum_digits()
+            sage: Word(primes(1000)).sum_digits()                                       # needs sage.libs.pari
             word: 1001110100111010111011001011101110011011...
 
         Sum of digits modulo 3 of the prime numbers written in base 3::
 
-            sage: Word(primes(1000)).sum_digits(base=3)
+            sage: Word(primes(1000)).sum_digits(base=3)                                 # needs sage.libs.pari
             word: 2100002020002221222121022221022122111022...
-            sage: Word(primes(1000)).sum_digits(base=3, mod=3)
+            sage: Word(primes(1000)).sum_digits(base=3, mod=3)                          # needs sage.libs.pari
             word: 2100002020002221222121022221022122111022...
 
         Sum of digits modulo 2 of the prime numbers written in base 3::
 
-            sage: Word(primes(1000)).sum_digits(base=3, mod=2)
+            sage: Word(primes(1000)).sum_digits(base=3, mod=2)                          # needs sage.libs.pari
             word: 0111111111111111111111111111111111111111...
 
         Sum of digits modulo 7 of the prime numbers written in base 10::
 
-            sage: Word(primes(1000)).sum_digits(base=10, mod=7)
+            sage: Word(primes(1000)).sum_digits(base=10, mod=7)                         # needs sage.libs.pari
             word: 2350241354435041006132432241353546006304...
 
         Negative entries::
@@ -1623,7 +1621,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``fact`` - a non empty finite word
+        - ``fact`` -- a non empty finite word
 
         OUTPUT:
 
@@ -1664,7 +1662,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``fact`` - a non empty finite word
+        - ``fact`` -- a non empty finite word
 
         OUTPUT:
 
@@ -1716,7 +1714,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``fact`` - a non empty finite word
+        - ``fact`` -- a non empty finite word
 
         OUTPUT:
 

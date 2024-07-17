@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Rankers
 """
@@ -27,11 +26,11 @@ def from_list(l):
 
     INPUT:
 
-    -  ``l`` - a list
+    -  ``l`` -- a list
 
     OUTPUT:
 
-    - ``[rank, unrank]`` - functions
+    - ``[rank, unrank]`` -- functions
 
     EXAMPLES::
 
@@ -72,7 +71,7 @@ def rank_from_list(l):
         sage: r('c')
         2
 
-    For non elements a ``ValueError`` is raised, as with the usual
+    For non elements a :class:`ValueError` is raised, as with the usual
     ``index`` method of lists::
 
         sage: r('blah')
@@ -191,7 +190,7 @@ def unrank(L, i):
     tuple (or more generally a :class:`collections.abc.Sequence`), an
     enumerated set, some old parent of Sage still implementing
     unranking in the method ``__getitem__``, or an iterable (see
-    :class:`collections.abc.Iterable`). See :trac:`15919`.
+    :class:`collections.abc.Iterable`). See :issue:`15919`.
 
     EXAMPLES:
 

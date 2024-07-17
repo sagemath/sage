@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Spaces of valuations
 
@@ -43,7 +42,6 @@ EXAMPLES::
 
         sage: v = valuations.TrivialPseudoValuation(QQ)
         sage: v._test_category()
-
 """
 # ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
@@ -96,7 +94,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
 
     .. TODO::
 
-        The comparison problem might be fixed by :trac:`22029` or similar.
+        The comparison problem might be fixed by :issue:`22029` or similar.
 
     TESTS::
 
@@ -486,7 +484,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 return self.domain().one()
             exp = s / self.value_group().gen()
             if exp not in ZZ:
-                raise NotImplementedError("s must be a multiple of %r but %r is not"%(self.value_group().gen(), s))
+                raise NotImplementedError("s must be a multiple of %r but %r is not" % (self.value_group().gen(), s))
             ret = self.domain()(self.uniformizer() ** ZZ(exp))
             return self.simplify(ret, error=s)
 
@@ -510,8 +508,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 sage: valuations.TrivialValuation(ZZ).residue_ring()
                 Integer Ring
                 sage: GaussValuation(ZZ['x'], ZZ.valuation(2)).residue_ring()
-                Univariate Polynomial Ring in x over Finite Field of size 2 (using ...)
-
+                Univariate Polynomial Ring in x over Finite Field of size 2...
 
             """
 
@@ -592,9 +589,9 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 Rational Field
             """
             extensions = self.extensions(ring)
-            assert(extensions)
+            assert extensions
             if len(extensions) > 1:
-                raise ValueError("there is no unique extension of %r from %r to %r"%(self, self.domain(), ring))
+                raise ValueError("there is no unique extension of %r from %r to %r" % (self, self.domain(), ring))
             return extensions[0]
 
         def extensions(self, ring):
@@ -610,7 +607,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             """
             if ring is self.domain():
                 return [self]
-            raise NotImplementedError("extending %r from %r to %r not implemented"%(self, self.domain(), ring))
+            raise NotImplementedError("extending %r from %r to %r not implemented" % (self, self.domain(), ring))
 
         def restriction(self, ring):
             r"""
@@ -626,7 +623,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             """
             if ring is self.domain():
                 return self
-            raise NotImplementedError("restricting %r from %r to %r not implemented"%(self, self.domain(), ring))
+            raise NotImplementedError("restricting %r from %r to %r not implemented" % (self, self.domain(), ring))
 
         def change_domain(self, ring):
             r"""
@@ -649,7 +646,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 return self.extension(ring)
             if ring.is_subring(self.domain()):
                 return self.restriction(ring)
-            raise NotImplementedError("changing %r from %r to %r not implemented"%(self, self.domain(), ring))
+            raise NotImplementedError("changing %r from %r to %r not implemented" % (self, self.domain(), ring))
 
         def scale(self, scalar):
             r"""
@@ -732,11 +729,11 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
 
             for other in others + [self]:
                 if other.parent() is not self.parent():
-                    raise ValueError("all valuations must be valuations on %r but %r is a valuation on %r"%(self.domain(), other, other.domain()))
+                    raise ValueError("all valuations must be valuations on %r but %r is a valuation on %r" % (self.domain(), other, other.domain()))
                 if not other.is_discrete_valuation():
                     raise ValueError("all valuations must be discrete valuations but %r is not" % (other,))
                 if other.is_trivial():
-                    raise ValueError("all valuations must be non-trivial but %r is not"%(other,))
+                    raise ValueError("all valuations must be non-trivial but %r is not" % (other,))
 
             if len(others) == 0:
                 return self.uniformizer()
@@ -756,7 +753,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                     factor = ret
                     ret = delta
                     while any(other(ret) >= 0 for other in others[:i]):
-                        assert(others[i](ret) < 0)
+                        assert others[i](ret) < 0
                         ret *= factor
                 else:  # others[i](ret) > 0
                     # construct an element which approximates a unit with respect to others[i]
@@ -801,16 +798,16 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             numerator = self._weakly_separating_element(other)
             n = self(numerator)
             nn = other(numerator)
-            assert(n > 0)
-            assert(nn is not infinity)
-            if (nn < 0):
+            assert n > 0
+            assert nn is not infinity
+            if nn < 0:
                 return numerator
 
             denominator = other._weakly_separating_element(self)
             d = self(denominator)
             dd = other(denominator)
-            assert(dd > 0)
-            assert(d is not infinity)
+            assert dd > 0
+            assert d is not infinity
             if d < 0:
                 # The following may fail if denominator is not
                 # invertible in the domain, but we don't have a better
@@ -828,11 +825,11 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 # a/b > d/n and b/a > nn/dd
                 # which is
                 # dd/nn > a/b > d/n
-                assert(dd/nn > d/n)
+                assert dd / nn > d / n
                 from sage.rings.continued_fraction import continued_fraction
                 ab_cf = []
-                dn_cf = continued_fraction(d/n)
-                ddnn_cf = continued_fraction(dd/nn)
+                dn_cf = continued_fraction(d / n)
+                ddnn_cf = continued_fraction(dd / nn)
                 for i, (x,y) in enumerate(zip(dn_cf, ddnn_cf)):
                     if x == y:
                         ab_cf.append(x)
@@ -851,8 +848,8 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 a,b = ab.numerator(), ab.denominator()
 
             ret = self.domain()(numerator**a / denominator**b)
-            assert(self(ret) > 0)
-            assert(other(ret) < 0)
+            assert (self(ret) > 0)
+            assert (other(ret) < 0)
             return ret
 
         def _weakly_separating_element(self, other):
@@ -882,7 +879,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             ret = self.uniformizer()
             if self(ret) > other(ret):
                 return ret
-            raise NotImplementedError("weakly separating element for %r and %r"%(self, other))
+            raise NotImplementedError("weakly separating element for %r and %r" % (self, other))
 
         def shift(self, x, s):
             r"""
@@ -1336,7 +1333,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             TESTS::
 
                 sage: v = QQ.valuation(5)
-                sage: v._test_value_semigroup()
+                sage: v._test_value_semigroup()                                         # needs sage.geometry.polyhedron
 
             """
             tester = self._tester(**options)
@@ -1355,7 +1352,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             TESTS::
 
                 sage: v = QQ.valuation(5)
-                sage: v._test_element_with_valuation()
+                sage: v._test_element_with_valuation()                                  # needs sage.geometry.polyhedron
 
             """
             tester = self._tester(**options)

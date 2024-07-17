@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.combinat sage.graphs
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Regular Supercrystals
 """

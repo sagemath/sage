@@ -1,4 +1,5 @@
 # cython: binding=True
+# sage.doctest: needs sage.plot
 r"""
 Mandelbrot and Julia sets (Cython helper)
 
@@ -7,7 +8,6 @@ This is the helper file providing functionality for mandel_julia.py.
 AUTHORS:
 
 - Ben Barros
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 BEN BARROS <bbarros@slu.edu>
@@ -34,7 +34,7 @@ from sage.ext.fast_callable import fast_callable
 from sage.calculus.all import symbolic_expression
 from sage.symbolic.ring import SR
 from sage.calculus.var import var
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.categories.function_fields import FunctionFields
 from cypari2.handle_error import PariError
 from math import sqrt
@@ -57,6 +57,7 @@ def _color_to_RGB(color):
     if not isinstance(color, (list, tuple)):
         color = [int(255.0 * k) for k in Color(color)]
     return tuple(color)
+
 
 cpdef fast_mandelbrot_plot(double x_center, double y_center,
  double image_width, long max_iteration, long pixel_count,
@@ -186,24 +187,24 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
 
     - ``theta`` -- double, angle between 0 and 1 inclusive.
 
-    - ``D`` -- long (optional - default: ``25``) depth of the approximation.
+    - ``D`` -- long (default: ``25``) depth of the approximation.
      As ``D`` increases, the external ray gets closer to the boundary of the
      Mandelbrot set.
 
-    - ``S`` -- long (optional - default: ``10``) sharpness of the approximation.
+    - ``S`` -- long (default: ``10``) sharpness of the approximation.
      Adjusts the number of points used to approximate the external ray (number
      of points is equal to ``S*D``).
 
-    - ``R`` -- long (optional - default: ``100``) radial parameter. If ``R`` is
+    - ``R`` -- long (default: ``100``) radial parameter. If ``R`` is
      sufficiently large, the external ray reaches enough close to infinity.
 
-    - ``pixel_count`` -- long (optional - default: ``500``) side length of image
+    - ``pixel_count`` -- long (default: ``500``) side length of image
      in number of pixels.
 
-    - ``image_width`` -- double (optional - default: ``4``) width of the image
+    - ``image_width`` -- double (default: ``4``) width of the image
      in the complex plane.
 
-    - ``prec`` -- long (optional - default: ``300``) specifies the bits of
+    - ``prec`` -- long (default: ``300``) specifies the bits of
      precision used by the Complex Field when using Newton's method to compute
      points on the external ray.
 
@@ -431,28 +432,28 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
       set.
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center
+    - ``x_center`` -- double (default: ``0.0``), Real part of center
       point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of
+    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
       center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image
+    - ``image_width`` -- double (default: ``4.0``), width of image
       in the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of
+    - ``max_iteration`` -- long (default: ``500``), maximum number of
       iterations the map ``Q_c(z)``.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
+    - ``pixel_count`` -- long (default: ``500``), side length of
       image in number of pixels.
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations
+    - ``level_sep`` -- long (default: ``2``), number of iterations
       between each color level.
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used
+    - ``color_num`` -- long (default: ``40``), number of colors used
       to plot image.
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``), color
       used to determine the coloring of set.
 
     OUTPUT:
@@ -552,31 +553,31 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
     - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
       set.
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center
+    - ``x_center`` -- double (default: ``0.0``), Real part of center
       point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of
+    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
       center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image in
+    - ``image_width`` -- double (default: ``4.0``), width of image in
       the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of
+    - ``max_iteration`` -- long (default: ``500``), maximum number of
       iterations the map ``Q_c(z)``.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
+    - ``pixel_count`` -- long (default: ``500``), side length of
       image in number of pixels.
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations
+    - ``level_sep`` -- long (default: ``2``), number of iterations
       between each color level.
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used
+    - ``color_num`` -- long (default: ``40``), number of colors used
       to plot image.
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``), color
       used to determine the coloring of set.
 
-    - ``point_color`` -- RGB color (optional - default: ``[255, 0, 0]``), color
+    - ``point_color`` -- RGB color (default: ``[255, 0, 0]``), color
       of the point `c` in the Mandelbrot set.
 
     OUTPUT:
@@ -680,6 +681,15 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         sage: f = z^4 - z + c
         sage: polynomial_mandelbrot(f, pixel_count=100)
         100x100px 24-bit RGB image
+
+    ::
+
+        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import polynomial_mandelbrot
+        sage: B.<c> = CC[]
+        sage: R.<z> = B[]
+        sage: f = z^2*(z-c) + c
+        sage: polynomial_mandelbrot(f, pixel_count=100)
+        100x100px 24-bit RGB image
     """
 
     cdef:
@@ -699,14 +709,14 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     P = f.parent()
 
     if P.base_ring() is CC:
-        if is_FractionField(P):
+        if isinstance(P, FractionField_generic):
             raise NotImplementedError("coefficients must be polynomials in the parameter")
         gen_list = list(P.gens())
         parameter = gen_list.pop(gen_list.index(parameter))
         variable = gen_list.pop()
 
     elif P.base_ring().base_ring() is CC:
-        if is_FractionField(P.base_ring()):
+        if isinstance(P.base_ring(), FractionField_generic):
             raise NotImplementedError("coefficients must be polynomials in the parameter")
         phi = P.flattening_morphism()
         f = phi(f)
@@ -730,7 +740,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     # Take the given base color and create a list of evenly spaced
     # colors between the given base color and white. The number of
     # colors in the list depends on the variable color_num.
-    if type(base_color) == Color:
+    if isinstance(base_color, Color):
         # Convert Color to RGB list
         base_color = [int(k*255) for k in base_color]
     color_list = []
@@ -763,7 +773,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         df = f.derivative(z).univariate_polynomial()
         critical_pts = df.roots(multiplicities=False)
         constant_c = True
-    except PariError:
+    except (PariError, TypeError):
         constant_c = False
 
     # If c is in the constant term of the polynomial, then the critical points
@@ -964,7 +974,7 @@ cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
     # Take the given base color and create a list of evenly spaced
     # colors between the given base color and white. The number of
     # colors in the list depends on the variable color_num.
-    if type(base_color) == Color:
+    if isinstance(base_color, Color):
         # Convert Color to RGB list
         base_color = [int(k*255) for k in base_color]
     color_list = []

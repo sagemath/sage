@@ -14,7 +14,6 @@ where functions that depend on the ramification of the defining polynomial are p
 AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
@@ -106,7 +105,7 @@ cdef inline int ccmp(celement a, celement b, long prec, bint reduce_a, bint redu
     if not (reduce_a or reduce_b):
         return 0 if a == b else 1
     csub(prime_pow.tmp_ccmp_a, a, b, prec, prime_pow)
-    coeffs = prime_pow.tmp_ccmp_a.__coeffs
+    coeffs = prime_pow.tmp_ccmp_a._coeffs
     cdef long i, coeff_prec, break_pt
     if prime_pow.e == 1:
         for i in range(prime_pow.tmp_ccmp_a.degree()+1):
@@ -186,9 +185,9 @@ cdef inline int cneg(celement out, celement a, long prec, PowComputer_ prime_pow
     """
     cdef celement ma = -a
     if ma is a:
-        out.__coeffs = ma.__coeffs[:]
+        out._coeffs = ma._coeffs[:]
     else:
-        out.__coeffs = ma.__coeffs
+        out._coeffs = ma._coeffs
 
 cdef inline int cadd(celement out, celement a, celement b, long prec, PowComputer_ prime_pow) except -1:
     r"""
@@ -211,9 +210,9 @@ cdef inline int cadd(celement out, celement a, celement b, long prec, PowCompute
     """
     cdef celement sm = a + b
     if sm is a or sm is b:
-        out.__coeffs = sm.__coeffs[:]
+        out._coeffs = sm._coeffs[:]
     else:
-        out.__coeffs = sm.__coeffs
+        out._coeffs = sm._coeffs
 
 cdef inline int csub(celement out, celement a, celement b, long prec, PowComputer_ prime_pow) except -1:
     r"""
@@ -236,9 +235,9 @@ cdef inline int csub(celement out, celement a, celement b, long prec, PowCompute
     """
     cdef celement df = a - b
     if df is a or df is b:
-        out.__coeffs = df.__coeffs[:]
+        out._coeffs = df._coeffs[:]
     else:
-        out.__coeffs = df.__coeffs
+        out._coeffs = df._coeffs
 
 cdef inline int cmul(celement out, celement a, celement b, long prec, PowComputer_ prime_pow) except -1:
     r"""
@@ -261,9 +260,9 @@ cdef inline int cmul(celement out, celement a, celement b, long prec, PowCompute
     """
     cdef celement pd = a*b
     if pd is a or pd is b:
-        out.__coeffs = pd.__coeffs[:]
+        out._coeffs = pd._coeffs[:]
     else:
-        out.__coeffs = pd.__coeffs
+        out._coeffs = pd._coeffs
 
 cdef inline int csetone(celement out, PowComputer_ prime_pow) except -1:
     r"""
@@ -276,7 +275,7 @@ cdef inline int csetone(celement out, PowComputer_ prime_pow) except -1:
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
     """
-    out.__coeffs = [prime_pow.base_ring(1)]
+    out._coeffs = [prime_pow.base_ring(1)]
 
 cdef inline int csetzero(celement out, PowComputer_ prime_pow) except -1:
     r"""
@@ -289,7 +288,7 @@ cdef inline int csetzero(celement out, PowComputer_ prime_pow) except -1:
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
     """
-    out.__coeffs = []
+    out._coeffs = []
 
 cdef inline bint cisone(celement a, PowComputer_ prime_pow) except -1:
     r"""
@@ -330,7 +329,7 @@ cdef inline int ccopy(celement out, celement a, PowComputer_ prime_pow) except -
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
     """
-    out.__coeffs = a.__coeffs[:]
+    out._coeffs = a._coeffs[:]
 
 cdef inline cpickle(celement a, PowComputer_ prime_pow):
     r"""
@@ -343,7 +342,7 @@ cdef inline cpickle(celement a, PowComputer_ prime_pow):
     - ``prime_pow`` the ``PowComputer`` for the ring
 
     """
-    return a.__coeffs
+    return a._coeffs
 
 cdef inline int cunpickle(celement out, x, PowComputer_ prime_pow) except -1:
     r"""
@@ -358,7 +357,7 @@ cdef inline int cunpickle(celement out, x, PowComputer_ prime_pow) except -1:
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
     """
-    out.__coeffs = x
+    out._coeffs = x
 
 cdef inline long chash(celement a, long ordp, long prec, PowComputer_ prime_pow) except -1:
     r"""
@@ -413,9 +412,9 @@ cdef int cconv(celement out, x, long prec, long valshift, PowComputer_ prime_pow
     else:
         xx = prime_pow.poly_ring(x)
     if xx is x:
-        out.__coeffs = xx.__coeffs[:]
+        out._coeffs = xx._coeffs[:]
     else:
-        out.__coeffs = xx.__coeffs
+        out._coeffs = xx._coeffs
     if valshift > 0:
         cshift_notrunc(out, out, -valshift, prec, prime_pow, True)
     elif valshift == 0:
@@ -458,12 +457,12 @@ cdef inline long cconv_mpz_t(celement out, mpz_t x, long prec, bint absolute, Po
     mpz_set(n.value, x)
 
     if n:
-        out.__coeffs = [prime_pow.base_ring(n)]
+        out._coeffs = [prime_pow.base_ring(n)]
         if not absolute:
             valuation = cremove(out, out, prec, prime_pow)
         creduce(out, out, prec, prime_pow)
     else:
-        out.__coeffs = []
+        out._coeffs = []
 
     return valuation
 
@@ -492,12 +491,12 @@ cdef inline int cconv_mpz_t_out(mpz_t out, celement x, long valshift, long prec,
     else:
         prime_pow.powhelper_cconv_out = x
 
-    if len(prime_pow.powhelper_cconv_out.__coeffs) == 0:
+    if len(prime_pow.powhelper_cconv_out._coeffs) == 0:
         mpz_set_ui(out, 0)
-    elif len(prime_pow.powhelper_cconv_out.__coeffs) == 1:
+    elif len(prime_pow.powhelper_cconv_out._coeffs) == 1:
         # recursively let the underlying polynomial convert the constant
         # coefficient to an integer (if possible)
-        n = ZZ(prime_pow.powhelper_cconv_out.__coeffs[0])
+        n = ZZ(prime_pow.powhelper_cconv_out._coeffs[0])
         mpz_set(out, n.value)
     else:
         raise ValueError("cannot convert to integer")
@@ -532,7 +531,7 @@ cdef inline long cconv_mpq_t(celement out, mpq_t x, long prec, bint absolute, Po
     """
     cdef Rational r = PY_NEW(Rational)
     mpq_set(r.value, x)
-    out.__coeffs = [prime_pow.base_ring(r)]
+    out._coeffs = [prime_pow.base_ring(r)]
 
     if not absolute:
         return cremove(out, out, prec, prime_pow)
@@ -565,12 +564,12 @@ cdef inline int cconv_mpq_t_out(mpq_t out, celement x, long valshift, long prec,
     else:
         prime_pow.powhelper_cconv_out = x
 
-    if len(prime_pow.powhelper_cconv_out.__coeffs) == 0:
+    if len(prime_pow.powhelper_cconv_out._coeffs) == 0:
         mpq_set_ui(out, 0, 1)
-    elif len(prime_pow.powhelper_cconv_out.__coeffs) == 1:
+    elif len(prime_pow.powhelper_cconv_out._coeffs) == 1:
         # recursively let the underlying polynomial convert the constant
         # coefficient to a rational (if possible)
-        c = QQ(prime_pow.powhelper_cconv_out.__coeffs[0])
+        c = QQ(prime_pow.powhelper_cconv_out._coeffs[0])
         mpq_set(out, c.value)
     else:
         raise ValueError("cannot convert to rational")

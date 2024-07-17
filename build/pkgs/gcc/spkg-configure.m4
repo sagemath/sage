@@ -159,14 +159,14 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
 
         if test $IS_REALLY_GCC = yes ; then
             # Add the .0 because Debian/Ubuntu gives version numbers like
-            # 4.6 instead of 4.6.4 (Trac #18885)
+            # 4.6 instead of 4.6.4 (Issue #18885)
             AS_CASE(["$GXX_VERSION.0"],
-                [[[0-7]].*], [
-                    # Install our own GCC if the system-provided one is older than gcc 8
+                [[[0-7]].*|8.[[0-3]].*], [
+                    # Install our own GCC if the system-provided one is older than gcc 8.4
                     SAGE_SHOULD_INSTALL_GCC([you have $CXX version $GXX_VERSION, which is quite old])
                 ],
-                [1[[4-9]].*], [
-                    # Install our own GCC if the system-provided one is newer than 13.x.
+                [1[[5-9]].*], [
+                    # Install our own GCC if the system-provided one is newer than 14.x.
                     # See https://github.com/sagemath/sage/issues/29456
                     SAGE_SHOULD_INSTALL_GCC([$CXX is g++ version $GXX_VERSION, which is too recent for this version of Sage])
                 ])
@@ -247,7 +247,7 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
 
 
 ], , , [
-    # Trac #27907: Find location of crti.o from the system CC, in case we build our own gcc
+    # Issue #27907: Find location of crti.o from the system CC, in case we build our own gcc
     AC_MSG_CHECKING([for the location of crti.o])
     CRTI=`$CC -print-file-name=crti.o 2>/dev/null || true`
     if test -n "$CRTI" ; then

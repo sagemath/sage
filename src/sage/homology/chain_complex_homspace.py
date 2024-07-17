@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs          (because all doctests use SimplicialComplex)
+# sage.doctest: needs sage.graphs          (because all doctests use SimplicialComplex)
 r"""
 Homspaces between chain complexes
 
@@ -83,10 +83,9 @@ EXAMPLES::
     sage: w = G(f)
     sage: w == x
     True
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2009 D. Benjamin Antieau <d.ben.antieau@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -100,7 +99,7 @@ EXAMPLES::
 #
 #                  https://www.gnu.org/licenses/
 #
-#*****************************************************************************
+# ****************************************************************************
 
 import sage.categories.homset
 from sage.homology.chain_complex_morphism import ChainComplexMorphism
@@ -117,9 +116,17 @@ def is_ChainComplexHomspace(x):
         sage: C = T.chain_complex(augmented=True, cochain=True)
         sage: G = Hom(C, C)
         sage: is_ChainComplexHomspace(G)
+        doctest:warning...
+        DeprecationWarning: The function is_ChainComplexHomspace is deprecated;
+        use 'isinstance(..., ChainComplexHomspace)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
 
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ChainComplexHomspace is deprecated; "
+                "use 'isinstance(..., ChainComplexHomspace)' instead.")
     return isinstance(x, ChainComplexHomspace)
 
 

@@ -397,7 +397,6 @@ AUTHORS:
 REFERENCES:
 
 - \M. Berger: *Geometry I* [Ber1987]_
-
 """
 
 #*****************************************************************************
@@ -1729,7 +1728,7 @@ class Euclidean3dimSpace(EuclideanSpace):
                 symbols = 'r ph:\\phi z'
         self._spherical_chart = None    # to be constructed later if necessary
         self._spherical_frame = None    # orthonormal frame
-        self._cylindrical_chart = None  #
+        self._cylindrical_chart = None
         self._cylindrical_frame = None  # orthonormal frame
         init_coord_methods = {'Cartesian': self._init_cartesian,
                               'spherical': self._init_spherical,
@@ -1832,7 +1831,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         coords = symbols.split()  # list of strings, one per coordinate
         # Adding the coordinate ranges:
         coordinates = (coords[0] + ':(0,+oo) ' + coords[1]
-                       + ':(0,2*pi):periodic '+ coords[2])
+                       + ':(0,2*pi):periodic ' + coords[2])
         chart = self.chart(coordinates=coordinates)
         self._cylindrical_chart = chart
         frame = chart.frame()
@@ -1879,14 +1878,15 @@ class Euclidean3dimSpace(EuclideanSpace):
 
         Tests of the change-of-frame formulas::
 
-            sage: spher = E.spherical_coordinates()  # long time
-            sage: spher_f = E.spherical_frame()  # long time
-            sage: cart_f = E.cartesian_frame()  # long time
-            sage: E.change_of_frame(cart_f, spher_f)[:,spher]  # long time
+            sage: # long time
+            sage: spher = E.spherical_coordinates()
+            sage: spher_f = E.spherical_frame()
+            sage: cart_f = E.cartesian_frame()
+            sage: E.change_of_frame(cart_f, spher_f)[:,spher]
             [cos(ph)*sin(th) cos(ph)*cos(th)        -sin(ph)]
             [sin(ph)*sin(th) cos(th)*sin(ph)         cos(ph)]
             [        cos(th)        -sin(th)               0]
-            sage: E.change_of_frame(spher_f, cart_f)[:,spher]  # long time
+            sage: E.change_of_frame(spher_f, cart_f)[:,spher]
             [cos(ph)*sin(th) sin(ph)*sin(th)         cos(th)]
             [cos(ph)*cos(th) cos(th)*sin(ph)        -sin(th)]
             [       -sin(ph)         cos(ph)               0]
@@ -1958,14 +1958,15 @@ class Euclidean3dimSpace(EuclideanSpace):
 
         Tests of the change-of-frame formulas::
 
-            sage: cylind = E.cylindrical_coordinates()  # long time
-            sage: cylind_f = E.cylindrical_frame()  # long time
-            sage: cart_f= E.cartesian_frame()  # long time
-            sage: E.change_of_frame(cart_f, cylind_f)[:,cylind]  # long time
+            sage: # long time
+            sage: cylind = E.cylindrical_coordinates()
+            sage: cylind_f = E.cylindrical_frame()
+            sage: cart_f= E.cartesian_frame()
+            sage: E.change_of_frame(cart_f, cylind_f)[:,cylind]
             [ cos(ph) -sin(ph)        0]
             [ sin(ph)  cos(ph)        0]
             [       0        0        1]
-            sage: E.change_of_frame(cylind_f, cart_f)[:,cylind]  # long time
+            sage: E.change_of_frame(cylind_f, cart_f)[:,cylind]
             [ cos(ph)  sin(ph)        0]
             [-sin(ph)  cos(ph)        0]
             [       0        0        1]
@@ -2035,14 +2036,15 @@ class Euclidean3dimSpace(EuclideanSpace):
 
         Tests of the change-of-frame formulas::
 
-            sage: spher = E.spherical_coordinates()  # long time
-            sage: spher_f = E.spherical_frame()  # long time
-            sage: cylind_f = E.cylindrical_frame()  # long time
-            sage: E.change_of_frame(cylind_f, spher_f)[:, spher]  # long time
+            sage: # long time
+            sage: spher = E.spherical_coordinates()
+            sage: spher_f = E.spherical_frame()
+            sage: cylind_f = E.cylindrical_frame()
+            sage: E.change_of_frame(cylind_f, spher_f)[:, spher]
             [ sin(th)  cos(th)        0]
             [       0        0        1]
             [ cos(th) -sin(th)        0]
-            sage: E.change_of_frame(spher_f, cylind_f)[:, spher]  # long time
+            sage: E.change_of_frame(spher_f, cylind_f)[:, spher]
             [ sin(th)        0  cos(th)]
             [ cos(th)        0 -sin(th)]
             [       0        1        0]

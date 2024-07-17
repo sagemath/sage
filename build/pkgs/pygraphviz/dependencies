@@ -1,4 +1,4 @@
-$(PYTHON) libgraphviz | $(PYTHON_TOOLCHAIN)
+ libgraphviz | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

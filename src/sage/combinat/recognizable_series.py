@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Recognizable Series
 
@@ -26,27 +27,13 @@ such that the coefficient corresponding to a word `w\in A^*` equals
     In particular, minimization is called before checking if a series is
     nonzero.
 
-.. WARNING::
-
-    As this code is experimental, warnings are thrown when a
-    recognizable series space is created for the first time in a
-    session (see :class:`sage.misc.superseded.experimental`).
-
-    TESTS::
-
-        sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
-        doctest:...: FutureWarning: This class/method/function is
-        marked as experimental. It, its functionality or its interface
-        might change without a formal deprecation.
-        See https://github.com/sagemath/sage/issues/21202 for details.
-
 
 Various
 =======
 
 .. SEEALSO::
 
-    :mod:`k-regular sequence <sage.combinat.k_regular_sequence>`,
+    :mod:`k-regular sequence <sage.combinat.regular_sequence>`,
     :mod:`sage.rings.cfinite_sequence`,
     :mod:`sage.combinat.binary_recurrence_sequences`.
 
@@ -65,26 +52,25 @@ ACKNOWLEDGEMENT:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from functools import wraps
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import experimental
 from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class PrefixClosedSet():
+class PrefixClosedSet:
     def __init__(self, words):
         r"""
         A prefix-closed set.
@@ -263,7 +249,7 @@ class PrefixClosedSet():
         while n < len(self.elements):
             try:
                 nn = next(it)
-                yield self.elements[n] + nn #next(it)
+                yield self.elements[n] + nn  # next(it)
             except StopIteration:
                 n += 1
                 it = self.words.iterate_by_length(1)
@@ -317,6 +303,12 @@ def minimize_result(operation):
       if ``False``, then not. If this argument is ``None``, then
       the default specified by the parent's ``minimize_results`` is used.
 
+    .. NOTE::
+
+        If the result of ``operation`` is ``self``, then minimization is
+        not applied unless ``minimize=True`` is explicitly set,
+        in particular, independent of the parent's ``minimize_results``.
+
     TESTS::
 
         sage: from sage.combinat.recognizable_series import minimize_result
@@ -351,14 +343,39 @@ def minimize_result(operation):
         some result minimized
         sage: S('some').operation(minimize=False)
         some result
+
+    ::
+
+        sage: class T(S):
+        ....:     @minimize_result
+        ....:     def nooperation(self):
+        ....:         return self
+        sage: t = T('some')
+        sage: p.minimize_results = True
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
+        sage: p.minimize_results = False
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
     """
     @wraps(operation)
     def minimized(self, *args, **kwds):
         minimize = kwds.pop('minimize', None)
-        if minimize is None:
-            minimize = self.parent().minimize_results
 
         result = operation(self, *args, **kwds)
+        if minimize is not True and result is self:
+            return result
+
+        if minimize is None:
+            minimize = self.parent().minimize_results
 
         if minimize:
             result = result.minimized()
@@ -438,7 +455,7 @@ class RecognizableSeries(ModuleElement):
             sage: S.mu[0] is M0, S.mu[1] is M1, S.left is L, S.right is R
             (True, True, True, True)
         """
-        super(RecognizableSeries, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         from copy import copy
         from sage.matrix.constructor import Matrix
@@ -1044,9 +1061,11 @@ class RecognizableSeries(ModuleElement):
             T = M.transpose()
             T.set_immutable()
             return T
-        return self.parent()(self.mu.map(tr),
-                             left=self.right,
-                             right=self.left)
+
+        P = self.parent()
+        return P.element_class(P, self.mu.map(tr),
+                               left=self.right,
+                               right=self.left)
 
     @cached_method
     def minimized(self):
@@ -1106,6 +1125,12 @@ class RecognizableSeries(ModuleElement):
             sage: all(c == d and v == w
             ....:     for (c, v), (d, w) in islice(zip(iter(S), iter(M)), 20))
             True
+
+        TESTS::
+
+            sage: Rec((Matrix([[0]]), Matrix([[0]])),
+            ....:     vector([1]), vector([0])).minimized().linear_representation()
+            ((), Finite family {0: [], 1: []}, ())
         """
         return self._minimized_right_()._minimized_left_()
 
@@ -1212,11 +1237,11 @@ class RecognizableSeries(ModuleElement):
         mu_prime = []
         for a in self.parent().alphabet():
             a = self.parent().indices()([a])
-            M = Matrix([alpha(c) if c in C else tuple(ZZ(c==q) for q in P)
+            M = Matrix([alpha(c) if c in C else tuple(ZZ(c == q) for q in P)
                         for c in (p + a for p in P)])
             mu_prime.append(M)
 
-        left_prime = vector([ZZ(1)] + (len(P)-1)*[ZZ(0)])
+        left_prime = vector([ZZ.one()] + (len(P) - 1) * [ZZ.zero()])
         right_prime = vector(self.coefficient_of_word(p) for p in P)
 
         P = self.parent()
@@ -1257,7 +1282,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: E
@@ -1280,7 +1305,7 @@ class RecognizableSeries(ModuleElement):
 
         result = P.element_class(
             P,
-            dict((a, self.mu[a].block_sum(other.mu[a])) for a in P.alphabet()),
+            {a: self.mu[a].block_sum(other.mu[a]) for a in P.alphabet()},
             vector(tuple(self.left) + tuple(other.left)),
             vector(tuple(self.right) + tuple(other.right)))
 
@@ -1296,7 +1321,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: -E
@@ -1323,7 +1348,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: M = 2 * E  # indirect doctest
@@ -1340,6 +1365,11 @@ class RecognizableSeries(ModuleElement):
         TESTS::
 
             sage: 1 * E is E
+            True
+
+        ::
+
+            sage: 0 * E is Seq2.zero()
             True
 
         We test that ``_rmul_`` and ``_lmul_`` are actually called::
@@ -1360,10 +1390,12 @@ class RecognizableSeries(ModuleElement):
             _lmul_
             2-regular sequence 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, ...
         """
+        P = self.parent()
+        if other.is_zero():
+            return P._zero_()
         if other.is_one():
             return self
-        P = self.parent()
-        return P.element_class(P, self.mu, other*self.left, self.right)
+        return P.element_class(P, self.mu, other * self.left, self.right)
 
     def _lmul_(self, other):
         r"""
@@ -1380,7 +1412,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
             sage: M = E * 2 # indirect doctest
@@ -1399,8 +1431,13 @@ class RecognizableSeries(ModuleElement):
             sage: E * 1 is E
             True
 
+        ::
+
+            sage: E * 0 is Seq2.zero()
+            True
+
         The following is not tested, as `MS^i` for integers `i` does
-        not work, thus ``vector([m])`` fails. (See :trac:`21317` for
+        not work, thus ``vector([m])`` fails. (See :issue:`21317` for
         details.)
 
         ::
@@ -1415,10 +1452,12 @@ class RecognizableSeries(ModuleElement):
             sage: M  # not tested
             sage: M.linear_representation()  # not tested
         """
+        P = self.parent()
+        if other.is_zero():
+            return P._zero_()
         if other.is_one():
             return self
-        P = self.parent()
-        return P.element_class(P, self.mu, self.left, self.right*other)
+        return P.element_class(P, self.mu, self.left, self.right * other)
 
     @minimize_result
     def hadamard_product(self, other):
@@ -1443,7 +1482,7 @@ class RecognizableSeries(ModuleElement):
 
         EXAMPLES::
 
-            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2 = RegularSequenceRing(2, ZZ)
 
             sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
             ....:          vector([1, 0]), vector([1, 1]))
@@ -1523,8 +1562,7 @@ class RecognizableSeries(ModuleElement):
             return T
         result = P.element_class(
             P,
-            dict((a, tensor_product(self.mu[a], other.mu[a]))
-                 for a in P.alphabet()),
+            {a: tensor_product(self.mu[a], other.mu[a]) for a in P.alphabet()},
             vector(tensor_product(Matrix(self.left), Matrix(other.left))),
             vector(tensor_product(Matrix(self.right), Matrix(other.right))))
 
@@ -1622,7 +1660,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: Rec1 is Rec2 is Rec3
             True
         """
-        return super(RecognizableSeriesSpace, cls).__classcall__(
+        return super().__classcall__(
             cls, *cls.__normalize__(*args, **kwds))
 
     @classmethod
@@ -1688,7 +1726,6 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         return (coefficient_ring, indices, category, minimize_results)
 
-    @experimental(issue_number=21202)
     def __init__(self, coefficient_ring, indices, category, minimize_results):
         r"""
         See :class:`RecognizableSeriesSpace` for details.
@@ -1745,7 +1782,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         """
         self._indices_ = indices
         self._minimize_results_ = minimize_results
-        super(RecognizableSeriesSpace, self).__init__(
+        super().__init__(
             category=category, base=coefficient_ring)
 
     def __reduce__(self):
@@ -1866,15 +1903,19 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         z = self.coefficient_ring().zero()
         o = self.coefficient_ring().one()
         e = self.coefficient_ring().an_element()
-        return self(list(Matrix([[o, z], [i*o, o]])
+        return self(list(Matrix([[o, z], [i * o, o]])
                          for i, _ in enumerate(self.alphabet())),
                     vector([z, e]), right=vector([e, z]))
 
-    def some_elements(self):
+    def some_elements(self, **kwds):
         r"""
         Return some elements of this recognizable series space.
 
         See :class:`TestSuite` for a typical use case.
+
+        INPUT:
+
+        - ``kwds`` are passed on to the element constructor
 
         OUTPUT:
 
@@ -1912,7 +1953,60 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                 LR = list(islice(elements_V, 2))
                 if len(mu) != k or len(LR) != 2:
                     break
-                yield self(mu, *LR)
+                yield self(mu, *LR, **kwds)
+
+    @cached_method
+    def _zero_(self):
+        r"""
+        Return the zero element of this :class:`RecognizableSeriesSpace`,
+        i.e. the unique neutral element for `+`.
+
+        TESTS::
+
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: Z = Rec._zero_(); Z
+            0
+            sage: Z.linear_representation()
+            ((), Finite family {0: [], 1: []}, ())
+        """
+        from sage.matrix.constructor import Matrix
+        from sage.modules.free_module_element import vector
+        from sage.sets.family import Family
+
+        return self.element_class(
+            self, Family(self.alphabet(), lambda a: Matrix()),
+            vector([]), vector([]))
+
+    @cached_method
+    def one(self):
+        r"""
+        Return the one element of this :class:`RecognizableSeriesSpace`,
+        i.e. the embedding of the one of the coefficient ring into
+        this :class:`RecognizableSeriesSpace`.
+
+        EXAMPLES::
+
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: O = Rec.one(); O
+            [] + ...
+            sage: O.linear_representation()
+            ((1), Finite family {0: [0], 1: [0]}, (1))
+
+        TESTS::
+
+            sage: Rec.one() is Rec.one()
+            True
+        """
+        from sage.matrix.constructor import Matrix
+        from sage.modules.free_module_element import vector
+
+        R = self.coefficient_ring()
+        one = R.one()
+        zero = R.zero()
+        return self.element_class(self,
+                                  len(self.alphabet())*[Matrix([[zero]])],
+                                  vector([one]),
+                                  vector([one]))
 
     @cached_method
     def one_hadamard(self):
@@ -1941,7 +2035,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         from sage.modules.free_module_element import vector
 
         one = self.coefficient_ring()(1)
-        return self(dict((a, Matrix([[one]])) for a in self.alphabet()),
+        return self({a: Matrix([[one]]) for a in self.alphabet()},
                     vector([one]), vector([one]))
 
     def _element_constructor_(self, data,
@@ -1968,6 +2062,19 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: Rec(S) is S
             True
 
+        ::
+
+            sage: A = Rec(42); A
+            42*[] + ...
+            sage: A.linear_representation()
+            ((42), Finite family {0: [0], 1: [0]}, (1))
+            sage: Z = Rec(0); Z
+            0
+            sage: Z.linear_representation()
+            ((), Finite family {0: [], 1: []}, ())
+
+        ::
+
             sage: Rec((M0, M1))
             Traceback (most recent call last):
             ...
@@ -1986,19 +2093,17 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             ValueError: left or right vector is None
         """
         if isinstance(data, int) and data == 0:
-            from sage.matrix.constructor import Matrix
-            from sage.modules.free_module_element import vector
-            from sage.sets.family import Family
+            return self._zero_()
 
-            return self.element_class(
-                self, Family(self.alphabet(), lambda a: Matrix()),
-                vector([]), vector([]))
-
-        if type(data) == self.element_class and data.parent() == self:
+        if isinstance(data, self.element_class) and data.parent() == self:
             element = data
 
         elif isinstance(data, RecognizableSeries):
             element = self.element_class(self, data.mu, data.left, data.right)
+
+        elif data in self.coefficient_ring():
+            c = self.coefficient_ring()(data)
+            return c * self.one()
 
         else:
             mu = data

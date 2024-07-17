@@ -673,14 +673,14 @@ parameters so that you can position the image map on the object
 properly.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 John E. Stone
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import re
@@ -702,36 +702,36 @@ class TachyonRT(SageObject):
 
     INPUT:
 
-    -  ``model`` - a string that describes a 3d model in
+    -  ``model`` -- a string that describes a 3d model in
        the Tachyon modeling format. Type ``sage.interfaces.tachyon?`` for a
        description of this format.
 
-    -  ``outfile`` - (default: 'sage.png') output filename;
+    -  ``outfile`` -- (default: 'sage.png') output filename;
        the extension of the filename determines the type. Supported types
        include:
 
-       -  ``tga`` - 24-bit (uncompressed)
+       -  ``tga`` -- 24-bit (uncompressed)
 
-       -  ``bmp`` - 24-bit Windows BMP (uncompressed)
+       -  ``bmp`` -- 24-bit Windows BMP (uncompressed)
 
-       -  ``ppm`` - 24-bit PPM (uncompressed)
+       -  ``ppm`` -- 24-bit PPM (uncompressed)
 
-       -  ``rgb`` - 24-bit SGI RGB (uncompressed)
+       -  ``rgb`` -- 24-bit SGI RGB (uncompressed)
 
-       -  ``png`` - 24-bit PNG (compressed, lossless)
+       -  ``png`` -- 24-bit PNG (compressed, lossless)
 
-    -  ``verbose`` - integer; (default: 1)
+    -  ``verbose`` -- integer; (default: 1)
 
-       -  ``0`` - silent
+       -  ``0`` -- silent
 
-       -  ``1`` - some output
+       -  ``1`` -- some output
 
-       -  ``2`` - very verbose output
+       -  ``2`` -- very verbose output
 
-    -  ``block`` - bool (default: True); if False, run the
+    -  ``block`` -- bool (default: ``True``); if False, run the
        rendering command in the background.
 
-    -  ``extra_opts`` - passed directly to tachyon command
+    -  ``extra_opts`` -- passed directly to tachyon command
        line. Use tachyon_rt.usage() to see some of the possibilities.
 
     OUTPUT:
@@ -804,8 +804,8 @@ class TachyonRT(SageObject):
         if self.version() >= '0.99.2':
             # this keyword was changed in 0.99.2
             model = model.replace(
-                    "              focallength ",
-                    "              focaldist ")
+                "              focallength ",
+                "              focaldist ")
         modelfile = tmp_filename(ext='.dat')
         with open(modelfile, 'w') as file:
             file.write(model)
@@ -890,5 +890,6 @@ class TachyonRT(SageObject):
             See https://github.com/sagemath/sage/issues/34066 for details.
         """
         deprecation(34066, "type 'sage.interfaces.tachyon?' for help")
+
 
 tachyon_rt = TachyonRT()

@@ -1,7 +1,7 @@
 r"""
 Subsets
 
-The set of subsets of a finite set. The set can be given as a list or a Set
+The set of subsets of a finite set. The set can be given as a list or a :class:`Set`
 or else as an integer `n` which encodes the set `\{1,2,...,n\}`.
 See :class:`Subsets` for more information and examples.
 
@@ -535,7 +535,7 @@ class Subsets_s(Parent):
             sage: Subsets([2,4,5]).an_element()
             {2, 4}
 
-         Check that :trac:`33988` is fixed::
+         Check that :issue:`33988` is fixed::
 
             sage: Subsets([1,2,3]).an_element() == Subsets([1,2,3])._an_element_()
             True
@@ -549,10 +549,10 @@ class Subsets_s(Parent):
         EXAMPLES::
 
             sage: X = Subsets([7,8,9])
-            sage: X.lattice()
+            sage: X.lattice()                                                           # needs sage.combinat sage.graphs
             Finite lattice containing 8 elements
             sage: Y = Subsets(0)
-            sage: Y.lattice()
+            sage: Y.lattice()                                                           # needs sage.combinat sage.graphs
             Finite lattice containing 1 elements
 
         """
@@ -741,7 +741,8 @@ class Subsets_sk(Subsets_s):
         if self._k > self._s.cardinality():
             raise EmptySetError
 
-        return self.element_class([i for i in itertools.islice(reversed(self._s), int(self._k))])
+        return self.element_class(list(itertools.islice(reversed(self._s),
+                                                        int(self._k))))
 
     def _fast_iterator(self):
         r"""
@@ -873,8 +874,8 @@ class Subsets_sk(Subsets_s):
 
 def dict_to_list(d):
     r"""
-    Return a list whose elements are the elements of i of d repeated with
-    multiplicity d[i].
+    Return a list whose elements are the elements of ``i`` of ``d`` repeated with
+    multiplicity ``d[i]``.
 
     EXAMPLES::
 
@@ -1166,7 +1167,7 @@ class SubMultiset_s(Parent):
 
 class SubMultiset_sk(SubMultiset_s):
     """
-    The combinatorial class of the subsets of size k of a multiset s.  Note
+    The combinatorial class of the subsets of size ``k`` of a multiset ``s``.  Note
     that each subset is represented by a list of the elements rather than a
     set since we can have multiplicities (no multiset data structure yet in
     sage).
@@ -1184,7 +1185,7 @@ class SubMultiset_sk(SubMultiset_s):
         [3, 3]
         sage: [sub for sub in S]
         [[1, 2], [1, 3], [2, 3], [3, 3]]
-        """
+    """
 
     def __init__(self, s, k):
         """
@@ -1289,7 +1290,7 @@ class SubMultiset_sk(SubMultiset_s):
 
     def random_element(self):
         r"""
-        Return a random submultiset of given length
+        Return a random submultiset of given length.
 
         EXAMPLES::
 
@@ -1318,7 +1319,7 @@ class SubMultiset_sk(SubMultiset_s):
             sage: S.list()
             [[1, 2], [1, 3], [2, 2], [2, 3]]
 
-        Check that :trac:`28588` is fixed::
+        Check that :issue:`28588` is fixed::
 
             sage: Subsets([3,2,2], submultiset=True).list()
             [[], [3], [2], [3, 2], [2, 2], [3, 2, 2]]
@@ -1478,7 +1479,7 @@ def powerset(X):
 
     INPUT:
 
-    -  ``X`` - an iterable
+    -  ``X`` -- an iterable
 
     OUTPUT: iterator of lists
 

@@ -114,7 +114,7 @@ cdef class ntl_ZZ_pContext_class():
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         self.x.restore()
 
     cpdef void _assert_is_current_modulus(self) except *:

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Cartesian Product Functorial Construction
 
@@ -16,7 +17,8 @@ from sage.misc.lazy_import import lazy_import
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
 from sage.categories.pushout import MultivariateConstructionFunctor
 
-native_python_containers = set([tuple, list, set, frozenset, range])
+native_python_containers = {tuple, list, set, frozenset, range}
+
 
 class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConstructionFunctor):
     """
@@ -216,6 +218,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
         """
         return not (self == other)
 
+
 class CartesianProductsCategory(CovariantConstructionCategory):
     r"""
     An abstract base class for all ``CartesianProducts`` categories.
@@ -242,7 +245,7 @@ class CartesianProductsCategory(CovariantConstructionCategory):
 
         """
         # This method is only required for the capital `C`
-        return "Cartesian products of %s"%(self.base_category()._repr_object_names())
+        return "Cartesian products of %s" % (self.base_category()._repr_object_names())
 
     def CartesianProducts(self):
         """
@@ -270,6 +273,7 @@ class CartesianProductsCategory(CovariantConstructionCategory):
             Integer Ring
         """
         return self.base_category().base_ring()
+
 
 # Moved to avoid circular imports
 lazy_import('sage.categories.sets_cat', 'cartesian_product')

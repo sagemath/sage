@@ -590,7 +590,7 @@ class VermaModule(CombinatorialFreeModule):
         The sole purpose of this method is to construct the homset as a
         :class:`~sage.algebras.lie_algebras.verma_module.VermaModuleHomset`.
         If ``category`` is specified and is not a subcategory of
-        ``self.category()``, a ``TypeError`` is raised instead.
+        ``self.category()``, a :class:`TypeError` is raised instead.
 
         This method is not meant to be called directly. Please use
         :func:`sage.categories.homset.Hom` instead.
@@ -696,6 +696,7 @@ class VermaModule(CombinatorialFreeModule):
 
 #####################################################################
 ## Morphisms and Homset
+
 
 class VermaModuleMorphism(Morphism):
     """
@@ -980,6 +981,7 @@ class VermaModuleMorphism(Morphism):
             False
         """
         return self.domain() == self.codomain() and bool(self._scalar)
+
 
 class VermaModuleHomset(Homset):
     r"""

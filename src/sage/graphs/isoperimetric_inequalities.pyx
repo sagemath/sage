@@ -110,7 +110,8 @@ def cheeger_constant(g):
     cdef unsigned long vmin = 1   # value of the volume for the min
     cdef int i
 
-    init_short_digraph(sd, g)
+    init_short_digraph(sd, g, edge_labelled=False, vertex_list=list(g),
+                       sort_neighbors=False)
 
     subgraph = <int *> check_malloc(sd.n * sizeof(int))
     bitsubgraph = <int *> check_malloc(sd.n * sizeof(int))
@@ -209,8 +210,8 @@ def edge_isoperimetric_number(g):
     In general, for `d`-regular graphs the edge-isoperimetric number is
     `d` times larger than the Cheeger constant of the graph::
 
-        sage: g = graphs.RandomRegular(3, 10)                                           # optional - networkx
-        sage: g.edge_isoperimetric_number() == g.cheeger_constant() * 3                 # optional - networkx
+        sage: g = graphs.RandomRegular(3, 10)                                           # needs networkx
+        sage: g.edge_isoperimetric_number() == g.cheeger_constant() * 3                 # needs networkx
         True
 
     And the edge-isoperimetric constant of a disconnected graph is `0`::
@@ -244,7 +245,8 @@ def edge_isoperimetric_number(g):
     cdef int u = 0                  # current vertex
     cdef int i
 
-    init_short_digraph(sd, g)
+    init_short_digraph(sd, g, edge_labelled=False, vertex_list=list(g),
+                       sort_neighbors=False)
 
     cdef unsigned long bmin = sd.neighbors[1] - sd.neighbors[0]  # value of boundary for the min
     cdef unsigned long vmin = 1  # value of the volume for the min

@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 r"""
 Dense vectors using a NumPy backend
 
@@ -6,8 +7,8 @@ Complex Double Field
 
 EXAMPLES::
 
-    sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)])
-    sage: v
+    sage: # needs sage.symbolic
+    sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)]); v
     (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: type(v)
     <class 'sage.modules.vector_complex_double_dense.Vector_complex_double_dense'>
@@ -18,6 +19,7 @@ EXAMPLES::
     (5.0, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: loads(dumps(v)) == v
     True
+
     sage: v = vector(RDF, [1,2,3,4]); v
     (1.0, 2.0, 3.0, 4.0)
     sage: loads(dumps(v)) == v
@@ -198,7 +200,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(self._vector_numpy*self._python_dtype(right))
 
-
     def inv_fft(self,algorithm="radix2", inplace=False):
         """
         This performs the inverse fast Fourier transform on the vector.
@@ -210,6 +211,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         EXAMPLES::
 
+            sage: # needs scipy
             sage: v = vector(CDF,[1,2,3,4])
             sage: w = v.fft()
             sage: max(v - w.inv_fft()) < 1e-12
@@ -231,6 +233,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         EXAMPLES::
 
+            sage: # needs scipy
             sage: v = vector(CDF,[1+2*I,2,3*I,4])
             sage: v.fft()
             (7.0 + 5.0*I, 1.0 + 1.0*I, -5.0 + 5.0*I, 1.0 - 3.0*I)
@@ -244,6 +247,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
             sage: v
             (7.0 + 5.0*I, 1.0 + 1.0*I, -5.0 + 5.0*I, 1.0 - 3.0*I)
 
+            sage: # needs scipy
             sage: v = vector(RDF,4,range(4)); v
             (0.0, 1.0, 2.0, 3.0)
             sage: v.fft()
@@ -282,7 +286,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
                 fft = scipy.fft
                 ifft = scipy.ifft
             V = CDF ** self._degree
-            from .vector_complex_double_dense import Vector_complex_double_dense
+            from sage.modules.vector_complex_double_dense import Vector_complex_double_dense
             if direction == 'forward':
                 return Vector_complex_double_dense(V, fft(self._vector_numpy))
             else:
@@ -305,7 +309,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         """
         return self.change_ring(CDF)
 
-
     def zero_at(self, eps):
         r"""
         Returns a copy with small entries replaced by zeros.
@@ -316,7 +319,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         INPUT:
 
-        - ``eps`` - cutoff value
+        - ``eps`` -- cutoff value
 
         OUTPUT:
 
@@ -355,14 +358,13 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         v = self._new(out)
         return v
 
-
     def norm(self, p=2):
         r"""
         Returns the norm (or related computations) of the vector.
 
         INPUT:
 
-        - ``p`` - default: 2 - controls which norm is computed,
+        - ``p`` -- (default: 2); controls which norm is computed,
           allowable values are any real number and positive and
           negative infinity.  See output discussion for specifics.
 
@@ -390,8 +392,8 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         ALGORITHM:
 
-        Computation is performed by the ``norm()`` function of
-        the SciPy/NumPy library.
+        Computation is performed by the :func:`~scipy:scipy.linalg.norm`
+        function of the SciPy/NumPy library.
 
         EXAMPLES:
 
@@ -471,10 +473,10 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         # p = 0 returns integer *count* of non-zero entries
         return RDF(n)
 
-
     #############################
     # statistics
     #############################
+
     def mean(self):
         """
         Calculate the arithmetic mean of the vector.
@@ -541,7 +543,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         else:
             return self._sage_dtype(numpy.std(self._vector_numpy, ddof=0))
 
-
     def stats_kurtosis(self):
         """
         Compute the kurtosis of a dataset.
@@ -553,6 +554,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         EXAMPLES::
 
+            sage: # needs scipy
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])
             sage: v.stats_kurtosis()  # rel tol 5e-15

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Growth diagrams and dual graded graphs
 
@@ -371,7 +371,7 @@ compute the labels belonging to a filling::
     sage: GrowthDiagram(RulePascal(), [3,1,2])
     Traceback (most recent call last):
     ...
-    AttributeError: 'RulePascal' object has no attribute 'forward_rule'
+    AttributeError: 'RulePascal' object has no attribute 'forward_rule'...
 
 We now re-implement the rule where we provide the dual graded graphs::
 
@@ -476,7 +476,6 @@ from itertools import zip_longest
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.combinat.posets.posets import Poset
 from sage.combinat.words.word import Word
 from sage.combinat.words.words import Words
 from sage.combinat.binary_tree import BinaryTree, BinaryTrees, LabelledBinaryTree
@@ -487,7 +486,10 @@ from sage.combinat.skew_tableau import SkewTableau
 from sage.combinat.core import Core, Cores
 from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
-from sage.graphs.digraph import DiGraph
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.combinat.posets.posets', 'Poset')
 
 
 def _make_partition(l):
@@ -619,8 +621,8 @@ class GrowthDiagram(SageObject):
 
     Passing the permutation matrix instead gives the same result::
 
-        sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())
-        sage: ascii_art([G.P_symbol(), G.Q_symbol()])
+        sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())                                # needs sage.modules
+        sage: ascii_art([G.P_symbol(), G.Q_symbol()])                                   # needs sage.modules
         [   1  2  3    1  3  4 ]
         [   4      ,   2       ]
 
@@ -797,8 +799,8 @@ class GrowthDiagram(SageObject):
         """
         l = self._lambda[0]
         h = len(self._lambda)
-        shape_lambda = [l-p for p in self._mu] + [l]*(h-len(self._mu))
-        shape_mu     = [l-p for p in self._lambda]
+        shape_lambda = [l - p for p in self._mu] + [l] * (h - len(self._mu))
+        shape_mu = [l - p for p in self._lambda]
         shape = SkewPartition([shape_lambda[::-1], shape_mu[::-1]])
         F = {(l-i-1, h-j-1): v for (i,j),v in self._filling.items()}
         return GrowthDiagram(self.rule,
@@ -911,7 +913,7 @@ class GrowthDiagram(SageObject):
             sage: G.P_chain()
             [word: , word: 1, word: 11, word: 111, word: 1011]
 
-        Check that :trac:`25631` is fixed::
+        Check that :issue:`25631` is fixed::
 
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
             sage: BinaryWord(filling = {}).P_chain()
@@ -941,7 +943,7 @@ class GrowthDiagram(SageObject):
             sage: G.Q_chain()
             [word: , word: 1, word: 10, word: 101, word: 1011]
 
-        Check that :trac:`25631` is fixed::
+        Check that :issue:`25631` is fixed::
 
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
             sage: BinaryWord(filling = {}).Q_chain()
@@ -1128,7 +1130,7 @@ class GrowthDiagram(SageObject):
             sage: G1 == G2
             False
         """
-        return (type(self) == type(other) and
+        return (type(self) is type(other) and
                 self.rule == other.rule and
                 self._lambda == other._lambda and
                 self._mu == other._mu and
@@ -1358,10 +1360,10 @@ class GrowthDiagram(SageObject):
 
         ``filling`` is a matrix::
 
-            sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())  # indirect doctest
-            sage: G._filling
+            sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())  # indirect doctest        # needs sage.modules
+            sage: G._filling                                                            # needs sage.modules
             {(0, 1): 1, (1, 2): 1, (2, 0): 1, (3, 5): 1, (4, 3): 1, (5, 4): 1}
-            sage: G.shape()
+            sage: G.shape()                                                             # needs sage.modules
             [6, 6, 6, 6, 6, 6] / []
 
         ``filling`` is a permutation::
@@ -1390,7 +1392,8 @@ class GrowthDiagram(SageObject):
 
         ``filling`` is a list of lists and shape is given::
 
-            sage: G = GrowthDiagram(RuleRSK, [[1,0,1],[0,1]], shape=SkewPartition([[3,2],[1]]))  # indirect doctest
+            sage: G = GrowthDiagram(RuleRSK, [[1,0,1],[0,1]],                                    # indirect doctest
+            ....:                   shape=SkewPartition([[3,2],[1]]))
             sage: G._filling
             {(0, 0): 1, (1, 1): 1, (2, 0): 1}
             sage: G.shape()
@@ -2028,7 +2031,8 @@ class RuleShiftedShapes(Rule):
                 .  4'
                    5
             sage: Shifted = GrowthDiagram.rules.ShiftedShapes()
-            sage: labels = [mu if is_even(i) else 0 for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
+            sage: labels = [mu if is_even(i) else 0
+            ....:           for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
             sage: G = Shifted({(1,2):1, (2,1):1}, shape=[5,5,5,5,5], labels=labels)
             sage: G.P_symbol().pp()
              .  .  .  .  2
@@ -2080,7 +2084,8 @@ class RuleShiftedShapes(Rule):
                 .  4'
                    5
             sage: Shifted = GrowthDiagram.rules.ShiftedShapes()
-            sage: labels = [mu if is_even(i) else 0 for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
+            sage: labels = [mu if is_even(i) else 0
+            ....:           for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
             sage: G = Shifted({(1,2):1, (2,1):1}, shape=[5,5,5,5,5], labels=labels)
             sage: G.Q_symbol().pp()
              .  .  .  .  2
@@ -2116,8 +2121,8 @@ class RuleShiftedShapes(Rule):
 
         INPUT:
 
-        - ``y, e, t, f, x`` -- a path of three partitions and two
-          colors from a cell in a growth diagram, labelled as::
+        - ``y``, ``e``, ``t``, ``f``, ``x`` -- a path of three partitions and
+          two colors from a cell in a growth diagram, labelled as::
 
               t f x
               e
@@ -2216,8 +2221,8 @@ class RuleShiftedShapes(Rule):
 
         INPUT:
 
-        - ``y, g, z, h, x`` -- a path of three partitions and two
-          colors from a cell in a growth diagram, labelled as::
+        - ``y``, ``g``, ``z``, ``h``, ``x`` -- a path of three partitions and
+          two colors from a cell in a growth diagram, labelled as::
 
                   x
                   h
@@ -2509,8 +2514,8 @@ class RuleLLMS(Rule):
 
         INPUT:
 
-        - ``y, e, t, f, x`` -- a path of three partitions and two
-          colors from a cell in a growth diagram, labelled as::
+        - ``y``, ``e``, ``t``, ``f``, ``x`` -- a path of three partitions and
+          two colors from a cell in a growth diagram, labelled as::
 
               t f x
               e
@@ -2783,7 +2788,7 @@ class RuleBinaryWord(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three binary words from a cell in a growth
+        - ``y``, ``t``, ``x`` -- three binary words from a cell in a growth
           diagram, labelled as::
 
               t x
@@ -2845,7 +2850,7 @@ class RuleBinaryWord(Rule):
 
         See [Fom1995]_ Lemma 4.6.1, page 40.
 
-        - ``y, z, x`` -- three binary words from a cell in a growth diagram,
+        - ``y``, ``z``, ``x`` -- three binary words from a cell in a growth diagram,
           labelled as::
 
                 x
@@ -3199,7 +3204,7 @@ class RuleSylvester(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three binary trees from a cell in a growth
+        - ``y``, ``t``, ``x`` -- three binary trees from a cell in a growth
           diagram, labelled as::
 
               t x
@@ -3322,7 +3327,7 @@ class RuleSylvester(Rule):
 
         INPUT:
 
-        - ``y, z, x`` -- three binary trees from a cell in a growth
+        - ``y``, ``z``, ``x`` -- three binary trees from a cell in a growth
           diagram, labelled as::
 
                 x
@@ -3515,7 +3520,7 @@ class RuleYoungFibonacci(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three Fibonacci words from a
+        - ``y``, ``t``, ``x`` -- three Fibonacci words from a
           cell in a growth diagram, labelled as::
 
               t x
@@ -3571,7 +3576,7 @@ class RuleYoungFibonacci(Rule):
 
         See [Fom1995]_ Lemma 4.4.1, page 35.
 
-        - ``y, z, x`` -- three Fibonacci words from a cell in a
+        - ``y``, ``z``, ``x`` -- three Fibonacci words from a cell in a
           growth diagram, labelled as::
 
                 x
@@ -3759,7 +3764,7 @@ class RuleRSK(RulePartitions):
 
         INPUT:
 
-        - ``y, t, x`` -- three partitions from a cell in a
+        - ``y``, ``t``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               t x
@@ -3814,7 +3819,7 @@ class RuleRSK(RulePartitions):
 
         INPUT:
 
-        - ``y, z, x`` -- three partitions from a cell in a
+        - ``y``, ``z``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               x
@@ -3911,7 +3916,7 @@ class RuleBurge(RulePartitions):
 
         INPUT:
 
-        - ``y, t, x`` -- three  from a cell in a growth diagram,
+        - ``y``, ``t``, ``x`` -- three  from a cell in a growth diagram,
           labelled as::
 
               t x
@@ -3960,7 +3965,7 @@ class RuleBurge(RulePartitions):
 
         INPUT:
 
-        - ``y, z, x`` -- three partitions from a cell in a
+        - ``y``, ``z``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               x
@@ -4204,7 +4209,7 @@ class RuleDomino(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three partitions from a cell in a
+        - ``y``, ``t``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               t x
@@ -4342,7 +4347,7 @@ class RuleDomino(Rule):
 #####################################################################
 
 
-class Rules():
+class Rules:
     """
     Catalog of rules for growth diagrams.
     """
