@@ -473,14 +473,13 @@ class EllipticCurveFactory(UniqueFactory):
             constructor for elliptic curves over `\QQ`; elliptic
             curves over other fields do not support them.
 
-        EXAMPLES::
+        TESTS::
+
             sage: E = EllipticCurve.create_object(0, (QQ, (1, 2, 0, 1, 2)), rank=2)
-            sage: type(E)
-            Elliptic Curve defined by y^2 + x*y = x^3 + 2*x^2 + x + 2 over Rational Field
-            sage: EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)), rank=2)
+            sage: E = EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)), rank=2)
             Traceback (most recent call last):
             ...
-            TypeError: Unexpected keyword arguments: {'rank': 2}
+            TypeError: unexpected keyword arguments: {'rank': 2}
         """
         R, x = key
 
@@ -488,7 +487,7 @@ class EllipticCurveFactory(UniqueFactory):
             from .ell_rational_field import EllipticCurve_rational_field
             return EllipticCurve_rational_field(x, **kwds)
         elif kwds:
-            raise TypeError(f"Unexpected keyword arguments: {kwds}")
+            raise TypeError(f"unexpected keyword arguments: {kwds}")
 
         if isinstance(R, NumberField):
             from .ell_number_field import EllipticCurve_number_field

@@ -168,7 +168,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: EllipticCurve.create_object(0, (QQ, (1, 2, 0, 1, 2)), base=QQ)
             Traceback (most recent call last):
             ...
-            TypeError: Unexpected keyword arguments: {'base': Rational Field}
+            TypeError: unexpected keyword arguments: {'base': Rational Field}
 
         When constructing a curve from the large database using a
         label, we must be careful that the copied generators have the
@@ -210,7 +210,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if 'torsion_order' in kwds:
             self._set_torsion_order(kwds.pop('torsion_order'))
         if kwds:
-            raise TypeError(f"Unexpected keyword arguments: {kwds}")
+            raise TypeError(f"unexpected keyword arguments: {kwds}")
 
     def _set_rank(self, r):
         r"""
