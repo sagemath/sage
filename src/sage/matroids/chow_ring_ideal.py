@@ -138,7 +138,8 @@ class ChowRingIdeal(MPolynomialIdeal):
     def flats_generator(self):
         return dict(self.flats_generator)
     
-class AugmentedChowRingIdeal(SageObject):
+
+class AugmentedChowRingIdeal(SageObject, metaclass=ABCMeta):
 
     @abstractmethod
     def gens_constructor():
@@ -155,7 +156,7 @@ class AugmentedChowRingIdeal(SageObject):
     def flats_generator(self):
         return dict(self.flats_generator)
 
-class AugmentedChowRingIdeal_fy(AugmentedChowRingIdeal, MPolynomialIdeal):
+class AugmentedChowRingIdeal_fy(MPolynomialIdeal, metaclass=AugmentedChowRingIdeal):
     def __init__(self, M, R):
         """
     The class of augmented Chow ring ideal of Feitchner-Yuzvinsky
