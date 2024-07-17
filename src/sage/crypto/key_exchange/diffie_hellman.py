@@ -58,9 +58,9 @@ class DiffieHellman(KeyExchangeScheme):
 
         .. WARNING::
 
-            This is a toy implementation for educational use only! Do not use this
-            implementation, or any cryptographic features of Sage, in any setting where
-            security is needed!
+            This is a toy implementation for educational use only! Do not use
+            this implementation, or any cryptographic features of Sage, in any
+            setting where security is needed!
 
         REFERENCES:
 
@@ -116,7 +116,7 @@ class DiffieHellman(KeyExchangeScheme):
             raise ValueError('p must be at least 5')
 
         if proof:
-            # The modn implementation takes care of checking that ``p`` is prime
+            # The modn implementation checks that ``p`` is prime
             self._field = GF(p, impl='modn')
         else:
             with WithProof('arithmetic', False):
@@ -216,7 +216,8 @@ class DiffieHellman(KeyExchangeScheme):
         """
         return self._g**secret_key
 
-    def compute_shared_secret(self, pk: IntegerMod_abstract, sk: Integer) -> IntegerMod_abstract:
+    def compute_shared_secret(self, pk: IntegerMod_abstract,
+                              sk: Integer) -> IntegerMod_abstract:
         """
         Compute the shared secret using the given public key and secret keys.
 
@@ -242,14 +243,16 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES:
 
-        This is an example of a ``DiffieHellman`` instance where the subgroup size is `(p - 1) / 2`::
+        This is an example of a ``DiffieHellman`` instance where the subgroup
+        size is `(p - 1) / 2`::
 
             sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(47, 2)
             sage: DH.subgroup_size()
             23
 
-        This is an example of a ``DiffieHellman`` instance where the subgroup size is `p - 1`::
+        This is an example of a ``DiffieHellman`` instance where the subgroup
+        size is `p - 1`::
 
             sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(47, 5)
