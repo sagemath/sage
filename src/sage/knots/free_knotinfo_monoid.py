@@ -411,8 +411,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
         if unique and len(res) > 1:
             non_unique_hint = '\nuse keyword argument `unique` to obtain more details'
             raise NotImplementedError('this (possibly non prime) knot cannot be identified uniquely by KnotInfo%s' % non_unique_hint)
-        else:
-            raise NotImplementedError('this (possibly non prime) knot cannot be identified by KnotInfo')
+        raise NotImplementedError('this (possibly non prime) knot cannot be identified by KnotInfo')
 
     def inject_variables(self, select=None, verbose=True):
         """
