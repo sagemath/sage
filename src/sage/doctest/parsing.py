@@ -1688,6 +1688,12 @@ class SageOutputChecker(doctest.OutputChecker):
             got = ld_pie_warning_regex.sub('', got)
             did_fixup = True
 
+        if "R[write to console]" in got:
+            # Supress R warnings
+            r_warning_regex = re.compile(r'R\[write to console\]:.*')
+            got = r_warning_regex.sub('', got)
+            did_fixup = True
+
         if "Overriding pythran description" in got:
             # Some signatures changed in numpy-1.25.x that may yet be
             # reverted, but which pythran would otherwise warn about.
