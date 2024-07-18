@@ -1579,6 +1579,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.sage0 import sage0
             sage: sage0.quit()
             sage: _ = sage0.eval("import doctest, sys, os, multiprocessing, subprocess")
             sage: _ = sage0.eval("from sage.doctest.parsing import SageOutputChecker")

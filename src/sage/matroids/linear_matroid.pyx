@@ -111,7 +111,7 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy, deepcopy
+from copy import copy
 from itertools import product
 
 from cpython.object cimport Py_EQ, Py_NE

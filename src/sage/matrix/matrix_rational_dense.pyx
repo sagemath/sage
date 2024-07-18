@@ -110,7 +110,7 @@ from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense, _lift_crt
 from sage.structure.element cimport Element, Vector
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import ZZ, is_IntegerRing
+from sage.rings.integer_ring import ZZ, IntegerRing_class
 import sage.rings.abc
 from sage.rings.rational_field import QQ
 
@@ -1465,7 +1465,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             if self._is_immutable:
                 return self
             return self.__copy__()
-        if is_IntegerRing(R):
+        if isinstance(R, IntegerRing_class):
             A, d = self._clear_denom()
             if not d.is_one():
                 raise TypeError("matrix has denominators so can't change to ZZ")

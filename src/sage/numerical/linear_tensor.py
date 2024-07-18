@@ -99,7 +99,7 @@ from copy import copy
 
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_function
-from sage.numerical.linear_functions import is_LinearFunction, LinearFunctionsParent_class
+from sage.numerical.linear_functions import LinearFunction, LinearFunctionsParent_class
 from sage.numerical.linear_tensor_element import LinearTensor
 
 
@@ -128,10 +128,18 @@ def is_LinearTensor(x):
         sage: x = p.new_variable(nonnegative=False)
         sage: from sage.numerical.linear_tensor import is_LinearTensor
         sage: is_LinearTensor(x[0] - 2*x[2])
+        doctest:warning...
+        DeprecationWarning: The function is_LinearTensor is deprecated;
+        use 'isinstance(..., LinearTensor)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: is_LinearTensor('a string')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_LinearTensor is deprecated; "
+                "use 'isinstance(..., LinearTensor)' instead.")
     return isinstance(x, LinearTensor)
 
 
@@ -413,9 +421,9 @@ class LinearTensorParent_class(Parent):
             (3.0, 3.0) + (2.0, 2.0)*x_1 + (1.0, 1.0)*x_3
         """
         M = self.free_module()
-        if is_LinearTensor(x):
+        if isinstance(x, LinearTensor):
             x = x.dict()
-        elif is_LinearFunction(x):
+        elif isinstance(x, LinearFunction):
             x = dict([key, self._convert_constant(value)] for key, value in x.dict().items())
         elif isinstance(x, dict):
             x = dict([int(key), M(value)] for key, value in x.items())

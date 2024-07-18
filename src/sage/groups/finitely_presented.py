@@ -799,7 +799,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         ParentLibGAP.__init__(self, parent_gap)
         Group.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -813,7 +813,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             'Finitely presented group < a, b | a, b^3 >'
         """
         gens = ', '.join(self.variable_names())
-        rels = ', '.join([str(r) for r in self.relations()])
+        rels = ', '.join(str(r) for r in self.relations())
         return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):
