@@ -456,7 +456,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
             sage: cat = Algebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])], category=cat)
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: A.ideal(A([1,1]))
             Ideal (e0 + e1) of
              Finite-dimensional algebra of degree 2 over Finite Field of size 3
@@ -766,7 +767,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
             sage: cat = Algebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])], category=cat)
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: q0 = A.quotient_map(A.zero_ideal()); q0
             Morphism
              from Finite-dimensional algebra of degree 2 over Finite Field of size 3
@@ -815,7 +817,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
             sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])], category=cat)
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: A.maximal_ideal()                                                     # needs sage.rings.finite_rings
             Ideal (0, e1) of
              Finite-dimensional algebra of degree 2 over Finite Field of size 3
@@ -823,7 +826,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             sage: cat = CommutativeAlgebras(QQ).FiniteDimensional().WithBasis()
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
-            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])], category=cat)
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])],
+            ....:                              category=cat)
             sage: B.maximal_ideal()                                                     # needs sage.libs.pari
             Traceback (most recent call last):
             ...
