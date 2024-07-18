@@ -52,9 +52,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
     `p(x_1, \ldots, x_n) = \sum_{i=1}^n c_i x_1^{i_1}\cdots x_n^{i_n}`.
 
     In classical arithmetic, we can rewrite the general form of a tropical
-    monomial: `x_1^{i_1}\cdots x_n^{i_n} = i_1 x_1 + \ldots + i_n x_n`. Thus,
-    the tropical polynomial can be viewed as the minimum (maximum) of a
-    finite collection of linear functions.
+    monomial: `x_1^{i_1}\cdots x_n^{i_n} \mapsto i_1 x_1 + \cdots + i_n x_n`.
+    Thus, the tropical polynomial can be viewed as the minimum (maximum) of
+    a finite collection of linear functions.
 
     EXAMPLES:
 
@@ -96,7 +96,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
         :width: 300 px
 
         T = TropicalSemiring(QQ, use_min=True)
-        R.<a,b> = PolynomialRing(T)
+        R = PolynomialRing(T, ('a,b'))
+        a, b = R.gen(), R.gen(1)
         p1 = R(3)*a*b + a + R(-1)*b
         tv1 = p1.tropical_variety()
         sphinx_plot(tv1.plot())
@@ -105,7 +106,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
         :width: 300 px
 
         T = TropicalSemiring(QQ, use_min=True)
-        R.<a,b> = PolynomialRing(T)
+        R = PolynomialRing(T, ('a,b'))
+        a, b = R.gen(), R.gen(1)
         p1 = R(3)*a*b + a + R(-1)*b
         sphinx_plot(p1.plot3d())
     
@@ -121,7 +123,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
         :width: 300 px
 
         T = TropicalSemiring(QQ, use_min=False)
-        R.<a,b> = PolynomialRing(T)
+        R = PolynomialRing(T, ('a,b'))
+        a, b = R.gen(), R.gen(1)
         p1 = R(3)*a*b + a + R(-1)*b
         tv1 = p1.tropical_variety()
         sphinx_plot(tv1.plot())
@@ -130,7 +133,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
         :width: 300 px
 
         T = TropicalSemiring(QQ, use_min=False)
-        R.<a,b> = PolynomialRing(T)
+        R = PolynomialRing(T, ('a,b'))
+        a, b = R.gen(), R.gen(1)
         p1 = R(3)*a*b + a + R(-1)*b
         sphinx_plot(p1.plot3d())
 
@@ -146,21 +150,20 @@ class TropicalMPolynomial(MPolynomial_polydict):
         ArithmeticError: cannot negate any non-infinite element
     """
     def subs(self, fixed=None, **kwds):
-        """
+        r"""
         Fix some given variables in ``self`` and return the changed
         tropical multivariate polynomials.
 
         INPUT:
 
         -  ``fixed`` -- (optional) dictionary of inputs
-
         -  ``**kwds`` -- named parameters
 
         OUTPUT: new :class:`TropicalMPolynomial`
 
         .. SEEALSO::
         
-            :meth:`sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict.subs
+            :meth:`sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict.subs`
 
         EXAMPLES::
 
@@ -201,7 +204,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         Return the 3d plot of ``self``.
 
         Only implemented for tropical polynomial in two variables.
-        The `x`-`y` axes for this 3d plot is the same as the `x-y`
+        The `x`-`y` axes for this 3d plot is the same as the `x`-`y`
         axes of the corresponding tropical curve.
 
         OUTPUT: Graphics3d Object
@@ -216,8 +219,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
             :width: 300 px
 
             T = TropicalSemiring(QQ, use_min=False)
-            R.<x,y> = PolynomialRing(T)
-            p1 = x^2
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p1 = x**2
             sphinx_plot(p1.plot3d())
 
         ::
@@ -229,7 +233,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
             :width: 300 px
 
             T = TropicalSemiring(QQ, use_min=False)
-            R.<x,y> = PolynomialRing(T)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
             p2 = R(3)+R(2)*x+R(2)*y+R(3)*x*y
             sphinx_plot(p2.plot3d())
 
@@ -376,7 +381,6 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         sage: f * R.one() == f
         True
     """
-
     def __init__(self, base_semiring, n, names, order):
         r"""
         Initialize ``self``.

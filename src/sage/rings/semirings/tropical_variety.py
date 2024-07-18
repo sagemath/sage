@@ -53,7 +53,8 @@ class TropicalVariety(SageObject):
         :width: 300 px
 
         T = TropicalSemiring(QQ, use_min=False)
-        R.<x,y> = PolynomialRing(T)
+        R = PolynomialRing(T, ('x,y'))
+        x, y = R.gen(), R.gen(1)
         p1 = R(1)*x + x*y + R(0)
         sphinx_plot(p1.tropical_variety().plot())
 
@@ -72,7 +73,8 @@ class TropicalVariety(SageObject):
         :width: 300 px
 
         T = TropicalSemiring(QQ, use_min=True)
-        R.<x,y> = PolynomialRing(T)
+        R = PolynomialRing(T, ('x,y'))
+        x, y = R.gen(), R.gen(1)
         p1 = R(1)*x + x*y + R(0)
         sphinx_plot(p1.tropical_variety().plot())
 
@@ -96,8 +98,9 @@ class TropicalVariety(SageObject):
         :width: 300 px
 
         T = TropicalSemiring(QQ, use_min=False)
-        R.<x,y> = PolynomialRing(T)
-        p1 = R(7) + T(4)*x + y + R(4)*x*y + R(3)*y^2 + R(-3)*x^2
+        R = PolynomialRing(T, ('x,y'))
+        x, y = R.gen(), R.gen(1)
+        p1 = R(7) + T(4)*x + y + R(4)*x*y + R(3)*y**2 + R(-3)*x**2
         sphinx_plot(p1.tropical_variety().plot())
 
     If the tropical polynomial have `n>2` variables, then the result will be 
@@ -126,8 +129,7 @@ class TropicalVariety(SageObject):
         Traceback (most recent call last):
         ...
         ValueError: x + y is not a multivariate tropical polynomial
-    """
-    
+    """    
     def __init__(self, poly):
         r"""
         Initialize ``self``.
@@ -158,10 +160,11 @@ class TropicalVariety(SageObject):
         other monomials in the polynomial after substituting the parameter.
         This will give us the condition of parameters. Each of this condition
         is then combined by union operator. If this final condition is not an
-        empty set, we calculate the weight of this particular component by
-        the maximum of gcd of the numbers `|i-k|` and `|j-l|` for all pairs
-        `(i,j)` and `(k,l)` such that the value of on this component is given
-        by the corresponding monomials.
+        empty set, then it represent one component of tropical root. Then we
+        calculate the weight of this particular component by the maximum of
+        gcd of the numbers `|i-k|` and `|j-l|` for all pairs `(i,j)` and
+        `(k,l)` such that the value of on this component is given by the
+        corresponding monomials.
         
         EXAMPLES:
 
@@ -388,7 +391,6 @@ class TropicalSurface(TropicalVariety):
     This balancing condition ensures that the sum of the outgoing normal
     vectors at each edge is zero, reflecting the equilibrium.
     """
-
     def _axes(self):
         """
         Set the default axes for ``self``. 
@@ -417,7 +419,6 @@ class TropicalSurface(TropicalVariety):
             sage: p2 = x + y + z + x^2 + R(1)
             sage: p2.tropical_variety()._axes()
             [[-1, 2], [-1, 2]]
-            
         """
         from sage.symbolic.relation import solve
 
@@ -449,13 +450,17 @@ class TropicalSurface(TropicalVariety):
             for expr in list_expr:
                 for u in temp_u:
                     sol = solve(expr.subs(self._vars[0]==u), self._vars[1])
-                    if (not sol[0]) or (not isinstance(sol[0], list)):
+                    if not sol:
+                        temp_v.add(0)
+                    elif (not sol[0]):
                         temp_v.add(0)
                     else:
                         temp_v.add(sol[0][0].rhs())
                 for v in temp_v:
                     sol = solve(expr.subs(self._vars[1]==v), self._vars[0])
-                    if (not sol[0]) or (not isinstance(sol[0], list)):
+                    if not sol:
+                        temp_u.add(0)
+                    elif (not sol[0]):
                         temp_u.add(0)
                     else:
                         temp_u.add(sol[0][0].rhs())
@@ -469,7 +474,7 @@ class TropicalSurface(TropicalVariety):
 
         OUTPUT: Graphics3d Object
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
@@ -488,9 +493,10 @@ class TropicalSurface(TropicalVariety):
         .. PLOT::
             :width: 300 px
 
-            T = TropicalSemiring(QQ, use_min=False)
-            R.<x,y,z> = PolynomialRing(T)
-            p1 = x + y + z + x^2 + R(1)
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y,z'))
+            x, y, z = R.gen(), R.gen(1), R.gen(2)
+            p1 = x + y + z + x**2 + R(1)
             sphinx_plot(p1.tropical_variety().plot())
         """
         import random
@@ -521,7 +527,7 @@ class TropicalSurface(TropicalVariety):
                     checkpoint = True
                     for exp in comp[1]: 
                         final_exp = exp.subs(self._vars[0]==u, self._vars[1]==v)
-                        if bool(final_exp) == False:
+                        if not final_exp:
                             checkpoint = False
                             break
                     if checkpoint:
@@ -542,7 +548,7 @@ class TropicalSurface(TropicalVariety):
 
     def _repr_(self):
         """
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -564,7 +570,6 @@ class TropicalCurve(TropicalVariety):
     condition ensures that the sum of the outgoing slopes at each vertex
     is zero, reflecting the equilibrium.
     """
-    
     def _axes(self):
         """
         Set the default axes for ``self``.
@@ -704,7 +709,7 @@ class TropicalCurve(TropicalVariety):
         A Graphics object. The weight of the component will be written if it
         is greater or equal than 2. The weight is written near the vertex.
 
-        EXAMPLES::
+        EXAMPLES:
 
         A constant and monomial will not have a tropical curve::
 
@@ -717,7 +722,8 @@ class TropicalCurve(TropicalVariety):
             :width: 300 px
 
             T = TropicalSemiring(QQ)
-            R.<x,y> = PolynomialRing(T)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
             sphinx_plot((x).tropical_variety().plot())
 
         A polynomial with only two terms will give one straight line::
@@ -729,7 +735,8 @@ class TropicalCurve(TropicalVariety):
             :width: 300 px
 
             T = TropicalSemiring(QQ)
-            R.<x,y> = PolynomialRing(T)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
             sphinx_plot((y+R(1)).tropical_variety().plot())
 
         An intriguing and fascinating tropical curve can be obtained with
@@ -746,22 +753,24 @@ class TropicalCurve(TropicalVariety):
             :width: 300 px
 
             T = TropicalSemiring(QQ)
-            R.<x,y> = PolynomialRing(T)
-            p1 = R(1) + R(2)*x + R(3)*y + R(6)*x*y + R(10)*x*y^2
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p1 = R(1) + R(2)*x + R(3)*y + R(6)*x*y + R(10)*x*y**2
             sphinx_plot(p1.tropical_variety().plot())
 
         ::
 
-            sage: p2 = x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4 + \
-            x*y^5 + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10)
+            sage: p2 = (x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4 + x*y^5
+            ....:       + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10))
 
         .. PLOT::
             :width: 300 px
 
             T = TropicalSemiring(QQ)
-            R.<x,y> = PolynomialRing(T)
-            p2 = x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4 + \
-            x*y^5 + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p2 = x**6 + R(4)*x**4*y**2 + R(2)*x**3*y**3 + R(3)*x**2*y**4 + \
+            x*y**5 + R(7)*x**2 + R(5)*x*y + R(3)*y**2 + R(2)*x + y + R(10)
             sphinx_plot(p2.tropical_variety().plot())
         """
         from sage.plot.plot import plot
@@ -769,7 +778,7 @@ class TropicalCurve(TropicalVariety):
         from sage.plot.graphics import Graphics
         from sage.plot.plot import parametric_plot
 
-        if self._hypersurface == []:
+        if not self._hypersurface:
             return plot(lambda x: float('nan'), {-1, 1})
         
         combined_plot = Graphics()
@@ -822,7 +831,7 @@ class TropicalCurve(TropicalVariety):
 
     def _repr_(self):
         """
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
         

@@ -750,9 +750,6 @@ def _save_in_cache(key, R):
 def _single_variate(base_ring, name, sparse=None, implementation=None, order=None):
     # The "order" argument is unused, but we allow it (and ignore it)
     # for consistency with the multi-variate case.
-    from sage.rings.semirings.tropical_semiring import TropicalSemiring
-    from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
-    
     sparse = bool(sparse)
 
     # "implementation" must be last
@@ -796,7 +793,9 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
 
     # Generic implementations
     if constructor is None:
+        from sage.rings.semirings.tropical_semiring import TropicalSemiring
         if isinstance(base_ring, TropicalSemiring):
+            from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
             constructor = TropicalPolynomialSemiring
         elif base_ring not in _CommutativeRings:
             constructor = polynomial_ring.PolynomialRing_general
@@ -811,10 +810,7 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
         else:
             constructor = polynomial_ring.PolynomialRing_commutative
 
-        if isinstance(base_ring, TropicalSemiring):
-            implementation_names = [None]
-        else:
-            implementation_names = constructor._implementation_names(implementation, base_ring, sparse)
+        implementation_names = constructor._implementation_names(implementation, base_ring, sparse)
 
         # Only use names which are not supported by the specialized class.
         if specialized is not None:
@@ -833,9 +829,6 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
 
 
 def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementation=None):
-    from sage.rings.semirings.tropical_semiring import TropicalSemiring
-    from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomialSemiring
-
     if sparse is None:
         sparse = True
     if not sparse:
@@ -874,7 +867,9 @@ def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementat
 
     if R is None and implementation == "generic":
         from . import multi_polynomial_ring
+        from sage.rings.semirings.tropical_semiring import TropicalSemiring
         if isinstance(base_ring, TropicalSemiring):
+            from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomialSemiring
             constructor = TropicalMPolynomialSemiring
         elif base_ring in _Domains:
             constructor = multi_polynomial_ring.MPolynomialRing_polydict_domain

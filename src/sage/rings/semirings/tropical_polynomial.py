@@ -44,8 +44,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
     Tropical polynomial is a polynomial with coefficients from tropical
     semiring. Tropical polynomial induces a function which is piecewise
     linear and each piece has an integer slope. Tropical roots (zeros) of
-    polynomial `P(x)` is defined as all points ``x_0`` for which the graph
-    of ``P(x)`` change its slope. The difference in the slopes of the two
+    polynomial `P(x)` is defined as all points `x_0` for which the graph
+    of `P(x)` change its slope. The difference in the slopes of the two
     pieces adjacent to this root gives the order of the root.
 
     The tropical polynomials are implemented with a sparse format by using
@@ -55,7 +55,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
     EXAMPLES:
 
     First, we construct a tropical polynomial semiring by defining a base
-    tropical semiring and then inputting it to ``PolynomialRing``::
+    tropical semiring and then inputting it to :class:`PolynomialRing`::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<x> = PolynomialRing(T); R
@@ -129,7 +129,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         :width: 300 px
 
         T = TropicalSemiring(QQ, use_min=False)
-        R.<x> = PolynomialRing(T)
+        R = PolynomialRing(T, 'x')
         p1 = R([1,4,None,0])
         sphinx_plot(p1.plot())
         
@@ -142,8 +142,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         :width: 300 px
 
         T = TropicalSemiring(QQ, use_min=False)
-        R.<x> = PolynomialRing(T)
-        p2 = R(1)*x^2 + R(2)*x + R(3)
+        R = PolynomialRing(T, 'x')
+        x = R.gen()
+        p2 = R(1)*x**2 + R(2)*x + R(3)
         sphinx_plot(plot(p2, xmin=-1, xmax=3))
 
     TESTS:
@@ -168,8 +169,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         For each pair of monomials in the polynomial, we find the point
         where their values are equal.  This is the same as solving the
-        equation `c_1 + a_1*x = c_2 + a_2*x` for `x`, where `(c_1, a_1)`
-        and `(c_2, a_2)` are the coefficients and exponents of monomials.
+        equation `c_1 + a_1 \cdot x = c_2 + a_2 \cdot x` for `x`, where
+        `(c_1, a_1)` and `(c_2, a_2)` are the coefficients and exponents
+        of monomials.
 
         The solution to this equation is `x = (c_2-c_1)/(a_1-a_2)`. We
         substitute this `x` to each monomials in polynomial and check if
@@ -476,7 +478,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             :width: 300 px
 
             T = TropicalSemiring(QQ, use_min=False)
-            R.<x> = PolynomialRing(T)
+            R = PolynomialRing(T, 'x')
             p1 = p1 = R([4,2,1,3])
             sphinx_plot(p1.plot())
         
@@ -494,7 +496,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             :width: 300 px
 
             T = TropicalSemiring(QQ, use_min=True)
-            R.<x> = PolynomialRing(T)
+            R = PolynomialRing(T, 'x')
             p1 = R([4,2,1,3])
             sphinx_plot(plot(p1, xmin=-4, xmax=4))
         
@@ -532,7 +534,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         
     def _repr_(self):
         r"""
-        Return a nice tropical polynomial string representation.
+        Return a string represemtation of ``self``.
         
         EXAMPLES::
 
@@ -560,7 +562,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
     def _latex_(self):
         r"""
-        Return the latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -649,8 +651,6 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
             sage: T = TropicalSemiring(QQ)
             sage: R = PolynomialRing(T, 'x')
-            sage: category(R)
-            Category of semirings
             sage: TestSuite(R).run()
 
         TESTS::
@@ -804,6 +804,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         """
         Return a random tropical polynomial of given degrees (bounds).
 
+        In the context of tropical polynomial, a monic polynomial is the one
+        with the leading coefficient 0.
+
         OUTPUT: a :class:`TropicalPolynomial`
 
         .. SEEALSO:: 
@@ -817,10 +820,15 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: f = R.random_element()
             sage: f.parent() is R
             True
+            sage: f[f.degree()]
+            0
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
-        return self(R.random_element(degree=degree, monic=monic, *args, **kwds))
+        f = R.random_element(degree=degree, monic=monic, *args, **kwds)
+        dict_f = f.dict()
+        dict_f[f.degree()] = 0
+        return self(dict_f)
     
     def is_sparse(self):
         """
@@ -846,7 +854,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - points -- a list of tuples ``(x, y)``
+        - ``points`` -- a list of tuples ``(x, y)``
 
         OUTPUT: a :class:`TropicalPolynomial`
 
@@ -941,3 +949,20 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         result *= unit
         return result
     
+    @classmethod
+    def _implementation_names(cls, implementation, base_ring, sparse):
+        """
+        Return the only implementation currently available for this semiring,
+        which is ``[None]``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
+            sage: T = TropicalSemiring(QQ)
+            sage: TropicalPolynomialSemiring._implementation_names(None, T, True)
+            [None]
+        """
+        names = [None]
+        assert isinstance(names, list)
+        assert implementation in names
+        return names

@@ -70,6 +70,7 @@ Tropical Polynomials
 
    sage/rings/semirings/tropical_polynomial
    sage/rings/semirings/tropical_mpolynomial
+   sage/rings/semirings/tropical_variety
 
 Boolean Polynomials
 -------------------
