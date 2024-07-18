@@ -1,9 +1,9 @@
 r"""
-Public key exchange schemes.
+Key exchange schemes.
 
-This module contains base classes for public key exchange schemes. The classes
-defined in this module should not be called directly. It is the responsibility
-of child classes to implement specific cryptosystems.
+This module contains base classes for key exchange schemes. The classes defined
+in this module should not be called directly. It is the responsibility of child
+classes to implement specific cryptosystems.
 
 
 AUTHORS:

@@ -1,8 +1,8 @@
 r"""
-Diffie-Hellman Public Key Exchange Scheme
+Diffie-Hellman Key Exchange Scheme
 
-This module contains a toy implementation of the Diffie-Hellman public key
-exchange scheme.
+This module contains a toy implementation of the Diffie-Hellman key exchange
+scheme.
 
 AUTHORS:
 
