@@ -3,7 +3,7 @@ Key exchange schemes.
 
 This module contains base classes for key exchange schemes. The classes defined
 in this module should not be called directly. It is the responsibility of child
-classes to implement specific cryptosystems.
+classes to implement specific key exchange schemes.
 
 
 AUTHORS:
