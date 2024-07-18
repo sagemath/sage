@@ -138,9 +138,10 @@ class ChowRingIdeal(MPolynomialIdeal):
     def flats_generator(self):
         return dict(self.flats_generator)
     
+class CombinedMeta(ABCMeta, type):
+    pass
 
-class AugmentedChowRingIdeal(SageObject, metaclass=ABCMeta):
-
+class AugmentedChowRingIdeal(CombinedMeta):
     @abstractmethod
     def gens_constructor():
         pass
@@ -156,7 +157,7 @@ class AugmentedChowRingIdeal(SageObject, metaclass=ABCMeta):
     def flats_generator(self):
         return dict(self.flats_generator)
 
-class AugmentedChowRingIdeal_fy(MPolynomialIdeal, metaclass=AugmentedChowRingIdeal):
+class AugmentedChowRingIdeal_fy(SageObject,MPolynomialIdeal, AugmentedChowRingIdeal):
     def __init__(self, M, R):
         """
     The class of augmented Chow ring ideal of Feitchner-Yuzvinsky
@@ -183,9 +184,10 @@ class AugmentedChowRingIdeal_fy(MPolynomialIdeal, metaclass=AugmentedChowRingIde
         Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
         6 elements with 16 bases of Feitchner-Yuzvinsky presentation
     """
+    def __init__(self, M, R):
         self._matroid = M
         self.flats = [X for i in range(1, self._matroid.rank())
-                 for X in self._matroid.flats(i)]
+                for X in self._matroid.flats(i)]
         E = list(self._matroid.groundset())
         self.flats_generator = dict()
         try:
@@ -199,6 +201,7 @@ class AugmentedChowRingIdeal_fy(MPolynomialIdeal, metaclass=AugmentedChowRingIde
         for i,F in enumerate(self.flats):
             self.flats_generator[F] = self.poly_ring.gens()[len(E) + i]
         MPolynomialIdeal.__init__(self, self.poly_ring, self.gens_constructor())
+        
     
     def gens_constructor(self):
         E = list(self._matroid.groundset())
@@ -268,7 +271,7 @@ class AugmentedChowRingIdeal_fy(MPolynomialIdeal, metaclass=AugmentedChowRingIde
         g_basis = PolynomialSequence(self.poly_ring, [gb])
         return g_basis
 
-class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal, MPolynomialIdeal):
+class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal):
     def __init__(self, M, R):
         """
     The class of augmented Chow ring ideal of atom-free
@@ -295,22 +298,8 @@ class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal, MPolynomialIdeal)
         Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
         6 elements with 16 bases of atom-free presentation
     """
-        self._matroid = M
-        self.flats = [X for i in range(1, self._matroid.rank())
-                 for X in self._matroid.flats(i)]
-        E = list(self._matroid.groundset())
-        self.flats_generator = dict()
-        try:
-            names_groundset = ['A{}'.format(''.join(str(x))) for x in E]
-            names_flats = ['B{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self.flats]
-            self.poly_ring = PolynomialRing(R, names_groundset + names_flats)
-        except ValueError:
-            self.poly_ring = PolynomialRing(R, 'A', len(E) + len(self.flats))
-        for i,x in enumerate(E):
-            self.flats_generator[x] = self.poly_ring.gens()[i]
-        for i,F in enumerate(self.flats):
-            self.flats_generator[F] = self.poly_ring.gens()[len(E) + i]
-        MPolynomialIdeal.__init__(self, self.poly_ring, self.gens_constructor())
+        
+        AugmentedChowRingIdeal.__init__(self, M, R)
 
     def gens_constructor(self): 
         E = list(self._matroid.groundset())
