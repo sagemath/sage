@@ -70,7 +70,7 @@ CDF = CLF = RLF = None
 
 # useful for parsing
 NUMBERS = re.compile("[0-9]")
-BLOCK = re.compile('[+-]?[0-9.e\*I]*')
+BLOCK = re.compile(r'[+-]?[0-9.e\*I]*')
 
 
 def late_import():
