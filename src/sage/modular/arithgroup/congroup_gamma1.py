@@ -661,9 +661,10 @@ class Gamma1_class(GammaH_class):
 
 
 def _dimension_new_cusp_forms_Ross(N,k,chi):
-    r"""An internal function to implement the explicit dimension formula
-        given in Theorem 1.4 of https://arxiv.org/abs/2407.08881. For tests, 
-        see test_dim_formula_Ross() in sage/modular/arithgroup/tests.py  
+    r"""
+    Compute the dimension formula given in Theorem 1.4 of :arxiv:`2407.08881`.
+    
+    For more tests, see :meth:`sage.modular.arithgroup.tests.Test.test_dim_formula_Ross()`.
     """
     # First term of explicit dimension formula
     def psi_local(p,r):
