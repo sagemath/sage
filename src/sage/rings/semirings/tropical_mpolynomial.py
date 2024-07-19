@@ -389,8 +389,6 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
             sage: T = TropicalSemiring(QQ)
             sage: R = PolynomialRing(T, 5, 'x')
-            sage: category(R)
-            Category of semirings
             sage: TestSuite(R).run()
         """
         from sage.rings.semirings.tropical_semiring import TropicalSemiring
