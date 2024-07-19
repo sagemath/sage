@@ -664,7 +664,14 @@ def _dimension_new_cusp_forms_Ross(N,k,chi):
     Compute the dimension formula given in Theorem 1.4 of :arxiv:`2407.08881`.
     
     For more tests, see :meth:`sage.modular.arithgroup.tests.Test.test_dim_formula_Ross()`.
+    
+    TESTS::
+
+        sage: chi = DirichletGroup(60)[5]
+        sage: sage.modular.arithgroup.congroup_gamma1._dimension_new_cusp_forms_Ross(60,12,chi)
+        66
     """
+    
     # First term of explicit dimension formula
     def psi_local(p,r):
         assert r >= 1
