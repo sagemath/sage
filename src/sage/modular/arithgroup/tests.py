@@ -422,8 +422,8 @@ class Test:
 
     def test_dim_formula_Ross(self, N_ub=50, k_ub=10):
         r"""
-        Test the explicit dimension formula implemented in 
-        Gamma1._dimension_new_cusp_forms_Ross()
+        Test the dimension formula given in Theorem 1.4
+        of :arxiv:`2407.08881`
 
         EXAMPLES::
 
