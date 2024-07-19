@@ -659,7 +659,6 @@ class Gamma1_class(GammaH_class):
         return self.dimension_cusp_forms(k, eps, algorithm) - 2*old
 
 
-
 def _dimension_new_cusp_forms_Ross(N,k,chi):
     r"""
     Compute the dimension formula given in Theorem 1.4 of :arxiv:`2407.08881`.
