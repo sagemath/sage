@@ -6748,8 +6748,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         """
         # We need `f` to be defined over a number field for
         # the function `is_postcrtically_finite` to work
-        if self.base_ring() not in NumberFields():
-            raise NotImplementedError("Base ring must be a number field")
+        if self.base_ring() is not QQbar:
+            if self.base_ring() not in NumberFields():
+                    raise NotImplementedError("Base ring must be a number field")
 
         if self.domain().dimension() != 1:
             return False
@@ -6923,17 +6924,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: F = DynamicalSystem_projective([x^4,y^4])
-            sage: F.Lattes_to_curve(check_lattes=True)
-            Traceback (most recent call last):
-            ...
-            ValueError: Map is not Lattes
-
-        ::
-
-            sage: P.<x,y> = ProjectiveSpace(QQbar,1)
-            sage: F = DynamicalSystem_projective([x^4,y^4])
+            sage: P.<x,y> = ProjectiveSpace(RR, 1)
+            sage: F = DynamicalSystem_projective([x^4, y^4])
             sage: F.Lattes_to_curve(check_lattes=True)
             Traceback (most recent call last):
             ...
@@ -6941,8 +6933,26 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: F = DynamicalSystem_projective([x^3,y^3])
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^4, y^4])
+            sage: F.Lattes_to_curve(check_lattes=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: Map is not Lattes
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^4, y^4])
+            sage: F.Lattes_to_curve()
+            Traceback (most recent call last):
+            ...
+            ValueError: No Solutions found. Check if map is Lattes
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^3, y^3])
             sage: F.Lattes_to_curve(check_lattes=True)
             Traceback (most recent call last):
             ...
@@ -6951,12 +6961,20 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: K.<x>=QuadraticField(2)
-            sage: P.<a,y>=ProjectiveSpace(K,1)
-            sage: E=EllipticCurve([1,x])
-            sage: f=P.Lattes_map(E,2)
+            sage: P.<a,y>=ProjectiveSpace(K, 1)
+            sage: E=EllipticCurve([1, x])
+            sage: f=P.Lattes_map(E, 2)
             sage: f.Lattes_to_curve()
             Elliptic Curve defined by y^2 = x^3 + x + a
             over Number Field in a with defining polynomial y^2 - 2
+
+        ::
+
+            sage: P.<x,y>=ProjectiveSpace(QQbar, 1)
+            sage: E=EllipticCurve([1, 2])
+            sage: f=P.Lattes_map(E, 2)
+            sage: f.Lattes_to_curve(check_lattes=true)
+            Elliptic Curve defined by y^2 = x^3 + x + 2 over Rational Field
 
         """
         if self.base_ring() is not QQbar:
@@ -7001,6 +7019,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         eq = [poly.numerator().change_ring(phi) for poly in eq]
         I = eq[0].parent().ideal(eq)
         pts = I.variety()
+        if len(pts) == 0:
+            raise ValueError("No Solutions found. Check if map is Lattes")
         a = pts[0]['avar']
         b = pts[0]['bvar']
         u = pts[0]['uvar']
