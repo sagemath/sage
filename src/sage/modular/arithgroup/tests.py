@@ -18,8 +18,6 @@ from __future__ import annotations
 from .arithgroup_perm import ArithmeticSubgroup_Permutation, EvenArithmeticSubgroup_Permutation, OddArithmeticSubgroup_Permutation
 from sage.modular.arithgroup.all import Gamma, Gamma0, Gamma1, GammaH
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.modular.dirichlet import DirichletGroup
-from sage.rings.integer_ring import ZZ
 
 import sage.misc.prandom as prandom
 from sage.misc.timing import cputime
