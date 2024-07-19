@@ -161,7 +161,7 @@ def column_Kleitman_Spencer_Katona(k):
         sage: column_Kleitman_Spencer_Katona(25000)
         Traceback (most recent call last):
         ...
-        ValueError: not implemented for k > 24310
+        NotImplementedError: not implemented for k > 24310
 
     """
     kdict = [(3, 4), (4, 5), (10, 6), (15, 7), (35, 8), (56, 9),
@@ -169,7 +169,7 @@ def column_Kleitman_Spencer_Katona(k):
              (3003, 15), (6435, 16), (11440, 17), (24310, 18)]
 
     if k > kdict[-1][0]:
-        raise ValueError("not implemented for k > {}".format(kdict[-1][0]))
+        raise NotImplementedError("not implemented for k > {}".format(kdict[-1][0]))
 
     for (ki, N) in kdict:
         if k <= ki:
