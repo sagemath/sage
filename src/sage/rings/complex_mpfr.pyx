@@ -502,6 +502,10 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             4.00000000000000 - 13.5965845149689*I
             sage: CC('1.2*I+3.4')
             3.40000000000000 + 1.20000000000000*I
+            sage: CC('1.2*I')
+            1.20000000000000*I
+            sage: CC('3.4')
+            3.40000000000000
             sage: CC('hello')
             Traceback (most recent call last):
             ...
@@ -523,11 +527,16 @@ class ComplexField_class(sage.rings.abc.ComplexField):
                 if len(x) == 0 or not all(letter in allowed for letter in x):
                     raise ValueError(f'given string {x!r} is not a complex number')
                 split = [group for group in BLOCK.findall(x) if group]
-                if len(split) != 2:
+                N = len(split)
+                if N == 1:
+                    split = split[0]
+                    real, imag = ('0', split) if 'I' in split else (split, '0')
+                elif N == 2:
+                    real, imag = split
+                    if 'I' in real:
+                        real, imag = imag, real
+                else:
                     raise ValueError(f'given string {x!r} is not a complex number')
-                real, imag = split
-                if 'I' in real:
-                    real, imag = imag, real
                 if not NUMBERS.search(imag):
                     imag = imag.replace('I', '1')
                 else:
