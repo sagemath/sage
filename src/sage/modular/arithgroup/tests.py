@@ -430,6 +430,7 @@ class Test:
             sage: from sage.modular.arithgroup.tests import Test
             sage: Test().test_dim_formula_Ross(100,16)
         """
+        from sage.modular.dirichlet import DirichletGroup
         for N in range(3,N_ub+1):
             Gamma1_N = Gamma1(N)
             for eps in DirichletGroup(N):
