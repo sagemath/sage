@@ -203,7 +203,6 @@ class TropicalVariety(SageObject):
         from itertools import combinations
         from sage.symbolic.ring import SR
         from sage.symbolic.relation import solve
-        
         from sage.arith.misc import gcd
         from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomial
 
@@ -228,11 +227,12 @@ class TropicalVariety(SageObject):
                 eq += variables[i]*e
             eq += poly.dict()[key].lift()
             linear_eq[key] = eq
-
+        
+        temp_order = []
         # checking for all possible combinations of two terms
         for keys in combinations(poly.dict(), 2):
             sol = solve(linear_eq[keys[0]]==linear_eq[keys[1]], variables)
-            
+
             # parametric solution of the chosen two terms
             final_sol = []
             for s in sol[0]:
@@ -251,7 +251,9 @@ class TropicalVariety(SageObject):
                     temp_compare = linear_eq[compare]
                     for i, v in enumerate(variables):
                         temp_compare = temp_compare.subs(v==final_sol[i])
-                    if poly.parent().base()._use_min:
+                    if min_max == temp_compare:
+                        sol_compare = [[]]
+                    elif poly.parent().base()._use_min:
                         sol_compare = solve(min_max < temp_compare, variables)
                     else:
                         sol_compare = solve(min_max > temp_compare, variables)
@@ -264,7 +266,7 @@ class TropicalVariety(SageObject):
                     else:
                         no_solution = True
                         break
-
+            
             # solve the condition for parameter
             if not no_solution:
                 parameter = set()
@@ -273,14 +275,15 @@ class TropicalVariety(SageObject):
                 parameter_solution = solve(all_sol_compare, list(parameter))
                 if parameter_solution:
                     xy_interval.append(parameter_solution[0])
+                    tropical_roots.append(xy_interval)
                     # calculate order
                     index_diff = []
                     for i in range(len(keys[0])):
                         index_diff.append(abs(keys[0][i]-keys[1][i]))
                     order = gcd(index_diff)
-                    xy_interval.append(order)
-                    tropical_roots.append(xy_interval)
-
+                    temp_order.append(order)
+                    
+        components = []
         dim_param = len(tropical_roots[0][0]) - 1
         vars = [SR.var('t{}'.format(i)) for i in range(1, dim_param+1)]
         for arg in tropical_roots:
@@ -297,8 +300,7 @@ class TropicalVariety(SageObject):
             new_eq = tuple(new_eq)
             arg.remove(arg[0])
             arg.insert(0, new_eq)
-
-            if arg[1] == []:
+            if not arg[1]:
                 for var in vars:
                     expr1 = -infinity < var
                     expr2 = var < infinity
@@ -317,8 +319,19 @@ class TropicalVariety(SageObject):
                         expr = lhs <= rhs
                     new_param.append(expr)
                 arg.insert(1, new_param)
-            self._hypersurface.append(arg)  
+            components.append(arg)  
         self._vars = vars
+        final_order = []
+        for i, component in enumerate(components):
+            if component not in self._hypersurface:
+                self._hypersurface.append(component)
+                final_order.append(temp_order[i])
+            else:
+                index = self._hypersurface.index(component)
+                if temp_order[i] > final_order[index]:
+                    final_order[index] = temp_order[i]
+        for i in range(len(self._hypersurface)):
+            self._hypersurface[i].append(final_order[i])
 
     def dimension(self):
         """
@@ -747,6 +760,7 @@ class TropicalCurve(TropicalVariety):
             [[(-1, t1), [-2 <= t1], 1],
             [(t1, -2), [-1 <= t1], 1],
             [(t1 + 1, t1), [-4 <= t1, t1 <= -2], 1],
+            [(t1, -4), [t1 <= -3], 2],
             [(-t1 - 7, t1), [t1 <= -4], 1]]
 
         .. PLOT::
@@ -841,3 +855,4 @@ class TropicalCurve(TropicalVariety):
             Tropical curve of 0*x^2 + 0*y^2 + 0
         """
         return (f"Tropical curve of {self._poly}")
+    
