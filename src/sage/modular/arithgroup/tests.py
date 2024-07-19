@@ -418,8 +418,6 @@ class Test:
             for j in range(i + 1, len(reps)):
                 assert reps[i] * ~reps[j] not in G
                 assert reps[j] * ~reps[i] not in G
-
-
     def test_dim_formula_Ross(self, N_ub=50, k_ub=10):
         r"""
         Test the dimension formula given in Theorem 1.4
