@@ -1049,7 +1049,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
             raise ValueError('The coefficients must have the same length as the number of flags')
         self._n = n
         base = parent.base()
-        self._values = vector(base, values)
+        self._values = vector(base, values, sparse=True)
         self._ftype = parent.ftype()
         CommutativeAlgebraElement.__init__(self, parent)
     
@@ -1195,7 +1195,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
             :func:`values()`
             :func:`Flag.afae`
         """
-        return vector(R, self._values)
+        return vector(R, self._values, sparse=True)
     
     def __len__(self):
         r"""
@@ -1778,17 +1778,17 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
             if isinstance(v, Flag):
                 if v.ftype()==self.ftype():
                     flags = self.generate_flags(v.size())
-                    vec = vector(base, [(1 if xx==v else 0) for xx in flags])
+                    vec = vector(base, [(1 if xx==v else 0) for xx in flags], sparse=True)
                     return self.element_class(self, v.size(), vec)
             elif isinstance(v, FlagAlgebraElement):
                 if v.ftype()==self.ftype():
                     if self.base()==v.parent().base():
                         return v
                     elif self.base().has_coerce_map_from(v.parent().base()):
-                        vals = vector(self.base(), v.values())
+                        vals = vector(self.base(), v.values(), sparse=True)
                         return self.element_class(self, v.size(), vals)
             elif v in base:
-                return self.element_class(self, self.ftype().size(), vector(base, [v]))
+                return self.element_class(self, self.ftype().size(), vector(base, [v], sparse=True))
             raise ValueError('Can\'t construct an element from {}'.format(v))
         return self.element_class(self, *args, **kwds)
     
