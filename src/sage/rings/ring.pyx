@@ -1646,9 +1646,16 @@ def is_Ring(x):
 
         sage: from sage.rings.ring import is_Ring
         sage: is_Ring(ZZ)
+        doctest:warning...
+        DeprecationWarning: The function is_Ring is deprecated; use '... in Rings()' instead
+        See https://github.com/sagemath/sage/issues/38288 for details.
         True
         sage: MS = MatrixSpace(QQ, 2)                                                   # needs sage.modules
         sage: is_Ring(MS)                                                               # needs sage.modules
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38288,
+                       "The function is_Ring is deprecated; "
+                       "use '... in Rings()' instead")
     return x in _Rings
