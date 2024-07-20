@@ -1658,6 +1658,11 @@ REFERENCES:
 .. [CIA] CIA Factbook 09
          https://www.cia.gov/library/publications/the-world-factbook/
 
+.. [CJ2022] \M. Chang, C. Jefferson, *Disjoint direct product decomposition
+            of permutation groups*, Journal of Symbolic Computation (2022),
+            Volume 108, pages 1-16. :doi:`10.1016/j.jsc.2021.04.003`.
+            Preprint: :arxiv:`2004.11618v3`.
+
 .. [CK1986] \R. Calderbank, W.M. Kantor,
             *The geometry of two-weight codes*,
             Bull. London Math. Soc. 18(1986) 97-122.
