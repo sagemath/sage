@@ -5288,13 +5288,13 @@ cdef class Polynomial(CommutativePolynomial):
             sage: # needs sage.rings.finite_rings
             sage: P.<x> = PolynomialRing(GF(401^13, 'a'))
             sage: t = 2*x^14 - 5 + 6*x
-            sage: t.splitting_field('b')
+            sage: t.splitting_field('b')                                                # long time (16s)
             Finite Field in b of size 401^104
             sage: t = 24*x^13 + 2*x^12 + 14
-            sage: t.splitting_field('b')
+            sage: t.splitting_field('b')                                                # long time (39s)
             Finite Field in b of size 401^156
             sage: t = x^56 - 14*x^3
-            sage: t.splitting_field('b')
+            sage: t.splitting_field('b')                                                # long time (2s)
             Finite Field in b of size 401^52
 
             sage: R.<x> = QQ[]

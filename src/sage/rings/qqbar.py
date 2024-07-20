@@ -4968,7 +4968,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
         slower because the algorithm needs to check the equality of the real
         parts::
 
-            sage: sorted(p2.roots(QQbar,False))   # long time - 3 secs
+            sage: sorted(p2.roots(QQbar,False))   # long time (3s)
             [1.000000000000000? - 4.016778562562223?*I,
              1.000000000000000? - 3.850538755978243?*I,
              1.000000000000000? - 3.390564396412898?*I,
