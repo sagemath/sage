@@ -8159,9 +8159,9 @@ class Graph(GenericGraph):
         Singleton Vertex::
 
             sage: Graph(1).modular_decomposition()
-            (PRIME, [0])
+            0
             sage: Graph(1).modular_decomposition(style='tree')
-            PRIME[0[]]
+            0[]
 
         Vertices may be arbitrary --- check that :issue:`24898` is fixed::
 
@@ -8209,8 +8209,7 @@ class Graph(GenericGraph):
         if not self.order():
             D = None
         elif self.order() == 1:
-            D = create_prime_node()
-            D.children.append(create_normal_node(self.vertices(sort=False)[0]))
+            D = create_normal_node(next(self.vertex_iterator()))
         else:
             D = habib_maurer_algorithm(self)
 
