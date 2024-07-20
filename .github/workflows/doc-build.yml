@@ -132,6 +132,7 @@ jobs:
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build documentation workflow"
+          mkdir -p doc
           # Check if we are on PR
           PR_NUMBER=""
           if [[ -n "$GITHUB_REF" ]]; then
@@ -146,7 +147,6 @@ jobs:
             # mathjax path in new doc
             mathjax_path_to=$(docker exec -e SAGE_USE_CDNS=yes BUILD /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
             new_version=$(docker exec BUILD cat src/VERSION.txt)
-            mkdir -p doc/
             docker cp BUILD:/sage/local/share/doc/sage/html doc/
             # Wipe out chronic diffs between old doc and new doc
             (cd doc && \
