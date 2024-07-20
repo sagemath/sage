@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of Python modules in the Sage library
 
@@ -1080,7 +1081,6 @@ class sage__symbolic(JoinFeature):
                               PythonModule('sage.geometry.riemannian_manifolds'),
                               PythonModule('sage.geometry.hyperbolic_space'),
                               PythonModule('sage.dynamics.complex_dynamics'),
-                              PythonModule('sage.libs.pynac'),
                               PythonModule('sage.libs.ecl'),
                               PythonModule('sage.interfaces.fricas'),
                               PythonModule('sage.interfaces.giac'),

@@ -173,13 +173,13 @@ def delta_swap(p, k, delta):
         raise ValueError("the index is greater than the length of the path")
     # if delta is None:
     #     delta = [len(_) for _ in str(p._nu).split(sep='1')[1:]]
-    if k == 0 or p[k-1] == 1:
+    if k == 0 or p[k - 1] == 1:
         raise ValueError("there is no such covering move")
     found = False
     i = p[:k].count(1)
     j = k
     alt = 0
-    while not found and j <= p.length()-1:
+    while not found and j <= p.length() - 1:
         if p[j]:
             alt += delta[i]
             i += 1
@@ -188,8 +188,9 @@ def delta_swap(p, k, delta):
         if alt == 0:
             found = True
         j += 1
-    q = p[:k-1] + p[k:j] + [p[k-1]] + p[j:]
+    q = p[:k - 1] + p[k:j] + [p[k - 1]] + p[j:]
     return NuDyckWord(q, p._nu)
+
 
 def AltNuTamariLattice(nu, delta=None):
     r"""
@@ -253,12 +254,12 @@ def AltNuTamariLattice(nu, delta=None):
 
     - [CC2023]_
     """
-    if not( (isinstance(nu, (list, tuple)) and all(x in [0, 1] for x in nu)) or
-            (isinstance(nu, str) and all(x in ['0', '1'] for x in nu)) ):
+    if not ((isinstance(nu, (list, tuple)) and all(x in [0, 1] for x in nu)) or
+            (isinstance(nu, str) and all(x in ['0', '1'] for x in nu))):
         raise ValueError("nu must be a list or a string of 0s and 1s")
     nu = [int(a) for a in nu]
     # transforms nu in a sequence of 0s and 1s if it is a list
-    nu = ''.join([str(a) for a in nu])
+    nu = ''.join(str(a) for a in nu)
     # produces delta if delta is None, and check that delta is valid otherwise
     deltamax = [len(a) for a in nu.split(sep='1')[1:]]
     if delta is None:

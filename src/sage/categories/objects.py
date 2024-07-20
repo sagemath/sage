@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Objects
 """
@@ -19,6 +20,7 @@ from sage.categories.homsets import HomsetsCategory
 # Generic category (default when requesting category of
 # an object using misc.functional.category
 #############################################################
+
 
 class Objects(Category_singleton):
     """

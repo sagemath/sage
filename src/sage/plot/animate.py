@@ -8,7 +8,7 @@ Images are produced by calling the ``save_image`` method on each input
 object, creating a sequence of PNG files.
 These are then assembled to various target formats using different
 tools.
-In particular, the ``convert`` program from ImageMagick_ can be used to
+In particular, the ``magick/convert`` program from ImageMagick_ can be used to
 generate an animated GIF file.
 FFmpeg_ (with the command line program ``ffmpeg``) provides support for
 various video formats, but also an alternative method of generating
@@ -20,7 +20,7 @@ alternative which works without any extra dependencies.
 
     Note that ``ImageMagick`` and ``FFmpeg`` are not included with Sage, and
     must be installed by the user.  On unix systems, type ``which
-    convert`` at a command prompt to see if ``convert`` (part of the
+    magick`` at a command prompt to see if ``magick`` (part of the
     ``ImageMagick`` suite) is installed.  If it is, you will be given its
     location.  Similarly, you can check for ``ffmpeg`` with ``which
     ffmpeg``.  See the websites of ImageMagick_ or FFmpeg_ for
@@ -116,7 +116,6 @@ REFERENCES:
 - `FFmpeg <https://www.ffmpeg.org>`_
 - `APNG <https://wiki.mozilla.org/APNG_Specification>`_
 - `browsers which support it <https://caniuse.com/#feat=apng>`_
-
 """
 
 ############################################################################
@@ -165,7 +164,7 @@ class Animation(WithEqualityById, SageObject):
       graphics objects, but if they aren't, then :meth:`make_image` is
       called on them.
 
-    - ``xmin, xmax, ymin, ymax`` -- the ranges of the x and y axes.
+    - ``xmin``, ``xmax``, ``ymin``, ``ymax`` -- the ranges of the x and y axes.
 
     - ``**kwds`` -- all additional inputs are passed onto the rendering
       command. E.g., use ``figsize`` to adjust the resolution and aspect
@@ -568,29 +567,29 @@ class Animation(WithEqualityById, SageObject):
         objects in self.
 
         This method will only work if either (a) the ImageMagick
-        software suite is installed, i.e., you have the ``convert``
+        software suite is installed, i.e., you have the ``magick/convert``
         command or (b) ``ffmpeg`` is installed.  See the web sites of
         ImageMagick_ and FFmpeg_ for more details.  By default, this
-        produces the gif using ``convert`` if it is present.  If this
-        can't find ``convert`` or if ``use_ffmpeg`` is True, then it
+        produces the gif using Imagemagick if it is present.  If this
+        can't find ImageMagick or if ``use_ffmpeg`` is True, then it
         uses ``ffmpeg`` instead.
 
         INPUT:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
+        -  ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
+        -  ``savefile`` -- file that the animated gif gets saved
            to
 
-        -  ``iterations`` - integer (default: 0); number of
+        -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
-        - ``use_ffmpeg`` - boolean (default: False); if True, use
-          'ffmpeg' by default instead of 'convert'.
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
+          'ffmpeg' by default instead of ImageMagick
 
         If ``savefile`` is not specified: in notebook mode, display the
         animation; otherwise, save it to a default file name.
@@ -652,7 +651,7 @@ class Animation(WithEqualityById, SageObject):
         the frames in ``self``.
 
         This method will only work if ``imagemagick`` is installed (command
-        ``convert``). See https://www.imagemagick.org for information
+        ``magick`` or ``convert``). See https://www.imagemagick.org for information
         about ``imagemagick``.
 
         INPUT:
@@ -666,10 +665,10 @@ class Animation(WithEqualityById, SageObject):
         - ``show_path`` -- boolean (default: ``False``); if ``True``,
           print the path to the saved file
 
-        - ``delay`` - (default: 20) delay in hundredths of a
+        - ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        - ``iterations`` - integer (default: 0); number of iterations
+        - ``iterations`` -- integer (default: 0); number of iterations
           of animation. If 0, loop forever.
 
         If ``savefile`` is not specified: in notebook mode, display
@@ -691,12 +690,12 @@ class Animation(WithEqualityById, SageObject):
            like this::
 
               FeatureNotPresentError: imagemagick is not available.
-              Executable 'convert' not found on PATH.
+              Executable 'magick' not found on PATH.
               Further installation instructions might be available at
               https://www.imagemagick.org/.
 
         """
-        from sage.features.imagemagick import ImageMagick
+        from sage.features.imagemagick import ImageMagick, Magick
         ImageMagick().require()
 
         if not savefile:
@@ -707,7 +706,7 @@ class Animation(WithEqualityById, SageObject):
 
         # running the command
         directory = self.png()
-        cmd = ['convert', '-dispose', 'Background',
+        cmd = [Magick().executable, '-dispose', 'Background',
                 '-delay', '%s' % int(delay), '-loop', '%s' % int(iterations),
                 '*.png', savefile]
         from subprocess import run
@@ -722,7 +721,7 @@ class Animation(WithEqualityById, SageObject):
                                         result.stderr.strip(),
                                         result.stdout.strip()))
             raise OSError("Error: Cannot generate GIF animation. "
-                    "The convert command (ImageMagick) is present but does "
+                    "The magick/convert command (ImageMagick) is present but does "
                     "not seem to be functional. Verify that the objects "
                     "passed to the animate command can be saved in PNG "
                     "image format. "
@@ -812,7 +811,7 @@ class Animation(WithEqualityById, SageObject):
         -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        - ``format`` - (default: gif) format to use for output.
+        - ``format`` -- (default: gif) format to use for output.
           Currently supported formats are: gif,
           ogg, webm, mp4, flash, matroska, avi, wmv, quicktime.
 
@@ -826,7 +825,7 @@ class Animation(WithEqualityById, SageObject):
            Currently this is done using an animated gif, though this
            could change in the future. This requires that either
            ffmpeg or the ImageMagick suite (in particular, the
-           ``convert`` command) is installed.
+           ``magick/convert`` command) is installed.
 
         See also the :meth:`ffmpeg` method.
 
@@ -913,7 +912,7 @@ class Animation(WithEqualityById, SageObject):
         - ``show_path`` -- boolean (default: ``False``); if ``True``,
           print the path to the saved file
 
-        - ``output_format`` - string (default: ``None``); format and
+        - ``output_format`` -- string (default: ``None``); format and
           suffix to use for the video.  This may be ``'mpg'``, ``'mpeg'``,
           ``'avi'``, ``'gif'``, or any other format that ``ffmpeg`` can handle.
           If this is ``None`` and the user specifies ``savefile`` with a
@@ -922,20 +921,20 @@ class Animation(WithEqualityById, SageObject):
           is specified or if the suffix cannot be determined, ``'mpg'`` is
           used.
 
-        - ``ffmpeg_options`` - string (default: ``''``); this string is
+        - ``ffmpeg_options`` -- string (default: ``''``); this string is
           passed directly to ffmpeg.
 
-        - ``delay`` - integer (default: ``None``); delay in hundredths of a
+        - ``delay`` -- integer (default: ``None``); delay in hundredths of a
           second between frames.  The framerate is 100/delay.
           This is not supported for mpeg files: for mpegs, the frame
           rate is always 25 fps.
 
-        - ``iterations`` - integer (default: 0); number of iterations
+        - ``iterations`` -- integer (default: 0); number of iterations
           of animation. If 0, loop forever.  This is only supported
           for animated gif output and requires ``ffmpeg`` version 0.9 or
           later.  For older versions, set ``iterations=None``.
 
-        - ``pix_fmt`` - string (default: 'rgb24'); used only for gif
+        - ``pix_fmt`` -- string (default: 'rgb24'); used only for gif
           output.  Different values such as 'rgb8' or 'pal8' may be
           necessary depending on how ffmpeg was installed.  Set
           ``pix_fmt=None`` to disable this option.
@@ -1024,8 +1023,9 @@ class Animation(WithEqualityById, SageObject):
         # afterwards.  Hence 'early_options' and 'ffmpeg_options'
         # The `-nostdin` is needed to avoid the command to hang, see
         # https://stackoverflow.com/questions/16523746/ffmpeg-hangs-when-run-in-background
-        cmd = 'cd {}; ffmpeg -nostdin -y -f image2 {} -i {} {} {}'.format(
-            shlex.quote(pngdir), early_options, shlex.quote(pngs), ffmpeg_options, shlex.quote(savefile))
+        cmd = 'cd {}; {} -nostdin -y -f image2 {} -i {} {} {}'.format(
+            shlex.quote(pngdir), shlex.quote(FFmpeg().absolute_filename()),
+            early_options, shlex.quote(pngs), ffmpeg_options, shlex.quote(savefile))
         from subprocess import check_call, CalledProcessError, PIPE
         try:
             if sage.misc.verbose.get_verbose() > 0:
@@ -1054,16 +1054,16 @@ class Animation(WithEqualityById, SageObject):
 
         Input:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
+        -  ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
+        -  ``savefile`` -- file that the animated gif gets saved
            to
 
-        -  ``iterations`` - integer (default: 0); number of
+        -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
         EXAMPLES::
@@ -1115,13 +1115,13 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``filename`` - (default: None) name of save file
+        -  ``filename`` -- (default: None) name of save file
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
-        - ``use_ffmpeg`` - boolean (default: False); if True, use
-          'ffmpeg' by default instead of 'convert' when creating GIF
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
+          'ffmpeg' by default instead of ImageMagick when creating GIF
           files.
 
         If filename is None, then in notebook mode, display the

@@ -484,7 +484,7 @@ class P1NFList(SageObject):
 
     INPUT:
 
-    -  ``N`` - integral ideal (the modulus or level).
+    -  ``N`` -- integral ideal (the modulus or level).
 
     OUTPUT:
 
@@ -699,9 +699,9 @@ class P1NFList(SageObject):
 
         OUTPUT:
 
-        - ``u`` - the normalizing scalar (only if ``with_scalar=True``)
+        - ``u`` -- the normalizing scalar (only if ``with_scalar=True``)
 
-        - ``i`` - the index of `(c, d)` in the list.
+        - ``i`` -- the index of `(c, d)` in the list.
 
         EXAMPLES::
 
@@ -782,7 +782,7 @@ class P1NFList(SageObject):
 
         OUTPUT:
 
-        - ``i`` - the index of `(c, d)` in the list.
+        - ``i`` -- the index of `(c, d)` in the list.
 
         EXAMPLES::
 
@@ -1013,7 +1013,7 @@ def p1NFlist(N):
 
     INPUT:
 
-    -  ``N`` - integral ideal (the level or modulus).
+    -  ``N`` -- integral ideal (the level or modulus).
 
     EXAMPLES::
 

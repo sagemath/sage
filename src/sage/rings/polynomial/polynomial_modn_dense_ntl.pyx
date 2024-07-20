@@ -47,8 +47,6 @@ from sage.rings.fraction_field_element import FractionFieldElement
 
 from sage.rings.infinity import infinity
 
-from sage.interfaces.singular import singular as singular_default
-
 from sage.structure.element import canonical_coercion, coerce_binop, have_same_parent
 
 from sage.libs.ntl.types cimport NTL_SP_BOUND
@@ -57,8 +55,10 @@ from sage.libs.ntl.lzz_p cimport *
 from sage.libs.ntl.lzz_pX cimport *
 from sage.libs.ntl.ZZ_pX cimport *
 
+
 def make_element(parent, args):
     return parent(*args)
+
 
 zz_p_max = NTL_SP_BOUND
 
@@ -127,7 +127,6 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         elif isinstance(x, dict):
             R = parent.base_ring()
             x = _dict_to_list(x, R(0))
-
 
         elif isinstance(x, ZZX):
             self._poly = x.copy()
@@ -290,7 +289,6 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         q, _ = self.quo_rem(right)
         return q
 
-
     def degree(self, gen=None):
         """
         Return the degree of this polynomial.
@@ -360,7 +358,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         self._poly = ZZ_pX(v, self.parent().modulus())
 
     # Polynomial_singular_repr stuff, copied due to lack of multiple inheritance
-    def _singular_(self, singular=singular_default, force=False):
+    def _singular_(self, singular=None, force=False):
         self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         if self.__singular is not None:
             try:
@@ -371,7 +369,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
                 pass
         return self._singular_init_(singular)
 
-    def _singular_init_(self, singular=singular_default, force=False):
+    def _singular_init_(self, singular=None, force=False):
         self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         self.__singular = singular(str(self))
         return self.__singular
@@ -426,6 +424,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
             [4]
         """
         return small_roots(self, *args, **kwds)
+
 
 def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
     r"""
@@ -624,6 +623,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
     roots = set([ZmodN(r) for r,m in R if abs(r) <= X])
     Nbeta = N**beta
     return [root for root in roots if N.gcd(ZZ(self(root))) >= Nbeta]
+
 
 cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
     r"""
@@ -1089,7 +1089,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
 
         INPUT:
 
-        - ``degree`` (``None`` or an integer) - if specified, truncate or zero
+        - ``degree`` (``None`` or an integer) -- if specified, truncate or zero
           pad the list of coefficients to this degree before reversing it.
 
         EXAMPLES::
@@ -1235,7 +1235,6 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             return self._parent(int(fx))
 
 
-
 cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
 
     def __init__(self, parent, v=None, check=True, is_gen=False, construct=False):
@@ -1261,7 +1260,6 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         y.c = self.c
         y._parent = self._parent
         return y
-
 
     cpdef list list(self, bint copy=True):
         return [self.get_unsafe(n) for n from 0 <= n <= self.degree()]
@@ -1598,7 +1596,6 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         ZZ_pX_RightShift(r.x, self.x, n)
         return r
 
-
     def _derivative(self, var=None):
         r"""
         Return the formal derivative of ``self`` with respect to ``var``.
@@ -1638,7 +1635,6 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         ZZ_pX_diff(r.x, self.x)
         return r
 
-
     def reverse(self, degree=None):
         """
         Return the reverse of the input polynomial thought as a polynomial of
@@ -1648,7 +1644,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
 
         INPUT:
 
-        - ``degree`` (``None`` or an integer) - if specified, truncate or zero
+        - ``degree`` (``None`` or an integer) -- if specified, truncate or zero
           pad the list of coefficients to this degree before reversing it.
 
         EXAMPLES::

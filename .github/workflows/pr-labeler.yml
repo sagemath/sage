@@ -1,6 +1,6 @@
 # This action automatically labels Pull-Requests
 # based on files edited and no of lines changed.
-name: Size Labeler/Checker
+name: Size Labeler / Checker
 on:
   pull_request_target:
     types:
@@ -17,22 +17,34 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - name: Checkout code
+      # checkout the .ci directory of the develop branch of the main repository sagemath/sage
+      - name: Checkout the main repo
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .ci
+      # Check out the pull request repository and mount it at path /<repo_name>
+      - name: Checkout the pull request repo
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          path: ${{ github.event.pull_request.head.repo.name }}
 
       - name: Add labels based on size
         run: |
-          git fetch origin $BASE_SHA
-          chmod a+x .github/workflows/set_labels_by_changes.sh
-          .github/workflows/set_labels_by_changes.sh
+          git fetch origin $BASE_REF
+          chmod a+x .ci/set_labels_by_changes.sh
+          .ci/set_labels_by_changes.sh
         env:
-          BASE_SHA: ${{ github.base_ref }}
-          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_REF: ${{ github.base_ref }}
+          PR_MOUNT_DIR: ${{ github.event.pull_request.head.repo.name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
+          PR_REPO: ${{ github.event.pull_request.head.repo.name }}
           PR_NUMBER: ${{ github.event.pull_request.number}}
           SMALL_THRESHOLD: ${{ vars.SMALL_THRESHOLD }}
           MODERATE_THRESHOLD: ${{ vars.MODERATE_THRESHOLD }}

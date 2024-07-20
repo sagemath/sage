@@ -267,7 +267,6 @@ cdef class ntl_ZZ_pE():
         sig_off()
         return r
 
-
     cdef ntl_ZZ_pX get_as_ZZ_pX(ntl_ZZ_pE self):
         r"""
         Returns value as ntl_ZZ_pX.

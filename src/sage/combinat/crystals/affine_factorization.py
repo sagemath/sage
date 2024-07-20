@@ -10,6 +10,7 @@ Affine factorization crystal of type `A`
 #******************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
@@ -18,8 +19,9 @@ from sage.categories.crystals import CrystalMorphism
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.homset import Hom
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.rsk import RSK
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
 class AffineFactorizationCrystal(UniqueRepresentation, Parent):

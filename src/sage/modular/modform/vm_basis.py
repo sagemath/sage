@@ -57,7 +57,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
     - ``prec`` -- (default: 10) a positive integer
 
-    - ``cusp_only`` -- bool (default: False)
+    - ``cusp_only`` -- bool (default: ``False``)
 
     - ``var`` -- string (default: 'q')
 

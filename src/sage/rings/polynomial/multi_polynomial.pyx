@@ -20,11 +20,13 @@ from itertools import chain
 
 from sage.misc.misc_c import prod
 
+
 def is_MPolynomial(x):
     from sage.misc.superseded import deprecation
     deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial) instead")
 
     return isinstance(x, MPolynomial)
+
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.map cimport Map
@@ -1559,7 +1561,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``variable`` - The variable with respect to which we compute
+        - ``variable`` -- The variable with respect to which we compute
           the discriminant
 
         OUTPUT: An element of the base ring of the polynomial ring.
@@ -1997,7 +1999,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``weights`` - Either individual numbers, an iterable or a dictionary,
+        - ``weights`` -- Either individual numbers, an iterable or a dictionary,
           specifying the weights of each variable. If it is a dictionary, it
           maps each variable of ``self`` to its weight. If it is a sequence of
           individual numbers or a tuple, the weights are specified in the order
@@ -2236,7 +2238,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``root`` - if set to ``True``, return a pair ``(True, root)``
+        - ``root`` -- if set to ``True``, return a pair ``(True, root)``
           where ``root`` is a square root or ``(False, None)`` if
           it is not a square.
 
@@ -2348,11 +2350,11 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - ``prec`` --  integer, sets the precision (default: 300)
 
-        - ``return_conjugation`` -- boolean. Returns element of `SL(2, \ZZ)` (default: True)
+        - ``return_conjugation`` -- boolean. Returns element of `SL(2, \ZZ)` (default: ``True``)
 
         - ``error_limit`` -- sets the error tolerance (default: 0.000001)
 
-        - ``smallest_coeffs`` -- (default: True), boolean, whether to find the
+        - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
           model with smallest coefficients
 
         - ``norm_type`` -- either ``'norm'`` or ``'height'``. What type of norm
