@@ -75,7 +75,8 @@ def interval_roots(p, rts, prec):
     """
 
     CIF = ComplexIntervalField(prec)
-    CIFX = CIF['x']
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    CIFX = PolynomialRing(CIF, 'x')
 
     ip = CIFX(p)
     ipd = CIFX(p.derivative())
@@ -266,9 +267,10 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
         factors = p.squarefree_decomposition()
 
     prec = 53
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     while True:
         CC = ComplexField(prec)
-        CCX = CC['x']
+        CCX = PolynomialRing(CC, 'x')
 
         all_rts = []
         ok = True

@@ -75,6 +75,7 @@ from sage.combinat.combinatorial_map import combinatorial_map
 from sage.misc.prandom import randint
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
@@ -998,7 +999,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         return ParkingFunction(sorted(self))  # type:ignore
 
     def characteristic_quasisymmetric_function(self, q=None,
-                                               R=QQ['q', 't'].fraction_field()):
+                                               R=PolynomialRing(QQ, ['q', 't']).fraction_field()):
         r"""
         Return the characteristic quasisymmetric function of ``self``.
 

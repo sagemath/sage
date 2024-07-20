@@ -94,6 +94,7 @@ import operator
 from sage.combinat.finite_state_machine import Automaton, Transducer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 class AutomatonGenerators:
@@ -1271,8 +1272,9 @@ class TransducerGenerators:
             raise ValueError("%s does not have one argument." %
                              (left_side,))
 
+        P = PolynomialRing(base_ring, var)
         try:
-            polynomial_left = base_ring[var](left_side.operands()[0])
+            polynomial_left = P(left_side.operands()[0])
         except Exception:
             raise ValueError("%s is not a polynomial "
                              "in %s." % (left_side.operands()[0], var))
@@ -1326,8 +1328,9 @@ class TransducerGenerators:
             raise ValueError("%s does not have exactly one argument."
                              % (next_function,))
 
+        P = PolynomialRing(base_ring, var)
         try:
-            polynomial_right = base_ring[var](next_function.operands()[0])
+            polynomial_right = P(next_function.operands()[0])
         except Exception:
             raise ValueError("%s is not a polynomial in %s."
                              % (next_function.operands()[0], var))

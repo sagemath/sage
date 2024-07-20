@@ -1562,7 +1562,8 @@ class FusionRing(WeylCharacterRing):
                     powers[val] -= 1
                 else:
                     powers[val] = -1
-            R = ZZ['q']
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            R = PolynomialRing(ZZ, 'q')
             q = R.gen()
             expr = R.fraction_field().one()
             for val in powers:

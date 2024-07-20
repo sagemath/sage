@@ -455,7 +455,8 @@ cdef class Fmpz_poly(SageObject):
             x^3 - 1
         """
         from sage.rings.integer_ring import ZZ
-        return ZZ[var](self.list())
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        return PolynomialRing(ZZ, var)(self.list())
 
 
 # Functions removed from flint but still needed in Sage. Code adapted from

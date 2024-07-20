@@ -232,7 +232,7 @@ def fq(n, q=None):
         (q^6 - q^5 - q^4 + q^2 + q - 1)/q^6
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = PolynomialRing(ZZ, 'q').gen()
     return prod(1 - q**(-i - 1) for i in range(n))
 
 
@@ -276,7 +276,7 @@ def primitives(n, invertible=False, q=None):
         1/4*q^4 - 1/4*q^2
     """
     if q is None:
-        q = QQ['q'].gen()
+        q = PolynomialRing(QQ, 'q').gen()
     p = sum(moebius(n // d) * q**d for d in divisors(n)) / n
     if invertible and n == 1:
         return p - 1
@@ -305,7 +305,7 @@ def order_of_general_linear_group(n, q=None):
         q^4 - q^3 - q^2 + q
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = PolynomialRing(ZZ, 'q').gen()
     return prod([q**n - q**i for i in range(n)])
 
 
@@ -352,7 +352,7 @@ def centralizer_group_cardinality(la, q=None):
         q^5 - 2*q^4 + q^3
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = PolynomialRing(ZZ, 'q').gen()
     return q**centralizer_algebra_dim(la)*prod([fq(m, q=q) for m in la.to_exp()])
 
 
@@ -577,7 +577,7 @@ class PrimarySimilarityClassType(Element,
             q^8
         """
         if q is None:
-            q = ZZ['q'].gen()
+            q = PolynomialRing(ZZ, 'q').gen()
         return q.parent()(func(self.partition()).substitute(q=q**self.degree()))
 
     @cached_in_parent_method
@@ -600,7 +600,7 @@ class PrimarySimilarityClassType(Element,
             q^8 - q^6 - q^4 + q^2
         """
         if q is None:
-            q = FractionField(ZZ['q']).gen()
+            q = FractionField(PolynomialRing(ZZ, 'q')).gen()
         return self.statistic(centralizer_group_cardinality, q=q)
 
     def invariant_subspace_generating_function(self, q=None, t=None):
@@ -920,7 +920,7 @@ class SimilarityClassType(CombinatorialElement):
             1/2*q^2 - 1/2*q
         """
         if q is None:
-            q = ZZ['q'].gen()
+            q = PolynomialRing(ZZ, 'q').gen()
         if self.size() == 0:
             return q.parent().one()
         list_of_degrees = [PT.degree() for PT in self]
@@ -1002,7 +1002,7 @@ class SimilarityClassType(CombinatorialElement):
             q^2 + q
         """
         if q is None:
-            q = ZZ['q'].gen()
+            q = PolynomialRing(ZZ, 'q').gen()
         return order_of_general_linear_group(self.size(), q=q) / self.centralizer_group_card(q=q)
 
     def number_of_matrices(self, invertible=False, q=None):
@@ -1026,7 +1026,7 @@ class SimilarityClassType(CombinatorialElement):
             1/2*q^4 - 1/2*q^2
         """
         if q is None:
-            q = ZZ['q'].gen()
+            q = PolynomialRing(ZZ, 'q').gen()
         return self.class_card(q=q)*self.number_of_classes(invertible=invertible, q=q)
 
     def statistic(self, func, q=None):
@@ -1057,7 +1057,7 @@ class SimilarityClassType(CombinatorialElement):
             q^8
         """
         if q is None:
-            q = FractionField(ZZ['q']).gen()
+            q = FractionField(PolynomialRing(ZZ, 'q')).gen()
         return prod([PT.statistic(func, q=q) for PT in self])
 
     def invariant_subspace_generating_function(self, q=None, t=None):
@@ -1355,7 +1355,7 @@ def matrix_similarity_classes(n, q=None, invertible=False):
         15
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = PolynomialRing(ZZ, 'q').gen()
     basering = q.parent()
     if n == 0:
         return basering.one()
@@ -1479,7 +1479,7 @@ def ext_orbits(input_data, q=None, selftranspose=False):
     # Comments cite items in the paper "Similarity over rings of length two" by
     # Prasad, Singla, and Spallone.
     if q is None:
-        q = FractionField(QQ['q']).gen()
+        q = FractionField(PolynomialRing(QQ, 'q')).gen()
     case, data = input_parsing(input_data)
     if case == 'par':
         la = data
@@ -1561,7 +1561,7 @@ def matrix_similarity_classes_length_two(n, q=None, selftranspose=False, inverti
         q^8 + q^6 - q^5 - q
     """
     if q is None:
-        q = FractionField(QQ['q']).gen()
+        q = FractionField(PolynomialRing(QQ, 'q')).gen()
     return sum([tau.number_of_classes(invertible=invertible, q=q)*ext_orbits(tau, q=q, selftranspose=selftranspose) for tau in SimilarityClassTypes(n)])
 
 
@@ -1638,7 +1638,7 @@ def ext_orbit_centralizers(input_data, q=None, selftranspose=False):
     # Comments cite items in the paper "Similarity over rings of length two" by
     # Prasad, Singla, and Spallone.
     if q is None:
-        q = FractionField(QQ['q']).gen()
+        q = FractionField(PolynomialRing(QQ, 'q')).gen()
     case, data = input_parsing(input_data)
     if case == 'par':
         la = data
@@ -1723,7 +1723,7 @@ def matrix_centralizer_cardinalities_length_two(n, q=None, selftranspose=False, 
         {4: 4, 8: 8, 12: 4, 16: 2, 32: 4, 48: 2, 96: 4}
     """
     if q is None:
-        q = FractionField(QQ['q']).gen()
+        q = FractionField(PolynomialRing(QQ, 'q')).gen()
     for tau in SimilarityClassTypes(n):
         for pair in ext_orbit_centralizers(tau, q=q, selftranspose=selftranspose):
             yield (q**tau.centralizer_algebra_dim()*pair[0], tau.number_of_classes(invertible=invertible, q=q)*pair[1])

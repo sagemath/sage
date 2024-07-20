@@ -350,6 +350,7 @@ from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import shuffle
 from sage.misc.superseded import deprecation, deprecated_function_alias
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
 
@@ -7906,8 +7907,8 @@ cdef class Matroid(SageObject):
         """
         a = x
         b = y
-        R = ZZ['x, y']
-        x, y = R._first_ngens(2)
+        R = PolynomialRing(ZZ, ['x', 'y'])
+        x, y = R.gens()
         T = R(0)
         for B in self.bases_iterator():
             T += x ** len(self._internal(B)) * y ** len(self._external(B))
@@ -7963,7 +7964,7 @@ cdef class Matroid(SageObject):
             ....:     if not M.loops():
             ....:         assert (-1)**r * M.characteristic_polynomial(l) == sum(M.broken_circuit_complex().f_vector())
         """
-        R = ZZ['l']
+        R = PolynomialRing(ZZ, 'l')
         cdef list w = self.whitney_numbers()
         w.reverse()
         chi = R(w)
@@ -8112,7 +8113,6 @@ cdef class Matroid(SageObject):
                 flats_containing[x].append(i)
 
         # Create the ambient polynomial ring
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         try:
             names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
             P = PolynomialRing(R, names)

@@ -65,8 +65,9 @@ cdef _QQx = None
 
 cdef QQx():
     global _QQx
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     if _QQx is None:
-        _QQx = QQ['x']
+        _QQx = PolynomialRing(QQ, 'x')
     return _QQx
 
 cdef named_unops = [ 'sqrt', 'erf', 'gamma', 'abs',

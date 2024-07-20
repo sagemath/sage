@@ -1557,7 +1557,6 @@ class FunctionField_polymod(FunctionField):
             # turn the minpoly of K into a bivariate polynomial
             if names[0] == names[1]:
                 raise ValueError("names of generators must be distinct")
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self.constant_base_field(), names=names)
             S = R.remove_var(names[1])
             f = R(L.polynomial().change_variable_name(names[1]).map_coefficients(
@@ -2315,7 +2314,7 @@ class FunctionField_global(FunctionField_simple):
         for j in range(1, g+1):
             a.append(q**j * a[g-j])
 
-        return ZZ[name](a)
+        return PolynomialRing(ZZ, name)(a)
 
     def number_of_rational_places(self, r=1):
         """

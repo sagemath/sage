@@ -592,7 +592,8 @@ class Category_ideal(Category_in_ambient):
             Category of algebra ideals in Univariate Polynomial Ring in x over Rational Field
         """
         from sage.rings.rational_field import QQ
-        return cls(QQ['x'])
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        return cls(PolynomialRing(QQ, 'x'))
 
     def ring(self):
         """

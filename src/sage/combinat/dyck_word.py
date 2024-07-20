@@ -92,6 +92,7 @@ from sage.categories.posets import Posets
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.words.word import Word
 from sage.combinat.set_partition import SetPartitions
@@ -2044,7 +2045,7 @@ class DyckWord_complete(DyckWord):
         return p1.inverse().complement()
 
     def characteristic_symmetric_function(self, q=None,
-                                          R=QQ['q', 't'].fraction_field()):
+                                          R=PolynomialRing(QQ, ['q', 't']).fraction_field()):
         r"""
         The characteristic function of ``self`` is the sum of
         `q^{dinv(D,F)} Q_{ides(read(D,F))}` over all permutation

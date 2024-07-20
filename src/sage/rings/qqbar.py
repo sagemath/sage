@@ -2914,11 +2914,11 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
 
 
 # Cache some commonly-used polynomial rings
-QQx = QQ['x']
+QQx = PolynomialRing(QQ, 'x')
 QQx_x = QQx.gen()
-QQy = QQ['y']
+QQy = PolynomialRing(QQ, 'y')
 QQy_y = QQy.gen()
-QQxy = QQ['x', 'y']
+QQxy = PolynomialRing(QQ, ['x', 'y'])
 QQxy_x = QQxy.gen(0)
 QQxy_y = QQxy.gen(1)
 
@@ -3354,7 +3354,7 @@ class AlgebraicGenerator(SageObject):
 
         def find_fn(p, prec):
             ifield = RealIntervalField(prec)
-            if_poly = ifield['x', 'y']
+            if_poly = PolynomialRing(ifield, ['x', 'y'])
             ip = if_poly(p)
             return ip(other._root._interval_fast(prec), self._root._interval_fast(prec))
         my_factor = find_zero_result(find_fn, factors_sage)
@@ -7020,7 +7020,7 @@ class AlgebraicPolynomialTracker(SageObject):
                 self._factors = [fac_exp[0] for fac_exp in self._poly.factor()]
             else:
                 fld = gen.field()
-                fld_poly = fld['y']
+                fld_poly = PolynomialRing(fld, 'y')
 
                 fp = fld_poly(coeffs)
 
@@ -7274,7 +7274,7 @@ class ANRoot(ANDescr):
 
         zero = field.zero()
 
-        poly_ring = field['x']
+        poly_ring = PolynomialRing(field, 'x')
 
         # interval_p = poly_ring(p)
         if p.base_ring() is QQ:
@@ -7430,7 +7430,7 @@ class ANRoot(ANDescr):
 
         zero = field.zero()
 
-        poly_ring = field['x']
+        poly_ring = PolynomialRing(field, 'x')
 
         # interval_p = poly_ring(p)
         if p.base_ring() is QQ:
@@ -7639,7 +7639,7 @@ class ANRoot(ANDescr):
             def find_fn(factor, prec):
                 # XXX
                 ifield = (ComplexIntervalField if self.is_complex() else RealIntervalField)(prec)
-                if_poly = ifield['x']
+                if_poly = PolynomialRing(ifield, 'x')
                 gen_val = gen._interval_fast(prec)
                 self_val = self._interval_fast(prec)
                 v = [c.polynomial()(gen_val) for c in factor]
@@ -7671,7 +7671,7 @@ class ANRoot(ANDescr):
             pari_nf = gen.pari_field()
 
             x, y = QQxy.gens()
-            my_factor = QQxy['z']([c.polynomial()(y) for c in my_factor])(x)
+            my_factor = PolynomialRing(QQxy, 'z')([c.polynomial()(y) for c in my_factor])(x)
 
             # XXX much duplicate code with AlgebraicGenerator.union()
 
@@ -8867,7 +8867,7 @@ def _init_qqbar():
 
     QQbar_hash_offset = AlgebraicNumber(ANExtensionElement(QQbar_I_generator, ~ZZ(123456789) + QQbar_I_nf.gen() / ZZ(987654321)))
 
-    ZZX_x = ZZ['x'].gen()
+    ZZX_x = PolynomialRing(ZZ, 'x').gen()
 
 
 # This is used in the _algebraic_ method of the golden_ratio constant,

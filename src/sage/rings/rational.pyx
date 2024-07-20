@@ -2958,7 +2958,8 @@ cdef class Rational(sage.structure.element.FieldElement):
         - Craig Citro
         """
         QQ = self.parent()
-        return QQ[var]([-self,1])
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        return PolynomialRing(QQ, var)([-self, 1])
 
     def minpoly(self, var='x'):
         """
@@ -2984,7 +2985,8 @@ cdef class Rational(sage.structure.element.FieldElement):
         - Craig Citro
         """
         QQ = self.parent()
-        return QQ[var]([-self,1])
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        return PolynomialRing(QQ, var)([-self, 1])
 
     def _integer_(self, Z=None):
         """

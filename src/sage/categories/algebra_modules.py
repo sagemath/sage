@@ -75,7 +75,8 @@ class AlgebraModules(Category_module):
             Category of algebra modules over Univariate Polynomial Ring in x over Rational Field
         """
         from sage.rings.rational_field import QQ
-        return cls(QQ['x'])
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        return cls(PolynomialRing(QQ, 'x'))
 
     def algebra(self):
         """

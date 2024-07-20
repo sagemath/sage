@@ -105,6 +105,7 @@ from sage.numerical.optimize import find_root
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
 from sage.structure.element import parent
@@ -647,7 +648,7 @@ class RingLindnerPeikert(RingLWE):
         s = sqrt(s_t_bound*floor(q/4))
         # Transform s into stddev
         stddev = s/sqrt(2*pi.n())
-        D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n, stddev)
+        D = DiscreteGaussianDistributionPolynomialSampler(PolynomialRing(ZZ, 'x'), n, stddev)
         RingLWE.__init__(self, N=N, q=q, D=D, poly=None, secret_dist='noise', m=m)
 
 class RingLWEConverter(SageObject):

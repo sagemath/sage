@@ -147,7 +147,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
     if algorithm == 'python':
         return chromatic_polynomial_with_cache(G, cache=cache)
 
-    R = ZZ['x']
+    R = PolynomialRing(ZZ, 'x')
     if not G:
         return R.one()
     if G.has_loops():

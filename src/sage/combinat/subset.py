@@ -1101,7 +1101,8 @@ class SubMultiset_s(Parent):
             sage: sum(S.generating_serie())
             72
         """
-        R = ZZ[variable]
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        R = PolynomialRing(ZZ, variable)
         return R.prod(R([1] * (n + 1)) for n in self._d.values())
 
     def __iter__(self):
@@ -1232,7 +1233,8 @@ class SubMultiset_sk(SubMultiset_s):
             True
             True
         """
-        x = ZZ[variable].gen()
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        x = PolynomialRing(ZZ, variable).gen()
         P = SubMultiset_s.generating_serie(self)
         return P[self._k] * (x**self._k)
 

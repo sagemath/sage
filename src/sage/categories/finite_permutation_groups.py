@@ -278,9 +278,10 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 Symbolic Ring
             """
             from sage.rings.integer_ring import ZZ
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
             if isinstance(variable, str):
-                variable = ZZ[variable].gen()
+                variable = PolynomialRing(ZZ, variable).gen()
             cycle_poly = self.cycle_index()
             return cycle_poly.expand(2).subs(x0=1, x1=variable)
 

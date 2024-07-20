@@ -797,7 +797,8 @@ class GoldenRatio(Constant):
             x^2 - x - 1
         """
         from sage.rings.rational_field import QQ
-        x = QQ['x'].gen(0)
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        x = PolynomialRing(QQ, 'x').gen(0)
         return x**2 - x - 1
 
     def __float__(self):

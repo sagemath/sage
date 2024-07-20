@@ -41,9 +41,10 @@ from sage.misc.misc_c import prod
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom, End
 from sage.rings.fraction_field import FractionField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from . import sfa
 
-QQt = FractionField(QQ['t'])
+QQt = FractionField(PolynomialRing(QQ, 't'))
 
 p_to_m_cache = {}
 m_to_p_cache = {}

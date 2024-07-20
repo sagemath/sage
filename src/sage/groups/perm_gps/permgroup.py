@@ -136,22 +136,22 @@ REFERENCES:
 from __future__ import annotations
 from functools import wraps
 
-from sage.misc.randstate import current_randstate
-from sage.groups.group import FiniteGroup
-
-from sage.rings.rational_field import QQ
-from sage.rings.integer import Integer
-from sage.interfaces.abc import ExpectElement, GapElement
-from sage.libs.gap.libgap import libgap
-from sage.libs.gap.element import GapElement as LibGapElement
-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
-from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor, standardize_generator
-from sage.groups.abelian_gps.abelian_group import AbelianGroup
-from sage.misc.cachefunc import cached_method
-from sage.groups.class_function import ClassFunction_libgap
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.groups.abelian_gps.abelian_group import AbelianGroup
+from sage.groups.class_function import ClassFunction_libgap
 from sage.groups.conjugacy_classes import ConjugacyClassGAP
+from sage.groups.group import FiniteGroup
+from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor, standardize_generator
+from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+from sage.interfaces.abc import ExpectElement, GapElement
+from sage.libs.gap.element import GapElement as LibGapElement
+from sage.libs.gap.libgap import libgap
+from sage.misc.cachefunc import cached_method
+from sage.misc.randstate import current_randstate
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.structure.richcmp import (richcmp_method,
                                     richcmp, rich_to_bool, op_EQ, op_NE)
 
@@ -4824,7 +4824,7 @@ class PermutationGroup_generic(FiniteGroup):
                                                   libgap.OnPoints)
         M = pi.MolienSeries()
 
-        R = QQ['x']
+        R = PolynomialRing(QQ, 'x')
         nn = M.NumeratorOfRationalFunction()
         dd = M.DenominatorOfRationalFunction()
         return (R(str(nn).replace("_1", "")) /
@@ -4886,7 +4886,7 @@ class PermutationGroup_generic(FiniteGroup):
             raise ValueError("p must be 0 or prime")
 
         ff = self._libgap_().PoincareSeriesPrimePart(p, n)
-        R = QQ['x']
+        R = PolynomialRing(QQ, 'x')
         nn = ff.NumeratorOfRationalFunction()
         dd = ff.DenominatorOfRationalFunction()
         return (R(str(nn).replace('x_1', 'x')) /

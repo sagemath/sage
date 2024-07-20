@@ -122,6 +122,7 @@ from sage.rings.factorint import factor_trial_division
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.quadratic_forms.binary_qf import BinaryQF
 from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
@@ -6266,7 +6267,7 @@ def nearby_rational_poly(f, **kwds):
         sage: RR(4728779608739021/2251799813685248  - 21/10)
         8.88178419700125e-17
     """
-    R = QQ['X']
+    R = PolynomialRing(QQ, 'X')
     return R([a.nearby_rational(**kwds) for a in f])
 
 def simplest_rational_poly(f, prec):
@@ -6287,7 +6288,7 @@ def simplest_rational_poly(f, prec):
         sage: simplest_rational_poly(2.1*x^2 + 3.5*x - 1.2, 53)
         21/10*X^2 + 7/2*X - 6/5
     """
-    R = QQ['X']
+    R = PolynomialRing(QQ, 'X')
     Z = RealField(prec)
     return R([Z(a).simplest_rational() for a in f])
 

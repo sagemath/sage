@@ -4108,7 +4108,7 @@ class Graph(GenericGraph):
         from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions
         from sage.combinat.set_partition_ordered import OrderedSetPartitions
         if t is None:
-            t = ZZ['t'].gen()
+            t = PolynomialRing(ZZ, 't').gen()
         if R is None:
             R = t.parent()
         M = QuasiSymmetricFunctions(R).M()
