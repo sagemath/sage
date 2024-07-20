@@ -915,7 +915,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         """
         The `G`-Algebra derived from this algebra by relations.
 
-        By default is assumed, that two variables commute.
+        By default it is assumed that any two variables commute.
 
         .. TODO::
 
@@ -958,6 +958,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             (-t)*x*y + t*y + (t + 1)
         """
         from sage.matrix.constructor import Matrix
+        commutative = not relations
 
         base_ring = self.base_ring()
         polynomial_ring = PolynomialRing(base_ring, self.gens())
@@ -993,7 +994,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         from sage.rings.polynomial.plural import g_Algebra
         return g_Algebra(base_ring, cmat, dmat,
                          names=names or self.variable_names(),
-                         order=order, check=check)
+                         order=order, check=check, commutative=commutative)
 
     def poincare_birkhoff_witt_basis(self):
         """
