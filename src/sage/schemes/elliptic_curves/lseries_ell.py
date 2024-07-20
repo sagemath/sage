@@ -17,8 +17,8 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from math import ceil, log, sqrt
 
@@ -143,7 +143,7 @@ class Lseries_ell(SageObject):
 
         If the curve has too large a conductor, it is not possible to
         compute with the `L`-series using this command.  Instead a
-        ``RuntimeError`` is raised::
+        :class:`RuntimeError` is raised::
 
             sage: e = EllipticCurve([1,1,0,-63900,-1964465932632])
             sage: L = e.lseries().dokchitser(15, algorithm='gp')

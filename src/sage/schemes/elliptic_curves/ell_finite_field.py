@@ -444,7 +444,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
           - ``'all'`` -- compute cardinality with both ``'pari'`` and
             ``'bsgs'``; return result if they agree or raise a
-            ``AssertionError`` if they do not
+            :class:`AssertionError` if they do not
 
         - ``extension_degree`` -- an integer `d` (default: 1): if the
           base field is `\GF{q}`, return the cardinality of ``self``
@@ -1612,7 +1612,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         (integer) The discriminant of the endomorphism ring `\text{End}(E)`, if
         this has class number ``h``.  If `\text{End}(E)` does not have class
-        number ``h``, a ``ValueError`` is raised.
+        number ``h``, a :class:`ValueError` is raised.
 
         ALGORITHM:
 
@@ -1622,7 +1622,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         must be a multiple of `h_0`, compute the possible conductors,
         using :meth:`height_above_floor` for each prime `\ell`
         dividing the quotient `h/h_0`.  If exactly one conductor `f`
-        remains, return `f^2D_0`, otherwise raise a ``ValueError``;
+        remains, return `f^2D_0`, otherwise raise a :class:`ValueError`;
         this can onlyhappen when the input value of `h` was incorrect.
 
         .. NOTE::

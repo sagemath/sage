@@ -564,6 +564,7 @@ class RingClassField(SageObject):
     def is_subfield(self, M):
         """
         Return ``True`` if this ring class field is a subfield of the ring class field `M`.
+
         If `M` is not a ring class field, then a :class:`TypeError` is raised.
 
         EXAMPLES::
@@ -704,7 +705,7 @@ class GaloisGroup(SageObject):
 
         - `x` -- automorphism or quadratic field element
 
-        OUTPUT: An automorphism (or ``TypeError``)
+        OUTPUT: An automorphism (or :class:`TypeError`)
 
         EXAMPLES::
 
