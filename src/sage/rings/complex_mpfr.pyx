@@ -70,7 +70,7 @@ CDF = CLF = RLF = None
 
 # useful for parsing
 NUMBERS = re.compile("[0-9]")
-BLOCK = re.compile(r'[+-]?[0-9\.]*(?:e[+-]?[0-9]*|)\*?I?')
+BLOCK = re.compile(r'[+-]?(?:I\*|)[0-9\.]*(?:e[+-]?[0-9]*|)\*?I?')
 
 
 def late_import():
@@ -504,6 +504,8 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             3.40000000000000 + 1.20000000000000*I
             sage: CC('1.2*I')
             1.20000000000000*I
+            sage: CC('9-I*1.2')
+            9.00000000000000 - 1.20000000000000*I
             sage: CC('3.4')
             3.40000000000000
             sage: CC('3.4e-6+7.8e11*I')
