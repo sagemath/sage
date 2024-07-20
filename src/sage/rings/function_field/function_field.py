@@ -190,7 +190,7 @@ quartic over `\GF{2}` and gap numbers for ordinary places::
 
 The gap numbers for Weierstrass places are of course not ordinary::
 
-    sage: # needs sage.modules sage.rings.function_field
+    sage: # needs sage.rings.function_field
     sage: p1,p2,p3 = L.weierstrass_places()[:3]
     sage: p1.gaps()
     [1, 2, 4]
@@ -532,9 +532,9 @@ class FunctionField(Field):
             sage: O.basis()                                                             # needs sage.modules
             (1, y, y^2)
 
-            sage: Z = K.order(x); Z                                                     # needs sage.modules sage.rings.function_field
+            sage: Z = K.order(x); Z                                                     # needs sage.rings.function_field
             Order in Rational function field in x over Rational Field
-            sage: Z.basis()                                                             # needs sage.modules sage.rings.function_field
+            sage: Z.basis()                                                             # needs sage.rings.function_field
             (1,)
 
         Orders with multiple generators are not yet supported::
@@ -619,7 +619,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
-            sage: L.order_infinite(y)           # not implemented                       # needs sage.modules sage.rings.function_field
+            sage: L.order_infinite(y)           # not implemented                       # needs sage.rings.function_field
 
             sage: Z = K.order(x); Z                                                     # needs sage.modules
             Order in Rational function field in x over Rational Field
@@ -1016,7 +1016,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.space_of_differentials()                                            # needs sage.modules sage.rings.function_field
+            sage: L.space_of_differentials()                                            # needs sage.rings.function_field
             Space of differentials of Function field in y
              defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
@@ -1040,7 +1040,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.space_of_holomorphic_differentials()                                # needs sage.modules sage.rings.function_field
+            sage: L.space_of_holomorphic_differentials()                                # needs sage.rings.function_field
             (Vector space of dimension 4 over Finite Field of size 5,
              Linear map:
                From: Vector space of dimension 4 over Finite Field of size 5
@@ -1067,7 +1067,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.basis_of_holomorphic_differentials()                                # needs sage.modules sage.rings.function_field
+            sage: L.basis_of_holomorphic_differentials()                                # needs sage.rings.function_field
             [((x/(x^3 + 4))*y) d(x),
              ((1/(x^3 + 4))*y) d(x),
              ((x/(x^3 + 4))*y^2) d(x),
@@ -1089,12 +1089,12 @@ class FunctionField(Field):
 
             sage: _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (t^3 - 1)/(t^3 - 2))                        # needs sage.rings.function_field
-            sage: L.divisor_group()                                                     # needs sage.modules sage.rings.function_field
+            sage: L.divisor_group()                                                     # needs sage.rings.function_field
             Divisor group of Function field in y defined by y^3 + (-t^3 + 1)/(t^3 - 2)
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.divisor_group()                                                     # needs sage.modules sage.rings.function_field
+            sage: L.divisor_group()                                                     # needs sage.rings.function_field
             Divisor group of Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
         from .divisor import DivisorGroup

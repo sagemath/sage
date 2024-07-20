@@ -127,6 +127,10 @@ def is_ComplexNumber(x):
         sage: a = ComplexNumber(1, 2); a
         1.00000000000000 + 2.00000000000000*I
         sage: is_ComplexNumber(a)
+        doctest:warning...
+        DeprecationWarning: The function is_ComplexNumber is deprecated;
+        use 'isinstance(..., ComplexNumber)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: b = ComplexNumber(1); b
         1.00000000000000
@@ -146,6 +150,10 @@ def is_ComplexNumber(x):
         sage: is_ComplexNumber(d)
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_ComplexNumber is deprecated; "
+                       "use 'isinstance(..., ComplexNumber)' instead.")
     return isinstance(x, ComplexNumber)
 
 

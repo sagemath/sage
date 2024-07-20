@@ -675,7 +675,6 @@ cdef class PowComputer_ext(PowComputer_class):
         ZZ_mul(ans.x, self.pow_ZZ_tmp(mpz_get_ui((<Integer>m).value))[0], self.pow_ZZ_tmp(mpz_get_ui((<Integer>n).value))[0])
         return ans
 
-
     cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
         Returns self.prime^self.prec_cap as an ``mpz_srcptr``.
@@ -1841,7 +1840,6 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
         else:
             raise IndexError
 
-
     def __dealloc__(self):
         """
         Deallocates low_shifter and high_shifter.
@@ -2272,7 +2270,6 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
         else:
             raise IndexError
 
-
     def __dealloc__(self):
         """
         Deallocates low_shifter and high_shifter.
@@ -2324,6 +2321,7 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
             [316 53 3123 3]
         """
         return ZZ_pX_eis_shift_p(self, x, a, n, finalprec)
+
 
 def PowComputer_ext_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, prec_type = "small", ext_type = "u", shift_seed = None):
     r"""

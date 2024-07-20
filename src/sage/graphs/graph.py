@@ -3047,7 +3047,8 @@ class Graph(GenericGraph):
         .. NOTE::
 
             - This method assumes the graph is connected.
-            - This algorithm works in O(m).
+            - This time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)`
+              for ``DenseGraph`` .
 
         .. SEEALSO::
 

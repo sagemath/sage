@@ -457,6 +457,7 @@ cdef frozenset special_method_names = frozenset(['__abs__', '__add__',
             '__rtruediv__', '__rxor__', '__set__', '__setattr__', '__setitem__', '__setslice__', '__sizeof__',
             '__str__', '__sub__', '__subclasscheck__', '__truediv__', '__unicode__', '__xor__', 'next'])
 
+
 def _cached_function_unpickle(module, name, cache=None):
     """
     Unpickle the cache function ``name`` defined in ``module``.
@@ -504,6 +505,7 @@ def _cached_function_unpickle(module, name, cache=None):
     if cache is not None:
         ret.cache.update(cache)
     return ret
+
 
 cdef class NonpicklingDict(dict):
     r"""
@@ -1453,6 +1455,7 @@ cdef class WeakCachedFunction(CachedFunction):
 
 
 weak_cached_function = decorator_keywords(WeakCachedFunction)
+
 
 class CachedMethodPickle():
     """
@@ -3016,6 +3019,7 @@ cdef class CachedSpecialMethod(CachedMethod):
                 pass
             D[name] = Caller
         return Caller
+
 
 @decorator_keywords
 def cached_method(f, name=None, key=None, do_pickle=None):

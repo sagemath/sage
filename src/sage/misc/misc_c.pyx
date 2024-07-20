@@ -23,6 +23,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
 from cpython.sequence cimport *
 from cpython.list cimport *
@@ -305,8 +306,6 @@ class NonAssociative:
         """
         return NonAssociative(self, other)
 
-from copy import copy
-
 
 def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
     """
@@ -397,6 +396,7 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
         sum = z + sum
 
     return sum
+
 
 cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff):
     """

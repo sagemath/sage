@@ -3289,8 +3289,8 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
             if self.base().has_coerce_map_from(P.base()):
                 return True
 
-        from sage.rings.fraction_field import is_FractionField
-        if is_FractionField(P):
+        from sage.rings.fraction_field import FractionField_generic
+        if isinstance(P, FractionField_generic):
             B = P.base()
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing

@@ -54,7 +54,7 @@ Next, test the ``pinfo`` magic for ``R`` interface code, see :issue:`26906`::
     ...
     String form:     lm
     File:            .../sage/interfaces/r.py
-    Docstring:
+    Docstring:...
     title
     *****
     <BLANKLINE>

@@ -644,6 +644,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         TESTS::
 
+            sage: from sage.interfaces.gap import gap
             sage: gap._eval_line('2+2;')
             '4'
 
@@ -1124,6 +1125,7 @@ class Gap(Gap_generic):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.gap import gap
             sage: gap.__reduce__()
             (<function reduce_load_GAP at 0x...>, ())
             sage: f, args = _
