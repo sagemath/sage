@@ -695,7 +695,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
         from sage.combinat.root_system.reflection_group_element import _gap_return
         J_inv = [self._index_set_inverse[j] + 1 for j in J]
         S = str(gap3('ReducedRightCosetRepresentatives(%s,ReflectionSubgroup(%s,%s))' % (self._gap_group._name, self._gap_group._name, J_inv)))
-        return [self(w) for w in _gap_return(S)]
+        return [self(w, check=False) for w in _gap_return(S)]
 
     def simple_root_index(self, i):
         r"""
@@ -820,7 +820,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
                      if self.fix_space().is_subspace(T[i].fix_space())]
             S = str(gap3('ReducedRightCosetRepresentatives(%s,ReflectionSubgroup(%s,%s))' % (W._gap_group._name, W._gap_group._name, T_fix)))
             from sage.combinat.root_system.reflection_group_element import _gap_return
-            return [W(w) for w in _gap_return(S)]
+            return [W(w, check=False) for w in _gap_return(S)]
 
         def left_coset_representatives(self):
             r"""
