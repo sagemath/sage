@@ -1292,9 +1292,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``absolutely`` -- a boolean (default: ``False``); if ``True``,
+        - ``absolutely`` -- a boolean (default: ``False``); if ``False``,
           check the existence of an isomorphism defined on the base
-          field; if ``False``, check over an algebraic closure.
+          field; if ``True``, check over an algebraic closure.
 
         EXAMPLES::
 
@@ -1323,6 +1323,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: phi = DrinfeldModule(A, [z, 1])
             sage: psi = DrinfeldModule(A, [z, z])
+            sage: phi.is_isomorphic(psi)
+            False
+            sage: phi.is_isomorphic(psi, absolutely=True)
+            True
+
+        In particular, two Drinfeld modules may have the same
+        `j`-invariant, while not being isomorphic on the base field::
+
+            sage: phi = DrinfeldModule(A, [z, 0, 1])
+            sage: psi = DrinfeldModule(A, [z, 0, z])
+            sage: phi.j_invariant() == psi.j_invariant()
+            True
             sage: phi.is_isomorphic(psi)
             False
             sage: phi.is_isomorphic(psi, absolutely=True)
