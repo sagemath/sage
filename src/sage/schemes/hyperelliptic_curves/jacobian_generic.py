@@ -253,7 +253,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         - ``B`` -- (default: 200) the bound which appears in the statement of
           the algorithm from [Lom2019]_
 
-        - ``proof`` -- (default: False) whether or not to insist on a provably
+        - ``proof`` -- (default: ``False``) whether or not to insist on a provably
           correct answer. This is related to the warning in the docstring
           of this module: if this function returns ``False``, then
           strictly speaking this has not been proven to be ``False`` until one
@@ -324,7 +324,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         - ``B`` -- (default: 200) the bound which appears in the statement of
           the algorithm from [Lom2019]_
 
-        - ``proof`` -- (default: False) whether or not to insist on a provably
+        - ``proof`` -- (default: ``False``) whether or not to insist on a provably
           correct answer. This is related to the warning in the module docstring
           of `jacobian_endomorphisms.py`: if this function returns ``False``, then
           strictly speaking this has not been proven to be ``False`` until one has

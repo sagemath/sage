@@ -23,14 +23,14 @@ def CyclicCover(r, f, names=None, check_smooth=True):
 
     INPUT:
 
-    - ``r`` - the order of the cover
+    - ``r`` -- the order of the cover
 
-    - ``f`` - univariate polynomial if not given, then it defaults to 0.
+    - ``f`` -- univariate polynomial if not given, then it defaults to 0.
 
-    - ``names``  (default: ``["x","y"]``) - names for the
+    - ``names``  (default: ``["x","y"]``) -- names for the
       coordinate functions
 
-    - ``check_squarefree`` (default: ``True``) - test if
+    - ``check_squarefree`` (default: ``True``) -- test if
       the input defines a unramified cover of the projective line.
 
     .. WARNING::

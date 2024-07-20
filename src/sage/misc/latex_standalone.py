@@ -1547,7 +1547,7 @@ class TikzPicture(Standalone):
         - ``edge_labels`` -- bool (default: ``True``)
         - ``color_by_label`` -- bool (default: ``False``)
         - ``rankdir`` -- string (default: ``'down'``)
-        - ``subgraph_clusters`` -- (default: []) a list of lists of
+        - ``subgraph_clusters`` -- (default: ``[]``) a list of lists of
           vertices, if supported by the layout engine, nodes belonging to
           the same cluster subgraph are drawn together, with the entire
           drawing of the cluster contained within a bounding rectangle.

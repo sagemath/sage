@@ -14,7 +14,6 @@ class.
 AUTHORS:
 
 - Ingolfur Edvardsson (2014-07): initial implementation
-
 """
 
 #*****************************************************************************
@@ -63,9 +62,9 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         OUTPUT: The index of the newly created variable
 
@@ -98,11 +97,11 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``n`` - the number of new variables (must be > 0)
+        - ``n`` -- the number of new variables (must be > 0)
 
-        - ``obj`` - (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` - optional list of names (default: ``None``)
+        - ``names`` -- optional list of names (default: ``None``)
 
         OUTPUT: The index of the variable created last.
 
@@ -198,7 +197,6 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-
     cpdef add_linear_constraint(self, coefficients, name=None):
         """
         Add a linear constraint.
@@ -209,11 +207,11 @@ cdef class GenericSDPBackend:
           is a variable index (integer) and ``v`` is a value (real
           value).
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``name`` - an optional name for this row (default: ``None``)
+        - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLES::
 
@@ -233,7 +231,6 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-
     cpdef add_linear_constraints(self, int number, names=None):
         """
         Add constraints.
@@ -242,11 +239,11 @@ cdef class GenericSDPBackend:
 
         - ``number`` (integer) -- the number of constraints to add.
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``names`` - an optional list of names (default: ``None``)
+        - ``names`` -- an optional list of names (default: ``None``)
 
         EXAMPLES::
 
@@ -618,8 +615,8 @@ cdef class GenericSDPBackend:
         raise NotImplementedError()
 
 
-
 default_solver = None
+
 
 def default_sdp_solver(solver=None):
     """

@@ -6,7 +6,6 @@ AUTHORS:
 - William Stein (2007-12): initial version
 
 - William Stein and Robert Bradshaw (2008-01): Many improvements
-
 """
 #*****************************************************************************
 #      Copyright (C) 2007 William Stein <wstein@gmail.com>
@@ -59,7 +58,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
 
     - ``radius`` -- (default: None)
 
-    - ``arrow_head`` -- (default: False)
+    - ``arrow_head`` -- (default: ``False``)
 
     - ``color`` -- a string (``"red"``, ``"green"`` etc)
       or a tuple (r, g, b) with r, g, b numbers between 0 and 1
@@ -1036,12 +1035,12 @@ class Line(PrimitiveObject):
 
     - ``points`` -- list of points to pass through
 
-    - ``thickness`` -- (optional, default 5) diameter of the line
+    - ``thickness`` -- (default: 5) diameter of the line
 
-    - ``corner_cutoff`` -- (optional, default 0.5) threshold for
+    - ``corner_cutoff`` -- (default: 0.5) threshold for
       smoothing (see :meth:`corners`).
 
-    - ``arrow_head`` -- (optional, default ``False``) if ``True`` make
+    - ``arrow_head`` -- (default: ``False``) if ``True`` make
       this curve into an arrow
 
     The parameter ``corner_cutoff`` is a bound for the cosine of the
@@ -1215,13 +1214,13 @@ class Line(PrimitiveObject):
 
         INPUT:
 
-        - ``corner_cutoff`` -- (optional, default ``None``) If the
+        - ``corner_cutoff`` -- (default: ``None``) If the
           cosine of the angle between adjacent line segments is smaller than
           this bound, then there will be a sharp corner in the path.
           Otherwise, the path is smoothed. If ``None``,
           then the default value 0.5 is used.
 
-        - ``max_len`` -- (optional, default ``None``) Maximum number
+        - ``max_len`` -- (default: ``None``) Maximum number
           of points allowed in a single path. If this is set, this
           creates corners at smooth points in order to break the path
           into smaller pieces.

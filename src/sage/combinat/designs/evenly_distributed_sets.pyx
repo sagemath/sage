@@ -66,7 +66,7 @@ cdef class EvenlyDistributedSetsBacktracker:
 
     - ``k`` -- a positive integer such that `k(k-1)` divides `q-1`
 
-    - ``up_to_isomorphism`` - (boolean, default ``True``) whether only consider
+    - ``up_to_isomorphism`` -- (boolean, default ``True``) whether only consider
       evenly distributed sets up to automorphisms of the field of the form
       `x \mapsto ax + b`. If set to ``False`` then the iteration is over all
       evenly distributed sets that contain ``0`` and ``1``.
@@ -107,7 +107,6 @@ cdef class EvenlyDistributedSetsBacktracker:
         sage: E = EvenlyDistributedSetsBacktracker(Zmod(13), 4, up_to_isomorphism=True)
         sage: for B in E: print(B)
         [0, 1, 11, 5]
-
 
 
     Or only count them::

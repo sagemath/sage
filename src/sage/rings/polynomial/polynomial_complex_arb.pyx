@@ -1,4 +1,3 @@
-# -*- coding: utf-8
 r"""
 Univariate polynomials over `\CC` with Arb ball coefficients.
 
@@ -20,7 +19,6 @@ TESTS:
     sage: Pol.<x> = CBF[]
     sage: (x+1/2)^3
     x^3 + 1.500000000000000*x^2 + 0.7500000000000000*x + 0.1250000000000000
-
 """
 
 from cysignals.signals cimport sig_on, sig_off
@@ -596,8 +594,8 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         INPUT:
 
-        - ``expo`` - non-negative integer exponent
-        - ``n`` - truncation order
+        - ``expo`` -- non-negative integer exponent
+        - ``n`` -- truncation order
 
         EXAMPLES::
 

@@ -114,6 +114,13 @@ class PyPiVersion(object):
         """
         return self.json['info']['requires_dist']
 
+    @property
+    def requires_python(self):
+        """
+        Return the requires_python attribute
+        """
+        return self.json['info']['requires_python']
+
     def update(self, package=None):
         if package is None:
             package = Package(self.name)

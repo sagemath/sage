@@ -281,7 +281,7 @@ def line(points, **kwds):
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
+    -  ``points`` -- either a single point (as a tuple), a list of
        points, a single complex number, or a list of complex numbers.
 
     For information regarding additional arguments, see either line2d?
@@ -323,7 +323,7 @@ def line2d(points, **options):
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
+    -  ``points`` -- either a single point (as a tuple), a list of
        points, a single complex number, or a list of complex numbers.
 
     Type ``line2d.options`` for a dictionary of the default options for
@@ -347,7 +347,7 @@ def line2d(points, **options):
 
     Any MATPLOTLIB line option may also be passed in.  E.g.,
 
-    - ``linestyle`` - (default: "-") The style of the line, which is one of
+    - ``linestyle`` -- (default: "-") The style of the line, which is one of
        - ``"-"`` or ``"solid"``
        - ``"--"`` or ``"dashed"``
        - ``"-."`` or ``"dash dot"``
@@ -364,7 +364,7 @@ def line2d(points, **options):
        - ``"steps-post"`` (step function; horizontal line is to the
          right of point)
 
-    - ``marker``  - The style of the markers, which is one of
+    - ``marker``  -- The style of the markers, which is one of
        - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
        - ``","`` (pixel), ``"."`` (point)
        - ``"_"`` (horizontal line), ``"|"`` (vertical line)
