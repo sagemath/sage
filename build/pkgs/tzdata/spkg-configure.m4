@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([tzdata], [SAGE_PYTHON_PACKAGE_CHECK([tzdata])])
