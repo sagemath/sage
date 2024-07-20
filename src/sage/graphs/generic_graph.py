@@ -19589,8 +19589,8 @@ class GenericGraph(GenericGraph_pyx):
             raise TypeError('both arguments must be of the same class')
 
         multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
-        loops = self.allows_loops()          or other.allows_loops()
-        weighted = self.weighted()              and other.weighted()
+        loops = self.allows_loops() or other.allows_loops()
+        weighted = self.weighted() and other.weighted()
 
         if self._directed:
             from sage.graphs.digraph import DiGraph

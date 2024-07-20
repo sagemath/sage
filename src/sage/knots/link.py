@@ -4441,7 +4441,7 @@ class Link(SageObject):
             if all(i is SymmetryMutant.mirror_image for i in sym_mut):
                 # all matching links are mirrored to self
                 return S, SymmetryMutant.mirror_image
-            if all(i is SymmetryMutant.itself  for i in sym_mut):
+            if all(i is SymmetryMutant.itself for i in sym_mut):
                 # all matching links are self itself
                 return S, SymmetryMutant.itself
             if any(i is SymmetryMutant.unknown for i in sym_mut):
