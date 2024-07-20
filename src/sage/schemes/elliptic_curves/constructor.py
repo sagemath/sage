@@ -438,6 +438,9 @@ class EllipticCurveFactory(UniqueFactory):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
             x, data = CremonaDatabase().coefficients_and_data(x)
+            # data is only valid for elliptic curves over QQ.
+            if R not in (None, QQ):
+                data = {}
             # User-provided keywords may override database entries.
             data.update(kwds)
             kwds = data
@@ -457,7 +460,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         return (R, tuple(R(a) for a in x)), kwds
 
-    def create_object(self, version, key, **kwds):
+    def create_object(self, version, key, *, names=None, **kwds):
         r"""
         Create an object from a ``UniqueFactory`` key.
 
@@ -466,6 +469,15 @@ class EllipticCurveFactory(UniqueFactory):
             sage: E = EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)))
             sage: type(E)
             <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
+
+        ``names`` is ignored at the moment, however it is used to support a convenient way to get a generator::
+
+            sage: E.<P> = EllipticCurve(QQ, [1, 3])
+            sage: P
+            (-1 : 1 : 1)
+            sage: E.<P> = EllipticCurve(GF(5), [1, 3])
+            sage: P
+            (4 : 1 : 1)
 
         .. NOTE::
 
