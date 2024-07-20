@@ -606,7 +606,7 @@ class FileFeature(Feature):
     To work with the file described by the feature, use the method :meth:`absolute_filename`.
     A :class:`FeatureNotPresentError` is raised if the file cannot be found::
 
-        sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").absolute_path()
+        sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").absolute_filename()
         Traceback (most recent call last):
         ...
         sage.features.FeatureNotPresentError: does-not-exist is not available.
@@ -653,32 +653,6 @@ class FileFeature(Feature):
         # the distribution sagemath-objects, which is not an install-requires of
         # the distribution sagemath-environment.
         raise NotImplementedError
-
-    def absolute_path(self):
-        r"""
-        Deprecated alias for :meth:`absolute_filename`.
-
-        Deprecated to make way for a method of this name returning a ``Path``.
-
-        EXAMPLES::
-
-            sage: from sage.features import Executable
-            sage: Executable(name="sh", executable="sh").absolute_path()
-            doctest:warning...
-            DeprecationWarning: method absolute_path has been replaced by absolute_filename
-            See https://github.com/sagemath/sage/issues/31292 for details.
-            '/...bin/sh'
-        """
-        try:
-            from sage.misc.superseded import deprecation
-        except ImportError:
-            # The import can fail because sage.misc.superseded is provided by
-            # the distribution sagemath-objects, which is not an
-            # install-requires of the distribution sagemath-environment.
-            pass
-        else:
-            deprecation(31292, 'method absolute_path has been replaced by absolute_filename')
-        return self.absolute_filename()
 
 
 class Executable(FileFeature):
@@ -764,7 +738,7 @@ class Executable(FileFeature):
 
         A :class:`FeatureNotPresentError` is raised if the file cannot be found::
 
-            sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").absolute_path()
+            sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").absolute_filename()
             Traceback (most recent call last):
             ...
             sage.features.FeatureNotPresentError: does-not-exist is not available.

@@ -44,7 +44,7 @@ EXAMPLES::
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
-from sage.rings.integer import is_Integer, Integer
+from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.schemes.generic.homset import SchemeHomset_points
@@ -124,16 +124,16 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             elif len(P) == 2:
                 P1 = P[0]
                 P2 = P[1]
-                if is_Integer(P1) and is_Integer(P2):
+                if isinstance(P1, Integer) and isinstance(P2, Integer):
                     R = PolynomialRing(self.value_ring(), 'x')
                     P1 = R(P1)
                     P2 = R(P2)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
-                if is_Integer(P1) and isinstance(P2, Polynomial):
+                if isinstance(P1, Integer) and isinstance(P2, Polynomial):
                     R = PolynomialRing(self.value_ring(), 'x')
                     P1 = R(P1)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
-                if is_Integer(P2) and isinstance(P1, Polynomial):
+                if isinstance(P2, Integer) and isinstance(P1, Polynomial):
                     R = PolynomialRing(self.value_ring(), 'x')
                     P2 = R(P2)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
