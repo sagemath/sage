@@ -49,8 +49,6 @@ import sys
 
 import sage.rings.abc
 
-from sage.calculus.functions import jacobian
-
 from sage.categories.homset import Hom, End
 from sage.categories.fields import Fields
 
@@ -896,6 +894,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             return self.__jacobian
         except AttributeError:
             pass
+
+        from sage.calculus.functions import jacobian
+
         self.__jacobian = jacobian(list(self), self.domain().ambient_space().gens())
         return self.__jacobian
 
