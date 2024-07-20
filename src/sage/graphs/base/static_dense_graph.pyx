@@ -711,7 +711,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
 
         elif bitset_len(boundaries.rows[i]):
             # We prepare the boundary for the selection of the next vertex.
-            # This is equivalant to consider an empty neighborhood.
+            # This is equivalent to consider an empty neighborhood.
             bitset_copy(boundaries.rows[i + 1], boundaries.rows[i])
             bitset_clear(boundaries.rows[i])  # to prevent doing twice this operation
             E.append([])
