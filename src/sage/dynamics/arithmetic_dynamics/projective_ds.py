@@ -109,6 +109,7 @@ from sage.schemes.projective.projective_morphism import (
 from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
+from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
@@ -8900,7 +8901,6 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 return False, None
             else:
                 return False
-        from sage.rings.qqbar import QQbar
         Fbar = self.change_ring(QQbar)
         Pbar = Fbar.domain()
         fixed = Fbar.periodic_points(1)
@@ -8932,6 +8932,92 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 return False, None
         else:
             return Npoly.derivative(z) == (z - N_aff[0]).denominator()
+
+    def Newton_to_poly(self, return_conjugation=False, check_newton=False):
+        
+        r'''
+        Return whether ``self`` is a Newton map.
+
+        A map `g` is *Newton* if it is conjugate to a map of the form
+        `f(z) = z - \frac{p(z)}{p'(z)}` after dehomogenization,
+        where `p(z)` is a squarefree polynomial.
+
+        INPUT:
+
+        - ``return_conjugation`` -- (default: ``False``) if the map is Newton
+          and ``True``, then return the conjugation that moves this map to
+          the above form
+
+        - ``check_newton`` -- (default: ``False``) adds extra check to insure
+          'self' is a newton map
+
+        OUTPUT:
+
+        A Polynomial. If ``return_conjugation`` is ``True``, then this also
+        returns the conjugation as a matrix
+
+        The conjugation may be defined over an extension if the map has
+        fixed points not defined over the base field.
+
+        EXAMPLES::
+
+            sage: A.<x> = PolynomialRing(QQ,1)
+            sage: f = x^4 + x^3 - x^2 + x - 1
+            sage: f = x - f/f.derivative(x)
+            sage: F = DynamicalSystem_affine([f])
+            sage: F = F.homogenize(1)
+            sage: M = matrix(QQ,2,2,[-1,2,0,-1])
+            sage: F = F.conjugate(M)
+            sage: m,p = F.Newton_to_poly(True)
+            sage: J = DynamicalSystem_affine([p.parent().gen() - p/p.derivative(p.parent().gen())])
+            sage: F.conjugate(m) == J.homogenize(1)
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([-4*x^3 - 3*x*y^2, -2*y^3])
+            sage: F.Newton_to_poly(return_conjugation=True)
+            (
+            [   0    1]
+            [-4*a  2*a], 16*x^3 - 24*x^2 + 8*x
+            )
+
+        '''
+        if self.degree() == 1:
+            raise NotImplementedError("degree one Newton maps are trivial")
+        if not self.base_ring() in NumberFields():
+            raise NotImplementedError("only implemented over number fields")
+        if check_newton:
+            V = self.is_newton()
+            if not V:
+                raise ValueError("Map is not Newton")
+        Fbar = self.change_ring(QQbar)
+        Pbar = Fbar.domain()
+        fixed = Fbar.periodic_points(1)
+        for Q in fixed:
+            if Fbar.multiplier(Q, 1) != 0:
+                inf = Q
+                break
+        if inf != Pbar([1,0]):
+            # need to move to inf to infinity
+            fixed.remove(inf)
+            source = [inf] + fixed[:2]
+            target = [Pbar([1, 0]), Pbar([0, 1]), Pbar([1, 1])]
+            M = Pbar.point_transformation_matrix(source, target)
+            M = M.inverse()
+            K, el, psi = number_field_elements_from_algebraics([t for r in M for t in r])
+            M = matrix(M.nrows(), M.ncols(), el)
+        else:
+            M = matrix(QQ, 2, 2, [1,0,0,1])
+        New_aff = self.conjugate(M).dehomogenize(1)
+        g = New_aff[0].numerator()
+        h = New_aff[0].denominator()
+        poly = New_aff.domain().gens()[0]*h - g
+        
+        if return_conjugation:
+            return (M, poly)
+        return poly
 
 class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
                                               SchemeMorphism_polynomial_projective_space_finite_field):
