@@ -2449,9 +2449,10 @@ class FunctionField_integral(FunctionField_simple):
         g = sum([v[i].numerator().subs(x) * y**i for i in range(len(v))])
 
         if self.is_global():
+            import os
             from sage.libs.singular.function import singular_function, lib
-            from sage.env import SAGE_EXTCODE
-            lib(SAGE_EXTCODE + '/singular/function_field/core.lib')
+            import sage.ext_data.singular.function_field as ff
+            lib(os.path.join(ff.__path__[0], 'core.lib'))
             normalize = singular_function('core_normalize')
 
             # Singular "normalP" algorithm assumes affine domain over
