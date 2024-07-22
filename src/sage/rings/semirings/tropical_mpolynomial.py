@@ -71,7 +71,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         sage: p2 = R(1)*a + R(1)*b + R(1)*a*b; p2
         1*a*b + 1*a + 1*b
 
-    Some basic arithmetic operations for tropical polynomials::
+    Some basic arithmetic operations for multivariate tropical polynomials::
 
         sage: p1 + p2
         3*a*b + 1*a + 1*b
@@ -83,14 +83,16 @@ class TropicalMPolynomial(MPolynomial_polydict):
         6
 
     Let us look at the different result for tropical curve and 3d graph
-    of tropical polynomial in two variables when the min-plus or max-plus
-    algebra is used::
+    of tropical polynomial in two variables when different algebra is used.
+    First for the min-plus algebra::
 
         sage: T = TropicalSemiring(QQ, use_min=True)
         sage: R.<a,b> = PolynomialRing(T)
         sage: p1 = R(3)*a*b + a + R(-1)*b
         sage: p1.tropical_variety()
         Tropical curve of 3*a*b + 0*a + (-1)*b
+        sage: p1.tropical_variety().plot()
+        Graphics object consisting of 3 graphics primitives
 
     .. PLOT::
         :width: 300 px
@@ -101,7 +103,13 @@ class TropicalMPolynomial(MPolynomial_polydict):
         p1 = R(3)*a*b + a + R(-1)*b
         tv1 = p1.tropical_variety()
         sphinx_plot(tv1.plot())
-        
+    
+    Tropical polynomial in two variables will induce a function in three
+    dimension that consists of a number of surfaces::
+
+        sage: p1.plot3d()
+        Graphics3d Object
+    
     .. PLOT::
         :width: 300 px
 
@@ -111,13 +119,15 @@ class TropicalMPolynomial(MPolynomial_polydict):
         p1 = R(3)*a*b + a + R(-1)*b
         sphinx_plot(p1.plot3d())
     
-    ::
+    If we use a max-plus algebra, we will get a slightly different result::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<a,b> = PolynomialRing(T)
         sage: p1 = R(3)*a*b + a + R(-1)*b
         sage: p1.tropical_variety()
         Tropical curve of 3*a*b + 0*a + (-1)*b
+        sage: p1.tropical_variety().plot()
+        Graphics object consisting of 3 graphics primitives
     
     .. PLOT::
         :width: 300 px
@@ -129,6 +139,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
         tv1 = p1.tropical_variety()
         sphinx_plot(tv1.plot())
 
+    ::
+
+        sage: p1.plot3d()
+        Graphics3d Object
+    
     .. PLOT::
         :width: 300 px
 
@@ -214,6 +229,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R.<x,y> = PolynomialRing(T)
             sage: p1 = x^2
+            sage: p1.plot3d()
+            Graphics3d Object
         
         .. PLOT::
             :width: 300 px
@@ -228,6 +245,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
             sage: p2 = R(3)+R(2)*x+R(2)*y+R(3)*x*y; p2
             3*x*y + 2*x + 2*y + 3
+            sage: p2.plot3d()
+            Graphics3d Object
 
         .. PLOT::
             :width: 300 px
@@ -273,8 +292,10 @@ class TropicalMPolynomial(MPolynomial_polydict):
         r"""
         Return tropical roots of ``self``.
         
-        In multivariate case, the roots can be represented by a tropical
-        variety. For 2 dimensions, it is also called a tropical curve.
+        In the multivariate case, the roots can be represented by a
+        tropical variety. In two dimensions, this is known as a tropical
+        curve. For dimensions higher than two, it is referred to as a
+        tropical hypersurface.
 
         OUTPUT: a :class:`sage.rings.semirings.tropical_variety.TropicalVariety`
         
@@ -309,7 +330,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
     
     def _repr_(self):
         r"""
-        Return a nice tropical polynomial string representation.
+        Return string representation of ``self``.
         
         EXAMPLES::
 
@@ -330,7 +351,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
     
     def _latex_(self):
         r"""
-        Return the latex representation of this tropical polynomial.
+        Return the latex representation of ``self``.
 
         EXAMPLES::
 
@@ -354,7 +375,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
-    Semiring of tropical polynomials in multiple variables.
+    The semiring of tropical polynomials in multiple variables.
 
     The tropical additive operation is defined as min/max and the
     tropical multiplicative operation is defined as classical addition.

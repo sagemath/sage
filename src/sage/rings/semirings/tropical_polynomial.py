@@ -89,20 +89,20 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         sage: p1(3)
         Traceback (most recent call last):
         ...
-        TypeError: no common canonical parent for objects with parents: 
+        TypeError: no common canonical parent for objects with parents:
         'Tropical semiring over Rational Field' and 'Integer Ring'
         sage: p1(T(3))
         9
         
-    Additionally, we are able to find all tropical roots of a tropical
-    polynomial counted with multiplicity with this special method:
+    We can find all tropical roots of a tropical polynomial, counted
+    with their multiplicities::
 
         sage: p1.roots()
         [-3, 2, 2]
         sage: p2.roots()
         [1, 1]
 
-    Even though some tropical polynomials have tropical roots, this does not
+    Even though every tropical polynomials have tropical roots, this does not
     neccessarily means it can be factored into its linear factors::
 
         sage: p1.factor()
@@ -124,7 +124,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         sage: p1.piecewise_function()
         piecewise(x|-->1 on (-oo, -3], x|-->x + 4 on (-3, 2), x|-->3*x on [2, +oo); x)
-        
+        sage: p1.plot()
+        Graphics object consisting of 1 graphics primitive
+
     .. PLOT::
         :width: 300 px
 
@@ -137,6 +139,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         
         sage: p2.piecewise_function()
         piecewise(x|-->3 on (-oo, 1], x|-->2*x + 1 on (1, +oo); x)
+        sage: p2.plot()
+        Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
         :width: 300 px
@@ -473,6 +477,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             3*x^3 + 1*x^2 + 2*x + 4
             sage: p1.roots()
             [1/3, 1/3, 1/3]
+            sage: p1.plot()
+            Graphics object consisting of 1 graphics primitive
         
         .. PLOT::
             :width: 300 px
@@ -491,6 +497,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p1 = R([4,2,1,3])
             sage: p1.roots()
             [-2, 1, 2]
+            sage: p1.plot()
+            Graphics object consisting of 1 graphics primitive
         
         .. PLOT::
             :width: 300 px
@@ -510,7 +518,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             ...
             ValueError: Expected 2 inputs for xmin and xmax, but got 1
         
-        The error occured when ``xmin`` is greater or equal than ``xmax``::
+        Error also occured when ``xmin`` is greater or equal than``xmax``::
 
             sage: plot(p1, 5, 3)
             Traceback (most recent call last):
@@ -634,9 +642,10 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
             sage: T = TropicalSemiring(ZZ)
-            sage: TPS = TropicalPolynomialSemiring                                      # needs sage.rings.semirings.tropical_polynomial                
-            sage: TPS(T, 'x') == TPS(T, ('x'))                                          # needs sage.rings.semirings.tropical_polynomial
+            sage: TPS = TropicalPolynomialSemiring               
+            sage: TPS(T, 'x') == TPS(T, ('x')) 
             True
         """
         if isinstance(names, str):
@@ -655,7 +664,8 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: TropicalPolynomialSemiring(ZZ)                                        # needs sage.rings.semirings.tropical_polynomial
+            sage: from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
+            sage: TropicalPolynomialSemiring(ZZ, names='x')                                        
             Traceback (most recent call last):
             ...
             ValueError: Integer Ring is not a tropical semiring
@@ -865,6 +875,8 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: points = [(-2,-3),(1,3),(2,4)]
             sage: p1 = R.interpolation(points); p1
             1*x^2 + 2*x + 4
+            sage: p1.plot()
+            Graphics object consisting of 1 graphics primitive
 
         .. PLOT::
             :width: 300 px
@@ -882,6 +894,8 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: points = [(0,0),(1,1),(2,4)]
             sage: p1 = R.interpolation(points); p1
             (-2)*x^3 + (-1)*x^2 + 0*x + 0
+            sage: p1.plot()
+            Graphics object consisting of 1 graphics primitive
 
         .. PLOT::
             :width: 300 px
@@ -966,3 +980,4 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         assert isinstance(names, list)
         assert implementation in names
         return names
+    

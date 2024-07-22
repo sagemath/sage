@@ -1,6 +1,10 @@
 r"""
 Tropical Varieties
 
+A tropical variety is a piecewise-linear geometric object derived from
+a classical algebraic variety by using tropical mathematics, where the
+tropical semiring replaces the usual arithmetic operations.
+
 AUTHORS:
 
 - Verrel Rievaldo Wijaya (2024-06): initial version
@@ -28,10 +32,9 @@ class TropicalVariety(SageObject):
     r"""
     A tropical variety in `\RR^n`.
 
-    A tropical variety or the corner locus of tropical polynomial function
-    is defined by taking the minimum (maximum) of each terms of polynomial
-    and considering the loci where these minima (maxima) are attained
-    multiple times.
+    A tropical variety is defined as a corner locus of tropical polynomial
+    function. This means it consist of all points in `\RR^n` for which
+    the minimum (maximum) of the function is attained at least twice.
 
     EXAMPLES:
 
@@ -48,6 +51,8 @@ class TropicalVariety(SageObject):
         [[(t1, 1), [t1 >= -1], 1], [(-1, t1), [t1 <= 1], 1], [(-t1, t1), [t1 >= 1], 1]]
         sage: tv.vertices()
         {(-1, 1)}
+        sage: tv.plot()
+        Graphics object consisting of 3 graphics primitives
 
     .. PLOT::
         :width: 300 px
@@ -68,7 +73,9 @@ class TropicalVariety(SageObject):
         Tropical curve of 0*x*y + 1*x + 0
         sage: tv.components()
         [[(t1, 1), [t1 <= -1], 1], [(-1, t1), [t1 >= 1], 1], [(-t1, t1), [t1 <= 1], 1]]
-
+        sage: tv.plot()
+        Graphics object consisting of 3 graphics primitives
+        
     .. PLOT::
         :width: 300 px
 
@@ -78,7 +85,7 @@ class TropicalVariety(SageObject):
         p1 = R(1)*x + x*y + R(0)
         sphinx_plot(p1.tropical_variety().plot())
 
-    A tropical curve can consist of many rays or lines with different orders::
+    Tropical variety can consist of multiple components with varying orders::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<x,y> = PolynomialRing(T)
@@ -93,7 +100,9 @@ class TropicalVariety(SageObject):
         [(7, t1), [t1 <= 0], 1],
         [(t1 - 1, t1), [2 <= t1], 1],
         [(t1 + 7, t1), [0 <= t1], 1]]
-
+        sage: tv.plot()
+        Graphics object consisting of 8 graphics primitives
+        
     .. PLOT::
         :width: 300 px
 
@@ -129,7 +138,7 @@ class TropicalVariety(SageObject):
         Traceback (most recent call last):
         ...
         ValueError: x + y is not a multivariate tropical polynomial
-    """    
+    """
     def __init__(self, poly):
         r"""
         Initialize ``self``.
@@ -394,7 +403,7 @@ class TropicalVariety(SageObject):
         return self._hypersurface
 
 class TropicalSurface(TropicalVariety):
-    r""""
+    r"""
     A tropical surface in `\RR^3`.
     
     The tropical surface consists of planar regions and facets, which we
@@ -485,6 +494,19 @@ class TropicalSurface(TropicalVariety):
         """
         Return a 3d plot of ``self``.
 
+        INPUT::
+
+        - ``num_of_points`` -- integer (default: `32`); a number of points
+          to use in the three-dimensional scatter plot.
+
+        - ``size`` -- real number (default: `20`); size of each point in
+          the three-dimensional scatter plot.
+
+        - ``color`` -- string or tuple that represent a color (default:
+          ``random``); ``random`` means each component will be assigned
+          a different color. If instead a specific ``color`` is provided,
+          then all points will be given the same color.
+
         OUTPUT: Graphics3d Object
 
         EXAMPLES::
@@ -502,6 +524,8 @@ class TropicalSurface(TropicalVariety):
             [(t1, 1, t2), [1 <= t2, 1 <= t1], 1],
             [(1/2*t1, t2, t1), [t1 <= min(0, t2)], 1],
             [(t1, t2, 1), [1 <= t1, 1 <= t2], 1]]
+            sage: p1.tropical_variety().plot()
+            Graphics3d Object
 
         .. PLOT::
             :width: 300 px
@@ -573,7 +597,7 @@ class TropicalSurface(TropicalVariety):
         return (f"Tropical surface of {self._poly}")
 
 class TropicalCurve(TropicalVariety):
-    r""""
+    r"""
     A tropical curve in `\RR^2`.
     
     The tropical curve consists of line segments and half-lines, which we
@@ -762,6 +786,8 @@ class TropicalCurve(TropicalVariety):
             [(t1 + 1, t1), [-4 <= t1, t1 <= -2], 1],
             [(t1, -4), [t1 <= -3], 2],
             [(-t1 - 7, t1), [t1 <= -4], 1]]
+            sage: p1.tropical_variety().plot()
+            Graphics object consisting of 6 graphics primitives
 
         .. PLOT::
             :width: 300 px
@@ -772,11 +798,14 @@ class TropicalCurve(TropicalVariety):
             p1 = R(1) + R(2)*x + R(3)*y + R(6)*x*y + R(10)*x*y**2
             sphinx_plot(p1.tropical_variety().plot())
 
-        ::
+        Another tropical polynomial with numerous components, resulting
+        in a more intricate structure::
 
             sage: p2 = (x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4 + x*y^5
             ....:       + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10))
-
+            sage: p2.tropical_variety().plot()
+            Graphics object consisting of 11 graphics primitives
+            
         .. PLOT::
             :width: 300 px
 
