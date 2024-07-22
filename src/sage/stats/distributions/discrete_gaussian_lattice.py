@@ -324,7 +324,6 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         if self.is_spherical and not self._c_in_lattice_and_lattice_trivial:
             raise NotImplementedError("Center must be at zero and basis must be trivial.")
 
-
         sigma = self._sigma
         prec = DiscreteGaussianDistributionLatticeSampler.compute_precision(
             prec, sigma
