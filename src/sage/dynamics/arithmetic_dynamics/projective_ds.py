@@ -9060,6 +9060,16 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             ...
             ValueError: Map is not Newton
 
+        ::
+
+            sage: A.<x> = PolynomialRing(QQ,1)
+            sage: f = 3*x^3 + 2*x-1
+            sage: F = DynamicalSystem_affine([x - f/f.derivative(x)])
+            sage: F = F.homogenize(1).conjugate(matrix(QQ,2,2,[-1,2,3,-1]))
+            sage: F.Newton_to_poly()
+            (19/348*a^5 - 17/348*a^4 + 7/348*a^3 - 587/348*a^2 + 1429/348*a - 2831/348)*x0^3 +
+            (-11/116*a^5 - 1/348*a^4 - 1/116*a^3 + 989/348*a^2 - 693/116*a + 3119/348)*x0^2 +
+            (7/174*a^5 + 3/58*a^4 - 1/87*a^3 - 67/58*a^2 + 325/174*a - 24/29)*x0
         """
         if self.degree() <= 1:
             raise ValueError("Map is not Newton")
