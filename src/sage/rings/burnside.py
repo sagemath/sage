@@ -698,7 +698,7 @@ class UnivariateMolecularConjugacyClasses(IndexedFreeAbelianMonoid):
             return x
         if isinstance(x, PermutationGroup_generic):
             domain_partition = x.disjoint_direct_product_decomposition()
-            return super()._element_constructor_([(self.gen(self._project(x, part)), 1) for part in domain_partition])
+            return super()._element_constructor_([(self._indices(self._project(x, part)), 1) for part in domain_partition])
         raise ValueError("unable to convert {x} into {self}")
 
     def _repr_(self):
@@ -753,6 +753,60 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
             1
         """
         return self._indices(SymmetricGroup(0))
+
+    def construct_from_action(self, action, domain, domsize):
+        r"""
+        Construct an element of this ring from a group action.
+
+        INPUT:
+
+        - ``action`` - an action on ``domain``
+        - ``domain`` - a finite set
+        - ``domsize`` - size of the domain
+
+        EXAMPLES::
+
+            sage: P = PolynomialMolecularDecomposition()
+
+        We create a group action of `S_4` on two-element subsets::
+
+            sage: X = Subsets(4, 2)
+            sage: a = lambda g, x: X([g(e) for e in x])
+            sage: P.construct_from_action(a, X, 4)
+            {2, [(1,2)]}^2
+
+        Next, we create a group action of `S_4` on itself via conjugation::
+
+            sage: X = SymmetricGroup(4)
+            sage: a = lambda g, x: g*x*g.inverse()
+            sage: P.construct_from_action(a, X, 4)
+            {4, [(2,3,4), (1,2)]} + {4, [(2,4), (1,4)(2,3)]} + {1, [()]}*{3, [(1,2,3)]} + {2, [(1,2)]}^2 + {4, [(1,2,3,4)]}
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition()
+            sage: P(-3)
+            -3
+        """
+        def find_stabilizer(action, pnt):
+            stabilizer = []
+            for g in G:
+                if action(g, pnt) == pnt:
+                    stabilizer.append(g)
+            H = G.subgroup(stabilizer)
+            gens = H.gens_small()
+            return G.subgroup(gens)
+
+        G = SymmetricGroup(domsize)
+        H = PermutationGroup(G.gens(), action=action, domain=domain)
+        # decompose H into orbits
+        orbit_list = H.orbits()
+        # find the stabilizer subgroups
+        stabilizer_list = [find_stabilizer(action, orbit[0]) for orbit in orbit_list]
+        # normalize each summand and collect terms
+        from collections import Counter
+        C = Counter([self._indices(stabilizer) for stabilizer in stabilizer_list])
+        return self._from_dict(dict(C))
 
     def product_on_basis(self, H, K):
         r"""
