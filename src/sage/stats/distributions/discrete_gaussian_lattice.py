@@ -70,7 +70,7 @@ from sage.misc.functional import sqrt
 from sage.misc.prandom import normalvariate
 from sage.misc.verbose import verbose
 from sage.symbolic.constants import pi
-from sage.matrix.constructor import matrix
+from sage.matrix.constructor import matrix, identity_matrix
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 
@@ -262,19 +262,19 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D._normalisation_factor_zz()
             Traceback (most recent call last):
             ...
-            NotImplementedError: basis must be a square matrix for now
+            NotImplementedError: Basis must be a square matrix.
 
             sage: D = DGL(ZZ^3, c=(1/2, 0, 0))
             sage: D._normalisation_factor_zz()
             Traceback (most recent call last):
             ...
-            NotImplementedError: lattice must contain 0 for now
+            NotImplementedError: Center must be at zero and basis must be trivial.
 
             sage: D = DGL(Matrix(3, 3, 1/2))
             sage: D._normalisation_factor_zz()
             Traceback (most recent call last):
             ...
-            NotImplementedError: lattice must be integral for now
+            NotImplementedError: Lattice must be integral.
         """
         # If σ > 1:
         # We use the Fourier transform g(t) of f(x) = exp(-k^2 / 2σ^2), but
@@ -314,13 +314,14 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             return sum(self.f((vector(u) + base) * self.B) for u in coords)
 
         if self.B.nrows() != self.B.ncols():
-            raise NotImplementedError("basis must be a square matrix for now")
-
-        if self.is_spherical and not self._c_in_lattice:
-            raise NotImplementedError("lattice must contain 0 for now")
+            raise NotImplementedError("Basis must be a square matrix.")
 
         if self.B.base_ring() != ZZ:
-            raise NotImplementedError("lattice must be integral for now")
+            raise NotImplementedError("Lattice must be integral.")
+
+        if self.is_spherical and not self._c_in_lattice_and_lattice_trivial:
+            raise NotImplementedError("Center must be at zero and basis must be trivial.")
+
 
         sigma = self._sigma
         prec = DiscreteGaussianDistributionLatticeSampler.compute_precision(
@@ -585,7 +586,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         self.B = B
         self.Q = B * B.T
         self._G = B.gram_schmidt()[0]
-        self._c_in_lattice = False
+        self._c_in_lattice_and_lattice_trivial = False
 
         self.D = None
         self.VS = None
@@ -614,18 +615,19 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
            Do not call this method directly, it is called automatically from
            :func:`DiscreteGaussianDistributionLatticeSampler.__init__`.
         """
+
         if self.is_spherical:
             # deal with trivial case first, it is common
-            if self._G == 1 and self._c == 0:
-                self._c_in_lattice = True
+            if self._c == 0 and self._G == 1:
+                self._c_in_lattice_and_lattice_trivial = True
                 D = DiscreteGaussianDistributionIntegerSampler(sigma=self._sigma)
                 self.D = tuple([D for _ in range(self.B.nrows())])
                 self.VS = FreeModule(ZZ, self.B.nrows())
 
             else:
                 w = self.B.solve_left(self._c)
-                if w in ZZ ** self.B.nrows():
-                    self._c_in_lattice = True
+                if w in ZZ ** self.B.nrows() and self._G == 1:
+                    self._c_in_lattice_and_lattice_trivial = True
                     D = []
                     for i in range(self.B.nrows()):
                         sigma_ = self._sigma / self._G[i].norm()
@@ -678,8 +680,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         """
         if not self.is_spherical:
             v = self._call_non_spherical()
-        elif self._c_in_lattice:
-            v = self._call_in_lattice()
+        elif self._c_in_lattice_and_lattice_trivial:
+            v = self._call_simple()
         else:
             v = self._call()
         v.set_immutable()
@@ -809,14 +811,14 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sigma_str = f"Σ =\n{self._sigma}"
         return f"Discrete Gaussian sampler with Gaussian parameter {sigma_str}, c={self._c} over lattice with basis\n\n{self.B}"
 
-    def _call_in_lattice(self):
+    def _call_simple(self):
         r"""
-        Return a new sample assuming `c \in \Lambda(B)`.
+        Return a new sample assuming `c \in \Lambda(B)` and `B^* = 1`.
 
         EXAMPLES::
 
             sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(ZZ^3, 3.0, c=(1,0,0))
-            sage: L = [D._call_in_lattice() for _ in range(2^12)]
+            sage: L = [D._call_simple() for _ in range(2^12)]
             sage: mean_L = sum(L) / len(L)
             sage: norm(mean_L.n() - D.c()) < 0.25
             True
