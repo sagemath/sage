@@ -8473,7 +8473,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         #we find one and not go all the way to the splitting field
         i = 0
         if G.degree() != 0:
-            if is_MPolynomialRing(G.parent()):
+            if isinstance(G.parent(), MPolynomialRing_base):
                 G = G.polynomial(G.variable(0))
         else:
             #no other fixed points
