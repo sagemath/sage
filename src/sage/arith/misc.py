@@ -1955,7 +1955,7 @@ def xlcm(m, n):
     return (l, m, n)
 
 
-def xgcd(a, b):
+def xgcd(a, b=None):
     r"""
     Return a triple ``(g,s,t)`` such that `g = s\cdot a+t\cdot b = \gcd(a,b)`.
 
@@ -1970,12 +1970,22 @@ def xgcd(a, b):
 
     INPUT:
 
+    One of the following:
+
     -  ``a, b`` -- integers or more generally, element of a ring for which the
        xgcd make sense (e.g. a field or univariate polynomials).
 
+    -  ``a`` -- list or tuple of at least two integers or more generally, element
+       of a ring which the xgcd make sense.
+
     OUTPUT:
 
-    -  ``g, s, t`` -- such that `g = s\cdot a + t\cdot b`
+    One of the following:
+
+    -  ``g, s, t`` -- when two inputs ``a, b`` are given. They satisfy `g = s\cdot a + t\cdot b`.
+
+    -  ``r`` -- when only ``a`` is given (and ``b = None``). The tuple ``r`` has length one longer
+       than the length of ``a``, and its entries satisfy ``r[0] = \sum_{0 \le i < len(a)} r[i + 1] * a[i]``.
 
     .. NOTE::
 
@@ -1988,6 +1998,12 @@ def xgcd(a, b):
         (4, 4, -5)
         sage: 4*56 + (-5)*44
         4
+        sage: xgcd([56, 44])
+        (4, 4, -5)
+        sage: xgcd([30, 105, 70, 42])
+        (1, -3, 13, 91, -182)
+        sage: (-3)*30 + 13*105 + 91*70 + (-182)*42
+        1
 
         sage: g, a, b = xgcd(5/1, 7/1); g, a, b
         (1, 3, -2)
@@ -1997,6 +2013,10 @@ def xgcd(a, b):
         sage: x = polygen(QQ)
         sage: xgcd(x^3 - 1, x^2 - 1)
         (x - 1, 1, -x)
+        sage: g, a, b, c = xgcd([x^4 - x, x^6 - 1, x^4 - 1]); g, a, b, c
+        (x - 1, -1, x^2 + 1, -x^4 - x^2)
+        sage: a*(x^4 - x) + b*(x^6 - 1) + c*(x^4 - 1) == g
+        True
 
         sage: K.<g> = NumberField(x^2 - 3)                                              # needs sage.rings.number_field
         sage: g.xgcd(g + 2)                                                             # needs sage.rings.number_field
@@ -2045,15 +2065,29 @@ def xgcd(a, b):
         sage: xgcd(y^2, a*h*y + b)
         (1, 7*a^2/b^2, (((-h)*a)/b^2)*y + 1/b)
     """
-    try:
+    if b is not None:
+        # xgcd of two elements
+        try:
+            return a.xgcd(b)
+        except AttributeError:
+            a = py_scalar_to_element(a)
+            b = py_scalar_to_element(b)
+        except TypeError:
+            b = py_scalar_to_element(b)
         return a.xgcd(b)
-    except AttributeError:
-        a = py_scalar_to_element(a)
-        b = py_scalar_to_element(b)
-    except TypeError:
-        b = py_scalar_to_element(b)
-    return a.xgcd(b)
-
+    else:
+        # xgcd of >=2 elements
+        if not isinstance(a, (tuple, list)):
+            raise TypeError("Input `a` has to be a tuple or a list.")
+        if len(a) < 2:
+            raise ValueError("At least two integers or elements should be given.")
+        if len(a) == 2:
+            return xgcd(a[0], a[1])
+        else:  # Compute xgcd recursively
+            xgcd_t = xgcd(a[1:])  # xgcd_t[0] = sum(xgcd_t[i] * a[i], 1 \le i \le n-1)
+            g, c_h, c_t = xgcd(a[0], xgcd_t[0])  # g = c_h * a[0] * c_t * xgcd_t[0]
+            res = [g, c_h] + [c_t * c for c in xgcd_t[1:]]
+            return tuple(res)
 
 XGCD = xgcd
 
