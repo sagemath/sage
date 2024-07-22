@@ -8901,7 +8901,10 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 return False, None
             else:
                 return False
-        Fbar = self.change_ring(QQbar)
+        phi = QQbar.coerce_map_from(self.base_ring())
+        if phi is None:
+            phi = self.base_ring().embeddings(QQbar)[0]
+        Fbar = self.change_ring(phi)
         Pbar = Fbar.domain()
         fixed = Fbar.periodic_points(1)
         for Q in fixed:
@@ -8934,9 +8937,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             return Npoly.derivative(z) == (z - N_aff[0]).denominator()
 
     def Newton_to_poly(self, return_conjugation=False, check_newton=False):
-        
-        r'''
-        Return whether ``self`` is a Newton map.
+        r"""
+        Return a polynomial for 'self' and a conjugation to allow the right form
 
         A map `g` is *Newton* if it is conjugate to a map of the form
         `f(z) = z - \frac{p(z)}{p'(z)}` after dehomogenization,
@@ -8969,7 +8971,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: M = matrix(QQ,2,2,[-1,2,0,-1])
             sage: F = F.conjugate(M)
             sage: m,p = F.Newton_to_poly(True)
-            sage: J = DynamicalSystem_affine([p.parent().gen() - p/p.derivative(p.parent().gen())])
+            sage: x = p.parent().gen()
+            sage: J = DynamicalSystem_affine([x - p/p.derivative(x)])
             sage: F.conjugate(m) == J.homogenize(1)
             True
 
@@ -8983,16 +8986,94 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             [-4*a  2*a], 16*x^3 - 24*x^2 + 8*x
             )
 
-        '''
-        if self.degree() == 1:
-            raise NotImplementedError("degree one Newton maps are trivial")
-        if not self.base_ring() in NumberFields():
-            raise NotImplementedError("only implemented over number fields")
+        ::
+
+            sage: K.<x>=QuadraticField(2)
+            sage: A.<a> = PolynomialRing(QQ,1)
+            sage: f = a^2 + x*a - 1
+            sage: F = DynamicalSystem_affine([a - f/f.derivative(a)])
+            sage: F = F.homogenize(1).conjugate(matrix(K,2,2,[-1,2,x,-1]))
+            sage: F.Newton_to_poly(True,True)
+            (
+            [ -1/7*a^3 - 4/7*a^2 + 5/7*a + 8/7  4/7*a^3 + 2/7*a^2 - 13/7*a - 4/7]
+            [-4/7*a^3 - 2/7*a^2 + 20/7*a + 4/7  2/7*a^3 + 1/7*a^2 - 10/7*a - 2/7],
+            (1/2*a^3 - 5/2*a)*x0^2 + (-1/2*a^3 + 5/2*a)*x0
+            )
+
+        ::
+
+            sage: R.<t>=QQ[]
+            sage: K.<c>=NumberField(t^3-2)
+            sage: A.<x> = PolynomialRing(QQ,1)
+            sage: f = x^2 + c*x - 1
+            sage: F = DynamicalSystem_affine([x - f/f.derivative(x)])
+            sage: F = F.homogenize(1).conjugate(matrix(QQ,2,2,[-1,2,3,-1]))
+            sage: F.Newton_to_poly(true,true)
+            (
+            [       1/5*a^5 - 3/5*a^3 - 2/5*a^2 + 4/5*a -1/5*a^5 + 3/5*a^3 + 2/5*a^2 - 3/5*a - 2/5]
+            [      3/5*a^5 - 9/5*a^3 - 6/5*a^2 + 12/5*a -3/5*a^5 + 9/5*a^3 + 6/5*a^2 - 9/5*a - 1/5],
+            (1/2*a^5 - 3/2*a^3 - a^2 + 2*a)*x0^2 + (-1/2*a^5 + 3/2*a^3 + a^2 - 2*a)*x0
+            )
+
+        ::
+
+            sage: A.<x> = PolynomialRing(QQ,1)
+            sage: f = 2*x-1
+            sage: F = DynamicalSystem_affine([x - f/f.derivative(x)])
+            sage: F = F.homogenize(1)
+            sage: F.Newton_to_poly(true,true)
+            Traceback (most recent call last):
+            ...
+            ValueError: Map is not Newton
+
+        ::
+
+            sage: A.<x> = PolynomialRing(QQbar,1)
+            sage: f = x^2 + 2*x-1
+            sage: F = DynamicalSystem_affine([x - f/f.derivative(x)])
+            sage: F = F.homogenize(1).conjugate(matrix(QQ,2,2,[-1,2,3,-1]))
+            sage: F.Newton_to_poly(true)
+            (
+            [       2/5*a -1/5*a - 1/5]
+            [       6/5*a -3/5*a + 2/5],
+            (2*a)*x0^2 + (-2*a)*x0
+            )
+
+        ::
+
+            sage: A.<x> = PolynomialRing(RR,1)
+            sage: f = x^2 + 2*x-1
+            sage: F = DynamicalSystem_affine([x - f/f.derivative(x)]).homogenize(1)
+            sage: F.Newton_to_poly(true)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented over number fields
+
+        ::
+
+            sage: A.<x> = PolynomialRing(QQ,1)
+            sage: f = x^2 + 2*x-1
+            sage: F = DynamicalSystem_affine([f])
+            sage: F = F.homogenize(1).conjugate(matrix(QQ,2,2,[-1,2,3,-1]))
+            sage: F.Newton_to_poly(true,true)
+            Traceback (most recent call last):
+            ...
+            ValueError: Map is not Newton
+
+        """
+        if self.degree() <= 1:
+            raise ValueError("Map is not Newton")
+        if not self.base_ring() is QQbar:
+            if not self.base_ring() in NumberFields():
+                raise NotImplementedError("only implemented over number fields")
         if check_newton:
             V = self.is_newton()
             if not V:
                 raise ValueError("Map is not Newton")
-        Fbar = self.change_ring(QQbar)
+        phi = QQbar.coerce_map_from(self.base_ring())
+        if phi is None:
+            phi = self.base_ring().embeddings(QQbar)[0]
+        Fbar = self.change_ring(phi)
         Pbar = Fbar.domain()
         fixed = Fbar.periodic_points(1)
         for Q in fixed:
@@ -9006,15 +9087,17 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             target = [Pbar([1, 0]), Pbar([0, 1]), Pbar([1, 1])]
             M = Pbar.point_transformation_matrix(source, target)
             M = M.inverse()
+            Newton = Fbar.conjugate(M)
             K, el, psi = number_field_elements_from_algebraics([t for r in M for t in r])
             M = matrix(M.nrows(), M.ncols(), el)
+            Newton = Newton._number_field_from_algebraics()
         else:
-            M = matrix(QQ, 2, 2, [1,0,0,1])
-        New_aff = self.conjugate(M).dehomogenize(1)
-        g = New_aff[0].numerator()
-        h = New_aff[0].denominator()
-        poly = New_aff.domain().gens()[0]*h - g
-        
+            Newton = self
+            M = matrix(self.base_ring(), 2, 2, [1,0,0,1])
+        New_aff = Newton.dehomogenize(1)
+        poly = New_aff.domain().gens()[0]*New_aff[0].denominator() - New_aff[0].numerator()
+        if not poly.base_ring() is QQbar:
+            poly = poly.change_ring(poly.base_ring().embeddings(M.base_ring())[0])
         if return_conjugation:
             return (M, poly)
         return poly
