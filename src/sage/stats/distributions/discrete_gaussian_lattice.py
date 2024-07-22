@@ -70,7 +70,7 @@ from sage.misc.functional import sqrt
 from sage.misc.prandom import normalvariate
 from sage.misc.verbose import verbose
 from sage.symbolic.constants import pi
-from sage.matrix.constructor import matrix, identity_matrix
+from sage.matrix.constructor import matrix
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 
