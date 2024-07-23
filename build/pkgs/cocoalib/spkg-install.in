@@ -4,6 +4,9 @@ cd src/
 # there is room for adding more options (set some flags, use a lot of libraries
 # shipped with Sage): go to the source directory and type: ./configure --help
 
+# Avoid ERROR: specified compiler "g++ -std=gnu++11" is not executable.   [[verify-compiler.sh]]
+export CXX=$(echo "$CXX" | sed 's/ *-std=[a-z0-9+]*//g')
+
 # This is NOT a autoconf script, so sdh_configure does not work
 ./configure --prefix="${SAGE_LOCAL}" \
              --with-libgmp="${SAGE_LOCAL}/lib/libgmp.a"
