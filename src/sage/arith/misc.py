@@ -1975,7 +1975,7 @@ def xgcd(a, b=None):
     -  ``a, b`` -- integers or more generally, element of a ring for which the
        xgcd make sense (e.g. a field or univariate polynomials).
 
-    -  ``a`` -- list or tuple of at least two integers or more generally, element
+    -  ``a`` -- a list or tuple of at least two integers or more generally, elements
        of a ring which the xgcd make sense.
 
     OUTPUT:
@@ -1984,8 +1984,8 @@ def xgcd(a, b=None):
 
     -  ``g, s, t`` -- when two inputs ``a, b`` are given. They satisfy `g = s\cdot a + t\cdot b`.
 
-    -  ``r`` -- when only ``a`` is given (and ``b = None``). The tuple ``r`` has length one longer
-       than the length of ``a``, and its entries satisfy ``r[0] = \sum_{0 \le i < len(a)} r[i + 1] * a[i]``.
+    -  ``r`` -- a tuple, when only ``a`` is given (and ``b = None``). It has length one longer
+       than the length of ``a``, and its entries satisfy `r_0 = \sum_{i = 0}^{len(a) - 1} r_{i + 1}a_i`.
 
     .. NOTE::
 
@@ -2082,9 +2082,9 @@ def xgcd(a, b=None):
     else:
         # xgcd of >=2 elements
         if not isinstance(a, (tuple, list)):
-            raise TypeError("Input `a` has to be a tuple or a list.")
+            raise TypeError("input `a` should be a tuple or a list")
         if len(a) < 2:
-            raise ValueError("At least two integers or elements should be given.")
+            raise ValueError("at least two elements should be given")
         if len(a) == 2:
             return xgcd(a[0], a[1])
         else:  # Compute xgcd recursively
