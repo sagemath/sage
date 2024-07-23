@@ -2091,6 +2091,7 @@ def xgcd(a, b=None):
 
 XGCD = xgcd
 
+
 # def XGCD_python(a, b):
 #     """
 #     Return triple (g,p,q) such that g = p*a+b*q = GCD(a,b).
