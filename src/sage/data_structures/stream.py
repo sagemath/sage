@@ -1613,8 +1613,6 @@ class Stream_uninitialized(Stream):
 
         self._coefficient_ring = coefficient_ring
         self._base_ring = base_ring
-        #        self._P = InfinitePolynomialRing(self._base_ring, names=["FESDUMMY"])
-        #        self._PF = CoefficientRing(self._P, CoefficientRing.Element)
         self._PF = CoefficientRing(self._base_ring)
         self._P = self._PF.base()
         if self._coefficient_ring == self._base_ring:
@@ -2632,10 +2630,7 @@ class Stream_add(Stream_binaryCommutative):
             sage: [h.get_coefficient(i) for i in range(10)]
             [0, 2, 6, 12, 20, 30, 42, 56, 72, 90]
         """
-        l = self._left[n]
-        r = self._right[n]
-        m = l + r
-        return m # self._left[n] + self._right[n]
+        return self._left[n] + self._right[n]
 
 
 class Stream_sub(Stream_binary):
@@ -4464,10 +4459,8 @@ class Stream_derivative(Stream_unary):
             sage: [f2[i] for i in range(-1, 4)]
             [0, 2, 6, 12, 20]
         """
-        c1 = self._series[n + self._shift]
-        c2 = ZZ.prod(range(n + 1, n + self._shift + 1))
-        p = c1 * c2
-        return p
+        return (ZZ.prod(range(n + 1, n + self._shift + 1))
+                * self._series[n + self._shift])
 
     def __hash__(self):
         """
