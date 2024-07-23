@@ -8,8 +8,7 @@ cd src/
 export CXX=$(echo "$CXX" | sed 's/ *-std=[a-z0-9+]*//g')
 
 # This is NOT a autoconf script, so sdh_configure does not work
-./configure --prefix="${SAGE_LOCAL}" \
-             --with-libgmp="${SAGE_LOCAL}/lib/libgmp.a"
+./configure --prefix="${SAGE_LOCAL}"
 
 sdh_make library
 sdh_make install
