@@ -23,6 +23,7 @@ from sage.misc.misc_c import prod
 
 from sage.structure.element import parent
 from sage.structure.coerce import py_scalar_to_element
+from sage.structure.sequence import Sequence
 
 from sage.rings.integer import Integer, GCD_list
 from sage.rings.integer_ring import ZZ
@@ -1957,11 +1958,14 @@ def xlcm(m, n):
 
 def xgcd(a, b=None):
     r"""
-    Return a triple ``(g,s,t)`` such that `g = s\cdot a+t\cdot b = \gcd(a,b)`.
+    When both ``a`` and ``b`` are given, then return a triple ``(g,s,t)``
+    such that `g = s\cdot a+t\cdot b = \gcd(a,b)`.
+    When only ``a`` is given, then return a tuple ``r`` of length ``len(a) + 1``
+    such that `r_0 = \sum_{i = 0}^{len(a) - 1} r_{i + 1}a_i = gcd(a_0, \dots, a_{len(a) - 1})`
 
     .. NOTE::
 
-       One exception is if `a` and `b` are not in a principal ideal domain (see
+       One exception is if the elements are not in a principal ideal domain (see
        :wikipedia:`Principal_ideal_domain`), e.g., they are both polynomials
        over the integers. Then this function can't in general return ``(g,s,t)``
        as above, since they need not exist.  Instead, over the integers, we
@@ -2005,6 +2009,10 @@ def xgcd(a, b=None):
         (1, -255, 85, -17, -2)
         sage: (-255)*30 + 85*105 + (-17)*70 + (-2)*42
         1
+        sage: xgcd([])
+        (0,)
+        sage: xgcd([42])
+        (42, 1)
 
         sage: g, a, b = xgcd(5/1, 7/1); g, a, b
         (1, 3, -2)
@@ -2069,6 +2077,19 @@ def xgcd(a, b=None):
         sage: S.<y> = R.fraction_field()[]
         sage: xgcd(y^2, a*h*y + b)
         (1, 7*a^2/b^2, (((-h)*a)/b^2)*y + 1/b)
+
+    Tests with randomly generated integers::
+
+        sage: import numpy as np
+        sage: N, M = 1000, 10000
+        sage: a = np.random.randint(M, size=N) * np.random.randint(M)
+        sage: r = xgcd(a)
+        sage: len(r) == len(a) + 1
+        True
+        sage: r[0] == gcd(a)
+        True
+        sage: sum(c * x for c, x in zip(r[1:], a)) == gcd(a)
+        True
     """
     if b is not None:
         # xgcd of two elements
@@ -2082,8 +2103,6 @@ def xgcd(a, b=None):
         return a.xgcd(b)
 
     # xgcd of >=2 elements
-    if not isinstance(a, (tuple, list)):
-        raise TypeError("input `a` should be a tuple or a list")
     if len(a) == 0:
         return (ZZ(0),)
     a = Sequence(a, use_sage_types=True)
