@@ -2102,7 +2102,7 @@ def xgcd(a, b=None):
             b = py_scalar_to_element(b)
         return a.xgcd(b)
 
-    # xgcd of >=2 elements
+    # xgcd for several elements (possibly more than one)
     if len(a) == 0:
         return (ZZ(0),)
     a = Sequence(a, use_sage_types=True)
