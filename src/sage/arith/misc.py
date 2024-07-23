@@ -2089,6 +2089,7 @@ def xgcd(a, b=None):
             res = [g, c_h] + [c_t * c for c in xgcd_t[1:]]
             return tuple(res)
 
+
 XGCD = xgcd
 
 
