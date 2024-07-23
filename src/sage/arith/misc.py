@@ -2000,9 +2000,9 @@ def xgcd(a, b=None):
         4
         sage: xgcd([56, 44])
         (4, 4, -5)
-        sage: xgcd([30, 105, 70, 42])
-        (1, -3, 13, 91, -182)
-        sage: (-3)*30 + 13*105 + 91*70 + (-182)*42
+        sage: r = xgcd([30, 105, 70, 42]); r
+        (1, -255, 85, -17, -2)
+        sage: (-255)*30 + 85*105 + (-17)*70 + (-2)*42
         1
 
         sage: g, a, b = xgcd(5/1, 7/1); g, a, b
@@ -2014,7 +2014,7 @@ def xgcd(a, b=None):
         sage: xgcd(x^3 - 1, x^2 - 1)
         (x - 1, 1, -x)
         sage: g, a, b, c = xgcd([x^4 - x, x^6 - 1, x^4 - 1]); g, a, b, c
-        (x - 1, -1, x^2 + 1, -x^4 - x^2)
+        (x - 1, x^3, -x, 1)
         sage: a*(x^4 - x) + b*(x^6 - 1) + c*(x^4 - 1) == g
         True
 
@@ -2049,14 +2049,14 @@ def xgcd(a, b=None):
         sage: xgcd(int8(4), int8(8))                                                    # needs numpy
         (4, 1, 0)
         sage: xgcd([int8(4), int8(8), int(10)])                                         # needs numpy
-        (2, 0, -1, 1)
+        (2, -2, 0, 1)
         sage: from gmpy2 import mpz
         sage: xgcd(mpz(4), mpz(8))
         (4, 1, 0)
         sage: xgcd(4, mpz(8))
         (4, 1, 0)
         sage: xgcd([4, mpz(8), mpz(10)])
-        (2, 0, -1, 1)
+        (2, -2, 0, 1)
 
     TESTS:
 
@@ -2079,19 +2079,20 @@ def xgcd(a, b=None):
         except TypeError:
             b = py_scalar_to_element(b)
         return a.xgcd(b)
-    else:
-        # xgcd of >=2 elements
-        if not isinstance(a, (tuple, list)):
-            raise TypeError("input `a` should be a tuple or a list")
-        if len(a) < 2:
-            raise ValueError("at least two elements should be given")
-        if len(a) == 2:
-            return xgcd(a[0], a[1])
-        else:  # Compute xgcd recursively
-            xgcd_t = xgcd(a[1:])  # xgcd_t[0] = sum(xgcd_t[i] * a[i], 1 \le i \le n-1)
-            g, c_h, c_t = xgcd(a[0], xgcd_t[0])  # g = c_h * a[0] * c_t * xgcd_t[0]
-            res = [g, c_h] + [c_t * c for c in xgcd_t[1:]]
-            return tuple(res)
+
+    # xgcd of >=2 elements
+    if not isinstance(a, (tuple, list)):
+        raise TypeError("input `a` should be a tuple or a list")
+    if len(a) < 2:
+        raise ValueError("at least two elements should be given")
+    if len(a) == 2:
+        return xgcd(a[0], a[1])
+    else:  # Compute xgcd recursively
+        res = xgcd(a[0], a[1])
+        for i in range(2, len(a)):
+            g, s, t = xgcd(res[0], a[i])
+            res = [g] + [s * c for c in res[1:]] + [t]
+        return tuple(res)
 
 
 XGCD = xgcd
