@@ -2084,12 +2084,12 @@ def xgcd(a, b=None):
     # xgcd of >=2 elements
     if not isinstance(a, (tuple, list)):
         raise TypeError("input `a` should be a tuple or a list")
-    if len(a) < 2:
-        raise ValueError("at least two elements should be given")
-    # Compute xgcd recursively
-    res = xgcd(a[0], a[1])
-    for i in range(2, len(a)):
-        g, s, t = xgcd(res[0], a[i])
+    if len(a) == 0:
+        return (ZZ(0),)
+    a = Sequence(a, use_sage_types=True)
+    res = [a.universe().zero()]
+    for b in a:
+        g, s, t = xgcd(res[0], b)
         res = [g] + [s * c for c in res[1:]] + [t]
     return tuple(res)
 
