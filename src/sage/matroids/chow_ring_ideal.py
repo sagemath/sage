@@ -5,7 +5,7 @@ AUTHORS:
 
 - Shriya M
 
-These are the classes of Chow ring ideals for matroids. There are two classes 
+These are the classes of Chow ring ideals for matroids. There are three classes
 created - Chow ring ideal and augmented Chow ring ideal. The augmented
 Chow ring ideal has two different presentations implemented - the Feitchner-
 Yuzvinsky presentation and atom-free presentation. Both classes have 
@@ -23,12 +23,23 @@ from sage.matroids.utilities import cmp_elements_key
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.set import Set
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-from abc import ABC, abstractmethod, ABCMeta
-from sage.structure.sage_object import SageObject
+from sage.misc.abstract_method import abstract_method
 
 class ChowRingIdeal(MPolynomialIdeal):
-    def __init__(self, M, R):
-        """
+    @abstract_method
+    def gens_constructor():
+        pass
+
+    def matroid(self):
+        M = self._matroid
+        return M
+    
+    def flats_generator(self):
+        return dict(self.flats_generator)
+    
+
+class ChowRingIdeal_nonaug(ChowRingIdeal):
+    r"""
     The class of Chow ring ideal, a multi-polynomial ideal. 
     Base class - ``MPolynomialIdeal``.
 
@@ -44,16 +55,27 @@ class ChowRingIdeal(MPolynomialIdeal):
 
     Chow ring ideal of uniform matroid of rank 3 on 6 elements::
 
-        sage: from sage.matroids.chow_ring_ideal import ChowRingIdeal
+        sage: from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug
 
-        sage: ch = ChowRingIdeal(M=matroids.Uniform(3,6), R=QQ)
+        sage: ch = ChowRingIdeal_nonaug(M=matroids.Uniform(3,6), R=QQ)
         sage: ch
         Chow ring ideal of U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
         {3: {{0, 1, 2, 3, 4, 5}}}
-        sage: ch = ChowRingIdeal(M=matroids.catalog.Fano(), R=QQ)
+        sage: ch = ChowRingIdeal_nonaug(M=matroids.catalog.Fano(), R=QQ)
         sage: ch
         Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
     """
+    def __init__(self, M, R):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug
+
+            sage: I = ChowRingIdeal_nonaug(M=matroids.catalog.Fano(), R=QQ)
+            sage: TestSuite(I).run()
+        """
         self._matroid = M
         flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
@@ -89,16 +111,16 @@ class ChowRingIdeal(MPolynomialIdeal):
         return "Chow ring ideal of {}".format(self._matroid)
 
     def groebner_basis(self):
-        """
+        r"""
         Returns the Groebner basis of the Chow ring ideal of consideration.
         Return type - ``PolynomialSequence``.
 
         EXAMPLES::
 
-            sage: from sage.matroids.chow_ring_ideal import ChowRingIdeal
+            sage: from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug
             sage: from sage.matroids.basis_matroid import BasisMatroid
 
-            sage: ch = ChowRingIdeal(M=BasisMatroid(groundset='abc', bases=['ab', 'ac']), R=QQ)
+            sage: ch = ChowRingIdeal_nonaug(M=BasisMatroid(groundset='abc', bases=['ab', 'ac']), R=QQ)
             sage: ch.groebner_basis()
             [Aa^2, Aa*Abc, Aa*Abc, Abc^2]
             sage: ch.groebner_basis().is_groebner()
@@ -107,7 +129,7 @@ class ChowRingIdeal(MPolynomialIdeal):
         Another example would be the Groebner basis of the Chow ring ideal of
         the Non-Fano matroid::
 
-            sage: ch = ChowRingIdeal(M=matroids.catalog.NonFano(), R=QQ)
+            sage: ch = ChowRingIdeal_nonaug(M=matroids.catalog.NonFano(), R=QQ)
             sage: ch.groebner_basis()
             Polynomial Sequence with 592 Polynomials in 16 Variables
         """
@@ -121,7 +143,7 @@ class ChowRingIdeal(MPolynomialIdeal):
                 else:
                     term = self.poly_ring.zero()
                     for H in flats:
-                        if H < F:
+                        if H < G:
                             term += self.flats_generator[H]
                     if Set(F).is_empty():
                         gb.append(term**self._matroid.rank(Set(G)))
@@ -130,61 +152,45 @@ class ChowRingIdeal(MPolynomialIdeal):
 
         g_basis = PolynomialSequence(self.poly_ring, [gb])
         return g_basis
-
-
-    def matroid(self):
-        return self._matroid
     
-    def flats_generator(self):
-        return dict(self.flats_generator)
     
-class CombinedMeta(ABCMeta, type):
-    pass
+class AugmentedChowRingIdeal_fy(ChowRingIdeal):
+    r"""
+        The class of augmented Chow ring ideal of Feitchner-Yuzvinsky
+        presentation, a multi-polynomial ideal.
+        Base class - ``MPolynomialIdeal``.
 
-class AugmentedChowRingIdeal(CombinedMeta):
-    @abstractmethod
-    def gens_constructor():
-        pass
+        INPUT:
 
-    @abstractmethod
-    def groebner_basis():
-        pass
 
-    def matroid(self):
-        M = self._matroid
-        return M
-    
-    def flats_generator(self):
-        return dict(self.flats_generator)
+        - `M` -- a matroid.
+        - `R` -- a ring.
 
-class AugmentedChowRingIdeal_fy(SageObject,MPolynomialIdeal, AugmentedChowRingIdeal):
-    def __init__(self, M, R):
+        OUTPUT: augmented Chow ring ideal of matroid `M` of Feitchner-Yuzvinsky
+        presentation.
+
+        EXAMPLES::
+
+        Augmented Chow ring ideal of Wheel matroid of rank 3::
+
+            sage: from sage.matroids.chow_ring_ideal import AugmentedChowRingIdeal_fy
+
+            sage: ch = AugumentedChowRingIdeal_fy(M=matroids.Wheel(3), R=QQ)
+            sage: ch
+            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
+            6 elements with 16 bases of Feitchner-Yuzvinsky presentation
         """
-    The class of augmented Chow ring ideal of Feitchner-Yuzvinsky
-    presentation, a multi-polynomial ideal.
-    Base class - ``MPolynomialIdeal``.
-
-    INPUT:
-
-
-    - `M` -- a matroid.
-    - `R` -- a ring.
-
-    OUTPUT: augmented Chow ring ideal of matroid `M` of Feitchner-Yuzvinsky
-    presentation.
-
-    EXAMPLES::
-
-    Augmented Chow ring ideal of Wheel matroid of rank 3::
-
-        sage: from sage.matroids.chow_ring_ideal import AugmentedChowRingIdeal_fy
-
-        sage: ch = AugumentedChowRingIdeal_fy(M=matroids.Wheel(3), R=QQ)
-        sage: ch
-        Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
-        6 elements with 16 bases of Feitchner-Yuzvinsky presentation
-    """
     def __init__(self, M, R):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.chow_ring_ideal import AugumentedChowRingIdeal_fy
+
+            sage: I = AugmentedChowRingIdeal_fy(M=matroids.Wheel(3), R=QQ)
+            sage: TestSuite(I).run()
+        """
         self._matroid = M
         self.flats = [X for i in range(1, self._matroid.rank())
                 for X in self._matroid.flats(i)]
@@ -228,7 +234,7 @@ class AugmentedChowRingIdeal_fy(SageObject,MPolynomialIdeal, AugmentedChowRingId
         return "Augmented Chow ring ideal of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
     
     def groebner_basis(self):
-        """
+        r"""
         Returns the Groebner basis of the augmented Chow ring ideal.
         Return type - ``PolynomialSequence``.
 
@@ -238,7 +244,7 @@ class AugmentedChowRingIdeal_fy(SageObject,MPolynomialIdeal, AugmentedChowRingId
 
             sage: ch = AugmentedChowRingIdeal_fy(M=matroids.catalog.Fano(), R=QQ)
             sage: ch.groebner_basis()
-            Polynomial Sequence with 2744 Polynomials in 21 Variables
+            Polynomial Sequence with 4116 Polynomials in 21 Variables
         """
         gb = []
         E = list(self._matroid.groundset())
@@ -271,23 +277,20 @@ class AugmentedChowRingIdeal_fy(SageObject,MPolynomialIdeal, AugmentedChowRingId
         g_basis = PolynomialSequence(self.poly_ring, [gb])
         return g_basis
 
-class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal):
-    def __init__(self, M, R):
-        """
-    The class of augmented Chow ring ideal of atom-free
-    presentation, a multi-polynomial ideal.
-    Base class - ``MPolynomialIdeal``.
+class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
+    r"""
+    The augmented Chow ring ideal in the atom-free
+    presentation.
 
     INPUT:
 
-
-    - `M` -- a matroid.
-    - `R` -- a ring.
+    - ``M`` -- a matroid
+    - ``R`` -- a ring
 
     OUTPUT: augmented Chow ring ideal of matroid `M` of atom-free
     presentation.
 
-    EXAMPLES::
+    EXAMPLES:
 
     Augmented Chow ring ideal of Wheel matroid of rank 3::
 
@@ -297,9 +300,49 @@ class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal):
         sage: ch
         Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
         6 elements with 16 bases of atom-free presentation
-    """
+    """ 
+    def __init__(self, M, R): #documentation of every init
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.chow_ring_ideal import AugumentedChowRingIdeal_atom_free
+
+            sage: I = AugumentedChowRingIdeal_atom_free(M=matroids.Wheel(3), R=QQ)
+            sage: TestSuite(I).run()
+        """
+        self._matroid = M
+        flats = [X for i in range(1, self._matroid.rank())
+                 for X in self._matroid.flats(i)]
         
-        AugmentedChowRingIdeal.__init__(self, M, R)
+        E = list(self._matroid.groundset())
+        flats_containing = {x: [] for x in E}
+        for i,F in enumerate(flats):
+            for x in F:
+                flats_containing[x].append(i)
+
+        names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
+
+        try:
+            self.poly_ring = PolynomialRing(R, names) #self.ring
+        except ValueError: # variables are not proper names
+            self.poly_ring = PolynomialRing(R, 'A', len(self.flats))
+           
+           
+        gens = self.poly_ring.gens()
+        self.flats_generator = dict(zip(flats, gens))
+
+        
+        Q = [gens[i] * gens[i+j+1] for i,F in enumerate(flats)
+            for j,G in enumerate(flats[i+1:]) if not (F < G or G < F)]
+        L = [sum(gens[i] for i in flats_containing[x])
+            - sum(gens[i] for i in flats_containing[y])
+            for j,x in enumerate(E) for y in E[j+1:]]
+        
+
+        MPolynomialIdeal.__init__(self, self.poly_ring, Q + L)
+        
 
     def gens_constructor(self): 
         E = list(self._matroid.groundset())
@@ -336,11 +379,12 @@ class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal):
         EXAMPLES::
 
             sage: from sage.matroids.chow_ring_ideal import AugmentedChowRingIdeal_atom_free
+            sage: from sage.matroids.graphic_matroid import GraphicMatroid
 
             sage: M1 = GraphicMatroid(graphs.CycleGraph(3))
             sage: ch = AugmentedChowRingIdeal_atom_free(M=M1, R=QQ)
             sage: ch.groebner_basis()
-            [B0^2, B0*B1, B0*B2, B0*B1, B1^2, B1*B2, B0*B2, B1*B2, B2^2]
+            [A0^2, A0*A1, A0*A2, A0*A1, A1^2, A1*A2, A0*A2, A1*A2, A2^2]
         """
         gb = []
         flats = [X for i in range(1, self._matroid.rank())
@@ -365,10 +409,16 @@ class AugmentedChowRingIdeal_atom_free(AugmentedChowRingIdeal):
 
         
 
+#linting tests pass
+#single underscore for attributes
+#Developer's guide
+#use 'self' in docstrings
+#rebase chow_ring from repr_update
+#common base class for all chow ring ideals - augmented parameter
+#getting ring from chow ring ideal to chow ring
+#references in the main index
 
 
-
-            
             
 
         
