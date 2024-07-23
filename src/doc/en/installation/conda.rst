@@ -112,7 +112,7 @@ Here we assume that you are using a git checkout.
     $ export SAGE_NUM_THREADS=24
 
 - Create and activate a new conda environment with the dependencies of Sage
-  and a few additional developer tools::
+  and a few additional developer tools:
 
   .. tab:: mamba
 
