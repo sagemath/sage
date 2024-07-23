@@ -2048,11 +2048,15 @@ def xgcd(a, b=None):
         (4, 1, 0)
         sage: xgcd(int8(4), int8(8))                                                    # needs numpy
         (4, 1, 0)
+        sage: xgcd([int8(4), int8(8), int(10)])                                         # needs numpy
+        (2, 0, -1, 1)
         sage: from gmpy2 import mpz
         sage: xgcd(mpz(4), mpz(8))
         (4, 1, 0)
         sage: xgcd(4, mpz(8))
         (4, 1, 0)
+        sage: xgcd([4, mpz(8), mpz(10)])
+        (2, 0, -1, 1)
 
     TESTS:
 
