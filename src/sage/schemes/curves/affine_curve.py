@@ -858,7 +858,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         if not A.base_ring() in Fields():
             raise TypeError("curve not defined over a field")
 
-        d = self.dimension()
+        d = AlgebraicScheme_subscheme_affine_field.dimension(self)
         if d != 1:
             raise ValueError("defining equations (={}) define a scheme of dimension {} != 1".format(X, d))
 
@@ -920,7 +920,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                To:   Affine Space of dimension 3 over Rational Field
                Defn: Defined on coordinates by sending (x, y, z, w) to
                      (x, y, z),
-             Affine Curve over Rational Field defined by c - 1, b - 3, a - 2)
+             Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
+               c - 1,
+               b - 3,
+               a - 2)
 
         ::
 
