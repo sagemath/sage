@@ -1574,8 +1574,8 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``vertex_list`` -- list (default: ``None``); defines a mapping from
-          the vertices of the graph to consecutive integers in ``(0, \ldots,
-          n-1)``. Otherwise, the result of :meth:`vertices` will be used
+          the vertices of the graph to consecutive integers in `(0, \ldots,
+          n-1)`. Otherwise, the result of :meth:`vertices` will be used
           instead. Because :meth:`vertices` only works if the vertices can be
           sorted, using ``vertex_list`` is useful when working with possibly
           non-sortable objects in Python 3.
