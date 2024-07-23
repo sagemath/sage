@@ -16,7 +16,7 @@ REFERENCES
 - :arxiv:`2111.00393`
 """
 
-from sage.matroids.chow_ring_ideal import ChowRingIdeal, AugmentedChowRingIdeal
+from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRingIdeal_fy, AugmentedChowRingIdeal_atom_free
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 
@@ -44,13 +44,16 @@ class ChowRing(QuotientRing_nc):
         sage: ch
         Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning circuits
     """
-    def __init__(self, R, M, augmented):
+    def __init__(self, R, M, augmented, presentation=None):
         self._matroid = M
         self._augmented = augmented
         if augmented:
-            self._ideal = AugmentedChowRingIdeal(M, R)
+            if presentation=='fy':
+                self._ideal = AugmentedChowRingIdeal_fy(M, R)
+            elif presentation=='atom-free':
+                self._ideal = AugmentedChowRingIdeal_fy(M, R)
         else:
-            self._ideal = ChowRingIdeal(M, R) #check method to get ring
+            self._ideal = ChowRingIdeal_nonaug(M, R) #check method to get ring
         QuotientRing_nc.__init__(self, R=self._ideal.poly_ring, I=self._ideal, names=self._ideal.poly_ring.variable_names(), category=GradedAlgebrasWithBasis(R))
 
     def _repr_(self):
