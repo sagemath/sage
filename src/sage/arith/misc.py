@@ -1968,9 +1968,9 @@ def xgcd(a, b=None):
        One exception is if the elements are not in a principal ideal domain (see
        :wikipedia:`Principal_ideal_domain`), e.g., they are both polynomials
        over the integers. Then this function can't in general return ``(g,s,t)``
-       as above, since they need not exist.  Instead, over the integers, we
-       first multiply `g` by a divisor of the resultant of `a/g` and `b/g`, up
-       to sign.
+       or ``r`` as above, since they need not exist. Instead, over the integers,
+       when ``a`` and ``b`` are given, we first multiply `g` by a divisor of the
+       resultant of `a/g` and `b/g`, up to sign.
 
     INPUT:
 
