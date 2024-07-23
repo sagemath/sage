@@ -169,11 +169,6 @@ class TropicalMPolynomial(MPolynomial_polydict):
         Fix some given variables in ``self`` and return the changed
         tropical multivariate polynomials.
 
-        INPUT:
-
-        -  ``fixed`` -- (optional) dictionary of inputs
-        -  ``**kwds`` -- named parameters
-
         OUTPUT: new :class:`TropicalMPolynomial`
 
         .. SEEALSO::
@@ -441,7 +436,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- ``dict``, constant, or :class:`MPolynomial` #edit
+        - ``x`` -- ``dict``, constant, or :class:`MPolynomial`
 
         EXAMPLES::
 
@@ -532,7 +527,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         r"""
         Return a random multivariate tropical polynomial from ``self``.
 
-        SEEALSO::
+        OUTPUT: a :class:`TropicalMPolynomial`
+
+        .. SEEALSO::
 
             :meth:`sage.rings.polynomial.multi_polynomial_ring_base.MPolynomialRing_base.random_element`
 

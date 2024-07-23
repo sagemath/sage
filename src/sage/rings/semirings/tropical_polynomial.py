@@ -300,7 +300,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         `x + x_0` is `x_0` and not `-x_0`. However, similar to classical
         algebra, not every tropical polynomial can be factored.
 
-        OUTPUT: a :class:'sage.structure.factorization.Factorization'
+        OUTPUT: a :class:'Factorization'
 
         EXAMPLES::
 
@@ -464,7 +464,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         ``xmin`` to ``xmax``. Otherwise, the domain will start from the
         the minimum root of ``self`` minus 1 to maximum root of ``self``
         plus 1. If the function of ``self`` is constant or linear, then
-        the default domain will be [-1,1].
+        the default domain will be `[-1,1]`.
 
         EXAMPLES:
 
@@ -819,7 +819,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         OUTPUT: a :class:`TropicalPolynomial`
 
-        .. SEEALSO:: 
+        .. SEEALSO::
         
             :meth:`sage.rings.polynomial.polynomial_ring.PolynomialRing_general.random_element`
         

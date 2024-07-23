@@ -36,6 +36,38 @@ class TropicalVariety(SageObject):
     function. This means it consist of all points in `\RR^n` for which
     the minimum (maximum) of the function is attained at least twice.
 
+    We represent the tropical variety as a list of lists, where the
+    inner list consist of three parts. The first one is a parametric
+    equations for tropical roots. The second one is the condition
+    for parameters. The third one is the order of the corresponding
+    component.
+
+    INPUT:
+
+    - ``poly`` -- a :class:`TropicalMPolynomial`
+
+    ALGORITHM:
+
+    We need to determine a corner locus of this tropical polynomial
+    function, which is all points `(x_1, x_2, \ldots, x_n)` for which
+    the maximum (minimum) is obtained at least twice. First, we convert
+    each monomial to its corresponding linear function. Then for each two
+    monomials of polynomial, we find the points where their values are
+    equal. Since we attempt to solve the equality of two equations in `n`
+    variables, the solution set will be described by `n-1` parameters.
+
+    Next, we need to check if the value of previous two monomials at the
+    points in solution set is really the maximum (minimum) of function.
+    We do this by solving the inequality of the previous monomial with all
+    other monomials in the polynomial after substituting the parameter.
+    This will give us the condition of parameters. Each of this condition
+    is then combined by union operator. If this final condition is not an
+    empty set, then it represent one component of tropical root. Then we
+    calculate the weight of this particular component by the maximum of
+    gcd of the numbers `|i-k|` and `|j-l|` for all pairs `(i,j)` and
+    `(k,l)` such that the value of on this component is given by the
+    corresponding monomials.
+
     EXAMPLES:
 
     We construct a tropical variety in `\RR^2`, where it is called a
@@ -126,87 +158,46 @@ class TropicalVariety(SageObject):
         [(t1, t2, t1, t3), [max(t1 + 1/2, 1/2*t1 + 1/2*t2 - 2) <= t3], 1],
         [(t1, t2 + 9/2, t3, t2), [t2 <= min(t3 + 1/2, t1 + 1/2)], 1],
         [(t1 - 1/2, t2, t3, t1), [t2 - 9/2 <= t1, t1 <= t3 + 1/2, t2 - 5 <= t3], 1],
-        [(2*t1 - t2 + 4, t2, t3, t1), [t1 <= min(1/2*t2 + 1/2*t3 - 2, t2 - 9/2)], 1]]
-    
-    TESTS:
-
-    The input to ``TropicalVariety`` should be a tropical polynomial::
-
-        sage: R.<x,y> = QQ[]
-        sage: p1 = x + y
-        sage: TropicalVariety(f)                                                            # needs sage.rings.semirings.tropical_variety            
-        Traceback (most recent call last):
-        ...
-        ValueError: x + y is not a multivariate tropical polynomial
+        [(2*t1 - t2 + 4, t2, t3, t1), [t1 <= min(1/2*t2 + 1/2*t3 - 2, t2 - 9/2)], 1]] 
     """
     def __init__(self, poly):
         r"""
         Initialize ``self``.
 
-        We represent the tropical variety as a list of lists, where the
-        inner list consist of three parts. The first one is a parametric
-        equations for tropical roots. The second one is the condition
-        for parameters. The third one is the order of the corresponding
-        component.
-
-        INPUT:
-
-        - ``poly`` -- a :class:`TropicalMPolynomial`
-
-        ALGORITHM:
-
-        We need to determine a corner locus of this tropical polynomial
-        function, which is all points `(x_1, x_2, \ldots, x_n)` for which
-        the maximum (minimum) is obtained at least twice. First, we convert
-        each monomial to its corresponding linear function. Then for each two
-        monomials of polynomial, we find the points where their values are
-        equal. Since we attempt to solve the equality of two equations in `n`
-        variables, the solution set will be described by `n-1` parameters.
-
-        Next, we need to check if the value of previous two monomials at the
-        points in solution set is really the maximum (minimum) of function.
-        We do this by solving the inequality of the previous monomial with all
-        other monomials in the polynomial after substituting the parameter.
-        This will give us the condition of parameters. Each of this condition
-        is then combined by union operator. If this final condition is not an
-        empty set, then it represent one component of tropical root. Then we
-        calculate the weight of this particular component by the maximum of
-        gcd of the numbers `|i-k|` and `|j-l|` for all pairs `(i,j)` and
-        `(k,l)` such that the value of on this component is given by the
-        corresponding monomials.
-        
         EXAMPLES:
 
-        A fairly simple example of tropical curve::
+        Tropical variety in two, three, and higher dimensions::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: tv = (x+y).tropical_variety(); tv
             Tropical curve of 0*x + 0*y
-            sage: tv.components()
-            [[(t1, t1), [-Infinity < t1, t1 < +Infinity], 1]]
 
-        A basic illustration of a tropical surface::
+        ::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: tv = (x+y+z).tropical_variety(); tv
             Tropical surface of 0*x + 0*y + 0*z
-            sage: tv.components()
-            [[(t1, t1, t2), [t1 <= t2], 1],
-            [(t1, t2, t1), [t1 <= t2], 1],
-            [(t1, t2, t2), [t2 <= t1], 1]]
+
+        ::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<w,x,y,z> = PolynomialRing(T)
+            sage: tv = (w+x+y+z).tropical_variety(); tv
+            Tropical hypersurface of 0*w + 0*x + 0*y + 0*z
 
         TESTS:
 
-        Every constant or monomial will not have a tropical variety::
+        The input to ``TropicalVariety`` should be a tropical polynomial::
 
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<x,y> = PolynomialRing(T)
-            sage: R(3).tropical_variety().components()
-            []
-            sage: x.tropical_variety().components()
-            []
+            sage: from sage.rings.semirings.tropical_variety import TropicalVariety
+            sage: R.<x,y> = QQ[]
+            sage: p1 = x + y
+            sage: TropicalVariety(p1)         
+            Traceback (most recent call last):
+            ...
+            ValueError: x + y is not a multivariate tropical polynomial
         """
         import operator
         from itertools import combinations
@@ -237,6 +228,7 @@ class TropicalVariety(SageObject):
             eq += poly.dict()[key].lift()
             linear_eq[key] = eq
         
+        temp_keys = []
         temp_order = []
         # checking for all possible combinations of two terms
         for keys in combinations(poly.dict(), 2):
@@ -291,7 +283,10 @@ class TropicalVariety(SageObject):
                         index_diff.append(abs(keys[0][i]-keys[1][i]))
                     order = gcd(index_diff)
                     temp_order.append(order)
-                    
+                    temp_keys.append(keys)
+
+        # changing all the operator symbol to be <= or >=
+        self._keys = []           
         components = []
         dim_param = len(tropical_roots[0][0]) - 1
         vars = [SR.var('t{}'.format(i)) for i in range(1, dim_param+1)]
@@ -329,16 +324,20 @@ class TropicalVariety(SageObject):
                     new_param.append(expr)
                 arg.insert(1, new_param)
             components.append(arg)  
+        
+        # determine the order of each component
         self._vars = vars
         final_order = []
         for i, component in enumerate(components):
             if component not in self._hypersurface:
                 self._hypersurface.append(component)
                 final_order.append(temp_order[i])
+                self._keys.append(temp_keys[i])
             else:
                 index = self._hypersurface.index(component)
                 if temp_order[i] > final_order[index]:
                     final_order[index] = temp_order[i]
+                    self._keys[index] = temp_keys[i]
         for i in range(len(self._hypersurface)):
             self._hypersurface[i].append(final_order[i])
 
@@ -377,9 +376,9 @@ class TropicalVariety(SageObject):
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
-            sage: R.<a,x,y,z> = PolynomialRing(T)
-            sage: (a+x+y+z).tropical_variety()
-            Tropical hypersurface of 0*a + 0*x + 0*y + 0*z
+            sage: R.<w,x,y,z> = PolynomialRing(T)
+            sage: (w).tropical_variety()
+            Tropical hypersurface of 0*w
         """
         return (f"Tropical hypersurface of {self._poly}")
 
@@ -494,7 +493,7 @@ class TropicalSurface(TropicalVariety):
         """
         Return a 3d plot of ``self``.
 
-        INPUT::
+        INPUT:
 
         - ``num_of_points`` -- integer (default: `32`); a number of points
           to use in the three-dimensional scatter plot.
@@ -591,8 +590,8 @@ class TropicalSurface(TropicalVariety):
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
-            sage: (x^4+y^2+z^2).tropical_variety()
-            Tropical surface of 0*x^4 + 0*y^2 + 0*z^2
+            sage: (x^4+z^2).tropical_variety()
+            Tropical surface of 0*x^4 + 0*z^2
         """
         return (f"Tropical surface of {self._poly}")
 
@@ -748,25 +747,14 @@ class TropicalCurve(TropicalVariety):
 
         EXAMPLES:
 
-        A constant and monomial will not have a tropical curve::
+        A polynomial with only two terms will give one straight line::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
-            sage: (x).tropical_variety().components()
-            []
-        
-        .. PLOT::
-            :width: 300 px
-
-            T = TropicalSemiring(QQ)
-            R = PolynomialRing(T, ('x,y'))
-            x, y = R.gen(), R.gen(1)
-            sphinx_plot((x).tropical_variety().plot())
-
-        A polynomial with only two terms will give one straight line::
-
             sage: (y+R(1)).tropical_variety().components()
             [[(t1, 1), [-Infinity < t1, t1 < +Infinity], 1]]
+            sage: (y+R(1)).tropical_variety().plot()
+            Graphics object consisting of 1 graphics primitive
 
         .. PLOT::
             :width: 300 px
@@ -880,8 +868,8 @@ class TropicalCurve(TropicalVariety):
         
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
-            sage: (x^2+y^2+R(0)).tropical_variety()
-            Tropical curve of 0*x^2 + 0*y^2 + 0
+            sage: (x^2+R(0)).tropical_variety()
+            Tropical curve of 0*x^2 + 0
         """
         return (f"Tropical curve of {self._poly}")
     
