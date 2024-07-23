@@ -1984,8 +1984,9 @@ def xgcd(a, b=None):
 
     -  ``g, s, t`` -- when two inputs ``a, b`` are given. They satisfy `g = s\cdot a + t\cdot b`.
 
-    -  ``r`` -- a tuple, when only ``a`` is given (and ``b = None``). It has length one longer
-       than the length of ``a``, and its entries satisfy `r_0 = \sum_{i = 0}^{len(a) - 1} r_{i + 1}a_i`.
+    -  ``r`` -- a tuple, when only ``a`` is given (and ``b = None``). Its first entry ``r[0]`` is the gcd of the inputs,
+       and has length one longer than the length of ``a``.
+       Its entries satisfy `r_0 = \sum_{i = 0}^{len(a) - 1} r_{i + 1}a_i`.
 
     .. NOTE::
 
@@ -2085,14 +2086,12 @@ def xgcd(a, b=None):
         raise TypeError("input `a` should be a tuple or a list")
     if len(a) < 2:
         raise ValueError("at least two elements should be given")
-    if len(a) == 2:
-        return xgcd(a[0], a[1])
-    else:  # Compute xgcd recursively
-        res = xgcd(a[0], a[1])
-        for i in range(2, len(a)):
-            g, s, t = xgcd(res[0], a[i])
-            res = [g] + [s * c for c in res[1:]] + [t]
-        return tuple(res)
+    # Compute xgcd recursively
+    res = xgcd(a[0], a[1])
+    for i in range(2, len(a)):
+        g, s, t = xgcd(res[0], a[i])
+        res = [g] + [s * c for c in res[1:]] + [t]
+    return tuple(res)
 
 
 XGCD = xgcd
