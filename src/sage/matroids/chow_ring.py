@@ -45,6 +45,16 @@ class ChowRing(QuotientRing_nc):
         Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning circuits
     """
     def __init__(self, R, M, augmented, presentation=None):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.chow_ring import ChowRing
+
+            sage: I = ChowRing(M=matroids.Wheel(3), R=QQ, augmented=False)
+            sage: TestSuite(I).run()
+        """
         self._matroid = M
         self._augmented = augmented
         if augmented:
