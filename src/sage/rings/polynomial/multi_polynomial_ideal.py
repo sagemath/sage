@@ -1229,11 +1229,11 @@ class MPolynomialIdeal_singular_repr(
             if self.ngens() == 1:
                 g = self.gen(0)
                 if g.is_unit():
-                    self.__dimension = -1
+                    self.__dimension = Integer(-1)
                 elif g:
-                    self.__dimension = self.ring().ngens() - 1
+                    self.__dimension = Integer(self.ring().ngens() - 1)
                 else:
-                    self.__dimension = self.ring().ngens()
+                    self.__dimension = Integer(self.ring().ngens())
                 return self.__dimension
             try:
                 from sage.libs.singular.function_factory import ff
@@ -1253,7 +1253,8 @@ class MPolynomialIdeal_singular_repr(
                     from sage.sets.set import Set
                     gb = toy_buchberger.buchberger_improved(self)
                     if self.ring().one() in gb:
-                        return Integer(-1)
+                        self.__dimension = Integer(-1)
+                        return self.__dimension
                     ring_vars = self.ring().gens()
                     n = len(ring_vars)
                     lms = [each.lm() for each in gb]
