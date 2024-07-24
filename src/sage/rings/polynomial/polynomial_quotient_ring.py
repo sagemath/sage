@@ -266,6 +266,10 @@ class PolynomialQuotientRingFactory(UniqueFactory):
 PolynomialQuotientRing = PolynomialQuotientRingFactory("PolynomialQuotientRing")
 
 def is_PolynomialQuotientRing(x):
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_PolynomialQuotientRing is deprecated; "
+                "use 'isinstance(..., PolynomialQuotientRing_generic)' instead.")
     return isinstance(x, PolynomialQuotientRing_generic)
 
 
@@ -1342,10 +1346,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         if not isinstance(K, NumberField) or not self.__polynomial.is_squarefree():
             raise NotImplementedError
 
-        from sage.rings.ideal import is_Ideal
+        from sage.rings.ideal import Ideal_generic
         for p in S:
             # second check due to inconsistency over QQ - see # 7596
-            if not (is_Ideal(p)
+            if not (isinstance(p, Ideal_generic)
                     and (p.ring() is K or p.ring() is K.ring_of_integers())
                     and p.is_prime()):
                 raise TypeError("S must be a list of prime ideals of the base field.")

@@ -4078,8 +4078,8 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
 
         from .misc import combine_exceptions
         from sage.symbolic.ring import SymbolicRing
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
         from sage.rings.power_series_ring import is_PowerSeriesRing
 
         if isinstance(P, SymbolicRing):
@@ -4097,7 +4097,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
                                        (data, self)), e)
                 return sum(summands, self.zero())
 
-        elif is_PolynomialRing(P):
+        elif isinstance(P, PolynomialRing_general):
             p = P.gen()
             try:
                 return sum(iter(self.create_summand('exact', growth=p**i,
@@ -4108,7 +4108,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
                 raise combine_exceptions(
                     ValueError('Polynomial %s is not in %s' % (data, self)), e)
 
-        elif is_MPolynomialRing(P):
+        elif isinstance(P, MPolynomialRing_base):
             try:
                 return sum(iter(self.create_summand('exact', growth=g, coefficient=c)
                                 for c, g in iter(data)),

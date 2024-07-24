@@ -29,6 +29,10 @@ from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
 
 
 def is_MPolynomialRing(x):
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38266,
+                       "The function is_MPolynomialRing is deprecated; "
+                       "use 'isinstance(..., MPolynomialRing_base)' instead.")
     return isinstance(x, MPolynomialRing_base)
 
 
@@ -135,7 +139,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
              Multivariate Polynomial Ring in x, y over Rational Field
         """
         base = self.base_ring()
-        if is_MPolynomialRing(base) or polynomial_ring.is_PolynomialRing(base):
+        if isinstance(base, MPolynomialRing_base) or isinstance(base, polynomial_ring.PolynomialRing_general):
             from sage.rings.polynomial.flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
@@ -590,14 +594,14 @@ cdef class MPolynomialRing_base(CommutativeRing):
             P = x.parent()
             # polynomial rings in the same variable over the any base
             # that coerces in:
-            if is_MPolynomialRing(P):
+            if isinstance(P, MPolynomialRing_base):
                 if P.variable_names() == self.variable_names():
                     if self.has_coerce_map_from(P.base_ring()):
                         return self(x)
                 elif self.base_ring().has_coerce_map_from(P._mpoly_base_ring(self.variable_names())):
                     return self(x)
 
-            elif polynomial_ring.is_PolynomialRing(P):
+            elif isinstance(P, polynomial_ring.PolynomialRing_general):
                 if P.variable_name() in self.variable_names():
                     if self.has_coerce_map_from(P.base_ring()):
                         return self(x)
@@ -634,7 +638,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             # One is not a parent -- not equal and not ordered
             return op == Py_NE
 
-        if not is_MPolynomialRing(right):
+        if not isinstance(right, MPolynomialRing_base):
             return op == Py_NE
 
         lft = <MPolynomialRing_base>left
