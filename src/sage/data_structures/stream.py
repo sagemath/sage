@@ -95,14 +95,18 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
 from sage.arith.misc import divisors
 from sage.misc.misc_c import prod
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
+from sage.categories.fields import Fields
+from sage.categories.functor import Functor
+from sage.categories.integral_domains import IntegralDomains
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
+from sage.categories.pushout import ConstructionFunctor
+from sage.categories.quotient_fields import QuotientFields
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
@@ -1343,25 +1347,49 @@ class VariablePool(UniqueRepresentation):
         """
         return self._pool
 
-from sage.categories.functor import Functor
-from sage.categories.pushout import ConstructionFunctor
-from sage.categories.fields import Fields
-from sage.categories.integral_domains import IntegralDomains
-from sage.categories.quotient_fields import QuotientFields
 
 class CoefficientRingFunctor(ConstructionFunctor):
+    r"""
+    A construction functor for the :class:`CoefficientRing`.
+
+    The functor maps the integral domain of coefficients to the field
+    of unknown coefficients.
+    """
     rank = 0
 
     def __init__(self):
+        r"""
+        Initialize the functor.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import CoefficientRingFunctor
+            sage: CoefficientRingFunctor()
+            CoefficientRingFunctor
+        """
         Functor.__init__(self, IntegralDomains(), Fields())
 
     def _apply_functor(self, R):
+        r"""
+        Apply the functor to an integral domain.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import CoefficientRingFunctor
+            sage: CoefficientRingFunctor()(ZZ)  # indirect doctest
+            CoefficientRing over Integer Ring
+        """
         return CoefficientRing(R)
+
 
 class CoefficientRingElement(FractionFieldElement):
     pass
 
+
 class CoefficientRing(UniqueRepresentation, FractionField_generic):
+    r"""
+    The class of unknown coefficients in a stream.
+    """
     def __init__(self, base_ring):
         """
 
@@ -1412,8 +1440,10 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
             sage: c = PF.gen(0)
             sage: p = a + c
             sage: p.parent()
-            Multivariate Lazy Taylor Series Ring in a, b over CoefficientRing over Fraction Field of Symmetric Functions over Rational Field in the homogeneous basis
-
+            Multivariate Lazy Taylor Series Ring in a, b
+             over CoefficientRing
+             over Fraction Field of Symmetric Functions
+             over Rational Field in the homogeneous basis
         """
         B = InfinitePolynomialRing(base_ring, names=["FESDUMMY"])
         FractionField_generic.__init__(self, B,
@@ -1421,14 +1451,51 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
                                        category=QuotientFields())
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import CoefficientRing
+            sage: CoefficientRing(ZZ["q"])
+            CoefficientRing over Univariate Polynomial Ring in q over Integer Ring
+        """
         return "CoefficientRing over %s" % self.base_ring()
 
     def gen(self, i):
+        r"""
+        Return the ``n``-th generator of ``self``.
+
+        The name of the generator is not to be relied on.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import CoefficientRing
+            sage: PF = CoefficientRing(ZZ["q"])
+            sage: PF.gen(0)
+            FESDUMMY_0
+        """
         return self._element_class(self, self._R.gen()[i])
 
     def construction(self):
-        return (CoefficientRingFunctor(),
-                self.base_ring())
+        r"""
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`CoefficientRingFunctor` and `R` is an integral
+        domain, such that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import CoefficientRing
+            sage: PF = CoefficientRing(ZZ["q"])
+            sage: F, R = PF.construction()
+            sage: F, R
+            (CoefficientRingFunctor,
+             Univariate Polynomial Ring in q over Integer Ring)
+
+            sage: F(R)
+            CoefficientRing over Univariate Polynomial Ring in q over Integer Ring
+        """
+        return (CoefficientRingFunctor(), self.base_ring())
 
 
 class Stream_uninitialized(Stream):
@@ -2082,7 +2149,7 @@ class Stream_uninitialized(Stream):
             raise ValueError("could not determine any coefficients:\n"
                              + eqs_str)
         raise ValueError("there are no linear equations:\n"
-                             + eqs_str)
+                         + eqs_str)
 
     def _eq_str(self, idx, eq):
         """
@@ -2959,9 +3026,9 @@ class Stream_cauchy_compose(Stream_binary):
             sage: f = Stream_function(lambda n: n, True, 1)
             sage: g = Stream_function(lambda n: n^2, True, 1)
             sage: h = Stream_cauchy_compose(f, g, True)
-            sage: h[5] # indirect doctest
+            sage: h[5]  # indirect doctest
             527
-            sage: [h[i] for i in range(10)] # indirect doctest
+            sage: [h[i] for i in range(10)]  # indirect doctest
             [0, 1, 6, 28, 124, 527, 2172, 8755, 34704, 135772]
         """
         fv = self._left._approximate_order
@@ -3382,7 +3449,7 @@ class Stream_scalar(Stream_unary):
 
             sage: from sage.data_structures.stream import Stream_function, Stream_rmul
             sage: f = Stream_function(lambda n: Zmod(6)(n), True, 2)
-            sage: h = Stream_rmul(f, 3, True) # indirect doctest
+            sage: h = Stream_rmul(f, 3, True)  # indirect doctest
             sage: h._approximate_order
             2
             sage: [h[i] for i in range(5)]
