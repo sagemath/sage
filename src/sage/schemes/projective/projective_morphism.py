@@ -58,25 +58,37 @@ AUTHORS:
 # ****************************************************************************
 
 import sys
-from sage.arith.misc import GCD as gcd
+
+import sage.rings.abc
+
 from sage.arith.functions import lcm
-from sage.misc.misc_c import prod
+from sage.arith.misc import GCD as gcd
+from sage.categories.fields import Fields
+from sage.categories.finite_fields import FiniteFields
+from sage.categories.homset import Hom, End
+from sage.categories.number_fields import NumberFields
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-import sage.rings.abc
-from sage.rings.integer import Integer
-from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import FractionField
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
-from sage.categories.finite_fields import FiniteFields
-from sage.categories.number_fields import NumberFields
-from sage.categories.homset import Hom, End
-from sage.categories.fields import Fields
+
+lazy_import('sage.dynamics.arithmetic_dynamics.generic_ds', 'DynamicalSystem')
+lazy_import('sage.dynamics.arithmetic_dynamics.projective_ds',
+            ['DynamicalSystem_projective', 'DynamicalSystem_projective_field',
+             'DynamicalSystem_projective_finite_field'])
+lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
+lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
+lazy_import('sage.rings.padics.padic_base_generic', 'pAdicGeneric')
+lazy_import('sage.rings.padics.padic_valuation', 'pAdicValuation_base')
+
 
 _NumberFields = NumberFields()
 _FiniteFields = FiniteFields()
@@ -618,7 +630,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                     ((1/3*i)*x^2 + (1/2*i)*y^2 : i*y^2)
         """
         from sage.modules.free_module_element import vector
-        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 
         if not mat.is_square():
             raise ValueError("matrix must be square")
@@ -664,7 +675,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                     (-1/3*x^2 - 1/2*y^2 : -y^2)
         """
         from sage.modules.free_module_element import vector
-        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
         if not mat.is_square():
             raise ValueError("matrix must be square")
         if mat.nrows() != self.domain().ngens():
@@ -716,14 +726,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: g is f                                                                # needs sage.schemes
             True
         """
-        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
         if isinstance(self, DynamicalSystem):
             return self
         if not self.is_endomorphism():
             raise TypeError("must be an endomorphism")
-        from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
-        from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective_field
-        from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective_finite_field
         R = self.base_ring()
         if R not in _Fields:
             return DynamicalSystem_projective(list(self), self.domain())
@@ -948,7 +954,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         # defined by the ideal/valuation
         ideal = kwds.pop('ideal', None)
         if ideal is not None:
-            from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
             if not (ideal in ZZ or isinstance(ideal, NumberFieldFractionalIdeal)):
                 raise TypeError('ideal must be an ideal of a number field, not %s' % ideal)
             if isinstance(ideal, NumberFieldFractionalIdeal):
@@ -980,7 +985,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         valuation = kwds.pop('valuation', None)
         if valuation is not None:
-            from sage.rings.padics.padic_valuation import pAdicValuation_base
             if not isinstance(valuation, pAdicValuation_base):
                 raise TypeError('valuation must be a valuation on a number field, not %s' % valuation)
             if valuation.domain() != self.base_ring():
@@ -1048,7 +1052,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             self.scale_by(1 / GCD)
 
         # If R is not p-adic, we make the first coordinate positive
-        from sage.rings.padics.padic_base_generic import pAdicGeneric
         if not isinstance(R, pAdicGeneric):
             if self[0].lc() < 0:
                 self.scale_by(-1)
@@ -1764,10 +1767,10 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             Scheme morphism:
               From: Projective Space of dimension 1 over Number Field in a
                     with defining polynomial y^4 + 3*y^2 + 1
-                    with a = 0.?e-151 + 0.618033988749895?*I
+                    with a = 0.?e-113 + 0.618033988749895?*I
               To:   Projective Space of dimension 2 over Number Field in a
                     with defining polynomial y^4 + 3*y^2 + 1
-                    with a = 0.?e-151 + 0.618033988749895?*I
+                    with a = 0.?e-113 + 0.618033988749895?*I
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + (a^3 + 2*a)*x*y + 3*y^2 : y^2 : (2*a^2 + 3)*x*y)
 

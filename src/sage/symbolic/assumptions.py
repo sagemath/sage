@@ -461,11 +461,11 @@ def assume(*args):
     If everything goes as planned, there is no output.
 
     If you assume something that is not one of the two forms above, then
-    an ``AttributeError`` is raised as we try to call its ``assume``
+    an :class:`AttributeError` is raised as we try to call its ``assume``
     method.
 
     If you make inconsistent assumptions (for example, that ``x`` is
-    both even and odd), then a ``ValueError`` is raised.
+    both even and odd), then a :class:`ValueError` is raised.
 
     .. WARNING::
 
@@ -630,7 +630,7 @@ def assume(*args):
         True
         sage: forget()
 
-    Ensure that an ``AttributeError`` is raised if we are given junk::
+    Ensure that an :class:`AttributeError` is raised if we are given junk::
 
         sage: assume(3)
         Traceback (most recent call last):

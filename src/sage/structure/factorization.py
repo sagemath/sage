@@ -1206,7 +1206,7 @@ class Factorization(SageObject):
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: F = Factorization([(x,3), (y, 2), (x,1)])
             sage: F(x=4)
-            (1) * 4^3 * y^2 * 4
+            4^3 * y^2 * 4
             sage: F.subs({y:2})
             x^3 * 2^2 * x
 

@@ -624,7 +624,7 @@ class GenericGraph(GenericGraph_pyx):
         Helper method for method ``__hash__``.
 
         This method checks whether parameter ``hash_labels`` has been specified
-        by the user. Otherwise, defaults to the value of parameter ``weigthed``.
+        by the user. Otherwise, defaults to the value of parameter ``weighted``.
 
         TESTS::
 
@@ -18420,6 +18420,9 @@ class GenericGraph(GenericGraph_pyx):
                 M = self.adjacency_matrix(vertices=int_to_vertex)
 
             # We call the Floyd-Warshall method from SciPy
+            import numpy  # to ensure numpy 2.0 compatibility
+            if int(numpy.version.short_version[0]) > 1:
+                numpy.set_printoptions(legacy="1.25")
             from numpy import array as np_array
             from scipy.sparse.csgraph import floyd_warshall
             dd, pp = floyd_warshall(np_array(M), directed=self.is_directed(),
@@ -19586,8 +19589,8 @@ class GenericGraph(GenericGraph_pyx):
             raise TypeError('both arguments must be of the same class')
 
         multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
-        loops = self.allows_loops()          or other.allows_loops()
-        weighted = self.weighted()              and other.weighted()
+        loops = self.allows_loops() or other.allows_loops()
+        weighted = self.weighted() and other.weighted()
 
         if self._directed:
             from sage.graphs.digraph import DiGraph
@@ -25854,7 +25857,7 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
             # The groups are ordered by increasing multiplicity
             edge_partition = [tmp[mu] for mu in sorted(tmp.keys())]
 
-            # Now the edges are partitionned according to the multiplicity they
+            # Now the edges are partitioned according to the multiplicity they
             # represent, and edge labels are forgotten.
 
         else:
