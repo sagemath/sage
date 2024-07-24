@@ -1,1 +1,6 @@
+cd src
+
 # https://github.com/Macaulay2/M2/blob/master/M2/INSTALL-CMake.md
+cd M2/M2/BUILD/build
+sdh_cmake -GNinja -S../.. -B. \
+      -DCMAKE_BUILD_TYPE=Release
