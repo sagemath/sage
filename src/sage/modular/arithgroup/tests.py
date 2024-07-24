@@ -197,6 +197,9 @@ class Test:
             sage: T.test('todd_coxeter',seconds=1)
             test_todd_coxeter
             ...
+            sage: T.test('dim_formula_Ross',seconds=3)
+            test_dim_formula_Ross
+            ...
         """
         seconds = float(seconds)
         total = cputime()
@@ -415,3 +418,22 @@ class Test:
             for j in range(i + 1, len(reps)):
                 assert reps[i] * ~reps[j] not in G
                 assert reps[j] * ~reps[i] not in G
+    def test_dim_formula_Ross(self, N_ub=50, k_ub=10):
+        r"""
+        Test the dimension formula given in Theorem 1.4
+        of :arxiv:`2407.08881`
+
+        EXAMPLES::
+
+            sage: from sage.modular.arithgroup.tests import Test
+            sage: Test().test_dim_formula_Ross(100,16)
+        """
+        from sage.modular.dirichlet import DirichletGroup
+        for N in range(3,N_ub+1):
+            Gamma1_N = Gamma1(N)
+            for eps in DirichletGroup(N):
+                for k in range(2,k_ub+1):
+                    Ross_dim = Gamma1_N.dimension_new_cusp_forms(k,eps,algorithm="Ross")
+                    CO_dim   = Gamma1_N.dimension_new_cusp_forms(k,eps,algorithm="CohenOesterle")
+                    assert Ross_dim == CO_dim
+
