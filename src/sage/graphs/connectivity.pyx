@@ -925,7 +925,7 @@ def is_vertex_cut(G, cut, weak=False):
     if G.is_directed() and not weak:
         CC = G.strongly_connected_components()
     else:
-        CC = G.connected_components()
+        CC = G.connected_components(sort=False)
     if len(CC) > 1:
         for comp in CC:
             subcut = cutset.intersection(comp)
