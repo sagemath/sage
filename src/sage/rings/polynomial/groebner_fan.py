@@ -58,10 +58,9 @@ REFERENCES:
 """
 
 import string
+import re
 import pexpect
 from subprocess import PIPE, Popen
-
-from sage.misc.sage_eval import sage_eval
 
 from sage.structure.sage_object import SageObject
 from sage.interfaces.gfan import gfan
@@ -983,8 +982,9 @@ class GroebnerFan(SageObject):
                                stdin=PIPE, stdout=PIPE, stderr=PIPE)
         ans, err = gfan_processes.communicate(input=str_to_bytes(self.gfan()))
         ans = bytes_to_str(ans)
-        ans = sage_eval(ans.replace('{', '').replace('}', '').replace('\n', ''))
-        return [vector(QQ, x) for x in ans]
+        vect = re.compile(r"\([0-9,/\s]*\)")
+        ans = (tup[1:-1].split(',') for tup in vect.findall(ans))
+        return [vector(QQ, [QQ(y) for y in x]) for x in ans]
 
     def ring(self):
         """
