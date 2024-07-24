@@ -4203,6 +4203,10 @@ REFERENCES:
              293-311 (1987).
              :doi:`10.1007/BF00337892`
 
+.. [Kudo2017] Momonari Kudo, "Analysis of an algorithm to compute the cohomology
+              groups of coherent sheaves and its applications", Japan Journal of
+              Industrial and Applied Mathematics 34 (2017), 1--40.
+
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
 

@@ -1492,3 +1492,77 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
             4.61512051684126
         """
         return self.Chow_form().local_height_arch(i, prec)
+
+    def coherent_sheaf(self, module, twist=0):
+        r"""
+        Return the sheaf defined by the graded ``module``.
+
+        If ``twist`` is a non-zero integer `n`, the sheaf twisted by
+        `\OO_{\PP^r}(n)` is returned.
+
+        INPUT:
+
+        - ``module`` -- a free module or a quotient module
+
+        - ``twist`` -- (default: `0`) an integer
+
+        EXAMPLES::
+
+            sage: P3.<x0,x1,x2,x3> = ProjectiveSpace(QQ, 3)
+            sage: X = P3.subscheme(x0^3 + x1^3 + x2^3 + x3^3)
+            sage: S = X.coordinate_ring()
+            sage: SS = FreeModule(S, 2)
+            sage: X.coherent_sheaf(SS, twist=2)
+            Twisted coherent sheaf on Closed subscheme of Projective Space of dimension 3
+             over Rational Field defined by: x0^3 + x1^3 + x2^3 + x3^3
+        """
+        from sage.schemes.projective.coherent_sheaf import CoherentSheaf_on_projective_subscheme
+        return CoherentSheaf_on_projective_subscheme(self, module, twist=twist)
+
+    def structure_sheaf(self, twist=0):
+        r"""
+        Return the structure sheaf `\OO_{\PP^r}` of this projective space.
+
+        If ``twist`` is a non-zero integer `n`, the sheaf twisted by
+        `\OO_{\PP^r}(n)` is returned.
+
+        INPUT:
+
+        - ``twist`` -- (default: `0`) an integer
+
+        EXAMPLES::
+
+            sage: P3.<x0,x1,x2,x3> = ProjectiveSpace(QQ, 3)
+            sage: X = P3.subscheme(x0^3 + x1^3 + x2^3 + x3^3)
+            sage: X.structure_sheaf()
+            Coherent sheaf on Closed subscheme of Projective Space of dimension 3
+             over Rational Field defined by: x0^3 + x1^3 + x2^3 + x3^3
+        """
+        from sage.modules.free_module import FreeModule
+        M = FreeModule(self.coordinate_ring(), rank=1)
+        return self.coherent_sheaf(M, twist=twist)
+
+    def arithmetic_genus(self):
+        r"""
+        Return the arithmetic genus of this subscheme of a projective space.
+
+        EXAMPLES:
+
+        This is an example of a curve whose geometric genus is smaller than
+        arithmetic genus due to a singular point::
+
+            sage: A2.<x,y> = AffineSpace(QQ,2)
+            sage: C = Curve(x^4 - 5*x^2 - y^2 + 4, A2)
+            sage: X = C.projective_closure()
+            sage: X.arithmetic_genus()
+            3
+            sage: X.geometric_genus()
+            1
+            sage: X.is_singular()
+            True
+        """
+        p = self.structure_sheaf().euler_characteristic() - 1
+        if self.dimension() % 2:
+            p = -p
+        return p
+

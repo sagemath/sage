@@ -581,6 +581,10 @@ def latex_extra_preamble():
         \newcommand{\PSL}{\mathrm{PSL}}
         \newcommand{\lcm}{\mathop{\operatorname{lcm}}}
         \newcommand{\dist}{\mathrm{dist}}
+        \newcommand{\im}{\mathop{\operatorname{im}}}
+        \newcommand{\rank}{\mathop{\operatorname{rank}}}
+        \newcommand{\PP}{\mathbf{P}}
+        \newcommand{\OO}{\mathcal{O}}
         \newcommand{\Bold}[1]{\mathbf{#1}}
         <BLANKLINE>
     """

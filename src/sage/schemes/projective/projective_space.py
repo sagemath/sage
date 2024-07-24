@@ -1,5 +1,5 @@
 r"""
-Projective `n` space over a ring
+Projective `n`-space over a ring
 
 EXAMPLES:
 
@@ -106,6 +106,8 @@ from sage.rings.rational_field import QQ, RationalField
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
+
+from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.projective.projective_homset import (SchemeHomset_points_projective_ring,
                                                        SchemeHomset_points_projective_field,
                                                        SchemeHomset_polynomial_projective_space)
@@ -116,10 +118,15 @@ from sage.schemes.projective.projective_point import (SchemeMorphism_point_proje
                                                       SchemeMorphism_point_projective_field,
                                                       SchemeMorphism_point_projective_finite_field)
 
+lazy_import('sage.combinat.integer_vector', 'IntegerVectors')
+lazy_import('sage.combinat.permutation', 'Permutation')
+lazy_import('sage.combinat.tuple', ['Tuples', 'UnorderedTuples'])
+lazy_import('sage.combinat.subset', 'Subsets')
 lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
 lazy_import('sage.combinat.tuple', ['Tuples', 'UnorderedTuples'])
 lazy_import('sage.dynamics.arithmetic_dynamics.projective_ds', 'DynamicalSystem_projective')
 lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.modules.free_module', 'FreeModule')
 lazy_import('sage.modules.free_module_element', 'prepare')
 lazy_import('sage.schemes.generic.algebraic_scheme', 'AlgebraicScheme_subscheme')
 lazy_import('sage.schemes.product_projective.space',
@@ -752,7 +759,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
-            sage: Hom(P, P)
+            sage: Hom(P, P)  # indirect doctest
             Set of morphisms
               From: Projective Space of dimension 2 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
@@ -2250,6 +2257,71 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         m = matrix(3, list(self.gens()) + list(p) + list(q))
         return Curve([f for f in m.minors(3) if f])
+
+    def coherent_sheaf(self, module, twist=0):
+        r"""
+        Return the sheaf defined by the graded ``module``.
+
+        If ``twist`` is a non-zero integer `n`, the sheaf twisted by
+        `\OO_{\PP^r}(n)` is returned.
+
+        INPUT:
+
+        - ``module`` -- a free module or a quotient module over the coordinate
+          ring of this space
+
+        - ``twist`` -- (default: `0`) an integer
+
+        EXAMPLES::
+
+            sage: P2 = ProjectiveSpace(QQ, 2, 'x')
+            sage: S = P2.coordinate_ring()
+            sage: SS = FreeModule(S, 2)
+            sage: P2.coherent_sheaf(SS, twist=2)
+            Twisted coherent sheaf on Projective Space of dimension 2 over Rational Field
+        """
+        from sage.schemes.projective.coherent_sheaf import CoherentSheaf_on_projective_space
+        return CoherentSheaf_on_projective_space(self, module, twist=twist)
+
+    def structure_sheaf(self, twist=0):
+        r"""
+        Return the structure sheaf `\OO_{\PP^r}` of this projective space.
+
+        If ``twist`` is a non-zero integer `n`, the sheaf twisted by
+        `\OO_{\PP^r}(n)` is returned.
+
+        INPUT:
+
+        - ``twist`` -- (default: `0`) an integer
+
+        EXAMPLES::
+
+            sage: P3.<x0,x1,x2,x3> = ProjectiveSpace(QQ, 3)
+            sage: P3.structure_sheaf()
+            Coherent sheaf on Projective Space of dimension 3 over Rational Field
+        """
+        M = FreeModule(self.coordinate_ring(), rank=1)
+        return self.coherent_sheaf(M, twist=twist)
+
+    def arithmetic_genus(self):
+        r"""
+        Return the arithmetic genus of this projective space.
+
+        This is known to be zero. This method simply checks the fact.
+
+        EXAMPLES::
+
+            sage: P1 = ProjectiveSpace(QQ, 1)
+            sage: P1.arithmetic_genus()
+            0
+            sage: P2 = ProjectiveSpace(QQ, 2)
+            sage: P2.arithmetic_genus()
+            0
+        """
+        p = self.structure_sheaf().euler_characteristic() - 1
+        if self.dimension() % 2:
+            p = -p
+        return p
 
 
 class ProjectiveSpace_finite_field(ProjectiveSpace_field):
