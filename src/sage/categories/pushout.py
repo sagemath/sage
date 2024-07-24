@@ -1985,12 +1985,12 @@ class VectorFunctor(ConstructionFunctor):
         name = self.name_mapping.get(R, None)
         latex_name = self.latex_name_mapping.get(R, None)
         if name is None:
-            for base_ring, name in self.name_mapping.items():
+            for name in self.name_mapping.values():
                 name = f'{name}_base_ext'
                 break
         if latex_name is None:
             from sage.misc.latex import latex
-            for base_ring, latex_name in self.latex_name_mapping.items():
+            for latex_name in self.latex_name_mapping.values():
                 latex_name = fr'{latex_name} \otimes {latex(R)}'
                 break
         if name is None and latex_name is None:

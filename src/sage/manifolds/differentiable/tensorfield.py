@@ -708,7 +708,7 @@ class TensorField(ModuleElementWithMutability):
 
         """
         # First deletes any reference to self in the vectors' dictionaries:
-        for vid, val in self._lie_derivatives.items():
+        for val in self._lie_derivatives.values():
             del val[0]._lie_der_along_self[id(self)]
         # Then clears the dictionary of Lie derivatives
         self._lie_derivatives.clear()
