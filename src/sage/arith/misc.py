@@ -1958,6 +1958,8 @@ def xlcm(m, n):
 
 def xgcd(a, b=None):
     r"""
+    Return the greatest common divisor and the Bézout coefficients of the input arguments.
+
     When both ``a`` and ``b`` are given, then return a triple ``(g,s,t)``
     such that `g = s\cdot a+t\cdot b = \gcd(a,b)`.
     When only ``a`` is given, then return a tuple ``r`` of length ``len(a) + 1``
@@ -2109,7 +2111,10 @@ def xgcd(a, b=None):
     res = [a.universe().zero()]
     for b in a:
         g, s, t = xgcd(res[0], b)
-        res = [g] + [s * c for c in res[1:]] + [t]
+        res[0] = g
+        for i in range(1, len(res)):
+            res[i] *= s
+        res.append(t)
     return tuple(res)
 
 
