@@ -678,7 +678,7 @@ class MultivariateAtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         Lc = sum(L, [])
         Ls = [len(l) for l in L]
         mapping = {v: i for i, v in enumerate(Lc, 1)}
-        normalized_gens = [[tuple(mapping[x] for x in cyc) for cyc in gen] for gen in H.gens_small()]
+        normalized_gens = [[tuple(mapping[x] for x in cyc) for cyc in gen.cycle_tuples()] for gen in H.gens_small()]
         return PermutationGroup(gens=normalized_gens), self._grading_set(Ls)
 
     def _element_constructor_(self, x):
@@ -804,7 +804,6 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
             [                       {1, [()]}^5           {1, [()]}^3*{2, [(1,2)]}         {3, [(1,2,3)]}*{1, [()]}^2  {3, [(1,2,3), (2,3)]}*{1, [()]}^2]
             [          {1, [()]}^3*{2, [(1,2)]}           {1, [()]}*{2, [(1,2)]}^2        {3, [(1,2,3)]}*{2, [(1,2)]} {3, [(1,2,3), (2,3)]}*{2, [(1,2)]}]
         """
-        print("pob called")
         return self._from_dict({H * K: 1})
 
     def _repr_(self):
