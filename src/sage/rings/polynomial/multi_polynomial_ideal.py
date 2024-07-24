@@ -1201,7 +1201,6 @@ class MPolynomialIdeal_singular_repr(
             sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')
             sage: I = R.ideal(0)
             sage: I.dimension()
-            verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             2
 
         ALGORITHM:
