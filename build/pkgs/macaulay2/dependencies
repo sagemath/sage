@@ -1,0 +1,7 @@
+4ti2 fflas_ffpack gfortran boost_cropped cddlib libffi givaro glpk $(MP_LIBRARY) $(BLAS) liblzma mpc mpfi mpfr ncurses ntl readline singular libxml2 zlib lrslib normaliz pkgconf topcom polymake git gfan frobby nauty libnauty flint onetbb
+
+# other needed packages according to https://github.com/Macaulay2/M2/blob/master/M2/INSTALL:
+# autoconf bison cohomcalg curl emacs flex install-info libboost-math-dev libboost-regex-dev libboost-stacktrace-dev libgdbm-dev libgivaro-dev libglpk-dev libgtest-dev libmps-dev libtool lsb-release  npm openssh-server pinentry-curses time unzip xbase-clients yasm dpkg-dev libeigen3-dev libtool-bin coinor-csdp coinor-csdp-doc
+
+# Different list according to https://github.com/Macaulay2/M2/blob/master/M2/INSTALL-CMake.md:
+# libopenblas-dev libgmp3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libomp-dev libtbb-dev libffi-dev
