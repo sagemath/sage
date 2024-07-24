@@ -858,7 +858,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             sage: K.<x,y,z,t> = QQ[]
             sage: t1 = x^2*z^2 + y*t
             sage: t2 = y*z^2 + x^2*t
-            sage: C = Curve([x^4-y^2-19,z^4-t^2-23,t1^2-t2^2-19*23])
+            sage: C = Curve([x^4 - y^2 - 19, z^4 - t^2 - 23, t1^2 - t2^2 - 19*23])
             Traceback (most recent call last):
             ...
             ValueError: defining equations (=[x^4 - y^2 - 19, z^4 - t^2 - 23,
