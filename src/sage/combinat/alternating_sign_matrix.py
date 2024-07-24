@@ -519,18 +519,17 @@ class AlternatingSignMatrix(Element,
             sage: asm = AlternatingSignMatrix([[1,0,0],[0,1,0],[0,0,1]])
             sage: fpl = asm.to_fully_packed_loop()
             sage: fpl
-                |         |
-                |         |
-                +    + -- +
-                |    |
-                |    |
-             -- +    +    + --
-                     |    |
-                     |    |
-                + -- +    +
-                |         |
-                |         |
-
+                │         │
+                │         │
+                +    + ── +
+                │    │
+                │    │
+             ── +    +    + ──
+                     │    │
+                     │    │
+                + ── +    +
+                │         │
+                │         │
         """
         from sage.combinat.fully_packed_loop import FullyPackedLoop
         return FullyPackedLoop(self)
