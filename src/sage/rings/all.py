@@ -167,7 +167,7 @@ from sage.rings.continued_fraction import (continued_fraction,
 from sage.rings.asymptotic.all import *
 
 lazy_import('sage.rings.burnside', ['BurnsideRing', 'PolynomialMolecularDecomposition',
-                                    'UnivariateAtomicConjugacyClasses', 'UnivariateMolecularConjugacyClasses'])
+                                    'MultivariateAtomicSpecies'])
 
 # Register classes in numbers abc
 from sage.rings import numbers_abc

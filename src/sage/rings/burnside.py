@@ -1,4 +1,6 @@
+from sage.combinat.integer_vector import IntegerVectors
 from sage.misc.cachefunc import cached_method
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.element import parent
@@ -8,12 +10,11 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.algebras import Algebras
-from sage.categories.monoids import Monoids
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedMonoid
+from sage.sets.set import Set
 
 GAP_FAIL = libgap.eval('fail')
 
@@ -35,32 +36,30 @@ def _is_conjugate(G, H1, H2):
 class ElementCache():
     def __init__(self):
         r"""
-        Class for caching elements of conjugacy classes of subgroups.
+        Class for caching elements.
         """
         self._cache = dict()
-
-    def _group_invariants(self, H):
-        r"""
-        Return tuple of group invariants associated with H.
-        """
-        return tuple([H.order(), H.degree()])
     
-    def _cache_get(self, H):
+    def _cache_get(self, elm):
         r"""
-        Return the cached element for H, or create it
+        Return the cached element, or create it
         if it doesn't exist.
+
+        ``elm`` must implement the following methods:
+          ``_element_key`` - hashable type for dict lookup.
+          ``__eq__`` - to compare two elements.
         """
-        element = self.element_class(self, H)
-        key = self._group_invariants(H)
+        key = elm._element_key()
         if key in self._cache:
-            for H0, H0_elm in self._cache[key]:
-                if _is_conjugate(element.subgroup_of(), H0, H):
-                    return H0_elm
+            lookup = self._cache[key]
+            for other_elm in lookup:
+                if elm == other_elm:
+                    return other_elm
             else:
-                self._cache[key].append((H, element))
+                lookup.append(elm)
         else:
-            self._cache[key] = [(H, element)]
-        return element
+            self._cache[key] = [elm]
+        return elm
 
 class ConjugacyClassOfSubgroups(Element):
     def __init__(self, parent, C):
@@ -108,6 +107,14 @@ class ConjugacyClassOfSubgroups(Element):
             True
         """
         return hash(self._C)
+
+    @cached_method
+    def _element_key(self):
+        r"""
+        Return tuple of group invariants associated with H.
+        """
+        # should this be a lazy attribute instead?
+        return tuple([self._C.order(), self._C.degree()])
     
     def _repr_(self):
         r"""
@@ -260,7 +267,8 @@ class ConjugacyClassesOfSubgroups(Parent, ElementCache):
             return x
         if isinstance(x, PermutationGroup_generic):
             if x.is_subgroup(self._G):
-                return self._cache_get(self._G.subgroup(x.gens()))
+                elm = self.element_class(self, self._G.subgroup(x.gens()))
+                return self._cache_get(elm)
             raise ValueError(f"unable to convert {x} into {self}: not a subgroup of {self._G}")
         raise ValueError("unable to convert {x} into {self}")
 
@@ -533,32 +541,20 @@ class BurnsideRing(CombinatorialFreeModule):
         """
         return "Burnside ring of " + repr(self._G)
 
-class AtomicConjugacyClass(ConjugacyClassOfSubgroups):
+class ConjugacyClassOfDirectlyIndecomposableSubgroups(ConjugacyClassOfSubgroups):
     def __init__(self, parent, C):
         r"""
-        An atomic conjugacy class.
-
-        TESTS::
-
-            sage: At = UnivariateAtomicConjugacyClasses()
-            sage: Z4 = CyclicPermutationGroup(4)
-            sage: TestSuite(At(Z4)).run()
+        A conjugacy class of directly indecomposable subgroups.
         """
+        if len(C.disjoint_direct_product_decomposition()) != 1:
+            raise ValueError(f"{C} is not directly indecomposable")
         ConjugacyClassOfSubgroups.__init__(self, parent, C)
 
     @cached_method
     def subgroup_of(self):
         r"""
-        Return the group which this atomic conjugacy class of subgroups
-        belongs to.
-
-        TESTS::
-
-            sage: At = UnivariateAtomicConjugacyClasses()
-            sage: g = At(CyclicPermutationGroup(3)); g
-            {3, [(1,2,3)]}
-            sage: g.subgroup_of()
-            Symmetric group of order 3! as a permutation group
+        Return the group which this conjugacy class of
+        directly indecomposable subgroups belongs to.
         """
         return SymmetricGroup(self._C.degree())
     
@@ -574,171 +570,211 @@ class AtomicConjugacyClass(ConjugacyClassOfSubgroups):
         """
         return "{" + f"{self._C.degree()}, {self._C.gens_small()}" + "}"
 
-class UnivariateAtomicConjugacyClasses(UniqueRepresentation, Parent, ElementCache):
-    def __init__(self):
+class AtomicSpecies(ConjugacyClassOfDirectlyIndecomposableSubgroups):
+    def __init__(self, parent, C, multicardinality):
         r"""
-        Infinite set of atomic conjugacy classes of `S_n`.
+        An atomic species centered on a given multicardinality: a directly
+        indecomposable subgroup paired with an integer vector.
+        """
+        total_cardinality = sum(multicardinality)
+        if C.degree() != sum(multicardinality):
+            raise ValueError(f"Degree of {C} (= {C.degree()}) must equal the total cardinality {total_cardinality}")
+        G = SymmetricGroup(total_cardinality).young_subgroup(multicardinality)
+        if not C.is_subgroup(G):
+            raise ValueError(f"{C} is not a subgroup of {G}")
+        ConjugacyClassOfDirectlyIndecomposableSubgroups.__init__(self, parent, C)
+        self._mc = multicardinality
 
-        Graded by `n \geq 0`.
+    @cached_method
+    def subgroup_of(self):
+        r"""
+        Return the group which the underlying permutation group
+        of this atomic species belongs to.
+        """
+        return SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
 
-        TESTS::
+    def __hash__(self):
+        r"""
+        Return the hash of the atomic species.
+        """
+        return hash(tuple([self._C, self._mc]))
 
-            sage: At = UnivariateAtomicConjugacyClasses()
-            sage: TestSuite(At).run(skip="_test_graded_components")
+    @cached_method
+    def _element_key(self):
+        r"""
+        Return a lookup key for ``self``.
+        """
+        return tuple([*super()._element_key(), self._mc])
+
+    def __eq__(self, other):
+        r"""
+        Two atomic species are equal if the underlying groups are conjugate,
+        and their multicardinalities are equal.
+        """
+        if parent(self) != parent(other):
+            return False
+        return self._mc == other._mc and super().__eq__(other)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+        """
+        return "{" + f"{self._C.gens_small()}: {self._mc}" + "}"
+
+class MultivariateAtomicSpecies(UniqueRepresentation, Parent, ElementCache):
+    def __init__(self, k):
+        r"""
+        Infinite set of `k`-variate atomic species graded by
+        integer vectors of length `k`.
         """
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, category=category)
         ElementCache.__init__(self)
+        self._k = k
+        self._grading_set = IntegerVectors(length=k)
+
+    def __hash__(self):
+        r"""
+        Return a hash for ``self``.
+        """
+        return hash(self._k)
+
+    def __eq__(self, other):
+        r"""
+        Needed for unique representation behaviour.
+
+        TESTS::
+
+            sage: At1 = MultivariateAtomicSpecies(1); At1
+            sage: At2 = MultivariateAtomicSpecies(2); At2
+            sage: At1_2 = MultivariateAtomicSpecies(1); At1_2
+            sage: At1 is At1_2
+            True
+            sage: At1 is At2
+            False
+            sage: At1_2 is At2
+            False
+        """
+        if type(self) != type(other):
+            return False
+        return self._k == other._k
     
     @cached_method
     def an_element(self):
         """
         Return an element of ``self``.
-
-        EXAMPLES::
-
-            sage: At = UnivariateAtomicConjugacyClasses()
-            sage: At.an_element()
-            {0, []}
         """
-        return self._cache_get(SymmetricGroup(0))
+        return self._element_constructor_((SymmetricGroup(self._k).young_subgroup([1] * self._k),
+                                           [1] * self._k))
+
+    def _normalize(self, H, f):
+        r"""
+        Normalize `H` and return `H` and the multicardinality.
+        """
+        # TODO: Complete the documentation.
+        L = [[] for _ in range(self._k)]
+        for k, v in f.items():
+            L[v - 1].append(k)
+        Lc = sum(L, [])
+        Ls = [len(l) for l in L]
+        mapping = {v: i for i, v in enumerate(Lc, 1)}
+        normalized_gens = [[tuple(mapping[x] for x in cyc) for cyc in gen] for gen in H.gens_small()]
+        return PermutationGroup(gens=normalized_gens), self._grading_set(Ls)
 
     def _element_constructor_(self, x):
         r"""
-        Construct the atomic conjugacy class of subgroups containing ``x``.
+        Construct the `k`-variate molecular species with the given data.
 
-        TESTS::
+        INPUT:
 
-            sage: At = UnivariateAtomicConjugacyClasses()
-            sage: Z4 = CyclicPermutationGroup(4)
-            sage: At(Z4)
-            {4, [(1,2,3,4)]}
+        - ``x`` - an element of ``self`` or a tuple ``(H, f)`` where `H` is
+        the directly indecomposable permutation group representation for the
+        `k`-variate atomic species and `f` is a ``dict`` mapping each element
+        of the domain of `H` to integers in `\{ 1 \ldots k \}`, representing
+        the set to which the element belongs.
         """
         # BUG: SymmetricGroup(0) fails to be constructed.
         if parent(x) == self:
             return x
-        if isinstance(x, PermutationGroup_generic):
-            if len(x.disjoint_direct_product_decomposition()) == 1:
-                return self._cache_get(x)
-            else:
-                raise ValueError(f"{x} is not atomic")
-        raise ValueError(f"unable to convert {x} into {self}")
-    
-    def __contains__(self, H):
-        r"""
-        Return if H is an atomic subgroup.
-        """
-        if parent(H) == self:
-            return True
-        return (isinstance(H, PermutationGroup_generic)
-                and len(H.disjoint_direct_product_decomposition()) == 1)
-    
-    def _repr_(self):
-        r"""
-        Return a string representation of ``self``.
-
-        EXAMPLES::
-
-            sage: At = UnivariateAtomicConjugacyClasses()
-            sage: At
-            Set of all atomic conjugacy classes on 1 sort
-        """
-        return "Set of all atomic conjugacy classes on 1 sort"
-    
-    Element=AtomicConjugacyClass
-
-class UnivariateMolecularConjugacyClasses(IndexedFreeAbelianMonoid):
-    @staticmethod
-    def __classcall__(cls):
-        r"""
-        Needed to make this work. Taken from example in center_uea.py.
-        """
-        return super(IndexedMonoid, cls).__classcall__(cls)
-
-    def __init__(self):
-        r"""
-        Infinite set of molecular conjugacy classes of `S_n`.
-        Implemented as elements of the free abelian monoid on
-        univariate atomic conjugacy classes.
-
-        Graded by `n \geq 0`.
-
-        TESTS::
-
-            sage: Mol = UnivariateMolecularConjugacyClasses()
-            sage: TestSuite(Mol).run(skip="_test_graded_components")
-        """
-        category = Monoids() & SetsWithGrading().Infinite()
-        IndexedFreeAbelianMonoid.__init__(self,
-                                          indices=UnivariateAtomicConjugacyClasses(),
-                                          prefix='', bracket=False,
-                                          category=category)
-
-    def _project(self, H, part):
-        r"""
-        Project `H` onto a subset ``part`` of its domain.
-        ``part`` must be a union of cycles, but this is not checked.
-        """
-        restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part] for gen in H.gens_small()]
-        mapping = {elm: i for i, elm in enumerate(part, 1)}
-        normalized_gens = [[tuple(mapping[x] for x in cyc) for cyc in gen] for gen in restricted_gens]
-        return PermutationGroup(gens=normalized_gens)
-    
-    def _element_constructor_(self, x):
-        r"""
-        Construct the molecular conjugacy class of subgroups containing ``x``.
-
-        TESTS::
-
-            sage: Mol = UnivariateMolecularConjugacyClasses()
-            sage: [Mol(H) for H in SymmetricGroup(3).conjugacy_classes_subgroups()]
-            [{1, [()]}^3, {1, [()]}*{2, [(1,2)]}, {3, [(1,2,3)]}, {3, [(1,2,3), (2,3)]}]
-        """
-        if parent(x) == self:
-            return x
-        if isinstance(x, PermutationGroup_generic):
-            domain_partition = x.disjoint_direct_product_decomposition()
-            return super()._element_constructor_([(self._indices(self._project(x, part)), 1) for part in domain_partition])
+        H, f = x
+        if Set(H.domain()) != Set(f.keys()):
+            raise ValueError(f"Keys of {f} do not match with domain of {H}")
+        if not Set(f.values()).issubset(Set(range(1, self._k + 1))):
+            raise ValueError(f"Values of {f} must be in the range [1, {self._k}]")
+        if isinstance(H, PermutationGroup_generic) and isinstance(f, dict):
+            elm = self.element_class(self, *self._normalize(H, f))
+            return self._cache_get(elm)
         raise ValueError("unable to convert {x} into {self}")
-
+    
+    def __getitem__(self, x):
+        r"""
+        Call ``_element_constructor_`` on ``x``.
+        """
+        return self._element_constructor_(x)
+    
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
-
-        EXAMPLES::
-
-            sage: Mol = UnivariateMolecularConjugacyClasses()
-            sage: Mol
-            Set of all molecular conjugacy classes on 1 sort
         """
-        return "Set of all molecular conjugacy classes on 1 sort"
+        return f"Infinite set of {self._k}-variate atomic species"
+    
+    Element = AtomicSpecies
 
 class PolynomialMolecularDecomposition(CombinatorialFreeModule):
-    def __init__(self, base_ring=ZZ):
+    def __init__(self, k, base_ring=ZZ):
         r"""
-        Ring of virtual species on 1 sort.
+        Ring of `k`-variate virtual species.
         """
-        basis_keys = UnivariateMolecularConjugacyClasses()
+        # should we pass a category to basis_keys?
+        basis_keys = IndexedFreeAbelianMonoid(MultivariateAtomicSpecies(k),
+                                              prefix='', bracket=False)
         category = GradedAlgebrasWithBasis(base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, base_ring,
                                         basis_keys=basis_keys,
                                         category=category,
                                         prefix='', bracket=False)
+        self._k = k
+        self._atomic_basis = basis_keys.indices()
 
-    def __getitem__(self, H):
+    def _project(self, H, f, part):
         r"""
-        Return the basis element indexed by ``H``.
-
-        ``H`` must be a subgroup of a symmetric group.
-
-        EXAMPLES::
-
-            sage: P = PolynomialMolecularDecomposition()
-            sage: Z4 = CyclicPermutationGroup(4)
-            sage: P[Z4]
-            {4, [(1,2,3,4)]}
+        Project `H` onto a subset ``part`` of its domain.
+        ``part`` must be a union of cycles, but this is not checked.
         """
-        return self._from_dict({self._indices(H): 1})
+        restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part] for gen in H.gens_small()]
+        mapping = {p: f[p] for p in part}
+        return tuple([PermutationGroup(gens=restricted_gens), mapping])
+    
+    def _element_constructor_(self, x):
+        r"""
+        Construct the `k`-variate molecular species with the given data.
+
+        INPUT:
+
+        - ``x`` - an element of ``self`` or a tuple ``(H, f)`` where `H` is
+        the permutation group representation for the species and `f` is a
+        ``dict`` mapping each element of the domain of `H` to integers in
+        `\{ 1 \ldots k \}`, representing the set to which the element belongs.
+        """
+        if parent(x) == self:
+            return x
+        H, f = x
+        if Set(H.domain()) != Set(f.keys()):
+            raise ValueError(f"Keys of {f} do not match with domain of {H}")
+        if not Set(f.values()).issubset(Set(range(1, self._k + 1))):
+            raise ValueError(f"Values of {f} must be in the range [1, {self._k}]")
+        if isinstance(H, PermutationGroup_generic) and isinstance(f, dict):
+            domain_partition = H.disjoint_direct_product_decomposition()
+            from collections import Counter
+            C = Counter([self._atomic_basis(self._project(H, f, part)) for part in domain_partition])
+            return self._from_dict({self._indices(dict(C)): 1})
+        raise ValueError("unable to convert {x} into {self}")
+
+    def __getitem__(self, x):
+        r"""
+        Calls _element_constructor_ on x.
+        """
+        return self._element_constructor_(x)
 
     @cached_method
     def one_basis(self):
@@ -752,71 +788,11 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
             sage: P.one_basis()
             1
         """
-        return self._indices(SymmetricGroup(0))
-
-    def construct_from_action(self, action, domain, domsize):
-        r"""
-        Construct an element of this ring from a group action.
-
-        INPUT:
-
-        - ``action`` - an action on ``domain``
-        - ``domain`` - a finite set
-        - ``domsize`` - size of the domain
-
-        EXAMPLES::
-
-            sage: P = PolynomialMolecularDecomposition()
-
-        We create a group action of `S_4` on two-element subsets::
-
-            sage: X = Subsets(4, 2)
-            sage: a = lambda g, x: X([g(e) for e in x])
-            sage: P.construct_from_action(a, X, 4)
-            {2, [(1,2)]}^2
-
-        Next, we create a group action of `S_4` on itself via conjugation::
-
-            sage: X = SymmetricGroup(4)
-            sage: a = lambda g, x: g*x*g.inverse()
-            sage: P.construct_from_action(a, X, 4)
-            {4, [(2,3,4), (1,2)]} + {4, [(2,4), (1,4)(2,3)]} + {1, [()]}*{3, [(1,2,3)]} + {2, [(1,2)]}^2 + {4, [(1,2,3,4)]}
-
-        TESTS::
-
-            sage: P = PolynomialMolecularDecomposition()
-            sage: P(-3)
-            -3
-        """
-        def find_stabilizer(action, pnt):
-            stabilizer = []
-            for g in G:
-                if action(g, pnt) == pnt:
-                    stabilizer.append(g)
-            H = G.subgroup(stabilizer)
-            gens = H.gens_small()
-            return G.subgroup(gens)
-
-        G = SymmetricGroup(domsize)
-        H = PermutationGroup(G.gens(), action=action, domain=domain)
-        # decompose H into orbits
-        orbit_list = H.orbits()
-        # find the stabilizer subgroups
-        stabilizer_list = [find_stabilizer(action, orbit[0]) for orbit in orbit_list]
-        # normalize each summand and collect terms
-        from collections import Counter
-        C = Counter([self._indices(stabilizer) for stabilizer in stabilizer_list])
-        return self._from_dict(dict(C))
+        return self._element_constructor_(tuple([SymmetricGroup(0), dict()]))
 
     def product_on_basis(self, H, K):
         r"""
         Return the product of the basis elements indexed by `H` and `K`.
-
-        Let `H` be a subgroup of `\mathfrak{G}_n` and `K` be a subgroup of `\mathfrak{G}_m`.
-        Then we define their Cauchy product as the subgroup of `\mathfrak{G}_{n+m}` given by
-        `H \ast K = \{h \dot k \vert h \in H_{\{1 \ldots n\}}, K_{\{n+1 \ldots n+m\}}\}` where
-        the subscripts denote the domains on which H and K act. Note that this is isomorphic to
-        the direct product of `H` and `K`.
 
         EXAMPLES::
 
@@ -824,10 +800,11 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
             sage: P = PolynomialMolecularDecomposition()
             sage: L1 = SymmetricGroup(3).conjugacy_classes_subgroups()
             sage: L2 = SymmetricGroup(2).conjugacy_classes_subgroups()
-            sage: matrix([[P.product_on_basis(Mol(x),Mol(y)) for x in L1] for y in L2])
+            sage: matrix([[P(x) * P(y) for x in L1] for y in L2])
             [                       {1, [()]}^5           {1, [()]}^3*{2, [(1,2)]}         {3, [(1,2,3)]}*{1, [()]}^2  {3, [(1,2,3), (2,3)]}*{1, [()]}^2]
             [          {1, [()]}^3*{2, [(1,2)]}           {1, [()]}*{2, [(1,2)]}^2        {3, [(1,2,3)]}*{2, [(1,2)]} {3, [(1,2,3), (2,3)]}*{2, [(1,2)]}]
-        """        
+        """
+        print("pob called")
         return self._from_dict({H * K: 1})
 
     def _repr_(self):
@@ -836,8 +813,8 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: P = PolynomialMolecularDecomposition()
+            sage: P = PolynomialMolecularDecomposition(2)
             sage: P
             Polynomial Molecular Decomposition
         """
-        return "Polynomial Molecular Decomposition"
+        return f"Ring of {self._k}-variate virtual species"
