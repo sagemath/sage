@@ -546,7 +546,7 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(ConjugacyClassOfSubgroups)
         r"""
         A conjugacy class of directly indecomposable subgroups.
         """
-        if len(C.disjoint_direct_product_decomposition()) != 1:
+        if len(C.disjoint_direct_product_decomposition()) > 1:
             raise ValueError(f"{C} is not directly indecomposable")
         ConjugacyClassOfSubgroups.__init__(self, parent, C)
 
@@ -561,12 +561,6 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(ConjugacyClassOfSubgroups)
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
-
-        EXAMPLES::
-
-            sage: At = UnivariateAtomicConjugacyClasses()
-            sage: g = At(CyclicPermutationGroup(3)); g
-            {3, [(1,2,3)]}
         """
         return "{" + f"{self._C.degree()}, {self._C.gens_small()}" + "}"
 
@@ -665,7 +659,7 @@ class MultivariateAtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         Return an element of ``self``.
         """
         return self._element_constructor_((SymmetricGroup(self._k).young_subgroup([1] * self._k),
-                                           [1] * self._k))
+                                           {e: i for i, e in enumerate(range(1, self._k + 1), 1)}))
 
     def _normalize(self, H, f):
         r"""
@@ -679,7 +673,11 @@ class MultivariateAtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         Ls = [len(l) for l in L]
         mapping = {v: i for i, v in enumerate(Lc, 1)}
         normalized_gens = [[tuple(mapping[x] for x in cyc) for cyc in gen.cycle_tuples()] for gen in H.gens_small()]
-        return PermutationGroup(gens=normalized_gens), self._grading_set(Ls)
+        P = PermutationGroup(gens=normalized_gens)
+        # Fix for SymmetricGroup(0)
+        if H.degree() == 0:
+            P = SymmetricGroup(0)
+        return P, self._grading_set(Ls)
 
     def _element_constructor_(self, x):
         r"""
@@ -693,12 +691,11 @@ class MultivariateAtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         of the domain of `H` to integers in `\{ 1 \ldots k \}`, representing
         the set to which the element belongs.
         """
-        # BUG: SymmetricGroup(0) fails to be constructed.
         if parent(x) == self:
             return x
         H, f = x
         if Set(H.domain()) != Set(f.keys()):
-            raise ValueError(f"Keys of {f} do not match with domain of {H}")
+            raise ValueError(f"Keys of {f} do not match with domain of {H} (= {H.domain()})")
         if not Set(f.values()).issubset(Set(range(1, self._k + 1))):
             raise ValueError(f"Values of {f} must be in the range [1, {self._k}]")
         if isinstance(H, PermutationGroup_generic) and isinstance(f, dict):
@@ -711,10 +708,31 @@ class MultivariateAtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         Call ``_element_constructor_`` on ``x``.
         """
         return self._element_constructor_(x)
+
+    def __contains__(self, x):
+        r"""
+        Return if ``x`` is in ``self``.
+        """
+        if parent(x) == self:
+            return True
+        try:
+            self._element_constructor_(x)
+        except:
+            return False
+        return True
     
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
+
+        TESTS::
+
+            sage: At1 = MultivariateAtomicSpecies(1)
+            sage: At1
+            Infinite set of 1-variate atomic species
+            sage: At2 = MultivariateAtomicSpecies(2)
+            sage: At2
+            Infinite set of 2-variate atomic species
         """
         return f"Infinite set of {self._k}-variate atomic species"
     
@@ -724,6 +742,13 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
     def __init__(self, k, base_ring=ZZ):
         r"""
         Ring of `k`-variate virtual species.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition(1)
+            sage: TestSuite(P).run()
+            sage: P2 = PolynomialMolecularDecomposition(2)
+            sage: TestSuite(P2).run()
         """
         # should we pass a category to basis_keys?
         basis_keys = IndexedFreeAbelianMonoid(MultivariateAtomicSpecies(k),
@@ -743,7 +768,7 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
         """
         restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part] for gen in H.gens_small()]
         mapping = {p: f[p] for p in part}
-        return tuple([PermutationGroup(gens=restricted_gens), mapping])
+        return tuple([PermutationGroup(gens=restricted_gens, domain=part), mapping])
     
     def _element_constructor_(self, x):
         r"""
@@ -773,6 +798,22 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
     def __getitem__(self, x):
         r"""
         Calls _element_constructor_ on x.
+
+        TESTS::
+
+            sage: P = PolynomialMolecularDecomposition(1)
+            sage: At1 = MultivariateAtomicSpecies(1)
+            sage: At1((SymmetricGroup(1), {1: 1})).rename("X")
+            sage: X = (SymmetricGroup(2).young_subgroup([1, 1]), {1: 1, 2: 1})
+            sage: P[X]
+            X^2
+            sage: P2=PolynomialMolecularDecomposition(2)
+            sage: At2=MultivariateAtomicSpecies(2)
+            sage: At2((SymmetricGroup(1), {1: 1})).rename("X")
+            sage: At2((SymmetricGroup(1), {1: 2})).rename("Y")
+            sage: XY = (SymmetricGroup(2).young_subgroup([1, 1]), {1: 1, 2: 2})
+            sage: P2[XY]
+            Y*X
         """
         return self._element_constructor_(x)
 
@@ -784,11 +825,28 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: P = PolynomialMolecularDecomposition()
+            sage: P = PolynomialMolecularDecomposition(1)
             sage: P.one_basis()
-            1
+            {[]: [0]}
+            sage: P2 = PolynomialMolecularDecomposition(2)
+            sage: P2.one_basis()
+            {[]: [0, 0]}
         """
-        return self._element_constructor_(tuple([SymmetricGroup(0), dict()]))
+        return self._indices({self._atomic_basis(tuple([SymmetricGroup(0), dict()])): 1})
+
+    @cached_method
+    def an_element(self):
+        """
+        Return an element of ``self``.
+
+            sage: P=PolynomialMolecularDecomposition(1)
+            sage: P.an_element()
+            {[]: [0]}
+            sage: P2=PolynomialMolecularDecomposition(2)
+            sage: P2.an_element()
+            {[]: [0, 0]}
+        """
+        return self.one()
 
     def product_on_basis(self, H, K):
         r"""
@@ -796,14 +854,22 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: Mol = UnivariateMolecularConjugacyClasses()
-            sage: P = PolynomialMolecularDecomposition()
-            sage: L1 = SymmetricGroup(3).conjugacy_classes_subgroups()
-            sage: L2 = SymmetricGroup(2).conjugacy_classes_subgroups()
+            sage: P=PolynomialMolecularDecomposition(1)
+            sage: d2 = {e: 1 for e in range(1, 3)}
+            sage: d3 = {e: 1 for e in range(1, 4)}
+            sage: L1 = [(H, d3) for H in SymmetricGroup(3).conjugacy_classes_subgroups()]
+            sage: L2 = [(H, d2) for H in SymmetricGroup(2).conjugacy_classes_subgroups()]
             sage: matrix([[P(x) * P(y) for x in L1] for y in L2])
-            [                       {1, [()]}^5           {1, [()]}^3*{2, [(1,2)]}         {3, [(1,2,3)]}*{1, [()]}^2  {3, [(1,2,3), (2,3)]}*{1, [()]}^2]
-            [          {1, [()]}^3*{2, [(1,2)]}           {1, [()]}*{2, [(1,2)]}^2        {3, [(1,2,3)]}*{2, [(1,2)]} {3, [(1,2,3), (2,3)]}*{2, [(1,2)]}]
+            [                         {[()]: [1]}^5           {[()]: [1]}^3*{[(1,2)]: [2]}         {[(1,2,3)]: [3]}*{[()]: [1]}^2  {[(1,2,3), (2,3)]: [3]}*{[()]: [1]}^2]
+            [          {[()]: [1]}^3*{[(1,2)]: [2]}           {[()]: [1]}*{[(1,2)]: [2]}^2        {[(1,2,3)]: [3]}*{[(1,2)]: [2]} {[(1,2,3), (2,3)]: [3]}*{[(1,2)]: [2]}]
         """
+        # Hacky workaround for handling the one of the algebra :(
+        if H == self.one_basis() and K == self.one_basis():
+            return self._from_dict({self.one_basis(): 1})
+        elif H == self.one_basis():
+            return self._from_dict({K: 1})
+        elif K == self.one_basis():
+            return self._from_dict({H: 1})
         return self._from_dict({H * K: 1})
 
     def _repr_(self):
@@ -812,8 +878,11 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: P = PolynomialMolecularDecomposition(2)
+            sage: P = PolynomialMolecularDecomposition(1)
             sage: P
-            Polynomial Molecular Decomposition
+            Ring of 1-variate virtual species
+            sage: P2 = PolynomialMolecularDecomposition(2)
+            sage: P2
+            Ring of 2-variate virtual species
         """
         return f"Ring of {self._k}-variate virtual species"
