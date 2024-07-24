@@ -1608,7 +1608,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
         if not A.base_ring() in Fields():
             raise TypeError("curve not defined over a field")
 
-        d = AlgebraicScheme_subscheme_projective_field.dimension(self)
+        d = super(Curve_generic, self).dimension()
         if d != 1:
             raise ValueError(f"defining equations (={X}) define a scheme of dimension {d} != 1")
 

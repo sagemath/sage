@@ -869,7 +869,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         if not A.base_ring() in Fields():
             raise TypeError("curve not defined over a field")
 
-        d = AlgebraicScheme_subscheme_affine_field.dimension(self)
+        d = super(Curve_generic, self).dimension()
         if d != 1:
             raise ValueError("defining equations (={}) define a scheme of dimension {} != 1".format(X, d))
 
