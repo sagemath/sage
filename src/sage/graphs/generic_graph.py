@@ -1569,12 +1569,12 @@ class GenericGraph(GenericGraph_pyx):
             This routine needs the optional package igraph to be installed:
             to do so, it is enough to run ``sage -i python_igraph``. For more
             information on the Python version of igraph, see
-            http://igraph.org/python/.
+            https://python.igraph.org/.
 
         INPUT:
 
         - ``vertex_list`` -- list (default: ``None``); defines a mapping from
-          the vertices of the graph to consecutive integers in ``(0, \ldots,
+          the vertices of the graph to consecutive integers in `(0, \ldots,
           n-1)`. Otherwise, the result of :meth:`vertices` will be used
           instead. Because :meth:`vertices` only works if the vertices can be
           sorted, using ``vertex_list`` is useful when working with possibly
@@ -1585,25 +1585,25 @@ class GenericGraph(GenericGraph_pyx):
           containing in position `i` the label of the `i`-th vertex in the list
           ``vertex_list`` if it is given or in :meth:`vertices` when
           ``vertex_list == None`` (see
-          http://igraph.org/python/doc/igraph.Graph-class.html#__init__ for more
+          https://python.igraph.org/en/stable/api/igraph.Graph.html#__init__ for more
           information)
 
         - ``edge_attrs`` -- dictionary (default: ``{}``); a dictionary where the
           key is a string (the attribute name), and the value is an iterable
           containing in position `i` the label of the `i`-th edge in the list
           outputted by :meth:`edge_iterator` (see
-          http://igraph.org/python/doc/igraph.Graph-class.html#__init__ for more
+          https://python.igraph.org/en/stable/api/igraph.Graph.html#__init__ for more
           information)
 
         .. NOTE::
 
-            In ``igraph``, a graph is weighted if the edge labels have attribute
-            ``weight``. Hence, to create a weighted graph, it is enough to add
-            this attribute.
+            In ``igraph``, a graph is weighted if the edge attribute ``weight`` is
+            present. Hence, to create a weighted graph, it is enough to add this
+            attribute.
 
         .. NOTE::
 
-            Often, Sage uses its own defined types for integer/floats. These
+            Often, Sage uses its own defined types for integers/floats. These
             types may not be igraph-compatible (see example below).
 
         EXAMPLES:
@@ -1654,7 +1654,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: H.vs()['name'] == V                                          # optional - python_igraph
             True
 
-        Sometimes, Sage integer/floats are not compatible with igraph::
+        Sometimes, Sage integers/floats are not compatible with igraph::
 
             sage: G = Graph([(0, 1, 2)])
             sage: E = list(G.edge_iterator())
