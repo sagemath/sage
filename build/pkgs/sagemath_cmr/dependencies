@@ -1,0 +1,1 @@
+$(PYTHON) cmr cysignals | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython
