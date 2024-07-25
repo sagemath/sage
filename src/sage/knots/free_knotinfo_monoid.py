@@ -123,8 +123,8 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
         """
         self._max_crossing_number = None
         self._set_index_dictionary(max_crossing_number=max_crossing_number)
-        from sage.sets.set import Set
-        indices = Set(self._index_dict.keys())
+        from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+        indices = FiniteEnumeratedSet(self._index_dict.keys())
         if not prefix or prefix == 'F':
             prefix = 'KnotInfo'
         super().__init__(indices, prefix)
@@ -161,6 +161,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
 
         TESTS::
 
+            sage: from sage.features.databases import DatabaseKnotInfo
             sage: F = DatabaseKnotInfo()
             sage: F.hide()
             sage: FreeKnotInfoMonoid(7)  # indirect doctest
@@ -195,8 +196,8 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
                 if sym.is_minimal(K):
                     add_index(K, sym)
         if current_max_crossing_number > 0:
-            from sage.sets.set import Set
-            self._indices = Set(self._index_dict.keys())
+            from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+            self._indices = FiniteEnumeratedSet(self._index_dict.keys())
 
     def _repr_(self):
         """
@@ -308,6 +309,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
             (KnotInfo['K3_1'],)
         """
         from sage.knots.knotinfo import KnotInfo
+
         def hp_mirr(hp):
             v, z = hp.parent().gens()
             return hp.subs({v: ~v, z: z})
