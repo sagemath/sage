@@ -76,8 +76,19 @@ def _is_valid_lex_BFS_order(G, L):
 
         sage: G = DiGraph("I?O@??A?CCA?A??C??")
         sage: _is_valid_lex_BFS_order(G, [0, 7, 1, 2, 3, 4, 5, 8, 6, 9])
+        False
+        sage: _is_valid_lex_BFS_order(G, G.lex_BFS())
+        True
+        sage: H = G.to_undirected()
+        sage: _is_valid_lex_BFS_order(H, G.lex_BFS())
+        True
+        sage: _is_valid_lex_BFS_order(G, H.lex_BFS())
         True
     """
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
+
     cdef int n = G.order()
 
     if set(L) != set(G):
@@ -86,11 +97,9 @@ def _is_valid_lex_BFS_order(G, L):
     cdef dict L_inv = {u: i for i, u in enumerate(L)}
     cdef int pos_a, pos_b, pos_c
 
-    neighbors = G.neighbor_in_iterator if G.is_directed() else G.neighbor_iterator
-
     for pos_a in range(n - 1, -1, -1):
         a = L[pos_a]
-        for c in neighbors(a):
+        for c in G.neighbor_iterator(a):
             pos_c = L_inv[c]
             if pos_c > pos_a:
                 continue
@@ -99,7 +108,7 @@ def _is_valid_lex_BFS_order(G, L):
                 if G.has_edge(c, b):
                     continue
                 if any(L_inv[d] < pos_c and not G.has_edge(d, a)
-                       for d in neighbors(b)):
+                       for d in G.neighbor_iterator(b)):
                     # The condition is satisfied for a < b < c
                     continue
                 return False
@@ -259,6 +268,9 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         complexity for ``SparseGraph``. For ``DenseGraph``, the complexity is
         `O(n^2)`. See [HMPV2000]_ and next section for more details.
 
+    Loops and multiple edges are ignored during the computation of ``lex_BFS``
+    and directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     The ``"fast"`` algorithm is the `O(n + m)` time algorithm proposed in
@@ -315,10 +327,11 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_BFS(initial_vertex=2, algorithm="slow")
-        [2, 3, 1]
-        sage: G.lex_BFS(initial_vertex=2, algorithm="fast")
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_BFS(initial_vertex=2, algorithm="slow") in correct_anwsers
+        True
+        sage: G.lex_BFS(initial_vertex=2, algorithm="fast") in correct_anwsers
+        True
 
     For a Chordal Graph, a reversed Lex BFS is a Perfect Elimination Order::
 
@@ -408,9 +421,9 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     if tree:
         from sage.graphs.digraph import DiGraph
 
-    # Loops and multiple edges are not needed in Lex BFS
-    if G.has_loops() or G.has_multiple_edges():
-        G = G.to_simple(immutable=False)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef size_t n = G.order()
     if not n:
@@ -497,6 +510,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
+    Loops and multiple edges are ignored during the computation of ``lex_UP``
+    and directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     This algorithm maintains for each vertex left in the graph a code
@@ -538,8 +554,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_UP(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_UP(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -587,9 +604,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
 
-    # Loops and multiple edges are not needed in Lex UP
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int nV = G.order()
 
@@ -671,6 +688,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
+    Loops and multiple edges are ignored during the computation of ``lex_DFS``
+    and directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     This algorithm maintains for each vertex left in the graph a code
@@ -711,8 +731,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_DFS(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_DFS(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -760,9 +781,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
 
-    # Loops and multiple edges are not needed in Lex DFS
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int nV = G.order()
 
@@ -845,6 +866,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
+    Loops and multiple edges are ignored during the computation of ``lex_DOWN``
+    and directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     This algorithm maintains for each vertex left in the graph a code
@@ -886,8 +910,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_DOWN(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_DOWN(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -935,9 +960,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
 
-    # Loops and multiple edges are not needed in Lex DOWN
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int nV = G.order()
 

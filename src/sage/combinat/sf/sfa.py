@@ -304,12 +304,20 @@ def is_SymmetricFunction(x):
         sage: from sage.combinat.sf.sfa import is_SymmetricFunction
         sage: s = SymmetricFunctions(QQ).s()
         sage: is_SymmetricFunction(2)
+        doctest:warning...
+        DeprecationWarning: The function is_SymmetricFunction is deprecated;
+        use 'isinstance(..., SymmetricFunctionAlgebra_generic.Element)' instead.
+        See https://github.com/sagemath/sage/issues/38279 for details.
         False
         sage: is_SymmetricFunction(s(2))
         True
         sage: is_SymmetricFunction(s([2,1]))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38279,
+                "The function is_SymmetricFunction is deprecated; "
+                "use 'isinstance(..., SymmetricFunctionAlgebra_generic.Element)' instead.")
     return isinstance(x, SymmetricFunctionAlgebra_generic.Element)
 
 #####################################################################
@@ -3429,7 +3437,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         tHA = HopfAlgebrasWithBasis(R).TensorProducts()
         tensorflag = Px in tHA
-        if not is_SymmetricFunction(x):
+        if not isinstance(x, SymmetricFunctionAlgebra_generic.Element):
             if R.has_coerce_map_from(Px) or x in R:
                 x = R(x)
                 Px = R
