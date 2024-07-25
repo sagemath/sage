@@ -252,7 +252,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D._normalisation_factor_zz()  # long time
             Traceback (most recent call last):
             ...
-            NotImplementedError: Center must be at zero and basis must be trivial.
+            NotImplementedError: center must be at zero and basis must be trivial
 
             sage: Sigma = Matrix(ZZ, [[5, -2, 4], [-2, 10, -5], [4, -5, 5]])
             sage: D = DGL(ZZ^3, Sigma, [7, 2, 5])
@@ -264,19 +264,19 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D._normalisation_factor_zz()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Basis must be a square matrix.
+            NotImplementedError: basis must be a square matrix
 
             sage: D = DGL(ZZ^3, c=(1/2, 0, 0))
             sage: D._normalisation_factor_zz()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Center must be at zero and basis must be trivial.
+            NotImplementedError: center must be at zero and basis must be trivial
 
             sage: D = DGL(Matrix(3, 3, 1/2))
             sage: D._normalisation_factor_zz()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Lattice must be integral.
+            NotImplementedError: lattice must be integral
         """
         # If σ > 1:
         # We use the Fourier transform g(t) of f(x) = exp(-k^2 / 2σ^2), but
@@ -316,13 +316,13 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             return sum(self.f((vector(u) + base) * self.B) for u in coords)
 
         if self.B.nrows() != self.B.ncols():
-            raise NotImplementedError("Basis must be a square matrix.")
+            raise NotImplementedError("basis must be a square matrix")
 
         if self.B.base_ring() != ZZ:
-            raise NotImplementedError("Lattice must be integral.")
+            raise NotImplementedError("lattice must be integral")
 
         if self.is_spherical and not self._c_in_lattice_and_lattice_trivial:
-            raise NotImplementedError("Center must be at zero and basis must be trivial.")
+            raise NotImplementedError("center must be at zero and basis must be trivial")
 
         sigma = self._sigma
         prec = DiscreteGaussianDistributionLatticeSampler.compute_precision(
