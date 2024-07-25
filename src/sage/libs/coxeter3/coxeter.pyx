@@ -944,7 +944,7 @@ cdef class CoxGroupElement:
 
     def is_two_sided_descent(self, s):
         """
-        Return whether ``s`` is a two sided descent of ``self``.
+        Return whether ``s`` is a two-sided descent of ``self``.
 
         EXAMPLES::
 

@@ -13,20 +13,20 @@ Numerical computation of newforms
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.fast_arith       import prime_range
-from sage.matrix.constructor     import matrix
-from sage.misc.verbose           import verbose
-from sage.misc.cachefunc         import cached_method
-from sage.misc.prandom           import randint
+from sage.rings.fast_arith import prime_range
+from sage.matrix.constructor import matrix
+from sage.misc.verbose import verbose
+from sage.misc.cachefunc import cached_method
+from sage.misc.prandom import randint
 from sage.modular.arithgroup.all import Gamma0
-from sage.modular.modsym.all     import ModularSymbols
+from sage.modular.modsym.all import ModularSymbols
 from sage.modules.free_module_element import free_module_element as vector
-from sage.rings.complex_double   import CDF
-from sage.rings.integer          import Integer
-from sage.rings.rational_field   import QQ
-from sage.structure.richcmp      import richcmp_method, richcmp
-from sage.structure.sage_object  import SageObject
-from sage.structure.sequence     import Sequence
+from sage.rings.complex_double import CDF
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.sage_object import SageObject
+from sage.structure.sequence import Sequence
 
 # This variable controls importing the SciPy library sparingly
 scipy = None

@@ -32,12 +32,20 @@ from .free_monoid_element import FreeMonoidElement
 def is_StringMonoidElement(x):
     r"""
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38280,
+                "The function is_StringMonoidElement is deprecated; "
+                "use 'isinstance(..., StringMonoidElement)' instead.")
     return isinstance(x, StringMonoidElement)
 
 
 def is_AlphabeticStringMonoidElement(x):
     r"""
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38280,
+                "The function is_AlphabeticStringMonoidElement is deprecated; "
+                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), AlphabeticStringMonoid)' instead.")
     from .string_monoid import AlphabeticStringMonoid
     return isinstance(x, StringMonoidElement) and \
         isinstance(x.parent(), AlphabeticStringMonoid)
@@ -46,6 +54,10 @@ def is_AlphabeticStringMonoidElement(x):
 def is_BinaryStringMonoidElement(x):
     r"""
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38280,
+                "The function is_BinaryStringMonoidElement is deprecated; "
+                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), BinaryStringMonoid)' instead.")
     from .string_monoid import BinaryStringMonoid
     return isinstance(x, StringMonoidElement) and \
         isinstance(x.parent(), BinaryStringMonoid)
@@ -54,6 +66,10 @@ def is_BinaryStringMonoidElement(x):
 def is_OctalStringMonoidElement(x):
     r"""
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38280,
+                "The function is_OctalStringMonoidElement is deprecated; "
+                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), OctalStringMonoid)' instead.")
     from .string_monoid import OctalStringMonoid
     return isinstance(x, StringMonoidElement) and \
         isinstance(x.parent(), OctalStringMonoid)
@@ -62,6 +78,10 @@ def is_OctalStringMonoidElement(x):
 def is_HexadecimalStringMonoidElement(x):
     r"""
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38280,
+                "The function is_HexadecimalStringMonoidElement is deprecated; "
+                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), HexadecimalStringMonoid)' instead.")
     from .string_monoid import HexadecimalStringMonoid
     return isinstance(x, StringMonoidElement) and \
         isinstance(x.parent(), HexadecimalStringMonoid)
@@ -70,6 +90,10 @@ def is_HexadecimalStringMonoidElement(x):
 def is_Radix64StringMonoidElement(x):
     r"""
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38280,
+                "The function is_Radix64StringMonoidElement is deprecated; "
+                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), Radix64StringMonoid)' instead.")
     from .string_monoid import Radix64StringMonoid
     return isinstance(x, StringMonoidElement) and \
         isinstance(x.parent(), Radix64StringMonoid)
