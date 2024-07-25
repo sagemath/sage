@@ -194,7 +194,7 @@ class ConjugacyClassOfSubgroups(Element):
             sage: B[H2] < B[H3]
             True
         """
-        return self <= other and self != other
+        return self != other and self <= other
 
 class ConjugacyClassesOfSubgroups(Parent, ElementCache):
     def __init__(self, G):
@@ -563,6 +563,40 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(ConjugacyClassOfSubgroups)
         Return a string representation of ``self``.
         """
         return "{" + f"{self._C.degree()}, {self._C.gens_small()}" + "}"
+
+    def __le__(self, other):
+        r"""
+        Return if this element is less than or equal to ``other``.
+
+        ``self`` is less or equal to ``other`` if it is conjugate to
+        a subgroup of ``other`` in the parent group of larger degree.
+        """
+        # If selfdeg > otherdeg, return False
+        # then selfdeg <= otherdeg
+        return (isinstance(other, ConjugacyClassOfSubgroups)
+                and self._C.degree() <= other._C.degree()
+                and (self._C.degree() < other._C.degree() or
+                     (GAP_FAIL != libgap.ContainedConjugates(self.subgroup_of(),
+                                                             other._C, self._C, True))))
+
+    def __eq__(self, other):
+        r"""
+        Return if this element is equal to ``other``.
+
+        Two elements compare equal if they are conjugate subgroups in the parent group.
+
+        TESTS::
+
+            sage: G = SymmetricGroup(4)
+            sage: B = BurnsideRing(G)
+            sage: H1 = PermutationGroup([(1,2)])
+            sage: H2 = PermutationGroup([(2,3)])
+            sage: B[H1] == B[H2]
+            True
+        """
+        return (isinstance(other, ConjugacyClassOfSubgroups)
+                and self._C.degree() == other._C.degree() and
+                _is_conjugate(self.subgroup_of(), self._C, other._C))
 
 class AtomicSpecies(ConjugacyClassOfDirectlyIndecomposableSubgroups):
     def __init__(self, parent, C, multicardinality):
