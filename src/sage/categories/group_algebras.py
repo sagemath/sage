@@ -209,7 +209,7 @@ class GroupAlgebras(AlgebrasCategory):
                 - :meth:`Groups.Algebras.ElementMethods.central_form`
                 - :meth:`Monoids.Algebras.ElementMethods.is_central`
             """
-            return tuple([self.sum_of_monomials(conj) for conj  in
+            return tuple([self.sum_of_monomials(conj) for conj in
                           self.basis().keys().conjugacy_classes()])
 
         # Hopf algebra structure

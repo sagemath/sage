@@ -2324,10 +2324,10 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             if isinstance(comp, CompWithSym):
                 resu._sym = comp._sym
                 resu._antisym = comp._antisym
-        #
+
         # 2/ Tensor components set to comp:
         resu._components[comp._frame] = comp
-        #
+
         return resu
 
     def alternating_contravariant_tensor(self, degree, name=None,

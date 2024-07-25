@@ -29,8 +29,11 @@ lazy_import('sage.groups.raag', 'RightAngledArtinGroup')
 
 lazy_import('sage.groups.semimonomial_transformations.semimonomial_transformation_group', 'SemimonomialTransformationGroup')
 
-lazy_import('sage.groups.group_exp', ['GroupExp', 'GroupExp_Class', 'GroupExpElement'])
-
-lazy_import('sage.groups.group_semidirect_product', ['GroupSemidirectProduct', 'GroupSemidirectProductElement'])
+lazy_import('sage.groups.group_exp', 'GroupExp')
+lazy_import('sage.groups.group_exp', ['GroupExp_Class', 'GroupExpElement'],
+            deprecation=38238)
+lazy_import('sage.groups.group_semidirect_product', 'GroupSemidirectProduct')
+lazy_import('sage.groups.group_semidirect_product', 'GroupSemidirectProductElement',
+            deprecation=38238)
 
 del lazy_import

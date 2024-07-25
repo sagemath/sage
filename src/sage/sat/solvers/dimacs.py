@@ -82,8 +82,10 @@ class DIMACS(SatSolver):
             sage: DIMACS()
             DIMACS Solver: ''
         """
+        self._headname_file_created_during_init = False
         if filename is None:
             filename = tmp_filename()
+            self._headname_file_created_during_init = True
 
         self._headname = filename
         self._verbosity = verbosity
@@ -114,11 +116,31 @@ class DIMACS(SatSolver):
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: d = DIMACS(command="iliketurtles {input}")
             sage: del d
+
+        We check that files created during initialization are properly
+        deleted (:issue:`38328`)::
+
+            sage: from sage.sat.solvers.dimacs import DIMACS
+            sage: d = DIMACS(command="iliketurtles {input}")
+            sage: filename = d._headname
+            sage: os.path.exists(filename)
+            True
+            sage: del d
+            sage: os.path.exists(filename)
+            False
+
+        ::
+
+            sage: fn = tmp_filename()
+            sage: d = DIMACS(filename=fn)
+            sage: del d
         """
         if not self._tail.closed:
             self._tail.close()
         if os.path.exists(self._tail.name):
             os.unlink(self._tail.name)
+        if self._headname_file_created_during_init and os.path.exists(self._headname):
+            os.unlink(self._headname)
 
     def var(self, decision=None):
         """
@@ -520,7 +542,7 @@ class DIMACS(SatSolver):
             assert L[-1] == "0", "last digit of solution line must be zero (not {})".format(L[-1])
             return (None,) + tuple(int(e) > 0 for e in L[:-1])
         else:
-            raise ValueError("When parsing the output, no line starts with letter v or s")
+            raise ValueError("When parsing the output(={}), no line starts with letter v or s".format(self._output))
 
 class RSat(DIMACS):
     """
