@@ -27,6 +27,7 @@ AUTHORS:
 from sage.knots.knotinfo import SymmetryMutant
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedFreeAbelianMonoidElement
 from sage.misc.cachefunc import cached_method
+from sage.misc.fast_methods import Singleton
 
 
 class FreeKnotInfoMonoidElement(IndexedFreeAbelianMonoidElement):
@@ -88,7 +89,7 @@ class FreeKnotInfoMonoidElement(IndexedFreeAbelianMonoidElement):
         return [P._index_dict[w] for w in wl]
 
 
-class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
+class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
 
     Element = FreeKnotInfoMonoidElement
 
@@ -277,6 +278,79 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
         return None
 
     @cached_method
+    def _search_composition(self, max_cr, knot, hpoly):
+        r"""
+        Add KnotInfo items to the list of candidates that have
+        matching Homfly polynomial.
+
+        INPUT:
+
+        -  ``max_cr`` -- max number of crorssing to stop searching
+        -  ``knot`` -- instance of :class:`~sage.knots.knot.Knot`
+        -  ``hpoly`` -- Homfly polynomial to search for a component
+
+        OUTPUT:
+
+        A tuple of elements of ``self`` that match a (not necessarily prime or
+        proper) component of the given knot having the given Homfly polynomial.
+
+        EXAMPLES::
+
+            sage: from sage.knots.free_knotinfo_monoid import FreeKnotInfoMonoid
+            sage: FKIM =  FreeKnotInfoMonoid()
+            sage: FKIM.inject_variables(select=3)
+            Defining K3_1
+            Defining K3_1m
+            sage: KI = K3_1 * K3_1m
+            sage: K = KI.as_knot()
+            sage: h = K3_1.to_knotinfo()[0][0].homfly_polynomial()
+            sage: FKIM._search_composition(3, K, h)
+            (KnotInfo['K3_1'],)
+        """
+        from sage.knots.knotinfo import KnotInfo
+        def hp_mirr(hp):
+            v, z = hp.parent().gens()
+            return hp.subs({v: ~v, z: z})
+
+        former_cr = 3
+        res = []
+        for K in KnotInfo:
+            if not K.is_knot():
+                break
+            c = K.crossing_number()
+            if c < 3:
+                continue
+            if c > max_cr:
+                break
+            hp = K.homfly_polynomial()
+            hp_sym = {s: hp for s in SymmetryMutant if s.is_minimal(K)}
+            hpm = hp_mirr(hp)
+            if hp != hpm:
+                hp_sym[SymmetryMutant.mirror_image] = hpm
+                if SymmetryMutant.concordance_inverse in hp_sym.keys():
+                    hp_sym[SymmetryMutant.concordance_inverse] = hpm
+
+            for sym_mut in hp_sym.keys():
+                hps = hp_sym[sym_mut]
+                if hps.divides(hpoly):
+                    Kgen = self((K, sym_mut))
+                    h = hpoly // hps
+                    if h.is_unit():
+                        res += [Kgen]
+                    else:
+                        res_rec = self._search_composition(max_cr - c, knot, h)
+                        if res_rec:
+                            res += [Kgen * k for k in res_rec]
+            if c > former_cr and res:
+                k = self._check_elements(knot, tuple(res))
+                if k:
+                    # matching item found
+                    return tuple([k])
+                former_cr = c
+
+        return tuple(sorted(set(res)))
+
+    @cached_method
     def _from_knot(self, knot):
         """
         Create a tuple of element of this abelian monoid which possibly
@@ -295,62 +369,8 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
             sage: FKIM._from_knot(K)
             (KnotInfo['K5_1m'],)
         """
-        from sage.knots.knotinfo import KnotInfo
-
-        def search_composition(max_cr, hpoly):
-            r"""
-            Add KnotInfo items to the list of candidates that have
-            matching Homfly polynomial.
-
-            INPUT:
-
-            -  ``max_cr`` -- max number of crorssing to stop searching
-            -  ``hpoly`` -- Homfly polynomial
-            """
-            def hp_mirr(hp):
-                v, z = hp.parent().gens()
-                return hp.subs({v: ~v, z: z})
-
-            former_cr = 3
-            res = []
-            for K in KnotInfo:
-                if not K.is_knot():
-                    break
-                c = K.crossing_number()
-                if c < 3:
-                    continue
-                if c > max_cr:
-                    break
-                hp = K.homfly_polynomial()
-                hp_sym = {s: hp for s in SymmetryMutant if s.is_minimal(K)}
-                hpm = hp_mirr(hp)
-                if hp != hpm:
-                    hp_sym[SymmetryMutant.mirror_image] = hpm
-                    if SymmetryMutant.concordance_inverse in hp_sym.keys():
-                        hp_sym[SymmetryMutant.concordance_inverse] = hpm
-
-                for sym_mut in hp_sym.keys():
-                    hps = hp_sym[sym_mut]
-                    if hps.divides(hpoly):
-                        Kgen = self((K, sym_mut))
-                        h = hpoly // hps
-                        if h.is_unit():
-                            res += [Kgen]
-                        else:
-                            res_rec = search_composition(max_cr - c, h)
-                            if res_rec:
-                                res += [Kgen * k for k in res_rec]
-                if c > former_cr and res:
-                    k = self._check_elements(knot, tuple(res))
-                    if k:
-                        # matching item found
-                        return tuple([k])
-                    former_cr = c
-
-            return tuple(sorted(set(res)))
-
         hp = knot.homfly_polynomial(normalization='vz')
-        return search_composition(13, hp)
+        return self._search_composition(13, knot, hp)
 
     def from_knot(self, knot, unique=True):
         """
