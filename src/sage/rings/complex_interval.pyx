@@ -2389,6 +2389,7 @@ cdef _circle_invert_standard(
     if crosses_NE_diagonal:
         mpfr_clear(min2)
 
+
 def make_ComplexIntervalFieldElement0( fld, re, im ):
     """
     Construct a :class:`ComplexIntervalFieldElement` for pickling.
