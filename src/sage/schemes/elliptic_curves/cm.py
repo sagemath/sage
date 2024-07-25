@@ -34,12 +34,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.interfaces.magma import magma
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.number_field.number_field import is_fundamental_discriminant
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.misc.cachefunc import cached_function
@@ -121,6 +119,7 @@ def hilbert_class_polynomial(D, algorithm=None):
         return sage.libs.arb.arith.hilbert_class_polynomial(D)
 
     if algorithm == "magma":
+        from sage.interfaces.magma import magma
         magma.eval("R<x> := PolynomialRing(IntegerRing())")
         f = str(magma.eval("HilbertClassPolynomial(%s)" % D))
         return IntegerRing()['x'](f)
