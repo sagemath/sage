@@ -110,6 +110,7 @@ from sage.schemes.projective.projective_space import ProjectiveSpace, Projective
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
 from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
+from sage.misc.superseded import deprecated_function_alias
 
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
@@ -5893,9 +5894,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             base_ring = base_ring.base_ring()
         elif base_ring in FunctionFields():
             base_ring = base_ring.constant_base_field()
-        if not (base_ring in NumberFields() or base_ring == ZZ or isinstance(base_ring, sage.rings.abc.Order)
-                or (base_ring in FiniteFields())):
-            raise NotImplementedError("incompatible base field, see documentation")
+        if not base_ring is QQbar:
+            if not (base_ring in NumberFields() or base_ring == ZZ or isinstance(base_ring, sage.rings.abc.Order)
+                    or (base_ring in FiniteFields())):
+                raise NotImplementedError("incompatible base field, see documentation")
 
         #now we find the two polynomials for the resultant
         Fn = self.nth_iterate_map(n)
@@ -8888,17 +8890,19 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: F.is_newton()
             True
         """
-        if self.degree() == 1:
+        if self.degree() <= 1:
             raise NotImplementedError("degree one Newton maps are trivial")
-        if not self.base_ring() in NumberFields():
-            raise NotImplementedError("only implemented over number fields")
+        if not self.base_ring() is QQbar:
+            if not self.base_ring() in NumberFields():
+                raise NotImplementedError("only implemented over number fields")
         # check if Newton map
         sigma_1 = self.sigma_invariants(1)
         d = ZZ(self.degree())
         Newton_sigma = [d/(d-1)] + [0] * d  # almost Newton
         if sigma_1 != Newton_sigma:
             if return_conjugation:
-                return False, None
+                sage.misc.superseded.deprecation(38393, "return conjugation functionality now exists in Newton_to_poly")
+                return False
             else:
                 return False
         phi = QQbar.coerce_map_from(self.base_ring())
@@ -8929,16 +8933,17 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         z = N_aff.domain().gen(0)
         Npoly = (z - N_aff[0]).numerator()
         if return_conjugation:
+            sage.misc.superseded.deprecation(38393, "return conjugation functionality now exists in Newton_to_poly")
             if Npoly.derivative(z) == (z - N_aff[0]).denominator():
-                return True, M
+                return True
             else:
-                return False, None
+                return False
         else:
             return Npoly.derivative(z) == (z - N_aff[0]).denominator()
 
-    def Newton_to_poly(self, return_conjugation=False, check_newton=False):
+    def Newton_to_poly(self, return_conjugation=False, check_newton=True):
         r"""
-        Return a polynomial for 'self' and a conjugation to allow the right form
+        Returns a polynomial, conjugation and to allow the right map to be made
 
         A map `g` is *Newton* if it is conjugate to a map of the form
         `f(z) = z - \frac{p(z)}{p'(z)}` after dehomogenization,
@@ -8948,9 +8953,9 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         - ``return_conjugation`` -- (default: ``False``) if the map is Newton
           and ``True``, then return the conjugation that moves this map to
-          the above form
+          the above form, also returns embedding of matrix to map or vice versa
 
-        - ``check_newton`` -- (default: ``False``) adds extra check to insure
+        - ``check_newton`` -- (default: ``True``) adds extra check to insure
           'self' is a newton map
 
         OUTPUT:
@@ -8970,7 +8975,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: F = F.homogenize(1)
             sage: M = matrix(QQ,2,2,[-1,2,0,-1])
             sage: F = F.conjugate(M)
-            sage: m,p = F.Newton_to_poly(True)
+            sage: m,p = F.Newton_to_poly(return_conjugation=True)
             sage: x = p.parent().gen()
             sage: J = DynamicalSystem_affine([x - p/p.derivative(x)])
             sage: F.conjugate(m) == J.homogenize(1)
@@ -8989,11 +8994,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         ::
 
             sage: K.<x>=QuadraticField(2)
-            sage: A.<a> = PolynomialRing(QQ,1)
+            sage: A.<a> = PolynomialRing(QQ, 1)
             sage: f = a^2 + x*a - 1
             sage: F = DynamicalSystem_affine([a - f/f.derivative(a)])
-            sage: F = F.homogenize(1).conjugate(matrix(K,2,2,[-1,2,x,-1]))
-            sage: F.Newton_to_poly(True,True)
+            sage: F = F.homogenize(1).conjugate(matrix(K, 2, 2, [-1, 2, x, -1]))
+            sage: F.Newton_to_poly(return_conjugation=True)
             (
             [ -1/7*a^3 - 4/7*a^2 + 5/7*a + 8/7  4/7*a^3 + 2/7*a^2 - 13/7*a - 4/7]
             [-4/7*a^3 - 2/7*a^2 + 20/7*a + 4/7  2/7*a^3 + 1/7*a^2 - 10/7*a - 2/7],
@@ -9007,8 +9012,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: A.<x> = PolynomialRing(QQ,1)
             sage: f = x^2 + c*x - 1
             sage: F = DynamicalSystem_affine([x - f/f.derivative(x)])
-            sage: F = F.homogenize(1).conjugate(matrix(QQ,2,2,[-1,2,3,-1]))
-            sage: F.Newton_to_poly(true,true)
+            sage: F = F.homogenize(1).conjugate(matrix(QQ, 2, 2, [-1, 2, 3, -1]))
+            sage: F.Newton_to_poly(return_conjugation=true)
             (
             [       1/5*a^5 - 3/5*a^3 - 2/5*a^2 + 4/5*a -1/5*a^5 + 3/5*a^3 + 2/5*a^2 - 3/5*a - 2/5]
             [      3/5*a^5 - 9/5*a^3 - 6/5*a^2 + 12/5*a -3/5*a^5 + 9/5*a^3 + 6/5*a^2 - 9/5*a - 1/5],
@@ -9017,22 +9022,22 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         ::
 
-            sage: A.<x> = PolynomialRing(QQ,1)
-            sage: f = 2*x-1
+            sage: A.<x> = PolynomialRing(QQ, 1)
+            sage: f = 2*x - 1
             sage: F = DynamicalSystem_affine([x - f/f.derivative(x)])
             sage: F = F.homogenize(1)
-            sage: F.Newton_to_poly(true,true)
+            sage: F.Newton_to_poly(return_conjugation=true)
             Traceback (most recent call last):
             ...
             ValueError: Map is not Newton
 
         ::
 
-            sage: A.<x> = PolynomialRing(QQbar,1)
-            sage: f = x^2 + 2*x-1
+            sage: A.<x> = PolynomialRing(QQbar, 1)
+            sage: f = x^2 + 2*x-  1
             sage: F = DynamicalSystem_affine([x - f/f.derivative(x)])
-            sage: F = F.homogenize(1).conjugate(matrix(QQ,2,2,[-1,2,3,-1]))
-            sage: F.Newton_to_poly(true)
+            sage: F = F.homogenize(1).conjugate(matrix(QQ, 2, 2, [-1, 2, 3, -1]))
+            sage: F.Newton_to_poly(return_conjugation=true)
             (
             [       2/5*a -1/5*a - 1/5]
             [       6/5*a -3/5*a + 2/5],
@@ -9044,18 +9049,18 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: A.<x> = PolynomialRing(RR,1)
             sage: f = x^2 + 2*x-1
             sage: F = DynamicalSystem_affine([x - f/f.derivative(x)]).homogenize(1)
-            sage: F.Newton_to_poly(true)
+            sage: F.Newton_to_poly(return_conjugation=true)
             Traceback (most recent call last):
             ...
             NotImplementedError: only implemented over number fields
 
         ::
 
-            sage: A.<x> = PolynomialRing(QQ,1)
+            sage: A.<x> = PolynomialRing(QQ, 1)
             sage: f = x^2 + 2*x-1
             sage: F = DynamicalSystem_affine([f])
-            sage: F = F.homogenize(1).conjugate(matrix(QQ,2,2,[-1,2,3,-1]))
-            sage: F.Newton_to_poly(true,true)
+            sage: F = F.homogenize(1).conjugate(matrix(QQ, 2, 2, [-1, 2, 3, -1]))
+            sage: F.Newton_to_poly(return_conjugation=true)
             Traceback (most recent call last):
             ...
             ValueError: Map is not Newton
@@ -9065,7 +9070,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: A.<x> = PolynomialRing(QQ,1)
             sage: f = 3*x^3 + 2*x-1
             sage: F = DynamicalSystem_affine([x - f/f.derivative(x)])
-            sage: F = F.homogenize(1).conjugate(matrix(QQ,2,2,[-1,2,3,-1]))
+            sage: F = F.homogenize(1).conjugate(matrix(QQ, 2, 2, [-1, 2, 3, -1]))
             sage: F.Newton_to_poly()
             (19/348*a^5 - 17/348*a^4 + 7/348*a^3 - 587/348*a^2 + 1429/348*a - 2831/348)*x0^3 +
             (-11/116*a^5 - 1/348*a^4 - 1/116*a^3 + 989/348*a^2 - 693/116*a + 3119/348)*x0^2 +
@@ -9076,9 +9081,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         if not self.base_ring() is QQbar:
             if not self.base_ring() in NumberFields():
                 raise NotImplementedError("only implemented over number fields")
-        if check_newton:
-            V = self.is_newton()
-            if not V:
+        if check_newton and not self.is_newton():
                 raise ValueError("Map is not Newton")
         phi = QQbar.coerce_map_from(self.base_ring())
         if phi is None:
@@ -9108,8 +9111,15 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         poly = New_aff.domain().gens()[0]*New_aff[0].denominator() - New_aff[0].numerator()
         if not poly.base_ring() is QQbar:
             poly = poly.change_ring(poly.base_ring().embeddings(M.base_ring())[0])
+        phi = M.base_ring().embeddings(self.base_ring())
+        if len(phi) == 0:
+            phi = self.base_ring().embeddings(M.base_ring())[0]
+        else:
+            phi = phi[0]
+            M = matrix(self.base_ring() , 2 , [phi(M[0,0]),phi(M[0,1]),phi(M[1,0]),phi(M[1,1])])
+            poly = poly.change_ring(phi)
         if return_conjugation:
-            return (M, poly)
+            return (M, poly, phi)
         return poly
 
 class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
