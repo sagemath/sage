@@ -342,8 +342,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     .. NOTE::
 
-    Loops and multiple edges are ignored during the computation of ``lex_BFS``
-    and directed graphs are converted to undirected graphs.
+        Loops and multiple edges are ignored during the computation of
+        ``lex_BFS`` and directed graphs are converted to undirected graphs.
 
     .. SEEALSO::
 
@@ -533,8 +533,8 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     .. NOTE::
 
-    Loops and multiple edges are ignored during the computation of ``lex_UP``
-    and directed graphs are converted to undirected graphs.
+        Loops and multiple edges are ignored during the computation of
+        ``lex_UP`` and directed graphs are converted to undirected graphs.
 
     .. SEEALSO::
 
@@ -607,8 +607,8 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     .. NOTE::
 
-    Loops and multiple edges are ignored during the computation of ``lex_DFS``
-    and directed graphs are converted to undirected graphs.
+        Loops and multiple edges are ignored during the computation of
+        ``lex_DFS`` and directed graphs are converted to undirected graphs.
 
     .. SEEALSO::
 
@@ -681,8 +681,8 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     .. NOTE::
 
-    Loops and multiple edges are ignored during the computation of ``lex_DOWN``
-    and directed graphs are converted to undirected graphs.
+        Loops and multiple edges are ignored during the computation of
+        ``lex_DOWN`` and directed graphs are converted to undirected graphs.
 
     .. SEEALSO::
 
