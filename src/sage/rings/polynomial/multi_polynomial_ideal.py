@@ -1177,10 +1177,16 @@ class MPolynomialIdeal_singular_repr(
 
         If the ideal is the total ring, the dimension is `-1` by convention.
 
+        ALGORITHM:
+
+        For principal ideals, Theorem 3.5.1 of [Ger2008]_ is used. Otherwise
+        Singular is used, unless the characteristic is too large. This requires
+        computation of a Groebner basis, which can be very expensive.
+
         For polynomials over a finite field of order too large for Singular,
-        this falls back on a toy implementation of Buchberger to compute
-        the Groebner basis, then uses the algorithm described in Chapter 9,
-        Section 1 of Cox, Little, and O'Shea's "Ideals, Varieties, and Algorithms".
+        this falls back on a toy implementation of Buchberger to compute the
+        Groebner basis, then uses the algorithm described in Chapter 9, Section
+        1 of Cox, Little, and O'Shea's "Ideals, Varieties, and Algorithms".
 
         EXAMPLES::
 
@@ -1203,10 +1209,6 @@ class MPolynomialIdeal_singular_repr(
             sage: I.dimension()
             2
 
-        ALGORITHM:
-
-        Uses Singular, unless the characteristic is too large.
-
         TESTS:
 
         Check that this method works over QQbar (:issue:`25351`)::
@@ -1215,11 +1217,6 @@ class MPolynomialIdeal_singular_repr(
             sage: I = ideal(x^2-y, x^3-QQbar(-1))                                       # needs sage.rings.number_field
             sage: I.dimension()                                                         # needs sage.rings.number_field
             1
-
-        .. NOTE::
-
-            Requires computation of a Groebner basis, which can be a
-            very expensive operation.
         """
         try:
             return self.__dimension
