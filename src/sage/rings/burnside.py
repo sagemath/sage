@@ -578,6 +578,7 @@ class AtomicSpecies(ConjugacyClassOfDirectlyIndecomposableSubgroups):
             raise ValueError(f"{C} is not a subgroup of {G}")
         ConjugacyClassOfDirectlyIndecomposableSubgroups.__init__(self, parent, C)
         self._mc = multicardinality
+        self._tc = total_cardinality
 
     @cached_method
     def subgroup_of(self):
@@ -585,13 +586,13 @@ class AtomicSpecies(ConjugacyClassOfDirectlyIndecomposableSubgroups):
         Return the group which the underlying permutation group
         of this atomic species belongs to.
         """
-        return SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
+        return SymmetricGroup(self._tc).young_subgroup(self._mc)
 
     def __hash__(self):
         r"""
         Return the hash of the atomic species.
         """
-        return hash(tuple([self._C, self._mc]))
+        return hash(tuple([self._C, self._mc, self._tc]))
 
     @cached_method
     def _element_key(self):
@@ -871,6 +872,14 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
         elif K == self.one_basis():
             return self._from_dict({H: 1})
         return self._from_dict({H * K: 1})
+
+    def degree_on_basis(self, m):
+        r"""
+        Return the degree of the basis element indexed by ``m``
+        in ``self``.
+        """
+        d = m.dict()
+        return sum(at._tc * p for at, p in d.items())
 
     def _repr_(self):
         r"""
