@@ -1564,60 +1564,6 @@
 .. |codespace-fedora-40-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-40-maximal%2Fdevcontainer.json
 
-.. |image-centos-7-devtoolset-gcc_11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-system-packages
-
-.. |image-centos-7-devtoolset-gcc_11-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-configured
-
-.. |image-centos-7-devtoolset-gcc_11-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-targets-pre
-
-.. |image-centos-7-devtoolset-gcc_11-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-targets
-
-.. |image-centos-7-devtoolset-gcc_11-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-targets-optional
-
-.. |codespace-centos-7-devtoolset-gcc_11-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-7-devtoolset-gcc_11-minimal%2Fdevcontainer.json
-
-.. |image-centos-7-devtoolset-gcc_11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-system-packages
-
-.. |image-centos-7-devtoolset-gcc_11-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-configured
-
-.. |image-centos-7-devtoolset-gcc_11-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-targets-pre
-
-.. |image-centos-7-devtoolset-gcc_11-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-targets
-
-.. |image-centos-7-devtoolset-gcc_11-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-targets-optional
-
-.. |codespace-centos-7-devtoolset-gcc_11-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-7-devtoolset-gcc_11-standard%2Fdevcontainer.json
-
-.. |image-centos-7-devtoolset-gcc_11-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-with-system-packages
-
-.. |image-centos-7-devtoolset-gcc_11-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-configured
-
-.. |image-centos-7-devtoolset-gcc_11-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-with-targets-pre
-
-.. |image-centos-7-devtoolset-gcc_11-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-with-targets
-
-.. |image-centos-7-devtoolset-gcc_11-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-maximal-with-targets-optional
-
-.. |codespace-centos-7-devtoolset-gcc_11-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-7-devtoolset-gcc_11-maximal%2Fdevcontainer.json
-
 .. |image-centos-stream-9-python3.9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-system-packages
 
@@ -2646,17 +2592,6 @@
      - |codespace-fedora-40-standard|
    * -    ‑*maximal*
      - |image-fedora-40-maximal-with-system-packages| |image-fedora-40-maximal-with-targets-pre|
-     -
-   * - **centos**-7-devtoolset-gcc_11 
-       
-          ‑*minimal*
-     - |image-centos-7-devtoolset-gcc_11-minimal-with-system-packages| |image-centos-7-devtoolset-gcc_11-minimal-with-targets-pre| |image-centos-7-devtoolset-gcc_11-minimal-with-targets| |image-centos-7-devtoolset-gcc_11-minimal-with-targets-optional|
-     - |codespace-centos-7-devtoolset-gcc_11-minimal|
-   * -    ‑*standard*
-     - |image-centos-7-devtoolset-gcc_11-standard-with-system-packages| |image-centos-7-devtoolset-gcc_11-standard-with-targets-pre| |image-centos-7-devtoolset-gcc_11-standard-with-targets| |image-centos-7-devtoolset-gcc_11-standard-with-targets-optional|
-     - |codespace-centos-7-devtoolset-gcc_11-standard|
-   * -    ‑*maximal*
-     - |image-centos-7-devtoolset-gcc_11-maximal-with-system-packages| |image-centos-7-devtoolset-gcc_11-maximal-with-targets-pre|
      -
    * - **centos**-stream-9-python3.9 
        

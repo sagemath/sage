@@ -29,6 +29,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 
 def is_Scheme(x):

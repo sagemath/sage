@@ -84,8 +84,10 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
         r"""
         TESTS::
 
+            sage: cat = CommutativeAlgebras(QQ).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
-            ....:                                   Matrix([[0, 1], [0, 0]])])
+            ....:                                   Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.maximal_ideal()                                                 # needs sage.libs.pari
             sage: q = A.quotient_map(I)                                                 # needs sage.libs.pari
             sage: q._repr_()                                                            # needs sage.libs.pari
@@ -98,8 +100,10 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
         """
         TESTS::
 
+            sage: cat = CommutativeAlgebras(QQ).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
-            ....:                                   Matrix([[0, 1], [0, 0]])])
+            ....:                                   Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.maximal_ideal()                                                 # needs sage.libs.pari
             sage: q = A.quotient_map(I)                                                 # needs sage.libs.pari
             sage: q(0) == 0 and q(1) == 1                                               # needs sage.libs.pari
@@ -180,8 +184,10 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
         EXAMPLES::
 
+            sage: cat = CommutativeAlgebras(QQ).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
-            ....:                                   Matrix([[0, 1], [0, 0]])])
+            ....:                                   Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.maximal_ideal()                                                 # needs sage.libs.pari
             sage: q = A.quotient_map(I)                                                 # needs sage.libs.pari
             sage: B = q.codomain()                                                      # needs sage.libs.pari

@@ -26,25 +26,29 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from copy import copy
+
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
-_NumberFields = NumberFields()
-from sage.rings.integer_ring import ZZ
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.rings.abc import Order
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import Order as NumberFieldOrder
-from sage.rings.qqbar import number_field_elements_from_algebraics
+from sage.rings.integer_ring import ZZ
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.arith.misc import GCD as gcd
-from sage.arith.functions import lcm
-from sage.misc.misc_c import prod
-
-from copy import copy
+from sage.rings.ring import CommutativeRing
 from sage.schemes.generic.morphism import (SchemeMorphism,
                                            SchemeMorphism_point)
 from sage.structure.element import AdditiveGroupElement
-from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
+from sage.structure.sequence import Sequence
+
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
+
+_NumberFields = NumberFields()
 
 # --------------------
 # Projective varieties
@@ -159,7 +163,6 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         SchemeMorphism.__init__(self, X)
 
         if check:
-            from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
             if isinstance(v, SchemeMorphism):
                 v = list(v)
@@ -746,7 +749,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         if prec is None:
             prec = 53
         K = self.codomain().base_ring()
-        if K in _NumberFields or isinstance(K, NumberFieldOrder) or K == ZZ:
+        if K in _NumberFields or K is ZZ or isinstance(K, Order):
             P = self
         else:
             try:
@@ -755,7 +758,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
                 raise TypeError("must be defined over an algebraic field")
             else:
                 K = P.codomain().base_ring()
-        if isinstance(K, NumberFieldOrder):
+        if isinstance(K, Order):
             K = K.number_field()
         # first get rid of the denominators
         denom = lcm([xi.denominator() for xi in P])
@@ -1135,7 +1138,6 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         self._normalized = False
 
         if check:
-            from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
             if isinstance(v, SchemeMorphism):
                 v = list(v)

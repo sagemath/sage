@@ -421,6 +421,7 @@ cdef make_children(Node D, tuple w):
      #    It may be a good idea to form the product of some of the most
      #    frequent variables. But this isn't implemented yet. TODO?
 
+
 def first_hilbert_series(I, grading=None, return_grading=False):
     """
     Return the first Hilbert series of the given monomial ideal.
@@ -549,6 +550,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
                 fmpz_poly_mul(AN.RMult, AN.RMult, fhs._poly)
                 fmpz_poly_add(fhs._poly, AN.LMult, AN.RMult)
                 got_result = True
+
 
 def hilbert_poincare_series(I, grading=None):
     r"""

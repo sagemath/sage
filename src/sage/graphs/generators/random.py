@@ -825,7 +825,7 @@ def RandomHolmeKim(n, m, p, seed=None):
 
 def RandomIntervalGraph(n, seed=None):
     r"""
-    Returns a random interval graph.
+    Return a random interval graph.
 
     An interval graph is built from a list `(a_i,b_i)_{1\leq i \leq n}`
     of intervals : to each interval of the list is associated one
@@ -845,6 +845,11 @@ def RandomIntervalGraph(n, seed=None):
         used to create the graph are saved with the graph and can
         be recovered using ``get_vertex()`` or ``get_vertices()``.
 
+    .. SEEALSO::
+
+        - :meth:`sage.graphs.generators.intersection.IntervalGraph`
+        - :meth:`sage.graphs.generators.random.RandomProperIntervalGraph`
+
     INPUT:
 
     - ``n`` -- integer; the number of vertices in the random graph
@@ -863,11 +868,200 @@ def RandomIntervalGraph(n, seed=None):
     """
     if seed is not None:
         set_random_seed(seed)
-    from sage.misc.prandom import random
     from sage.graphs.generators.intersection import IntervalGraph
 
     intervals = [tuple(sorted((random(), random()))) for i in range(n)]
     return IntervalGraph(intervals, True)
+
+
+def RandomProperIntervalGraph(n, seed=None):
+    r"""
+    Return a random proper interval graph.
+
+    An interval graph is built from a list `(a_i,b_i)_{1\leq i \leq n}` of
+    intervals : to each interval of the list is associated one vertex, two
+    vertices being adjacent if the two corresponding (closed) intervals
+    intersect. An interval graph is proper if no interval of the list properly
+    contains another interval.
+    Observe that proper interval graphs coincide with unit interval graphs.
+    See the :wikipedia:`Interval_graph` for more details.
+
+    This method implements the random proper interval graph generator proposed
+    in [SYKU2010]_ which outputs graphs with uniform probability. The time
+    complexity of this generator is in `O(n^3)`.
+
+    .. NOTE::
+
+        The vertices are named 0, 1, 2, and so on. The intervals
+        used to create the graph are saved with the graph and can
+        be recovered using ``get_vertex()`` or ``get_vertices()``.
+
+    .. SEEALSO::
+
+        - :meth:`sage.graphs.generators.intersection.IntervalGraph`
+        - :meth:`sage.graphs.generators.random.RandomIntervalGraph`
+
+    INPUT:
+
+    - ``n`` -- positive integer; the number of vertices of the graph
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.random import RandomProperIntervalGraph
+        sage: G = RandomProperIntervalGraph(10)
+        sage: G.is_interval()
+        True
+
+    TESTS::
+
+        sage: from sage.graphs.generators.random import RandomProperIntervalGraph
+        sage: RandomProperIntervalGraph(0)
+        Graph on 0 vertices
+        sage: RandomProperIntervalGraph(1)
+        Graph on 1 vertex
+        sage: RandomProperIntervalGraph(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be >= 0
+    """
+    if seed is not None:
+        set_random_seed(seed)
+    if n < 0:
+        raise ValueError('parameter n must be >= 0')
+    if not n:
+        return Graph()
+
+    from sage.graphs.generators.intersection import IntervalGraph
+
+    if n == 1:
+        return IntervalGraph([[0, 1]])
+
+    from sage.combinat.combinat import catalan_number
+    from sage.functions.other import binomial
+
+    # let np = n' = n - 1
+    np = n - 1
+
+    # Choose case 1 with probability C(n') / (C(n') + binomial(n', n' // 2))
+    cnp = catalan_number(np)
+    if random() < cnp / (cnp + binomial(np, np // 2)):
+        # Case 1: Generate a balanced nonnegative string (that can be
+        # reversible) of length 2n' as follows. We generate the sequence of '['
+        # and ']' from left to right. Assume we have already chosen k symbols
+        # x_1x_2...x_k, with k < 2n'. The next symbol x_{k+1} is '[' with
+        # probability (h_x(k) + 2) (r - h_x(k) + 1) / (2 (r + 1) (h_x(k) + 1))
+        # where r = 2n' - k - 1 and
+        # h_x(k) = 0 if k == 0, h_x(k - 1) + 1 if x_i == 0 else h_x(k - 1) - 1.
+        #
+        # Since the i-th interval starts at the i-th symbol [ and ends at the
+        # i-th symbol ], we directly build the intervals
+        intervals = [[0, 2*n] for _ in range(n)]
+        L = 1  # next starting interval
+        R = 0  # next ending interval
+        hx = [0]
+        r = 2 * np - 1
+        for k in range(2 * np):
+            # Choose symbol x_{k+1}
+            if random() < ((hx[k] + 2) * (r - hx[k] + 1)) / (2 * (r + 1) * (hx[k] + 1)):
+                # We have choosen symbol [, so we start an interval
+                hx.append(hx[k] + 1)
+                intervals[L][0] = k + 1
+                L += 1
+            else:
+                # We have choosen symbol ], so we end an interval
+                hx.append(hx[k] - 1)
+                intervals[R][1] = k + 1
+                R += 1
+            r -= 1
+        # Add the last symbol, ], to get a sequence of length 2*n
+        intervals[R][1] = k + 2
+
+        # Finally return the interval graph
+        return IntervalGraph(intervals)
+
+    # Otherwise, generate a balanced nonnegative reversible string of length
+    # 2n'. This case happens with small probability and is way more complex.
+    # The string is of the form x_1x_2...x_ny_n..y_2y_1, where y_i is ] if x_i
+    # is [, and [ otherwise.
+
+    from sage.misc.cachefunc import cached_function
+
+    @cached_function
+    def compute_C(n, h):
+        """
+        Return C(n, h) as defined below.
+
+        Recall that the Catalan number is C(n) = binomial(2n, n) / (n + 1)
+        and let C(n, h) = 0 if h > n. The following equations hold for each
+        integers i and k with 0 <= i <= k.
+
+        1. C(2k, 2i + 1) = 0, C(2k + 1, 2i) = 0,
+        2. C(2k, 0) = C(k), C(k, k) = 1, and
+        3. C(k, i) = C(k - 1, i - 1) + C(k - 1, i + 1).
+        """
+        if h > n:
+            return 0
+        if n % 2 != h % 2:
+            # C(2k, 2i + 1) = 0 and C(2k + 1, 2i) = 0
+            # i.e., if n and h have different parity
+            return 0
+        if n == h:
+            return 1
+        if not h and not n % 2:
+            # C(2k, 0) = C(k)
+            return catalan_number(n // 2)
+        # Otherwise, C(k, i) = C(k - 1, i - 1) + C(k - 1, i + 1)
+        return compute_C(n - 1, h - 1) + compute_C(n - 1, h + 1)
+
+    # We first fill an array hx of length n, backward, and then use it to choose
+    # the symbols x_1x_2...x_n (and so symbols y_n...y_2y_1).
+    hx = [0] * n
+    hx[1] = 1
+    # Set hx[np] = h with probability C(np, h) / binomial(np, np // 2)
+    number = randint(0, binomial(np, np // 2))
+    total = 0
+    for h in range(np + 1):
+        total += compute_C(np, h)
+        if number < total:
+            break
+    hx[np] = h
+
+    x = [']']
+    y = ['[']
+    for i in range(np - 1, 0, -1):
+        # Choose symbol x_i
+        if random() < (hx[i + 1] + 2) * (i - hx[i + 1] + 1) / (2 * (i + 1) * (hx[i + 1] + 1)):
+            hx[i] = hx[i + 1] + 1
+            x.append(']')
+            y.append('[')
+        else:
+            hx[i] = hx[i + 1] - 1
+            x.append('[')
+            y.append(']')
+    x.append('[')
+    x.reverse()
+    y.append(']')
+    x.extend(y)
+
+    # We now turn the sequence of symbols to proper intervals.
+    # The i-th intervals starts from the index of the i-th symbol [ in
+    # symbols and ends at the position of the i-th symbol ].
+    intervals = [[0, 2 * n] for _ in range(n)]
+    L = 0  # next starting interval
+    R = 0  # next ending interval
+    for pos, symbol in enumerate(x):
+        if symbol == '[':
+            intervals[L][0] = pos
+            L += 1
+        else:
+            intervals[R][1] = pos
+            R += 1
+
+    # We finally return the resulting interval graph
+    return IntervalGraph(intervals)
 
 
 # Random Chordal Graphs
