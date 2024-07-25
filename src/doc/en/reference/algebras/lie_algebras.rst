@@ -7,6 +7,8 @@ Lie Algebras
    sage/algebras/lie_algebras/abelian
    sage/algebras/lie_algebras/affine_lie_algebra
    sage/algebras/lie_algebras/bch
+   sage/algebras/lie_algebras/bgg_resolution
+   sage/algebras/lie_algebras/bgg_dual_module
    sage/algebras/lie_algebras/center_uea
    sage/algebras/lie_algebras/classical_lie_algebra
    sage/algebras/lie_algebras/examples

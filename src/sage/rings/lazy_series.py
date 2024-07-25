@@ -6981,9 +6981,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         """
         if len(args) != self.parent()._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
-        from sage.combinat.sf.sfa import is_SymmetricFunction
-        if not all(isinstance(g, LazySymmetricFunction)
-                   or is_SymmetricFunction(g)
+        from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic
+        if not all(isinstance(g, (LazySymmetricFunction, SymmetricFunctionAlgebra_generic.Element))
                    or not g for g in args):
             raise ValueError("all arguments must be (possibly lazy) symmetric functions")
 
@@ -7200,9 +7199,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         """
         if len(args) != self.parent()._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
-        from sage.combinat.sf.sfa import is_SymmetricFunction
-        if not all(isinstance(g, LazySymmetricFunction)
-                   or is_SymmetricFunction(g)
+        from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic
+        if not all(isinstance(g, (LazySymmetricFunction, SymmetricFunctionAlgebra_generic.Element))
                    or not g for g in args):
             raise ValueError("all arguments must be (possibly lazy) symmetric functions")
 

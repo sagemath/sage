@@ -8159,9 +8159,9 @@ class Graph(GenericGraph):
         Singleton Vertex::
 
             sage: Graph(1).modular_decomposition()
-            (PRIME, [0])
+            0
             sage: Graph(1).modular_decomposition(style='tree')
-            PRIME[0[]]
+            0[]
 
         Vertices may be arbitrary --- check that :issue:`24898` is fixed::
 
@@ -8209,8 +8209,7 @@ class Graph(GenericGraph):
         if not self.order():
             D = None
         elif self.order() == 1:
-            D = create_prime_node()
-            D.children.append(create_normal_node(self.vertices(sort=False)[0]))
+            D = create_normal_node(next(self.vertex_iterator()))
         else:
             D = habib_maurer_algorithm(self)
 
@@ -8707,13 +8706,13 @@ class Graph(GenericGraph):
 
         Petersen's 2-factor decomposition theorem asserts that any `2r`-regular
         graph `G` can be decomposed into 2-factors.  Equivalently, it means that
-        the edges of any `2r`-regular graphs can be partitionned in `r` sets
+        the edges of any `2r`-regular graphs can be partitioned in `r` sets
         `C_1,\dots,C_r` such that for all `i`, the set `C_i` is a disjoint union
         of cycles (a 2-regular graph).
 
         As any graph of maximal degree `\Delta` can be completed into a regular
         graph of degree `2\lceil\frac\Delta 2\rceil`, this result also means
-        that the edges of any graph of degree `\Delta` can be partitionned in
+        that the edges of any graph of degree `\Delta` can be partitioned in
         `r=2\lceil\frac\Delta 2\rceil` sets `C_1,\dots,C_r` such that for all
         `i`, the set `C_i` is a graph of maximal degree `2` (a disjoint union of
         paths and cycles).
