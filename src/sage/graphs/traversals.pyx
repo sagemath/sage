@@ -76,6 +76,7 @@ from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
 from sage.graphs.graph_decompositions.slice_decomposition cimport \
         extended_lex_BFS
 
+
 def _lex_order_common(G, algo, reverse, tree, initial_vertex):
     r"""
     Perform a lexicographic search (LexBFS, LexUP, LexDFS or LexDOWN) on the
