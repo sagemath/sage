@@ -2170,9 +2170,20 @@ class MatrixSpace(UniqueRepresentation, Parent):
             False
             sage: MM.zero().is_mutable()
             False
+
+        Check that :issue:`38221` is fixed::
+
+            sage: # needs sage.groups
+            sage: G = CyclicPermutationGroup(7)
+            sage: R = GF(2)
+            sage: A = G.algebra(R)
+            sage: S = MatrixSpace(A, 3, 3)
+            sage: S.zero_matrix()
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
         """
-        zero = self.base_ring().zero()
-        res = self.element_class(self, zero, False, False)
+        res = self.element_class(self, None, False, False)
         res.set_immutable()
         return res
 

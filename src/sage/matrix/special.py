@@ -1000,11 +1000,23 @@ def zero_matrix(ring, nrows=None, ncols=None, sparse=False):
         [0 0 0 0 0]
         [0 0 0 0 0]
 
+    TESTS:
+
+    Check that :issue:`38221` is fixed::
+
+        sage: # needs sage.groups
+        sage: G = CyclicPermutationGroup(7)
+        sage: R = GF(2)
+        sage: A = G.algebra(R)
+        sage: zero_matrix(A, 3, 3)
+        [0 0 0]
+        [0 0 0]
+        [0 0 0]
     """
     if isinstance(ring, (Integer, int)):
         nrows, ncols = (ring, nrows)
         ring = ZZ
-    return matrix_space.MatrixSpace(ring, nrows, ncols, sparse)(0)
+    return matrix_space.MatrixSpace(ring, nrows, ncols, sparse).matrix(None)
 
 
 @matrix_method

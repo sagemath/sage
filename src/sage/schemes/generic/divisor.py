@@ -111,10 +111,18 @@ def is_Divisor(x):
         sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
         sage: C = Curve(y^2 - x^9 - x)
         sage: is_Divisor(C.divisor([]))
+        doctest:warning...
+        DeprecationWarning: The function is_Divisor is deprecated;
+        use 'isinstance(..., Divisor_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         True
         sage: is_Divisor("Ceci n'est pas un diviseur")
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_Divisor is deprecated; "
+                "use 'isinstance(..., Divisor_generic)' instead.")
     return isinstance(x, Divisor_generic)
 
 

@@ -96,7 +96,7 @@ With power series the behavior is the same.
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
-from sage.rings.infinity import infinity, is_Infinite
+from sage.rings.infinity import infinity, InfinityElement
 
 from sage.rings.rational_field import QQ
 
@@ -800,7 +800,6 @@ cdef class PowerSeries(AlgebraElement):
                 return bigoh
             s += " + %s"%bigoh
         return s.lstrip(" ")
-
 
     def truncate(self, prec=infinity):
         """
@@ -1908,7 +1907,7 @@ cdef class PowerSeries(AlgebraElement):
         assert(val >= 1)
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = R.one()
@@ -1994,7 +1993,7 @@ cdef class PowerSeries(AlgebraElement):
         x = self
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = x
@@ -2147,7 +2146,7 @@ cdef class PowerSeries(AlgebraElement):
         x = self
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = x
@@ -2235,7 +2234,7 @@ cdef class PowerSeries(AlgebraElement):
         assert(val >= 1)
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = R.one()
@@ -2731,7 +2730,6 @@ cdef class PowerSeries(AlgebraElement):
             1 - 12*x^2 + O(x^4)
         """
         return multi_derivative(self, args)
-
 
     def __setitem__(self, n, value):
         """

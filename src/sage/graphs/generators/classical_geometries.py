@@ -1315,7 +1315,7 @@ def CossidentePenttilaGraph(q):
 
     from sage.libs.gap.libgap import libgap
     adj_list = libgap.function_factory("""function(q)
-        local z, e, so, G, nu, G1, G0, B, T, s, O1, O2, x;
+        local z, e, so, G, nu, G1, G0, B, T, s, O1, O2, x, sqo;
         LoadPackage("grape");
         G0:=SO(3,q^2);
         so:=GeneratorsOfGroup(G0);

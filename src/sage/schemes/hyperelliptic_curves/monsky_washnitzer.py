@@ -45,33 +45,29 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import integer_ceil as ceil
 from sage.arith.misc import binomial
+from sage.arith.misc import integer_ceil as ceil
 from sage.categories.algebras import Algebras
-from sage.functions.log import log
+from sage.categories.integral_domains import IntegralDomains
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import newton_method_sizes
 from sage.misc.profiler import Profiler
 from sage.misc.repr import repr_lincomb
-from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
-from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement, vector
 from sage.modules.module import Module
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.rational_field import RationalField as Rationals
 from sage.rings.rational import Rational
-from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
-from sage.categories.integral_domains import IntegralDomains
-from sage.rings.infinity import Infinity
-from sage.rings.padics.factory import Qp as pAdicField
-from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational_field import QQ, RationalField as Rationals
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
@@ -81,7 +77,9 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
+lazy_import('sage.functions.log', 'log')
 lazy_import('sage.rings.lazy_series_ring', 'LazyLaurentSeriesRing')
+lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
 
 
 class SpecialCubicQuotientRingElement(ModuleElement):
@@ -3489,7 +3487,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: E = EllipticCurve(K,[-31/3,-2501/108]) #11a
             sage: P = E(K(14/3), K(11/2))
             sage: w = E.invariant_differential()
-            sage: w.coleman_integral(P,2*P)
+            sage: w.coleman_integral(P, 2*P)
             O(5^6)
 
             sage: Q = E([3,58332])
