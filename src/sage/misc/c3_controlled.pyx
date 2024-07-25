@@ -155,7 +155,7 @@ class as its bases. However, this would have several drawbacks:
   point of truth for calculating the bases of each class.
 
 - It increases the complexity of the calculation of the MRO with
-  ``C3``. For example, for a linear hierachy of classes, the
+  ``C3``. For example, for a linear hierarchy of classes, the
   complexity goes from `O(n^2)` to `O(n^3)` which is not acceptable.
 
 - It increases the complexity of inspecting the classes. For example,
@@ -990,7 +990,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     EXAMPLES:
 
     See the introduction of this module :mod:`sage.misc.c3_controlled`
-    for many examples. Here we consider a large example, originaly
+    for many examples. Here we consider a large example, originally
     taken from the hierarchy of categories above
     :class:`HopfAlgebrasWithBasis`::
 

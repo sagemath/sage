@@ -14,8 +14,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.projective.projective_space import ProjectiveSpace
-
 from .hyperelliptic_generic import HyperellipticCurve_generic
 from .hyperelliptic_finite_field import HyperellipticCurve_finite_field
 from .hyperelliptic_rational_field import HyperellipticCurve_rational_field
@@ -27,6 +25,7 @@ import sage.rings.abc
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import RationalField
+from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.dynamic_class import dynamic_class
 
 

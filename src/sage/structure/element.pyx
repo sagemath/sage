@@ -2841,8 +2841,9 @@ cdef class RingElement(ModuleElement):
 
     def multiplicative_order(self):
         r"""
-        Return the multiplicative order of ``self``, if ``self`` is a unit,
-        or raise :exc:`ArithmeticError` otherwise.
+        Return the multiplicative order of ``self``, if ``self`` is a unit.
+
+        This raises an :class:`ArithmeticError` otherwise.
         """
         if not self.is_unit():
             raise ArithmeticError("self (=%s) must be a unit to have a multiplicative order.")

@@ -12,22 +12,22 @@ Hyperelliptic curves over a `p`-adic field
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.padics.factory import Qp as pAdicField
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.rings.real_mpfr import RR
-from sage.rings.rational_field import RationalField
-from sage.rings.infinity import Infinity
-from sage.functions.log import log
-from sage.modules.free_module import VectorSpace
 from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
-
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.rings.rational_field import RationalField
+from sage.rings.real_mpfr import RR
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
+
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.rings.padics.factory", "Qp", as_="pAdicField")
 
 from . import hyperelliptic_generic
 

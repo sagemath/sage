@@ -40,6 +40,7 @@ try:
 except ImportError:
     pass
 
+
 def cyclotomic_coeffs(nn, sparse=None):
     """
     Return the coefficients of the `n`-th cyclotomic polynomial

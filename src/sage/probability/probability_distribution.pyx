@@ -140,6 +140,9 @@ cdef class ProbabilityDistribution:
              1.8,
              2.0]
         """
+        import numpy as np
+        if int(np.version.short_version[0]) > 1:
+            np.set_printoptions(legacy="1.25")
         import pylab
         ell = [float(self.get_random_element()) for _ in range(num_samples)]
         S = pylab.hist(ell, bins, density=True)

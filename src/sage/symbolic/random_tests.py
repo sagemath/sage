@@ -354,7 +354,7 @@ def assert_strict_weak_order(a, b, c, cmp_func):
 
     OUTPUT:
 
-    Does not return anything. Raises a :exc:`ValueError` if ``cmp_func``
+    Nothing. Raises a :exc:`ValueError` if ``cmp_func``
     is not a strict weak order on the three given elements.
 
     REFERENCES:

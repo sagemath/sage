@@ -27,6 +27,9 @@ Development supported by NSF award No. 0702939.
 import numpy as np
 cimport numpy as np
 
+if int(np.version.short_version[0]) > 1:
+    np.set_printoptions(legacy="1.25")
+
 from math import pi
 cdef double TWOPI = 2*pi
 

@@ -90,7 +90,7 @@ built is the following (see [ST1994]_):
 
   - `G` is a comparability graph
   - `\forall uv\in G, vu\not\in C^G_{uv}`
-  - The edges of `G` can be partitionned into `B_1,...,B_k` where `B_i` is the
+  - The edges of `G` can be partitioned into `B_1,...,B_k` where `B_i` is the
     equivalence class of some oriented edge in `G-B_1-\dots-B_{i-1}`
 
 Hence, ensuring that a graph is a comparability graph can be done by checking

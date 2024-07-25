@@ -986,7 +986,6 @@ cdef class TateAlgebraTerm(MonoidElement):
             raise ValueError("the division is not exact")
         return (<TateAlgebraTerm>self)._floordiv_c(<TateAlgebraTerm>other)
 
-
     cdef TateAlgebraTerm _floordiv_c(self, TateAlgebraTerm other):
         r"""
         Return the result of the exact division of this term by ``other``.
@@ -1622,7 +1621,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         """
         return self.nth_root(2, prec)
 
-
     def sqrt(self, prec=None):
         r"""
         Return the square root of this series.
@@ -1661,7 +1659,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             ValueError: not in the domain of convergence
         """
         return self.nth_root(2, prec)
-
 
     def nth_root(self, n=2, prec=None):
         r"""
@@ -1746,7 +1743,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             root = root.lift_to_precision(min(aprec, curprec))
             root += scalar * root * (1 - a * root**n)
         return root
-
 
     cpdef _richcmp_(self, other, int op):
         r"""
@@ -2737,7 +2733,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             series += nfactorial
         return series / nfactorial
 
-
     def leading_term(self, secure=False):
         r"""
         Return the leading term of this series.
@@ -2819,7 +2814,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             raise PrecisionError("not enough precision to determine the leading term")
         else:
             raise ValueError("zero has no leading term")
-
 
     def leading_coefficient(self, secure=False):
         """
@@ -2962,10 +2956,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         if self.valuation() != 0:
             return False
         c = self.leading_coefficient()
-        if c != 0 and c.unit_part() == 1:
-            return True
-        return False
-
+        return c != 0 and c.unit_part() == 1
 
     def weierstrass_degree(self):
         r"""

@@ -600,7 +600,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
 cdef class FiniteSetEndoMap_N(FiniteSetMap_MN):
     """
-    Maps from ``range(n)`` to itself.
+    Map from ``range(n)`` to itself.
 
     .. SEEALSO:: :class:`FiniteSetMap_MN` for assumptions on the parent
 
@@ -653,7 +653,7 @@ cdef class FiniteSetEndoMap_N(FiniteSetMap_MN):
 
 cdef class FiniteSetEndoMap_Set(FiniteSetMap_Set):
     """
-    Maps from a set to itself.
+    Map from a set to itself.
 
     .. SEEALSO:: :class:`FiniteSetMap_Set` for assumptions on the parent
 

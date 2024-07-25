@@ -332,14 +332,14 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         EXAMPLES::
 
             sage: print(latex(AffineSpace(1, ZZ, 'x')))
-            \mathbf{A}_{\Bold{Z}}^1
+            \mathbf{A}_{\Bold{Z}}^{1}
 
         TESTS::
 
-            sage: AffineSpace(3, Zp(5), 'y')._latex_()                                  # needs sage.rings.padics
-            '\\mathbf{A}_{\\Bold{Z}_{5}}^3'
+            sage: AffineSpace(11, Zp(5), 'y')._latex_()                                 # needs sage.rings.padics
+            '\\mathbf{A}_{\\Bold{Z}_{5}}^{11}'
         """
-        return "\\mathbf{A}_{%s}^%s" % (latex(self.base_ring()), self.dimension_relative())
+        return "\\mathbf{A}_{%s}^{%s}" % (latex(self.base_ring()), self.dimension_relative())
 
     def _morphism(self, *args, **kwds):
         """

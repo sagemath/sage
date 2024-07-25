@@ -13,7 +13,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.sets_cat import Sets
 from sage.categories.cartesian_product import CartesianProductsCategory
-from sage.categories.isomorphic_objects   import IsomorphicObjectsCategory
+from sage.categories.isomorphic_objects import IsomorphicObjectsCategory
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.cpython.getattr import raw_getattr

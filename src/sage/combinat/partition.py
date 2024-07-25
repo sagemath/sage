@@ -4751,7 +4751,7 @@ class Partition(CombinatorialElement):
 
     def to_core(self, k):
         r"""
-        Maps the `k`-bounded partition ``self`` to its corresponding `k+1`-core.
+        Map the `k`-bounded partition ``self`` to its corresponding `k+1`-core.
 
         See also :meth:`k_skew`.
 
@@ -4770,7 +4770,7 @@ class Partition(CombinatorialElement):
 
     def from_kbounded_to_reduced_word(self, k):
         r"""
-        Maps a `k`-bounded partition to a reduced word for an element in
+        Map a `k`-bounded partition to a reduced word for an element in
         the affine permutation group.
 
         This uses the fact that there is a bijection between `k`-bounded
@@ -4806,7 +4806,7 @@ class Partition(CombinatorialElement):
 
     def from_kbounded_to_grassmannian(self, k):
         r"""
-        Maps a `k`-bounded partition to a Grassmannian element in
+        Map a `k`-bounded partition to a Grassmannian element in
         the affine Weyl group of type `A_k^{(1)}`.
 
         For details, see the documentation of the method

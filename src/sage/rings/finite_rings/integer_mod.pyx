@@ -637,7 +637,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         else:
             return sib(self.parent())(v)
 
-    def log(self, b=None):
+    def log(self, b=None, order=None, check=False):
         r"""
         Compute the discrete logarithm of this element to base `b`,
         that is,
@@ -651,6 +651,14 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         - ``b`` -- a unit modulo `n`. If ``b`` is not given,
           ``R.multiplicative_generator()`` is used, where
           ``R`` is the parent of ``self``.
+
+        -  ``order`` -- integer (unused), the order of ``b``.
+          This argument is normally unused, only there for
+          coherence of apis with finite field elements.
+
+        - ``check`` -- boolean (default: ``False``); if set,
+          test whether the given ``order`` is correct
+
 
         OUTPUT:
 
@@ -757,6 +765,15 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: R(1).factor()
             1
 
+        An example for ``check=True``::
+
+            sage: F = GF(127, impl='modn')
+            sage: t = F.primitive_element()
+            sage: t.log(t, 57, check=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: base does not have the provided order
+
         AUTHORS:
 
         - David Joyner and William Stein (2005-11)
@@ -777,6 +794,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             b = self._parent(b)
             if not b.is_unit():
                 raise ValueError(f"logarithm with base {b} is not defined since it is not a unit modulo {b.modulus()}")
+
+        if check:
+            from sage.groups.generic import has_order
+            if not has_order(b, order, '*'):
+                raise ValueError('base does not have the provided order')
 
         cdef Integer n = Integer()
         cdef Integer m = one_Z

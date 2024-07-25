@@ -1376,7 +1376,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                     return j
                 elif two*j == G.n():
                     return j
-                # for the cases fom here on the sign has to be adjusted to the
+                # for the cases from here on the sign has to be adjusted
+                # to the
                 # sign of self (in self._block_decomposition_data())
                 elif two*j == -G.n():
                     return -j
@@ -2976,7 +2977,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         ``AlgebraicField`` is returned. Otherwise an element of a relative field
         extension over the base field of (the parent of) ``self`` is returned.
 
-        Warning: Relative field extensions don't support default embeddings.
+        Warning: Relative field extensions do not support default embeddings.
         So the correct embedding (which is the positive resp. imaginary positive
         one) has to be chosen.
 

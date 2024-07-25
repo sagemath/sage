@@ -230,6 +230,7 @@ cdef class dfs_manager:
             raise RuntimeError("Node limit ({0:%d}) exceeded".format(self.node_limit))
         return ans
 
+
 class WeilPolynomials_iter():
     r"""
     Iterator created by WeilPolynomials.

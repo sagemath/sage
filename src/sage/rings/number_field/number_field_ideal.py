@@ -426,7 +426,7 @@ class NumberFieldIdeal(Ideal_generic):
         K = self.number_field()
         return [K(x, check=False) for x in K.pari_zk() * hnf]
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return the string representation of this number field ideal.
 
@@ -1858,7 +1858,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         else:
             raise ValueError("gens must have a nonzero element (zero ideal is not a fractional ideal)")
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return the string representation of this number field fractional ideal.
 

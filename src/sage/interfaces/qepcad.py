@@ -809,7 +809,7 @@ class Qepcad:
 
         A logfile can be specified with ``logfile``.
         If ``verbose=True`` is given, then the logfile is automatically
-        set to ``sys.stdout``, so all QEPCAD interaction is echoed to
+        set to ``sys.stdout.buffer``, so all QEPCAD interaction is echoed to
         the terminal.
 
         You can set the amount of memory that QEPCAD allocates with
@@ -839,7 +839,7 @@ class Qepcad:
         self._cell_cache = {}
 
         if verbose:
-            logfile = sys.stdout
+            logfile = sys.stdout.buffer
 
         varlist = None
         if vars is not None:

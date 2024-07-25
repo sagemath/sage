@@ -69,10 +69,9 @@ from sage.arith.misc import (binomial,
                              prime_divisors,
                              kronecker as kronecker_symbol,
                              valuation)
-from sage.functions.log import log
-from sage.functions.other import floor
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import denominator
+from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import get_verbose, verbose
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
@@ -80,12 +79,15 @@ from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.padics.factory import Qp
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
+
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.functions.other", "floor")
+lazy_import('sage.rings.padics.factory', 'Qp')
 
 
 @richcmp_method

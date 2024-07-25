@@ -1662,6 +1662,8 @@ cdef class TimeSeries:
         if len(v0) == 1:
             return v1[0]/v0[0]
         import numpy
+        if int(numpy.version.short_version[0]) > 1:
+            numpy.set_printoptions(legacy="1.25")
         coeffs = numpy.polyfit(v0,v1,1)
         return coeffs[0]
 

@@ -318,7 +318,7 @@ class HyperbolicPoint(Element):
         We also lift matrices into isometries::
 
             sage: B = diagonal_matrix([-1, -1, 1])
-            sage: B = HyperbolicPlane().HM().get_isometry(B)
+            sage: B = HyperbolicPlane().HM().get_isometry(B)                            # needs scipy
             sage: B * HyperbolicPlane().HM().get_point((0, 1, sqrt(2)))
             Point in HM (0, -1, sqrt(2))
         """
@@ -491,7 +491,7 @@ class HyperbolicPoint(Element):
             sage: A.preserves_orientation()
             True
 
-            sage: A*A == HyperbolicPlane().UHP().get_isometry(identity_matrix(2))
+            sage: A*A == HyperbolicPlane().UHP().get_isometry(identity_matrix(2))       # needs scipy
             True
         """
         R = self.parent().realization_of().a_realization()
@@ -508,11 +508,11 @@ class HyperbolicPoint(Element):
 
         EXAMPLES::
 
-            sage: HyperbolicPlane().PD().get_point(0).show()
+            sage: HyperbolicPlane().PD().get_point(0).show()                            # needs sage.plot
             Graphics object consisting of 2 graphics primitives
-            sage: HyperbolicPlane().KM().get_point((0,0)).show()
+            sage: HyperbolicPlane().KM().get_point((0,0)).show()                        # needs sage.plot
             Graphics object consisting of 2 graphics primitives
-            sage: HyperbolicPlane().HM().get_point((0,0,1)).show()
+            sage: HyperbolicPlane().HM().get_point((0,0,1)).show()                      # needs sage.plot
             Graphics3d Object
         """
         p = self.coordinates()
@@ -587,7 +587,7 @@ class HyperbolicPointUHP(HyperbolicPoint):
 
             sage: HyperbolicPlane().UHP().get_point(I).show()
             Graphics object consisting of 2 graphics primitives
-            sage: HyperbolicPlane().UHP().get_point(0).show()
+            sage: HyperbolicPlane().UHP().get_point(0).show()                           # needs sage.plot
             Graphics object consisting of 2 graphics primitives
             sage: HyperbolicPlane().UHP().get_point(infinity).show()
             Traceback (most recent call last):

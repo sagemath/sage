@@ -995,7 +995,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             matrix_grpF4 = self.as_matrix_group(root_bur=r64)
             self._internal_test_attached_group(matrix_grpF4, tester)
 
-        if self.strands() < 5  or self._cbg_type == CubicBraidGroup.type.Coxeter:
+        if self.strands() < 5 or self._cbg_type == CubicBraidGroup.type.Coxeter:
             matrix_grpF5 = self.as_matrix_group(characteristic=5)
             self._internal_test_attached_group(matrix_grpF5, tester)
 
@@ -1180,7 +1180,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # to the invariant bilinear form.
             # -----------------------------------------------------------
             xbas = [bas[mhalf - i - 1] for i in range(mhalf)]
-            ybas = [bas[mhalf + i]    for i in range(mhalf)]
+            ybas = [bas[mhalf + i] for i in range(mhalf)]
 
             # -----------------------------------------------------------
             # computing the List of transvection vectors according to

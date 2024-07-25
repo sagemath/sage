@@ -533,8 +533,8 @@ def symplectic_basis_over_ZZ(M):
             pivot += 2
 
     ps.sort()
-    es = [ p[1]   for p in ps ]
-    fs = [ p[1]+1 for p in ps ]
+    es = [p[1] for p in ps]
+    fs = [p[1] + 1 for p in ps]
     C = B.matrix_from_rows(es + fs + zeroes)
     F = C * M * C.transpose()
     return F, C

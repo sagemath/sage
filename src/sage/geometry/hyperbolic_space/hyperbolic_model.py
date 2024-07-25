@@ -480,13 +480,13 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             [1 0]
             [0 1]
 
-            sage: HyperbolicPlane().KM().get_isometry(identity_matrix(3))
+            sage: HyperbolicPlane().KM().get_isometry(identity_matrix(3))               # needs scipy
             Isometry in KM
             [1 0 0]
             [0 1 0]
             [0 0 1]
 
-            sage: HyperbolicPlane().HM().get_isometry(identity_matrix(3))
+            sage: HyperbolicPlane().HM().get_isometry(identity_matrix(3))               # needs scipy
             Isometry in HM
             [1 0 0]
             [0 1 0]
@@ -575,6 +575,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         EXAMPLES::
 
+            sage: # needs scipy
             sage: A = HyperbolicPlane().PD().random_isometry()
             sage: A.preserves_orientation()
             True
@@ -919,7 +920,7 @@ class HyperbolicModelUHP(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: hp = HyperbolicPlane().UHP().get_background_graphic()
+            sage: hp = HyperbolicPlane().UHP().get_background_graphic()                 # needs sage.plot
         """
         from sage.plot.line import line
         bd_min = bdry_options.get('bd_min', -5)
@@ -1085,9 +1086,9 @@ class HyperbolicModelUHP(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: A = HyperbolicPlane().UHP().random_isometry()
-            sage: B = HyperbolicPlane().UHP().random_isometry(preserve_orientation=False)
-            sage: B.preserves_orientation()
+            sage: A = HyperbolicPlane().UHP().random_isometry()                         # needs scipy
+            sage: B = HyperbolicPlane().UHP().random_isometry(preserve_orientation=False)           # needs scipy
+            sage: B.preserves_orientation()                                             # needs scipy
             False
         """
         [a, b, c, d] = [RR.random_element() for k in range(4)]
@@ -1253,7 +1254,7 @@ class HyperbolicModelPD(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: circ = HyperbolicPlane().PD().get_background_graphic()
+            sage: circ = HyperbolicPlane().PD().get_background_graphic()                # needs sage.plot
         """
         from sage.plot.circle import circle
         return circle((0, 0), 1, axes=False, color='black')
@@ -1361,7 +1362,7 @@ class HyperbolicModelKM(HyperbolicModel):
         EXAMPLES::
 
             sage: A = matrix(3, [[1, 0, 0], [0, 17/8, 15/8], [0, 15/8, 17/8]])
-            sage: HyperbolicPlane().KM().isometry_in_model(A)
+            sage: HyperbolicPlane().KM().isometry_in_model(A)                           # needs scipy
             True
         """
         if isinstance(A, HyperbolicIsometry):
@@ -1377,7 +1378,7 @@ class HyperbolicModelKM(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: circ = HyperbolicPlane().KM().get_background_graphic()
+            sage: circ = HyperbolicPlane().KM().get_background_graphic()                # needs sage.plot
         """
         from sage.plot.circle import circle
         return circle((0, 0), 1, axes=False, color='black')
@@ -1471,7 +1472,7 @@ class HyperbolicModelHM(HyperbolicModel):
         EXAMPLES::
 
            sage: A = diagonal_matrix([1,1,-1])
-           sage: HyperbolicPlane().HM().isometry_in_model(A)
+           sage: HyperbolicPlane().HM().isometry_in_model(A)                            # needs scipy
            True
         """
         if isinstance(A, HyperbolicIsometry):
@@ -1486,7 +1487,7 @@ class HyperbolicModelHM(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: H = HyperbolicPlane().HM().get_background_graphic()
+            sage: H = HyperbolicPlane().HM().get_background_graphic()                   # needs sage.plot
         """
         from sage.plot.plot3d.all import plot3d
         from sage.symbolic.ring import SR

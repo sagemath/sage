@@ -2191,7 +2191,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
         def _from_schur_on_basis(self, la):
             r"""
-            Maps the Schur symmetric function indexed by ``la`` to the
+            Map the Schur symmetric function indexed by ``la`` to the
             Fundamental basis.
 
             EXAMPLES::
@@ -2897,7 +2897,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         @cached_method
         def _from_monomial_on_basis(self, comp):
             r"""
-            Maps the Monomial quasi-symmetric function indexed by
+            Map the Monomial quasi-symmetric function indexed by
             ``comp`` to the Quasisymmetric Schur basis.
 
             INPUT:

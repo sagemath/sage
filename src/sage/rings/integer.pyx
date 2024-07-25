@@ -593,6 +593,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         Test comparisons with numpy types (see :issue:`13386` and :issue:`18076`)::
 
             sage: import numpy                                                          # needs numpy
+            sage: if int(numpy.version.short_version[0]) > 1:                           # needs numpy
+            ....:     numpy.set_printoptions(legacy="1.25")                             # needs numpy
             sage: numpy.int8('12') == 12                                                # needs numpy
             True
             sage: 12 == numpy.int8('12')                                                # needs numpy

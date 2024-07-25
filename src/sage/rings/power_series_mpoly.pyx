@@ -116,7 +116,6 @@ cdef class PowerSeries_mpoly(PowerSeries):
                                  prec = prec,
                                  check =True)
 
-
     def __iter__(self):
         """
         Return an iterator over the coefficients of this power series.

@@ -120,7 +120,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: HeckeTriangleGroup(10)
             Hecke triangle group for n = 10
         """
-        return "Hecke triangle group for n = {}".format(self._n)
+        return f"Hecke triangle group for n = {self._n}"
 
     def _latex_(self):
         r"""
@@ -1262,7 +1262,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         - ``incomplete`` -- if ``True`` (default: ``False``) then all
           (also higher) discriminants which were gathered so far are listed
-          (however there might be missing discriminants inbetween).
+          (however there might be missing discriminants in between).
 
         OUTPUT: list of discriminants less than or equal to ``D``
 
@@ -1412,7 +1412,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             if not ZZ(2).divides(k):
                 raise TypeError
         except TypeError:
-            raise ValueError("k={} has to be an even integer!".format(k))
+            raise ValueError(f"k={k} has to be an even integer!")
 
         z = PolynomialRing(self.base_ring(), 'z').gen()
 

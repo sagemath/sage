@@ -229,7 +229,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
 
         # If we list the basis the representation usually gets too long...
         # return "Subspace with basis {} of {}".format([v.as_ring_element() for v in self.basis()], self._ambient_space)
-        return "Subspace of dimension {} of {}".format(len(self._basis), self._ambient_space)
+        return f"Subspace of dimension {len(self._basis)} of {self._ambient_space}"
 
     def change_ring(self, new_base_ring):
         r"""
