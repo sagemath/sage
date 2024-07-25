@@ -1382,10 +1382,6 @@ class CoefficientRingFunctor(ConstructionFunctor):
         return CoefficientRing(R)
 
 
-class CoefficientRingElement(FractionFieldElement):
-    pass
-
-
 class CoefficientRing(UniqueRepresentation, FractionField_generic):
     r"""
     The class of unknown coefficients in a stream.
@@ -1447,7 +1443,7 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
         """
         B = InfinitePolynomialRing(base_ring, names=["FESDUMMY"])
         FractionField_generic.__init__(self, B,
-                                       element_class=CoefficientRingElement,
+                                       element_class=FractionFieldElement,
                                        category=QuotientFields())
 
     def _repr_(self):
