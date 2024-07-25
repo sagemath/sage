@@ -95,7 +95,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``*args, **kwds`` -- all other options are passed
+        - ``*args``, ``**kwds`` -- all other options are passed
           to the circle graphing primitive.
 
         EXAMPLES::
@@ -444,7 +444,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
           - ``'all'`` -- compute cardinality with both ``'pari'`` and
             ``'bsgs'``; return result if they agree or raise a
-            ``AssertionError`` if they do not
+            :class:`AssertionError` if they do not
 
         - ``extension_degree`` -- an integer `d` (default: 1): if the
           base field is `\GF{q}`, return the cardinality of ``self``
@@ -1177,7 +1177,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
           field of the other, in which case it will test over the
           larger base field.
 
-        - ``proof`` (default True) -- this parameter is here only to
+        - ``proof`` (default: ``True``) -- this parameter is here only to
           be consistent with versions for other types of elliptic
           curves.
 
@@ -1252,8 +1252,8 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E1.is_isogenous(E7,GF(13^30,'j'))
             False
         """
-        from .ell_generic import is_EllipticCurve
-        if not is_EllipticCurve(other):
+        from .ell_generic import EllipticCurve_generic
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True
@@ -1290,7 +1290,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``proof`` (boolean, default True) -- If True, returns a
+        - ``proof`` (boolean, default: ``True``) -- If True, returns a
           proved result.  If False, then a return value of False is
           certain but a return value of True may be based on a
           probabilistic test.  See the documentation of the function
@@ -1324,7 +1324,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``proof`` (boolean, default True) -- If True, returns a
+        - ``proof`` (boolean, default: ``True``) -- If True, returns a
           proved result.  If False, then a return value of True is
           certain but a return value of False may be based on a
           probabilistic test.  See the documentation of the function
@@ -1612,7 +1612,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         (integer) The discriminant of the endomorphism ring `\text{End}(E)`, if
         this has class number ``h``.  If `\text{End}(E)` does not have class
-        number ``h``, a ``ValueError`` is raised.
+        number ``h``, a :class:`ValueError` is raised.
 
         ALGORITHM:
 
@@ -1622,7 +1622,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         must be a multiple of `h_0`, compute the possible conductors,
         using :meth:`height_above_floor` for each prime `\ell`
         dividing the quotient `h/h_0`.  If exactly one conductor `f`
-        remains, return `f^2D_0`, otherwise raise a ``ValueError``;
+        remains, return `f^2D_0`, otherwise raise a :class:`ValueError`;
         this can onlyhappen when the input value of `h` was incorrect.
 
         .. NOTE::
@@ -2348,7 +2348,7 @@ def is_j_supersingular(j, proof=True):
 
     - ``j`` (finite field element) -- an element of a finite field
 
-    - ``proof`` (boolean, default True) -- If True, returns a proved
+    - ``proof`` (boolean, default: ``True``) -- If True, returns a proved
       result.  If False, then a return value of False is certain but a
       return value of True may be based on a probabilistic test.  See
       the ALGORITHM section below for more details.
@@ -2498,7 +2498,7 @@ def special_supersingular_curve(F, *, endomorphism=False):
 
     - ``F`` -- finite field `\mathbb F_{p^r}`;
 
-    - ``endomorphism`` -- boolean (optional, default ``False``):
+    - ``endomorphism`` -- boolean (default: ``False``):
       When set to ``True``, it is required that `2 \mid r`, and
       the function then additionally returns `\vartheta`.
 

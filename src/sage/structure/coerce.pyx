@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 The coercion model
 
@@ -351,6 +352,7 @@ cpdef bint parent_is_integers(P) except -1:
         from sage.rings.integer_ring import ZZ
         return P is ZZ
 
+
 def parent_is_numerical(P):
     r"""
     Test if elements of the parent or type ``P`` can be numerically evaluated
@@ -380,6 +382,7 @@ def parent_is_numerical(P):
         if P is None:
             return False
     return P._is_numerical()
+
 
 def parent_is_real_numerical(P):
     r"""
@@ -517,6 +520,8 @@ cdef class CoercionModel:
     Check that :issue:`8426` is fixed (see also :issue:`18076`)::
 
         sage: import numpy                                                              # needs numpy
+        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
+        ....:     numpy.set_printoptions(legacy="1.25")                                 # needs numpy
 
         sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
@@ -795,7 +800,6 @@ cdef class CoercionModel:
             self._exception_stack = []
             self._exceptions_cleared = True
         return self._exception_stack
-
 
     def explain(self, xp, yp, op=mul, int verbosity=2):
         """
@@ -1639,7 +1643,6 @@ cdef class CoercionModel:
         elif isinstance(S_map, IdentityMorphism):
             S_map = None
         return R_map, S_map
-
 
     cpdef discover_coercion(self, R, S):
         """

@@ -31,7 +31,6 @@ AUTHORS:
   numbers of higher level
 
 - Simon Spicer (2014-08): Added new analytic rank computation functionality
-
 """
 
 ##############################################################################
@@ -48,11 +47,46 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
+
+from copy import copy
 from itertools import product
+from math import sqrt
+
+import sage.arith.all as arith
+import sage.databases.cremona
+import sage.modular.modform.constructor
+import sage.modular.modform.element
+
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod, prod as mul
+from sage.misc.verbose import verbose as verbose_verbose
+from sage.modular.modsym.modsym import ModularSymbols
+from sage.modular.pollack_stevens.space import ps_modsym_from_elliptic_curve
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.fast_arith import prime_range
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.infinity import Infinity as oo
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ, IntegerRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.rings.rational_field import RationalField
+from sage.rings.real_mpfi import RealIntervalField
+from sage.rings.real_mpfr import RealField, RR
+from sage.structure.coerce import py_scalar_to_element
+from sage.structure.element import Element, RingElement
+
+lazy_import("sage.functions.log", "log")
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import("sage.functions.gamma", "gamma_inc")
+lazy_import('sage.interfaces.gp', 'gp')
 
 from . import constructor
 from . import BSD
-from .ell_generic import is_EllipticCurve
+from .ell_generic import EllipticCurve_generic
 from . import ell_modular_symbols
 from .ell_number_field import EllipticCurve_number_field
 from . import ell_point
@@ -63,51 +97,10 @@ from . import mod5family
 from .modular_parametrization import ModularParameterization
 from . import padics
 
-from sage.modular.modsym.modsym import ModularSymbols
-from sage.modular.pollack_stevens.space import ps_modsym_from_elliptic_curve
-
-import sage.modular.modform.constructor
-import sage.modular.modform.element
-import sage.databases.cremona
-
-import sage.arith.all as arith
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.rings.fast_arith import prime_range
-from sage.rings.real_mpfr import RR
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.structure.element import RingElement
-from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.infinity import Infinity as oo
-from sage.rings.integer_ring import ZZ, IntegerRing
-from sage.rings.rational_field import QQ
-from sage.rings.integer import Integer
-from sage.rings.real_mpfi import RealIntervalField
-from sage.rings.real_mpfr import RealField
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.rational_field import RationalField
-
-from sage.structure.coerce import py_scalar_to_element
-from sage.structure.element import Element
-from sage.misc.misc_c import prod as mul
-from sage.misc.misc_c import prod
-from sage.misc.lazy_import import lazy_import
-from sage.misc.verbose import verbose as verbose_verbose
-
-from sage.functions.log import log
-
-from sage.matrix.matrix_space import MatrixSpace
-lazy_import('sage.libs.pari.all', 'pari')
-lazy_import("sage.functions.gamma", "gamma_inc")
-from math import sqrt
-from sage.interfaces.gp import gp
-from sage.misc.cachefunc import cached_method
-from copy import copy
-
 Q = RationalField()
 C = ComplexField()
 R = RealField()
 Z = IntegerRing()
-IR = RealIntervalField(20)
 
 _MAX_HEIGHT = 21
 
@@ -695,7 +688,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     def database_curve(self):
         r"""
         Return the curve in the elliptic curve database isomorphic to this
-        curve, if possible. Otherwise raise a ``LookupError`` exception.
+        curve, if possible.
+
+        Otherwise this raises a :class:`LookupError` exception.
 
         Since :issue:`11474`, this returns exactly the same curve as
         :meth:`minimal_model`; the only difference is the additional
@@ -816,7 +811,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           general 2-descent when 2-torsion trivial; n_aux=-1 causes default
           to be used (depends on method)
 
-        - ``second_descent`` -- (default: True)
+        - ``second_descent`` -- (default: ``True``)
           second_descent only relevant for descent via 2-isogeny
 
         OUTPUT:
@@ -1516,7 +1511,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         TESTS:
 
         When the input is horrendous, some of the algorithms just bomb
-        out with a ``RuntimeError``::
+        out with a :class:`RuntimeError`::
 
             sage: EllipticCurve([1234567,89101112]).analytic_rank(algorithm='rubinstein')
             Traceback (most recent call last):
@@ -2267,10 +2262,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
           - ``'pari'`` -- use ellrank in pari
 
-        - ``only_use_mwrank`` -- bool (default True) if False, first
+        - ``only_use_mwrank`` -- bool (default: ``True``) if False, first
           attempts to use more naive, natively implemented methods
 
-        - ``use_database`` -- bool (default True) if True, attempts to
+        - ``use_database`` -- bool (default: ``True``) if True, attempts to
           find curve and gens in the (optional) database
 
         - ``descent_second_limit`` -- (default: 12) used in 2-descent
@@ -3846,10 +3841,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``algorithm`` -- string:
 
-          * ``'sympow'`` - (default) use Mark Watkin's (newer) C
+          * ``'sympow'`` -- (default) use Mark Watkin's (newer) C
             program sympow
 
-          * ``'magma'`` - requires that MAGMA be installed (also
+          * ``'magma'`` -- requires that MAGMA be installed (also
             implemented by Mark Watkins)
 
         - ``M`` -- non-negative integer; the modular degree at level `MN`
@@ -4101,7 +4096,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     def cremona_label(self, space=False):
         r"""
         Return the Cremona label associated to (the minimal model) of this
-        curve, if it is known. If not, raise a ``LookupError`` exception.
+        curve, if it is known.
+
+        If not, this raises a :class:`LookupError` exception.
 
         EXAMPLES::
 
@@ -4985,7 +4982,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.is_isogenous(EE)
             False
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if other.base_field() is not QQ:
             raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")

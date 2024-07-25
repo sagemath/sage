@@ -135,8 +135,19 @@ AC_ARG_ENABLE([editable],
 AC_ARG_ENABLE([wheels],
               [AS_HELP_STRING([--enable-wheels],
                               [build wheels for the Sage library and update them on "sage -b"; if disabled, use "make wheels" to build wheels])],
-              [AC_SUBST([SAGE_WHEELS], [$enableval])],
-              [])
+              [dnl
+                 AS_VAR_IF([SAGE_EDITABLE], [yes], [dnl
+                 ], [dnl
+                   AC_MSG_NOTICE([direct installation of the Sage library (--disable-editable --disable-wheels) is no longer supported; ignoring --disable-wheels])
+                 ])
+                 AC_SUBST([SAGE_WHEELS], [$enableval])
+              ], [dnl
+                 AS_VAR_IF([SAGE_EDITABLE], [yes], [dnl
+                   AC_SUBST([SAGE_WHEELS], [no])
+                 ], [dnl
+                   AC_SUBST([SAGE_WHEELS], [yes])
+                 ])
+              ])
 
 # Check whether we are on a supported platform
 AC_CANONICAL_BUILD()
@@ -155,6 +166,27 @@ You are attempting to build Sage on $host,
 which is not a supported platform for Sage]]);;
 esac
 
+dnl Issue #38039: Alert users on WSL early about a source tree
+dnl that has not been cloned correctly.
+dnl This will save users from running into build errors later.
+AC_MSG_CHECKING([the symbolic links in the source tree])
+AS_IF([test -L build/pkgs/liblzma/package-version.txt], [dnl OK
+    AC_MSG_RESULT([intact])
+], [dnl Either replaced by a copy (OK, as done in the sage-conf_pypi sdist)
+    dnl  or replaced by the name of the link target (BAD, misconfigured git clone in WSL)
+    AS_IF([test ! -e build/pkgs/sagelib/src], [dnl
+        AC_MSG_RESULT([intact (with links to embedded source trees pruned)])
+    ], [dnl
+        AS_IF([test -d build/pkgs/sagelib/src], [dnl
+            AC_MSG_RESULT([broken (links to directories have been replaced by copies)])
+        ], [dnl
+            AC_MSG_RESULT([broken])
+        ])
+        AC_MSG_NOTICE([Sorry, the symbolic links in this source tree are broken.])
+        AC_MSG_NOTICE([See README.md for installation instructions.])
+        AC_MSG_ERROR([Exiting, as Sage cannot be built from this source tree.])
+    ])
+])
 
 ###############################################################################
 # Check general programs
@@ -505,6 +537,19 @@ AC_CONFIG_COMMANDS(mkdirs,
             AC_MSG_NOTICE([[creating symbolic link lib64 -> lib]])
             ln -s lib "$SAGE_LOCAL/lib64"
         fi
+        dnl Check that the file system is sufficiently functional
+        if test -z "$SAGE_BUILD_DIR"; then
+            SAGE_BUILD_DIR="$SAGE_LOCAL/var/tmp/sage/build"
+        fi
+        AC_MSG_NOTICE([creating directory $SAGE_BUILD_DIR])
+        mkdir -p "$SAGE_BUILD_DIR" || AC_MSG_ERROR([error creating directory $SAGE_BUILD_DIR (SAGE_BUILD_DIR)])
+        rm -f "$SAGE_BUILD_DIR"/conftest
+        touch "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error creating a file in $SAGE_BUILD_DIR])
+        chmod +x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions +x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([file permissions +x did not persist in $SAGE_BUILD_DIR])
+        chmod -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions -x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest && AC_MSG_ERROR([file permissions -x did not persist in $SAGE_BUILD_DIR])
+        rm -f "$SAGE_BUILD_DIR"/conftest
     ],
     [
         SAGE_LOGS="$SAGE_ROOT/logs/pkgs"

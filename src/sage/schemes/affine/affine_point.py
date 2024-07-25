@@ -44,7 +44,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
     - ``v`` -- a list/tuple/iterable of coordinates in `R`
 
-    - ``check`` -- boolean (optional, default:``True``); whether to
+    - ``check`` -- boolean (default:``True``); whether to
       check the input for consistency
 
     EXAMPLES::
@@ -202,7 +202,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             else:
                 R = RealField(prec)
             H = max([self[i].abs() for i in range(self.codomain().ambient_space().dimension_relative())])
-            return R(max(H,1)).log()
+            return R(max(H, 1)).log()
         if self.domain().base_ring() in _NumberFields or isinstance(self.domain().base_ring(), sage.rings.abc.Order):
             return max([self[i].global_height(prec) for i in range(self.codomain().ambient_space().dimension_relative())])
         else:
@@ -372,8 +372,8 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
             ...
             TypeError: this point must be a point on an affine subscheme
         """
-        from sage.schemes.affine.affine_space import is_AffineSpace
-        if is_AffineSpace(self.codomain()):
+        from sage.schemes.affine.affine_space import AffineSpace_generic
+        if isinstance(self.codomain(), AffineSpace_generic):
             raise TypeError("this point must be a point on an affine subscheme")
         return self.codomain().intersection_multiplicity(X, self)
 
@@ -397,8 +397,8 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
             sage: Q2.multiplicity()                                                     # needs sage.libs.singular
             2
         """
-        from sage.schemes.affine.affine_space import is_AffineSpace
-        if is_AffineSpace(self.codomain()):
+        from sage.schemes.affine.affine_space import AffineSpace_generic
+        if isinstance(self.codomain(), AffineSpace_generic):
             raise TypeError("this point must be a point on an affine subscheme")
         return self.codomain().multiplicity(self)
 

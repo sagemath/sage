@@ -56,7 +56,6 @@ AUTHORS:
 
 - Vincent Klein (2017-11-15) : add __mpc__() to class ComplexDoubleElement.
   ComplexDoubleElement constructor support and gmpy2.mpc parameter.
-
 """
 
 # ****************************************************************************
@@ -505,7 +504,6 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             from sage.rings.complex_mpfr import ComplexField
             return ComplexField(prec)
 
-
     def gen(self, n=0):
         """
         Return the generator of the complex double field.
@@ -699,6 +697,7 @@ cdef ComplexDoubleElement new_ComplexDoubleElement():
     z = ComplexDoubleElement.__new__(ComplexDoubleElement)
     return z
 
+
 def is_ComplexDoubleElement(x):
     """
     Return ``True`` if ``x`` is a :class:`ComplexDoubleElement`.
@@ -707,10 +706,18 @@ def is_ComplexDoubleElement(x):
 
         sage: from sage.rings.complex_double import is_ComplexDoubleElement
         sage: is_ComplexDoubleElement(0)
+        doctest:warning...
+        DeprecationWarning: The function is_ComplexDoubleElement is deprecated;
+        use 'isinstance(..., ComplexDoubleElement)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         False
         sage: is_ComplexDoubleElement(CDF(0))
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_ComplexDoubleElement is deprecated; "
+                       "use 'isinstance(..., ComplexDoubleElement)' instead.")
     return isinstance(x, ComplexDoubleElement)
 
 
@@ -1463,7 +1470,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``all`` - bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- bool (default: ``False``); if ``True``, return a
            list of all square roots.
 
         If all is ``False``, the branch cut is the negative real axis. The
@@ -1529,7 +1536,6 @@ cdef class ComplexDoubleElement(FieldElement):
             return [z * zeta**k for k in range(n)]
         else:
             return z
-
 
     def is_square(self):
         r"""
@@ -1734,7 +1740,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``base`` - default: `e`, the base of the natural logarithm
+        -  ``base`` -- default: `e`, the base of the natural logarithm
 
         EXAMPLES::
 
@@ -2018,7 +2024,6 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         return self._new_c(gsl_complex_tanh(self._complex))
 
-
     def sech(self):
         r"""
         This function returns the complex hyperbolic secant of the complex
@@ -2154,10 +2159,10 @@ cdef class ComplexDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``self`` - element of the upper half plane (if not,
+        -  ``self`` -- element of the upper half plane (if not,
            raises a ValueError).
 
-        -  ``omit_frac`` - (bool, default: ``False``), if ``True``,
+        -  ``omit_frac`` -- (bool, default: ``False``), if ``True``,
            omit the `e^{\pi i z / 12}` factor.
 
         OUTPUT: a complex double number
@@ -2553,10 +2558,10 @@ cdef class ComplexToCDF(Morphism):
 
         sage: # needs numpy
         sage: import numpy
-        sage: f = CDF.coerce_map_from(numpy.complex_)
-        sage: f(numpy.complex_(I))
+        sage: f = CDF.coerce_map_from(numpy.complex128)
+        sage: f(numpy.complex128(I))
         1.0*I
-        sage: f(numpy.complex_(I)).parent()
+        sage: f(numpy.complex128(I)).parent()
         Complex Double Field
     """
     def __init__(self, R):
@@ -2573,7 +2578,7 @@ cdef class ComplexToCDF(Morphism):
         EXAMPLES::
 
             sage: import numpy                                                          # needs numpy
-            sage: CDF(numpy.complex_(I))    # indirect doctest                          # needs numpy
+            sage: CDF(numpy.complex128(I))    # indirect doctest                          # needs numpy
             1.0*I
         """
         cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
@@ -2587,13 +2592,11 @@ cdef class ComplexToCDF(Morphism):
         EXAMPLES::
 
             sage: import numpy                                                          # needs numpy
-            sage: f = sage.rings.complex_double.ComplexToCDF(numpy.complex_)            # needs numpy
+            sage: f = sage.rings.complex_double.ComplexToCDF(numpy.complex128)          # needs numpy
             sage: f._repr_type()                                                        # needs numpy
             'Native'
         """
         return "Native"
-
-
 
 
 #####################################################
@@ -2603,6 +2606,7 @@ cdef ComplexDoubleField_class _CDF
 _CDF = ComplexDoubleField_class()
 CDF = _CDF  # external interface
 cdef ComplexDoubleElement I = ComplexDoubleElement(0,1)
+
 
 def ComplexDoubleField():
     """
@@ -2616,6 +2620,7 @@ def ComplexDoubleField():
         True
     """
     return _CDF
+
 
 from sage.misc.parser import Parser
 cdef cdf_parser = Parser(float, float,  {"I" : _CDF.gen(), "i" : _CDF.gen()})

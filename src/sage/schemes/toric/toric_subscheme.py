@@ -9,7 +9,6 @@ AUTHORS:
 - William Stein (2005): initial version.
 
 - Andrey Novoseltsev (2010-05-17): subschemes of toric varieties.
-
 """
 
 # ****************************************************************************
@@ -21,9 +20,11 @@ AUTHORS:
 # https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.calculus.functions import jacobian
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
+
+lazy_import("sage.calculus.functions", "jacobian")
 
 
 class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):

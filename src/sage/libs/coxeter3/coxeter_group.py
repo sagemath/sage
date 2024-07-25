@@ -1,6 +1,5 @@
 # sage_setup: distribution = sagemath-coxeter3
 # sage.doctest: optional - coxeter3
-
 """
 Coxeter Groups implemented with Coxeter3
 """
@@ -294,7 +293,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         INPUT:
 
         - ``u``, ``v`` -- elements of the underlying Coxeter group
-        - ``constant_term_one`` -- (default: True) True uses the constant equals one convention,
+        - ``constant_term_one`` -- (default: ``True``) True uses the constant equals one convention,
            False uses the Leclerc-Thibon convention
 
         .. SEEALSO::

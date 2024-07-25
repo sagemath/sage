@@ -11,7 +11,6 @@ Some examples of use are provided in the documentation of
 AUTHORS:
 
 - Marco Mancini, Eric Gourgoulhon, Michal Bejger (2015): initial version
-
 """
 
 # *****************************************************************************

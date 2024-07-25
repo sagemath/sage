@@ -39,7 +39,6 @@ cdef extern from "gsl/gsl_fit.h":
                    double *y, double *y_err)
 
 
-
   int gsl_fit_poly ( double * x, double * w, double * y, size_t n,
                     double * c, size_t m, double * chisq)
 

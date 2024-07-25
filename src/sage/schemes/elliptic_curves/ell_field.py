@@ -444,10 +444,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E1.is_isomorphic(E2)
             True
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
         E = self
         F = other
-        if not is_EllipticCurve(E) or not is_EllipticCurve(F):
+        if not isinstance(E, EllipticCurve_generic) or not isinstance(F, EllipticCurve_generic):
             raise ValueError("arguments are not elliptic curves")
         K = E.base_ring()
         zero = K.zero()
@@ -543,10 +543,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: (D/12345).is_perfect_power(4)
             True
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
         E = self
         F = other
-        if not is_EllipticCurve(E) or not is_EllipticCurve(F):
+        if not isinstance(E, EllipticCurve_generic) or not isinstance(F, EllipticCurve_generic):
             raise ValueError("arguments are not elliptic curves")
         K = E.base_ring()
         zero = K.zero()
@@ -612,10 +612,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: (D/12345).is_perfect_power(6)
             True
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
         E = self
         F = other
-        if not is_EllipticCurve(E) or not is_EllipticCurve(F):
+        if not isinstance(E, EllipticCurve_generic) or not isinstance(F, EllipticCurve_generic):
             raise ValueError("arguments are not elliptic curves")
         K = E.base_ring()
         zero = K.zero()
@@ -1553,10 +1553,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field, point_of_order
             sage: p = 2^127 - 1
             sage: E = EllipticCurve(GF(p), [1,0])
-            sage: P = point_of_order(E, 31)
-            sage: %timeit E.kernel_polynomial_from_point(P, algorithm='basic')    # not tested
+            sage: P = point_of_order(E, 31)                                             # long time (8.5s)
+            sage: %timeit E.kernel_polynomial_from_point(P, algorithm='basic')          # not tested
             4.38 ms ± 13.7 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
-            sage: %timeit E.kernel_polynomial_from_point(P, algorithm='minpoly')  # not tested
+            sage: %timeit E.kernel_polynomial_from_point(P, algorithm='minpoly')        # not tested
             854 µs ± 1.56 µs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
 
         Example of finding all the rational isogenies using this method::
@@ -2065,8 +2065,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             ...
             NotImplementedError: Only implemented for isomorphic curves over general fields.
         """
-        from .ell_generic import is_EllipticCurve
-        if not is_EllipticCurve(other):
+        from .ell_generic import EllipticCurve_generic
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True
@@ -2129,7 +2129,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         characteristic, and is an element of the field which is zero
         if and only if the curve is supersingular.  Over a field of
         characteristic zero, where the Hasse invariant is undefined,
-        a ``ValueError`` is raised.
+        a :class:`ValueError` is raised.
 
         EXAMPLES::
 

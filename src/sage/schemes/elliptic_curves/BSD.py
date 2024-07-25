@@ -1,11 +1,13 @@
 "Birch and Swinnerton-Dyer formulas"
 
 from sage.arith.misc import prime_divisors
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.infinity import Infinity
-from sage.rings.number_field.number_field import QuadraticField
-from sage.functions.other import ceil
+
+lazy_import("sage.functions.other", "ceil")
+lazy_import("sage.rings.number_field.number_field", "QuadraticField")
 
 
 class BSD_data:
@@ -319,7 +321,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
       Heegner index before switching over to trying to compute the
       Heegner index bound. (Rank 0 only!)
 
-    - ``return_BSD`` -- bool (default: False) whether to return an object
+    - ``return_BSD`` -- bool (default: ``False``) whether to return an object
       which contains information to reconstruct a proof
 
     .. NOTE::

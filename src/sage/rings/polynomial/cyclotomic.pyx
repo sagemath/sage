@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Fast calculation of cyclotomic polynomials
 
@@ -40,6 +39,7 @@ try:
     from sage.libs.pari.all import pari
 except ImportError:
     pass
+
 
 def cyclotomic_coeffs(nn, sparse=None):
     """

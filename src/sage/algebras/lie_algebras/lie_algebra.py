@@ -894,7 +894,7 @@ class FinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
         LieAlgebraWithGenerators.__init__(self, R, names, index_set, category)
         self.__ngens = len(self._indices)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -905,9 +905,9 @@ class FinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
             Lie algebra on 2 generators (x, y) over Rational Field
         """
         if self.__ngens == 1:
-            return "Lie algebra on the generator {0} over {1}".format(
+            return "Lie algebra on the generator {} over {}".format(
                 self.gen(0), self.base_ring())
-        return "Lie algebra on {0} generators {1} over {2}".format(
+        return "Lie algebra on {} generators {} over {}".format(
             self.__ngens, self.gens(), self.base_ring())
 
     @lazy_attribute

@@ -226,7 +226,7 @@ space with a curve of `\ZZ_3`-orbifold singularities::
     sage: P4_11133 = toric_varieties.P4_11133()
     sage: P4_11133.is_smooth(), P4_11133.is_orbifold()
     (False, True)
-    sage: cone = P4_11133.fan(3)[8]
+    sage: cone = P4_11133.fan(3)[9]
     sage: cone.is_smooth(), cone.is_simplicial()
     (False, True)
     sage: HH = P4_11133.cohomology_ring();  HH
@@ -236,6 +236,7 @@ space with a curve of `\ZZ_3`-orbifold singularities::
 
 Every cone defines a torus orbit closure, and hence a (co)homology class::
 
+    sage: # needs sage.libs.singular
     sage: HH.gens()
     ([3*z4], [3*z4], [z4], [z4], [z4])
     sage: list(map(HH, P4_11133.fan(1)))
@@ -248,6 +249,7 @@ Every cone defines a torus orbit closure, and hence a (co)homology class::
 We can compute intersection numbers by integrating top-dimensional
 cohomology classes::
 
+    sage: # needs sage.libs.singular
     sage: D = P4_11133.divisor(0)
     sage: HH(D)
     [3*z4]
@@ -261,12 +263,14 @@ computations with the rational Chow group::
 
     sage: AA = P4_11133.Chow_group(QQ)
     sage: list(map(AA, P4_11133.fan(1)))  # long time (5s on sage.math, 2012)
-    [( 0 | 0 | 0 | 3 | 0 ), ( 0 | 0 | 0 | 3 | 0 ), ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 )]
+    [( 0 | 0 | 0 | 3 | 0 ), ( 0 | 0 | 0 | 3 | 0 ),
+     ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 )]
     sage: list(map(AA, P4_11133.fan(4)))  # long time (5s on sage.math, 2012)
-    [( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 )]
-    sage: AA(cone).intersection_with_divisor(D)  # long time (4s on sage.math, 2013)
+    [( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ),
+     ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 )]
+    sage: AA(cone).intersection_with_divisor(D)  # long time (4s on sage.math, 2013)    # needs sage.libs.singular
     ( 1 | 0 | 0 | 0 | 0 )
-    sage: AA(cone).intersection_with_divisor(D).count_points()  # long time
+    sage: AA(cone).intersection_with_divisor(D).count_points()  # long time             # needs sage.libs.singular
     1
 
 The real advantage of the Chow group is that
@@ -302,25 +306,29 @@ implementing them on your own as a patch for inclusion!
 
 import sys
 
-from sage.functions.all import factorial
 import sage.geometry.abc
+
+from sage.categories.fields import Fields
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan
-from sage.misc.latex import latex
-from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.quotient_ring_element import QuotientRingElement
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.quotient_ring import QuotientRing_generic
+from sage.rings.quotient_ring_element import QuotientRingElement
+from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.toric.homset import SchemeHomset_points_toric_field
 from sage.structure.category_object import certify_names
-from sage.categories.fields import Fields
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import("sage.functions.all", "factorial")
+
 _Fields = Fields()
 
 
@@ -351,6 +359,9 @@ def is_ToricVariety(x):
 
         sage: from sage.schemes.toric.variety import is_ToricVariety
         sage: is_ToricVariety(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: fan = FaceFan(lattice_polytope.cross_polytope(2))
         sage: P = ToricVariety(fan)
@@ -361,6 +372,8 @@ def is_ToricVariety(x):
         sage: is_ToricVariety(ProjectiveSpace(2))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead.")
     return isinstance(x, ToricVariety_field)
 
 
@@ -1316,7 +1329,7 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``another`` - :class:`toric variety <ToricVariety_field>`.
+        - ``another`` -- :class:`toric variety <ToricVariety_field>`.
 
         OUTPUT:
 
@@ -1339,7 +1352,7 @@ class ToricVariety_field(AmbientSpace):
         """
         if self is another:
             return True
-        if not is_ToricVariety(another):
+        if not isinstance(another, ToricVariety_field):
             raise TypeError(
                 "only another toric variety can be checked for isomorphism; "
                 "got %s" % another)
@@ -3300,12 +3313,20 @@ def is_CohomologyClass(x):
         sage: HH = P2.cohomology_ring()
         sage: from sage.schemes.toric.variety import is_CohomologyClass
         sage: is_CohomologyClass( HH.one() )                                            # needs sage.libs.singular
+        doctest:warning...
+        DeprecationWarning: The function is_CohomologyClass is deprecated;
+        use 'isinstance(..., CohomologyClass)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         True
         sage: is_CohomologyClass( HH(P2.fan(1)[0]) )                                    # needs sage.libs.singular
         True
         sage: is_CohomologyClass('z')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_CohomologyClass is deprecated; "
+                "use 'isinstance(..., CohomologyClass)' instead.")
     return isinstance(x, CohomologyClass)
 
 

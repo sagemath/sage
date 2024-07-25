@@ -29,24 +29,26 @@ AUTHORS:
 import numpy
 import math
 import bisect
+
 from itertools import product
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.infinity import infinity
-from sage.rings.cif import CIF
-from sage.rings.cc import CC
-from sage.rings.complex_double import CDF
-from sage.rings.real_double import RDF
-from sage.rings.real_mpfi import RIF
-from sage.rings.real_mpfr import RR
-
-from sage.misc.cachefunc import cached_method
 from sage.arith.functions import lcm
 from sage.arith.misc import factorial
 from sage.ext.fast_callable import fast_callable
-from sage.functions.log import log, exp
-from sage.symbolic.ring import SR
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.rings.cc import CC
+from sage.rings.complex_double import CDF
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
+
+lazy_import("sage.functions.log", ["log", "exp"])
+lazy_import("sage.rings.cif", "CIF")
+lazy_import("sage.rings.real_mpfi", "RIF")
+lazy_import("sage.symbolic.ring", "SR")
 
 
 class UnionOfIntervals:
@@ -805,8 +807,8 @@ class EllipticCurveCanonicalHeight:
             ValueError: EllipticCurveCanonicalHeight class can only be created
             from an elliptic curve defined over a number field
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(E):
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+        if isinstance(E, EllipticCurve_generic):
             self.E = E
             from sage.rings.number_field.number_field_base import NumberField
             K = E.base_ring()
@@ -1202,7 +1204,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi1, xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
+        - ``xi1``, ``xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
 
         - ``v`` (embedding) -- a real embedding of the field.
 
@@ -1250,7 +1252,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi1, xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
+        - ``xi1``, ``xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
 
         - ``n`` (integer) -- a positive integer.
 
@@ -1529,7 +1531,7 @@ class EllipticCurveCanonicalHeight:
         - ``N`` (int, default 20) -- The number of terms to use in the
           `q`-expansion of `\wp`.
 
-        - ``abs_only`` (boolean, default False) -- flag to determine
+        - ``abs_only`` (boolean, default: ``False``) -- flag to determine
           whether (if True) the error adjustment should use the
           absolute value or (if False) the real and imaginary parts.
 
@@ -1613,7 +1615,7 @@ class EllipticCurveCanonicalHeight:
         - ``N`` (int) -- The number of terms to use in the
           `q`-expansion of `\wp`.
 
-        - ``half`` (boolean, default False) -- if True, use an array of
+        - ``half`` (boolean, default: ``False``) -- if True, use an array of
           size `N\times N/2` instead of `N\times N`.
 
         OUTPUT:
@@ -1667,9 +1669,9 @@ class EllipticCurveCanonicalHeight:
 
         - ``v`` (embedding) -- a complex embedding of the number field.
 
-        - ``verbose`` (boolean, default False) -- verbosity flag.
+        - ``verbose`` (boolean, default: ``False``) -- verbosity flag.
 
-        - ``use_half`` (boolean, default False) -- if True, use only half
+        - ``use_half`` (boolean, default: ``False``) -- if True, use only half
           the fundamental region.
 
         OUTPUT:
@@ -1788,7 +1790,7 @@ class EllipticCurveCanonicalHeight:
 
         - ``N`` (integer) -- upper bound on the multiples to be used.
 
-        - ``verbose`` (boolean, default True) -- verbosity flag.
+        - ``verbose`` (boolean, default: ``True``) -- verbosity flag.
 
         OUTPUT:
 
@@ -1889,7 +1891,7 @@ class EllipticCurveCanonicalHeight:
 
         - ``n_max`` -- how many multiples to use in iteration.
 
-        - ``verbose`` (boolean, default False) -- verbosity flag.
+        - ``verbose`` (boolean, default: ``False``) -- verbosity flag.
 
         OUTPUT:
 
@@ -2015,7 +2017,7 @@ class EllipticCurveCanonicalHeight:
 
         - ``n_max`` -- how many multiples to use in iteration.
 
-        - ``verbose`` (boolean, default False) -- verbosity flag.
+        - ``verbose`` (boolean, default: ``False``) -- verbosity flag.
 
         OUTPUT:
 

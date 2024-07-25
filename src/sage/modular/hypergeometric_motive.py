@@ -47,7 +47,6 @@ REFERENCES:
 - [BeCoMe]_
 
 - [Watkins]_
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017--2024     Frédéric Chapoton
@@ -1338,7 +1337,7 @@ class HypergeometricData:
 
         - ``prec`` -- precision (optional)
 
-        - ``cache_p`` - a boolean
+        - ``cache_p`` -- a boolean
 
         OUTPUT:
 
@@ -1497,9 +1496,11 @@ class HypergeometricData:
             Using instead :class:`UniversalCyclotomicfield`, this is much
             slower than the `p`-adic version :meth:`padic_H_value`.
 
+            Unlike in :meth:`padic_H_value`, tame and wild primes are not supported.
+
         EXAMPLES:
 
-        With values in the UniversalCyclotomicField (slow)::
+        With values in the :class:`UniversalCyclotomicField` (slow)::
 
             sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
             sage: H = Hyp(alpha_beta=([1/2]*4, [0]*4))
@@ -1514,7 +1515,7 @@ class HypergeometricData:
             sage: [H.H_value(13,i,-1) for i in range(1,3)]  # not tested
             [-84, -1420]
 
-        With values in ComplexField::
+        With values in :class:`ComplexField`::
 
             sage: [H.H_value(5,i,-1, ComplexField(60)) for i in range(1,3)]
             [-4, 276]
@@ -1751,7 +1752,7 @@ class HypergeometricData:
 
         INPUT:
 
-        - ``t`` -- rational number, not 0 or 1
+        - ``t`` -- rational number, not 0
 
         - ``p`` -- prime number of good reduction
 
@@ -1837,6 +1838,15 @@ class HypergeometricData:
             T + 1
             sage: H.euler_factor(1/7^4, 7)
             7*T^3 + 7*T^2 + T + 1
+
+        This is an example with `t = 1`::
+
+            sage: H = Hyp(cyclotomic=[[4,2], [3,1]])
+            sage: H.euler_factor(1, 7)
+            -T^2 + 1
+            sage: H = Hyp(cyclotomic=[[5], [1,1,1,1]])
+            sage: H.euler_factor(1, 7)
+            343*T^2 - 6*T + 1
 
         TESTS::
 
@@ -1927,7 +1937,7 @@ class HypergeometricData:
         - [Watkins]_
         """
         t = QQ(t)
-        if t in [0, 1]:
+        if t == 0:
             raise ValueError('invalid t')
         if not is_prime(p):
             raise ValueError('p not prime')
@@ -2004,7 +2014,7 @@ class HypergeometricData:
         ans = characteristic_polynomial_from_traces(traces, d, p, w, sign, deg=deg)
 
         # In the multiplicative case, we sometimes need to add extra factors.
-        if typ == "mult":
+        if typ == "mult" and t != 1:
             if self.degree() % 2 == 0:
                 ans *= tmp
             if w % 2 == 0 and (t-1).valuation(p) % 2 == 0:

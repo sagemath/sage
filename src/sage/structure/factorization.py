@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Factorizations
 
@@ -234,7 +235,7 @@ class Factorization(SageObject):
         - ``cr`` -- (default: ``False``); if ``True``, print the factorization
           with carriage returns between factors.
 
-        - ``sort`` - (default: ``True``); if ``True``, sort the factors by
+        - ``sort`` -- (default: ``True``); if ``True``, sort the factors by
           calling the sort function ``self.sort()`` after creating
           the factorization
 
@@ -1205,7 +1206,7 @@ class Factorization(SageObject):
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: F = Factorization([(x,3), (y, 2), (x,1)])
             sage: F(x=4)
-            (1) * 4^3 * y^2 * 4
+            4^3 * y^2 * 4
             sage: F.subs({y:2})
             x^3 * 2^2 * x
 

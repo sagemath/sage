@@ -116,7 +116,6 @@ from scipy.spatial import Voronoi
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD, algdep
 from sage.ext.fast_callable import fast_callable
-from sage.functions.log import lambert_w
 from sage.graphs.graph import Graph
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -2939,11 +2938,11 @@ class RiemannSurface:
           along, where ``z_start`` may be infinite, in which case ``w_start``
           must be an integer specifying the branch.
 
-        - ``cutoff_individually`` -- boolean (default: False). Whether to truncate
+        - ``cutoff_individually`` -- boolean (default: ``False``). Whether to truncate
           the integrand uniformly or not. If ``None``, then no truncation is
           applied.
 
-        - ``raise_errors`` -- boolean (default: True). By default the code uses
+        - ``raise_errors`` -- boolean (default: ``True``). By default the code uses
           convergence errors to ensure any answers returned are accurate. This
           can be turned off to return answers faster that are not necessarily
           correct.
@@ -3107,6 +3106,8 @@ class RiemannSurface:
             n_steps = self._prec - 1
         else:
             n_steps = 15
+
+        from sage.functions.log import lambert_w
 
         V = VectorSpace(self._CC, self.genus)
         h = one
@@ -3510,7 +3511,7 @@ class RiemannSurface:
           where ``v`` is the valuation of the divisor at point ``P``, ``P`` as per
           the input to :meth:`_aj_based`.
 
-        - ``verbose`` -- logical (default: False). Whether to report the progress
+        - ``verbose`` -- logical (default: ``False``). Whether to report the progress
           of the computation, in terms of how many elements of the list ``divisor``
           have been completed.
 

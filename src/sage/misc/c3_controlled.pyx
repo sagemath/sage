@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 The C3 algorithm, under control of a total order
 
@@ -154,7 +155,7 @@ class as its bases. However, this would have several drawbacks:
   point of truth for calculating the bases of each class.
 
 - It increases the complexity of the calculation of the MRO with
-  ``C3``. For example, for a linear hierachy of classes, the
+  ``C3``. For example, for a linear hierarchy of classes, the
   complexity goes from `O(n^2)` to `O(n^3)` which is not acceptable.
 
 - It increases the complexity of inspecting the classes. For example,
@@ -581,6 +582,7 @@ cdef class CmpKeyNamed:
 
 _cmp_key_named = CmpKeyNamed()
 
+
 ##############################################################################
 
 def C3_merge(list lists):
@@ -658,6 +660,7 @@ def C3_merge(list lists):
             # No head is available
             raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
+
 
 cpdef identity(x):
     r"""
@@ -910,7 +913,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                 tailsets[-1].add(key(heads[-1]))
                 heads[-1] = O
             elif O != heads[-1]:
-                assert O_key not in tailsets[-1], "C3 should not have choosen this O"
+                assert O_key not in tailsets[-1], "C3 should not have chosen this O"
                 # Use a heap or something for fast sorted insertion?
                 # Since Python uses TimSort, that's probably not so bad.
                 tails[-1].append(O)
@@ -989,7 +992,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     EXAMPLES:
 
     See the introduction of this module :mod:`sage.misc.c3_controlled`
-    for many examples. Here we consider a large example, originaly
+    for many examples. Here we consider a large example, originally
     taken from the hierarchy of categories above
     :class:`HopfAlgebrasWithBasis`::
 
@@ -1353,7 +1356,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         if not super_classes:
             super_classes = (object,)
         return dynamic_class("%s.cls"%self, super_classes)
-
 
     @cached_method
     def all_bases(self):

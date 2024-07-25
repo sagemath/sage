@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of Python modules in the Sage library
 
@@ -535,6 +536,32 @@ class sage__libs__ntl(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.ntl',
                              [PythonModule('sage.libs.ntl.convert')],
                              spkg='sagemath_ntl', type='standard')
+
+
+class sage__libs__homfly(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.homfly`.
+
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__libs__homfly
+        sage: sage__libs__homfly().is_present()                                         # needs sage.libs.homfly
+        FeatureTestResult('sage.libs.homfly', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__homfly
+            sage: isinstance(sage__libs__homfly(), sage__libs__homfly)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.homfly',
+                             [PythonModule('sage.libs.homfly')],
+                             spkg='sagemath_homfly', type='standard')
 
 
 class sage__libs__pari(JoinFeature):
@@ -1080,7 +1107,6 @@ class sage__symbolic(JoinFeature):
                               PythonModule('sage.geometry.riemannian_manifolds'),
                               PythonModule('sage.geometry.hyperbolic_space'),
                               PythonModule('sage.dynamics.complex_dynamics'),
-                              PythonModule('sage.libs.pynac'),
                               PythonModule('sage.libs.ecl'),
                               PythonModule('sage.interfaces.fricas'),
                               PythonModule('sage.interfaces.giac'),
@@ -1130,6 +1156,7 @@ def all_features():
             sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__gap(),
+            sage__libs__homfly(),
             sage__libs__linbox(),
             sage__libs__m4ri(),
             sage__libs__ntl(),

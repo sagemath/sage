@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 The symbolic ring
 """
@@ -208,7 +207,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
             return False
         else:
-            from sage.rings.fraction_field import is_FractionField
+            from sage.rings.fraction_field import FractionField_generic
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
             from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
@@ -221,7 +220,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
                 return R not in (RLF, CLF)
-            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or isinstance(R, LaurentPolynomialRing_generic):
+            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or isinstance(R, FractionField_generic) or isinstance(R, LaurentPolynomialRing_generic):
                 base = R.base_ring()
                 return base is not self and self.has_coerce_map_from(base)
             elif (R is InfinityRing or R is UnsignedInfinityRing
@@ -385,12 +384,12 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         INPUT:
 
-        - ``x`` - a Python object.
+        - ``x`` -- a Python object.
 
-        - ``force`` - bool, default ``False``, if True, the Python object
+        - ``force`` -- bool, default ``False``, if True, the Python object
           is taken as is without attempting coercion or list traversal.
 
-        - ``recursive`` - bool, default ``True``, disables recursive
+        - ``recursive`` -- bool, default ``True``, disables recursive
           traversal of lists.
 
         EXAMPLES::
@@ -443,7 +442,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         INPUT:
 
-        - ``n`` - a nonnegative integer
+        - ``n`` -- a nonnegative integer
 
         OUTPUT:
 
@@ -1163,6 +1162,8 @@ cdef class NumpyToSRMorphism(Morphism):
     We check that :issue:`8949` and :issue:`9769` are fixed (see also :issue:`18076`)::
 
         sage: import numpy                                                              # needs numpy
+        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
+        ....:     numpy.set_printoptions(legacy="1.25")                                 # needs numpy
         sage: f(x) = x^2
         sage: f(numpy.int8('2'))                                                        # needs numpy
         4
@@ -1191,7 +1192,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
         INPUT:
 
-        - ``numpy_type`` - a numpy number type
+        - ``numpy_type`` -- a numpy number type
 
         EXAMPLES::
 

@@ -63,19 +63,20 @@ We can also construct polynomials over relative number fields::
     1
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Luis Felipe Tabera Alonso <taberalf@unican.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense_field
 from sage.rings.rational_field import QQ
 from sage.structure.element import coerce_binop
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
 
 class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
     """
@@ -95,13 +96,13 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
           :meth:`sage.rings.polynomial.polynomial_element_generic.Polynomial_generic_dense_field.__init__`
           for more details.
 
-        - ``check`` -- boolean (default: True) if True, make sure that
+        - ``check`` -- boolean (default: ``True``) if True, make sure that
           the coefficients of the polynomial are in the base ring.
 
-        - ``is_gen`` -- boolean (default: False) if True, `x` is the
+        - ``is_gen`` -- boolean (default: ``False``) if True, `x` is the
           distinguished generator of the polynomial ring.
 
-        - ``construct`` -- (default: False) boolean, unused.
+        - ``construct`` -- (default: ``False``) boolean, unused.
 
         EXAMPLES::
 

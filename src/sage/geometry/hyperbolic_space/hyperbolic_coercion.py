@@ -649,7 +649,7 @@ def SL2R_to_SO21(A):
         sage: from sage.geometry.hyperbolic_space.hyperbolic_coercion import SL2R_to_SO21
         sage: A = SL2R_to_SO21(identity_matrix(2))
         sage: J = matrix([[1,0,0],[0,1,0],[0,0,-1]]) #Lorentzian Gram matrix
-        sage: norm(A.transpose()*J*A - J) < 10**-4
+        sage: norm(A.transpose()*J*A - J) < 10**-4                                      # needs scipy
         True
     """
     a, b, c, d = (A/A.det().sqrt()).list()
@@ -689,7 +689,7 @@ def SO21_to_SL2R(M):
     EXAMPLES::
 
         sage: from sage.geometry.hyperbolic_space.hyperbolic_coercion import SO21_to_SL2R
-        sage: (SO21_to_SL2R(identity_matrix(3)) - identity_matrix(2)).norm() < 10**-4
+        sage: (SO21_to_SL2R(identity_matrix(3)) - identity_matrix(2)).norm() < 10**-4   # needs scipy
         True
     """
     ####################################################################

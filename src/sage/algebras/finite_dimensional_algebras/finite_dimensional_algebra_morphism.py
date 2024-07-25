@@ -15,7 +15,7 @@ Morphisms Between Finite Algebras
 from sage.misc.cachefunc import cached_method
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.homset import RingHomset_generic
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 
 class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
@@ -84,8 +84,10 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
         r"""
         TESTS::
 
+            sage: cat = CommutativeAlgebras(QQ).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
-            ....:                                   Matrix([[0, 1], [0, 0]])])
+            ....:                                   Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.maximal_ideal()                                                 # needs sage.libs.pari
             sage: q = A.quotient_map(I)                                                 # needs sage.libs.pari
             sage: q._repr_()                                                            # needs sage.libs.pari
@@ -98,8 +100,10 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
         """
         TESTS::
 
+            sage: cat = CommutativeAlgebras(QQ).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
-            ....:                                   Matrix([[0, 1], [0, 0]])])
+            ....:                                   Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.maximal_ideal()                                                 # needs sage.libs.pari
             sage: q = A.quotient_map(I)                                                 # needs sage.libs.pari
             sage: q(0) == 0 and q(1) == 1                                               # needs sage.libs.pari
@@ -180,8 +184,10 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
         EXAMPLES::
 
+            sage: cat = CommutativeAlgebras(QQ).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
-            ....:                                   Matrix([[0, 1], [0, 0]])])
+            ....:                                   Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.maximal_ideal()                                                 # needs sage.libs.pari
             sage: q = A.quotient_map(I)                                                 # needs sage.libs.pari
             sage: B = q.codomain()                                                      # needs sage.libs.pari
@@ -190,6 +196,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
         """
         coker_I = I.basis_matrix().transpose().kernel().basis_matrix().transpose()
         return self.domain().ideal((self._matrix * coker_I).kernel().basis_matrix(), given_by_matrix=True)
+
 
 class FiniteDimensionalAlgebraHomset(RingHomset_generic):
     """
@@ -240,10 +247,10 @@ class FiniteDimensionalAlgebraHomset(RingHomset_generic):
                 return f
             if f.parent() == self:
                 return FiniteDimensionalAlgebraMorphism(self, f._matrix, check, unitary)
-        elif is_Matrix(f):
+        elif isinstance(f, Matrix):
             return FiniteDimensionalAlgebraMorphism(self, f, check, unitary)
         try:
-            from sage.matrix.constructor import Matrix
-            return FiniteDimensionalAlgebraMorphism(self, Matrix(f), check, unitary)
+            from sage.matrix.constructor import matrix
+            return FiniteDimensionalAlgebraMorphism(self, matrix(f), check, unitary)
         except Exception:
             return RingHomset_generic.__call__(self, f, check)

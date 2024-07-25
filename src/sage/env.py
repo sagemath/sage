@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Sage Runtime Environment
 
@@ -16,7 +17,6 @@ environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
 AUTHORS:
 
 - \R. Andrew Ohana (2012): initial version
-
 """
 
 # ****************************************************************************
@@ -78,7 +78,7 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
     - ``fallbacks`` -- tuple containing ``str`` or ``None`` values.
 
-    - ``force`` -- boolean (optional, default is ``False``). If
+    - ``force`` -- boolean (default: ``False``). If
       ``True``, skip the environment variable and only use the
       fallbacks.
 
@@ -281,7 +281,7 @@ def sage_include_directories(use_sources=False):
 
     INPUT:
 
-    -  ``use_sources`` -- (default: False) a boolean
+    -  ``use_sources`` -- (default: ``False``) a boolean
 
     OUTPUT:
 
@@ -296,7 +296,7 @@ def sage_include_directories(use_sources=False):
         sage: import sage.env
         sage: sage.env.sage_include_directories()
         ['...',
-         '.../numpy/core/include',
+         '.../numpy/...core/include',
          '.../include/python...']
 
     To check that C/C++ files are correctly found, we verify that we can

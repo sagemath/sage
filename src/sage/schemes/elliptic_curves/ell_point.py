@@ -1,17 +1,14 @@
 r"""
 Points on elliptic curves
 
-The base class ``EllipticCurvePoint_field``, derived from
-``AdditiveGroupElement``, provides support for points on elliptic
-curves defined over general fields.  The derived classes
-``EllipticCurvePoint_number_field`` and
-``EllipticCurvePoint_finite_field`` provide further support for point
-on curves defined over number fields (including the rational field
+The base class :class:`EllipticCurvePoint` currently provides little
+functionality of its own.  Its derived class
+:class:`EllipticCurvePoint_field` provides support for points on
+elliptic curves over general fields.  The derived classes
+:class:`EllipticCurvePoint_number_field` and
+:class:`EllipticCurvePoint_finite_field` provide further support for
+points on curves over number fields (including the rational field
 `\QQ`) and over finite fields.
-
-The class ``EllipticCurvePoint``, which is based on
-``SchemeMorphism_point_projective_ring``, currently has little extra
-functionality.
 
 EXAMPLES:
 
@@ -107,7 +104,6 @@ AUTHORS:
 
 - Mariah Lenox (March 2011) -- Added ``tate_pairing`` and ``ate_pairing``
   functions to ``EllipticCurvePoint_finite_field`` class
-
 """
 
 # ****************************************************************************
@@ -121,30 +117,28 @@ AUTHORS:
 
 import math
 
-from sage.rings.padics.factory import Qp
-from sage.rings.padics.precision_error import PrecisionError
-
+import sage.groups.generic as generic
 import sage.rings.abc
 
+from sage.misc.lazy_import import lazy_import
+from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.infinity import Infinity as oo
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.integer_mod import Mod
-from sage.rings.real_mpfr import RealField
-from sage.rings.real_mpfr import RR
-import sage.groups.generic as generic
-from sage.structure.sequence import Sequence
-from sage.structure.richcmp import richcmp
-
-from sage.structure.coerce_actions import IntegerMulAction
-
+from sage.rings.real_mpfr import RealField, RR
 from sage.schemes.curves.projective_curve import Hasse_bounds
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
+from sage.schemes.generic.morphism import is_SchemeMorphism
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
                                                       SchemeMorphism_point_abelian_variety_field)
-from sage.schemes.generic.morphism import is_SchemeMorphism
+from sage.structure.coerce_actions import IntegerMulAction
+from sage.structure.element import AdditiveGroupElement
+from sage.structure.richcmp import richcmp
+from sage.structure.sequence import Sequence
 
-from .constructor import EllipticCurve
+lazy_import('sage.rings.padics.factory', 'Qp')
 
 try:
     from sage.libs.pari.all import pari, PariError
@@ -153,14 +147,41 @@ except ImportError:
     PariError = ()
 
 
-class EllipticCurvePoint(SchemeMorphism_point_projective_ring):
+class EllipticCurvePoint(AdditiveGroupElement,
+                         SchemeMorphism_point_projective_ring):
     """
     A point on an elliptic curve.
     """
-    pass
+    def curve(self):
+        """
+        Return the curve that this point is on.
+
+        This is a synonym for :meth:`scheme`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: P = E([-1, 1])
+            sage: P.curve()
+            Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
+
+            sage: E = EllipticCurve(QQ, [1, 1])
+            sage: P = E(0, 1)
+            sage: P.scheme()
+            Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
+            sage: P.scheme() == P.curve()
+            True
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 3,'a')                                      # needs sage.rings.number_field
+            sage: P = E.base_extend(K)(1, a)                                            # needs sage.rings.number_field
+            sage: P.scheme()                                                            # needs sage.rings.number_field
+            Elliptic Curve defined by y^2 = x^3 + x + 1 over Number Field in a with defining polynomial x^2 - 3
+        """
+        return self.scheme()
 
 
-class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
+class EllipticCurvePoint_field(EllipticCurvePoint,
+                               SchemeMorphism_point_abelian_variety_field):
     """
     A point on an elliptic curve over a field.  The point has coordinates
     in the base field.
@@ -275,7 +296,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             v = (R.zero(), R.one(), R.zero())
 
         SchemeMorphism_point_abelian_variety_field.__init__(self, point_homset, v, check=check)
-        # AdditiveGroupElement.__init__(self, point_homset)
 
         self.normalize_coordinates()
 
@@ -426,39 +446,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         else:
             return pari([0])
 
-    def scheme(self):
-        """
-        Return the scheme of this point, i.e., the curve it is on.
-        This is synonymous with :meth:`curve` which is perhaps more
-        intuitive.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(QQ,[1,1])
-            sage: P = E(0,1)
-            sage: P.scheme()
-            Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
-            sage: P.scheme() == P.curve()
-            True
-            sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 - 3,'a')                                      # needs sage.rings.number_field
-            sage: P = E.base_extend(K)(1, a)                                            # needs sage.rings.number_field
-            sage: P.scheme()                                                            # needs sage.rings.number_field
-            Elliptic Curve defined by y^2 = x^3 + x + 1
-            over Number Field in a with defining polynomial x^2 - 3
-        """
-        # The following text is just not true: it applies to the class
-        # EllipticCurvePoint, which appears to be never used, but does
-        # not apply to EllipticCurvePoint_field which is simply derived
-        # from AdditiveGroupElement.
-        #
-        # "Technically, points on curves in Sage are scheme maps from
-        #  the domain Spec(F) where F is the base field of the curve to
-        #  the codomain which is the curve.  See also domain() and
-        #  codomain()."
-
-        return self.codomain()
-
     def order(self):
         r"""
         Return the order of this point on the elliptic curve.
@@ -496,19 +483,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                                   "not implemented over general fields.")
 
     additive_order = order
-
-    def curve(self):
-        """
-        Return the curve that this point is on.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve('389a')
-            sage: P = E([-1,1])
-            sage: P.curve()
-            Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
-        """
-        return self.scheme()
 
     def __bool__(self):
         """
@@ -1043,7 +1017,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         - ``m`` -- a positive integer
 
-        - ``poly_only`` -- bool (default: False); if True return
+        - ``poly_only`` -- bool (default: ``False``); if True return
           polynomial whose roots give all possible `x`-coordinates of
           `m`-th roots of ``self``.
 
@@ -1510,7 +1484,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         INPUT:
 
-        - ``R, Q`` -- points on self.curve() with ``Q`` nonzero.
+        - ``R``, ``Q`` -- points on self.curve() with ``Q`` nonzero.
 
         OUTPUT:
 
@@ -3743,8 +3717,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        ``p`` - integer: a prime ``absprec`` - integer (default: 20):
-        the initial `p`-adic absolute precision of the computation
+        - ``p`` -- integer: a prime ``absprec`` -- integer (default: 20):
+          the initial `p`-adic absolute precision of the computation
 
         OUTPUT:
 

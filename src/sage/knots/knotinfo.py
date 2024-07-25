@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.groups
 r"""
 Access to the KnotInfo database
 
@@ -157,7 +157,7 @@ Further methods::
     True
     sage: K.is_amphicheiral()
     True
-    sage: K.jones_polynomial()
+    sage: K.jones_polynomial()                                                          # needs sage.symbolic
     t^2 - t - 1/t + 1/t^2 + 1
     sage: K.kauffman_polynomial()
     a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
@@ -211,7 +211,6 @@ REFERENCES:
 
 - `KnotInfo <https://knotinfo.math.indiana.edu/>`__
 - `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__
-
 
 
 AUTHORS:
@@ -544,7 +543,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -586,7 +585,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -629,7 +628,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -663,7 +662,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -873,7 +872,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: KnotInfo.K5_2.three_genus()     # optional - databsase_knotinfo
+            sage: KnotInfo.K5_2.three_genus()     # optional - database_knotinfo
             1
 
         Note that this differs from the corresponding result in Sage
@@ -901,7 +900,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: KnotInfo.K5_2.signature()       # optional - databsase_knotinfo
+            sage: KnotInfo.K5_2.signature()       # optional - database_knotinfo
             1
         """
         return knotinfo_int(self[self.items.signature])
@@ -1017,7 +1016,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``positive`` -- boolean (optional, default False) whether to check
+        - ``positive`` -- boolean (default: ``False``) whether to check
           if ``self`` is positive or negative amphicheiral (see documentation
           of :meth:`symmetry_type`)
 
@@ -1351,7 +1350,7 @@ class KnotInfoBase(Enum):
 
         - ``var1`` -- (default: ``'a'``) the first variable
         - ``var2`` -- (default: ``'z'``) the second variable
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1363,14 +1362,16 @@ class KnotInfoBase(Enum):
         EXAMPLES::
 
             sage: L = KnotInfo.L2a1_1
+            sage: K = KnotInfo.K4_1
+
             sage: L.kauffman_polynomial()
             a^-1*z - a^-1*z^-1 + a^-2 + a^-3*z - a^-3*z^-1
-            sage: K = KnotInfo.K4_1
             sage: K.kauffman_polynomial()
             a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
 
         Comparison with Jones polynomial::
 
+            sage: # needs sage.symbolic
             sage: k    = _
             sage: a, z = k.variables()
             sage: j    = K.jones_polynomial(skein_normalization=True)
@@ -1469,7 +1470,7 @@ class KnotInfoBase(Enum):
         EXAMPLES::
 
             sage: K = KnotInfo.K4_1
-            sage: Kj = K.jones_polynomial(); Kj
+            sage: Kj = K.jones_polynomial(); Kj                                         # needs sage.symbolic
             t^2 - t - 1/t + 1/t^2 + 1
             sage: Kjs = K.jones_polynomial(skein_normalization=True); Kjs
             A^-8 - A^-4 + 1 - A^4 + A^8
@@ -1479,17 +1480,17 @@ class KnotInfoBase(Enum):
         for proper links::
 
             sage: L = KnotInfo.L2a1_1
-            sage: Lj = L.jones_polynomial(); Lj
+            sage: Lj = L.jones_polynomial(); Lj                                         # needs sage.symbolic
             -x^5 - x
-            sage: Ljt = L.jones_polynomial(use_sqrt=True); Ljt
+            sage: Ljt = L.jones_polynomial(use_sqrt=True); Ljt                          # needs sage.symbolic
             -t^(5/2) - sqrt(t)
             sage: Ljp = L.jones_polynomial(puiseux=True); Ljp
             -t^(1/2) - t^(5/2)
             sage: Ljs = L.jones_polynomial(skein_normalization=True); Ljs
             -A^2 - A^10
-            sage: Lj.parent()
+            sage: Lj.parent()                                                           # needs sage.symbolic
             Symbolic Ring
-            sage: Ljt.parent()
+            sage: Ljt.parent()                                                          # needs sage.symbolic
             Symbolic Ring
             sage: Ljp.parent()
             Puiseux Series Ring in t over Integer Ring
@@ -1499,17 +1500,17 @@ class KnotInfoBase(Enum):
         Comparison with Sage's results::
 
             sage: k = K.link()
-            sage: kj = k.jones_polynomial()
-            sage: bool(Kj == kj)
+            sage: kj = k.jones_polynomial()                                             # needs sage.symbolic
+            sage: bool(Kj == kj)                                                        # needs sage.symbolic
             True
             sage: kjs = k.jones_polynomial(skein_normalization=True)
             sage: Kjs == kjs
             True
             sage: l = L.link()
-            sage: lj = l.jones_polynomial()
-            sage: bool(Lj == lj)
+            sage: lj = l.jones_polynomial()                                             # needs sage.symbolic
+            sage: bool(Lj == lj)                                                        # needs sage.symbolic
             False
-            sage: bool(Ljt == lj)   # see note above
+            sage: bool(Ljt == lj)   # see note above                                    # needs sage.symbolic
             True
             sage: ljs = l.jones_polynomial(skein_normalization=True)
             sage: Ljs == ljs
@@ -1519,6 +1520,8 @@ class KnotInfoBase(Enum):
         of the positive crossings of the right-handed trefoil)::
 
             sage: K3_1  = KnotInfo.K3_1
+
+            sage: # needs sage.symbolic
             sage: K3_1j = K3_1.jones_polynomial()
             sage: L2a1_1j = Ljt     # see note above
             sage: R = L2a1_1j.parent()
@@ -1619,7 +1622,7 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
         - ``laurent_poly`` -- boolean (default ``False``) see the note below
 
@@ -1709,7 +1712,7 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1727,7 +1730,7 @@ class KnotInfoBase(Enum):
             sage: Lc = L.conway_polynomial(); Lc
             t^3
 
-        Comparision to Sage's results::
+        Comparison to Sage's results::
 
             sage: Kc == K.link().conway_polynomial()
             True
@@ -1736,7 +1739,7 @@ class KnotInfoBase(Enum):
 
         Launch the KnotInfo description web-page::
 
-            sage: K.items.conway_polynomial.description_webpage() # not tested
+            sage: K.items.conway_polynomial.description_webpage()  # not tested
             True
         """
         conway_polynomial = self[self.items.conway_polynomial]
@@ -1833,7 +1836,7 @@ class KnotInfoBase(Enum):
             False
 
 
-        Comparision to Sage's results::
+        Comparison to Sage's results::
 
             sage: Kk == K.link().khovanov_polynomial()
             True
@@ -1954,7 +1957,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``use_item`` -- (optional, default ``self.items.pd_notation``)
+        - ``use_item`` -- (default: ``self.items.pd_notation``)
           instance of :class:`KnotInfoColumns` to choose the column
           that should be used to construct the link. Allowed values
           are:
@@ -2152,7 +2155,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``unique`` -- boolean (optional, default=``True``) if set to ``False``
+        - ``unique`` -- boolean (default: ``True``) if set to ``False``
           it is only checked if ``self`` is among the recovered items
 
         EXAMPLES::
@@ -2218,7 +2221,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``verbose`` -- boolean (optional, default ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``) to suppress
           the message printed on the invocation
 
         EXAMPLES::
@@ -2241,7 +2244,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default False) it only affects proper links.
+        - ``oriented`` -- boolean (default: ``False``) it only affects proper links.
           By default the items of the series will be again series of links
           collecting all orientation mutants of an unoriented name. To obtain
           the series of the individual links this keyword has to be set to
@@ -2404,21 +2407,21 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (optional, default ``False``) it only affects
+        - ``oriented`` -- boolean (default: ``False``) it only affects
           series of proper links. By default the list items of a series of proper
           links are again series of links collecting all orientation types of an
           unoriented name. To obtain the list of the individual links this
           keyword has to be set to ``True``
 
-        - ``comp`` (optional, default ``None``) if given an integer for this
+        - ``comp`` (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according number
           of components. This keyword implies ``oriented=True``
 
-        - ``det`` (optional, default ``None``) if given an integer for this
+        - ``det`` (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according value
           for its determinant. This keyword implies ``oriented=True``
 
-        - ``homfly`` (optional, default ``None``) if given a HOMFLY-PT polynomial
+        - ``homfly`` (default: ``None``) if given a HOMFLY-PT polynomial
           having ``normalization='vz'`` for this keyword the list is restriced to
           links having the according value for its HOMFLY-PT polynomial. This
           keyword implies ``oriented=True``
@@ -2496,16 +2499,16 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (optional, default ``False``) see the
+        - ``oriented`` -- boolean (default: ``False``) see the
           description for :meth:`list`
 
-        - ``comp`` (optional, default ``None``) see the description for
+        - ``comp`` (default: ``None``) see the description for
           :meth:`list`
 
-        - ``det`` (optional, default ``None``) see the description for
+        - ``det`` (default: ``None``) see the description for
           :meth:`list`
 
-        - ``homfly`` (optional, default ``None``) see the description for
+        - ``homfly`` (default: ``None``) see the description for
           :meth:`list`
 
         EXAMPLES::
@@ -2655,7 +2658,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``unique`` -- boolean (optional, default=``True``) see
+        - ``unique`` -- boolean (default: ``True``) see
           :meth:`KnotInfoBase.is_recoverable`
         - ``max_samples`` -- non negative integer or ``infinity`` (optional,
           default ``8``) limits the number of items to check (random sample).
@@ -2691,20 +2694,23 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: TestSuite(KnotInfo.L5a1_0.series()).run(verbose=True)  # indirec doctest
+            sage: TestSuite(KnotInfo.L5a1_0.series()).run(verbose=True)  # indirect doctest
             running ._test_category() . . . pass
             running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
             running ._test_recover() . . . pass
-            sage: TestSuite(KnotInfo.K6_1.series()).run(max_samples=infinity)  # indirec doctest
+            sage: TestSuite(KnotInfo.K6_1.series()).run(max_samples=infinity)  # indirect doctest
         """
         tester = options['tester']
         max_samples = tester._max_samples
-        if max_samples:
-            tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
-        else:
-            tester.assertTrue(self.is_recoverable(unique=False))
+        try:
+            if max_samples:
+                tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
+            else:
+                tester.assertTrue(self.is_recoverable(unique=False))
+        except ImportError:
+            pass
 
     def inject(self, verbose=True):
         r"""
@@ -2713,12 +2719,11 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``verbose`` -- boolean (optional, default ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``) to suppress
           the message printed on the invocation
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfoSeries
             sage: KnotInfoSeries(6, True, True).inject()
             Defining K6
             sage: K6(2)

@@ -15,7 +15,7 @@ H(yperplane) and V(ertex) representation objects for polyhedra
 
 
 from sage.structure.sage_object import SageObject
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
@@ -645,7 +645,7 @@ class Hrepresentation(PolyhedronRepresentation):
             sage: ineq.eval( vector(ZZ, [3,2]) )
             5
         """
-        if is_Vector(Vobj):
+        if isinstance(Vobj, Vector):
             return self.A() * Vobj + self.b()
         return Vobj.evaluated_on(self)
 

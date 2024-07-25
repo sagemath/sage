@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs, sage.combinat
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Morphisms between toric lattices compatible with fans
 
@@ -80,18 +80,16 @@ import operator
 
 from sage.categories.homset import Hom
 from sage.geometry.cone import Cone
-from sage.geometry.fan import Fan, is_Fan
+from sage.geometry.fan import Fan, RationalPolyhedralFan
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.latex import latex
-from sage.misc.misc import walltime
 from sage.misc.misc_c import prod
 from sage.modules.free_module_morphism import FreeModuleMorphism
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.infinity import is_Infinite
+from sage.rings.infinity import InfinityElement
 from functools import reduce
 
 
@@ -270,15 +268,15 @@ class FanMorphism(FreeModuleMorphism):
             Codomain fan: Rational polyhedral fan in 2-d lattice N
             sage: TestSuite(fm).run(skip="_test_category")
         """
-        assert is_Fan(domain_fan)
-        if is_Fan(codomain):
+        assert isinstance(domain_fan, RationalPolyhedralFan)
+        if isinstance(codomain, RationalPolyhedralFan):
             codomain, codomain_fan = codomain.lattice(), codomain
         else:
             codomain_fan = None
         if isinstance(morphism, FreeModuleMorphism):
             parent = morphism.parent()
             A = morphism.matrix()
-        elif is_Matrix(morphism):
+        elif isinstance(morphism, Matrix):
             A = morphism
             if codomain is None:
                 raise ValueError("codomain (fan) must be given explicitly if "
@@ -505,6 +503,7 @@ class FanMorphism(FreeModuleMorphism):
             0 & 1
             \end{array}\right) : \Sigma^{2} \to \Sigma^{2}
         """
+        from sage.misc.latex import latex
         return (r"%s : %s \to %s" % (latex(self.matrix()),
                         latex(self.domain_fan()), latex(self.codomain_fan())))
 
@@ -1459,7 +1458,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: phi.is_surjective()
             False
         """
-        if is_Infinite(self.index()):
+        if isinstance(self.index(), InfinityElement):
             return False    # Not surjective between vector spaces.
         for dcones in self.codomain_fan().cones():
             for sigma_p in dcones:

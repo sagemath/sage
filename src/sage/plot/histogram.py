@@ -92,6 +92,8 @@ class Histogram(GraphicPrimitive):
             {'xmax': 10.0, 'xmin': 3.0, 'ymax': 0.476190476190..., 'ymin': 0}
         """
         import numpy
+        if int(numpy.version.short_version[0]) > 1:
+            numpy.set_printoptions(legacy="1.25")
 
         # Extract these options (if they are not None) and pass them to
         # histogram()
@@ -148,7 +150,7 @@ class Histogram(GraphicPrimitive):
                 'edgecolor': 'The color of the border of each bar.',
                 'alpha': 'How transparent the plot is',
                 'hue': 'The color of the bars given as a hue.',
-                'fill': '(True or False, default True) Whether to fill the bars',
+                'fill': '(True or False, default: ``True``) Whether to fill the bars',
                 'hatch': 'What symbol to fill with - one of "/", "\\", "|", "-", "+", "x", "o", "O", ".", "*"',
                 'linewidth': 'Width of the lines defining the bars',
                 'linestyle': "One of 'solid' or '-', 'dashed' or '--', 'dotted' or ':', 'dashdot' or '-.'",
@@ -223,13 +225,13 @@ def histogram(datalist, **options):
       partition
     - ``color`` -- The color of the face of the bars or list of colors if
       multiple data sets are given
-    - ``cumulative`` -- (boolean - default: False) If True, then
+    - ``cumulative`` -- (default: ``False``) If True, then
       a histogram is computed in which each bin gives the counts in that
       bin plus all bins for smaller values.  Negative values give
       a reversed direction of accumulation
     - ``edgecolor`` -- The color of the border of each bar
-    - ``fill`` -- (boolean - default: True) Whether to fill the bars
-    - ``hatch`` -- (default: None) symbol to fill the bars with - one of
+    - ``fill`` -- (default: ``True``) Whether to fill the bars
+    - ``hatch`` -- (default: None) symbol to fill the bars with; one of
       "/", "\\", "|", "-", "+", "x", "o", "O", ".", "*", "" (or None)
     - ``hue`` -- The color of the bars given as a hue. See
       :mod:`~sage.plot.colors.hue` for more information on the hue
@@ -237,7 +239,7 @@ def histogram(datalist, **options):
     - ``linewidth`` -- (float) width of the lines defining the bars
     - ``linestyle`` -- (default: 'solid') Style of the line. One of 'solid'
       or '-', 'dashed' or '--', 'dotted' or ':', 'dashdot' or '-.'
-    - ``density`` -- (boolean - default: False) If True, the result is the
+    - ``density`` -- (default: ``False``) If True, the result is the
       value of the probability density function at the bin, normalized such
       that the integral over the range is 1.
     - ``range`` -- A list [min, max] which define the range of the
@@ -245,7 +247,7 @@ def histogram(datalist, **options):
       omitted from counts
     - ``rwidth`` -- (float in [0,1], default: 1) The relative width of the bars
       as a fraction of the bin width
-    - ``stacked`` -- (boolean - default: False) If True, multiple data are
+    - ``stacked`` -- (default: ``False``) If True, multiple data are
       stacked on top of each other
     - ``weights`` -- (list) A sequence of weights the same length as the data
       list. If supplied, then each value contributes its associated weight

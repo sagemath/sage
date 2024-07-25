@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 import os
 
 from . import StaticFile

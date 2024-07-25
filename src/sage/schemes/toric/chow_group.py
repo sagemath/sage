@@ -131,8 +131,8 @@ from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 
 import sage.geometry.abc
-from sage.schemes.toric.variety import is_ToricVariety
-from sage.schemes.toric.divisor import is_ToricDivisor
+from sage.schemes.toric.variety import ToricVariety_field
+from sage.schemes.toric.divisor import ToricDivisor_generic
 
 
 class ChowCycle(FGP_Element):
@@ -408,7 +408,7 @@ class ChowCycle(FGP_Element):
              (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
              (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)]
         """
-        assert is_ToricDivisor(divisor), f'{divisor} is not a toric divisor'
+        assert isinstance(divisor, ToricDivisor_generic), f'{divisor} is not a toric divisor'
 
         A = self.parent()  # the Chow group
         X = A._variety  # the toric variety
@@ -548,7 +548,7 @@ class ChowGroupFactory(UniqueFactory):
             sage: ChowGroup(P2, ZZ, check=True) == ChowGroup(P2, ZZ, check=False)   # indirect doctest
             True
         """
-        if not is_ToricVariety(toric_variety):
+        if not isinstance(toric_variety, ToricVariety_field):
             raise ValueError('first argument must be a toric variety')
 
         if base_ring not in [ZZ, QQ]:
@@ -608,9 +608,9 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             sage: P2 = toric_varieties.P2()
             sage: A = ChowGroup_class(P2,ZZ,True); A
             Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches
-            sage: is_ChowGroup(A)
+            sage: isinstance(A, ChowGroup_class)
             True
-            sage: is_ChowCycle(A.an_element())
+            sage: isinstance(A.an_element(), ChowCycle)
             True
 
         TESTS::
@@ -701,7 +701,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         if isinstance(x, sage.geometry.abc.ConvexRationalPolyhedralCone):
             cone = fan.embed(x)
             return self.element_class(self, self._cone_to_V(cone), False)
-        if is_ToricDivisor(x):
+        if isinstance(x, ToricDivisor_generic):
             v = sum(x.coefficient(i) * self._cone_to_V(onecone)
                     for i, onecone in enumerate(fan(1)))
             return self.element_class(self, v, False)
@@ -1216,10 +1216,15 @@ def is_ChowGroup(x) -> bool:
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import is_ChowGroup
         sage: is_ChowGroup(A)
+        doctest:warning...
+        DeprecationWarning: The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_ChowGroup('Victoria')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.")
     return isinstance(x, ChowGroup_class)
 
 
@@ -1239,10 +1244,18 @@ def is_ChowCycle(x) -> bool:
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import *
         sage: is_ChowCycle(A)
+        doctest:warning...
+        DeprecationWarning: The function is_ChowCycle is deprecated;
+        use 'isinstance(..., ChowCycle)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         False
         sage: is_ChowCycle(A.an_element())
         True
         sage: is_ChowCycle('Victoria')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_ChowCycle is deprecated; "
+                "use 'isinstance(..., ChowCycle)' instead.")
     return isinstance(x, ChowCycle)

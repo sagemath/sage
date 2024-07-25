@@ -55,9 +55,9 @@ from sage.categories.fields import Fields
 from sage.categories.enumerated_sets import EnumeratedSets
 
 from sage.misc.lazy_import import lazy_import
-from sage.features import PythonModule
+from sage.features.meataxe import Meataxe
 lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
-            feature=PythonModule('sage.matrix.matrix_gfpn_dense', spkg='meataxe'))
+            feature=Meataxe())
 lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
 
 _Rings = Rings()
@@ -74,12 +74,18 @@ def is_MatrixSpace(x):
         sage: MS = MatrixSpace(QQ,2)
         sage: A = MS.random_element()
         sage: is_MatrixSpace(MS)
+        doctest:warning...
+        DeprecationWarning: the function is_MatrixSpace is deprecated;
+        use 'isinstance(..., MatrixSpace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_MatrixSpace(A)
         False
         sage: is_MatrixSpace(5)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_MatrixSpace is deprecated; use 'isinstance(..., MatrixSpace)' instead")
     return isinstance(x, MatrixSpace)
 
 
@@ -396,7 +402,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             if R.order() < matrix_modn_sparse.MAX_MODULUS:
                 return matrix_modn_sparse.Matrix_modn_sparse
 
-    if sage.rings.rational_field.is_RationalField(R):
+    if isinstance(R, sage.rings.rational_field.RationalField):
         try:
             from . import matrix_rational_sparse
         except ImportError:
@@ -404,7 +410,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         else:
             return matrix_rational_sparse.Matrix_rational_sparse
 
-    if sage.rings.integer_ring.is_IntegerRing(R):
+    if isinstance(R, sage.rings.integer_ring.IntegerRing_class):
         try:
             from . import matrix_integer_sparse
         except ImportError:
@@ -1156,7 +1162,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         INPUT:
 
 
-        -  ``R`` - ring
+        -  ``R`` -- ring
 
 
         OUTPUT: a matrix space
@@ -1183,7 +1189,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``R`` - ring
+        -  ``R`` -- ring
 
         OUTPUT: a matrix space
 
@@ -1265,10 +1271,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
             if op is operator.mul:
                 from . import action as matrix_action
                 if self_on_left:
-                    if is_MatrixSpace(S):
+                    if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(self, S)
-                    elif sage.modules.free_module.is_FreeModule(S):
+                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.MatrixVectorAction(self, S)
                     elif isinstance(S, SchemeHomset_points):
                         return matrix_action.MatrixSchemePointAction(self, S)
@@ -1278,10 +1284,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
                         # action of base ring
                         return sage.structure.coerce_actions.RightModuleAction(S, self)
                 else:
-                    if is_MatrixSpace(S):
+                    if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(S, self)
-                    elif sage.modules.free_module.is_FreeModule(S):
+                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.VectorMatrixAction(self, S)
                     elif isinstance(S, SchemeHomset_generic):
                         return matrix_action.PolymapMatrixAction(self, S)
@@ -1456,11 +1462,11 @@ class MatrixSpace(UniqueRepresentation, Parent):
                 return self.has_coerce_map_from(MS)
 
             try:
-                from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
+                from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
             except ImportError:
                 pass
             else:
-                if is_ArithmeticSubgroup(S):
+                if isinstance(S, ArithmeticSubgroup):
                     return self.has_coerce_map_from(MS)
 
             return False
@@ -2164,9 +2170,20 @@ class MatrixSpace(UniqueRepresentation, Parent):
             False
             sage: MM.zero().is_mutable()
             False
+
+        Check that :issue:`38221` is fixed::
+
+            sage: # needs sage.groups
+            sage: G = CyclicPermutationGroup(7)
+            sage: R = GF(2)
+            sage: A = G.algebra(R)
+            sage: S = MatrixSpace(A, 3, 3)
+            sage: S.zero_matrix()
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
         """
-        zero = self.base_ring().zero()
-        res = self.element_class(self, zero, False, False)
+        res = self.element_class(self, None, False, False)
         res.set_immutable()
         return res
 
@@ -2394,14 +2411,14 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``density`` - ``float`` or ``None`` (default: ``None``);  rough
+        -  ``density`` -- ``float`` or ``None`` (default: ``None``);  rough
            measure of the proportion of nonzero entries in the random matrix;
            if set to ``None``, all entries of the matrix are randomized,
            allowing for any element of the underlying ring, but if set to
            a ``float``, a proportion of entries is selected and randomized to
            non-zero elements of the ring
 
-        -  ``*args, **kwds`` - remaining parameters, which may be passed to
+        -  ``*args, **kwds`` -- remaining parameters, which may be passed to
            the random_element function of the base ring. ("may be", since this
            function calls the ``randomize`` function on the zero matrix, which
            need not call the ``random_element`` function of the base ring at
@@ -2588,7 +2605,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``*args``, ``**kwds`` - Parameters that can be forwarded to the
+        - ``*args``, ``**kwds`` -- Parameters that can be forwarded to the
           ``random_element`` method
 
         OUTPUT:
@@ -2615,6 +2632,50 @@ class MatrixSpace(UniqueRepresentation, Parent):
             rand_matrix = self.random_element(*args, **kwds)
         return rand_matrix
 
+    def from_vector(self, vector, order=None, coerce=True):
+        r"""
+        Build an element of ``self`` from a vector.
+
+        EXAMPLES::
+
+            sage: A = matrix([[1,2,3], [4,5,6]])
+            sage: v = vector(A); v
+            (1, 2, 3, 4, 5, 6)
+            sage: MS = A.parent()
+            sage: MS.from_vector(v)
+            [1 2 3]
+            [4 5 6]
+            sage: order = [(1,2), (1,0), (0,1), (0,2), (0,0), (1,1)]
+            sage: MS.from_vector(v, order=order)
+            [5 3 4]
+            [2 6 1]
+        """
+        if order is None:
+            if self.is_dense():
+                return self.element_class(self, vector, coerce=coerce)
+            else:
+                nc = self.ncols()
+                d = {(k // nc, k % nc): c for k, c in vector.dict().items()}
+                return self.element_class(self, d, coerce=coerce)
+        return super().from_vector(vector, order=order, coerce=coerce)
+
+    def _from_dict(self, d, coerce=True, remove_zeros=True):
+        r"""
+        Construct an element of ``self`` from the dictionary ``d``.
+
+        INPUT:
+
+        - ``coerce`` -- boolean; coerce the coefficients to the base ring
+        - ``remove_zeros`` -- ignored; for compatibility
+
+        EXAMPLES::
+
+            sage: MS = MatrixSpace(QQ['x'], 10, 5)
+            sage: A = MS.random_element()
+            sage: MS._from_dict(A.monomial_coefficients()) == A
+            True
+        """
+        return self.element_class(self, d, coerce=coerce)
 
 def dict_to_list(entries, nrows, ncols):
     r"""
@@ -2651,9 +2712,9 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
 
     INPUT:
 
-    - ``ring`` - a ring
-    - ``sparse`` - a boolean
-    - ``checkrank`` - a boolean
+    - ``ring`` -- a ring
+    - ``sparse`` -- a boolean
+    - ``checkrank`` -- a boolean
 
     OUTPUT:
 

@@ -26,7 +26,6 @@ AUTHORS:
 - Kiran Kedlaya (2016)
 
 - Dean Bisogno (2017): Fixed Hasse-Witt computation
-
 """
 # ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -57,11 +56,13 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.arith.misc import binomial
 from sage.rings.power_series_ring import PowerSeriesRing
 from . import hyperelliptic_generic
-from sage.schemes.hyperelliptic_curves.hypellfrob import hypellfrob
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.functional import rank
-from sage.libs.pari.all import pari
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.schemes.hyperelliptic_curves.hypellfrob', 'hypellfrob')
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
 
@@ -1442,7 +1443,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - 'E' - Hyperelliptic Curve of the form `y^2 = f(x)` over a
+        - 'E' -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
           finite field, `\GF{q}`
 
         OUTPUT:
@@ -1780,8 +1781,6 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         OUTPUT:
 
         - ``N`` : The matrix `N = M M^p \dots M^{p^{g-1}}` where `M = c_{pi-j}`, and `f(x)^{(p-1)/2} = \sum c_i x^i`
-
-
 
         Reference-N. Yui. On the Jacobian varieties of hyperelliptic curves over fields of characteristic `p > 2`.
 

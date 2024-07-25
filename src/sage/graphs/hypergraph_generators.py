@@ -211,7 +211,7 @@ class HypergraphGenerators:
 
         INPUT:
 
-        - ``k,n`` -- nonnegative integers with `k\leq n`
+        - ``k``, ``n`` -- nonnegative integers with `k\leq n`
 
         EXAMPLES::
 

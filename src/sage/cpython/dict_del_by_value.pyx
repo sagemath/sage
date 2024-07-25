@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Delete item from PyDict by exact value and hash
 

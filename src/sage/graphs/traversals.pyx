@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # cython: binding=True
 # distutils: language = c++
 r"""
@@ -77,8 +76,19 @@ def _is_valid_lex_BFS_order(G, L):
 
         sage: G = DiGraph("I?O@??A?CCA?A??C??")
         sage: _is_valid_lex_BFS_order(G, [0, 7, 1, 2, 3, 4, 5, 8, 6, 9])
+        False
+        sage: _is_valid_lex_BFS_order(G, G.lex_BFS())
+        True
+        sage: H = G.to_undirected()
+        sage: _is_valid_lex_BFS_order(H, G.lex_BFS())
+        True
+        sage: _is_valid_lex_BFS_order(G, H.lex_BFS())
         True
     """
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
+
     cdef int n = G.order()
 
     if set(L) != set(G):
@@ -87,11 +97,9 @@ def _is_valid_lex_BFS_order(G, L):
     cdef dict L_inv = {u: i for i, u in enumerate(L)}
     cdef int pos_a, pos_b, pos_c
 
-    neighbors = G.neighbor_in_iterator if G.is_directed() else G.neighbor_iterator
-
     for pos_a in range(n - 1, -1, -1):
         a = L[pos_a]
-        for c in neighbors(a):
+        for c in G.neighbor_iterator(a):
             pos_c = L_inv[c]
             if pos_c > pos_a:
                 continue
@@ -100,7 +108,7 @@ def _is_valid_lex_BFS_order(G, L):
                 if G.has_edge(c, b):
                     continue
                 if any(L_inv[d] < pos_c and not G.has_edge(d, a)
-                       for d in neighbors(b)):
+                       for d in G.neighbor_iterator(b)):
                     # The condition is satisfied for a < b < c
                     continue
                 return False
@@ -257,7 +265,11 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
       - ``"fast"`` -- This algorithm uses the notion of *slices* to refine the
         position of the vertices in the ordering. The time complexity of this
         algorithm is in `O(n + m)`, and our implementation follows that
-        complexity. See [HMPV2000]_ and next section for more details.
+        complexity for ``SparseGraph``. For ``DenseGraph``, the complexity is
+        `O(n^2)`. See [HMPV2000]_ and next section for more details.
+
+    Loops and multiple edges are ignored during the computation of ``lex_BFS``
+    and directed graphs are converted to undirected graphs.
 
     ALGORITHM:
 
@@ -315,10 +327,11 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_BFS(initial_vertex=2, algorithm="slow")
-        [2, 3, 1]
-        sage: G.lex_BFS(initial_vertex=2, algorithm="fast")
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_BFS(initial_vertex=2, algorithm="slow") in correct_anwsers
+        True
+        sage: G.lex_BFS(initial_vertex=2, algorithm="fast") in correct_anwsers
+        True
 
     For a Chordal Graph, a reversed Lex BFS is a Perfect Elimination Order::
 
@@ -408,9 +421,9 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     if tree:
         from sage.graphs.digraph import DiGraph
 
-    # Loops and multiple edges are not needed in Lex BFS
-    if G.has_loops() or G.has_multiple_edges():
-        G = G.to_simple(immutable=False)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef size_t n = G.order()
     if not n:
@@ -429,7 +442,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Initialize the predecessors array
     cdef MemoryAllocator mem = MemoryAllocator()
@@ -444,7 +458,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     cdef int now, v, vi, int_neighbor
 
     # Perform Lex BFS
-    if algorithm is "fast":
+    if algorithm == "fast":
         lex_BFS_fast_short_digraph(sd, sigma_int, pred)
         sigma = [int_to_v[sigma_int[i]] for i in range(n)]
 
@@ -496,6 +510,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
+    Loops and multiple edges are ignored during the computation of ``lex_UP``
+    and directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     This algorithm maintains for each vertex left in the graph a code
@@ -505,8 +522,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     appended to the codes of all neighbors of the selected vertex that are left
     in the graph.
 
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
 
     See [Mil2017]_ for more details on the algorithm.
 
@@ -536,8 +554,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_UP(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_UP(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -585,9 +604,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
 
-    # Loops and multiple edges are not needed in Lex UP
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int nV = G.order()
 
@@ -602,7 +621,8 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex UP
 
@@ -668,6 +688,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
+    Loops and multiple edges are ignored during the computation of ``lex_DFS``
+    and directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     This algorithm maintains for each vertex left in the graph a code
@@ -676,8 +699,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     codes are updated. Lex DFS differs from Lex BFS only in the way codes are
     updated after each iteration.
 
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
 
     See [CK2008]_ for more details on the algorithm.
 
@@ -707,8 +731,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_DFS(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_DFS(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -756,9 +781,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
 
-    # Loops and multiple edges are not needed in Lex DFS
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int nV = G.order()
 
@@ -773,7 +798,8 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex DFS
 
@@ -840,6 +866,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
+    Loops and multiple edges are ignored during the computation of ``lex_DOWN``
+    and directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     This algorithm maintains for each vertex left in the graph a code
@@ -849,8 +878,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     prepended to the codes of all neighbors of the selected vertex that are left
     in the graph.
 
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
 
     See [Mil2017]_ for more details on the algorithm.
 
@@ -880,8 +910,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_DOWN(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_DOWN(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -929,9 +960,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
 
-    # Loops and multiple edges are not needed in Lex DOWN
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int nV = G.order()
 
@@ -946,7 +977,8 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex DOWN
 
@@ -1412,7 +1444,8 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
         int_to_v[0], int_to_v[i] = int_to_v[i], int_to_v[0]
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
 
@@ -1578,6 +1611,10 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     chosen at each step `i` to be placed in position `n - i` in `\alpha`. This
     ordering can be computed in time `O(n + m)`.
 
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
+
     When the graph is chordal, the ordering returned by MCS is a *perfect
     elimination ordering*, like :meth:`~sage.graphs.traversals.lex_BFS`. So
     this ordering can be used to recognize chordal graphs. See [He2006]_ for
@@ -1589,7 +1626,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     INPUT:
 
-    - ``G`` -- a Sage Graph
+    - ``G`` -- a Sage graph
 
     - ``reverse`` -- boolean (default: ``False``); whether to return the
       vertices in discovery order, or the reverse
@@ -1604,8 +1641,8 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     By default, return the ordering `\alpha` as a list. When ``tree`` is
     ``True``, the method returns a tuple `(\alpha, T)`, where `T` is a directed
-    tree with the same set of vertices as `G`and a directed edge from `u` to `v`
-    if `u` was the first vertex to saw `v`.
+    tree with the same set of vertices as `G` and a directed edge from `u` to `v`
+    if `u` was the first vertex to see `v`.
 
     EXAMPLES:
 
@@ -1671,7 +1708,8 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
         raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
     cdef uint32_t** p_vertices = sd.neighbors
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
@@ -2045,7 +2083,8 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* alpha = <int*>mem.calloc(N, sizeof(int))

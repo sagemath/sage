@@ -54,8 +54,6 @@ EXAMPLES::
     [          0           0 79 + O(107)      O(107)]
     [     O(107) 42 + O(107)           0           0]
     [30 + O(107)      O(107)           0           0]
-
-
 """
 
 # *****************************************************************************
@@ -68,19 +66,20 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-
 from sage.arith.misc import euler_phi
-from sage.functions.other import ceil, binomial, floor
-from sage.functions.log import log
+from sage.matrix.constructor import matrix, zero_matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.padics.factory import Zp, Zq, Qq
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.matrix.constructor import matrix, zero_matrix
-from sage.modules.free_module_element import vector
-from sage.schemes.hyperelliptic_curves.hypellfrob import interval_products
-from sage.misc.cachefunc import cached_method
+
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.functions.other", ["ceil", "binomial", "floor"])
+lazy_import('sage.rings.padics.factory', ['Zp', 'Zq', 'Qq'])
+lazy_import('sage.schemes.hyperelliptic_curves.hypellfrob', 'interval_products')
 
 from .charpoly_frobenius import charpoly_frobenius
 from . import cycliccover_generic
@@ -333,20 +332,20 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
 
         INPUT:
 
-        -   ``i`` - The power of x in the expression `Frob(x^i dx/y^j) / dx`
+        -   ``i`` -- The power of x in the expression `Frob(x^i dx/y^j) / dx`
 
-        -   ``j`` - The (negative) power of y in the expression
-                    `Frob(x^i dx/y^j) / dx`
+        -   ``j`` -- The (negative) power of y in the expression
+                     `Frob(x^i dx/y^j) / dx`
 
         OUTPUT:
 
-        ``frobij`` - a Matrix of size  (d * (N0 - 1) + ) x (N0)
-                     that represents the Frobenius expansion of
-                     x^i dx/y^j modulo p^(N0 + 1)
+        ``frobij`` -- a Matrix of size  (d * (N0 - 1) + ) x (N0)
+                      that represents the Frobenius expansion of
+                      x^i dx/y^j modulo p^(N0 + 1)
 
-                    the entry (l, s) corresponds to the coefficient associated
-                    to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
-                    (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
+                      the entry (l, s) corresponds to the coefficient associated
+                      to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
+                      (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
 
         ALGORITHM:
 

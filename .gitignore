@@ -204,6 +204,8 @@ build/pkgs/wheel/version_requirements.txt
 /pkgs/*/MANIFEST
 /pkgs/*/*.egg-info
 /pkgs/*/.tox
+/pkgs/*/venv*
+/pkgs/*/.venv*
 
 /pkgs/sage-conf_pypi/sage_root/config.log
 /pkgs/sage-conf_pypi/sage_root/config.status
@@ -259,6 +261,7 @@ build/pkgs/wheel/version_requirements.txt
 /src/doc/en/reference/*/sage_docbuild
 /src/doc/en/reference/sage
 /src/doc/en/reference/spkg/*.rst
+!/src/doc/en/reference/spkg/index.rst
 /src/doc/output
 /src/doc/en/installation/*.txt
 /src/doc/en/reference/repl/*.txt

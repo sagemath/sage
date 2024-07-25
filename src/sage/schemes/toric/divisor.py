@@ -170,12 +170,12 @@ AUTHORS:
 from sage.combinat.combination import Combinations
 import sage.geometry.abc
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.toric_lattice_element import is_ToricLatticeElement
-from sage.topology.simplicial_complex import SimplicialComplex
+from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.modules.free_module import (FreeModule_ambient_field,
@@ -185,9 +185,11 @@ from sage.rings.rational_field import QQ
 from sage.schemes.generic.divisor import Divisor_generic
 from sage.schemes.generic.divisor_group import DivisorGroup_generic
 from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
-from sage.schemes.toric.variety import CohomologyRing, is_ToricVariety
+from sage.schemes.toric.variety import CohomologyRing, ToricVariety_field
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
+
+lazy_import('sage.topology.simplicial_complex', 'SimplicialComplex')
 
 
 def is_ToricDivisor(x):
@@ -207,6 +209,10 @@ def is_ToricDivisor(x):
 
         sage: from sage.schemes.toric.divisor import is_ToricDivisor
         sage: is_ToricDivisor(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricDivisor is deprecated;
+        use 'isinstance(..., ToricDivisor_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         False
         sage: P2 = toric_varieties.P2()
         sage: D = P2.divisor(0); D
@@ -214,6 +220,10 @@ def is_ToricDivisor(x):
         sage: is_ToricDivisor(D)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_ToricDivisor is deprecated; "
+                "use 'isinstance(..., ToricDivisor_generic)' instead.")
     return isinstance(x, ToricDivisor_generic)
 
 
@@ -244,11 +254,11 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
       divisor group. If ``ring`` is not specified, a coefficient ring
       suitable for ``arg`` is derived.
 
-    - ``check`` -- bool (default: True). Whether to coerce
+    - ``check`` -- bool (default: ``True``). Whether to coerce
       coefficients into base ring. Setting it to ``False`` can speed
       up construction.
 
-    - ``reduce`` -- reduce (default: True). Whether to combine common
+    - ``reduce`` -- reduce (default: ``True``). Whether to combine common
       terms. Setting it to ``False`` can speed up construction.
 
     .. WARNING::
@@ -302,7 +312,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         ...
         TypeError: cannot deduce coefficient ring for [(u, u)]
     """
-    assert is_ToricVariety(toric_variety)
+    assert isinstance(toric_variety, ToricVariety_field)
 
     # First convert special arguments into lists
     # of multiplicities or (multiplicity,coordinate)
@@ -312,7 +322,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         check = False
         reduce = False
     # Divisor by lattice point (corresponding to a ray)
-    if is_ToricLatticeElement(arg):
+    if isinstance(arg, ToricLatticeElement):
         if arg not in toric_variety.fan().lattice():
             raise ValueError("%s is not in the ambient lattice of %s"
                              % (arg, toric_variety.fan()))
@@ -1687,7 +1697,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             sage: DivisorGroup(P2, ZZ) is ToricDivisorGroup(P2, ZZ)
             False
         """
-        assert is_ToricVariety(toric_variety), str(toric_variety) + ' is not a toric variety!'
+        assert isinstance(toric_variety, ToricVariety_field), str(toric_variety) + ' is not a toric variety!'
         super().__init__(toric_variety, base_ring)
 
     def _latex_(self):
@@ -1817,7 +1827,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             sage: TDiv(TDiv.gen(0), check=True)
             V(x)
         """
-        if is_ToricDivisor(x):
+        if isinstance(x, ToricDivisor_generic):
             if x.parent() is self:
                 return x
             else:
@@ -2012,9 +2022,9 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
             sage: Cl(D)
             Divisor class [0, 0, 1, 0]
         """
-        if is_ToricDivisor(x):
+        if isinstance(x, ToricDivisor_generic):
             x = self._projection_matrix * vector(x)
-        if is_Vector(x):
+        if isinstance(x, Vector):
             x = list(x)
         return self.element_class(self, x)
 

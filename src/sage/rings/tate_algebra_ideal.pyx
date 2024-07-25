@@ -35,6 +35,7 @@ from heapq import heappush, heappop
 
 from cysignals.signals cimport sig_check
 
+
 class TateAlgebraIdeal(Ideal_generic):
     r"""
     Initialize a class for ideals in a Tate series algebra
@@ -399,7 +400,6 @@ class TateAlgebraIdeal(Ideal_generic):
         return self.ring().ideal(gens)
 
 
-
 # Grobner bases computations
 ############################
 
@@ -411,9 +411,9 @@ def groebner_basis_buchberger(I, prec, py_integral):
 
     INPUT:
 
-    - ``I`` - an ideal in a Tate series algebra
+    - ``I`` -- an ideal in a Tate series algebra
 
-    - ``prec`` - the related precision at which the initial generators
+    - ``prec`` -- the related precision at which the initial generators
       are truncated
 
     - ``integral`` -- a boolean; if ``True``, first compute a
@@ -576,11 +576,6 @@ cdef Jpair(p1, p2):
     - ``p1`` -- a pair (signature, series)
 
     - ``p2`` -- a pair (signature, series)
-
-    TESTS::
-
-
-
     """
     cdef TateAlgebraTerm s1, s2
     cdef TateAlgebraElement v1, v2
@@ -790,6 +785,7 @@ def print_pair(p, verbose):
     else:
         s, v = p
         return "(sign = %s, series = %s + ...)" % (s, v.leading_term())
+
 
 def groebner_basis_pote(I, prec, verbose=0):
     r"""

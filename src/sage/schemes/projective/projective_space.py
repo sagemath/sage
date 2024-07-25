@@ -80,47 +80,52 @@ AUTHORS:
 # ****************************************************************************
 from itertools import product
 
-from sage.arith.misc import gcd, binomial
+import sage.rings.abc
 
+from sage.arith.misc import gcd, binomial
+from sage.categories.fields import Fields
+from sage.categories.homset import Hom
+from sage.categories.map import Map
+from sage.categories.number_fields import NumberFields
+from sage.categories.rings import Rings
+from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.permutation import Permutation
+from sage.combinat.subset import Subsets
+from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.misc.persist import register_unpickle_override
 from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.fraction_field import FractionField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import QQ, is_RationalField
-from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import Order
-
-from sage.categories.fields import Fields
-from sage.categories.rings import Rings
-from sage.categories.number_fields import NumberFields
-from sage.categories.homset import Hom
-from sage.categories.map import Map
-from sage.misc.latex import latex
-from sage.misc.misc_c import prod
-from sage.misc.persist import register_unpickle_override
-
+from sage.rings.rational_field import QQ, RationalField
+from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
-from sage.combinat.permutation import Permutation
-from sage.combinat.tuple import Tuples
-from sage.combinat.tuple import UnorderedTuples
-from sage.combinat.subset import Subsets
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import prepare
-from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.projective.projective_homset import (SchemeHomset_points_projective_ring,
                                                        SchemeHomset_points_projective_field,
                                                        SchemeHomset_polynomial_projective_space)
-from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
-                                                      SchemeMorphism_point_projective_field,
-                                                      SchemeMorphism_point_projective_finite_field)
 from sage.schemes.projective.projective_morphism import (SchemeMorphism_polynomial_projective_space,
                                                          SchemeMorphism_polynomial_projective_space_field,
                                                          SchemeMorphism_polynomial_projective_space_finite_field)
+from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
+                                                      SchemeMorphism_point_projective_field,
+                                                      SchemeMorphism_point_projective_finite_field)
+
+lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
+lazy_import('sage.combinat.tuple', ['Tuples', 'UnorderedTuples'])
+lazy_import('sage.dynamics.arithmetic_dynamics.projective_ds', 'DynamicalSystem_projective')
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.modules.free_module_element', 'prepare')
+lazy_import('sage.schemes.generic.algebraic_scheme', 'AlgebraicScheme_subscheme')
+lazy_import('sage.schemes.product_projective.space',
+            ['ProductProjectiveSpaces', 'ProductProjectiveSpaces_ring'])
+lazy_import('sage.schemes.projective.projective_subscheme',
+            ['AlgebraicScheme_subscheme_projective', 'AlgebraicScheme_subscheme_projective_field'])
 
 
 # for better efficiency
@@ -140,12 +145,17 @@ def is_ProjectiveSpace(x):
 
         sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
         sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
+        doctest:warning...
+        DeprecationWarning: The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # needs sage.rings.finite_rings
         True
         sage: is_ProjectiveSpace(Spec(ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.")
     return isinstance(x, ProjectiveSpace_ring)
 
 
@@ -259,7 +269,7 @@ def ProjectiveSpace(n, R=None, names=None):
     if R in _Fields:
         if isinstance(R, FiniteField):
             return ProjectiveSpace_finite_field(n, R, names)
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             return ProjectiveSpace_rational_field(n, R, names)
         else:
             return ProjectiveSpace_field(n, R, names)
@@ -506,7 +516,6 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         mm = int(m)
         if mm != m:
             raise ValueError("m must be an integer")
-        from sage.schemes.product_projective.space import ProductProjectiveSpaces
         return ProductProjectiveSpaces([self.dimension_relative()] * mm, self.base_ring())
 
     def __mul__(self, right):
@@ -515,7 +524,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``right`` - a projective space, product of projective spaces, or subscheme.
+        - ``right`` -- a projective space, product of projective spaces, or subscheme.
 
         OUTPUT: a product of projective spaces or subscheme.
 
@@ -557,11 +566,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if self.base_ring() != right.base_ring():
             raise ValueError('Must have the same base ring')
 
-        from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
-        from sage.schemes.product_projective.space import ProductProjectiveSpaces
-        from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
-
-        if isinstance(right, (ProductProjectiveSpaces_ring)):
+        if isinstance(right, ProductProjectiveSpaces_ring):
             return ProductProjectiveSpaces([self] + right.components())
         elif isinstance(right, ProjectiveSpace_ring):
             if self is right:
@@ -585,15 +590,14 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: print(latex(ProjectiveSpace(1, ZZ, 'x')))
-            {\mathbf P}_{\Bold{Z}}^1
+            {\mathbf P}_{\Bold{Z}}^{1}
 
         TESTS::
 
-            sage: ProjectiveSpace(3, Zp(5), 'y')._latex_()                              # needs sage.rings.padics
-            '{\\mathbf P}_{\\Bold{Z}_{5}}^3'
+            sage: ProjectiveSpace(11, Zp(5), 'y')._latex_()                             # needs sage.rings.padics
+            '{\\mathbf P}_{\\Bold{Z}_{5}}^{11}'
         """
-        return "{\\mathbf P}_{%s}^%s" % (latex(self.base_ring()),
-                                         self.dimension_relative())
+        return "{\\mathbf P}_{%s}^{%s}" % (latex(self.base_ring()), self.dimension_relative())
 
     def _linear_system_as_kernel(self, d, pt, m):
         """
@@ -778,7 +782,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT: A point of this projective space.
@@ -948,7 +952,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        -  ``X`` - a list or tuple of equations.
+        -  ``X`` -- a list or tuple of equations.
 
         EXAMPLES::
 
@@ -985,8 +989,6 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             "_test_elements_eq_symmetric", "_test_elements_eq_transitive",\
             "_test_elements_neq"])
         """
-        from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subscheme_projective,
-                                                                  AlgebraicScheme_subscheme_projective_field)
         R = self.base_ring()
         if R.is_field() and R.is_exact():
             return AlgebraicScheme_subscheme_projective_field(self, X)
@@ -1006,9 +1008,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         kwds:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``precision`` - (default: 53) a positive integer
+        - ``precision`` -- (default: 53) a positive integer
 
         OUTPUT:
 
@@ -1165,12 +1167,12 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         # or the ring of integers
         is_ring_of_ints = False
 
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             field_type = False
         elif R in NumberFields():
-            # True for the rational field as well, so check is_RationalField first
+            # True for the rational field as well, so check RationalField first
             field_type = True
-        elif (R is ZZ) or (isinstance(R, Order) and R.is_integrally_closed()): # Ensure ring of integers / maximal order
+        elif R is ZZ or (isinstance(R, sage.rings.abc.Order) and R.is_integrally_closed()):  # Ensure ring of integers / maximal order
             is_ring_of_ints = True
         else:
             raise NotImplementedError("self must be a projective space over a number field or a ring of integers")
@@ -1359,7 +1361,6 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         x, y = R.gens()
         phi = F[0].parent().hom([x], R)
         F = [phi(F[0]).homogenize(y), phi(F[1]).homogenize(y) * y]
-        from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
         return DynamicalSystem_projective(F, domain=self)
 
     def cartesian_product(self, other):
@@ -1369,7 +1370,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``other`` - A projective space with the same base ring as this space.
+        - ``other`` -- A projective space with the same base ring as this space.
 
         OUTPUT:
 
@@ -1384,7 +1385,6 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: PP.gens()
             (x0, x1, y0, y1, y2)
         """
-        from sage.schemes.product_projective.space import ProductProjectiveSpaces
         return ProductProjectiveSpaces([self, other])
 
     def chebyshev_polynomial(self, n, kind='first', monic=False):
@@ -1539,7 +1539,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if CS is None:
             CS = ProjectiveSpace(self.base_ring(), binomial(N + d, d) - 1)
         else:
-            if not is_ProjectiveSpace(CS):
+            if not isinstance(CS, ProjectiveSpace_ring):
                 raise TypeError("(=%s) must be a projective space" % CS)
             if CS.dimension() != binomial(N + d, d) - 1:
                 raise TypeError("(=%s) has the wrong dimension to serve as the codomain space" % CS)
@@ -1551,7 +1551,6 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def point_transformation_matrix(self, points_source, points_target, normalize=True):
         r"""
-
         Returns a unique element of PGL that transforms one set of points to another.
 
         Given a projective space of dimension n and a set of n+2 source points and a set of n+2 target
@@ -1893,7 +1892,6 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             ...
             ValueError: plane_1 must be defined by a single degree 1 equation
         """
-        from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
         if not isinstance(plane_1, AlgebraicScheme_subscheme_projective):
             raise TypeError('plane_1 must be a subscheme')
         if not isinstance(plane_2, AlgebraicScheme_subscheme_projective):
@@ -2121,9 +2119,9 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         INPUT:
 
-        - ``Ch`` - a homogeneous polynomial.
+        - ``Ch`` -- a homogeneous polynomial.
 
-        - ``dim`` - the dimension of the associated scheme.
+        - ``dim`` -- the dimension of the associated scheme.
 
         OUTPUT: a projective subscheme.
 
@@ -2446,7 +2444,7 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
 
         INPUT:
 
-        -  ``bound`` - integer.
+        -  ``bound`` -- integer.
 
         EXAMPLES::
 

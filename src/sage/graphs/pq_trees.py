@@ -236,7 +236,7 @@ def reorder_sets(sets):
 
     INPUT:
 
-    - ``sets`` - a list of instances of ``list, Set`` or ``set``
+    - ``sets`` -- a list of instances of ``list, Set`` or ``set``
 
     ALGORITHM:
 
@@ -245,7 +245,7 @@ def reorder_sets(sets):
     EXAMPLES:
 
     There is only one way (up to reversal) to represent contiguously
-    the sequence ofsets `\{i-1, i, i+1\}`::
+    the sequence of sets `\{i-1, i, i+1\}`::
 
         sage: from sage.graphs.pq_trees import reorder_sets
         sage: seq = [Set([i-1,i,i+1]) for i in range(1,15)]
@@ -401,9 +401,9 @@ class PQ:
 
         return value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
-        Succintly represents ``self``.
+        Succinctly represents ``self``.
 
         EXAMPLES::
 
@@ -428,10 +428,10 @@ class PQ:
 
         INPUT:
 
-        - ``left, right`` (boolean) -- whether ``v`` is aligned to the
+        - ``left``, ``right`` -- booleans; whether ``v`` is aligned to the
           right or to the left
 
-        - ``v``-- an element of the ground set
+        - ``v`` -- an element of the ground set
 
         OUTPUT:
 

@@ -73,10 +73,15 @@ def is_ProductProjectiveSpaces(x):
     EXAMPLES::
 
         sage: is_ProductProjectiveSpaces(ProjectiveSpace(5, names='x'))
+        doctest:warning...
+        DeprecationWarning: The function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: is_ProductProjectiveSpaces(ProductProjectiveSpaces([1, 2, 3], ZZ, 'x'))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead.")
     return isinstance(x, ProductProjectiveSpaces_ring)
 
 
@@ -288,8 +293,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         EXAMPLES::
 
             sage: latex(ProductProjectiveSpaces([1, 2, 3], ZZ, 'x'))
-            {\mathbf P}_{\Bold{Z}}^1 \times {\mathbf P}_{\Bold{Z}}^2 \times {\mathbf
-            P}_{\Bold{Z}}^3
+            {\mathbf P}_{\Bold{Z}}^{1} \times {\mathbf P}_{\Bold{Z}}^{2} \times
+             {\mathbf P}_{\Bold{Z}}^{3}
         """
         return " \\times ".join(PS._latex_() for PS in self)
 

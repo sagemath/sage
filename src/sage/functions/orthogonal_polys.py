@@ -2849,7 +2849,7 @@ class Func_meixner(OrthogonalFunction):
 
     - ``n`` -- the degree
     - ``x`` -- the independent variable `x`
-    - ``b, c`` -- the parameters `b, c`
+    - ``b``, ``c`` -- the parameters `b`, `c`
     """
     def __init__(self):
         """
@@ -2975,7 +2975,7 @@ class Func_hahn(OrthogonalFunction):
 
     - ``k`` -- the degree
     - ``x`` -- the independent variable `x`
-    - ``a, b`` -- the parameters `a, b`
+    - ``a``, ``b`` -- the parameters `a`, `b`
     - ``n`` -- the number of discrete points
 
     EXAMPLES:

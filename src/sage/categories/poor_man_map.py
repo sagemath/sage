@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Poor Man's map
 """
@@ -90,15 +91,14 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             A map from (1, 2, 3)
             sage: PoorManMap(lambda x: x+2, codomain=(3,4,5))
             A map to (3, 4, 5)
-
         """
         return ((self._name if self._name is not None else "A map") +
-                (" from %s" % (self._domain,) if self._domain   is not None else ""     ) +
-                (" to %s" % (self._codomain,) if self._codomain is not None else ""     ))
+                (" from %s" % (self._domain,) if self._domain is not None else "") +
+                (" to %s" % (self._codomain,) if self._codomain is not None else ""))
 
     def domain(self):
         """
-        Returns the domain of ``self``
+        Return the domain of ``self``.
 
         EXAMPLES::
 
@@ -225,8 +225,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             other_codomain = None
 
         if self_domain is not None and other_codomain is not None:
-            from sage.structure.parent import is_Parent
-            if is_Parent(self_domain) and is_Parent(other_codomain):
+            from sage.structure.parent import Parent
+            if isinstance(self_domain, Parent) and isinstance(other_codomain, Parent):
                 if not self_domain.has_coerce_map_from(other_codomain):
                     raise ValueError("the codomain %r does not coerce into the domain %r" % (other_codomain, self_domain))
 
