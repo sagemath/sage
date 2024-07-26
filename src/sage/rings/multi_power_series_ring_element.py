@@ -157,7 +157,7 @@ AUTHORS:
 from sage.structure.richcmp import richcmp
 
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.rings.infinity import infinity, is_Infinite
+from sage.rings.infinity import infinity, InfinityElement
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.power_series_ring import is_PowerSeriesRing
@@ -1966,7 +1966,7 @@ class MPowerSeries(PowerSeries):
         assert (val >= 1)
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = Rbg.one()
@@ -2063,7 +2063,7 @@ class MPowerSeries(PowerSeries):
         assert (val >= 1)
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         x_pow_n = Rbg.one()
         log_x = Rbg.zero().add_bigoh(prec)

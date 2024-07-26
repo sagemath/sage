@@ -5288,13 +5288,13 @@ cdef class Polynomial(CommutativePolynomial):
             sage: # needs sage.rings.finite_rings
             sage: P.<x> = PolynomialRing(GF(401^13, 'a'))
             sage: t = 2*x^14 - 5 + 6*x
-            sage: t.splitting_field('b')
+            sage: t.splitting_field('b')                                                # long time (16s)
             Finite Field in b of size 401^104
             sage: t = 24*x^13 + 2*x^12 + 14
-            sage: t.splitting_field('b')
+            sage: t.splitting_field('b')                                                # long time (39s)
             Finite Field in b of size 401^156
             sage: t = x^56 - 14*x^3
-            sage: t.splitting_field('b')
+            sage: t.splitting_field('b')                                                # long time (2s)
             Finite Field in b of size 401^52
 
             sage: R.<x> = QQ[]
@@ -8851,7 +8851,7 @@ cdef class Polynomial(CommutativePolynomial):
                          'you expect.')
 
                 import numpy
-                from numpy.linalg.linalg import LinAlgError
+                from numpy.linalg import LinAlgError
                 from sage.rings.complex_double import CDF
 
                 numpy_dtype = ('complex' if input_complex else 'double')
@@ -11554,7 +11554,6 @@ cdef class Polynomial(CommutativePolynomial):
             phi = SpecializationMorphism(self._parent,D)
         return phi(self)
 
-
     def _log_series(self, long n):
         r"""
         Return the power series expansion of logarithm of this polynomial,
@@ -11711,6 +11710,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         raise NotImplementedError
 
+
 # ----------------- inner functions -------------
 # Cython can't handle function definitions inside other function
 
@@ -11765,6 +11765,7 @@ cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
             sum = sum + x[i] * y[k-i]
         coeffs[k] = sum
     return coeffs
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -11847,6 +11848,7 @@ cdef list do_karatsuba_different_size(list left, list right, Py_ssize_t K_thresh
                 output[mi+j] = output[mi+j] + carry[j]
             output.extend(carry[n-1:])
         return output
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -12580,6 +12582,7 @@ cdef class Polynomial_generic_dense(Polynomial):
                 n -= 1
         self._coeffs = self._coeffs[:n]
         return self
+
 
 def make_generic_polynomial(parent, coeffs):
     return parent(coeffs)
