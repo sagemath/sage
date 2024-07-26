@@ -213,8 +213,7 @@ def is_long_hole_free(g, certificate=False):
     cdef int n = g.order()
     cdef list id_label = list(g)
     cdef short_digraph sd
-    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label,
-                       sort_neighbors=False)
+    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
 
     # Make a dense copy of the graph for quick adjacency tests
     cdef bitset_t dense_graph
@@ -528,9 +527,9 @@ def is_weakly_chordal(g, certificate=False):
     contain an induced cycle of length at least 5.
 
     Using is_long_hole_free() and is_long_antihole_free() yields a run time
-    of `O(n+m^2)` for ``SparseGraph`` and `O(n^2\log{m} + m^2)` for
-    ``DenseGraph`` (where `n` is the number of vertices and `m` is the number of
-    edges of the graph).
+    of `O(n+m^2)` for ``SparseGraph`` and `O(n^2 + m^2)` for ``DenseGraph``
+    (where `n` is the number of vertices and `m` is the number of edges of the
+    graph).
 
     EXAMPLES:
 
