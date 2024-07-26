@@ -16,7 +16,7 @@ dependencies:
   - boost-cpp=1.85.0=h07eb623_2
   - brial=1.2.12=pyh694c41f_3
   - bzip2=1.0.8=hfdf4475_7
-  - c-ares=1.32.2=h51dda26_0
+  - c-ares=1.32.3=h51dda26_0
   - c-compiler=1.7.0=h282daa2_1
   - ca-certificates=2024.7.4=h8857fd0_0
   - cachetools=5.4.0=pyhd8ed1ab_0
@@ -24,20 +24,20 @@ dependencies:
   - cctools_osx-64=986=ha1c5b94_0
   - cddlib=1!0.94m=h0f52abe_0
   - chardet=5.2.0=py310h2ec42d9_1
-  - clang=16.0.6=default_h179603d_9
-  - clang-16=16.0.6=default_h0c94c6a_9
-  - clang_impl_osx-64=16.0.6=h8787910_17
-  - clang_osx-64=16.0.6=hb91bd55_17
-  - clangxx=16.0.6=default_h179603d_9
-  - clangxx_impl_osx-64=16.0.6=h6d92fbe_17
-  - clangxx_osx-64=16.0.6=hb91bd55_17
+  - clang=16.0.6=default_h179603d_11
+  - clang-16=16.0.6=default_h0c94c6a_11
+  - clang_impl_osx-64=16.0.6=h8787910_18
+  - clang_osx-64=16.0.6=hb91bd55_18
+  - clangxx=16.0.6=default_h179603d_11
+  - clangxx_impl_osx-64=16.0.6=h6d92fbe_18
+  - clangxx_osx-64=16.0.6=hb91bd55_18
   - cliquer=1.22=h10d778d_1
   - cmake=3.30.1=h749d262_0
   - colorama=0.4.6=pyhd8ed1ab_0
   - compiler-rt=16.0.6=ha38d28d_2
   - compiler-rt_osx-64=16.0.6=ha38d28d_2
   - compilers=1.7.0=h694c41f_1
-  - curl=8.8.0=hea67d85_1
+  - curl=8.9.0=hcd6fca1_0
   - cxx-compiler=1.7.0=h7728843_1
   - distlib=0.3.8=pyhd8ed1ab_0
   - ecl=23.9.9=h2b27fa8_0
@@ -91,9 +91,9 @@ dependencies:
   - libbraiding=1.2=hf0c8a7f_0
   - libbrial=1.2.12=h81e9653_3
   - libcblas=3.9.0=22_osx64_openblas
-  - libclang-cpp16=16.0.6=default_h0c94c6a_9
-  - libcurl=8.8.0=hf9fcc65_1
-  - libcxx=18.1.8=hef8daea_0
+  - libclang-cpp16=16.0.6=default_h0c94c6a_11
+  - libcurl=8.9.0=hfcf2730_0
+  - libcxx=18.1.8=hef8daea_1
   - libdeflate=1.20=h49d49c5_0
   - libedit=3.1.20191231=h0678c8f_2
   - libev=4.33=h10d778d_2
@@ -141,7 +141,7 @@ dependencies:
   - metis=5.1.0=he965462_1007
   - mpc=1.3.1=h81bd1dd_0
   - mpfi=1.5.4=h52b28e3_1001
-  - mpfr=4.2.1=h4f6b447_1
+  - mpfr=4.2.1=hc80595b_2
   - nauty=2.8.8=h10d778d_1
   - ncurses=6.5=h5846eda_0
   - ninja=1.12.1=h3c5361c_0

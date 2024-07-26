@@ -11,12 +11,12 @@ dependencies:
   - automake=1.16.5=pl5321hce30654_0
   - bc=1.07.1=h3422bc3_0
   - bdw-gc=8.0.6=hc021e02_0
-  - blas=2.122=openblas
-  - blas-devel=3.9.0=22_osxarm64_openblas
+  - blas=2.123=openblas
+  - blas-devel=3.9.0=23_osxarm64_openblas
   - boost-cpp=1.85.0=hca5e981_2
   - brial=1.2.12=pyh694c41f_3
   - bzip2=1.0.8=h99b78c6_7
-  - c-ares=1.32.2=h99b78c6_0
+  - c-ares=1.32.3=h99b78c6_0
   - c-compiler=1.7.0=h6aa9301_1
   - ca-certificates=2024.7.4=hf0a4a13_0
   - cachetools=5.4.0=pyhd8ed1ab_0
@@ -24,20 +24,20 @@ dependencies:
   - cctools_osx-arm64=986=h62378fb_0
   - cddlib=1!0.94m=h6d7a090_0
   - chardet=5.2.0=py39h2804cbe_1
-  - clang=16.0.6=default_h675cc0c_9
-  - clang-16=16.0.6=default_h5c12605_9
-  - clang_impl_osx-arm64=16.0.6=hc421ffc_17
-  - clang_osx-arm64=16.0.6=h54d7cd3_17
-  - clangxx=16.0.6=default_h675cc0c_9
-  - clangxx_impl_osx-arm64=16.0.6=hcd7bac0_17
-  - clangxx_osx-arm64=16.0.6=h54d7cd3_17
+  - clang=16.0.6=default_h675cc0c_11
+  - clang-16=16.0.6=default_h5c12605_11
+  - clang_impl_osx-arm64=16.0.6=hc421ffc_18
+  - clang_osx-arm64=16.0.6=h54d7cd3_18
+  - clangxx=16.0.6=default_h675cc0c_11
+  - clangxx_impl_osx-arm64=16.0.6=hcd7bac0_18
+  - clangxx_osx-arm64=16.0.6=h54d7cd3_18
   - cliquer=1.22=h93a5062_1
   - cmake=3.30.1=had79d8f_0
   - colorama=0.4.6=pyhd8ed1ab_0
   - compiler-rt=16.0.6=h3808999_2
   - compiler-rt_osx-arm64=16.0.6=h3808999_2
   - compilers=1.7.0=hce30654_1
-  - curl=8.8.0=h653d890_1
+  - curl=8.9.0=hbf5303f_0
   - cxx-compiler=1.7.0=h2ffa867_1
   - distlib=0.3.8=pyhd8ed1ab_0
   - ecl=23.9.9=h1d9728a_0
@@ -84,16 +84,16 @@ dependencies:
   - libasprintf=0.22.5=h8fbad5d_2
   - libasprintf-devel=0.22.5=h8fbad5d_2
   - libatomic_ops=7.6.14=h1a8c8d9_0
-  - libblas=3.9.0=22_osxarm64_openblas
+  - libblas=3.9.0=23_osxarm64_openblas
   - libboost=1.85.0=h17eb2be_2
   - libboost-devel=1.85.0=hf450f58_2
   - libboost-headers=1.85.0=hce30654_2
   - libbraiding=1.2=hb7217d7_0
   - libbrial=1.2.12=h56a29cd_3
-  - libcblas=3.9.0=22_osxarm64_openblas
-  - libclang-cpp16=16.0.6=default_h5c12605_9
-  - libcurl=8.8.0=h7b6f9a7_1
-  - libcxx=18.1.8=h167917d_0
+  - libcblas=3.9.0=23_osxarm64_openblas
+  - libclang-cpp16=16.0.6=default_h5c12605_11
+  - libcurl=8.9.0=hfd8ffcc_0
+  - libcxx=18.1.8=h167917d_1
   - libdeflate=1.20=h93a5062_0
   - libedit=3.1.20191231=hc8eb9b7_2
   - libev=4.33=h93a5062_2
@@ -113,8 +113,8 @@ dependencies:
   - libintl=0.22.5=h8fbad5d_2
   - libintl-devel=0.22.5=h8fbad5d_2
   - libjpeg-turbo=3.0.0=hb547adb_1
-  - liblapack=3.9.0=22_osxarm64_openblas
-  - liblapacke=3.9.0=22_osxarm64_openblas
+  - liblapack=3.9.0=23_osxarm64_openblas
+  - liblapacke=3.9.0=23_osxarm64_openblas
   - libllvm16=16.0.6=haab561b_3
   - libnghttp2=1.58.0=ha4dd798_1
   - libopenblas=0.3.27=openmp_h517c56d_1
@@ -142,7 +142,7 @@ dependencies:
   - metis=5.1.0=h13dd4ca_1007
   - mpc=1.3.1=h91ba8db_0
   - mpfi=1.5.4=hbde5f5b_1001
-  - mpfr=4.2.1=h41d338b_1
+  - mpfr=4.2.1=h1cfca0a_2
   - nauty=2.8.8=h93a5062_1
   - ncurses=6.5=hb89a1cb_0
   - ninja=1.12.1=h420ef59_0
