@@ -683,7 +683,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: M = matrix(ZZ, [[1,2],[0,1]])
             sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(M, 20.0)
             sage: L = [D() for _ in range(2^12)]                                               # long time
-            sage: div = (numpy.mean([abs(x) for x,y in L])/numpy.mean([abs(y) for x,y, in L])) # long time
+            sage: div = numpy.mean([abs(x) for x,y in L]) / numpy.mean([abs(y) for x,y, in L]) # long time
             sage: 0.9 < div < 1.1                                                              # long time
             True
 
