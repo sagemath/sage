@@ -375,8 +375,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: G([1, 4, 0, 1]).acton(infinity)
             +Infinity
         """
-        from sage.rings.infinity import is_Infinite, infinity
-        if is_Infinite(z):
+        from sage.rings.infinity import InfinityElement, infinity
+        if isinstance(z, InfinityElement):
             if self.c() != 0:
                 return self.a() / self.c()
             else:

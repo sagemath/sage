@@ -296,7 +296,7 @@ def sage_include_directories(use_sources=False):
         sage: import sage.env
         sage: sage.env.sage_include_directories()
         ['...',
-         '.../numpy/core/include',
+         '.../numpy/...core/include',
          '.../include/python...']
 
     To check that C/C++ files are correctly found, we verify that we can

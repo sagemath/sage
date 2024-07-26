@@ -240,7 +240,7 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
     For small values of the parameter ``n`` we check the coherence of the
     function :func:`transversal_design`::
 
-        sage: for n in range(2,25):                               # long time -- 15 secs
+        sage: for n in range(2,25):                               # long time (15s)
         ....:     i = 2
         ....:     while designs.transversal_design(i, n, existence=True) is True:
         ....:         i += 1
