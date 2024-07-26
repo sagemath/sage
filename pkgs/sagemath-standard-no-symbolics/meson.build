@@ -5,7 +5,7 @@ project(
   meson_version: '>= 1.2.0',
 )
 
-set_variable('distribution_sagemath_standard-no-symbolics', true)
+set_variable('distribution_sagemath_standard_no_symbolics', true)
 
 # Python module
 # https://mesonbuild.com/Python-module.html
