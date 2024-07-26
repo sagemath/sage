@@ -74,3 +74,8 @@ body[data-theme="dark"] {
   }
 }
 
+/* For sections INPUT, OUTPUT, EXAMPLES, etc. */
+
+abbr {
+  font-weight: 450;
+}
