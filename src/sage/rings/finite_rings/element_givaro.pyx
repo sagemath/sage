@@ -1412,10 +1412,17 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return Integer(self._cache.log_to_int(self.element))
 
-    def log(FiniteField_givaroElement self, base):
+    def log(FiniteField_givaroElement self, base, order=None, *, check=False):
         """
         Return the log to the base `b` of ``self``, i.e., an integer `n`
         such that `b^n =` ``self``.
+
+        INPUT:
+
+        - ``base`` -- non-zero field element
+        - ``order`` -- integer (optional), multiple of order of ``base``
+        - ``check`` -- boolean (default: ``False``): If set,
+          test whether the given ``order`` is correct.
 
         .. WARNING::
 
@@ -1430,9 +1437,22 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: a = b^7
             sage: a.log(b)
             7
+
+        TESTS:
+
+        An example for ``check=True``::
+
+            sage: F.<t> = GF(3^5, impl='givaro')
+            sage: t.log(t, 3^4, check=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: 81 is not a multiple of the order of the base
         """
         b = self.parent()(base)
-        return sage.groups.generic.discrete_log(self, b)
+        if (order is not None) and check and not (b**order).is_one():
+            raise ValueError(f"{order} is not a multiple of the order of the base")
+
+        return sage.groups.generic.discrete_log(self, b, ord=order)
 
     def _int_repr(FiniteField_givaroElement self):
         r"""
@@ -1729,6 +1749,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: TestSuite(e).run() # indirect doctest
         """
         return unpickle_FiniteField_givaroElement,(self.parent(),self.element)
+
 
 def unpickle_FiniteField_givaroElement(parent, int x):
     """

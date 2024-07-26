@@ -2702,8 +2702,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         .. NOTE::
 
-            If the curves in question are not isomorphic, a ``ValueError``
-            is raised.
+            If the curves in question are not isomorphic,
+            a :class:`ValueError` is raised.
 
         EXAMPLES::
 

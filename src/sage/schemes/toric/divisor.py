@@ -210,6 +210,10 @@ def is_ToricDivisor(x):
 
         sage: from sage.schemes.toric.divisor import is_ToricDivisor
         sage: is_ToricDivisor(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricDivisor is deprecated;
+        use 'isinstance(..., ToricDivisor_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         False
         sage: P2 = toric_varieties.P2()
         sage: D = P2.divisor(0); D
@@ -217,6 +221,10 @@ def is_ToricDivisor(x):
         sage: is_ToricDivisor(D)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_ToricDivisor is deprecated; "
+                "use 'isinstance(..., ToricDivisor_generic)' instead.")
     return isinstance(x, ToricDivisor_generic)
 
 
@@ -1820,7 +1828,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             sage: TDiv(TDiv.gen(0), check=True)
             V(x)
         """
-        if is_ToricDivisor(x):
+        if isinstance(x, ToricDivisor_generic):
             if x.parent() is self:
                 return x
             else:
@@ -2015,7 +2023,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
             sage: Cl(D)
             Divisor class [0, 0, 1, 0]
         """
-        if is_ToricDivisor(x):
+        if isinstance(x, ToricDivisor_generic):
             x = self._projection_matrix * vector(x)
         if isinstance(x, Vector):
             x = list(x)

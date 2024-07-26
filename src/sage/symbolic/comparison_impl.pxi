@@ -190,7 +190,7 @@ class _math_key():
 
         OUTPUT:
 
-        Boolean. A ``ValueError`` is raised if we do not know how to
+        Boolean. A :class:`ValueError` is raised if we do not know how to
         perform the comparison.
 
         EXAMPLES::
@@ -233,7 +233,7 @@ cpdef math_sorted(expressions):
 
     The list sorted by ascending (real) value. If an entry does not
     define a real value (or plus/minus infinity), or if the comparison
-    is not known, a ``ValueError`` is raised.
+    is not known, a :class:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -342,7 +342,7 @@ class _mixed_key():
 
         OUTPUT:
 
-        Boolean. A ``ValueError`` is raised if we do not know how to
+        Boolean. A :class:`ValueError` is raised if we do not know how to
         perform the comparison.
 
         EXAMPLES::
@@ -425,7 +425,7 @@ cpdef mixed_sorted(expressions):
     and the expressions with variables according to print order.
     If an entry does not
     define a real value (or plus/minus infinity), or if the comparison
-    is not known, a ``ValueError`` is raised.
+    is not known, a :class:`ValueError` is raised.
 
     EXAMPLES::
 

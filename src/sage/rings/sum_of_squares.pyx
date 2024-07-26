@@ -131,6 +131,7 @@ cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]) noexcept:
 
     return 1
 
+
 def two_squares_pyx(uint32_t n):
     r"""
     Return a pair of non-negative integers ``(i,j)`` such that `i^2 + j^2 = n`.
@@ -185,7 +186,8 @@ def two_squares_pyx(uint32_t n):
         return (integer.smallInteger(i[0]), integer.smallInteger(i[1]))
     sig_off()
 
-    raise ValueError("%d is not a sum of 2 squares"%n)
+    raise ValueError("%d is not a sum of 2 squares" % n)
+
 
 def is_sum_of_two_squares_pyx(uint32_t n):
     r"""
@@ -214,6 +216,7 @@ def is_sum_of_two_squares_pyx(uint32_t n):
     else:
         sig_off()
         return False
+
 
 def three_squares_pyx(uint32_t n):
     r"""
@@ -267,7 +270,8 @@ def three_squares_pyx(uint32_t n):
         return (integer.smallInteger(i[0]), integer.smallInteger(i[1]), integer.smallInteger(i[2]))
     sig_off()
 
-    raise ValueError("%d is not a sum of 3 squares"%n)
+    raise ValueError("%d is not a sum of 3 squares" % n)
+
 
 def four_squares_pyx(uint32_t n):
     r"""

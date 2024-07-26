@@ -264,12 +264,14 @@ computations with the rational Chow group::
 
     sage: AA = P4_11133.Chow_group(QQ)
     sage: list(map(AA, P4_11133.fan(1)))  # long time (5s on sage.math, 2012)
-    [( 0 | 0 | 0 | 3 | 0 ), ( 0 | 0 | 0 | 3 | 0 ), ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 )]
+    [( 0 | 0 | 0 | 3 | 0 ), ( 0 | 0 | 0 | 3 | 0 ),
+     ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 )]
     sage: list(map(AA, P4_11133.fan(4)))  # long time (5s on sage.math, 2012)
-    [( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 )]
-    sage: AA(cone).intersection_with_divisor(D)  # long time (4s on sage.math, 2013)
+    [( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ),
+     ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 )]
+    sage: AA(cone).intersection_with_divisor(D)  # long time (4s on sage.math, 2013)    # needs sage.libs.singular
     ( 1 | 0 | 0 | 0 | 0 )
-    sage: AA(cone).intersection_with_divisor(D).count_points()  # long time
+    sage: AA(cone).intersection_with_divisor(D).count_points()  # long time             # needs sage.libs.singular
     1
 
 The real advantage of the Chow group is that
@@ -3312,12 +3314,20 @@ def is_CohomologyClass(x):
         sage: HH = P2.cohomology_ring()
         sage: from sage.schemes.toric.variety import is_CohomologyClass
         sage: is_CohomologyClass( HH.one() )                                            # needs sage.libs.singular
+        doctest:warning...
+        DeprecationWarning: The function is_CohomologyClass is deprecated;
+        use 'isinstance(..., CohomologyClass)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         True
         sage: is_CohomologyClass( HH(P2.fan(1)[0]) )                                    # needs sage.libs.singular
         True
         sage: is_CohomologyClass('z')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_CohomologyClass is deprecated; "
+                "use 'isinstance(..., CohomologyClass)' instead.")
     return isinstance(x, CohomologyClass)
 
 

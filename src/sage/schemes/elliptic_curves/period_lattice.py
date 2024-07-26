@@ -2043,7 +2043,7 @@ def extended_agm_iteration(a, b, c):
 
     OUTPUT:
 
-    (3-tuple) `(a_0,b_0,c_0)`, the limit of the iteration `(a,b,c) \mapsto ((a+b)/2,\sqrt{ab},(c+\sqrt(c^2+b^2-a^2))/2)`.
+    (3-tuple) `(a_0,b_0,c_0)`, the limit of the iteration `(a,b,c) \mapsto ((a+b)/2,\sqrt{ab},(c+\sqrt{c^2+b^2-a^2})/2)`.
 
     EXAMPLES::
 

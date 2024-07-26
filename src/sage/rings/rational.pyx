@@ -85,6 +85,7 @@ from sage.structure.richcmp cimport rich_to_bool_sgn
 
 RealNumber_classes = ()
 
+
 def _register_real_number_class(cls):
     r"""
     Register ``cls``.
@@ -1591,7 +1592,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         a, b = K.pari_bnf(proof=proof).bnfisnorm(self, flag=extra_primes)
         return K(a), Rational(b)
-
 
     def is_perfect_power(self, expected_value=False):
         r"""
@@ -3572,7 +3572,6 @@ cdef class Rational(sage.structure.element.FieldElement):
         else:
             return sage.rings.infinity.infinity
 
-
     def multiplicative_order(self):
         """
         Return the multiplicative order of ``self``.
@@ -3645,9 +3644,8 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         return True
 
-    #Function alias for checking if the number is a integer.  Added to solve issue 15500
+    # Function alias for checking if the number is a integer.  Added to solve issue 15500
     is_integer = is_integral
-
 
     def is_S_integral(self, S=[]):
         r"""

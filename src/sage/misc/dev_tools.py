@@ -149,6 +149,7 @@ def load_submodules(module=None, exclude_pattern=None):
     EXAMPLES::
 
         sage: sage.misc.dev_tools.load_submodules(sage.combinat)
+        load sage.combinat.SJT... succeeded
         load sage.combinat.affine_permutation... succeeded
         load sage.combinat.algebraic_combinatorics... succeeded
         ...

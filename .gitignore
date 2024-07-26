@@ -320,6 +320,7 @@ build/bin/sage-build-env-config
 /src/doc/en/reference/*/sage_docbuild
 /src/doc/en/reference/sage
 /src/doc/en/reference/spkg/*.rst
+!/src/doc/en/reference/spkg/index.rst
 /src/doc/output
 /src/doc/en/installation/*.txt
 /src/doc/en/reference/repl/*.txt

@@ -249,7 +249,7 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S = AlgebraicScheme(P); S
             Subscheme of Projective Space of dimension 3 over Integer Ring
             sage: S._latex_()
-            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^3$}'
+            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^{3}$}'
         """
         return r"\text{{Subscheme of ${}$}}".format(latex(self.__A))
 
@@ -676,7 +676,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
                x - y
             sage: U._latex_()
             '\\text{Quasi-projective subscheme }
-             (X\\setminus Y)\\subset {\\mathbf P}_{\\Bold{Z}}^2,\\text{ where }
+             (X\\setminus Y)\\subset {\\mathbf P}_{\\Bold{Z}}^{2},\\text{ where }
              X \\text{ is defined by }\\text{no polynomials},\\text{ and }
              Y \\text{ is defined by } x - y.'
         """
@@ -1048,13 +1048,13 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z
             sage: S._latex_()
-            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z'
+            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^{2} \\text{ defined by } x^{2} - y z'
             sage: S = P.subscheme([x^2 - y*z, x^5]); S
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z,
               x^5
             sage: S._latex_()
-            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z, x^{5}'
+            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^{2} \\text{ defined by } x^{2} - y z, x^{5}'
         """
         polynomials = ', '.join(latex(f) for f in self.defining_polynomials())
         if not polynomials:

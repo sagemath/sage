@@ -140,11 +140,10 @@ class MultiGraphics(WithEqualityById, SageObject):
             sage: G = MultiGraphics([c, (c, (0.7, 0.6, 0.2, 0.2))])
             sage: print(G)
             Multigraphics with 2 elements
-
         """
         self._glist = []
         self._positions = []
-        #
+
         for ins in graphics_list:
             if isinstance(ins, Graphics):
                 self.append(ins)  # default position
@@ -786,6 +785,9 @@ class MultiGraphics(WithEqualityById, SageObject):
             True
             sage: G.position(1)
             (0.2, 0.3, 0.4, 0.1)
+            sage: import numpy  # to ensure numpy 2.0 compatibility
+            sage: if int(numpy.version.short_version[0]) > 1:
+            ....:     numpy.set_printoptions(legacy="1.25")
             sage: ax1.get_position().bounds  # tol 1.0e-13
             (0.2, 0.3, 0.4000000000000001, 0.10000000000000003)
 
@@ -1297,6 +1299,9 @@ class GraphicsArray(MultiGraphics):
             sage: g1 = plot(sin(x), (x, -pi, pi))
             sage: g2 = circle((0,1), 1.)
             sage: G = graphics_array([g1, g2])
+            sage: import numpy  # to ensure numpy 2.0 compatibility
+            sage: if int(numpy.version.short_version[0]) > 1:
+            ....:     numpy.set_printoptions(legacy="1.25")
             sage: G.position(0)  # tol 5.0e-3
             (0.025045451349937315,
              0.03415488992713045,

@@ -1718,7 +1718,7 @@ def diameter(G, algorithm=None, source=None):
         unweighted undirected graph. It is based on the following observation:
 
             The diameter of the graph is equal to the maximum eccentricity of
-            a vertex. Let `v` be any vertex, and let `V` be partitionned into
+            a vertex. Let `v` be any vertex, and let `V` be partitioned into
             `A\cup B` where:
 
             .. MATH::
@@ -2520,8 +2520,8 @@ def antipodal_graph(G):
     This method first computes the eccentricity of all vertices and determines
     the diameter of the graph. Then, it for each vertex `u` with eccentricity
     the diameter, it computes BFS distances from `u` and add an edge in the
-    antipodal graph for each vertex `v` at diamter distance from `u` (i.e., for
-    each antipodal vertex).
+    antipodal graph for each vertex `v` at diameter distance from `u`
+    (i.e., for each antipodal vertex).
 
     The drawback of this method is that some BFS distances may be computed
     twice, one time to determine the eccentricities and another time is the
