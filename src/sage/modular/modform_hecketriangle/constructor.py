@@ -5,7 +5,6 @@ Constructor for spaces of modular forms for Hecke triangle groups based on a typ
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -68,11 +67,10 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
 
     - ``analytic_type``  -- The :class:`AnalyticType` of `f`.
 
-    For the zero function the degree `(0, 1)` is choosen.
+    For the zero function the degree `(0, 1)` is chosen.
 
     This function is (heavily) used to determine the type of elements
     and to check if the element really is contained in its parent.
-
 
     EXAMPLES::
 

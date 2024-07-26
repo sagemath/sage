@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Goppa code
 
@@ -20,7 +20,6 @@ EXAMPLES::
 AUTHORS:
 
 - Filip Ion, Marketa Slukova (2019-06): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2019 Filip Ion <filip.alexandru.ion@gmail.com>,

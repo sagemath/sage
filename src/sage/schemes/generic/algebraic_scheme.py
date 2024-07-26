@@ -98,7 +98,6 @@ AUTHORS:
 - Ben Hutz (2014): subschemes of Cartesian products of projective space
 
 - Ben Hutz (2017): split subschemes types into respective folders
-
 """
 
 # ****************************************************************************
@@ -119,7 +118,7 @@ from sage.categories.number_fields import NumberFields
 
 from sage.rings.ideal import is_Ideal
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.misc.latex import latex
@@ -249,7 +248,7 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S = AlgebraicScheme(P); S
             Subscheme of Projective Space of dimension 3 over Integer Ring
             sage: S._latex_()
-            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^3$}'
+            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^{3}$}'
         """
         return r"\text{{Subscheme of ${}$}}".format(latex(self.__A))
 
@@ -676,7 +675,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
                x - y
             sage: U._latex_()
             '\\text{Quasi-projective subscheme }
-             (X\\setminus Y)\\subset {\\mathbf P}_{\\Bold{Z}}^2,\\text{ where }
+             (X\\setminus Y)\\subset {\\mathbf P}_{\\Bold{Z}}^{2},\\text{ where }
              X \\text{ is defined by }\\text{no polynomials},\\text{ and }
              Y \\text{ is defined by } x - y.'
         """
@@ -839,10 +838,10 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
         kwds:
 
-        - ``bound`` - integer (optional, default=0). The bound for the coordinates for
+        - ``bound`` -- integer (default: 0). The bound for the coordinates for
           subschemes with dimension at least 1.
 
-        - ``F`` - field (optional, default=base ring). The field to compute
+        - ``F`` -- field (default: base ring). The field to compute
           the rational points over.
 
 
@@ -874,7 +873,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             F = self.base_ring()
 
         if bound == 0:
-            if is_RationalField(F):
+            if isinstance(F, RationalField):
                 raise TypeError("A positive bound (= %s) must be specified." % bound)
             if not isinstance(F, FiniteField):
                 raise TypeError("Argument F (= %s) must be a finite field." % F)
@@ -899,9 +898,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     INPUT:
 
-    -  ``A`` - ambient space (e.g. affine or projective `n`-space)
+    -  ``A`` -- ambient space (e.g. affine or projective `n`-space)
 
-    -  ``polynomials`` - single polynomial, ideal or iterable of defining
+    -  ``polynomials`` -- single polynomial, ideal or iterable of defining
        polynomials; in any case polynomials must belong to the coordinate
        ring of the ambient space and define valid polynomial functions (e.g.
        they should be homogeneous in the case of a projective space)
@@ -1048,13 +1047,13 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z
             sage: S._latex_()
-            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z'
+            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^{2} \\text{ defined by } x^{2} - y z'
             sage: S = P.subscheme([x^2 - y*z, x^5]); S
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z,
               x^5
             sage: S._latex_()
-            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z, x^{5}'
+            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^{2} \\text{ defined by } x^{2} - y z, x^{5}'
         """
         polynomials = ', '.join(latex(f) for f in self.defining_polynomials())
         if not polynomials:
@@ -1544,7 +1543,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         r"""
         Create the product of subschemes.
 
-        INPUT: ``right`` - a subscheme of similar type.
+        INPUT:
+
+        - ``right`` -- a subscheme of similar type
 
         OUTPUT: a subscheme of a the product of the ambient spaces.
 
@@ -1744,24 +1745,24 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         kwds:
 
-        - ``bound`` - integer (optional, default=0). The bound for the coordinates for
+        - ``bound`` -- integer (default: 0). The bound for the coordinates for
           subschemes with dimension at least 1.
 
-        - ``prec`` - integer (optional, default=53). The precision to use to
+        - ``prec`` -- integer (default: 53). The precision to use to
           compute the elements of bounded height for number fields.
 
-        - ``F`` - field (optional, default=base ring). The field to compute
+        - ``F`` -- field (default: base ring). The field to compute
           the rational points over.
 
-        - ``point_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``point_tolerance`` -- positive real number (default: 10^(-10)).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``zero_tolerance`` -- positive real number (default: 10^(-10)).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
         OUTPUT: list of points in subscheme or ambient space
 
@@ -1786,7 +1787,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         over the rationals::
 
             sage: E = EllipticCurve('37a')                                              # needs sage.schemes
-            sage: E.rational_points(bound=8)                                            # needs sage.schemes
+            sage: E.rational_points(bound=8)                                            # needs sage.libs.singular sage.schemes
             [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 0),
              (1/4 : -5/8 : 1), (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
              (2 : -3 : 1), (2 : 2 : 1)]
@@ -1795,8 +1796,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         enumerated. ::
 
             sage: Etilde = E.base_extend(GF(3))                                         # needs sage.schemes
-            sage: Etilde.rational_points()                                              # needs sage.schemes
-            [(0 : 1 : 0), (0 : 0 : 1), (0 : 2 : 1), (1 : 0 : 1), (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
+            sage: Etilde.rational_points()                                              # needs sage.libs.singular sage.schemes
+            [(0 : 1 : 0), (0 : 0 : 1), (0 : 2 : 1), (1 : 0 : 1),
+             (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
 
         The class of hyperelliptic curves does not (yet) support
         desingularization of the places at infinity into two points::
@@ -1804,27 +1806,27 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: FF = FiniteField(7)
             sage: P.<x> = PolynomialRing(FiniteField(7))
             sage: C = HyperellipticCurve(x^8 + x + 1)                                   # needs sage.schemes
-            sage: C.rational_points()                                                   # needs sage.schemes
+            sage: C.rational_points()                                                   # needs sage.libs.singular sage.schemes
             [(0 : 1 : 0), (0 : 1 : 1), (0 : 6 : 1), (2 : 0 : 1),
              (4 : 0 : 1), (6 : 1 : 1), (6 : 6 : 1)]
 
         ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.rings.real_mpfr
             sage: K.<v> = QuadraticField(-3)
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)
             sage: X = P.subscheme([x^2 - v^2*x*z, y*x - v*z^2])
-            sage: X.rational_points(F=CC)
+            sage: X.rational_points(F=CC)                                               # needs sage.libs.singular
             [(-3.00000000000000 : -0.577350269189626*I : 1.00000000000000),
              (0.000000000000000 : 1.00000000000000 : 0.000000000000000)]
 
         ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.rings.real_mpfr
             sage: K.<v> = QuadraticField(3)
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: X = A.subscheme([x^2 - v^2*y, y*x - v])
-            sage: X.rational_points(F=RR)
+            sage: X.rational_points(F=RR)                                               # needs sage.libs.singular
             [(1.73205080756888, 1.00000000000000)]
 
         .. TODO::

@@ -19,7 +19,6 @@ REFERENCES:
 
 - Chap. 1 of [KN1963]_
 - Chaps. 2 and 3 of [Lee2013]_
-
 """
 
 # ****************************************************************************
@@ -1282,7 +1281,7 @@ class DiffMap(ContinuousMap):
                                  "the {} by the {}".format(tensor, self))
         # Vector field module for the result:
         fmodule2 = dom1.vector_field_module(dest_map=self)
-        #
+
         frame2 = fmodule2.basis(from_frame=chart2.frame())
         si1 = dom1.start_index()
         si2 = fmodule2._sindex

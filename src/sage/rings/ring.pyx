@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Rings
 
@@ -336,36 +337,6 @@ cdef class Ring(ParentWithGens):
         # returns (a sub-category of) the category of rings before
         # initialisation has finished.
         return self._category or _Rings
-
-    def ideal_monoid(self):
-        """
-        Return the monoid of ideals of this ring.
-
-        EXAMPLES::
-
-            sage: # needs sage.combinat sage.modules
-            sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)
-            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
-            sage: Q = F.quotient(I)
-            sage: Q.ideal_monoid()
-            Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z)
-             over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
-            sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')
-            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
-            sage: Q = F.quo(I)
-            sage: Q.ideal_monoid()
-            Monoid of ideals of Quotient of Free Associative Unital Algebra
-             on 3 generators (x, y, z) over Integer Ring
-             by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
-
-        """
-        if self._ideal_monoid is not None:
-            return self._ideal_monoid
-        else:
-            from sage.rings.noncommutative_ideals import IdealMonoid_nc
-            M = IdealMonoid_nc(self)
-            self._ideal_monoid = M
-            return M
 
     def ideal(self, *args, **kwds):
         """
@@ -819,7 +790,7 @@ cdef class Ring(ParentWithGens):
 
         - ``n`` -- positive integer
 
-        - ``all`` -- bool (default: False) - whether to return
+        - ``all`` -- bool (default: ``False``); whether to return
           a list of all primitive `n`-th roots of unity. If True, raise a ``ValueError``
           if ``self`` is not an integral domain.
 
@@ -945,25 +916,6 @@ cdef class Ring(ParentWithGens):
             NotImplementedError: cannot construct elements of <sage.rings.ring.Ring object at ...>
         """
         return self(randint(-bound,bound))
-
-    def ideal_monoid(self):
-        """
-        Return the monoid of ideals of this ring.
-
-        EXAMPLES::
-
-            sage: ZZ.ideal_monoid()
-            Monoid of ideals of Integer Ring
-            sage: R.<x>=QQ[]; R.ideal_monoid()
-            Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
-        """
-        if self._ideal_monoid is not None:
-            return self._ideal_monoid
-        else:
-            from sage.rings.ideal_monoid import IdealMonoid
-            M = IdealMonoid(self)
-            self._ideal_monoid = M
-            return M
 
     @cached_method
     def epsilon(self):
@@ -1186,25 +1138,6 @@ cdef class CommutativeRing(Ring):
             1
         """
         raise NotImplementedError
-
-    def ideal_monoid(self):
-        """
-        Return the monoid of ideals of this ring.
-
-        EXAMPLES::
-
-            sage: ZZ.ideal_monoid()
-            Monoid of ideals of Integer Ring
-            sage: R.<x>=QQ[]; R.ideal_monoid()
-            Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
-        """
-        if self._ideal_monoid is not None:
-            return self._ideal_monoid
-        else:
-            from sage.rings.ideal_monoid import IdealMonoid
-            M = IdealMonoid(self)
-            self._ideal_monoid = M
-            return M
 
     def extension(self, poly, name=None, names=None, **kwds):
         """
@@ -1645,9 +1578,16 @@ def is_Ring(x):
 
         sage: from sage.rings.ring import is_Ring
         sage: is_Ring(ZZ)
+        doctest:warning...
+        DeprecationWarning: The function is_Ring is deprecated; use '... in Rings()' instead
+        See https://github.com/sagemath/sage/issues/38288 for details.
         True
         sage: MS = MatrixSpace(QQ, 2)                                                   # needs sage.modules
         sage: is_Ring(MS)                                                               # needs sage.modules
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38288,
+                       "The function is_Ring is deprecated; "
+                       "use '... in Rings()' instead")
     return x in _Rings

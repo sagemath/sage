@@ -36,7 +36,6 @@ AUTHORS:
 - Ben Hutz (2015-11): iteration of subschemes
 
 - Ben Hutz (2017-7): relocate code and create class
-
 """
 
 # ****************************************************************************
@@ -88,8 +87,8 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.rings.fraction_field import (FractionField, is_FractionField, FractionField_1poly_field)
-from sage.rings.fraction_field_element import is_FractionFieldElement, FractionFieldElement
+from sage.rings.fraction_field import FractionField, FractionField_generic, FractionField_1poly_field
+from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.function_field.function_field import is_FunctionField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -395,11 +394,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # homogenize!
             f = morphism_or_polys
             aff_CR = f.parent()
-            if (not is_PolynomialRing(aff_CR) and not is_FractionField(aff_CR)
+            if (not is_PolynomialRing(aff_CR) and not isinstance(aff_CR, FractionField_generic)
                 and not (is_MPolynomialRing(aff_CR) and aff_CR.ngens() == 1)):
                 msg = '{} is not a single variable polynomial or rational function'
                 raise ValueError(msg.format(f))
-            if is_FractionField(aff_CR):
+            if isinstance(aff_CR, FractionField_generic):
                 polys = [f.numerator(),f.denominator()]
             else:
                 polys = [f, aff_CR(1)]
@@ -890,7 +889,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         # do it again to divide out by denominators of coefficients
                         PHI = QR2[0].sage()
                         PHI = PHI.numerator()._maxima_().divide(PHI.denominator())[0].sage()
-                    if not is_FractionFieldElement(PHI):
+                    if not isinstance(PHI, FractionFieldElement):
                         from sage.symbolic.expression_conversions import polynomial
                         PHI = polynomial(PHI, ring=self.coordinate_ring())
                 except (TypeError, NotImplementedError): #something Maxima, or the conversion, can't handle
@@ -1139,31 +1138,31 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``g`` - a rational map of `\mathbb{P}^1` given as a projective morphism.
+        - ``g`` -- a rational map of `\mathbb{P}^1` given as a projective morphism.
           ``g`` and ``self`` should have the same field of definition.
 
         kwds:
 
-        - ``n`` - (default: 5) a positive integer
+        - ``n`` -- (default: 5) a positive integer
           Order of periodic points to use or preimages to take if starting points are specified.
 
-        - ``f_starting_point`` - (optional, default: ``None``) value in the base number field or None.
+        - ``f_starting_point`` -- (default: ``None``) value in the base number field or None.
           If ``f_starting_point`` is None, we solve for points of period ``n`` for ``self``.
           Otherwise, we take ``n``-th preimages of the point given by ``f_starting_point``
           under ``f`` on the affine line.
 
-        - ``g_starting_point`` - (optional, default: ``None``) value in the base number field or None.
+        - ``g_starting_point`` -- (default: ``None``) value in the base number field or None.
           If ``g_starting_point`` is None, we solve for points of period ``n`` for ``g``.
           Otherwise, we take ``n``-th preimages of the point given by ``g_starting_point``
           under ``g`` on the affine line.
 
-        - ``check_primes_of_bad_reduction`` - (optional, default: ``False``) boolean.
+        - ``check_primes_of_bad_reduction`` -- (default: ``False``) boolean.
           Passed to the ``primes_of_bad_reduction`` function for ``self`` and ``g``.
 
-        - ``prec`` - (optional, default: ``RealField`` default)
+        - ``prec`` -- (default: ``RealField`` default)
           default precision for RealField values which are returned.
 
-        - ``noise_multiplier`` - (default: 2) a real number.
+        - ``noise_multiplier`` -- (default: 2) a real number.
           Discriminant terms involved in the computation at the archimedean places
           are often not needed, particularly if the capacity of the Julia sets is 1,
           and introduce a lot of error. By a well-known result of Mahler (see
@@ -2005,7 +2004,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``N`` -- (optional - default: 10) positive integer. number of
+        - ``N`` -- (default: 10) positive integer. number of
           terms of the series to use
 
         - ``prec`` -- (default: 100) positive integer, float point or
@@ -3088,8 +3087,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``check_primes`` -- (optional) boolean: this signals whether to
             check whether each element in ``prime_list`` is a prime
 
-          * ``'BM'`` - the Bruin-Molnar algorithm [BM2012]_
-          * ``'HS'`` - the Hutz-Stoll algorithm [HS2018]_
+          * ``'BM'`` -- the Bruin-Molnar algorithm [BM2012]_
+          * ``'HS'`` -- the Hutz-Stoll algorithm [HS2018]_
 
         OUTPUT:
 
@@ -3269,8 +3268,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``algorithm`` -- (optional) string; can be one of the following:
 
-          * ``'BM'`` - the Bruin-Molnar algorithm [BM2012]_
-          * ``'HS'`` - for the Hutz-Stoll algorithm [HS2018]_
+          * ``'BM'`` -- the Bruin-Molnar algorithm [BM2012]_
+          * ``'HS'`` -- for the Hutz-Stoll algorithm [HS2018]_
 
           if not specified, properties of the map are utilized to choose
 
@@ -3534,7 +3533,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         if hyperplane_found:
                             break
                 else:
-                    if is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R):
+                    if is_PolynomialRing(R) or is_MPolynomialRing(R) or isinstance(R, FractionField_generic):
                         # for polynomial rings, we can get an infinite family of hyperplanes
                         # by increasing the degree
                         var = R.gen()
@@ -3587,12 +3586,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``starting_prime`` -- (default: 5) the first prime to use for CRT
 
-        - ``algorithm``-- (optional) can be one of the following:
+        - ``algorithm`` -- (optional) can be one of the following:
 
-          * ``'CRT'`` - Chinese Remainder Theorem
-          * ``'fixed_points'`` - fixed points algorithm
+          * ``'CRT'`` -- Chinese Remainder Theorem
+          * ``'fixed_points'`` -- fixed points algorithm
 
-        - ``return_functions``-- (default: ``False``) boolean; ``True``
+        - ``return_functions`` -- (default: ``False``) boolean; ``True``
           returns elements as linear fractional transformations and
           ``False`` returns elements as `PGL2` matrices
 
@@ -3703,7 +3702,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             raise NotImplementedError("rational function of degree 1 not implemented")
         f = self.dehomogenize(1)
         R = PolynomialRing(f.base_ring(),'x')
-        if is_FractionFieldElement(f[0]):
+        if isinstance(f[0], FractionFieldElement):
             F = (f[0].numerator().univariate_polynomial(R))/f[0].denominator().univariate_polynomial(R)
         else:
             F = f[0].univariate_polynomial(R)
@@ -4108,7 +4107,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``check`` -- boolean (default: True)
+        - ``check`` -- boolean (default: ``True``)
 
         - ``use_algebraic_closure`` -- boolean (default: ``True``) -- If ``True``, uses the
           algebraic closure. If ``False``, uses the smallest extension of the base field
@@ -4317,9 +4316,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` - a positive integer, the period
+        - ``n`` -- a positive integer, the period
 
-        - ``m`` - a non negative integer, the preperiod
+        - ``m`` -- a non negative integer, the preperiod
 
         kwds:
 
@@ -4660,7 +4659,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` - a positive integer
+        - ``n`` -- a positive integer
 
         - ``minimal`` -- (default: ``True``) boolean; ``True`` specifies to
           find only the periodic points of minimal period ``n`` and ``False``
@@ -4676,8 +4675,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``algorithm`` -- (default: ``'variety'``) must be one of
           the following:
 
-          * ``'variety'`` - find the rational points on the appropriate variety
-          * ``'cyclegraph'`` - find the cycles from the cycle graph
+          * ``'variety'`` -- find the rational points on the appropriate variety
+          * ``'cyclegraph'`` -- find the cycles from the cycle graph
 
         - ``return_scheme`` -- return a subscheme of the ambient space
           that defines the ``n`` th periodic points
@@ -4881,7 +4880,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if isinstance(R, FractionField_1poly_field) or is_FunctionField(R):
             raise NotImplementedError('periodic points not implemented for fraction function fields; '
                 'clear denominators and use the polynomial ring instead')
-        if is_FractionField(R):
+        if isinstance(R, FractionField_generic):
             if is_MPolynomialRing(R.ring()):
                 raise NotImplementedError('periodic points not implemented for fraction function fields; '
                     'clear denominators and use the polynomial ring instead')
@@ -5785,7 +5784,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     X = X.change_ring(F)
                 else:
                     F = base_ring
-                    if is_FractionField(base_ring):
+                    if isinstance(base_ring, FractionField_generic):
                         if is_MPolynomialRing(base_ring.ring()) or is_PolynomialRing(base_ring.ring()):
                             f.normalize_coordinates()
                             f_ring = f.change_ring(base_ring.ring())
@@ -5887,14 +5886,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             return sigmas
 
         base_ring = dom.base_ring()
-        if is_FractionField(base_ring):
+        if isinstance(base_ring, FractionField_generic):
             base_ring = base_ring.ring()
         if (is_PolynomialRing(base_ring) or is_MPolynomialRing(base_ring)):
             base_ring = base_ring.base_ring()
         elif base_ring in FunctionFields():
             base_ring = base_ring.constant_base_field()
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if not (base_ring in NumberFields() or is_NumberFieldOrder(base_ring)
+        if not (base_ring in NumberFields() or base_ring == ZZ or isinstance(base_ring, sage.rings.abc.Order)
                 or (base_ring in FiniteFields())):
             raise NotImplementedError("incompatible base field, see documentation")
 
@@ -6018,10 +6016,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``error_limit`` -- (default: 0.000001) a real number, sets
           the error tolerance
 
-        - ``smallest_coeffs`` -- (default: True), boolean, whether to find the
+        - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
           model with smallest coefficients
 
-        - ``dynatomic`` -- (default: True) boolean, to use formal periodic points
+        - ``dynatomic`` -- (default: ``True``) boolean, to use formal periodic points
 
         - ``start_n`` -- (default: 1), positive integer, firs period to rry to find
           appropriate binary form
@@ -6034,10 +6032,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           * ``'BM'`` -- Bruin-Molnar algorithm [BM2012]_
           * ``'HS'`` -- Hutz-Stoll algorithm [HS2018]_
 
-        - ``check_minimal`` -- (default: True), boolean, whether to check
+        - ``check_minimal`` -- (default: ``True``), boolean, whether to check
           if this map is a minimal model
 
-        - ``smallest_coeffs`` -- (default: True), boolean, whether to find the
+        - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
           model with smallest coefficients
 
         OUTPUT:
@@ -6105,7 +6103,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.reduced_form(prec=30, smallest_coeffs=False)
             Traceback (most recent call last):
             ...
-            ValueError: accuracy of Newton's root not within tolerance(0.00009... > 1e-06), increase precision
+            ValueError: accuracy of Newton's root not within tolerance(0.00008... > 1e-06), increase precision
             sage: f.reduced_form(smallest_coeffs=False)
             (
             Dynamical System of Projective Space of dimension 1 over Rational Field
@@ -8439,6 +8437,14 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
               To:   Finite Field in z2 of size 3^2
               Defn: 1 |--> 1
 
+        Fixes :issue:`38012` by not forcing univariate polynomial to be univariate::
+
+            sage: R.<z> = PolynomialRing(QQ)
+            sage: f = DynamicalSystem_affine(z^2 + z + 1).homogenize(1)
+            sage: f.normal_form()
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+             Defn: Defined on coordinates by sending (x0 : x1) to
+                   (x0^2 + 5/4*x1^2 : x1^2)
         """
         # defines the field of fixed points
         if self.codomain().dimension_relative() != 1:
@@ -8467,7 +8473,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         #we find one and not go all the way to the splitting field
         i = 0
         if G.degree() != 0:
-            G = G.polynomial(G.variable(0))
+            if is_MPolynomialRing(G.parent()):
+                G = G.polynomial(G.variable(0))
         else:
             #no other fixed points
             raise NotImplementedError("map is not a polynomial")
@@ -9203,7 +9210,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
         The following keywords are used when the dimension of the domain is 1:
 
-        - ``absolute``-- (default: ``False``) boolean; if ``True``, then
+        - ``absolute`` -- (default: ``False``) boolean; if ``True``, then
           return the absolute automorphism group and a field of definition
 
         - ``iso_type`` -- (default: ``False``) boolean; if ``True``, then

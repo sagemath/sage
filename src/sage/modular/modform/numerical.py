@@ -13,20 +13,20 @@ Numerical computation of newforms
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.fast_arith       import prime_range
-from sage.matrix.constructor     import matrix
-from sage.misc.verbose           import verbose
-from sage.misc.cachefunc         import cached_method
-from sage.misc.prandom           import randint
+from sage.rings.fast_arith import prime_range
+from sage.matrix.constructor import matrix
+from sage.misc.verbose import verbose
+from sage.misc.cachefunc import cached_method
+from sage.misc.prandom import randint
 from sage.modular.arithgroup.all import Gamma0
-from sage.modular.modsym.all     import ModularSymbols
+from sage.modular.modsym.all import ModularSymbols
 from sage.modules.free_module_element import free_module_element as vector
-from sage.rings.complex_double   import CDF
-from sage.rings.integer          import Integer
-from sage.rings.rational_field   import QQ
-from sage.structure.richcmp      import richcmp_method, richcmp
-from sage.structure.sage_object  import SageObject
-from sage.structure.sequence     import Sequence
+from sage.rings.complex_double import CDF
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.sage_object import SageObject
+from sage.structure.sequence import Sequence
 
 # This variable controls importing the SciPy library sparingly
 scipy = None
@@ -38,34 +38,34 @@ class NumericalEigenforms(SageObject):
 
     INPUT:
 
-    - ``group`` - a congruence subgroup of a Dirichlet character of
+    - ``group`` -- a congruence subgroup of a Dirichlet character of
       order 1 or 2
 
-    - ``weight`` - an integer >= 2
+    - ``weight`` -- an integer >= 2
 
-    - ``eps`` - a small float; abs( ) < eps is what "equal to zero" is
+    - ``eps`` -- a small float; abs( ) < eps is what "equal to zero" is
       interpreted as for floating point numbers.
 
-    - ``delta`` - a small-ish float; eigenvalues are considered distinct
+    - ``delta`` -- a small-ish float; eigenvalues are considered distinct
       if their difference has absolute value at least delta
 
-    - ``tp`` - use the Hecke operators T_p for p in tp when searching
+    - ``tp`` -- use the Hecke operators T_p for p in tp when searching
       for a random Hecke operator with distinct Hecke eigenvalues.
 
     OUTPUT:
 
     A numerical eigenforms object, with the following useful methods:
 
-    - :meth:`ap` - return all eigenvalues of `T_p`
+    - :meth:`ap` -- return all eigenvalues of `T_p`
 
-    - :meth:`eigenvalues` - list of eigenvalues corresponding
+    - :meth:`eigenvalues` -- list of eigenvalues corresponding
       to the given list of primes, e.g.,::
 
           [[eigenvalues of T_2],
            [eigenvalues of T_3],
            [eigenvalues of T_5], ...]
 
-    - :meth:`systems_of_eigenvalues` - a list of the systems of
+    - :meth:`systems_of_eigenvalues` -- a list of the systems of
       eigenvalues of eigenforms such that the chosen random linear
       combination of Hecke operators has multiplicity 1 eigenvalues.
 
@@ -367,11 +367,11 @@ class NumericalEigenforms(SageObject):
 
         INPUT:
 
-        - ``p`` - integer, a prime number
+        - ``p`` -- integer, a prime number
 
         OUTPUT:
 
-        - ``list`` - a list of double precision complex numbers
+        - ``list`` -- a list of double precision complex numbers
 
         EXAMPLES::
 
@@ -400,7 +400,7 @@ class NumericalEigenforms(SageObject):
 
         INPUT:
 
-        - ``primes`` - a list of primes
+        - ``primes`` -- a list of primes
 
         OUTPUT:
 

@@ -1,6 +1,5 @@
 # cython: binding=True
 # distutils: language = c++
-
 """
 Graph coloring
 
@@ -106,7 +105,8 @@ def format_coloring(data, value_only=False, hex_colors=False, vertex_color_dict=
         {0: ['a', 'b'], 1: ['c'], 2: ['d']}
         sage: format_coloring(color_classes, value_only=False, hex_colors=True)         # needs sage.plot
         {'#0000ff': ['d'], '#00ff00': ['c'], '#ff0000': ['a', 'b']}
-        sage: format_coloring(color_classes, value_only=False, hex_colors=False, vertex_color_dict=True)
+        sage: format_coloring(color_classes, value_only=False, hex_colors=False,
+        ....:                 vertex_color_dict=True)
         {'a': 0, 'b': 0, 'c': 1, 'd': 2}
         sage: format_coloring(color_classes, value_only=False, hex_colors=True,         # needs sage.plot
         ....:                 vertex_color_dict=True)
@@ -122,7 +122,8 @@ def format_coloring(data, value_only=False, hex_colors=False, vertex_color_dict=
         sage: format_coloring([], value_only=False, hex_colors=True,                    # needs sage.plot
         ....:                 vertex_color_dict=True)
         {}
-        sage: format_coloring([], value_only=False, hex_colors=False, vertex_color_dict=True)
+        sage: format_coloring([], value_only=False, hex_colors=False,
+        ....:                 vertex_color_dict=True)
         {}
     """
     if value_only:
@@ -1319,7 +1320,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
       - When set to ``False``, tries to find a `\Delta`-edge-coloring using
         Mixed Integer Linear Programming (MILP). If impossible, returns a
-        `(\Delta + 1)`-edge-coloring.  Please note that determinating if the
+        `(\Delta + 1)`-edge-coloring.  Please note that determining if the
         chromatic index of a graph equals `\Delta` is computationally difficult,
         and could take a long time.
 

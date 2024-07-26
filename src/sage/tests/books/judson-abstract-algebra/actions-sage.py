@@ -169,5 +169,4 @@ r"""
     sage: S = G.stabilizer(4)
     sage: S.orbits()
     ((1, 2, 3), (4,))
-
 """

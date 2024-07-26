@@ -624,7 +624,7 @@ class GenericGraph(GenericGraph_pyx):
         Helper method for method ``__hash__``.
 
         This method checks whether parameter ``hash_labels`` has been specified
-        by the user. Otherwise, defaults to the value of parameter ``weigthed``.
+        by the user. Otherwise, defaults to the value of parameter ``weighted``.
 
         TESTS::
 
@@ -4572,8 +4572,9 @@ class GenericGraph(GenericGraph_pyx):
         has no non-oriented edge (this vertex must have odd degree), the walk
         resumes at another vertex of odd degree, if any.
 
-        This algorithm has complexity `O(m)`, where `m` is the number of edges
-        in the graph.
+        This algorithm has complexity `O(n+m)` for ``SparseGraph`` and `O(n^2)`
+        for ``DenseGraph``, where `m` is the number of edges in the graph and
+        `n` is the number of vertices in the graph.
 
         EXAMPLES:
 
@@ -9645,13 +9646,13 @@ class GenericGraph(GenericGraph_pyx):
 
         Now, using the backtrack algorithm in the Heawood graph ::
 
-            sage: G=graphs.HeawoodGraph()
+            sage: G = graphs.HeawoodGraph()
             sage: G.hamiltonian_cycle(algorithm='backtrack')
             (True, [...])
 
         And now in the Petersen graph ::
 
-            sage: G=graphs.PetersenGraph()
+            sage: G = graphs.PetersenGraph()
             sage: B, P = G.hamiltonian_cycle(algorithm='backtrack')
             sage: B
             False
@@ -9662,7 +9663,7 @@ class GenericGraph(GenericGraph_pyx):
 
         Finally, we test the algorithm in a cube graph, which is Hamiltonian ::
 
-            sage: G=graphs.CubeGraph(3)
+            sage: G = graphs.CubeGraph(3)
             sage: G.hamiltonian_cycle(algorithm='backtrack')
             (True, [...])
 
@@ -11041,7 +11042,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``s,t`` -- two vertices of the graph.
+        - ``s``, ``t`` -- two vertices of the graph.
 
         - ``solver`` -- string (default: ``None``); specify a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -12895,7 +12896,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``u, v`` -- the vertices (and direction if digraph) of the edge
+        - ``u``, ``v`` -- the vertices (and direction if digraph) of the edge
 
         -  ``l`` -- the new label
 
@@ -14905,7 +14906,8 @@ class GenericGraph(GenericGraph_pyx):
         ALGORITHM:
 
         This method implements the algorithm proposed in [RT1975]_ for the
-        recognition of chordal graphs with time complexity in `O(m)`. The
+        recognition of chordal graphs. The time complexity of this algorithm is
+        `O(n+m)` for ``SparseGraph`` and `O(n^2)` for ``DenseGraph``. The
         algorithm works through computing a Lex BFS on the graph, then checking
         whether the order is a Perfect Elimination Order by computing for each
         vertex `v` the subgraph induced by its non-deleted neighbors, then
@@ -18192,8 +18194,9 @@ class GenericGraph(GenericGraph_pyx):
              4: {0: 4, 1: 0, 2: 3, 3: 4, 4: None}}
             sage: pred[0]
             {0: None, 1: 0, 2: 1, 3: 2, 4: 0}
-            sage: G = Graph( { 0: {1: {'weight':1}}, 1: {2: {'weight':1}}, 2: {3: {'weight':1}}, 3: {4: {'weight':2}}, 4: {0: {'weight':2}} }, sparse=True)
-            sage: dist, pred = G.shortest_path_all_pairs(weight_function = lambda e:e[2]['weight'])
+            sage: G = Graph({0: {1: {'weight':1}}, 1: {2: {'weight':1}}, 2: {3: {'weight':1}},
+            ....:            3: {4: {'weight':2}}, 4: {0: {'weight':2}}}, sparse=True)
+            sage: dist, pred = G.shortest_path_all_pairs(weight_function=lambda e: e[2]['weight'])
             sage: dist
             {0: {0: 0, 1: 1, 2: 2, 3: 3, 4: 2},
              1: {0: 1, 1: 0, 2: 1, 3: 2, 4: 3},
@@ -18214,7 +18217,7 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: G = Graph( { 0: {1:None}, 1: {2:None}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2} }, sparse=True )
+            sage: G = Graph({0: {1:None}, 1: {2:None}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True)
             sage: G.shortest_path_all_pairs()
             ({0: {0: 0, 1: 1, 2: 2, 3: 2, 4: 1},
             1: {0: 1, 1: 0, 2: 1, 3: 2, 4: 2},
@@ -18349,7 +18352,7 @@ class GenericGraph(GenericGraph_pyx):
 
         Algorithms that do not work with weights::
 
-            sage: g = Graph({0: {1:1}, 1: {2:1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True )
+            sage: g = Graph({0: {1:1}, 1: {2:1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True)
             sage: g.shortest_path_all_pairs(algorithm="BFS", by_weight=True)
             Traceback (most recent call last):
             ...
@@ -18417,6 +18420,9 @@ class GenericGraph(GenericGraph_pyx):
                 M = self.adjacency_matrix(vertices=int_to_vertex)
 
             # We call the Floyd-Warshall method from SciPy
+            import numpy  # to ensure numpy 2.0 compatibility
+            if int(numpy.version.short_version[0]) > 1:
+                numpy.set_printoptions(legacy="1.25")
             from numpy import array as np_array
             from scipy.sparse.csgraph import floyd_warshall
             dd, pp = floyd_warshall(np_array(M), directed=self.is_directed(),
@@ -18524,10 +18530,10 @@ class GenericGraph(GenericGraph_pyx):
 
           - For ``by_weight==False`` only:
 
-            - ``'BFS'`` - the computation is done through a BFS centered on
+            - ``'BFS'`` -- the computation is done through a BFS centered on
               each vertex successively.
 
-            - ``'Floyd-Warshall-Cython'`` - the Cython implementation of
+            - ``'Floyd-Warshall-Cython'`` -- the Cython implementation of
               the Floyd-Warshall algorithm. Usually slower than ``'BFS'``.
 
           - For graphs without negative weights:
@@ -18546,7 +18552,7 @@ class GenericGraph(GenericGraph_pyx):
             - ``'Johnson_Boost'``: the Johnson algorithm, implemented in
               Boost.
 
-            - ``'Floyd-Warshall-Python'`` - the Python implementation of
+            - ``'Floyd-Warshall-Python'`` -- the Python implementation of
               the Floyd-Warshall algorithm. Usually slower than
               ``'Johnson_Boost'``.
 
@@ -19039,13 +19045,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_path([22, 23, 24, 5])
             sage: D.add_path([5, 33, 34, 35])
             sage: list(D.depth_first_search(5, neighbors=D.neighbors_in))
-            [5, 4, 3, 2, 1, 0, 24, 23, 22]
+            [5, 24, 23, 22, 4, 3, 2, 1, 0]
             sage: list(D.breadth_first_search(5, neighbors=D.neighbors_in))
-            [5, 24, 4, 23, 3, 22, 2, 1, 0]
+            [5, 4, 24, 3, 23, 2, 22, 1, 0]
             sage: list(D.depth_first_search(5, neighbors=D.neighbors_out))
-            [5, 6, 7, 8, 9, 33, 34, 35]
+            [5, 33, 34, 35, 6, 7, 8, 9]
             sage: list(D.breadth_first_search(5, neighbors=D.neighbors_out))
-            [5, 33, 6, 34, 7, 35, 8, 9]
+            [5, 6, 33, 7, 34, 8, 35, 9]
 
         You can get edges of the DFS tree instead of the vertices using the
         ``edges`` parameter::
@@ -19583,8 +19589,8 @@ class GenericGraph(GenericGraph_pyx):
             raise TypeError('both arguments must be of the same class')
 
         multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
-        loops = self.allows_loops()          or other.allows_loops()
-        weighted = self.weighted()              and other.weighted()
+        loops = self.allows_loops() or other.allows_loops()
+        weighted = self.weighted() and other.weighted()
 
         if self._directed:
             from sage.graphs.digraph import DiGraph
@@ -23507,9 +23513,9 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
 
-        -  ``partition`` - a list of lists
+        -  ``partition`` -- a list of lists
 
-        -  ``quotient_matrix`` - (default False) if True, and
+        -  ``quotient_matrix`` -- (default: ``False``) if True, and
            the partition is equitable, returns a matrix over the integers
            whose rows and columns represent cells of the partition, and whose
            i,j entry is the number of vertices in cell j adjacent to each
@@ -25851,7 +25857,7 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
             # The groups are ordered by increasing multiplicity
             edge_partition = [tmp[mu] for mu in sorted(tmp.keys())]
 
-            # Now the edges are partitionned according to the multiplicity they
+            # Now the edges are partitioned according to the multiplicity they
             # represent, and edge labels are forgotten.
 
         else:

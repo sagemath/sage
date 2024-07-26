@@ -157,7 +157,6 @@ AUTHORS:
 - Simon King (2010-12): (:issue:`8800`) fixed a bug in ``denominator()``.
 
 - Simon King (2010-12), Peter Bruin (June 2014): (:issue:`10513`) new coercion model and category framework.
-
 """
 
 ###########################################################################
@@ -623,16 +622,16 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
 
     INPUT:
 
-    - ``gens`` - a list of either vectors or lists of ring elements
+    - ``gens`` -- a list of either vectors or lists of ring elements
       used to generate the span
 
-    - ``base_ring`` - default: ``None`` - a principal ideal domain
+    - ``base_ring`` -- (default: ``None``); a principal ideal domain
       for the ring of scalars
 
-    - ``check`` - default: ``True`` - passed to the ``span()`` method
+    - ``check`` -- (default: ``True``); passed to the ``span()`` method
       of the ambient module
 
-    - ``already_echelonized`` - default: ``False`` - set to ``True``
+    - ``already_echelonized`` -- (default: ``False``); set to ``True``
       if the vectors form the rows of a matrix in echelon form, in
       order to skip the computation of an echelonized basis for the
       span.
@@ -784,7 +783,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         return FreeModule(R, 0)
     else:
         x = gens[0]
-        if free_module_element.is_FreeModuleElement(x):
+        if isinstance(x, free_module_element.FreeModuleElement):
             M = x.parent()
         else:
             try:
@@ -3110,8 +3109,8 @@ class FreeModule_generic(Module_free_ambient):
             Domain: Vector space of dimension 2 over Rational Field
             Codomain: Vector space of dimension 2 over Rational Field
         """
-        from sage.structure.element import is_Matrix
-        if codomain is None and is_Matrix(im_gens):
+        from sage.structure.element import Matrix
+        if codomain is None and isinstance(im_gens, Matrix):
             side = kwds.get("side", "left")
             n = im_gens.nrows() if side == "right" else im_gens.ncols()
             from sage.categories.pushout import pushout
@@ -3276,12 +3275,12 @@ class FreeModule_generic(Module_free_ambient):
 
         INPUT:
 
-        -- ``prob`` - float. Each coefficient will be set to zero with
+        - ``prob`` -- float. Each coefficient will be set to zero with
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
-        -- ``*args, **kwds`` - passed on to ``random_element()`` function
-           of base ring.
+        - ``*args``, ``**kwds`` -- passed on to the :func:`random_element`
+          function of the base ring.
 
         EXAMPLES::
 
@@ -3824,7 +3823,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             return sage.rings.infinity.infinity
 
         a = sage.matrix.matrix_space.MatrixSpace(self.base_field(), self.rank())(C).determinant()
-        if sage.rings.integer_ring.is_IntegerRing(self.base_ring()):
+        if isinstance(self.base_ring(), sage.rings.integer_ring.IntegerRing_class):
             return a.abs()
         elif isinstance(self.base_ring, sage.rings.abc.Order):
             return self.base_ring().ideal(a).norm()
@@ -4262,9 +4261,9 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
         INPUT:
 
 
-        -  ``gens`` - a list of vector in self
+        -  ``gens`` -- a list of vector in self
 
-        -  ``check`` - whether or not to verify that each gen
+        -  ``check`` -- whether or not to verify that each gen
            is in the ambient vector space
 
 
@@ -4414,9 +4413,9 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         INPUT:
 
-        - ``Y`` - a free module (or vector space) that will
+        - ``Y`` -- a free module (or vector space) that will
           be the codomain of the morphisms in returned homspace
-        - ``category`` - the category for the homspace
+        - ``category`` -- the category for the homspace
 
         OUTPUT:
 
@@ -4671,12 +4670,12 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         INPUT:
 
 
-        -  ``basis`` - list of vectors
+        -  ``basis`` -- list of vectors
 
-        -  ``check`` - boolean (default: ``True``): whether or not to
+        -  ``check`` -- boolean (default: ``True``): whether or not to
            coerce entries of gens into base field
 
-        -  ``already_echelonized`` - boolean (default: ``False``):
+        -  ``already_echelonized`` -- boolean (default: ``False``):
            set this if you know the gens are already in echelon form
 
 
@@ -4723,12 +4722,12 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         INPUT:
 
-        -  ``gens`` - list of vectors
+        -  ``gens`` -- list of vectors
 
-        -  ``check`` - boolean (default: ``True``) verify that gens
+        -  ``check`` -- boolean (default: ``True``) verify that gens
            are all in ``self``.
 
-        -  ``already_echelonized`` - boolean (default: ``False``) set
+        -  ``already_echelonized`` -- boolean (default: ``False``) set
            to True if you know the gens are in Echelon form.
 
         EXAMPLES:
@@ -4768,7 +4767,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         INPUT:
 
-        - ``dim`` - int, dimension of subspaces to be generated
+        - ``dim`` -- int, dimension of subspaces to be generated
 
         EXAMPLES::
 
@@ -4980,11 +4979,11 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         - ``vectors`` -- A list of vectors, all from the same vector
           space.
 
-        - ``zeros`` -- default: ``'left'`` - ``'left'`` or ``'right'``
+        - ``zeros`` -- (default: ``'left'``); ``'left'`` or ``'right'``
           as a general preference for where zeros are located in the
           returned coefficients
 
-        - ``check`` -- default: ``True`` - if ``True`` each item in
+        - ``check`` -- (default: ``True``); if ``True`` each item in
           the list ``vectors`` is checked for membership in ``self``.
           Set to ``False`` if you can be certain the vectors come from
           the vector space.
@@ -5739,7 +5738,7 @@ class FreeModule_ambient(FreeModule_generic):
         OUTPUT:
 
 
-        -  ``Sequence`` - an immutable sequence with universe
+        -  ``Sequence`` -- an immutable sequence with universe
            this ambient free module
 
 
@@ -5824,7 +5823,7 @@ class FreeModule_ambient(FreeModule_generic):
 
         INPUT:
 
-        - ``v`` - list
+        - ``v`` -- list
 
         EXAMPLES::
 
@@ -5878,9 +5877,9 @@ class FreeModule_ambient(FreeModule_generic):
 
         INPUT:
 
-        -  ``v`` - vector
+        -  ``v`` -- vector
 
-        -  ``check`` - boolean (default: ``True``); if True, also
+        -  ``check`` -- boolean (default: ``True``); if True, also
            verify that `v` is really in ``self``.
 
         OUTPUT: list
@@ -5945,11 +5944,11 @@ class FreeModule_ambient(FreeModule_generic):
         INPUT:
 
 
-        - ``prob`` - float. Each coefficient will be set to zero with
+        - ``prob`` -- float. Each coefficient will be set to zero with
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
-        - ``*args, **kwds`` - passed on to random_element function of base
+        - ``*args``, ``**kwds`` -- passed on to random_element function of base
            ring.
 
 
@@ -7050,9 +7049,9 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         INPUT:
 
-        -  ``v`` - vector
+        -  ``v`` -- vector
 
-        -  ``check`` - boolean (default: ``True``); if ``True``, also
+        -  ``check`` -- boolean (default: ``True``); if ``True``, also
            verify that `v` is really in ``self``.
 
         OUTPUT: list
@@ -7435,7 +7434,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         INPUT:
 
-        -  ``R`` - a principal ideal domain
+        -  ``R`` -- a principal ideal domain
 
         EXAMPLES::
 
@@ -7552,9 +7551,9 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         INPUT:
 
-        -  ``v`` - vector
+        -  ``v`` -- vector
 
-        -  ``check`` - boolean (default: ``True``); if ``True``, also
+        -  ``check`` -- boolean (default: ``True``); if ``True``, also
            verify that `v` is really in ``self``.
 
         Returns a list `c` such that if `B` is the echelonized basis
@@ -7604,7 +7603,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         INPUT:
 
-        - ``v`` - list
+        - ``v`` -- list
 
         EXAMPLES::
 
@@ -8267,10 +8266,10 @@ def element_class(R, is_sparse):
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
     """
     import sage.rings.integer_ring
-    if sage.rings.integer_ring.is_IntegerRing(R) and not is_sparse:
+    if isinstance(R, sage.rings.integer_ring.IntegerRing_class) and not is_sparse:
         from sage.modules.vector_integer_dense import Vector_integer_dense
         return Vector_integer_dense
-    elif sage.rings.rational_field.is_RationalField(R) and not is_sparse:
+    elif isinstance(R, sage.rings.rational_field.RationalField) and not is_sparse:
         from sage.modules.vector_rational_dense import Vector_rational_dense
         return Vector_rational_dense
     elif isinstance(R, sage.rings.abc.IntegerModRing) and not is_sparse:

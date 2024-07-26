@@ -125,7 +125,6 @@ AUTHORS:
 - Grayson Jorgenson (2016-08)
 
 - Kwankyu Lee (2019-05): added integral projective curves
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -137,31 +136,29 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
+from builtins import sum as add
 
 from sage.categories.fields import Fields
 from sage.categories.homset import hom, Hom, End
 from sage.categories.number_fields import NumberFields
-
-from sage.interfaces.singular import singular
 from sage.matrix.constructor import matrix
-from builtins import sum as add
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.misc.persist import register_unpickle_override
 from sage.misc.sage_eval import sage_eval
-
-from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
-from sage.rings.integer_ring import IntegerRing
-from sage.rings.number_field.number_field import NumberField
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import (number_field_elements_from_algebraics,
-                              QQbar)
-from sage.rings.rational_field import is_RationalField
 from sage.rings.integer import Integer
-
+from sage.rings.integer_ring import IntegerRing
+from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import RationalField
 from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
-
 from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subscheme_projective,
                                                           AlgebraicScheme_subscheme_projective_field)
+
+lazy_import('sage.interfaces.singular', 'singular')
+lazy_import('sage.rings.number_field.number_field', 'NumberField')
+lazy_import('sage.rings.qqbar', ['number_field_elements_from_algebraics', 'QQbar'])
 
 from .curve import Curve_generic
 
@@ -174,7 +171,6 @@ from .point import (ProjectiveCurvePoint_field,
                     IntegralProjectivePlaneCurvePoint_finite_field)
 
 from .closed_point import IntegralProjectiveCurveClosedPoint
-from sage.misc.persist import register_unpickle_override
 
 
 class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
@@ -691,7 +687,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         - ``pt`` -- a rational point on X which is not a point of ramification
            for the projection `(x,y) \to x`.
 
-        - ``n``-- the number of terms desired
+        - ``n`` -- the number of terms desired
 
         OUTPUT: `x = x0 + t`, `y = y0` + power series in `t`
 
@@ -758,16 +754,16 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        -  ``self`` - an affine plane curve
+        -  ``self`` -- an affine plane curve
 
-        -  ``patch`` - (optional) the affine patch to be plotted; if not
+        -  ``patch`` -- (optional) the affine patch to be plotted; if not
            specified, the patch corresponding to the last projective
            coordinate being nonzero
 
-        -  ``*args`` - optional tuples (variable, minimum, maximum) for
+        -  ``*args`` -- optional tuples (variable, minimum, maximum) for
            plotting dimensions
 
-        -  ``**kwds`` - optional keyword arguments passed on to
+        -  ``**kwds`` -- optional keyword arguments passed on to
            ``implicit_plot``
 
         EXAMPLES:
@@ -1459,10 +1455,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
             L = [t for pt in pts for t in pt]
             K = number_field_elements_from_algebraics(L)[0]
-            if is_RationalField(K):
+            if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
             else:
-                if is_RationalField(F):
+                if isinstance(F, RationalField):
                     return F.embeddings(K)[0]
                 else:
                     # make sure the defining polynomial variable names are the same for K, N
@@ -1863,7 +1859,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         """
         if self.genus():
             raise TypeError("this curve must have geometric genus zero")
-        if not is_RationalField(self.base_ring()):
+        if not isinstance(self.base_ring(), RationalField):
             raise TypeError("this curve must be defined over the rational field")
         singular.lib("paraplanecurves.lib")
         R = singular.paraPlaneCurve(self.defining_polynomial())
@@ -2016,7 +2012,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         INPUT:
 
 
-        -  ``sort`` - bool (default: ``True``), if ``True`` return the
+        -  ``sort`` -- bool (default: ``True``), if ``True`` return the
            point list sorted. If ``False``, returns the points in the order
            computed by Singular.
 
@@ -2086,7 +2082,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         INPUT:
 
-        -  ``D`` - a divisor
+        -  ``D`` -- a divisor
 
         OUTPUT: A list of function field elements that form a basis of the
         Riemann-Roch space.

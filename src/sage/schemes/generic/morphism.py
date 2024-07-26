@@ -82,7 +82,7 @@ from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 from sage.categories.homset import Homset, Hom, End
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.categories.map import FormalCompositeMap, Map
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_attribute
@@ -113,7 +113,10 @@ def is_SchemeMorphism(f):
         sage: is_SchemeMorphism(f)
         True
     """
-    from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
+    try:
+        from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
+    except ImportError:
+        EllipticCurvePoint_field = ()
     return isinstance(f, (SchemeMorphism, EllipticCurvePoint_field))
 
 
@@ -774,7 +777,7 @@ class SchemeMorphism_spec(SchemeMorphism):
 
     - ``phi`` -- a ring morphism with matching domain and codomain.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     EXAMPLES::
@@ -947,7 +950,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
     - ``polys`` -- a list/tuple/iterable of polynomials defining the
       scheme morphism.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     EXAMPLES:
@@ -1253,7 +1256,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         INPUT:
 
-        - ``i``-- integer
+        - ``i`` -- integer
 
         OUTPUT:
 
@@ -1643,7 +1646,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             if phi is None:
                 raise ValueError("either the dictionary or the specialization must be provided")
         else:
-            if is_FractionField(self[0].parent()):
+            if isinstance(self[0].parent(), FractionField_generic):
                 from sage.rings.polynomial.flatten import FractionSpecializationMorphism
                 phi = FractionSpecializationMorphism(self[0].parent(), D)
             else:

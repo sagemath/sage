@@ -805,7 +805,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<a> = QuadraticField(4569)
             sage: j = 46969655/32768
             sage: E = EllipticCurve(j=K(j))
-            sage: C = E.isogeny_class()
+            sage: C = E.isogeny_class()                                                 # long time (9.5s)
         """
         K = self.base_field()
         r1, r2 = K.signature()
@@ -1628,7 +1628,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: Emin.non_minimal_primes()
             []
 
-        If the model is not globally integral, a ``ValueError`` is
+        If the model is not globally integral, a :class:`ValueError` is
         raised::
 
             sage: E = EllipticCurve([0, 0, 0, 1/2, 1/3])
@@ -1789,7 +1789,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
           proof module is number_field, not elliptic_curves, since the
           functions that actually need the flag are in number fields.
 
-        - ``semi_global`` (boolean, default False) -- if there is no
+        - ``semi_global`` (boolean, default: ``False``) -- if there is no
           global minimal mode, return a semi-global minimal model
           (minimal at all but one prime) instead, if True; raise an
           error if False.  No effect if a global minimal model exists.
@@ -3066,7 +3066,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         - ``other`` -- another elliptic curve.
 
-        - ``proof`` (default True) -- If ``False``, the function will
+        - ``proof`` (default: ``True``) -- If ``False``, the function will
           return ``True`` whenever the two curves have the same
           conductor and are isogenous modulo `p` for all primes `p` of
           norm up to ``maxnorm``.  If ``True``, the function returns

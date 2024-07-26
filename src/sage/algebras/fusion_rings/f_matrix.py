@@ -467,7 +467,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -600,7 +601,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -624,7 +626,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -1444,10 +1447,10 @@ class FMatrix(SageObject):
 
         - ``option`` -- a string determining equations to be set up:
 
-          * ``'hexagons'`` - get equations imposed on the F-matrix by
+          * ``'hexagons'`` -- get equations imposed on the F-matrix by
             the hexagon relations in the definition of a braided category
 
-          * ``'pentagons'`` - get equations imposed on the F-matrix by
+          * ``'pentagons'`` -- get equations imposed on the F-matrix by
             the pentagon relations in the definition of a monoidal category
 
         - ``output`` -- (default: ``True``) a boolean indicating whether
@@ -2424,7 +2427,7 @@ class FMatrix(SageObject):
             Partitioned 6 equations into 6 components of size:
             [1, 1, 1, 1, 1, 1]
             Computing appropriate NumberField...
-            sage: f.certify_pentagons()  is None      # not tested (long time ~1.5s, cypari issue in doctesting framework)
+            sage: f.certify_pentagons()  is None      # not tested (cypari issue in doctesting framework), long time (~1.5s)
             True
         """
         fvars_copy = deepcopy(self._fvars)

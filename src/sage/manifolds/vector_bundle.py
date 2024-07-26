@@ -21,7 +21,6 @@ REFERENCES:
 
 - [Lee2013]_
 - [Mil1974]_
-
 """
 
 #******************************************************************************
@@ -808,7 +807,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         symbol_dual = kwargs.pop('symbol_dual', None)
         latex_symbol_dual = kwargs.pop('latex_symbol_dual', None)
         domain = kwargs.pop('domain', None)
-        #
+
         sec_module = self.section_module(domain=domain, force_free=True)
         resu = LocalFrame(sec_module, symbol=symbol, latex_symbol=latex_symbol,
                           indices=indices, latex_indices=latex_indices,
@@ -927,7 +926,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
           :class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: True) -- if set to True, the inverse
+        - ``compute_inverse`` (default: ``True``) -- if set to True, the inverse
           automorphism is computed and the change from basis `(f_i)` to `(e_i)`
           is set to it in the internal dictionary ``self._frame_changes``
 

@@ -43,7 +43,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     - ``domain`` -- a vector space
     - ``f`` -- a function ``f(l,i)`` taking a basis element `l` of ``domain`` and an index `i`, and returning `F_i`
     - ``cartan_type`` -- The Cartan type of the Hecke algebra
-    - ``q1,q2`` -- The eigenvalues of the generators `T` of the Hecke algebra
+    - ``q1``, ``q2`` -- The eigenvalues of the generators `T` of the Hecke algebra
     - ``side`` -- "left" or "right" (default: "right")
       whether this is a left or right representation
 
@@ -828,7 +828,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
           of the generators of an affine Hecke algebra on ``self``. By
           default, this is ``T``.
 
-        - ``normalized`` -- boolean (default: True) whether the
+        - ``normalized`` -- boolean (default: ``True``) whether the
           eigenvector `E_\mu` is normalized so that `\mu` has
           coefficient `1`.
 

@@ -24,6 +24,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.misc.superseded import deprecated_function_alias
 
+
 def is_FiniteFieldElement(x):
     """
     Return ``True`` if ``x`` is a finite field element.
@@ -208,9 +209,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``var`` - string (default: 'x')
+        - ``var`` -- string (default: 'x')
 
-        - ``algorithm`` - string (default: 'pari')
+        - ``algorithm`` -- string (default: 'pari')
 
           - 'pari' -- use pari's minpoly
 
@@ -545,7 +546,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``var`` -- default: ``None`` - a string for a new variable name to use.
+        - ``var`` -- (default: ``None``); a string for a new variable name to use.
 
         EXAMPLES::
 

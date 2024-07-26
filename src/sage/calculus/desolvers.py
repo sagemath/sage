@@ -14,40 +14,40 @@ symbolic variables, for example with ``var("_C")``.
 
 Commands:
 
-- :func:`desolve` - Compute the "general solution" to a 1st or 2nd order
+- :func:`desolve` -- Compute the "general solution" to a 1st or 2nd order
   ODE via Maxima.
 
-- :func:`desolve_laplace` - Solve an ODE using Laplace transforms via
+- :func:`desolve_laplace` -- Solve an ODE using Laplace transforms via
   Maxima. Initial conditions are optional.
 
-- :func:`desolve_rk4` - Solve numerically an IVP for one first order
+- :func:`desolve_rk4` -- Solve numerically an IVP for one first order
   equation, return list of points or plot.
 
-- :func:`desolve_system_rk4` - Solve numerically an IVP for a system of first
+- :func:`desolve_system_rk4` -- Solve numerically an IVP for a system of first
   order equations, return list of points.
 
-- :func:`desolve_odeint` - Solve numerically a system of first-order ordinary
+- :func:`desolve_odeint` -- Solve numerically a system of first-order ordinary
   differential equations using :func:`~scipy:scipy.integrate.odeint` from
   the module :mod:`scipy:scipy.integrate`.
 
-- :func:`desolve_system` - Solve a system of 1st order ODEs of any size using
+- :func:`desolve_system` -- Solve a system of 1st order ODEs of any size using
   Maxima. Initial conditions are optional.
 
-- :func:`eulers_method` - Approximate solution to a 1st order DE,
+- :func:`eulers_method` -- Approximate solution to a 1st order DE,
   presented as a table.
 
-- :func:`eulers_method_2x2` - Approximate solution to a 1st order system
+- :func:`eulers_method_2x2` -- Approximate solution to a 1st order system
   of DEs, presented as a table.
 
-- :func:`eulers_method_2x2_plot` - Plot the sequence of points obtained
+- :func:`eulers_method_2x2_plot` -- Plot the sequence of points obtained
   from Euler's method.
 
 The following functions require the optional package ``tides``:
 
-- :func:`desolve_mintides` - Numerical solution of a system of 1st order ODEs via
+- :func:`desolve_mintides` -- Numerical solution of a system of 1st order ODEs via
   the Taylor series integrator method implemented in TIDES.
 
-- :func:`desolve_tides_mpfr` - Arbitrary precision Taylor series integrator implemented in TIDES.
+- :func:`desolve_tides_mpfr` -- Arbitrary precision Taylor series integrator implemented in TIDES.
 
 AUTHORS:
 
@@ -223,8 +223,8 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
 
     - ``algorithm`` -- (default: ``'maxima'``) one of
 
-      * ``'maxima'`` - use maxima
-      * ``'fricas'`` - use FriCAS (the optional fricas spkg has to be installed)
+      * ``'maxima'`` -- use maxima
+      * ``'fricas'`` -- use FriCAS (the optional fricas spkg has to be installed)
 
     OUTPUT:
 
@@ -665,16 +665,16 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
 
     INPUT:
 
-    - ``de`` - a lambda expression representing the ODE (e.g. ``de =
+    - ``de`` -- a lambda expression representing the ODE (e.g. ``de =
       diff(y,x,2) == diff(y,x)+sin(x)``)
 
-    - ``dvar`` - the dependent variable (e.g. ``y``)
+    - ``dvar`` -- the dependent variable (e.g. ``y``)
 
-    - ``ivar`` - (optional) the independent variable (hereafter called
+    - ``ivar`` -- (optional) the independent variable (hereafter called
       `x`), which must be specified if there is more than one
       independent variable in the equation.
 
-    - ``ics`` - a list of numbers representing initial conditions, (e.g.
+    - ``ics`` -- a list of numbers representing initial conditions, (e.g.
       ``f(0)=1``, ``f'(0)=2`` corresponds to ``ics = [0,1,2]``)
 
     OUTPUT:
@@ -812,8 +812,8 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
 
     - ``algorithm`` -- (default: ``'maxima'``) one of
 
-      * ``'maxima'`` - use maxima
-      * ``'fricas'`` - use FriCAS (the optional fricas spkg has to be installed)
+      * ``'maxima'`` -- use maxima
+      * ``'fricas'`` -- use FriCAS (the optional fricas spkg has to be installed)
 
     EXAMPLES::
 
@@ -1241,32 +1241,32 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
     - Variant 1 (function in two variables)
 
-      - ``de`` - right hand side, i.e. the function `f(x,y)` from ODE `y'=f(x,y)`
+      - ``de`` -- right hand side, i.e. the function `f(x,y)` from ODE `y'=f(x,y)`
 
-      - ``dvar`` - dependent variable (symbolic variable declared by var)
+      - ``dvar`` -- dependent variable (symbolic variable declared by var)
 
     - Variant 2 (symbolic equation)
 
-      - ``de`` - equation, including term with ``diff(y,x)``
+      - ``de`` -- equation, including term with ``diff(y,x)``
 
-      - ``dvar`` - dependent variable (declared as function of independent variable)
+      - ``dvar`` -- dependent variable (declared as function of independent variable)
 
     - Other parameters
 
-      - ``ivar`` - should be specified, if there are more variables or if the equation is autonomous
+      - ``ivar`` -- should be specified, if there are more variables or if the equation is autonomous
 
-      - ``ics`` - initial conditions in the form ``[x0,y0]``
+      - ``ics`` -- initial conditions in the form ``[x0,y0]``
 
-      - ``end_points`` - the end points of the interval
+      - ``end_points`` -- the end points of the interval
 
         - if ``end_points`` is a or [a], we integrate between ``min(ics[0],a)`` and ``max(ics[0],a)``
         - if ``end_points`` is None, we use ``end_points=ics[0]+10``
 
         - if end_points is [a,b] we integrate between ``min(ics[0], a)`` and ``max(ics[0], b)``
 
-      - ``step`` - (optional, default:0.1) the length of the step (positive number)
+      - ``step`` -- (default:0.1) the length of the step (positive number)
 
-      - ``output`` - (optional, default: ``'list'``) one of ``'list'``,
+      - ``output`` -- (default: ``'list'``) one of ``'list'``,
         ``'plot'``, ``'slope_field'`` (graph of the solution with slope field)
 
     OUTPUT:
@@ -1397,24 +1397,24 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
 
     input is similar to desolve_system and desolve_rk4 commands
 
-    - ``des`` - right hand sides of the system
+    - ``des`` -- right hand sides of the system
 
-    - ``vars`` - dependent variables
+    - ``vars`` -- dependent variables
 
-    - ``ivar`` - (optional) should be specified, if there are more variables or
+    - ``ivar`` -- (optional) should be specified, if there are more variables or
       if the equation is autonomous and the independent variable is
       missing
 
-    - ``ics`` - initial conditions in the form ``[x0,y01,y02,y03,....]``
+    - ``ics`` -- initial conditions in the form ``[x0,y01,y02,y03,....]``
 
-    - ``end_points`` - the end points of the interval
+    - ``end_points`` -- the end points of the interval
 
       - if ``end_points`` is a or [a], we integrate on between ``min(ics[0], a)`` and ``max(ics[0], a)``
       - if ``end_points`` is None, we use ``end_points=ics[0]+10``
 
       - if ``end_points`` is [a,b] we integrate on between ``min(ics[0], a)`` and ``max(ics[0], b)``
 
-    - ``step`` -- (optional, default: 0.1) the length of the step
+    - ``step`` -- (default: 0.1) the length of the step
 
     OUTPUT:
 
@@ -1647,11 +1647,9 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
         # n-dimensional systems:
         else:
-            desc = []
             variabs = dvars[:]
             variabs.append(ivar)
-            for de in des:
-                desc.append(fast_float(de, *variabs))
+            desc = [fast_float(de, *variabs) for de in des]
 
             def func(y, t):
                 v = list(y[:])

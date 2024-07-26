@@ -29,6 +29,7 @@ from sage.misc.lazy_list import lazy_list
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
 
+
 class DownUpAlgebra(CombinatorialFreeModule):
     r"""
     The down-up algebra.

@@ -103,8 +103,8 @@ Functions
 
 from itertools import combinations
 from sage.combinat.posets.lattices import FiniteLatticePoset
-from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.categories.fields import Fields
@@ -112,13 +112,13 @@ from sage.categories.rings import Rings
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
-from .rank_matroid import RankMatroid
-from .circuits_matroid import CircuitsMatroid
-from .flats_matroid import FlatsMatroid
-from .circuit_closures_matroid import CircuitClosuresMatroid
-from .basis_matroid import BasisMatroid
-from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from .graphic_matroid import GraphicMatroid
+from sage.matroids.rank_matroid import RankMatroid
+from sage.matroids.circuits_matroid import CircuitsMatroid
+from sage.matroids.flats_matroid import FlatsMatroid
+from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
+from sage.matroids.basis_matroid import BasisMatroid
+from sage.matroids.linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from sage.matroids.graphic_matroid import GraphicMatroid
 import sage.matroids.utilities
 
 
@@ -510,7 +510,7 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: Matroid([0, 1, 2], [[1, 0, 1], [0, 1, 1]])
             Traceback (most recent call last):
             ...
-            ValueError: basis has wrong cardinality.
+            ValueError: basis has wrong cardinality
 
         If the groundset size equals number of rows plus number of columns, an
         identity matrix is prepended. Otherwise the groundset size must equal
@@ -634,7 +634,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
             sage: M = Matroid(circuit_closures=[(2, 'abd'), (3, 'abcdef'),
             ....:                               (2, 'bce')])
-            sage: M.equals(matroids.catalog.Q6())                                # needs sage.rings.finite_rings
+            sage: M.equals(matroids.catalog.Q6())                                       # needs sage.rings.finite_rings
             True
 
     #.  RevLex-Index:
@@ -805,8 +805,8 @@ def Matroid(groundset=None, data=None, **kwds):
             Graph = ()
         if isinstance(data, Graph):
             key = 'graph'
-        elif is_Matrix(data) or (
-             isinstance(data, tuple) and is_Matrix(data[0])):
+        elif isinstance(data, Matrix) or (
+             isinstance(data, tuple) and isinstance(data[0], Matrix)):
             key = 'matrix'
         elif isinstance(data, sage.modules.with_basis.morphism.ModuleMorphism) or (
              isinstance(data, tuple) and
@@ -928,7 +928,7 @@ def Matroid(groundset=None, data=None, **kwds):
             # 2) Sage will sort the columns, making it impossible to keep labels!
             V = G.vertices(sort=True)
             n = G.num_verts()
-            A = Matrix(ZZ, n, m, 0)
+            A = matrix(ZZ, n, m, 0)
             mm = 0
             for i, j, k in G.edge_iterator():
                 A[V.index(i), mm] = -1
@@ -958,11 +958,11 @@ def Matroid(groundset=None, data=None, **kwds):
             A = A.matrix()
 
         # Fix the representation
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             if base_ring is not None:
-                A = Matrix(base_ring, A)
+                A = matrix(base_ring, A)
             else:
-                A = Matrix(A)
+                A = matrix(A)
 
         # Fix the ring
         if base_ring is not None:

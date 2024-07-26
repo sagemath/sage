@@ -207,7 +207,6 @@ Check that we can invert matrices::
     sage: m.inverse()
     [   1 + z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7) -1 - 2*z - 3*z^2 - 4*z^3 - 5*z^4 - 6*z^5 - 7*z^6 + O(z^7)]
     [  -1 - z - 3*z^2 - 3*z^3 - 5*z^4 - 5*z^5 - 7*z^6 + O(z^7)  2 + 2*z + 4*z^2 + 4*z^3 + 6*z^4 + 6*z^5 + 8*z^6 + O(z^7)]
-
 """
 
 # ****************************************************************************
@@ -6982,9 +6981,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         """
         if len(args) != self.parent()._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
-        from sage.combinat.sf.sfa import is_SymmetricFunction
-        if not all(isinstance(g, LazySymmetricFunction)
-                   or is_SymmetricFunction(g)
+        from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic
+        if not all(isinstance(g, (LazySymmetricFunction, SymmetricFunctionAlgebra_generic.Element))
                    or not g for g in args):
             raise ValueError("all arguments must be (possibly lazy) symmetric functions")
 
@@ -7201,9 +7199,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         """
         if len(args) != self.parent()._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
-        from sage.combinat.sf.sfa import is_SymmetricFunction
-        if not all(isinstance(g, LazySymmetricFunction)
-                   or is_SymmetricFunction(g)
+        from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic
+        if not all(isinstance(g, (LazySymmetricFunction, SymmetricFunctionAlgebra_generic.Element))
                    or not g for g in args):
             raise ValueError("all arguments must be (possibly lazy) symmetric functions")
 

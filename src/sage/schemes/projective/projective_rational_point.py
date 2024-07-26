@@ -54,19 +54,23 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 from itertools import product
 
 from sage.arith.misc import gcd, next_prime, previous_prime, crt
 from sage.arith.srange import srange
-from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.mrange import xmrange
 from sage.schemes.generic.scheme import Scheme
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
-from sage.matrix.constructor import matrix
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer_ring import ZZ
+from sage.schemes.generic.scheme import is_Scheme
+
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def enum_projective_rational_field(X, B):
@@ -76,9 +80,9 @@ def enum_projective_rational_field(X, B):
 
     INPUT:
 
-    - ``X`` -  a scheme or set of abstract rational points of a scheme.
+    - ``X`` --  a scheme or set of abstract rational points of a scheme.
 
-    - ``B`` -  a positive integer bound.
+    - ``B`` --  a positive integer bound.
 
     OUTPUT:
 
@@ -171,11 +175,11 @@ def enum_projective_number_field(X, **kwds):
 
     kwds:
 
-    - ``bound`` - a real number
+    - ``bound`` -- a real number
 
-    - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+    - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
-    - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
+    - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
 
     OUTPUT:
 
@@ -234,7 +238,7 @@ def enum_projective_finite_field(X):
 
     INPUT:
 
-    - ``X`` -  a scheme defined over a finite field or a set of abstract
+    - ``X`` --  a scheme defined over a finite field or a set of abstract
       rational points of such a scheme.
 
     OUTPUT:
@@ -331,9 +335,9 @@ def sieve(X, bound):
 
     INPUT:
 
-    - ``X`` - a scheme with ambient space defined over projective space
+    - ``X`` -- a scheme with ambient space defined over projective space
 
-    - ``bound`` - a positive integer bound
+    - ``bound`` -- a positive integer bound
 
     OUTPUT:
 

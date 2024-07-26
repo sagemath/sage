@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Parsing docstrings
 
@@ -135,7 +136,7 @@ def parse_optional_tags(
     - ``'not tested'``
     - ``'known bug'`` (possible values are ``None``, ``linux`` and ``macos``)
     - ``'py2'``
-    - ``'optional - FEATURE...'`` or ``'needs FEATURE...'`` --
+    - ``'optional -- FEATURE...'`` or ``'needs FEATURE...'`` --
       the dictionary will just have the key ``'FEATURE'``
 
     The values, if non-``None``, are strings with optional explanations
@@ -1685,6 +1686,12 @@ class SageOutputChecker(doctest.OutputChecker):
             # :issue:`30845` -- suppress warning on conda about ld
             ld_pie_warning_regex = re.compile(r'ld: warning: -pie being ignored. It is only used when linking a main executable')
             got = ld_pie_warning_regex.sub('', got)
+            did_fixup = True
+
+        if "R[write to console]" in got:
+            # Supress R warnings
+            r_warning_regex = re.compile(r'R\[write to console\]:.*')
+            got = r_warning_regex.sub('', got)
             did_fixup = True
 
         if "Overriding pythran description" in got:

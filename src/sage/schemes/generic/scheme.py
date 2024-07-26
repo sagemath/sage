@@ -21,11 +21,14 @@ AUTHORS:
 
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.ideal import is_Ideal
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
+
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 
 def is_Scheme(x):
@@ -317,7 +320,7 @@ class Scheme(Parent):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT:
@@ -595,7 +598,7 @@ class Scheme(Parent):
         - ``Y`` -- the codomain scheme (optional); if ``Y`` is not
           given, try to determine ``Y`` from context
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT:
@@ -629,7 +632,7 @@ class Scheme(Parent):
         - ``category`` -- a category (optional); the category of the
           Hom-set
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency.
 
         OUTPUT:
@@ -1185,7 +1188,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         - ``Y`` -- the codomain scheme (optional); if ``Y`` is not
           given, try to determine ``Y`` from context
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT:

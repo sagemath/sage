@@ -39,7 +39,6 @@ AUTHORS:
 - Martin Albrecht <malb@informatik.uni-bremen.de> (2006-06-05)
 - William Stein (2006-12-07): editing, lots of docs, etc.
 - Robert Bradshaw (2007-05-23): is_square/sqrt, pow.
-
 """
 
 # ****************************************************************************
@@ -70,7 +69,7 @@ from sage.structure.element cimport Vector
 
 from sage.interfaces.abc import GapElement
 
-cdef object is_IntegerMod
+cdef object IntegerMod_abstract
 cdef object Integer
 cdef object Rational
 cdef object MPolynomial
@@ -81,17 +80,17 @@ cdef void late_import() noexcept:
     """
     Late import of modules
     """
-    global is_IntegerMod, \
+    global IntegerMod_abstract, \
            Integer, \
            Rational, \
            MPolynomial, \
            Polynomial
 
-    if is_IntegerMod is not None:
+    if IntegerMod_abstract is not None:
         return
 
     import sage.rings.finite_rings.integer_mod
-    is_IntegerMod = sage.rings.finite_rings.integer_mod.is_IntegerMod
+    IntegerMod_abstract = sage.rings.finite_rings.integer_mod.IntegerMod_abstract
 
     import sage.rings.integer
     Integer = sage.rings.integer.Integer
@@ -362,7 +361,7 @@ cdef class Cache_givaro(Cache_base):
             else:
                 raise TypeError("unable to coerce from a finite field other than the prime subfield")
 
-        elif isinstance(e, (int, Integer)) or is_IntegerMod(e):
+        elif isinstance(e, (int, Integer)) or isinstance(e, IntegerMod_abstract):
             try:
                 e_int = e % self.characteristic()
                 self.objectptr.initi(res, e_int)
@@ -686,7 +685,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -707,7 +706,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -728,7 +727,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -1412,10 +1411,17 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return Integer(self._cache.log_to_int(self.element))
 
-    def log(FiniteField_givaroElement self, base):
+    def log(FiniteField_givaroElement self, base, order=None, *, check=False):
         """
         Return the log to the base `b` of ``self``, i.e., an integer `n`
         such that `b^n =` ``self``.
+
+        INPUT:
+
+        - ``base`` -- non-zero field element
+        - ``order`` -- integer (optional), multiple of order of ``base``
+        - ``check`` -- boolean (default: ``False``): If set,
+          test whether the given ``order`` is correct.
 
         .. WARNING::
 
@@ -1430,9 +1436,22 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: a = b^7
             sage: a.log(b)
             7
+
+        TESTS:
+
+        An example for ``check=True``::
+
+            sage: F.<t> = GF(3^5, impl='givaro')
+            sage: t.log(t, 3^4, check=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: 81 is not a multiple of the order of the base
         """
         b = self.parent()(base)
-        return sage.groups.generic.discrete_log(self, b)
+        if (order is not None) and check and not (b**order).is_one():
+            raise ValueError(f"{order} is not a multiple of the order of the base")
+
+        return sage.groups.generic.discrete_log(self, b, ord=order)
 
     def _int_repr(FiniteField_givaroElement self):
         r"""
@@ -1730,6 +1749,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return unpickle_FiniteField_givaroElement,(self.parent(),self.element)
 
+
 def unpickle_FiniteField_givaroElement(parent, int x):
     """
     TESTS::
@@ -1739,6 +1759,7 @@ def unpickle_FiniteField_givaroElement(parent, int x):
         sage: TestSuite(e).run() # indirect doctest
     """
     return make_FiniteField_givaroElement(parent._cache, x)
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_givaro', 'unpickle_FiniteField_givaroElement', unpickle_FiniteField_givaroElement)

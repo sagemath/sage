@@ -42,7 +42,7 @@ cpdef int iaxpy(a, dict X, dict Y, bint remove_zeros=True, bint factor_on_left=T
     INPUT:
 
     - ``a`` -- element of a parent `K` or `±1`
-    - ``X,Y`` -- dictionaries representing a vector `X` over `K`
+    - ``X``, ``Y`` -- dictionaries representing a vector `X` over `K`
     - ``remove_zeros`` -- boolean (default: ``True``); whether to
       remove the keys whose values are zero after the addition has
       been performed

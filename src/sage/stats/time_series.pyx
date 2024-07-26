@@ -567,7 +567,6 @@ cdef class TimeSeries:
             memcpy(v._values + i*T._length, T._values, sizeof(double)*T._length)
         return v
 
-
     def autoregressive_fit(self,M):
         r"""
         This method fits the time series to an autoregressive process
@@ -1269,7 +1268,6 @@ cdef class TimeSeries:
             s *= self._values[i]
         return s
 
-
     def mean(self):
         r"""
         Return the mean (average) of the elements of ``self``.
@@ -1720,6 +1718,8 @@ cdef class TimeSeries:
         if len(v0) == 1:
             return v1[0]/v0[0]
         import numpy
+        if int(numpy.version.short_version[0]) > 1:
+            numpy.set_printoptions(legacy="1.25")
         coeffs = numpy.polyfit(v0,v1,1)
         return coeffs[0]
 

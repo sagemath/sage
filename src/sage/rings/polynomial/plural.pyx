@@ -120,7 +120,7 @@ import sage.libs.singular.ring
 
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import is_IntegerRing
+from sage.rings.integer_ring import IntegerRing_class
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular, MPolynomial_libsingular, new_MP
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
@@ -157,7 +157,7 @@ class G_AlgFactory(UniqueFactory):
         - ``key`` -- a 6-tuple, formed by a base ring, a tuple of names, two
           matrices over a polynomial ring over the base ring with the given
           variable names, a term order, and a category
-        - ``extra_args`` -- a dictionary, whose only relevant key is 'check'.
+        - ``extra_args`` -- a dictionary, whose only relevant key is 'check'
 
         TESTS::
 
@@ -174,18 +174,19 @@ class G_AlgFactory(UniqueFactory):
                                        category, check)
 
     def create_key_and_extra_args(self, base_ring, c, d, names=None, order=None,
-                                  category=None, check=None):
+                                  category=None, check=None, commutative=None):
         """
         Create a unique key for g-algebras.
 
         INPUT:
 
         - ``base_ring`` -- a ring
-        - ``c,d`` -- two matrices
+        - ``c``, ``d`` -- two matrices
         - ``names`` -- a tuple or list of names
         - ``order`` -- (optional) term order
         - ``category`` -- (optional) category
         - ``check`` -- optional bool
+        - ``commutative`` -- optional bool
 
         TESTS::
 
@@ -193,6 +194,10 @@ class G_AlgFactory(UniqueFactory):
             sage: H = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
             sage: H is A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y}) # indirect doctest
             True
+
+            sage: P = A.g_algebra(relations={}, order='lex')
+            sage: P.category()
+            Category of commutative algebras over Rational Field
         """
         if names is None:
             raise ValueError("The generator names must be provided")
@@ -213,7 +218,11 @@ class G_AlgFactory(UniqueFactory):
         d.set_immutable()
 
         # Get the correct category
-        category = check_default_category(Algebras(base_ring), category)
+        if commutative:
+            usualcat = Algebras(base_ring).Commutative()
+        else:
+            usualcat = Algebras(base_ring)
+        category = check_default_category(usualcat, category)
 
         # Extra arg
         if check is None:
@@ -252,7 +261,7 @@ cdef class NCPolynomialRing_plural(Ring):
         INPUT:
 
         - ``base_ring`` -- base ring (must be either `\GF{q}`, `\ZZ`, `\ZZ/n\ZZ`, `\QQ` or absolute number field)
-        - ``names`` - a tuple of names of ring variables
+        - ``names`` -- a tuple of names of ring variables
         - ``c``, ``d`` -- upper triangular matrices of coefficients,
           resp. commutative polynomials, satisfying the nondegeneracy
           conditions, which are to be tested if ``check`` is ``True``. These
@@ -532,7 +541,7 @@ cdef class NCPolynomialRing_plural(Ring):
                     _p = p_NSet(_n, _ring)
 
             # also accepting ZZ
-            elif is_IntegerRing(element.parent()):
+            elif isinstance(element.parent(), IntegerRing_class):
                 if isinstance(base_ring, FiniteField_prime_modn):
                     _p = p_ISet(int(element),_ring)
                 else:
@@ -877,11 +886,11 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``*gens`` - list or tuple of generators (or several input arguments)
-        - ``coerce`` - bool (default: ``True``); this must be a
+        - ``*gens`` -- list or tuple of generators (or several input arguments)
+        - ``coerce`` -- bool (default: ``True``); this must be a
           keyword argument. Only set it to ``False`` if you are certain
           that each generator is already in the ring.
-        - ``side`` - string (either "left", which is the default, or "twosided")
+        - ``side`` -- string (either "left", which is the default, or "twosided")
           Must be a keyword argument. Defines whether the ideal is a left ideal
           or a two-sided ideal. Right ideals are not implemented.
 
@@ -1141,9 +1150,9 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``f`` - monomial
+        - ``f`` -- monomial
 
-        - ``g`` - monomial
+        - ``g`` -- monomial
 
         EXAMPLES::
 
@@ -1211,8 +1220,8 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``f`` - monomial
-        - ``G`` - list/set of mpolynomials
+        - ``f`` -- monomial
+        - ``G`` -- list/set of mpolynomials
 
         EXAMPLES::
 
@@ -1272,8 +1281,8 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``h`` - monomial
-        - ``g`` - monomial
+        - ``h`` -- monomial
+        - ``g`` -- monomial
 
         EXAMPLES::
 
@@ -1346,7 +1355,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``t`` - a monomial
+        - ``t`` -- a monomial
 
         OUTPUT:
 
@@ -2022,7 +2031,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``degrees`` - Can be any of:
+        - ``degrees`` -- Can be any of:
                 - a dictionary of degree restrictions
                 - a list of degree restrictions (with None in the unrestricted variables)
                 - a monomial (very fast, but not as flexible)
@@ -2145,7 +2154,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``mon`` - a monomial
+        - ``mon`` -- a monomial
 
         OUTPUT:
 
@@ -2347,7 +2356,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``x`` - a tuple or, in case of a single-variable MPolynomial
+        - ``x`` -- a tuple or, in case of a single-variable MPolynomial
           ring ``x`` can also be an integer.
 
         EXAMPLES::
@@ -2411,7 +2420,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``as_ETuples`` - (default: ``True``) if ``True`` returns the result as an list of ETuples
+        - ``as_ETuples`` -- (default: ``True``) if ``True`` returns the result as an list of ETuples
           otherwise returns a list of tuples
 
 

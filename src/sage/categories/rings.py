@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Rings
 """
@@ -643,13 +644,6 @@ class Rings(CategoryWithAxiom):
             """
             The monoid of the ideals of this ring.
 
-            .. NOTE::
-
-                The code is copied from the base class of rings.
-                This is since there are rings that do not inherit
-                from that class, such as matrix algebras.  See
-                :issue:`7797`.
-
             EXAMPLES::
 
                 sage: # needs sage.modules
@@ -666,6 +660,28 @@ class Rings(CategoryWithAxiom):
 
                 sage: MS.ideal_monoid() is MS.ideal_monoid()                            # needs sage.modules
                 True
+
+            More examples::
+
+                sage: # needs sage.combinat sage.modules
+                sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)
+                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
+                sage: Q = F.quotient(I)
+                sage: Q.ideal_monoid()
+                Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z)
+                 over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
+                sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')
+                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
+                sage: Q = F.quo(I)
+                sage: Q.ideal_monoid()
+                Monoid of ideals of Quotient of Free Associative Unital Algebra
+                 on 3 generators (x, y, z) over Integer Ring
+                 by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
+
+                sage: ZZ.ideal_monoid()
+                Monoid of ideals of Integer Ring
+                sage: R.<x> = QQ[]; R.ideal_monoid()
+                Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
             """
             try:
                 from sage.rings.ideal_monoid import IdealMonoid
@@ -1110,7 +1126,7 @@ class Rings(CategoryWithAxiom):
 
                 sage: k.<t> = GF(5^3)                                                   # needs sage.rings.finite_rings
                 sage: Frob = k.frobenius_endomorphism()                                 # needs sage.rings.finite_rings
-                sage: k['x', Frob]                                                      # needs sage.rings.finite_rings
+                sage: k['x', Frob]                                                      # needs sage.modules sage.rings.finite_rings
                 Ore Polynomial Ring in x over Finite Field in t of size 5^3
                  twisted by t |--> t^5
 
@@ -1419,7 +1435,7 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - ``*args``, ``**kwds`` - parameters that can be forwarded to
+            - ``*args``, ``**kwds`` -- parameters that can be forwarded to
               the ``random_element`` method
 
             EXAMPLES::

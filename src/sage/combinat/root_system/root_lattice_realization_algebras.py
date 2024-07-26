@@ -395,7 +395,7 @@ class Algebras(AlgebrasCategory):
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- "antidominant", "bar", or "dominant" (default: "antidominant")
 
             If `R` is the parent weight ring, the Demazure-Lusztig
@@ -566,13 +566,13 @@ class Algebras(AlgebrasCategory):
 
                 sage: K = QQ['q1,q2']
                 sage: q1, q2 = K.gens()
-                sage: for cartan_type in CartanType.samples(crystallographic=True): # long time 12s
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:    L = RootSystem(cartan_type).root_lattice()
                 ....:    KL = L.algebra(K)
                 ....:    T = KL.demazure_lusztig_operators(q1,q2)
                 ....:    T._test_relations()
 
-                sage: for cartan_type in CartanType.samples(crystallographic=True): # long time 12s
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:    L = RootSystem(cartan_type).weight_lattice()
                 ....:    KL = L.algebra(K)
                 ....:    T = KL.demazure_lusztig_operators(q1,q2)
@@ -584,7 +584,7 @@ class Algebras(AlgebrasCategory):
             to specify explicitly the elements on which to run the
             tests::
 
-                sage: for cartan_type in CartanType.samples(crystallographic=True): # long time 12s
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:    L = RootSystem(cartan_type).ambient_space()
                 ....:    KL = L.algebra(K)
                 ....:    weight_lattice = RootSystem(cartan_type).weight_lattice(extended=L.is_extended())
@@ -604,7 +604,7 @@ class Algebras(AlgebrasCategory):
 
             - ``weight`` -- a classical weight `\lambda`
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
 
             See :meth:`demazure_lusztig_operators` for the details.
@@ -658,7 +658,7 @@ class Algebras(AlgebrasCategory):
 
             INPUT:
 
-            - ``q,q1,q2`` -- three elements of the ground ring
+            - ``q``, ``q1``, ``q2`` -- three elements of the ground ring
             - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
 
             Let `KL` be the group algebra of an affine weight lattice
@@ -978,7 +978,7 @@ class Algebras(AlgebrasCategory):
 
             - ``weight`` -- an element `\lambda` of the weight lattice
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
 
             .. SEEALSO:: :meth:`twisted_demazure_lusztig_operators`
@@ -1023,7 +1023,7 @@ class Algebras(AlgebrasCategory):
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
 
             .. WARNING::
@@ -1103,7 +1103,7 @@ class Algebras(AlgebrasCategory):
 
                 sage: K = QQ['q1,q2'].fraction_field()
                 sage: q1, q2 = K.gens()
-                sage: for cartan_type in CartanType.samples(affine=True, crystallographic=True): # long time 12s
+                sage: for cartan_type in CartanType.samples(affine=True, crystallographic=True):  # long time (12s)
                 ....:     if cartan_type.rank() > 4: continue
                 ....:     if cartan_type.type() == 'BC': continue
                 ....:     KL = RootSystem(cartan_type).weight_lattice().algebra(K)

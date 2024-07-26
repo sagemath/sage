@@ -5,7 +5,6 @@ Hecke triangle group elements
 AUTHORS:
 
 - Jonas Jermann (2014): initial version
-
 """
 
 # ****************************************************************************
@@ -1075,7 +1074,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         is +- the identity (to correct the sign) and
         ``power = self.primitive_power()``.
 
-        The primitive part itself is choosen such that it cannot be
+        The primitive part itself is chosen such that it cannot be
         written as a non-trivial power of another element.
         It is a generator of the stabilizer of the corresponding
         (attracting) fixed point.
@@ -1168,7 +1167,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         If ``self`` is elliptic (or +- the identity) the result
         is never reduced (by definition). Instead a more canonical
         conjugation representative of ``self`` (resp. it's
-        primitive part) is choosen.
+        primitive part) is chosen.
 
         Warning: The case ``n=infinity`` is not verified at all
         and probably wrong!
@@ -1380,7 +1379,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                     return j
                 elif two*j == G.n():
                     return j
-                # for the cases fom here on the sign has to be adjusted to the
+                # for the cases from here on the sign has to be adjusted
+                # to the
                 # sign of self (in self._block_decomposition_data())
                 elif two*j == -G.n():
                     return -j
@@ -1434,7 +1434,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         An integer. For hyperbolic elements a non-negative integer.
         For parabolic elements a negative sign corresponds to taking
         the inverse. For elliptic elements a (non-trivial) integer
-        with minimal absolute value is choosen. For +- the identity
+        with minimal absolute value is chosen. For +- the identity
         element ``0`` is returned.
 
         EXAMPLES::
@@ -1995,11 +1995,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         for r in R:
             fp = r.fixed_points()[0]
 
-            emb_res = emb(fp/G.lam())
+            emb_res = emb(fp / G.lam())
             emb_res.simplify()
             emb_res.exactify()
-            for j in range(1, emb_res.floor()+1):
-                L.append(G.T(-j).acton(r))
+            L.extend(G.T(-j).acton(r) for j in range(1, emb_res.floor() + 1))
 
         return L
 
@@ -2958,7 +2957,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         - ``embedded`` -- If ``True``, the fixed points are embedded into
           ``AlgebraicRealField`` resp. ``AlgebraicField``. Default: ``False``.
 
-        - ``order`` -- If ``order="none"`` the fixed points are choosen
+        - ``order`` -- If ``order="none"`` the fixed points are chosen
           and ordered according to a fixed formula.
 
           If ``order="sign"`` the fixed points are always ordered
@@ -2981,9 +2980,9 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         ``AlgebraicField`` is returned. Otherwise an element of a relative field
         extension over the base field of (the parent of) ``self`` is returned.
 
-        Warning: Relative field extensions don't support default embeddings.
+        Warning: Relative field extensions do not support default embeddings.
         So the correct embedding (which is the positive resp. imaginary positive
-        one) has to be choosen.
+        one) has to be chosen.
 
         EXAMPLES::
 

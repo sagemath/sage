@@ -434,7 +434,7 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
         ValueError: input vectors not totally cyclic
     """
     from sage.modules.free_module_element import vector
-    from sage.matrix.constructor import Matrix
+    from sage.matrix.constructor import matrix
     if base_ring:
         vectors = tuple(vector(base_ring, x) for x in vectors)
     else:
@@ -454,9 +454,9 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
         # (And this is faster.)
 
         if base_ring:
-            ker = Matrix(base_ring, vectors).left_kernel()
+            ker = matrix(base_ring, vectors).left_kernel()
         else:
-            ker = Matrix(vectors).left_kernel()
+            ker = matrix(vectors).left_kernel()
         solutions = Polyhedron(lines=tuple(ker.basis_matrix()), base_ring=base_ring, backend=backend)
 
         from sage.matrix.special import identity_matrix
@@ -476,9 +476,9 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
     # where ``V`` is the dehomogenized dual point configuration.
     # If we append a row of ones to ``vectors``, ``V`` is just the right kernel.
     if base_ring:
-        m = Matrix(base_ring, vectors).transpose().stack(Matrix(base_ring, [[1]*len(vectors)]))
+        m = matrix(base_ring, vectors).transpose().stack(matrix(base_ring, [[1]*len(vectors)]))
     else:
-        m = Matrix(vectors).transpose().stack(Matrix([[1]*len(vectors)]))
+        m = matrix(vectors).transpose().stack(matrix([[1]*len(vectors)]))
 
     if m.rank() != len(vectors[0]) + 1:
         # The given vectors do not span the ambient space,
@@ -1542,7 +1542,7 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: id = polytopes.icosidodecahedron_V2()   # long time - 6secs
+            sage: id = polytopes.icosidodecahedron_V2()   # long time (6s)
             sage: id.f_vector()                           # long time
             (1, 30, 60, 32, 1)
             sage: id.base_ring()                          # long time
@@ -1705,7 +1705,7 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: pd = polytopes.pentakis_dodecahedron()    # long time - ~10 sec
+            sage: pd = polytopes.pentakis_dodecahedron()    # long time (10s)
             sage: pd.n_vertices()                           # long time
             32
             sage: pd.n_inequalities()                       # long time
@@ -2061,7 +2061,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2090,7 +2090,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2119,7 +2119,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2148,7 +2148,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2188,7 +2188,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
           coordinates instead of floating point approximations
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2201,7 +2201,7 @@ class Polytopes:
         It is possible to use the backend ``'normaliz'`` to get an exact
         representation::
 
-            sage: polytopes.truncated_six_hundred_cell(exact=True,backend='normaliz') # not tested - long time ~16sec
+            sage: polytopes.truncated_six_hundred_cell(exact=True,backend='normaliz')  # not tested, long time (16s)
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 1440 vertices
         """
         return self.generalized_permutahedron(['H', 4], point=[1, 1, 0, 0], exact=exact, backend=backend, regular=True)
@@ -2222,14 +2222,14 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
 
         EXAMPLES::
 
-            sage: polytopes.rectified_six_hundred_cell(backend='normaliz')  # not tested - long time ~14sec
+            sage: polytopes.rectified_six_hundred_cell(backend='normaliz')              # not tested, long time (14s)
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 720 vertices
         """
         return self.generalized_permutahedron(['H', 4], point=[0, 1, 0, 0], exact=exact, backend=backend, regular=True)
@@ -2248,7 +2248,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
           coordinates instead of floating point approximations
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2312,7 +2312,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``False`` use floating
+        - ``exact`` -- (boolean, default ``True``) if ``False`` use floating
           point approximations instead of exact coordinates
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2615,7 +2615,7 @@ class Polytopes:
           coordinates in the weight basis. If ``None`` is given, the point
           `(1, 1, 1, \ldots)` is used.
 
-        - ``exact`` - (boolean, default ``True``) if ``False`` use floating
+        - ``exact`` -- (boolean, default ``True``) if ``False`` use floating
           point approximations instead of exact coordinates
 
         - ``regular`` -- boolean (default: ``False``); whether to apply a
@@ -2855,7 +2855,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2888,7 +2888,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2928,7 +2928,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2956,7 +2956,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -2995,7 +2995,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -3023,7 +3023,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -3051,7 +3051,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
@@ -3091,7 +3091,7 @@ class Polytopes:
 
         The classical construction given by Coxeter in [Cox1969]_ is given by::
 
-            sage: polytopes.one_hundred_twenty_cell()                    # not tested - long time ~15 sec.
+            sage: polytopes.one_hundred_twenty_cell()                    # not tested, long time (~15s)
             A 4-dimensional polyhedron in (Number Field in sqrt5 with defining
              polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^4 defined as
              the convex hull of 600 vertices
