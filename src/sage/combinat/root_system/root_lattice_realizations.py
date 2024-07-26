@@ -3720,7 +3720,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def descents(self, index_set=None, positive=False):
             """
-            Returns the descents of pt
+            Return the descents of pt
 
             EXAMPLES::
 

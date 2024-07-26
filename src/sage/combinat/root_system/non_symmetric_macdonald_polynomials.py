@@ -939,7 +939,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E10 = KL0.monomial(L0((1,0))) + KL0( q*(1-(-q1/q2)) / (1-q^2*(-q1/q2)^4) )
         sage: E10 == E[omega[1]]
         True
-        sage: E.eigenvalues(E10)
+        sage: E.eigenvalues(E10)  # not checked
         [q*q1^2/q2^2, q2^3/(-q^2*q1^3), q1/(-q2)]
 
     Checking T0check::
@@ -1085,11 +1085,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: omega = L0.fundamental_weights()
         sage: E[0*omega[1]]
         B[(0, 0)]
-        sage: E.eigenvalues(_)
+        sage: E.eigenvalues(_)  # checked for i=0 with previous calculation
         [1/(q*t^3), t, t]
         sage: E[omega[1]]
         B[(1, 0)]
-        sage: E.eigenvalues(_)
+        sage: E.eigenvalues(_)  # not checked
         [t, 1/(q*t^3), t]
 
         sage: E[-omega[1]]           # consistent with before refactoring
@@ -1099,11 +1099,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         [(-1)/(-q^2*t^3), q*t, t]
         sage: E[-omega[1]+omega[2]]  # consistent with before refactoring
         ((-t+1)/(-q*t^3+1))*B[(1, 0)] + B[(0, 1)]
-        sage: E.eigenvalues(_)
+        sage: E.eigenvalues(_)  # not checked
         [t, q*t^3, (-1)/(-q*t^2)]
         sage: E[omega[1]-omega[2]]   # consistent with before refactoring
         ((-t+1)/(-q*t^2+1))*B[(1, 0)] + B[(0, -1)] + ((-t+1)/(-q*t^2+1))*B[(0, 1)]
-        sage: E.eigenvalues(_)
+        sage: E.eigenvalues(_)  # not checked
         [1/(q^2*t^3), 1/(q*t), q*t^2]
 
         sage: E[-omega[2]]
@@ -1112,7 +1112,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         + ((-q*t^4+q*t^3+t-1)/(-q^3*t^4+q^2*t^3+q*t-1))*B[(1, 1)]
         sage: E.eigenvalues(_)  # not checked   # long time (1s)
         [1/(q^3*t^3), t, q*t]
-        sage: E[-omega[2]].map_coefficients(lambda c: c.subs(t=0))
+        sage: E[-omega[2]].map_coefficients(lambda c: c.subs(t=0))     # checking against crystals
         B[(0, 0)] + B[(-1, -1)] + B[(-1, 1)] + B[(1, -1)] + B[(1, 1)]
 
         sage: E[2*omega[2]]
@@ -1553,7 +1553,6 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             Lazy family (<...Y_lambdacheck...>(i))_{i in Coroot lattice of the Root system of type ['BC', 3, 2]}
             sage: _.keys().classical()
             Root lattice of the Root system of type ['B', 3]
-
         """
         from sage.sets.family import Family
         Y = self._T_Y.Y()

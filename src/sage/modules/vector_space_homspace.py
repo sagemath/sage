@@ -192,7 +192,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ####################################################################################
 
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 import sage.modules.free_module_homspace
 
 # This module initially overrides just the minimum functionality necessary

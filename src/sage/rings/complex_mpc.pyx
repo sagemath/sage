@@ -81,7 +81,6 @@ except ImportError:
 from sage.rings.integer cimport Integer
 from sage.rings.complex_mpfr cimport ComplexNumber
 from sage.rings.complex_mpfr import ComplexField_class
-from sage.rings.ring import Ring
 
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.rings.real_mpfr cimport RealField_class, RealNumber

@@ -1,5 +1,5 @@
-# sage_setup: distribution = sagemath-mcqd
 # distutils: language = c++
+# sage_setup: distribution = sagemath-mcqd
 
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator

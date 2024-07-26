@@ -75,7 +75,6 @@ from sage.misc.functional import cyclotomic_polynomial
 from sage.misc.misc_c import prod
 from sage.modular.hypergeometric_misc import hgm_coeffs
 from sage.modules.free_module_element import vector
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
@@ -85,7 +84,6 @@ from sage.rings.polynomial.polynomial_ring import polygen, polygens
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from sage.schemes.generic.spec import Spec
 
 

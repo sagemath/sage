@@ -428,7 +428,6 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         This works for vector spaces, too::
 
-            sage: # needs sage.libs.pari
             sage: V = VectorSpace(GF(3), 2)
             sage: W = VectorSpace(GF(3), 3)
             sage: f = V.hom([W.1, W.1 - W.0])

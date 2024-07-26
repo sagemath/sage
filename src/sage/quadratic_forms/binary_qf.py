@@ -930,17 +930,17 @@ class BinaryQF(SageObject):
             sage: if f.discriminant() > 0:
             ....:     algos.append('sage')
             sage: a = choice(algos)
-            sage: g = f.reduced_form(algorithm=a)                                       # needs sage.libs.pari
-            sage: g.is_reduced()                                                        # needs sage.libs.pari
+            sage: g = f.reduced_form(algorithm=a)
+            sage: g.is_reduced()
             True
-            sage: g.is_equivalent(f)                                                    # needs sage.libs.pari
+            sage: g.is_equivalent(f)
             True
-            sage: g,M = f.reduced_form(transformation=True, algorithm=a)                # needs sage.libs.pari
-            sage: g.is_reduced()                                                        # needs sage.libs.pari
+            sage: g,M = f.reduced_form(transformation=True, algorithm=a)
+            sage: g.is_reduced()
             True
-            sage: g.is_equivalent(f)                                                    # needs sage.libs.pari
+            sage: g.is_equivalent(f)
             True
-            sage: f * M == g                                                            # needs sage.libs.pari
+            sage: f * M == g
             True
         """
         if self.is_reduced():

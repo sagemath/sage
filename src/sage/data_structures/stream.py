@@ -2197,8 +2197,6 @@ class Stream_plethysm(Stream_binary):
             sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
             sage: h = Stream_plethysm(f, g, True, p)
         """
-        from sage.combinat.sf.sfa import _variables_recursive
-
         if isinstance(f, Stream_exact):
             self._degree_f = f._degree
         else:
@@ -2339,8 +2337,6 @@ class Stream_plethysm(Stream_binary):
         ret = self._basis.zero()
         if n < ret_approx_order:
             return ret
-
-        from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
 
         la_exp = la.to_exp()
         wgt = [i for i, m in enumerate(la_exp, 1) if m]
@@ -2761,12 +2757,12 @@ class Stream_cauchy_invert(Stream_unary):
 
             sage: from sage.data_structures.stream import Stream_function, Stream_cauchy_invert
             sage: f = Stream_function(lambda n: GF(7)(n), True, 0)
-            sage: [f[i] for i in range(5)]                                              # needs sage.rings.finite_rings
+            sage: [f[i] for i in range(5)]
             [0, 1, 2, 3, 4]
-            sage: h = Stream_cauchy_invert(f)                                           # needs sage.rings.finite_rings
-            sage: h._approximate_order                                                  # needs sage.rings.finite_rings
+            sage: h = Stream_cauchy_invert(f)
+            sage: h._approximate_order
             -1
-            sage: [h[i] for i in range(-2, 5)]                                          # needs sage.rings.finite_rings
+            sage: [h[i] for i in range(-2, 5)]
             [0, 1, 5, 1, 0, 0, 0]
         """
         try:

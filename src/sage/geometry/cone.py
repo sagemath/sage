@@ -3296,7 +3296,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A random (strictly convex) cone is isomorphic to itself::
 
             sage: K = random_cone(max_ambient_dim=6, strictly_convex=True)
-            sage: K.is_isomorphic(K)            # optional - sage                       # needs sage.graphs
+            sage: K.is_isomorphic(K)                                                    # needs sage.graphs
             True
         """
         if self.is_strictly_convex() and other.is_strictly_convex():
