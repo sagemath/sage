@@ -1035,6 +1035,87 @@ class SagecodeTransform(SphinxTransform):
                         parent.insert(index + 1, container)
 
 
+class DocstringTransform(SphinxTransform):
+    r"""
+    Transform sections in Sage docstrings for better rendering.
+
+    The following are tests.
+
+    AUTHORS:
+
+    - Alice
+    - Bob
+
+    INPUT:
+
+    - one
+    - two
+
+    OUTPUT:
+
+    three
+
+    OUTPUT: three
+
+    EXAMPLE::
+
+        sage: 1 + 2
+        3
+
+    EXAMPLES::
+
+        sage: 1 + 2
+        3
+
+    EXAMPLE:
+
+    We show that `1 + 2 = 3`::
+
+        sage: 1 + 2
+        3
+
+    EXAMPLES:
+
+    We show that `1 + 2 = 3`::
+
+        sage: 1 + 2
+        3
+
+    """
+    default_priority = 600
+
+    def apply(self):
+        for node in self.document.traverse(nodes.paragraph):
+            if isinstance(node.children[0], nodes.Text) and node.children[0].astext().strip() == 'AUTHORS:':
+                list_node = node.next_node(siblings=True, descend=False)
+                if isinstance(list_node, nodes.bullet_list):
+                    new_node = nodes.admonition(classes=['authors'], admonitionclass='authors')
+                    node.replace_self(new_node)
+                    node = new_node
+                    admonition_title = nodes.title()
+                    admonition_title.append(nodes.Text('Authors'))
+                    node.insert(0, admonition_title)
+                    node.append(list_node)
+                    node.parent.remove(list_node)
+            # Not applied for now, Issue #37614
+            if False and isinstance(node.children[0], nodes.Text):
+                text = node.children[0].astext()
+                for section in ['INPUT', 'OUTPUT', 'EXAMPLES', 'EXAMPLE', 'TESTS', 'TEST',
+                                'ALGORITHM', 'REFERENCE', 'REFERENCES']:
+                    if text.startswith(f'{section}:'):
+                        parent = node.parent
+                        index = parent.index(node)
+                        parent.remove(node)
+                        abbr_node = nodes.abbreviation()
+                        remaining_text = text[len(f'{section}:'):]
+                        abbr_node += nodes.Text(f'{section}:')
+                        para = nodes.paragraph()
+                        para += abbr_node
+                        para += nodes.Text(remaining_text)
+                        parent.insert(index, para)
+                        break
+
+
 # This replaces the setup() in sage.misc.sagedoc_conf
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
@@ -1046,6 +1127,7 @@ def setup(app):
         app.connect('autodoc-process-docstring', skip_TESTS_block)
     app.connect('autodoc-skip-member', skip_member)
     app.add_transform(SagemathTransform)
+    app.add_transform(DocstringTransform)
     if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
         app.add_transform(SagecodeTransform)
 
