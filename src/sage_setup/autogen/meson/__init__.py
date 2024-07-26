@@ -131,12 +131,12 @@ def run(folder: Path, output_dir: Path, folder_rel_to_src=None, dry_run=False, f
             metadata.inc_dirs = []
             c_file = path.with_suffix('.c')
             cpp_file = path.with_suffix('.cpp')
-            if cpp_file.exists():
+            if not monolithic or cpp_file.exists():
                 metadata.is_cpp = True
                 c_file = cpp_file
             else:
                 metadata.is_cpp = False
-            if c_file.exists():
+            if monolithic or c_file.exists():
                 metadata.not_yet_on_conda = False
                 with open(c_file, 'r') as c_file:
                     contents = c_file.read()
