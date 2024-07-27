@@ -279,7 +279,7 @@ def call(func, *args, **kwargs):
     Check that :issue:`11885` is fixed::
 
         sage: a.call(a.ei, 1.0r, parent=float)
-        1.8951178163559366
+        1.8951178163559368
 
     Check that :issue:`14984` is fixed::
 
