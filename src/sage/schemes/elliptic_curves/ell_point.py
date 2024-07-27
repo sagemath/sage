@@ -3041,6 +3041,19 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P2 = F([2,5])                                                         # needs sage.rings.number_field
             sage: P2.height()                                                           # needs sage.rings.number_field
             1.06248137652528
+
+        This shows that the bug reported at :issue:`36834` (incorrect
+        value when the model is not integral) has been fixed::
+
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - 84131656042917)
+            sage: E = EllipticCurve(K, [0, 0, 0, -5482707841/48, -244634179112639/864])
+            sage: P = E(349189/12, 1/2*a)
+            sage: P.height()
+            10.4560438181991
+            sage: [(n*P).height()/P.height() for n in [2,3,4,5]]
+            [4.00000000000000, 9.00000000000000, 16.0000000000000, 25.0000000000000]
+
         """
         if self.has_finite_order():
             return QQ(0)
@@ -3314,7 +3327,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     def non_archimedean_local_height(self, v=None, prec=None,
                                      weighted=False, is_minimal=None):
         """
-        Compute the local height of ``self`` at the non-archimedean place `v`.
+        Compute the local height of ``self`` at non-archimedean places.
 
         INPUT:
 
@@ -3334,6 +3347,13 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
           return this normalised height multiplied by the local degree
           if `v` is a single place, or by the degree of `K` if `v` is
           None.
+
+        - ``is_minimal`` -- boolean, or ``None`` (default). Ignored
+          when ``v`` is ``None`` (default) or ``True``.  Otherwise,
+          when the place ``v`` is specified: if ``True``, the model is
+          assumed to be both locally integral and a local minimal
+          model; if ``None`` (default) or ``False``, a local minimal
+          model is computed and the computation is done on that model.
 
         OUTPUT:
 
@@ -3419,6 +3439,20 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P = E(2,5)
             sage: P.non_archimedean_local_height(2)
             -2/3*log(2)
+
+        This shows that the bug reported at :issue:`36834` (incorrect
+        value when the model is not integral) has been fixed::
+
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = QuadraticField(84131656042917)
+            sage: E = EllipticCurve(K, [0, 0, 0, -5482707841/48, -244634179112639/864])
+            sage: P = E(349189/12, 1/2*a)
+            sage: h = P.non_archimedean_local_height()
+            sage: h
+            1/2*log(144) - log(3) - 2*log(2)
+            sage: h.numerator().simplify_log()
+            0
+
         """
         if prec:
             log = lambda x: RealField(prec)(x).log()
@@ -3441,21 +3475,17 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                            for p, e in factorD if not p.divides(c))
                      + sum(self.non_archimedean_local_height(p, prec, weighted=True)
                            - c.valuation(p) * log(p)
-                           for p, e in factorD if e >= 12 and p.divides(c)))
+                           for p, e in factorD if e >= 12 and c.valuation(p)))
             else:
                 factorD = K.factor(D)
                 if self[0] == 0:
                     c = K.ideal(1)
                 else:
                     c = K.ideal(self[0]).denominator()
-                # The last sum is for bad primes that divide c where
-                # the model is not minimal.
                 h = (log(c.norm())
-                     + sum(self.non_archimedean_local_height(v, prec, weighted=True, is_minimal=(e < 12))
-                           for v, e in factorD if not v.divides(c))
                      + sum(self.non_archimedean_local_height(v, prec, weighted=True)
                            - c.valuation(v) * log(v.norm())
-                           for v, e in factorD if e >= 12 and v.divides(c)))
+                           for v, e in factorD)) # if e >= 12 and c.valuation(v)))
                 if not weighted:
                     h /= K.degree()
             return h
