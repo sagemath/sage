@@ -138,7 +138,7 @@ Here we assume that you are using a git checkout.
   - Bootstrap the source tree and install the build prerequisites and the Sage library::
 
       $ ./bootstrap
-      $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
+      $ pip install --no-build-isolation -v -v --editable ./src
 
     If you encounter any errors, try to install the ``sage-conf`` package first::
 
@@ -165,7 +165,7 @@ suffices to restart Sage.
 
 After editing any Cython files, rebuild the Sage library using::
 
-  $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable src
+  $ pip install --no-build-isolation -v -v --editable src
 
 In order to update the conda environment later, you can run::
 
@@ -175,14 +175,6 @@ To build the documentation, use::
 
   $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
   $ sage --docbuild all html
-
-.. NOTE::
-
-   The switch ``--config-settings editable_mode=compat`` restores the
-   `legacy setuptools implementation of editable installations
-   <https://setuptools.pypa.io/en/latest/userguide/development_mode.html>`_.
-   Adventurous developers may omit this switch to try the modern,
-   PEP-660 implementation of editable installations, see :issue:`34209`.
 
 .. NOTE::
 
