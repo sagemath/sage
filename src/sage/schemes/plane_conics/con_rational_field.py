@@ -23,24 +23,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-
 import sage.rings.abc
-
-from sage.structure.sequence import Sequence
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.matrix.constructor import Matrix
-
-from sage.quadratic_forms.qfsolve import qfsolve, qfparam
-
-from .con_number_field import ProjectiveConic_number_field
-
-from sage.structure.element import InfinityElement
 
 from sage.arith.functions import lcm
 from sage.arith.misc import hilbert_symbol
+from sage.matrix.constructor import Matrix
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.schemes.projective.projective_space import ProjectiveSpace
+from sage.structure.element import InfinityElement
+from sage.structure.sequence import Sequence
+
+lazy_import('sage.quadratic_forms.qfsolve', ['qfsolve', 'qfparam'])
+
+from .con_number_field import ProjectiveConic_number_field
 
 
 class ProjectiveConic_rational_field(ProjectiveConic_number_field):

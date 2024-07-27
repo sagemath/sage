@@ -42,9 +42,10 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import itertools
-from copy import copy
 
+from copy import copy
 from itertools import combinations
+
 from sage.combinat.permutation import Permutation
 from sage.functions.generalized import sign
 from sage.geometry.voronoi_diagram import VoronoiDiagram
@@ -53,10 +54,10 @@ from sage.groups.braid import BraidGroup
 from sage.groups.finitely_presented import wrap_FpGroup
 from sage.groups.free_group import FreeGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.libs.braiding import leftnormalform, rightnormalform
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
 from sage.rings.complex_interval_field import ComplexIntervalField
@@ -67,7 +68,9 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-from .constructor import Curve
+from sage.schemes.curves.constructor import Curve
+
+lazy_import('sage.libs.braiding', ['leftnormalform', 'rightnormalform'])
 
 roots_interval_cache = {}
 
@@ -608,7 +611,7 @@ def newton(f, x0, i0):
         sage: n
         0.0?
         sage: n.real().endpoints()
-        (-0.0460743801652894, 0.0291454081632654)
+        (-0.0147727272727274, 0.00982142857142862)
         sage: n.imag().endpoints()
         (0.000000000000000, -0.000000000000000)
     """

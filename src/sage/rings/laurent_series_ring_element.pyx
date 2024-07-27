@@ -149,7 +149,6 @@ cdef class LaurentSeries(AlgebraElement):
         elif parent is not f.parent():
             f = parent._power_series_ring(f)
 
-
         # self is that t^n * u:
         if not f:
             if n is infinity:
@@ -821,7 +820,6 @@ cdef class LaurentSeries(AlgebraElement):
             f2 = right.__u
         # 3. Subtract
         return type(self)(self._parent, f1 - f2, m)
-
 
     def add_bigoh(self, prec):
         """
@@ -1564,7 +1562,6 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return multi_derivative(self, args)
 
-
     def _derivative(self, var=None):
         """
         The formal derivative of this Laurent series with respect to var.
@@ -1624,7 +1621,6 @@ cdef class LaurentSeries(AlgebraElement):
         u = self._parent._power_series_ring(v, self.__u.prec())
         return type(self)(self._parent, u, n-1)
 
-
     def integral(self):
         r"""
         The formal integral of this Laurent series with 0 constant term.
@@ -1681,7 +1677,6 @@ cdef class LaurentSeries(AlgebraElement):
         except TypeError:
             raise ArithmeticError("Coefficients of integral cannot be coerced into the base ring")
         return type(self)(self._parent, u, n+1)
-
 
     def nth_root(self, long n, prec=None):
         r"""

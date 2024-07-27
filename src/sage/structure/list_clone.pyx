@@ -295,7 +295,7 @@ cdef class ClonableElement(Element):
         """
         Check that ``self`` is mutable.
 
-        Raise a ``ValueError`` if ``self`` is immutable.
+        This raises a :class:`ValueError` if ``self`` is immutable.
 
         TESTS::
 

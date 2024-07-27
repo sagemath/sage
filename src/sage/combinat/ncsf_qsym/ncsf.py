@@ -182,8 +182,11 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
     bialgebra structure, which cooperates with the grading to form a
     connected graded bialgebra. Thus, as any connected graded bialgebra,
     ``Psi`` is a Hopf algebra. Over ``QQ`` (or any other `\QQ`-algebra),
-    this Hopf algebra ``Psi`` is isomorphic to the tensor algebra of
-    its space of primitive elements.
+    this Hopf algebra ``Psi`` is isomorphic to the universal enveloping
+    algebra of its space of primitive elements. Here, the primitives
+    form a countably generated free Lie algebra, so ``Psi`` is isomorphic
+    to the tensor algebra on a countably infinite dimensional vector
+    space.
 
     The antipode is an anti-algebra morphism; in the ``Psi`` basis, it
     sends the generators to their opposites and changes their sign if

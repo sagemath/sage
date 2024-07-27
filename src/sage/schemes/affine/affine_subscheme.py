@@ -20,8 +20,6 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.fields import Fields
-from sage.interfaces.singular import singular
-from sage.modules.free_module_element import vector
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 from .affine_morphism import SchemeMorphism_polynomial_affine_subscheme_field
@@ -418,6 +416,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         Iloc = R.ideal([f(chng_coords) for f in I.gens()])
         Jloc = R.ideal([f(chng_coords) for f in J.gens()])
         # compute the intersection multiplicity with Serre's Tor formula using Singular
+        from sage.interfaces.singular import singular
         singular.lib("homolog.lib")
         i = 0
         s = 0
@@ -491,6 +490,8 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             P = self(P)
         except TypeError:
             raise TypeError("(=%s) is not a point on (=%s)" % (P, self))
+
+        from sage.interfaces.singular import singular
 
         # Apply a linear change of coordinates to self so that P is sent to the origin
         # and then compute the multiplicity of the local ring of the translated subscheme
@@ -578,6 +579,8 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
             sage: _.dimension()
             1
         """
+        from sage.modules.free_module_element import vector
+
         A = self.ambient_space()
         R = A.coordinate_ring()
         gens = R.gens()

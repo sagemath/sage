@@ -165,7 +165,6 @@ cdef class Polynomial_rational_flint(Polynomial):
             fmpq_poly_set_si(res._poly, int(x))
         return res
 
-
     def __cinit__(self):
         """
         Initialises the underlying data structure.

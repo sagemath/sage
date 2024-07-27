@@ -8,7 +8,6 @@ cdef class Ring(ParentWithGens):
     cdef public object _one_element
     cdef public object _zero_ideal
     cdef public object _unit_ideal
-    cdef public object _ideal_monoid
 
 
 cdef class CommutativeRing(Ring):

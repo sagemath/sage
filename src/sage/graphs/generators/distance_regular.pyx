@@ -740,7 +740,7 @@ def AlternatingFormsGraph(const int n, const int q):
     matrices over `GF(q)` with zero diagonal. Two vertices are adjacent
     if and only if the difference of the two matrices has rank 2.
 
-    This grap is distance-regular with classical parameters
+    This graph is distance-regular with classical parameters
     `(\lfloor \frac n 2 \rfloor,  q^2, q^2 - 1, q^{2 \lceil \frac n 2 \rceil -1})`.
 
     INPUT:
@@ -1129,7 +1129,7 @@ def DoubleGrassmannGraph(const int q, const int e):
     r"""
     Return the bipartite double of the distance-`e` graph of the Grassmann graph `J_q(n,e)`.
 
-    This graph can also be descirbed as follows:
+    This graph can also be described as follows:
     Let `V` be the vector space of dimension `n` over `GF(q)`.
     The vertex set is the set of `e+1` or `e` subspaces of `V`.
     Two vertices are adjacent if one subspace is contained in the other.

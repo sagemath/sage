@@ -509,7 +509,6 @@ class ECM(SageObject):
         """
         n = self._validate(n)
         kwds.setdefault('c', 1000000000)
-        kwds.setdefault('I', 1)
         if factor_digits is not None:
             B1 = self.recommended_B1(factor_digits)
         kwds['one'] = True

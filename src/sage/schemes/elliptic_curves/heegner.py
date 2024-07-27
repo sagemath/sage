@@ -98,15 +98,6 @@ The above is consistent with the following analytic computation::
 from itertools import product
 
 import sage.rings.abc
-import sage.rings.number_field.number_field_element
-import sage.rings.number_field.number_field as number_field
-from sage.rings.number_field.number_field import NumberField
-from sage.rings.number_field.number_field import QuadraticField
-from sage.rings.real_mpfr import RealField
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.real_mpfi import RealIntervalField
-from sage.rings.infinity import Infinity as infinity
-from sage.rings.fast_arith import prime_range
 
 from sage.arith.functions import lcm
 from sage.arith.misc import (binomial, factorial, prime_divisors,
@@ -115,20 +106,27 @@ from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
 from sage.modular.modsym.p1list import P1List
-from sage.rings.complex_double import CDF
+from sage.quadratic_forms.binary_qf import BinaryQF, BinaryQF_reduced_representatives
 from sage.rings.factorint import factor_trial_division
+from sage.rings.fast_arith import prime_range
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.infinity import Infinity as infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.quadratic_forms.binary_qf import BinaryQF
-from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     richcmp_not_equal, rich_to_bool)
+
+lazy_import('sage.rings.complex_double', 'CDF')
+lazy_import('sage.rings.complex_mpfr', 'ComplexField')
+lazy_import('sage.rings.number_field.number_field', ['NumberField', 'QuadraticField'])
+lazy_import('sage.rings.real_mpfi', 'RealIntervalField')
+lazy_import('sage.rings.real_mpfr', 'RealField')
 
 ###############################################################################
 #
@@ -527,7 +525,7 @@ class RingClassField(SageObject):
         """
         D = self.__D
         var = 'sqrt_minus_%s' % (-D)
-        return number_field.QuadraticField(D,var)
+        return QuadraticField(D,var)
 
     @cached_method
     def galois_group(self, base=QQ):
@@ -566,6 +564,7 @@ class RingClassField(SageObject):
     def is_subfield(self, M):
         """
         Return ``True`` if this ring class field is a subfield of the ring class field `M`.
+
         If `M` is not a ring class field, then a :class:`TypeError` is raised.
 
         EXAMPLES::
@@ -706,7 +705,7 @@ class GaloisGroup(SageObject):
 
         - `x` -- automorphism or quadratic field element
 
-        OUTPUT: An automorphism (or ``TypeError``)
+        OUTPUT: An automorphism (or :class:`TypeError`)
 
         EXAMPLES::
 
@@ -2232,7 +2231,7 @@ class HeegnerPoints_level_disc(HeegnerPoints):
         """
         D = self.__D
         var = 'sqrt_minus_%s' % (-D)
-        return number_field.QuadraticField(D,var)
+        return QuadraticField(D,var)
 
     def kolyvagin_conductors(self, r=None, n=10, E=None, m=None):
         r"""

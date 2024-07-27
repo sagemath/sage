@@ -1,6 +1,8 @@
 # sage.doctest: needs sage.rings.finite_rings (because all doctests use GF)
 """
-Ideals of Finite Algebras
+Ideals of Finite Dimensional Algebras
+
+It is necessary to use algebras in the category of associative algebras.
 """
 
 # ****************************************************************************
@@ -39,8 +41,10 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
 
     EXAMPLES::
 
+        sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
         sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-        ....:                                      Matrix([[0, 1], [0, 0]])])
+        ....:                                      Matrix([[0, 1], [0, 0]])],
+        ....:                              category=cat)
         sage: A.ideal(A([0,1]))
         Ideal (e1) of Finite-dimensional algebra of degree 2 over Finite Field of size 3
     """
@@ -48,8 +52,10 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
         """
         EXAMPLES::
 
+            sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.ideal(A([0,1]))
             sage: TestSuite(I).run(skip="_test_category")  # Currently ideals are not using the category framework
         """
@@ -78,8 +84,10 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
 
         TESTS::
 
+            sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.ideal(A([1,1]))
             sage: J = A.ideal(A([0,1]))
             sage: I == J
@@ -90,7 +98,8 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
             True
 
             sage: A2 = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                       Matrix([[0, 1], [0, 0]])])
+            ....:                                       Matrix([[0, 1], [0, 0]])],
+            ....:     category=cat)
             sage: A is A2
             True
             sage: A == A2
@@ -134,8 +143,10 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
         """
         EXAMPLES::
 
+            sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: J = A.ideal(A([0,1]))
             sage: A([0,1]) in J
             True
@@ -152,8 +163,10 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
 
         EXAMPLES::
 
+            sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.ideal(A([1,1]))
             sage: I.basis_matrix()
             [1 0]
@@ -168,8 +181,10 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
 
         EXAMPLES::
 
+            sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: I = A.ideal(A([1,1]))
             sage: I.vector_space()
             Vector space of degree 2 and dimension 2 over Finite Field of size 3

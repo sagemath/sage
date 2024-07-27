@@ -1021,7 +1021,6 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         cdef int pow = n/d
         return f if pow == 1 else f**pow
 
-
     def minpoly(self, var='x'):
         r"""
         Return the minimal polynomial of ``self``, which is the smallest
@@ -1234,7 +1233,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         """
         return unpickleFiniteField_ntl_gf2eElement, (self._parent, str(self))
 
-    def log(self, base):
+    def log(self, base, order=None, *, check=False):
         """
         Compute an integer `x` such that `b^x = a`, where `a` is ``self``
         and `b` is ``base``.
@@ -1242,6 +1241,9 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         INPUT:
 
         - ``base`` -- finite field element
+        - ``order`` -- integer (optional), the order of the base
+        - ``check`` -- boolean (default: ``False``): If set,
+          test whether the given ``order`` is correct.
 
         OUTPUT:
 
@@ -1279,16 +1281,34 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             ...
             ValueError: no logarithm of z50 exists to base z50^49 + z50^46 + z50^45 + z50^44 + z50^41 + z50^34 + z50^33 + z50^32 + z50^27 + z50^25 + z50^24 + z50^21 + z50^18 + z50^17 + z50^16 + z50^15 + z50^12 + z50^11 + z50^10 + z50^8 + z50^7 + z50^3 + z50^2
 
+        An example for ``check=True``::
+
+            sage: F.<t> = GF(2^5, impl='ntl')
+            sage: t.log(t, 3^4, check=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: base does not have the provided order
+
         AUTHORS:
 
         - David Joyner and William Stein (2005-11)
         - Lorenz Panny (2021-11): use PARI's :pari:`fflog` instead of :func:`sage.groups.generic.discrete_log`
         """
+        cdef Integer base_order
+
         base = self.parent()(base)
 
         # The result is undefined if the input to fflog() is invalid.
         # Since the unit group is cyclic, it suffices to check orders.
-        cdef Integer base_order = base.multiplicative_order()
+        if order is None:
+            base_order = base.multiplicative_order()
+        else:
+            if check:
+                from sage.groups.generic import has_order
+                if not has_order(base, order, '*'):
+                    raise ValueError('base does not have the provided order')
+            base_order = order
+
         cdef Integer self_order = self.multiplicative_order()
         if not self_order.divides(base_order):
             raise ValueError(f'no logarithm of {self} exists to base {base}')
@@ -1301,6 +1321,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         x = pari.fflog(self, base, (base_order, fac))
         return Integer(x)
+
 
 def unpickleFiniteField_ntl_gf2eElement(parent, elem):
     """

@@ -272,7 +272,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         Internal function. Return a latex string for this elliptic curve.
 
-        Users will normally use latex() instead.
+        Users will normally use :func:`latex` instead.
 
         EXAMPLES::
 
@@ -2701,8 +2701,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         .. NOTE::
 
-            If the curves in question are not isomorphic, a ``ValueError``
-            is raised.
+            If the curves in question are not isomorphic,
+            a :class:`ValueError` is raised.
 
         EXAMPLES::
 

@@ -6103,7 +6103,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.reduced_form(prec=30, smallest_coeffs=False)
             Traceback (most recent call last):
             ...
-            ValueError: accuracy of Newton's root not within tolerance(0.00009... > 1e-06), increase precision
+            ValueError: accuracy of Newton's root not within tolerance(0.00008... > 1e-06), increase precision
             sage: f.reduced_form(smallest_coeffs=False)
             (
             Dynamical System of Projective Space of dimension 1 over Rational Field
@@ -8437,6 +8437,14 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
               To:   Finite Field in z2 of size 3^2
               Defn: 1 |--> 1
 
+        Fixes :issue:`38012` by not forcing univariate polynomial to be univariate::
+
+            sage: R.<z> = PolynomialRing(QQ)
+            sage: f = DynamicalSystem_affine(z^2 + z + 1).homogenize(1)
+            sage: f.normal_form()
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+             Defn: Defined on coordinates by sending (x0 : x1) to
+                   (x0^2 + 5/4*x1^2 : x1^2)
         """
         # defines the field of fixed points
         if self.codomain().dimension_relative() != 1:
@@ -8465,7 +8473,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         #we find one and not go all the way to the splitting field
         i = 0
         if G.degree() != 0:
-            G = G.polynomial(G.variable(0))
+            if is_MPolynomialRing(G.parent()):
+                G = G.polynomial(G.variable(0))
         else:
             #no other fixed points
             raise NotImplementedError("map is not a polynomial")

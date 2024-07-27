@@ -293,8 +293,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         EXAMPLES::
 
             sage: latex(ProductProjectiveSpaces([1, 2, 3], ZZ, 'x'))
-            {\mathbf P}_{\Bold{Z}}^1 \times {\mathbf P}_{\Bold{Z}}^2 \times {\mathbf
-            P}_{\Bold{Z}}^3
+            {\mathbf P}_{\Bold{Z}}^{1} \times {\mathbf P}_{\Bold{Z}}^{2} \times
+             {\mathbf P}_{\Bold{Z}}^{3}
         """
         return " \\times ".join(PS._latex_() for PS in self)
 

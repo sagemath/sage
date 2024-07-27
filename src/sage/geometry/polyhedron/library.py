@@ -1542,7 +1542,7 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: id = polytopes.icosidodecahedron_V2()   # long time - 6secs
+            sage: id = polytopes.icosidodecahedron_V2()   # long time (6s)
             sage: id.f_vector()                           # long time
             (1, 30, 60, 32, 1)
             sage: id.base_ring()                          # long time
@@ -1705,7 +1705,7 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: pd = polytopes.pentakis_dodecahedron()    # long time - ~10 sec
+            sage: pd = polytopes.pentakis_dodecahedron()    # long time (10s)
             sage: pd.n_vertices()                           # long time
             32
             sage: pd.n_inequalities()                       # long time
@@ -2201,7 +2201,7 @@ class Polytopes:
         It is possible to use the backend ``'normaliz'`` to get an exact
         representation::
 
-            sage: polytopes.truncated_six_hundred_cell(exact=True,backend='normaliz') # not tested - long time ~16sec
+            sage: polytopes.truncated_six_hundred_cell(exact=True,backend='normaliz')  # not tested, long time (16s)
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 1440 vertices
         """
         return self.generalized_permutahedron(['H', 4], point=[1, 1, 0, 0], exact=exact, backend=backend, regular=True)
@@ -2229,7 +2229,7 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: polytopes.rectified_six_hundred_cell(backend='normaliz')  # not tested - long time ~14sec
+            sage: polytopes.rectified_six_hundred_cell(backend='normaliz')              # not tested, long time (14s)
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 720 vertices
         """
         return self.generalized_permutahedron(['H', 4], point=[0, 1, 0, 0], exact=exact, backend=backend, regular=True)
@@ -3091,7 +3091,7 @@ class Polytopes:
 
         The classical construction given by Coxeter in [Cox1969]_ is given by::
 
-            sage: polytopes.one_hundred_twenty_cell()                    # not tested - long time ~15 sec.
+            sage: polytopes.one_hundred_twenty_cell()                    # not tested, long time (~15s)
             A 4-dimensional polyhedron in (Number Field in sqrt5 with defining
              polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^4 defined as
              the convex hull of 600 vertices

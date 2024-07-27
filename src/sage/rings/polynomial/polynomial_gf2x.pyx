@@ -310,6 +310,7 @@ def GF2X_BuildIrred_list(n):
     GF2X_BuildIrred(f, int(n))
     return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
 
+
 def GF2X_BuildSparseIrred_list(n):
     """
     Return the list of coefficients of an irreducible polynomial of
@@ -329,6 +330,7 @@ def GF2X_BuildSparseIrred_list(n):
     GF2 = FiniteField(2)
     GF2X_BuildSparseIrred(f, int(n))
     return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
+
 
 def GF2X_BuildRandomIrred_list(n):
     """

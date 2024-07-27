@@ -827,7 +827,7 @@ class CoxeterGroups(Category_singleton):
                 sage: len(W.kazhdan_lusztig_cells())
                 10
 
-            Computing the two sided cells in `B_3`::
+            Computing the two-sided cells in `B_3`::
 
                 sage: # optional - coxeter3, needs sage.combinat sage.groups sage.libs.gap sage.modules sage.rings.number_field
                 sage: W = CoxeterGroup('B3', implementation='coxeter3')
@@ -2064,9 +2064,8 @@ class CoxeterGroups(Category_singleton):
             """
             reflections = self.absolute_chain_reflections()
             P = self.parent()
-            chain = [P.prod(reversed(reflections[:i]))
-                    for i in range(len(reflections)+1)]
-            return chain
+            return [P.prod(reversed(reflections[:i]))
+                    for i in range(len(reflections) + 1)]
 
         def absolute_chain_reflections(self):
             r"""
@@ -2720,21 +2719,23 @@ class CoxeterGroups(Category_singleton):
                 return self.apply_simple_projection(desc, length_increasing=False).bruhat_le(other.apply_simple_reflection(desc))
             return self == other
 
+        @cached_in_parent_method
         def weak_le(self, other, side='right'):
-            """
-            Comparison in weak order.
+            r"""
+            Perform the comparison between ``self`` and ``other`` in
+            weak (Bruhat) order.
 
             INPUT:
 
-            - other -- an element of the same Coxeter group
-            - side -- 'left' or 'right'  (default: 'right')
+            - ``other`` -- an element of the same Coxeter group
+            - ``side`` -- string (default: ``'right'``); ``'left'`` or ``'right'``
 
             OUTPUT: a boolean
 
-            This returns whether ``self`` <= ``other`` in left
-            (resp. right) weak order, that is if 'v' can be obtained
-            from 'v' by length increasing multiplication by simple
-            reflections on the left (resp. right).
+            This returns whether `u \leq v`, where `u` is ``self`` and `v`
+            is ``other``, in left (resp. right) weak order, that is if `v`
+            can be obtained from `u` by length increasing multiplication by
+            simple reflections on the left (resp. right).
 
             EXAMPLES::
 

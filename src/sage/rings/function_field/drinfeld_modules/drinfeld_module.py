@@ -759,27 +759,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         return DrinfeldModuleHomset(self, other, category)
 
-    def _check_rank_two(self):
-        r"""
-        Raise ``NotImplementedError`` if the rank is not two.
-
-        TESTS::
-
-            sage: Fq = GF(25)
-            sage: A.<T> = Fq[]
-            sage: K.<z12> = Fq.extension(6)
-            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-            sage: phi._check_rank_two()
-            sage: phi = DrinfeldModule(A, [p_root, 1])
-            sage: phi._check_rank_two()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: rank must be 2
-        """
-        if self.rank() != 2:
-            raise NotImplementedError('rank must be 2')
-
     def _latex_(self):
         r"""
         Return a LaTeX representation of the Drinfeld module.
@@ -1313,9 +1292,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``absolutely`` -- a boolean (default: ``False``); if ``True``,
+        - ``absolutely`` -- a boolean (default: ``False``); if ``False``,
           check the existence of an isomorphism defined on the base
-          field; if ``False``, check over an algebraic closure.
+          field; if ``True``, check over an algebraic closure.
 
         EXAMPLES::
 
@@ -1344,6 +1323,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: phi = DrinfeldModule(A, [z, 1])
             sage: psi = DrinfeldModule(A, [z, z])
+            sage: phi.is_isomorphic(psi)
+            False
+            sage: phi.is_isomorphic(psi, absolutely=True)
+            True
+
+        In particular, two Drinfeld modules may have the same
+        `j`-invariant, while not being isomorphic on the base field::
+
+            sage: phi = DrinfeldModule(A, [z, 0, 1])
+            sage: psi = DrinfeldModule(A, [z, 0, z])
+            sage: phi.j_invariant() == psi.j_invariant()
+            True
             sage: phi.is_isomorphic(psi)
             False
             sage: phi.is_isomorphic(psi, absolutely=True)

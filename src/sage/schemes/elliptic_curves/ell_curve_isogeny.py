@@ -2903,7 +2903,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         Check for :issue:`36638`::
 
-            sage: phi.scaling_factor().parent()  # needs sage.rings.finite_rings
+            sage: phi.scaling_factor().parent()                                         # needs sage.rings.finite_rings
             Finite Field in z2 of size 257^2
 
         ALGORITHM: The "inner" isogeny is normalized by construction,

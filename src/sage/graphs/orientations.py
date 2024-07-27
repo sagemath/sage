@@ -80,7 +80,7 @@ def acyclic_orientations(G):
         sage: len(list(it))
         54
 
-    Test for arbitary vertex labels::
+    Test for arbitrary vertex labels::
 
         sage: g_str = Graph([('abc', 'def'), ('ghi', 'def'), ('xyz', 'abc'), ('xyz', 'uvw'), ('uvw', 'abc'), ('uvw', 'ghi')])
         sage: it = g_str.acyclic_orientations()

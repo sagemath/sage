@@ -755,8 +755,8 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
             sage: f.pullback_divisor(D)
             4*V(z0) + 2*V(z1)
         """
-        from sage.schemes.toric.divisor import is_ToricDivisor
-        if not (is_ToricDivisor(divisor) and divisor.is_QQ_Cartier()):
+        from sage.schemes.toric.divisor import ToricDivisor_generic
+        if not (isinstance(divisor, ToricDivisor_generic) and divisor.is_QQ_Cartier()):
             raise ValueError('the divisor must be torus-invariant and QQ-Cartier')
         m = divisor.m(self._defining_cone)
         values = []
@@ -1300,8 +1300,8 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: square.pullback_divisor(D)
             2*V(z)
         """
-        from sage.schemes.toric.divisor import is_ToricDivisor
-        if not (is_ToricDivisor(divisor) and divisor.is_QQ_Cartier()):
+        from sage.schemes.toric.divisor import ToricDivisor_generic
+        if not (isinstance(divisor, ToricDivisor_generic) and divisor.is_QQ_Cartier()):
             raise ValueError('the divisor must be torus-invariant and QQ-Cartier')
         fm = self.fan_morphism()
         values = []
@@ -1978,8 +1978,8 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             sage: fc.embedding_morphism().pullback_divisor(D)
             -V(z0) - 3*V(z1) - 3*V(z2)
         """
-        from sage.schemes.toric.divisor import is_ToricDivisor
-        if not (is_ToricDivisor(divisor) and divisor.is_QQ_Cartier()):
+        from sage.schemes.toric.divisor import ToricDivisor_generic
+        if not (isinstance(divisor, ToricDivisor_generic) and divisor.is_QQ_Cartier()):
             raise ValueError('the divisor must be torus-invariant and QQ-Cartier')
         m = divisor.m(self.defining_cone())
         values = []

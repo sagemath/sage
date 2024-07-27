@@ -1,3 +1,4 @@
+# sage.doctest: needs scipy
 r"""
 Hyperbolic Isometries
 

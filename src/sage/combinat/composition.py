@@ -155,10 +155,25 @@ class Composition(CombinatorialElement):
             [1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0]
             sage: Composition(code=_)
             [4, 1, 2, 3, 5]
+
+        TESTS:
+
+        Let us check that :issue:`14862` is solved::
+
+            sage: C = Compositions()
+            sage: C([3,-1,1])
+            Traceback (most recent call last):
+            ...
+            ValueError: not a composition
+            sage: C("strawberry")
+            Traceback (most recent call last):
+            ...
+            ValueError: not a composition
         """
         if descents is not None:
             if isinstance(descents, tuple):
-                return Compositions().from_descents(descents[0], nps=descents[1])
+                return Compositions().from_descents(descents[0],
+                                                    nps=descents[1])
             else:
                 return Compositions().from_descents(descents)
         elif code is not None:
@@ -167,8 +182,22 @@ class Composition(CombinatorialElement):
             return Compositions().from_subset(*from_subset)
         elif isinstance(co, Composition):
             return co
-        else:
-            return Compositions()(list(co))
+
+        return Compositions()(co)
+
+    def __init__(self, parent, lst):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: C = Composition([3,1,2])
+            sage: TestSuite(C).run()
+        """
+        lst = [Integer(u) for u in lst]
+        if not all(u >= 0 for u in lst):
+            raise ValueError("elements must be nonnegative integers")
+        CombinatorialElement.__init__(self, parent, lst)
 
     def _ascii_art_(self):
         """
@@ -1755,8 +1784,10 @@ class Compositions(UniqueRepresentation, Parent):
             sage: P(Partition([5,2,1]))
             [5, 2, 1]
         """
-        if isinstance(lst, (Composition, Partition)):
-            lst = list(lst)
+        # input can be an iterator, and one has to use it twice
+        lst = list(lst)
+        if any(not isinstance(x, (int, Integer)) or x < 0 for x in lst):
+            raise ValueError('not a composition')
         elt = self.element_class(self, lst)
         if elt not in self:
             raise ValueError("%s not in %s" % (elt, self))
@@ -1860,7 +1891,8 @@ class Compositions(UniqueRepresentation, Parent):
                 return self.element_class(self, [n])
 
         if n <= d[-1]:
-            raise ValueError("S (=%s) is not a subset of {1, ..., %s}" % (d, n - 1))
+            raise ValueError("S (=%s) is not a subset of {1, ..., %s}"
+                             % (d, n - 1))
         else:
             d.append(n)
 

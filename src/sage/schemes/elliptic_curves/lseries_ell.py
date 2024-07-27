@@ -17,16 +17,16 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.rings.real_mpfr import RealField
-from sage.rings.rational_field import RationalField
-from math import sqrt, log, ceil
-import sage.functions.exp_integral as exp_integral
-from sage.misc.verbose import verbose
+from math import ceil, log, sqrt
+
 from sage.misc.cachefunc import cached_method
+from sage.misc.verbose import verbose
+from sage.rings.rational_field import RationalField
+from sage.rings.real_mpfr import RealField
+from sage.structure.sage_object import SageObject
 
 
 class Lseries_ell(SageObject):
@@ -143,7 +143,7 @@ class Lseries_ell(SageObject):
 
         If the curve has too large a conductor, it is not possible to
         compute with the `L`-series using this command.  Instead a
-        ``RuntimeError`` is raised::
+        :class:`RuntimeError` is raised::
 
             sage: e = EllipticCurve([1,1,0,-63900,-1964465932632])
             sage: L = e.lseries().dokchitser(15, algorithm='gp')
@@ -716,10 +716,12 @@ class Lseries_ell(SageObject):
             # positive, so L'(E,1) = 0.
             return (R.zero(), Rerror.zero())
 
+        from sage.functions.exp_integral import exponential_integral_1
+
         an = self.__E.anlist(k)  # list of Sage Integers
         pi = R.pi()
         sqrtN = R(self.__E.conductor()).sqrt()
-        v = exp_integral.exponential_integral_1(2*pi/sqrtN, k)
+        v = exponential_integral_1(2*pi/sqrtN, k)
 
         # Compute series sum and accumulate floating point errors
         L = R.zero()

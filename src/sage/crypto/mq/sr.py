@@ -2478,7 +2478,7 @@ class SR_gf2n(SR_generic):
             l = r*c
 
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+k]**2 - _vars[e*j+(k+1) % e]   for j in range(l)  for k in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+(k+1) % e] for j in range(l) for k in range(e)]
 
 class SR_gf2(SR_generic):
     def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -3200,7 +3200,7 @@ class SR_gf2(SR_generic):
         if self._polybori:
             return []
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+k]**2 - _vars[e*j+k]   for j in range(l)  for k in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+k] for j in range(l) for k in range(e)]
 
 class SR_gf2_2(SR_gf2):
     """

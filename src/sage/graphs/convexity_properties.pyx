@@ -117,7 +117,7 @@ cdef class ConvexityProperties:
       elements `z` with `d_{G}(u,w) + d_{G}(w,v) = d_{G}(u,v)`. This is not in
       general equal to `h(\{u,v\})` !
 
-    Nothing says these recommandations will actually lead to any actual
+    Nothing says these recommendations will actually lead to any actual
     improvements. There are just some ideas remembered while writing this
     code. Trying to optimize may well lead to lost in efficiency on many
     instances.

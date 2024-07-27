@@ -157,7 +157,7 @@ class G_AlgFactory(UniqueFactory):
         - ``key`` -- a 6-tuple, formed by a base ring, a tuple of names, two
           matrices over a polynomial ring over the base ring with the given
           variable names, a term order, and a category
-        - ``extra_args`` -- a dictionary, whose only relevant key is 'check'.
+        - ``extra_args`` -- a dictionary, whose only relevant key is 'check'
 
         TESTS::
 
@@ -174,7 +174,7 @@ class G_AlgFactory(UniqueFactory):
                                        category, check)
 
     def create_key_and_extra_args(self, base_ring, c, d, names=None, order=None,
-                                  category=None, check=None):
+                                  category=None, check=None, commutative=None):
         """
         Create a unique key for g-algebras.
 
@@ -186,6 +186,7 @@ class G_AlgFactory(UniqueFactory):
         - ``order`` -- (optional) term order
         - ``category`` -- (optional) category
         - ``check`` -- optional bool
+        - ``commutative`` -- optional bool
 
         TESTS::
 
@@ -193,6 +194,10 @@ class G_AlgFactory(UniqueFactory):
             sage: H = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
             sage: H is A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y}) # indirect doctest
             True
+
+            sage: P = A.g_algebra(relations={}, order='lex')
+            sage: P.category()
+            Category of commutative algebras over Rational Field
         """
         if names is None:
             raise ValueError("The generator names must be provided")
@@ -213,7 +218,11 @@ class G_AlgFactory(UniqueFactory):
         d.set_immutable()
 
         # Get the correct category
-        category = check_default_category(Algebras(base_ring), category)
+        if commutative:
+            usualcat = Algebras(base_ring).Commutative()
+        else:
+            usualcat = Algebras(base_ring)
+        category = check_default_category(usualcat, category)
 
         # Extra arg
         if check is None:

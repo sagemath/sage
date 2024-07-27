@@ -347,9 +347,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
             sage: G({1: 3, -2: 12})
             F[-2]^12*F[1]^3
             sage: G(-5)
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert -5, use gen() instead
+            F[-5]
 
         TESTS::
 

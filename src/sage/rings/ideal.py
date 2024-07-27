@@ -320,7 +320,7 @@ class Ideal_generic(MonoidElement):
             return '\n(\n  %s\n)\n' % (',\n\n  '.join(L))
         return '(%s)' % (', '.join(L))
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return a string representation of ``self``.
 
@@ -1270,7 +1270,7 @@ class Ideal_principal(Ideal_generic):
     #def __init__(self, ring, gen):
     #    Ideal_generic.__init__(self, ring, [gen])
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return a string representation of ``self``.
 
@@ -1700,7 +1700,7 @@ class Ideal_fractional(Ideal_generic):
 
     See :func:`Ideal()`.
     """
-    def __repr__(self):
+    def _repr_(self):
         """
         Return a string representation of ``self``.
 

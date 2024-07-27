@@ -1895,8 +1895,8 @@ class Components(SageObject):
         if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind  in self._comp]
-            ind_step = max(1, int(len(ind_list)/nproc))
+            ind_list = list(self._comp)
+            ind_step = max(1, len(ind_list) // nproc)
             local_list = lol(ind_list, ind_step)
             # list of input parameters:
             listParalInput = [(self, other, ind_part) for ind_part in local_list]

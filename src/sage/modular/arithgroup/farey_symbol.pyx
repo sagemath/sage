@@ -1030,6 +1030,7 @@ cdef class Farey:
                                         thickness=options['thickness'])
         d = g.get_minmax_data()
         g.set_axes_range(d['xmin'], d['xmax'], 0, options['ymax'])
+        g.set_aspect_ratio(1)
         return g
 
 
