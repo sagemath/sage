@@ -27,6 +27,9 @@ class GraphHomomorphismCounter:
         if colourful and (graph_clr is None or target_clr is None):
             raise ValueError("Both graph_clr and target_clr must be provided when colourful is True")
 
+        self.graph._scream_if_not_simple()
+        self.target_graph._scream_if_not_simple()
+
         # Only used in `__init__`
         from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition, label_nice_tree_decomposition
 
@@ -40,9 +43,6 @@ class GraphHomomorphismCounter:
         # Bookkeeping for colourful mappings
         self.actual_target_graph = target_graph
         self.actual_target_size = self.actual_target_graph.order()
-
-        self.graph._scream_if_not_simple()
-        self.target_graph._scream_if_not_simple()
 
         self.tree_decomp = graph.treewidth(certificate=True)
         self.nice_tree_decomp = make_nice_tree_decomposition(graph, self.tree_decomp)
