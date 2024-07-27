@@ -264,7 +264,6 @@ cdef class FractionFieldElement(FieldElement):
         """
         return self._denominator
 
-
     def is_square(self,root=False):
         """
         Return whether or not ``self`` is a perfect square.
@@ -1285,6 +1284,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
             return
         super(self.__class__, self).reduce()
         self.normalize_leading_coefficients()
+
 
 def make_element(parent, numerator, denominator):
     """

@@ -721,7 +721,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         We make sure that the previous example works on random examples::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # long time, needs sage.rings.finite_rings
             sage: p = random_prime(50)
             sage: K.<u> = GF((p, randrange(1,20)))
             sage: L.<v> = K.extension(randrange(2,20))

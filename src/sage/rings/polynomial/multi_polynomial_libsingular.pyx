@@ -1877,6 +1877,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             M.append(new_MP(self, p_Copy(tempvector, _ring)))
         return M
 
+
 def unpickle_MPolynomialRing_libsingular(base_ring, names, term_order):
     """
     inverse function for ``MPolynomialRing_libsingular.__reduce__``
