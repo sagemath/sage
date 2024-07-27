@@ -417,6 +417,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             """
             return self.base_ring().is_integral_domain()
 
+        @cached_method
         def fraction_field(self):
             r"""
             Return the fraction field of ``self``.
@@ -428,14 +429,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 Fraction Field of Symmetric Functions over Rational Field in the Schur basis
             """
             if not self.is_integral_domain():
-                raise TypeError("self must be an integral domain.")
-            if hasattr(self, "__fraction_field") and self.__fraction_field is not None:
-                return self.__fraction_field
-            else:
-                import sage.rings.fraction_field
-                K = sage.rings.fraction_field.FractionField_generic(self)
-                self.__fraction_field = K
-            return self.__fraction_field
+                raise TypeError("self must be an integral domain")
+            from sage.rings.fraction_field import FractionField_generic
+            return FractionField_generic(self)
 
         def is_field(self, proof=True):
             """
