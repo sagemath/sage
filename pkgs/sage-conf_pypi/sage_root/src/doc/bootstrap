@@ -1,3 +1,0 @@
-#! /usr/bin/env bash
-# This version of the src/doc/bootstrap script does nothing.
-exit 0
