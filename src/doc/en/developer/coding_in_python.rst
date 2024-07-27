@@ -14,8 +14,10 @@ Python language standard
 
 Sage library code needs to be compatible with all versions of Python
 that Sage supports.  The information regarding the supported versions
-can be found in the files ``build/pkgs/python3/spkg-configure.m4`` and
-``src/setup.cfg.m4``.
+can be found in the files ``build/pkgs/python3/spkg-configure.m4``
+(for the Sage distribution), ``src/pyproject.toml`` (for the Sage
+library), and ``m4/pyproject_toml_metadata.m4`` (for most other
+distribution packages in ``pkgs/``).
 
 Python 3.9 is the oldest supported version.  Hence,
 all language and library features that are available in Python 3.9 can
@@ -44,7 +46,7 @@ using one of two mechanisms:
     (to be used in place of ``typing``).
 
   The Sage library declares these packages as dependencies and ensures that
-  versions that provide features of Python 3.11 are available.
+  versions that provide features of Python 3.12 are available.
 
 Meta :issue:`29756` keeps track of newer Python features and serves
 as a starting point for discussions on how to make use of them in the

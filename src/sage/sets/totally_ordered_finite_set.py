@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Totally Ordered Finite Sets
 

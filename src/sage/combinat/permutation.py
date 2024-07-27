@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Permutations
 
@@ -250,7 +251,6 @@ from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.combinat.backtrack import GenericBacktracker
-from sage.combinat.SJT import SJT
 from sage.combinat.combinat import CombinatorialElement, catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.composition import Composition
@@ -270,6 +270,7 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element, get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
 
+lazy_import('sage.combinat.SJT', 'SJT')
 lazy_import('sage.combinat.rsk', ['RSK', 'RSK_inverse'])
 lazy_import('sage.combinat.tableau', 'Tableau')
 lazy_import('sage.combinat.words.finite_word', 'evaluation_dict')

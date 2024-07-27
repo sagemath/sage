@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 """
 Graph-theoretic partition backtrack functions
 

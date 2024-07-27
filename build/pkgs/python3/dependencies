@@ -1,4 +1,4 @@
-zlib readline sqlite libpng bzip2 liblzma libffi openssl | xz
+zlib readline sqlite libpng bzip2 liblzma xz libffi openssl
 
 ----------
 All lines of this file are ignored except the first.

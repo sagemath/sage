@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 from .satsolver import SatSolver
 from .cryptominisat import CryptoMiniSat
 

@@ -68,4 +68,4 @@
     magic doctest comments should appear on the "sage:" line, not "....:" lines
   # see optional_regex in src/sage/doctest/parsing.py
   # "indirect doctest" is from src/bin/sage-coverage
-  pattern: '^[ 	]*[.][.][.][.]:.*#.*(py2|py3|long time|not implemented|not tested|known bug|optional|indirect doctest)'
+  pattern: '^[ 	]*[.][.][.][.]:.*#.*(py2|py3|long time|not implemented|not tested|known bug|optional|needs|indirect doctest)'

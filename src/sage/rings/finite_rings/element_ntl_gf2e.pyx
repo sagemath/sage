@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -334,7 +335,13 @@ cdef class Cache_ntl_gf2e(Cache_base):
             e = e.__pari__()
 
         elif isinstance(e, GapElement):
+            from sage.libs.gap.element import GapElement_FiniteField
+
+            if isinstance(e, GapElement_FiniteField):
+                return e.sage(ring=self._parent)
+
             from sage.libs.gap.libgap import libgap
+
             return libgap(e).sage(ring=self._parent)
 
         else:

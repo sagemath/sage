@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 r"""
 Base classes for 3D graphics objects and plotting
 

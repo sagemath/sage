@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Library of Interesting Groups
 
@@ -14,7 +15,12 @@ of groups implemented as permutation groups.
 # entry to the list in the module-level
 # docstring of groups/groups_catalog.py
 
-from .all import GL, SL, Sp, SU, GU, SO, GO
-from .all import QuaternionMatrixGroupGF3 as QuaternionGF3
-from sage.groups.matrix_gps.binary_dihedral import BinaryDihedralGroup as BinaryDihedral
-from sage.groups.matrix_gps.heisenberg import HeisenbergGroup as Heisenberg
+from .all__sagemath_modules import GL, SL, Sp, SU, GU, SO, GO
+from .all__sagemath_modules import QuaternionMatrixGroupGF3 as QuaternionGF3
+
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.groups.matrix_gps.binary_dihedral', 'BinaryDihedralGroup', as_='BinaryDihedral')
+lazy_import('sage.groups.matrix_gps.heisenberg', 'HeisenbergGroup', as_='Heisenberg')
+
+del lazy_import

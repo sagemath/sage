@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-libecm
 r"""
 The Elliptic Curve Factorization Method
 

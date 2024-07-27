@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Randomized tests of GiNaC / PyNaC
 """

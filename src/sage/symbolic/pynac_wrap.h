@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-symbolics
+ */
 /*******************************************************************************
     Sage: Open Source Mathematical Software
         Copyright (C) 2008 William Stein <wstein@gmail.com>

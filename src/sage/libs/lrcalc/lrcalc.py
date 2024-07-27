@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-combinat
+# sage.doctest: optional - lrcalc_python, needs sage.combinat
 r"""
 An interface to Anders Buch's Littlewood-Richardson Calculator ``lrcalc``
 

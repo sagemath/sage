@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.structure.element cimport AlgebraElement
 from sage.structure.parent cimport Parent
 from sage.rings.integer cimport Integer

@@ -27,6 +27,23 @@ distribution of a small part of the Sage Library.
 
 It provides a small, fundamental subset of the modules of the Sage
 library ("sagelib", `sagemath-standard`), providing the connection to the
-system and software environment.  It also includes the `sage` script for
-launching the Sage REPL and accessing various developer tools (see `sage
---help`).
+system and software environment.
+
+
+What is included
+----------------
+
+* `sage` script for launching the Sage REPL and accessing various developer tools
+  (see `sage --help`, `Invoking Sage <https://doc.sagemath.org/html/en/reference/repl/options.html>`_).
+
+* sage.env
+
+* `sage.features <https://doc.sagemath.org/html/en/reference/misc/sage/features.html>`_: Testing for features of the environment at runtime
+
+* `sage.misc.package <https://doc.sagemath.org/html/en/reference/misc/sage/misc/package.html>`_: Listing packages of the Sage distribution
+
+* `sage.misc.package_dir <https://doc.sagemath.org/html/en/reference/misc/sage/misc/package_dir.html>`_
+
+* `sage.misc.temporary_file <https://doc.sagemath.org/html/en/reference/misc/sage/misc/temporary_file.html>`_
+
+* `sage.misc.viewer <https://doc.sagemath.org/html/en/reference/misc/sage/misc/viewer.html>`_

@@ -1,0 +1,3 @@
+FORCE $(PYTHON) cysignals gmpy2 boost_cropped sagemath_categories | $(PYTHON_TOOLCHAIN) sagemath_environment sage_setup cython pkgconfig python_build
+
+# FORCE: Always run the spkg-install script

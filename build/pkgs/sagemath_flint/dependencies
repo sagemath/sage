@@ -1,0 +1,1 @@
+$(PYTHON) sagemath_categories sagemath_ntl flint | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig sage_conf

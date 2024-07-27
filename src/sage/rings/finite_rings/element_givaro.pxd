@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 # distutils: extra_compile_args = GIVARO_CFLAGS -std=c++11
 # distutils: include_dirs = GIVARO_INCDIR
 

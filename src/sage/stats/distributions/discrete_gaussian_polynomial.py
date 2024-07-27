@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Discrete Gaussian Samplers for `\ZZ[x]`
 
@@ -73,7 +74,9 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
         True
         sage: gs = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)
         sage: [gs() for _ in range(3)]  # random
-        [4*x^7 + 4*x^6 - 4*x^5 + 2*x^4 + x^3 - 4*x + 7, -5*x^6 + 4*x^5 - 3*x^3 + 4*x^2 + x, 2*x^7 + 2*x^6 + 2*x^5 - x^4 - 2*x^2 + 3*x + 1]
+        [4*x^7 + 4*x^6 - 4*x^5 + 2*x^4 + x^3 - 4*x + 7,
+         -5*x^6 + 4*x^5 - 3*x^3 + 4*x^2 + x,
+         2*x^7 + 2*x^6 + 2*x^5 - x^4 - 2*x^2 + 3*x + 1]
 
     .. automethod:: __init__
     .. automethod:: __call__

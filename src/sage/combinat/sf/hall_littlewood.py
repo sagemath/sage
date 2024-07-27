@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Hall-Littlewood Polynomials
@@ -20,13 +21,16 @@ Notation used in the definitions follows mainly [Mac1995]_.
 #*****************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.libs.symmetrica.all import hall_littlewood
 from . import sfa
 import sage.combinat.partition
-from sage.matrix.constructor import matrix
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
+from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
+
+lazy_import('sage.libs.symmetrica.all', 'hall_littlewood')
+lazy_import('sage.matrix.constructor', 'matrix')
+
 
 # P basis cache
 p_to_s_cache = {}

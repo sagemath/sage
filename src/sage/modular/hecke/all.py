@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-schemes
+
 from sage.modular.hecke.homspace import HeckeModuleHomspace, is_HeckeModuleHomspace
 
 from sage.modular.hecke.module import HeckeModule_free_module, HeckeModule_generic, is_HeckeModule

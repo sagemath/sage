@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-lcalc
 r"""
 Rubinstein's `L`-function calculator
 

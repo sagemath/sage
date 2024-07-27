@@ -1,3 +1,4 @@
+#
 # This file is run by Sage when initializing libgap via GAP_Initialize, and may
 # contain bug fixes/workarounds and/or any Sage-specific patches necessary for
 # Sage's libgap interface.

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 #*****************************************************************************
 #       Copyright (C) 2014 Sage
 #

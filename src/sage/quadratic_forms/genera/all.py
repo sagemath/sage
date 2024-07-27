@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #

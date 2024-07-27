@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 # cython: wraparound=False, boundscheck=False
 # sage.doctest: needs sage.graphs
 r"""

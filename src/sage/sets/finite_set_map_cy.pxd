@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 #*****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>,
 #

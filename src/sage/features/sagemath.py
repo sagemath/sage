@@ -105,6 +105,28 @@ class sagemath_doc_html(StaticFile):
                             type='standard')
 
 
+class sage__all(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.all`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__all
+        sage: sage__all().is_present()                                                  # needs sage.all
+        FeatureTestResult('sage.all', True)
+    """
+
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__all
+            sage: isinstance(sage__all(), sage__all)
+            True
+        """
+        PythonModule.__init__(self, 'sage.all')
+
+
 class sage__combinat(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.combinat`.
@@ -128,10 +150,10 @@ class sage__combinat(JoinFeature):
 
     Doctests that use Python modules from :mod:`sage.combinat` that involve trees,
     graphs, hypergraphs, posets, quivers, combinatorial designs,
-    finite state machines etc. should be marked ``# needs sage.combinat sage.graphs``::
+    finite state machines etc. should be marked ``# needs sage.graphs`` instead::
 
-        sage: L = Poset({0: [1], 1: [2], 2:[3], 3:[4]})                                 # needs sage.combinat sage.graphs
-        sage: L.is_chain()                                                              # needs sage.combinat sage.graphs
+        sage: L = Poset({0: [1], 1: [2], 2:[3], 3:[4]})                                 # needs sage.graphs
+        sage: L.is_chain()                                                              # needs sage.graphs
         True
 
     Doctests that use combinatorial modules/algebras, or root systems should use the tag
@@ -147,10 +169,10 @@ class sage__combinat(JoinFeature):
         Positive imaginary roots of type ['A', 3, 1]
 
     Doctests that use lattices, semilattices, or Dynkin diagrams should use the tag
-    ``# needs sage.combinat sage.graphs sage.modules``::
+    ``# needs sage.graphs sage.modules``::
 
-        sage: L = LatticePoset({0: [1,2], 1: [3], 2: [3,4], 3: [5], 4: [5]})            # needs sage.combinat sage.graphs sage.modules
-        sage: L.meet_irreducibles()                                                     # needs sage.combinat sage.graphs sage.modules
+        sage: L = LatticePoset({0: [1,2], 1: [3], 2: [3,4], 3: [5], 4: [5]})            # needs sage.graphs sage.modules
+        sage: L.meet_irreducibles()                                                     # needs sage.graphs sage.modules
         [1, 3, 4]
 
     TESTS::
@@ -174,6 +196,8 @@ class sage__combinat(JoinFeature):
         JoinFeature.__init__(self, 'sage.combinat',
                              [PythonModule('sage.combinat'),                        # namespace package
                               PythonModule('sage.combinat.tableau'),                # representative
+                              PythonModule('sage.monoids'),                         # namespace package
+                              PythonModule('sage.monoids.hecke_monoid'),            # representative
                              ],
                              spkg='sagemath_combinat', type="standard")
 
@@ -216,8 +240,10 @@ class sage__geometry__polyhedron(JoinFeature):
         JoinFeature.__init__(self, 'sage.geometry.polyhedron',
                              [PythonModule('sage.geometry'),                        # namespace package
                               PythonModule('sage.geometry.polyhedron'),             # representative
+                              PythonModule('sage.geometry.newton_polygon'),
                               PythonModule('sage.schemes.toric'),                   # namespace package
                               PythonModule('sage.schemes.toric.variety'),           # representative
+                              # sage__modules(),
                              ],
                              spkg='sagemath_polyhedra', type="standard")
 
@@ -367,7 +393,7 @@ class sage__libs__ecl(PythonModule):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__libs__ecl
-        sage: sage__libs__ecl().is_present()                        # optional - sage.libs.ecl
+        sage: sage__libs__ecl().is_present()                                            # needs sage.libs.ecl
         FeatureTestResult('sage.libs.ecl', True)
     """
 
@@ -406,8 +432,12 @@ class sage__libs__flint(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.flint',
-                             [PythonModule('sage.libs.flint.arith_sage'),
-                              PythonModule('sage.libs.flint.flint_sage')],
+                             [PythonModule('sage.libs.flint.flint_sage'),
+                              PythonModule('sage.libs.flint.arith_sage'),
+                              PythonModule('sage.rings.padics.padic_relaxed_element'),
+                              PythonModule('sage.rings.padics.pow_computer_flint'),
+                              PythonModule('sage.graphs.chrompoly'),
+                              PythonModule('sage.graphs.matchpoly')],
                              spkg='sagemath_flint', type='standard')
 
 
@@ -454,6 +484,58 @@ class sage__libs__gap(JoinFeature):
                               PythonModule('sage.rings.universal_cyclotomic_field')])
 
 
+class sage__libs__giac(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.giac`.
+
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__libs__giac
+        sage: sage__libs__giac().is_present()                                           # needs sage.libs.giac
+        FeatureTestResult('sage.libs.giac', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__giac
+            sage: isinstance(sage__libs__giac(), sage__libs__giac)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.giac',
+                             [PythonModule('sage.libs.giac.giac')],
+                             spkg='sagemath_giac', type='standard')
+
+
+class sage__libs__homfly(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.homfly`.
+
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__libs__homfly
+        sage: sage__libs__homfly().is_present()                                         # needs sage.libs.homfly
+        FeatureTestResult('sage.libs.homfly', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__homfly
+            sage: isinstance(sage__libs__homfly(), sage__libs__homfly)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.homfly',
+                             [PythonModule('sage.libs.homfly')],
+                             spkg='sagemath_homfly', type='standard')
+
+
 class sage__libs__linbox(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.linbox`
@@ -479,7 +561,9 @@ class sage__libs__linbox(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.linbox',
                              [PythonModule('sage.rings.finite_rings.element_givaro'),
                               PythonModule('sage.matrix.matrix_modn_dense_float'),
-                              PythonModule('sage.matrix.matrix_modn_dense_double')],
+                              PythonModule('sage.matrix.matrix_modn_dense_double'),
+                              PythonModule('sage.matrix.matrix_integer_dense'),
+                              PythonModule('sage.matrix.matrix_rational_dense')],
                              spkg='sagemath_linbox', type='standard')
 
 
@@ -488,8 +572,8 @@ class sage__libs__m4ri(JoinFeature):
     A :class:`sage.features.Feature` describing the presence of Cython modules
     depending on the M4RI and/or M4RIe libraries.
 
-    In addition to the modularization purposes that this tag serves,
-    it also provides attribution to the upstream project.
+    In addition to the modularization purposes that this tag serves, it also provides attribution
+    to the upstream project.
 
     TESTS::
 
@@ -534,34 +618,10 @@ class sage__libs__ntl(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.ntl',
-                             [PythonModule('sage.libs.ntl.convert')],
+                             [PythonModule('sage.libs.ntl.convert'),
+                              PythonModule('sage.rings.polynomial.polynomial_integer_dense_ntl'),
+                              ],
                              spkg='sagemath_ntl', type='standard')
-
-
-class sage__libs__homfly(JoinFeature):
-    r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.homfly`.
-
-    In addition to the modularization purposes that this tag serves,
-    it also provides attribution to the upstream project.
-
-    TESTS::
-
-        sage: from sage.features.sagemath import sage__libs__homfly
-        sage: sage__libs__homfly().is_present()                                         # needs sage.libs.homfly
-        FeatureTestResult('sage.libs.homfly', True)
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__libs__homfly
-            sage: isinstance(sage__libs__homfly(), sage__libs__homfly)
-            True
-        """
-        JoinFeature.__init__(self, 'sage.libs.homfly',
-                             [PythonModule('sage.libs.homfly')],
-                             spkg='sagemath_homfly', type='standard')
 
 
 class sage__libs__pari(JoinFeature):
@@ -598,7 +658,8 @@ class sage__libs__pari(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.pari',
-                             [PythonModule('sage.libs.pari.convert_sage')],
+                             [PythonModule('sage.interfaces.gp'),
+                              PythonModule('sage.libs.pari.convert_gmp')],
                              spkg='sagemath_pari', type='standard')
 
 
@@ -630,7 +691,8 @@ class sage__libs__singular(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.singular',
                              [PythonModule('sage.libs.singular.singular'),
-                              PythonModule('sage.interfaces.singular')])
+                              PythonModule('sage.interfaces.singular'),
+                              PythonModule('sage.rings.polynomial.plural')])
 
 
 class sage__modular(JoinFeature):
@@ -694,6 +756,8 @@ class sage__modules(JoinFeature):
                               PythonModule('sage.modules.free_module'),             # representative
                               PythonModule('sage.matrix'),                          # namespace package
                               PythonModule('sage.matrix.matrix2'),                  # representative
+                              PythonModule('sage.coding'),                          # namespace package
+                              PythonModule('sage.coding.kasami_codes'),             # representative
                               PythonModule('sage.combinat.free_module'),
                               PythonModule('sage.quadratic_forms'),                 # namespace package
                               PythonModule('sage.quadratic_forms.quadratic_form'),  # representative
@@ -752,7 +816,8 @@ class sage__plot(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.plot',
-                             [PythonModule('sage.plot.plot')],
+                             [PythonModule('sage.plot.plot'),
+                              PythonModule('matplotlib')],
                              spkg='sagemath_plot', type='standard')
 
 
@@ -776,6 +841,30 @@ class sage__rings__complex_double(PythonModule):
         """
         PythonModule.__init__(self, 'sage.rings.complex_double',
                               spkg='sagemath_modules', type='standard')
+
+
+class sage__rings__complex_interval_field(JoinFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.complex_interval_field`.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__rings__complex_interval_field
+        sage: sage__rings__complex_interval_field().is_present()                        # needs sage.rings.complex_interval_field
+        FeatureTestResult('sage.rings.complex_interval_field', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__complex_interval_field
+            sage: isinstance(sage__rings__complex_interval_field(), sage__rings__complex_interval_field)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.rings.complex_interval_field',
+                             [PythonModule('sage.rings.complex_interval_field'),
+                              PythonModule('sage.rings.cif')],
+                             spkg='sagemath_modules', type='standard')
 
 
 class sage__rings__finite_rings(JoinFeature):
@@ -913,14 +1002,30 @@ class sage__rings__number_field(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.number_field',
                              [PythonModule('sage.rings.number_field.number_field_element'),
-                              PythonModule('sage.rings.universal_cyclotomic_field'),
-                              PythonModule('sage.rings.qqbar')],
+                              PythonModule('sage.rings.number_field.number_field_element_quadratic'),
+                              PythonModule('sage.rings.qqbar'),
+                              PythonModule('sage.rings.polynomial.real_roots'),
+                              sage__libs__flint()],
                              type='standard')
 
 
 class sage__rings__padics(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``sage.rings.padics``.
+
+    This includes the element implementations using :ref:`PARI <spkg_pari>` and :ref:`NTL <spkg_ntl>`.
+
+    EXAMPLES::
+
+        sage: Qp(3)                                                                     # needs sage.rings.padics
+        sage: Qq(125)                                                                   # needs sage.rings.padics
+
+    Some other precision models require the additional feature :mod:`sage.libs.flint`::
+
+        sage: R.<a> = QqFP(25, 40); R                                                   # needs sage.libs.flint sage.rings.padics
+        5-adic Unramified Extension Field in a defined by x^2 + 4*x + 2
+        sage: R.<a> = Zq(9, 5, 'fixed-mod', print_mode='series'); b = 3*(1+2*a)^4; b    # needs sage.libs.flint sage.rings.padics
+        2*3 + (2*a + 2)*3^2 + (2*a + 1)*3^3
 
     TESTS::
 
@@ -937,7 +1042,9 @@ class sage__rings__padics(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.rings.padics',
-                             [PythonModule('sage.rings.padics.factory')],
+                             [PythonModule('sage.rings.padics.factory'),
+                              PythonModule('sage.rings.padics.padic_ext_element'),
+                              PythonModule('polynomial_padic_capped_relative_dense')],
                              type='standard')
 
 
@@ -961,7 +1068,7 @@ class sage__rings__polynomial__pbori(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.polynomial.pbori',
                              [PythonModule('sage.rings.polynomial.pbori.pbori')],
-                             spkg='sagemath_brial', type='standard')
+                             spkg='sagemath_brial', type='optional')
 
 
 class sage__rings__real_double(PythonModule):
@@ -995,6 +1102,31 @@ class sage__rings__real_double(PythonModule):
         PythonModule.__init__(self, 'sage.rings.real_double', type='standard')
 
 
+class sage__rings__real_interval_field(JoinFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_mpfi`.
+
+    It provides the :class:`RealIntervalField`.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__rings__real_interval_field
+        sage: sage__rings__real_interval_field().is_present()                           # needs sage.rings.real_interval_field
+        FeatureTestResult('sage.rings.real_interval_field', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__real_interval_field
+            sage: isinstance(sage__rings__real_interval_field(), sage__rings__real_interval_field)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.rings.real_interval_field',
+                             [PythonModule('sage.rings.real_mpfi')],
+                             type='standard')
+
+
 class sage__rings__real_mpfr(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_mpfr`.
@@ -1015,6 +1147,7 @@ class sage__rings__real_mpfr(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.real_mpfr',
                              [PythonModule('sage.rings.real_mpfr'),
+                              PythonModule('sage.rings.cc'),
                               PythonModule('sage.rings.complex_mpfr'),
                              ],
                              spkg='sagemath_modules', type='standard')
@@ -1039,7 +1172,7 @@ class sage__sat(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.sat',
-                             [PythonModule('sage.sat.expression')],
+                             [PythonModule('sage.sat.solvers.satsolver')],
                              spkg='sagemath_combinat', type='standard')
 
 
@@ -1062,7 +1195,8 @@ class sage__schemes(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.schemes',
-                             [PythonModule('sage.schemes.elliptic_curves.ell_generic')],
+                             [PythonModule('sage.schemes.elliptic_curves.ell_generic'),
+                              sage__modules()],
                              spkg="sagemath_schemes", type='standard')
 
 
@@ -1148,6 +1282,7 @@ def all_features():
     """
     return [SAGE_SRC(),
             sagemath_doc_html(),
+            sage__all(),
             sage__combinat(),
             sage__geometry__polyhedron(),
             sage__graphs(),
@@ -1156,6 +1291,7 @@ def all_features():
             sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__gap(),
+            sage__libs__giac(),
             sage__libs__homfly(),
             sage__libs__linbox(),
             sage__libs__m4ri(),
@@ -1167,12 +1303,14 @@ def all_features():
             sage__numerical__mip(),
             sage__plot(),
             sage__rings__complex_double(),
+            sage__rings__complex_interval_field(),
             sage__rings__finite_rings(),
             sage__rings__function_field(),
             sage__rings__number_field(),
             sage__rings__padics(),
             sage__rings__polynomial__pbori(),
             sage__rings__real_double(),
+            sage__rings__real_interval_field(),
             sage__rings__real_mpfr(),
             sage__sat(),
             sage__schemes(),

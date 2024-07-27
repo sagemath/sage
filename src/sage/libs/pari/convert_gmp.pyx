@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 """
 Convert PARI objects to/from GMP objects
 

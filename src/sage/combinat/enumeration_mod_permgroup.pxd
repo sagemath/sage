@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 from sage.structure.list_clone cimport ClonableIntArray
 
 cpdef list all_children(ClonableIntArray v, int max_part)

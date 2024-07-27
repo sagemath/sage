@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Parents for Polyhedra
 """
@@ -20,7 +21,12 @@ from sage.misc.lazy_import import lazy_import
 import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.real_double import RDF
+
+try:
+    from sage.rings.real_double import RDF
+except ImportError:
+    RDF = None
+
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules

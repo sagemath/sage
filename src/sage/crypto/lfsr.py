@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Linear feedback shift register (LFSR) sequence commands
@@ -127,10 +128,10 @@ AUTHORS:
 
 import copy
 
-from sage.structure.all import Sequence
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.all import Sequence
 
 
 def lfsr_sequence(key, fill, n):

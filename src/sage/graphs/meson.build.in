@@ -1,0 +1,10 @@
+bliss = cc.find_library('bliss', required: false)
+mcqd = cc.find_library('mcqd', required: false)
+cliquer = cc.find_library('cliquer')
+
+# Cannot be found via pkg-config
+planarity = declare_dependency(
+  dependencies: [
+    cc.find_library('planarity'),
+  ]
+)

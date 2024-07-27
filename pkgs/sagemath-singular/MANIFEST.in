@@ -1,0 +1,30 @@
+prune sage
+
+include VERSION.txt
+
+graft           sage/algebras/quatalg                                 # flint, singular
+graft           sage/algebras/letterplace                             # singular
+graft           sage/algebras/fusion_rings                            # number_field (ntl), singular
+graft           sage/ext_data/singular
+graft           sage/libs/singular
+include         sage/matrix/matrix_mpolynom*.p*
+include         sage/rings/function_field/*_polymod.*
+include         sage/rings/polynomial/plural.p*
+include         sage/rings/polynomial/*singular*.p*
+exclude         sage/rings/polynomial/polynomial_singular_interface.p*  # in sagemath-categories
+
+
+global-exclude *.c
+global-exclude *.cpp
+
+global-exclude all__sagemath_*.py
+global-include all__sagemath_singular.py
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

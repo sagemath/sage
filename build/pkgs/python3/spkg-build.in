@@ -73,25 +73,24 @@ sdh_configure --enable-shared $PYTHON_CONFIGURE
 # we need to provide paths into $SAGE_LOCAL, so that setup.py finds
 # the libraries needed for the extension modules - in particular sqlite3.
 # (The search code there does not know about CPATH and LIBRARY_PATH.)
+make_LDFLAGS="-L. -Wl,-rpath,. -L$SAGE_LOCAL/lib $LDFLAGS"
+make_CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
 
-if [ "$UNAME" = "Darwin" ]; then
-    make_LDFLAGS="-L$SAGE_LOCAL/lib -L$SAGE_INST_LOCAL/lib $LDFLAGS"
-    # This enables python to find libpython
-    export DYLD_LIBRARY_PATH="."
-fi
+# Also, we need to add an rpath, like we do for SAGE_LOCAL in src/bin/sage-env.
+# SAGE_INST_LOCAL is the installation hierarchy for the current package
+# -- for python3, this is SAGE_VENV.
+make_LDFLAGS="-Wl,-rpath,$SAGE_INST_LOCAL/lib $make_LDFLAGS"
 if [ "$UNAME" = "Linux" ]; then
-    make_LDFLAGS="-L. -Wl,-rpath,. -L$SAGE_LOCAL/lib $LDFLAGS"
-    make_CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
-    # Also, we need to add an rpath, like we do for SAGE_LOCAL in src/bin/sage-env.
-    # SAGE_INST_LOCAL is the installation hierarchy for the current package
-    # -- for python3, this is SAGE_VENV.
-    make_LDFLAGS="-Wl,-rpath,$SAGE_INST_LOCAL/lib $make_LDFLAGS"
     make_LDFLAGS="-Wl,-rpath-link,$SAGE_INST_LOCAL/lib $make_LDFLAGS"
-    # This enables python to find libpython
-    export LD_LIBRARY_PATH="."
 fi
 
 sdh_make LDFLAGS="$make_LDFLAGS" CPPFLAGS="$make_CPPFLAGS"
+
+if [ "$UNAME" = "Darwin" ]; then
+    export DYLD_LIBRARY_PATH="."
+else
+    export LD_LIBRARY_PATH="."
+fi
 
 # When building on a case-insensitive filesystem (on any OS, not just Windows)
 # the Python executable is output to the build directory as 'python.exe'

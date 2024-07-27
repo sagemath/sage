@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.structure.element cimport ModuleElement
 from sage.rings.power_series_ring_element cimport PowerSeries
 

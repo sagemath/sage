@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-flint
+
 from sage.rings.rational cimport Rational
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.modules.vector_real_double_dense cimport Vector_real_double_dense

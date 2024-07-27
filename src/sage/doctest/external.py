@@ -31,15 +31,15 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import multiprocessing
 import os
+
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
 if os.uname().sysname == 'Darwin':
+    import multiprocessing
     multiprocessing.set_start_method('fork', force=True)
-Array = multiprocessing.Array
 
 # Functions in this module whose name is of the form 'has_xxx' tests if the
 # software xxx is available to Sage.
@@ -431,8 +431,13 @@ class AvailableSoftware():
         features.update(all_features())
         self._features = sorted(features, key=lambda feature: feature.name)
         self._indices = {feature.name: idx for idx, feature in enumerate(self._features)}
-        self._seen = Array('i', len(self._features)) # initialized to zeroes
-        self._hidden = Array('i', len(self._features)) # initialized to zeroes
+        try:
+            from multiprocessing import Array
+            self._seen = Array('i', len(self._features)) # initialized to zeroes
+            self._hidden = Array('i', len(self._features)) # initialized to zeroes
+        except ImportError:  # module '_multiprocessing' is removed in Pyodide due to browser limitations
+            self._seen = [0] * len(self._features)
+            self._hidden = [0] * len(self._features)
 
     def __contains__(self, item):
         """

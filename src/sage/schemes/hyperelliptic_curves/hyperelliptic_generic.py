@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Hyperelliptic curves over a general ring
 

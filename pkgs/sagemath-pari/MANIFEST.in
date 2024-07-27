@@ -1,0 +1,73 @@
+prune sage
+
+include VERSION.txt
+
+include sage/ext/memory.p*                                      # only used by sage.libs.pari
+
+include sage/interfaces/gp.p*
+
+graft sage/libs/pari
+exclude sage/libs/pari/convert_flint.p*
+include sage/groups/pari_group.p*
+include sage/rings/finite_rings/*pari*.p*               # needs sage.rings.finite_rings.element_base
+include sage/rings/factorint_pari.p*                    # needs sage.rings.integer
+include sage/rings/power_series_pari.p*                 # needs sage.rings.power_series_ring_element, sage.rings.polynomial.polynomial_element
+include sage/rings/pari_ring.p*
+
+# We could but don't currently include this
+# -- rather we ship all of sage.rings.number_field in sagemath-ntl (which currently depends on sagemath-pari)
+# include sage/rings/number_field/totallyreal*.p*         # needs sage.rings.{integer,rational}
+
+#
+# padics using PARI.
+#
+graft sage/rings/padics
+graft sage/rings/polynomial/padics
+graft sage/rings/valuation
+include sage/rings/function_field/valuation.p*
+include sage/libs/linkages/padics/*.pxi                         # FIXME?
+include sage/rings/tate*.p*
+# exclude what is shipped by sagemath-categories
+exclude sage/rings/padics/padic_generic.p*
+exclude sage/rings/padics/local_generic.p*
+exclude sage/rings/padics/local_generic_element.p*
+exclude sage/rings/padics/precision_error.p*
+exclude sage/rings/padics/misc.p*
+# exclude what is shipped by sagemath-ntl
+exclude sage/rings/padics/padic_ext_element.p*
+exclude sage/rings/padics/pow_computer_ext.p*
+exclude sage/rings/padics/padic_ZZ_pX_*.p*
+# exclude what is shipped by sagemath-flint
+exclude sage/rings/padics/all.p*
+exclude sage/rings/padics/*flint*.p*
+exclude sage/rings/padics/padic_relaxed_*.p*
+
+# Parts of quadratic_forms excluded form sagemath-modules;
+# lazy-imported and can only be tested with pari present
+graft sage/quadratic_forms/genera
+include sage/quadratic_forms/quadratic_form__automorphisms.p*
+include sage/quadratic_forms/quadratic_form__genus.p*
+include sage/quadratic_forms/quadratic_form__local_density_interfaces.p*
+include sage/quadratic_forms/quadratic_form__local_normal_form.p*
+include sage/quadratic_forms/quadratic_form__local_representation_conditions.p*
+include sage/quadratic_forms/quadratic_form__mass*.p*
+include sage/quadratic_forms/quadratic_form__siegel_product.p*
+include sage/quadratic_forms/qfsolve.p*
+include sage/quadratic_forms/special_values.p*
+
+global-exclude *.c
+global-exclude *.cpp
+
+include sage/rings/padics/transcendantal.c  # sic
+
+global-exclude all__sagemath*.*
+global-include all__sagemath_pari.py
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

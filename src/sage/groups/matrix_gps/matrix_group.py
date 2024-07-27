@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Base classes for Matrix Groups
 
@@ -16,7 +17,7 @@ Loading, saving, ... works::
 
 We test that :issue:`9437` is fixed::
 
-    sage: len(list(SL(2, Zmod(4))))
+    sage: len(list(SL(2, Zmod(4))))                                                     # needs sage.libs.gap
     48
 
 AUTHORS:

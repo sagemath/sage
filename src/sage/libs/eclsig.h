@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-symbolics
+ */
 /*
  * eclsig.h: included from ecl.pyx
  *

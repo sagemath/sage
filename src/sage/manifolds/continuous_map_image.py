@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Images of Manifold Subsets under Continuous Maps as Subsets of the Codomain
 
@@ -31,7 +32,7 @@ class ImageManifoldSubset(ManifoldSubset):
       of `\Phi` is the inverse of `\Phi` onto its image if the latter
       exists (NB: no check of this is performed)
     - ``name`` -- (default: computed from the names of the map and the subset)
-       string; name (symbol) given to the subset
+      string; name (symbol) given to the subset
     - ``latex_name`` --  (default: ``None``) string; LaTeX symbol to
       denote the subset; if none is provided, it is set to ``name``
     - ``domain_subset`` -- (default: the domain of ``map``) a subset of the domain of

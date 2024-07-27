@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # Functions removed from flint but still needed in Sage. Code adapted from
 # earlier versions of flint.
 

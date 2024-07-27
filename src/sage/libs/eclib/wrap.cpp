@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-eclib
+ */
 #include <iostream>
 #include <sstream>
 using namespace std;

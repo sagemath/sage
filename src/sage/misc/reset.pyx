@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 """
 Interpreter reset
@@ -70,7 +71,6 @@ def reset(vars=None, attached=False):
         sage: bool(x > 3)
         False
     """
-    from sage.symbolic.assumptions import forget
     if vars is not None:
         restore(vars)
         return
@@ -83,7 +83,12 @@ def reset(vars=None, attached=False):
             except KeyError:
                 pass
     restore()
-    forget()
+    try:
+        from sage.symbolic.assumptions import forget
+    except ImportError:
+        pass
+    else:
+        forget()
     reset_interfaces()
     if attached:
         import sage.repl.attach
@@ -141,8 +146,12 @@ def restore(vars=None):
             import sage.all
             D = sage.all.__dict__
     _restore(G, D, vars)
-    import sage.calculus.calculus
-    _restore(sage.calculus.calculus.syms_cur, sage.calculus.calculus.syms_default, vars)
+    try:
+        import sage.calculus.calculus
+    except ImportError:
+        pass
+    else:
+        _restore(sage.calculus.calculus.syms_cur, sage.calculus.calculus.syms_default, vars)
 
 
 def _restore(G, D, vars):
@@ -166,5 +175,9 @@ def _restore(G, D, vars):
 
 
 def reset_interfaces():
-    from sage.interfaces.quit import expect_quitall
-    expect_quitall()
+    try:
+        from sage.interfaces.quit import expect_quitall
+    except ImportError:
+        pass
+    else:
+        expect_quitall()
