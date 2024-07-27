@@ -555,7 +555,11 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         R = None
 
     try:
+        import numpy
         from numpy import ndarray
+        if int(numpy.version.short_version[0]) > 1:
+            numpy.set_printoptions(legacy="1.25")
+
     except ImportError:
         pass
     else:
@@ -1188,7 +1192,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             over Rational Field to numpy array of type <... 'float'>:
             setting an array element with a sequence.
         """
+        import numpy
         from numpy import array
+        if int(numpy.version.short_version[0]) > 1:
+            numpy.set_printoptions(legacy="1.25")
+
         try:
             return array(self, dtype=dtype)
         except ValueError as e:

@@ -1399,7 +1399,7 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
     Over an extension field::
 
         sage: E3 = E.change_ring(CyclotomicField(3))
-        sage: possible_isogeny_degrees(E3)
+        sage: possible_isogeny_degrees(E3)                                              # long time (5s)
         [5]
         sage: [phi.degree() for phi in E3.isogenies_prime_degree()]
         [5, 5]
@@ -1421,7 +1421,7 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
 
         sage: K.<a> = NumberField(x^4 - 5*x^2 + 3)
         sage: E = EllipticCurve(K, [a^2 - 2, -a^2 + 3, a^2 - 2, -50*a^2 + 35, 95*a^2 - 67])
-        sage: possible_isogeny_degrees(E, exact=False, algorithm='Billerey')
+        sage: possible_isogeny_degrees(E, exact=False, algorithm='Billerey')            # long time (6.5s)
         [2, 5]
         sage: possible_isogeny_degrees(E, exact=False, algorithm='Larson')
         [2, 5]
@@ -1432,7 +1432,7 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
 
     This function only returns the primes which are isogeny degrees::
 
-        sage: Set(E.isogeny_class().matrix().list())
+        sage: Set(E.isogeny_class().matrix().list())                                    # long time (7s)
         {1, 2, 4, 5, 20, 10}
 
     For curves with CM by a quadratic order of class number greater
