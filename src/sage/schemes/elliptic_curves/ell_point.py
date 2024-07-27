@@ -3485,7 +3485,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                 h = (log(c.norm())
                      + sum(self.non_archimedean_local_height(v, prec, weighted=True)
                            - c.valuation(v) * log(v.norm())
-                           for v, e in factorD)) # if e >= 12 and c.valuation(v)))
+                           for v, e in factorD))
                 if not weighted:
                     h /= K.degree()
             return h
