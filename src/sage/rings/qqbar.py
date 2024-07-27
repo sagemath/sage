@@ -117,14 +117,12 @@ We can convert from symbolic expressions::
     1
     sage: QQbar((-8)^(1/3))
     1.000000000000000? + 1.732050807568878?*I
-    sage: AA((-8)^(1/3))
-    -2
     sage: QQbar((-4)^(1/4))
     1 + 1*I
     sage: AA((-4)^(1/4))
     Traceback (most recent call last):
     ...
-    ValueError: Cannot coerce algebraic number with non-zero imaginary part to algebraic real
+    ValueError: cannot raise negative algebraic real -4 to fractional power 1/4
 
 The coercion, however, goes in the other direction, since not all
 symbolic expressions are algebraic numbers::
