@@ -118,9 +118,14 @@ if [ -n "$SAGE_SILENT_BUILD" -a ${use_prefix} = true ]; then
     ( exec>> $logfile 2>&1; time_cmd "$cmd"; status=$?; report_time; exit $status )
     status=$?
     if [[ $status != 0 ]]; then
-        echo "  [$logname] error installing, exit status $status. End of log file:"
-        tail -n 120 "$logfile" | sed "/Please email sage-devel/,$ d;s;^;  [$logname]   ;" >&2
-        echo "  [$logname] Full log file: $logfile"
+        if [ -n "$GITHUB_ACTIONS" ]; then
+            echo "  [$logname] error installing, exit status $status. Log file:"
+            sed "s;^;  [$logname]   ;" "$logfile" >&2
+        else
+            echo "  [$logname] error installing, exit status $status. End of log file:"
+            tail -n 120 "$logfile" | sed "/Please email sage-devel/,$ d;s;^;  [$logname]   ;" >&2
+            echo "  [$logname] Full log file: $logfile"
+        fi
     else
         time=$(report_time)
         if [ -n "$time" ]; then

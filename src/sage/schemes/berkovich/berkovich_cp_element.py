@@ -33,17 +33,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.structure.element import Element
-from sage.structure.element import Expression
 import sage.rings.abc
-from sage.rings.real_mpfr import RR, RealNumber
-from sage.rings.padics.padic_generic_element import pAdicGenericElement
-from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
-from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
+
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR, RealNumber
+from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
+from sage.schemes.projective.projective_space import ProjectiveSpace
+from sage.structure.element import Element, Expression
+
+lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
+lazy_import('sage.rings.padics.padic_base_generic', 'pAdicBaseGeneric')
 
 
 class Berkovich_Element(Element):
