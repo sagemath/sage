@@ -26,6 +26,7 @@ from sage.functions.all import exp
 from sage.symbolic.expression_conversions import Converter
 from sage.symbolic.operators import add_vararg, mul_vararg
 from sage.symbolic.ring import SR
+from sage.rings.qqbar import AlgebraicRealField
 
 
 #############
@@ -97,6 +98,19 @@ class AlgebraicConverter(Converter):
             sage: L = QuadraticField(3, embedding=-AA(3).sqrt())
             sage: bool(L.gen() == -sqrt(3))
             True
+
+        Test that :issue:`36735` is fixed::
+
+            sage: AA((-1)^(2/3))
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot raise negative algebraic real -1 to fractional power 2/3
+            sage: AA((-sqrt(27)+1)^5)
+            -1300.937032397459?
+            sage: AA((-sqrt(27)+1)^(5/2))
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot raise negative algebraic real -4.196152422706632? to fractional power 5/2
         """
         # We try to avoid simplifying, because maxima's simplify command
         # can change the value of a radical expression (by changing which
@@ -107,6 +121,8 @@ class AlgebraicConverter(Converter):
                 base, expt = ex.operands()
                 base = self.field(base)
                 expt = Rational(expt)
+                if isinstance(self.field, AlgebraicRealField) and expt.denom() != 1 and base < 0:
+                    raise ValueError("cannot raise negative algebraic real %r to fractional power %r" % (base, expt))
                 return self.field(base**expt)
             else:
                 if operator is add_vararg:
