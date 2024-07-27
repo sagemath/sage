@@ -6,14 +6,18 @@
 ## Distribution packaging should use build/pkgs/sagelib/src/setup.py
 ## instead.
 
+import logging
 import os
 import platform
 import sys
 import time
 from setuptools import setup, find_namespace_packages
 from setuptools.dist import Distribution
-from distutils import log
 import multiprocessing.pool
+
+logging.basicConfig(format='%(levelname)-8s%(relativeCreated)6dms: %(message)s [%(pathname)s:%(lineno)d]', level=logging.INFO)
+log = logging.getLogger(__name__)
+log.info('setup.py started')
 
 # PEP 517 builds do not have . in sys.path
 sys.path.insert(0, os.path.dirname(__file__))
