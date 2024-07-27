@@ -186,7 +186,7 @@ jobs:
 
       - name: Copy doc
         id: copy
-        if: (success() || failure()) && steps.docbuild.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
+        if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
           set -ex
           # We copy everything to a local folder
