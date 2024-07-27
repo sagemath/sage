@@ -429,7 +429,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 Fraction Field of Symmetric Functions over Rational Field in the Schur basis
             """
             if not self.is_integral_domain():
-                raise TypeError("self must be an integral domain.")
+                raise TypeError("self must be an integral domain")
             if hasattr(self, "__fraction_field") and self.__fraction_field is not None:
                 return self.__fraction_field
             else:
