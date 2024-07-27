@@ -775,7 +775,7 @@ def is_edge_cut(G, edges):
         sage: G.add_edge((2, 5, 'xyz'))
         sage: is_edge_cut(G, [(0, 5), (2, 5)])
         True
-        sage: is_edge_cut(G, [(0, 5), (2, 5, 'xyz)])
+        sage: is_edge_cut(G, [(0, 5), (2, 5, 'xyz')])
         True
         sage: is_edge_cut(G, [(0, 5, 'silly'), (2, 5)])
         True
@@ -867,10 +867,11 @@ def is_edge_cut(G, edges):
     cdef set seen
     DS = DisjointSet(G)
 
-    CC = G.connected_components()
-    for comp in CC:
+    for comp in G.connected_components():
         if not S.intersection(comp):
+            # This component is not involved in the cut
             continue
+
         # We run a DFS in comp from any vertex and avoid edges in C
         start = comp[0]
         queue = [start]
