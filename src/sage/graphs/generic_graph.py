@@ -24997,6 +24997,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.connectivity import blocks_and_cut_vertices
     from sage.graphs.connectivity import blocks_and_cuts_tree
     from sage.graphs.connectivity import is_cut_edge
+    from sage.graphs.connectivity import is_edge_cut
     from sage.graphs.connectivity import is_cut_vertex
     from sage.graphs.connectivity import edge_connectivity
     from sage.graphs.connectivity import vertex_connectivity

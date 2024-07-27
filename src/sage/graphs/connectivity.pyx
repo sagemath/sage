@@ -23,7 +23,8 @@ Here is what the module can do:
     :meth:`connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
-    :meth:`is_cut_edge` | Return ``True`` if the input edge is a cut-edge or a bridge.
+    :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
+    :meth:`is_edge_cut` | Check whether ``edges`` is an edge cut of ``G``.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
     :meth:`edge_connectivity` | Return the edge connectivity of the graph.
     :meth:`vertex_connectivity` | Return the vertex connectivity of the graph.
@@ -735,7 +736,7 @@ def blocks_and_cuts_tree(G):
 
 def is_edge_cut(G, edges):
     """
-    Check whether `èdges`` is an edge cut of ``G``.
+    Check whether ``edges`` is an edge cut of ``G``.
 
     A set of edges is an edge cut of a graph if its removal increases the number
     of connected components. In a digraph, we consider the number of (weakly)
@@ -894,11 +895,15 @@ def is_edge_cut(G, edges):
 
 def is_cut_edge(G, u, v=None, label=None):
     """
+<<<<<<< HEAD
     Return ``True`` if the input edge is a cut-edge or a bridge.
+=======
+    Check whether the input edge is a cut-edge or a bridge.
+>>>>>>> 676db03765d (expose in generic_graph.py)
 
     A cut edge (or bridge) is an edge that when removed increases
-    the number of connected components.  This function works with
-    simple graphs as well as graphs with loops and multiedges.  In
+    the number of connected components. This function works with
+    simple graphs as well as graphs with loops and multiedges. In
     a digraph, a cut edge is an edge that when removed increases
     the number of (weakly) connected components.
 
