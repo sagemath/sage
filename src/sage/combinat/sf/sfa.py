@@ -417,6 +417,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             """
             return self.base_ring().is_integral_domain()
 
+        @cached_method
         def fraction_field(self):
             r"""
             Return the fraction field of ``self``.
