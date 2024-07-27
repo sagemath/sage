@@ -173,7 +173,7 @@ def run(folder: Path, output_dir: Path, folder_rel_to_src=None, dry_run=False, f
                         '/linbox/': 'linbox',
                         '/gsl/': 'gsl',
                         'mpfr.h': 'mpfr',
-                        'arb.h': 'arb',
+                        'arb.h': 'flint',
                         'mpfi.h': 'mpfi',
                         'mpc.h': 'mpc',
                         'gmpy2/': 'gmpy2',
