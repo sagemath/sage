@@ -46,8 +46,6 @@ SITEPACKAGESDIR=$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["pur
 # does not shadow the namespace package sage during the build.
 (cd "$SITEPACKAGESDIR" && rm -f sage/__init__.py)
 if [ "$SAGE_EDITABLE" = yes ]; then
-    # Until https://github.com/sagemath/sage/issues/34209 switches us to PEP 660 editable wheels
-    export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
     sdh_pip_editable_install .
 
     if [ "$SAGE_WHEELS" = yes ]; then
