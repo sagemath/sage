@@ -425,6 +425,26 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             """
             return self.base_ring().is_integral_domain()
 
+        def fraction_field(self):
+            r"""
+            Return the fraction field of ``self``.
+
+            EXAMPLES::
+
+                sage: s = SymmetricFunctions(QQ).s()
+                sage: s.fraction_field()
+                Fraction Field of Symmetric Functions over Rational Field in the Schur basis
+            """
+            if not self.is_integral_domain():
+                raise TypeError("self must be an integral domain.")
+            if hasattr(self, "__fraction_field") and self.__fraction_field is not None:
+                return self.__fraction_field
+            else:
+                import sage.rings.fraction_field
+                K = sage.rings.fraction_field.FractionField_generic(self)
+                self.__fraction_field = K
+            return self.__fraction_field
+
         def is_field(self, proof=True):
             """
             Return whether ``self`` is a field. (It is not.)
@@ -1861,6 +1881,9 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
     _print_style = 'lex'
 
+    def is_prime_field(self):
+        return False
+
     # Todo: share this with ncsf and over algebras with basis indexed by word-like elements
     def __getitem__(self, c):
         r"""
@@ -3093,6 +3116,40 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         m[1, 1, 1] + m[2, 1] + m[3]
         sage: m.set_print_style('lex')
     """
+    def __truediv__(self, x):
+        r"""
+        Return the quotient of ``self`` by ``other``.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s[1]/(1+s[1])
+            s[1]/(s[] + s[1])
+
+            sage: s[1]/2
+            1/2*s[1]
+
+        TESTS::
+
+            sage: (s[1]/2).parent()
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        from sage.categories.modules import _Fields
+        B = self.base_ring()
+        try:
+            bx = B(x)
+        except TypeError:
+            f = self.parent().fraction_field()
+            return f(self, x)
+        F = self.parent()
+        D = self._monomial_coefficients
+
+        if B not in _Fields:
+            return type(self)(F, {k: c._divide_if_possible(x)
+                                  for k, c in D.items()})
+
+        return ~bx * self
+
     def factor(self):
         """
         Return the factorization of this symmetric function.
