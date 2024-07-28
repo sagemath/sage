@@ -2,6 +2,7 @@ cdef extern from 'symmetrica/def.h':
     INT plethysm(OP s1, OP s2, OP res)
     INT schur_schur_plet(OP p1, OP p2, OP res)
 
+
 def plethysm_symmetrica(outer, inner):
     """
     """

@@ -6,6 +6,7 @@ cdef extern from 'symmetrica/def.h':
     INT kostka_tab(OP shape, OP content, OP result)
     INT kostka_tafel(OP n, OP result)
 
+
 def kostka_number_symmetrica(shape, content):
     """
     computes the kostkanumber, i.e. the number of
@@ -52,6 +53,7 @@ def kostka_number_symmetrica(shape, content):
 
 
     return res
+
 
 def kostka_tab_symmetrica(shape, content):
     """
@@ -112,6 +114,7 @@ def kostka_tab_symmetrica(shape, content):
 
 
     return res
+
 
 def kostka_tafel_symmetrica(n):
     """

@@ -91,6 +91,7 @@ def sdg_symmetrica(part, perm):
 
     return res
 
+
 def odg_symmetrica(part, perm):
     """
     Calculates the irreducible matrix representation
@@ -143,6 +144,7 @@ def ndg_symmetrica(part, perm):
     freeall(cD)
 
     return res
+
 
 def specht_dg_symmetrica(part, perm):
     """

@@ -24,8 +24,10 @@ from sage.libs.pari.all import pari_gen
 
 import operator
 
+
 def make_element(parent, args):
     return parent(*args)
+
 
 cdef inline Polynomial_template element_shift(self, int n):
      if not isinstance(self, Polynomial_template):

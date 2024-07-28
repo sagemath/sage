@@ -408,6 +408,7 @@ def compute_schur_with_alphabet_det_symmetrica(part, length, alphabet='x'):
 
     return res
 
+
 def part_part_skewschur_symmetrica(outer, inner):
     """
     Return the skew Schur function s_{outer/inner}.
@@ -433,6 +434,7 @@ def part_part_skewschur_symmetrica(outer, inner):
     freeall(cresult)
 
     return res
+
 
 def hall_littlewood_symmetrica(part):
     """
@@ -543,6 +545,7 @@ def t_SCHUR_POWSYM_symmetrica(schur):
 
     return res
 
+
 def t_POLYNOM_SCHUR_symmetrica(p):
     """
     Converts a symmetric polynomial with base ring QQ or ZZ into a symmetric function
@@ -586,6 +589,7 @@ def t_MONOMIAL_HOMSYM_symmetrica(monomial):
     freeall(cmonomial)
 
     return res
+
 
 def t_MONOMIAL_ELMSYM_symmetrica(monomial):
     """
@@ -648,6 +652,7 @@ def t_MONOMIAL_POWSYM_symmetrica(monomial):
     freeall(cmonomial)
 
     return res
+
 
 def t_POLYNOM_MONOMIAL_symmetrica(p):
     """
@@ -714,6 +719,7 @@ def t_ELMSYM_POWSYM_symmetrica(elmsym):
 
     return res
 
+
 def t_ELMSYM_MONOMIAL_symmetrica(elmsym):
     """
 
@@ -754,6 +760,7 @@ def t_ELMSYM_HOMSYM_symmetrica(elmsym):
     freeall(celmsym)
 
     return res
+
 
 def t_POLYNOM_ELMSYM_symmetrica(p):
     """
@@ -799,6 +806,7 @@ def t_HOMSYM_SCHUR_symmetrica(homsym):
 
     return res
 
+
 def t_HOMSYM_POWSYM_symmetrica(homsym):
     """
 
@@ -839,6 +847,7 @@ def t_HOMSYM_MONOMIAL_symmetrica(homsym):
     freeall(chomsym)
 
     return res
+
 
 def t_HOMSYM_ELMSYM_symmetrica(homsym):
     """
@@ -902,6 +911,7 @@ def t_POWSYM_SCHUR_symmetrica(powsym):
 
     return res
 
+
 def t_POWSYM_ELMSYM_symmetrica(powsym):
     """
 
@@ -922,6 +932,7 @@ def t_POWSYM_ELMSYM_symmetrica(powsym):
 
     return res
 
+
 def t_POWSYM_HOMSYM_symmetrica(powsym):
     """
 
@@ -941,6 +952,7 @@ def t_POWSYM_HOMSYM_symmetrica(powsym):
     freeall(cpowsym)
 
     return res
+
 
 def t_POLYNOM_POWER_symmetrica(p):
     """

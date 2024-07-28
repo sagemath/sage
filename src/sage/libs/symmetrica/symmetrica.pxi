@@ -522,6 +522,7 @@ cdef int _op(object a, OP result) except -1:
     else:
         raise TypeError("cannot convert a (= %s) to OP" % a)
 
+
 def test_integer(object x):
     """
     Tests functionality for converting between Sage's integers

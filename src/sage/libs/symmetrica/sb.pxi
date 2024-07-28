@@ -64,6 +64,7 @@ def mult_schubert_schubert_symmetrica(a, b):
 
     return res
 
+
 def t_SCHUBERT_POLYNOM_symmetrica(a):
     """
     Converts a Schubert polynomial to a 'regular' multivariate
@@ -95,6 +96,7 @@ def t_SCHUBERT_POLYNOM_symmetrica(a):
     freeall(cres)
 
     return res
+
 
 def t_POLYNOM_SCHUBERT_symmetrica(a):
     """
@@ -134,6 +136,7 @@ def t_POLYNOM_SCHUBERT_symmetrica(a):
     freeall(cres)
 
     return res
+
 
 def mult_schubert_variable_symmetrica(a, i):
     """
@@ -269,6 +272,7 @@ def scalarproduct_schubert_symmetrica(a, b):
     freeall(cres)
 
     return res
+
 
 def divdiff_schubert_symmetrica(i, a):
     r"""

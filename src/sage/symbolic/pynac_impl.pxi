@@ -1286,6 +1286,7 @@ cdef py_numer(n):
         except AttributeError:
             return n
 
+
 def py_numer_for_doctests(n):
     """
     This function is used to test py_numer().
@@ -1397,6 +1398,7 @@ cdef py_float(n, PyObject* kwds):
         except TypeError:
             return CC(n)
 
+
 def py_float_for_doctests(n, kwds):
     """
     This function is for testing py_float.
@@ -1457,6 +1459,7 @@ cdef py_tgamma(x):
             return CC(res)
     return res
 
+
 def py_tgamma_for_doctests(x):
     """
     This function is for testing py_tgamma().
@@ -1496,6 +1499,7 @@ cdef py_factorial(x):
     else:
         return py_tgamma(x+1)
 
+
 def py_factorial_py(x):
     """
     This function is a python wrapper around py_factorial(). This wrapper
@@ -1516,6 +1520,7 @@ cdef py_doublefactorial(x):
         raise ValueError("argument must be >= -1")
     from sage.misc.misc_c import prod  # fast balanced product
     return prod([n - 2*i for i in range(n//2)])
+
 
 def doublefactorial(n):
     """
@@ -1637,6 +1642,7 @@ cdef py_stieltjes(x):
         prec = 53
     return mpmath_utils.call(mpmath.stieltjes, n, prec=prec)
 
+
 def py_stieltjes_for_doctests(x):
     """
     This function is for testing py_stieltjes().
@@ -1670,6 +1676,7 @@ cdef py_zeta(x):
         return x.zeta()
     except AttributeError:
         return CC(x).zeta()
+
 
 def py_zeta_for_doctests(x):
     """
@@ -1711,6 +1718,7 @@ cdef py_exp(x):
         return RR(x).exp()
     except (TypeError, ValueError):
         return CC(x).exp()
+
 
 def py_exp_for_doctests(x):
     """
@@ -1780,6 +1788,7 @@ cdef py_log(x):
         return RR(x).log()
     except (TypeError, ValueError):
         return CC(x).log()
+
 
 def py_log_for_doctests(x):
     """
@@ -2202,6 +2211,7 @@ cdef py_psi2(n, x):
         prec = 53
     return mpmath_utils.call(mpmath.psi, n, x, prec=prec)
 
+
 def py_psi2_for_doctests(n, x):
     """
     This function is a python wrapper so py_psi2 can be tested. The real tests
@@ -2276,6 +2286,7 @@ cdef py_eval_unsigned_infinity():
     from sage.rings.infinity import unsigned_infinity
     return unsigned_infinity
 
+
 def py_eval_unsigned_infinity_for_doctests():
     """
     This function tests py_eval_unsigned_infinity.
@@ -2295,6 +2306,7 @@ cdef py_eval_infinity():
     from sage.rings.infinity import infinity
     return infinity
 
+
 def py_eval_infinity_for_doctests():
     """
     This function tests py_eval_infinity.
@@ -2313,6 +2325,7 @@ cdef py_eval_neg_infinity():
     """
     from sage.rings.infinity import minus_infinity
     return minus_infinity
+
 
 def py_eval_neg_infinity_for_doctests():
     """
