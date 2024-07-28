@@ -60,7 +60,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<a,b> = PolynomialRing(T); R
         Multivariate Tropical Polynomial Semiring in a, b over Rational Field
-        
+
     Define some multivariate tropical polynomials::
 
         sage: p1 = R(3)*a*b + a + R(-1)*b; p1
@@ -100,13 +100,13 @@ class TropicalMPolynomial(MPolynomial_polydict):
         p1 = R(3)*a*b + a + R(-1)*b
         tv1 = p1.tropical_variety()
         sphinx_plot(tv1.plot())
-    
+
     Tropical polynomial in two variables will induce a function in three
     dimension that consists of a number of surfaces::
 
         sage: p1.plot3d()
         Graphics3d Object
-    
+
     .. PLOT::
         :width: 300 px
 
@@ -115,7 +115,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         a, b = R.gen(), R.gen(1)
         p1 = R(3)*a*b + a + R(-1)*b
         sphinx_plot(p1.plot3d())
-    
+
     If we use a max-plus algebra, we will get a slightly different result::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
@@ -125,7 +125,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         Tropical curve of 3*a*b + 0*a + (-1)*b
         sage: p1.tropical_variety().plot()
         Graphics object consisting of 3 graphics primitives
-    
+
     .. PLOT::
         :width: 300 px
 
@@ -140,7 +140,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         sage: p1.plot3d()
         Graphics3d Object
-    
+
     .. PLOT::
         :width: 300 px
 
@@ -169,7 +169,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         OUTPUT: new :class:`TropicalMPolynomial`
 
         .. SEEALSO::
-        
+
             :meth:`sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict.subs`
 
         EXAMPLES::
@@ -187,7 +187,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
                 variables[i] = T(dict[var])
             except TypeError:
                 variables[i] = dict[var]
-        
+
         variables = list(self.parent().gens())
         T = self.parent().base()
         for i in range(len(variables)):
@@ -223,7 +223,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1 = x^2
             sage: p1.plot3d()
             Graphics3d Object
-        
+
         .. PLOT::
             :width: 300 px
 
@@ -278,19 +278,19 @@ class TropicalMPolynomial(MPolynomial_polydict):
             for y in y_point:
                 val = self(T(x),T(y)).lift()
                 res.append([x,y,val])
-        return list_plot3d(res, point_list=True)    
+        return list_plot3d(res, point_list=True)
 
     def tropical_variety(self):
         r"""
         Return tropical roots of ``self``.
-        
+
         In the multivariate case, the roots can be represented by a
         tropical variety. In two dimensions, this is known as a tropical
         curve. For dimensions higher than two, it is referred to as a
         tropical hypersurface.
 
         OUTPUT: a :class:`sage.rings.semirings.tropical_variety.TropicalVariety`
-        
+
         EXAMPLES:
 
         Tropical curve for tropical polynomials in two variables::
@@ -319,11 +319,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
         if self.parent().ngens() == 3:
             return TropicalSurface(self)
         return TropicalVariety(self)
-    
+
     def _repr_(self):
         r"""
         Return string representation of ``self``.
-        
+
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
@@ -340,7 +340,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
                 const = str(self.monomial_coefficient(self.parent(0)))
                 s = s.replace(f" {const}", f" ({const})")
         return s
-    
+
     def _latex_(self):
         r"""
         Return the latex representation of ``self``.
@@ -378,7 +378,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     extends the concepts to polynomials with multiple variables.
 
     EXAMPLES::
-        
+
         sage: T = TropicalSemiring(QQ)
         sage: R.<x,y> = PolynomialRing(T)
         sage: f = T(1)*x + T(-1)*y
@@ -411,11 +411,11 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
         self._ngens = n
         self._term_order = order
-    
+
     def term_order(self):
         """
         Return the defined term order of ``self``.
-        
+
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
@@ -424,7 +424,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             Degree reverse lexicographic term order
         """
         return self._term_order
-        
+
     Element = TropicalMPolynomial
 
     def _element_constructor_(self, x):
@@ -446,7 +446,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: f = -x*y + 1
             sage: R(f)
             (-1)*x*y + 1
-        
+
         TESTS::
 
             sage: T = TropicalSemiring(QQ)
@@ -455,7 +455,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R(a + b)
             Traceback (most recent call last):
             ...
-            ValueError: can not convert 0*a + 0*b to Multivariate Tropical 
+            ValueError: can not convert 0*a + 0*b to Multivariate Tropical
             Polynomial Semiring in x, y over Rational Field
         """
         from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -475,7 +475,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             for key, value in x.items():  # convert coefficient to tropical
                 x[key] = self.base()(value)
         return self.element_class(self, x)
-    
+
     @cached_method
     def one(self):
         r"""
@@ -512,7 +512,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
             sage: T = TropicalSemiring(RR)
             sage: R.<u,v,w> = PolynomialRing(T); R
-            Multivariate Tropical Polynomial Semiring in u, v, w over Real 
+            Multivariate Tropical Polynomial Semiring in u, v, w over Real
             Field with 53 bits of precision
         """
         if self._ngens == 0:
@@ -520,7 +520,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
                     f" over {self.base_ring().base_ring()}")
         return (f"Multivariate Tropical Polynomial Semiring in {', '.join(self.variable_names())}"
                 f" over {self.base_ring().base_ring()}")
-    
+
     def random_element(self, degree=2, terms=None, choose_degree=False,
                        *args, **kwargs):
         r"""
@@ -547,9 +547,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
         return self(R.random_element(degree=degree, terms=terms,
-                                     choose_degree=choose_degree, 
+                                     choose_degree=choose_degree,
                                      *args, **kwargs))
-    
+
     def gen(self, n=0):
         r"""
         Return the ``n``-th generator of ``self``.
@@ -571,14 +571,14 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             IndexError: tuple index out of range
         """
         return self.gens()[n]
-    
+
     @cached_method
     def gens(self):
         r"""
         Return the generators of ``self``.
 
         EXAMPLES::
-        
+
             sage: T = TropicalSemiring(QQ)
             sage: R = PolynomialRing(T, 5, 'x')
             sage: R.gens()
@@ -590,7 +590,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             exponent[i] = 1
             gens.append(self({tuple(exponent):self.base()(0)}))
         return tuple(gens)
-    
+
     def ngens(self):
         r"""
         Return the number of generators of ``self``.
@@ -603,4 +603,3 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             10
         """
         return self._ngens
-        

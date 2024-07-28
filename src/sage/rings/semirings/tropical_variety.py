@@ -108,7 +108,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         [[(t1, 1), [t1 <= -1], 1], [(-1, t1), [t1 >= 1], 1], [(-t1, t1), [t1 <= 1], 1]]
         sage: tv.plot()
         Graphics object consisting of 3 graphics primitives
-        
+
     .. PLOT::
         :width: 300 px
 
@@ -135,7 +135,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         [(t1 + 7, t1), [0 <= t1], 1]]
         sage: tv.plot()
         Graphics object consisting of 8 graphics primitives
-        
+
     .. PLOT::
         :width: 300 px
 
@@ -145,7 +145,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         p1 = R(7) + T(4)*x + y + R(4)*x*y + R(3)*y**2 + R(-3)*x**2
         sphinx_plot(p1.tropical_variety().plot())
 
-    If the tropical polynomial have `n>2` variables, then the result will be 
+    If the tropical polynomial have `n>2` variables, then the result will be
     a tropical hypersurface embedded in a real space `\RR^n`::
 
         sage: T = TropicalSemiring(QQ)
@@ -159,7 +159,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         [(t1, t2, t1, t3), [max(t1 + 1/2, 1/2*t1 + 1/2*t2 - 2) <= t3], 1],
         [(t1, t2 + 9/2, t3, t2), [t2 <= min(t3 + 1/2, t1 + 1/2)], 1],
         [(t1 - 1/2, t2, t3, t1), [t2 - 9/2 <= t1, t1 <= t3 + 1/2, t2 - 5 <= t3], 1],
-        [(2*t1 - t2 + 4, t2, t3, t1), [t1 <= min(1/2*t2 + 1/2*t3 - 2, t2 - 9/2)], 1]] 
+        [(2*t1 - t2 + 4, t2, t3, t1), [t1 <= min(1/2*t2 + 1/2*t3 - 2, t2 - 9/2)], 1]]
     """
     def __init__(self, poly):
         r"""
@@ -177,7 +177,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: from sage.rings.semirings.tropical_variety import TropicalVariety
             sage: R.<x,y> = QQ[]
             sage: p1 = x + y
-            sage: TropicalVariety(p1)         
+            sage: TropicalVariety(p1)
             Traceback (most recent call last):
             ...
             ValueError: x + y is not a multivariate tropical polynomial
@@ -196,7 +196,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         self._hypersurface = []
         if len(poly.dict()) == 1:  # constant polynomial
             return
-        
+
         tropical_roots = []
         variables = []
         for name in poly.parent().variable_names():
@@ -209,12 +209,12 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             eq = sum(variables[i]*e for i, e in enumerate(key))
             eq += pd[key].lift()
             linear_eq[key] = eq
-        
+
         temp_keys = []
         temp_order = []
         # checking for all possible combinations of two terms
         for keys in combinations(pd, 2):
-            sol = solve(linear_eq[keys[0]]==linear_eq[keys[1]], variables)
+            sol = solve(linear_eq[keys[0]] == linear_eq[keys[1]], variables)
 
             # parametric solution of the chosen two terms
             final_sol = []
@@ -222,18 +222,18 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                 final_sol.append(s.right())
             xy_interval = []
             xy_interval.append(tuple(final_sol))
-            
+
             # comparing with other terms
             min_max = linear_eq[keys[0]]
             for i,v in enumerate(variables):
-                min_max = min_max.subs(v==final_sol[i])
+                min_max = min_max.subs(v == final_sol[i])
             all_sol_compare = []
             no_solution = False
             for compare in pd:
                 if compare not in keys:
                     temp_compare = linear_eq[compare]
                     for i, v in enumerate(variables):
-                        temp_compare = temp_compare.subs(v==final_sol[i])
+                        temp_compare = temp_compare.subs(v == final_sol[i])
                     if min_max == temp_compare:
                         sol_compare = [[]]
                     elif poly.parent().base()._use_min:
@@ -249,7 +249,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     else:
                         no_solution = True
                         break
-            
+
             # solve the condition for parameter
             if not no_solution:
                 parameter = set()
@@ -268,7 +268,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     temp_keys.append(keys)
 
         # changing all the operator symbol to be <= or >=
-        self._keys = []           
+        self._keys = []
         components = []
         dim_param = len(tropical_roots[0][0]) - 1
         vars = [SR.var('t{}'.format(i)) for i in range(1, dim_param+1)]
@@ -305,8 +305,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                         expr = lhs <= rhs
                     new_param.append(expr)
                 arg.insert(1, new_param)
-            components.append(arg)  
-        
+            components.append(arg)
+
         # determine the order of each component
         self._vars = vars
         final_order = []
@@ -336,7 +336,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             4
         """
         return len(self._hypersurface[0][0])
-    
+
     def number_of_components(self):
         """
         Return the number of components that make up ``self``.
@@ -350,7 +350,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             13
         """
         return len(self._hypersurface)
-    
+
     def _repr_(self):
         """
         Returns a string representation of ``self``.
@@ -386,7 +386,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 class TropicalSurface(TropicalVariety):
     r"""
     A tropical surface in `\RR^3`.
-    
+
     The tropical surface consists of planar regions and facets, which we
     can call cells. These cells are connected in such a way that they form
     a piecewise linear structure embedded in three-dimensional space. These
@@ -411,8 +411,8 @@ class TropicalSurface(TropicalVariety):
     """
     def _axes(self):
         """
-        Set the default axes for ``self``. 
-        
+        Set the default axes for ``self``.
+
         This default axes is used for the 3d plot. The axes is centered
         around where the intersection of the components occured so it
         gives a nice visual representation for the interactions between
@@ -420,8 +420,8 @@ class TropicalSurface(TropicalVariety):
         the visibility and interpretation of how the components align
         and interact in three-dimensional space.
 
-        OUTPUT: 
-        
+        OUTPUT:
+
         A list of two lists, where the first inner list represent value of
         x-axis and the second inner list represent value of y-axis.
         If there are either no components or only one component, the axis
@@ -450,12 +450,12 @@ class TropicalSurface(TropicalVariety):
             temp_v = set()
             for expr in comp[1]:
                 if expr.lhs().is_numeric():
-                    if bool(expr.rhs()==self._vars[0]):
+                    if bool(expr.rhs() == self._vars[0]):
                         temp_u.add(expr.lhs())
                     else:
                         temp_v.add(expr.lhs())
                 elif expr.rhs().is_numeric():
-                    if bool(expr.lhs()==self._vars[0]):
+                    if bool(expr.lhs() == self._vars[0]):
                         temp_u.add(expr.rhs())
                     else:
                         temp_v.add(expr.rhs())
@@ -467,7 +467,7 @@ class TropicalSurface(TropicalVariety):
                 temp_v.add(0)
             for expr in list_expr:
                 for u in temp_u:
-                    sol = solve(expr.subs(self._vars[0]==u), self._vars[1])
+                    sol = solve(expr.subs(self._vars[0] == u), self._vars[1])
                     if not sol:
                         temp_v.add(0)
                     elif (not sol[0]):
@@ -475,7 +475,7 @@ class TropicalSurface(TropicalVariety):
                     else:
                         temp_v.add(sol[0][0].rhs())
                 for v in temp_v:
-                    sol = solve(expr.subs(self._vars[1]==v), self._vars[0])
+                    sol = solve(expr.subs(self._vars[1] == v), self._vars[0])
                     if not sol:
                         temp_u.add(0)
                     elif (not sol[0]):
@@ -485,7 +485,7 @@ class TropicalSurface(TropicalVariety):
             u_set = u_set.union(temp_u)
             v_set = v_set.union(temp_v)
         return [[min(u_set)-1, max(u_set)+1], [min(v_set)-1, max(v_set)+1]]
-    
+
     def plot(self, num_of_points=32, size=20, color='random'):
         """
         Return a 3d plot of ``self``.
@@ -536,7 +536,7 @@ class TropicalSurface(TropicalVariety):
         from sage.plot.graphics import Graphics
         from sage.arith.srange import srange
         from sage.plot.plot3d.shapes2 import point3d, text3d
-        
+
         if color == 'random':
             colors = []
             for _ in range(self.number_of_components()):
@@ -545,7 +545,7 @@ class TropicalSurface(TropicalVariety):
                 colors.append(color)
         else:
             colors = [color]*self.number_of_components()
-        
+
         axes = self._axes()
         step = num_of_points
         du = (axes[0][1]-axes[0][0])/step
@@ -558,25 +558,25 @@ class TropicalSurface(TropicalVariety):
             for u in u_range:
                 for v in v_range:
                     checkpoint = True
-                    for exp in comp[1]: 
-                        final_exp = exp.subs(self._vars[0]==u, self._vars[1]==v)
+                    for exp in comp[1]:
+                        final_exp = exp.subs(self._vars[0] == u, self._vars[1] == v)
                         if not final_exp:
                             checkpoint = False
                             break
                     if checkpoint:
-                        x = comp[0][0].subs(self._vars[0]==u, self._vars[1]==v)
-                        y = comp[0][1].subs(self._vars[0]==u, self._vars[1]==v)
-                        z = comp[0][2].subs(self._vars[0]==u, self._vars[1]==v)
+                        x = comp[0][0].subs(self._vars[0] == u, self._vars[1] == v)
+                        y = comp[0][1].subs(self._vars[0] == u, self._vars[1] == v)
+                        z = comp[0][2].subs(self._vars[0] == u, self._vars[1] == v)
                         points.append((x,y,z))
             point_plot = point3d(points, size=size, color=colors[i])
             order = comp[2]
             if order > 1:
-                text_order = text3d(str(order), points[len(points)//2], 
+                text_order = text3d(str(order), points[len(points)//2],
                                     fontweight='bold', fontsize='500%')
                 combined_plot += point_plot + text_order
             else:
                 combined_plot += point_plot
-        
+
         return combined_plot
 
     def _repr_(self):
@@ -595,7 +595,7 @@ class TropicalSurface(TropicalVariety):
 class TropicalCurve(TropicalVariety):
     r"""
     A tropical curve in `\RR^2`.
-    
+
     The tropical curve consists of line segments and half-lines, which we
     call edges. These edges are connected in such a way that they form a
     piecewise linear graph embedded in the plane. These edges meet at
@@ -616,15 +616,15 @@ class TropicalCurve(TropicalVariety):
     def _axes(self):
         """
         Set the default axes for ``self``.
-        
+
         This default axes is used for plot of tropical curve and also the
         3d plot of tropical polynomial function. The axes is chosen by first
         find all vertices of this tropical curve. Then we choose the minimum
         and maximum of all x-component in this vertices to be the x-axis.
         The same apply to the y-axis.
 
-        OUTPUT: 
-        
+        OUTPUT:
+
         A list of two lists, where the first inner list represent value of
         x-axis and the second inner list represent value of y-axis.
 
@@ -641,7 +641,7 @@ class TropicalCurve(TropicalVariety):
         """
         if self.number_of_components() == 0:  # constant or monomial
             return [[-1,1], [-1,1]]
-        
+
         if self.number_of_components() == 1:
             eq = self._hypersurface[0][0]
             if not eq[0].is_numeric() and not eq[1].is_numeric():
@@ -650,23 +650,23 @@ class TropicalCurve(TropicalVariety):
                 return [[eq[0]-1, eq[0]+1], [-1,1]]
             else:
                 return [[-1,1], [eq[1]-1, eq[1]+1]]
-        
+
         xmin = xmax = list(self.vertices())[0][0]
         for vertice in self.vertices():
             if vertice[0] < xmin:
                 xmin = vertice[0]
             elif vertice[0] > xmax:
                 xmax = vertice[0]
-        
+
         ymin = ymax = list(self.vertices())[0][1]
         for vertice in self.vertices():
             if vertice[1] < ymin:
                 ymin = vertice[1]
             elif vertice[1] > ymax:
                 ymax = vertice[1]
-        
+
         return [[xmin-1, xmax+1], [ymin-1, ymax+1]]
-    
+
     def vertices(self):
         r"""
         Return all vertices of ``self``, which is the point where three or
@@ -696,15 +696,15 @@ class TropicalCurve(TropicalVariety):
             lower = interval[0].lower()
             upper = interval[0].upper()
             if lower != -infinity:
-                x = parametric_function[0].subs(var==lower)
-                y = parametric_function[1].subs(var==lower)
+                x = parametric_function[0].subs(var == lower)
+                y = parametric_function[1].subs(var == lower)
                 vertices.add((x,y))
             if upper != infinity:
-                x = parametric_function[0].subs(var==upper)
-                y = parametric_function[1].subs(var==upper)
+                x = parametric_function[0].subs(var == upper)
+                y = parametric_function[1].subs(var == upper)
                 vertices.add((x,y))
         return vertices
-    
+
     def _parameter_intervals(self):
         r"""
         Return the intervals of each component's parameter of ``self``.
@@ -737,7 +737,7 @@ class TropicalCurve(TropicalVariety):
                 else:
                     interval = RealSet([R(lower),R(upper)])
             intervals.append(interval)
-        return intervals          
+        return intervals
 
     def plot(self):
         """
@@ -747,8 +747,8 @@ class TropicalCurve(TropicalVariety):
         coordinates. The plot shows piecewise-linear segments representing
         each components. The axes are centered around the vertices.
 
-        OUTPUT: 
-        
+        OUTPUT:
+
         A Graphics object. The weight of the component will be written if it
         is greater or equal than 2. The weight is written near the vertex.
 
@@ -775,7 +775,7 @@ class TropicalCurve(TropicalVariety):
         a more complex tropical polynomial::
 
             sage: p1 = R(1) + R(2)*x + R(3)*y + R(6)*x*y + R(10)*x*y^2
-            sage: p1.tropical_variety().components() 
+            sage: p1.tropical_variety().components()
             [[(-1, t1), [-2 <= t1], 1],
             [(t1, -2), [-1 <= t1], 1],
             [(t1 + 1, t1), [-4 <= t1, t1 <= -2], 1],
@@ -800,7 +800,7 @@ class TropicalCurve(TropicalVariety):
             ....:       + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10))
             sage: p2.tropical_variety().plot()
             Graphics object consisting of 11 graphics primitives
-            
+
         .. PLOT::
             :width: 300 px
 
@@ -818,7 +818,7 @@ class TropicalCurve(TropicalVariety):
 
         if not self._hypersurface:
             return plot(lambda x: float('nan'), {-1, 1})
-        
+
         combined_plot = Graphics()
         large_int = 100
         intervals = self._parameter_intervals()
@@ -839,21 +839,21 @@ class TropicalCurve(TropicalVariety):
                 lower = interval[0].lower()
                 upper = interval[0].upper()
                 midpoint = (lower+upper)/2
-            
+
             if lower == infinity and upper == infinity:
                 midpoint = 0
-                plot = parametric_plot(parametric_function, (var, -large_int, 
+                plot = parametric_plot(parametric_function, (var, -large_int,
                                         large_int), color='red')
-            else: 
+            else:
                 plot = parametric_plot(parametric_function, (var, lower, upper),
                                     color='red')
 
             if component[2] > 1:  # add order if >= 2
                 point = []
                 for eq in component[0]:
-                    value = eq.subs(var==midpoint)
+                    value = eq.subs(var == midpoint)
                     point.append(value)
-                text_order = text(str(order), (point[0], point[1]), 
+                text_order = text(str(order), (point[0], point[1]),
                                   fontsize=16, color='black')
                 combined_plot += plot + text_order
             else:
@@ -863,7 +863,7 @@ class TropicalCurve(TropicalVariety):
         axes = self._axes()
         xmin, xmax = axes[0][0], axes[0][1]
         ymin, ymax = axes[1][0], axes[1][1]
-        combined_plot.set_axes_range(xmin=xmin, xmax=xmax, 
+        combined_plot.set_axes_range(xmin=xmin, xmax=xmax,
                                      ymin=ymin, ymax=ymax)
         return combined_plot
 
@@ -872,11 +872,10 @@ class TropicalCurve(TropicalVariety):
         Return a string representation of ``self``.
 
         EXAMPLES::
-        
+
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: (x^2+R(0)).tropical_variety()
             Tropical curve of 0*x^2 + 0
         """
         return (f"Tropical curve of {self._poly}")
-    

@@ -93,7 +93,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         'Tropical semiring over Rational Field' and 'Integer Ring'
         sage: p1(T(3))
         9
-        
+
     We can find all tropical roots of a tropical polynomial, counted
     with their multiplicities::
 
@@ -134,9 +134,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         R = PolynomialRing(T, 'x')
         p1 = R([1,4,None,0])
         sphinx_plot(p1.plot())
-        
+
     ::
-        
+
         sage: p2.piecewise_function()
         piecewise(x|-->3 on (-oo, 1], x|-->2*x + 1 on (1, +oo); x)
         sage: p2.plot()
@@ -160,8 +160,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         Traceback (most recent call last):
         ...
         ArithmeticError: cannot negate any non-infinite element
-    """                                                                            
-    
+    """
+
     def roots(self):
         r"""
         Return the list of all tropical roots of ``self``, counted with
@@ -192,11 +192,11 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             3*x^6 + 4*x^5 + 2*x^4 + 0*x^3 + 1*x^2 + 4*x + 5
             sage: p1.roots()
             [-1, -1, -1, 1, 2, 2]
-        
+
         There will be no tropical root for constant polynomial. Additionaly,
         for a monomial, the tropical root is assumed to be the additive
         identity of its base tropical semiring::
-        
+
             sage: p2 = R(2)
             sage: p2.roots()
             []
@@ -212,7 +212,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 return tropical_roots
             else:
                 return [self.parent().base_ring().zero()]*exponent
-        
+
         dict_root = {}
         dict_coeff = {i:c.lift() for i,c in self.dict().items()}
         for comb in combinations(dict_coeff, 2):
@@ -238,12 +238,12 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 else:
                     if order > dict_root[root]:
                         dict_root[root] = order
-        
+
         for root in dict_root:
             tropical_roots += [root] * dict_root[root]
-            
+
         return sorted(tropical_roots)
-    
+
     def split_form(self):
         r"""
         Return the tropical polynomial which has the same roots as ``self``
@@ -263,7 +263,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             3*x^6 + 4*x^5 + 2*x^4 + 0*x^3 + 1*x^2 + 4*x + 5
             sage: p1.split_form()
             3*x^6 + 2*x^5 + 1*x^4 + 0*x^3 + 1*x^2 + 3*x + 5
-        
+
         ::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
@@ -290,7 +290,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             linear = R([root, 0])
             poly *= linear
         return poly
-    
+
     def factor(self):
         r"""
         Return the factorization of ``self`` into its tropical linear factors.
@@ -312,7 +312,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             (0) * (0*x + 1) * (0*x + 2) * (0*x + 3)
 
         Such factorization is not always possible::
-        
+
             sage: p2 = R([4,4,2]); p2
             2*x^2 + 4*x + 4
             sage: p2.factor()
@@ -344,17 +344,17 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             if root in roots_order:
                 roots_order[root] += 1
             else:
-                roots_order[root] = 1 
+                roots_order[root] = 1
         factors = []
         for root in roots_order:
             factors.append((R([root, 0]), roots_order[root]))
-        
+
         return Factorization(factors, unit=unit)
 
     def piecewise_function(self):
         r"""
         Return the tropical polynomial function of ``self``.
-        
+
         The function is a piecewise linear function with the domains are
         divided by the roots. First we convert each term of polynomial to
         its corresponding linear function. Next, we must determine which
@@ -391,7 +391,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         if not self.roots():
             f = self.dict()[0].lift()
             return f
-        
+
         if len(self.dict()) == 1:
             gradient = list(self.dict())[0]
             intercept = self.dict()[gradient].lift()
@@ -446,7 +446,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         f = piecewise(pieces)
         return f
-    
+
     def plot(self, xmin=None, xmax=None):
         r"""
         Return the plot of ``self``, which is the tropical polynomial
@@ -479,7 +479,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             [1/3, 1/3, 1/3]
             sage: p1.plot()
             Graphics object consisting of 1 graphics primitive
-        
+
         .. PLOT::
             :width: 300 px
 
@@ -487,7 +487,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             R = PolynomialRing(T, 'x')
             p1 = p1 = R([4,2,1,3])
             sphinx_plot(p1.plot())
-        
+
         A different result will be obtained if the tropical semiring employs
         a min-plus algebra. Rather, a graph of the piecewise linear concave
         function will be obtained::
@@ -499,7 +499,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             [-2, 1, 2]
             sage: p1.plot()
             Graphics object consisting of 1 graphics primitive
-        
+
         .. PLOT::
             :width: 300 px
 
@@ -507,7 +507,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             R = PolynomialRing(T, 'x')
             p1 = R([4,2,1,3])
             sphinx_plot(plot(p1, xmin=-4, xmax=4))
-        
+
         TESTS:
 
         If ``xmin`` or ``xmax`` is given as an input, then the others also
@@ -517,7 +517,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             Traceback (most recent call last):
             ...
             ValueError: expected 2 inputs for xmin and xmax, but got 1
-        
+
         Error also occured when ``xmin`` is greater or equal than``xmax``::
 
             sage: plot(p1, 5, 3)
@@ -535,15 +535,15 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 return plot(f, xmin=roots[0]-1, xmax=roots[-1]+1)
         elif xmin is None or xmax is None:
             raise ValueError("expected 2 inputs for xmin and xmax, but got 1")
-        elif (xmin>=xmax):
+        elif (xmin >= xmax):
             raise ValueError(f"xmin = {xmin} should be less than xmax = {xmax}")
         else:
             return plot(f, xmin=xmin, xmax=xmax)
-        
+
     def _repr_(self):
         r"""
         Return a string represemtation of ``self``.
-        
+
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
@@ -554,10 +554,10 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         import re
         if not self.dict():
             return str(self.parent().base().zero())
-        
+
         def replace_negatives(match):
             return f'({match.group(0)})'
-        
+
         s = super()._repr()
         var = self.parent().variable_name()
         if s[0] == var:
@@ -594,7 +594,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                     x = "\\left(" + x + "\\right)"
                 if n > 1:
                     var = "|%s^{%s}" % (name, n)
-                elif n==1:
+                elif n == 1:
                     var = "|%s" % name
                 else:
                     var = ""
@@ -603,7 +603,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         if s == " ":
             return self.parent().base().zero()._latex_()
         return s[1:].lstrip().rstrip()
-    
+
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
     The semiring of univariate tropical polynomials.
@@ -619,7 +619,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     However, it fails to become a ring because it lacks additive inverses.
 
     EXAMPLES::
-        
+
         sage: T = TropicalSemiring(QQ)
         sage: R.<x> = PolynomialRing(T)
         sage: f = T(1)*x
@@ -644,8 +644,8 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
             sage: from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
             sage: T = TropicalSemiring(ZZ)
-            sage: TPS = TropicalPolynomialSemiring               
-            sage: TPS(T, 'x') == TPS(T, ('x')) 
+            sage: TPS = TropicalPolynomialSemiring
+            sage: TPS(T, 'x') == TPS(T, ('x'))
             True
         """
         if isinstance(names, str):
@@ -665,7 +665,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         TESTS::
 
             sage: from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
-            sage: TropicalPolynomialSemiring(ZZ, names='x')                                        
+            sage: TropicalPolynomialSemiring(ZZ, names='x')
             Traceback (most recent call last):
             ...
             ValueError: Integer Ring is not a tropical semiring
@@ -719,7 +719,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
                 x = {0:x}
                 check = False
         return self.element_class(self, x, check=check)
-    
+
     @cached_method
     def one(self):
         """
@@ -782,7 +782,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         if n != 0:
             raise IndexError("generator n not defined")
         return self.gens()[n]
-    
+
     @cached_method
     def gens(self):
         """
@@ -796,7 +796,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             (0*abc,)
         """
         return tuple([self([None,0])])
-    
+
     def ngens(self):
         """
         Return the number of generators of ``self``, which is 1
@@ -822,9 +822,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         OUTPUT: a :class:`TropicalPolynomial`
 
         .. SEEALSO::
-        
+
             :meth:`sage.rings.polynomial.polynomial_ring.PolynomialRing_general.random_element`
-        
+
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
@@ -844,7 +844,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         if monic:
             new_dict[f.degree()] = 0
         return self(new_dict)
-    
+
     def is_sparse(self):
         """
         Return ``True`` to indicate that the objects are sparse polynomials.
@@ -857,7 +857,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             True
         """
         return True
-    
+
     def interpolation(self, points):
         """
         Return a tropical polynomial with its function is a linear
@@ -910,7 +910,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             points = [(0,0),(1,1),(2,4)]
             p1 = R.interpolation(points)
             sphinx_plot(p1.plot())
-        
+
         TESTS:
 
         Every piecewise linear component of tropical polynomial function
@@ -923,7 +923,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             ValueError: the slope is not an integer
-        
+
         For max-plus algebra, the slope of the componenets has to be
         increasing as we move from left to right. Conversely for min-plus
         algebra, the slope of the componenets has to be decreasing from
@@ -959,7 +959,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
                 roots[points[i][0]] = order
         if len(all_slope) == 1:  # constant polynomial
             return self(points[0][1])
-        
+
         result = self()
         for root, ord in roots.items():
             result *= self([root,0])**ord
@@ -967,7 +967,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         unit = self.base()(points[0][1]-test_value.lift())
         result *= unit
         return result
-    
+
     @classmethod
     def _implementation_names(cls, implementation, base_ring, sparse):
         """
@@ -985,4 +985,3 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         assert isinstance(names, list)
         assert implementation in names
         return names
-    
