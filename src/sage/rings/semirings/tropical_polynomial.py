@@ -73,8 +73,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         1*x^2 + 2*x + 3
 
     We can do some basic arithmetic operations for these tropical polynomials.
-    Remember that any number given have to be tropical. If not, then it will
-    raise an error::
+    Remember that numbers given have to be in the tropical semiring.
+    If not, then it will raise an error::
 
         sage: p1 + p2
         0*x^3 + 1*x^2 + 4*x + 3
@@ -516,7 +516,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: plot(p1, 5)
             Traceback (most recent call last):
             ...
-            ValueError: Expected 2 inputs for xmin and xmax, but got 1
+            ValueError: expected 2 inputs for xmin and xmax, but got 1
         
         Error also occured when ``xmin`` is greater or equal than``xmax``::
 
@@ -534,7 +534,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             else:
                 return plot(f, xmin=roots[0]-1, xmax=roots[-1]+1)
         elif xmin is None or xmax is None:
-            raise ValueError("Expected 2 inputs for xmin and xmax, but got 1")
+            raise ValueError("expected 2 inputs for xmin and xmax, but got 1")
         elif (xmin>=xmax):
             raise ValueError(f"xmin = {xmin} should be less than xmax = {xmax}")
         else:
@@ -720,6 +720,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
                 check = False
         return self.element_class(self, x, check=check)
     
+    @cached_method
     def one(self):
         """
         Return the multiplicative identity of ``self``.
@@ -733,6 +734,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         """
         return self(0)
 
+    @cached_method
     def zero(self):
         """
         Return the additive identity of ``self``.
@@ -748,7 +750,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
     def _repr_(self):
         """
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -827,18 +829,21 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
             sage: T = TropicalSemiring(QQ)
             sage: R = PolynomialRing(T, 'x')
-            sage: f = R.random_element()
-            sage: f.parent() is R
-            True
+            sage: f = R.random_element(5, monic=True)
+            sage: f.degree()
+            5
             sage: f[f.degree()]
             0
+            sage: f.parent() is R
+            True
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
         f = R.random_element(degree=degree, monic=monic, *args, **kwds)
-        dict_f = f.dict()
-        dict_f[f.degree()] = 0
-        return self(dict_f)
+        new_dict = f.dict()
+        if monic:
+            new_dict[f.degree()] = 0
+        return self(new_dict)
     
     def is_sparse(self):
         """
@@ -952,7 +957,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
                 order = slope - all_slope[-1]
                 all_slope.append(slope)
                 roots[points[i][0]] = order
-        if len(all_slope) == 1: # constant polynomial
+        if len(all_slope) == 1:  # constant polynomial
             return self(points[0][1])
         
         result = self()

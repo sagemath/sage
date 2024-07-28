@@ -27,8 +27,9 @@ REFERENCES:
 
 from sage.structure.sage_object import SageObject
 from sage.rings.infinity import infinity
+from sage.structure.unique_representation import UniqueRepresentation
 
-class TropicalVariety(SageObject):
+class TropicalVariety(UniqueRepresentation, SageObject):
     r"""
     A tropical variety in `\RR^n`.
 
@@ -164,32 +165,14 @@ class TropicalVariety(SageObject):
         r"""
         Initialize ``self``.
 
-        EXAMPLES:
-
-        Tropical variety in two, three, and higher dimensions::
+        EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
-            sage: tv = (x+y).tropical_variety(); tv
-            Tropical curve of 0*x + 0*y
+            sage: tv = (x+y).tropical_variety()
+            sage: TestSuite(tv).run()
 
-        ::
-
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<x,y,z> = PolynomialRing(T)
-            sage: tv = (x+y+z).tropical_variety(); tv
-            Tropical surface of 0*x + 0*y + 0*z
-
-        ::
-
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<w,x,y,z> = PolynomialRing(T)
-            sage: tv = (w+x+y+z).tropical_variety(); tv
-            Tropical hypersurface of 0*w + 0*x + 0*y + 0*z
-
-        TESTS:
-
-        The input to ``TropicalVariety`` should be a tropical polynomial::
+        TESTS::
 
             sage: from sage.rings.semirings.tropical_variety import TropicalVariety
             sage: R.<x,y> = QQ[]
@@ -211,7 +194,7 @@ class TropicalVariety(SageObject):
 
         self._poly = poly
         self._hypersurface = []
-        if len(poly.dict()) == 1: # constant polynomial
+        if len(poly.dict()) == 1:  # constant polynomial
             return
         
         tropical_roots = []
@@ -221,17 +204,16 @@ class TropicalVariety(SageObject):
 
         # convert each term to its linear function
         linear_eq = {}
-        for key in poly.dict():
-            eq = 0
-            for i,e in enumerate(key):
-                eq += variables[i]*e
-            eq += poly.dict()[key].lift()
+        pd = poly.dict()
+        for key in pd:
+            eq = sum(variables[i]*e for i, e in enumerate(key))
+            eq += pd[key].lift()
             linear_eq[key] = eq
         
         temp_keys = []
         temp_order = []
         # checking for all possible combinations of two terms
-        for keys in combinations(poly.dict(), 2):
+        for keys in combinations(pd, 2):
             sol = solve(linear_eq[keys[0]]==linear_eq[keys[1]], variables)
 
             # parametric solution of the chosen two terms
@@ -247,7 +229,7 @@ class TropicalVariety(SageObject):
                 min_max = min_max.subs(v==final_sol[i])
             all_sol_compare = []
             no_solution = False
-            for compare in poly.dict():
+            for compare in pd:
                 if compare not in keys:
                     temp_compare = linear_eq[compare]
                     for i, v in enumerate(variables):
@@ -258,11 +240,11 @@ class TropicalVariety(SageObject):
                         sol_compare = solve(min_max < temp_compare, variables)
                     else:
                         sol_compare = solve(min_max > temp_compare, variables)
-                    if sol_compare: # if there is solution
+                    if sol_compare:  # if there is solution
                         if isinstance(sol_compare[0], list):
                             if sol_compare[0]:
                                 all_sol_compare.append(sol_compare[0][0])
-                        else: # solution is unbounded on one side
+                        else:  # solution is unbounded on one side
                             all_sol_compare.append(sol_compare[0])
                     else:
                         no_solution = True
@@ -395,7 +377,7 @@ class TropicalVariety(SageObject):
             [[(t1, t1, t2, t3), [t1 <= t3, t1 <= t2], 1],
             [(t1, t2, t1, t3), [t1 <= t3, t1 <= t2], 1],
             [(t1, t2, t3, t1), [t1 <= min(t3, t2)], 1],
-            [(t1, t2, t2, t3), [t2 <= t3, t2 <= t1], 1],
+            [(t1, t2, t2, t3), [t2 <= t1, t2 <= t3], 1],
             [(t1, t2, t3, t2), [t2 <= min(t3, t1)], 1],
             [(t1, t2, t3, t3), [t3 <= min(t1, t2)], 1]]
         """
@@ -411,6 +393,21 @@ class TropicalSurface(TropicalVariety):
     cells meet along edges, where the balancing condition is satisfied.
     This balancing condition ensures that the sum of the outgoing normal
     vectors at each edge is zero, reflecting the equilibrium.
+
+    EXAMPLES::
+
+        sage: T = TropicalSemiring(QQ, use_min=False)
+        sage: R.<x,y,z> = PolynomialRing(T)
+        sage: p1 = x + y + z + R(0)
+        sage: tv = p1.tropical_variety(); tv
+        Tropical surface of 0*x + 0*y + 0*z + 0
+        sage: tv.components()
+        [[(t1, t1, t2), [t2 <= t1, 0 <= t1], 1],
+        [(t1, t2, t1), [max(0, t2) <= t1], 1],
+        [(0, t1, t2), [t2 <= 0, t1 <= 0], 1],
+        [(t1, t2, t2), [max(0, t1) <= t2], 1],
+        [(t1, 0, t2), [t2 <= 0, t1 <= 0], 1],
+        [(t1, t2, 0), [t1 <= 0, t2 <= 0], 1]]
     """
     def _axes(self):
         """
@@ -443,7 +440,7 @@ class TropicalSurface(TropicalVariety):
         """
         from sage.symbolic.relation import solve
 
-        if not self._hypersurface: # no components
+        if not self._hypersurface:  # no components
             return [[-1, 1], [-1, 1]]
         u_set = set()
         v_set = set()
@@ -605,6 +602,16 @@ class TropicalCurve(TropicalVariety):
     a vertices, where the balancing condition is satisfied. This balancing
     condition ensures that the sum of the outgoing slopes at each vertex
     is zero, reflecting the equilibrium.
+
+    EXAMPLES::
+
+        sage: T = TropicalSemiring(QQ, use_min=False)
+        sage: R.<x,y> = PolynomialRing(T)
+        sage: p1 = x + y + R(0)
+        sage: tv = p1.tropical_variety(); tv
+        Tropical curve of 0*x + 0*y + 0
+        sage: tv.components()
+        [[(t1, t1), [t1 >= 0], 1], [(0, t1), [t1 <= 0], 1], [(t1, 0), [t1 <= 0], 1]]
     """
     def _axes(self):
         """
@@ -632,7 +639,7 @@ class TropicalCurve(TropicalVariety):
             sage: p2.tropical_variety()._axes()
             [[-3/2, 1/2], [25/2, 29/2]]
         """
-        if self.number_of_components() == 0: # constant or monomial
+        if self.number_of_components() == 0:  # constant or monomial
             return [[-1,1], [-1,1]]
         
         if self.number_of_components() == 1:
@@ -841,7 +848,7 @@ class TropicalCurve(TropicalVariety):
                 plot = parametric_plot(parametric_function, (var, lower, upper),
                                     color='red')
 
-            if component[2] > 1: # add order if >= 2
+            if component[2] > 1:  # add order if >= 2
                 point = []
                 for eq in component[0]:
                     value = eq.subs(var==midpoint)

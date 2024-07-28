@@ -33,11 +33,8 @@ REFERENCES:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-
-
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 
 class TropicalMPolynomial(MPolynomial_polydict):
@@ -462,7 +459,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             Polynomial Semiring in x, y over Rational Field
         """
         from sage.rings.polynomial.multi_polynomial import MPolynomial
-        new_dict = {}
+        # new_dict = {}
         if isinstance(x, TropicalMPolynomial):
             if x.parent() is not self:
                 raise ValueError(f"can not convert {x} to {self}")
@@ -471,14 +468,15 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
                 x = x.dict()
             else:
                 raise ValueError(f"can not convert {x} to {self}")
-        elif x in self.base().base_ring(): # constant
+        elif (x in self.base().base_ring()) or (x in self.base()):
             term = [0]*self.ngens()
             x = {tuple(term): x}
         if isinstance(x, dict):
-            for key, value in x.items(): # convert coefficient to tropical
-                new_dict[key] = self.base()(value)
-        return self.element_class(self, new_dict)
+            for key, value in x.items():  # convert coefficient to tropical
+                x[key] = self.base()(value)
+        return self.element_class(self, x)
     
+    @cached_method
     def one(self):
         r"""
         Return the multiplicative identity of ``self``.
@@ -490,8 +488,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.one()
             0
         """
-        return self(0)
+        return self(self.base().one())
 
+    @cached_method
     def zero(self):
         r"""
         Return the additive identity of ``self``.
@@ -538,6 +537,10 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,b,c> = PolynomialRing(T)
             sage: f = R.random_element()
+            sage: f.degree() <= 2
+            True
+            sage: len(list(f)) <= 5
+            True
             sage: f.parent() is R
             True
         """
