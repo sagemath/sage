@@ -124,7 +124,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
         self._max_crossing_number = None
         self._set_index_dictionary(max_crossing_number=max_crossing_number)
         from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-        indices = FiniteEnumeratedSet(self._index_dict.keys())
+        indices = FiniteEnumeratedSet(self._index_dict)
         if not prefix or prefix == 'F':
             prefix = 'KnotInfo'
         super().__init__(indices, prefix)
@@ -197,7 +197,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
                     add_index(K, sym)
         if current_max_crossing_number > 0:
             from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-            self._indices = FiniteEnumeratedSet(self._index_dict.keys())
+            self._indices = FiniteEnumeratedSet(self._index_dict)
 
     def _repr_(self):
         """
