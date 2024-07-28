@@ -739,7 +739,7 @@ class Rings(CategoryWithAxiom):
                 sage: L.ideal(a)
                 Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
             """
-            return self._ideal_class_()(self, [self.zero()])
+            return self._ideal_class_(1)(self, [self.zero()])
 
         @cached_method
         def unit_ideal(self):
@@ -751,7 +751,7 @@ class Rings(CategoryWithAxiom):
                 sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
                 Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
             """
-            return self._ideal_class_()(self, [self.one()])
+            return self._ideal_class_(1)(self, [self.one()])
 
         def principal_ideal(self, gen, coerce=True):
             """
