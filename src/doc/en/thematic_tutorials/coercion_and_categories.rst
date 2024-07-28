@@ -119,9 +119,7 @@ This base class provides a lot more methods than a general parent::
      '_list',
      '_one_element',
      '_pseudo_fraction_field',
-     '_unit_ideal',
      '_zero_element',
-     '_zero_ideal',
      'algebraic_closure',
      'base_extend',
      'divides',
@@ -146,9 +144,7 @@ This base class provides a lot more methods than a general parent::
      'prime_subfield',
      'principal_ideal',
      'random_element',
-     'unit_ideal',
      'zero',
-     'zero_ideal',
      'zeta',
      'zeta_order']
 

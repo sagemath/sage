@@ -709,6 +709,50 @@ class Rings(CategoryWithAxiom):
             from sage.rings.noncommutative_ideals import Ideal_nc
             return Ideal_nc
 
+        @cached_method
+        def zero_ideal(self):
+            """
+            Return the zero ideal of this ring (cached).
+
+            EXAMPLES::
+
+                sage: ZZ.zero_ideal()
+                Principal ideal (0) of Integer Ring
+                sage: QQ.zero_ideal()
+                Principal ideal (0) of Rational Field
+                sage: QQ['x'].zero_ideal()
+                Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+
+            The result is cached::
+
+                sage: ZZ.zero_ideal() is ZZ.zero_ideal()
+                True
+
+            TESTS:
+
+            Make sure that :issue:`13644` is fixed::
+
+                sage: # needs sage.rings.padics
+                sage: K = Qp(3)
+                sage: R.<a> = K[]
+                sage: L.<a> = K.extension(a^2-3)
+                sage: L.ideal(a)
+                Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
+            """
+            return self._ideal_class_()(self, [self.zero()], coerce=False)
+
+        @cached_method
+        def unit_ideal(self):
+            """
+            Return the unit ideal of this ring.
+
+            EXAMPLES::
+
+                sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
+                Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
+            """
+            return self._ideal_class_()(self, [self.one()], coerce=False)
+
         def characteristic(self):
             """
             Return the characteristic of this ring.
