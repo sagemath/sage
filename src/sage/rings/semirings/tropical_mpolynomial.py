@@ -596,7 +596,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         Return the number of generators of ``self``.
 
         EXAMPLES::
-        
+
             sage: T = TropicalSemiring(QQ)
             sage: R = PolynomialRing(T, 10, 'z')
             sage: R.ngens()
