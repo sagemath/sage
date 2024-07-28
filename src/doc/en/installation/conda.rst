@@ -70,7 +70,7 @@ Using conda to provide system packages for the Sage distribution
 If Conda is installed (check by typing ``conda info``), one can install SageMath
 from source as follows:
 
-  - Create a new conda environment including all standard packages
+-   Create a new conda environment including all standard packages
     recognized by sage, and activate it::
 
       $ conda env create --file environment-3.11-linux.yml --name sage-build
@@ -84,12 +84,13 @@ from source as follows:
     A different Python version can be selected by replacing ``3.11`` by ``3.9``
     or ``3.10`` in these commands.
 
-  - Then the SageMath distribution will be built using the compilers provided by Conda
+-   Then the SageMath distribution will be built using the compilers provided by Conda
     and using many packages installed by Conda::
 
       $ ./bootstrap
       $ ./configure --with-python=$CONDA_PREFIX/bin/python \
-                    --prefix=$CONDA_PREFIX
+                    --with-sage-venv=$CONDA_PREFIX \
+                    --prefix=$CONDA_PREFIX/libexec/sage-local
       $ make
 
 
@@ -105,13 +106,13 @@ environment for Sage development.
 
 Here we assume that you are using a git checkout.
 
-  - Optionally, set the build parallelism for the Sage library. Use
+-   Optionally, set the build parallelism for the Sage library. Use
     whatever the meaningful value for your machine is - no more than
     the number of cores::
 
       $ export SAGE_NUM_THREADS=24
 
-  - Create and activate a new conda environment with the dependencies of Sage
+-   Create and activate a new conda environment with the dependencies of Sage
     and a few additional developer tools::
 
       .. tab:: mamba
@@ -135,7 +136,7 @@ Here we assume that you are using a git checkout.
     A different Python version can be selected by replacing ``3.11`` by ``3.9``
     or ``3.10`` in these commands.
 
-  - Bootstrap the source tree and install the build prerequisites and the Sage library::
+-   Bootstrap the source tree and install the build prerequisites and the Sage library::
 
       $ ./bootstrap
       $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
@@ -146,7 +147,7 @@ Here we assume that you are using a git checkout.
 
     and then run the last command again.
 
-  - Verify that Sage has been installed::
+-   Verify that Sage has been installed::
 
       $ sage -c 'print(version())'
       SageMath version 10.2.beta4, Release Date: 2023-09-24
