@@ -27,7 +27,7 @@ class LazyFormat(str):
         sage: LazyFormat("Got `%s`; expected %s")%(3, 2/3)
         Got `3`; expected 2/3
 
-    To demonstrate the lazyness, let us build an object with a broken
+    To demonstrate the laziness, let us build an object with a broken
     ``__repr__`` method::
 
         sage: class IDontLikeBeingPrinted():

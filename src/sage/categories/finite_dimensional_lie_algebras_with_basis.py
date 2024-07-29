@@ -2429,7 +2429,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
               General case
 
-              * ``'generic'`` -- generic algortihm (only implemented currently
+              * ``'generic'`` -- generic algorithm (only implemented currently
                 for positive characteristic)
 
             Note that the algorithm for any more generic cases can be used

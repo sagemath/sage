@@ -795,7 +795,7 @@ class PoincareBirkhoffWittBasisSemisimpleLieAlgebra(PoincareBirkhoffWittBasis):
             r"""
             Return the transpose map of ``self``.
 
-            This is the tranpose map on the Lie algebra extended
+            This is the transpose map on the Lie algebra extended
             as an anti-involution of ``self``.
 
             EXAMPLES::

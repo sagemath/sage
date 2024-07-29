@@ -455,7 +455,7 @@ cpdef executor(tuple params):
     Execute a function defined in this module
     (``sage.algebras.fusion_rings.fast_parallel_fmats_methods``) in a worker
     process, and supply the factory parameter by constructing a reference
-    to the ``FMatrix`` object in the worker's memory adress space from
+    to the ``FMatrix`` object in the worker's memory address space from
     its ``id``.
 
     INPUT:

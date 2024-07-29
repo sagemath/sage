@@ -274,7 +274,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             was defined in [BHZ2005]_.
 
             This partial order is not a lattice, as there is no unique
-            maximal element. It can be succintly defined as follows.
+            maximal element. It can be succinctly defined as follows.
 
             Let `u` and `v` be two elements of the Coxeter group `W`. Let
             `S(u)` be the support of `u`. Then `u \leq v` if and only

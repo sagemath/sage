@@ -295,7 +295,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         .. WARNING::
 
-            The construction can be very slow, it is not reccomended unless
+            The construction can be very slow, it is not recommended unless
             the corresponding simplicial complex has 5 or less vertices.
 
         EXAMPLES::
@@ -350,7 +350,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         OUTPUT:
 
-        A dictonary, whose values are lists, representing spheres
+        A dictionary, whose values are lists, representing spheres
         and disks described in the construction of the moment-angle
         complex. ``The 2-simplex`` represents a 2-disk, and
         ``Minimal triangulation of the 1-sphere`` represents a 1-sphere.

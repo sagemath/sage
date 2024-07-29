@@ -26,7 +26,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from cpython.object cimport Py_EQ, Py_NE
 
-# it would be preferrable to let bint_symbolp wrap an efficient macro
+# it would be preferable to let bint_symbolp wrap an efficient macro
 # but the macro provided in object.h doesn't seem to work
 cdef bint bint_symbolp(cl_object obj) noexcept:
     return not(cl_symbolp(obj) == ECL_NIL)

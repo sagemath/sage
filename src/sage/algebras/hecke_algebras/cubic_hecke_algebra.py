@@ -1324,7 +1324,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             sage: len(CHA3.get_order())
             24
         """
-        # The reason we have overriden this is that we have to care about
+        # The reason we have overridden this is that we have to care about
         # the dynamical growth of thefinite sub basis used for the
         # calculation in case of more than 4 strands.
 
@@ -3066,7 +3066,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         OUTPUT:
 
-        A tripple consisting of the coefficients.
+        A triple consisting of the coefficients.
 
         EXAMPLES::
 

@@ -857,7 +857,7 @@ cdef class MatrixArgs:
 
         cdef list L
         if self.typ == MA_ENTRIES_SEQ_FLAT and not convert:
-            # Try to re-use existing list
+            # Try to reuse existing list
             if type(self.entries) is not list:
                 L = list(self.entries)
             else:

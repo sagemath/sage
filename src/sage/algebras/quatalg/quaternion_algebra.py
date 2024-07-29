@@ -2342,7 +2342,7 @@ class QuaternionOrder(Parent):
           of minimal norm such that `O' = \gamma^{-1} O \gamma`,
           rather than the ring isomorphism it defines.
 
-        - ``B`` -- postive integer, bound on theta series
+        - ``B`` -- positive integer, bound on theta series
           coefficients to rule out non isomorphic orders.
 
         .. NOTE::

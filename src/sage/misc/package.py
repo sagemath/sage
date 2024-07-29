@@ -144,7 +144,7 @@ def spkg_type(name):
 
     The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
     If no ``SPKG`` exists with the given name (or the directory ``SAGE_PKGS`` is
-    not avaialble), ``None`` is returned.
+    not available), ``None`` is returned.
     """
     spkg_type = None
     from sage.env import SAGE_PKGS
