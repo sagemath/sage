@@ -248,7 +248,7 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S = AlgebraicScheme(P); S
             Subscheme of Projective Space of dimension 3 over Integer Ring
             sage: S._latex_()
-            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^3$}'
+            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^{3}$}'
         """
         return r"\text{{Subscheme of ${}$}}".format(latex(self.__A))
 
@@ -675,7 +675,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
                x - y
             sage: U._latex_()
             '\\text{Quasi-projective subscheme }
-             (X\\setminus Y)\\subset {\\mathbf P}_{\\Bold{Z}}^2,\\text{ where }
+             (X\\setminus Y)\\subset {\\mathbf P}_{\\Bold{Z}}^{2},\\text{ where }
              X \\text{ is defined by }\\text{no polynomials},\\text{ and }
              Y \\text{ is defined by } x - y.'
         """
@@ -1047,13 +1047,13 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z
             sage: S._latex_()
-            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z'
+            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^{2} \\text{ defined by } x^{2} - y z'
             sage: S = P.subscheme([x^2 - y*z, x^5]); S
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z,
               x^5
             sage: S._latex_()
-            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z, x^{5}'
+            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^{2} \\text{ defined by } x^{2} - y z, x^{5}'
         """
         polynomials = ', '.join(latex(f) for f in self.defining_polynomials())
         if not polynomials:
@@ -1787,7 +1787,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         over the rationals::
 
             sage: E = EllipticCurve('37a')                                              # needs sage.schemes
-            sage: E.rational_points(bound=8)                                            # needs sage.schemes
+            sage: E.rational_points(bound=8)                                            # needs sage.libs.singular sage.schemes
             [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 0),
              (1/4 : -5/8 : 1), (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
              (2 : -3 : 1), (2 : 2 : 1)]
@@ -1796,8 +1796,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         enumerated. ::
 
             sage: Etilde = E.base_extend(GF(3))                                         # needs sage.schemes
-            sage: Etilde.rational_points()                                              # needs sage.schemes
-            [(0 : 1 : 0), (0 : 0 : 1), (0 : 2 : 1), (1 : 0 : 1), (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
+            sage: Etilde.rational_points()                                              # needs sage.libs.singular sage.schemes
+            [(0 : 1 : 0), (0 : 0 : 1), (0 : 2 : 1), (1 : 0 : 1),
+             (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
 
         The class of hyperelliptic curves does not (yet) support
         desingularization of the places at infinity into two points::
@@ -1805,27 +1806,27 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: FF = FiniteField(7)
             sage: P.<x> = PolynomialRing(FiniteField(7))
             sage: C = HyperellipticCurve(x^8 + x + 1)                                   # needs sage.schemes
-            sage: C.rational_points()                                                   # needs sage.schemes
+            sage: C.rational_points()                                                   # needs sage.libs.singular sage.schemes
             [(0 : 1 : 0), (0 : 1 : 1), (0 : 6 : 1), (2 : 0 : 1),
              (4 : 0 : 1), (6 : 1 : 1), (6 : 6 : 1)]
 
         ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.rings.real_mpfr
             sage: K.<v> = QuadraticField(-3)
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)
             sage: X = P.subscheme([x^2 - v^2*x*z, y*x - v*z^2])
-            sage: X.rational_points(F=CC)
+            sage: X.rational_points(F=CC)                                               # needs sage.libs.singular
             [(-3.00000000000000 : -0.577350269189626*I : 1.00000000000000),
              (0.000000000000000 : 1.00000000000000 : 0.000000000000000)]
 
         ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.rings.real_mpfr
             sage: K.<v> = QuadraticField(3)
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: X = A.subscheme([x^2 - v^2*y, y*x - v])
-            sage: X.rational_points(F=RR)
+            sage: X.rational_points(F=RR)                                               # needs sage.libs.singular
             [(1.73205080756888, 1.00000000000000)]
 
         .. TODO::
