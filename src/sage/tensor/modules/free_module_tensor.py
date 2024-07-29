@@ -269,8 +269,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
     def __init__(
         self,
-        fmodule: FiniteRankFreeModule,
-        tensor_type,
+        fmodule: tuple[FiniteRankFreeModule],
+        tensor_type = None,
         name: Optional[str] = None,
         latex_name: Optional[str] = None,
         sym=None,
@@ -302,9 +302,17 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if parent is None:
             parent = fmodule.tensor_module(*tensor_type)
         ModuleElementWithMutability.__init__(self, parent)
-        self._fmodule = fmodule
-        self._tensor_type = tuple(tensor_type)
-        self._tensor_rank = self._tensor_type[0] + self._tensor_type[1]
+        self._fmodule = fmodule if isinstance(fmodule, tuple) else (fmodule,)
+        if tensor_type is None:
+            shape = list()
+            for module in self.parent()._module_set:
+                shape.append(module._rank)
+            self._shape = tuple(shape)
+            self._tensor_rank = len(self._shape)
+        else:
+            self._tensor_type = tensor_type
+            self._shape = (self._fmodule[0]._rank,) * (tensor_type[0] + tensor_type[1])
+            self._tensor_rank = tensor_type[0] + tensor_type[1]
         self._is_zero = False # a priori, may be changed below or via
                               # method __bool__()
         self._name = name
@@ -366,7 +374,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
     ##### End of required methods for ModuleElement (beside arithmetic) #####
 
-    def _repr_(self):
+    def _repr_(self):   # modified
         r"""
         Return a string representation of ``self``.
 
@@ -379,15 +387,18 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         """
         # Special cases
-        if self._tensor_type == (0,2) and self._sym == ((0,1),):
-            description = "Symmetric bilinear form "
-        else:
-            # Generic case
-            description = "Type-({},{}) tensor".format(
+        if hasattr(self, '_tensor_type'):
+            if self._tensor_type == (0,2) and self._sym == ((0,1),):
+                description = "Symmetric bilinear form "
+            else:
+                # Generic case
+                description = "Type-({},{}) tensor".format(
                             self._tensor_type[0], self._tensor_type[1])
+        else:
+            description = "Shape-{} tensor".format(self._shape)
         if self._name is not None:
             description += " " + self._name
-        description += " on the {}".format(self._fmodule)
+        description += " on the {}".format(self.base_module())
         return description
 
     def _latex_(self):
@@ -463,7 +474,9 @@ class FreeModuleTensor(ModuleElementWithMutability):
             (2, 1)
 
         """
-        return self._tensor_type
+        if hasattr(self, '_tensor_type'):
+            return self._tensor_type
+        raise AttributeError("Tensor object has no attribute tensor type")
 
     def tensor_rank(self):
         r"""
@@ -507,6 +520,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
             True
 
         """
+        if hasattr(self, '_tensor_type'):
+            return self._fmodule[0]
         return self._fmodule
 
     def symmetries(self):
@@ -947,8 +962,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             True
 
         """
-        return self.__class__(self._fmodule, self._tensor_type, sym=self._sym,
-                              antisym=self._antisym)
+        return self.__class__(self._fmodule, self._tensor_type, sym=self._sym, antisym=self._antisym)
 
     def _new_comp(self, basis):
         r"""
@@ -983,25 +997,27 @@ class FreeModuleTensor(ModuleElementWithMutability):
              with symmetry on the index positions (0, 1)
 
         """
-        fmodule = self._fmodule  # the base free module
+        fmodule = self._fmodule[0]  # the base free module
+        if not isinstance(basis, (list, tuple)):
+            basis = (basis,)
+        if hasattr(self, '_tensor_rank'):
+            sindex = (fmodule._sindex,) * self._tensor_rank
+        else:
+            sindex = tuple([module._sindex for module in self.parent()._module_set])
         if not self._sym and not self._antisym:
-            return Components(fmodule._ring, basis, self._tensor_rank,
-                              start_index=fmodule._sindex,
-                              output_formatter=fmodule._output_formatter)
+            return Components(fmodule._ring, basis, self._tensor_rank, self._shape,
+                    start_index=sindex, output_formatter=fmodule._output_formatter)
         for isym in self._sym:
             if len(isym) == self._tensor_rank:
                 return CompFullySym(fmodule._ring, basis, self._tensor_rank,
-                                    start_index=fmodule._sindex,
-                                    output_formatter=fmodule._output_formatter)
+                    start_index=sindex, output_formatter=fmodule._output_formatter)
         for isym in self._antisym:
             if len(isym) == self._tensor_rank:
                 return CompFullyAntiSym(fmodule._ring, basis, self._tensor_rank,
-                                        start_index=fmodule._sindex,
-                                     output_formatter=fmodule._output_formatter)
+                    start_index=sindex, output_formatter=fmodule._output_formatter)
         return CompWithSym(fmodule._ring, basis, self._tensor_rank,
-                           start_index=fmodule._sindex,
-                           output_formatter=fmodule._output_formatter,
-                           sym=self._sym, antisym=self._antisym)
+                    start_index=sindex, output_formatter=fmodule._output_formatter,
+                    sym=self._sym, antisym=self._antisym)
 
     def components(self, basis=None, from_basis=None) -> Components:
         r"""
@@ -1235,11 +1251,14 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         """
         if basis is None:
-            basis = self._fmodule._def_basis
+            basis = tuple([module._def_basis for module in self._fmodule])
+        elif not isinstance(basis, (list, tuple)):
+            basis = (basis,)
         if basis not in self._components:
-            if basis not in self._fmodule._known_bases:
-                raise ValueError("the {} has not been ".format(basis) +
-                                 "defined on the {}".format(self._fmodule))
+            for module in self._fmodule:
+                    if not any(element in basis for element in module._known_bases):
+                        raise ValueError("the {} has not been ".format(basis) +
+                                        "defined on the {}".format(module))
             self._components[basis] = self._new_comp(basis)
         self._del_derived() # deletes the derived quantities
         self.del_other_comp(basis)
@@ -1374,11 +1393,14 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         """
         if basis is None:
-            basis = self._fmodule._def_basis
+            basis = tuple([module._def_basis for module in self._fmodule])
+        elif not isinstance(basis, (list, tuple)):
+            basis = (basis,)
         if basis not in self._components:
-            if basis not in self._fmodule._known_bases:
-                raise ValueError("the {} has not been ".format(basis) +
-                                 "defined on the {}".format(self._fmodule))
+            for module in self._fmodule:
+                if not any(element in basis for element in module._known_bases):
+                    raise ValueError("the {} has not been ".format(basis) +
+                                    "defined on the {}".format(module))
             self._components[basis] = self._new_comp(basis)
         self._del_derived() # deletes the derived quantities
         return self._components[basis]
@@ -1493,7 +1515,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         """
         if basis is None:
-            basis = self._fmodule._def_basis
+            basis = tuple([module._def_basis for module in self._fmodule])
         if basis not in self._components:
             raise ValueError(f"the components w.r.t. the {basis}"
                              " have not been defined")
@@ -1597,20 +1619,20 @@ class FreeModuleTensor(ModuleElementWithMutability):
         """
         if isinstance(args, list):  # case of [[...]] syntax
             if isinstance(args[0], (int, Integer, slice, tuple)):
-                basis = self._fmodule._def_basis
+                basis = tuple([module._def_basis for module in self._fmodule])
             else:
-                basis = args[0]
+                basis = args[0] if isinstance(args[0], (list, tuple)) else (args[0],)
                 args = args[1:]
         else:
             if isinstance(args, (int, Integer, slice)):
-                basis = self._fmodule._def_basis
+                basis = tuple([module._def_basis for module in self._fmodule])
             elif not isinstance(args[0], (int, Integer, slice)):
-                basis = args[0]
+                basis = args[0] if isinstance(args[0], (list, tuple)) else (args[0],)
                 args = args[1:]
                 if len(args) == 1:
                     args = args[0]  # to accommodate for [e,:] syntax
             else:
-                basis = self._fmodule._def_basis
+                basis = tuple([module._def_basis for module in self._fmodule])
         self.set_comp(basis)[args] = value
 
     def copy_from(self, other):
@@ -1861,8 +1883,9 @@ class FreeModuleTensor(ModuleElementWithMutability):
             Basis (f_0,f_1,f_2) on the Rank-3 free module M over the Integer Ring
 
         """
-        if self._fmodule._def_basis in self._components:
-            return self._fmodule._def_basis  # the default basis is privileged
+        basis = tuple([module._def_basis for module in self._fmodule])
+        if  basis in self._components:
+            return basis  # the default basis is privileged
         else:
             # a basis is picked arbitrarily:
             return next(iter(self._components.items()))[0]
@@ -2581,6 +2604,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             True
 
         """
+        # if hasattr(self, )
         if using is not None:
             if self.tensor_type() != (0, 2):
                 raise ValueError(
