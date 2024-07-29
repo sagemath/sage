@@ -8027,7 +8027,7 @@ cdef class Matroid(SageObject):
 
         return [F for F in FF if fsol[F]]
 
-    def chow_ring(self, R=None):
+    def chow_ring(self, R, augmented=False, presentation=None):
         r"""
         Return the Chow ring of ``self`` over ``R``.
 
@@ -8099,37 +8099,8 @@ cdef class Matroid(SageObject):
         - [FY2004]_
         - [AHK2015]_
         """
-        # Setup
-        if R is None:
-            R = ZZ
-        # We only want proper flats
-        flats = [X for i in range(1, self.rank())
-                 for X in self.flats(i)]
-        E = list(self.groundset())
-        flats_containing = {x: [] for x in E}
-        for i,F in enumerate(flats):
-            for x in F:
-                flats_containing[x].append(i)
-
-        # Create the ambient polynomial ring
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        try:
-            names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-            P = PolynomialRing(R, names)
-        except ValueError: # variables are not proper names
-            P = PolynomialRing(R, 'A', len(flats))
-            names = P.variable_names()
-        gens = P.gens()
-        # Create the ideal of quadratic relations
-        Q = [gens[i] * gens[i+j+1] for i,F in enumerate(flats)
-             for j,G in enumerate(flats[i+1:]) if not (F < G or G < F)]
-        # Create the ideal of linear relations
-        L = [sum(gens[i] for i in flats_containing[x])
-             - sum(gens[i] for i in flats_containing[y])
-             for j,x in enumerate(E) for y in E[j+1:]]
-        ret = P.quotient(Q + L, names=names)
-        ret.rename("Chow ring of {} over {}".format(self, R))
-        return ret
+        from sage.matroids.chow_ring import ChowRing
+        return ChowRing(M=self, R=R, augmented=augmented, presentation=presentation)
 
     cpdef plot(self, B=None, lineorders=None, pos_method=None,pos_dict=None,save_pos=False):
         """
