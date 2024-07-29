@@ -794,7 +794,7 @@ class HyperbolicGeodesic(SageObject):
             sage: g = HM.get_geodesic((0,0,1), (1,0, n(sqrt(2))))
             sage: A = g.reflection_involution()
             sage: B = diagonal_matrix([1, -1, 1])
-            sage: bool((B - A.matrix()).norm() < 10**-9)
+            sage: bool((B - A.matrix()).norm() < 10**-9)                                # needs scipy
             True
 
         The above tests go through the Upper Half Plane.  It remains to
@@ -1602,7 +1602,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             ....:     return bool(x.dist(m) < 1e-9)
             sage: c, d, e = CC(1, 1), CC(2, 1), CC(2, 0.5)
             sage: pairs = [(c, d), (d, c), (c, e), (e, c), (d, e), (e, d)]
-            sage: all(bisector_gets_midpoint(a, b) for a, b in pairs)
+            sage: all(bisector_gets_midpoint(a, b) for a, b in pairs)                   # needs scipy
             True
         """
         if self.length() == infinity:
@@ -2379,7 +2379,7 @@ class HyperbolicGeodesicHM(HyperbolicGeodesic):
             sage: p1 = HM.get_point((4, -4, sqrt(33)))
             sage: p2 = HM.get_point((-3,-3,sqrt(19)))
             sage: g = HM.get_geodesic(p1, p2)
-            sage: g._plot_vertices(5)
+            sage: g._plot_vertices(5)                                                   # needs sage.plot
             [(4.0, -4.0, 5.744562...),
              (1.363213..., -1.637073..., 2.353372...),
              (0.138568..., -0.969980..., 1.400022...),

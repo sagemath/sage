@@ -1058,7 +1058,7 @@ def is_polhill(int v, int k, int l, int mu):
          [(1, 2), (3, 2), (2, 1), (2, 3), (2, 2)]]
     D = [[G(e) for e in x] for x in D]
 
-    # The K_i are hyperplanes partitionning the nonzero elements of
+    # The K_i are hyperplanes partitioning the nonzero elements of
     # GF(2^s)^2. See section 6.
     s = 3
     G1 = GF(2**s,'x')
