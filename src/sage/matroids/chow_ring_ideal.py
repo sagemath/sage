@@ -27,7 +27,7 @@ from sage.misc.abstract_method import abstract_method
 
 class ChowRingIdeal(MPolynomialIdeal):
     @abstract_method
-    def gens_constructor():
+    def _gens_constructor():
         pass
 
     def matroid(self):
@@ -35,7 +35,7 @@ class ChowRingIdeal(MPolynomialIdeal):
         return M
     
     def flats_generator(self):
-        return dict(self.flats_generator)
+        return dict(self._flats_generator)
     
 
 class ChowRingIdeal_nonaug(ChowRingIdeal):
@@ -74,28 +74,28 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             sage: from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug
 
             sage: I = ChowRingIdeal_nonaug(M=matroids.catalog.Fano(), R=QQ)
-            sage: TestSuite(I).run()
+            sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
         flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
         try:
-            self.poly_ring = PolynomialRing(R, names) #self.ring
+            poly_ring = PolynomialRing(R, names) #self.ring
         except ValueError: # variables are not proper names
-            self.poly_ring = PolynomialRing(R, 'A', len(self.flats))
-        gens = self.poly_ring.gens()
-        self.flats_generator = dict(zip(flats, gens))
-        MPolynomialIdeal.__init__(self, self.poly_ring, self.gens_constructor())
+            poly_ring = PolynomialRing(R, 'A', len(self.flats))
+        gens = poly_ring.gens()
+        self._flats_generator = dict(zip(flats, gens))
+        MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
 
-    def gens_constructor(self):
+    def _gens_constructor(self, poly_ring):
         E = list(self._matroid.groundset())
-        flats = list(self.flats_generator.keys())
+        flats = list(self._flats_generator.keys())
         flats_containing = {x: [] for x in E}
         for i,F in enumerate(flats):
             for x in F:
                 flats_containing[x].append(i)
-        gens = self.poly_ring.gens()
+        gens = poly_ring.gens()
         Q = [gens[i] * gens[i+j+1] for i,F in enumerate(flats)
             for j,G in enumerate(flats[i+1:]) if not (F < G or G < F)]
         L = [sum(gens[i] for i in flats_containing[x])
@@ -130,23 +130,24 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             Polynomial Sequence with 232 Polynomials in 16 Variables
         """
 
-        flats = list(self.flats_generator.keys())
+        flats = list(self._flats_generator)
         gb = list()
+        R = self.ring()
         for F in flats:
             for G in flats: 
                 if not (F < G or G < F):
-                    gb.append(self.flats_generator[F]*self.flats_generator[G])
+                    gb.append(self._flats_generator[F]*self._flats_generator[G])
                 else:
-                    term = self.poly_ring.zero()
+                    term = R.zero()
                     for H in flats:
                         if H > G:
-                            term += self.flats_generator[H]
+                            term += self._flats_generator[H]
                     if Set(F).is_empty():
-                        gb.append(term**self._matroid.rank(Set(G)))
+                        gb.append(term**self._matroid.rank(G)) 
                     elif F < G:
-                        gb.append(term**(self._matroid.rank(Set(G))-self._matroid.rank(Set(F))))
+                        gb.append(term**(self._matroid.rank(G)-self._matroid.rank(F)))
 
-        g_basis = PolynomialSequence(self.poly_ring, [gb])
+        g_basis = PolynomialSequence(R, [gb])
         return g_basis
     
 class AugmentedChowRingIdeal_fy(ChowRingIdeal):
@@ -194,17 +195,17 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         try:
             names_groundset = ['A{}'.format(''.join(str(x))) for x in E]
             names_flats = ['B{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
-            self.poly_ring = PolynomialRing(R, names_groundset + names_flats)
+            poly_ring = PolynomialRing(R, names_groundset + names_flats)
         except ValueError:
-            self.poly_ring = PolynomialRing(R, 'A', len(E) + len(self._flats))
+            poly_ring = PolynomialRing(R, 'A', len(E) + len(self._flats))
         for i,x in enumerate(E):
-            self.flats_generator[x] = self.poly_ring.gens()[i]
+            self._flats_generator[x] = poly_ring.gens()[i]
         for i,F in enumerate(self._flats):
-            self.flats_generator[F] = self.poly_ring.gens()[len(E) + i]
-        MPolynomialIdeal.__init__(self, self.poly_ring, self.gens_constructor())
+            self._flats_generator[F] = poly_ring.gens()[len(E) + i]
+        MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
         
     
-    def gens_constructor(self):
+    def _gens_constructor(self, poly_ring):
         E = list(self._matroid.groundset())
         flats_containing = {x: [] for x in E}
         for F in self._flats:
@@ -215,14 +216,14 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         for F in self._flats:
             for G in self._flats:
                     if not (F < G or G < F):
-                        Q.append(self.flats_generator[F] * self.flats_generator[G])
+                        Q.append(self._flats_generator[F] * self._flats_generator[G])
         L = list()
         for x in E:
-            term = self.poly_ring.zero()
+            term = poly_ring.zero()
             for F in self._flats:
                 if F not in flats_containing[x]:
-                    term += self.flats_generator[F]
-            L.append(self.flats_generator[x] - term)
+                    term += self._flats_generator[F]
+            L.append(self._flats_generator[x] - term)
         return Q + L
 
     def __repr__(self):
@@ -243,33 +244,34 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         """
         gb = []
         E = list(self._matroid.groundset())
+        poly_ring = self.ring()
         for i in E:
             for F in self._flats:
                 for G in self._flats:
-                    term = self.poly_ring.zero()
-                    term1 = self.poly_ring.zero()
+                    term = poly_ring.zero()
+                    term1 = poly_ring.zero()
                     for H in self._flats:
                         if i in Set(H):
-                            term += self.flats_generator[H]
+                            term += self._flats_generator[H]
                         if H > F:
-                            term1 += self.flats_generator[H]
+                            term1 += self._flats_generator[H]
 
-                    gb.append(self.flats_generator[i] + term)
+                    gb.append(self._flats_generator[i] + term)
                     gb.append(term1**(self._matroid.rank(Set(F))) + 1)
 
                     if i in Set(F):
-                        gb.append(self.flats_generator[i]*((term1)**self._matroid.rank(Set(F))))
+                        gb.append(self._flats_generator[i]*((term1)**self._matroid.rank(Set(F))))
             
                     elif not i in Set(F):
-                        gb.append(self.flats_generator[i]*self.flats_generator[F])
+                        gb.append(self._flats_generator[i]*self._flats_generator[F])
                     
                     elif not (F < G or G < F):
-                        gb.append(self.flats_generator[F]*self.flats_generator[G])
+                        gb.append(self._flats_generator[F]*self._flats_generator[G])
                     
                     elif G < F:
-                        gb.append(self.flats_generator[G]*term1**(self._matroid.rank(Set(F))-self._matroid.rank(Set(G))))
+                        gb.append(self._flats_generator[G]*term1**(self._matroid.rank(Set(F))-self._matroid.rank(Set(G))))
 
-        g_basis = PolynomialSequence(self.poly_ring, [gb])
+        g_basis = PolynomialSequence(poly_ring, [gb])
         return g_basis
 
 class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
@@ -296,7 +298,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
         6 elements with 16 bases of atom-free presentation
     """ 
-    def __init__(self, M, R): #documentation of every init
+    def __init__(self, M, R):
         r"""
         Initialize ``self``.
 
@@ -305,7 +307,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: from sage.matroids.chow_ring_ideal import AugmentedChowRingIdeal_atom_free
 
             sage: I = AugmentedChowRingIdeal_atom_free(M=matroids.Wheel(3), R=QQ)
-            sage: TestSuite(I).run()
+            sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
         self._flats = [X for i in range(1, self._matroid.rank())
@@ -320,26 +322,14 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
 
         try:
-            self.poly_ring = PolynomialRing(R, names) #self.ring
+            poly_ring = PolynomialRing(R, names) #self.ring
         except ValueError: # variables are not proper names
-            self.poly_ring = PolynomialRing(R, 'A', len(self._flats))
-           
-           
-        gens = self.poly_ring.gens()
-        self.flats_generator = dict(zip(self._flats, gens))
+            poly_ring = PolynomialRing(R, 'A', len(self._flats))
 
-        
-        Q = [gens[i] * gens[i+j+1] for i,F in enumerate(self._flats)
-            for j,G in enumerate(self._flats[i+1:]) if not (F < G or G < F)]
-        L = [sum(gens[i] for i in flats_containing[x])
-            - sum(gens[i] for i in flats_containing[y])
-            for j,x in enumerate(E) for y in E[j+1:]]
+        MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
         
 
-        MPolynomialIdeal.__init__(self, self.poly_ring, Q + L)
-        
-
-    def gens_constructor(self): 
+    def _gens_constructor(self, poly_ring): 
         E = list(self._matroid.groundset())
         Q = []
         flats_containing = {x: [] for x in E}
@@ -349,16 +339,16 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         for F in self._flats:
             for x in E:
                 if F not in flats_containing[x]:
-                    Q.append(self.flats_generator[x]*self.flats_generator[F])
-                    term = self.poly_ring.zero()
+                    Q.append(self._flats_generator[x]*self._flats_generator[F])
+                    term = poly_ring.zero()
                     for G in flats_containing[x]:
-                        term += self.flats_generator[G]
-                        Q.append(self.flats_generator[F]*term)
+                        term += self._flats_generator[G]
+                        Q.append(self._flats_generator[F]*term)
                    
         for i in E:
-            term = self.poly_ring.zero()
+            term = poly_ring.zero()
             for F in flats_containing[i]:
-                term += self.flats_generator[F]
+                term += self._flats_generator[F]
             Q.append(term**2)
 
         return Q
@@ -384,35 +374,23 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         gb = []
         flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
+        poly_ring = self.ring()
         if Set([]) in flats:
             flats.remove(Set([]))
         for F in flats:
             for G in flats:
                 if not (F > G or G > F):
-                    gb.append(self.flats_generator[F]*self.flats_generator[G])
+                    gb.append(self._flats_generator[F]*self._flats_generator[G])
                 elif F < G:
-                    term = self.poly_ring.zero()
+                    term = poly_ring.zero()
                     for H in flats:
                         if H < F:
-                            term += self.flats_generator[H]
-                    gb.append(self.flats_generator[F]*(term**self._matroid.rank(Set(G)))*
+                            term += self._flats_generator[H]
+                    gb.append(self._flats_generator[F]*(term**self._matroid.rank(Set(G)))*
                             (term**(self._matroid.rank(Set(G))-self._matroid.rank(Set(F)))))
 
-        g_basis = PolynomialSequence(self.poly_ring, [gb])
+        g_basis = PolynomialSequence(poly_ring, [gb])
         return g_basis
-
-
-        
-
-#linting tests pass
-#single underscore for attributes
-#Developer's guide
-#use 'self' in docstrings
-#rebase chow_ring from repr_update
-#common base class for all chow ring ideals - augmented parameter
-#getting ring from chow ring ideal to chow ring
-#references in the main index
-
 
             
 
