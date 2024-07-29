@@ -191,7 +191,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             for j in range(submatrix.numColumns):
                 submatrix.columns[j] = columns[j]
 
-            CMR_CALL(CMRchrmatZoomSubmat(cmr, self._mat, submatrix, &cmr_submatrix))
+            CMR_CALL(CMRchrmatSlice(cmr, self._mat, submatrix, &cmr_submatrix))
         finally:
             CMR_CALL(CMRsubmatFree(cmr, &submatrix))
 
