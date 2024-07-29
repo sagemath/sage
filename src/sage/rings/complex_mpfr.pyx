@@ -29,7 +29,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+import re
 import weakref
 
 import sage.misc.misc
@@ -40,8 +40,6 @@ from sage.structure.parent cimport Parent
 from sage.structure.element cimport RingElement, Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
-
-from sage.misc.sage_eval import sage_eval
 
 import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
@@ -69,6 +67,10 @@ NumberFieldElement_quadratic = ()
 AA = None
 QQbar = None
 CDF = CLF = RLF = None
+
+# useful for parsing
+NUMBERS = re.compile("[0-9]")
+BLOCK = re.compile(r'[+-]?(?:I\*|)[0-9\.]*(?:e[+-]?[0-9]*|)\*?I?')
 
 
 def late_import():
@@ -496,10 +498,26 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
             sage: CC('1.2+3.4*j')
             1.20000000000000 + 3.40000000000000*I
+            sage: CC("+4-13.59658451496887*I")
+            4.00000000000000 - 13.5965845149689*I
+            sage: CC('1.2*I+3.4')
+            3.40000000000000 + 1.20000000000000*I
+            sage: CC('1.2*I')
+            1.20000000000000*I
+            sage: CC('9-I*1.2')
+            9.00000000000000 - 1.20000000000000*I
+            sage: CC('3.4')
+            3.40000000000000
+            sage: CC('3.4e-6+7.8e11*I')
+            3.40000000000000e-6 + 7.80000000000000e11*I
             sage: CC('hello')
             Traceback (most recent call last):
             ...
             ValueError: given string 'hello' is not a complex number
+            sage: CC('1+2+3*I')
+            Traceback (most recent call last):
+            ...
+            ValueError: given string '1+2+3*I' is not a complex number
         """
         if not isinstance(x, (RealNumber, tuple)):
             if isinstance(x, ComplexDoubleElement):
@@ -512,17 +530,28 @@ class ComplexField_class(sage.rings.abc.ComplexField):
                 allowed = '+-.*0123456789Ie'
                 if len(x) == 0 or not all(letter in allowed for letter in x):
                     raise ValueError(f'given string {x!r} is not a complex number')
-                # This should rather use a proper parser to validate input.
-                # TODO: this is probably not the best and most
-                # efficient way to do this.  -- Martin Albrecht
-                return ComplexNumber(self,
-                                     sage_eval(x, locals={"I": self.gen()}))
+                split = [group for group in BLOCK.findall(x) if group]
+                N = len(split)
+                if N == 1:
+                    split = split[0]
+                    real, imag = ('0', split) if 'I' in split else (split, '0')
+                elif N == 2:
+                    real, imag = split
+                    if 'I' in real:
+                        real, imag = imag, real
+                else:
+                    raise ValueError(f'given string {x!r} is not a complex number')
+                if not NUMBERS.search(imag):
+                    imag = imag.replace('I', '1')
+                else:
+                    imag = imag.replace('*', '').replace('I', '')
+                return ComplexNumber(self, real, imag)
 
             late_import()
             if isinstance(x, NumberFieldElement_quadratic):
                 if isinstance(x.parent(), sage.rings.abc.NumberField_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
-                    (re, im) = list(x)
-                    return ComplexNumber(self, re, im)
+                    real, imag = list(x)
+                    return ComplexNumber(self, real, imag)
 
             try:
                 return self(x.sage())
@@ -718,9 +747,9 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             True
         """
         size = self._real_field()(component_max)
-        re = self._real_field().random_element(-size, size, *args, **kwds)
-        im = self._real_field().random_element(-size, size, *args, **kwds)
-        return self(re, im)
+        real = self._real_field().random_element(-size, size, *args, **kwds)
+        imag = self._real_field().random_element(-size, size, *args, **kwds)
+        return self(real, imag)
 
     def pi(self):
         r"""
@@ -952,8 +981,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             elif isinstance(real, pari_gen):
                 real, imag = real.real(), real.imag()
             elif isinstance(real, (list, tuple)):
-                re, imag = real
-                real = re
+                real, imag = real
             elif isinstance(real, complex):
                 real, imag = real.real, real.imag
             elif type(real) is gmpy2.mpc:
@@ -1372,7 +1400,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: ComplexNumber(0).log()._latex_()
             '-\\infty'
         """
-        import re
         s = repr(self).replace('*I', 'i').replace('infinity','\\infty')
         return re.sub(r"e(-?\d+)", r" \\times 10^{\1}", s)
 
@@ -1459,9 +1486,9 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         if prec is not None:
             return ComplexField(prec)(self)._mpmath_()
         from sage.libs.mpmath.all import make_mpc
-        re = mpfr_to_mpfval(self.__re)
-        im = mpfr_to_mpfval(self.__im)
-        return make_mpc((re, im))
+        real = mpfr_to_mpfval(self.__re)
+        imag = mpfr_to_mpfval(self.__im)
+        return make_mpc((real, imag))
 
     def _sympy_(self):
         """
@@ -3250,7 +3277,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
     algdep = algebraic_dependency
 
 
-def make_ComplexNumber0(fld, mult_order, re, im):
+def make_ComplexNumber0(fld, mult_order, real, imag):
     """
     Create a complex number for pickling.
 
@@ -3260,7 +3287,7 @@ def make_ComplexNumber0(fld, mult_order, re, im):
         sage: loads(dumps(a)) == a # indirect doctest
         True
     """
-    x = ComplexNumber(fld, re, im)
+    x = ComplexNumber(fld, real, imag)
     x._set_multiplicative_order(mult_order)
     return x
 
@@ -3532,7 +3559,6 @@ def _format_complex_number(real, imag, format_spec):
         ...
         ValueError: '=' alignment not allowed in complex format specifier
     """
-    import re
     match = re.match(r'^(.?[><=^])?'         # 1: fill and align
                      r'([ +-]?)'             # 2: sign
                      r'[^\d\.]*?0?(\d*)'     # 3: width

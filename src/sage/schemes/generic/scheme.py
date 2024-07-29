@@ -24,7 +24,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.categories.commutative_rings import CommutativeRings
-from sage.rings.ideal import is_Ideal
+from sage.rings.ideal import Ideal_generic
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
 
@@ -985,7 +985,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         if len(args) == 1:
             x = args[0]
             if ((isinstance(x, self.element_class) and (x.parent() is self or x.parent() == self))
-                or (is_Ideal(x) and x.ring() is self.coordinate_ring())):
+                or (isinstance(x, Ideal_generic) and x.ring() is self.coordinate_ring())):
                 # Construct a topological point from x.
                 return self._element_constructor_(x)
         try:
@@ -1015,7 +1015,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
                 return x
             elif x.parent() == self:
                 return self.element_class(self, x.prime_ideal())
-        elif is_Ideal(x) and x.ring() is self.coordinate_ring():
+        elif isinstance(x, Ideal_generic) and x.ring() is self.coordinate_ring():
             return self.element_class(self, x)
         raise TypeError('cannot convert %s to a topological point of %s' % (x, self))
 

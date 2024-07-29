@@ -409,8 +409,8 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         """
         if self.domain() is ring:
             return [self]
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        if is_PolynomialRing(ring) and self.domain().base_ring().is_subring(ring.base_ring()):
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        if isinstance(ring, PolynomialRing_general) and self.domain().base_ring().is_subring(ring.base_ring()):
             if self.domain().base_ring().fraction_field() is ring.base_ring():
                 return [LimitValuation(self._initial_approximation.change_domain(ring),
                         self._G.change_ring(ring.base_ring()))]
@@ -661,8 +661,8 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             # the approximation ends in v(phi)=infty
             return R
         else:
-            from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-            assert (is_PolynomialRing(R))
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            assert (isinstance(R, PolynomialRing_general))
             return R.base_ring()
 
     def _ge_(self, other):

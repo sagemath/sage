@@ -102,7 +102,7 @@ from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
 
 from sage.rings.number_field.number_field_base import NumberField
-from sage.rings.ideal import is_Ideal
+from sage.rings.ideal import Ideal_generic
 
 from .constructor import EllipticCurve
 from .kodaira_symbol import KodairaSymbol
@@ -1184,7 +1184,7 @@ def check_prime(K, P):
                 raise TypeError("The element %s is not prime" % (P,))
         elif P in QQ:
             raise TypeError("The element %s is not prime" % (P,))
-        elif is_Ideal(P) and P.base_ring() is ZZ:
+        elif isinstance(P, Ideal_generic) and P.base_ring() is ZZ:
             if P.is_prime():
                 return P.gen()
             else:

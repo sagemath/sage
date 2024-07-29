@@ -1784,7 +1784,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         # TODO: Refactor imports to move this to the top
         from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict
         from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         from sage.rings.polynomial.polydict import ETuple
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         from sage.rings.quotient_ring import QuotientRing_generic
@@ -1875,7 +1875,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
             return R(sage_repr)
 
-        elif is_PolynomialRing(R) and (ring_is_fine or can_convert_to_singular(R)):
+        elif isinstance(R, PolynomialRing_general) and (ring_is_fine or can_convert_to_singular(R)):
 
             sage_repr = [0] * int(self.deg() + 1)
 

@@ -58,14 +58,13 @@ REFERENCES:
 """
 
 import string
+import re
 import pexpect
 from subprocess import PIPE, Popen
 
-from sage.misc.sage_eval import sage_eval
-
 from sage.structure.sage_object import SageObject
 from sage.interfaces.gfan import gfan
-from .multi_polynomial_ideal import is_MPolynomialIdeal
+from .multi_polynomial_ideal import MPolynomialIdeal
 from .polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
@@ -819,7 +818,7 @@ class GroebnerFan(SageObject):
         if symmetry:
             print("WARNING! Symmetry option not yet implemented!!")
         self.__verbose = verbose
-        if not is_MPolynomialIdeal(I):
+        if not isinstance(I, MPolynomialIdeal):
             raise TypeError("I must be a multivariate polynomial ideal")
         if not prefix_check([str(R_gen) for R_gen in I.ring().gens()]):
             raise RuntimeError("Ring variables cannot contain each other as prefixes")
@@ -976,8 +975,9 @@ class GroebnerFan(SageObject):
                                stdin=PIPE, stdout=PIPE, stderr=PIPE)
         ans, err = gfan_processes.communicate(input=str_to_bytes(self.gfan()))
         ans = bytes_to_str(ans)
-        ans = sage_eval(ans.replace('{', '').replace('}', '').replace('\n', ''))
-        return [vector(QQ, x) for x in ans]
+        vect = re.compile(r"\([0-9,/\s]*\)")
+        ans = (tup[1:-1].split(',') for tup in vect.findall(ans))
+        return [vector(QQ, [QQ(y) for y in x]) for x in ans]
 
     def ring(self):
         """

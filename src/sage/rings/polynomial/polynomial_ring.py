@@ -191,6 +191,10 @@ def is_PolynomialRing(x):
         sage: from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         sage: from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
         sage: is_PolynomialRing(2)
+        doctest:warning...
+        DeprecationWarning: The function is_PolynomialRing is deprecated;
+        use 'isinstance(..., PolynomialRing_general)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         False
 
     This polynomial ring is not univariate.
@@ -200,6 +204,10 @@ def is_PolynomialRing(x):
         sage: is_PolynomialRing(ZZ['x,y,z'])
         False
         sage: is_MPolynomialRing(ZZ['x,y,z'])
+        doctest:warning...
+        DeprecationWarning: The function is_MPolynomialRing is deprecated;
+        use 'isinstance(..., MPolynomialRing_base)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
 
     ::
@@ -221,6 +229,10 @@ def is_PolynomialRing(x):
         sage: type(R)
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_PolynomialRing is deprecated; "
+                "use 'isinstance(..., PolynomialRing_general)' instead.")
     return isinstance(x, PolynomialRing_general)
 
 
@@ -616,9 +628,9 @@ class PolynomialRing_general(Ring):
             sage: QQ['x'].flattening_morphism()
             Identity endomorphism of Univariate Polynomial Ring in x over Rational Field
         """
-        from .multi_polynomial_ring import is_MPolynomialRing
+        from .multi_polynomial_ring import MPolynomialRing_base
         base = self.base_ring()
-        if is_PolynomialRing(base) or is_MPolynomialRing(base):
+        if isinstance(base, PolynomialRing_general) or isinstance(base, MPolynomialRing_base):
             from .flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
@@ -803,7 +815,7 @@ class PolynomialRing_general(Ring):
 
         # polynomial rings in the same variable over a base that canonically
         # coerces into self.base_ring()
-        if is_PolynomialRing(P):
+        if isinstance(P, PolynomialRing_general):
             if self.construction()[0] != P.construction()[0]:
                 # Construction (including variable names) must be the
                 # same to allow coercion
@@ -842,8 +854,8 @@ class PolynomialRing_general(Ring):
             return PolynomialRingHomomorphism_from_base(RingHomset(P, self), f)
 
         # Last, we consider multivariate polynomial rings:
-        from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-        if is_MPolynomialRing(P) and self.variable_name() in P.variable_names():
+        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+        if isinstance(P, MPolynomialRing_base) and self.variable_name() in P.variable_names():
             P_ = P.remove_var(self.variable_name())
             return self.base_ring() != P_ and self.base_ring().has_coerce_map_from(P_)
 
@@ -1593,7 +1605,7 @@ class PolynomialRing_general(Ring):
             0
         """
         base_ring = self.base_ring()
-        if is_PolynomialRing(base_ring):
+        if isinstance(base_ring, PolynomialRing_general):
             return 0
         try:
             from sage.matrix.matrix_space import MatrixSpace

@@ -425,7 +425,7 @@ def _frobenius_shift(K, generators, check_only=False):
                 q, x = compatible[m].popitem()
             except KeyError:
                 break
-            for qq, xx in compatible[m].items():
+            for xx in compatible[m].values():
                 assert x == xx
         return
     crt = {}

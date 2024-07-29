@@ -159,7 +159,7 @@ from sage.structure.richcmp import richcmp
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import infinity, InfinityElement
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.power_series_ring import is_PowerSeriesRing
 from sage.rings.power_series_ring_element import PowerSeries
 
@@ -174,8 +174,14 @@ def is_MPowerSeries(f):
         sage: from sage.rings.multi_power_series_ring_element import is_MPowerSeries
         sage: M = PowerSeriesRing(ZZ,4,'v')
         sage: is_PowerSeries(M.random_element(10))
+        doctest:warning...
+        DeprecationWarning: The function is_PowerSeries is deprecated; use 'isinstance(..., PowerSeries)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
         sage: is_MPowerSeries(M.random_element(10))
+        doctest:warning...
+        DeprecationWarning: The function is_MPowerSeries is deprecated; use 'isinstance(..., MPowerSeries)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
         sage: T.<v> = PowerSeriesRing(RR)
         sage: is_MPowerSeries(1 - v + v^2 +O(v^3))
@@ -183,6 +189,10 @@ def is_MPowerSeries(f):
         sage: is_PowerSeries(1 - v + v^2 +O(v^3))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_MPowerSeries is deprecated; "
+                "use 'isinstance(..., MPowerSeries)' instead.")
     return isinstance(f, MPowerSeries)
 
 
@@ -370,7 +380,7 @@ class MPowerSeries(PowerSeries):
             # x is either a multivariate or univariate power series
             #
             # test whether x coerces directly to designated parent
-            if is_MPowerSeries(x):
+            if isinstance(x, MPowerSeries):
                 try:
                     self._bg_value = parent._bg_ps_ring(x._bg_value)
                 except TypeError:
@@ -394,7 +404,7 @@ class MPowerSeries(PowerSeries):
                 self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         # test whether x coerces to underlying polynomial ring of parent
-        elif is_PolynomialRing(xparent):
+        elif isinstance(xparent, PolynomialRing_general):
             self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         else:

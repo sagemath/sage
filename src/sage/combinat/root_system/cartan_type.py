@@ -3064,39 +3064,3 @@ class SuperCartanType_standard(UniqueRepresentation, SageObject):
             raise IndexError("index out of range")
 
     options = CartanType.options
-
-##############################################################################
-# For backward compatibility
-
-
-class CartanType_simple_finite:
-    def __setstate__(self, dict):
-        """
-        Implement the unpickling of Cartan types pickled by Sage <= 4.0.
-
-        EXAMPLES:
-
-        This is the pickle for CartanType(["A", 4])::
-
-            sage: pg_CartanType_simple_finite = unpickle_global('sage.combinat.root_system.cartan_type', 'CartanType_simple_finite')
-            sage: si1 = unpickle_newobj(pg_CartanType_simple_finite, ())
-            sage: from sage.misc.fpickle import unpickleModule
-            sage: pg_make_integer = unpickle_global('sage.rings.integer', 'make_integer')
-            sage: si2 = pg_make_integer('4')
-            sage: unpickle_build(si1, {'tools':unpickleModule('sage.combinat.root_system.type_A'), 't':['A', si2], 'letter':'A', 'n':si2})
-
-            sage: si1
-            ['A', 4]
-            sage: si1.dynkin_diagram()                                                  # needs sage.graphs
-            O---O---O---O
-            1   2   3   4
-            A4
-
-        This is quite hacky; in particular unique representation is not preserved::
-
-            sage: si1 == CartanType(["A", 4]) # todo: not implemented
-            True
-        """
-        T = CartanType([dict['letter'], dict['n']])
-        self.__class__ = T.__class__
-        self.__dict__ = T.__dict__

@@ -46,7 +46,7 @@ from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.fraction_field import FractionField_generic
-from sage.rings.quotient_ring import is_QuotientRing
+from sage.rings.quotient_ring import QuotientRing_nc
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space_field
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space_finite_field
@@ -268,7 +268,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             PR = PR.ring().change_ring(K).fraction_field()
             polys = [PR(poly) for poly in polys]
         else:
-            quotient_ring = any(is_QuotientRing(poly.parent()) for poly in polys)
+            quotient_ring = any(isinstance(poly.parent(), QuotientRing_nc) for poly in polys)
             # If any of the list entries lies in a quotient ring, we try
             # to lift all entries to a common polynomial ring.
             if quotient_ring:

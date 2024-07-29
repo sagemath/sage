@@ -1,1 +1,1 @@
-python-pycosat
+python3-pycosat

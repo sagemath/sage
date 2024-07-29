@@ -144,7 +144,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: loads(R.dumps()) == R
             True
         """
-        if not is_MPolynomialRing(other):
+        if not isinstance(other, MPolynomialRing_base):
             return False
         return ((self.base_ring(), self.ngens(),
                 self.variable_names(), self.term_order()) ==
@@ -940,8 +940,8 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
         """
         do_coerce = False
         if len(gens) == 1:
-            from sage.rings.ideal import is_Ideal
-            if is_Ideal(gens[0]):
+            from sage.rings.ideal import Ideal_generic
+            if isinstance(gens[0], Ideal_generic):
                 if gens[0].ring() is self:
                     return gens[0]
                 gens = gens[0].gens()

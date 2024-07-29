@@ -363,7 +363,7 @@ class PreferencesABC(SageObject):
             (align_latex, graphics, supplemental_plot, text)
         """
         options = []
-        for key, value in self.__class__.__dict__.items():
+        for value in self.__class__.__dict__.values():
             if isinstance(value, Property):
                 options.append(value)
         return tuple(sorted(options, key=str))

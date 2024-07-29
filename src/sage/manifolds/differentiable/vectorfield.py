@@ -294,7 +294,7 @@ class VectorField(MultivectorField):
             sage: v._del_dependencies()
         """
         if self._lie_der_along_self != {}:
-            for idtens, tens in self._lie_der_along_self.items():
+            for tens in self._lie_der_along_self.values():
                 del tens._lie_derivatives[id(self)]
             self._lie_der_along_self.clear()
 

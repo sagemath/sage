@@ -240,8 +240,8 @@ class FunctionFieldValuationFactory(UniqueFactory):
             # unique extension to domain
             base_valuation = domain.base_field().valuation(prime)
             return self.create_key_and_extra_args_from_valuation(domain, base_valuation)
-        from sage.rings.ideal import is_Ideal
-        if is_Ideal(prime):
+        from sage.rings.ideal import Ideal_generic
+        if isinstance(prime, Ideal_generic):
             raise NotImplementedError("a place cannot be given by an ideal yet")
 
         raise NotImplementedError("argument must be a place or a pseudo-valuation on a supported subring but %r does not satisfy this for the domain %r" % (prime, domain))

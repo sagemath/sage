@@ -1659,8 +1659,8 @@ class InfiniteInductiveValuation(FinalInductiveValuation, InfiniteDiscretePseudo
             sage: w.change_domain(R.quo(x^2 + x + 1))
             2-adic valuation
         """
-        from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-        if is_PolynomialQuotientRing(ring) and ring.base() is self.domain() and ring.modulus() == self.phi():
+        from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+        if isinstance(ring, PolynomialQuotientRing_generic) and ring.base() is self.domain() and ring.modulus() == self.phi():
             return self.restriction(self.domain().base())._extensions_to_quotient(ring, approximants=[self])[0]
         return super().change_domain(ring)
 

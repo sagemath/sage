@@ -218,7 +218,7 @@ from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRi
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.polydict cimport ETuple
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 
 # base ring imports
 import sage.rings.abc
@@ -508,7 +508,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
                 return True
             elif base_ring.has_coerce_map_from(other._mpoly_base_ring(self.variable_names())):
                 return True
-        elif is_PolynomialRing(other):
+        elif isinstance(other, PolynomialRing_general):
             if base_ring.has_coerce_map_from(other._mpoly_base_ring(self.variable_names())):
                 return True
 
@@ -1098,8 +1098,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         coerce = kwds.get('coerce', True)
         if len(gens) == 1:
             gens = gens[0]
-        from sage.rings.ideal import is_Ideal
-        if is_Ideal(gens):
+        from sage.rings.ideal import Ideal_generic
+        if isinstance(gens, Ideal_generic):
             if gens.ring() is self:
                 return gens
             gens = gens.gens()

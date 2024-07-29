@@ -116,7 +116,7 @@ import sage.rings.abc
 
 from sage.categories.number_fields import NumberFields
 
-from sage.rings.ideal import is_Ideal
+from sage.rings.ideal import Ideal_generic
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField
@@ -925,17 +925,17 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x^2 - y*z
         """
-        from sage.rings.polynomial.multi_polynomial_sequence import is_PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
 
         AlgebraicScheme.__init__(self, A, category=category)
         self._base_ring = A.base_ring()
         R = A.coordinate_ring()
-        if is_Ideal(polynomials):
+        if isinstance(polynomials, Ideal_generic):
             I = polynomials
             polynomials = I.gens()
             if I.ring() is R: # Otherwise we will recompute I later after
                 self.__I = I  # converting generators to the correct ring
-        if isinstance(polynomials, tuple) or is_PolynomialSequence(polynomials) or is_iterator(polynomials):
+        if isinstance(polynomials, tuple) or isinstance(polynomials, PolynomialSequence_generic) or is_iterator(polynomials):
             polynomials = list(polynomials)
         elif not isinstance(polynomials, list):
             # Looks like we got a single polynomial

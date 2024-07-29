@@ -326,6 +326,10 @@ def is_MPolynomialIdeal(x) -> bool:
     but matches Magma's behavior. ::
 
         sage: is_MPolynomialIdeal(I)
+        doctest:warning...
+        DeprecationWarning: The function is_MPolynomialIdeal is deprecated;
+        use 'isinstance(..., MPolynomialIdeal)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         False
 
     ::
@@ -334,6 +338,10 @@ def is_MPolynomialIdeal(x) -> bool:
         sage: is_MPolynomialIdeal(I)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_MPolynomialIdeal is deprecated; "
+                "use 'isinstance(..., MPolynomialIdeal)' instead.")
     return isinstance(x, MPolynomialIdeal)
 
 
@@ -590,12 +598,11 @@ class MPolynomialIdeal_singular_base_repr:
             [[1], [1], [[[(2*a + 3)], [[1]]]]]]
         """
         from sage.rings.fraction_field import FractionField_generic
-        from sage.rings.polynomial.multi_polynomial_ring_base import \
-            is_MPolynomialRing
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         F = self.base_ring()
         if (not isinstance(F, FractionField_generic) or
-            (not is_MPolynomialRing(F.ring()) and not is_PolynomialRing(F.ring()))):
+            not isinstance(F.ring(), (MPolynomialRing_base, PolynomialRing_general))):
             raise TypeError("the base ring must be a field with parameters")
         from sage.arith.functions import lcm
         from sage.libs.singular.function import lib, singular_function

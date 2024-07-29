@@ -99,8 +99,8 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ, RationalField
 from sage.schemes.generic.ambient_space import AmbientSpace
@@ -248,7 +248,7 @@ def ProjectiveSpace(n, R=None, names=None):
         sage: P.gens() == R.gens()
         True
     """
-    if (is_MPolynomialRing(n) or is_PolynomialRing(n)) and R is None:
+    if (isinstance(n, MPolynomialRing_base) or isinstance(n, PolynomialRing_general)) and R is None:
         if names is not None:
             # Check for the case that the user provided a variable name
             # That does not match what we wanted to use from R

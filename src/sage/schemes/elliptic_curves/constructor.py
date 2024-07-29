@@ -28,7 +28,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.rational_field import RationalField
 
 import sage.rings.abc
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -1095,7 +1095,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     # check the input
     R = F.parent()
     K = R.base_ring()
-    if not is_MPolynomialRing(R):
+    if not isinstance(R, MPolynomialRing_base):
         raise TypeError('equation must be a polynomial')
     if R.ngens() != 3 or F.nvariables() != 3:
         raise TypeError('equation must be a polynomial in three variables')
@@ -1328,7 +1328,7 @@ def chord_and_tangent(F, P):
     from sage.schemes.curves.constructor import Curve
     # check the input
     R = F.parent()
-    if not is_MPolynomialRing(R):
+    if not isinstance(R, MPolynomialRing_base):
         raise TypeError('equation must be a polynomial')
     if R.ngens() != 3:
         raise TypeError('{} is not a polynomial in three variables'.format(F))

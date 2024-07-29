@@ -685,7 +685,7 @@ class DiffScalarField(ScalarField):
         ScalarField._del_derived(self) # derived quantities of the mother class
         self._differential = None  # reset of the differential
         # First deletes any reference to self in the vectors' dictionaries:
-        for vid, val in self._lie_derivatives.items():
+        for val in self._lie_derivatives.values():
             del val[0]._lie_der_along_self[id(self)]
         # Then clears the dictionary of Lie derivatives
         self._lie_derivatives.clear()

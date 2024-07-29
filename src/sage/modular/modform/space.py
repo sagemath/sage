@@ -70,7 +70,7 @@ from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.power_series_ring_element import is_PowerSeries
+from sage.rings.power_series_ring_element import PowerSeries
 from sage.rings.rational_field import QQ
 from sage.categories.rings import Rings
 
@@ -1115,7 +1115,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             return self(x.q_expansion(self._q_expansion_module().degree()))
 
-        elif is_PowerSeries(x):
+        elif isinstance(x, PowerSeries):
             if x.prec() == PlusInfinity():
                 if x == 0:
                     return self.element_class(self, self.free_module().zero())
@@ -1906,7 +1906,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
                 B = V.span_of_basis(w)
             else:
                 B = V.span(w)
-        if is_PowerSeries(f) and f.prec() < n:
+        if isinstance(f, PowerSeries) and f.prec() < n:
             raise ValueError("you need at least %s terms of precision" % n)
         x = V(f.padded_list(n))
         return B.coordinates(x)
