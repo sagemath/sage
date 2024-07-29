@@ -1,20 +1,13 @@
-from sage.combinat.integer_vector import IntegerVectors
 from sage.misc.cachefunc import cached_method
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.element import parent
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.sets_with_grading import SetsWithGrading
-from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.algebras import Algebras
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.sets.set import Set
 
 GAP_FAIL = libgap.eval('fail')
 
