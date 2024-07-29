@@ -242,7 +242,7 @@ and use ``S`` to walk around the exchange graph of ``A``::
     sage: S.cluster_variable(3)
     (x2 + 1)/x3
 
-Walking around by mutating ``S`` updates the informations stored in ``A``::
+Walking around by mutating ``S`` updates the information stored in ``A``::
 
     sage: len(A.g_vectors_so_far())
     10

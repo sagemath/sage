@@ -277,7 +277,7 @@ cdef class Functor(SageObject):
 
     def _coerce_into_domain(self, x):
         """
-        Interprete the argument as an object of self's domain.
+        Interpret the argument as an object of self's domain.
 
         NOTE:
 

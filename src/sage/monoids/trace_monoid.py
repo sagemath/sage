@@ -450,7 +450,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
     Return a free partially commuting monoid (trace monoid) on `n` generators
     over independence relation `I`.
 
-    We construct a trace monoid by specifing:
+    We construct a trace monoid by specifying:
 
     - a free monoid and independence relation
     - or generator names and independence relation,

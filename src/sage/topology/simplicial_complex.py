@@ -2278,7 +2278,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         :type enlarge: boolean; optional, default ``True``
 
         :param algorithm: The options are ``'auto'``, ``'dhsw'``, or
-           ``'pari'``.  (``'no_chomp'`` is a synomym for ``'auto'``,
+           ``'pari'``.  (``'no_chomp'`` is a synonym for ``'auto'``,
            maintained for backward compatibility.)  If ``'auto'``,
            use the Dumas, Heckenbach, Saunders, and Welker elimination
            algorithm for large matrices, Pari for small ones.
