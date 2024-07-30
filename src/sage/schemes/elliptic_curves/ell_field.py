@@ -189,13 +189,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                         while (x**2 + x + D).roots():
                             D *= a
                 else:
-                    # We could take a multiplicative generator but
-                    # that might be expensive to compute; otherwise
-                    # half the elements will do, and testing squares
-                    # is very fast.
-                    D = K.random_element()
-                    while D.is_square():
-                        D = K.random_element()
+                    D = K.quadratic_nonresidue()
             else:
                 raise ValueError("twisting parameter D must be specified over infinite fields.")
         else:
