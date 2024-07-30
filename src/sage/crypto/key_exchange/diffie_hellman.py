@@ -20,7 +20,7 @@ AUTHORS:
 
 from sage.misc.superseded import experimental
 
-from sage.crypto.key_exchange.key_exchange import KeyExchangeScheme
+from sage.crypto.key_exchange.key_exchange_scheme import KeyExchangeScheme
 
 from sage.arith.misc import is_prime
 from sage.misc.prandom import randint
@@ -68,7 +68,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(13, 2)
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/37305 for details.
@@ -90,7 +89,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(3, 2)
             Traceback (most recent call last):
             ...
@@ -139,7 +137,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(5, 2)
             sage: DH.field()
             Finite Field of size 5
@@ -152,7 +149,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(7, 3)
             sage: DH.prime()
             7
@@ -165,7 +161,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(7, 3)
             sage: DH.generator()
             3
@@ -178,7 +173,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(7, 3)
             sage: DH.parameters()
             (7, 3)
@@ -191,7 +185,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS:
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(7, 2)
             sage: keys = [DH.generate_secret_key() for i in range(10)]
             sage: all(2 <= i <= 5 for i in keys)
@@ -209,7 +202,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(13, 2)
             sage: DH.generate_public_key(4)
             3
@@ -229,7 +221,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(17, 3)
             sage: DH.compute_shared_secret(13, 11)
             4
@@ -246,7 +237,6 @@ class DiffieHellman(KeyExchangeScheme):
         This is an example of a ``DiffieHellman`` instance where the subgroup
         size is `(p - 1) / 2`::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(47, 2)
             sage: DH.subgroup_size()
             23
@@ -254,7 +244,6 @@ class DiffieHellman(KeyExchangeScheme):
         This is an example of a ``DiffieHellman`` instance where the subgroup
         size is `p - 1`::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(47, 5)
             sage: DH.subgroup_size()
             46
@@ -268,7 +257,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(53, 9)
             sage: len(DH)
             26
@@ -281,7 +269,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH1 = DiffieHellman(5, 2)
             sage: DH2 = DiffieHellman(5, 2)
             sage: DH1 == DH2
@@ -299,7 +286,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH1 = DiffieHellman(7, 3)
             sage: DH2 = DiffieHellman(7, 3)
             sage: s = set([DH1, DH2])
@@ -314,7 +300,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(7, 3)
             sage: DH
             Diffie-Hellman key exchange over Finite Field of size 7 with generator 3
@@ -330,7 +315,6 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.diffie_hellman import DiffieHellman
             sage: DH = DiffieHellman(7, 3)
             sage: latex(DH)
             \text{Diffie-Hellman key exchange over }\Bold{F}_{7}\text{ with generator }3
