@@ -38,17 +38,17 @@ class DiffieHellman(KeyExchangeScheme):
     @experimental(37305)
     def __init__(self, p: Integer, g: Union[Integer, IntegerMod_abstract],
                  proof: bool = True) -> None:
-        """
+        r"""
         Create an instance of the Diffie-Hellman key exchange scheme using the
         given prime ``p`` and base ``g``.
 
         INPUT:
 
-        - ``p`` -- prime integer defining the field `\\GF{p}` that the key
+        - ``p`` -- prime integer defining the field `\GF{p}` that the key
           exchanges will be performed over, must be at least 5
 
         - ``g`` -- base for the key exchange, (coerceable to) an element of
-          `\\GF{p}` from `2` to `p - 2`
+          `\GF{p}` from `2` to `p - 2`
 
         - ``proof`` -- (default: ``True``) whether to require a proof that
           ``p`` is prime. If ``False``, a probabilistic test can be used for
@@ -64,7 +64,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         REFERENCES:
 
-        For more information, see [PP2010]_, section 8.1.
+        For more information, see Section 8.1 of [PP2010]_.
 
         EXAMPLES::
 
