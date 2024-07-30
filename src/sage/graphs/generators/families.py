@@ -4442,6 +4442,9 @@ def StaircaseGraph(n):
     node `2n - 2` with `0` and `n - 1`, the node `2n - 1` with `n - 2` and
     `2n - 3`, and the nodes `2n - 2` and `2n - 1` with each other.
 
+    Note that ``graphs.StaircaseGraph(4)`` is also known as the `Bicorn`
+    `graph`. It is the only brick that has a unique `b`-invariant edge.
+
     PLOTTING:
 
     Upon construction, the position dictionary is filled to override
@@ -4466,6 +4469,12 @@ def StaircaseGraph(n):
 
         sage: g = graphs.StaircaseGraph(5)
         sage: g.show()                          # long time                             # needs sage.plot
+
+    Construct and show the Bicorn graph::
+
+        sage: bicornGraph = graphs.StaircaseGraph(4)
+        sage: # The edge (1, 4) is the unique b-invariant edge.
+        sage: bicornGraph.show()                # long time                             # needs sage.plot
 
     Create several staircase graphs in a Sage graphics array::
 
