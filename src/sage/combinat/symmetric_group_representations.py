@@ -45,14 +45,14 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSets
 
 lazy_import("sage.combinat.yang_baxter_graph", "YangBaxterGraph_partition")
-lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_="PermutationConstructor")
+lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_='PermutationConstructor')
 lazy_import("sage.symbolic.ring", "SR")
 
 
 # #### Constructor function ################################################
 
 
-def SymmetricGroupRepresentation(partition, implementation="specht",
+def SymmetricGroupRepresentation(partition, implementation='specht',
         ring=None, cache_matrices=True):
     r"""
     The irreducible representation of the symmetric group corresponding to
@@ -62,15 +62,15 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
 
     - ``partition`` -- a partition of a positive integer
 
-    - ``implementation`` -- string (default: ``"specht"``), one of:
+    - ``implementation`` -- string (default: ``'specht'``); one of:
 
-      * ``"seminormal"`` -- for Young's seminormal representation
-      * ``"orthogonal"`` -- for Young's orthogonal representation
-      * ``"specht"`` -- for Specht's representation
+      * ``'seminormal'`` -- for Young's seminormal representation
+      * ``'orthogonal'`` -- for Young's orthogonal representation
+      * ``'specht'`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 
-    - ``cache_matrices`` -- boolean (default: ``True``) if ``True``, then any
+    - ``cache_matrices`` -- boolean (default: ``True``); if ``True``, then any
       representation matrices that are computed are cached
 
     EXAMPLES:
@@ -179,7 +179,7 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
     return Rep(partition)
 
 
-def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
+def SymmetricGroupRepresentations(n, implementation='specht', ring=None,
         cache_matrices=True):
     r"""
     Irreducible representations of the symmetric group.
@@ -188,15 +188,15 @@ def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
 
     - ``n`` -- positive integer
 
-    - ``implementation`` -- string (default: ``"specht"``), one of:
+    - ``implementation`` -- string (default: ``'specht'``); one of:
 
-      * ``"seminormal"`` -- for Young's seminormal representation
-      * ``"orthogonal"`` -- for Young's orthogonal representation
-      * ``"specht"`` -- for Specht's representation
+      * ``'seminormal'`` -- for Young's seminormal representation
+      * ``'orthogonal'`` -- for Young's orthogonal representation
+      * ``'specht'`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 
-    - ``cache_matrices`` -- boolean (default: ``True``) if ``True``, then any
+    - ``cache_matrices`` -- boolean (default: ``True``); if ``True``, then any
       representation matrices that are computed are cached
 
     EXAMPLES:
@@ -253,6 +253,8 @@ def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
         return YoungRepresentations_Orthogonal(n, ring=ring, cache_matrices=cache_matrices)
     elif implementation == "specht":
         return SpechtRepresentations(n, ring=ring, cache_matrices=cache_matrices)
+    elif implementation == "unitary":
+        return UnitaryRepresentations(n, ring=ring, cache_matrices=cache_matrices)
     else:
         raise NotImplementedError("only seminormal, orthogonal and specht are implemented")
 
@@ -337,7 +339,7 @@ class SymmetricGroupRepresentation_generic_class(Element):
             sage: spc == SymmetricGroupRepresentation([3])
             True
         """
-        if not isinstance(other, type(other)):
+        if not isinstance(other, type(self)):
             return False
         return (self._ring, self._partition) == (other._ring, other._partition)
 
@@ -659,7 +661,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
                 iu = index_lookup[u]
                 iv = index_lookup[v]
                 M[iu, iu], M[iu, iv], M[iv, iu], M[iv, iv] = \
-                    self._2x2_matrix_entries(beta)
+                    self._2x2_matrix_entries(self._ring(beta))
         return M
 
     def _representation_matrix_uncached(self, permutation):
@@ -914,7 +916,7 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
         """
         if permutation is None:
             permutation = Permutation(range(1, 1 + self._n))
-        Q = matrix(QQ, len(self._yang_baxter_graph))
+        Q = matrix(self._ring, len(self._yang_baxter_graph))
         for i, v in enumerate(self._dual_vertices):
             for j, u in enumerate(self._yang_baxter_graph):
                 Q[i, j] = self.scalar_product(tuple(permutation.action(v)), u)
@@ -999,6 +1001,191 @@ class SpechtRepresentations(SymmetricGroupRepresentations_class):
         """
         return "Specht representations of the symmetric group of order %s! over %s" % (self._n, self._ring)
 
+# #### Unitary Representation ###############################################
+
+
+class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
+    def __init__(self, parent, partition):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: U = SymmetricGroupRepresentation([2,1], "unitary")
+            sage: TestSuite(U).run()
+            sage: U = SymmetricGroupRepresentation([2,1], "unitary", GF(7))
+            Traceback (most recent call last):
+            ...
+            ValueError: the base ring must be a finite field of square order
+            sage: U = SymmetricGroupRepresentation([2,1], "unitary", GF(7**2))
+            sage: TestSuite(U).run()
+        """
+        if parent._ring.characteristic() == 0:
+            orth = SymmetricGroupRepresentation(partition, 'orthogonal')
+            self.representation_matrix = orth.representation_matrix
+            self._representation_matrix_uncached = orth._representation_matrix_uncached
+        else:
+            if not (parent._ring.is_field()
+                    and parent._ring.is_finite()
+                    and parent._ring.order().is_square()):
+                raise ValueError("the base ring must be a finite field of square order")
+            from sage.arith.misc import factorial
+            if parent._ring.characteristic().divides(factorial(parent._n)):
+                raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
+            self._q = parent._ring.order().sqrt()
+            self._specht = SymmetricGroupRepresentation(partition, 'specht', ring=parent._ring)
+        super().__init__(parent, partition)
+
+    def _repr_(self):
+        r"""
+        String representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SymmetricGroupRepresentation([2,1], "unitary")
+            Unitary representation of the symmetric group corresponding to [2, 1]
+        """
+        return f"Unitary representation of the symmetric group corresponding to {self._partition}"
+
+    @cached_method
+    def representation_matrix(self, permutation):
+        r"""
+        Return the matrix representing the ``permutation`` in this
+        irreducible representation.
+
+        .. NOTE::
+
+            This method caches the results.
+
+        EXAMPLES::
+
+            sage: unitary_specht = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
+            sage: unitary_specht.representation_matrix(Permutation([2,1,3,4]))
+            [       4     4*z2        0]
+            [3*z2 + 4        3        0]
+            [       0        0        1]
+            sage: unitary_specht.representation_matrix(Permutation([3,2,1,4]))
+            [       4     6*z2       z2]
+            [  z2 + 6        2        6]
+            [6*z2 + 1        6        2]
+            sage: all(A * A.H == 1 for A in [unitary_specht.representation_matrix(g)
+            ....:                            for g in Permutations(4)])
+            True
+        """
+        ret = self._representation_matrix_uncached(permutation)
+        ret.set_immutable()
+        return ret
+
+    @lazy_attribute
+    def _unitary_change_basis_matrix(self):
+        """
+        Compute the change of basis matrix.
+
+        EXAMPLES::
+
+            sage: unitary_specht = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
+            sage: unitary_specht._unitary_change_basis_matrix
+            [   1 2*z2 3*z2]
+            [   0 4*z2 4*z2]
+            [   0    0 5*z2]
+            sage: unitary_specht = SymmetricGroupRepresentation([2,2], 'unitary', ring=GF(7**2))
+            sage: unitary_specht._unitary_change_basis_matrix
+            [   1 2*z2]
+            [   0 4*z2]
+        """
+        from sage.matrix.special import diagonal_matrix
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        G = Permutations(self._n)
+        F = self._ring
+        q = self._q  # square root of the order of
+        rho = self._specht._representation_matrix_uncached
+
+        # compute the invariant symmetric bilinear matrix
+        d_rho = len(self._specht._yang_baxter_graph)
+        R = PolynomialRing(F, 'u', d_rho**2)
+        U_vars = R.gens()
+        Utemp = matrix(R, d_rho, d_rho, U_vars)
+
+        def augmented_matrix(g):
+            rho_g = rho(g)
+            equation_matrix = rho_g.transpose() * Utemp * rho_g.conjugate() - Utemp
+            augmented_system = []
+            for i in range(d_rho):
+                for j in range(d_rho):
+                    linear_expression = equation_matrix[i, j]
+                    row = [linear_expression.coefficient(u) for u in U_vars]
+                    augmented_system.append(row)
+            return augmented_system
+
+        total_system = sum((augmented_matrix(g) for g in G), [])
+        null_space = matrix(F, total_system).right_kernel()
+        #U_mats = [matrix(F, d_rho, d_rho, b) for b in null_space.basis()]
+        U = matrix(F, d_rho, d_rho, null_space.basis()[0])
+
+        def conj_square_root(u):
+            if not u:
+                return F.zero()
+            z = F.multiplicative_generator()
+            k = u.log(z)
+            if k % (q+1) != 0:
+                raise ValueError(f"unable to factor since {u} is not in base field GF({q})")
+            return z ** ((k//(q+1)) % (q-1))
+
+        # compute the change of basis matrix for U to be Hermitian
+        Up = U.LU()[2]
+        D = Up.diagonal()
+        A = ~Up * matrix.diagonal([d.sqrt() for d in D])
+        diag = (A.H * U * A).diagonal()
+        factor_diag = diagonal_matrix([conj_square_root(d) for d in diag])
+        factor_diag_inv = diagonal_matrix([~d for d in factor_diag.diagonal()])
+
+        return A * factor_diag_inv
+
+    def _representation_matrix_uncached(self, permutation):
+        r"""
+        Return the matrix representing the ``permutation`` in this
+        irreducible representation.
+
+        .. NOTE::
+
+            This method caches the results.
+
+        EXAMPLES::
+
+            sage: unitary_specht = SymmetricGroupRepresentation([2,2], 'unitary', ring=GF(7**2))
+            sage: unitary_specht._representation_matrix_uncached(Permutation([3,1,4,2]))
+            [       4     4*z2]
+            [3*z2 + 4        3]
+            sage: unitary_specht._representation_matrix_uncached(Permutation([1,2,4,3]))
+            [       4     3*z2]
+            [4*z2 + 3        3]
+            sage: all(A * A.H == 1 for A in [unitary_specht._representation_matrix_uncached(g)
+            ....:                            for g in Permutations(4)])
+            True
+        """
+        assert self._ring.characteristic() > 0
+        rho = self._specht._representation_matrix_uncached
+        A = self._unitary_change_basis_matrix
+        return A.inverse() * rho(permutation) * A
+
+
+class UnitaryRepresentations(SymmetricGroupRepresentations_class):
+    _default_ring = SR
+
+    Element = UnitaryRepresentation
+
+    def _repr_(self):
+        r"""
+        String representation of ``self``.
+
+        EXAMPLES::
+
+            sage: spc = SymmetricGroupRepresentations(4)
+            sage: spc
+            Specht representations of the symmetric group of order 4! over Integer Ring
+        """
+        return "Unitary representations of the symmetric group of order %s! over %s" % (self._n, self._ring)
+
 # ##### Miscellaneous functions ############################################
 
 
@@ -1024,6 +1211,8 @@ def partition_to_vector_of_contents(partition, reverse=False):
 
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.combinat.specht_module import SymmetricGroupRepresentation as SymmetricGroupRepresentation_mixin
+
+
 class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricGroupRepresentation_mixin):
     r"""
     A Garsia-Procesi module.
