@@ -652,13 +652,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
           ``R.multiplicative_generator()`` is used, where
           ``R`` is the parent of ``self``.
 
-        -  ``order`` -- integer (unused), the order of ``b``.
+        - ``order`` -- integer (unused), the order of ``b``.
           This argument is normally unused, only there for
           coherence of apis with finite field elements.
 
         - ``check`` -- boolean (default: ``False``); if set,
           test whether the given ``order`` is correct
-
 
         OUTPUT:
 
