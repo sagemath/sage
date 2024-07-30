@@ -1,0 +1,14 @@
+## This is a conda environment file for use on Linux or macOS.
+##
+## Use it as follows:
+##
+##    conda env create -f environment.yml
+##    conda activate {{cookiecutter.project_name}}
+##
+name: {{cookiecutter.project_name}}
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python==3.11
+  - sage
