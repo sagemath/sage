@@ -68,7 +68,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: DH = DiffieHellman(13, 2)
+            sage: DH = key_exchange.DiffieHellman(13, 2)
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/37305 for details.
 
@@ -77,7 +77,7 @@ class DiffieHellman(KeyExchangeScheme):
         (see [KK2003]_)::
 
             sage: p = 2^8192 - 2^8128 - 1 + 2^64 * (round(2^8062 * pi) + 4743158)
-            sage: DH = DiffieHellman(p, 2, proof=False)
+            sage: DH = key_exchange.DiffieHellman(p, 2, proof=False)
             sage: alice_sk = DH.generate_secret_key()
             sage: alice_pk = DH.generate_public_key(alice_sk)
             sage: bob_sk = DH.generate_secret_key()
@@ -89,22 +89,22 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: DH = DiffieHellman(3, 2)
+            sage: DH = key_exchange.DiffieHellman(3, 2)
             Traceback (most recent call last):
             ...
             ValueError: p must be at least 5
 
-            sage: DH = DiffieHellman(5, 0)
+            sage: DH = key_exchange.DiffieHellman(5, 0)
             Traceback (most recent call last):
             ...
             ValueError: g cannot be 0, 1, or p - 1 (mod p)
 
-            sage: DH = DiffieHellman(5, 1)
+            sage: DH = key_exchange.DiffieHellman(5, 1)
             Traceback (most recent call last):
             ...
             ValueError: g cannot be 0, 1, or p - 1 (mod p)
 
-            sage: DH = DiffieHellman(5, 4)
+            sage: DH = key_exchange.DiffieHellman(5, 4)
             Traceback (most recent call last):
             ...
             ValueError: g cannot be 0, 1, or p - 1 (mod p)
@@ -137,7 +137,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: DH = DiffieHellman(5, 2)
+            sage: DH = key_exchange.DiffieHellman(5, 2)
             sage: DH.field()
             Finite Field of size 5
         """
@@ -149,7 +149,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: DH = DiffieHellman(7, 3)
+            sage: DH = key_exchange.DiffieHellman(7, 3)
             sage: DH.prime()
             7
         """
@@ -161,7 +161,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: DH = DiffieHellman(7, 3)
+            sage: DH = key_exchange.DiffieHellman(7, 3)
             sage: DH.generator()
             3
         """
@@ -173,7 +173,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: DH = DiffieHellman(7, 3)
+            sage: DH = key_exchange.DiffieHellman(7, 3)
             sage: DH.parameters()
             (7, 3)
         """
@@ -185,7 +185,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS:
 
-            sage: DH = DiffieHellman(7, 2)
+            sage: DH = key_exchange.DiffieHellman(7, 2)
             sage: keys = [DH.generate_secret_key() for i in range(10)]
             sage: all(2 <= i <= 5 for i in keys)
             True
@@ -202,7 +202,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: DH = DiffieHellman(13, 2)
+            sage: DH = key_exchange.DiffieHellman(13, 2)
             sage: DH.generate_public_key(4)
             3
         """
@@ -221,7 +221,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         EXAMPLES::
 
-            sage: DH = DiffieHellman(17, 3)
+            sage: DH = key_exchange.DiffieHellman(17, 3)
             sage: DH.compute_shared_secret(13, 11)
             4
         """
@@ -237,14 +237,14 @@ class DiffieHellman(KeyExchangeScheme):
         This is an example of a ``DiffieHellman`` instance where the subgroup
         size is `(p - 1) / 2`::
 
-            sage: DH = DiffieHellman(47, 2)
+            sage: DH = key_exchange.DiffieHellman(47, 2)
             sage: DH.subgroup_size()
             23
 
         This is an example of a ``DiffieHellman`` instance where the subgroup
         size is `p - 1`::
 
-            sage: DH = DiffieHellman(47, 5)
+            sage: DH = key_exchange.DiffieHellman(47, 5)
             sage: DH.subgroup_size()
             46
         """
@@ -257,7 +257,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: DH = DiffieHellman(53, 9)
+            sage: DH = key_exchange.DiffieHellman(53, 9)
             sage: len(DH)
             26
         """
@@ -269,8 +269,8 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: DH1 = DiffieHellman(5, 2)
-            sage: DH2 = DiffieHellman(5, 2)
+            sage: DH1 = key_exchange.DiffieHellman(5, 2)
+            sage: DH2 = key_exchange.DiffieHellman(5, 2)
             sage: DH1 == DH2
             True
             sage: DH1 == 5
@@ -286,8 +286,8 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: DH1 = DiffieHellman(7, 3)
-            sage: DH2 = DiffieHellman(7, 3)
+            sage: DH1 = key_exchange.DiffieHellman(7, 3)
+            sage: DH2 = key_exchange.DiffieHellman(7, 3)
             sage: s = set([DH1, DH2])
             sage: len(s)
             1
@@ -300,7 +300,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: DH = DiffieHellman(7, 3)
+            sage: DH = key_exchange.DiffieHellman(7, 3)
             sage: DH
             Diffie-Hellman key exchange over Finite Field of size 7 with generator 3
         """
@@ -315,7 +315,7 @@ class DiffieHellman(KeyExchangeScheme):
 
         TESTS::
 
-            sage: DH = DiffieHellman(7, 3)
+            sage: DH = key_exchange.DiffieHellman(7, 3)
             sage: latex(DH)
             \text{Diffie-Hellman key exchange over }\Bold{F}_{7}\text{ with generator }3
         """

@@ -22,6 +22,6 @@ lazy_import('sage.crypto.lfsr', ['lfsr_sequence',
                                  ])
 
 
-from sage.crypto.key_exchange.all import *
+import sage.crypto.key_exchange.catalog as key_exchange
 
 del lazy_import
