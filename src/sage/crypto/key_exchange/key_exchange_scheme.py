@@ -37,7 +37,7 @@ class KeyExchangeScheme(SageObject):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.key_exchange import KeyExchangeScheme
+            sage: from sage.crypto.key_exchange.key_exchange_scheme import KeyExchangeScheme
             sage: K = KeyExchangeScheme()
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/37305 for details.
@@ -50,7 +50,7 @@ class KeyExchangeScheme(SageObject):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.key_exchange import KeyExchangeScheme
+            sage: from sage.crypto.key_exchange.key_exchange_scheme import KeyExchangeScheme
             sage: K = KeyExchangeScheme()
             sage: K.generate_secret_key()
             Traceback (most recent call last):
@@ -65,7 +65,7 @@ class KeyExchangeScheme(SageObject):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.key_exchange import KeyExchangeScheme
+            sage: from sage.crypto.key_exchange.key_exchange_scheme import KeyExchangeScheme
             sage: K = KeyExchangeScheme()
             sage: K.generate_public_key(None)
             Traceback (most recent call last):
@@ -80,7 +80,7 @@ class KeyExchangeScheme(SageObject):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.key_exchange import KeyExchangeScheme
+            sage: from sage.crypto.key_exchange.key_exchange_scheme import KeyExchangeScheme
             sage: K = KeyExchangeScheme()
             sage: K.compute_shared_secret(None, None)
             Traceback (most recent call last):
@@ -95,7 +95,7 @@ class KeyExchangeScheme(SageObject):
 
         TESTS::
 
-            sage: from sage.crypto.key_exchange.key_exchange import KeyExchangeScheme
+            sage: from sage.crypto.key_exchange.key_exchange_scheme import KeyExchangeScheme
             sage: K = KeyExchangeScheme()
             sage: K.parameters()
             Traceback (most recent call last):
