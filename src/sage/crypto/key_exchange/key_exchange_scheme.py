@@ -1,5 +1,5 @@
 r"""
-Key Exchange Scheme
+Key Exchange Schemes
 
 This module contains base classes for key exchange schemes. The classes defined
 in this module should not be called directly. It is the responsibility of child
