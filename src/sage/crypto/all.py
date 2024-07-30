@@ -21,8 +21,7 @@ lazy_import('sage.crypto.lfsr', ['lfsr_sequence',
                                  'lfsr_connection_polynomial',
                                  ])
 
-lazy_import('sage.crypto.key_exchange.all', ['KeyExchangeScheme',
-                                 'DiffieHellman',
-                                 ])
+
+from sage.crypto.key_exchange.all import *
 
 del lazy_import
