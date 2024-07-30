@@ -191,7 +191,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         self._flats = [X for i in range(1, self._matroid.rank())
                 for X in self._matroid.flats(i)]
         E = list(self._matroid.groundset())
-        self.flats_generator = dict()
+        self._flats_generator = dict()
         try:
             names_groundset = ['A{}'.format(''.join(str(x))) for x in E]
             names_flats = ['B{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
@@ -325,7 +325,9 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             poly_ring = PolynomialRing(R, names) #self.ring
         except ValueError: # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(self._flats))
-
+        gens = poly_ring.gens()
+        self._flats_generator = dict()
+        self._flats_generator = dict(zip(self._flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
         
 
@@ -337,19 +339,20 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             for x in F:
                 flats_containing[x].append(F)
         for F in self._flats:
-            for x in E:
-                if F not in flats_containing[x]:
-                    Q.append(self._flats_generator[x]*self._flats_generator[F])
+            for G in self._flats:
+                if not (G > F or F > G):
+                        Q.append(self._flats_generator[F]*self._flats_generator[G])
+                for x in E:
                     term = poly_ring.zero()
-                    for G in flats_containing[x]:
-                        term += self._flats_generator[G]
+                    for H in flats_containing[x]:
+                        term += self._flats_generator[H]
+                    Q.append(term**2)
+
+                    if F not in flats_containing[x]:
+                        term = poly_ring.zero()
+                        for H in flats_containing[x]:
+                            term += self._flats_generator[H]
                         Q.append(self._flats_generator[F]*term)
-                   
-        for i in E:
-            term = poly_ring.zero()
-            for F in flats_containing[i]:
-                term += self._flats_generator[F]
-            Q.append(term**2)
 
         return Q
             
