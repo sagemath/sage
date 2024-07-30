@@ -659,7 +659,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
                 iu = index_lookup[u]
                 iv = index_lookup[v]
                 M[iu, iu], M[iu, iv], M[iv, iu], M[iv, iv] = \
-                    self._2x2_matrix_entries(beta)
+                    self._2x2_matrix_entries(self._ring(beta))
         return M
 
     def _representation_matrix_uncached(self, permutation):

@@ -2068,7 +2068,153 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             return self._dft_seminormal(mult=mult)
         if form == "modular":
             return self._dft_modular()
+        if form == "unitary":
+            return self._dft_unitary()
         raise ValueError("invalid form (= %s)" % form)
+
+    def _dft_unitary(self):
+        """
+        Return the unitary form of the discrete Fourier transform for ``self``.
+
+        EXAMPLES::
+
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: QS3._dft_unitary()
+            [-1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3]
+            [      -1/3*sqrt3                0              1/2        1/6*sqrt3        1/6*sqrt3             -1/2]
+            [               0       -1/3*sqrt3        1/6*sqrt3              1/2             -1/2        1/6*sqrt3]
+            [               0       -1/3*sqrt3        1/6*sqrt3             -1/2              1/2        1/6*sqrt3]
+            [      -1/3*sqrt3                0             -1/2        1/6*sqrt3        1/6*sqrt3              1/2]
+            [-1/6*sqrt2*sqrt3  1/6*sqrt2*sqrt3  1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3  1/6*sqrt2*sqrt3]
+
+        TESTS::
+
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: U_dft = QS3._dft_unitary()
+            sage: U_dft*U_dft.conjugate().transpose() == identity_matrix(QS3.group().cardinality())
+            True
+            sage: GF5S3 = SymmetricGroupAlgebra(GF(5**2), 3)
+            sage: U = GF5S3._dft_unitary()
+            sage: U*U.H == identity_matrix(GF5S3.group().cardinality())
+            True
+        """
+        from sage.matrix.special import diagonal_matrix
+        from sage.misc.functional import sqrt
+        from sage.misc.flatten import flatten
+
+        G = self.group()
+        F = self.base_ring()
+        assert F.is_field()
+
+        if F.characteristic() == 0:
+            data = {}
+            for partition in Partitions(G.degree()):
+                specht_module = self.specht_module(partition)
+                rho = specht_module.representation_matrix
+                P = sum(rho(g) * rho(g).conjugate().transpose() for g in G) / G.cardinality()
+                d, L = P.eigenmatrix_left()
+                data[partition] = (specht_module, P, d, L)
+
+            def all_roots_field():
+                required_square_roots = []
+                for partition in Partitions(G.degree()):
+                    specht_module, P, d, L = data[partition]
+                    required_square_roots += [specht_module.dimension(), G.cardinality()] + d.diagonal()
+                required_square_roots = flatten([[QQ(q).numerator(), QQ(q).denominator()] if q in QQ else q for q in required_square_roots])
+                K = F
+                for n in set(required_square_roots):
+                    R = PolynomialRing(K, 'x')
+                    x = R.gen()
+                    if n.is_rational() and (x**2 - n).is_irreducible():
+                        gen_name = "sqrt"+str(n).replace("/","over")
+                        K = K.extension(sqrt(n).minpoly(),names=gen_name)
+                    if not n.is_rational() and sqrt(n).minpoly().is_irreducible():
+                        gen_name = "deg" + str(n.minpoly().degree()) + "index" + str(list(set(required_square_roots)).index(n))
+                        K = K.extension(sqrt(n).minpoly(),names=gen_name)
+                return K
+
+            def unitary_change_of_basis(partition, K):
+                specht_module, P, d, L = data[partition]
+                return L.inverse() * diagonal_matrix([sqrt(K(a)) for a in d.diagonal()]) * L
+            K = all_roots_field()
+            unitary_data = {partition: unitary_change_of_basis(partition, K) for partition in Partitions(G.degree())}
+
+            def hat(f, partition):
+                specht_module, P, d, L = data[partition]
+                rho = self.specht_module(partition).representation_matrix
+                Q = unitary_data[partition]
+                unitary_factor = specht_module.dimension() / G.cardinality()
+                sqrt_unitary_factor = sqrt(K(unitary_factor))
+                return sqrt_unitary_factor * sum(f(g) * Q.inverse() * rho(g) * Q for g in G if f(g))
+
+            delta = lambda s: lambda t: 1 if t == s else 0
+            return matrix(K, [flatten([hat(delta(g), partition).list() for partition in Partitions(G.degree())]) for g in G]).transpose()
+
+        if F.characteristic() > 0:
+            assert F.is_finite()
+            assert F.order().is_square()
+            q = sqrt(F.order())
+
+            def conjugate_pos_char(A):
+                return matrix(F,[[A[i][j]**q for j in range(A.nrows())] for i in range(A.nrows())])
+
+            def invariant_symmetric_bilinear_matrix(q,partition):
+                n = sum(partition)
+                specht_module = self.specht_module(partition)
+                rho = specht_module.representation_matrix
+                d_rho = specht_module.dimension()
+                R = PolynomialRing(F,'u',d_rho**2)
+                U_vars = R.gens()
+                U = matrix(R,d_rho,d_rho,U_vars)
+
+                def augmented_matrix(g):
+                    rho_g = rho(g)
+                    equation_matrix = rho_g.transpose()*U*conjugate_pos_char(rho_g) - U
+                    augmented_system = []
+                    for i in range(d_rho):
+                        for j in range(d_rho):
+                            linear_expression = equation_matrix[i, j]
+                            row = [linear_expression.coefficient(u) for u in U_vars]
+                            augmented_system.append(row)
+                    return matrix(F, augmented_system)
+                total_system = matrix(F,0,d_rho**2)
+                for g in G:
+                    total_system = total_system.stack(augmented_matrix(g))
+                null_space = total_system.right_kernel()
+                U_mats = [matrix(F,d_rho,d_rho,b) for b in null_space.basis()]
+                return U_mats
+
+            def conj_square_root(u):
+                if u == 0:
+                    return 0
+                z = F.multiplicative_generator()
+                k = u.log(z)
+                if k % (q+1) != 0:
+                    raise ValueError("Unable to factor: u is not in base field GF(q)")
+                return z**((k//(q+1)) % (q-1))
+
+            def base_change_hermitian(U):
+                Up = U.LU()[2]
+                D = Up.diagonal()
+                A = ~Up * matrix.diagonal([d.sqrt() for d in D])
+                diag = (A.H * U * A).diagonal()
+                factor_diag = diagonal_matrix([conj_square_root(d) for d in diag])
+                return factor_diag*A.inverse()
+
+            def hat(f,partition):
+                specht_module = self.specht_module(partition)
+                rho = specht_module.representation_matrix
+                U = invariant_symmetric_bilinear_matrix(q,partition)[0]
+                A = base_change_hermitian(U)
+                sqrt_unitary_factor = sqrt(F(specht_module.dimension()/G.cardinality()))
+                return sqrt_unitary_factor*sum(f(g)*A*rho(g)*A.inverse() for g in G)
+
+            delta = lambda s: lambda t: 1 if t == s else 0
+            fourier_transform = [flatten([hat(delta(g),partition).list() for partition in Partitions(G.degree())]) for g in G]
+            dft_matrix = matrix(F,fourier_transform).transpose()
+            sign_diag = (dft_matrix*conjugate_pos_char(dft_matrix).transpose()).diagonal()
+            factor_diag = diagonal_matrix([conj_square_root(d) for d in sign_diag])
+            return factor_diag.inverse()*dft_matrix
 
     def _dft_seminormal(self, mult='l2r'):
         """
