@@ -876,7 +876,7 @@ class TateAlgebra_generic(Parent):
 
         INPUT:
 
-        - ``n`` -- optional integer, number of generators
+        - ``n`` -- integer (default: ``0``); the number of generators
 
         EXAMPLES::
 

@@ -1480,7 +1480,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
 
         INPUT:
 
-        - ``n`` -- optional integer, the number of generators
+        - ``n`` -- integer (default: ``0``); the number of generators
 
         EXAMPLES::
 
