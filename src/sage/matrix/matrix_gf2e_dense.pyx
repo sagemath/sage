@@ -1126,7 +1126,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         mzed_col_swap(self._entries, col1, col2)
 
-    def augment(self, Matrix_gf2e_dense right):
+    def augment(self, right):
         """
         Augments ``self`` with ``right``.
 
@@ -1169,20 +1169,37 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: M.augment(N)
             []
         """
+        cdef Matrix_gf2e_dense _right
         cdef Matrix_gf2e_dense A
 
-        if self._nrows != right._nrows:
+        if not isinstance(right, Matrix_gf2e_dense):
+            # See issue: #36761 - Allow Vectors to be augmented
+            if hasattr(right, '_vector_'):
+                if self._nrows != len(right):
+                    raise TypeError("Both numbers of rows must match.")
+                if self.base_ring() is not right.base_ring():
+                    right = right.change_ring(self.base_ring())
+                from sage.matrix.matrix_space import MatrixSpace
+                M = MatrixSpace(self.base_ring(), nrows=len(right), ncols=1)
+                _right = <Matrix_gf2e_dense>(M(right))
+            else:
+                raise TypeError("a matrix must be augmented with another matrix, "
+                    "or a vector")
+        else:
+            _right = <Matrix_gf2e_dense>right
+
+        if self._nrows != _right._nrows:
             raise TypeError("Both numbers of rows must match.")
 
         if self._ncols == 0:
-            return right.__copy__()
-        if right._ncols == 0:
+            return _right.__copy__()
+        if _right._ncols == 0:
             return self.__copy__()
 
-        A = self.new_matrix(ncols = self._ncols + right._ncols)
+        A = self.new_matrix(ncols = self._ncols + _right._ncols)
         if self._nrows == 0:
             return A
-        A._entries = mzed_concat(A._entries, self._entries, right._entries)
+        A._entries = mzed_concat(A._entries, self._entries, _right._entries)
         return A
 
     cdef _stack_impl(self, bottom):
