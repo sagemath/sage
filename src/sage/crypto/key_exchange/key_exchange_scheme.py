@@ -1,5 +1,5 @@
 r"""
-Key exchange schemes.
+Key Exchange Scheme
 
 This module contains base classes for key exchange schemes. The classes defined
 in this module should not be called directly. It is the responsibility of child
@@ -8,7 +8,7 @@ classes to implement specific key exchange schemes.
 
 AUTHORS:
 
-- Vincent Macri (2024-07-17): initial version
+- Vincent Macri (2024-07-30): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2024 Vincent Macri <vincent.macri@ucalgary.ca>

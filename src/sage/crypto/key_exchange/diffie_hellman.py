@@ -6,7 +6,7 @@ scheme.
 
 AUTHORS:
 
-- Vincent Macri (2024-07-17): initial version
+- Vincent Macri (2024-07-30): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2024 Vincent Macri <vincent.macri@ucalgary.ca>
