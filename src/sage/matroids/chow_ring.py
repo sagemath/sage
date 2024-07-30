@@ -21,7 +21,7 @@ from sage.rings.quotient_ring import QuotientRing_nc
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.sets.set import Set
-from sage.combinat.posets.posets import Poset
+from functools import cmp_to_key
 
 
 class ChowRing(QuotientRing_nc):
@@ -96,8 +96,15 @@ class ChowRing(QuotientRing_nc):
                  for X in self._matroid.flats(i)]
         flats.append(Set([]))
         maximum_rank = max([self._matroid.rank(F) for F in flats])
-        func = lambda A,B: A.issubset(B)
-        flats = Poset((flats, func), cover_relations=True).directed_subsets('down') #DEBUG
+        flats_gen = self._ideal.flats_generator()
+        def func(A, B):
+            if A.issubset(B):
+                return 1
+            elif B.issubset(A):
+                return -1
+            else:
+                return 0
+        flats = sorted(flats, key=cmp_to_key(func))
         monomial_basis = []
         if self._augmented:
             if self._presentation=='fy':
@@ -106,14 +113,15 @@ class ChowRing(QuotientRing_nc):
                     for j in range(len(flats)):
                         if j == 0:
                             if i > self._matroid.rank(flats[0]):
-                                term *= self._flats_generator[flats[j]]**(0)
+                                term *= flats_gen[flats[j]]**(0)
                             else:
-                                term *= self._flats_generator[flats[j]]**(i + 1)
+                                term *= flats_gen[flats[j]]**(i + 1)
                         else:
                             if i >= (self._matroid.rank(flats[j]) - self._matroid.rank(flats[j-1])):
-                                term *= self._flats_generator[flats[j]]**(0)
+                                if (flats[j] in list(flats_gen)):
+                                    term *= flats_gen[flats[j]]**(0)
                             else:
-                                term *= self._flats_generator[flats[j]]**(i + 1)
+                                term *= flats_gen[flats[j]]**(i + 1)
                     monomial_basis.append(term)
                 
             elif self._presentation=='atom-free':
@@ -123,9 +131,9 @@ class ChowRing(QuotientRing_nc):
                     for j in range(1, len(flats) - 1):
                         if i >= (self._matroid.rank(flats[j-1]) - self._matroid.rank(flats[j])):
                             pow.append((j , i))
-                    if sum(pow) == self._matroid.rank(flats[0]):
+                    if sum([p[1] for p in pow]) == self._matroid.rank(flats[0]):
                         for p in pow:
-                            term *= self._flats_generator[flats[p[0]]]**(p[1])
+                            term *= flats_gen[flats[p[0]]]**(p[1])
                     monomial_basis.append(term)
         
 
@@ -134,13 +142,14 @@ class ChowRing(QuotientRing_nc):
                     term = self._ideal.ring().one()
                     for j in range(len(flats)):
                         if i > (self._matroid.rank(flats[j]) - self._matroid.rank(flats[j-1]) - 1):
-                                term *= self._flats_generator[flats[j]]**(0)
+                                if flats[j] in list(flats_gen):
+                                    term *= flats_gen[flats[j]]**(0)
                         else:
-                            term *= self._flats_generator[flats[j]]**(i + 1)
+                            term *= flats_gen[flats[j]]**(i + 1)
                     monomial_basis.append(term)
 
 
-        m_basis = PolynomialSequence([monomial_basis], self._ideal.ring())
+        m_basis = PolynomialSequence(self._ideal.ring(), monomial_basis)
         return m_basis
                         
                 
