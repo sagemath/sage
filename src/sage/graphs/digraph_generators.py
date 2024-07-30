@@ -27,7 +27,6 @@ build by typing ``digraphs.`` in Sage and then hitting :kbd:`Tab`.
     :meth:`~DiGraphGenerators.GeneralizedDeBruijn` | Return the generalized de Bruijn digraph of order `n` and degree `d`.
     :meth:`~DiGraphGenerators.ImaseItoh`           | Return the digraph of Imase and Itoh of order `n` and degree `d`.
     :meth:`~DiGraphGenerators.Kautz`               | Return the Kautz digraph of degree `d` and diameter `D`.
-    :meth:`~DiGraphGenerators.KohTindellDiGraph`   | Return the KohTindell digraph.
     :meth:`~DiGraphGenerators.nauty_directg`       | Return an iterator yielding digraphs using nauty's ``directg`` program.
     :meth:`~DiGraphGenerators.Paley`               | Return a Paley digraph on `q` vertices.
     :meth:`~DiGraphGenerators.Path`                | Return a directed path on `n` vertices.
@@ -110,9 +109,6 @@ class DiGraphGenerators:
                     - RandomTournament
                     - TransitiveTournament
                     - tournaments_nauty
-
-                Named Graphs:
-                    - KohTindellDiGraph
 
 
     ORDERLY GENERATION: digraphs(vertices, property=lambda x: True,
@@ -1681,12 +1677,6 @@ class DiGraphGenerators:
         G._circle_embedding(list(range(n)))
 
         return G
-
-    def KohTindellDiGraph():
-        r"""
-        Return the KohTindell digraph.
-        """
-        raise NotImplementedError()
 
 # ##############################################################################
 #   DiGraph Iterators

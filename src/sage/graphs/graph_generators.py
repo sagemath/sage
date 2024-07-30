@@ -98,7 +98,6 @@ the number of edges or vertices.
 __append_to_doc(
     ["Balaban10Cage",
      "Balaban11Cage",
-     "BicornGraph",
      "BidiakisCube",
      "BiggsSmithGraph",
      "BlanusaFirstSnarkGraph",
@@ -2521,7 +2520,6 @@ class GraphGenerators:
     from .generators import smallgraphs, distance_regular
     Balaban10Cage = staticmethod(smallgraphs.Balaban10Cage)
     Balaban11Cage = staticmethod(smallgraphs.Balaban11Cage)
-    BicornGraph = staticmethod(smallgraphs.BicornGraph)
     BidiakisCube = staticmethod(smallgraphs.BidiakisCube)
     BiggsSmithGraph = staticmethod(smallgraphs.BiggsSmithGraph)
     BlanusaFirstSnarkGraph = staticmethod(smallgraphs.BlanusaFirstSnarkGraph)

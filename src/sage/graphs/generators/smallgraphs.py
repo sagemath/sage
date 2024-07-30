@@ -1053,13 +1053,6 @@ def Balaban11Cage(embedding=1):
         raise ValueError("the value of embedding must be 1, 2, or 3")
 
 
-def BicornGraph():
-    r"""
-    Return the Bicorn graph.
-    """
-    raise NotImplementedError()
-
-
 def BidiakisCube():
     r"""
     Return the Bidiakis cube.
