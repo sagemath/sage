@@ -3846,6 +3846,10 @@ REFERENCES:
             \M. Grötschel, \L Lovász, *Handbook of combinatorics*,
             Vol. 1, Chapter 18, 1995
 
+.. [KK2003] T. Kivinen and M. Kojo. *More Modular Exponential (MODP)
+            Diffie-Hellman groups for Internet Key Exchange (IKE)*, in RFC 3526.
+            Available at https://www.rfc-editor.org/rfc/rfc3526
+
 .. [KKMMNN1992] S-J. Kang, M. Kashiwara, K. C. Misra, T. Miwa, T. Nakashima,
                 and A. Nakayashiki. *Affine crystals and vertex models*.
                 Int. J. Mod. Phys. A, **7** (suppl. 1A), (1992) pp. 449-484.

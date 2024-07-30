@@ -74,8 +74,8 @@ class DiffieHellman(KeyExchangeScheme):
             See https://github.com/sagemath/sage/issues/37305 for details.
 
         This is an example of a full key exchange using a cryptographically
-        large prime. This is the prime from the 8192-bit MODP group in
-        RFC3526::
+        large prime. This is the prime from the 8192-bit MODP group in RFC 3526
+        (see [KK2003]_)::
 
             sage: p = 2^8192 - 2^8128 - 1 + 2^64 * (round(2^8062 * pi) + 4743158)
             sage: DH = DiffieHellman(p, 2, proof=False)
