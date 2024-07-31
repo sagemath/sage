@@ -365,6 +365,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
                 s = s.replace(f" {const}", f" \\left({const}\\right)")
         return s
 
+
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
     The semiring of tropical polynomials in multiple variables.
@@ -459,7 +460,6 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             Polynomial Semiring in x, y over Rational Field
         """
         from sage.rings.polynomial.multi_polynomial import MPolynomial
-        # new_dict = {}
         if isinstance(x, TropicalMPolynomial):
             if x.parent() is not self:
                 raise ValueError(f"can not convert {x} to {self}")
@@ -488,7 +488,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.one()
             0
         """
-        return self(self.base().one())
+        return self._element_constructor_(self.base().one())
 
     @cached_method
     def zero(self):
@@ -502,7 +502,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.zero()
             +infinity
         """
-        return self(self.base().zero())
+        return self._element_constructor_(self.base().zero())
 
     def _repr_(self):
         r"""

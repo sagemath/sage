@@ -161,7 +161,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         ...
         ArithmeticError: cannot negate any non-infinite element
     """
-
     def roots(self):
         r"""
         Return the list of all tropical roots of ``self``, counted with
@@ -409,7 +408,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             else:
                 test_number = self.base_ring()((unique_root[i] +
                                                 unique_root[i-1])/2)
-
             terms = {i: c * test_number**i for i, c in self.dict().items()}
             if self.base_ring()._use_min:
                 critical = min(terms.values())
@@ -604,6 +602,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             return self.parent().base().zero()._latex_()
         return s[1:].lstrip().rstrip()
 
+
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
     The semiring of univariate tropical polynomials.
@@ -732,7 +731,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.one()
             0
         """
-        return self(0)
+        return self._element_constructor_(self.base().one())
 
     @cached_method
     def zero(self):
@@ -746,7 +745,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.zero()
             +infinity
         """
-        return self(self.base().zero())
+        return self._element_constructor_(self.base().zero())
 
     def _repr_(self):
         """
