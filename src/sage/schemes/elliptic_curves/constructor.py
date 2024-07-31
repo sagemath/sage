@@ -479,17 +479,6 @@ class EllipticCurveFactory(UniqueFactory):
             sage: P
             (4 : 1 : 1)
 
-        No checking is done on keyword arguments, passing wrong values leads to wrong output::
-
-            sage: EllipticCurve(QQ, [2, 5], modular_degree=-1).modular_degree()
-            -1
-            sage: EllipticCurve(QQ, [2, 5]).modular_degree()
-            944
-            sage: EllipticCurve(QQ, [2, 5], regulator=-1).regulator()
-            -1.00000000000000
-            sage: EllipticCurve(QQ, [2, 5]).regulator()
-            1.00000000000000
-
         .. NOTE::
 
             Keyword arguments are currently only passed to the
@@ -503,6 +492,14 @@ class EllipticCurveFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             TypeError: unexpected keyword arguments: {'rank': 2}
+
+        Coverage tests::
+
+            sage: E = EllipticCurve(QQ, [2, 5], modular_degree=944, regulator=1)
+            sage: E.modular_degree()
+            944
+            sage: E.regulator()
+            1.00000000000000
         """
         R, x = key
 
