@@ -1,3 +1,4 @@
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.integer_vector import IntegerVectors
 from sage.misc.cachefunc import cached_method
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
@@ -25,7 +26,7 @@ def _is_conjugate(G, H1, H2):
         sage: G = SymmetricGroup(3)
         sage: H1 = PermutationGroup([(1,2)])
         sage: H2 = PermutationGroup([(2,3)])
-        sage: from sage.rings.burnside import _is_conjugate
+        sage: from sage.rings.species import _is_conjugate
         sage: _is_conjugate(G, H1, H2)
         True
     """
@@ -61,14 +62,14 @@ class ElementCache():
         return elm
 
 
-class ConjugacyClassOfDirectlyIndecomposableSubgroups():
-    def __init__(self, C, ambient_group):
+class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
+    def __init__(self, parent, C, ambient_group):
         r"""
         A conjugacy class of directly indecomposable subgroups.
         """
-        if len(C.disjoint_direct_product_decomposition()) > 1:
-            raise ValueError(f"{C} is not directly indecomposable")
-        self._C = self._normalize(C)
+        Element.__init__(self, parent)
+        self._C = C
+        self._smallgen = C.gens_small()
         self._ambient_group = ambient_group
 
     @cached_method
@@ -78,12 +79,23 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups():
         directly indecomposable subgroups belongs to.
         """
         return self._ambient_group
-    
+
+    @cached_method
+    def _element_key(self):
+        r"""
+        Return the key for this element.
+        """
+        return tuple([self._C.degree(), self._C.order(),
+                      self._ambient_group])
+
+    def __hash__(self):
+        return hash(self._element_key)
+
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
         """
-        return "{" + f"{self._C.degree()}, {self._C.gens_small()}" + "}"
+        return f"{self._smallgen}"
 
     def __eq__(self, other):
         r"""
@@ -95,52 +107,66 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups():
         # No __le__ method because does it really make sense to have one here?
         return (isinstance(other, ConjugacyClassOfDirectlyIndecomposableSubgroups)
                 and self._ambient_group == other._ambient_group
-                and _is_conjugate(self._ambient_group, self._C, self._other))
+                and _is_conjugate(self._ambient_group, self._C, other._C))
+
+class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Parent, ElementCache):
+
+    def __init__(self):
+        r"""
+        Conjugacy classes of directly indecomposable subgroups.
+        """
+        Parent.__init__(self, category=InfiniteEnumeratedSets())
+        ElementCache.__init__(self)
+    
+    def _element_constructor_(self, x):
+        r"""
+        ``x`` is an element of ``self`` or a tuple `(H, G)` such that
+        `H` is directly indecomposable and `G` is the ambient group of
+        `H`.
+        """
+        if parent(x) == self:
+            return x
+        H, G = x
+        # can't handle any normalization before this point because
+        # of subgroup check
+        if H.is_subgroup(G):
+            if len(H.disjoint_direct_product_decomposition()) > 1:
+                raise ValueError(f"{H} is not directly indecomposable")
+            # do domain normalization here?
+            elm = self.element_class(self, H, G)
+            return self._cache_get(elm)
+        raise ValueError(f"{H} is not a subgroup of {G}")
+    
+    Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
 
 class AtomicSpeciesElement(Element):
-    def __init__(self, parent, C, mapping):
+    def __init__(self, parent, dis, mc):
         r"""
-        An atomic species.
-
-        ``C`` - an instance of 
-        ``mapping`` - a dictionary whose keys are the elements
-        of the domain of ``C`` and values are the "variable" to which an element
-        is assigned. The values must be in the range `[1, k]`.
+        An atomic species. ``dis`` is an instance of
+        ConjugacyClassOfDirectlyIndecomposableSubgroups
+        and ``mc`` is the multicardinality of the atomic
+        species.
         """
         # Notice that a molecular species (and therefore an atomic species)
         # must be centered on a multicardinality, otherwise it wouldn't be
         # molecular. So it is kind of redundant to say "atomic species
         # centered on a given multicardinality."
-        total_cardinality = sum(multicardinality)
-        if C.degree() != sum(multicardinality):
-            raise ValueError(f"Degree of {C} (= {C.degree()}) must equal the total cardinality {total_cardinality}")
-        G = SymmetricGroup(total_cardinality).young_subgroup(multicardinality)
-        if not C.is_subgroup(G):
-            raise ValueError(f"{C} is not a subgroup of {G}")
-        ConjugacyClassOfDirectlyIndecomposableSubgroups.__init__(self, parent, C)
-        self._mc = multicardinality
-        self._tc = total_cardinality
-
-    @cached_method
-    def subgroup_of(self):
-        r"""
-        Return the group which the underlying permutation group
-        of this atomic species belongs to.
-        """
-        return self._dic._ambient_group
+        Element.__init__(self, parent)
+        self._dis = dis
+        self._mc = mc
 
     def __hash__(self):
         r"""
         Return the hash of the atomic species.
         """
-        return hash(tuple([self._C, self._mc, self._tc]))
+        return hash(tuple([self._dis, self._mc]))
 
     @cached_method
     def _element_key(self):
         r"""
         Return a lookup key for ``self``.
         """
-        return tuple([*super()._element_key(), self._mc])
+        return tuple([self._dis._C, self._mc])
 
     def __eq__(self, other):
         r"""
@@ -149,13 +175,13 @@ class AtomicSpeciesElement(Element):
         """
         if parent(self) != parent(other):
             return False
-        return self._mc == other._mc and super().__eq__(other)
+        return self._mc == other._mc and self._dis == self._dis
 
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
         """
-        return "{" + f"{self._C.gens_small()}: {self._mc}" + "}"
+        return "{" + f"{self._dis}: {self._mc}" + "}"
 
 class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
     def __init__(self, k):
@@ -168,6 +194,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         ElementCache.__init__(self)
         self._k = k
         self._grading_set = IntegerVectors(length=k)
+        self._dis = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
 
     def __hash__(self):
         r"""
@@ -203,23 +230,25 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         return self._element_constructor_((SymmetricGroup(self._k).young_subgroup([1] * self._k),
                                            {e: i for i, e in enumerate(range(1, self._k + 1), 1)}))
 
-    def _normalize(self, H, f):
+    def _normalize(self, H, M):
         r"""
-        Normalize `H` and return `H` and the multicardinality.
+        Normalize the domain of `H` and return `H`, the ambient group,
+        and the multicardinality.
         """
         # TODO: Complete the documentation.
         L = [[] for _ in range(self._k)]
-        for k, v in f.items():
+        for k, v in M.items():
             L[v - 1].append(k)
         Lc = sum(L, [])
         Ls = [len(l) for l in L]
+        # normalize domain to {1..n}
         mapping = {v: i for i, v in enumerate(Lc, 1)}
         normalized_gens = [[tuple(mapping[x] for x in cyc) for cyc in gen.cycle_tuples()] for gen in H.gens_small()]
         P = PermutationGroup(gens=normalized_gens)
         # Fix for SymmetricGroup(0)
         if H.degree() == 0:
             P = SymmetricGroup(0)
-        return P, self._grading_set(Ls)
+        return P, SymmetricGroup(len(Lc)).young_subgroup(Ls), self._grading_set(Ls)
 
     def _element_constructor_(self, x):
         r"""
@@ -227,23 +256,23 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
         INPUT:
 
-        - ``x`` - an element of ``self`` or a tuple ``(H, f)`` where `H` is
+        - ``x`` - an element of ``self`` or a tuple ``(H, M)`` where `H` is
         the directly indecomposable permutation group representation for the
-        `k`-variate atomic species and `f` is a ``dict`` mapping each element
+        `k`-variate atomic species and `M` is a ``dict`` mapping each element
         of the domain of `H` to integers in `\{ 1 \ldots k \}`, representing
         the set to which the element belongs.
         """
         if parent(x) == self:
             return x
-        H, f = x
-        if Set(H.domain()) != Set(f.keys()):
-            raise ValueError(f"Keys of {f} do not match with domain of {H} (= {H.domain()})")
-        if not Set(f.values()).issubset(Set(range(1, self._k + 1))):
-            raise ValueError(f"Values of {f} must be in the range [1, {self._k}]")
-        if isinstance(H, PermutationGroup_generic) and isinstance(f, dict):
-            elm = self.element_class(self, *self._normalize(H, f))
-            return self._cache_get(elm)
-        raise ValueError("unable to convert {x} into {self}")
+        H, M = x
+        if Set(H.domain()) != Set(M.keys()):
+            raise ValueError(f"Keys of {M} do not match with domain of {H} (= {H.domain()})")
+        if not Set(M.values()).issubset(Set(range(1, self._k + 1))):
+            raise ValueError(f"Values of {M} must be in the range [1, {self._k}]")
+        H_norm, ambient_group, mc = self._normalize(H, M)
+        dis_elm = self._dis((H_norm, ambient_group))
+        elm = self.element_class(self, dis_elm, mc)
+        return self._cache_get(elm)
     
     def __getitem__(self, x):
         r"""
@@ -255,11 +284,12 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         r"""
         Return if ``x`` is in ``self``.
         """
+        # This needs to be improved.
         if parent(x) == self:
             return True
         try:
             self._element_constructor_(x)
-        except:
+        except ValueError:
             return False
         return True
     
@@ -269,20 +299,16 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
         TESTS::
 
-            sage: At1 = MultivariateAtomicSpecies(1)
+            sage: At1 = AtomicSpecies(1)
             sage: At1
             Infinite set of 1-variate atomic species
-            sage: At2 = MultivariateAtomicSpecies(2)
+            sage: At2 = AtomicSpecies(2)
             sage: At2
             Infinite set of 2-variate atomic species
         """
         return f"Infinite set of {self._k}-variate atomic species"
     
     Element = AtomicSpeciesElement
-
-class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
-    def __init__(self):
-        pass
 
 class PolynomialSpecies(CombinatorialFreeModule):
     def __init__(self, k, base_ring=ZZ):
@@ -303,6 +329,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring,
                                         basis_keys=basis_keys,
                                         category=category,
+                                        element_class=self.Element,
                                         prefix='', bracket=False)
         self._k = k
         self._atomic_basis = basis_keys.indices()
@@ -336,9 +363,10 @@ class PolynomialSpecies(CombinatorialFreeModule):
             raise ValueError(f"Values of {f} must be in the range [1, {self._k}]")
         if isinstance(H, PermutationGroup_generic) and isinstance(f, dict):
             domain_partition = H.disjoint_direct_product_decomposition()
-            from collections import Counter
-            C = Counter([self._atomic_basis(self._project(H, f, part)) for part in domain_partition])
-            return self._from_dict({self._indices(dict(C)): 1})
+            term = self._indices.one()
+            for part in domain_partition:
+                term *= self._indices.gen(self._project(H, f, part))
+            return self._from_dict({term: 1})
         raise ValueError("unable to convert {x} into {self}")
 
     def __getitem__(self, x):
@@ -441,4 +469,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         """
         return f"Ring of {self._k}-variate virtual species"
     
-    Element = PolynomialSpeciesElement
+    class Element(CombinatorialFreeModule.Element):
+        pass
+        # def _mul_(self, other):
+        #     return type(self)()
