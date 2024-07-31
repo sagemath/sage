@@ -488,7 +488,21 @@ class Bijectionist(SageObject):
                  elements_distributions=tuple(),
                  value_restrictions=tuple(), solver=None, key=None):
         """
-        Initialize the bijectionist.
+        Initialize a Bijectionist object for managing bijective functions and their constraints.
+
+        Parameters:
+        - A (list): List of elements for the first set.
+        - B (list): List of elements for the second set.
+        - tau (function): Function mapping elements of B to Z (optional).
+        - alpha_beta (tuple): Functions for computing statistics alpha and beta (optional).
+        - P (list): List of partitions for constant blocks (optional).
+        - pi_rho (tuple): Functions for intertwining relations (optional).
+        - phi_psi (tuple): Functions for quadratic relations (optional).
+        - Q (list): List of partitions for homomesic relations (optional).
+        - elements_distributions (tuple): Element distribution constraints (optional).
+        - value_restrictions (tuple): Value restrictions (optional).
+        - solver (str): Solver for MixedIntegerLinearProgram (optional).
+        - key (dict): Sorting key for elements (optional).
 
         TESTS:
 
