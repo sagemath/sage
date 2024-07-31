@@ -2,6 +2,7 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.misc.cachefunc import cached_method
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.structure.parent import Parent
+from sage.structure.element import Element
 from sage.structure.element import parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
@@ -12,18 +13,63 @@ from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.sets.set import Set
-from sage.rings.burnside import ConjugacyClassOfSubgroups, ElementCache, _is_conjugate
 
 GAP_FAIL = libgap.eval('fail')
 
-class ConjugacyClassOfDirectlyIndecomposableSubgroups(ConjugacyClassOfSubgroups):
-    def __init__(self, parent, C):
+def _is_conjugate(G, H1, H2):
+    r"""
+    Test if ``H1`` and ``H2`` are conjugate subgroups in ``G``.
+
+    EXAMPLES::
+
+        sage: G = SymmetricGroup(3)
+        sage: H1 = PermutationGroup([(1,2)])
+        sage: H2 = PermutationGroup([(2,3)])
+        sage: from sage.rings.burnside import _is_conjugate
+        sage: _is_conjugate(G, H1, H2)
+        True
+    """
+    return GAP_FAIL != libgap.RepresentativeAction(G, H1, H2)
+
+
+class ElementCache():
+    def __init__(self):
+        r"""
+        Class for caching elements.
+        """
+        self._cache = dict()
+
+    def _cache_get(self, elm):
+        r"""
+        Return the cached element, or create it
+        if it doesn't exist.
+
+        ``elm`` must implement the following methods:
+          ``_element_key`` - hashable type for dict lookup.
+          ``__eq__`` - to compare two elements.
+        """
+        key = elm._element_key()
+        if key in self._cache:
+            lookup = self._cache[key]
+            for other_elm in lookup:
+                if elm == other_elm:
+                    return other_elm
+            else:
+                lookup.append(elm)
+        else:
+            self._cache[key] = [elm]
+        return elm
+
+
+class ConjugacyClassOfDirectlyIndecomposableSubgroups():
+    def __init__(self, C, ambient_group):
         r"""
         A conjugacy class of directly indecomposable subgroups.
         """
         if len(C.disjoint_direct_product_decomposition()) > 1:
             raise ValueError(f"{C} is not directly indecomposable")
-        ConjugacyClassOfSubgroups.__init__(self, parent, C)
+        self._C = self._normalize(C)
+        self._ambient_group = ambient_group
 
     @cached_method
     def subgroup_of(self):
@@ -31,7 +77,7 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(ConjugacyClassOfSubgroups)
         Return the group which this conjugacy class of
         directly indecomposable subgroups belongs to.
         """
-        return SymmetricGroup(self._C.degree())
+        return self._ambient_group
     
     def _repr_(self):
         r"""
@@ -39,46 +85,32 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(ConjugacyClassOfSubgroups)
         """
         return "{" + f"{self._C.degree()}, {self._C.gens_small()}" + "}"
 
-    def __le__(self, other):
-        r"""
-        Return if this element is less than or equal to ``other``.
-
-        ``self`` is less or equal to ``other`` if it is conjugate to
-        a subgroup of ``other`` in the parent group of larger degree.
-        """
-        # If selfdeg > otherdeg, return False
-        # then selfdeg <= otherdeg
-        return (isinstance(other, ConjugacyClassOfSubgroups)
-                and self._C.degree() <= other._C.degree()
-                and (self._C.degree() < other._C.degree() or
-                     (GAP_FAIL != libgap.ContainedConjugates(self.subgroup_of(),
-                                                             other._C, self._C, True))))
-
     def __eq__(self, other):
         r"""
-        Return if this element is equal to ``other``.
+        Return if ``self`` is equal to ``other``.
 
-        Two elements compare equal if they are conjugate subgroups in the parent group.
-
-        TESTS::
-
-            sage: G = SymmetricGroup(4)
-            sage: B = BurnsideRing(G)
-            sage: H1 = PermutationGroup([(1,2)])
-            sage: H2 = PermutationGroup([(2,3)])
-            sage: B[H1] == B[H2]
-            True
+        Two directly indecomposable subgroups belong to the same conjugacy
+        class if they have the same ambient group and are conjugate within it.
         """
-        return (isinstance(other, ConjugacyClassOfSubgroups)
-                and self._C.degree() == other._C.degree() and
-                _is_conjugate(self.subgroup_of(), self._C, other._C))
+        # No __le__ method because does it really make sense to have one here?
+        return (isinstance(other, ConjugacyClassOfDirectlyIndecomposableSubgroups)
+                and self._ambient_group == other._ambient_group
+                and _is_conjugate(self._ambient_group, self._C, self._other))
 
-class AtomicSpecies(ConjugacyClassOfDirectlyIndecomposableSubgroups):
-    def __init__(self, parent, C, multicardinality):
+class AtomicSpeciesElement(Element):
+    def __init__(self, parent, C, mapping):
         r"""
-        An atomic species centered on a given multicardinality: a directly
-        indecomposable subgroup paired with an integer vector.
+        An atomic species.
+
+        ``C`` - an instance of 
+        ``mapping`` - a dictionary whose keys are the elements
+        of the domain of ``C`` and values are the "variable" to which an element
+        is assigned. The values must be in the range `[1, k]`.
         """
+        # Notice that a molecular species (and therefore an atomic species)
+        # must be centered on a multicardinality, otherwise it wouldn't be
+        # molecular. So it is kind of redundant to say "atomic species
+        # centered on a given multicardinality."
         total_cardinality = sum(multicardinality)
         if C.degree() != sum(multicardinality):
             raise ValueError(f"Degree of {C} (= {C.degree()}) must equal the total cardinality {total_cardinality}")
@@ -95,7 +127,7 @@ class AtomicSpecies(ConjugacyClassOfDirectlyIndecomposableSubgroups):
         Return the group which the underlying permutation group
         of this atomic species belongs to.
         """
-        return SymmetricGroup(self._tc).young_subgroup(self._mc)
+        return self._dic._ambient_group
 
     def __hash__(self):
         r"""
@@ -125,7 +157,7 @@ class AtomicSpecies(ConjugacyClassOfDirectlyIndecomposableSubgroups):
         """
         return "{" + f"{self._C.gens_small()}: {self._mc}" + "}"
 
-class MultivariateAtomicSpecies(UniqueRepresentation, Parent, ElementCache):
+class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
     def __init__(self, k):
         r"""
         Infinite set of `k`-variate atomic species graded by
@@ -149,9 +181,9 @@ class MultivariateAtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
         TESTS::
 
-            sage: At1 = MultivariateAtomicSpecies(1); At1
-            sage: At2 = MultivariateAtomicSpecies(2); At2
-            sage: At1_2 = MultivariateAtomicSpecies(1); At1_2
+            sage: At1 = AtomicSpecies(1); At1
+            sage: At2 = AtomicSpecies(2); At2
+            sage: At1_2 = AtomicSpecies(1); At1_2
             sage: At1 is At1_2
             True
             sage: At1 is At2
@@ -246,12 +278,16 @@ class MultivariateAtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         """
         return f"Infinite set of {self._k}-variate atomic species"
     
-    Element = AtomicSpecies
+    Element = AtomicSpeciesElement
 
-class PolynomialMolecularDecomposition(CombinatorialFreeModule):
+class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
+    def __init__(self):
+        pass
+
+class PolynomialSpecies(CombinatorialFreeModule):
     def __init__(self, k, base_ring=ZZ):
         r"""
-        Ring of `k`-variate virtual species.
+        Ring of `k`-variate polynomial (virtual) species.
 
         TESTS::
 
@@ -261,7 +297,7 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
             sage: TestSuite(P2).run()
         """
         # should we pass a category to basis_keys?
-        basis_keys = IndexedFreeAbelianMonoid(MultivariateAtomicSpecies(k),
+        basis_keys = IndexedFreeAbelianMonoid(AtomicSpecies(k),
                                               prefix='', bracket=False)
         category = GradedAlgebrasWithBasis(base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, base_ring,
@@ -404,3 +440,5 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
             Ring of 2-variate virtual species
         """
         return f"Ring of {self._k}-variate virtual species"
+    
+    Element = PolynomialSpeciesElement
