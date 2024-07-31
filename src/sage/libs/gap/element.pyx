@@ -22,6 +22,8 @@ from sage.libs.gap.gap_includes cimport *
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.util cimport *
 from sage.libs.gap.util import GAPError
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.pylong cimport mpz_get_pylong
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1477,7 +1479,7 @@ cdef class GapElement_Integer(GapElement):
         Return the Sage equivalent of the :class:`GapElement_Integer`
 
         - ``ring`` -- Integer ring or ``None`` (default). If not
-          specified, a the default Sage integer ring is used.
+          specified, the default Sage integer ring is used.
 
         OUTPUT:
 
@@ -1497,6 +1499,8 @@ cdef class GapElement_Integer(GapElement):
 
         TESTS::
 
+            sage: libgap(0).sage()
+            0
             sage: large = libgap.eval('2^130');  large
             1361129467683753853853498429727072845824
             sage: large.sage()
@@ -1507,17 +1511,31 @@ cdef class GapElement_Integer(GapElement):
             sage: huge.sage().ndigits()
             10000
         """
+        cdef UInt* x
+        cdef Int size
+        cdef int c_sign
+        cdef int c_size
+        cdef mpz_t output
         if ring is None:
             ring = ZZ
-        if self.is_C_int():
-            return ring(GAP_ValueInt(self.value))
-        else:
-            # TODO: waste of time!
-            # gap integers are stored as a mp_limb_t and we have a much more direct
-            # conversion implemented in mpz_get_pylong(mpz_srcptr z)
-            # (see sage.libs.gmp.pylong)
-            string = self.String().sage()
-            return ring(string)
+        try:
+            GAP_Enter()
+            if self.is_C_int():
+                return ring(GAP_ValueInt(self.value))
+            else:
+                # gap integers are stored as a mp_limb_t
+                size = GAP_SizeInt(self.value) # count limbs and extract sign
+                if size > 0:
+                    c_sign = 1
+                    c_size = size
+                else: # Must have size < 0, or else self.value == 0 and self.is_C_int() == True
+                    c_sign = -1
+                    c_size = -size
+                x = GAP_AddrInt(self.value) # pointer to limbs
+                mpz_roinit_n(output, <mp_limb_t *>x, c_size)
+                return ring(c_sign*mpz_get_pylong(output))
+        finally:
+            GAP_Leave()
 
     _integer_ = sage
 
@@ -1680,7 +1698,7 @@ cdef class GapElement_IntegerMod(GapElement):
         INPUT:
 
         - ``ring`` -- Sage integer mod ring or ``None`` (default). If
-          not specified, a suitable integer mod ringa is used
+          not specified, a suitable integer mod ring is used
           automatically.
 
         OUTPUT:
@@ -1699,8 +1717,21 @@ cdef class GapElement_IntegerMod(GapElement):
             # ring = self.DefaultRing().sage()
             characteristic = self.Characteristic().sage()
             ring = ZZ.quotient_ring(characteristic)
-        return self.lift().sage(ring=ring)
+        return ring(self.lift())
 
+    def _integer_(self, R):
+        r"""
+        TESTS::
+
+            sage: n = libgap.ZmodnZObj(13, 123)
+            sage: ZZ(n)
+            13
+            sage: ZZ(-n)
+            110
+            sage: ZZ(0*n)
+            0
+        """
+        return self.lift()._integer_(R)
 
 ############################################################################
 ### GapElement_FiniteField #####################################################
@@ -1822,6 +1853,8 @@ cdef class GapElement_FiniteField(GapElement):
             a^2 + a + 1
             sage: n.sage(ring=GF(2^8, 'a'))
             a^7 + a^6 + a^4 + a^2 + a + 1
+            sage: (n^3).sage()
+            1
 
         Check that :issue:`23153` is fixed::
 
@@ -2930,7 +2963,7 @@ cdef class GapElement_List(GapElement):
         if ring is None:
             ring = entries.DefaultRing().sage()
         MS = MatrixSpace(ring, n, m)
-        return MS([x.sage(ring=ring) for x in entries])
+        return MS([ring(x) for x in entries])
 
     _matrix_ = matrix
 

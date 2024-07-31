@@ -976,6 +976,10 @@ def is_Infinite(x) -> bool:
     EXAMPLES::
 
         sage: sage.rings.infinity.is_Infinite(oo)
+        doctest:warning...
+        DeprecationWarning: The function is_Infinite is deprecated;
+        use 'isinstance(..., InfinityElement)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: sage.rings.infinity.is_Infinite(-oo)
         True
@@ -988,6 +992,9 @@ def is_Infinite(x) -> bool:
         sage: sage.rings.infinity.is_Infinite(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_Infinite is deprecated; use 'isinstance(..., InfinityElement)' instead.")
+
     return isinstance(x, InfinityElement)
 
 
