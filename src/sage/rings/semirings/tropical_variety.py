@@ -382,6 +382,108 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             [(t1, t2, t3, t3), [t3 <= min(t1, t2)], 1]]
         """
         return self._hypersurface
+    
+    def _components_intersection(self):
+        r"""
+        Return the intersection of three or more components of ``self``.
+
+        For a tropical variety in `\RR^n`, the intersection is characterized
+        by a linear equation in `\RR^{n-1}`. Specifically, this becomes a 
+        vertex for tropical curve and an edges for tropical surface.
+
+        OUTPUT:
+
+        A dictionary where the keys represent parametric equations and
+        the values is a list of tuples. The tuples contains a condition
+        for parameter and the corresponding component index.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x + y + z + x^2
+            sage: tv = p1.tropical_variety()
+            sage: tv._components_intersection()
+            {(t2, t2, t2): [({0 <= t2}, 0), ({0 <= t2}, 1)],
+            (0, 0, t2): [({0 <= t2}, 0), ({0 <= t2}, 2), ({0 <= t2}, 4), ({t2 <= 0}, 4)],
+            (0, t2, 0): [({0 <= t2}, 1), ({0 <= t2}, 5), ({t2 <= 0}, 5)],
+            (0, t1, 0): [({0 <= t1}, 2)],
+            (t1, t1, t1): [({0 <= t1}, 3), ({t1 <= 0}, 3)]}
+        """
+        import operator
+        from sage.functions.min_max import max_symbolic, min_symbolic
+        from sage.symbolic.relation import solve
+        from sage.combinat.permutation import Permutations
+        
+        def update_result(result):
+            # finding parameter for intersection
+            sol_param = solve(new_expr, vars)
+            sol_param_sim = set()
+            for sol in sol_param:
+                for eqn in sol:
+                    if self.dimension() == 2:
+                        sol_param_sim.add(eqn)
+                    else:
+                        if eqn.operator() == operator.lt:
+                            sol_param_sim.add(eqn.lhs() <= eqn.rhs())
+                        elif eqn.operator() == operator.gt:
+                            sol_param_sim.add(eqn.lhs() >= eqn.rhs())
+            # checking if the found intersection is actually the same
+            # as another element in result
+            check_same = False
+            for perm in Permutations(vars, len(vars)-1):
+                subs_dict = dict(zip(new_vars, perm))
+                temp_points = [p.subs(subs_dict) for p in points]
+                if tuple(temp_points) in result:
+                    temp_sol = set()
+                    for sol in sol_param_sim:
+                        temp_sol.add(sol.subs(subs_dict))
+                    if temp_sol in result[tuple(temp_points)]:
+                        check_same = True
+                        break
+            if sol_param_sim:
+                if not check_same:
+                    if tuple(points) not in result:
+                        result[tuple(points)] = [(sol_param_sim, index)]
+                    else:
+                        result[tuple(points)].append((sol_param_sim, index))
+
+        result = {}
+        vars = self._vars
+        for index, comp in enumerate(self._hypersurface):
+            for expr in comp[1]:
+                left = expr.lhs()
+                right = expr.rhs()
+                points = list(comp[0])
+                # if the lhs contains a min or max operator
+                if (left.operator() == max_symbolic) or (left.operator() == min_symbolic):
+                    for operand in expr.lhs().operands():
+                        new_expr = [e.subs(right==operand) for e in comp[1]]
+                        new_vars = [t for t in vars if t != right]
+                        for i, p in enumerate(points):
+                            new_eq = p.subs(right==operand)
+                            points[i] = new_eq
+                        update_result(result)
+                # if the rhs contains a min or max operator
+                elif (right.operator() == max_symbolic) or (right.operator() == min_symbolic):
+                    for operand in expr.rhs().operands():
+                        new_expr = [e.subs(left==operand) for e in comp[1]]
+                        new_vars = [t for t in vars if t != left]
+                        for i, p in enumerate(points):
+                            new_eq = p.subs(left==operand)
+                            points[i] = new_eq
+                        update_result(result)
+                else:
+                    var = expr.variables()[0]
+                    subs_expr = solve(left==right, var)[0].rhs()
+                    new_expr = [e.subs(var==subs_expr) for e in comp[1]]
+                    new_vars = [t for t in vars if t != var]
+                    for i, p in enumerate(points):
+                        new_eq = p.subs(var==subs_expr)
+                        points[i] = new_eq
+                    update_result(result)
+        return result
+
 
 class TropicalSurface(TropicalVariety):
     r"""
@@ -543,8 +645,10 @@ class TropicalSurface(TropicalVariety):
                 # Generate a random color in RGB format
                 color = (random.random(), random.random(), random.random())
                 colors.append(color)
-        else:
+        elif isinstance(color, str):
             colors = [color]*self.number_of_components()
+        else:
+            colors = color
 
         axes = self._axes()
         step = num_of_points
@@ -591,6 +695,7 @@ class TropicalSurface(TropicalVariety):
             Tropical surface of 0*x^4 + 0*z^2
         """
         return (f"Tropical surface of {self._poly}")
+
 
 class TropicalCurve(TropicalVariety):
     r"""
