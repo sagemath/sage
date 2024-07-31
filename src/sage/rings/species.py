@@ -1,3 +1,4 @@
+from sage.all__sagemath_objects import Integer
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.integer_vector import IntegerVectors
 from sage.misc.cachefunc import cached_method
@@ -20,9 +21,7 @@ GAP_FAIL = libgap.eval('fail')
 def _is_conjugate(G, H1, H2):
     r"""
     Test if ``H1`` and ``H2`` are conjugate subgroups in ``G``.
-
     EXAMPLES::
-
         sage: G = SymmetricGroup(3)
         sage: H1 = PermutationGroup([(1,2)])
         sage: H2 = PermutationGroup([(2,3)])
@@ -63,30 +62,20 @@ class ElementCache():
 
 
 class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
-    def __init__(self, parent, C, ambient_group):
+    def __init__(self, parent, C):
         r"""
         A conjugacy class of directly indecomposable subgroups.
         """
         Element.__init__(self, parent)
         self._C = C
         self._smallgen = C.gens_small()
-        self._ambient_group = ambient_group
-
-    @cached_method
-    def subgroup_of(self):
-        r"""
-        Return the group which this conjugacy class of
-        directly indecomposable subgroups belongs to.
-        """
-        return self._ambient_group
 
     @cached_method
     def _element_key(self):
         r"""
         Return the key for this element.
         """
-        return tuple([self._C.degree(), self._C.order(),
-                      self._ambient_group])
+        return tuple([self._C.degree(), self._C.order()])
 
     def __hash__(self):
         return hash(self._element_key)
@@ -101,16 +90,14 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
         r"""
         Return if ``self`` is equal to ``other``.
 
-        Two directly indecomposable subgroups belong to the same conjugacy
-        class if they have the same ambient group and are conjugate within it.
+        ``self`` is equal to ``other`` if they have the same degree (say `n`)
+        and order and are conjugate within `S_n`.
         """
-        # No __le__ method because does it really make sense to have one here?
         return (isinstance(other, ConjugacyClassOfDirectlyIndecomposableSubgroups)
-                and self._ambient_group == other._ambient_group
-                and _is_conjugate(self._ambient_group, self._C, other._C))
+                and self._element_key() == other._element_key()
+                and _is_conjugate(SymmetricGroup(self._C.degree()), self._C, other._C))
 
 class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Parent, ElementCache):
-
     def __init__(self):
         r"""
         Conjugacy classes of directly indecomposable subgroups.
@@ -120,32 +107,28 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
     
     def _element_constructor_(self, x):
         r"""
-        ``x`` is an element of ``self`` or a tuple `(H, G)` such that
-        `H` is directly indecomposable and `G` is the ambient group of
-        `H`.
+        ``x`` is an element of ``self`` or a group `H` such that
+        `H` is directly indecomposable.
         """
         if parent(x) == self:
             return x
-        H, G = x
-        # can't handle any normalization before this point because
-        # of subgroup check
-        if H.is_subgroup(G):
-            if len(H.disjoint_direct_product_decomposition()) > 1:
-                raise ValueError(f"{H} is not directly indecomposable")
-            # do domain normalization here?
-            elm = self.element_class(self, H, G)
+        if isinstance(x, PermutationGroup_generic):
+            if len(x.disjoint_direct_product_decomposition()) > 1:
+                raise ValueError(f"{x} is not directly indecomposable")
+            elm = self.element_class(self, x)
             return self._cache_get(elm)
-        raise ValueError(f"{H} is not a subgroup of {G}")
+        raise ValueError(f"unable to convert {x} to {self}")
     
     Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
 
 class AtomicSpeciesElement(Element):
-    def __init__(self, parent, dis, mc):
+    def __init__(self, parent, dis, domain_partition):
         r"""
         An atomic species. ``dis`` is an instance of
         ConjugacyClassOfDirectlyIndecomposableSubgroups
-        and ``mc`` is the multicardinality of the atomic
-        species.
+        and ``domain_partition`` is a dict, which
+        represents the assignment of each element of the
+        domain of ``dis`` to a "variable".
         """
         # Notice that a molecular species (and therefore an atomic species)
         # must be centered on a multicardinality, otherwise it wouldn't be
@@ -153,7 +136,8 @@ class AtomicSpeciesElement(Element):
         # centered on a given multicardinality."
         Element.__init__(self, parent)
         self._dis = dis
-        self._mc = mc
+        self._dompart = domain_partition
+        self._mc = [len(s) for s in domain_partition]
 
     def __hash__(self):
         r"""
@@ -175,6 +159,7 @@ class AtomicSpeciesElement(Element):
         """
         if parent(self) != parent(other):
             return False
+        # Here it is enough to compare mc
         return self._mc == other._mc and self._dis == self._dis
 
     def _repr_(self):
@@ -232,23 +217,23 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
     def _normalize(self, H, M):
         r"""
-        Normalize the domain of `H` and return `H`, the ambient group,
-        and the multicardinality.
+        Normalize the domain of `H` and return `H` and the domain partition.
         """
         # TODO: Complete the documentation.
-        L = [[] for _ in range(self._k)]
-        for k, v in M.items():
-            L[v - 1].append(k)
-        Lc = sum(L, [])
-        Ls = [len(l) for l in L]
+        if Set(H.domain()) != Set(M.keys()):
+            raise ValueError(f"Keys of {M} do not match with domain of {H} (= {H.domain()})")
+        if not Set(M.values()).issubset(Set(range(1, self._k + 1))):
+            raise ValueError(f"Values of {M} must be in the range [1, {self._k}]")
         # normalize domain to {1..n}
-        mapping = {v: i for i, v in enumerate(Lc, 1)}
+        mapping = {v: i for i, v in enumerate(H.domain(), 1)}
         normalized_gens = [[tuple(mapping[x] for x in cyc) for cyc in gen.cycle_tuples()] for gen in H.gens_small()]
         P = PermutationGroup(gens=normalized_gens)
         # Fix for SymmetricGroup(0)
         if H.degree() == 0:
             P = SymmetricGroup(0)
-        return P, SymmetricGroup(len(Lc)).young_subgroup(Ls), self._grading_set(Ls)
+        # create domain partition
+        dompart = {mapping[k]: v for k, v in M.items()}
+        return P, dompart
 
     def _element_constructor_(self, x):
         r"""
@@ -265,13 +250,11 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         if parent(x) == self:
             return x
         H, M = x
-        if Set(H.domain()) != Set(M.keys()):
-            raise ValueError(f"Keys of {M} do not match with domain of {H} (= {H.domain()})")
-        if not Set(M.values()).issubset(Set(range(1, self._k + 1))):
-            raise ValueError(f"Values of {M} must be in the range [1, {self._k}]")
-        H_norm, ambient_group, mc = self._normalize(H, M)
-        dis_elm = self._dis((H_norm, ambient_group))
-        elm = self.element_class(self, dis_elm, mc)
+        H_norm, dompart = self._normalize(H, M)
+        dis_elm = self._dis(H_norm)
+        perm = libgap.RepresentativeAction(H_norm, dis_elm._C)
+        dompart_norm = {Integer(k ^ perm): v for k, v in dompart.items()}
+        elm = self.element_class(self, dis_elm, dompart_norm)
         return self._cache_get(elm)
     
     def __getitem__(self, x):
