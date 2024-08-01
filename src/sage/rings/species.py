@@ -119,6 +119,9 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             return self._cache_get(elm)
         raise ValueError(f"unable to convert {x} to {self}")
     
+    def _repr_(self):
+        return "Infinite set of conjugacy classes of directly indecomposable subgroups"
+    
     Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
 
 class AtomicSpeciesElement(Element):
@@ -189,26 +192,6 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         Return a hash for ``self``.
         """
         return hash(self._k)
-
-    def __eq__(self, other):
-        r"""
-        Needed for unique representation behaviour.
-
-        TESTS::
-
-            sage: At1 = AtomicSpecies(1); At1
-            sage: At2 = AtomicSpecies(2); At2
-            sage: At1_2 = AtomicSpecies(1); At1_2
-            sage: At1 is At1_2
-            True
-            sage: At1 is At2
-            False
-            sage: At1_2 is At2
-            False
-        """
-        if type(self) != type(other):
-            return False
-        return self._k == other._k
     
     @cached_method
     def an_element(self):
@@ -273,8 +256,10 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         # This needs to be improved.
         if parent(x) == self:
             return True
+        H, M = x
         try:
-            self._element_constructor_(x)
+            H_norm, _ = self._normalize(H, M)
+            self._dis(H_norm)
         except ValueError:
             return False
         return True
@@ -303,9 +288,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: P = PolynomialMolecularDecomposition(1)
+            sage: P = PolynomialSpecies(1)
             sage: TestSuite(P).run()
-            sage: P2 = PolynomialMolecularDecomposition(2)
+            sage: P2 = PolynomialSpecies(2)
             sage: TestSuite(P2).run()
         """
         # should we pass a category to basis_keys?
@@ -356,18 +341,18 @@ class PolynomialSpecies(CombinatorialFreeModule):
         TESTS::
 
             sage: P = PolynomialMolecularDecomposition(1)
-            sage: At1 = MultivariateAtomicSpecies(1)
+            sage: At1 = AtomicSpecies(1)
             sage: At1((SymmetricGroup(1), {1: 1})).rename("X")
-            sage: X = (SymmetricGroup(2).young_subgroup([1, 1]), {1: 1, 2: 1})
-            sage: P[X]
+            sage: X2 = (SymmetricGroup(2).young_subgroup([1, 1]), {1: 1, 2: 1})
+            sage: P[X2]
             X^2
-            sage: P2=PolynomialMolecularDecomposition(2)
-            sage: At2=MultivariateAtomicSpecies(2)
+            sage: P2 = PolynomialSpecies(2)
+            sage: At2 = AtomicSpecies(2)
             sage: At2((SymmetricGroup(1), {1: 1})).rename("X")
             sage: At2((SymmetricGroup(1), {1: 2})).rename("Y")
             sage: XY = (SymmetricGroup(2).young_subgroup([1, 1]), {1: 1, 2: 2})
             sage: P2[XY]
-            Y*X
+            X*Y
         """
         return self._element_constructor_(x)
 
