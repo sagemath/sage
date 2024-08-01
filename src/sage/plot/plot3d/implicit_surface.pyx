@@ -468,6 +468,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: cube_marcher.y_vertices.tolist()
             [[[<1.0, 0.5, 0.0>, None]], [[None, None]]]
             sage: cube_marcher.x_vertices.any() # This shouldn't affect the X vertices.
+            ...
         """
         (self.y_vertices, self.y_vertices_swapped) = \
             (self.y_vertices_swapped, self.y_vertices)
@@ -574,6 +575,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: cube_marcher.x_vertices.tolist()
             [[None, None], [None, <1.5, 1.0, 1.0>]]
             sage: cube_marcher.y_vertices.any() or cube_marcher.z_vertices.any() # This shouldn't affect the Y or Z vertices.
+            ...
         """
         cdef bint has_prev = (_prev is not None)
         cdef bint has_next = (_next is not None)

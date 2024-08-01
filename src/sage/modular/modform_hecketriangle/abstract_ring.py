@@ -1793,7 +1793,7 @@ class FormsRing_abstract(Parent):
         - ``k``  -- A non-negative even integer, namely the weight.
 
                     If ``k=None`` (default) then the weight of ``self``
-                    is choosen if ``self`` is homogeneous and the
+                    is chosen if ``self`` is homogeneous and the
                     weight is possible, otherwise ``k=0`` is set.
 
         OUTPUT:

@@ -171,9 +171,9 @@ cdef class UniqueFactory(SageObject):
         ....:         return args, {'impl':kwds.get('impl', None)}
         ....:     def create_object(self, version, key, **extra_args):
         ....:         impl = extra_args['impl']
-        ....:         if impl=='C':
+        ....:         if impl == 'C':
         ....:             return C(*key)
-        ....:         if impl=='D':
+        ....:         if impl == 'D':
         ....:             return D(*key)
         ....:         return E(*key)
         ....:
