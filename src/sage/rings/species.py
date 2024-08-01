@@ -137,7 +137,10 @@ class AtomicSpeciesElement(Element):
         Element.__init__(self, parent)
         self._dis = dis
         self._dompart = domain_partition
-        self._mc = [len(s) for s in domain_partition]
+        L = [0 for _ in range(self.parent()._k)]
+        for v in self._dompart.values():
+            L[v - 1] += 1
+        self._mc = tuple(L)
 
     def __hash__(self):
         r"""
@@ -252,8 +255,8 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         H, M = x
         H_norm, dompart = self._normalize(H, M)
         dis_elm = self._dis(H_norm)
-        perm = libgap.RepresentativeAction(H_norm, dis_elm._C)
-        dompart_norm = {Integer(k ^ perm): v for k, v in dompart.items()}
+        perm = libgap.RepresentativeAction(SymmetricGroup(H_norm.degree()), H_norm, dis_elm._C)
+        dompart_norm = {Integer(k ** perm): v for k, v in dompart.items()}
         elm = self.element_class(self, dis_elm, dompart_norm)
         return self._cache_get(elm)
     
@@ -332,25 +335,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` - an element of ``self`` or a tuple ``(H, f)`` where `H` is
-        the permutation group representation for the species and `f` is a
+        - ``x`` - an element of ``self`` or a tuple ``(H, M)`` where `H` is
+        the permutation group representation for the species and `M` is a
         ``dict`` mapping each element of the domain of `H` to integers in
         `\{ 1 \ldots k \}`, representing the set to which the element belongs.
         """
         if parent(x) == self:
             return x
-        H, f = x
-        if Set(H.domain()) != Set(f.keys()):
-            raise ValueError(f"Keys of {f} do not match with domain of {H}")
-        if not Set(f.values()).issubset(Set(range(1, self._k + 1))):
-            raise ValueError(f"Values of {f} must be in the range [1, {self._k}]")
-        if isinstance(H, PermutationGroup_generic) and isinstance(f, dict):
-            domain_partition = H.disjoint_direct_product_decomposition()
-            term = self._indices.one()
-            for part in domain_partition:
-                term *= self._indices.gen(self._project(H, f, part))
-            return self._from_dict({term: 1})
-        raise ValueError("unable to convert {x} into {self}")
+        H, M = x
+        domain_partition = H.disjoint_direct_product_decomposition()
+        term = self._indices.one()
+        for part in domain_partition:
+            term *= self._indices.gen(self._project(H, M, part))
+        return self._from_dict({term: 1})
 
     def __getitem__(self, x):
         r"""
@@ -382,26 +379,26 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: P = PolynomialMolecularDecomposition(1)
+            sage: P = PolynomialSpecies(1)
             sage: P.one_basis()
-            {[]: [0]}
-            sage: P2 = PolynomialMolecularDecomposition(2)
+            1
+            sage: P2 = PolynomialSpecies(2)
             sage: P2.one_basis()
-            {[]: [0, 0]}
+            1
         """
-        return self._indices({self._atomic_basis(tuple([SymmetricGroup(0), dict()])): 1})
+        return self._indices.one()
 
     @cached_method
     def an_element(self):
         """
         Return an element of ``self``.
 
-            sage: P=PolynomialMolecularDecomposition(1)
+            sage: P = PolynomialSpecies(1)
             sage: P.an_element()
-            {[]: [0]}
-            sage: P2=PolynomialMolecularDecomposition(2)
+            1
+            sage: P2 = PolynomialSpecies(2)
             sage: P2.an_element()
-            {[]: [0, 0]}
+            1
         """
         return self.one()
 
@@ -420,13 +417,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             [                         {[()]: [1]}^5           {[()]: [1]}^3*{[(1,2)]: [2]}         {[(1,2,3)]: [3]}*{[()]: [1]}^2  {[(1,2,3), (2,3)]: [3]}*{[()]: [1]}^2]
             [          {[()]: [1]}^3*{[(1,2)]: [2]}           {[()]: [1]}*{[(1,2)]: [2]}^2        {[(1,2,3)]: [3]}*{[(1,2)]: [2]} {[(1,2,3), (2,3)]: [3]}*{[(1,2)]: [2]}]
         """
-        # Hacky workaround for handling the one of the algebra :(
-        if H == self.one_basis() and K == self.one_basis():
-            return self._from_dict({self.one_basis(): 1})
-        elif H == self.one_basis():
-            return self._from_dict({K: 1})
-        elif K == self.one_basis():
-            return self._from_dict({H: 1})
         return self._from_dict({H * K: 1})
 
     def degree_on_basis(self, m):
