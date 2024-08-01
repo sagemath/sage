@@ -50,8 +50,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from pathlib import Path
 from copy import copy
+
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
@@ -1480,11 +1481,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         p, n = self.signature_pair()
         if p * n != 0:
             from sage.env import SAGE_EXTCODE
-            from sage.interfaces.gp import gp
             from sage.libs.pari import pari
-            m = self.gram_matrix().__pari__()
-            gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
-            m = gp.eval('qflllgram_indefgoon(%s)' % m)
+            m = self.gram_matrix()
+            pari.read(Path(SAGE_EXTCODE) / "pari" / "simon" / "qfsolve.gp")
+            m = pari('qflllgram_indefgoon')(m)
             # convert the output string to sage
             G, U = pari(m).sage()
             U = U.T
