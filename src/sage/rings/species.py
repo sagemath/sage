@@ -369,10 +369,10 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: P = PolynomialMolecularDecomposition(1)
+            sage: P = PolynomialSpecies(1)
             sage: At1 = AtomicSpecies(1)
-            sage: At1((SymmetricGroup(1), {1: 1})).rename("X")
-            sage: X2 = (SymmetricGroup(2).young_subgroup([1, 1]), {1: 1, 2: 1})
+            sage: At1(SymmetricGroup(1)).rename("X")
+            sage: X2 = SymmetricGroup(2).young_subgroup([1, 1])
             sage: P[X2]
             X^2
             sage: P2 = PolynomialSpecies(2)
@@ -422,14 +422,18 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: P=PolynomialMolecularDecomposition(1)
-            sage: d2 = {e: 1 for e in range(1, 3)}
-            sage: d3 = {e: 1 for e in range(1, 4)}
-            sage: L1 = [(H, d3) for H in SymmetricGroup(3).conjugacy_classes_subgroups()]
-            sage: L2 = [(H, d2) for H in SymmetricGroup(2).conjugacy_classes_subgroups()]
-            sage: matrix([[P(x) * P(y) for x in L1] for y in L2])
-            [                         {[()]: [1]}^5           {[()]: [1]}^3*{[(1,2)]: [2]}         {[(1,2,3)]: [3]}*{[()]: [1]}^2  {[(1,2,3), (2,3)]: [3]}*{[()]: [1]}^2]
-            [          {[()]: [1]}^3*{[(1,2)]: [2]}           {[()]: [1]}*{[(1,2)]: [2]}^2        {[(1,2,3)]: [3]}*{[(1,2)]: [2]} {[(1,2,3), (2,3)]: [3]}*{[(1,2)]: [2]}]
+            sage: A = AtomicSpecies(1)
+            sage: A(SymmetricGroup(1)).rename("X")
+            sage: [A(SymmetricGroup(n)).rename(f"E_{n}") for n in range(2, 5)]
+            [None, None, None]
+            sage: [A(CyclicPermutationGroup(n)).rename(f"C_{n}") for n in range(3, 5)]
+            [None, None]
+            sage: P = PolynomialSpecies(1)
+            sage: L1 = [P(H) for H in SymmetricGroup(3).conjugacy_classes_subgroups()]
+            sage: L2 = [P(H) for H in SymmetricGroup(2).conjugacy_classes_subgroups()]
+            sage: matrix([[F * G for F in L1] for G in L2])
+            [    X^5 X^3*E_2 C_3*X^2 E_3*X^2]
+            [X^3*E_2 X*E_2^2 C_3*E_2 E_3*E_2]
         """
         return self._from_dict({H * K: 1})
 
@@ -447,10 +451,10 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: P = PolynomialMolecularDecomposition(1)
+            sage: P = PolynomialSpecies(1)
             sage: P
             Ring of 1-variate virtual species
-            sage: P2 = PolynomialMolecularDecomposition(2)
+            sage: P2 = PolynomialSpecies(2)
             sage: P2
             Ring of 2-variate virtual species
         """
