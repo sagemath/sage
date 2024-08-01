@@ -4442,8 +4442,8 @@ def StaircaseGraph(n):
     node `2n - 2` with `0` and `n - 1`, the node `2n - 1` with `n - 2` and
     `2n - 3`, and the nodes `2n - 2` and `2n - 1` with each other.
 
-    Note that ``graphs.StaircaseGraph(4)`` is also known as the `Bicorn`
-    `graph`. It is the only brick that has a unique `b`-invariant edge.
+    Note that ``graphs.StaircaseGraph(4)`` is also known as the ``Bicorn
+    graph``. It is the only brick that has a unique `b`-invariant edge.
 
     PLOTTING:
 
@@ -4470,10 +4470,10 @@ def StaircaseGraph(n):
         sage: g = graphs.StaircaseGraph(5)
         sage: g.show()                          # long time                             # needs sage.plot
 
-    Construct and show the Bicorn graph::
+    Construct and show the Bicorn graph. Note that the edge `(1, 4)` is the
+    unique `b`-invariant edge::
 
         sage: bicornGraph = graphs.StaircaseGraph(4)
-        sage: # The edge (1, 4) is the unique b-invariant edge.
         sage: bicornGraph.show()                # long time                             # needs sage.plot
 
     Create several staircase graphs in a Sage graphics array::
@@ -4495,6 +4495,7 @@ def StaircaseGraph(n):
     TESTS:
 
     The input parameter must be an integer that is at least 3::
+
         sage: G = graphs.StaircaseGraph(2)
         Traceback (most recent call last):
         ...
@@ -4553,7 +4554,7 @@ def BiwheelGraph(n):
     For `n \geq 4`, the biwheel graph of order `2n` is the planar
     bipartite graph obtained from the cycle graph of order `2n - 2`, i.e.,
     ``graphs.CycleGraph(2*n - 2)`` (called the `rim` of the biwheel graph) by
-    introducing two new nodes `2n - 2` and `2n - 1` (called the `hubs` of the
+    introducing two new nodes `2n - 2` and `2n - 1` (called the *hubs* of the
     biwheel graph), and then joining the node `2n - 2` with the odd indexed
     nodes up to `2n - 3` and joining the node `2n - 1` with the even indexed
     nodes up to `2n - 4`.
@@ -4607,6 +4608,7 @@ def BiwheelGraph(n):
     TESTS:
 
     The input parameter must be an integer that is at least 4::
+
         sage: G = graphs.BiwheelGraph(3)
         Traceback (most recent call last):
         ...
@@ -4709,6 +4711,7 @@ def TruncatedBiwheelGraph(n):
     TESTS:
 
     The input parameter must be an integer that is at least 3::
+
         sage: G = graphs.TruncatedBiwheelGraph(2)
         Traceback (most recent call last):
         ...
