@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.groups
 r"""
 Knots
 
@@ -271,10 +272,12 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: K = Knot([[1,5,2,4],[5,3,6,2],[3,1,4,6]])
             sage: K.dt_code()
             [4, 6, 2]
+
             sage: B = BraidGroup(4)
             sage: K = Knot(B([1, 2, 1, 2]))
             sage: K.dt_code()
             [4, -6, 8, -2]
+
             sage: K = Knot([[[1, -2, 3, -4, 5, -1, 2, -3, 4, -5]],
             ....:          [1, 1, 1, 1, 1]])
             sage: K.dt_code()
@@ -678,9 +681,11 @@ class Knots(Singleton, Parent):
         """
         if n > 10:
             raise ValueError('more than 10 crossings, not in the knot table')
-        from sage.groups.braid import BraidGroup
         if (n, k) in small_knots_table:
             m, word = small_knots_table[(n, k)]
+
+            from sage.groups.braid import BraidGroup
+
             G = BraidGroup(m)
             return Knot(G(word))
         else:

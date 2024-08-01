@@ -136,31 +136,29 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
+from builtins import sum as add
 
 from sage.categories.fields import Fields
 from sage.categories.homset import hom, Hom, End
 from sage.categories.number_fields import NumberFields
-
-from sage.interfaces.singular import singular
 from sage.matrix.constructor import matrix
-from builtins import sum as add
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.misc.persist import register_unpickle_override
 from sage.misc.sage_eval import sage_eval
-
-from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
-from sage.rings.integer_ring import IntegerRing
-from sage.rings.number_field.number_field import NumberField
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import (number_field_elements_from_algebraics,
-                              QQbar)
-from sage.rings.rational_field import RationalField
 from sage.rings.integer import Integer
-
+from sage.rings.integer_ring import IntegerRing
+from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import RationalField
 from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
-
 from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subscheme_projective,
                                                           AlgebraicScheme_subscheme_projective_field)
+
+lazy_import('sage.interfaces.singular', 'singular')
+lazy_import('sage.rings.number_field.number_field', 'NumberField')
+lazy_import('sage.rings.qqbar', ['number_field_elements_from_algebraics', 'QQbar'])
 
 from .curve import Curve_generic
 
@@ -173,7 +171,6 @@ from .point import (ProjectiveCurvePoint_field,
                     IntegralProjectivePlaneCurvePoint_finite_field)
 
 from .closed_point import IntegralProjectiveCurveClosedPoint
-from sage.misc.persist import register_unpickle_override
 
 
 class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
