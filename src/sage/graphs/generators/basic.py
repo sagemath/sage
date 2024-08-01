@@ -414,7 +414,7 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
 
     INPUT:
 
-    - ``seqs`` -- list of sequences, taht is a list of lists
+    - ``seqs`` -- list of sequences, that is a list of lists
 
     - ``alpha`` -- float; threshold on the correlation coefficient between two
       sequences for adding an edge

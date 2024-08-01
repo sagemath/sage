@@ -317,7 +317,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: P.legend()
             False
             sage: P.legend(True)
-            sage: P  #  show with the legend
+            sage: P  # show with the legend
             Graphics object consisting of 1 graphics primitive
         """
         if show is None:
@@ -436,7 +436,17 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: p.set_legend_options(loc=(0.5,0.5)); p  # aligns the bottom of the box to the center                  # needs sage.symbolic
+            sage: p.set_legend_options(loc=(0.5,0.5)); p  # aligns the bottom of the box to the center                # needs sage.symbolic
+            Graphics object consisting of 1 graphics primitive
+
+        The parameters ``loc`` and ``borderaxespad`` can be altered
+        in order to place the legend below the x-axis label or to
+        the left of the y-axis label::
+
+            sage: p = line([(0, 0), (1, 1)], legend_label='test')
+            sage: p.axes_labels(['X-Label', 'Y-Label'])  # adding labels for axes
+            sage: p.set_legend_options(loc=8, borderaxespad=-7.5-0.01*p.fontsize())
+            sage: p
             Graphics object consisting of 1 graphics primitive
         """
         if len(kwds) == 0:
@@ -2754,7 +2764,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: xmin, xmax = sub.get_xlim()
             sage: ymin, ymax = sub.get_ylim()
             sage: xmin > xmax, ymin > ymax
-            (True, True)
+            (...True..., ...True...)
         """
         if not isinstance(ticks, (list, tuple)):
             ticks = (ticks, None)
