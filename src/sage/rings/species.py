@@ -14,7 +14,6 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.sets.set import Set
 
 GAP_FAIL = libgap.eval('fail')
 
@@ -144,6 +143,7 @@ class AtomicSpeciesElement(Element):
         for v in self._dompart.values():
             L[v - 1] += 1
         self._mc = tuple(L)
+        self._tc = sum(self._mc)
 
     def __hash__(self):
         r"""
@@ -206,9 +206,9 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         Normalize the domain of `H` and return `H` and the domain partition.
         """
         # TODO: Complete the documentation.
-        if Set(H.domain()) != Set(M.keys()):
+        if set(H.domain()) != set(M.keys()):
             raise ValueError(f"Keys of {M} do not match with domain of {H} (= {H.domain()})")
-        if not Set(M.values()).issubset(Set(range(1, self._k + 1))):
+        if not set(M.values()).issubset(range(1, self._k + 1)):
             raise ValueError(f"Values of {M} must be in the range [1, {self._k}]")
         # normalize domain to {1..n}
         mapping = {v: i for i, v in enumerate(H.domain(), 1)}
@@ -223,19 +223,33 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
     def _element_constructor_(self, x):
         r"""
-        Construct the `k`-variate molecular species with the given data.
+        Construct the `k`-variate atomic species with the given data.
 
         INPUT:
 
-        - ``x`` - an element of ``self`` or a tuple ``(H, M)`` where `H` is
-        the directly indecomposable permutation group representation for the
-        `k`-variate atomic species and `M` is a ``dict`` mapping each element
-        of the domain of `H` to integers in `\{ 1 \ldots k \}`, representing
-        the set to which the element belongs.
+        - ``x`` can be any of the following:
+            - an element of ``self``.
+            - a tuple ``(H, M)`` where `H` is the permutation group representation
+            for the atomic species and `M` is a ``dict`` mapping each element of the
+            domain of `H` to integers in `\{ 1 \ldots k \}`, representing the set to
+            which the element belongs.
+            - if `k=1`, i.e. we are working with univariate atomic species, the mapping
+            `M` may be omitted and just the group `H` may be passed.
         """
         if parent(x) == self:
             return x
-        H, M = x
+        H, M = None, None
+        if isinstance(x, tuple):
+            H, M = x
+        else:
+            if self._k == 1:
+                if isinstance(x, PermutationGroup_generic):
+                    H = x
+                    M = {e: 1 for e in H.domain()}
+                else:
+                    raise ValueError(f"{x} must be a permutation group")
+            else:
+                raise ValueError(f"{x} must be a tuple for multivariate species")
         H_norm, dompart = self._normalize(H, M)
         dis_elm = self._dis(H_norm)
         perm = libgap.RepresentativeAction(SymmetricGroup(H_norm.degree()), H_norm, dis_elm._C)
@@ -320,14 +334,29 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` - an element of ``self`` or a tuple ``(H, M)`` where `H` is
-        the permutation group representation for the species and `M` is a
-        ``dict`` mapping each element of the domain of `H` to integers in
-        `\{ 1 \ldots k \}`, representing the set to which the element belongs.
+        - ``x`` can be any of the following:
+            - an element of ``self``.
+            - a tuple ``(H, M)`` where `H` is the permutation group representation
+            for the species and `M` is a ``dict`` mapping each element of the domain
+            of `H` to integers in `\{ 1 \ldots k \}`, representing the set to which
+            the element belongs.
+            - if `k=1`, i.e. we are working with univariate species, the mapping `M`
+            may be omitted and just the group `H` may be passed.
         """
         if parent(x) == self:
             return x
-        H, M = x
+        H, M = None, None
+        if isinstance(x, tuple):
+            H, M = x
+        else:
+            if self._k == 1:
+                if isinstance(x, PermutationGroup_generic):
+                    H = x
+                    M = {e: 1 for e in H.domain()}
+                else:
+                    raise ValueError(f"{x} must be a permutation group")
+            else:
+                raise ValueError(f"{x} must be a tuple for multivariate species")
         domain_partition = H.disjoint_direct_product_decomposition()
         term = self._indices.one()
         for part in domain_partition:
