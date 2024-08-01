@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-environment
-import os
+from pathlib import Path
 
 from . import StaticFile
 
@@ -26,16 +26,17 @@ class Threejs(StaticFile):
         """
         from sage.env import SAGE_SHARE, THREEJS_DIR
 
+        share_dir = Path(SAGE_SHARE)
         threejs_search_path = THREEJS_DIR or (
-            os.path.join(SAGE_SHARE, "jupyter", "nbextensions", "threejs-sage"),
-            os.path.join(SAGE_SHARE, "sagemath", "threejs-sage"),
-            os.path.join(SAGE_SHARE, "sage", "threejs"),
-            os.path.join(SAGE_SHARE, "threejs-sage")
+            (share_dir / "jupyter" / "nbextensions" / "threejs-sage"),
+            (share_dir / "sagemath" / "threejs-sage"),
+            (share_dir / "sage" / "threejs"),
+            (share_dir / "threejs-sage")
             )
 
         try:
             version = self.required_version()
-            filename = os.path.join(version, "three.min.js")
+            filename = Path(version) / "three.min.js"
         except FileNotFoundError:
             filename = 'unknown'
 
@@ -64,7 +65,7 @@ class Threejs(StaticFile):
         """
         from sage.env import SAGE_EXTCODE
 
-        filename = os.path.join(SAGE_EXTCODE, 'threejs', 'threejs-version.txt')
+        filename = Path(SAGE_EXTCODE) / 'threejs' / 'threejs-version.txt'
 
         with open(filename) as f:
             return f.read().strip()
