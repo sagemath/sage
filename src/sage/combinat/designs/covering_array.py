@@ -260,7 +260,7 @@ def covering_array(strength, number_columns, levels):
     if in_database:
         return in_database
 
-    if orthogonal_array(number_columns, levels, strength, existence=True) == True:
+    if orthogonal_array(number_columns, levels, strength, existence=True) is True:
         return orthogonal_array(number_columns, levels, strength)
 
     else:
