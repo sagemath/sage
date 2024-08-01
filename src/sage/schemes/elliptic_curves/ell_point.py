@@ -4071,25 +4071,18 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             else:
                 v = self.weil_pairing(P2, n)
                 w = P1.weil_pairing(self, n)
-                try:
-                    x0, y0 = v.log(z, o), w.log(z, o)
-                except TypeError:
-                    # not all implementations of finite-field elements support passing the order in .log()
-                    # known bug -- fixing #38350 will eliminate the need for this try-except
-                    x0, y0 = v.log(z), w.log(z)
+                x0, y0 = v.log(z, o), w.log(z, o)
 
             T = self - x0*P1 - y0*P2
             if not T:
                 return x0, y0
 
-            try:
-                x1 = (n//n1 * T).log(o*P1, n1)
-                y1 = (n//n2 * T).log(o*P2, n2)
-            except TypeError:
-                # not all implementations of finite-field elements support passing the order in .log()
-                # known bug -- fixing #38350 will eliminate the need for this try-except
-                x1 = (n//n1 * T).log(o*P1)
-                y1 = (n//n2 * T).log(o*P2)
+            T1 = n//n1 * T
+            T2 = n//n2 * T
+            T1.set_order(multiple=n1, check=False)
+            T2.set_order(multiple=n2, check=False)
+            x1 = T1.log(o*P1)
+            y1 = T2.log(o*P2)
 
 #            assert n//n1 * self == (x1*o + n//n1*x0) * P1 + n//n1*y0 * P2
 #            assert n//n2 * self == n//n2*x0 * P1 + (y1*o + n//n2*y0) * P2
