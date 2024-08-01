@@ -1485,8 +1485,8 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             m = self.gram_matrix()
             pari.read(Path(SAGE_EXTCODE) / "pari" / "simon" / "qfsolve.gp")
             m = pari('qflllgram_indefgoon')(m)
-            # convert the output string to sage
-            G, U = pari(m).sage()
+            # convert the output to sage
+            G, U = m.sage()
             U = U.T
         else:
             e = 1
