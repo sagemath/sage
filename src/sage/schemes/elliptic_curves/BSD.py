@@ -1,11 +1,13 @@
 "Birch and Swinnerton-Dyer formulas"
 
 from sage.arith.misc import prime_divisors
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.infinity import Infinity
-from sage.rings.number_field.number_field import QuadraticField
-from sage.functions.other import ceil
+
+lazy_import("sage.functions.other", "ceil")
+lazy_import("sage.rings.number_field.number_field", "QuadraticField")
 
 
 class BSD_data:
