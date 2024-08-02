@@ -447,10 +447,11 @@ if github_ref:
     match = re.search(r'refs/pull/(\d+)/merge', github_ref)
     if match:
         pr_number = match.group(1)
-is_develop_version = not version.split('.')[-1].isnumeric()
+is_for_develop = github_ref.startswith('refs/heads/develop')
 is_for_github_pr = github_ref and match and pr_number
+is_stable_release = version.split('.')[-1].isnumeric()
 
-if is_develop_version or is_for_github_pr:  # condition for announcement banner
+if is_for_develop or is_for_github_pr or not is_stable_release:  # condition for announcement banner
     # This URL is hardcoded in the file .github/workflows/doc-publish.yml.
     # See NETLIFY_ALIAS of the "Deploy to Netlify" step.
     ver = f'<a href="https://doc-develop--sagemath.netlify.app/html/en/index.html">{version}</a>'

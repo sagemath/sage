@@ -15,15 +15,11 @@ class GluedScheme(scheme.Scheme):
     r"""
     INPUT:
 
+    - ``f`` -- open immersion from a scheme `U` to a scheme `X`
 
-    -  ``f`` -- open immersion from a scheme `U` to a scheme
-       `X`
+    - ``g`` -- open immersion from `U` to a scheme `Y`
 
-    -  ``g`` -- open immersion from `U` to a scheme `Y`
-
-
-    OUTPUT: The scheme obtained by gluing `X` and `Y` along the open set
-    `U`.
+    OUTPUT: the scheme obtained by gluing `X` and `Y` along the open set `U`
 
     .. NOTE::
 

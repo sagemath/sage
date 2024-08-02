@@ -238,10 +238,10 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         - ``i`` -- affine coordinate chart of the projective ambient space of
           this curve to compute affine patch with respect to
 
-        - ``AA`` -- (default: None) ambient affine space, this is constructed
+        - ``AA`` -- (default: ``None``) ambient affine space, this is constructed
           if it is not given
 
-        OUTPUT: A curve in affine space.
+        OUTPUT: a curve in affine space
 
         EXAMPLES::
 
@@ -280,16 +280,16 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point not on this curve that will be used
-          to define the projection map; this is constructed if not specified.
+        - ``P`` -- (default: ``None``) a point not on this curve that will be used
+          to define the projection map; this is constructed if not specified
 
-        - ``PS`` -- (default: None) the projective space the projected curve
+        - ``PS`` -- (default: ``None``) the projective space the projected curve
           will be defined in. This space must be defined over the same base ring
           as this curve, and must have dimension one less than that of the
           ambient space of this curve. This space will be constructed if not
           specified.
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a scheme morphism from this curve into a projective space of
           dimension one less than that of the ambient space of this curve
@@ -499,12 +499,12 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         INPUT:
 
-        - ``PP`` -- (default: None) the projective plane the projected curve
+        - ``PP`` -- (default: ``None``) the projective plane the projected curve
           will be defined in. This space must be defined over the same base field
           as this curve, and must have dimension two. This space is constructed
           if not specified.
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a scheme morphism from this curve into a projective plane
 
@@ -639,10 +639,12 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         """
         Return the divisor of a function on a curve.
 
-        INPUT: ``r`` is a rational function on X
+        INPUT:
 
-        OUTPUT: A list. The divisor of r represented as a list of coefficients and
-        points. (TODO: This will change to a more structural output in the
+        - ``r`` is a rational function on X
+
+        OUTPUT: list; the divisor of r represented as a list of coefficients
+        and points. (TODO: This will change to a more structural output in the
         future.)
 
         EXAMPLES::
@@ -685,7 +687,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         INPUT:
 
         - ``pt`` -- a rational point on X which is not a point of ramification
-           for the projection `(x,y) \to x`.
+          for the projection `(x,y) \to x`
 
         - ``n`` -- the number of terms desired
 
@@ -754,17 +756,16 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        -  ``self`` -- an affine plane curve
+        - ``self`` -- an affine plane curve
 
-        -  ``patch`` -- (optional) the affine patch to be plotted; if not
-           specified, the patch corresponding to the last projective
-           coordinate being nonzero
+        - ``patch`` -- (optional) the affine patch to be plotted; if not
+          specified, the patch corresponding to the last projective
+          coordinate being nonzero
 
-        -  ``*args`` -- optional tuples (variable, minimum, maximum) for
-           plotting dimensions
+        - ``*args`` -- (optional) tuples (variable, minimum, maximum) for
+          plotting dimensions
 
-        -  ``**kwds`` -- optional keyword arguments passed on to
-           ``implicit_plot``
+        - ``**kwds`` -- optional keyword arguments passed on to ``implicit_plot``
 
         EXAMPLES:
 
@@ -902,7 +903,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         For a plane curve, this is just the degree of its defining polynomial.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -922,12 +923,12 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        - ``P`` -- a point on this curve.
+        - ``P`` -- a point on this curve
 
-        - ``factor`` -- (default: ``True``) whether to attempt computing the
+        - ``factor`` -- boolean (default: ``True``); whether to attempt computing the
           polynomials of the individual tangent lines over the base field of this
           curve, or to just return the polynomial corresponding to the union of
-          the tangent lines (which requires fewer computations).
+          the tangent lines (which requires fewer computations)
 
         OUTPUT:
 
@@ -1000,12 +1001,13 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        - ``P`` -- a point on this curve.
+        - ``P`` -- a point on this curve
 
         OUTPUT:
 
-        - Boolean. True or False depending on whether ``P`` is or is not an ordinary singularity of this
-          curve, respectively. An error is raised if ``P`` is not a singular point of this curve.
+        boolean; ``True`` or ``False`` depending on whether ``P`` is or is not
+        an ordinary singularity of this curve, respectively. An error is raised
+        if ``P`` is not a singular point of this curve.
 
         EXAMPLES::
 
@@ -1124,12 +1126,12 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        - ``Q`` -- a point on this curve.
+        - ``Q`` -- a point on this curve
 
         OUTPUT:
 
-        - a scheme morphism from this curve to a curve in excellent position that is a restriction of a change
-          of coordinates map of the projective plane.
+        A scheme morphism from this curve to a curve in excellent position that
+        is a restriction of a change of coordinates map of the projective plane.
 
         EXAMPLES::
 
@@ -1530,11 +1532,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        - ``C`` -- a curve in the ambient space of this curve.
+        - ``C`` -- a curve in the ambient space of this curve
 
-        - ``P`` -- a point in the intersection of both curves.
+        - ``P`` -- a point in the intersection of both curves
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1681,7 +1683,6 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             sage: C.tangent_line(p)
             Projective Curve over Rational Field
              defined by -2*x + y + w, -3*x + z + 2*w
-
         """
         for i in range(len(p)):
             if p[i]:
@@ -1816,9 +1817,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         The rational parameterization may have coefficients in a quadratic extension of the rational
         field.
 
-        OUTPUT:
-
-        - a birational map between `\mathbb{P}^{1}` and this curve, given as a scheme morphism.
+        OUTPUT: a birational map between `\mathbb{P}^{1}` and this curve, given as a scheme morphism
 
         EXAMPLES::
 
@@ -1872,9 +1871,9 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
 
     def riemann_surface(self, **kwargs):
         r"""
-        Return the complex Riemann surface determined by this curve
+        Return the complex Riemann surface determined by this curve.
 
-        OUTPUT: A :class:`~sage.schemes.riemann_surfaces.riemann_surface.RiemannSurface` object.
+        OUTPUT: a :class:`~sage.schemes.riemann_surfaces.riemann_surface.RiemannSurface` object
 
         EXAMPLES::
 
@@ -1883,7 +1882,6 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C.riemann_surface()
             Riemann surface defined by polynomial f = x^3 + 3*y^3 + 5 = 0,
             with 53 bits of precision
-
         """
         return self.affine_patch(2).riemann_surface(**kwargs)
 
@@ -1902,9 +1900,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         - ``self`` -- a projective curve
 
-        OUTPUT:
-
-        A generator of all the rational points on the curve defined over its base field.
+        OUTPUT: a generator of all the rational points on the curve defined over its base field
 
         EXAMPLES::
 
@@ -1968,7 +1964,6 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             Traceback (most recent call last):
             ...
             StopIteration
-
         """
         g = self.defining_polynomial()
         K = g.parent().base_ring()
@@ -2011,11 +2006,9 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         INPUT:
 
-
-        -  ``sort`` -- bool (default: ``True``), if ``True`` return the
-           point list sorted. If ``False``, returns the points in the order
-           computed by Singular.
-
+        - ``sort`` -- boolean (default: ``True``); if ``True`` return the
+          point list sorted. If ``False``, returns the points in the order
+          computed by Singular.
 
         EXAMPLES::
 
@@ -2032,10 +2025,10 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
              (0 : 0 : 1), (2 : 3 : 1)]
 
 
-        .. note::
+        .. NOTE::
 
             The Brill-Noether package does not always work (i.e., the
-            'bn' algorithm. When it fails a :class:`RuntimeError` exception is
+            'bn' algorithm. When it fails a :exc:`RuntimeError` exception is
             raised.
         """
         f = self.defining_polynomial()._singular_()
@@ -2082,10 +2075,10 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         INPUT:
 
-        -  ``D`` -- a divisor
+        - ``D`` -- a divisor
 
-        OUTPUT: A list of function field elements that form a basis of the
-        Riemann-Roch space.
+        OUTPUT: list of function field elements that form a basis of the
+        Riemann-Roch space
 
         EXAMPLES::
 
@@ -2155,28 +2148,28 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         V = [(sage_eval(a, vars)/sage_eval(b, vars)) for a, b in LG]
         return V
 
-    def rational_points(self, algorithm="enum", sort=True):
+    def rational_points(self, algorithm='enum', sort=True):
         r"""
         Return the rational points on this curve.
 
         INPUT:
 
-        -  ``algorithm`` -- one of
+        - ``algorithm`` -- one of
 
-           -  ``'enum'`` -- straightforward enumeration
+           - ``'enum'`` -- straightforward enumeration
 
-           -  ``'bn'`` -- via Singular's brnoeth package.
+           - ``'bn'`` -- via Singular's brnoeth package
 
-        - ``sort`` --  boolean (default: ``True``); whether the output
-          points should be sorted.  If False, the order of the output
+        - ``sort`` -- boolean (default: ``True``); whether the output
+          points should be sorted.  If ``False``, the order of the output
           is non-deterministic.
 
-        OUTPUT: A list of all the rational points on the curve, possibly sorted.
+        OUTPUT: list of all the rational points on the curve, possibly sorted
 
         .. NOTE::
 
            The Brill-Noether package does not always work (i.e., the 'bn'
-           algorithm. When it fails a :class:`RuntimeError` exception is raised.
+           algorithm. When it fails a :exc:`RuntimeError` exception is raised.
 
         EXAMPLES::
 
@@ -2231,7 +2224,6 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             sage: C = Curve(f); pts = C.rational_points()
             sage: pts
             [(0 : 0 : 1), (0 : 1 : 0), (1 : 0 : 0)]
-
         """
         if algorithm == "enum":
             points = list(self.rational_points_iterator())
@@ -2247,8 +2239,8 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             return self._points_via_singular(sort=sort)
 
         if algorithm == "all":
-            S_enum = self.rational_points(algorithm="enum")
-            S_bn = self.rational_points(algorithm="bn")
+            S_enum = self.rational_points(algorithm='enum')
+            S_bn = self.rational_points(algorithm='bn')
             if S_enum != S_bn:
                 raise RuntimeError("Bug in rational_points -- different\
                                      algorithms give different answers for\
@@ -2358,7 +2350,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         - ``f`` -- a fraction of homogeneous polynomials of the coordinate ring
           of the ambient space of the curve
 
-        OUTPUT: An element of the function field.
+        OUTPUT: an element of the function field
 
         EXAMPLES::
 
@@ -2412,7 +2404,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         INPUT:
 
-        -  ``f`` -- an element of the function field
+        - ``f`` -- an element of the function field
 
         OUTPUT:
 
@@ -2533,7 +2525,6 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: D = Curve(x)
             sage: D._singularities
             []
-
         """
         S = self.ambient_space().coordinate_ring()
         to_F = self._map_to_function_field
@@ -2840,7 +2831,7 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
 
         INPUT:
 
-        - ``degree`` -- a positive integer
+        - ``degree`` -- positive integer
 
         EXAMPLES::
 
@@ -2897,7 +2888,6 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
             sage: Cbar = C.projective_closure()
             sage: Cbar.L_polynomial()
             9*t^4 - 3*t^3 + t^2 - t + 1
-
         """
         F = self.function_field()
         L = F.L_polynomial()
@@ -2935,7 +2925,6 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
             Finite Field in z3 of size 3^3
             sage: len(D.closed_points())
             21
-
         """
         q = self.base_ring().order()
         L = self.L_polynomial()
@@ -2987,12 +2976,12 @@ def Hasse_bounds(q, genus=1):
 
     INPUT:
 
-    - ``q`` (int) -- a prime power
+    - ``q`` -- integer; a prime power
 
-    - ``genus`` (int, default 1) -- a non-negative integer,
+    - ``genus`` -- nonnegative integer (default: 1)
 
-    OUTPUT: A tuple. The Hasse bounds (lb,ub) for the cardinality of a curve of
-    genus ``genus`` defined over `\GF{q}`.
+    OUTPUT: tuple; the Hasse bounds (lb,ub) for the cardinality of a curve of
+    genus ``genus`` defined over `\GF{q}`
 
     EXAMPLES::
 

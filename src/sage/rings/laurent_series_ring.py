@@ -218,7 +218,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
     def __init__(self, power_series):
         """
-        Initialization
+        Initialization.
 
         EXAMPLES::
 
@@ -284,8 +284,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     def base_extend(self, R):
         """
         Return the Laurent series ring over R in the same variable as
-        self, assuming there is a canonical coerce map from the base ring
-        of self to R.
+        ``self``, assuming there is a canonical coerce map from the base ring
+        of ``self`` to R.
 
         EXAMPLES::
 
@@ -304,7 +304,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         If the base ring is a field, then Laurent series are already a field.
         If the base ring is a domain, then the Laurent series over its fraction
-        field is returned. Otherwise, raise a ``ValueError``.
+        field is returned. Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -405,7 +405,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         - ``n`` -- (default: 0) multiply the result by `t^n`
 
         - ``prec`` -- (default: ``infinity``) the precision of the series
-            as an integer.
+            as an integer
 
         EXAMPLES::
 
@@ -678,13 +678,13 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         from sage.rings.polynomial.laurent_polynomial_ring_base import (
             LaurentPolynomialRing_generic,
         )
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         from sage.rings.power_series_ring import is_PowerSeriesRing
 
         if ((is_LaurentSeriesRing(P) or
              isinstance(P, LaurentPolynomialRing_generic) or
              is_PowerSeriesRing(P) or
-             is_PolynomialRing(P))
+             isinstance(P, PolynomialRing_general))
             and P.variable_name() == self.variable_name()
             and A.has_coerce_map_from(P.base_ring())):
             return True
@@ -712,7 +712,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             False
         """
         # NOTE: There are no ring homomorphisms from the ring of
-        # all formal power series to most rings, e.g, the p-adic
+        # all formal power series to most rings, e.g, the `p`-adic
         # field, since you can always (mathematically!) construct
         # some power series that does not converge.
         # NOTE: The above claim is wrong when the base ring is Z.

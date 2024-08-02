@@ -371,7 +371,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
             sage: TestSuite(Q).run()            # long time
         """
         self._cartan_type = cartan_type
-        GapPackage("QuaGroup", spkg="gap_package_quagroup").require()
+        GapPackage("QuaGroup", spkg='gap_package_quagroup').require()
         libgap.LoadPackage('QuaGroup')
         R = libgap.eval('RootSystem("%s",%s)' % (cartan_type.type(), cartan_type.rank()))
         Q = self._cartan_type.root_system().root_lattice()
@@ -1084,7 +1084,7 @@ class QuantumGroupMorphism(Morphism):
             sage: Q = QuantumGroup(['A',1])
             sage: F, K, Ki, E = Q.gens()
             sage: phi = Q.hom([E, Ki, K, F])
-            sage: TestSuite(phi).run(skip="_test_category")
+            sage: TestSuite(phi).run(skip='_test_category')
         """
         self._repr_type_str = "Quantum group homomorphism"
         Morphism.__init__(self, parent)
@@ -1699,7 +1699,7 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
         G = DiGraph([vertices, edges], format='vertices_and_edges')
         from sage.graphs.dot2tex_utils import have_dot2tex
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex",
+            G.set_latex_options(format='dot2tex',
                                 edge_labels=True,
                                 color_by_label=self._cartan_type._index_set_coloring)
         return G
@@ -2073,7 +2073,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
              + q^-1*(F[a1+a2]*v0<x>F[a1]*v0) + 1*(F[a1+a2]*v0<x>F[a1+a2]*v0)
         """
         return self.module_morphism(self._ambient_basis_map.__getitem__,
-                                    codomain=self._ambient, unitriangular="lower")
+                                    codomain=self._ambient, unitriangular='lower')
 
     def retract(self, elt):
         """
@@ -2153,7 +2153,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
         G = DiGraph([vertices, edges], format='vertices_and_edges')
         from sage.graphs.dot2tex_utils import have_dot2tex
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex",
+            G.set_latex_options(format='dot2tex',
                                 edge_labels=True,
                                 color_by_label=self._cartan_type._index_set_coloring)
         return G
@@ -2364,7 +2364,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
             F[a1]*F[a2]^(4)
         """
         I = cartesian_product([NonNegativeIntegers()]*len(self._pos_roots))
-        return Family(I, self._construct_monomial, name="monomial")
+        return Family(I, self._construct_monomial, name='monomial')
 
     def _construct_canonical_basis_elts(self, k):
         r"""

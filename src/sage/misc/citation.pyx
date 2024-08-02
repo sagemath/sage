@@ -57,7 +57,7 @@ def get_systems(cmd):
 
     INPUT:
 
-    - ``cmd`` -- a string to run
+    - ``cmd`` -- string to run
 
     .. WARNING::
 

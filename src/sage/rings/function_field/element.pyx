@@ -146,7 +146,6 @@ cdef class FunctionFieldElement(FieldElement):
             Traceback (most recent call last):
             ...
             NotImplementedError: PARI does not support general function field elements.
-
         """
         raise NotImplementedError("PARI does not support general function field elements.")
 
@@ -172,8 +171,8 @@ cdef class FunctionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``base`` -- a function field (default: ``None``), if ``None``, then
-          the matrix is formed over the base field of this function field.
+        - ``base`` -- a function field (default: ``None``); if ``None``, then
+          the matrix is formed over the base field of this function field
 
         EXAMPLES:
 
@@ -641,8 +640,8 @@ cdef class FunctionFieldElement(FieldElement):
         OUTPUT:
 
         If the element is in the valuation ring at the place, then an element
-        in the residue field at the place is returned. Otherwise, ``ValueError``
-        is raised.
+        in the residue field at the place is returned. Otherwise, a
+        :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -683,7 +682,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -709,7 +708,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 

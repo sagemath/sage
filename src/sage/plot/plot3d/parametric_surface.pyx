@@ -44,14 +44,14 @@ EXAMPLES::
 By default, the surface is colored with one single color. ::
 
     sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)),
-    ....:  color="red")
+    ....:  color='red')
     sage: P.show()
 
 .. PLOT::
 
     from sage.plot.plot3d.parametric_surface import ParametricSurface
     def f(x,y): return x+y, sin(x)*sin(y), x*y
-    sphinx_plot(ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)), color="red"))
+    sphinx_plot(ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)), color='red'))
 
 One can instead provide a coloring function and a colormap::
 
@@ -145,15 +145,15 @@ cdef class ParametricSurface(IndexFaceSet):
 
     INPUT:
 
-    - ``f`` -- (default: ``None``) The defining function. Either a tuple of
+    - ``f`` -- (default: ``None``) the defining function. Either a tuple of
       three functions, or a single function which returns a tuple, taking
       two python floats as input. To subclass, pass ``None`` for ``f`` and
       override ``eval_c`` or ``eval`` instead.
 
-    - ``domain`` -- (default: ``None``) A tuple of two lists, defining the
+    - ``domain`` -- (default: ``None``) a tuple of two lists, defining the
       grid of `u,v` values. If ``None``, this will be calculated automatically.
 
-    - ``color`` -- (default: ``None``) A pair `(h,c)` where `h` is
+    - ``color`` -- (default: ``None``) a pair `(h,c)` where `h` is
       a function with values in `[0,1]` and `c` is a colormap. The
       color of a point `p` is then defined as the composition
       `c(h(p))`
@@ -189,7 +189,7 @@ cdef class ParametricSurface(IndexFaceSet):
         ....:     return (x,y,z)
         sage: v = srange(float(0),float((3/2)*pi),float(0.1))
         sage: S = ParametricSurface(f, (srange(float(0),float(pi),float(0.1)),
-        ....:                srange(float(-1),float(1),float(0.1))), color="blue")
+        ....:                srange(float(-1),float(1),float(0.1))), color='blue')
         sage: show(S)
 
     .. PLOT::
@@ -203,7 +203,7 @@ cdef class ParametricSurface(IndexFaceSet):
             return (x,y,z)
         from sage.plot.plot3d.parametric_surface import ParametricSurface
         v = srange(float(0),float((3/2)*pi),float(0.1))
-        sphinx_plot(ParametricSurface(f, (srange(float(0),float(pi),float(0.1)),srange(float(-1),float(1),float(0.1))), color="blue"))
+        sphinx_plot(ParametricSurface(f, (srange(float(0),float(pi),float(0.1)),srange(float(-1),float(1),float(0.1))), color='blue'))
 
     A colored example using the ``color`` keyword::
 
@@ -383,7 +383,6 @@ cdef class ParametricSurface(IndexFaceSet):
                'vertices': [{'x': -2.0, 'y': -2.0, 'z': 0.0},
                 ...
                 {'x': 2.0, 'y': 2.0, 'z': 0.0}]})]
-
         """
         self.triangulate(render_params)
         return IndexFaceSet.threejs_repr(self, render_params)
@@ -658,10 +657,10 @@ cdef class ParametricSurface(IndexFaceSet):
 
         We branch outside the loops for efficiency. The options for self.f are:
 
-        - ``None`` -- call self.eval_c() or self.eval()
-                        (One of these is presumably overridden.)
-        - tuple -- split into fx, fy, fz and call each separately
-        - callable -- call f(u,v)
+        - ``None`` -- call ``self.eval_c()`` or ``self.eval()``
+          (One of these is presumably overridden.)
+        - ``tuple`` -- split into fx, fy, fz and call each separately
+        - ``callable`` -- call f(u,v)
 
         In addition, branches are taken for efficient calling of fast callables
         """
@@ -784,7 +783,6 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: S = parametric_plot3d( (sin, cos, lambda u: u/10), (0, 20))
             sage: S.plot() is S
             True
-
         """
         return self
 
@@ -833,7 +831,6 @@ class MoebiusStrip(ParametricSurface):
             Graphics3d Object
             sage: O = MoebiusStrip(5,1,plot_points=200,color='red'); O # keywords get passed to plot3d
             Graphics3d Object
-
         """
         ParametricSurface.__init__(self, **kwds)
         self.r = float(r)
@@ -848,9 +845,9 @@ class MoebiusStrip(ParametricSurface):
 
         INPUT:
 
-        -  ``ds`` -- A number, typically coming from a RenderParams object,
-           which helps determine the increment for the `v` range for the
-           MoebiusStrip object.
+        - ``ds`` -- a number, typically coming from a RenderParams object,
+          which helps determine the increment for the `v` range for the
+          MoebiusStrip object
 
         EXAMPLES::
 

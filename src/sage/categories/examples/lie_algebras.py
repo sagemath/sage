@@ -216,7 +216,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
 
         def __bool__(self) -> bool:
             """
-            Check non-zero.
+            Check nonzero.
 
             EXAMPLES::
 

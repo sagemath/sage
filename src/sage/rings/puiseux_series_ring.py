@@ -204,7 +204,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
         If the base ring is a field, then Puiseux series are already a field.
         If the base ring is a domain, then the Puiseux series over its fraction
-        field is returned. Otherwise, raise a :class:`ValueError`.
+        field is returned. Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -340,7 +340,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
     def _coerce_map_from_(self, P):
         r"""
-        Return a coercion map from `P` to `self`, or `True`, or `None`.
+        Return a coercion map from `P` to ``self``, or ``True``, or ``None``.
 
         The following rings admit a coercion map to the Puiseux series ring
         `A((x-a)^(1/e))`:
@@ -351,7 +351,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
           variable `(x-a)` over a ring admitting a coercion map to `A`
 
         - any Puiseux series ring with the same center `a` and ramification
-          index equal to a multiple of `self`'s ramification index. For
+          index equal to a multiple of ``self``'s ramification index. For
           example, Puiseux series in (x-a)^(1/2) can be interpreted as Puiseux
           series in (x-a)^(1/4).
 

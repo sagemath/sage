@@ -611,7 +611,7 @@ class XTree:
 
     - ``t.attribute`` -- attribute named
     - ``t.child`` -- first child named
-    - ``t[i]`` -- i-th child
+    - ``t[i]`` -- `i`-th child
     - ``for child in t:`` -- iterate over ``t``'s children
     - ``len(t)`` -- number of ``t``'s children
 
