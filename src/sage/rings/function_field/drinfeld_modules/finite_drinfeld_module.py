@@ -419,18 +419,24 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: phi.frobenius_charpoly(var='Bar')
             Bar^2 + Bar + T^2 + T + 1
         """
+        # If no algorithm is specified, return cached data (if it
+        # exists), or pick an algorithm:
         if algorithm is None:
-            if self.rank() < self._base_degree_over_constants:
-                algorithm = 'crystalline'
-            else:
-                algorithm = 'CSA'
-        method_name = f'_frobenius_charpoly_{algorithm}'
-        if hasattr(self, method_name):
             if self._frobenius_charpoly is not None:
                 return self._frobenius_charpoly.change_variable_name(var)
-            self._frobenius_charpoly = getattr(self, method_name)(var)
-            return self._frobenius_charpoly
-        raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
+            else:
+                if self.rank() < self._base_degree_over_constants:
+                    method_name = f'_frobenius_charpoly_{crystalline}'
+                else:
+                    method_name = f'_frobenius_charpoly_{CSA}'
+        # If an algorithm is specified, do not use cached data, even
+        # if it is possible:
+        else:
+            method_name = f'_frobenius_charpoly_{algorithm}'
+            if not hasattr(self, method_name):
+                raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
+        self._frobenius_charpoly = getattr(self, method_name)(var)
+        return self._frobenius_charpoly
 
     @cached_method
     def _frobenius_charpoly_CSA(self, var='X'):
