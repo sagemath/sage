@@ -89,7 +89,6 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.fraction_field import FractionField, FractionField_generic, FractionField_1poly_field
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.rings.function_field.function_field import is_FunctionField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.flatten import FlatteningMorphism, UnflatteningMorphism
@@ -4534,7 +4533,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         else:
             f_sub = self.change_ring(R)
             R = f_sub.base_ring() #in the case when R is an embedding
-        if isinstance(R, FractionField_1poly_field) or is_FunctionField(R):
+        if isinstance(R, FractionField_1poly_field) or R in FunctionFields():
             raise NotImplementedError('Periodic points not implemented for function fields; '
                 'clear denominators and use the polynomial ring instead')
         CR = f_sub.coordinate_ring()
@@ -4872,7 +4871,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         else:
             f_sub = self.change_ring(R)
             R = f_sub.base_ring() #in the case when R is an embedding
-        if isinstance(R, FractionField_1poly_field) or is_FunctionField(R):
+        if isinstance(R, FractionField_1poly_field) or R in FunctionFields():
             raise NotImplementedError('periodic points not implemented for fraction function fields; '
                 'clear denominators and use the polynomial ring instead')
         if isinstance(R, FractionField_generic):

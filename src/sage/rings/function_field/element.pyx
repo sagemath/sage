@@ -64,8 +64,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.structure.element cimport FieldElement
+from sage.categories.function_fields import FunctionFields
 from sage.misc.cachefunc import cached_method
+from sage.structure.element cimport FieldElement
 
 
 def is_FunctionFieldElement(x):
@@ -76,14 +77,24 @@ def is_FunctionFieldElement(x):
 
         sage: t = FunctionField(QQ,'t').gen()
         sage: sage.rings.function_field.element.is_FunctionFieldElement(t)
+        doctest:warning...
+        DeprecationWarning: The function is_FunctionFieldElement is deprecated;
+        use '....parent() in FunctionFields()' instead.
+        See https://github.com/sagemath/sage/issues/38289 for details.
         True
         sage: sage.rings.function_field.element.is_FunctionFieldElement(0)
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38289,
+                       "The function is_FunctionFieldElement is deprecated; "
+                       "use '....parent() in FunctionFields()' instead.")
     if isinstance(x, FunctionFieldElement):
         return True
-    from sage.rings.function_field.function_field import is_FunctionField
-    return is_FunctionField(x.parent())
+    from sage.rings.function_field.function_field import FunctionField
+    if isinstance(x.parent(), FunctionField):
+        return True
+    return x.parent() in FunctionFields()
 
 
 def make_FunctionFieldElement(parent, element_class, representing_element):
