@@ -414,22 +414,23 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         import operator
         from sage.functions.min_max import max_symbolic, min_symbolic
         from sage.symbolic.relation import solve
-        from sage.combinat.permutation import Permutations
+        from sage.symbolic.expression import Expression
         
         def update_result(result):
             sol_param = solve(new_expr, vars)
             sol_param_sim = set()
             for sol in sol_param:
-                if sol == []:
+                if sol == [] or (isinstance(sol, Expression)):
                     sol = [(-infinity, infinity)]
-                for eqn in sol:
-                    if self.dimension() == 2:
-                        sol_param_sim.add((-infinity, infinity))
-                    else:
-                        if eqn.operator() == operator.lt:
-                            sol_param_sim.add(eqn.lhs() <= eqn.rhs())
-                        elif eqn.operator() == operator.gt:
-                            sol_param_sim.add(eqn.lhs() >= eqn.rhs())
+                else:
+                    for eqn in sol:
+                        if self.dimension() == 2:
+                            sol_param_sim.add((-infinity, infinity))
+                        else:
+                            if eqn.operator() == operator.lt:
+                                sol_param_sim.add(eqn.lhs() <= eqn.rhs())
+                            elif eqn.operator() == operator.gt:
+                                sol_param_sim.add(eqn.lhs() >= eqn.rhs())
             if sol_param_sim:
                 if index not in result:
                     result[index] = [(tuple(points), sol_param_sim)]
@@ -469,7 +470,6 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                         new_eq = p.subs(var==subs_expr)
                         points[i] = new_eq
                     update_result(result)
-        
         return result
 
 
@@ -500,7 +500,7 @@ class TropicalSurface(TropicalVariety):
         [(t1, t2, 0), [t1 <= 0, t2 <= 0], 1]]
     """
     def _axes(self):
-        """
+        r"""
         Set the default axes for ``self``.
 
         This default axes is used for the 3d plot. The axes is centered
@@ -512,10 +512,11 @@ class TropicalSurface(TropicalVariety):
 
         OUTPUT:
 
-        A list of two lists, where the first inner list represent value of
-        x-axis and the second inner list represent value of y-axis.
-        If there are either no components or only one component, the axis
-        will be set to [[-1, 1], [-1, 1]].
+        A list of three lists, where the first inner list represent value
+        of x-axis, the second inner list represent value of y-axis, and
+        the third inner list represent value of z-axis. If there are
+        either no components or only one component, the axis will be set
+        to `[[-1, 1], [-1, 1], [-1, 1]]`.
 
         EXAMPLES::
 
@@ -523,10 +524,10 @@ class TropicalSurface(TropicalVariety):
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = x + y
             sage: p1.tropical_variety()._axes()
-            [[-1, 1], [-1, 1]]
+            [[-1, 1], [-1, 1], [-1.0, 1.0]]
             sage: p2 = x + y + z + x^2 + R(1)
             sage: p2.tropical_variety()._axes()
-            [[-1, 2], [-1, 2]]
+            [[-1, 2], [-1, 2], [-1, 2]]
         """
         from sage.symbolic.relation import solve
         from sage.arith.srange import srange
@@ -603,6 +604,181 @@ class TropicalSurface(TropicalVariety):
                                 zmax = z
         axes.append([zmin, zmax])
         return axes
+
+    def polygon_vertices(self):
+        """
+        Return the vertices of the polygon for each components of ``self``
+        to be used for plotting.
+
+        OUTPUT:
+
+        A dictionary where the keys represent component indices and the
+        values are a set of points in three dimensional space.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x + y + z + x^2
+            sage: tv = p1.tropical_variety()
+            sage: tv.polygon_vertices()
+            {0: {(0, 0, 0), (0, 0, 1), (1, 1, 1)},
+            1: {(0, 0, 0), (0, 1, 0), (1, 1, 1)},
+            2: {(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1)},
+            3: {(-1/2, -1, -1), (0, 0, 0), (1, -1, -1), (1, 1, 1)},
+            4: {(-1/2, -1, -1), (-1/2, -1, 1), (0, 0, 0), (0, 0, 1)},
+            5: {(-1/2, -1, -1), (-1/2, 1, -1), (0, 0, 0), (0, 1, 0)}}
+        """
+        from sage.sets.real_set import RealSet
+        from sage.symbolic.relation import solve
+
+        vertices = {i:set() for i in range(self.number_of_components())}
+        axes = self._axes()
+        comps = self.components()
+        vars = self._vars
+        comps_int = self._components_intersection()
+
+        for index, lines in comps_int.items():  # find the inside vertex
+            for line in lines:  
+                v = list(line[1])[0].variables()[0]
+                for param in line[1]:
+                    left = param.lhs()
+                    right = param.rhs()
+                    if left.is_numeric():
+                        vertex = [e.subs(v==left) for e in line[0]]
+                        vertices[index].add(tuple(vertex))
+                    elif right.is_numeric():
+                        vertex = [e.subs(v==right) for e in line[0]]
+                        vertices[index].add(tuple(vertex))
+
+            # find the interval of parameter for outer vertex
+            interval1 = RealSet(-infinity,infinity)  # represent t1
+            interval2 = RealSet(-infinity,infinity)  # represent t2
+            is_doublevar = False
+            for i, point in enumerate(comps[index][0]):
+                vs = point.variables()
+                if len(vs) == 1:
+                    temp1 = RealSet(solve(point>=axes[i][0], vs[0])[0][0])
+                    temp2 = RealSet(solve(point<=axes[i][1], vs[0])[0][0])
+                    temp = temp1.intersection(temp2)
+                    if vs[0] == vars[0]:
+                        interval1 = interval1.intersection(temp)
+                    else:
+                        interval2 = interval2.intersection(temp)
+                elif len(vs) == 2:
+                    sol1 = solve(point>=axes[i][0], vs)
+                    sol2 = solve(point<=axes[i][1], vs)
+                    is_doublevar = True
+
+            # calculate the outer vertex with t1 fixed
+            for p in [interval1.inf(), interval1.sup()]:
+                new_param = [e.subs(vars[0]==p) for e in comps[index][1]]
+                temp = solve(new_param, vars[1])
+                if temp:
+                    interval_param = RealSet()
+                    for t in temp:
+                        interval_param = interval_param + RealSet(t[0])
+                    interval_param = interval_param.intersection(interval2)
+                    if is_doublevar:
+                        int1 = RealSet()
+                        for s1 in sol1:
+                            subs1 = solve(s1[0].subs(vars[0]==p), vars[1])
+                            try:
+                                int1 = int1 + RealSet(subs1[0])
+                            except TypeError:
+                                int1 = int1 + RealSet(subs1[0][0])
+                        int2 = RealSet()
+                        for s2 in sol2:
+                            subs2 = solve(s2[0].subs(vars[0]==p), vars[1])
+                            try:
+                                int2 = int2 + RealSet(subs2[0])
+                            except TypeError:
+                                int2 = int2 + RealSet(subs2[0][0])
+                        final_int = int1.intersection(int2)
+                        interval_param = interval_param.intersection(final_int)
+                    if interval_param:
+                        vertex1 = [e.subs(vars[0]==p, vars[1]==interval_param.inf()) for e in comps[index][0]]
+                        vertex2 = [e.subs(vars[0]==p, vars[1]==interval_param.sup()) for e in comps[index][0]]
+                        vertices[index].add(tuple(vertex1))
+                        vertices[index].add(tuple(vertex2))
+        
+            # calculate the outer vertex with t2 fixed
+            for p in [interval2.inf(), interval2.sup()]:
+                new_param = [e.subs(vars[1]==p) for e in comps[index][1]]
+                temp = solve(new_param, vars[0])
+                if temp:
+                    interval_param = RealSet()
+                    for t in temp:
+                        interval_param = interval_param + RealSet(t[0])
+                    interval_param = interval_param.intersection(interval1)
+                    if is_doublevar:
+                        int1 = RealSet()
+                        for s1 in sol1:
+                            subs1 = solve(s1[0].subs(vars[1]==p), vars[0])
+                            try:
+                                int1 = int1 + RealSet(subs1[0])
+                            except TypeError:
+                                int1 = int1 + RealSet(subs1[0][0])
+                        int2 = RealSet()
+                        for s2 in sol2:
+                            subs2 = solve(s2[0].subs(vars[1]==p), vars[0])
+                            try:
+                                int2 = int2 + RealSet(subs2[0])
+                            except TypeError:
+                                int2 = int2 + RealSet(subs2[0][0])
+                        final_int = int1.intersection(int2)
+                        interval_param = interval_param.intersection(final_int)
+                    if interval_param:
+                        vertex1 = [e.subs(vars[0]==interval_param.inf(), vars[1]==p) for e in comps[index][0]]
+                        vertex2 = [e.subs(vars[0]==interval_param.sup(), vars[1]==p) for e in comps[index][0]]
+                        vertices[index].add(tuple(vertex1))
+                        vertices[index].add(tuple(vertex2))
+        return vertices
+    
+    def polygon_plot(self, color='random'):
+        """
+        Return the plot of ``self`` by constructing a polygon from vertices
+        in ``self.polygon_vertices()``.
+
+        INPUT:
+
+        - ``color`` -- string or tuple that represent a color (default:
+          ``random``); ``random`` means each polygon will be assigned
+          a different color. If instead a specific ``color`` is provided,
+          then all polygon will be given the same color.
+
+        OUTPUT: Graphics3d Object
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x + y + z + x^2
+            sage: tv = p1.tropical_variety()
+            sage: tv.polygon_plot()
+        """
+        import random
+        from sage.plot.graphics import Graphics
+        from sage.plot.plot3d.shapes2 import polygon3d
+
+        if color == 'random':
+            colors = []
+            for _ in range(self.number_of_components()):
+                # Generate a random color in RGB format
+                color = (random.random(), random.random(), random.random())
+                colors.append(color)
+        elif isinstance(color, str):
+            colors = [color]*self.number_of_components()
+        else:
+            colors = color
+
+        combined_plot = Graphics()
+        for i, vertex in self.polygon_vertices().items():
+            points = [list(v) for v in vertex]
+            plot = polygon3d(points, color=colors[i])
+            combined_plot += plot
+        
+        return combined_plot
 
     def plot(self, num_of_points=32, size=20, color='random'):
         """
