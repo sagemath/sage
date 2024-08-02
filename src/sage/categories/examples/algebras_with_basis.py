@@ -52,7 +52,7 @@ class FreeAlgebra(CombinatorialFreeModule):
         Return the empty word, which index the one of this algebra,
         as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
 
-        EXAMPLES::r
+        EXAMPLES::
 
             sage: A = AlgebrasWithBasis(QQ).example()                                   # needs sage.modules
             sage: A.one_basis()                                                         # needs sage.modules
