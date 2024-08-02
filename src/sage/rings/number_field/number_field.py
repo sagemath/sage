@@ -2572,6 +2572,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: p = K.primes_above(2)[0]
             sage: K.quadratic_defect(5, p)
             +Infinity
+
+        TESTS::
+
+            sage: x = polygen(QQ, 'x')
+            sage: K.<t> = NumberField(x^10 - x^8 - 2*x^7 - x^6 + 2*x^5 + 2*x^4 - x^2 + 1)
+            sage: p = K.prime_factors(2)[0]
+            sage: pi = K.uniformizer(p)
+            sage: a = 1 + pi^3
+            sage: K.quadratic_defect(a, p)
+            3
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         if a not in self:
@@ -2584,13 +2594,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         if a.is_zero():
             return Infinity
         v = self(a).valuation(p)
-        if v % 2 == 1:
+        if v % 2:
             return v
-        # compute uniformizer pi
-        for g in p.gens():
-            if g.valuation(p) == 1:
-                pi = g
-                break
+        pi = self.uniformizer(p)
         a = self(a) / pi**v
         F = p.residue_field()
         q = F.reduction_map()
@@ -2604,11 +2610,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         a = self(s**2) * a
         u = self(4).valuation(p)
         w = (a - 1).valuation(p)
-        R = PolynomialRing(F, 'x')
-        x = R.gen()
-        f = R(x**2 + x)
-        while w < u and w % 2 == 0:
-            s = self(q((a - 1) / pi**w)**(1/2))
+        x = PolynomialRing(F, 'x').gen()
+        f = x**2 + x
+        while w < u and not w % 2:
+            s = F.lift(q((a - 1) / pi**w).sqrt())
             a = a / (1 + s*(pi**(w/2)))**2
             w = (a - 1).valuation(p)
         if w < u and w % 2:
