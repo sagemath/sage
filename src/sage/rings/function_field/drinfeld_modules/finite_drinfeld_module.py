@@ -796,7 +796,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         return self._frobenius_norm
 
     @cached_method
-    def frobenius_trace(self):
+    def frobenius_trace(self, algorithm=None):
         r"""
         Return the Frobenius trace of the Drinfeld module.
 
@@ -869,7 +869,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             ``CSA`` algorithm is used otherwise.
 
         TESTS:
-        
+
         These test values are taken from :meth:`frobenius_charpoly`::
 
             sage: Fq = GF(9)
@@ -928,8 +928,9 @@ class DrinfeldModule_finite(DrinfeldModule):
         matrix_method_name = f'_frobenius_matrix_{algorithm}'
         if not hasattr(self, matrix_method_name):
             raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
-        matrix = getattr(self, matrix_method_name)(var)
+        matrix = getattr(self, matrix_method_name)
         trace = matrix.trace()
+        A = self.function_ring()
         self._frobenius_trace = A([x.in_base() for x in trace])
         return self._frobenius_trace
 
