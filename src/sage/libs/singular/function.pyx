@@ -1823,6 +1823,45 @@ def lib(name):
         raise NameError("Singular library {!r} not found".format(name))
 
 
+def get_printlevel():
+    """
+    Return the value of the variable ``printlevel``.
+
+    This is useful to switch off and back the comments.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.function import get_printlevel, set_printlevel
+        sage: l = get_printlevel()
+        sage: set_printlevel(-1)
+        sage: get_printlevel()
+        -1
+        sage: set_printlevel(l)
+    """
+    global printlevel
+    cdef int pl = printlevel
+    return pl
+
+
+def set_printlevel(l):
+    """
+    Set the  value of the variable ``printlevel``.
+
+    This is useful to switch off and back the comments.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.function import get_printlevel, set_printlevel
+        sage: l = get_printlevel()
+        sage: set_printlevel(2)
+        sage: get_printlevel()
+        2
+        sage: set_printlevel(l)
+    """
+    global printlevel
+    printlevel = <int>l
+
+
 def list_of_functions(packages=False):
     """
     Return a list of all function names currently available.

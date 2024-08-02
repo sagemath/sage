@@ -141,6 +141,7 @@ from builtins import sum as add
 from sage.categories.fields import Fields
 from sage.categories.homset import hom, Hom, End
 from sage.categories.number_fields import NumberFields
+from sage.libs.singular.function import singular_function, lib as singular_lib, get_printlevel, set_printlevel
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -1662,10 +1663,18 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             sage: C.is_complete_intersection()
             False
         """
-        singular.lib("sing.lib")
-        id = singular.simplify(self.defining_ideal(), 10)
-        L = singular.is_ci(id).sage()
-        return len(self.ambient_space().gens()) - len(id.sage().gens()) == L[-1]
+        singular_lib("sing.lib")
+        simplify = singular_function("simplify")
+        is_ci = singular_function("is_ci")
+
+        # verbose unless printlevel is -1.
+        saved_printlevel = get_printlevel()
+        set_printlevel(-1)
+        id = simplify(self.defining_ideal(), 10)
+        L = is_ci(id)[-1]
+        set_printlevel(saved_printlevel)
+
+        return len(self.ambient_space().gens()) - len(id) == L
 
     def tangent_line(self, p):
         """
@@ -1860,11 +1869,13 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             raise TypeError("this curve must have geometric genus zero")
         if not isinstance(self.base_ring(), RationalField):
             raise TypeError("this curve must be defined over the rational field")
+
         singular.lib("paraplanecurves.lib")
-        R = singular.paraPlaneCurve(self.defining_polynomial())
-        singular.setring(R)
-        param = singular('PARA').sage().gens()
+        R = singular.paraPlaneCurve(self.defining_polynomial())  # ring
+        R.set_ring()
+        param = singular('PARA').sage().gens()  # ideal
         R = R.sage()
+
         C = self.change_ring(R.base_ring())
         H = Hom(ProjectiveSpace(R.base_ring(), 1, R.gens()), C)
         return H(param)
@@ -2043,7 +2054,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         X2 = singular.NSplaces(1, X1)
         R = X2[5][1][1]
-        singular.set_ring(R)
+        R.set_ring()
 
         # We use sage_flattened_str_list since iterating through
         # the entire list through the sage/singular interface directly
@@ -2127,7 +2138,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         pnts = [(int(v[i][0]), int(v[i][2])-1) for i in range(len(v))]
         # retrieve coordinates of rational points
         R = X2[5][1][1]
-        singular.set_ring(R)
+        R.set_ring()
         v = singular('POINTS').sage_flattened_str_list()
         coords = [self(int(v[3*i]), int(v[3*i+1]), int(v[3*i+2])) for i in range(len(v)//3)]
         # build correct representation of D for singular
