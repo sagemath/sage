@@ -382,13 +382,13 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             [(t1, t2, t3, t3), [t3 <= min(t1, t2)], 1]]
         """
         return self._hypersurface
-    
+
     def _components_intersection(self):
         r"""
         Return the intersection of three or more components of ``self``.
 
         For a tropical variety in `\RR^n`, the intersection is characterized
-        by a linear equation in `\RR^{n-1}`. Specifically, this becomes a 
+        by a linear equation in `\RR^{n-1}`. Specifically, this becomes a
         vertex for tropical curve and an edges for tropical surface.
 
         OUTPUT:
@@ -397,7 +397,28 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         values are lists of tuples. Each tuple contains a parametric
         equation of points and the corresponding parameter's condition.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        In two dimension, it will provide vertices that are incident with
+        each component::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: tv = p1.tropical_variety()
+            sage: tv._components_intersection()
+            {0: [((-2, 0), {})],
+            1: [((-2, 0), {})],
+            2: [((-1, -3), {})],
+            3: [((-2, 0), {}), ((-1, 0), {})],
+            4: [((-1, -3), {}), ((-1, 0), {})],
+            5: [((-1, -3), {})],
+            6: [((-1, 0), {}), ((3, 4), {})],
+            7: [((3, 4), {})],
+            8: [((3, 4), {})]}
+
+        In three dimensions, it will provide all parametric equations of
+        lines that lie within each component::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
@@ -408,30 +429,35 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             1: [((0, t2, 0), {0 <= t2}), ((t2, t2, t2), {0 <= t2})],
             2: [((0, t1, 0), {0 <= t1}), ((0, 0, t2), {0 <= t2})],
             3: [((t1, t1, t1), {0 <= t1}), ((t1, 2*t1, 2*t1), {t1 <= 0})],
-            4: [((0, 0, t2), {0 <= t2}), ((1/2*t2, t2, t2), {t2 <= 0})],
+            4: [((1/2*t2, t2, t2), {t2 <= 0}), ((0, 0, t2), {0 <= t2})],
             5: [((0, t2, 0), {0 <= t2}), ((1/2*t2, t2, t2), {t2 <= 0})]}
         """
         import operator
         from sage.functions.min_max import max_symbolic, min_symbolic
         from sage.symbolic.relation import solve
         from sage.symbolic.expression import Expression
+        from sage.sets.set import Set
         
         def update_result(result):
+            # print(f"{index}, {new_expr}")
             sol_param = solve(new_expr, vars)
-            sol_param_sim = set()
-            for sol in sol_param:
-                if sol == [] or (isinstance(sol, Expression)):
-                    sol = [(-infinity, infinity)]
-                else:
-                    for eqn in sol:
-                        if self.dimension() == 2:
-                            sol_param_sim.add((-infinity, infinity))
-                        else:
+            # print(f"{index}, sol param = {sol_param}")
+            if self.dimension() == 2:
+                sol_param_sim = True
+            else:
+                sol_param_sim = set()
+                for sol in sol_param:
+                    if isinstance(sol, list):
+                        for eqn in sol:
                             if eqn.operator() == operator.lt:
                                 sol_param_sim.add(eqn.lhs() <= eqn.rhs())
                             elif eqn.operator() == operator.gt:
                                 sol_param_sim.add(eqn.lhs() >= eqn.rhs())
+                    else:
+                        sol_param_sim.add(sol)
             if sol_param_sim:
+                if self.dimension() == 2:
+                    sol_param_sim = Set()
                 if index not in result:
                     result[index] = [(tuple(points), sol_param_sim)]
                 else:
@@ -577,6 +603,8 @@ class TropicalSurface(TropicalVariety):
             u_set = u_set.union(temp_u)
             v_set = v_set.union(temp_v)
         axes = [[min(u_set)-1, max(u_set)+1], [min(v_set)-1, max(v_set)+1]]
+
+        # finding the z-axis
         step = 10
         du = (axes[0][1]-axes[0][0])/step
         dv = (axes[1][1]-axes[1][0])/step
@@ -606,7 +634,7 @@ class TropicalSurface(TropicalVariety):
         return axes
 
     def polygon_vertices(self):
-        """
+        r"""
         Return the vertices of the polygon for each components of ``self``
         to be used for plotting.
 
@@ -701,7 +729,7 @@ class TropicalSurface(TropicalVariety):
                         vertex2 = [e.subs(vars[0]==p, vars[1]==interval_param.sup()) for e in comps[index][0]]
                         vertices[index].add(tuple(vertex1))
                         vertices[index].add(tuple(vertex2))
-        
+
             # calculate the outer vertex with t2 fixed
             for p in [interval2.inf(), interval2.sup()]:
                 new_param = [e.subs(vars[1]==p) for e in comps[index][1]]
@@ -734,7 +762,7 @@ class TropicalSurface(TropicalVariety):
                         vertices[index].add(tuple(vertex1))
                         vertices[index].add(tuple(vertex2))
         return vertices
-    
+
     def polygon_plot(self, color='random'):
         """
         Return the plot of ``self`` by constructing a polygon from vertices
@@ -756,6 +784,7 @@ class TropicalSurface(TropicalVariety):
             sage: p1 = x + y + z + x^2
             sage: tv = p1.tropical_variety()
             sage: tv.polygon_plot()
+            Graphics3d Object
         """
         import random
         from sage.plot.graphics import Graphics
@@ -777,7 +806,6 @@ class TropicalSurface(TropicalVariety):
             points = [list(v) for v in vertex]
             plot = polygon3d(points, color=colors[i])
             combined_plot += plot
-        
         return combined_plot
 
     def plot(self, num_of_points=32, size=20, color='random'):
