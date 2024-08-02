@@ -229,6 +229,7 @@ __append_to_doc(
      "BalancedTree",
      "BarbellGraph",
      "BilinearFormsGraph",
+     "BiwheelGraph",
      "BubbleSortGraph",
      "CaiFurerImmermanGraph",
      "chang_graphs",
@@ -286,8 +287,10 @@ __append_to_doc(
      "SierpinskiGasketGraph",
      "SquaredSkewHadamardMatrixGraph",
      "SwitchedSquaredSkewHadamardMatrixGraph",
+     "StaircaseGraph",
      "strongly_regular_graph",
      "trees",
+     "TruncatedBiwheelGraph",
      "nauty_gentreeg",
      "triangulations",
      "TuranGraph",
@@ -458,6 +461,9 @@ AUTHORS:
 - Marco Cognetta (2016-03-03): added TuranGraph
 
 - Janmenjaya Panda (2024-05-26): added MoebiusLadderGraph
+
+- Janmenjaya Panda (2024-06-09): added StaircaseGraph, BiwheelGraph and
+  TruncatedBiwheelGraph
 
 
 Functions and methods
@@ -2646,6 +2652,7 @@ class GraphGenerators:
     BalancedTree = staticmethod(families.BalancedTree)
     BarbellGraph = staticmethod(families.BarbellGraph)
     BilinearFormsGraph = staticmethod(distance_regular.BilinearFormsGraph)
+    BiwheelGraph = staticmethod(families.BiwheelGraph)
     BubbleSortGraph = staticmethod(families.BubbleSortGraph)
     CaiFurerImmermanGraph = staticmethod(families.CaiFurerImmermanGraph)
     chang_graphs = staticmethod(families.chang_graphs)
@@ -2700,10 +2707,12 @@ class GraphGenerators:
     SierpinskiGasketGraph = staticmethod(families.SierpinskiGasketGraph)
     SquaredSkewHadamardMatrixGraph = staticmethod(families.SquaredSkewHadamardMatrixGraph)
     SwitchedSquaredSkewHadamardMatrixGraph = staticmethod(families.SwitchedSquaredSkewHadamardMatrixGraph)
+    StaircaseGraph = staticmethod(families.StaircaseGraph)
     strongly_regular_graph = staticmethod(strongly_regular_db.strongly_regular_graph)
     TabacjnGraph = staticmethod(families.TabacjnGraph)
     TadpoleGraph = staticmethod(families.TadpoleGraph)
     trees = staticmethod(families.trees)
+    TruncatedBiwheelGraph = staticmethod(families.TruncatedBiwheelGraph)
     nauty_gentreeg = staticmethod(families.nauty_gentreeg)
     TuranGraph = staticmethod(families.TuranGraph)
     UstimenkoGraph = staticmethod(distance_regular.UstimenkoGraph)

@@ -4424,3 +4424,321 @@ def CubeConnectedCycle(d):
         G.add_edge((x, y), (x ^ (1 << y), y))
 
     return G
+
+
+def StaircaseGraph(n):
+    r"""
+    Return a staircase graph with `2n` nodes
+
+    For `n \geq 3`, the staircase graph of order `2n` is the graph obtained
+    from the ladder graph of order `2n - 2`, i.e., ``graphs.LadderGraph(n - 1)``
+    by introducing two new nodes `2n - 2` and `2n - 1`, and then joining the
+    node `2n - 2` with `0` and `n - 1`, the node `2n - 1` with `n - 2` and
+    `2n - 3`, and the nodes `2n - 2` and `2n - 1` with each other.
+
+    Note that ``graphs.StaircaseGraph(4)`` is also known as the ``Bicorn
+    graph``. It is the only brick that has a unique `b`-invariant edge.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. By convention, each staircase graph will be
+    displayed horizontally, with the first `n - 1` nodes displayed from left to
+    right on the top horizontal line, the second `n - 1` nodes displayed from
+    left to right on the middle horizontal line, and the last two nodes
+    displayed at the bottom two corners.
+
+    INPUT:
+
+    - ``n`` -- an integer at least 3; number of nodes is `2n`
+
+    OUTPUT:
+
+    - ``G`` -- a staircase graph of order `2n`; note that a
+      :class:`ValueError` is returned if `n < 3`
+
+    EXAMPLES:
+
+    Construct and show a staircase graph with 10 nodes::
+
+        sage: g = graphs.StaircaseGraph(5)
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    Construct and show the Bicorn graph. Note that the edge `(1, 4)` is the
+    unique `b`-invariant edge::
+
+        sage: bicornGraph = graphs.StaircaseGraph(4)
+        sage: bicornGraph.show()                # long time                             # needs sage.plot
+
+    Create several staircase graphs in a Sage graphics array::
+
+        sage: # needs sage.plots
+        sage: g = []
+        sage: j = []
+        sage: for i in range(9):
+        ....:    k = graphs.StaircaseGraph(i+3)
+        ....:    g.append(k)
+        sage: for i in range(3):
+        ....:    n = []
+        ....:    for m in range(3):
+        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i+m), vertex_labels=False))
+        ....:    j.append(n)
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
+
+    TESTS:
+
+    The input parameter must be an integer that is at least 3::
+
+        sage: G = graphs.StaircaseGraph(2)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be at least 3
+
+    REFERENCES:
+
+    - [LM2024]_
+
+    .. SEEALSO::
+
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.LadderGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-06-09)
+    """
+    if n < 3:
+        raise ValueError("parameter n must be at least 3")
+
+    pos_dict = {
+        0: (0, 1),
+        n - 2: (n, 1),
+        2*n - 2: (0, -1),
+        2*n - 1: (n, -1)
+    }
+
+    edges = [
+        (0, n - 1),
+        (0, 2*n - 2),
+        (n - 2, 2*n - 3),
+        (n - 2, 2*n - 1),
+        (n - 1, 2*n - 2),
+        (2*n - 3, 2*n - 1),
+        (2*n - 2, 2*n - 1)
+    ]
+
+    for v in range(1, n - 2):
+        pos_dict[v] = (v + 1, 1)
+        edges.append((v, v + n - 1))
+
+    for v in range(n - 1, 2*n - 2):
+        pos_dict[v] = (v - n + 2, 0)
+
+    G = Graph(2 * n, pos=pos_dict, name="Staircase graph")
+    G.add_edges(edges)
+    G.add_path(list(range(n - 1)))
+    G.add_path(list(range(n - 1, 2*n - 2)))
+    return G
+
+
+def BiwheelGraph(n):
+    r"""
+    Return a biwheel graph with `2n` nodes
+
+    For `n \geq 4`, the biwheel graph of order `2n` is the planar
+    bipartite graph obtained from the cycle graph of order `2n - 2`, i.e.,
+    ``graphs.CycleGraph(2*n - 2)`` (called the `rim` of the biwheel graph) by
+    introducing two new nodes `2n - 2` and `2n - 1` (called the *hubs* of the
+    biwheel graph), and then joining the node `2n - 2` with the odd indexed
+    nodes up to `2n - 3` and joining the node `2n - 1` with the even indexed
+    nodes up to `2n - 4`.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. By convention, each biwheel graph will be
+    displayed with the first (0) node at the right if `n` is even or
+    otherwise at an angle `\pi / (2n - 2)` with respect to the origin, with the
+    rest of the nodes up to `2n - 3` following in a counterclockwise manner.
+    Note that the last two nodes, i.e., the hubs `2n - 2` and `2n - 1` will
+    be displayed at the coordinates `(-1/3, 0)` and `(1/3, 0)` respectively.
+
+    INPUT:
+
+    - ``n`` -- an integer at least 4; number of nodes is `2n`
+
+    OUTPUT:
+
+    - ``G`` -- a biwheel graph of order `2n`; note that a
+      :class:`ValueError` is returned if `n < 4`
+
+    EXAMPLES:
+
+    Construct and show a biwheel graph with 10 nodes::
+
+        sage: g = graphs.BiwheelGraph(5)
+        sage: g.show()                          # long time                             # needs sage.plot
+        sage: g.is_planar()
+        True
+        sage: g.is_bipartite()
+        True
+
+    Create several biwheel graphs in a Sage graphics array::
+
+        sage: # needs sage.plots
+        sage: g = []
+        sage: j = []
+        sage: for i in range(9):
+        ....:    k = graphs.BiwheelGraph(i+4)
+        ....:    g.append(k)
+        sage: for i in range(3):
+        ....:    n = []
+        ....:    for m in range(3):
+        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i+m), vertex_labels=False))
+        ....:    j.append(n)
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
+
+    TESTS:
+
+    The input parameter must be an integer that is at least 4::
+
+        sage: G = graphs.BiwheelGraph(3)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be at least 4
+
+    REFERENCES:
+
+    - [LM2024]_
+
+    .. SEEALSO::
+
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.WheelGraph`,
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.TruncatedBiwheelGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-06-09)
+    """
+    if n < 4:
+        raise ValueError("parameter n must be at least 4")
+
+    angle_param = 0
+
+    if n % 2:
+        from math import pi
+        angle_param = pi / (2*n - 2)
+
+    G = Graph(2 * n, name="Biwheel graph")
+    pos_dict = G._circle_embedding(list(range(2*n - 2)), angle=angle_param, return_dict=True)
+    edges = []
+
+    from sage.rings.rational_field import QQ
+    pos_dict[2*n - 2] = (-QQ((1, 3)), 0)
+    pos_dict[2*n - 1] = (QQ((1, 3)), 0)
+
+    for i in range(2*n - 2):
+        if i % 2 == 0:
+            edges += [(i, 2*n - 1)]
+        else:
+            edges += [(i, 2*n - 2)]
+
+    G.set_pos(pos_dict)
+    G.add_cycle(list(range(2*n - 2)))
+    G.add_edges(edges)
+    return G
+
+
+def TruncatedBiwheelGraph(n):
+    r"""
+    Return a truncated biwheel graph with `2n` nodes
+
+    For `n \geq 3`, the truncated biwheel graph of order `2n` is the graph
+    obtained from the path graph of order `2n - 2`, i.e.,
+    ``graphs.PathGraph(2*n - 2)`` by introducing two new nodes `2n - 2` and
+    `2n - 1`, and then joining the node `2n - 2` with the odd indexed nodes
+    up to `2n - 3`, joining the node `2n - 1` with the even indexed nodes up to
+    `2n - 4` and adding the edges `(0, 2n - 2)` and `(2n - 3, 2n - 1)`.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override the
+    spring-layout algorithm. By convention, each truncated biwheel graph will
+    be displayed horizontally, with the first `2n - 2` nodes displayed from
+    left to right on the middle horizontal line and the nodes `2n - 2` and
+    `2n - 1` displayed at the top and the bottom central positions
+    respectively.
+
+    INPUT:
+
+    - ``n`` -- an integer at least 3; number of nodes is `2n`
+
+    OUTPUT:
+
+    - ``G`` -- a truncated biwheel graph of order `2n`; note that a
+      :class:`ValueError` is returned if `n < 3`
+
+    EXAMPLES:
+
+    Construct and show a truncated biwheel graph with 10 nodes::
+
+        sage: g = graphs.TruncatedBiwheelGraph(5)
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    Create several truncated biwheel graphs in a Sage graphics array::
+
+        sage: # needs sage.plots
+        sage: g = []
+        sage: j = []
+        sage: for i in range(9):
+        ....:    k = graphs.TruncatedBiwheelGraph(i+3)
+        ....:    g.append(k)
+        sage: for i in range(3):
+        ....:    n = []
+        ....:    for m in range(3):
+        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i+m), vertex_labels=False))
+        ....:    j.append(n)
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
+
+    TESTS:
+
+    The input parameter must be an integer that is at least 3::
+
+        sage: G = graphs.TruncatedBiwheelGraph(2)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be at least 3
+
+    REFERENCES:
+
+    - [LM2024]_
+
+    .. SEEALSO::
+
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.WheelGraph`,
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.BiwheelGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-06-09)
+    """
+    if n < 3:
+        raise ValueError("parameter n must be at least 3")
+
+    pos_dict = {2*n - 2: (0, n), 2*n - 1: (0, -n)}
+    edges = [(0, 2*n - 2), (2*n - 3, 2*n - 1)]
+
+    for v in range(2*n - 2):
+        pos_dict[v] = (2*(v-n) + 3, 0)
+        if v % 2 == 0:
+            edges += [(v, 2*n - 1)]
+        else:
+            edges += [(v, 2*n - 2)]
+
+    G = Graph(2 * n, pos=pos_dict, name="Truncated biwheel graph")
+    G.add_path(list(range(2*n - 2)))
+    G.add_edges(edges)
+
+    return G

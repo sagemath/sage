@@ -4396,6 +4396,10 @@ REFERENCES:
 .. [LM2018] \A. Lauve, M. Mastnak. *Bialgebra coverings and transfer
             of structure*. Preprint, :arxiv:`1803.02691`.
 
+.. [LM2024] C.L. Lucchesi, U.S.R. Murty. *Perfect Matchings: A Theory of
+            Matching Covered Graphs*. Algorithms and Computation in Mathematics.
+            Springer Cham, 1st edition, 2024, :doi:`10.1007/978-3-031-47504-7`.
+
 .. [LMR2010] \N. Linial, R. Meshulam and M. Rosenthal, "Sum complexes
              -- a new family of hypertrees", Discrete & Computational
              Geometry, 2010, Volume 44, Number 3, Pages 622-636
