@@ -1,3 +1,40 @@
+r"""
+Rings of formal Dirichlet series
+
+For any ring `R` and any positive integer `n`, we obtain a ring of formal Dirichlet
+series over `R` truncated to precision `n` by considering the formal expressions of
+the form `\sum_{i=1}^{n-1} a_i i^{-s}` where the `a_i` are elements of `R`, with the
+addition and multiplication rules implied by the syntax.
+
+Sage provides dense and sparse implementations of fixed-precision Dirichlet series
+over any Sage base ring.
+
+EXAMPLES::
+
+    sage: R = DirichletSeriesRing(ZZ, 10)
+    sage: u = R([1,3,1]); u
+    1 + 3*2^-s + 3^-s + O(10^-s)
+    sage: v = 1/u; v
+    1 - 3*2^-s - 3^-s + 9*4^-s + 6*6^-s - 27*8^-s + 9^-s + O(10^-s)
+    sage: u*v
+    1 + O(10^-s)
+
+AUTHORS:
+
+- Kiran Kedlaya (2024-08-01): initial version
+
+"""
+
+# ****************************************************************************
+#       Copyright (C) 2024 Kiran S. Kedlaya <kedlaya@ucsd.edu>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
 from sage.rings.fast_arith import prime_range

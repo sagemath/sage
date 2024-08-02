@@ -1,12 +1,13 @@
 """
-Dirichlet Series
+Formal Dirichlet series
 
-Sage provides an implementation of dense and sparse fixed-precision Dirichlet series
+For any ring `R` and any positive integer `n`, we obtain a ring of formal Dirichlet
+series over `R` truncated to precision `n` by considering the formal expressions of
+the form `\sum_{i=1}^{n-1} a_i i^{-s}` where the `a_i` are elements of `R`, with the
+addition and multiplication rules implied by the syntax.
+
+Sage provides dense and sparse implementations of fixed-precision Dirichlet series
 over any Sage base ring.
-
-AUTHORS:
-
-- Kiran Kedlaya (2024-05): initial implementation
 
 EXAMPLES::
 
@@ -19,7 +20,23 @@ EXAMPLES::
     1 + 4*2^-s + 7*3^-s + 4*4^-s + 14*6^-s + O(8^-s)
     sage: f/g
     1 - 3^-s + 2*6^-s + O(8^-s)
+
+AUTHORS:
+
+- Kiran Kedlaya (2024-08-01): initial version
+
 """
+
+# ****************************************************************************
+#       Copyright (C) 2024 Kiran S. Kedlaya <kedlaya@ucsd.edu>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from sage.structure.element import parent, CommutativeAlgebraElement
 
 class DirichletSeries_generic(CommutativeAlgebraElement):
@@ -233,7 +250,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         """
         c = other[1]
         if not c.is_unit():
-            return ValueError("Leading coefficient must be a unit")
+            raise ValueError("Leading coefficient must be a unit")
         inv = self.base_ring()(~c)
         other1 = 1 - inv*other
         assert other1[1] == 0
