@@ -1,4 +1,4 @@
-"""
+r"""
 Formal Dirichlet series
 
 For any ring `R` and any positive integer `n`, we obtain a ring of formal Dirichlet
