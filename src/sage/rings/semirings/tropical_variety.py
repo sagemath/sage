@@ -393,9 +393,9 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
         OUTPUT:
 
-        A dictionary where the keys represent parametric equations and
-        the values is a list of tuples. The tuples contains a condition
-        for parameter and the corresponding component index.
+        A dictionary where the keys represent component indices and the
+        values are lists of tuples. Each tuple contains a parametric
+        equation of points and the corresponding parameter's condition.
 
         EXAMPLES::
 
@@ -404,11 +404,12 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: p1 = x + y + z + x^2
             sage: tv = p1.tropical_variety()
             sage: tv._components_intersection()
-            {(t2, t2, t2): [({0 <= t2}, 0), ({0 <= t2}, 1)],
-            (0, 0, t2): [({0 <= t2}, 0), ({0 <= t2}, 2), ({0 <= t2}, 4), ({t2 <= 0}, 4)],
-            (0, t2, 0): [({0 <= t2}, 1), ({0 <= t2}, 5), ({t2 <= 0}, 5)],
-            (0, t1, 0): [({0 <= t1}, 2)],
-            (t1, t1, t1): [({0 <= t1}, 3), ({t1 <= 0}, 3)]}
+            {0: [((t2, t2, t2), {0 <= t2}), ((0, 0, t2), {0 <= t2})],
+            1: [((0, t2, 0), {0 <= t2}), ((t2, t2, t2), {0 <= t2})],
+            2: [((0, t1, 0), {0 <= t1}), ((0, 0, t2), {0 <= t2})],
+            3: [((t1, t1, t1), {0 <= t1}), ((t1, 2*t1, 2*t1), {t1 <= 0})],
+            4: [((0, 0, t2), {0 <= t2}), ((1/2*t2, t2, t2), {t2 <= 0})],
+            5: [((0, t2, 0), {0 <= t2}), ((1/2*t2, t2, t2), {t2 <= 0})]}
         """
         import operator
         from sage.functions.min_max import max_symbolic, min_symbolic
@@ -416,37 +417,24 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         from sage.combinat.permutation import Permutations
         
         def update_result(result):
-            # finding parameter for intersection
             sol_param = solve(new_expr, vars)
             sol_param_sim = set()
             for sol in sol_param:
+                if sol == []:
+                    sol = [(-infinity, infinity)]
                 for eqn in sol:
                     if self.dimension() == 2:
-                        sol_param_sim.add(eqn)
+                        sol_param_sim.add((-infinity, infinity))
                     else:
                         if eqn.operator() == operator.lt:
                             sol_param_sim.add(eqn.lhs() <= eqn.rhs())
                         elif eqn.operator() == operator.gt:
                             sol_param_sim.add(eqn.lhs() >= eqn.rhs())
-            # checking if the found intersection is actually the same
-            # as another element in result
-            check_same = False
-            for perm in Permutations(vars, len(vars)-1):
-                subs_dict = dict(zip(new_vars, perm))
-                temp_points = [p.subs(subs_dict) for p in points]
-                if tuple(temp_points) in result:
-                    temp_sol = set()
-                    for sol in sol_param_sim:
-                        temp_sol.add(sol.subs(subs_dict))
-                    if temp_sol in result[tuple(temp_points)]:
-                        check_same = True
-                        break
             if sol_param_sim:
-                if not check_same:
-                    if tuple(points) not in result:
-                        result[tuple(points)] = [(sol_param_sim, index)]
-                    else:
-                        result[tuple(points)].append((sol_param_sim, index))
+                if index not in result:
+                    result[index] = [(tuple(points), sol_param_sim)]
+                else:
+                    result[index].append((tuple(points), sol_param_sim))
 
         result = {}
         vars = self._vars
@@ -454,12 +442,11 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             for expr in comp[1]:
                 left = expr.lhs()
                 right = expr.rhs()
-                points = list(comp[0])
                 # if the lhs contains a min or max operator
                 if (left.operator() == max_symbolic) or (left.operator() == min_symbolic):
                     for operand in expr.lhs().operands():
+                        points = list(comp[0])
                         new_expr = [e.subs(right==operand) for e in comp[1]]
-                        new_vars = [t for t in vars if t != right]
                         for i, p in enumerate(points):
                             new_eq = p.subs(right==operand)
                             points[i] = new_eq
@@ -467,21 +454,22 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                 # if the rhs contains a min or max operator
                 elif (right.operator() == max_symbolic) or (right.operator() == min_symbolic):
                     for operand in expr.rhs().operands():
+                        points = list(comp[0])
                         new_expr = [e.subs(left==operand) for e in comp[1]]
-                        new_vars = [t for t in vars if t != left]
                         for i, p in enumerate(points):
                             new_eq = p.subs(left==operand)
                             points[i] = new_eq
                         update_result(result)
                 else:
                     var = expr.variables()[0]
+                    points = list(comp[0])
                     subs_expr = solve(left==right, var)[0].rhs()
                     new_expr = [e.subs(var==subs_expr) for e in comp[1]]
-                    new_vars = [t for t in vars if t != var]
                     for i, p in enumerate(points):
                         new_eq = p.subs(var==subs_expr)
                         points[i] = new_eq
                     update_result(result)
+        
         return result
 
 
@@ -541,9 +529,10 @@ class TropicalSurface(TropicalVariety):
             [[-1, 2], [-1, 2]]
         """
         from sage.symbolic.relation import solve
+        from sage.arith.srange import srange
 
         if not self._hypersurface:  # no components
-            return [[-1, 1], [-1, 1]]
+            return [[-1, 1], [-1, 1], [-1, 1]]
         u_set = set()
         v_set = set()
         for comp in self._hypersurface:
@@ -586,7 +575,34 @@ class TropicalSurface(TropicalVariety):
                         temp_u.add(sol[0][0].rhs())
             u_set = u_set.union(temp_u)
             v_set = v_set.union(temp_v)
-        return [[min(u_set)-1, max(u_set)+1], [min(v_set)-1, max(v_set)+1]]
+        axes = [[min(u_set)-1, max(u_set)+1], [min(v_set)-1, max(v_set)+1]]
+        step = 10
+        du = (axes[0][1]-axes[0][0])/step
+        dv = (axes[1][1]-axes[1][0])/step
+        u_range = srange(axes[0][0], axes[0][1]+du, du)
+        v_range = srange(axes[1][0], axes[1][1]+dv, dv)
+        zmin, zmax = None, None
+        for comp in self._hypersurface:
+            for u in u_range:
+                for v in v_range:
+                    checkpoint = True
+                    for exp in comp[1]:
+                        final_exp = exp.subs(self._vars[0] == u, self._vars[1] == v)
+                        if not final_exp:
+                            checkpoint = False
+                            break
+                    if checkpoint:
+                        z = comp[0][2].subs(self._vars[0] == u, self._vars[1] == v)
+                        if (zmin is None) and (zmax is None):
+                            zmin = z
+                            zmax = z
+                        else:
+                            if z < zmin:
+                                zmin = z
+                            if z > zmax:
+                                zmax = z
+        axes.append([zmin, zmax])
+        return axes
 
     def plot(self, num_of_points=32, size=20, color='random'):
         """
