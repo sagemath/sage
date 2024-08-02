@@ -6,6 +6,7 @@ cdef extern from 'symmetrica/def.h':
     INT gupta_tafel(OP max, OP res)
     INT random_partition(OP nx, OP res)
 
+
 def strict_to_odd_part_symmetrica(part):
     """
     Implement the bijection between strict partitions
@@ -35,6 +36,7 @@ def strict_to_odd_part_symmetrica(part):
     ende()
 
     return res
+
 
 def odd_to_strict_part_symmetrica(part):
     """
@@ -128,6 +130,7 @@ def gupta_nm_symmetrica(n, m):
     ende()
 
     return res
+
 
 def gupta_tafel_symmetrica(max):
     """

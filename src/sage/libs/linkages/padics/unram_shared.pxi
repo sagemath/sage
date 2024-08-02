@@ -1,5 +1,6 @@
 cimport cython
 
+
 @cython.binding(True)
 def frobenius_unram(self, arithmetic=True):
     """
