@@ -426,15 +426,14 @@ class DrinfeldModule_finite(DrinfeldModule):
                 return self._frobenius_charpoly.change_variable_name(var)
             else:
                 if self.rank() < self._base_degree_over_constants:
-                    method_name = '_frobenius_charpoly_crystalline'
+                    algorithm = 'crystalline'
                 else:
-                    method_name = '_frobenius_charpoly_CSA'
+                    algorithm = 'CSA'
         # If an algorithm is specified, do not use cached data, even
         # if it is possible:
-        else:
-            method_name = f'_frobenius_charpoly_{algorithm}'
-            if not hasattr(self, method_name):
-                raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
+        method_name = f'_frobenius_charpoly_{algorithm}'
+        if not hasattr(self, method_name):
+            raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
         self._frobenius_charpoly = getattr(self, method_name)(var)
         return self._frobenius_charpoly
 
