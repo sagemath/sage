@@ -164,7 +164,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         self._frobenius_charpoly = None
 
     @cached_method
-    def _frobenius_crystalline_matrix(self):
+    def _frobenius_matrix_crystalline(self):
         r"""
         Return the matrix representing the Frobenius endomorphism on the
         crystalline cohomology of the Drinfeld module. This is done up to
@@ -182,7 +182,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: K.<z12> = Fq.extension(6)
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-            sage: phi._frobenius_crystalline_matrix()
+            sage: phi._frobenius_matrix_crystalline()
             [...((z2 + 3) + z12 + (4*z2 + 1)*z12^2 + (z2 + 4)*z12^3 + (z2 + 4)*z12^4 + (2*z2 + 3)*z12^5)*T^3 + (2*z2 + 2*z2*z12 + (2*z2 + 3)*z12^2 + ... + (3*z2 + 4)*z12^3 + (2*z2 + 3)*z12^4 + 3*z2*z12^5]
 
         ALGORITHM:
@@ -229,6 +229,30 @@ class DrinfeldModule_finite(DrinfeldModule):
                                               .coefficients(sparse=False)])
             reduced_companions.append(M)
         return (prod(reduced_companions) * companion_step * companion_initial)
+
+    @cached_method
+    def _frobenius_matrix_CSA(self):
+        r"""
+        Return the matrix of the left-multiplication by `\phi_T` with
+        respect to the maximal commutative subalgebra `K\{\tau^n\}` of
+        $K\{\tau\}$, where `K` is the base field and `n` is its degree
+        over `\mathbb F_q`. The characteristic polynomial of this matrix
+        is the characteristic polynomial of the Frobenius endomorphism,
+        which is crucial for :meth:`_frobenius_charpoly_CSA`.
+        """
+        E = self._base
+        EZ = PolynomialRing(E, name='Z')
+        n = self._base_degree_over_constants
+        phi_T = self.gen()
+        t = self.ore_variable()
+        rows = []
+        # Compute the reduced charpoly
+        for i in range(n):
+            m = phi_T.degree() + 1
+            row = [EZ([phi_T[jj] for jj in range(j, m, n)]) for j in range(n)]
+            rows.append(row)
+            phi_T = t * phi_T
+        return Matrix(rows)
 
     def frobenius_endomorphism(self):
         r"""
@@ -293,7 +317,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         INPUT:
 
         - ``var`` (default: ``'X'``) -- the name of the second variable
-        - ``algorithm`` (default: ``'crystalline'``) -- the algorithm
+        - ``algorithm`` (default: ``None``) -- the algorithm
           used to compute the characteristic polynomial
 
         .. NOTE:
@@ -354,7 +378,16 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         ALGORITHM:
 
-        See the note above.
+            If the user specifies an algorithm, then the characteristic
+            polynomial is computed according to the user's input (see
+            the note above), even if it had already been computed.
+
+            If no algorithm is given, then the function either returns a
+            cached value, or if no cached value is available, the
+            function computes the Frobenius characteristic polynomial
+            from scratch. In that case, if the rank `r` is less than the
+            extension degree `n`, then the ``crystalline`` algorithm is
+            used, while the ``CSA`` algorithm is used otherwise.
 
         TESTS::
 
@@ -469,24 +502,14 @@ class DrinfeldModule_finite(DrinfeldModule):
         the reduced characteristic polynomial of the Ore polynomial
         `phi_T`. This algorithm is particularly interesting when the
         rank of the Drinfeld module is large compared to the degree
-        of the extension `K/\mathbb F_q`.
+        of the extension `K/\mathbb F_q`. See [CL2023]_.
         """
-        E = self._base
-        EZ = PolynomialRing(E, name='Z')
-        n = self._base_degree_over_constants
-        phi_T = self.gen()
-        t = self.ore_variable()
-        rows = [ ]
         # Compute the reduced charpoly
-        for i in range(n):
-            m = phi_T.degree() + 1
-            row = [EZ([phi_T[jj] for jj in range(j, m, n)]) for j in range(n)]
-            rows.append(row)
-            phi_T = t * phi_T
-        chi = Matrix(rows).charpoly()
-        # We format the result
+        chi = self._frobenius_matrix_CSA().charpoly()
+        # Format the result
         K = self.base_over_constants_field()
         A = self.function_ring()
+        n = self._base_degree_over_constants
         r = self.rank()
         lc = chi[0][r]
         coeffs = [A([K(chi[i][j]/lc).in_base()
@@ -553,8 +576,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         of section 6.3 in [MS2023]_.
         """
         A = self.function_ring()
-        K = self.base_over_constants_field()
-        charpoly_K = self._frobenius_crystalline_matrix() \
+        charpoly_K = self._frobenius_matrix_crystalline() \
                          .charpoly(var).coefficients(sparse=False)
 
         # The above line obtains the char poly with coefficients in K[T]
@@ -784,6 +806,25 @@ class DrinfeldModule_finite(DrinfeldModule):
         and if `n` is the degree of the base field over `\mathbb{F}_q`,
         then the Frobenius trace has degree at most `\frac{n}{r}`.
 
+        INPUT:
+
+        - ``algorithm`` (default: ``None``) -- the algorithm
+          used to compute the characteristic polynomial
+
+        .. NOTE:
+
+        Available algorithms are:
+
+            - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
+              central simple algebra (CSA) over `\mathbb
+              F_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+            - ``'crystalline'`` -- it uses the action of the Frobenius
+              on the crystalline cohomology (see [MS2023]_).
+
+        The method raises an exception if the user asks for an
+        unimplemented algorithm, even if the characteristic has already
+        been computed. See :meth:`frobenius_charpoly` for more details.
+
         EXAMPLES::
 
             sage: Fq = GF(343)
@@ -805,28 +846,91 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: frobenius_trace == -phi.frobenius_charpoly()[1]
             True
 
+        One can specify an algorithm::
+
+            sage: psi = DrinfeldModule(A, [z6, 1, z6^3, z6 + 1])
+            sage: psi.frobenius_trace(algorithm='crystalline')
+            z3^2 + 6*z3 + 2
+            sage: psi.frobenius_trace(algorithm='CSA')
+            z3^2 + 6*z3 + 2
+
         ALGORITHM:
 
-            We extract the coefficient of `X^{r-1}` from the characteristic
-            polynomial if it has been previously computed, otherwise we compute
-            the trace of the matrix of the Frobenius acting on the crystalline
-            cohomology.
-        """
-        K = self.base_over_constants_field()
-        A = self.function_ring()
-        if self._frobenius_trace is not None:
-            return self._frobenius_trace
-        if self._frobenius_charpoly is not None:
-            self._frobenius_trace = -self._frobenius_charpoly \
-                                    .coefficients(sparse=False)[-2]
-        else:
-            if self.rank() < self._base_degree_over_constants:
-                method_name = f'_frobenius_{crystalline}_matrix'
-            else:
-                method_name = f'_frobenius_charpoly_{CSA}'
+            If the user specifies an algorithm, then the trace is
+            computed according to the user's input (see the note above),
+            even if the Frobenius trace or the Frobenius characteristic
+            polynomial had already been computed.
 
-        self._frobenius_trace = self._frobenius_crystalline_matrix().trace()
-        self._frobenius_trace = A([x.in_base() for x in self._frobenius_trace])
+            If no algorithm is given, then the function either returns a
+            cached value, or if no cached value is available, the
+            function computes the Frobenius trace from scratch. In that
+            case, if the rank `r` is less than the extension degree `n`,
+            then the ``crystalline`` algorithm is used, while the
+            ``CSA`` algorithm is used otherwise.
+
+        TESTS:
+        
+        These test values are taken from :meth:`frobenius_charpoly`::
+
+            sage: Fq = GF(9)
+            sage: A.<T> = Fq[]
+            sage: k.<zk> = Fq.extension(2)
+            sage: K.<z> = k.extension(3)
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [K(zk), z^8, z^7])
+            sage: phi.frobenius_trace(algorithm='CSA')
+            T^3 + (z2 + 1)*T^2 + (2*z2 + 2)*T + z2
+            sage: phi.frobenius_trace(algorithm='crystalline')
+            T^3 + (z2 + 1)*T^2 + (2*z2 + 2)*T + z2
+            sage: charpoly = phi.frobenius_charpoly()
+            sage: trace = phi.frobenius_trace()
+            sage: trace == - charpoly[2]
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [K(zk), z^2, z^3, z^4])
+            sage: phi.frobenius_trace(algorithm='CSA')
+            (2*z2 + 2)*T^2 + (2*z2 + 2)*T + 2*z2 + 1
+            sage: phi.frobenius_trace(algorithm='crystalline')
+            (2*z2 + 2)*T^2 + (2*z2 + 2)*T + 2*z2 + 1
+            sage: charpoly = phi.frobenius_charpoly()
+            sage: trace = phi.frobenius_trace()
+            sage: trace == - charpoly[2]
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [K(zk), z^8, z^7, z^20])
+            sage: phi.frobenius_trace(algorithm='CSA')
+            2*z2*T^2 + 2*z2*T + 2*z2 + 2
+            sage: phi.frobenius_trace(algorithm='crystalline')
+            2*z2*T^2 + 2*z2*T + 2*z2 + 2
+            sage: charpoly = phi.frobenius_charpoly()
+            sage: trace = phi.frobenius_trace()
+            sage: trace == - charpoly[2]
+        """
+        # If no algorithm is specified, return cached data (if it
+        # exists), or pick an algorithm:
+        if algorithm is None:
+            if self._frobenius_trace is not None:
+                return self._frobenius_trace
+            if self._frobenius_charpoly is not None:
+                self._frobenius_trace = -self._frobenius_charpoly \
+                                        .coefficients(sparse=False)[-2]
+            else:
+                if self.rank() < self._base_degree_over_constants:
+                    algorithm = 'crystalline'
+                else:
+                    algorithm = 'CSA'
+        # If an algorithm is specified, do not use cached data, even
+        # if it is possible:
+        matrix_method_name = f'_frobenius_matrix_{algorithm}'
+        if not hasattr(self, matrix_method_name):
+            raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
+        matrix = getattr(self, matrix_method_name)(var)
+        trace = matrix.trace()
+        self._frobenius_trace = A([x.in_base() for x in trace])
         return self._frobenius_trace
 
     def invert(self, ore_pol):
@@ -921,7 +1025,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         # Write the system and solve it
         k = deg // r
         A = self._function_ring
-        T = A.gen()
         mat_rows = [[E.zero() for _ in range(k+1)] for _ in range(k+1)]
         mat_rows[0][0] = E.one()
         phiT = self.gen()
