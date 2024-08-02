@@ -205,13 +205,14 @@ AUTHORS:
 
 import sage.misc.latex as latex
 
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.multi_power_series_ring_element import MPowerSeries
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.term_order import TermOrder
-from sage.rings.power_series_ring import PowerSeriesRing, PowerSeriesRing_generic, is_PowerSeriesRing
+from sage.rings.power_series_ring import PowerSeriesRing, PowerSeriesRing_generic
 from sage.rings.ring import CommutativeRing
 from sage.structure.nonexact import Nonexact
 
@@ -226,6 +227,8 @@ try:
 except ImportError:
     LaurentSeriesRing = ()
 
+lazy_import('sage.rings.lazy_series_ring', ('LazyPowerSeriesRing', 'LazyLaurentSeriesRing'))
+
 
 def is_MPowerSeriesRing(x):
     """
@@ -237,8 +240,16 @@ def is_MPowerSeriesRing(x):
         sage: from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
         sage: M = PowerSeriesRing(ZZ, 4, 'v')
         sage: is_PowerSeriesRing(M)
+        doctest:warning...
+        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
+        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
+        See https://github.com/sagemath/sage/issues/38290 for details.
         False
         sage: is_MPowerSeriesRing(M)
+        doctest:warning...
+        DeprecationWarning: The function is_MPowerSeriesRing is deprecated;
+        use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.
+        See https://github.com/sagemath/sage/issues/38290 for details.
         True
         sage: T = PowerSeriesRing(RR, 'v')
         sage: is_PowerSeriesRing(T)
@@ -252,7 +263,10 @@ def is_MPowerSeriesRing(x):
         sage: is_MPowerSeriesRing(L)
         True
     """
-    from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+    from sage.misc.superseded import deprecation
+    deprecation(38290,
+                "The function is_MPowerSeriesRing is deprecated; "
+                "use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.")
     return isinstance(x, (MPowerSeriesRing_generic, LazyPowerSeriesRing))
 
 
@@ -659,8 +673,9 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             True
         """
         P = f.parent()
-        if isinstance(P, MPolynomialRing_base) or is_MPowerSeriesRing(P) \
-               or isinstance(P, PolynomialRing_general) or is_PowerSeriesRing(P):
+        if isinstance(P, (PolynomialRing_general, MPolynomialRing_base,
+                          PowerSeriesRing_generic, MPowerSeriesRing_generic,
+                          LazyPowerSeriesRing)):
             if set(P.variable_names()).issubset(set(self.variable_names())):
                 if self.has_coerce_map_from(P.base_ring()):
                     return self(f)
@@ -738,7 +753,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         if all(v == 0 for v in im_gens):
             return True
 
-        if is_MPowerSeriesRing(codomain) or is_PowerSeriesRing(codomain) or isinstance(codomain, LaurentSeriesRing):
+        if isinstance(codomain, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing,
+                                 LaurentSeriesRing, LazyLaurentSeriesRing)):
             try:
                 B = all(v.valuation() > 0 or v.is_nilpotent() for v in im_gens)
             except NotImplementedError:
@@ -823,8 +839,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: R.has_coerce_map_from(L)
             True
         """
-        if isinstance(P, MPolynomialRing_base) or is_MPowerSeriesRing(P) \
-                   or isinstance(P, PolynomialRing_general) or is_PowerSeriesRing(P):
+        if isinstance(P, (MPolynomialRing_base, MPowerSeriesRing_generic, LazyPowerSeriesRing,
+                          PolynomialRing_general, PowerSeriesRing_generic)):
             if set(P.variable_names()).issubset(set(self.variable_names())):
                 if self.has_coerce_map_from(P.base_ring()):
                     return True

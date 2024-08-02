@@ -22,15 +22,16 @@ from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.laurent_series_ring import is_LaurentSeriesRing
+from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.rings.power_series_ring import is_PowerSeriesRing
+from sage.rings.power_series_ring import PowerSeriesRing_generic
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
 
 from .abstract_ring import FormsRing_abstract
 
 lazy_import('sage.rings.imaginary_unit', 'I')
+lazy_import('sage.rings.lazy_series_ring', ('LazyLaurentSeriesRing', 'LazyPowerSeriesRing'))
 lazy_import('sage.rings.qqbar', 'QQbar')
 
 
@@ -254,8 +255,9 @@ class FormsSpace_abstract(FormsRing_abstract):
         # can be changed in construct_form
         # resp. construct_quasi_form))
         P = parent(el)
-        if is_LaurentSeriesRing(P) or is_PowerSeriesRing(P):
-            if (self.is_modular()):
+        if isinstance(P, (LaurentSeriesRing, PowerSeriesRing_generic,
+                          LazyLaurentSeriesRing, LazyPowerSeriesRing)):
+            if self.is_modular():
                 return self.construct_form(el)
             else:
                 return self.construct_quasi_form(el)

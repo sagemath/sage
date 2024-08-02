@@ -154,14 +154,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.richcmp import richcmp
-
+from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import infinity, InfinityElement
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.rings.power_series_ring import is_PowerSeriesRing
 from sage.rings.power_series_ring_element import PowerSeries
+from sage.structure.richcmp import richcmp
+
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
+lazy_import('sage.rings.multi_power_series_ring', 'MPowerSeriesRing_generic')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
 def is_MPowerSeries(f):
@@ -375,8 +378,7 @@ class MPowerSeries(PowerSeries):
 
         # test whether x coerces to background univariate
         # power series ring of parent
-        from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
-        if is_PowerSeriesRing(xparent) or is_MPowerSeriesRing(xparent):
+        if isinstance(xparent, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing)):
             # x is either a multivariate or univariate power series
             #
             # test whether x coerces directly to designated parent
