@@ -62,9 +62,9 @@ class Threejs(StaticFile):
             sage: Threejs().required_version()
             'r...'
         """
-        from sage.env import SAGE_EXTCODE
+        from importlib.resources import files
 
-        filename = os.path.join(SAGE_EXTCODE, 'threejs', 'threejs-version.txt')
+        filename = files(__package__).joinpath("threejs-version.txt")
 
         with open(filename) as f:
             return f.read().strip()
