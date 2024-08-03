@@ -262,7 +262,9 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
             message="SPKG_TYPE"
             m4_case(SPKG_SOURCE, [none], [], [dnl
                 dnl Non-dummy optional/experimental package, advertise how to install
-                message="$message, use \"$srcdir/configure --enable-SPKG_NAME\" to install SPKG version $SPKG_VERSION"
+                AS_CASE(["$SPKG_VERSION"],
+                    [none], [message="$message, use \"$srcdir/configure --enable-SPKG_NAME\" to install SPKG"],
+                            [message="$message, use \"$srcdir/configure --enable-SPKG_NAME\" to install SPKG version $SPKG_VERSION"])
             ])
         ])
     ])
