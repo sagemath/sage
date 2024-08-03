@@ -1,0 +1,5 @@
+pthread = declare_dependency(
+  dependencies: [
+    cc.find_library('pthread'),
+  ]
+)

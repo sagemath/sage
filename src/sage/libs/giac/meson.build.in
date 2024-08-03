@@ -1,0 +1,5 @@
+giac = declare_dependency(
+  dependencies: [
+    cc.find_library('giac', required: false),
+  ]
+)
