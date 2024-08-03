@@ -1,3 +1,4 @@
+from itertools import chain
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
@@ -8,7 +9,8 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedFreeAbelianMonoidElement
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import Element, parent
 from sage.structure.parent import Parent
@@ -331,6 +333,22 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
     Element = AtomicSpeciesElement
 
+class MolecularSpecies(IndexedFreeAbelianMonoid):
+    class Element(IndexedFreeAbelianMonoidElement):
+        @lazy_attribute
+        def _group(self):
+            def gmul(H, K):
+                n, m = H.degree(), K.degree()
+                gens = H.gens_small()
+                for gen in K.gens_small():
+                    shift = libgap.MappingPermListList(K.domain().list(), [n + k for k in K.domain()])
+                    gens.append(shift ** -1 * gen * shift)
+                return PermutationGroup(gens, domain=range(1, n + m + 1))
+            G = SymmetricGroup(0)
+            for A, p in self._monomial.items():
+                for _ in range(p):
+                    G = gmul(G, A._dis._C)
+            return G
 
 class PolynomialSpecies(CombinatorialFreeModule):
     def __init__(self, k, base_ring=ZZ):
@@ -345,7 +363,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: TestSuite(P2).run()
         """
         # should we pass a category to basis_keys?
-        basis_keys = IndexedFreeAbelianMonoid(AtomicSpecies(k),
+        basis_keys = MolecularSpecies(AtomicSpecies(k),
                                               prefix='', bracket=False)
         category = GradedAlgebrasWithBasis(base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, base_ring,
@@ -501,4 +519,80 @@ class PolynomialSpecies(CombinatorialFreeModule):
         return f"Ring of {self._k}-variate virtual species"
 
     class Element(CombinatorialFreeModule.Element):
-        pass
+        @cached_method
+        def is_virtual(self):
+            return any(x < 0 for x in self.coefficients(sort=False))
+
+        @cached_method
+        def is_molecular(self):
+            return len(self.coefficients(sort=False)) == 1 and self.coefficients(sort=False)[0] == 1
+
+        @cached_method
+        def is_atomic(self):
+            return self.is_molecular() and len(self.support()[0]) == 1
+
+        def __call__(self, *args):
+            # should this also have a base ring check or is it coerced?
+            # the usage of type(self)(...), is it correct?
+            if len(args) != self.parent()._k:
+                raise ValueError(f"Number of args (= {len(args)}) must equal arity of self (= {len(args)})")
+            if any(not isinstance(arg, PolynomialSpecies.Element) for arg in args):
+                raise ValueError("All args must be elements of PolynomialSpecies")
+            if self.parent()._k > 1 or max(arg.parent()._k for arg in args) > 1:
+                raise NotImplementedError("Only univariate species are supported")
+            if self.is_virtual() or any(arg.is_virtual() for arg in args):
+                raise NotImplementedError(f"Only non-virtual species are supported")
+            # Now we only have non-virtual univariate species
+            res = 0
+            Gm = args[0].monomial_coefficients()
+            for M, fM in self.monomial_coefficients().items():
+                term = 0
+                # maybe move degree_on_basis to MolecularSpecies (and it will become "grade")
+                n = self.parent().degree_on_basis(M)
+                powvecs = IntegerVectors(n, len(Gm))
+                for vec in powvecs:
+                    coeff = 1
+                    for fN, exponent in zip(Gm.values(), vec):
+                        coeff *= fN ** exponent
+                    N_list = list(chain.from_iterable([[N._group for _ in range(c)] for N, c in zip(Gm.keys(), vec)]))
+                    R = self.parent()(wreath_imprimitive_general(N_list, M._group))
+                    term += coeff * R
+                res += fM * term
+            return res
+
+
+def wreath_imprimitive_general(G_list, H):
+    r"""
+    H([G[0]] - [G[1]] - ... - [G[m]])
+    """
+    if len(G_list) != H.degree():
+        raise ValueError(f"length of G_list (= {len(G_list)}) must be equal to degree of H (= {H.degree()})")
+    gens, dlist = [], []
+    dsum = 0
+    for G in G_list:
+        dlist.append(list(range(dsum + 1, dsum + G.degree() + 1)))
+        dsum += G.degree()
+
+    # First find gens of H
+    for gen in H.gens():
+        # each cycle must be homogenous in the degrees of groups shifted
+        # bad things happen if this isn't checked
+        # example: partitional_composition(E2, X+X^2)
+        # look at the structure with 1 X and 1 X^2, like {(1), (2,3)}
+        all_homogenous = True
+        for cyc in gen.cycle_tuples():
+            cyclens = [len(dlist[x - 1]) for x in cyc]
+            all_homogenous &= min(cyclens) == max(cyclens)
+        if not all_homogenous:
+            continue
+        perm = libgap.Flat(libgap.Permuted(dlist, gen))
+        gens.append(perm)
+
+    # Then find gens of G_i
+    for i in range(len(G_list)):
+        for gen in G_list[i].gens():
+            images = libgap.MappingPermListList(G_list[i].domain().list(),dlist[i])
+            gens.append(gen ** images)
+
+    # Finally create group
+    return PermutationGroup(gens, domain = range(1, dsum + 1))
