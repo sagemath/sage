@@ -35,7 +35,7 @@ class Phitigra(PythonModule):
             sage: isinstance(Phitigra(), Phitigra)
             True
         """
-        PythonModule.__init__(self, 'phitigra', spkg='phitigra')
+        PythonModule.__init__(self, 'phitigra', spkg='pypi:phitigra')
 
 
 def all_features():

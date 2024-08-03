@@ -71,7 +71,7 @@ class Pycosat(PythonModule):
             True
         """
         PythonModule.__init__(self, "pycosat",
-                              spkg="pycosat", type="optional")
+                              spkg="pypi:pycosat", type="optional")
 
 
 class Pycryptosat(PythonModule):
