@@ -144,7 +144,12 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
             import sage_conf
             value = getattr(sage_conf, key, None)
         except ImportError:
-            pass
+            try:
+                import sage.config
+                value = getattr(sage.config, key, None)
+            except ImportError:
+                pass
+
     # Try all fallbacks in order as long as we don't have a value
     for f in fallbacks:
         if value is not None:
