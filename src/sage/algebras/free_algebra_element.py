@@ -84,7 +84,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
     def _repr_(self):
         """
-        Return string representation of self.
+        Return string representation of ``self``.
 
         EXAMPLES::
 
@@ -98,7 +98,6 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: with localvars(A, ['a','b','c']):
             ....:    print(-x+3*y*z)
             -a + 3*b*c
-
         """
         v = sorted(self._monomial_coefficients.items())
         P = self.parent()
@@ -110,7 +109,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
     def _latex_(self):
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -279,6 +278,32 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
     # For backward compatibility
     # _lmul_ = _acted_upon_
     # _rmul_ = _acted_upon_
+
+    def _im_gens_(self, codomain, im_gens, base_map):
+        """
+        Apply a morphism defined by its values on the generators.
+
+        EXAMPLES::
+
+            sage: ring = algebras.Free(QQ, ['a', 'b'])
+            sage: a, b = ring.gens()
+            sage: A = matrix(QQ, 2, 2, [2, 3, 4, 1])
+            sage: B = matrix(QQ, 2, 2, [1, 7, 7, 1])
+            sage: f = ring.hom([A, B])
+            sage: f(a*b+1)
+            [24 17]
+            [11 30]
+        """
+        n = self.parent().ngens()
+        if n == 0:
+            cf = next(iter(self._monomial_coefficients.values()))
+            return codomain.coerce(cf)
+
+        if base_map is None:
+            base_map = codomain
+
+        return codomain.sum(base_map(c) * m(*im_gens)
+                            for m, c in self._monomial_coefficients.items())
 
     def variables(self):
         """

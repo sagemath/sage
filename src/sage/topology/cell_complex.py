@@ -122,9 +122,10 @@ class GenericCellComplex(SageObject):
         optional argument ``subcomplex`` is present, then return only
         the cells which are *not* in the subcomplex.
 
-        :param subcomplex: a subcomplex of this cell complex.  Return
-           the cells which are not in this subcomplex.
-        :type subcomplex: optional, default None
+        INPUT:
+
+        - ``subcomplex`` -- subcomplex (default: ``None``); a subcomplex of
+          this cell complex; return the cells which are not in this subcomplex
 
         This is not implemented in general; it should be implemented
         in any derived class.  When implementing, see the warning in
@@ -174,16 +175,16 @@ class GenericCellComplex(SageObject):
 
     def n_cells(self, n, subcomplex=None):
         """
-        List of cells of dimension ``n`` of this cell complex.
+        List of cells of dimension `n` of this cell complex.
         If the optional argument ``subcomplex`` is present, then
-        return the ``n``-dimensional cells which are *not* in the
+        return the `n`-dimensional cells which are *not* in the
         subcomplex.
 
-        :param n: the dimension
-        :type n: non-negative integer
-        :param subcomplex: a subcomplex of this cell complex. Return
-           the cells which are not in this subcomplex.
-        :type subcomplex: optional, default ``None``
+        INPUT:
+
+        - ``n`` -- nonnegative integer; the dimension
+        - ``subcomplex`` -- (optional) a subcomplex of this cell complex;
+          return the cells which are not in this subcomplex
 
         .. NOTE::
 
@@ -205,16 +206,16 @@ class GenericCellComplex(SageObject):
 
     def _n_cells_sorted(self, n, subcomplex=None):
         """
-        Sorted list of cells of dimension ``n`` of this cell complex.
+        Sorted list of cells of dimension `n` of this cell complex.
         If the optional argument ``subcomplex`` is present, then
-        return the ``n``-dimensional cells which are *not* in the
+        return the `n`-dimensional cells which are *not* in the
         subcomplex.
 
-        :param n: the dimension
-        :type n: non-negative integer
-        :param subcomplex: a subcomplex of this cell complex. Return
-           the cells which are not in this subcomplex.
-        :type subcomplex: optional, default ``None``
+        INPUT:
+
+        - ``n`` -- the dimension
+        - ``subcomplex`` -- (default: ``None``) a subcomplex of this cell
+          complex; return the cells which are not in this subcomplex
 
         EXAMPLES::
 
@@ -241,7 +242,7 @@ class GenericCellComplex(SageObject):
 
     def f_vector(self):
         """
-        The `f`-vector of this cell complex: a list whose `n^{th}`
+        The `f`-vector of this cell complex: a list whose `n`-th
         item is the number of `(n-1)`-cells.  Note that, like all
         lists in Sage, this is indexed starting at 0: the 0th element
         in this list is the number of `(-1)`-cells (which is 1: the
@@ -322,7 +323,9 @@ class GenericCellComplex(SageObject):
         """
         The disjoint union of this cell complex with another one.
 
-        :param right: the other cell complex (the right-hand factor)
+        INPUT:
+
+        - ``right`` -- the other cell complex (the right-hand factor)
 
         Disjoint unions are not implemented for general cell complexes.
 
@@ -342,7 +345,9 @@ class GenericCellComplex(SageObject):
         The wedge (one-point union) of this cell complex with
         another one.
 
-        :param right: the other cell complex (the right-hand factor)
+        INPUT:
+
+        - ``right`` -- the other cell complex (the right-hand factor)
 
         Wedges are not implemented for general cell complexes.
 
@@ -365,7 +370,9 @@ class GenericCellComplex(SageObject):
         """
         The join of this cell complex with another one.
 
-        :param right: the other cell complex (the right-hand factor)
+        INPUT:
+
+        - ``right`` -- the other cell complex (the right-hand factor)
 
         Joins are not implemented for general cell complexes.  They
         may be implemented in some derived classes (like simplicial
@@ -400,8 +407,7 @@ class GenericCellComplex(SageObject):
     #
     #     INPUT:
     #
-    #     -  ``n`` -- positive integer (default: 1): suspend this
-    #        many times.
+    #     - ``n`` -- positive integer (default: 1); suspend this many times.
     #     """
     #     raise NotImplementedError
 
@@ -429,14 +435,14 @@ class GenericCellComplex(SageObject):
         - ``check`` -- a bool: whether to check that the each
           composite of two consecutive differentials is zero
         - ``dimensions`` -- if ``None``, compute the chain complex in all
-           dimensions.  If a list or tuple of integers, compute the
-           chain complex in those dimensions, setting the chain groups
-           in all other dimensions to zero.
+          dimensions.  If a list or tuple of integers, compute the
+          chain complex in those dimensions, setting the chain groups
+          in all other dimensions to zero.
 
         Definitely implement the following:
 
-        -  ``base_ring`` -- commutative ring (default: ZZ)
-        -  ``cochain`` -- a bool: whether to return the cochain complex
+        - ``base_ring`` -- commutative ring (default: ZZ)
+        - ``cochain`` -- a bool: whether to return the cochain complex
 
         EXAMPLES::
 
@@ -454,31 +460,29 @@ class GenericCellComplex(SageObject):
         r"""
         The (reduced) homology of this cell complex.
 
-        :param dim: If None, then return the homology in every
-           dimension.  If ``dim`` is an integer or list, return the
-           homology in the given dimensions.  (Actually, if ``dim`` is
-           a list, return the homology in the range from ``min(dim)``
-           to ``max(dim)``.)
-        :type dim: integer or list of integers or None; optional,
-           default None
-        :param base_ring: commutative ring, must be ZZ or a field.
-        :type base_ring: optional, default ZZ
-        :param subcomplex: a subcomplex of this simplicial complex.
-           Compute homology relative to this subcomplex.
-        :type subcomplex: optional, default empty
-        :param generators: If ``True``, return generators for the homology
-           groups along with the groups.
-        :type generators: boolean; optional, default: ``False``
-        :param cohomology: If True, compute cohomology rather than homology.
-        :type cohomology: boolean; optional, default: ``False``
-        :param algorithm: The options are 'auto', 'dhsw', or 'pari'.
-           See below for a description of what they mean.
-        :type algorithm: string; optional, default 'pari'
-        :param verbose: If True, print some messages as the homology is
-           computed.
-        :type verbose: boolean; optional, default: ``False``
-        :param reduced: If ``True``, return the reduced homology.
-        :type reduced: boolean; optional, default ``True``
+        INPUT:
+
+        - ``dim`` -- integer or list of integers or ``None`` (default:
+          ``None``); if ``None``, then return the homology in every
+          dimension.  If ``dim`` is an integer or list, return the
+          homology in the given dimensions.  (Actually, if ``dim`` is
+          a list, return the homology in the range from ``min(dim)``
+          to ``max(dim)``.)
+        - ``base_ring`` -- commutative ring (default: ``ZZ``); must be `\ZZ` or
+          a field
+        - ``subcomplex`` -- (default: empty) a subcomplex of this simplicial
+          complex. Compute the homology relative to this subcomplex.
+        - ``generators`` -- boolean (default: ``False``); if ``True``, return
+          generators for the homology groups along with the groups.
+        - ``cohomology`` -- boolean (default: ``False``); if ``True``, compute
+          cohomology rather than homology
+        - ``algorithm`` -- string (default: ``'pari'``); the algorithm options
+          are 'auto', 'dhsw', or 'pari'. See below for a description of what
+          they mean.
+        - ``verbose`` -- boolean (default: ``False``); if True, print some
+          messages as the homology is computed
+        - ``reduced`` -- boolean (default: ``True``); if ``True``, return the
+          reduced homology
 
         ALGORITHM:
 
@@ -610,12 +614,14 @@ class GenericCellComplex(SageObject):
         automatically true here.  Indeed, this function just calls
         :meth:`homology` with ``cohomology`` set to ``True``.
 
-        :param dim:
-        :param base_ring:
-        :param subcomplex:
-        :param algorithm:
-        :param verbose:
-        :param reduced:
+        INPUT:
+
+        - ``dim``
+        - ``base_ring``
+        - ``subcomplex``
+        - ``algorithm``
+        - ``verbose``
+        - ``reduced``
 
         EXAMPLES::
 
@@ -662,20 +668,21 @@ class GenericCellComplex(SageObject):
         r"""
         The Betti numbers of this simplicial complex as a dictionary
         (or a single Betti number, if only one dimension is given):
-        the ith Betti number is the rank of the ith homology group.
+        the `i`-th Betti number is the rank of the `i`-th homology group.
 
-        :param dim: If ``None``, then return every Betti number, as
-           a dictionary with keys the non-negative integers.  If
-           ``dim`` is an integer or list, return the Betti number for
-           each given dimension.  (Actually, if ``dim`` is a list,
-           return the Betti numbers, as a dictionary, in the range
-           from ``min(dim)`` to ``max(dim)``.  If ``dim`` is a number,
-           return the Betti number in that dimension.)
-        :type dim: integer or list of integers or ``None``; optional,
-           default ``None``
-        :param subcomplex: a subcomplex of this cell complex.  Compute
-           the Betti numbers of the homology relative to this subcomplex.
-        :type subcomplex: optional, default ``None``
+        INPUT:
+
+        - ``dim`` -- integer or list of integers or ``None`` (default:
+          ``None``); if ``None``, then return every Betti number, as
+          a dictionary with keys the non-negative integers.  If
+          ``dim`` is an integer or list, return the Betti number for
+          each given dimension.  (Actually, if ``dim`` is a list,
+          return the Betti numbers, as a dictionary, in the range
+          from ``min(dim)`` to ``max(dim)``.  If ``dim`` is a number,
+          return the Betti number in that dimension.)
+        - ``subcomplex`` -- a subcomplex (default: ``None``) of this cell
+          complex;  compute the Betti numbers of the homology relative to this
+          subcomplex
 
         EXAMPLES:
 
@@ -715,13 +722,13 @@ class GenericCellComplex(SageObject):
 
     def is_acyclic(self, base_ring=ZZ):
         """
-        True if the reduced homology with coefficients in ``base_ring`` of
-        this cell complex is zero.
+        Return ``True`` if the reduced homology with coefficients in
+        ``base_ring`` of this cell complex is zero.
 
         INPUT:
 
-        - ``base_ring`` -- optional, default ``ZZ``. Compute homology
-          with coefficients in this ring.
+        - ``base_ring`` -- (default: ``ZZ``) compute homology
+          with coefficients in this ring
 
         EXAMPLES::
 
@@ -1005,7 +1012,7 @@ class GenericCellComplex(SageObject):
         - ``dim_left`` -- the dimension of the left-hand factors in
           the decomposition
 
-        OUTPUT: a list containing triples ``(c, left, right)``.
+        OUTPUT: list containing triples ``(c, left, right)``.
         ``left`` and ``right`` should be cells in this complex, and
         ``c`` an integer. In the cellular approximation of the
         diagonal map, the chain represented by ``cell`` should get
@@ -1098,7 +1105,7 @@ class GenericCellComplex(SageObject):
 
     def is_connected(self):
         """
-        True if this cell complex is connected.
+        Return ``True`` if this cell complex is connected.
 
         EXAMPLES::
 
@@ -1133,7 +1140,9 @@ class GenericCellComplex(SageObject):
         complex obtained by discarding all of the simplices in
         dimensions larger than `n`.
 
-        :param n: non-negative integer
+        INPUT:
+
+        - ``n`` -- nonnegative integer
 
         This is not implemented for general cell complexes.
 
@@ -1153,7 +1162,7 @@ class GenericCellComplex(SageObject):
         singular and plural of the name of the cells from which it is
         built.  This is used in constructing the string representation.
 
-        :return: tuple of strings
+        OUTPUT: tuple of strings
 
         This returns ``('Cell', 'cell', 'cells')``, as in "Cell
         complex", "1 cell", and "24 cells", but in other classes it
@@ -1178,7 +1187,7 @@ class GenericCellComplex(SageObject):
         """
         Print representation.
 
-        :return: string
+        OUTPUT: string
 
         EXAMPLES::
 

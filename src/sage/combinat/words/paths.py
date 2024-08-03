@@ -217,7 +217,7 @@ def WordPaths(alphabet, steps=None):
 
     - ``alphabet`` -- ordered alphabet
 
-    - ``steps`` -- (default is ``None``). It can be one of the following:
+    - ``steps`` -- (default: ``None``) it can be one of the following:
 
       - an iterable ordered container of as many vectors as there are
         letters in the alphabet. The vectors are associated to the letters
@@ -229,25 +229,23 @@ def WordPaths(alphabet, steps=None):
         to the letters according to their order in steps (given vectors
         first, opposite vectors after).
 
-      - ``None``: In this case, the type of steps are guessed from the
-        length of alphabet.
+      - ``None`` -- in this case, the type of steps are guessed from the
+        length of alphabet
 
-      - 'square_grid' or 'square': (default when size of alphabet is 4)
+      - ``'square_grid'`` or ``'square'`` -- (default when size of alphabet is 4)
         The order is : East, North, West, South.
 
-      - 'triangle_grid' or 'triangle':
+      - ``'triangle_grid'`` or ``'triangle'``
 
-      - 'hexagonal_grid' or 'hexagon': (default when size of alphabet is 6)
+      - ``'hexagonal_grid'`` or ``'hexagon'`` -- (default when size of alphabet is 6)
 
-      - 'cube_grid' or 'cube':
+      - ``'cube_grid'`` or ``'cube'``
 
-      - 'north_east', 'ne' or 'NE': (the default when size of alphabet is 2)
+      - ``'north_east'``, ``'ne'`` or ``'NE'`` -- (the default when size of alphabet is 2)
 
-      - 'dyck':
+      - ``'dyck'``
 
-    OUTPUT:
-
-    The combinatorial class of all paths of the given type.
+    OUTPUT: the combinatorial class of all paths of the given type
 
     EXAMPLES:
 
@@ -606,7 +604,6 @@ class WordPaths_all(FiniteWords):
             Ambient free module of rank 3 over the principal ideal domain Integer Ring
             sage: WordPaths('abcdef',steps='triangle_grid').vector_space()
             Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
-
         """
         return self._vector_space
 
@@ -621,8 +618,8 @@ class WordPaths_square_grid(WordPaths_all):
 
         INPUT:
 
-        - ``alphabet`` -- ordered alphabet of length 4. The order for the steps
-          is : East, North, West, South.
+        - ``alphabet`` -- ordered alphabet of length 4; the order for the steps
+          is : East, North, West, South
 
         EXAMPLES::
 
@@ -1060,7 +1057,7 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``include_last`` -- bool (default: ``True``) whether to include the
+        - ``include_last`` -- boolean (default: ``True``); whether to include the
           last point
 
         EXAMPLES:
@@ -1092,9 +1089,7 @@ class FiniteWordPath_all(SageObject):
         r"""
         Return the starting point of ``self``.
 
-        OUTPUT:
-
-        vector
+        OUTPUT: vector
 
         EXAMPLES::
 
@@ -1226,7 +1221,6 @@ class FiniteWordPath_all(SageObject):
             sage: p = P('abcde')
             sage: p.tikz_trajectory()
             '(0.000, 0.000) -- (1.00, 0.000) -- (1.50, 0.866) -- (1.00, 1.73) -- (0.000, 1.73) -- (-0.500, 0.866)'
-
         """
         from sage.misc.functional import N as n
         l = (str(tuple(n(x, digits=3) for x in pt)) for pt in self.points())
@@ -1239,16 +1233,14 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``v`` -- vector (default: None) If None, the directive
+        - ``v`` -- vector (default: ``None``); if ``None``, the directive
           vector (i.e. the end point minus starting point) of the path is
-          considered.
+          considered
 
-        - ``ring`` -- ring (default: None) where to do the
-          computations. If None, RealField(53) is used.
+        - ``ring`` -- ring (default: ``None``); where to do the
+          computations. If ``None``, RealField(53) is used.
 
-        OUTPUT:
-
-        iterator of points
+        OUTPUT: iterator of points
 
         EXAMPLES:
 
@@ -1301,28 +1293,26 @@ class FiniteWordPath_all(SageObject):
 
         - ``self`` -- a word path in a 3 or 4 dimension vector space
 
-        - ``v`` -- vector (default: None) If None, the directive
+        - ``v`` -- vector (default: ``None``); if ``None``, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``letters`` -- iterable (default: None) of the letters
-          to be projected. If None, then all the letters are considered.
+        - ``letters`` -- iterable (default: ``None``); of the letters
+          to be projected. If ``None``, then all the letters are considered.
 
-        - ``color`` -- dictionary (default: None) of the letters
-          mapped to colors. If None, automatic colors are chosen.
+        - ``color`` -- dictionary (default: ``None``); of the letters
+          mapped to colors. If ``None``, automatic colors are chosen.
 
-        - ``ring`` -- ring (default: None) where to do the
-          computations. If None, RealField(53) is used.
+        - ``ring`` -- ring (default: ``None``); where to do the
+          computations. If ``None``, RealField(53) is used.
 
-        - ``size`` -- number (default: ``12``) size of the points.
+        - ``size`` -- number (default: ``12``); size of the points
 
-        - ``kind`` -- string (default: ``'right'``) either
+        - ``kind`` -- string (default: ``'right'``); either
           ``'right'`` or ``'left'``. The color of a letter is given to the
           projected prefix to the right or the left of the letter.
 
-        OUTPUT:
-
-        2d or 3d Graphic object.
+        OUTPUT: 2d or 3d Graphic object
 
         EXAMPLES:
 
@@ -1422,16 +1412,14 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``v`` -- vector (default: None) If None, the directive
+        - ``v`` -- vector (default: ``None``); if ``None``, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``ring`` -- ring (default: None) where to do the
-          computations. If None, RealField(53) is used.
+        - ``ring`` -- ring (default: ``None``); where to do the
+          computations. If ``None``, RealField(53) is used.
 
-        OUTPUT:
-
-            word path
+        OUTPUT: word path
 
         EXAMPLES:
 
@@ -1502,29 +1490,28 @@ class FiniteWordPath_2d(FiniteWordPath_all):
           default:dict(rgbcolor='red',thickness=3)), options for the
           path drawing
 
-        - ``fill`` -- (boolean, default: ``True``), if fill is True and if
+        - ``fill`` -- boolean (default: ``True``); if fill is ``True`` and if
           the path is closed, the inside is colored
 
         - ``filloptions`` -- (dict,
           default:dict(rgbcolor='red',alpha=0.2)), options for the
           inside filling
 
-        - ``startpoint`` -- (boolean, default: ``True``), draw the start point?
+        - ``startpoint`` -- boolean (default: ``True``); draw the start point?
 
         - ``startoptions`` -- (dict,
           default:dict(rgbcolor='red',pointsize=100)) options for the
           start point drawing
 
-        - ``endarrow`` -- (boolean, default: ``True``), draw an arrow end at the end?
+        - ``endarrow`` -- boolean (default: ``True``); draw an arrow end at the end?
 
         - ``arrowoptions`` -- (dict,
           default:dict(rgbcolor='red',arrowsize=20, width=3)) options
           for the end point arrow
 
-        - ``gridlines`` -- (boolean, default: ``False``), show gridlines?
+        - ``gridlines`` -- boolean (default: ``False``); show gridlines?
 
         - ``gridoptions`` -- (dict, default: {}), options for the gridlines
-
 
         EXAMPLES:
 
@@ -1655,7 +1642,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             Animation with 296 frames
             sage: show(a*b*c*d)                 # long time, optional - imagemagick
 
-        .. note::
+        .. NOTE::
 
             If ImageMagick is not installed, you will get an error
             message like this::
@@ -1667,7 +1654,6 @@ class FiniteWordPath_2d(FiniteWordPath_all):
                ImageMagick, so please install it and try again.
 
             See www.imagemagick.org, for example.
-
         """
         from sage.plot.all import line, polygon, animate
 
@@ -1752,7 +1738,6 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             sage: p = P('abcd')
             sage: p.area()          #todo: not implemented
             2
-
         """
         if not self.is_closed():
             raise TypeError("the path must be closed to compute its area")
@@ -1766,9 +1751,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         between the highest and the lowest `y`-coordinate of each
         points traced by it.
 
-        OUTPUT:
-
-            non negative real number
+        OUTPUT: nonnegative real number
 
         EXAMPLES::
 
@@ -1776,7 +1759,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             sage: Freeman('aababaabbbAA').height()
             5
 
-        The function is well-defined if self is not simple or close::
+        The function is well-defined if ``self`` is not simple or close::
 
             sage: Freeman('aabAAB').height()
             1
@@ -1833,9 +1816,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         between the rightmost and the leftmost `x`-coordinate of each
         points traced by it.
 
-        OUTPUT:
-
-        non negative real number
+        OUTPUT: nonnegative real number
 
         EXAMPLES::
 
@@ -1843,7 +1824,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             sage: Freeman('aababaabbbAA').width()
             5
 
-        The function is well-defined if self is not simple or close::
+        The function is well-defined if ``self`` is not simple or close::
 
             sage: Freeman('aabAAB').width()
             2
@@ -2010,10 +1991,10 @@ class FiniteWordPath_3d(FiniteWordPath_all):
         - ``pathoptions`` -- (dict, default:dict(rgbcolor='red',arrow_head=True,
           thickness=3)), options for the path drawing
 
-        - ``startpoint`` -- (boolean, default: ``True``), draw the start point?
+        - ``startpoint`` -- boolean (default: ``True``); draw the start point?
 
         - ``startoptions`` -- (dict, default:dict(rgbcolor='red',size=10))
-           options for the start point drawing
+          options for the start point drawing
 
         EXAMPLES::
 
@@ -2029,7 +2010,6 @@ class FiniteWordPath_3d(FiniteWordPath_all):
             sage: p = P('abcabcAABBC')
             sage: p.plot()                                                              # needs sage.plot
             Graphics3d Object
-
         """
         # The following line seems not to work for 3d
         # G = Graphics()
@@ -2129,7 +2109,6 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
             Traceback (most recent call last):
             ...
             TypeError: the path must be closed to compute its area
-
         """
         if not self.is_closed():
             raise TypeError("the path must be closed to compute its area")
@@ -2186,7 +2165,7 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
 
         If the path is closed, the last point is not considered.
 
-        .. note::
+        .. NOTE::
 
             The linear algorithm described in the thesis of Xavier Provençal
             should be implemented here.
