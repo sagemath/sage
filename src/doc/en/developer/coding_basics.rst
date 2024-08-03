@@ -83,6 +83,18 @@ In particular,
        def SomeIdentityValue(x):
            return SomeValue(1)
 
+.. _section-python-version:
+
+Python Version
+=================
+
+In order to reduce the technical debt of maintaining the project, Sage follows
+Numpy's time window-based support policy
+`NEP 29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_ for Python versions. 
+Accordingly, minor versions of Python that are older than 42 months 
+at the next planned release date are no longer supported.
+Support for Python 3.9 (initially released in October 2020) is dropped in April 2024 and
+support for Python 3.10 (initially released in October 2021) is dropped in April 2025.
 
 .. _chapter-directory-structure:
 
