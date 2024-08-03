@@ -193,8 +193,8 @@ included in one of the following places:
   This practice is deprecated, see :issue:`33037`.
 
 In all cases, the files must be listed (explicitly or via wildcards) in
-the section ``options.package_data`` of the file
-:sage_root:`pkgs/sagemath-standard/setup.cfg.m4` (or the corresponding
+the section ``[tool.setuptools.package-data]`` of the file
+:sage_root:`SAGE_ROOT/pkgs/sagemath-standard/pyproject.toml` (or the corresponding
 file of another distribution).
 
 Large data files should not be added to the Sage source tree. Instead, it
