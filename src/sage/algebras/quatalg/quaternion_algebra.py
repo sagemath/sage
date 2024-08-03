@@ -45,7 +45,6 @@ from sage.arith.misc import (hilbert_conductor_inverse,
                              kronecker as kronecker_symbol,
                              prime_divisors,
                              valuation)
-from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -63,7 +62,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import diagonal_matrix, matrix
 from sage.structure.sequence import Sequence
 from sage.structure.element import RingElement
-from sage.structure.factory import UniqueFactory
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form import QuadraticForm
@@ -85,14 +84,30 @@ from sage.categories.number_fields import NumberFields
 
 from sage.structure.richcmp import richcmp_method
 
-########################################################
-# Constructor
-########################################################
+
+def is_QuaternionAlgebra(A):
+    """
+    Return ``True`` if ``A`` is of the QuaternionAlgebra data type.
+
+    EXAMPLES::
+
+        sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(QuaternionAlgebra(QQ,-1,-1))
+        doctest:warning...
+        DeprecationWarning: the function is_QuaternionAlgebra is deprecated;
+        use 'isinstance(..., QuaternionAlgebra)' instead
+        See https://github.com/sagemath/sage/issues/37896 for details.
+        True
+        sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(ZZ)
+        False
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(37896, "the function is_QuaternionAlgebra is deprecated; use 'isinstance(..., QuaternionAlgebra)' instead")
+    return isinstance(A, QuaternionAlgebra)
 
 
-class QuaternionAlgebraFactory(UniqueFactory):
+class QuaternionAlgebra(UniqueRepresentation, Parent):
     r"""
-    Construct a quaternion algebra.
+    A quaternion algebra.
 
     INPUT:
 
@@ -189,53 +204,51 @@ class QuaternionAlgebraFactory(UniqueFactory):
     algebra are not integral, then a slower generic type is used for
     arithmetic::
 
-        sage: type(QuaternionAlgebra(-1,-3).0)
+        sage: type(QuaternionAlgebra(-1, -3).0)
         <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
-        sage: type(QuaternionAlgebra(-1,-3/2).0)
+        sage: type(QuaternionAlgebra(-1, -3/2).0)
         <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
-
-    Make sure caching is sane::
-
-        sage: A = QuaternionAlgebra(2,3); A
-        Quaternion Algebra (2, 3) with base ring Rational Field
-        sage: B = QuaternionAlgebra(GF(5)(2),GF(5)(3)); B
-        Quaternion Algebra (2, 3) with base ring Finite Field of size 5
-        sage: A is QuaternionAlgebra(2,3)
-        True
-        sage: B is QuaternionAlgebra(GF(5)(2),GF(5)(3))
-        True
-        sage: Q = QuaternionAlgebra(2); Q
-        Quaternion Algebra (-1, -1) with base ring Rational Field
-        sage: Q is QuaternionAlgebra(QQ,-1,-1)
-        True
-        sage: Q is QuaternionAlgebra(-1,-1)
-        True
-        sage: Q.<ii,jj,kk> = QuaternionAlgebra(15); Q.variable_names()
-        ('ii', 'jj', 'kk')
-        sage: QuaternionAlgebra(15).variable_names()
-        ('i', 'j', 'k')
 
     TESTS:
 
     Verify that bug found when working on :issue:`12006` involving coercing
     invariants into the base field is fixed::
 
-        sage: Q = QuaternionAlgebra(-1,-1); Q
+        sage: Q = QuaternionAlgebra(-1, -1); Q
         Quaternion Algebra (-1, -1) with base ring Rational Field
         sage: parent(Q._a)
         Rational Field
         sage: parent(Q._b)
         Rational Field
     """
-    def create_key(self, arg0, arg1=None, arg2=None, names='i,j,k'):
-        """
-        Create a key that uniquely determines a quaternion algebra.
 
-        TESTS::
+    @staticmethod
+    def __classcall_private__(cls, arg0, arg1=None, arg2=None, names='i,j,k'):
+        r"""
+        Normalize inputs for unique representation.
 
-            sage: from sage.algebras.quatalg.quaternion_algebra import _QuaternionAlgebra
-            sage: _QuaternionAlgebra.create_key(-1,-1)
-            (Rational Field, -1, -1, ('i', 'j', 'k'))
+        TESTS:
+
+        Make sure caching is sane::
+
+            sage: A = QuaternionAlgebra(2,3); A
+            Quaternion Algebra (2, 3) with base ring Rational Field
+            sage: B = QuaternionAlgebra(GF(5)(2), GF(5)(3)); B
+            Quaternion Algebra (2, 3) with base ring Finite Field of size 5
+            sage: A is QuaternionAlgebra(2, 3)
+            True
+            sage: B is QuaternionAlgebra(GF(5)(2), GF(5)(3))
+            True
+            sage: Q = QuaternionAlgebra(2); Q
+            Quaternion Algebra (-1, -1) with base ring Rational Field
+            sage: Q is QuaternionAlgebra(QQ, -1, -1)
+            True
+            sage: Q is QuaternionAlgebra(-1, -1)
+            True
+            sage: Q.<ii,jj,kk> = QuaternionAlgebra(15); Q.variable_names()
+            ('ii', 'jj', 'kk')
+            sage: QuaternionAlgebra(15).variable_names()
+            ('i', 'j', 'k')
         """
         # QuaternionAlgebra(D)
         if arg1 is None and arg2 is None:
@@ -278,55 +291,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
                              % (a, b, K))
 
         names = normalize_names(3, names)
-        return (K, a, b, names)
-
-    def create_object(self, version, key, **extra_args):
-        """
-        Create the object from the key (extra arguments are ignored). This is
-        only called if the object was not found in the cache.
-
-        TESTS::
-
-            sage: from sage.algebras.quatalg.quaternion_algebra import _QuaternionAlgebra
-            sage: _QuaternionAlgebra.create_object("6.0", (QQ, -1, -1, ('i', 'j', 'k')))
-            Quaternion Algebra (-1, -1) with base ring Rational Field
-        """
-        K, a, b, names = key
         return QuaternionAlgebra_ab(K, a, b, names=names)
-
-
-_QuaternionAlgebra = QuaternionAlgebraFactory("QuaternionAlgebra")
-
-########################################################
-# Classes
-########################################################
-
-
-def is_QuaternionAlgebra(A):
-    """
-    Return ``True`` if ``A`` is of the QuaternionAlgebra data type.
-
-    EXAMPLES::
-
-        sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(QuaternionAlgebra(QQ,-1,-1))
-        doctest:warning...
-        DeprecationWarning: the function is_QuaternionAlgebra is deprecated;
-        use 'isinstance(..., QuaternionAlgebra)' instead
-        See https://github.com/sagemath/sage/issues/37896 for details.
-        True
-        sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37896, "the function is_QuaternionAlgebra is deprecated; use 'isinstance(..., QuaternionAlgebra)' instead")
-    return isinstance(A, QuaternionAlgebra)
-
-
-class QuaternionAlgebra(Parent, metaclass=ClasscallMetaclass):
-
-    @staticmethod
-    def __classcall_private__(cls, *args, **kwds):
-        return _QuaternionAlgebra(*args, **kwds)
 
     def ngens(self):
         """
@@ -617,7 +582,7 @@ class QuaternionAlgebra(Parent, metaclass=ClasscallMetaclass):
         return self.free_module()
 
 
-QuaternionAlgebra_abstract = QuaternionAlgebra  # deprecated alias
+QuaternionAlgebra_abstract = QuaternionAlgebra  # alias, deprecated in #38228
 
 
 class QuaternionAlgebra_ab(QuaternionAlgebra):
