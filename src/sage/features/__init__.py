@@ -299,7 +299,7 @@ class Feature(TrivialUniqueRepresentation):
                 lines.append(ps.spkg_installation_hint(self.spkg, feature=self.name))
         if self.url:
             lines.append("Further installation instructions might be available at {url}.".format(url=self.url))
-        self._cache_resolution = "\n".join(lines)
+        self._cache_resolution = "\n\n".join(lines)
         return self._cache_resolution
 
     def joined_features(self):
@@ -463,6 +463,7 @@ class FeatureNotPresentError(RuntimeError):
             lines.append(self.reason)
         resolution = self.resolution
         if resolution:
+            lines.append('')
             lines.append(str(resolution))
         return "\n".join(lines)
 
