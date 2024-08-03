@@ -29,10 +29,10 @@ dependencies:
   - cddlib=1!0.94m=h9202a9a_0
   - chardet=5.2.0=py311h38be061_1
   - cliquer=1.22=hd590300_1
-  - cmake=3.30.1=hf8c4bd3_0
+  - cmake=3.30.2=hf8c4bd3_0
   - colorama=0.4.6=pyhd8ed1ab_0
   - compilers=1.7.0=ha770c72_1
-  - curl=8.9.0=h18eb788_0
+  - curl=8.9.1=h18eb788_0
   - cxx-compiler=1.7.0=h00ab1b0_1
   - distlib=0.3.8=pyhd8ed1ab_0
   - ecl=23.9.9=hed6455c_0
@@ -88,7 +88,7 @@ dependencies:
   - libbraiding=1.2=hcb278e6_0
   - libbrial=1.2.12=h76af697_3
   - libcblas=3.9.0=23_linux64_openblas
-  - libcurl=8.9.0=hdb1bdb2_0
+  - libcurl=8.9.1=hdb1bdb2_0
   - libdeflate=1.20=hd590300_0
   - libedit=3.1.20191231=he28a2e2_2
   - libev=4.33=hd590300_2

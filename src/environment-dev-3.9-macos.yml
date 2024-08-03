@@ -21,7 +21,7 @@ dependencies:
   - autoconf=2.71=pl5321hcd07c0c_1
   - automake=1.16.5=pl5321hce30654_0
   - babel=2.14.0=pyhd8ed1ab_0
-  - backports=1.0=pyhd8ed1ab_3
+  - backports=1.0=pyhd8ed1ab_4
   - backports.tarfile=1.0.0=pyhd8ed1ab_1
   - bc=1.07.1=h3422bc3_0
   - bdw-gc=8.0.6=hc021e02_0
@@ -49,8 +49,8 @@ dependencies:
   - cachy=0.3.0=pyhd8ed1ab_1
   - cairo=1.18.0=hc6c324b_2
   - cattrs=23.2.3=pyhd8ed1ab_0
-  - cctools=986=h4faf515_0
-  - cctools_osx-arm64=986=h62378fb_0
+  - cctools=986=h4faf515_3
+  - cctools_osx-arm64=986=h670d6a2_3
   - cddlib=1!0.94m=h6d7a090_0
   - certifi=2024.7.4=pyhd8ed1ab_0
   - cffi=1.16.0=py39he153c15_0
@@ -67,7 +67,7 @@ dependencies:
   - click-default-group=1.2.4=pyhd8ed1ab_0
   - clikit=0.6.2=pyhd8ed1ab_2
   - cliquer=1.22=h93a5062_1
-  - cmake=3.30.1=had79d8f_0
+  - cmake=3.30.2=had79d8f_0
   - colorama=0.4.6=pyhd8ed1ab_0
   - colorlog=6.8.2=py39h2804cbe_0
   - comm=0.2.2=pyhd8ed1ab_0
@@ -79,14 +79,14 @@ dependencies:
   - conway-polynomials=0.9=pyhd8ed1ab_0
   - cppy=1.2.1=pyhd8ed1ab_0
   - crashtest=0.4.1=pyhd8ed1ab_0
-  - curl=8.9.0=hbf5303f_0
+  - curl=8.9.1=hbf5303f_0
   - cvxopt=1.3.2=py39hf9e8641_2
   - cxx-compiler=1.7.0=h2ffa867_1
   - cycler=0.12.1=pyhd8ed1ab_0
   - cypari2=2.1.5=py39h070b2a8_0
   - cysignals=1.11.2=py39h65fc70a_3
   - cython=3.0.10=py39hf3050f2_0
-  - debugpy=1.8.2=py39hbf7db11_0
+  - debugpy=1.8.3=py39hbf7db11_0
   - decorator=5.1.1=pyhd8ed1ab_0
   - defusedxml=0.7.1=pyhd8ed1ab_0
   - distlib=0.3.8=pyhd8ed1ab_0
@@ -133,10 +133,10 @@ dependencies:
   - gfortran=12.3.0=h1ca8e4b_1
   - gfortran_impl_osx-arm64=12.3.0=h53ed385_3
   - gfortran_osx-arm64=12.3.0=h57527a5_1
-  - gh=2.53.0=h163aea0_0
+  - gh=2.54.0=h163aea0_0
   - giac=1.9.0.21=h1c96721_1
   - giflib=5.2.2=h93a5062_0
-  - git=2.45.2=pl5321h41514c7_1
+  - git=2.46.0=pl5321h41514c7_0
   - gitdb=4.0.11=pyhd8ed1ab_0
   - gitpython=3.1.43=pyhd8ed1ab_0
   - givaro=4.2.0=h018886a_0
@@ -200,8 +200,8 @@ dependencies:
   - krb5=1.21.3=h237132a_0
   - lcalc=2.0.5=h4a402bc_2
   - lcms2=2.16=ha0e7c42_0
-  - ld64=711=h634c8be_0
-  - ld64_osx-arm64=711=ha4bd21c_0
+  - ld64=711=h634c8be_3
+  - ld64_osx-arm64=711=h4c89ff5_3
   - lerc=4.0.0=h9a09cb3_0
   - libasprintf=0.22.5=h8fbad5d_2
   - libasprintf-devel=0.22.5=h8fbad5d_2
@@ -218,8 +218,8 @@ dependencies:
   - libcblas=3.9.0=20_osxarm64_openblas
   - libcbor=0.10.2=hb7217d7_0
   - libclang-cpp16=16.0.6=default_h5c12605_11
-  - libcurl=8.9.0=hfd8ffcc_0
-  - libcxx=18.1.8=h167917d_1
+  - libcurl=8.9.1=hfd8ffcc_0
+  - libcxx=18.1.8=h167917d_2
   - libdeflate=1.20=h93a5062_0
   - libedit=3.1.20191231=hc8eb9b7_2
   - libev=4.33=h93a5062_2
@@ -268,8 +268,8 @@ dependencies:
   - make=4.3=he57ea6c_1
   - markupsafe=2.1.5=py39h17cfd9d_0
   - mathjax=3.2.2=hce30654_0
-  - matplotlib=3.9.1=py39hdf13c20_0
-  - matplotlib-base=3.9.1=py39h1398496_0
+  - matplotlib=3.9.1=py39hdf13c20_1
+  - matplotlib-base=3.9.1=py39h1398496_1
   - matplotlib-inline=0.1.7=pyhd8ed1ab_0
   - maxima=5.47.0=h2bbcd85_2
   - memory-allocator=0.1.3=py39h0f82c59_0
@@ -304,7 +304,7 @@ dependencies:
   - overrides=7.7.0=pyhd8ed1ab_0
   - packaging=24.1=pyhd8ed1ab_0
   - palp=2.20=h27ca646_0
-  - pandoc=3.2.1=hce30654_0
+  - pandoc=3.3=hce30654_0
   - pandocfilters=1.5.0=pyhd8ed1ab_0
   - pango=1.54.0=h9ee27a3_1
   - pari=2.15.5=h4f2304c_2_pthread
@@ -323,7 +323,7 @@ dependencies:
   - pexpect=4.9.0=pyhd8ed1ab_0
   - pickleshare=0.7.5=py_1003
   - pillow=10.4.0=py39h3baf582_0
-  - pip=24.0=pyhd8ed1ab_0
+  - pip=24.2=pyhd8ed1ab_0
   - pixman=0.43.4=hebf3989_0
   - pkg-config=0.29.2=hde07d2e_1009
   - pkgconfig=1.5.5=pyhd8ed1ab_4
@@ -398,7 +398,7 @@ dependencies:
   - sagetex=3.6.1=pyhd8ed1ab_0
   - scipy=1.11.4=py39h36c428d_0
   - send2trash=1.8.3=pyh31c8845_0
-  - setuptools=71.0.4=pyhd8ed1ab_0
+  - setuptools=72.1.0=pyhd8ed1ab_0
   - setuptools-scm=8.1.0=pyhd8ed1ab_0
   - setuptools_scm=8.1.0=hd8ed1ab_0
   - sigtool=0.1.3=h44b9a77_0
@@ -412,11 +412,11 @@ dependencies:
   - sphinx=7.4.7=pyhd8ed1ab_0
   - sphinx-basic-ng=1.0.0b2=pyhd8ed1ab_1
   - sphinx-copybutton=0.5.2=pyhd8ed1ab_0
-  - sphinxcontrib-applehelp=1.0.8=pyhd8ed1ab_0
-  - sphinxcontrib-devhelp=1.0.6=pyhd8ed1ab_0
-  - sphinxcontrib-htmlhelp=2.0.6=pyhd8ed1ab_0
+  - sphinxcontrib-applehelp=2.0.0=pyhd8ed1ab_0
+  - sphinxcontrib-devhelp=2.0.0=pyhd8ed1ab_0
+  - sphinxcontrib-htmlhelp=2.1.0=pyhd8ed1ab_0
   - sphinxcontrib-jsmath=1.0.1=pyhd8ed1ab_0
-  - sphinxcontrib-qthelp=1.0.8=pyhd8ed1ab_0
+  - sphinxcontrib-qthelp=2.0.0=pyhd8ed1ab_0
   - sphinxcontrib-serializinghtml=1.1.10=pyhd8ed1ab_0
   - sphinxcontrib-websupport=1.2.7=pyhd8ed1ab_0
   - sqlite=3.46.0=h5838104_0

@@ -20,8 +20,8 @@ dependencies:
   - c-compiler=1.7.0=h282daa2_1
   - ca-certificates=2024.7.4=h8857fd0_0
   - cachetools=5.4.0=pyhd8ed1ab_0
-  - cctools=986=h40f6528_0
-  - cctools_osx-64=986=ha1c5b94_0
+  - cctools=986=h40f6528_3
+  - cctools_osx-64=986=h303a5ab_3
   - cddlib=1!0.94m=h0f52abe_0
   - chardet=5.2.0=py39h6e9494a_1
   - clang=16.0.6=default_h179603d_11
@@ -32,12 +32,12 @@ dependencies:
   - clangxx_impl_osx-64=16.0.6=h6d92fbe_18
   - clangxx_osx-64=16.0.6=hb91bd55_18
   - cliquer=1.22=h10d778d_1
-  - cmake=3.30.1=h749d262_0
+  - cmake=3.30.2=h749d262_0
   - colorama=0.4.6=pyhd8ed1ab_0
   - compiler-rt=16.0.6=ha38d28d_2
   - compiler-rt_osx-64=16.0.6=ha38d28d_2
   - compilers=1.7.0=h694c41f_1
-  - curl=8.9.0=hcd6fca1_0
+  - curl=8.9.1=hcd6fca1_0
   - cxx-compiler=1.7.0=h7728843_1
   - distlib=0.3.8=pyhd8ed1ab_0
   - ecl=23.9.9=h2b27fa8_0
@@ -78,8 +78,8 @@ dependencies:
   - isl=0.26=imath32_h2e86a7b_101
   - krb5=1.21.3=h37d8d59_0
   - lcalc=2.0.5=h547a6ed_2
-  - ld64=711=ha02d983_0
-  - ld64_osx-64=711=ha20a434_0
+  - ld64=711=ha02d983_3
+  - ld64_osx-64=711=h04ffbf3_3
   - lerc=4.0.0=hb486fe8_0
   - libasprintf=0.22.5=h5ff76d1_2
   - libasprintf-devel=0.22.5=h5ff76d1_2
@@ -92,8 +92,8 @@ dependencies:
   - libbrial=1.2.12=h81e9653_3
   - libcblas=3.9.0=22_osx64_openblas
   - libclang-cpp16=16.0.6=default_h0c94c6a_11
-  - libcurl=8.9.0=hfcf2730_0
-  - libcxx=18.1.8=hef8daea_1
+  - libcurl=8.9.1=hfcf2730_0
+  - libcxx=18.1.8=hef8daea_2
   - libdeflate=1.20=h49d49c5_0
   - libedit=3.1.20191231=h0678c8f_2
   - libev=4.33=h10d778d_2

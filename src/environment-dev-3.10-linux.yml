@@ -26,7 +26,7 @@ dependencies:
   - autoconf=2.71=pl5321h2b4cb7a_1
   - automake=1.16.5=pl5321ha770c72_0
   - babel=2.14.0=pyhd8ed1ab_0
-  - backports=1.0=pyhd8ed1ab_3
+  - backports=1.0=pyhd8ed1ab_4
   - backports.tarfile=1.0.0=pyhd8ed1ab_1
   - bc=1.07.1=h7f98852_0
   - bdw-gc=8.0.6=h4bd325d_0
@@ -66,7 +66,7 @@ dependencies:
   - click-default-group=1.2.4=pyhd8ed1ab_0
   - clikit=0.6.2=pyhd8ed1ab_2
   - cliquer=1.22=hd590300_1
-  - cmake=3.30.1=hf8c4bd3_0
+  - cmake=3.30.2=hf8c4bd3_0
   - colorama=0.4.6=pyhd8ed1ab_0
   - colorlog=6.8.2=py310hff52083_0
   - comm=0.2.2=pyhd8ed1ab_0
@@ -77,7 +77,7 @@ dependencies:
   - cppy=1.2.1=pyhd8ed1ab_0
   - crashtest=0.4.1=pyhd8ed1ab_0
   - cryptography=43.0.0=py310h4909e49_0
-  - curl=8.9.0=h18eb788_0
+  - curl=8.9.1=h18eb788_0
   - cvxopt=1.3.2=py310h7b0674a_2
   - cxx-compiler=1.7.0=h00ab1b0_1
   - cycler=0.12.1=pyhd8ed1ab_0
@@ -85,7 +85,7 @@ dependencies:
   - cysignals=1.11.2=py310h945e7c7_3
   - cython=3.0.10=py310hc6cd4ac_0
   - dbus=1.13.6=h5008d03_3
-  - debugpy=1.8.2=py310h76e45a6_0
+  - debugpy=1.8.3=py310hea249c9_0
   - decorator=5.1.1=pyhd8ed1ab_0
   - defusedxml=0.7.1=pyhd8ed1ab_0
   - distlib=0.3.8=pyhd8ed1ab_0
@@ -135,10 +135,10 @@ dependencies:
   - gfortran=12.4.0=h236703b_0
   - gfortran_impl_linux-64=12.4.0=hc568b83_0
   - gfortran_linux-64=12.4.0=hd748a6a_0
-  - gh=2.53.0=h76a2195_0
+  - gh=2.54.0=h76a2195_0
   - giac=1.9.0.21=h673759e_1
   - giflib=5.2.2=hd590300_0
-  - git=2.45.2=pl5321ha099dd3_1
+  - git=2.46.0=pl5321hb5640b7_0
   - gitdb=4.0.11=pyhd8ed1ab_0
   - gitpython=3.1.43=pyhd8ed1ab_0
   - givaro=4.2.0=hb789bce_0
@@ -149,8 +149,8 @@ dependencies:
   - gmpy2=2.1.5=py310hc7909c9_1
   - graphite2=1.3.13=h59595ed_1003
   - gsl=2.7=he838d99_0
-  - gst-plugins-base=1.24.5=hbaaba92_0
-  - gstreamer=1.24.5=haf2f30d_0
+  - gst-plugins-base=1.24.6=hbaaba92_0
+  - gstreamer=1.24.6=haf2f30d_0
   - gxx=12.4.0=h236703b_0
   - gxx_impl_linux-64=12.4.0=h557a472_0
   - gxx_linux-64=12.4.0=h8489865_0
@@ -232,7 +232,7 @@ dependencies:
   - libclang-cpp15=15.0.7=default_h127d8a8_5
   - libclang13=18.1.8=default_h9def88c_1
   - libcups=2.3.3=h4637d8d_4
-  - libcurl=8.9.0=hdb1bdb2_0
+  - libcurl=8.9.1=hdb1bdb2_0
   - libdeflate=1.20=hd590300_0
   - libedit=3.1.20191231=he28a2e2_2
   - libev=4.33=hd590300_2
@@ -300,8 +300,8 @@ dependencies:
   - make=4.3=hd18ef5c_1
   - markupsafe=2.1.5=py310h2372a71_0
   - mathjax=3.2.2=ha770c72_0
-  - matplotlib=3.9.1=py310hff52083_0
-  - matplotlib-base=3.9.1=py310h0b1de36_0
+  - matplotlib=3.9.1=py310hff52083_1
+  - matplotlib-base=3.9.1=py310hf02ac8c_1
   - matplotlib-inline=0.1.7=pyhd8ed1ab_0
   - maxima=5.47.0=hed6455c_2
   - memory-allocator=0.1.3=py310h2372a71_0
@@ -330,7 +330,7 @@ dependencies:
   - notebook=7.2.1=pyhd8ed1ab_0
   - notebook-shim=0.2.4=pyhd8ed1ab_0
   - nspr=4.35=h27087fc_0
-  - nss=3.102=h593d115_0
+  - nss=3.103=h593d115_0
   - ntl=11.4.3=hef3c4d3_1
   - numpy=1.26.4=py310hb13e2d6_0
   - openblas=0.3.25=pthreads_h7a3da1a_0
@@ -341,7 +341,7 @@ dependencies:
   - overrides=7.7.0=pyhd8ed1ab_0
   - packaging=24.1=pyhd8ed1ab_0
   - palp=2.20=h36c2ea0_0
-  - pandoc=3.2.1=ha770c72_0
+  - pandoc=3.3=ha770c72_0
   - pandocfilters=1.5.0=pyhd8ed1ab_0
   - pango=1.54.0=h4c5309f_1
   - pari=2.15.5=h4d4ae9b_2_pthread
@@ -360,7 +360,7 @@ dependencies:
   - pexpect=4.9.0=pyhd8ed1ab_0
   - pickleshare=0.7.5=py_1003
   - pillow=10.4.0=py310hebfe307_0
-  - pip=24.0=pyhd8ed1ab_0
+  - pip=24.2=pyhd8ed1ab_0
   - pixman=0.43.2=h59595ed_0
   - pkg-config=0.29.2=h4bc722e_1009
   - pkgconfig=1.5.5=pyhd8ed1ab_4
@@ -439,7 +439,7 @@ dependencies:
   - secretstorage=3.3.3=py310hff52083_2
   - sed=4.8=he412f7d_0
   - send2trash=1.8.3=pyh0d859eb_0
-  - setuptools=71.0.4=pyhd8ed1ab_0
+  - setuptools=72.1.0=pyhd8ed1ab_0
   - setuptools-scm=8.1.0=pyhd8ed1ab_0
   - setuptools_scm=8.1.0=hd8ed1ab_0
   - simplegeneric=0.8.1=py_1
@@ -453,11 +453,11 @@ dependencies:
   - sphinx=7.4.7=pyhd8ed1ab_0
   - sphinx-basic-ng=1.0.0b2=pyhd8ed1ab_1
   - sphinx-copybutton=0.5.2=pyhd8ed1ab_0
-  - sphinxcontrib-applehelp=1.0.8=pyhd8ed1ab_0
-  - sphinxcontrib-devhelp=1.0.6=pyhd8ed1ab_0
-  - sphinxcontrib-htmlhelp=2.0.6=pyhd8ed1ab_0
+  - sphinxcontrib-applehelp=2.0.0=pyhd8ed1ab_0
+  - sphinxcontrib-devhelp=2.0.0=pyhd8ed1ab_0
+  - sphinxcontrib-htmlhelp=2.1.0=pyhd8ed1ab_0
   - sphinxcontrib-jsmath=1.0.1=pyhd8ed1ab_0
-  - sphinxcontrib-qthelp=1.0.8=pyhd8ed1ab_0
+  - sphinxcontrib-qthelp=2.0.0=pyhd8ed1ab_0
   - sphinxcontrib-serializinghtml=1.1.10=pyhd8ed1ab_0
   - sphinxcontrib-websupport=1.2.7=pyhd8ed1ab_0
   - sqlite=3.46.0=h6d4b2fc_0
@@ -520,7 +520,8 @@ dependencies:
   - xorg-libxi=1.7.10=h4bc722e_1
   - xorg-libxrender=0.9.11=hd590300_0
   - xorg-libxt=1.3.0=hd590300_1
-  - xorg-libxtst=1.2.4=h4bc722e_0
+  - xorg-libxtst=1.2.5=h4bc722e_0
+  - xorg-libxxf86vm=1.1.5=h4bc722e_1
   - xorg-recordproto=1.14.2=h7f98852_1002
   - xorg-renderproto=0.11.1=h7f98852_1002
   - xorg-xextproto=7.3.0=h0b41bf4_1003
