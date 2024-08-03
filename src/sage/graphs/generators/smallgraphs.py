@@ -4394,8 +4394,97 @@ def TietzeGraph():
 def TricornGraph():
     r"""
     Return the Tricorn graph.
+
+    The Tricorn graph is obtained by splicing a complete graph `K_4` with the
+    the triangular circular ladder graph `\overline{C_6}`. (Note that this
+    generates a unqiue graph as both of the graphs `K_4` and `\overline{C_6}`
+    are vertex-transitive). It is a nonsolid brick. This matching covered graph
+    is one of the ten extremal cubic bricks. (A matching covered graph `G` is
+    *extremal* if `\Phi(G) = dim(\mathcal{Lin}(G))`, where `\Phi(G)` denotes
+    the number of perfect matchings of `G`, and `dim(\mathcal{Lin}(G))` stands
+    for the dimension of the linear space of `G`).
+
+    The Tricorn graph has no removable doubletons and has precisely three
+    removable edges. The wheel graph `W_5` and the complete graph `K_4` are
+    matching minors of the Tricorn graph.
+
+    As per a theorem of Lovász [Lov1983]_, each non bipartite matching covered
+    graph has a conformal subgraph which is either a bi-subdivision of `K_4` or
+    of `\overline{C_6}` or both. In their paper, Kothari and Murty [KM2015]_
+    characterized those planar bricks that are free of `\overline{C_6}` (that
+    is, the planar bricks that do not contain a bi-subdivision of
+    `\overline{C_6}` as a conformal subgraph). Besides two infinite families of
+    matching covered graphs (odd wheel graphs and staircase graphs of order
+    *4k*), the Tricorn graph is the only exception brick that is simple, planar
+    and free of `\overline{C_6}`.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. By convention, the Tricorn graph is
+    displayed as mentioned in the book [LM2024]_, with the central vertex being
+    the `0`-th one. Rest of the nine vertices are shown in groups of three,
+    one on the top, rest two on the bottom left and on the bottom right
+    corners respectively.
+
+    OUTPUT:
+
+    - ``G`` -- the Tricorn graph
+
+    EXAMPLES:
+
+    Construct and show the Tricorn graph; note that the edges `(2, 3)`,
+    `(5, 6)` and `(8, 9)` are the only removable edges of the Tricorn
+    graph::
+
+        sage: g = graphs.TricornGraph()
+        sage: g.name()
+        'Tricorn Graph'
+        sage: g.order()
+        10
+        sage: g.size()
+        15
+        sage: g.girth()
+        3
+        sage: g.diameter()
+        3
+        sage: g.is_hamiltonian()
+        True
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    REFERENCES:
+
+    - [KM2015]_
+    - [LM2024]_
+    - [Lov1983]_
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-08-02)
     """
-    raise NotImplementedError()
+    pos_dict = {
+        0: (0, 0),
+        1: (0, 1),
+        2: (1/2, 1 + sqrt(3)/2),
+        3: (-1/2, 1 + sqrt(3)/2),
+        4: (-sqrt(3)/2, -1/2),
+        5: (-sqrt(3)/2 - 1, -1/2),
+        6: (-sqrt(3)/2 - 1/2, -1/2 - sqrt(3)/2),
+        7: (sqrt(3)/2, -1/2),
+        8: (sqrt(3)/2 + 1/2, -1/2 - sqrt(3)/2),
+        9: (sqrt(3)/2 + 1, -1/2)
+    }
+
+    G = Graph(10, pos=pos_dict, name="Tricorn Graph")
+
+    for v in range(1, 8, 3):
+        G.add_edges([
+            (0, v), (v, v+1),
+            (v, v+2), (v+1, v+2),
+            (v+2, int((-v**2 + 7*v + 4)/2))
+        ])
+
+    return G
 
 
 def TruncatedIcosidodecahedralGraph():
