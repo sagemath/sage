@@ -1145,9 +1145,13 @@ class InteractiveLPProblem(SageObject):
             objective_constant_term=self._constant_term)
 
     @cached_method
-    def feasible_set(self):
+    def feasible_set(self, backend=None):
         r"""
         Return the feasible set of ``self``.
+
+        INPUT:
+
+        - (optional) a backend for :mod:`Polyhedron <sage.geometry.polyhedron.constructor>`
 
         OUTPUT: a :mod:`Polyhedron <sage.geometry.polyhedron.constructor>`
 
@@ -1160,7 +1164,18 @@ class InteractiveLPProblem(SageObject):
             sage: P.feasible_set()
             A 2-dimensional polyhedron in QQ^2
             defined as the convex hull of 4 vertices
-        """
+            sage: P.feasible_set(backend='cdd')
+            A 2-dimensional polyhedron in QQ^2
+            defined as the convex hull of 4 vertices
+            sage: from sage.rings.real_double import RDF
+            sage: A = ([RDF(1),RDF(1)], [RDF(3), RDF(1)])
+            sage: b = (1000, 1500)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
+            sage: P.feasible_set()
+            A 2-dimensional polyhedron in RDF^2
+            defined as the convex hull of 4 vertices
+            """
         ieqs = []
         eqns = []
         for a, r, b in zip(self.A().rows(), self._constraint_types, self.b()):
@@ -1175,6 +1190,8 @@ class InteractiveLPProblem(SageObject):
                 ieqs.append([0] + list(-n))
             elif r == ">=":
                 ieqs.append([0] + list(n))
+        if backend is not None:
+            return Polyhedron(ieqs=ieqs, eqns=eqns, backend=backend)
         return Polyhedron(ieqs=ieqs, eqns=eqns)
 
     def is_bounded(self):
@@ -2578,6 +2595,31 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             Entering: $x_{2}$. Leaving: $x_{3}$.
             ...
             The optimal value: $6250$. An optimal solution: $\left(250,\,750\right)$.
+
+        TESTS::
+
+            sage: from sage.rings.real_double import RDF
+            sage: A = ([RDF(1), RDF(1)], [RDF(3), RDF(1)], [RDF(-1), RDF(-1)])
+            sage: b = (RDF(1000), RDF(1500), RDF(-400))
+            sage: c = (RDF(10), RDF(5))
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: P.run_simplex_method()
+            \begin{equation*}
+            ...
+            \end{equation*}
+            The initial dictionary is infeasible, solving auxiliary problem.
+            ...
+            Entering: $x_{0}$. Leaving: $x_{5}$.
+            ...
+            Entering: $x_{1}$. Leaving: $x_{0}$.
+            ...
+            Back to the original problem.
+            ...
+            Entering: $x_{5}$. Leaving: $x_{4}$.
+            ...
+            Entering: $x_{2}$. Leaving: $x_{3}$.
+            ...
+            The optimal value: $6250.0$. An optimal solution: $\left(249.99999999999997,\,750.0\right)$.
         """
         output = []
         d = self.initial_dictionary()
