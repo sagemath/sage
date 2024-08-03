@@ -207,6 +207,7 @@ build/pkgs/wheel/version_requirements.txt
 /pkgs/*/venv*
 /pkgs/*/.venv*
 
+/pkgs/sage-conf/pyproject.toml
 /pkgs/sage-conf_pypi/sage_root/config.log
 /pkgs/sage-conf_pypi/sage_root/config.status
 /pkgs/sage-conf_pypi/sage_root/local/
