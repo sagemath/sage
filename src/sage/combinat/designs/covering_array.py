@@ -88,11 +88,10 @@ def truncate_columns(array, k):
     if oldk == k:
         return array
 
-    elif oldk < k:
+    if oldk < k:
         raise ValueError("array only has {} columns".format(oldk))
 
-    else:
-        return [row[:k] for row in array]
+    return [row[:k] for row in array]
 
 
 def Kleitman_Spencer_Katona(N):
