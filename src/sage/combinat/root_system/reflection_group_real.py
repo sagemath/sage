@@ -53,7 +53,7 @@ from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_element import RealReflectionGroupElement
 
 
-def ReflectionGroup(*args,**kwds):
+def ReflectionGroup(*args, **kwds):
     r"""
     Construct a finite (complex or real) reflection group as a Sage
     permutation group by fetching the permutation representation of the
@@ -61,7 +61,7 @@ def ReflectionGroup(*args,**kwds):
 
     INPUT:
 
-    can be one or multiple of the following:
+    Can be one or multiple of the following:
 
     - a triple `(r, p, n)` with `p` divides `r`, which denotes the group
       `G(r, p, n)`
@@ -295,13 +295,13 @@ class RealReflectionGroup(ComplexReflectionGroup):
         type_str = type_str[:-3]
         return 'Reducible real reflection group of rank %s and type %s' % (self._rank, type_str)
 
-    def iteration(self, algorithm="breadth", tracking_words=True):
+    def iteration(self, algorithm='breadth', tracking_words=True):
         r"""
         Return an iterator going through all elements in ``self``.
 
         INPUT:
 
-        - ``algorithm`` (default: ``'breadth'``) -- must be one of
+        - ``algorithm`` -- (default: ``'breadth'``) must be one of
           the following:
 
           * ``'breadth'`` -- iterate over in a linear extension of the
@@ -309,8 +309,8 @@ class RealReflectionGroup(ComplexReflectionGroup):
           * ``'depth'`` -- iterate by a depth-first-search
           * ``'parabolic'`` -- iterate by using parabolic subgroups
 
-        - ``tracking_words`` (default: ``True``) -- whether or not to keep
-          track of the reduced words and store them in ``_reduced_word``
+        - ``tracking_words`` -- boolean (default: ``True``); whether or not to
+          keep track of the reduced words and store them in ``_reduced_word``
 
         .. NOTE::
 
@@ -373,7 +373,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             (1,7)(3,5)(4,8) [0, 1, 0]
             (1,5)(2,6)(3,7)(4,8) [0, 1, 0, 1]
         """
-        return self.iteration(algorithm="breadth", tracking_words=True)
+        return self.iteration(algorithm='breadth', tracking_words=True)
 
     @cached_method
     def bipartite_index_set(self):
@@ -727,7 +727,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
         - ``x`` -- an element in the group `W`
         - ``y`` -- an element in the group `W`
-        - ``side`` (default: ``'upper'``) -- must be one of the following:
+        - ``side`` -- (default: ``'upper'``) must be one of the following:
 
           * ``'upper'`` -- return the upper Bruhat cone of the interval [``x``, ``y``]
           * ``'lower'`` -- return the lower Bruhat cone of the interval [``x``, ``y``]

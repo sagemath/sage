@@ -46,7 +46,6 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         sage: K = GF(5^4).over()                                                        # needs sage.rings.finite_rings
         sage: x = K.random_element()                                                    # needs sage.rings.finite_rings
         sage: TestSuite(x).run()                                                        # needs sage.rings.finite_rings
-
     """
     def __init__(self, RingExtension_generic parent, x, *args, **kwds):
         r"""
@@ -274,7 +273,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``force`` -- a boolean (default: ``False``); if ``False``,
+        - ``force`` -- boolean (default: ``False``); if ``False``,
           raise an error if the backend is not exposed
 
         EXAMPLES::
@@ -290,7 +289,6 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             4*z4^3 + 2*z4^2 + 4*z4 + 4
             sage: y.parent()
             Finite Field in z4 of size 5^4
-
         """
         if force or (<RingExtension_generic>(self._parent))._is_backend_exposed:
             return self._backend
@@ -341,7 +339,6 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: x = 4*v^7 + v^6 + 3*v^4 + v^3 + v^2 + 4
             sage: x.in_base()
             u
-
         """
         cdef RingExtension_generic parent = <RingExtension_generic>self._parent
         if isinstance(parent, RingExtensionWithGen):
@@ -572,7 +569,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``root`` -- a boolean (default: ``False``); if ``True``,
+        - ``root`` -- boolean (default: ``False``); if ``True``,
           return also a square root
 
         EXAMPLES::
@@ -604,16 +601,16 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``extend`` -- a boolean (default: ``True``); if "True",
+        - ``extend`` -- boolean (default: ``True``); if ``True``,
           return a square root in an extension ring, if necessary.
-          Otherwise, raise a :class:`ValueError` if the root is not in
-          the ring
+          Otherwise, raise a :exc:`ValueError` if the root is not in
+          the ring.
 
-        - ``all`` -- a boolean (default: ``False``); if ``True``,
-          return all square roots of this element, instead of just one.
+        - ``all`` -- boolean (default: ``False``); if ``True``,
+          return all square roots of this element, instead of just one
 
-        - ``name`` -- Required when ``extend=True`` and ``self`` is not a
-          square. This will be the name of the generator extension.
+        - ``name`` -- required when ``extend=True`` and ``self`` is not a
+          square; this will be the name of the generator extension
 
         .. NOTE::
 

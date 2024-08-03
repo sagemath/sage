@@ -35,7 +35,6 @@ def is_QuarticCurve(C):
         DeprecationWarning: The function is_QuarticCurve is deprecated; use 'isinstance(..., QuarticCurve_generic)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         True
-
     """
     from sage.misc.superseded import deprecation
     deprecation(38022, "The function is_QuarticCurve is deprecated; use 'isinstance(..., QuarticCurve_generic)' instead.")

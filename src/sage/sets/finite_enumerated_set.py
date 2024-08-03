@@ -36,7 +36,6 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
     ``EnumeratedSets`` and has unique representation.
     The list of the elements is expanded in memory.
 
-
     EXAMPLES::
 
         sage: S = FiniteEnumeratedSet([1, 2, 3])
@@ -163,7 +162,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     def __iter__(self):
         r"""
-        Iterator over the element of self.
+        Iterator over the element of ``self``.
 
         EXAMPLES::
 
@@ -198,8 +197,8 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     def first(self):
         r"""
-        Return the first element of the enumeration or raise an EmptySetError if
-        the set is empty.
+        Return the first element of the enumeration or raise an
+        :exc:`EmptySetError` if the set is empty.
 
         EXAMPLES::
 
@@ -213,8 +212,8 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     def last(self):
         r"""
-        Returns the last element of the iteration or raise an EmptySetError if
-        the set is empty.
+        Return the last element of the iteration or raise an
+        :exc:`EmptySetError` if the set is empty.
 
         EXAMPLES::
 
@@ -259,7 +258,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     def rank(self, x):
         """
-        Returns the index of ``x`` in this finite enumerated set.
+        Return the index of ``x`` in this finite enumerated set.
 
         EXAMPLES::
 
@@ -381,7 +380,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
         - ``el`` -- an element of ``self``
 
-        If ``el`` is not an element of ``self``, a :class:`ValueError`
+        If ``el`` is not an element of ``self``, a :exc:`ValueError`
         is raised.
 
         TESTS::

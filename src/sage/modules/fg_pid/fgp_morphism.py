@@ -391,7 +391,7 @@ class FGP_Morphism(Morphism):
 
         INPUT:
 
-        - ``x`` -- element of the codomain of self.
+        - ``x`` -- element of the codomain of self
 
         EXAMPLES::
 
@@ -410,7 +410,6 @@ class FGP_Morphism(Morphism):
             sage: V = span([[5, -1/2]],ZZ); W = span([[20,-2]],ZZ); Q = V/W; phi=Q.hom([2*Q.0])
             sage: x = phi.image().0; phi(phi.lift(x)) == x
             True
-
         """
         x = self.codomain()(x)
 
@@ -485,7 +484,7 @@ def FGP_Homset(X, Y):
 
 class FGP_Homset_class(Homset):
     """
-    Homsets of :class:`~sage.modules.fg_pid.fgp_module.FGP_Module`
+    Homsets of :class:`~sage.modules.fg_pid.fgp_module.FGP_Module`.
 
     TESTS::
 

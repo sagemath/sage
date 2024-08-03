@@ -42,7 +42,6 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             sage: TriangularKacMoodyAlgebras(QQ).super_categories()
             [Join of Category of graded Lie algebras with basis over Rational Field
                  and Category of kac moody algebras over Rational Field]
-
         """
         # We do not also derive from (Magmatic) algebras since we don't want *
         #   to be our Lie bracket
@@ -314,7 +313,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.modules
-                sage: L = LieAlgebra(QQ, cartan_type="F4")
+                sage: L = LieAlgebra(QQ, cartan_type='F4')
                 sage: L.inject_variables()
                 Defining e1, e2, e3, e4, f1, f2, f3, f4, h1, h2, h3, h4
                 sage: e1.part()

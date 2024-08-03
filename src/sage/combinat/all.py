@@ -63,7 +63,7 @@ from sage.combinat.chas.all import *
 from sage.combinat.crystals.all import *
 from sage.combinat.rigged_configurations.all import *
 
-# block designs, etc
+# block designs, etc.
 from sage.combinat.designs.all import *
 
 # Free modules and friends

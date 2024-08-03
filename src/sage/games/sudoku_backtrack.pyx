@@ -13,7 +13,7 @@ def backtrack_all(n, puzzle):
 
         - ``n`` -- the size of the puzzle, where the array is an `n^2\times n^2` grid
 
-        - ``puzzle`` -- a list of the entries of the puzzle (1-based), in row-major order
+        - ``puzzle`` -- list of the entries of the puzzle (1-based), in row-major order
 
     OUTPUT:
 
@@ -103,7 +103,7 @@ def backtrack_all(n, puzzle):
         for j in range(nsquare):
             available[level][j] = 0
 
-    # For non-zero entries of input puzzle
+    # For nonzero entries of input puzzle
     # (1) Convert to zero-based indexing
     # (2) Make a set of size 1 available initially
     for level in range(nboxes):

@@ -50,7 +50,6 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
         1 + 2*q + 2*q^3 + 6*q^4 + 2*q^5 + 4*q^6 + 6*q^7 + 8*q^8 + 14*q^9 + 4*q^10
         + 12*q^11 + 18*q^12 + 12*q^13 + 12*q^14 + 8*q^15 + 34*q^16 + 12*q^17 + 8*q^18
         + 32*q^19 + 10*q^20 + 28*q^21 + 16*q^23 + 44*q^24 + O(q^25)
-
     """
     # Sanity Check: Max is an integer or an allowed string:
     try:
@@ -89,8 +88,8 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
 
     INPUT:
 
-    - ``Max`` -- an integer `\geq 0`
-    - ``var_str`` -- a string
+    - ``Max`` -- integer `\geq 0`
+    - ``var_str`` -- string
 
     OUTPUT: a power series or a vector
 
@@ -103,7 +102,6 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
         ....:                for i in range(1, Prec)]
         sage: compute == exact                                                          # needs sage.libs.pari
         True
-
     """
     # Try to use the cached result if it's enough precision
     if hasattr(self, '__theta_vec') and len(self.__theta_vec) >= Max:
@@ -271,11 +269,9 @@ def theta_series_degree_2(Q, prec):
 
     INPUT:
 
-    - ``prec`` -- an integer
+    - ``prec`` -- integer
 
-    OUTPUT:
-
-    dictionary, where:
+    OUTPUT: dictionary, where:
 
     - keys are `{\rm GL}_2(\ZZ)`-reduced binary quadratic forms (given as triples of
       coefficients)

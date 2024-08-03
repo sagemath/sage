@@ -56,15 +56,13 @@ class PlanePartition(ClonableArray,
 
     INPUT:
 
-    - ``PP`` -- a list of lists which represents a tableau
+    - ``PP`` -- list of lists which represents a tableau
     - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
       where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
       `y`-axis, `z`-axis, respectively; if this is not given, it is
       determined by the smallest box bounding ``PP``
 
-    OUTPUT:
-
-    The plane partition whose tableau representation is ``PP``.
+    OUTPUT: the plane partition whose tableau representation is ``PP``
 
     EXAMPLES::
 
@@ -162,9 +160,7 @@ class PlanePartition(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -214,7 +210,6 @@ class PlanePartition(ClonableArray,
             Traceback (most recent call last):
             ...
             ValueError: entries not all integers
-
         """
         if not all(a in ZZ for b in self for a in b):
             raise ValueError("entries not all integers")
@@ -355,9 +350,7 @@ class PlanePartition(ClonableArray,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
         - ``use_unicode`` -- boolean (default: ``False``); use unicode
 
-        OUTPUT:
-
-        A string of the 3D diagram of the plane partition.
+        OUTPUT: string of the 3D diagram of the plane partition
 
         EXAMPLES::
 
@@ -508,9 +501,7 @@ class PlanePartition(ClonableArray,
         - ``show_box`` -- boolean (default: ``False``); if ``True``,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
 
-        OUTPUT:
-
-        A pretty print of the plane partition.
+        OUTPUT: a pretty print of the plane partition
 
         EXAMPLES::
 
@@ -616,9 +607,7 @@ class PlanePartition(ClonableArray,
         - ``colors`` -- (default: ``["white", "lightgray", "darkgray"]``)
           list ``[A, B, C]`` of 3 strings representing colors
 
-        OUTPUT:
-
-        Latex code for drawing the plane partition.
+        OUTPUT: latex code for drawing the plane partition
 
         EXAMPLES::
 
@@ -696,15 +685,15 @@ class PlanePartition(ClonableArray,
                     for P in side]
 
         def add_topside(i, j, k):
-            return polygon(move(Uside, i, j, k), edgecolor="black",
+            return polygon(move(Uside, i, j, k), edgecolor='black',
                            color=colors[0])
 
         def add_leftside(i, j, k):
-            return polygon(move(Lside, i, j, k), edgecolor="black",
+            return polygon(move(Lside, i, j, k), edgecolor='black',
                            color=colors[1])
 
         def add_rightside(i, j, k):
-            return polygon(move(Rside, i, j, k), edgecolor="black",
+            return polygon(move(Rside, i, j, k), edgecolor='black',
                            color=colors[2])
         TP = plot([])
         for r in range(len(self.z_tableau())):
@@ -1485,7 +1474,7 @@ class PlanePartitions_all(PlanePartitions, DisjointUnionEnumeratedSets):
     """
     def __init__(self):
         r"""
-        Initializes the class of all plane partitions.
+        Initialize the class of all plane partitions.
 
         .. WARNING::
 
@@ -1544,7 +1533,7 @@ class PlanePartitions_box(PlanePartitions):
     """
     def __init__(self, box_size):
         r"""
-        Initializes the class of plane partitions that fit in a box of a
+        Initialize the class of plane partitions that fit in a box of a
         specified size.
 
         EXAMPLES::
@@ -1740,7 +1729,7 @@ class PlanePartitions_n(PlanePartitions):
     """
     def __init__(self, n):
         r"""
-        Initializes the class of plane partitions with ``n`` boxes.
+        Initialize the class of plane partitions with ``n`` boxes.
 
         .. WARNING::
 
@@ -1851,7 +1840,6 @@ class PlanePartitions_n(PlanePartitions):
             sage: P = PlanePartitions(17)
             sage: P.cardinality()
             18334
-
         """
         PPn = [1]
         for i in range(1, 1+self._n):

@@ -41,12 +41,12 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
     INPUT:
 
     - ``toric_variety`` -- ambient :class:`toric variety
-      <ToricVariety_field>`.
+      <ToricVariety_field>`
 
     - ``polynomials`` -- single polynomial, list, or ideal of defining
-      polynomials in the coordinate ring of ``toric_variety``.
+      polynomials in the coordinate ring of ``toric_variety``
 
-    OUTPUT: An :class:`algebraic subscheme of a toric variety
+    OUTPUT: an :class:`algebraic subscheme of a toric variety
     <AlgebraicScheme_subscheme_toric>`.
 
     TESTS::
@@ -106,7 +106,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         - same as for
           :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
 
-        OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
+        OUTPUT: a :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`
 
         TESTS::
 
@@ -146,7 +146,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         - same as for
           :class:`~sage.schemes.toric.homset.SchemeHomset_points_toric_field`.
 
-        OUTPUT: A :class:`~sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field`.
+        OUTPUT: a :class:`~sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field`
 
         TESTS::
 
@@ -166,7 +166,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         """
         Return the fan of the ambient space.
 
-        OUTPUT: A fan.
+        OUTPUT: a fan
 
         EXAMPLES::
 
@@ -184,8 +184,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``i`` -- integer, index of a generating cone of the fan of the
-          ambient space of ``self``.
+        - ``i`` -- integer; index of a generating cone of the fan of the
+          ambient space of ``self``
 
         OUTPUT:
 
@@ -384,11 +384,9 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``point`` -- a point of the algebraic subscheme.
+        - ``point`` -- a point of the algebraic subscheme
 
-        OUTPUT:
-
-        Integer. The index of the patch. See :meth:`affine_patch`.
+        OUTPUT: integer. The index of the patch. See :meth:`affine_patch`
 
         EXAMPLES::
 
@@ -416,7 +414,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``point`` -- a point of the toric algebraic scheme.
+        - ``point`` -- a point of the toric algebraic scheme
 
         OUTPUT:
 
@@ -496,7 +494,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         """
         Return the dimension of ``self``.
 
-        OUTPUT: An integer. If ``self`` is empty, `-1` is returned.
+        OUTPUT: integer; if ``self`` is empty, `-1` is returned
 
         EXAMPLES::
 
@@ -525,12 +523,12 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``point`` -- A point or ``None`` (default). The point to
-          test smoothness at.
+        - ``point`` -- a point or ``None`` (default); the point to
+          test smoothness at
 
         OUTPUT:
 
-        Boolean. If no point was specified, returns whether the
+        boolean; if no point was specified, returns whether the
         algebraic subscheme is smooth everywhere. Otherwise,
         smoothness at the specified point is tested.
 
@@ -667,7 +665,6 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
             False
             sage: P2.subscheme([x]).is_nondegenerate()
             False
-
         """
         X = self.ambient_space()
         fan = X.fan()
@@ -718,7 +715,6 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
             True
             sage: X.is_schon()
             False
-
         """
         return self.is_nondegenerate()
 
@@ -737,10 +733,10 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
     INPUT:
 
     - ``toric_variety`` -- ambient :class:`affine toric variety
-      <ToricVariety_field>`;
+      <ToricVariety_field>`
 
     - ``polynomials`` -- single polynomial, list, or ideal of defining
-      polynomials in the coordinate ring of ``toric_variety``.
+      polynomials in the coordinate ring of ``toric_variety``
 
     OUTPUT:
 
@@ -796,7 +792,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
         """
         Return the dimension of ``self``.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -835,12 +831,12 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
 
         INPUT:
 
-        - ``point`` -- A point or ``None`` (default). The point to
-          test smoothness at.
+        - ``point`` -- a point or ``None`` (default); the point to
+          test smoothness at
 
         OUTPUT:
 
-        Boolean. If no point was specified, returns whether the
+        boolean; if no point was specified, returns whether the
         algebraic subscheme is smooth everywhere. Otherwise,
         smoothness at the specified point is tested.
 

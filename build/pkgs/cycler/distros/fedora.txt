@@ -1,1 +1,1 @@
-python-cycler
+python3-cycler
