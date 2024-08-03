@@ -159,15 +159,15 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
             sage: V = QQ^3; W = QQ^2
             sage: H = Hom(V, W); H
-            Set of Morphisms (Linear Transformations) from
-            Vector space of dimension 3 over Rational Field to
-            Vector space of dimension 2 over Rational Field
+            Set of Morphisms (Linear Transformations)
+             from Vector space of dimension 3 over Rational Field
+               to Vector space of dimension 2 over Rational Field
             sage: phi = H(matrix(QQ, 3, 2, range(6))); phi
             Vector space morphism represented by the matrix:
             [0 1]
             [2 3]
             [4 5]
-            Domain: Vector space of dimension 3 over Rational Field
+            Domain:   Vector space of dimension 3 over Rational Field
             Codomain: Vector space of dimension 2 over Rational Field
             sage: phi(V.0)
             (0, 1)
@@ -189,11 +189,11 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         We compute the image of some elements::
 
-            sage: phi(V.0)    #indirect doctest
+            sage: phi(V.0)    # indirect doctest
             (1, 2, 3)
             sage: phi(V.1)
             (4, 5, 6)
-            sage: phi(V.0  - 1/4*V.1)
+            sage: phi(V.0 - 1/4*V.1)
             (0, 3/4, 3/2)
 
         We restrict ``phi`` to ``W`` and compute the image of an element::
@@ -325,8 +325,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined as left-multiplication by the matrix
             [1 0]
             [1 1]
-            Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
-            Codomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
+            Domain:   Ambient free module of rank 2 over the principal ideal domain
+                      Integer Ring
+            Codomain: Ambient free module of rank 2 over the principal ideal domain
+                      Integer Ring
             sage: h2.side()
             'right'
             sage: h2.side_switch().matrix()
@@ -361,14 +363,14 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Vector space morphism represented by the matrix:
             [-1  3]
             [ 1 -2]
-            Domain: Vector space of degree 3 and dimension 2 over Rational Field
-            Basis matrix:
-            [1 0 0]
-            [0 0 1]
+            Domain:   Vector space of degree 3 and dimension 2 over Rational Field
+                      Basis matrix:
+                      [1 0 0]
+                      [0 0 1]
             Codomain: Vector space of degree 4 and dimension 2 over Rational Field
-            Basis matrix:
-            [1 0 0 0]
-            [0 0 0 1]
+                      Basis matrix:
+                      [1 0 0 0]
+                      [0 0 0 1]
             sage: inv(y) == x
             True
 
@@ -390,7 +392,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [ -9   4  -3   2]
             [-20   8  -7   4]
             [ -6   2  -2   1]
-            Domain: Ambient free module of rank 4 over the principal ideal domain ...
+            Domain:   Ambient free module of rank 4 over the principal ideal domain ...
             Codomain: Ambient free module of rank 4 over the principal ideal domain ...
             sage: rho(y) == x
             True
@@ -456,9 +458,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: m = matrix(QQ, [[2, 1], [3, 4]])
             sage: phi = V.hom(m, U)
             sage: inv = phi.inverse()
-            sage: (inv*phi).is_identity()
+            sage: (inv * phi).is_identity()
             True
-            sage: (phi*inv).is_identity()
+            sage: (phi * inv).is_identity()
             True
         """
         return ~self
@@ -467,12 +469,12 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         EXAMPLES::
 
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: 2*phi
+            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+            sage: 2 * phi
             Free module morphism defined by the matrix
             [2 2]
             [0 4]...
-            sage: phi*2
+            sage: phi * 2
             Free module morphism defined by the matrix
             [2 2]
             [0 4]...
@@ -496,19 +498,19 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
             sage: K = GF(7); K
             Finite Field of size 7
-            sage: phi = End(K^2)([[1,1],[1,1]]); phi
+            sage: phi = End(K^2)([[1,1], [1,1]]); phi
             Vector space morphism represented by the matrix:
             [1 1]
             [1 1]
             Domain:   Vector space of dimension 2 over Finite Field of size 7
             Codomain: Vector space of dimension 2 over Finite Field of size 7
-            sage: 2*phi
+            sage: 2 * phi
             Vector space morphism represented by the matrix:
             [2 2]
             [2 2]
             Domain:   Vector space of dimension 2 over Finite Field of size 7
             Codomain: Vector space of dimension 2 over Finite Field of size 7
-            sage: K(2)*phi
+            sage: K(2) * phi
             Vector space morphism represented by the matrix:
             [2 2]
             [2 2]
@@ -526,29 +528,29 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi*phi
+            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+            sage: phi * phi
             Free module morphism defined by the matrix
             [1 3]
             [0 4]
-            Domain: Ambient free module of rank 2 over the principal ideal domain ...
+            Domain:   Ambient free module of rank 2 over the principal ideal domain ...
             Codomain: Ambient free module of rank 2 over the principal ideal domain ...
 
             sage: V = QQ^3
             sage: E = V.endomorphism_ring()
-            sage: phi = E(Matrix(QQ,3,range(9))) ; phi
+            sage: phi = E(Matrix(QQ, 3, range(9))); phi
             Vector space morphism represented by the matrix:
             [0 1 2]
             [3 4 5]
             [6 7 8]
-            Domain: Vector space of dimension 3 over Rational Field
+            Domain:   Vector space of dimension 3 over Rational Field
             Codomain: Vector space of dimension 3 over Rational Field
-            sage: phi*phi
+            sage: phi * phi
             Vector space morphism represented by the matrix:
             [ 15  18  21]
             [ 42  54  66]
             [ 69  90 111]
-            Domain: Vector space of dimension 3 over Rational Field
+            Domain:   Vector space of dimension 3 over Rational Field
             Codomain: Vector space of dimension 3 over Rational Field
             sage: phi.matrix()**2
             [ 15  18  21]
@@ -559,25 +561,26 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
             sage: W = QQ**4
             sage: E_VW = V.Hom(W)
-            sage: psi = E_VW(Matrix(QQ,3,4,range(12))) ; psi
+            sage: psi = E_VW(Matrix(QQ, 3, 4, range(12))); psi
             Vector space morphism represented by the matrix:
             [ 0  1  2  3]
             [ 4  5  6  7]
             [ 8  9 10 11]
-            Domain: Vector space of dimension 3 over Rational Field
+            Domain:   Vector space of dimension 3 over Rational Field
             Codomain: Vector space of dimension 4 over Rational Field
-            sage: psi*phi
+            sage: psi * phi
             Vector space morphism represented by the matrix:
             [ 20  23  26  29]
             [ 56  68  80  92]
             [ 92 113 134 155]
-            Domain: Vector space of dimension 3 over Rational Field
+            Domain:   Vector space of dimension 3 over Rational Field
             Codomain: Vector space of dimension 4 over Rational Field
-            sage: phi*psi
+            sage: phi * psi
             Traceback (most recent call last):
             ...
-            TypeError: Incompatible composition of morphisms: domain of left morphism must be codomain of right.
-            sage: phi.matrix()*psi.matrix()
+            TypeError: Incompatible composition of morphisms:
+            domain of left morphism must be codomain of right.
+            sage: phi.matrix() * psi.matrix()
             [ 20  23  26  29]
             [ 56  68  80  92]
             [ 92 113 134 155]
@@ -588,22 +591,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)
             sage: V, VtoK, KtoV = K.vector_space()
-            sage: f = V.hom([V.0 - V.1, V.0 + V.1])*KtoV; f
-            Composite map:
-            From: Number Field in a with defining polynomial x^2 + 23
-            To:   Vector space of dimension 2 over Rational Field
-            Defn:   Isomorphism map:
-                    From: Number Field in a with defining polynomial x^2 + 23
-                    To:   Vector space of dimension 2 over Rational Field
-                    then
-                    Vector space morphism represented by the matrix:
-                    [ 1 -1]
-                    [ 1  1]
-                    Domain: Vector space of dimension 2 over Rational Field
-                    Codomain: Vector space of dimension 2 over Rational Field
-            sage: f(a)
-            (1, 1)
-            sage: V.hom([V.0 - V.1, V.0 + V.1], side='right')*KtoV
+            sage: f = V.hom([V.0 - V.1, V.0 + V.1]) * KtoV; f
             Composite map:
               From: Number Field in a with defining polynomial x^2 + 23
               To:   Vector space of dimension 2 over Rational Field
@@ -611,17 +599,32 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                       From: Number Field in a with defining polynomial x^2 + 23
                       To:   Vector space of dimension 2 over Rational Field
                     then
-                      Vector space morphism represented as left-multiplication by the matrix:
-                    [ 1  1]
-                    [-1  1]
-                    Domain: Vector space of dimension 2 over Rational Field
-                    Codomain: Vector space of dimension 2 over Rational Field
+                      Vector space morphism represented by the matrix:
+                      [ 1 -1]
+                      [ 1  1]
+                      Domain:   Vector space of dimension 2 over Rational Field
+                      Codomain: Vector space of dimension 2 over Rational Field
+            sage: f(a)
+            (1, 1)
+            sage: V.hom([V.0 - V.1, V.0 + V.1], side="right") * KtoV
+            Composite map:
+              From: Number Field in a with defining polynomial x^2 + 23
+              To:   Vector space of dimension 2 over Rational Field
+              Defn:   Isomorphism map:
+                      From: Number Field in a with defining polynomial x^2 + 23
+                      To:   Vector space of dimension 2 over Rational Field
+                    then
+                      Vector space morphism represented as left-multiplication
+                      by the matrix:
+                      [ 1  1]
+                      [-1  1]
+                      Domain:   Vector space of dimension 2 over Rational Field
+                      Codomain: Vector space of dimension 2 over Rational Field
 
-
-        We can test interraction between morphisms with different ``side``::
+        We can test interaction between morphisms with different ``side``::
 
             sage: V = ZZ^2
-            sage: m = matrix(2, [1,1,0,1])
+            sage: m = matrix(2, [1,1, 0,1])
             sage: hl = V.hom(m)
             sage: hr = V.hom(m, side='right')
             sage: hl * hl
@@ -696,7 +699,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
-            sage: phi = (ZZ**2).endomorphism_ring()(Matrix(ZZ,2,[2..5])) ; phi
+            sage: phi = (ZZ**2).endomorphism_ring()(Matrix(ZZ, 2, [2..5])); phi
             Free module morphism defined by the matrix
             [2 3]
             [4 5]
@@ -714,7 +717,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [ 8 10]
             Domain: Ambient free module of rank 2 over the principal ideal domain ...
             Codomain: Ambient free module of rank 2 over the principal ideal domain ...
-            sage: psi = (ZZ**3).endomorphism_ring()(Matrix(ZZ,3,[22..30])) ; psi
+            sage: psi = (ZZ**3).endomorphism_ring()(Matrix(ZZ, 3, [22..30])); psi
             Free module morphism defined by the matrix
             [22 23 24]
             [25 26 27]
@@ -729,7 +732,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         ::
 
             sage: V = ZZ^2
-            sage: m = matrix(2, [1,1,0,1])
+            sage: m = matrix(2, [1,1, 0,1])
             sage: hl = V.hom(m)
             sage: hr = V.hom(m, side='right')
             sage: hl + hl
@@ -773,7 +776,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         EXAMPLES::
 
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
+            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
             sage: -phi
             Free module morphism defined by the matrix
             [-1 -1]
@@ -789,7 +792,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         EXAMPLES::
 
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
+            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
             sage: phi - phi
             Free module morphism defined by the matrix
             [0 0]
@@ -798,7 +801,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         ::
 
             sage: V = ZZ^2
-            sage: m = matrix(2, [1,1,0,1])
+            sage: m = matrix(2, [1,1, 0,1])
             sage: hl = V.hom(m)
             sage: hr = V.hom(m, side='right')
             sage: hl - hr
@@ -813,7 +816,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined as left-multiplication by the matrix
             [0 0]
             [0 0]...
-            sage: hr-hl
+            sage: hr - hl
             Free module morphism defined by the matrix
             [ 0 -1]
             [ 1  0]...
