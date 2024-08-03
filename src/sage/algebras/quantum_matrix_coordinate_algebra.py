@@ -983,11 +983,9 @@ def _generator_key(t):
 
     INPUT:
 
-    a tuple (index, exponent)
+    - ``t`` -- tuple (index, exponent)
 
-    OUTPUT:
-
-    a tuple made from the index only
+    OUTPUT: a tuple made from the index only
 
     EXAMPLES::
 

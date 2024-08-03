@@ -33,7 +33,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
     - ``I`` -- an ideal or a list of generators of the ideal
     - ``ambient`` -- (optional) the Lie algebra to be quotiented;
       will be deduced from ``I`` if not given
-    - ``names`` -- (optional) a string or a list of strings;
+    - ``names`` -- (optional) string or list of strings;
       names for the basis elements of the quotient. If ``names`` is a
       string, the basis will be named ``names_1``,...,``names_n``.
 
