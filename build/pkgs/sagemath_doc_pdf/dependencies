@@ -1,1 +1,5 @@
-sagemath_doc_html texlive texlive_luatex free_fonts xindy
+sagelib sphinx sphinx_copybutton sphinx_inline_tabs pplpy_doc | $(SAGERUNTIME) maxima networkx scipy sympy matplotlib pillow mathjax mpmath ipykernel jupyter_client conway_polynomials tachyon jmol ipywidgets jupyter_sphinx sage_docbuild elliptic_curves furo fpylll graphs  texlive texlive_luatex free_fonts xindy meson_python
+
+# Building the documentation has many dependencies, because all
+# documented modules are imported and because we use matplotlib to
+# produce plots.

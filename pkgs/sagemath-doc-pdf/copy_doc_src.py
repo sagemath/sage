@@ -1,0 +1,1 @@
+../sagemath-doc-html/copy_doc_src.py

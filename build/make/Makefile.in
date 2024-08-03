@@ -58,6 +58,8 @@ SAGE_SPKG_OPTIONS = @SAGE_SPKG_OPTIONS@
 # set to empty if --disable-doc is used
 SAGE_DOCS = @SAGE_DOCS@
 SAGE_DOCS_DISABLED_MESSAGE = This Sage build is configured with "configure --disable-doc", so building the documentation will not work.
+SAGE_VENV_DOCS = @SAGE_VENV_DOCS@
+SAGE_VENV_DOCS_DISABLED_MESSAGE = This Sage build is configured with "configure --disable-doc", so building the documentation will not work.
 
 # Where the Sage distribution installs Python packages.
 # This can be overridden by 'make SAGE_VENV=/some/venv'.
@@ -148,11 +150,14 @@ PYPI_WHEEL_PACKAGES = $(PYPI_NOARCH_WHEEL_PACKAGES) \
 	sagemath_sirocco			\
 	sagemath_meataxe
 
-# sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
+# sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib.
+# This can be changed when we have separate 'dependencies_build' files.
 WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES)		\
 	sage_conf				\
 	sagelib					\
-	sage_docbuild
+	sage_docbuild				\
+	sagemath_doc_html			\
+	sagemath_doc_pdf
 
 # Packages for which build sdists for PyPI
 PYPI_SDIST_PACKAGES = $(WHEEL_PACKAGES)
@@ -772,7 +777,7 @@ $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
 
-$(1)-sdist: FORCE python_build sage_setup cython
+$(1)-sdist: FORCE python_build sage_setup cython meson_python
 	$(AM_V_at) cd '$$(SAGE_ROOT)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
