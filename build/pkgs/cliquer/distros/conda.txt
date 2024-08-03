@@ -1,1 +1,3 @@
-cliquer
+cliquer>=1.21
+# We include the version constraint so that bootstrap-conda's environment minimizer
+# does not eliminate it (as a declared dependency of the giac SPKG)
