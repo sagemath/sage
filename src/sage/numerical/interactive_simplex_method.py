@@ -1165,20 +1165,35 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
-            sage: P.feasible_set()
+            sage: F = P.feasible_set(); F
             A 2-dimensional polyhedron in QQ^2
             defined as the convex hull of 4 vertices
-            sage: P.feasible_set(backend='cdd')
+            sage: F.backend()
+            'ppl'
+            sage: F_cdd = P.feasible_set(backend='cdd'); F_cdd
             A 2-dimensional polyhedron in QQ^2
             defined as the convex hull of 4 vertices
+            sage: F_cdd.backend()
+            'cdd'
+
+        An algebraic polyhedron::
+
+            sage: A = ([1, sqrt(2)], [sqrt(3), 1])
+            sage: b = (1000, 1500)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
+            sage: F = P.feasible_set(backend='number_field'); F
+            A 2-dimensional polyhedron in (Symbolic Ring)^2
+            defined as the convex hull of 4 vertices
+            sage: F.backend()
+            'number_field'
 
         Using ``RDF``::
 
-            sage: from sage.rings.real_double import RDF
             sage: A = ([RDF(1), RDF(1)], [RDF(3), RDF(1)])
             sage: b = (1000, 1500)
             sage: c = (10, 5)
-            sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
+            sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type='>=')
             sage: P.feasible_set()
             A 2-dimensional polyhedron in RDF^2
             defined as the convex hull of 4 vertices
