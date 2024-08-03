@@ -41,14 +41,12 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.rings.ring import CommutativeRing
 from sage.schemes.generic.morphism import (SchemeMorphism,
-                                           is_SchemeMorphism,
                                            SchemeMorphism_point)
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
 from sage.structure.sequence import Sequence
 
 lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
-lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 _NumberFields = NumberFields()
 
@@ -165,7 +163,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         if check:
             d = X.codomain().ambient_space().ngens()
-            if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:
@@ -1131,7 +1129,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
         if check:
             d = X.codomain().ambient_space().ngens()
-            if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:

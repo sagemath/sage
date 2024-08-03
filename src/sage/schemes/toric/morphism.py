@@ -362,9 +362,7 @@ fan::
 # the toric varieties level from Morphism. See
 # https://groups.google.com/d/msg/sage-devel/qF4yU6Vdmao/wQlNrneSmWAJ
 from sage.categories.morphism import Morphism
-
 from sage.structure.richcmp import richcmp_not_equal, richcmp
-
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.arith.misc import GCD as gcd
@@ -376,7 +374,6 @@ from sage.geometry.fan import Fan
 
 from sage.schemes.generic.scheme import Scheme
 from sage.schemes.generic.morphism import (
-    is_SchemeMorphism,
     SchemeMorphism, SchemeMorphism_point, SchemeMorphism_polynomial
 )
 
@@ -431,7 +428,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
         if check:
             # Verify that there are the right number of coords
             # Why is it not done in the parent?
-            if is_SchemeMorphism(coordinates):
+            if isinstance(coordinates, SchemeMorphism):
                 coordinates = list(coordinates)
             if not isinstance(coordinates, (list, tuple)):
                 raise TypeError("coordinates must be a scheme point, list, "
