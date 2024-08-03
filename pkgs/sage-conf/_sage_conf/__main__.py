@@ -7,8 +7,13 @@ def _main():
     import sage_conf
 
     parser = ArgumentParser(prog='sage-config')
+    try:
+        from sage_conf import VERSION
+    except ImportError:
+        VERSION = 'none'
+
     parser.add_argument('--version', help="show version", action="version",
-                       version='%(prog)s ' + sage_conf.VERSION)
+                       version='%(prog)s ' + VERSION)
     parser.add_argument("VARIABLE", nargs='?', help="output the value of VARIABLE")
     args = parser.parse_args()
     if args.VARIABLE:
