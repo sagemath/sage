@@ -15,6 +15,8 @@ AUTHORS:
 - Lorenz Panny, John Cremona (2023-02): ``.twists()``
 
 - Lorenz Panny (2023): ``special_supersingular_curve()``
+
+- Martin Grenouilloux (2024): ``EllipticCurve_with_prime_order()``
 """
 
 # ****************************************************************************
@@ -2714,8 +2716,8 @@ def EllipticCurve_with_order(m, *, D=None):
         sage: all(E.order() == 21 for E in Es)
         True
 
-    Indeed, we can verify that this is correct. Hasse's bounds tell us that $p \leq 50$
-    (approximately), and the rest can be checked via bruteforce::
+    Indeed, we can verify that this is correct. Hasse's bounds tell us that
+    `p \leq 50` (approximately), and the rest can be checked via bruteforce::
 
         sage: for p in prime_range(50):
         ....:     for j in range(p):
@@ -2777,3 +2779,135 @@ def EllipticCurve_with_order(m, *, D=None):
                         yield Et
                     except ValueError:
                         pass
+
+def EllipticCurve_with_prime_order(N):
+    r"""
+    Given a prime number ``N``, find another prime number `p` and construct an
+    elliptic curve `E` defined over `\mathbb F_p` such that
+    `\#E(\mathbb F_p) = N`.
+
+    INPUT:
+
+    - ``N`` -- integer; the order for which we seek an elliptic curve. Must be a
+      prime number.
+
+    OUTPUT: an elliptic curve `E/\mathbb F_p` of order ``N``
+
+    EXAMPLES::
+
+        sage: N = next_prime(int(b'sagemath'.hex(), 16))
+        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E
+        Elliptic Curve defined by y^2 = x^3 + 4757897140353078952*x +
+        1841350074072114366 over Finite Field of size 8314040074357871443
+        sage: E.order() == N
+        True
+
+    The execution time largely depends on the input::
+
+        sage: N = 125577861263605878504082476745517446213
+        sage: E = EllipticCurve_with_prime_order(N) # Takes ~1 second.
+        sage: E.order() == N
+        True
+
+    TESTS::
+
+        sage: for N in prime_range(3, 100):
+        ....:     E = EllipticCurve_with_prime_order(N)
+        ....:     assert E.order() == N
+
+        sage: N = 15175980689839334471
+        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E.order() == N
+        True
+
+        sage: N = next_prime(123456789)
+        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E.order() == N
+        True
+
+        sage: N = 123456789
+        sage: E = EllipticCurve_with_prime_order(N)
+        Traceback (most recent call last):
+        ...
+        ValueError: input order is not prime
+
+        sage: E = EllipticCurve_with_prime_order(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: input order is not prime
+
+        sage: E = EllipticCurve_with_prime_order(-7)
+        Traceback (most recent call last):
+        ...
+        ValueError: input order is not prime
+
+    .. NOTE::
+
+        Depending on the input, this function may run for a *very* long time.
+        This algorithm consists of multiple "search rounds" for a suitable
+        discriminant `D`. We expect this algorithm to terminate after a number
+        of rounds that is polynomial in `\log\log N`. In practice (cf. Section
+        5), this number is usually 1.
+
+    ALGORITHM: [BS2007]_, Algorithm 2.2
+    """
+    from sage.arith.misc import is_prime
+    from sage.combinat.subset import powerset
+    from sage.functions.other import ceil
+    from sage.misc.functional import symbolic_prod as product, log
+    from sage.quadratic_forms.binary_qf import BinaryQF
+    from sage.rings.fast_arith import prime_range
+    from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
+
+    if not is_prime(N):
+        raise ValueError("input order is not prime")
+
+    # The algorithm consists of multiple ‘search rounds’ for a suitable
+    # discriminant `D`, `r` defines the number of rounds. We expect this
+    # algorithm to terminate after a number of rounds that is polynomial in
+    # loglog N.
+    r = 0
+    prime_start = 3
+    prime_end = ceil((r + 1) * log(N))
+    S = []
+
+    while True:
+        # Iterating over the odd primes by chunks of size log(`N`).
+        S.extend(prime_range(prime_start, prime_end))
+
+        # Every possible products of distinct elements of `S`.
+        # There probably is a more optimal way to compute all possible products
+        # of elements of S than using a powerset. Here many multiplications are
+        # done multiple times.
+        for e in powerset(S):
+            D = product(e)
+            if -D % 8 != 5:
+                continue
+
+            Q = BinaryQF([1, 0, D])
+            sol = Q.solve_integer(4 * N)
+            if sol is None:
+                continue
+
+            x, _ = sol
+            p1 = N + 1 - x
+            p2 = N + 1 + x
+            for p_i in [p1, p2]:
+                if is_prime(p_i):
+                    H = hilbert_class_polynomial(-D)
+                    for j0, _ in H.roots(ring=GF(p_i)):
+                        E = EllipticCurve(j=j0)
+                        if E.order() == N:
+                            return E
+                        else:
+                            for Et in E.twists():
+                                if Et.order() == N:
+                                    return Et
+
+        # At this point, no discriminant has been found, moving to next round
+        # and extending the prime list.
+        r += 1
+
+        prime_start = prime_end
+        prime_end = ceil((r + 1) * log(N))
