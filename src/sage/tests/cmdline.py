@@ -552,6 +552,7 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
 
     Some programs of which we check functionality using only ``--version``::
 
+        sage: # needs sage.symbolic
         sage: (out, err, ret) = test_executable(["sage", "--maxima", "--version"])
         sage: out.find("Maxima ") >= 0
         True

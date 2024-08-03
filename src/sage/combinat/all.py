@@ -53,24 +53,15 @@ from sage.combinat import quickref, tutorial
 install_dict(__package__, {'quickref': quickref, 'tutorial': tutorial})
 del quickref, tutorial
 
-from sage.misc.lazy_import import lazy_import
+from sage.combinat.all__sagemath_categories import *
 
-from sage.combinat.combinat import (CombinatorialObject,
-                       bell_number, bell_polynomial, bernoulli_polynomial,
-                       catalan_number, euler_number,
-                       fibonacci, fibonacci_sequence, fibonacci_xrange,
-                       lucas_number1, lucas_number2,
-                       number_of_tuples, number_of_unordered_tuples,
-                       polygonal_number, stirling_number1, stirling_number2,
-                       tuples, unordered_tuples)
+from sage.misc.lazy_import import lazy_import
 
 from sage.combinat.expnums import expnums
 
 from sage.combinat.chas.all import *
 from sage.combinat.crystals.all import *
 from sage.combinat.rigged_configurations.all import *
-
-from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
 
 # block designs, etc.
 from sage.combinat.designs.all import *
@@ -86,7 +77,6 @@ from sage.combinat.symmetric_group_representations import SymmetricGroupRepresen
 from sage.combinat.yang_baxter_graph import YangBaxterGraph
 
 # Permutations
-from sage.combinat.permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
 from sage.combinat.affine_permutation import AffinePermutationGroup
 lazy_import('sage.combinat.colored_permutations', ['ColoredPermutations',
                                                    'SignedPermutation',
@@ -103,11 +93,7 @@ lazy_import("sage.combinat.hillman_grassl", ["WeakReversePlanePartition", "WeakR
 # PerfectMatchings
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 
-# Integer lists
-from sage.combinat.integer_lists import IntegerListsLex
-
 # Compositions
-from sage.combinat.composition import Composition, Compositions
 from sage.combinat.composition_signed import SignedCompositions
 
 # Partitions
@@ -170,9 +156,6 @@ lazy_import('sage.combinat.subword', 'Subwords')
 
 from sage.combinat.graph_path import GraphPaths
 
-# Tuples
-from sage.combinat.tuple import Tuples, UnorderedTuples
-
 # Alternating sign matrices
 lazy_import('sage.combinat.alternating_sign_matrix', ('AlternatingSignMatrix',
                                                       'AlternatingSignMatrices',
@@ -210,7 +193,6 @@ from sage.combinat.set_partition_ordered import OrderedSetPartition, OrderedSetP
 lazy_import('sage.combinat.multiset_partition_into_sets_ordered',
             ['OrderedMultisetPartitionIntoSets',
              'OrderedMultisetPartitionsIntoSets'])
-from sage.combinat.subset import Subsets, subsets, powerset, uniq
 from sage.combinat.necklace import Necklaces
 lazy_import('sage.combinat.dyck_word', ('DyckWords', 'DyckWord'))
 lazy_import('sage.combinat.nu_dyck_word', ('NuDyckWords', 'NuDyckWord'))
@@ -295,3 +277,6 @@ lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
 
 # Bijectionist
 lazy_import('sage.combinat.bijectionist', 'Bijectionist')
+del lazy_import
+del install_dict
+del install_doc

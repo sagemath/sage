@@ -511,6 +511,7 @@ class Semigroups(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.groups
                 sage: G = CyclicPermutationGroup(3)
                 sage: M = algebras.Exterior(QQ, 'x', 3)
                 sage: def on_basis(g, m):  # cyclically permute generators
@@ -1059,6 +1060,7 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
+                    sage: # needs sage.groups
                     sage: G = groups.permutation.Dihedral(5)
                     sage: CFM = CombinatorialFreeModule(GF(2), [1, 2, 3, 4, 5])
                     sage: A = G.algebra(GF(2))
