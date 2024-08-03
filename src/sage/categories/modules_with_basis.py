@@ -17,6 +17,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+import collections.abc
+
 from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -1573,6 +1575,33 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 m = C(m)
             return self[m]
 
+        def dense_coefficient_list(self, order=None):
+            """
+            Return a list of some coefficients of ``self``.
+
+            INPUT:
+
+            - ``order`` -- (optional) an ordering of a subset of the basis indexing set
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: V = QQ^ZZ
+                sage: v = V._from_dict({3: 1, 5: -1})
+                sage: v.dense_coefficient_list()
+                Traceback (most recent call last):
+                ...
+                ValueError: module is not finite-dimensional;
+                use order to obtain the coefficients of a finite-dimensional projection
+                sage: v.dense_coefficient_list([2, 3, 4])
+                [0, 1, 0]
+            """
+            if order is None:
+                raise ValueError(f"module is not finite-dimensional; "
+                                 f"use order to obtain the coefficients "
+                                 f"of a finite-dimensional projection")
+            return [self[i] for i in order]
+
         def is_zero(self):
             """
             Return ``True`` if and only if ``self == 0``.
@@ -2423,6 +2452,157 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 2*B[3]
             """
             return self(self.domain().monomial(i))
+
+        def _matrix_side_bases_orders(self, base_ring=None, side='left', *,
+                                      row_order=None, column_order=None):
+            r"""
+            Return the matrix of this morphism in the distinguished
+            bases of the domain and codomain.
+
+            INPUT:
+
+            - ``base_ring`` -- a ring (default: ``None``, meaning the
+              base ring of the codomain)
+
+            - ``side`` -- one of the following:
+
+              - ``'left'`` (the default): this morphism is considered as
+                acting on the left; thus the matrix representing the morphism
+                is to be multiplied by a column vector representing an element
+                of the domain, and each column of the matrix represents the
+                image of an element of the basis of the domain
+
+              - ``'right'``: this morphism is considered as acting on
+                the right; thus a row vector representing an element of the
+                domain is to be multiplied by the matrix representing the
+                morphism, and each row of the matrix represents the image of
+                an element of the basis of the domain
+
+              - ``'any'``: the implementation is allowed to choose a side
+
+            - ``row_order``, ``column_order`` -- each either ``None`` or a sequence
+              that indexes a subfamily of either ``domain_basis`` or
+              ``codomain_basis``, depending on ``side``.
+
+              If ``None``, the basis has to be finite, and the order of
+              the rows or columns matches with the order in which the
+              basis is enumerated.
+
+            OUTPUT: a tuple consisting of:
+
+            - ``matrix`` -- an immutable matrix,
+
+            - ``side`` -- either ``'left'`` or ``'right'``,
+
+            - ``domain_basis``, ``codomain_basis`` -- bases,
+
+            - ``row_order``, ``column_order`` -- sequences of objects,
+              each of which indexes a subfamily of either ``domain_basis``
+              or ``codomain_basis``, depending on ``side``.
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: X = CombinatorialFreeModule(ZZ, [1,2]); x = X.basis()
+                sage: Y = CombinatorialFreeModule(ZZ, [3,4]); y = Y.basis()
+                sage: phi = X.module_morphism(on_basis={1: y[3] + 3*y[4],
+                ....:                                   2: 2*y[3] + 5*y[4]}.__getitem__,
+                ....:                         codomain=Y)
+                sage: phi._matrix_side_bases_orders()
+                ( [1 2]
+                  [3 5], 'left',
+                  Finite family {1: B[1], 2: B[2]},
+                  Finite family {3: B[3], 4: B[4]},
+                  [3, 4], [1, 2] )
+                sage: phi._matrix_side_bases_orders(side="right")
+                ( [1 3]
+                  [2 5], 'right',
+                  Finite family {1: B[1], 2: B[2]},
+                  Finite family {3: B[3], 4: B[4]},
+                  [1, 2], [3, 4] )
+
+            Infinite-dimensional example::
+
+                sage: X = CombinatorialFreeModule(QQ, ZZ); x = X.basis()
+                sage: def on_basis(i):
+                ....:     return X.monomial(i+1) - X.monomial(i+2)
+                sage: phi = X.module_morphism(on_basis=on_basis, codomain=X)
+                sage: phi._matrix_side_bases_orders()
+                Traceback (most recent call last):
+                ...
+                ValueError: domain or codomain are not finite-dimensional;
+                use row_order or column_order to obtain the matrix
+                of a finite-dimensional restriction or projection
+                sage: phi._matrix_side_bases_orders(row_order=range(5),
+                ....:                               column_order=range(4))
+                ( [ 0  0  0  0]
+                  [ 1  0  0  0]
+                  [-1  1  0  0]
+                  [ 0 -1  1  0]
+                  [ 0  0 -1  1], 'left',
+                  Lazy family (Term map from Integer Ring to Free module generated by
+                               Integer Ring over Rational Field(i))_{i in Integer Ring},
+                  Lazy family (Term map from Integer Ring to Free module generated by
+                               Integer Ring over Rational Field(i))_{i in Integer Ring},
+                  range(0, 5), range(0, 4) )
+            """
+            if side == 'any':
+                side = 'left'
+                if row_order != column_order:
+                    raise ValueError("if side is 'any', row_order and column_order must be the same")
+            elif side not in ['left', 'right']:
+                raise ValueError(f"side must be 'left' or 'right', not {side}")
+            if side == 'left':
+                row_order, column_order = column_order, row_order
+
+            on_basis = self.on_basis()
+            domain_basis = self.domain().basis()
+            codomain_basis = self.codomain().basis()
+
+            from sage.rings.infinity import Infinity
+
+            if row_order is None:
+                nrows = self.domain().dimension()
+                if nrows == Infinity:
+                    raise ValueError(f"domain or codomain are not finite-dimensional; "
+                                     f"use row_order or column_order to obtain the matrix "
+                                     f"of a finite-dimensional restriction or projection")
+                try:
+                    row_order = sorted(domain_basis.keys())
+                except AttributeError:  # Not a family, assume it is list-like
+                    row_order = range(nrows)
+            elif not isinstance(row_order, collections.abc.Sequence):
+                raise ValueError("row_order and column_order must be either None or a sequence")
+            else:
+                nrows = len(row_order)
+
+            if column_order is None:
+                ncols = self.codomain().dimension()
+                if ncols == Infinity:
+                    raise ValueError(f"domain or codomain are not finite-dimensional; "
+                                     f"use row_order or column_order to obtain the matrix "
+                                     f"of a finite-dimensional restriction or projection")
+                try:
+                    column_order = sorted(codomain_basis.keys())
+                except AttributeError:  # Not a family, assume it is list-like
+                    column_order = range(ncols)
+            elif not isinstance(row_order, collections.abc.Sequence):
+                raise ValueError("row_order and column_order must be either None or a sequence")
+            else:
+                ncols = len(column_order)
+
+            from sage.matrix.matrix_space import MatrixSpace
+            if base_ring is None:
+                base_ring = self.codomain().base_ring()
+            MS = MatrixSpace(base_ring, nrows, ncols)
+            m = MS([on_basis(x).dense_coefficient_list(order=column_order)
+                    for x in row_order])
+
+            if side == 'left':
+                m = m.transpose()
+                column_order, row_order = row_order, column_order
+            m.set_immutable()
+            return m, side, domain_basis, codomain_basis, row_order, column_order
 
     class CartesianProducts(CartesianProductsCategory):
         """

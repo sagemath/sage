@@ -1826,6 +1826,51 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 raising :exc:`NotImplementedError` could be provided instead.
             """
 
+        def is_bijective(self):
+            r"""
+            Return whether ``self`` is bijective.
+
+            EXAMPLES:
+
+            Two morphisms between vector spaces
+            that are obviously not bijective, simply on
+            considerations of the dimensions.  However, each fulfills
+            half of the requirements to be a bijection.  ::
+
+                sage: V1 = QQ^2
+                sage: V2 = QQ^3
+                sage: m = matrix(QQ, [[1, 2, 3], [4, 5, 6]])
+                sage: phi = V1.hom(m, V2)
+                sage: phi.is_injective()
+                True
+                sage: phi.is_bijective()
+                False
+                sage: rho = V2.hom(m.transpose(), V1)
+                sage: rho.is_surjective()
+                True
+                sage: rho.is_bijective()
+                False
+
+            We construct a simple bijection between two one-dimensional
+            vector spaces.  ::
+
+                sage: V1 = QQ^3
+                sage: V2 = QQ^2
+                sage: phi = V1.hom(matrix(QQ, [[1, 2], [3, 4], [5, 6]]), V2)
+                sage: x = vector(QQ, [1, -1, 4])
+                sage: y = phi(x); y
+                (18, 22)
+                sage: rho = phi.restrict_domain(V1.span([x]))
+                sage: zeta = rho.restrict_codomain(V2.span([y]))
+                sage: zeta.is_bijective()
+                True
+
+            AUTHOR:
+
+            - Rob Beezer (2011-06-28)
+            """
+            return self.is_injective() and self.is_surjective()
+
         def is_injective(self):
             r"""
             Return whether this map is injective.
@@ -1843,6 +1888,21 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 return True
             if self.domain().cardinality() > self.codomain().cardinality():
                 return False
+            raise NotImplementedError
+
+        def is_surjective(self):
+            """
+            Return whether the map is surjective.
+
+            TESTS::
+
+                sage: from sage.categories.map import Map
+                sage: f = Map(Hom(QQ, ZZ, Rings()))
+                sage: f.is_surjective()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError
+            """
             raise NotImplementedError
 
         def image(self, domain_subset=None):
