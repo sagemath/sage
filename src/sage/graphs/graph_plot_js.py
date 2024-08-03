@@ -73,9 +73,9 @@ Authors:
 Functions
 ---------
 """
+from pathlib import Path
 from sage.misc.temporary_file import tmp_filename
 from sage.misc.lazy_import import lazy_import
-import os
 lazy_import("sage.plot.colors", "rainbow")
 
 # ****************************************************************************
@@ -317,13 +317,12 @@ def gen_html_code(G,
                                    "edge_thickness": int(edge_thickness)})
 
     from sage.env import SAGE_EXTCODE, SAGE_SHARE
-    js_code_file = open(SAGE_EXTCODE + "/graphs/graph_plot_js.html", 'r')
-    js_code = js_code_file.read().replace("// GRAPH_DATA_HEREEEEEEEEEEE", string)
-    js_code_file.close()
+    with open(Path(SAGE_EXTCODE) / "graphs" / "graph_plot_js.html", 'r') as f:
+        js_code = f.read().replace("// GRAPH_DATA_HEREEEEEEEEEEE", string)
 
     # Add d3.js script depending on whether d3js package is installed.
-    d3js_filepath = os.path.join(SAGE_SHARE, 'd3js', 'd3.min.js')
-    if os.path.exists(d3js_filepath):
+    d3js_filepath = Path(SAGE_SHARE) / 'd3js' / 'd3.min.js'
+    if d3js_filepath.exists():
         with open(d3js_filepath, 'r') as d3js_code_file:
             d3js_script = '<script>' + d3js_code_file.read() + '</script>'
     else:

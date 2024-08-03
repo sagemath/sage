@@ -2794,8 +2794,8 @@ class PSL(PermutationGroup_plg):
 
         F = self.base_ring()
         q = F.order()
-        libgap.Read(str(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
-                        'hurwitz_crv_rr_sp.gap'))
+        libgap.Read(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
+                    'hurwitz_crv_rr_sp.gap')
         mults = libgap.eval(f"ram_module_hurwitz({q})")
         return mults.sage()
 
@@ -2838,8 +2838,8 @@ class PSL(PermutationGroup_plg):
             raise ValueError("degree must be 2")
         F = self.base_ring()
         q = F.order()
-        libgap.Read(str(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
-                        'modular_crv_rr_sp.gap'))
+        libgap.Read(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
+                    'modular_crv_rr_sp.gap')
         mults = libgap.eval(f"ram_module_X({q})")
         return mults.sage()
 
