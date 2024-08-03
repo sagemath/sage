@@ -63,7 +63,7 @@ AUTHORS:
 from sage.categories.groups import Groups
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import CachedRepresentation
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.rings.integer import Integer
@@ -72,6 +72,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.structure.sequence import Sequence
 from sage.structure.element import coercion_model, parent
+from sage.structure.richcmp import richcmp, richcmp_method
 
 
 def is_FreeGroup(x):
@@ -672,56 +673,11 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
 
         from sage.groups.indexed_free_group import IndexedFreeGroup
         return IndexedFreeGroup(index_set, names=names, **kwds)
-    return FreeGroup_class(names)
+    return FreeGroup_class(names, **kwds)
 
 
-def wrap_FreeGroup(libgap_free_group):
-    """
-    Wrap a LibGAP free group.
-
-    This function changes the comparison method of
-    ``libgap_free_group`` to comparison by Python ``id``. If you want
-    to put the LibGAP free group into a container (set, dict) then you
-    should understand the implications of
-    :meth:`~sage.libs.gap.element.GapElement._set_compare_by_id`. To
-    be safe, it is recommended that you just work with the resulting
-    Sage :class:`FreeGroup_class`.
-
-    INPUT:
-
-    - ``libgap_free_group`` -- a LibGAP free group
-
-    OUTPUT: a Sage :class:`FreeGroup_class`
-
-    EXAMPLES:
-
-    First construct a LibGAP free group::
-
-        sage: F = libgap.FreeGroup(['a', 'b'])
-        sage: type(F)
-        <class 'sage.libs.gap.element.GapElement'>
-
-    Now wrap it::
-
-        sage: from sage.groups.free_group import wrap_FreeGroup
-        sage: wrap_FreeGroup(F)
-        Free Group on generators {a, b}
-
-    TESTS:
-
-    Check that we can do it twice (see :issue:`12339`) ::
-
-        sage: G = libgap.FreeGroup(['a', 'b'])
-        sage: wrap_FreeGroup(G)
-        Free Group on generators {a, b}
-    """
-    assert libgap_free_group.IsFreeGroup()
-    libgap_free_group._set_compare_by_id()
-    names = tuple( str(g) for g in libgap_free_group.GeneratorsOfGroup() )
-    return FreeGroup_class(names, libgap_free_group)
-
-
-class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
+@richcmp_method
+class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's FreeGroup.
 
@@ -736,7 +692,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     """
     Element = FreeGroupElement
 
-    def __init__(self, generator_names, libgap_free_group=None):
+    def __init__(self, generator_names, gap_group=None):
         """
         Python constructor.
 
@@ -757,15 +713,55 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G.variable_names()
             ('a', 'b')
         """
-        self._assign_names(generator_names)
-        if libgap_free_group is None:
-            libgap_free_group = libgap.FreeGroup(generator_names)
-        ParentLibGAP.__init__(self, libgap_free_group)
+        if gap_group is None:
+            gap_group = libgap.FreeGroup(generator_names)
+        ParentLibGAP.__init__(self, gap_group)
         if not generator_names:
             cat = Groups().Finite()
         else:
             cat = Groups().Infinite()
         Group.__init__(self, category=cat)
+        self._gen_names = generator_names
+        try:
+            self._assign_names(generator_names)
+        except ValueError:
+            pass
+
+    def __hash__(self):
+        """
+        Make hashable.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: F.__hash__() == hash(F._gen_names)
+            True
+        """
+        return hash(self._gen_names)
+
+    def __richcmp__(self, other, op):
+        """
+        Rich comparison of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: G1 = FreeGroup('a, b')
+            sage: gg = libgap.FreeGroup('x', 'y')
+            sage: G2 = FreeGroup('a, b', gap_group=gg)
+            sage: G1 == G2
+            True
+            sage: G1 is G2
+            False
+            sage: G3 = FreeGroup('x, y')
+            sage: G1 == G3
+            False
+            sage: G2 == G3
+            False
+        """
+        if not isinstance(other, self.__class__):
+            from sage.structure.richcmp import op_NE
+            return (op == op_NE)
+        return richcmp(self._gen_names, other._gen_names, op)
 
     def _repr_(self):
         """
@@ -777,7 +773,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G._repr_()
             'Free Group on generators {a, b}'
         """
-        return 'Free Group on generators {' + ', '.join(self.variable_names()) + '}'
+        return 'Free Group on generators {' + ', '.join(self._gen_names) + '}'
 
     def rank(self):
         """
@@ -811,7 +807,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G._gap_init_()
             'FreeGroup(["x0", "x1", "x2"])'
         """
-        gap_names = [ '"' + s + '"' for s in self.variable_names() ]
+        gap_names = ['"' + s + '"' for s in self._gen_names]
         gen_str = ', '.join(gap_names)
         return 'FreeGroup(['+gen_str+'])'
 
@@ -867,9 +863,9 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         except AttributeError:
             return self.element_class(self, x, **kwds)
         if isinstance(P, FreeGroup_class):
-            names = {P._names[abs(i)-1] for i in x.Tietze()}
-            if names.issubset(self._names):
-                return self([i.sign()*(self._names.index(P._names[abs(i)-1])+1)
+            names = {P._gen_names[abs(i)-1] for i in x.Tietze()}
+            if names.issubset(self._gen_names):
+                return self([i.sign()*(self._gen_names.index(P._gen_names[abs(i)-1])+1)
                              for i in x.Tietze()])
             else:
                 raise ValueError('generators of %s not in the group' % x)

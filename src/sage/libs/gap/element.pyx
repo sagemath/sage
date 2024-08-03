@@ -1320,12 +1320,22 @@ cdef class GapElement(RingElement):
             sage: p.sage().parent()
             Fraction Field of Univariate Polynomial Ring in x over Integer Ring
 
+            sage: G0 = libgap.SymplecticGroup(4,2)
+            sage: P = G0.IsomorphismFpGroup().Range()
+            sage: G = P.sage()
+            sage: G.gap() == P
+            True
+
+            sage: F0 = libgap.FreeGroup(2)
+            sage: F = F0.sage()
+            sage: F.gap() is F0
+            True
+
         TESTS:
 
         Check :issue:`30496`::
 
             sage: x = libgap.Integers.Indeterminate("x")
-
             sage: p = x^2 - 2*x
             sage: p.sage()
             x^2 - 2*x
@@ -1372,6 +1382,20 @@ cdef class GapElement(RingElement):
             # May be a list-like collection of some other type of GapElements
             # that we can convert
             return [item.sage() for item in self.AsList()]
+
+        elif self.IsFreeGroup():
+            from sage.groups.free_group import FreeGroup_class
+            names = tuple(str(g) for g in self.GeneratorsOfGroup())
+            return FreeGroup_class(names, gap_group=self)
+
+        elif self.IsFpGroup():
+            from sage.groups.free_group import FreeGroup
+            from sage.groups.finitely_presented import FinitelyPresentedGroup
+            # names = tuple(str(g).replace(".", "_") for g in self.FreeGroupOfFpGroup().GeneratorsOfGroup())
+            F = self.FreeGroupOfFpGroup().sage()
+            relations = tuple(F(rel.LetterRepAssocWord().sage())
+                              for rel in self.RelatorsOfFpGroup())
+            return FinitelyPresentedGroup(F, relations, libgap_fpgroup=self)
 
         raise NotImplementedError('cannot construct equivalent Sage object')
 
