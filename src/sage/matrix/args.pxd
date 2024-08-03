@@ -88,7 +88,7 @@ cdef class MatrixArgs:
         value was previously set, it must remain the same.
         """
         if n < 0:
-            raise ArithmeticError("number of columns must be non-negative")
+            raise ArithmeticError("number of columns must be nonnegative")
         cdef long p = self.ncols
         if p != -1 and p != n:
             raise ValueError(f"inconsistent number of columns: should be {p} "
@@ -104,7 +104,7 @@ cdef class MatrixArgs:
         value was previously set, it must remain the same.
         """
         if n < 0:
-            raise ArithmeticError("number of rows must be non-negative")
+            raise ArithmeticError("number of rows must be nonnegative")
         cdef long p = self.nrows
         if p != -1 and p != n:
             raise ValueError(f"inconsistent number of rows: should be {p} but got {n}")

@@ -24,18 +24,18 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
 
     INPUT:
 
-    - ``obj`` -- a list of functions, a module or a class. If given a list of
+    - ``obj`` -- list of functions, a module or a class. If given a list of
       functions, the generated table will consist of these. If given a module
       or a class, all functions/methods it defines will be listed, except
       deprecated or those starting with an underscore. In the case of a class,
       note that inherited methods are not displayed.
 
-    - ``names`` -- a dictionary associating a name to a function. Takes
+    - ``names`` -- dictionary associating a name to a function. Takes
       precedence over the automatically computed name for the functions. Only
       used when ``list_of_entries`` is a list.
 
     - ``sort`` -- boolean (default: ``True``); whether to sort the list of
-      methods lexicographically.
+      methods lexicographically
 
     - ``only_local_functions`` -- boolean (default: ``True``); if
       ``list_of_entries`` is a module, ``only_local_functions = True`` means
@@ -230,7 +230,7 @@ def list_of_subfunctions(root, only_local_functions=True):
 
     INPUT:
 
-    - ``root`` -- the module, or class, whose elements are to be listed.
+    - ``root`` -- the module, or class, whose elements are to be listed
 
     - ``only_local_functions`` -- boolean (default: ``True``); if ``root`` is a
       module, ``only_local_functions = True`` means that imported functions will
@@ -259,7 +259,6 @@ def list_of_subfunctions(root, only_local_functions=True):
         sage: list_of_subfunctions(A)                                                   # needs sage.graphs
         ([<function GenericGraph.order at 0x...>],
          {<function GenericGraph.order at 0x...>: 'x'})
-
     """
     if inspect.ismodule(root):
         ismodule = True
@@ -305,7 +304,7 @@ def gen_thematic_rest_table_index(root, additional_categories=None, only_local_f
 
     INPUT:
 
-    - ``root`` -- the module, or class, whose elements are to be listed.
+    - ``root`` -- the module, or class, whose elements are to be listed
 
     - ``additional_categories`` -- dictionary (default: ``None``); a dictionary
       associating a category (given as a string) to a function's name. Can be
@@ -355,8 +354,8 @@ def doc_index(name):
 
     INPUT:
 
-    - ``name`` -- a string, which will become the title of the index in which
-      this function/method will appear.
+    - ``name`` -- string, which will become the title of the index in which
+      this function/method will appear
 
     EXAMPLES::
 

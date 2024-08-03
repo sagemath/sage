@@ -82,7 +82,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
     def _compute_q_expansion_basis(self, prec=None):
         """
-        Compute q-expansions for a basis of self to precision prec.
+        Compute `q`-expansions for a basis of ``self`` to precision ``prec``.
 
         EXAMPLES::
 

@@ -1,1 +1,1 @@
-python-jupyter-sphinx
+python3-jupyter-sphinx
