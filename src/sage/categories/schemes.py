@@ -99,7 +99,7 @@ class Schemes(Category):
 
     def _call_(self, x):
         """
-        Construct a scheme from the data in ``x``
+        Construct a scheme from the data in ``x``.
 
         EXAMPLES:
 
@@ -143,7 +143,6 @@ class Schemes(Category):
               Defn: Natural morphism:
                       From: Integer Ring
                       To:   Rational Field
-
         """
         if isinstance(x, (SchemeMorphism, Scheme)):
             return x

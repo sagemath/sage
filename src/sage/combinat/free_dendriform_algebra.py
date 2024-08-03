@@ -180,7 +180,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         cat = HopfAlgebras(R).WithBasis().Graded().Connected()
         CombinatorialFreeModule.__init__(self, R, Trees,
-                                         latex_prefix="",
+                                         latex_prefix='',
                                          sorting_key=key,
                                          category=cat)
 
@@ -224,11 +224,11 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
     def gen(self, i):
         r"""
-        Return the ``i``-th generator of the algebra.
+        Return the `i`-th generator of the algebra.
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 

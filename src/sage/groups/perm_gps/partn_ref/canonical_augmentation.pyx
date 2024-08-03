@@ -400,74 +400,63 @@ cdef iterator *setup_canonical_generator(int degree,
 
     - ``all_children_are_equivalent`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
+        - ``PS`` -- pointer to a partition stack
+        - ``S`` -- pointer to the structure
         OUTPUT:
-        bint -- returns True if it can be determined that all refinements below
-            the current one will result in an equivalent discrete partition
-
+        bint; returns ``True`` if it can be determined that all refinements below
+        the current one will result in an equivalent discrete partition
     - ``refine_and_return_invariant`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
-        alpha -- an array consisting of numbers, which indicate the starting
-            positions of the cells to refine against (will likely be modified)
+        - ``PS`` -- pointer to a partition stack
+        - ``S`` -- pointer to the structure
+        - ``alpha`` -- an array consisting of numbers, which indicate the starting
+          positions of the cells to refine against (will likely be modified)
         OUTPUT:
-        int -- returns an invariant under application of arbitrary permutations
-
+        integer; returns an invariant under application of arbitrary permutations
     - ``compare_structures`` -- pointer to a function
         INPUT:
-        gamma_1, gamma_2 -- (list) permutations of the points of S1 and S2
-        S1, S2 -- pointers to the structures
-        degree -- degree of gamma_1 and 2
+        - ``gamma_1``, ``gamma_2`` -- (list) permutations of the points of S1 and S2
+        - ``S1``, ``S2`` -- pointers to the structures
+        - ``degree`` -- degree of gamma_1 and 2
         OUTPUT:
-        int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
-            such that the set of all structures is well-ordered
-
+        integer; 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
+        such that the set of all structures is well-ordered
     - ``generate_children`` -- pointer to a function
         INPUT:
-        S -- pointer to the structure
-        group -- pointer to an automorphism group (canonical relabeling is not guaranteed)
-        it -- preallocated iterator struct
+        - ``S`` -- pointer to the structure
+        - ``group`` -- pointer to an automorphism group (canonical relabeling is not guaranteed)
+        - ``it`` -- preallocated iterator struct
         OUTPUT:
-        iterator * -- pointer to an iterator over inequivalent augmentations of S
-
+        iterator *; pointer to an iterator over inequivalent augmentations of S
     - ``apply_augmentation`` -- pointer to a function
         INPUT:
-        parent -- object to augment
-        aug -- the augmentation
-        child -- space to put the augmented object
-        degree -- pointer to an int, function should store the degree of the augmented object here
-        mem_err -- pointer where memory error can be reported
-        OUTPUT:
-        pointer to child
-
+        - ``parent`` -- object to augment
+        - ``aug`` -- the augmentation
+        - ``child`` -- space to put the augmented object
+        - ``degree`` -- pointer to an int, function should store the degree of the augmented object here
+        - ``mem_err`` -- pointer where memory error can be reported
+        OUTPUT: pointer to child
     - ``free_object`` -- pointer to a function
         INPUT:
-        child -- object to be freed
-
+        - ``child`` -- object to be freed
     - ``free_iter_data`` -- pointer to a function
         INPUT:
-        data -- data part of an iterator struct
-
+        - ``data`` -- data part of an iterator struct
     - ``free_aug`` -- pointer to a function
         INPUT:
-        aug -- augmentation to be freed
-
+        - ``aug`` -- augmentation to be freed
     - ``canonical_parent`` -- pointer to a function
         INPUT:
-        child -- pointer to the structure
-        parent -- space to store the canonical parent
-        permutation -- array representing a relabeling of the child
-        degree -- pointer to store the degree of the parent
-        mem_err -- pointer for indicating memory errors
-        OUTPUT:
-        pointer to the parent
+        - ``child`` -- pointer to the structure
+        - ``parent`` -- space to store the canonical parent
+        - ``permutation`` -- array representing a relabeling of the child
+        - ``degree`` -- pointer to store the degree of the parent
+        - ``mem_err`` -- pointer for indicating memory errors
+        OUTPUT: pointer to the parent
 
     - ``max_depth`` -- maximum depth of augmentations to be made from the seed object S
 
     OUTPUT: a pointer to an iterator of objects
-
     """
     if max_depth <= 1:
         raise ValueError("maximum depth (%d) must be at least two" % max_depth)

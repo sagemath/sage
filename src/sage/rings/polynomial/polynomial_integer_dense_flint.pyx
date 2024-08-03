@@ -105,14 +105,14 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
     def __dealloc__(self):
         r"""
-        calls the underlying FLINT fmpz_poly destructor
+        Call the underlying FLINT fmpz_poly destructor
         """
         fmpz_poly_clear(self._poly)
 
     cdef Polynomial_integer_dense_flint _new(self):
         r"""
-        Quickly creates a new initialized Polynomial_integer_dense_flint
-        with the correct parent and _is_gen == 0.
+        Quickly create a new initialized ``Polynomial_integer_dense_flint``
+        with the correct parent and ``_is_gen == 0``.
         """
         cdef Polynomial_integer_dense_flint x = Polynomial_integer_dense_flint.__new__(Polynomial_integer_dense_flint)
         x._parent = self._parent
@@ -121,19 +121,18 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
     cpdef Polynomial _new_constant_poly(self, a, Parent P):
         r"""
-        Quickly creates a new constant polynomial with value a in parent P
+        Quickly create a new constant polynomial with value ``a`` in parent ``P``.
 
         ASSUMPTION:
 
-        The given value has to be in the base ring of P. This assumption is not
-        verified.
+        The given value has to be in the base ring of ``P``. This assumption is
+        not verified.
 
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
             sage: x._new_constant_poly(2,R)
             2
-
         """
         cdef Polynomial_integer_dense_flint x = Polynomial_integer_dense_flint.__new__(Polynomial_integer_dense_flint)
         x._parent = P
@@ -212,7 +211,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
             sage: ZZ['x']({2^3: 1})
             x^8
-
         """
         Polynomial.__init__(self, parent, is_gen=is_gen)
 
@@ -364,7 +362,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
     def __call__(self, *x, **kwds):
         """
-        Calls this polynomial with the given parameters, which can be
+        Call this polynomial with the given parameters, which can be
         interpreted as polynomial composition or evaluation by this
         method.
 
@@ -504,7 +502,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
             sage: R(-1).content()
             -1
-
         """
         if self.is_zero():
             return ZZ.zero()
@@ -978,7 +975,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
     cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         r"""
-        Truncated multiplication
+        Truncated multiplication.
 
         .. SEEALSO::
 
@@ -1167,7 +1164,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
     cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
         r"""
-        Truncated power
+        Truncated power.
 
         TESTS::
 
@@ -1310,10 +1307,10 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
     cpdef _unsafe_mutate(self, long n, value):
         r"""
-        Sets coefficient of `x^n` to value.
+        Set coefficient of `x^n` to value.
 
         This is very unsafe, because Sage polynomials are supposed to be
-        immutable. (Shhhh don't tell anyone!)
+        immutable.
 
         EXAMPLES::
 
@@ -1515,7 +1512,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: f=-x^2
             sage: f.squarefree_decomposition()
             (-1) * x^2
-
         """
         cdef ZZX_c** v
         cdef long* e
@@ -1658,7 +1654,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         - ``p`` -- prime
 
-        OUTPUT: factorization of ``self`` reduced modulo `p`.
+        OUTPUT: factorization of ``self`` reduced modulo `p`
 
         EXAMPLES::
 
@@ -1698,7 +1694,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         - ``prec`` -- integer; the precision
 
-        OUTPUT: factorization of ``self`` over the completion at `p`.
+        OUTPUT: factorization of ``self`` over the completion at `p`
 
         EXAMPLES::
 
@@ -1714,7 +1710,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: f.factor_padic(5, 10)
             (4 + O(5^10)) * (5 + O(5^11))^2 * ((1 + O(5^10))*x + 5 + O(5^10))^2
             * ((5 + O(5^10))*x + 1 + O(5^10))^2
-
         """
         from sage.rings.padics.factory import Zp
 
@@ -1815,7 +1810,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: p.reverse(degree=1.5r)
             Traceback (most recent call last):
             ...
-            ValueError: degree argument must be a non-negative integer, got 1.5
+            ValueError: degree argument must be a nonnegative integer, got 1.5
 
         Check that this implementation is compatible with the generic one::
 
@@ -1828,10 +1823,10 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         cdef unsigned long d
         if degree is not None:
             if degree < 0:
-                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+                raise ValueError("degree argument must be a nonnegative integer, got %s" % (degree))
             d = degree
             if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+                raise ValueError("degree argument must be a nonnegative integer, got %s" % (degree))
             # FLINT expects length
             fmpz_poly_reverse(res._poly, self._poly, d+1)
         else:
@@ -1853,7 +1848,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: f.revert_series(-1)
             Traceback (most recent call last):
             ...
-            ValueError: argument n must be a non-negative integer, got -1
+            ValueError: argument n must be a nonnegative integer, got -1
 
             sage: g = - t^3 + t^5
             sage: g.revert_series(6)
@@ -1864,7 +1859,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         cdef Polynomial_integer_dense_flint res = self._new()
         cdef unsigned long m
         if n < 0:
-            raise ValueError("argument n must be a non-negative integer, got {}".format(n))
+            raise ValueError("argument n must be a nonnegative integer, got {}".format(n))
         m = n
         if not self[0].is_zero() or not self[1].is_unit():
             raise ValueError("self must have constant coefficient 0 and a unit for coefficient {}^1".format(self.parent().gen()))
