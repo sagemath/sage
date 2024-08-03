@@ -732,15 +732,15 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             the resulting morphism will be defined with the default value.
         """
         if self.side() == "left":
-            if right.side() == "left":
-                return self.parent()(self.matrix() + right.matrix(), side=self.side())
-            elif right.side() == "right":
-                return self.parent()(self.matrix() + right.matrix().transpose(), side='left')
+            if other.side() == "left":
+                return self.parent()(self.matrix() + other.matrix(), side=self.side())
+            elif other.side() == "right":
+                return self.parent()(self.matrix() + other.matrix().transpose(), side="left")
         if self.side() == "right":
-            if right.side() == "right":
-                return self.parent()(self.matrix() + right.matrix(), side=self.side())
-            elif right.side() == "left":
-                return self.parent()(self.matrix().transpose() + right.matrix(), side='left')
+            if other.side() == "right":
+                return self.parent()(self.matrix() + other.matrix(), side=self.side())
+            elif other.side() == "left":
+                return self.parent()(self.matrix().transpose() + other.matrix(), side="left")
 
     def __neg__(self):
         """
