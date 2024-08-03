@@ -852,6 +852,40 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 ker = mat.left_kernel()
             return ker.dimension() == 0
 
+        def nullity(self):
+            r"""
+            Return the nullity of the matrix representing this morphism.
+
+            This is the dimension of its kernel.
+
+            EXAMPLES::
+
+                sage: V = ZZ^2; phi = V.hom(V.basis())
+                sage: phi.nullity()
+                0
+                sage: V = ZZ^2; phi = V.hom([V.0, V.0])
+                sage: phi.nullity()
+                1
+
+            ::
+
+                sage: m = matrix(2, [1, 2])
+                sage: V = ZZ^2
+                sage: h1 = V.hom(m)
+                sage: h1.nullity()
+                1
+                sage: W = ZZ^1
+                sage: h2 = W.hom(m, side="right")
+                sage: h2.nullity()
+                0
+            """
+            # Avoid using the method matrix() because of Issue #37877
+            mat, side, *_ = self._matrix_side_bases_orders(side='any')
+            if side == 'left':
+                return mat.right_nullity()
+            else:
+                return mat.left_nullity()
+
         def kernel_basis(self):
             """
             Return a basis of the kernel of ``self`` in echelon form.
@@ -915,6 +949,21 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             C = self.codomain()
             return C.submodule(self.image_basis(), already_echelonized=True,
                                category=self.category_for())
+
+        def rank(self):
+            r"""
+            Return the rank of the matrix representing this morphism.
+
+            EXAMPLES::
+
+                sage: V = ZZ^2; phi = V.hom(V.basis())
+                sage: phi.rank()
+                2
+                sage: V = ZZ^2; phi = V.hom([V.0, V.0])
+                sage: phi.rank()
+                1
+            """
+            return self.matrix().rank()
 
     class Homsets(HomsetsCategory):
 

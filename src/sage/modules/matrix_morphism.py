@@ -1014,52 +1014,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         return self.matrix()
 
-    def rank(self):
-        r"""
-        Return the rank of the matrix representing this morphism.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom(V.basis())
-            sage: phi.rank()
-            2
-            sage: V = ZZ^2; phi = V.hom([V.0, V.0])
-            sage: phi.rank()
-            1
-        """
-        return self.matrix().rank()
-
-    def nullity(self):
-        r"""
-        Return the nullity of the matrix representing this morphism, which is the
-        dimension of its kernel.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom(V.basis())
-            sage: phi.nullity()
-            0
-            sage: V = ZZ^2; phi = V.hom([V.0, V.0])
-            sage: phi.nullity()
-            1
-
-        ::
-
-            sage: m = matrix(2, [1, 2])
-            sage: V = ZZ^2
-            sage: h1 = V.hom(m)
-            sage: h1.nullity()
-            1
-            sage: W = ZZ^1
-            sage: h2 = W.hom(m, side='right')
-            sage: h2.nullity()
-            0
-        """
-        if self.side() == "left":
-            return self._matrix.left_nullity()
-        else:
-            return self._matrix.right_nullity()
-
     def is_identity(self):
         r"""
         Determines if this morphism is an identity function or not.
