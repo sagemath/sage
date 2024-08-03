@@ -3887,6 +3887,10 @@ REFERENCES:
             47:95-104, 1997.
             :doi:`10.1023/A:1022444205860`
 
+.. [KM2015] Nishad Kothari and U.S.R. Murty. *K4-free and C6¯-free Planar
+            Matching Covered Graphs.* Journal of Graph Theory. 82. (2015)
+            :doi:`10.1002/jgt.21882`.
+
 .. [KMAUTOM2000] Masayuki Kanda, Shiho Moriai, Kazumaro Aoki, Hiroki Ueda,
                  Youichi Takashima, Kazuo Ohta, and Tsutomu Matsumoto,
                  *E2 - a new 128-bit block cipher*; in IEICE Transactions on
