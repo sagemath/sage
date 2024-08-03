@@ -37,7 +37,7 @@ class symengine_py(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'symengine_py',
-                             [PythonModule('symengine', spkg='pypi:symengine.py',
+                             [PythonModule('symengine', spkg='pkg:pypi/symengine.py',
                                             url='https://pypi.org/project/symengine')])
 
 def all_features():

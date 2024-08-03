@@ -16,7 +16,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Constraint_System',
                     'Linear_Expression', 'line', 'ray', 'point'],
-                    feature=PythonModule("ppl", spkg='pypi:pplpy', type='standard'))
+            feature=PythonModule('ppl', spkg='pkg:pypi/pplpy', type='standard'))
 
 
 #########################################################################

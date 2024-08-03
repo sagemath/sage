@@ -37,7 +37,7 @@ class python_igraph(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'python_igraph',
-                             [PythonModule('igraph', spkg='pypi:igraph',
+                             [PythonModule('igraph', spkg='pkg:pypi/igraph',
                                             url='http://igraph.org')])
 
 def all_features():

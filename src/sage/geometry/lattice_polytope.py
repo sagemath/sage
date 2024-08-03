@@ -135,9 +135,9 @@ lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 from sage.features import PythonModule
 from sage.features.palp import PalpExecutable
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Linear_Expression'],
-                    feature=PythonModule("ppl", spkg='pypi:pplpy', type='standard'))
+                    feature=PythonModule('ppl', spkg='pkg:pypi/pplpy', type='standard'))
 lazy_import('ppl', 'point', as_='PPL_point',
-                    feature=PythonModule("ppl", spkg='pypi:pplpy', type='standard'))
+                    feature=PythonModule('ppl', spkg='pkg:pypi/pplpy', type='standard'))
 
 from sage.matrix.constructor import matrix
 from sage.structure.element import Matrix

@@ -36,7 +36,7 @@ class PyNormaliz(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'pynormaliz',
-                             [PythonModule('PyNormaliz', spkg='pypi:pynormaliz')])
+                             [PythonModule('PyNormaliz', spkg='pkg:pypi/pynormaliz')])
 
 
 def all_features():
