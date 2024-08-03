@@ -24,7 +24,7 @@ from cpython.type cimport PyType_IsSubtype
 
 cdef class Category_contains_method_by_parent_class:
     """
-    Returns whether ``x`` is an object in this category.
+    Return whether ``x`` is an object in this category.
 
     More specifically, returns ``True`` if and only if ``x`` has a
     category which is a subcategory of this one.
@@ -85,7 +85,7 @@ cdef class Category_contains_method_by_parent_class:
 
 class Category_singleton(Category):
     """
-    A base class for implementing singleton category
+    A base class for implementing singleton category.
 
     A *singleton* category is a category whose class takes no
     parameters like ``Fields()`` or ``Rings()``. See also the
@@ -260,7 +260,6 @@ class Category_singleton(Category):
             False
 
         Oh well; it's not really relevant for those tests.
-
     """
 
     # That is just an optimized constant cached_method
