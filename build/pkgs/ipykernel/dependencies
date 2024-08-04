@@ -1,4 +1,4 @@
-debugpy ipython comm traitlets jupyter_client jupyter_core nest_asyncio tornado matplotlib_inline appnope pyzmq psutil packaging | $(PYTHON_TOOLCHAIN) hatchling $(PYTHON)
+appnope comm debugpy ipython jupyter_client jupyter_core matplotlib_inline nest_asyncio packaging psutil pyzmq tornado traitlets | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
