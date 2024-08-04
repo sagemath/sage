@@ -1,4 +1,4 @@
- | $(PYTHON_TOOLCHAIN) docutils jinja2 pygments snowballstemmer imagesize babel alabaster requests sphinxcontrib_websupport sphinxcontrib_applehelp sphinxcontrib_devhelp sphinxcontrib_htmlhelp sphinxcontrib_jsmath sphinxcontrib_qthelp sphinxcontrib_serializinghtml packaging importlib_metadata $(PYTHON)
+sphinxcontrib_applehelp sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_htmlhelp sphinxcontrib_serializinghtml sphinxcontrib_qthelp jinja2 pygments docutils snowballstemmer babel alabaster imagesize requests packaging tomli colorama | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
