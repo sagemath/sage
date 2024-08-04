@@ -2951,7 +2951,7 @@ def GritsenkoGraph():
              (33, 49), (33, 51), (33, 57), (33, 61)]
     # use the union of the orbits of a on the edges
     return Graph(reduce(lambda x, y: x + y,
-                        map(lambda o: a.orbit(o, action='OnSets'), edges)),
+                        (a.orbit(o, action='OnSets') for o in edges)),
                  format='list_of_edges',
                  name="Gritsenko strongly regular graph")
 
@@ -4734,7 +4734,7 @@ def _EllipticLinesProjectivePlaneScheme(k):
     gp = libgap.Action(g, libgap.Orbit(g, l, libgap.OnLines), libgap.OnLines)
     orbitals = gp.Orbits(list(product(gp.Orbit(1), gp.Orbit(1))),
                          libgap.OnTuples)
-    mats = map(lambda o: [(int(x[0]) - 1, int(x[1]) - 1) for x in o], orbitals)
+    mats = ([(int(x[0]) - 1, int(x[1]) - 1) for x in o] for o in orbitals)
     return [matrix((q * (q - 1)) // 2, lambda i, j: 1 if (i, j) in x else 0)
             for x in mats]
 
@@ -4934,7 +4934,7 @@ def JankoKharaghaniTonchevGraph():
             301, 304, 308, 309, 310, 312, 313, 314, 316, 317, 318)
     Gamma = Graph(multiedges=False, name='Janko-Kharaghani-Tonchev')
     for i, b in ((1, B1), (163, B163)):
-        for j in map(lambda x: x[0], st.OrbitsDomain(b)):
+        for j in (x[0] for x in st.OrbitsDomain(b)):
             Gamma.add_edges(map(tuple, G.Orbit(libgap.Set([i, j]), libgap.OnSets)))
     Gamma.relabel(range(Gamma.order()))
     return Gamma

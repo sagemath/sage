@@ -1508,7 +1508,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
             coefficients[-2] %= self.phi()
         tau = self.value_group().index(self._base_valuation.value_group())
         vf = self._mu * tau * F.degree()
-        ret = self.domain().change_ring(self.domain())([c for c in coefficients])(self.phi()**tau)
+        ret = self.domain().change_ring(self.domain())(coefficients)(self.phi()**tau)
         ret = self.simplify(ret, error=vf, force=True)
         ret = ret.map_coefficients(_lift_to_maximal_precision)
         assert (ret == self.phi()) == (F == F.parent().gen())
