@@ -83,12 +83,18 @@ for block in diff_blocks:
                     hunk_lines = []
                 search_result = re.search(r'@@ -(\d+),(\d+) \+(\d+),(\d+)', line)
                 if search_result:
-                    line_number = int(search_result.group(3))
+                    line_number = int(search_result.group(3)) - 1
                     span = int(search_result.group(4))
-                    for i in chain(range(line_number, line_number + span), range(line_number - 1, -1, -1)):
-                        if content[i].startswith('<') and not content[i].startswith('</'):
+                    for i in chain(range(line_number, line_number + span), range(line_number, -1, -1)):
+                        ln = content[i]
+                        for idx, char in enumerate(ln):
+                            if not char.isspace():
+                                break
+                        else:
+                            idx = len(ln)
+                        if ln.startswith('<', idx) and not ln.startswith('</', idx):
                             count += 1
-                            content[i] = f'<span id="hunk{count}" style="visibility: hidden;"></span>' + content[i]
+                            content[i] = ln[:idx] + f'<span id="hunk{count}" style="visibility: hidden;"></span>' + ln[idx:]
                             hunks.append(f'<p class="hunk"><a href="{path}#hunk{count}" class="hunk" target="_blank">hunk #{count}</a></p>')
                             break
             hunk_lines.append(line)
