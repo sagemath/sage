@@ -1704,6 +1704,11 @@ REFERENCES:
 .. [CLG1997] Frank Celler and C. R. Leedham-Green,
              *Calculating the Order of an Invertible Matrix*, 1997
 
+.. [CLM2006] Marcelo H. de Carvalho, Cláudio L. Lucchesi and U.S.R. Murty,
+             *How to build a brick*, Discrete Mathematics, Volume 306,
+             Issues 19--20, Pages 2383--2410,ISSN 0012--365X, (2006),
+             :doi:`10.1016/j.disc.2005.12.032`.
+
 .. [CLRS2001] Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest
               and Clifford Stein, *Section 22.4: Topological sort*,
               Introduction to Algorithms (2nd ed.), MIT Press and
