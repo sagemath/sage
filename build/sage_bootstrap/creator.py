@@ -59,6 +59,19 @@ class PackageCreator(object):
                 f.write('upstream_url={0}'.format(upstream_url))
             f.write('\n')
 
+    def set_pypi_urls(self, pypi_version):
+        """
+        Write the ``checksums.ini`` file
+        """
+        with open(os.path.join(self.path, 'checksums.ini'), 'w+') as f:
+            for url in pypi_version.urls:
+                if 'cp' in url['python_version'] or 'py3' in url['python_version']:
+                    f.write('[{0}]\n'.format(url['filename']))
+                    f.write('tarball={0}\n'.format(url['filename']))
+                    f.write('sha256={0}\n'.format(url['digests']['sha256']))
+                    f.write('upstream_url={0}\n'.format(url['url']))
+                    f.write('\n')
+
     def set_description(self, description, license, upstream_contact):
         """
         Write the ``SPKG.rst`` file

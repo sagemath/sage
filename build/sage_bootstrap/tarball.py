@@ -40,7 +40,8 @@ class FileNotMirroredError(Exception):
 
 class Tarball(object):
 
-    def __init__(self, tarball_name, package=None):
+    def __init__(self, tarball_name, package=None,
+                 upstream_url=None, sha1=None, sha256=None):
         """
         A (third-party downloadable) tarball
 
@@ -57,7 +58,7 @@ class Tarball(object):
         if package is None:
             self.__package = None
             for pkg in Package.all():
-                if pkg.tarball_filename == tarball_name:
+                if pkg.is_package_of_tarball(tarball_name):
                     self.__package = pkg.tarball_package
             if self.package is None:
                 error = 'tarball {0} is not referenced by any Sage package'.format(tarball_name)
@@ -65,10 +66,9 @@ class Tarball(object):
                 raise ValueError(error)
         else:
             self.__package = package
-            if package.tarball_filename != tarball_name:
-                error = 'tarball {0} is not referenced by the {1} package'.format(tarball_name, package.name)
-                log.error(error)
-                raise ValueError(error)
+        self.__upstream_url = upstream_url
+        self.__sha1 = sha1
+        self.__sha256 = sha256
 
     def __repr__(self):
         return 'Tarball {0}'.format(self.filename)
@@ -97,11 +97,44 @@ class Tarball(object):
         return self.__package
 
     @property
+    def sha1(self):
+        """
+        Return the SHA1 checksum
+
+        OUTPUT:
+
+        String.
+        """
+        return self.__sha1
+
+    @property
+    def sha256(self):
+        """
+        Return the SHA256 checksum
+
+        OUTPUT:
+
+        String.
+        """
+        return self.__sha256
+
+    @property
     def upstream_fqn(self):
         """
         The fully-qualified (including directory) file name in the upstream directory.
         """
         return os.path.join(SAGE_DISTFILES, self.filename)
+
+    @property
+    def upstream_url(self):
+        """
+        The upstream URL or ``None`` if none is recorded
+
+        OUTPUT:
+
+        String. The URL.
+        """
+        return self.__upstream_url
 
     def __eq__(self, other):
         return self.filename == other.filename
@@ -127,17 +160,22 @@ class Tarball(object):
         """
         Test whether the checksum of the downloaded file is correct.
         """
-        if self.package.sha256:
+        if self.sha256:
             sha256 = self._compute_sha256()
-            if sha256 != self.package.sha256:
+            if sha256 != self.sha256:
                 return False
+            if self.sha1 is None:
+                return True
         elif force_sha256:
             log.warning('sha256 not available for {0}'.format(self.package.name))
             return False
         else:
             log.warning('sha256 not available for {0}, using sha1'.format(self.package.name))
+        if self.sha1 is None:
+            log.warning('sha1 not available for {0}'.format(self.package.name))
+            return True
         sha1 = self._compute_sha1()
-        return sha1 == self.package.sha1
+        return sha1 == self.sha1
 
     def is_distributable(self):
         return 'do-not-distribute' not in self.filename
@@ -178,7 +216,7 @@ class Tarball(object):
             except IOError:
                 log.debug('File not on mirror')
         if not successful_download:
-            url = self.package.tarball_upstream_url
+            url = self.upstream_url
             if allow_upstream and url:
                 log.info('Attempting to download from {}'.format(url))
                 try:

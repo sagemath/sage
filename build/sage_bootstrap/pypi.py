@@ -35,8 +35,12 @@ class PyPiError(Exception):
 
 class PyPiVersion(object):
 
-    def __init__(self, package_name, source='normal'):
+    def __init__(self, package_name, source='normal', version=None):
         self.name = package_name
+        if version is None:
+            self.suffix = ''
+        else:
+            self.suffix = '/' + version
         self.json = self._get_json()
         # Replace provided name with the canonical name
         self.name = self.json['info']['name']
@@ -55,7 +59,7 @@ class PyPiVersion(object):
 
     @property
     def json_url(self):
-        return 'https://pypi.python.org/pypi/{0}/json'.format(self.name)
+        return 'https://pypi.python.org/pypi/{0}{1}/json'.format(self.name, self.suffix)
 
     @property
     def version(self):
@@ -70,6 +74,7 @@ class PyPiVersion(object):
         Return the source url
         """
         for download in self.json['urls']:
+            log.info('{0}'.format(download))
             if self.python_version in download['python_version']:
                 self.python_version = download['python_version']
                 return download['url']
@@ -81,10 +86,29 @@ class PyPiVersion(object):
         Return the source tarball name
         """
         for download in self.json['urls']:
+            log.info('{0}'.format(download))
             if self.python_version in download['python_version']:
                 self.python_version = download['python_version']
                 return download['filename']
         raise PyPiError('No %s url for %s found', self.python_version, self.name)
+
+    @property
+    def urls(self):
+        """
+        Return the list of URLs.
+
+        Each URL is a dictionary::
+
+            {'digests': {'sha256': 'ad277f74b1c164f7248afa968700e410651eb858d7c160d109fb451dc45a2f09', ...},
+             'filename': 'rpds_py-0.10.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl',
+             'packagetype': 'bdist_wheel',
+             'python_version': 'cp310',
+             'requires_python': '>=3.8',
+             'url': 'https://files.pythonhosted.org/packages/79/c6/432ec657f5f44a878e8653c73abfc51708afd0899c3d89f2967e11f81f14/rpds_py-0.10.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl',
+             'yanked': False,
+             ...}
+        """
+        return self.json['urls']
 
     @property
     def package_url(self):
@@ -125,7 +149,10 @@ class PyPiVersion(object):
         if package is None:
             package = Package(self.name)
         if package.version == self.version:
-            log.info('%s is already at the latest version', self.name)
+            if self.suffix:
+                log.info('%s is already at this version', self.name)
+            else:
+                log.info('%s is already at the latest version', self.name)
             return
         log.info('Updating %s: %s -> %s', package.name, package.version, self.version)
         update = PackageUpdater(package.name, self.version)
