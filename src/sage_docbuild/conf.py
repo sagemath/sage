@@ -1089,12 +1089,7 @@ def setup(app):
 # https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#conf-tags
 # https://github.com/readthedocs/readthedocs.org/issues/4603#issuecomment-1411594800
-# Workaround to allow importing this file from other confs
-if 'tags' not in locals():
-    class Tags(set):
-        has = set.__contains__
-    tags = Tags()
-
-
-for feature in all_features():
-    tags.add('feature_' + feature.name.replace('.', '_'))
+def feature_tags():
+    for feature in all_features():
+        if feature.is_present():
+            yield 'feature_' + feature.name.replace('.', '_')
