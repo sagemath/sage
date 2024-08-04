@@ -971,7 +971,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         # This can be converted to usual GAP
         S = str(gap3('List(ConjugacyClasses(%s),Representative)' % self._gap_group._name))
-        return sage_eval(_gap_return(S), {'self': self})
+        return [self(w, check=False) for w in _gap_return(S)]
 
     def conjugacy_classes(self):
         r"""

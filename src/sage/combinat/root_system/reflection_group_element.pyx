@@ -21,6 +21,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
+import re
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -30,6 +31,8 @@ from sage.rings.rational_field import QQ
 from sage.combinat.root_system.reflection_group_c import reduced_word_c, reduce_in_coset
 from sage.matrix.constructor import Matrix
 from sage.matrix.special import identity_matrix
+
+TUPLE = re.compile(r'(?:\([0-9,]*\))+')
 
 
 cdef class ComplexReflectionGroupElement(PermutationGroupElement):
@@ -1246,8 +1249,7 @@ def _gap_return(S, coerce_obj='self'):
 
         sage: from sage.combinat.root_system.reflection_group_complex import _gap_return
         sage: _gap_return("[ (), (1,4)(2,3)(5,6), (1,6,2)(3,5,4) ]")    # optional - gap3
-        "[self('()',check=False),self('(1,4)(2,3)(5,6)',check=False),self('(1,6,2)(3,5,4)',check=False)]"
+        ['()', '(1,4)(2,3)(5,6)', '(1,6,2)(3,5,4)']
     """
     S = S.replace(' ', '').replace('\n', '')
-    S = S.replace(',(', '\',check=False),%s(\'(' % coerce_obj).replace('[', '[%s(\'' % coerce_obj).replace(']', '\',check=False)]')
-    return S
+    return TUPLE.findall(S)
