@@ -1,10 +1,10 @@
-jupyter_server_terminals: A Jupyter Server Extension Providing Terminals
-========================================================================
+jupyter_server_terminals: Jupyter Server Extension Providing Terminals
+======================================================================
 
 Description
 -----------
 
-A Jupyter Server Extension Providing Terminals.
+Jupyter Server Extension Providing Terminals
 
 License
 -------
