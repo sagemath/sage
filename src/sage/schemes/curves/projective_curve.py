@@ -1593,11 +1593,24 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             sage: C = Curve(x*y^2*z^7 - x^10 - x^2*z^8)
             sage: loads(dumps(C)) == C
             True
+
+        TESTS::
+
+            sage: P.<x0,x1,x2,x3,x4> = ProjectiveSpace(QQ, 4)
+            sage: C = Curve([x0^4 - x1^2*x4^2 - 19*x4^4, x2^4 - x3^2*x4^2 - 23*x4^4])
+            Traceback (most recent call last):
+            ...
+            ValueError: defining equations (=[x0^4 - x1^2*x4^2 - 19*x4^4, x2^4 - x3^2*x4^2 - 23*x4^4])
+            define a scheme of dimension 2 != 1
         """
         super().__init__(A, X, category=category)
 
         if not A.base_ring() in Fields():
             raise TypeError("curve not defined over a field")
+
+        d = super(Curve_generic, self).dimension()
+        if d != 1:
+            raise ValueError(f"defining equations (={X}) define a scheme of dimension {d} != 1")
 
     @lazy_attribute
     def _genus(self):

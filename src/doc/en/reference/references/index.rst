@@ -3008,7 +3008,10 @@ REFERENCES:
             Texts in Mathematics, Springer, 2001.
 
 .. [Gre2006] \R. M. Green, *Star reducible Coxeter groups*, Glasgow
-            Mathematical Journal, Volume 48, Issue 3, pp. 583-609.
+             Mathematical Journal, Volume 48, Issue 3, pp. 583-609.
+
+.. [Ger2008] Gert-Martin Greuel and Gerhard Pfister. A Singular introduction
+             to commutative algebra. Vol. 348. Berlin: Springer, 2008.
 
 .. [Gri2021] \O. Gritsenko, *On strongly regular graph with parameters (65; 32; 15; 16)*,
               :arxiv:`2102.05432`.
