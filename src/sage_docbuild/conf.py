@@ -27,11 +27,12 @@ import sphinx
 import sphinx.ext.intersphinx as intersphinx
 from sphinx import highlighting
 from sphinx.transforms import SphinxTransform
+from sphinx.util.docutils import SphinxDirective
 from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
 from sage.misc.sagedoc import extlinks
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, PPLPY_DOCS, MATHJAX_DIR
 from sage.misc.latex_macros import sage_mathjax_macros
-from sage.features import PythonModule
+from sage.features.sphinx import JupyterSphinx
 from sage.features.all import all_features
 import sage.version
 
@@ -56,12 +57,15 @@ extensions = [
     'sphinx_inline_tabs',
     'IPython.sphinxext.ipython_directive',
     'matplotlib.sphinxext.plot_directive',
-    'jupyter_sphinx',
 ]
+
+if JupyterSphinx().is_present():
+    extensions.append('jupyter_sphinx')
 
 jupyter_execute_default_kernel = 'sagemath'
 
 if SAGE_LIVE_DOC == 'yes':
+    JupyterSphinx().require()
     SAGE_JUPYTER_SERVER = os.environ.get('SAGE_JUPYTER_SERVER', 'binder')
     if SAGE_JUPYTER_SERVER.startswith('binder'):
         # format: "binder" or
@@ -1037,6 +1041,14 @@ class SagecodeTransform(SphinxTransform):
                         parent.insert(index + 1, container)
 
 
+class Ignore(SphinxDirective):
+
+    has_content = True
+
+    def run(self):
+        return []
+
+
 # This replaces the setup() in sage.misc.sagedoc_conf
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
@@ -1050,6 +1062,12 @@ def setup(app):
     app.add_transform(SagemathTransform)
     if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
         app.add_transform(SagecodeTransform)
+    if not JupyterSphinx().is_present():
+        app.add_directive("jupyter-execute", Ignore)
+        app.add_directive("jupyter-kernel", Ignore)
+        app.add_directive("jupyter-input", Ignore)
+        app.add_directive("jupyter-output", Ignore)
+        app.add_directive("thebe-button", Ignore)
 
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
@@ -1071,12 +1089,7 @@ def setup(app):
 # https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#conf-tags
 # https://github.com/readthedocs/readthedocs.org/issues/4603#issuecomment-1411594800
-# Workaround to allow importing this file from other confs
-if 'tags' not in locals():
-    class Tags(set):
-        has = set.__contains__
-    tags = Tags()
-
-
-for feature in all_features():
-    tags.add('feature_' + feature.name.replace('.', '_'))
+def feature_tags():
+    for feature in all_features():
+        if feature.is_present():
+            yield 'feature_' + feature.name.replace('.', '_')
