@@ -86,7 +86,7 @@ def cocliques_HoffmannSingleton():
         if len(c1.intersection(c2)) == 8:
             edges.append((c1, c2))
 
-    G = Graph(edges, format="list_of_edges")
+    G = Graph(edges, format='list_of_edges')
     return G
 
 
@@ -578,11 +578,11 @@ def LeonardGraph():
         if M[i, j] * M[i, l] * M[k, j] * M[k, l] == -1:
             edges.append(((i, j), (k, l)))
 
-    D = Graph(edges, format="list_of_edges")
+    D = Graph(edges, format='list_of_edges')
     blocks = [frozenset(cl) for cl in D.cliques_maximum()]
 
     edges = [(p, b) for b in blocks for p in b]
-    G = Graph(edges, format="list_of_edges")
+    G = Graph(edges, format='list_of_edges')
     return G
 
 
@@ -1301,7 +1301,7 @@ def graph_from_GQ_spread(const int s, const int t):
             sig_check()
             edges.append((p1, p2))
 
-    return Graph(edges, format="list_of_edges")
+    return Graph(edges, format='list_of_edges')
 
 
 def GeneralisedDodecagonGraph(const int s, const int t):
@@ -1792,7 +1792,7 @@ def _line_graph_generalised_polygon(H):
             sig_check()
             edges.append((l1, l2))
 
-    return Graph(edges, format="list_of_edges")
+    return Graph(edges, format='list_of_edges')
 
 
 def _intersection_array_from_graph(G):
@@ -1806,7 +1806,7 @@ def _intersection_array_from_graph(G):
 
     INPUT:
 
-    - G -- a graph
+    - ``G`` -- a graph
 
     EXAMPLES::
 
@@ -2539,10 +2539,10 @@ def near_polygon_graph(family, params):
 
     INPUT:
 
-    - ``family`` -- int; an element of the enum ``NearPolygonGraph``.
+    - ``family`` -- integer; an element of the enum ``NearPolygonGraph``
 
-    - ``params`` -- int or tuple; the parameters needed to construct a graph
-      of the family ``family``.
+    - ``params`` -- integer or tuple; the parameters needed to construct a graph
+      of the family ``family``
 
     EXAMPLES::
 
@@ -2707,7 +2707,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
       - ``False`` -- if there is no graph with the given intersection array;
 
-      - ``Unknown`` -- if Sage doesn't know if such a graph exists.
+      - ``Unknown`` -- if Sage doesn't know if such a graph exists
 
     - ``check`` -- boolean (default: ``True``); if ``True``, then checks that the result
       of this function has the given intersection array

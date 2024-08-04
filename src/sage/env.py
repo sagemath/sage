@@ -74,17 +74,15 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
     INPUT:
 
-    - ``key`` -- string.
+    - ``key`` -- string
 
-    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values.
+    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values
 
-    - ``force`` -- boolean (default: ``False``). If
+    - ``force`` -- boolean (default: ``False``); if
       ``True``, skip the environment variable and only use the
-      fallbacks.
+      fallbacks
 
-    OUTPUT:
-
-    The value of the environment variable or its fallbacks.
+    OUTPUT: the value of the environment variable or its fallbacks
 
     EXAMPLES::
 
@@ -281,7 +279,7 @@ def sage_include_directories(use_sources=False):
 
     INPUT:
 
-    -  ``use_sources`` -- (default: ``False``) a boolean
+    - ``use_sources`` -- boolean (default: ``False``)
 
     OUTPUT:
 
@@ -344,8 +342,7 @@ default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular
 default_optional_modules = ('lapack',)
 
 
-def cython_aliases(required_modules=None,
-                   optional_modules=None):
+def cython_aliases(required_modules=None, optional_modules=None):
     """
     Return the aliases for compiling Cython code. These aliases are
     macros which can occur in ``# distutils`` headers.
@@ -353,10 +350,10 @@ def cython_aliases(required_modules=None,
     INPUT:
 
     - ``required_modules`` -- (default: taken from ``default_required_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     - ``optional_modules`` -- (default: taken from ``default_optional_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     EXAMPLES::
 

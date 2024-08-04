@@ -86,14 +86,12 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``group``      -- A Hecke triangle group (default: HeckeTriangleGroup(3)).
+        - ``group`` -- a Hecke triangle group (default: HeckeTriangleGroup(3))
 
-        - ``prec``       -- An integer (default: 10), the default precision used
-                            in calculations in the LaurentSeriesRing or PowerSeriesRing.
+        - ``prec`` -- integer (default: 10), the default precision used in
+          calculations in the LaurentSeriesRing or PowerSeriesRing
 
-        OUTPUT:
-
-        The constructor for Fourier expansion with the specified settings.
+        OUTPUT: the constructor for Fourier expansion with the specified settings
 
         EXAMPLES::
 
@@ -503,7 +501,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k``  -- A non-negative even integer, namely the weight.
+        - ``k`` -- a nonnegative even integer, namely the weight
 
         EXAMPLES::
 
@@ -546,7 +544,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
                 raise TypeError(None)
             k = 2*ZZ(k/2)
         except TypeError:
-            raise TypeError("k={} has to be a non-negative even integer!".format(k))
+            raise TypeError("k={} has to be a nonnegative even integer!".format(k))
 
         if (not self.group().is_arithmetic() or self.group().n() == infinity):
             # Exceptional cases should be called manually (see in FormsRing_abstract)

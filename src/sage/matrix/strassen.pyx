@@ -22,7 +22,7 @@ from cysignals.signals cimport sig_on, sig_off
 
 def strassen_window_multiply(C, A,B, cutoff):
     """
-    Multiplies the submatrices specified by A and B, places result in
+    Multiply the submatrices specified by A and B, places result in
     C. Assumes that A and B have compatible dimensions to be
     multiplied, and that C is the correct size to receive the product,
     and that they are all defined over the same ring.
@@ -248,17 +248,17 @@ cdef subtract_strassen_product(MatrixWindow result, MatrixWindow A, MatrixWindow
 def strassen_echelon(MatrixWindow A, cutoff):
     """
     Compute echelon form, in place. Internal function, call with
-    M.echelonize(algorithm="strassen") Based on work of Robert Bradshaw
+    M.echelonize(algorithm='strassen') Based on work of Robert Bradshaw
     and David Harvey at MSRI workshop in 2006.
 
     INPUT:
 
-    -  ``A`` -- matrix window
+    - ``A`` -- matrix window
 
-    -  ``cutoff`` -- size at which algorithm reverts to
-       naive Gaussian elimination and multiplication must be at least 1.
+    - ``cutoff`` -- size at which algorithm reverts to
+      naive Gaussian elimination and multiplication must be at least 1
 
-    OUTPUT: The list of pivot columns
+    OUTPUT: the list of pivot columns
 
     EXAMPLES::
 
@@ -414,7 +414,7 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
                 # let [  0  I F ]  =  [  0  I  F  ]
                 top_cut = max(max(bottom_pivots) + 1, bottom_cut)
 
-                # Note: left with respect to leftmost non-zero column of bottom
+                # Note: left with respect to leftmost nonzero column of bottom
                 top_left = top.matrix_window(0, bottom_start, top_h, top_cut - bottom_start)
 
                 if bottom_h + top_h < ncols:
@@ -492,8 +492,8 @@ class int_range:
 
     It can be one of the following:
 
-    - ``indices`` -- integer, start of the unique interval
-    - ``range`` -- integer, length of the unique interval
+    - ``indices`` -- integer; start of the unique interval
+    - ``range`` -- integer; length of the unique interval
 
     OR
 
@@ -501,7 +501,7 @@ class int_range:
 
     OR
 
-    - ``indices`` -- None (default), shortcut for an empty list
+    - ``indices`` -- ``None`` (default), shortcut for an empty list
 
     OUTPUT:
 
@@ -591,9 +591,7 @@ class int_range:
         r"""
         Return the list of intervals.
 
-        OUTPUT:
-
-        A list of pairs of integers.
+        OUTPUT: list of pairs of integers
 
         EXAMPLES::
 
@@ -610,9 +608,7 @@ class int_range:
         r"""
         Return the (sorted) list of integers represented by this object.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -643,9 +639,7 @@ class int_range:
         r"""
         Return an iterator over the intervals.
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -667,9 +661,7 @@ class int_range:
         r"""
         Return the number of integers represented by this object.
 
-        OUTPUT:
-
-        Python integer
+        OUTPUT: Python integer
 
         EXAMPLES::
 
@@ -697,9 +689,7 @@ class int_range:
 
         - ``right`` -- an instance of ``int_range``
 
-        OUTPUT:
-
-        An instance of ``int_range``
+        OUTPUT: an instance of ``int_range``
 
         .. NOTE::
 
@@ -725,11 +715,9 @@ class int_range:
 
         INPUT:
 
-        - ``right`` -- an instance of ``int_range``.
+        - ``right`` -- an instance of ``int_range``
 
-        OUTPUT:
-
-        An instance of ``int_range``.
+        OUTPUT: an instance of ``int_range``
 
         .. NOTE::
 
@@ -757,11 +745,9 @@ class int_range:
 
         INPUT:
 
-        - ``right`` -- an instance of ``int_range``.
+        - ``right`` -- an instance of ``int_range``
 
-        OUTPUT:
-
-        An instance of ``int_range``.
+        OUTPUT: an instance of ``int_range``
 
         EXAMPLES::
 
@@ -787,7 +773,7 @@ def test(n, m, R, c=2):
     - ``n`` -- integer
     - ``m`` -- integer
     - ``R`` -- ring
-    - ``c`` -- integer (default:2)
+    - ``c`` -- integer (default: 2)
 
     EXAMPLES::
 

@@ -15,7 +15,7 @@ from sage.categories.unique_factorization_domains import UniqueFactorizationDoma
 
 class PrincipalIdealDomains(Category_singleton):
     """
-    The category of (constructive) principal ideal domains
+    The category of (constructive) principal ideal domains.
 
     By constructive, we mean that a single generator can be
     constructively found for any ideal given by a finite set of

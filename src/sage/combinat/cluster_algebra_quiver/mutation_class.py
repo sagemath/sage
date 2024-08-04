@@ -35,9 +35,7 @@ def _principal_part(mat):
 
     - ``mat`` -- a matrix with at least as many rows as columns
 
-    OUTPUT:
-
-    The top square part of the matrix ``mat``.
+    OUTPUT: the top square part of the matrix ``mat``
 
     EXAMPLES::
 
@@ -70,7 +68,7 @@ def _digraph_mutate(dg, k, frozen=None):
 
     - ``dg`` -- a digraph with integral edge labels with ``n+m`` vertices
     - ``k`` -- the vertex at which ``dg`` is mutated
-    - ``frozen`` -- the list of frozen vertices (default is the empty list)
+    - ``frozen`` -- the list of frozen vertices (default: empty list)
 
     EXAMPLES::
 
@@ -199,9 +197,7 @@ def _dg_canonical_form(dg, frozen=None):
 
     - ``frozen`` -- list (default: ``[]``) of frozen vertices
 
-    OUTPUT:
-
-    - dictionary {original label: canonical label}
+    OUTPUT: dictionary {original label: canonical label}
 
     - list of orbits of mutable vertices (using canonical labels)
 
@@ -283,12 +279,17 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
 
     INPUT:
 
-    - ``dg`` -- a digraph with n+m vertices
-    - ``depth`` -- a positive integer or infinity specifying (roughly) how many steps away from the initial seed to mutate
-    - ``return_dig6`` -- indicates whether to convert digraph data to dig6 string data
-    - ``show_depth`` -- if True, indicates that a running count of the depth is to be displayed
-    - ``up_to_equivalence``  -- if True, only one digraph for each graph-isomorphism class is recorded
-    - ``sink_source`` -- if True, only mutations at sinks or sources are applied
+    - ``dg`` -- a digraph with `n+m` vertices
+    - ``depth`` -- positive integer or infinity specifying (roughly) how many
+      steps away from the initial seed to mutate
+    - ``return_dig6`` -- indicates whether to convert digraph data to dig6
+      string data
+    - ``show_depth`` -- if ``True``, indicates that a running count of the
+      depth is to be displayed
+    - ``up_to_equivalence`` -- if ``True``, only one digraph for each
+      graph-isomorphism class is recorded
+    - ``sink_source`` -- if ``True``, only mutations at sinks or sources are
+      applied
 
     EXAMPLES::
 
@@ -387,7 +388,8 @@ def _digraph_to_dig6(dg, hashable=False):
     INPUT:
 
     - ``dg`` -- a digraph
-    - ``hashable`` -- (Boolean; optional; default: ``False``) if ``True``, the edge labels are turned into a dict.
+    - ``hashable`` -- boolean (default: ``False``); if ``True``, the edge
+      labels are turned into a dict
 
     EXAMPLES::
 
@@ -467,7 +469,7 @@ def _dig6_to_matrix( dig6 ):
 
 def _dg_is_sink_source( dg, v ):
     """
-    Return True iff the digraph dg has a sink or a source at vertex v.
+    Return ``True`` iff the digraph dg has a sink or a source at vertex `v`.
 
     INPUT:
 
@@ -540,7 +542,7 @@ def _graph_without_edge_labels(dg, vertices):
 
 def _has_two_cycles( dg ):
     """
-    Return True if the input digraph has a 2-cycle and False otherwise.
+    Return ``True`` if the input digraph has a 2-cycle and ``False`` otherwise.
 
     EXAMPLES::
 
@@ -560,11 +562,13 @@ def _has_two_cycles( dg ):
 
 def _is_valid_digraph_edge_set( edges, frozen=0 ):
     """
-    Return True if the input data is the edge set of a digraph for a quiver (no loops, no 2-cycles, edge-labels of the specified format), and returns False otherwise.
+    Return ``True`` if the input data is the edge set of a digraph for a quiver
+    (no loops, no 2-cycles, edge-labels of the specified format), and return
+    ``False`` otherwise.
 
     INPUT:
 
-    - ``frozen`` -- (integer; default:0) The number of frozen vertices.
+    - ``frozen`` -- integer (default: 0); the number of frozen vertices
 
     EXAMPLES::
 

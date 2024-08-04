@@ -464,7 +464,7 @@ Hecke triangle groups and elements:
   For each group element a very specific conjugacy representative
   can be obtained. For hyperbolic and parabolic elements the
   representative is a product ``V(j)``-matrices. They all
-  have non-negative trace and the number of factors is called
+  have nonnegative trace and the number of factors is called
   the block length of the element (which is implemented).
 
   Note: For this decomposition special care is given to the

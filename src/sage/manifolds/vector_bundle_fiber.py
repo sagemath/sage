@@ -156,7 +156,6 @@ class VectorBundleFiber(FiniteRankFreeModule):
 
         :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`
         for more documentation.
-
     """
     Element = VectorBundleFiberElement
 
@@ -173,7 +172,6 @@ class VectorBundleFiber(FiniteRankFreeModule):
             sage: e = E.local_frame('e')
             sage: Ep = E.fiber(p)
             sage: TestSuite(Ep).run()
-
         """
         if point._manifold is not vector_bundle._base_space:
             raise ValueError("Point must be an element "
@@ -266,7 +264,6 @@ class VectorBundleFiber(FiniteRankFreeModule):
             sage: E = M.vector_bundle(2, 'E')
             sage: E.fiber(p)._repr_()
             'Fiber of E at Point p on the 3-dimensional topological manifold M'
-
         """
         return "Fiber of {} at {}".format(self._vbundle._name,
                                           self._point)
@@ -284,7 +281,6 @@ class VectorBundleFiber(FiniteRankFreeModule):
             sage: Ep = E.fiber(p)
             sage: Ep.dim()
             2
-
         """
         # The dimension is the rank of self as a free module:
         return self._rank
@@ -308,7 +304,6 @@ class VectorBundleFiber(FiniteRankFreeModule):
              manifold M
             sage: Ep._an_element_().display()
             e_0 + 2 e_1
-
         """
         resu = self.element_class(self)
         if self._def_basis is not None:
@@ -331,6 +326,5 @@ class VectorBundleFiber(FiniteRankFreeModule):
             Point p on the 2-dimensional topological manifold M
             sage: p is Ep.base_point()
             True
-
         """
         return self._point

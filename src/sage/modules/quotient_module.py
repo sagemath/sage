@@ -219,7 +219,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
 
     def relations(self):
         r"""
-        Given this quotient space `Q = V/W`, return `W`
+        Given this quotient space `Q = V/W`, return `W`.
 
         EXAMPLES::
 
@@ -489,9 +489,9 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         Convert an element into this quotient space `V/W` if there is
         a way to make sense of it.
 
-        An element converts into self if it can be converted into `V`,
+        An element converts into ``self`` if it can be converted into `V`,
         or if not at least if it can be made sense of as a list of
-        length the dimension of self.
+        length the dimension of ``self``.
 
         EXAMPLES:
 
@@ -534,7 +534,6 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
             sage: Q((ZZ^3)([1,2,3]))
             (2, 3)
-
         """
         if isinstance(x, self.element_class) and x.parent() is self:
             return x
@@ -576,7 +575,6 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
             sage: V = QQ^3 / [[1,2,3]]
             sage: V.coerce_map_from(QQ^2)
-
         """
         from sage.modules.free_module import FreeModule_ambient
         if (isinstance(M, FreeModule_ambient)

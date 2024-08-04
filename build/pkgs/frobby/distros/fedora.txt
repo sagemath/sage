@@ -1,0 +1,3 @@
+frobby
+libfrobby
+libfrobby-devel
