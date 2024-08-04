@@ -1,4 +1,4 @@
-babel jupyter_events jupyter_server json5 jsonschema requests | $(PYTHON_TOOLCHAIN)  $(PYTHON)
+babel importlib_metadata jinja2 json5 jsonschema jupyter_server packaging requests | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
