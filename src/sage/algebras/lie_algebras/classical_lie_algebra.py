@@ -978,7 +978,7 @@ class e8(ExceptionalMatrixLieAlgebra):
 
         We skip the not implemented methods test as it takes too much time::
 
-            sage: TestSuite(g).run(skip="_test_not_implemented_methods")  # long time
+            sage: TestSuite(g).run(skip='_test_not_implemented_methods')  # long time
         """
         ct = CartanType(['E', 8])
         g = LieAlgebraChevalleyBasis(R, ct)
@@ -1642,7 +1642,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
                     raise ValueError("not a valid Dynkin orientation")
             else:
                 from sage.graphs.graph import Graph
-                G = Graph(epsilon, multiedges=True, loops=True, format="list_of_edges")
+                G = Graph(epsilon, multiedges=True, loops=True, format='list_of_edges')
                 if (G.has_multiple_edges() or G.has_loops()
                     or cartan_type.dynkin_diagram().to_undirected() != G.to_simple()):
                     raise ValueError("not a valid Dynkin orientation")
@@ -2098,8 +2098,8 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         INPUT:
 
-        - ``str_keys`` -- (default: ``False``) set to ``True`` to have the
-          indices indexed by strings instead of simple (co)roots
+        - ``str_keys`` -- boolean (default: ``False``); set to ``True`` to have
+          the indices indexed by strings instead of simple (co)roots
 
         EXAMPLES::
 
@@ -2197,7 +2197,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         INPUT:
 
-        - ``pos`` -- (default: ``True``) if ``True``, then return
+        - ``pos`` -- boolean (default: ``True``); if ``True``, then return
           `e_{\theta}`, otherwise return `f_{\theta}`
 
         EXAMPLES::

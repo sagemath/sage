@@ -43,12 +43,12 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
 
     INPUT:
 
-    - ``monomials`` -- a list of pairs ``[m, c]`` where ``m`` is the index
+    - ``monomials`` -- list of pairs ``[m, c]`` where ``m`` is the index
       and ``c`` is the coefficient
     - ``term_repr`` -- a function which returns a string given an index
       (can be ``repr`` or ``latex``, for example)
-    - ``use_latex`` -- (default: ``False``) if ``True`` then the output is
-      in latex format
+    - ``use_latex`` -- boolean (default: ``False``); if ``True`` then the
+      output is in latex format
 
     EXAMPLES::
 
@@ -728,7 +728,7 @@ class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets the global options for elements of the differential Weyl
+        Set the global options for elements of the differential Weyl
         algebra class. The default is to have the factored
         representations turned off.
 

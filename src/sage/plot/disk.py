@@ -40,7 +40,7 @@ class Disk(GraphicPrimitive):
     - ``angle`` -- beginning and ending angles of disk (i.e.
       angle extent of sector/wedge)
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -66,7 +66,7 @@ class Disk(GraphicPrimitive):
     """
     def __init__(self, point, r, angle, options):
         """
-        Initializes base class ``Disk``.
+        Initialize base class ``Disk``.
 
         EXAMPLES::
 
@@ -94,7 +94,7 @@ class Disk(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
@@ -109,7 +109,6 @@ class Disk(GraphicPrimitive):
             6.0
             sage: d['ymax']
             5.0
-
         """
         from sage.plot.plot import minmax_data
         return minmax_data([self.x - self.r, self.x + self.r],
@@ -164,7 +163,6 @@ class Disk(GraphicPrimitive):
             sage: f = tmp_filename(ext='.pdf')
             sage: p = disk((0,0), 5, (0, pi/4), alpha=0.5)
             sage: p.save(f)
-
         """
         import matplotlib.patches as patches
         options = self.options()
@@ -190,8 +188,7 @@ class Disk(GraphicPrimitive):
 
         INPUT:
 
-
-        -  ``z`` -- optional 3D height above `xy`-plane.
+        - ``z`` -- (optional) 3D height above `xy`-plane
 
         AUTHORS:
 
@@ -349,7 +346,7 @@ def disk(point, radius, angle, **options):
 
     Verify that :issue:`36153` is fixed::
 
-        sage: D = disk((0, 0), 5, (0, pi/2), legend_label="test")
+        sage: D = disk((0, 0), 5, (0, pi/2), legend_label='test')
     """
     from sage.plot.all import Graphics
     g = Graphics()

@@ -69,7 +69,7 @@ class ClusterQuiver(SageObject):
     - ``data`` -- can be any of the following::
 
       * :class:`QuiverMutationType`
-      * :class:`str` -- a string representing a :class:`QuiverMutationType` or a common quiver type (see Examples)
+      * :class:`str` -- string representing a :class:`QuiverMutationType` or a common quiver type (see Examples)
       * :class:`ClusterQuiver`
       * :class:`Matrix` -- a skew-symmetrizable matrix
       * :class:`DiGraph` -- must be the input data for a quiver
@@ -78,7 +78,7 @@ class ClusterQuiver(SageObject):
     - ``frozen`` -- (default: ``None``) sets the list of frozen variables
       if the input type is a :class:`DiGraph`, it is ignored otherwise
 
-    - ``user_labels`` -- (default:``None``) sets the names of the labels for
+    - ``user_labels`` -- (default: ``None``) sets the names of the labels for
       the vertices of the quiver if the input type is not a :class:`DiGraph`;
       otherwise it is ignored
 
@@ -534,16 +534,16 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``circular`` -- (default: ``True``) if ``True``, the circular plot
-          is chosen, otherwise >>spring<< is used.
-        - ``center`` -- (default:(0,0)) sets the center of the circular plot,
-          otherwise it is ignored.
-        - ``directed`` -- (default: ``True``) if ``True``, the directed
-          version is shown, otherwise the undirected.
+        - ``circular`` -- boolean (default: ``True``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
+        - ``center`` -- (default: (0,0)) sets the center of the circular plot,
+          otherwise it is ignored
+        - ``directed`` -- boolean (default: ``True``); if ``True``, the
+          directed version is shown, otherwise the undirected
         - ``mark`` -- (default: ``None``) if set to i, the vertex i is
-          highlighted.
-        - ``save_pos`` -- (default: ``False``) if ``True``, the positions
-          of the vertices are saved.
+          highlighted
+        - ``save_pos`` -- boolean (default: ``False``); if ``True``, the
+          positions of the vertices are saved
         - ``greens`` -- (default: ``[]``) if set to a list, will display the green
           vertices as green
 
@@ -661,16 +661,17 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``fig_size`` -- (default: 1) factor by which the size of the plot
-          is multiplied.
-        - ``circular`` -- (default: ``False``) if True, the circular plot is
-          chosen, otherwise >>spring<< is used.
-        - ``directed`` -- (default: ``True``) if True, the directed version is
-          shown, otherwise the undirected.
-        - ``mark`` -- (default: None) if set to i, the vertex i is highlighted.
-        - ``save_pos`` -- (default: ``False``) if True, the positions of the
-          vertices are saved.
-        - ``greens`` -- (default:[]) if set to a list, will display the green
-          vertices as green
+          is multiplied
+        - ``circular`` -- boolean (default: ``False``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
+        - ``directed`` -- boolean (default: ``True``); if ``True``, the directed
+          version is shown, otherwise the undirected
+        - ``mark`` -- boolean (default: ``None``); if set to i, the vertex i is
+          highlighted
+        - ``save_pos`` -- boolean (default: ``False``); if ``True``, the
+          positions of the vertices are saved
+        - ``greens`` -- (default: ``[]``) if set to a list, will display the
+          green vertices as green
 
         TESTS::
 
@@ -693,10 +694,10 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``fig_size`` -- (default: 1) factor by which the size of the
-          plot is multiplied.
+          plot is multiplied
 
-        - ``circular`` -- (default: ``True``) if ``True``, the circular plot
-          is chosen, otherwise >>spring<< is used.
+        - ``circular`` -- boolean (default: ``True``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
 
         TESTS::
 
@@ -704,7 +705,7 @@ class ClusterQuiver(SageObject):
             sage: S.interact()                                                          # needs sage.plot sage.symbolic
             ...VBox(children=...
         """
-        return cluster_interact(self, fig_size, circular, kind="quiver")
+        return cluster_interact(self, fig_size, circular, kind='quiver')
 
     def save_image(self, filename, circular=False):
         """
@@ -712,14 +713,15 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``filename`` -- the filename the image is saved to.
-        - ``circular`` -- (default: ``False``) if True, the circular plot is chosen, otherwise >>spring<< is used.
+        - ``filename`` -- the filename the image is saved to
+        - ``circular`` -- boolean (default: ``False``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
 
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                 # needs sage.plot sage.symbolic
             ....:     Q.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular)
@@ -735,7 +737,7 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``filename`` -- the filename the image is saved to.
+        - ``filename`` -- the filename the image is saved to
 
         If a filename is not specified, the default name is
         ``from_sage.qmu`` in the current sage directory.
@@ -744,7 +746,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.qmu') as f:                 # needs sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
 
         Make sure we can save quivers with `m != n` frozen variables, see :issue:`14851`::
@@ -753,7 +755,7 @@ class ClusterQuiver(SageObject):
             sage: T1 = S.principal_extension()
             sage: Q = T1.quiver()
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.qmu') as f:                 # needs sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
         """
         M = self.b_matrix()
@@ -879,8 +881,9 @@ class ClusterQuiver(SageObject):
         """
         Return the mutation type of ``self``.
 
-        Return the mutation_type of each connected component of self if it can be determined,
-        otherwise, the mutation type of this component is set to be unknown.
+        Return the mutation_type of each connected component of ``self`` if it
+        can be determined, otherwise, the mutation type of this component is
+        set to be unknown.
 
         The mutation types of the components are ordered by vertex labels.
 
@@ -1119,9 +1122,9 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``certificate`` -- boolean (default: ``False``) if True, the dictionary
-          from ``self.vertices()`` to the vertices of the returned quiver
-          is returned as well.
+        - ``certificate`` -- boolean (default: ``False``); if ``True``, the
+          dictionary from ``self.vertices()`` to the vertices of the returned
+          quiver is returned as well
 
         EXAMPLES::
 
@@ -1295,7 +1298,7 @@ class ClusterQuiver(SageObject):
 
     def first_source(self):
         r"""
-        Return the first vertex of ``self`` that is a source
+        Return the first vertex of ``self`` that is a source.
 
         EXAMPLES::
 
@@ -1334,11 +1337,13 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``sequence`` -- a vertex of ``self``, an iterator of vertices of ``self``,
-          a function which takes in the ClusterQuiver and returns a vertex or an iterator of vertices,
-          or a string of the parameter wanting to be called on ClusterQuiver that will return a vertex or
-          an iterator of vertices.
-        - ``inplace`` -- (default: ``True``) if False, the result is returned, otherwise ``self`` is modified.
+        - ``sequence`` -- a vertex of ``self``, an iterator of vertices of
+          ``self``, a function which takes in the ClusterQuiver and returns a
+          vertex or an iterator of vertices, or a string of the parameter
+          wanting to be called on ClusterQuiver that will return a vertex or
+          an iterator of vertices
+        - ``inplace`` -- boolean (default: ``True``); if ``False``, the result
+          is returned, otherwise ``self`` is modified
 
         EXAMPLES::
 
@@ -1471,13 +1476,16 @@ class ClusterQuiver(SageObject):
 
     def mutation_sequence(self, sequence, show_sequence=False, fig_size=1.2 ):
         """
-        Return a list containing the sequence of quivers obtained from ``self`` by a sequence of mutations on vertices.
+        Return a list containing the sequence of quivers obtained from ``self``
+        by a sequence of mutations on vertices.
 
         INPUT:
 
-        - ``sequence`` -- a list or tuple of vertices of ``self``.
-        - ``show_sequence`` -- (default: ``False``) if ``True``, a png containing the mutation sequence is shown.
-        - ``fig_size`` -- (default: 1.2) factor by which the size of the sequence is expanded.
+        - ``sequence`` -- list or tuple of vertices of ``self``
+        - ``show_sequence`` -- boolean (default: ``False``); if ``True``, a png
+          containing the mutation sequence is shown
+        - ``fig_size`` -- (default: 1.2) factor by which the size of the
+          sequence is expanded
 
         EXAMPLES::
 
@@ -1616,17 +1624,21 @@ class ClusterQuiver(SageObject):
             raise ValueError('not a total order on the vertices of the quiver or a list of edges to be oriented')
 
     def mutation_class_iter(self, depth=infinity, show_depth=False,
-                            return_paths=False, data_type="quiver",
+                            return_paths=False, data_type='quiver',
                             up_to_equivalence=True, sink_source=False):
         """
         Return an iterator for the mutation class of ``self`` together with certain constraints.
 
         INPUT:
 
-        - ``depth`` -- (default: infinity) integer, only quivers with distance at most depth from self are returned.
-        - ``show_depth`` -- (default: ``False``) if True, the actual depth of the mutation is shown.
-        - ``return_paths`` -- (default: ``False``) if True, a shortest path of mutation sequences from self to the given quiver is returned as well.
-        - ``data_type`` -- (default: "quiver") can be one of the following::
+        - ``depth`` -- integer (default: infinity); only quivers with distance
+          at most depth from ``self`` are returned.
+        - ``show_depth`` -- boolean (default: ``False``); if ``True``, the
+          actual depth of the mutation is shown
+        - ``return_paths`` -- boolean (default: ``False``); if ``True``, a
+          shortest path of mutation sequences from ``self`` to the given quiver
+          is returned as well
+        - ``data_type`` -- (default: ``'quiver'``) can be one of the following::
 
             * "quiver"
             * "matrix"
@@ -1634,8 +1646,10 @@ class ClusterQuiver(SageObject):
             * "dig6"
             * "path"
 
-        - ``up_to_equivalence`` -- (default: ``True``) if True, only one quiver for each graph-isomorphism class is recorded.
-        - ``sink_source`` -- (default: ``False``) if True, only mutations at sinks and sources are applied.
+        - ``up_to_equivalence`` -- boolean (default: ``True``); if ``True``,
+          only one quiver for each graph-isomorphism class is recorded
+        - ``sink_source`` -- boolean (default: ``False``); if ``True``, only
+          mutations at sinks and sources are applied
 
         EXAMPLES::
 
@@ -1751,29 +1765,29 @@ class ClusterQuiver(SageObject):
                 yield next_element
 
     def mutation_class(self, depth=infinity, show_depth=False, return_paths=False,
-                       data_type="quiver", up_to_equivalence=True, sink_source=False):
+                       data_type='quiver', up_to_equivalence=True, sink_source=False):
         """
         Return the mutation class of ``self`` together with certain constraints.
 
         INPUT:
 
-        - ``depth`` -- (default: ``infinity`) integer, only seeds with
+        - ``depth`` -- (default: ``infinity``) integer, only seeds with
           distance at most depth from ``self`` are returned
-        - ``show_depth`` -- (default: ``False``) if ``True``, the actual depth
-          of the mutation is shown
-        - ``return_paths`` -- (default: ``False``) if ``True``, a shortest
-          path of mutation sequences from self to the given quiver is
+        - ``show_depth`` -- boolean (default: ``False``); if ``True``, the
+          actual depth of the mutation is shown
+        - ``return_paths`` -- boolean (default: ``False``); if ``True``, a
+          shortest path of mutation sequences from ``self`` to the given quiver is
           returned as well
-        - ``data_type`` -- (default: ``"quiver"``) can be one of
+        - ``data_type`` -- (default: ``'quiver'``) can be one of
           the following:
 
-          * ``"quiver"`` -- the quiver is returned
-          * ``"dig6"`` -- the dig6-data is returned
-          * ``"path"`` -- shortest paths of mutation sequences from
+          * ``'quiver'`` -- the quiver is returned
+          * ``'dig6'`` -- the dig6-data is returned
+          * ``'path'`` -- shortest paths of mutation sequences from
             ``self`` are returned
 
-        - ``sink_source`` -- (default: ``False``) if ``True``, only mutations
-          at sinks and sources are applied
+        - ``sink_source`` -- boolean (default: ``False``); if ``True``, only
+          mutations at sinks and sources are applied
 
         EXAMPLES::
 
@@ -1904,12 +1918,16 @@ class ClusterQuiver(SageObject):
 
     def is_mutation_finite( self, nr_of_checks=None, return_path=False ):
         """
-        Uses a non-deterministic method by random mutations in various directions. Can result in a wrong answer.
+        Uses a non-deterministic method by random mutations in various
+        directions. Can result in a wrong answer.
 
         INPUT:
 
-        - ``nr_of_checks`` -- (default: None) number of mutations applied. Standard is 500*(number of vertices of self).
-        - ``return_path`` -- (default: ``False``) if True, in case of self not being mutation finite, a path from self to a quiver with an edge label (a,-b) and a*b > 4 is returned.
+        - ``nr_of_checks`` -- (default: ``None``) number of mutations applied;
+          Standard is 500*(number of vertices of ``self``)
+        - ``return_path`` -- (default: ``False``) if ``True``, in case of
+          ``self`` not being mutation finite, a path from ``self`` to a quiver
+          with an edge label `(a,-b)` and `a*b > 4` is returned
 
         ALGORITHM:
 
@@ -1951,14 +1969,12 @@ class ClusterQuiver(SageObject):
 
     def number_of_edges(self):
         r"""
-        Return the total number of edges on the quiver
+        Return the total number of edges on the quiver.
 
         Note: This only works with non-valued quivers. If used on a
         non-valued quiver then the positive value is taken to be the number of edges added
 
-        OUTPUT:
-
-        An integer of the number of edges.
+        OUTPUT: integer of the number of edges
 
         EXAMPLES::
 
@@ -1978,14 +1994,15 @@ class ClusterQuiver(SageObject):
 
     def relabel(self, relabelling, inplace=True):
         r"""
-        Return the quiver after doing a relabelling
+        Return the quiver after doing a relabelling.
 
-        Will relabel the vertices of the quiver
+        Will relabel the vertices of the quiver.
 
         INPUT:
 
-        - ``relabelling`` -- Dictionary of labels to move around
-        - ``inplace`` -- (default: ``True``) if True, will return a duplicate of the quiver
+        - ``relabelling`` -- dictionary of labels to move around
+        - ``inplace`` -- boolean (default: ``True``); if ``True``, will return
+          a duplicate of the quiver
 
         EXAMPLES::
 
