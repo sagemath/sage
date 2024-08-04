@@ -1,4 +1,4 @@
-platformdirs traitlets | $(PYTHON_TOOLCHAIN) hatchling $(PYTHON)
+platformdirs traitlets | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

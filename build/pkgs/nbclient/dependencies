@@ -1,4 +1,4 @@
- jupyter_client nbformat | $(PYTHON_TOOLCHAIN) $(PYTHON)
+jupyter_client jupyter_core nbformat traitlets | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

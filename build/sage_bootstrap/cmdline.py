@@ -414,6 +414,9 @@ def make_parser():
     parser_download.add_argument(
         '--no-check-certificate', action='store_true',
         help='do not check SSL certificates for https connections')
+    parser_download.add_argument(
+        '--tags', nargs='*', default=[],
+        help='ordered list of platform compatibility tags to try (for platform-dependent wheels only)')
 
     parser_upload = subparsers.add_parser(
         'upload', epilog=epilog_upload,
@@ -539,7 +542,8 @@ def run():
                          has_files=args.has_files, no_files=args.no_files,
                          exclude=args.exclude,
                          allow_upstream=args.allow_upstream,
-                         on_error=args.on_error)
+                         on_error=args.on_error,
+                         tags=args.tags)
     elif args.subcommand == 'create':
         app.create(args.package_name, args.version, args.tarball, args.type, args.url,
                    args.description, args.license, args.upstream_contact,

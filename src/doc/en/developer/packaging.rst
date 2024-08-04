@@ -86,11 +86,8 @@ the following source types:
 
 #. A ``wheel`` package:
 
-   - comes from the wheel file named in the required file ``checksums.ini``
-     and hosted on the Sage mirrors;
-
-   - per policy, only platform-independent wheels are allowed, i.e.,
-     ``*-none-any.whl`` files;
+   - comes from the wheel file(s) named in the required file ``checksums.ini``
+     and hosted on the Sage mirrors and GitHub Release Assets;
 
    - its version number is defined by the required file ``package-version.txt``;
 
@@ -102,7 +99,19 @@ the following source types:
 
    - Sage records the version number of the package installed using a file in
      ``$SAGE_LOCAL/var/lib/sage/installed/`` and will rerun the installation
-     if ``package-version.txt`` changes.
+     if ``package-version.txt`` changes;
+
+   - platform-independent ``wheel`` packages are preferred to ``normal`` packages
+     because the installation is faster and there are no build requirements;
+
+   - platform-dependent ``wheel`` packages should only be used when installation
+     from source (as a ``normal`` package) would have unusual build requirements
+     (example: the package :ref:`rpds_py <spkg_rpds_py>` would need Rust);
+
+   - if a platform-dependent ``wheel`` package is a standard package, there
+     must be a ``configure`` option that disables it
+     (example: use of the package :ref:`rpds_py <spkg_rpds_py>` can be disabled
+     by using ``./configure --disable-notebook``).
 
 #. A ``pip`` package:
 
@@ -589,8 +598,9 @@ would simply contain:
 Python-based packages
 ---------------------
 
-Python-based packages should declare ``$(PYTHON)`` as a dependency,
-and most Python-based packages will also have ``$(PYTHON_TOOLCHAIN)`` as
+Python-based packages should declare ``$(PYTHON)`` as an order-only dependency.
+
+Most ``normal`` Python-based packages will also have ``$(PYTHON_TOOLCHAIN)`` as
 an order-only dependency, which will ensure that fundamental packages such
 as ``pip`` and ``setuptools`` are available at the time of building the package.
 
@@ -1085,6 +1095,13 @@ package requires patching), you can use::
 
     [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
                                                --source normal              \
+                                               --type optional
+
+To create a platform-dependent ``wheel`` package instead of a ``normal`` package,
+use::
+
+    [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
+                                               --source wheel               \
                                                --type optional
 
 To create a ``pip`` package rather than a ``normal`` or ``wheel`` package, you can use::

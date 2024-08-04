@@ -1,9 +1,18 @@
-prometheus_client: Python client for the systems monitoring and alerting toolkit Prometheus
-===========================================================================================
+prometheus_client: Python client for the Prometheus monitoring system
+=====================================================================
 
 Description
 -----------
 
-The official Python 2 and 3 client for Prometheus (see
-https://prometheus.io), an open-source systems monitoring and alerting
-toolkit.
+Python client for the Prometheus monitoring system
+
+License
+-------
+
+Apache Software License 2.0
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/prometheus-client/
+

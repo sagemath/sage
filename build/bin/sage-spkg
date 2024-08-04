@@ -349,7 +349,7 @@ esac
 ensure_pkg_src() { ###############################################
 case "$PKG_SRC_TYPE" in
     normal|wheel)
-        PKG_SRC=$(sage-package download $SAGE_DOWNLOAD_FILE_OPTIONS $PKG_BASE) || exit_with_error_msg "Error downloading tarball of $PKG_BASE"
+        PKG_SRC=$(sage-package download $SAGE_DOWNLOAD_FILE_OPTIONS -- $PKG_BASE) || exit_with_error_msg "Error downloading tarball of $PKG_BASE"
         # Do a final check that PKG_SRC is a file with an absolute path
         cd /
         if [ ! -f "$PKG_SRC" ]; then
@@ -802,6 +802,13 @@ fi
 if [ $ERASE_ONLY = 1 ]; then
     delete_the_temporary_build_directory
     exit 0
+fi
+
+if [ -z "$SAGE_INSTALL_FETCH_ONLY" ]; then
+    TAGS=$("$SAGE_INST_LOCAL"/bin/python3 -c "from packaging.tags import sys_tags; print(' '.join(f'{tag.interpreter}-{tag.abi}-{tag.platform}' for tag in sys_tags()))" 2>/dev/null)
+    if [ -n "$TAGS" ]; then
+        SAGE_DOWNLOAD_FILE_OPTIONS+=" --tags $TAGS"
+    fi
 fi
 
 if [ $INSTALL = 1 ]; then

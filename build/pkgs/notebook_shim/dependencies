@@ -1,4 +1,4 @@
-jupyter_server | $(PYTHON_TOOLCHAIN) $(PYTHON)
+jupyter_server | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

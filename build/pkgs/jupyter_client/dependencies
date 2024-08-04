@@ -1,4 +1,4 @@
- jupyter_core pyzmq dateutil tornado traitlets importlib_metadata | $(PYTHON_TOOLCHAIN) $(PYTHON)
+importlib_metadata jupyter_core dateutil pyzmq tornado traitlets | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

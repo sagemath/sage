@@ -1,4 +1,4 @@
-jsonschema fastjsonschema jupyter_core traitlets | $(PYTHON_TOOLCHAIN) $(PYTHON)
+fastjsonschema jsonschema jupyter_core traitlets | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

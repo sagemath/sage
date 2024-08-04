@@ -1,10 +1,10 @@
-notebook_shim: A shim layer for notebook traits and config
-==========================================================
+notebook_shim: Shim layer for notebook traits and config
+========================================================
 
 Description
 -----------
 
-A shim layer for notebook traits and config
+Shim layer for notebook traits and config
 
 License
 -------

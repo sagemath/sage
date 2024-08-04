@@ -31,20 +31,20 @@ class FileServer(object):
             '/', 'data', 'files', 'spkg', 'upstream', package.name,
         )
 
-    def upload(self, package):
+    def upload(self, tarball):
         """
-        Upload the current tarball of package
+        Upload the current tarball of a package
         """
-        if not package.tarball.is_distributable():
-            raise ValueError('Tarball of {} is marked as not distributable'.format(package))
+        if not tarball.is_distributable():
+            raise ValueError('Tarball {} is marked as not distributable'.format(tarball))
         subprocess.check_call([
             'ssh', 'sagemath@fileserver.sagemath.org',
-            'mkdir -p {0} && touch {0}/index.html'.format(self.upstream_directory(package))
+            'mkdir -p {0} && touch {0}/index.html'.format(self.upstream_directory(tarball.package))
         ])
         subprocess.check_call([
             'rsync', '-av', '--checksum', '-e', 'ssh -l sagemath',
-            package.tarball.upstream_fqn,
-            'fileserver.sagemath.org:{0}'.format(self.upstream_directory(package))
+            tarball.upstream_fqn,
+            'fileserver.sagemath.org:{0}'.format(self.upstream_directory(tarball.package))
         ])
 
     def publish(self):
