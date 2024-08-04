@@ -32,7 +32,7 @@ from types import GeneratorType
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.structure.element import MonoidElement
-from sage.structure.richcmp import rich_to_bool, richcmp
+from sage.structure.richcmp import rich_to_bool, richcmp, op_NE
 from sage.structure.sequence import Sequence
 
 
@@ -352,7 +352,7 @@ class Ideal_generic(MonoidElement):
 
     def _richcmp_(self, other, op):
         """
-        Compare the generators of two ideals.
+        Compare two ideals with respect to set inclusion.
 
         INPUT:
 
@@ -362,15 +362,25 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: R = ZZ; I = ZZ*2; J = ZZ*(-2)
+            sage: R = ZZ
+            sage: I = ZZ*2
+            sage: J = ZZ*(-2)
             sage: I == J
             True
         """
+        if self.is_zero():
+            return rich_to_bool(op, other.is_zero() - 1)
+        if other.is_zero():
+            return rich_to_bool(op, 1)  # self.is_zero() is already False
         S = set(self.gens())
         T = set(other.gens())
         if S == T:
             return rich_to_bool(op, 0)
-        return richcmp(self.gens(), other.gens(), op)
+        if S < T:
+            return rich_to_bool(op, -1)
+        if S > T:
+            return rich_to_bool(op, +1)
+        raise NotImplementedError(f'ideal comparison between {self} and {other} is not implemented')
 
     def __contains__(self, x):
         """
@@ -1383,19 +1393,38 @@ class Ideal_principal(Ideal_generic):
 
     def _richcmp_(self, other, op):
         """
-        Compare the two ideals.
+        Compare two ideals with respect to set inclusion.
 
-        EXAMPLES:
+        EXAMPLES::
+
+            sage: I = 5 * ZZ
+            sage: J = 7 * ZZ
+            sage: I == J
+            False
+            sage: I < J
+            False
+            sage: I > J
+            False
+            sage: I <= J
+            False
+            sage: I >= J
+            False
+            sage: I != J
+            True
 
         Comparison with non-principal ideal::
 
             sage: R.<x> = ZZ[]
             sage: I = R.ideal([x^3 + 4*x - 1, x + 6])
-            sage: J = [x^2] * R
+            sage: J = [x + 6] * R
             sage: I > J  # indirect doctest
             True
             sage: J < I  # indirect doctest
             True
+            sage: I < J  # indirect doctest
+            False
+            sage: J > I  # indirect doctest
+            False
 
         Between two principal ideals::
 
@@ -1408,30 +1437,20 @@ class Ideal_principal(Ideal_generic):
             True
             sage: I3 = P.ideal(x)
             sage: I > I3
-            True
+            False
         """
-        if not isinstance(other, Ideal_generic):
-            other = self.ring().ideal(other)
-
         try:
-            if not other.is_principal():
-                return rich_to_bool(op, -1)
+            d1 = self.divides(other)
+            d2 = other.divides(self)
+            if d1 or d2:
+                return rich_to_bool(op, d1 - d2)
+            return op == op_NE
         except NotImplementedError:
-            # If we do not know if the other is principal or not, then we
-            #   fallback to the generic implementation
-            return Ideal_generic._richcmp_(self, other, op)
+            # If we do not know if the other is principal or not,
+            # then we fall back to the generic implementation
+            pass
 
-        if self.is_zero():
-            if not other.is_zero():
-                return rich_to_bool(op, -1)
-            return rich_to_bool(op, 0)
-
-        # is other.gen() / self.gen() a unit in the base ring?
-        g0 = other.gen()
-        g1 = self.gen()
-        if g0.divides(g1) and g1.divides(g0):
-            return rich_to_bool(op, 0)
-        return rich_to_bool(op, 1)
+        return Ideal_generic._richcmp_(self, other, op)
 
     def divides(self, other):
         """
