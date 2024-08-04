@@ -1,11 +1,12 @@
 #!/bin/sh
 if [ $# != 2 ]; then
-    echo >&2 "usage: $0 BASE_DOC_COMMIT DOC_REPO"
+    echo >&2 "usage: $0 DIFF_TEXT DOC_REPO"
     echo >&2 "creates CHANGES.html in the current directory"
-    echo >&2 "for the diffs of DOC_REPO against BASE_DOC_COMMIT"
+    echo >&2 "and plant targets of anchors in DOC_REPO"
+    echo >&2 "according to diff hunks in DIFF_TEXT"
     exit 1
 fi
-BASE_DOC_COMMIT="$1"
+DIFF_TEXT="$1"
 DOC_REPOSITORY="$2"
 
 # Create CHANGES.html
@@ -52,11 +53,10 @@ diffParagraphs.forEach(paragraph => {
 EOF
 echo '</head>' >> CHANGES.html
 echo '<body>' >> CHANGES.html
-(cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- "*.html") > diff.txt
 python3 - << EOF
 import os, re, html
 from itertools import chain
-with open('diff.txt', 'r') as f:
+with open('$DIFF_TEXT', 'r') as f:
     diff_text = f.read()
 diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
 out_blocks = []
@@ -85,8 +85,11 @@ for block in diff_blocks:
                 if search_result:
                     line_number = int(search_result.group(3)) - 1
                     span = int(search_result.group(4))
-                    for i in chain(range(line_number, line_number + span), range(line_number, -1, -1)):
-                        ln = content[i]
+                    for i in chain(range(line_number, line_number + span), range(line_number - 1, -1, -1)):
+                        try:
+                            ln = content[i]
+                        except IndexError:
+                            continue
                         for idx, char in enumerate(ln):
                             if not char.isspace():
                                 break
@@ -113,4 +116,4 @@ EOF
 cat diff.html >> CHANGES.html
 echo '</body>' >> CHANGES.html
 echo '</html>' >> CHANGES.html
-rm diff.txt diff.html
+rm diff.html
