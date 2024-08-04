@@ -1,4 +1,4 @@
- six wcwidth | $(PYTHON_TOOLCHAIN) $(PYTHON)
+wcwidth | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
