@@ -1,4 +1,4 @@
-async_lru importlib_metadata ipykernel jinja2 jupyter_core jupyter_lsp jupyter_server jupyterlab_server notebook_shim packaging traitlets tornado tomli httpx | $(PYTHON_TOOLCHAIN) $(PYTHON)
+async_lru httpx importlib_metadata importlib_resources ipykernel jinja2 jupyter_core jupyter_lsp jupyter_server jupyterlab_server notebook_shim packaging tomli tornado traitlets | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
