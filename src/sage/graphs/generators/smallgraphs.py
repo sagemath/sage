@@ -3828,8 +3828,87 @@ def MoserSpindle():
 def MurtyGraph():
     r"""
     Return the Murty graph.
+
+    Consider the complete bipartite graph `K_{3, 3}`. There is a set of three
+    black vertices and a set of three white vertices. Now, consider splicing
+    the complete graph `K_4` with one of the black vertices, this generates the
+    graph `K_4 \odot K_{3, 3}`. The Murty graph is obtained from
+    `K_4 \odot K_{3, 3}` with the addition of an edge joining the remaining two
+    black vertices. The Murty graph is free of conformal bicycles; in
+    other words, the Murty graph is an example of a graph that is Birkhoff-von
+    Neumann as well as PM-compact.
+
+    This is the smallest brick that is Birkhoff-von Neumann, aka a solid
+    brick, but is not odd-intercyclic. It is in this context that
+    Prof. U.S.R. Murty first stumbled upon this graph, and it also appears in
+    the work of Carvalho, Lucchesi, and Murty [CLM2006]_.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. By convention, the Murty graph is
+    displayed as mentioned in the paper [CKWL2019]_, with the first two
+    (noncubic) vertices on the top row, the second three vertices (that form a
+    stable set) in the middle row, and the remaining three vertices (that form
+    a triangle) at the bottom.
+
+    OUTPUT:
+
+    - ``G`` -- the Murty graph
+
+    EXAMPLES:
+
+    Construct and show the Murty graph::
+
+        sage: g = graphs.MurtyGraph()
+        sage: g.name()
+        'Murty Graph'
+        sage: g.order()
+        8
+        sage: g.size()
+        13
+        sage: g.girth()
+        3
+        sage: g.diameter()
+        2
+        sage: g.is_hamiltonian()
+        True
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    REFERENCES:
+
+    - [CKWL2019]_
+    - [CLM2006]_
+    - [LM2024]_
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-08-03)
     """
-    raise NotImplementedError()
+    pos_dict = {
+        0: (-0.5, sqrt(3)/2),
+        1: (0.5, sqrt(3)/2),
+        2: (-1, 0),
+        3: (0, 0),
+        4: (1, 0),
+        5: (-0.5, -1 - sqrt(3)/2),
+        6: (0, -1),
+        7: (0.5, -1 - sqrt(3)/2)
+    }
+
+    G = Graph(8, pos=pos_dict, name="Murty Graph")
+
+    G.add_edge(0, 1)
+    for v in range(2, 5):
+        G.add_edges([
+            (0, v), (1, v), (v, v+3)
+        ])
+
+    G.add_edges([
+        (5, 6), (5, 7), (6, 7)
+    ])
+
+    return G
 
 
 def NauruGraph(embedding=2):
