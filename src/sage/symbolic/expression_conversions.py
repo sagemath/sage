@@ -278,7 +278,7 @@ class Converter():
         The input to this method is the result of calling
         :meth:`pyobject` on a symbolic expression.
 
-        .. note::
+        .. NOTE::
 
            Note that if a constant such as ``pi`` is encountered in
            the expression tree, its corresponding pyobject which is an
@@ -400,7 +400,6 @@ class InterfaceInit(Converter):
             'sin((%pi)+(2))'
             sage: m(exp(x^2) + pi + 2)
             '(%pi)+(exp((_SAGE_VAR_x)^(2)))+(2)'
-
         """
         self.name_init = "_%s_init_" % interface.name()
         self.interface = interface
@@ -662,7 +661,7 @@ class InterfaceInit(Converter):
 ##########
 class FriCASConverter(InterfaceInit):
     """
-    Converts any expression to FriCAS.
+    Convert any expression to FriCAS.
 
     EXAMPLES::
 
@@ -675,7 +674,6 @@ class FriCASConverter(InterfaceInit):
         y %e   - asin(x + %pi)
         ----------------------
                    y
-
     """
     def __init__(self):
         import sage.interfaces.fricas
@@ -729,7 +727,6 @@ class FriCASConverter(InterfaceInit):
             sage: (ex^2)._fricas_()                                             # optional - fricas
                        +-+
             (4 + 2 %i)\|2  + 5 + 4 %i
-
         """
         try:
             result = getattr(obj, self.name_init)()
@@ -764,7 +761,6 @@ class FriCASConverter(InterfaceInit):
             sage: (2*x)._fricas_().integrate(x)                                 # optional - fricas
              2
             x
-
         """
         return repr(ex)
 
@@ -779,7 +775,6 @@ class FriCASConverter(InterfaceInit):
         - ``operator`` -- operator
 
         Note that ``ex.operator() == operator``.
-
 
         EXAMPLES::
 
@@ -797,10 +792,10 @@ class FriCASConverter(InterfaceInit):
             sage: var('x')
             x
             sage: F = function('F')
-            sage: integrate(F(x), x, algorithm="fricas")                        # optional - fricas
+            sage: integrate(F(x), x, algorithm='fricas')                        # optional - fricas
             integral(F(x), x)
 
-            sage: integrate(diff(F(x), x)*sin(F(x)), x, algorithm="fricas")     # optional - fricas
+            sage: integrate(diff(F(x), x)*sin(F(x)), x, algorithm='fricas')     # optional - fricas
             -cos(F(x))
 
         Check that :issue:`27310` is fixed::
@@ -813,7 +808,6 @@ class FriCASConverter(InterfaceInit):
             sage: fricas(ex)                                                    # optional - fricas
             F      (x,y + x)
              ,1,1,2
-
         """
         args = ex.operands()  # the arguments the derivative is evaluated at
         params = operator.parameter_set()
@@ -914,7 +908,7 @@ class PolynomialConverter(Converter):
 
     def symbol(self, ex):
         """
-        Returns a variable in the polynomial ring.
+        Return a variable in the polynomial ring.
 
         EXAMPLES::
 
@@ -1034,15 +1028,13 @@ def polynomial(ex, base_ring=None, ring=None):
 
     - ``ex`` -- a symbolic expression
 
-    - ``base_ring``, ``ring`` -- Either a
+    - ``base_ring``, ``ring`` -- either a
       ``base_ring`` or a polynomial ``ring`` can be
       specified for the parent of result.
       If just a ``base_ring`` is given, then the variables
       of the ``base_ring`` will be the variables of the expression ``ex``.
 
-    OUTPUT:
-
-    A polynomial.
+    OUTPUT: a polynomial
 
     EXAMPLES::
 
@@ -1123,15 +1115,13 @@ def laurent_polynomial(ex, base_ring=None, ring=None):
 
     - ``ex`` -- a symbolic expression
 
-    - ``base_ring``, ``ring`` -- Either a
+    - ``base_ring``, ``ring`` -- either a
       ``base_ring`` or a Laurent polynomial ``ring`` can be
       specified for the parent of result.
       If just a ``base_ring`` is given, then the variables
       of the ``base_ring`` will be the variables of the expression ``ex``.
 
-    OUTPUT:
-
-    A Laurent polynomial.
+    OUTPUT: a Laurent polynomial
 
     EXAMPLES::
 
@@ -1338,7 +1328,6 @@ def fast_callable(ex, etb):
         sage: f = (2*x^3+2*x-1)/((x-2)*(x+1))
         sage: f._fast_callable_(etb)
         div(add(add(mul(ipow(v_0, 3), 2), mul(v_0, 2)), -1), mul(add(v_0, 1), add(v_0, -2)))
-
     """
     return FastCallableConverter(ex, etb)()
 
@@ -1648,7 +1637,6 @@ class SubstituteFunction(ExpressionTreeWalker):
             sage: g = function('g')
             sage: f(g(x)).diff(x).substitute_function({g: sin})
             cos(x)*D[0](f)(sin(x))
-
         """
         new = self.substitutions.get(operator.function())
         if new is not None:

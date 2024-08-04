@@ -149,8 +149,8 @@ cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
 
     INPUT:
 
-    - ``base_ring``: A multivariate polynomial ring.
-    - ``blocks``: The number of blocks to be formed.
+    - ``base_ring`` -- a multivariate polynomial ring
+    - ``blocks`` -- the number of blocks to be formed
 
     OUTPUT:
 
@@ -191,7 +191,7 @@ cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
         T += T0
         names.extend([x + '_' + str(i) for x in names0])
     return PolynomialRing(base_ring.base_ring(), names, order=T,
-                          implementation="singular")
+                          implementation='singular')
 
 
 #####################
@@ -234,9 +234,7 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         A multivariate polynomial ring of type :class:`~sage.rings.polynomial.multipolynomial_libsingular.MPolynomialRing_libsingular`.
 
-        OUTPUT:
-
-        The free associative version of the given commutative ring.
+        OUTPUT: the free associative version of the given commutative ring
 
         .. NOTE::
 
@@ -328,11 +326,9 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         INPUT:
 
-        - `i` -- an integer
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        The generator with index `i`
+        OUTPUT: the generator with index `i`
 
         EXAMPLES::
 
@@ -654,8 +650,8 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         INPUT:
 
-        - ``g`` -- a list of elements of this free algebra.
-        - ``d`` -- an integer.
+        - ``g`` -- list of elements of this free algebra
+        - ``d`` -- integer
 
         OUTPUT:
 
@@ -701,14 +697,14 @@ cdef class FreeAlgebra_letterplace(Parent):
     # Coercion
     cpdef _coerce_map_from_(self, S):
         """
-        A ring ``R`` coerces into self, if
+        A ring ``R`` coerces into ``self``, if:
 
         - it coerces into the current polynomial ring, or
         - it is a free graded algebra in letterplace implementation,
           the generator names of ``R`` are a proper subset of the
-          generator names of self, the degrees of equally named
+          generator names of ``self``, the degrees of equally named
           generators are equal, and the base ring of ``R`` coerces
-          into the base ring of self.
+          into the base ring of ``self``.
 
         TESTS:
 
@@ -766,8 +762,8 @@ cdef class FreeAlgebra_letterplace(Parent):
 #
 #        INPUT:
 #
-#        - ``degree`` -- the maximal degree of the output (default 2).
-#        - ``terms`` -- the maximal number of terms of the output (default 5).
+#        - ``degree`` -- the maximal degree of the output (default: 2)
+#        - ``terms`` -- the maximal number of terms of the output (default: 5)
 #
 #        NOTE:
 #
@@ -788,12 +784,12 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         INPUT:
 
-        - A dictionary. Keys: tuples of exponents. Values:
-          The coefficients of the corresponding monomial
-          in the to-be-created element.
-        - ``check`` (optional bool, default ``True``):
-          This is forwarded to the initialisation of
-          :class:`~sage.algebras.letterplace.free_algebra_element_letterplace.FreeAlgebraElement_letterplace`.
+        - ``D`` -- dictionary; keys: tuples of exponents, values:
+          the coefficients of the corresponding monomial
+          in the to-be-created element
+        - ``check`` -- boolean (default: ``True``);
+          this is forwarded to the initialisation of
+          :class:`~sage.algebras.letterplace.free_algebra_element_letterplace.FreeAlgebraElement_letterplace`
 
         TESTS:
 

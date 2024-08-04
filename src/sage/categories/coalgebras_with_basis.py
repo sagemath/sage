@@ -92,7 +92,6 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 (B[(1,2,3)], B[(1,2,3)] # B[(1,2,3)])
                 sage: b, A.coproduct(b)
                 (B[(1,3)], B[(1,3)] # B[(1,3)])
-
             """
             if self.coproduct_on_basis is not NotImplemented:
                 # TODO: if self is a Hopf algebra, then one would want
@@ -145,7 +144,6 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 (B[(1,2,3)], 1)
                 sage: b, A.counit(b)
                 (B[(1,3)], 1)
-
             """
             if self.counit_on_basis is not NotImplemented:
                 return self.module_morphism(self.counit_on_basis,codomain=self.base_ring())

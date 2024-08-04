@@ -31,15 +31,13 @@ def DivisorGroup(scheme, base_ring=None):
 
     INPUT:
 
-    - ``scheme`` -- a scheme.
+    - ``scheme`` -- a scheme
 
     - ``base_ring`` -- usually either `\ZZ` (default) or `\QQ`. The
       coefficient ring of the divisors. Not to be confused with the
       base ring of the scheme!
 
-    OUTPUT:
-
-    An instance of ``DivisorGroup_generic``.
+    OUTPUT: an instance of ``DivisorGroup_generic``
 
     EXAMPLES::
 
@@ -66,11 +64,9 @@ def is_DivisorGroup(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    ``True`` or ``False``.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -114,10 +110,9 @@ class DivisorGroup_generic(FormalSums):
 
         INPUT:
 
-        - ``scheme`` -- a scheme.
+        - ``scheme`` -- a scheme
 
-        - ``base_ring`` -- the coefficient ring of the divisor
-          group.
+        - ``base_ring`` -- the coefficient ring of the divisor group
 
         Implementation note: :meth:`__classcall__` sets default value
         for ``base_ring``.
