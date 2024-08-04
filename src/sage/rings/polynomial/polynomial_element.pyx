@@ -8404,6 +8404,9 @@ cdef class Polynomial(CommutativePolynomial):
             UserWarning: roots may have been lost...
             [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
              [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            sage: ((x - 1)^2).roots(multiplicities=False, proof=False, warn=False)
+            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
+             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
 
         Note that coefficients in a number field with defining polynomial
         `x^2 + 1` are considered to be Gaussian rationals (with the
