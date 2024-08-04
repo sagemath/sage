@@ -3955,12 +3955,13 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         For anomalous curves with `\#E = p`, the
         :meth:`padic_elliptic_logarithm` function is called.
 
-        For two-dimensional logarithms, we first compute the Weil pairing of
-        `Q` with `P_1` and `P_2` and their logarithms to base the pairing of
-        `P_1` and `P_2`; this allows to read off `x` and `y` modulo the part
-        of the order where `P_1` and `P_2`. Modulo the rest of the order the
-        logarithm is effectively one-dimensional, so we can reduce the problem
-        to the basic one-dimensional case and finally recombine the results.
+        For two-dimensional logarithms, we first compute the Weil pairings
+        of `Q` with `P_1` and `P_2` and their logarithms relative to the
+        pairing of `P_1` and `P_2`; this allows reading off `x` and `y`
+        modulo the part of the order where `P_1` and `P_2` are independent.
+        Modulo the remaining part of the order the logarithm ends up being
+        effectively one-dimensional, so we can reduce the problem to the
+        basic one-dimensional case and finally recombine the results.
 
         INPUT:
 
