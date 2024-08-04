@@ -182,7 +182,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
 
     def is_atomic(self):
         """
-        Implements :meth:`CartanType_abstract.is_atomic`
+        Implement :meth:`CartanType_abstract.is_atomic`.
 
         `D_2` is atomic, like all `D_n`, despite being non irreducible.
 
@@ -220,7 +220,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
     @cached_method
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type D.
+        Return a Dynkin diagram for type D.
 
         EXAMPLES::
 

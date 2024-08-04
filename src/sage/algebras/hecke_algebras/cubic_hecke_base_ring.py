@@ -194,7 +194,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
       realized as splitting ring via the ``as_splitting_algebra`` method
     - ``third_unity_root_name`` -- string (default: ``'e3'``); for setting the
       name of the third root if unity of ``self``
-    - ``markov_trace_version`` -- boolean (default: ``False``) if this is
+    - ``markov_trace_version`` -- boolean (default: ``False``); if this is
       set to ``True`` then ``self`` contains one invertible indeterminate in
       addition which is meant to represent the writhe factor of a Markov trace
       on the cubic Hecke algebra and which default name is ``s``
@@ -441,7 +441,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         INPUT:
 
-        - ``mvp_expression``  -- element of GAP3 interface containing
+        - ``mvp_expression``  -- element of ``GAP3`` interface containing
           Jean Michel's ``MVP`` (multivariate polynomials)
 
         EXAMPLES::
@@ -536,9 +536,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
            considered as `\ZZ`-algebra. The base ring elements are transformed
            by this automorphism.
 
-        OUTPUT:
-
-        The involution as automorphism of ``self``.
+        OUTPUT: the involution as automorphism of ``self``
 
         EXAMPLES::
 
@@ -583,7 +581,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
     def create_specialization(self, im_cubic_equation_roots, im_writhe_parameter=None, var='T', third_unity_root_name='E3'):
         r"""
         Return an appropriate ring containing the elements from the list
-        ``im_cubic_equation_roots`` defining a conversion map from self mapping
+        ``im_cubic_equation_roots`` defining a conversion map from ``self`` mapping
         the cubic equation roots of ``self`` to ``im_cubic_equation_roots``.
 
         INPUT:
@@ -797,7 +795,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         INPUT:
 
-        - ``characteristic`` -- integer (default: ``0``); the characteristic
+        - ``characteristic`` -- integer (default: `0`); the characteristic
           of the field
 
         EXAMPLES::
@@ -932,7 +930,7 @@ class CubicHeckeRingOfDefinition(Localization):
     - ``ring_of_definition`` -- (optional) a :class:`CubicHeckeRingOfDefinition`
       to specify the generic cubic Hecke base ring over which ``self`` may be
       realized as splitting ring via the ``as_splitting_algebra`` method
-    - ``markov_trace_version`` -- boolean (default: ``False``) if this is
+    - ``markov_trace_version`` -- boolean (default: ``False``); if this is
       set to ``True`` then ``self`` contains one invertible indeterminate in
       addition which is meant to represent the writhe factor of a Markov trace
       on the cubic Hecke algebra and which default name is ``s``
@@ -1124,9 +1122,7 @@ class CubicHeckeRingOfDefinition(Localization):
            considered as `\ZZ`-algebra. The base ring elements are transformed
            by this automorphism.
 
-        OUTPUT:
-
-        The involution as automorphism of ``self``.
+        OUTPUT: the involution as automorphism of ``self``
 
         EXAMPLES::
 
