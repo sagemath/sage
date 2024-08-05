@@ -1,8 +1,8 @@
 SAGE_SPKG_CONFIGURE([python3], [
-   m4_pushdef([MIN_VERSION],               [3.9.0])
-   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.9.0])
+   m4_pushdef([MIN_VERSION],               [3.10.0])
+   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.10.0])
    m4_pushdef([LT_STABLE_VERSION],         [3.13.0])
-   m4_pushdef([LT_VERSION],                [3.13.0])
+   m4_pushdef([LT_VERSION],                [3.14.0])
    AC_ARG_WITH([python],
                [AS_HELP_STRING([--with-python=PYTHON3],
                                [Python 3 executable to use for the Sage venv; default: python3])])

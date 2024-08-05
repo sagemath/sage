@@ -1,4 +1,4 @@
- numpy freetype pillow dateutil pyparsing tornado cycler qhull fonttools contourpy | $(PYTHON_TOOLCHAIN) kiwisolver certifi setuptools_scm $(PYTHON)
+ numpy packaging freetype pillow dateutil pyparsing cycler qhull fonttools contourpy kiwisolver importlib_resources | $(PYTHON_TOOLCHAIN) pybind11 meson_python setuptools_scm $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

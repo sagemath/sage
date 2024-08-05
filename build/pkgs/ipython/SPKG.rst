@@ -26,14 +26,10 @@ offers:
 License
 -------
 
-BSD
-
+BSD-3-Clause
 
 Upstream Contact
 ----------------
 
-http://ipython.org
+https://pypi.org/project/ipython/
 
-ipython-dev@scipy.org
-
-ipython-user@scipy.org

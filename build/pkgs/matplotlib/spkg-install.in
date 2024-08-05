@@ -1,7 +1,12 @@
-# Write a configuration file to src/setup.cfg
+# Write a configuration file to src/mplsetup.cfg
 python3 make-setup-config.py
 
+# https://github.com/scipy/scipy/issues/16536 - meson breaks when CXX="g++ -std=gnu++11"
+export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 cd src
 
 # Finally install
-sdh_pip_install .
+# https://matplotlib.org/stable/install/dependencies.html#use-system-libraries
+sdh_pip_install -C setup-args="-Dsystem-freetype=true" \
+                -C setup-args="-Dsystem-qhull=true" \
+                .
