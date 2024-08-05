@@ -43,7 +43,6 @@ import sage.misc.flatten
 import sage.misc.randstate as randstate
 from sage.structure.sage_object import SageObject
 from sage.env import DOT_SAGE, SAGE_LIB, SAGE_SRC, SAGE_VENV, SAGE_EXTCODE
-from sage.misc.temporary_file import tmp_dir
 from cysignals.signals import AlarmInterrupt, init_cysignals
 
 from .sources import FileDocTestSource, DictAsObject, get_basename
@@ -1367,9 +1366,9 @@ class DocTestController(SageObject):
         if testing:
             return
 
-        # Setup signal handlers.
-        # Save crash logs in temporary directory.
-        os.putenv('CYSIGNALS_CRASH_LOGS', tmp_dir("crash_logs_"))
+        # Setup signal handlers. Crashes are logged to the directory
+        # specified by CYSIGNALS_CRASH_LOGS, typically set by sage-env
+        # to a subdirectory of DOT_SAGE.
         init_cysignals()
 
         import signal
