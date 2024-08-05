@@ -82,6 +82,11 @@ class ChowRing(QuotientRing_nc):
         sage: ch
         Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
         """
+        if self._augmented:
+            if self._presentation=='fy':
+                return "Augmented Chow ring of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
+            elif self._presentation=='atom-free':
+                return "Augmented Chow ring of {} of atom-free presentation".format(self._matroid)
         return "Chow ring of {}".format(self._matroid)    
 
     def _latex_(self):
