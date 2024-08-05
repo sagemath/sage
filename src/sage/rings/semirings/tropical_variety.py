@@ -439,24 +439,31 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         from sage.sets.set import Set
         
         def update_result(result):
-            # print(f"{index}, {new_expr}")
             sol_param = solve(new_expr, vars)
-            # print(f"{index}, sol param = {sol_param}")
-            if self.dimension() == 2:
-                sol_param_sim = True
-            else:
-                sol_param_sim = set()
-                for sol in sol_param:
-                    if isinstance(sol, list):
-                        for eqn in sol:
-                            if eqn.operator() == operator.lt:
-                                sol_param_sim.add(eqn.lhs() <= eqn.rhs())
-                            elif eqn.operator() == operator.gt:
-                                sol_param_sim.add(eqn.lhs() >= eqn.rhs())
-                    else:
-                        sol_param_sim.add(sol)
-            if sol_param_sim:
-                if self.dimension() == 2:
+            sol_param_sim = set()
+            for sol in sol_param:
+                if sol == []:
+                    for v in vars:
+                        if v != var:
+                            sol_param_sim.add(v < infinity)
+                elif isinstance(sol, list):
+                    for eqn in sol:
+                        if eqn.operator() == operator.eq:
+                            if not eqn.rhs().is_numeric():
+                                eqn_var = eqn.rhs().variables()
+                                param_var = [v for v in eqn_var if v in vars]
+                                if not param_var:
+                                    v = eqn.lhs()
+                                    if v != var:
+                                        sol_param_sim.add(v < infinity)
+                        elif eqn.operator() == operator.lt:
+                            sol_param_sim.add(eqn.lhs() <= eqn.rhs())
+                        elif eqn.operator() == operator.gt:
+                            sol_param_sim.add(eqn.lhs() >= eqn.rhs())
+                else:
+                    sol_param_sim.add(sol)
+            if (sol_param_sim) or (self.dimension() == 2):
+                if not sol_param_sim:
                     sol_param_sim = Set()
                 if index not in result:
                     result[index] = [(tuple(points), sol_param_sim)]
@@ -706,7 +713,10 @@ class TropicalSurface(TropicalVariety):
                 if temp:
                     interval_param = RealSet()
                     for t in temp:
-                        interval_param = interval_param + RealSet(t[0])
+                        if t != []:
+                            interval_param = interval_param + RealSet(t[0])
+                        else:
+                            interval_param = interval_param + RealSet(-infinity, infinity)
                     interval_param = interval_param.intersection(interval2)
                     if is_doublevar:
                         int1 = RealSet()
@@ -738,7 +748,10 @@ class TropicalSurface(TropicalVariety):
                 if temp:
                     interval_param = RealSet()
                     for t in temp:
-                        interval_param = interval_param + RealSet(t[0])
+                        if t != []:
+                            interval_param = interval_param + RealSet(t[0])
+                        else:
+                            interval_param = interval_param + RealSet(-infinity, infinity)
                     interval_param = interval_param.intersection(interval1)
                     if is_doublevar:
                         int1 = RealSet()
