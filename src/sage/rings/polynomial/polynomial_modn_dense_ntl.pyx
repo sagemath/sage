@@ -430,7 +430,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
 
         To be precise about the order fo compostion, given ``self``, ``other``
         and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \mod h(x)`.
-        
+
         INPUT:
 
         - ``other`` -- a polynomial `g(x)`
@@ -462,6 +462,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         other = other.ntl_ZZ_pX()
         res = elt.modular_composition(other, mod)
         return self.parent()(res, construct=True)
+
 
 def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
     r"""

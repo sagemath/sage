@@ -1478,7 +1478,7 @@ cdef class ntl_ZZ_pX():
 
         To be precise about the order fo compostion, given ``self``, ``other``
         and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \mod h(x)`.
-        
+
         INPUT:
 
         - ``other`` -- a polynomial `g(x)`
@@ -1503,7 +1503,7 @@ cdef class ntl_ZZ_pX():
         sig_on()
         # NTL requires that g is reduced
         other = other % modulus
-        
+
         # Build the modulus type
         ZZ_pX_Modulus_build(mod, modulus.x)
 

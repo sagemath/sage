@@ -996,7 +996,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         To be precise about the order fo compostion, given ``self``, ``other``
         and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \mod h(x)`.
-        
+
         INPUT:
 
         - ``other`` -- a polynomial `g(x)`
