@@ -31,27 +31,44 @@ class ChowRingIdeal(MPolynomialIdeal):
         pass
 
     def matroid(self):
+        r"""
+        Return the matroid of the given Chow ring ideal.
+
+        EXAMPLE::
+            
+            sage: ch = ChowRingIdeal_nonaug(M=matroids.Uniform(3,6), R=QQ)
+            sage: ch.matroid()
+            U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
+            {3: {{0, 1, 2, 3, 4, 5}}}
+        """
         M = self._matroid
         return M
     
     def flats_generator(self):
+        r"""
+        Return the variables of every corresponding flat/groundset element
+        of the matroid.
+
+        EXAMPLE::
+
+            sage: ch = ChowRingIdeal_nonaug(M=matroids.catalog.Fano(), R=QQ)
+            sage: ch.flats_generator() #WHERE IS OUTPUT?
+        """
         return dict(self._flats_generator)
     
 
-class ChowRingIdeal_nonaug(ChowRingIdeal):
+class ChowRingIdeal_nonaug(ChowRingIdeal): 
     r"""
-    The class of Chow ring ideal, a multi-polynomial ideal. 
-    Base class - ``MPolynomialIdeal``.
+    The Chow ring ideal. 
 
     INPUT:
 
+    - `M` -- a matroid
+    - `R` -- a ring
 
-    - `M` -- a matroid.
-    - `R` -- a ring.
+    OUTPUT: Chow ring ideal of matroid `M`
 
-    OUTPUT: Chow ring ideal of matroid `M`.
-
-    EXAMPLES::
+    EXAMPLES:
 
     Chow ring ideal of uniform matroid of rank 3 on 6 elements::
 
@@ -89,6 +106,14 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
 
     def _gens_constructor(self, poly_ring):
+        r"""
+        Returns the generators of the Chow ring ideal.
+        
+        EXAMPLE::
+            sage: ch = ChowRingIdeal_nonaug(M=matroids.catalog.NonFano(), R=QQ)
+            sage: ch._gens_constructor() #WHERE IS OUTPUT?
+
+        """
         E = list(self._matroid.groundset())
         flats = list(self._flats_generator.keys())
         flats_containing = {x: [] for x in E}
@@ -103,12 +128,19 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             for j,x in enumerate(E) for y in E[j+1:]]
         return Q + L
 
-    def __repr__(self):
+    def _repr_(self):
+        r"""
+        EXAMPLE::
+
+            sage: ch = ChowRingIdeal_nonaug(M=matroids.catalog.Fano(), R=QQ)
+            sage: ch
+            Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
+        """
         return "Chow ring ideal of {}".format(self._matroid)
 
     def groebner_basis(self):
         r"""
-        Returns the Groebner basis of the Chow ring ideal of consideration.
+        Returns the Groebner basis of the Chow ring ideal.
         Return type - ``PolynomialSequence``.
 
         EXAMPLES::
@@ -206,6 +238,16 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         
     
     def _gens_constructor(self, poly_ring):
+        r"""
+        Return the generators of augmented Chow ring ideal of
+        Feitchner-Yuzvinsky presentation.
+
+        EXAMPLES::
+
+            sage: ch = AugmentedChowRingIdeal_fy(M=matroids.Wheel(3), R=QQ)
+            sage: ch._gens_constructor() #WHERE IS OUTPUT?
+
+        """
         E = list(self._matroid.groundset())
         flats_containing = {x: [] for x in E}
         for F in self._flats:
@@ -226,7 +268,15 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             L.append(self._flats_generator[x] - term)
         return Q + L
 
-    def __repr__(self):
+    def _repr_(self):
+        r"""
+        EXAMPLES::
+
+            sage: ch = AugmentedChowRingIdeal_fy(M=matroids.Wheel(3), R=QQ)
+            sage: ch
+            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
+            6 elements with 16 bases of Feitchner-Yuzvinsky presentation
+        """
         return "Augmented Chow ring ideal of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
     
     def groebner_basis(self):
@@ -331,7 +381,17 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
         
 
-    def _gens_constructor(self, poly_ring): 
+    def _gens_constructor(self, poly_ring):
+        r"""
+        Return the generators of augmented Chow ring ideal of
+        atom-free presentation.
+
+        EXAMPLES::
+
+            sage: ch = AugmentedChowRingIdeal_atom_free(M=matroids.Wheel(3), R=QQ)
+            sage: ch._gens_constructor() #WHERE IS OUTPUT?
+
+        """
         E = list(self._matroid.groundset())
         Q = []
         flats_containing = {x: [] for x in E}
@@ -356,7 +416,15 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         return Q
             
-    def __repr__(self):
+    def _repr_(self):
+        r"""
+        EXAMPLE::
+
+            sage: ch = AugmentedChowRingIdeal_atom_free(M=matroids.Wheel(3), R=QQ)
+            sage: ch
+            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
+            6 elements with 16 bases of atom-free presentation
+        """
         return "Augmented Chow ring ideal of {} of atom-free presentation".format(self._matroid)
     
     def groebner_basis(self):
