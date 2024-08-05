@@ -64,14 +64,14 @@ We can check the identity `D_{i+1} U_i - U_{i-1} D_i = I_i` explicitly on
 all partitions of `i=3`::
 
     sage: for p in Partitions(3):
-    ....:     b = QQY(p)
+    ....:     b = QQY.monomial(p)
     ....:     assert D(U(b)) - U(D(b)) == b
 
 We can also check that the coefficient of `\lambda \vdash n` in
 `U^n(\emptyset)` is equal to the number of standard Young tableaux
 of shape `\lambda`::
 
-    sage: u = QQY(Partition([]))
+    sage: u = QQY.monomial(Partition([]))
     sage: for i in range(4):
     ....:     u = U(u)
     sage: u

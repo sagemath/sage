@@ -1086,8 +1086,10 @@ class Magmas(Category_singleton):
 
                     sage: # needs sage.groups sage.modules
                     sage: A = SymmetricGroupAlgebra(QQ, 3)
-                    sage: x = cartesian_product([A([1,3,2]), A([2,3,1])])
-                    sage: y = cartesian_product([A([1,3,2]), A([2,3,1])])
+                    sage: x = cartesian_product([A.monomial(Permutation([1,3,2])),
+                    ....:                        A.monomial(Permutation([2,3,1]))])
+                    sage: y = cartesian_product([A.monomial(Permutation([1,3,2])),
+                    ....:                        A.monomial(Permutation([2,3,1]))])
                     sage: cartesian_product([A,A]).product(x,y)
                     B[(0, [1, 2, 3])] + B[(1, [3, 1, 2])]
                     sage: x*y

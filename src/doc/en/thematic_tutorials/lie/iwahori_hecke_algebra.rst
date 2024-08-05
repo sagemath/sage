@@ -69,6 +69,5 @@ You may convert a Weyl group element into the Iwahori Hecke algebra::
     sage: P.<q> = LaurentPolynomialRing(QQ)
     sage: H = IwahoriHeckeAlgebra("G2",q)
     sage: T = H.T()
-    sage: T(s1*s2)
+    sage: T.monomial(s1*s2)
     T[1,2]
-
