@@ -10,6 +10,7 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedFreeAbelianMonoidElement, IndexedMonoid
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import Element, parent
@@ -45,7 +46,7 @@ class ElementCache():
 
     def _cache_get(self, elm):
         r"""
-        Return the cached element, or create it
+        Return the cached element, or add it
         if it doesn't exist.
 
         ``elm`` must implement the following methods:
@@ -58,11 +59,16 @@ class ElementCache():
             for other_elm in lookup:
                 if elm == other_elm:
                     return other_elm
+            elm = self._canonical_label(elm)
             lookup.append(elm)
         else:
+            elm = self._canonical_label(elm)
             self._cache[key] = [elm]
         return elm
 
+    @cached_method
+    def _canonical_label(self, elm):
+        return elm
 
 class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
     def __init__(self, parent, C):
@@ -71,8 +77,13 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
         """
         Element.__init__(self, parent)
         self._C = C
-        self._sorted_orbits = tuple(sorted(len(orbit) for orbit in C.orbits()))
+        self._sorted_orbits = sorted([sorted(orbit) for orbit in C.orbits()], key=len)
+        self._orbit_lens = tuple(len(orbit) for orbit in self._sorted_orbits)
         self._order = C.order()
+
+    @lazy_attribute
+    def _canonicalizing_perm(self):
+        return PermutationGroupElement([e for o in self._sorted_orbits for e in o], check=False)
 
     def __hash__(self):
         return hash(self._C)
@@ -83,6 +94,9 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
         """
         return f"{self._C.gens_small()}"
 
+    def _element_key(self):
+        return self._C.degree(), self._order, self._orbit_lens
+
     def __eq__(self, other):
         r"""
         Return whether ``self`` is equal to ``other``.
@@ -92,11 +106,12 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
         """
         return (isinstance(other, ConjugacyClassOfDirectlyIndecomposableSubgroups)
                 and self._C.degree() == other._C.degree()
-                and  _is_conjugate(SymmetricGroup(self._C.degree()),
-                                   self._C, other._C))
+                and (self._C == other._C
+                     or _is_conjugate(SymmetricGroup(self._C.degree()),
+                                      self._C, other._C)))
 
 
-class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Parent):
+class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Parent, ElementCache):
     def __init__(self):
         r"""
         Conjugacy classes of directly indecomposable subgroups.
@@ -121,20 +136,25 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
         if isinstance(x, PermutationGroup_generic):
             if len(x.disjoint_direct_product_decomposition()) > 1:
                 raise ValueError(f"{x} is not directly indecomposable")
-            pi = self.canonical_label(x)
-            return self.element_class(self, PermutationGroup(gap_group=libgap.ConjugateGroup(x, pi)))
+            elm = self.element_class(self, x)
+            return self._cache_get(elm)
         raise ValueError(f"unable to convert {x} to {self}")
 
     def _repr_(self):
         return "Infinite set of conjugacy classes of directly indecomposable subgroups"
 
     @cached_method
-    def canonical_label(self, H):
+    def canonical_label(self, elm):
         r"""
-        Return the permutation group element `g` such that
-        `g^{-1} H g` is a canonical representative.
+
+        EXAMPLES::
+
+            sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
+            sage: A = AtomicSpecies(1)
+            sage: A(G)
+            {[(5,6)(7,8), (1,2)(5,7)(6,8), (1,2)(3,4)]: (8,)}
         """
-        return PermutationGroupElement([e for o in sorted([sorted(orbit) for orbit in H.orbits()], key=len) for e in o], check=False)
+        return self.element_class(self, PermutationGroup(gap_group=libgap.ConjugateGroup(elm._C, elm._canonicalizing_perm)))
 
     Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
 
@@ -169,13 +189,13 @@ class AtomicSpeciesElement(Element):
         r"""
         Return a lookup key for ``self``.
         """
-        return self._mc, self._dis._order, self._dis._sorted_orbits
+        return self._mc, self._dis
 
     def __hash__(self):
         r"""
         Return the hash of the atomic species.
         """
-        return hash((self._mc, self._dis))
+        return hash(self._element_key())
 
     def __eq__(self, other):
         r"""
@@ -192,7 +212,7 @@ class AtomicSpeciesElement(Element):
         """
         return "{" + f"{self._dis}: {self._mc}" + "}"
 
-
+# How to remember the names without ElementCache?
 class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
     def __init__(self, k):
         r"""
@@ -278,9 +298,8 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             raise ValueError(f"{x} must be a tuple for multivariate species")
         H_norm, dompart = self._normalize(H, M)
         dis_elm = self._dis_ctor(H_norm)
-        # Python sorts are stable so we can use sorted twice without worrying about a change
-        # in the output.
-        pi = self._dis_ctor.canonical_label(H_norm)
+        # Trying to avoid libgap.RepresentativeAction; it is slow
+        pi = dis_elm._canonicalizing_perm
         dompart_norm = {pi(k): v for k, v in dompart.items()}
         elm = self.element_class(self, dis_elm, dompart_norm)
         return self._cache_get(elm)
@@ -328,97 +347,132 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         category = Monoids() & InfiniteEnumeratedSets()
         IndexedFreeAbelianMonoid.__init__(self, indices, prefix=prefix, category=category, **kwds)
         ElementCache.__init__(self)
+        self._k = indices._k
 
+    # I don't think _element_constructor is ever called, so
     def _element_constructor_(self, x=None):
-        elm = self._cache_get(super()._element_constructor_(x))
-        if elm._group is None:
-            elm._group_constructor()
-        return elm
+        print("molecular species element constructor is called!")
+        raise NotImplementedError
 
     @cached_method
     def one(self):
         elm = super().one()
         elm._group = SymmetricGroup(0)
+        elm._dompart = dict()
+        elm._mc = [0 for _ in range(self._k)]
+        elm._tc = 0
         return elm
 
     def gen(self, x):
-        elm = self._cache_get(super().gen(x))
+        r"""
+        Create the molecular species from an atomic species.
+        """
+        if x not in self._indices:
+            raise IndexError(f"{x} is not in the index set")
+        at = self._indices(x)
+        elm = self._cache_get(self.element_class(self, {at: ZZ.one()}))
         if elm._group is None:
-            elm._group_constructor()
+            elm._group = at._dis._C
+            elm._dompart = at._dompart
+            elm._mc = at._mc
+            elm._tc = at._tc
         return elm
 
     class Element(IndexedFreeAbelianMonoidElement):
         def __init__(self, F, x):
             super().__init__(F, x)
             self._group = None
+            self._dompart = None
+            self._mc = None
+            self._tc = None
+
+        def _assign_group_info(self, other):
+            self._group = other._group
+            self._dompart = other._dompart
+            self._mc = other._mc
+            self._tc = other._tc
 
         def _group_constructor(self):
             r"""
             Construct the group of ``self``.
             """
-            if self._group is None:
-                self._group = SymmetricGroup(0)
+            temp = self.parent().one()
             for A, p in self._monomial.items():
-                curgrp = self._groupexp(A._dis._C, p)
-                self._group = self._groupmul(self._group, curgrp)
+                at = self.parent().gen(A)
+                at_p = at ** p
+                temp = temp * at_p
+            self._assign_group_info(temp)
 
-        def _groupmul(self, G1, G2):
+        def _elmmul(self, elm1, elm2):
             r"""
-            Multiply two groups.
+            Populate the group info of ``self`` by multiplying
+            the groups of ``elm1`` and ``elm2``.
             """
-            # Would be great to be able to cache the intermediate results
-            if G1.degree() + G2.degree() == 0:
-                return SymmetricGroup(0)
-            if G1.degree() == 0:
-                return G2
-            if G2.degree() == 0:
-                return G1
-            gens1 = G1.gens()
+            if elm1._group is None:
+                elm1._group_constructor()
+            if elm2._group is None:
+                elm2._group_constructor()
+            if elm1.grade() == 0:
+                self._assign_group_info(elm2)
+                return
+            if elm2.grade() == 0:
+                self._assign_group_info(elm1)
+                return
+            self._mc = [elm1._mc[i] + elm2._mc[i] for i in range(self.parent()._k)]
+            self._tc = elm1._tc + elm2._tc
+            gens1 = elm1._group.gens()
+            # Try to avoid gens_small unless necessary
             if len(gens1) > 50:
-                gens1 = G1.gens_small()
-            gens2 = G2.gens()
+                gens1 = elm1._group.gens_small()
+            gens2 = elm2._group.gens()
             if len(gens2) > 50:
-                gens1 = G2.gens_small()
+                gens2 = elm2._group.gens_small()
             # always loop over the smaller gens list
             if len(gens1) < len(gens2):
                 gens1, gens2 = gens2, gens1
-                G1, G2 = G2, G1
+                elm1, elm2 = elm2, elm1
             gens = list(gens1)
+            self._dompart = elm1._dompart | {(elm1._tc + k): v for k, v in elm2._dompart.items()}
             for gen in gens2:
-                gens.append([tuple(G1.degree() + k for k in cyc) for cyc in gen.cycle_tuples()])
-            return PermutationGroup(gens, domain=range(1, G1.degree() + G2.degree() + 1))
+                gens.append([tuple(elm1._tc + k for k in cyc) for cyc in gen.cycle_tuples()])
+            self._group = PermutationGroup(gens, domain=range(1, elm1._tc + elm2._tc + 1))
 
-        def _groupexp(self, G, n):
-            r"""
-            Exponentiate a group.
-            """
-            grp = SymmetricGroup(0)
-            while n > 0:
-                if n % 2 == 1:
-                    grp = self._groupmul(grp, G)
-                G = self._groupmul(G, G)
-                n //= 2
-            return grp
+        def __floordiv__(self, elt):
+            raise NotImplementedError("Cannot cancel in this monoid")
 
-        # TODO: didn't override __floordiv__
         def _mul_(self, other):
+            r"""
+            Multiply ``self`` by ``other``.
+            """
             res = super()._mul_(other)
             elm = self.parent()._cache_get(res)
-            if self._group is None:
-                self._group = SymmetricGroup(0)
             if elm._group is None:
-                # Multiply two groups
-                elm._group = elm._groupmul(self._group, other._group)
+                elm._elmmul(self, other)
             return elm
 
+        def _elmexp(self, other, n):
+            r"""
+            Populate the group info of ``self`` by exponentiating
+            the group of ``other``.
+            """
+            if other._group is None:
+                other._group_constructor()
+            temp = self.parent().one()
+            while n > 0:
+                if n % 2 == 1:
+                    temp = temp * other
+                other = other * other
+                n //= 2
+            self._assign_group_info(temp)
+
         def __pow__(self, n):
+            r"""
+            Raise ``self`` to the power of ``n``.
+            """
             res = super().__pow__(n)
             elm = self.parent()._cache_get(res)
-            if self._group is None:
-                self._group = SymmetricGroup(0)
             if elm._group is None:
-                # Exponentiate the group
-                elm._group = elm._groupexp(self._group, n)
+                elm._elmexp(self, n)
             return elm
 
         def _element_key(self):
@@ -428,13 +482,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             r"""
             Return the grade of ``self``.
             """
-            return sum(A._tc * p for A, p in self._monomial.items())
+            return self._tc
 
         def domain(self):
             r"""
             Return the domain of ``self``.
             """
-            return FiniteEnumeratedSet(range(1, self.grade() + 1))
+            return FiniteEnumeratedSet(range(1, self._tc + 1))
 
 
 class PolynomialSpecies(CombinatorialFreeModule):
