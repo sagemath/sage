@@ -22,7 +22,7 @@ from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.sets.set import Set
 from functools import cmp_to_key
-
+from sage.misc.misc_c import prod
 
 class ChowRing(QuotientRing_nc):
     r"""
@@ -112,29 +112,24 @@ class ChowRing(QuotientRing_nc):
                     term = self._ideal.ring().one()
                     for j in range(len(flats)):
                         if j == 0:
-                            if i > self._matroid.rank(flats[0]):
-                                term *= flats_gen[flats[j]]**(0)
-                            else:
+                            if i <= self._matroid.rank(flats[0]):
                                 term *= flats_gen[flats[j]]**(i + 1)
                         else:
-                            if i >= (self._matroid.rank(flats[j]) - self._matroid.rank(flats[j-1])):
-                                if (flats[j] in list(flats_gen)):
-                                    term *= flats_gen[flats[j]]**(0)
-                            else:
-                                term *= flats_gen[flats[j]]**(i + 1)
+                            if i < (self._matroid.rank(flats[j]) - self._matroid.rank(flats[j-1])): #store the ranks as a list
+                                if flats[j] in flats_gen:
+                                    term *= flats_gen[flats[j]]**(i + 1)
                     monomial_basis.append(term)
                 
-            elif self._presentation=='atom-free':
+            elif self._presentation == 'atom-free': #all double equals need spacing
+                first_rank = self._matroid.rank(flats[len(flats)])
                 for i in range(maximum_rank):
-                    term = self._ideal.ring().one()
                     pow = []
                     for j in range(1, len(flats) - 1):
-                        if i >= (self._matroid.rank(flats[j-1]) - self._matroid.rank(flats[j])):
+                        if i >= (self._matroid.rank(flats[j]) - self._matroid.rank(flats[j-1])):
                             pow.append((j , i))
-                    if sum([p[1] for p in pow]) == self._matroid.rank(flats[0]):
-                        for p in pow:
-                            term *= flats_gen[flats[p[0]]]**(p[1])
-                    monomial_basis.append(term)
+                    if sum(p[1] for p in pow) == first_rank:
+                        term = prod(flats_gen[flats[p[0]]] ** p[1] for p in pow) 
+                        monomial_basis.append(term)
         
 
         else:
