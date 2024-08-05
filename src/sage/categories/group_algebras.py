@@ -400,7 +400,7 @@ class GroupAlgebras(AlgebrasCategory):
 
                 sage: # needs sage.combinat sage.groups sage.modules
                 sage: QS3 = SymmetricGroup(3).algebra(QQ)
-                sage: A = QS3([2,3,1]) + QS3([3,1,2])
+                sage: A = QS3.monomial(Partition([2,3,1])) + QS3.monomial(Partition([3,1,2]))
                 sage: A.central_form()
                 B[(1,2,3)]
                 sage: QS4 = SymmetricGroup(4).algebra(QQ)

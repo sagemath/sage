@@ -1089,7 +1089,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 ....:         CombinatorialFreeModule.__init__(self, F, basis_keys,
                 ....:                 category=Algebras(F).FiniteDimensional().WithBasis())
                 ....:     def x(self):
-                ....:         return self(self._xbar)
+                ....:         return self.monomial(self._xbar)
                 ....:     def one(self):
                 ....:         return self.basis()[self.base_ring().one()]
                 ....:     def product_on_basis(self, w1, w2):
@@ -1177,7 +1177,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.groups sage.modules
                 sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
-                sage: a = QS3([2,1,3])
+                sage: a = QS3.monomial(Partition([2,1,3]))
                 sage: a.to_matrix(side='left')
                 [0 0 1 0 0 0]
                 [0 0 0 0 1 0]
@@ -1573,7 +1573,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                     sage: # needs sage.groups sage.modules
                     sage: S = SymmetricGroupAlgebra(QQ, 4)
-                    sage: elt = S([3,1,2,4])
+                    sage: elt = S.monomial(Partition([3,1,2,4]))
                     sage: ci = elt.cellular_involution(); ci
                     7/48*[1, 3, 2, 4] + 49/48*[2, 3, 1, 4]
                      - 1/48*[3, 1, 2, 4] - 7/48*[3, 2, 1, 4]
