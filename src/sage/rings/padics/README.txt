@@ -8,7 +8,7 @@
 #*****************************************************************************
 
 This document aims at explaining the (somehow complicated) file structure and
-class hierarchy for p-adics in Sage.
+class hierarchy for `p`-adics in Sage.
 
 
 Below is a representation of the parent hierarchy.

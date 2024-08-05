@@ -1,6 +1,6 @@
 """
 This file provides the declaration for the pAdicTemplateElement class,
-which collects common functionality for the different p-adic template
+which collects common functionality for the different `p`-adic template
 classes.
 
 It is included in CR_template_header.pxi, CA_template_header.pxi and

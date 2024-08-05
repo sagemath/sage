@@ -126,7 +126,7 @@ class DrinfeldModule_finite(DrinfeldModule):
 
     def __init__(self, gen, category):
         """
-        Initialize `self`.
+        Initialize ``self``.
 
         Validity of the input is checked in `__classcall_private__`. The
         `__init__` just saves attributes.
@@ -139,7 +139,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         - ``gen`` -- the generator of the Drinfeld module as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` (default: `'t'`) -- the name of the Ore polynomial
+        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
           ring gen
 
         TESTS::
@@ -337,8 +337,8 @@ class DrinfeldModule_finite(DrinfeldModule):
               Anderson motive (see Chapter 2 of [CL2023]_).
 
         The method raises an exception if the user asks for an
-        unimplemented algorithm, even if the characteristic has already
-        been computed.
+        unimplemented algorithm, even if the characteristic polynomial
+        has already been computed.
 
         EXAMPLES::
 
@@ -1007,7 +1007,6 @@ class DrinfeldModule_finite(DrinfeldModule):
             Traceback (most recent call last):
             ...
             TypeError: input must be an Ore polynomial
-
         """
         deg = ore_pol.degree()
         r = self.rank()
@@ -1130,7 +1129,6 @@ class DrinfeldModule_finite(DrinfeldModule):
             False
             sage: psi.is_supersingular()
             False
-
         """
         return self.height() == self.rank()
 
@@ -1155,6 +1153,5 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: phi = DrinfeldModule(A, [1, z6, 0, z6])
             sage: phi.is_ordinary()
             True
-
         """
         return self.height() == 1

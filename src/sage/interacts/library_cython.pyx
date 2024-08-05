@@ -62,7 +62,6 @@ cpdef mandel(ff_m, z, int iterations):
         sage: ff_m = fast_callable(f, vars=[z,c], domain=CDF)
         sage: mandel(ff_m, CDF(1,1), 3)
         1.0 + 3.0*I
-
     """
     c = z
     for i in range(iterations):
