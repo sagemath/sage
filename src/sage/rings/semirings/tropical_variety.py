@@ -660,6 +660,7 @@ class TropicalSurface(TropicalVariety):
         from sage.sets.real_set import RealSet
         from sage.symbolic.relation import solve
 
+        R = self._poly.parent().base().base_ring()
         vertices = {i:set() for i in range(self.number_of_components())}
         axes = self._axes()
         comps = self.components()
@@ -673,10 +674,10 @@ class TropicalSurface(TropicalVariety):
                     left = param.lhs()
                     right = param.rhs()
                     if left.is_numeric():
-                        vertex = [e.subs(v==left) for e in line[0]]
+                        vertex = [R(e.subs(v==left)) for e in line[0]]
                         vertices[index].add(tuple(vertex))
                     elif right.is_numeric():
-                        vertex = [e.subs(v==right) for e in line[0]]
+                        vertex = [R(e.subs(v==right)) for e in line[0]]
                         vertices[index].add(tuple(vertex))
 
             # find the interval of parameter for outer vertex
@@ -725,8 +726,8 @@ class TropicalSurface(TropicalVariety):
                         final_int = int1.intersection(int2)
                         interval_param = interval_param.intersection(final_int)
                     if interval_param:
-                        vertex1 = [e.subs(vars[0]==p, vars[1]==interval_param.inf()) for e in comps[index][0]]
-                        vertex2 = [e.subs(vars[0]==p, vars[1]==interval_param.sup()) for e in comps[index][0]]
+                        vertex1 = [R(e.subs(vars[0]==p, vars[1]==interval_param.inf())) for e in comps[index][0]]
+                        vertex2 = [R(e.subs(vars[0]==p, vars[1]==interval_param.sup())) for e in comps[index][0]]
                         vertices[index].add(tuple(vertex1))
                         vertices[index].add(tuple(vertex2))
 
@@ -757,16 +758,16 @@ class TropicalSurface(TropicalVariety):
                         final_int = int1.intersection(int2)
                         interval_param = interval_param.intersection(final_int)
                     if interval_param:
-                        vertex1 = [e.subs(vars[0]==interval_param.inf(), vars[1]==p) for e in comps[index][0]]
-                        vertex2 = [e.subs(vars[0]==interval_param.sup(), vars[1]==p) for e in comps[index][0]]
+                        vertex1 = [R(e.subs(vars[0]==interval_param.inf(), vars[1]==p)) for e in comps[index][0]]
+                        vertex2 = [R(e.subs(vars[0]==interval_param.sup(), vars[1]==p)) for e in comps[index][0]]
                         vertices[index].add(tuple(vertex1))
                         vertices[index].add(tuple(vertex2))
         return vertices
 
-    def polygon_plot(self, color='random'):
+    def plot(self, color='random'):
         """
-        Return the plot of ``self`` by constructing a polygon from vertices
-        in ``self.polygon_vertices()``.
+        Return the plot of ``self`` by constructing a polyhedron from
+        vertices in ``self.polygon_vertices()``.
 
         INPUT:
 
@@ -783,17 +784,16 @@ class TropicalSurface(TropicalVariety):
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = x + y + z + x^2
             sage: tv = p1.tropical_variety()
-            sage: tv.polygon_plot()
+            sage: tv.plot()
             Graphics3d Object
         """
         import random
         from sage.plot.graphics import Graphics
-        from sage.plot.plot3d.shapes2 import polygon3d
+        from sage.geometry.polyhedron.constructor import Polyhedron
 
         if color == 'random':
             colors = []
             for _ in range(self.number_of_components()):
-                # Generate a random color in RGB format
                 color = (random.random(), random.random(), random.random())
                 colors.append(color)
         elif isinstance(color, str):
@@ -803,104 +803,9 @@ class TropicalSurface(TropicalVariety):
 
         combined_plot = Graphics()
         for i, vertex in self.polygon_vertices().items():
-            points = [list(v) for v in vertex]
-            plot = polygon3d(points, color=colors[i])
+            points = list(vertex)
+            plot = Polyhedron(vertices=points).plot(color=colors[i])
             combined_plot += plot
-        return combined_plot
-
-    def plot(self, num_of_points=32, size=20, color='random'):
-        """
-        Return a 3d plot of ``self``.
-
-        INPUT:
-
-        - ``num_of_points`` -- integer (default: `32`); a number of points
-          to use in the three-dimensional scatter plot.
-
-        - ``size`` -- real number (default: `20`); size of each point in
-          the three-dimensional scatter plot.
-
-        - ``color`` -- string or tuple that represent a color (default:
-          ``random``); ``random`` means each component will be assigned
-          a different color. If instead a specific ``color`` is provided,
-          then all points will be given the same color.
-
-        OUTPUT: Graphics3d Object
-
-        EXAMPLES::
-
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<x,y,z> = PolynomialRing(T)
-            sage: p1 = x + y + z + x^2 + R(1)
-            sage: p1.tropical_variety().components()
-            [[(t1, t1, t2), [t1 <= t2, 0 <= t1, t1 <= 1], 1],
-            [(t1, t2, t1), [0 <= t1, t1 <= min(1, t2), 0 <= t2], 1],
-            [(0, t1, t2), [0 <= t2, 0 <= t1], 1],
-            [(1, t1, t2), [1 <= t2, 1 <= t1], 1],
-            [(t1, t2, t2), [t2 <= min(1, t1, 2*t1)], 1],
-            [(1/2*t1, t1, t2), [t1 <= t2, t1 <= 0], 1],
-            [(t1, 1, t2), [1 <= t2, 1 <= t1], 1],
-            [(1/2*t1, t2, t1), [t1 <= min(0, t2)], 1],
-            [(t1, t2, 1), [1 <= t1, 1 <= t2], 1]]
-            sage: p1.tropical_variety().plot()
-            Graphics3d Object
-
-        .. PLOT::
-            :width: 300 px
-
-            T = TropicalSemiring(QQ)
-            R = PolynomialRing(T, ('x,y,z'))
-            x, y, z = R.gen(), R.gen(1), R.gen(2)
-            p1 = x + y + z + x**2 + R(1)
-            sphinx_plot(p1.tropical_variety().plot())
-        """
-        import random
-        from sage.plot.graphics import Graphics
-        from sage.arith.srange import srange
-        from sage.plot.plot3d.shapes2 import point3d, text3d
-
-        if color == 'random':
-            colors = []
-            for _ in range(self.number_of_components()):
-                # Generate a random color in RGB format
-                color = (random.random(), random.random(), random.random())
-                colors.append(color)
-        elif isinstance(color, str):
-            colors = [color]*self.number_of_components()
-        else:
-            colors = color
-
-        axes = self._axes()
-        step = num_of_points
-        du = (axes[0][1]-axes[0][0])/step
-        dv = (axes[1][1]-axes[1][0])/step
-        u_range = srange(axes[0][0], axes[0][1]+du, du)
-        v_range = srange(axes[1][0], axes[1][1]+dv, dv)
-        combined_plot = Graphics()
-        for i, comp in enumerate(self._hypersurface):
-            points = []
-            for u in u_range:
-                for v in v_range:
-                    checkpoint = True
-                    for exp in comp[1]:
-                        final_exp = exp.subs(self._vars[0] == u, self._vars[1] == v)
-                        if not final_exp:
-                            checkpoint = False
-                            break
-                    if checkpoint:
-                        x = comp[0][0].subs(self._vars[0] == u, self._vars[1] == v)
-                        y = comp[0][1].subs(self._vars[0] == u, self._vars[1] == v)
-                        z = comp[0][2].subs(self._vars[0] == u, self._vars[1] == v)
-                        points.append((x,y,z))
-            point_plot = point3d(points, size=size, color=colors[i])
-            order = comp[2]
-            if order > 1:
-                text_order = text3d(str(order), points[len(points)//2],
-                                    fontweight='bold', fontsize='500%')
-                combined_plot += point_plot + text_order
-            else:
-                combined_plot += point_plot
-
         return combined_plot
 
     def _repr_(self):
