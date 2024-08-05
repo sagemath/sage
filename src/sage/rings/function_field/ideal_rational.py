@@ -29,9 +29,9 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
     INPUT:
 
-    - ``ring`` -- the maximal order of the rational function field.
+    - ``ring`` -- the maximal order of the rational function field
 
-    - ``gen`` -- generator of the ideal, an element of the function field.
+    - ``gen`` -- generator of the ideal, an element of the function field
 
     EXAMPLES::
 
@@ -358,7 +358,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
     - ``ring`` -- infinite maximal order
 
-    - ``gen``-- generator
+    - ``gen`` -- generator
 
     Note that the infinite maximal order is a principal ideal domain.
 

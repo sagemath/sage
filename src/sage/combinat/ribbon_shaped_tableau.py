@@ -341,7 +341,8 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
         EXAMPLES::
 
             sage: import sage.combinat.ribbon_shaped_tableau as rst
-            sage: [StandardRibbonShapedTableaux().from_permutation(p) for p in Permutations(3)]
+            sage: [StandardRibbonShapedTableaux().from_permutation(p)
+            ....:  for p in Permutations(3)]
             [[[1, 2, 3]],
              [[None, 2], [1, 3]],
              [[1, 3], [2]],
@@ -458,7 +459,6 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
              [[None, 2, 3], [1, 4]],
              [[None, 2, 4], [1, 3]],
              [[None, 1, 4], [2, 3]]]
-
         """
         for p in descents_composition_list(self.shape):
             yield self.from_permutation(p)

@@ -23,22 +23,22 @@ class NamedMatrixGroup_gap(NamedMatrixGroup_generic, MatrixGroup_gap):
     def __init__(self, degree, base_ring, special, sage_name, latex_string,
                  gap_command_string, category=None):
         """
-        Base class for "named" matrix groups using LibGAP
+        Base class for "named" matrix groups using LibGAP.
 
         INPUT:
 
-        - ``degree`` -- integer. The degree (number of rows/columns of
-          matrices).
+        - ``degree`` -- integer; the degree (number of rows/columns of
+          matrices)
 
-        - ``base_ring`` -- ring. The base ring of the matrices.
+        - ``base_ring`` -- ring; the base ring of the matrices
 
-        - ``special`` -- boolean. Whether the matrix group is special,
-          that is, elements have determinant one.
+        - ``special`` -- boolean; whether the matrix group is special,
+          that is, elements have determinant one
 
-        - ``latex_string`` -- string. The latex representation.
+        - ``latex_string`` -- string; the latex representation
 
-        - ``gap_command_string`` -- string. The GAP command to construct
-          the matrix group.
+        - ``gap_command_string`` -- string; the GAP command to construct
+          the matrix group
 
         EXAMPLES::
 

@@ -180,11 +180,11 @@ class Expect(Interface):
         """
         Changes the server and the command to use for this interface.
 
-        This raises a :class:`RuntimeError` if the interface is already started.
+        This raises a :exc:`RuntimeError` if the interface is already started.
 
         INPUT:
 
-        - ``server`` -- string or ``None`` (default); name of a remote host to connect to using ``ssh``.
+        - ``server`` -- string or ``None`` (default); name of a remote host to connect to using ``ssh``
 
         - ``command`` -- one of:
 
@@ -295,7 +295,7 @@ class Expect(Interface):
 
     def is_running(self):
         """
-        Return True if self is currently running.
+        Return ``True`` if ``self`` is currently running.
         """
         if self._expect is None:
             return False
@@ -374,7 +374,6 @@ class Expect(Interface):
             sage: gap.quit()
             sage: pid == gap.pid()
             False
-
         """
         if self._expect is None:
             self._start()
@@ -407,7 +406,6 @@ This thus requires passwordless authentication to be setup, which can be done wi
 
 In many cases, the server that can actually run "slave" is not accessible from the internet directly, but you have to hop through an intermediate trusted server, say "gate".
 If that is your case, get help with _install_hints_ssh_through_gate().
-
 """
 
     def _install_hints_ssh_through_gate(self):
@@ -449,8 +447,7 @@ with any other program that might already ssh to "remote" in
 their own way.
 
 If this all works, you can then make calls like:
-         math = Mathematica(server="remote_for_sage")
-
+         math = Mathematica(server='remote_for_sage')
 """
 
     def _do_cleaner(self):
@@ -637,8 +634,8 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        - ``verbose`` -- (boolean, default ``False``) print a message
-          when quitting this process?
+        - ``verbose`` -- boolean (default: ``False``); whether to print a
+          message when quitting the process
 
         EXAMPLES::
 
@@ -714,11 +711,11 @@ If this all works, you can then make calls like:
 
     def _local_tmpfile(self):
         """
-        Return a filename that is used to buffer long command lines for this interface
+        Return a filename that is used to buffer long command lines for this interface.
 
         INPUT:
 
-        ``e`` -- an expect interface instance
+        - ``e`` -- an expect interface instance
 
         OUTPUT:
 
@@ -770,7 +767,7 @@ If this all works, you can then make calls like:
         # FriCAS uses the ".input" suffix, and the other
         # interfaces are suffix-agnostic, so using ".input" here
         # lets us avoid a subclass override for FriCAS.
-        with NamedTemporaryFile(suffix=".input", delete=False) as f:
+        with NamedTemporaryFile(suffix='.input', delete=False) as f:
             self.__local_tmpfile = f.name
             atexit.register(lambda: os.remove(f.name))
         return self.__local_tmpfile
@@ -820,11 +817,11 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        - ``line`` -- (string) a command.
-        - ``restart_if_needed`` - (optional bool, default ``True``) --
-          If it is ``True``, the command evaluation is evaluated
+        - ``line`` -- string; a command
+        - ``restart_if_needed`` -- boolean (default: ``True``);
+          if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          :class:`EOFError` occurred.
+          :exc:`EOFError` occurred.
 
         TESTS::
 
@@ -853,7 +850,6 @@ If this all works, you can then make calls like:
             sage: singular(3)
             Singular crashed -- automatically restarting.
             3
-
         """
         with open(self._local_tmpfile(), 'w') as F:
             F.write(line + '\n')
@@ -918,18 +914,19 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        - ``line`` -- (string) a command.
-        - ``allow_use_file`` (optional bool, default ``True``) --
+        - ``line`` -- string; a command
+        - ``allow_use_file`` -- boolean (default: ``True``);
           allow to evaluate long commands using :meth:`_eval_line_using_file`.
-        - ``wait_for_prompt`` (optional bool, default ``True``) --
+        - ``wait_for_prompt`` -- boolean (default: ``True``);
           wait until the prompt appears in the sub-process' output.
-        - ``restart_if_needed`` (optional bool, default ``True``) --
-          If it is ``True``, the command evaluation is evaluated
+        - ``restart_if_needed`` -- boolean (default: ``True``);
+          if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          :class:`EOFError` occurred.
+          :exc:`EOFError` occurred.
 
         TESTS::
 
+            sage: from sage.interfaces.singular import singular
             sage: singular._eval_line('def a=3;')
             ''
             sage: singular('a')
@@ -983,7 +980,6 @@ If this all works, you can then make calls like:
             sage: singular('2+3')
             Singular crashed -- automatically restarting.
             5
-
         """
         if allow_use_file and wait_for_prompt and self._eval_using_file_cutoff and len(line) > self._eval_using_file_cutoff:
             return self._eval_line_using_file(line)
@@ -1187,10 +1183,10 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        -  ``expr`` -- None or a string or list of strings
-           (default: None)
+        - ``expr`` -- ``None`` or a string or list of strings
+          (default: ``None``)
 
-        -  ``timeout`` -- None or a number (default: None)
+        - ``timeout`` -- ``None`` or a number (default: ``None``)
 
         EXAMPLES:
 
@@ -1270,7 +1266,7 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        -  ``string`` -- a string
+        - ``string`` -- string
 
         EXAMPLES: We illustrate this function using the Singular interface::
 
@@ -1360,32 +1356,34 @@ If this all works, you can then make calls like:
     ###########################################################################
 
     def eval(self, code, strip=True, synchronize=False, locals=None, allow_use_file=True,
-             split_lines="nofile", **kwds):
+             split_lines='nofile', **kwds):
         """
         INPUT:
 
-        -  ``code``       -- text to evaluate
+        - ``code`` -- text to evaluate
 
-        -  ``strip``      -- bool; whether to strip output prompts,
-                             etc. (ignored in the base class).
+        - ``strip`` -- boolean; whether to strip output prompts,
+          etc. (ignored in the base class)
 
-        - ``locals``      -- None (ignored); this is used for compatibility
-                             with the Sage notebook's generic system interface.
+        - ``locals`` -- None (ignored); this is used for compatibility
+          with the Sage notebook's generic system interface
 
-        - ``allow_use_file`` -- bool (default: True); if True and ``code`` exceeds an
-                                interface-specific threshold then ``code`` will be communicated
-                                via a temporary file rather that the character-based interface.
-                                If False then the code will be communicated via the character interface.
+        - ``allow_use_file`` -- boolean (default: ``True``); if ``True`` and
+          ``code`` exceeds an interface-specific threshold then ``code`` will
+          be communicated via a temporary file rather that the character-based
+          interface. If ``False`` then the code will be communicated via the
+          character interface.
 
-        - ``split_lines`` -- Tri-state (default: "nofile"); if "nofile" then ``code`` is sent line by line
-                             unless it gets communicated via a temporary file.
-                             If True then ``code`` is sent line by line, but some lines individually
-                             might be sent via temporary file. Depending on the interface, this may transform
-                             grammatical ``code`` into ungrammatical input.
-                             If False, then the whole block of code is evaluated all at once.
+        - ``split_lines`` -- Tri-state (default: ``'nofile'``); if "nofile"
+          then ``code`` is sent line by line unless it gets communicated via a
+          temporary file. If ``True`` then ``code`` is sent line by line, but
+          some lines individually might be sent via temporary file. Depending
+          on the interface, this may transform grammatical ``code`` into
+          ungrammatical input. If ``False``, then the whole block of code is
+          evaluated all at once.
 
-        -  ``**kwds``     -- All other arguments are passed onto the _eval_line
-                             method. An often useful example is reformat=False.
+        - ``**kwds`` -- all other arguments are passed onto the ``_eval_line``
+          method. An often useful example is ``reformat=False``.
         """
         if synchronize:
             try:
@@ -1477,7 +1475,7 @@ class FunctionElement(InterfaceFunctionElement):
 
 def is_ExpectElement(x):
     """
-    Return True if ``x`` is of type :class:`ExpectElement`
+    Return ``True`` if ``x`` is of type :class:`ExpectElement`.
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.ExpectElement`) instead.
@@ -1530,10 +1528,10 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
 
     def __hash__(self):
         """
-        Return the hash of self.
+        Return the hash of ``self``.
 
         This is a default implementation of hash
-        which just takes the hash of the string of self.
+        which just takes the hash of the string of ``self``.
         """
         return hash('%s%s' % (self, self._session_number))
 
@@ -1583,11 +1581,11 @@ class StdOutContext:
 
         INPUT:
 
-        - ``interface`` -- the interface whose communication shall be dumped.
+        - ``interface`` -- the interface whose communication shall be dumped
 
         - ``silent`` -- if ``True`` this context does nothing
 
-        - ``stdout`` -- optional parameter for alternative stdout device (default: ``None``)
+        - ``stdout`` -- (optional) parameter for alternative stdout device (default: ``None``)
 
         EXAMPLES::
 

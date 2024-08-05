@@ -98,7 +98,7 @@ def parse(s):
 
     INPUT:
 
-    - ``s`` -- a string containing a boolean formula
+    - ``s`` -- string containing a boolean formula
 
     OUTPUT:
 
@@ -133,11 +133,9 @@ def polish_parse(s):
 
     INPUT:
 
-    - ``s`` -- a string containing a boolean expression
+    - ``s`` -- string containing a boolean expression
 
-    OUTPUT:
-
-    The full syntax parse tree as a nested list.
+    OUTPUT: the full syntax parse tree as a nested list
 
     EXAMPLES:
 
@@ -173,9 +171,7 @@ def get_trees(*statements):
 
     - ``*statements`` -- strings or :class:`BooleanFormula` instances
 
-    OUTPUT:
-
-    The parse trees in a list.
+    OUTPUT: the parse trees in a list
 
     EXAMPLES:
 
@@ -229,12 +225,10 @@ def recover_formula(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a full syntax parse
+    - ``prefix_tree`` -- list; this is a full syntax parse
       tree in prefix form
 
-    OUTPUT:
-
-    The formula as a string.
+    OUTPUT: the formula as a string
 
     EXAMPLES:
 
@@ -284,12 +278,10 @@ def recover_formula_internal(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a simple tree
+    - ``prefix_tree`` -- list; this is a simple tree
       with at most one operator in prefix form
 
-    OUTPUT:
-
-    The formula as a string.
+    OUTPUT: the formula as a string
 
     EXAMPLES:
 
@@ -350,12 +342,10 @@ def prefix_to_infix(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a full syntax parse
+    - ``prefix_tree`` -- list; this is a full syntax parse
       tree in prefix form
 
-    OUTPUT:
-
-    A list containing the tree in infix form.
+    OUTPUT: list containing the tree in infix form
 
     EXAMPLES:
 
@@ -394,12 +384,10 @@ def to_infix_internal(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a simple parse tree
+    - ``prefix_tree`` -- list; this is a simple parse tree
       in prefix form with at most one operator
 
-    OUTPUT:
-
-    The tree in infix form as a list.
+    OUTPUT: the tree in infix form as a list
 
     EXAMPLES:
 
@@ -445,7 +433,7 @@ def tokenize(s):
 
     INPUT:
 
-    - ``s`` -- a string representation of a boolean formula
+    - ``s`` -- string representation of a boolean formula
 
     OUTPUT:
 
@@ -527,9 +515,9 @@ def tree_parse(toks, polish=False):
 
     INPUT:
 
-    - ``toks`` -- a list of tokens from a boolean formula
+    - ``toks`` -- list of tokens from a boolean formula
 
-    - ``polish`` -- (default: ``False``) a boolean; when ``True``,
+    - ``polish`` -- boolean (default: ``False``); when ``True``,
       :func:`~sage.logic.logicparser.tree_parse()` will return
       the full syntax parse tree
 
@@ -584,18 +572,16 @@ def parse_ltor(toks, n=0, polish=False):
 
     INPUT:
 
-    - ``toks`` -- a list of tokens. Each token is atomic.
+    - ``toks`` -- list of tokens; each token is atomic
 
-    - ``n`` -- (default: 0) an integer representing which order of
+    - ``n`` -- integer (default: 0) representing which order of
       operations are occurring
 
-    - ``polish`` -- (default: ``False``) a boolean; when ``True``, double
+    - ``polish`` -- boolean (default: ``False``); when ``True``, double
       negations are not cancelled and negated statements are turned into
-      list of length two.
+      list of length two
 
-    OUTPUT:
-
-    The parse tree as a nested list that depends on ``polish`` as follows:
+    OUTPUT: the parse tree as a nested list that depends on ``polish`` as follows:
 
     - If ``False``, then return a simplified parse tree.
 
@@ -675,9 +661,7 @@ def apply_func(tree, func):
     - ``func`` -- a function to be applied to each node of tree; this may
       be a function that comes from elsewhere in the logic module
 
-    OUTPUT:
-
-    The new parse tree in the form of a nested list.
+    OUTPUT: the new parse tree in the form of a nested list
 
     EXAMPLES:
 

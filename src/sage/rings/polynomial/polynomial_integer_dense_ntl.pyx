@@ -73,10 +73,10 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     r"""
     A dense polynomial over the integers, implemented via NTL.
     """
-    cdef Polynomial_integer_dense_ntl _new(self) noexcept:
+    cdef Polynomial_integer_dense_ntl _new(self):
         r"""
-        Quickly creates a new initialized Polynomial_integer_dense_ntl
-        with the correct parent and _is_gen == 0.
+        Quickly create a new initialized ``Polynomial_integer_dense_ntl``
+        with the correct parent and ``_is_gen == 0``.
         """
         cdef Polynomial_integer_dense_ntl x = Polynomial_integer_dense_ntl.__new__(Polynomial_integer_dense_ntl)
         x._parent = self._parent
@@ -338,7 +338,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         return Polynomial_integer_dense_ntl, \
                (self.parent(), self.list(), False, self.is_gen())
 
-    cdef get_unsafe(self, Py_ssize_t n) noexcept:
+    cdef get_unsafe(self, Py_ssize_t n):
         """
         Return the `n`-th coefficient of ``self``.
 
@@ -428,9 +428,9 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             name = self.parent().latex_variable_names()[0]
         return self._repr(name, latex=True)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         r"""
-        Returns self plus right.
+        Return ``self`` plus ``right``.
 
         EXAMPLES::
 
@@ -446,9 +446,9 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         return x
 
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         r"""
-        Return self minus right.
+        Return ``self`` minus ``right``.
 
         EXAMPLES::
 
@@ -464,9 +464,9 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         return x
 
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
-        Returns negative of ``self``.
+        Return negative of ``self``.
 
         EXAMPLES::
 
@@ -529,7 +529,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             (0, 0)
             sage: z.quo_rem(2*x)
             (0, 0)
-
         """
         cdef Polynomial_integer_dense_ntl _right = <Polynomial_integer_dense_ntl> right
 
@@ -565,7 +564,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
                 raise ArithmeticError("division not exact in Z[x] (consider coercing to Q[x] first)")
 
         return qq, rr
-
 
 
     @coerce_binop
@@ -680,9 +678,9 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             return S(rr), ss, tt
 
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         r"""
-        Returns self multiplied by right.
+        Return ``self`` multiplied by ``right``.
 
         EXAMPLES::
 
@@ -695,9 +693,10 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
                 (<Polynomial_integer_dense_ntl>right)._poly)
         return x
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         r"""
-        Returns self multiplied by right, where right is a scalar (integer).
+        Return ``self`` multiplied by ``right``, where ``right`` is a scalar
+        (integer).
 
         EXAMPLES::
 
@@ -714,9 +713,10 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         ZZX_mul_ZZ(x._poly, self._poly, _right)
         return x
 
-    cpdef _rmul_(self, Element right) noexcept:
+    cpdef _rmul_(self, Element right):
         r"""
-        Returns self multiplied by right, where right is a scalar (integer).
+        Return ``self`` multiplied by ``right``, where ``right`` is a scalar
+        (integer).
 
         EXAMPLES::
 
@@ -764,10 +764,10 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     def _unsafe_mutate(self, long n, value):
         r"""
-        Sets coefficient of `x^n` to value.
+        Set coefficient of `x^n` to ``value``.
 
         This is very unsafe, because Sage polynomials are supposed
-        to be immutable. (Shhhh don't tell anyone!)
+        to be immutable.
 
         EXAMPLES::
 
@@ -788,7 +788,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     def real_root_intervals(self):
         """
-        Returns isolating intervals for the real roots of this polynomial.
+        Return isolating intervals for the real roots of this polynomial.
 
         EXAMPLES:
         We compute the roots of the characteristic polynomial of some Salem numbers::
@@ -893,7 +893,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: f = -x^2
             sage: f.squarefree_decomposition()
             (-1) * x^2
-
         """
         cdef Polynomial_integer_dense_ntl p = self
         c = p.content()
@@ -917,7 +916,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     def _factor_pari(self):
         """
-        Use pari to factor self.
+        Use pari to factor ``self``.
 
         EXAMPLES::
 
@@ -933,7 +932,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     def _factor_ntl(self):
         """
-        Use NTL to factor self.
+        Use NTL to factor ``self``.
 
         AUTHOR:
 
@@ -1013,7 +1012,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         - ``p`` -- prime
 
-        OUTPUT: factorization of ``self`` reduced modulo `p`.
+        OUTPUT: factorization of ``self`` reduced modulo `p`
 
         EXAMPLES::
 
@@ -1053,9 +1052,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         - ``prec`` -- integer; the precision
 
-        OUTPUT:
-
-        - factorization of ``self`` over the completion at `p`.
+        OUTPUT: factorization of ``self`` over the completion at `p`
 
         EXAMPLES::
 
@@ -1071,7 +1068,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: f.factor_padic(5, 10)
             (4 + O(5^10)) * (5 + O(5^11))^2 * ((1 + O(5^10))*x + 5 + O(5^10))^2
             * ((5 + O(5^10))*x + 1 + O(5^10))^2
-
         """
         from sage.rings.padics.factory import Zp
 
@@ -1088,7 +1084,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         from sage.rings.polynomial.padics.polynomial_padic import _pari_padic_factorization_to_sage
         return _pari_padic_factorization_to_sage(G, R, self.leading_coefficient())
 
-    cpdef list list(self, bint copy=True) noexcept:
+    cpdef list list(self, bint copy=True):
         """
         Return a new copy of the list of the underlying
         elements of ``self``.
@@ -1109,7 +1105,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     @coerce_binop
     def resultant(self, other, proof=True):
         """
-        Returns the resultant of ``self`` and ``other``, which must lie in the same
+        Return the resultant of ``self`` and ``other``, which must lie in the same
         polynomial ring.
 
         If ``proof=False`` (the default is ``proof=True``), then this function may use a

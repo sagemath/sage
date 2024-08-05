@@ -18,7 +18,6 @@ REFERENCES:
 
 - Chap. 10 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015, 2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -48,7 +47,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
     :class:`Mapping` subclasses, not the :meth:`keys` but the
     :meth:`values` are considered the elements.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: M = FiniteRankFreeModule(ZZ, 3, name='M', start_index=1)
         sage: e = M.basis('e'); e
@@ -111,8 +110,8 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
             sage: e = M.basis('e')
             sage: list(e.values())
             [Element e_0 of the Rank-3 free module M over the Integer Ring,
-            Element e_1 of the Rank-3 free module M over the Integer Ring,
-            Element e_2 of the Rank-3 free module M over the Integer Ring]
+             Element e_1 of the Rank-3 free module M over the Integer Ring,
+             Element e_2 of the Rank-3 free module M over the Integer Ring]
         """
         return self._vec
 
@@ -175,7 +174,6 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: e = M.basis('e')
             sage: e._test_iter_len()
-
         """
         tester = self._tester(**options)
         g = iter(self)
@@ -258,7 +256,6 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
             Element e_2 of the Rank-3 free module M over the Integer Ring
             sage: e1.__getitem__(3)
             Element e_3 of the Rank-3 free module M over the Integer Ring
-
         """
         si = self._fmodule._sindex
         if isinstance(index, slice):
@@ -301,7 +298,6 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
             sage: f = e.dual_basis()
             sage: f._latex_()
             '\\left(e^{0},e^{1},e^{2}\\right)'
-
         """
         return self._latex_name
 
@@ -372,7 +368,6 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
             sage: latex(e)
             \left(E_{\alpha},E_{\beta},E_{\gamma}\right)
             sage: e.set_name('e') # back to the default
-
         """
         n = self._fmodule._rank
         if index_position == "down":
@@ -487,7 +482,6 @@ class FreeModuleCoBasis(Basis_abstract):
     TESTS::
 
         sage: TestSuite(f).run()
-
     """
     def __init__(self, basis, symbol, latex_symbol=None, indices=None,
                  latex_indices=None):
@@ -499,7 +493,6 @@ class FreeModuleCoBasis(Basis_abstract):
             sage: e = M.basis('e')
             sage: f = FreeModuleCoBasis(e, 'f')
             sage: TestSuite(f).run()
-
         """
         self._basis = basis
         Basis_abstract.__init__(self, basis._fmodule, symbol, latex_symbol,
@@ -551,7 +544,6 @@ class FreeModuleCoBasis(Basis_abstract):
             sage: f
             Dual basis (e^0,e^1,e^2) on the
              Rank-3 free module M over the Integer Ring
-
         """
         return "Dual basis {} on the {}".format(self._name, self._fmodule)
 
@@ -664,7 +656,6 @@ class FreeModuleBasis(Basis_abstract):
         sage: TestSuite(e).run()
         sage: TestSuite(f).run()
         sage: TestSuite(g).run()
-
     """
     # The following class attribute must be redefined by any derived class:
     _cobasis_class = FreeModuleCoBasis
@@ -719,7 +710,6 @@ class FreeModuleBasis(Basis_abstract):
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: e = FreeModuleBasis(M, 'e', latex_symbol=r'\epsilon')
             sage: TestSuite(e).run()
-
         """
         Basis_abstract.__init__(self, fmodule, symbol, latex_symbol, indices,
                                 latex_indices)
@@ -787,7 +777,6 @@ class FreeModuleBasis(Basis_abstract):
             sage: e1 = M1.basis('e')
             sage: e1
             Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring
-
         """
         return "Basis {} on the {}".format(self._name, self._fmodule)
 
@@ -821,9 +810,7 @@ class FreeModuleBasis(Basis_abstract):
         - ``latex_symbol_dual`` -- (default: ``None``) same as ``latex_symbol``
           but for the dual basis
 
-        OUTPUT:
-
-        - instance of :class:`FreeModuleBasis`
+        OUTPUT: instance of :class:`FreeModuleBasis`
 
         EXAMPLES::
 
@@ -839,7 +826,6 @@ class FreeModuleBasis(Basis_abstract):
             Basis (E_x,E_y,E_z) on the Rank-3 free module M over the Integer Ring
             sage: _.dual_basis()
             Dual basis (E^x,E^y,E^z) on the Rank-3 free module M over the Integer Ring
-
         """
         return FreeModuleBasis(self._fmodule, symbol, latex_symbol=latex_symbol,
                                indices=indices, latex_indices=latex_indices,
@@ -855,7 +841,7 @@ class FreeModuleBasis(Basis_abstract):
 
         INPUT:
 
-        - ``family``: a family of elements of ``self.free_module()`` that are
+        - ``family`` -- a family of elements of ``self.free_module()`` that are
           linearly independent and spanning ``self.free_module()``
 
         EXAMPLES::
@@ -876,7 +862,6 @@ class FreeModuleBasis(Basis_abstract):
             e_1 = 1/2 f_1 + 1/2 f_2
             sage: e[2].display(f)
             e_2 = 1/2 f_1 - 1/2 f_2
-
         """
         fmodule = self._fmodule
         n = fmodule.rank()
@@ -923,7 +908,6 @@ class FreeModuleBasis(Basis_abstract):
             Rank-3 free module M over the Integer Ring
             sage: e.module() is M
             True
-
         """
         return self._fmodule
 
@@ -961,7 +945,6 @@ class FreeModuleBasis(Basis_abstract):
             (0, 1, 0)
             sage: f[3](e[1]), f[3](e[2]), f[3](e[3])
             (0, 0, 1)
-
         """
         return self._dual_basis
 
@@ -1036,7 +1019,6 @@ class FreeModuleBasis(Basis_abstract):
             sage: b.dual_basis()
             Dual basis (A,B) on the 2-dimensional vector space M over the
              Rational Field
-
         """
         from .free_module_automorphism import FreeModuleAutomorphism
         if not isinstance(change_of_basis, FreeModuleAutomorphism):
@@ -1084,5 +1066,5 @@ class FreeModuleBasis(Basis_abstract):
         # of changes of bases:
         fmodule._basis_changes[(self, the_new_basis)] = transf
         fmodule._basis_changes[(the_new_basis, self)] = inv_transf
-        #
+
         return the_new_basis

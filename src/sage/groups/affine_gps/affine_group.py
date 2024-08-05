@@ -88,15 +88,15 @@ class AffineGroup(UniqueRepresentation, Group):
 
     - Degree and base ring:
 
-      * ``degree`` -- An integer. The degree of the affine group, that
-        is, the dimension of the affine space the group is acting on.
+      * ``degree`` -- integer; the degree of the affine group, that
+        is, the dimension of the affine space the group is acting on
 
-      * ``ring`` -- A ring or an integer. The base ring of the affine
+      * ``ring`` -- a ring or an integer; the base ring of the affine
         space. If an integer is given, it must be a prime power and
         the corresponding finite field is constructed.
 
-      * ``var`` -- (default: ``'a'``) Keyword argument to specify the finite
-        field generator name in the case where ``ring`` is a prime power.
+      * ``var`` -- (default: ``'a'``) keyword argument to specify the finite
+        field generator name in the case where ``ring`` is a prime power
 
     EXAMPLES::
 
@@ -173,8 +173,8 @@ class AffineGroup(UniqueRepresentation, Group):
             ring = V.base_ring()
         if len(args) == 2:
             degree, ring = args
-            from sage.rings.integer import is_Integer
-            if is_Integer(ring):
+            from sage.rings.integer import Integer
+            if isinstance(ring, Integer):
                 from sage.rings.finite_rings.finite_field_constructor import FiniteField
                 var = kwds.get('var', 'a')
                 ring = FiniteField(ring, var)
@@ -186,11 +186,11 @@ class AffineGroup(UniqueRepresentation, Group):
 
         INPUT:
 
-        - ``degree`` -- integer. The degree of the affine group, that
+        - ``degree`` -- integer; the degree of the affine group, that
           is, the dimension of the affine space the group is acting on
-          naturally.
+          naturally
 
-        - ``ring`` -- a ring. The base ring of the affine space.
+        - ``ring`` -- a ring; the base ring of the affine space
 
         EXAMPLES::
 
@@ -230,7 +230,7 @@ class AffineGroup(UniqueRepresentation, Group):
         """
         Verify that ``A``, ``b`` define an affine group element.
 
-        This raises a :class:`TypeError` if the input does not define
+        This raises a :exc:`TypeError` if the input does not define
         a valid group element.
 
         This is called from the group element constructor and can be
@@ -308,7 +308,7 @@ class AffineGroup(UniqueRepresentation, Group):
         """
         Return the dimension of the affine space.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -327,10 +327,8 @@ class AffineGroup(UniqueRepresentation, Group):
         Return the space of matrices representing the general linear
         transformations.
 
-        OUTPUT:
-
-        The parent of the matrices `A` defining the affine group
-        element `Ax+b`.
+        OUTPUT: the parent of the matrices `A` defining the affine group
+        element `Ax+b`
 
         EXAMPLES::
 
@@ -393,7 +391,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``A`` -- anything that determines a matrix
 
-        OUTPUT: The affine group element `x \mapsto A x`.
+        OUTPUT: the affine group element `x \mapsto A x`
 
         EXAMPLES::
 
@@ -414,7 +412,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``b`` -- anything that determines a vector
 
-        OUTPUT: The affine group element `x \mapsto x + b`.
+        OUTPUT: the affine group element `x \mapsto x + b`
 
         EXAMPLES::
 
@@ -437,7 +435,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         INPUT:
 
-        - ``v`` -- a vector, or something that determines a vector.
+        - ``v`` -- a vector, or something that determines a vector
 
         OUTPUT:
 

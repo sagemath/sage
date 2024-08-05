@@ -16,6 +16,7 @@ from sage.categories.algebras import Algebras
 from sage.categories.realizations import Category_realization_of_parent
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.data_structures.blas_dict import linear_combination
 from sage.matrix.constructor import matrix
 from sage.misc.bindable_class import BindableClass
 from sage.misc.cachefunc import cached_method
@@ -35,7 +36,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
     The integer-valued polynomial ring over a base ring `R`.
 
     Integer-valued polynomial rings are commutative and associative
-    algebras, with a basis indexed by non-negative integers.
+    algebras, with a basis indexed by nonnegative integers.
 
     There are two natural bases, made of the sequence
     `\binom{x}{n}` for `n \geq 0` (the *binomial basis*) and of
@@ -188,7 +189,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 Convert a polynomial into the ring of integer-valued polynomials.
 
-                This raises a :class:`ValueError` if this is not possible.
+                This raises a :exc:`ValueError` if this is not possible.
 
                 INPUT:
 
@@ -281,7 +282,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         class ElementMethods:
             def __call__(self, v):
                 """
-                Evaluation at some value ``v``
+                Return the evaluation at some value ``v``.
 
                 EXAMPLES::
 
@@ -330,7 +331,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - `j` -- integer (default: 1)
+                - ``j`` -- integer (default: 1)
 
                 In the binomial basis, the shift by 1 corresponds to
                 a summation operator from `0` to `x`.
@@ -469,7 +470,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, A.base_ring(),
                                              NonNegativeIntegers(),
                                              category=A.Bases(),
-                                             prefix="S",
+                                             prefix='S',
                                              latex_prefix=r"\mathbb{S}")
 
         def _realization_name(self) -> str:
@@ -513,7 +514,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -536,7 +537,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``h`` -- a tuple or vector
+            - ``h`` -- tuple or vector
 
             .. SEEALSO:: :meth:`Element.h_vector`
 
@@ -590,8 +591,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
         def _coerce_map_from_(self, R):
             r"""
-            Return ``True`` if there is a coercion from ``R`` into ``self``
-            and ``False`` otherwise.
+            Return whether there is a coercion from ``R`` into ``self``.
 
             INPUT:
 
@@ -690,6 +690,10 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             Convert the basis element `S[i]` to a polynomial.
 
+            INPUT:
+
+            - ``i`` -- integer
+
             EXAMPLES::
 
                 sage: F = IntegerValuedPolynomialRing(ZZ).S()
@@ -706,6 +710,8 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 Return the Bernoulli umbra.
 
                 This is the derivative at `-1` of the shift by one.
+
+                This is related to Bernoulli numbers.
 
                 .. SEEALSO:: :meth:`derivative_at_minus_one`
 
@@ -751,7 +757,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - `k` -- integer (default: 1)
+                - ``k`` -- integer (default: 1)
 
                 EXAMPLES::
 
@@ -769,24 +775,22 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     S[5]
                     sage: S[5].variable_shift().variable_shift(-1)
                     S[5]
+                    sage: S[5].variable_shift(2).variable_shift(-2)
+                    S[5]
                 """
                 if k == 0:
                     return self
 
                 A = self.parent()
 
-                if k > 0:
-                    B = A.basis()
-                    resu = A.linear_combination((B[j], c) for i, c in self
-                                                for j in range(i + 1))
-                    if k == 1:
-                        return resu
-                    return resu.variable_shift(k - 1)
+                def on_basis(n):
+                    return {A._indices(j): binomial(k + n - 1 - j, n - j)
+                            for j in range(n + 1)}
 
-                resu = self - A._from_dict({i - 1: c for i, c in self if i})
-                if k == -1:
-                    return resu
-                return resu.variable_shift(k + 1)
+                mc = self._monomial_coefficients
+                ret = linear_combination((on_basis(index), coeff)
+                                         for index, coeff in mc.items())
+                return A.element_class(A, ret)
 
             def derivative_at_minus_one(self):
                 """
@@ -858,7 +862,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: A = IntegerValuedPolynomialRing(ZZ).S()
                     sage: ex = A.monomial(4)
                     sage: f = ex.fraction();f
-                    -1/(t^5 - 5*t^4 + 10*t^3 - 10*t^2 + 5*t - 1)
+                    1/(-t^5 + 5*t^4 - 10*t^3 + 10*t^2 - 5*t + 1)
 
                     sage: F = LazyPowerSeriesRing(QQ, 't')
                     sage: F(f)
@@ -871,7 +875,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: y = polygen(QQ, 'y')
                     sage: penta = A.from_polynomial(7/2*y^2 + 7/2*y + 1)
                     sage: penta.fraction()
-                    (-t^2 - 5*t - 1)/(t^3 - 3*t^2 + 3*t - 1)
+                    (t^2 + 5*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
 
                 TESTS::
 
@@ -882,8 +886,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 v = self.h_vector()
                 d = len(v)
-                t = polygen(self.parent().base_ring(), 't')
-                numer = sum(v[i] * t**(d - 1 - i) for i in range(d))
+                ring_t = PolynomialRing(self.parent().base_ring(), 't')
+                t = ring_t.gen()
+                numer = ring_t({d - 1 - i: v[i] for i in range(d)})
                 return numer / (1 - t)**d
 
     S = Shifted
@@ -963,7 +968,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             sage: F(4/3)
             4/3*B[0]
         """
-        def __init__(self, A):
+        def __init__(self, A) -> None:
             r"""
             Initialize ``self``.
 
@@ -976,7 +981,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             CombinatorialFreeModule.__init__(self, A.base_ring(),
                                              NonNegativeIntegers(),
-                                             latex_prefix="",
+                                             latex_prefix='',
                                              category=A.Bases())
 
         def _realization_name(self) -> str:
@@ -1021,7 +1026,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -1068,8 +1073,11 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
         def _coerce_map_from_(self, R):
             r"""
-            Return ``True`` if there is a coercion from ``R`` into ``self``
-            and ``False`` otherwise.
+            Return whether there is a coercion from ``R`` into ``self``.
+
+            INPUT:
+
+            - ``R`` -- a commutative ring
 
             The things that coerce into ``self`` are
 
@@ -1164,6 +1172,10 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             Convert the basis element `B[i]` to a polynomial.
 
+            INPUT:
+
+            - ``i`` -- integer
+
             EXAMPLES::
 
                 sage: F = IntegerValuedPolynomialRing(ZZ).B()
@@ -1183,7 +1195,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - `k` -- integer (default: 1)
+                - ``k`` -- integer (default: 1)
 
                 EXAMPLES::
 
@@ -1209,10 +1221,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     return {A._indices(j): binomial(k, n - j)
                             for j in range(n + 1)}
 
-                from sage.data_structures.blas_dict import linear_combination
                 mc = self._monomial_coefficients
                 ret = linear_combination((on_basis(index), coeff)
-                                         for (index, coeff) in mc.items())
+                                         for index, coeff in mc.items())
                 return A.element_class(A, ret)
 
     B = Binomial

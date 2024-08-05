@@ -13,7 +13,7 @@ def interred(l, completely=False):
     If completely is set to ``True``, then also terms in the
     tail are not reducible by other polynomials.
     """
-    l = [Polynomial(p) for p in l if not p == 0]
+    l = [Polynomial(p) for p in l if p != 0]
     if not l:
         return []
     ring = l[0].ring()
@@ -26,8 +26,8 @@ def interred(l, completely=False):
         if completely:
             g.opt_red_tail = True
         for p in l:
-            p = g.nf(p)
-            if not p.is_zero():
-                g.add_generator(p)
+            gp = g.nf(p)
+            if not gp.is_zero():
+                g.add_generator(gp)
         l = tuple(e.p for e in g)
-    return list(l)
+    return l

@@ -30,6 +30,7 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from itertools import product
 from sage.combinat.subset import powerset
 
+
 class QuantumCliffordAlgebra(CombinatorialFreeModule):
     r"""
     The quantum Clifford algebra.
@@ -325,6 +326,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         """
         return (self._psi([0]*self._n), (0,)*self._n)
 
+
 class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
     r"""
     The quantum Clifford algebra when `q^{2k} \neq 1`.
@@ -487,7 +489,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
                 if p1[i] != 0:
                     # We make pairings 1-based because we cannot distinguish 0 and -0
                     pairings.append((i+1) * p1[i])
-            # we know p1[i] != p2[i] if non-zero, so their sum is -1, 0, 1
+            # we know p1[i] != p2[i] if nonzero, so their sum is -1, 0, 1
             p[i] = p1[i] + p2[i]
 
         supported.append(self._n-1) # To get between the last support and the end
@@ -614,6 +616,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
             return Cl.element_class(Cl, ret)
 
         __invert__ = inverse
+
 
 class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
     r"""

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Axioms
 
@@ -1693,6 +1694,7 @@ all_axioms += ("Flying", "Blue",
                "Stratified",
               )
 
+
 def uncamelcase(s,separator=" "):
     """
     EXAMPLES::
@@ -1705,6 +1707,7 @@ def uncamelcase(s,separator=" "):
         'finite_dimensional_algebras'
     """
     return re.sub("(?!^)[A-Z]", lambda match: separator+match.group()[0], s).lower()
+
 
 def base_category_class_and_axiom(cls):
     """
@@ -1853,6 +1856,7 @@ def axiom_of_nested_class(cls, nested_cls):
     assert axiom in cls.__dict__ and cls.__dict__[axiom] == nested_cls, \
         "{} not a nested axiom class of {} for axiom {}".format(nested_cls, cls, axiom)
     return axiom
+
 
 class CategoryWithAxiom(Category):
     r"""
@@ -2215,7 +2219,7 @@ class CategoryWithAxiom(Category):
         INPUT:
 
         - ``base_category`` -- a category
-        - ``axioms`` -- a list or iterable of strings
+        - ``axioms`` -- list or iterable of strings
 
         EXAMPLES::
 

@@ -196,7 +196,7 @@ class TensorProductOfCrystals(CrystalOfWords):
     .. RUBRIC:: Regular crystals
 
     Now if all crystals `B_k` are regular crystals, all `\varepsilon_i` and
-    `\varphi_i` are non-negative and we can
+    `\varphi_i` are nonnegative and we can
     define tensor product by the *signature rule*. We start by writing a word
     in `+` and `-` as follows:
 
@@ -408,7 +408,7 @@ class TensorProductOfCrystals(CrystalOfWords):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets the global options for tensor products of crystals. The default is to
+        Set the global options for tensor products of crystals. The default is to
         use the anti-Kashiwara convention.
 
         There are two conventions for how `e_i` and `f_i` act on tensor products,
@@ -447,11 +447,11 @@ class TensorProductOfCrystals(CrystalOfWords):
         """
         NAME = 'TensorProductOfCrystals'
         module = 'sage.combinat.crystals'
-        convention = dict(default="antiKashiwara",
+        convention = dict(default='antiKashiwara',
                         description='Sets the convention used for displaying/inputting tensor product of crystals',
                         values=dict(antiKashiwara='use the anti-Kashiwara convention',
                                     Kashiwara='use the Kashiwara convention'),
-                            alias=dict(anti="antiKashiwara", opposite="antiKashiwara"),
+                            alias=dict(anti='antiKashiwara', opposite='antiKashiwara'),
                             case_sensitive=False)
 
     def _element_constructor_(self, *crystalElements):
@@ -583,8 +583,6 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         for x in self.cartesian_product:
             yield self(*x)
 
-#    list = CombinatorialClass._CombinatorialClass__list_from_iterator
-
     def cardinality(self):
         """
         Return the cardinality of ``self``.
@@ -707,13 +705,13 @@ class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals, QueerSu
 
 class CrystalOfTableaux(CrystalOfWords):
     r"""
-    A class for crystals of tableaux with integer valued shapes
+    A class for crystals of tableaux with integer valued shapes.
 
     INPUT:
 
     - ``cartan_type`` -- a Cartan type
     - ``shape`` -- a partition of length at most ``cartan_type.rank()``
-    - ``shapes`` -- a list of such partitions
+    - ``shapes`` -- list of such partitions
 
     This constructs a classical crystal with the given Cartan type and
     highest weight(s) corresponding to the given shape(s).
@@ -888,13 +886,12 @@ class CrystalOfTableaux(CrystalOfWords):
         Traceback (most recent call last):
         ...
         ValueError: entries of each shape must be weakly decreasing
-
     """
 
     @staticmethod
     def __classcall_private__(cls, cartan_type, shapes=None, shape=None):
         """
-        Normalizes the input arguments to ensure unique representation,
+        Normalize the input arguments to ensure unique representation,
         and to delegate the construction of spin tableaux.
 
         EXAMPLES::
@@ -911,7 +908,6 @@ class CrystalOfTableaux(CrystalOfWords):
             sage: T2 = crystals.Tableaux(['A', [1,1]], [3,1,1,1])
             sage: T1 is T2
             True
-
         """
         cartan_type = CartanType(cartan_type)
         if cartan_type.letter == 'A' and isinstance(cartan_type, SuperCartanType_standard):
@@ -981,8 +977,8 @@ class CrystalOfTableaux(CrystalOfWords):
         INPUT:
 
         - ``cartan_type`` -- (data coercible into) a Cartan type
-        - ``shapes``      -- a list (or iterable) of shapes
-        - ``shape``       -- a shape
+        - ``shapes`` -- list (or iterable) of shapes
+        - ``shape`` -- a shape
 
         Shapes themselves are lists (or iterable) of integers.
 
@@ -1001,7 +997,7 @@ class CrystalOfTableaux(CrystalOfWords):
 
     def cartan_type(self):
         """
-        Returns the Cartan type of the associated crystal
+        Return the Cartan type of the associated crystal.
 
         EXAMPLES::
 
@@ -1073,7 +1069,7 @@ class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
     INPUT:
 
     - ``cartan_type`` -- a Cartan type
-    - ``shape``       -- a shape
+    - ``shape`` -- a shape
     """
 
     def __init__(self, cartan_type, shape):

@@ -18,12 +18,12 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
 
     INPUT:
 
-    - ``n`` -- an integer `\geq 1`
+    - ``n`` -- integer `\geq 1`
     - ``p`` -- a prime number > 2
-    - ``m`` -- an integer
-    - ``Qdet`` -- a integer which is non-zero mod `p`
+    - ``m`` -- integer
+    - ``Qdet`` -- a integer which is nonzero mod `p`
 
-    OUTPUT: an integer `\geq 0`
+    OUTPUT: integer `\geq 0`
 
     EXAMPLES::
 
@@ -55,12 +55,10 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
         ....:    == count_modp__by_gauss_sum(3, 3, m, 2)
         ....:  for m in range(3)]
         [True, True, True]
-
-
     """
     # Check that Qdet is non-degenerate
     if Qdet % p == 0:
-        raise RuntimeError("Qdet must be non-zero.")
+        raise RuntimeError("Qdet must be nonzero.")
 
     # Check that p is prime > 2
     if not is_prime(p) or p == 2:
@@ -87,7 +85,7 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
     return count
 
 
-cdef CountAllLocalTypesNaive_cdef(Q, p, k, m, zvec, nzvec) noexcept:
+cdef CountAllLocalTypesNaive_cdef(Q, p, k, m, zvec, nzvec):
     """
     This Cython routine is documented in its Python wrapper method
     QuadraticForm.count_congruence_solutions_by_type().
@@ -157,9 +155,9 @@ def CountAllLocalTypesNaive(Q, p, k, m, zvec, nzvec):
 
     - ``Q`` -- quadratic form over `\ZZ`
     - ``p`` -- prime number > 0
-    - ``k`` -- an integer > 0
-    - ``m`` -- an integer (depending only on mod `p^k`)
-    - ``zvec``, ``nzvec`` -- a list of integers in ``range(Q.dim())``, or ``None``
+    - ``k`` -- integer > 0
+    - ``m`` -- integer (depending only on mod `p^k`)
+    - ``zvec``, ``nzvec`` -- list of integers in ``range(Q.dim())``, or ``None``
 
     OUTPUT:
 
@@ -176,12 +174,11 @@ def CountAllLocalTypesNaive(Q, p, k, m, zvec, nzvec):
         [6, 6, 0, 0, 0, 0]
         sage: CountAllLocalTypesNaive(Q, 3, 1, 0, None, None)
         [15, 12, 1, 2, 0, 2]
-
     """
     return CountAllLocalTypesNaive_cdef(Q, p, k, m, zvec, nzvec)
 
 
-cdef local_solution_type_cdef(Q, p, w, zvec, nzvec) noexcept:
+cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     """
     Internal routine to check if a given solution vector `w` (of `Q(w) =
     m` mod `p^k`) is of a certain local type and satisfies certain
@@ -189,7 +186,6 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec) noexcept:
 
     NOTE: No internal checking is done to test if `p` is a prime >=2, or
     that Q has the same size as `w`.
-
     """
     cdef long i
     cdef long n
@@ -218,7 +214,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec) noexcept:
     # print("IsLocalSolutionType: Passed the Zero congruence condition test \n")
 
     # Check if the solution satisfies the nzvec "nonzero" congruence conditions
-    # (nzvec is non-empty and its components index a non-zero vector mod p)
+    # (nzvec is non-empty and its components index a nonzero vector mod p)
     if nzvec is None:
         nonzero_flag = True
     elif len(nzvec) == 0:
@@ -228,7 +224,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec) noexcept:
         i = 0
         while not nonzero_flag and i < len(nzvec):
             if w[nzvec[i]] % p:
-                nonzero_flag = True           # The non-zero condition is satisfied when we find one non-zero entry
+                nonzero_flag = True           # The nonzero condition is satisfied when we find one nonzero entry
             i += 1
 
     if not nonzero_flag:

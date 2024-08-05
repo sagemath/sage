@@ -86,9 +86,9 @@ cdef class TimeSeries:
         INPUT:
 
         - ``values`` -- integer (number of values) or an iterable of
-          floats.
+          floats
 
-        - ``initialize`` -- bool (default: ``True``); if ``False``, do not
+        - ``initialize`` -- boolean (default: ``True``); if ``False``, do not
           bother to zero out the entries of the new time series.
           For large series that you are going to just fill in,
           this can be way faster.
@@ -243,9 +243,7 @@ cdef class TimeSeries:
         time series.  This is useful since vectors have standard
         algebraic structure and play well with matrices.
 
-        OUTPUT:
-
-        A real double vector.
+        OUTPUT: a real double vector
 
         EXAMPLES::
 
@@ -292,9 +290,7 @@ cdef class TimeSeries:
           ``None``. If ``None`` use the default
           ``sage.stats.time_series.digits``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -320,9 +316,7 @@ cdef class TimeSeries:
         r"""
         Return the number of entries in this time series.
 
-        OUTPUT:
-
-        Python integer.
+        OUTPUT: Python integer
 
         EXAMPLES::
 
@@ -426,9 +420,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``i`` -- a nonnegative integer.
+        - ``i`` -- nonnegative integer
 
-        - ``x`` -- a float.
+        - ``x`` -- a float
 
         EXAMPLES::
 
@@ -486,11 +480,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``right`` -- a time series.
+        - ``right`` -- a time series
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -534,11 +526,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``left``, ``right`` -- an integer and a time series.
+        - ``left``, ``right`` -- integer and a time series
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -567,7 +557,6 @@ cdef class TimeSeries:
             memcpy(v._values + i*T._length, T._values, sizeof(double)*T._length)
         return v
 
-
     def autoregressive_fit(self,M):
         r"""
         This method fits the time series to an autoregressive process
@@ -590,11 +579,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``M`` -- an integer.
+        - ``M`` -- integer
 
-        OUTPUT:
-
-        A time series -- the coefficients of the autoregressive process.
+        OUTPUT: a time series -- the coefficients of the autoregressive process
 
         EXAMPLES::
 
@@ -633,7 +620,7 @@ cdef class TimeSeries:
         INPUT:
 
         - ``filter`` -- a time series outputted by the ``autoregressive_fit``
-          command.
+          command
 
         EXAMPLES::
 
@@ -663,9 +650,7 @@ cdef class TimeSeries:
         Return new time series obtain from this time series by
         reversing the order of the entries in this time series.
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -687,7 +672,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``right`` -- iterable that can be converted to a time series.
+        - ``right`` -- iterable that can be converted to a time series
 
         EXAMPLES::
 
@@ -729,9 +714,7 @@ cdef class TimeSeries:
         Return new time series got by taking the logarithms of all the
         terms in the time series.
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES:
 
@@ -761,9 +744,7 @@ cdef class TimeSeries:
         Return new time series got by applying the exponential map to
         all the terms in the time series.
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES::
 
@@ -785,9 +766,7 @@ cdef class TimeSeries:
         Return new time series got by replacing all entries
         of ``self`` by their absolute value.
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES::
 
@@ -816,9 +795,7 @@ cdef class TimeSeries:
 
         - ``k`` -- positive integer (default: 1)
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES::
 
@@ -843,11 +820,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``k`` -- a positive integer.
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES::
 
@@ -892,13 +867,13 @@ cdef class TimeSeries:
             t._values[i] = self._values[i*k]
         return t
 
-    cpdef rescale(self, double s) noexcept:
+    cpdef rescale(self, double s):
         r"""
         Change ``self`` by multiplying every value in the series by ``s``.
 
         INPUT:
 
-        - ``s`` -- a float.
+        - ``s`` -- a float
 
         EXAMPLES::
 
@@ -918,11 +893,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``s`` -- a float.
+        - ``s`` -- a float
 
-        OUTPUT:
-
-        A new time series with all values multiplied by ``s``.
+        OUTPUT: a new time series with all values multiplied by ``s``
 
         EXAMPLES::
 
@@ -947,11 +920,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``s`` -- a float.
+        - ``s`` -- a float
 
-        OUTPUT:
-
-        A new time series with ``s`` added to all values.
+        OUTPUT: a new time series with ``s`` added to all values
 
         EXAMPLES::
 
@@ -968,7 +939,7 @@ cdef class TimeSeries:
     def add_entries(self, t):
         r"""
         Add corresponding entries of ``self`` and ``t`` together,
-        extending either ``self`` or ``t`` by 0's if they do
+        extending either ``self`` or ``t`` by 0s if they do
         not have the same length.
 
         .. NOTE::
@@ -978,7 +949,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``t`` -- a time series.
+        - ``t`` -- a time series
 
         OUTPUT:
 
@@ -1051,10 +1022,10 @@ cdef class TimeSeries:
           plot the given number of equally spaced points in the time series.
           If 0, plot all points.
 
-        - ``points`` -- bool (default: ``False``). If ``True``, return just
-          the points of the time series.
+        - ``points`` -- boolean (default: ``False``); if ``True``, return just
+          the points of the time series
 
-        - ``**kwds`` -- passed to the line or point command.
+        - ``**kwds`` -- passed to the line or point command
 
         EXAMPLES::
 
@@ -1103,11 +1074,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``k`` -- positive integer.
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        A time series with the same number of steps as ``self``.
+        OUTPUT: a time series with the same number of steps as ``self``
 
         EXAMPLES::
 
@@ -1157,11 +1126,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``alpha`` -- float; a smoothing factor with ``0 <= alpha <= 1``.
+        - ``alpha`` -- float; a smoothing factor with ``0 <= alpha <= 1``
 
-        OUTPUT:
-
-        A time series with the same number of steps as ``self``.
+        OUTPUT: a time series with the same number of steps as ``self``
 
         EXAMPLES::
 
@@ -1203,11 +1170,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``s`` -- starting value for partial sums.
+        - ``s`` -- starting value for partial sums
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -1229,9 +1194,7 @@ cdef class TimeSeries:
 
         If ``self`` has length 0, returns 0.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1252,9 +1215,7 @@ cdef class TimeSeries:
 
         If ``self`` has length 0, returns 1.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1269,14 +1230,11 @@ cdef class TimeSeries:
             s *= self._values[i]
         return s
 
-
     def mean(self):
         r"""
         Return the mean (average) of the elements of ``self``.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1294,11 +1252,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``k`` -- a float.
+        - ``k`` -- a float
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -1320,11 +1276,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``k`` -- a positive integer.
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1353,11 +1307,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``k`` -- a positive integer.
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1391,7 +1343,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``self``, ``other`` -- time series.
+        - ``self``, ``other`` -- time series
 
         Whichever time series has more terms is truncated.
 
@@ -1432,11 +1384,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``k`` -- a nonnegative integer (default: 0)
+        - ``k`` -- nonnegative integer (default: 0)
 
-        OUTPUT:
-
-        A float.
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -1488,7 +1438,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``self``, ``other`` -- time series.
+        - ``self``, ``other`` -- time series
 
         Whichever time series has more terms is truncated.
 
@@ -1516,15 +1466,13 @@ cdef class TimeSeries:
                  {\sum_{t=0}^{n-1}   (x_t - \mu)^2}.
 
         Note that the variance must be nonzero or you will get a
-        :class:`ZeroDivisionError`.
+        :exc:`ZeroDivisionError`.
 
         INPUT:
 
-        - ``k`` -- a nonnegative integer (default: 1)
+        - ``k`` -- nonnegative integer (default: 1)
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -1552,13 +1500,11 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+        - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
           ``self.length() - 1`` instead of ``self.length()`` to give a less
           biased estimator for the variance.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1596,13 +1542,11 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+        - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
           ``self.length() - 1`` instead of ``self.length()`` to give a less
           biased estimator for the variance.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1644,16 +1588,14 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``self`` -- a time series  (*not* the series of differences).
+        - ``self`` -- a time series  (*not* the series of differences)
 
         - ``b`` -- integer (default: ``None``); if given instead divide the
           input time series up into ``j = floor(n/b)`` disjoint
           blocks, compute the `R/S` statistic for each block,
           and return the average of those `R/S` statistics.
 
-        OUTPUT:
-
-        A float.
+        OUTPUT: float
 
         EXAMPLES:
 
@@ -1720,6 +1662,8 @@ cdef class TimeSeries:
         if len(v0) == 1:
             return v1[0]/v0[0]
         import numpy
+        if int(numpy.version.short_version[0]) > 1:
+            numpy.set_printoptions(legacy="1.25")
         coeffs = numpy.polyfit(v0,v1,1)
         return coeffs[0]
 
@@ -1727,18 +1671,18 @@ cdef class TimeSeries:
         r"""
         Return the smallest value in this time series.
 
-        If this series has length 0, we raise a :class:`ValueError`.
+        If this series has length 0, we raise a :exc:`ValueError`.
 
         INPUT:
 
-        - ``index`` -- bool (default: ``False``); if ``True``, also return
-          index of minimal entry.
+        - ``index`` -- boolean (default: ``False``); if ``True``, also return
+          index of minimal entry
 
         OUTPUT:
 
-        - float -- smallest value.
+        - float; smallest value
 
-        - integer -- index of smallest value; only returned if ``index=True``.
+        - integer; index of smallest value (only returned if ``index=True``)
 
         EXAMPLES::
 
@@ -1765,18 +1709,18 @@ cdef class TimeSeries:
     def max(self, bint index=False):
         r"""
         Return the largest value in this time series. If this series
-        has length 0 we raise a :class:`ValueError`.
+        has length 0 we raise a :exc:`ValueError`.
 
         INPUT:
 
-        - ``index`` -- bool (default: ``False``); if ``True``, also return
-          index of maximum entry.
+        - ``index`` -- boolean (default: ``False``); if ``True``, also return
+          index of maximum entry
 
         OUTPUT:
 
-        - float -- largest value.
+        - float; largest value
 
-        - integer -- index of largest value; only returned if ``index=True``.
+        - integer; index of largest value (only returned if ``index=True``)
 
         EXAMPLES::
 
@@ -1807,13 +1751,11 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``min`` -- (default: ``None``) ``None`` or double.
+        - ``min`` -- (default: ``None``) ``None`` or double
 
-        - ``max`` -- (default: ``None``) ``None`` or double.
+        - ``max`` -- (default: ``None``) ``None`` or double
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -1885,18 +1827,16 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``bins`` -- a positive integer (default: 50)
+        - ``bins`` -- positive integer (default: 50)
 
-        - ``normalize`` -- (default: ``False``) whether to normalize so the
-          total area in the bars of the histogram is 1.
+        - ``normalize`` -- boolean (default: ``False``); whether to normalize so the
+          total area in the bars of the histogram is 1
 
         OUTPUT:
 
-        - counts -- list of counts of numbers of elements in
-          each bin.
+        - counts -- list of counts of numbers of elements in each bin
 
-        - endpoints -- list of 2-tuples (a,b) that give the
-          endpoints of the bins.
+        - endpoints -- list of 2-tuples (a,b) that give the endpoints of the bins
 
         EXAMPLES::
 
@@ -1954,12 +1894,10 @@ cdef class TimeSeries:
 
         - ``bins`` -- positive integer (default: 50)
 
-        - ``normalize`` -- (default: ``True``) whether to normalize so the
-          total area in the bars of the histogram is 1.
+        - ``normalize`` -- boolean (default: ``True``); whether to normalize so the
+          total area in the bars of the histogram is 1
 
-        OUTPUT:
-
-        A histogram plot.
+        OUTPUT: a histogram plot
 
         EXAMPLES::
 
@@ -1996,12 +1934,10 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``bins`` -- positive integer (default: 30), the number of bins
-          or candles.
+        - ``bins`` -- positive integer (default: 30); the number of bins
+          or candles
 
-        OUTPUT:
-
-        A candlestick plot.
+        OUTPUT: a candlestick plot
 
         EXAMPLES:
 
@@ -2058,11 +1994,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``copy`` -- bool (default: ``True``)
+        - ``copy`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        A numpy 1-D array.
+        OUTPUT: a numpy 1-D array
 
         EXAMPLES::
 
@@ -2109,7 +2043,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``distribution`` -- (default: ``"uniform"``); supported values are:
+        - ``distribution`` -- (default: ``'uniform'``) supported values are:
 
           - ``'uniform'`` -- from ``loc`` to ``loc + scale``
 
@@ -2209,9 +2143,9 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``left`` -- left bound on random distribution.
+        - ``left`` -- left bound on random distribution
 
-        - ``right`` -- right bound on random distribution.
+        - ``right`` -- right bound on random distribution
 
         EXAMPLES:
 
@@ -2303,7 +2237,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``center`` -- the center of the semicircle distribution.
+        - ``center`` -- the center of the semicircle distribution
 
         EXAMPLES:
 
@@ -2514,7 +2448,7 @@ cdef class TimeSeries:
         return y
 
 
-cdef new_time_series(Py_ssize_t length) noexcept:
+cdef new_time_series(Py_ssize_t length):
     r"""
     Return a new uninitialized time series of the given length.
     The entries of the time series are garbage.
@@ -2523,9 +2457,7 @@ cdef new_time_series(Py_ssize_t length) noexcept:
 
     - ``length`` -- integer
 
-    OUTPUT:
-
-    A time series.
+    OUTPUT: a time series
 
     EXAMPLES:
 

@@ -186,18 +186,18 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     INPUT:
 
     - ``G_in`` -- a Sage graph
-    - ``partition`` -- a list of lists representing a partition of the vertices
-    - ``lab`` -- if True, compute and return the canonical label in addition to the
+    - ``partition`` -- list of lists representing a partition of the vertices
+    - ``lab`` -- if ``True``, compute and return the canonical label in addition to the
       automorphism group
-    - ``dig`` -- set to True for digraphs and graphs with loops.  If True, does not
+    - ``dig`` -- set to ``True`` for digraphs and graphs with loops;  if ``True``, does not
       use optimizations based on Lemma 2.25 in [1] that are valid only for
-      simple graphs.
+      simple graphs
     - ``dict_rep`` -- if ``True``, return a dictionary with keys the vertices of the
       input graph G_in and values elements of the set the permutation group
       acts on.  (The point is that graphs are arbitrarily labelled, often
       0..n-1, and permutation groups always act on 1..n.  This dictionary
       maps vertex labels (such as 0..n-1) to the domain of the permutations.)
-    - ``certificate`` -- if ``True``, return the permutation from G to its canonical label.
+    - ``certificate`` -- if ``True``, return the permutation from G to its canonical label
     - ``verbosity`` -- currently ignored
     - ``use_indicator_function`` -- option to turn off indicator function
       (``True`` is generally faster)
@@ -506,6 +506,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     else:
         return tuple(return_tuple)
 
+
 cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     r"""
     Refine the input partition by checking degrees of vertices to the given
@@ -517,7 +518,7 @@ cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, 
       refined
     - ``S`` -- a graph struct object, which contains scratch space, the graph in
       question, and some flags
-    - ``cells_to_refine_by`` -- a list of pointers to cells to check degrees against
+    - ``cells_to_refine_by`` -- list of pointers to cells to check degrees against
       in refining the other cells (updated in place). Must be allocated to
       length at least the degree of PS, since the array may grow
     - ``ctrb_len`` -- how many cells in cells_to_refine_by
@@ -676,12 +677,12 @@ cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degr
 
 cdef bint all_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     """
-    Return True if every refinement of the current partition results in the
+    Return ``True`` if every refinement of the current partition results in the
     same structure.
 
-    WARNING:
+    .. WARNING::
 
-    Converse does not hold in general!  See Lemma 2.25 of [1] for details.
+        Converse does not hold in general!  See Lemma 2.25 of [1] for details.
 
     INPUT:
 
@@ -746,6 +747,7 @@ cdef inline int degree(PartitionStack *PS, CGraph G, int entry, int cell_index, 
                 break
     return num_arcs
 
+
 def all_labeled_graphs(n):
     """
     Return all labeled graphs on n vertices {0,1,...,n-1}.
@@ -777,7 +779,6 @@ def all_labeled_graphs(n):
         3 4
         4 11
         5 34
-
     """
     from sage.graphs.graph import Graph
     TE = []
@@ -799,7 +800,7 @@ def all_labeled_graphs(n):
 
 def random_tests(num=10, n_max=60, perms_per_graph=5):
     """
-    Tests to make sure that C(gamma(G)) == C(G) for random permutations gamma
+    Test to make sure that C(gamma(G)) == C(G) for random permutations gamma
     and random graphs G, and that isomorphic returns an isomorphism.
 
     INPUT:
@@ -898,7 +899,7 @@ def orbit_partition(gamma, list_perm=False):
 
     INPUT:
 
-    - ``list_perm`` - if ``True``, assumes
+    - ``list_perm`` -- if ``True``, assumes
       ``gamma`` is a list representing the map
       `i \mapsto ``gamma``[i]`
 
@@ -947,6 +948,7 @@ def orbit_partition(gamma, list_perm=False):
                 if i[j] == n:
                     i[j] = 0
         return l
+
 
 def coarsest_equitable_refinement(CGraph G, list partition, bint directed):
     """
@@ -1012,6 +1014,7 @@ def coarsest_equitable_refinement(CGraph G, list partition, bint directed):
 
     return eq_part
 
+
 def get_orbits(list gens, int n):
     """
     Compute orbits given a list of generators of a permutation group, in list
@@ -1052,8 +1055,6 @@ def get_orbits(list gens, int n):
     sig_free(perm_ints)
 
     return list(orbit_dict.itervalues())
-
-
 
 
 # Canonical augmentation
@@ -1163,7 +1164,7 @@ cdef void *apply_dg_edge_aug(void *parent, void *aug, void *child, int *degree, 
 
 cdef void *allocate_dg_edge(int n, bint loops) noexcept:
     r"""
-    Allocates an object for this augmentation scheme.
+    Allocate an object for this augmentation scheme.
     """
     cdef GraphStruct GS
     cdef DenseGraph G
@@ -1187,7 +1188,7 @@ cdef void *allocate_dg_edge(int n, bint loops) noexcept:
 
 cdef void free_dg_edge(void *child) noexcept:
     r"""
-    Deallocates an object for this augmentation scheme.
+    Deallocate an object for this augmentation scheme.
     """
     cdef GraphStruct GS = <GraphStruct> child
     sig_free(GS.scratch)
@@ -1196,9 +1197,9 @@ cdef void free_dg_edge(void *child) noexcept:
 
 cdef void *canonical_dg_edge_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err) noexcept:
     r"""
-    Applies ``permutation`` to ``child``, determines an arbitrary parent by
-    deleting the lexicographically largest edge, applies the inverse of
-    ``permutation`` to the result and stores the result in ``parent``.
+    Apply ``permutation`` to ``child``, determine an arbitrary parent by
+    deleting the lexicographically largest edge, apply the inverse of
+    ``permutation`` to the result and store the result in ``parent``.
     """
     cdef GraphStruct GS_par = <GraphStruct> parent, GS = <GraphStruct> child
     cdef DenseGraph DG_par = <DenseGraph> GS_par.G, DG = <DenseGraph> GS.G
@@ -1226,7 +1227,7 @@ cdef void *canonical_dg_edge_parent(void *child, void *parent, int *permutation,
 
 cdef iterator *allocate_dg_edge_gen(int degree, int depth, bint loops) noexcept:
     r"""
-    Allocates the iterator for generating graphs.
+    Allocate the iterator for generating graphs.
     """
     cdef iterator *dg_edge_gen = <iterator *> sig_malloc(sizeof(iterator))
     cdef canonical_generator_data *cgd = allocate_cgd(depth, degree)
@@ -1256,7 +1257,7 @@ cdef iterator *allocate_dg_edge_gen(int degree, int depth, bint loops) noexcept:
 
 cdef void free_dg_edge_gen(iterator *dg_edge_gen) noexcept:
     r"""
-    Deallocates the iterator for generating graphs.
+    Deallocate the iterator for generating graphs.
     """
     cdef canonical_generator_data *cgd = <canonical_generator_data *> dg_edge_gen.data
     deallocate_cgd(cgd)
@@ -1298,7 +1299,6 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
         1044
         sage: generate_dense_graphs_edge_addition(8,0)  # long time (about 14 seconds at 2.4 GHz)
         12346
-
     """
     from sage.graphs.graph import Graph
     cdef iterator *graph_iterator
@@ -1386,7 +1386,6 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
         return number
 
 
-
 # Dense graphs: adding vertices
 
 # This implements an augmentation scheme as follows:
@@ -1431,7 +1430,7 @@ cdef void *apply_dg_vert_aug(void *parent, void *aug, void *child, int *degree, 
 
 cdef void *allocate_dg_vert(int n, int depth) noexcept:
     r"""
-    Allocates an object for this augmentation scheme.
+    Allocate an object for this augmentation scheme.
     """
     cdef GraphStruct GS
     cdef DenseGraph G
@@ -1457,7 +1456,7 @@ cdef void *allocate_dg_vert(int n, int depth) noexcept:
 
 cdef void free_dg_vert(void *child) noexcept:
     r"""
-    Deallocates an object for this augmentation scheme.
+    Deallocate an object for this augmentation scheme.
     """
     cdef GraphStruct GS = <GraphStruct> child
     sig_free(GS.scratch)
@@ -1466,9 +1465,9 @@ cdef void free_dg_vert(void *child) noexcept:
 
 cdef void *canonical_dg_vert_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err) noexcept:
     r"""
-    Applies ``permutation`` to ``child``, determines an arbitrary parent by
-    deleting the lexicographically largest vertex, applies the inverse of
-    ``permutation`` to the result and stores the result in ``parent``.
+    Apply ``permutation`` to ``child``, determines an arbitrary parent by
+    deleting the lexicographically largest vertex, apply the inverse of
+    ``permutation`` to the result and store the result in ``parent``.
     """
     cdef GraphStruct GS_par = <GraphStruct> parent, GS = <GraphStruct> child
     cdef DenseGraph DG_par = <DenseGraph> GS_par.G, DG = <DenseGraph> GS.G
@@ -1488,7 +1487,7 @@ cdef void *canonical_dg_vert_parent(void *child, void *parent, int *permutation,
 
 cdef iterator *allocate_dg_vert_gen(int degree, int depth) noexcept:
     r"""
-    Allocates the iterator for generating graphs.
+    Allocate the iterator for generating graphs.
     """
     cdef iterator *dg_vert_gen = <iterator *> sig_malloc(sizeof(iterator))
     cdef canonical_generator_data *cgd = allocate_cgd(depth, degree)
@@ -1529,7 +1528,7 @@ cdef iterator *allocate_dg_vert_gen(int degree, int depth) noexcept:
 
 cdef void free_dg_vert_gen(iterator *dg_vert_gen) noexcept:
     r"""
-    Deallocates the iterator for generating graphs.
+    Deallocate the iterator for generating graphs.
     """
     cdef canonical_generator_data *cgd = <canonical_generator_data *> dg_vert_gen.data
     deallocate_cgd(cgd)
@@ -1572,7 +1571,6 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
         sage: from sage.groups.perm_gps.partn_ref.refinement_graphs import generate_dense_graphs_vert_addition
         sage: generate_dense_graphs_vert_addition(10, base_G=Graph('HEhf^rs'))
         11
-
     """
     from sage.graphs.graph import Graph
     cdef iterator *graph_iterator

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``bliss``
 """
@@ -53,8 +54,8 @@ class BlissLibrary(CythonFeature):
             Feature('libbliss')
         """
         CythonFeature.__init__(self, "libbliss", test_code=TEST_CODE,
-                               spkg="bliss",
-                               url="http://www.tcs.hut.fi/Software/bliss/")
+                               spkg='bliss',
+                               url='http://www.tcs.hut.fi/Software/bliss/')
 
 
 class Bliss(JoinFeature):
@@ -75,11 +76,9 @@ class Bliss(JoinFeature):
             sage: Bliss()
             Feature('bliss')
         """
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_bliss' later
         JoinFeature.__init__(self, "bliss",
-                             [PythonModule("sage.graphs.bliss", spkg="bliss",
-                                           url="http://www.tcs.hut.fi/Software/bliss/")])
+                             [PythonModule("sage.graphs.bliss", spkg='sagemath_bliss',
+                                           url='http://www.tcs.hut.fi/Software/bliss/')])
 
 
 def all_features():

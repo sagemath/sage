@@ -6,9 +6,9 @@ module derive from those in the module :mod:`sage.modules.fg_pid`. The only
 major differences are in the way elements are printed.
 """
 
-from sage.groups.old import AbelianGroup
-from sage.modules.fg_pid.fgp_module import FGP_Module_class
+from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.modules.fg_pid.fgp_element import FGP_Element
+from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.rings.integer_ring import ZZ
 
 
@@ -18,16 +18,15 @@ def AdditiveAbelianGroup(invs, remember_generators=True):
 
     INPUT:
 
-    - ``invs`` (list of integers): the invariants.
+    - ``invs`` -- list of integers; the invariants.
       These should all be greater than or equal to zero.
 
-    - ``remember_generators`` (boolean): whether or not to fix a set of
-      generators (corresponding to the given invariants, which need not be in
-      Smith form).
+    - ``remember_generators`` -- boolean (default: ``True``); whether or not
+      to fix a set of generators (corresponding to the given invariants, which
+      need not be in Smith form)
 
-    OUTPUT:
-
-    The abelian group `\bigoplus_i \ZZ / n_i \ZZ`, where `n_i` are the invariants.
+    OUTPUT: the abelian group `\bigoplus_i \ZZ / n_i \ZZ`, where `n_i` are the
+    invariants
 
     EXAMPLES::
 
@@ -173,12 +172,12 @@ class AdditiveAbelianGroupElement(FGP_Element):
         for i in range(H.nrows()):
             if i in pivot_rows:
                 j = pivots[i]
-                N = H[i,j]
+                N = H[i, j]
                 a = (y[j] - (y[j] % N)) // N
-                y = y - a*H.row(i)
+                y = y - a * H.row(i)
         return y
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation. This uses a canonical lifting of elements of
         this group (represented as a quotient `G/H` of free abelian groups) to
@@ -201,15 +200,15 @@ class AdditiveAbelianGroupElement(FGP_Element):
 # since we want to inherit things like __hash__ from there rather than the
 # hyper-generic implementation for abstract abelian groups.
 
-class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
+class AdditiveAbelianGroup_class(FGP_Module_class):
     r"""
     An additive abelian group, implemented using the `\ZZ`-module machinery.
 
     INPUT:
 
-    - ``cover`` -- the covering group as `\ZZ`-module.
+    - ``cover`` -- the covering group as `\ZZ`-module
 
-    - ``relations`` -- the relations as submodule of ``cover``.
+    - ``relations`` -- the relations as submodule of ``cover``
     """
 
     # The element class must be overridden in derived classes
@@ -222,6 +221,10 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
             sage: G = AdditiveAbelianGroup([0]); G # indirect doctest
             Additive abelian group isomorphic to Z
             sage: G == loads(dumps(G))
+            True
+            sage: G.category()
+            Category of modules over Integer Ring
+            sage: G in CommutativeAdditiveGroups()
             True
         """
         FGP_Module_class.__init__(self, cover, relations)
@@ -242,7 +245,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
 
     def _latex_(self):
         r"""
-        Returns a Latex representation of the group, using the invariants.
+        Return a Latex representation of the group, using the invariants.
 
         EXAMPLES::
 
@@ -292,11 +295,11 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
 
         INPUT:
 
-        - ``cover`` -- the covering group as `\ZZ`-module.
+        - ``cover`` -- the covering group as `\ZZ`-module
 
-        - ``relations`` -- the relations as submodule of ``cover``.
+        - ``relations`` -- the relations as submodule of ``cover``
 
-        - ``check`` -- ignored, present for compatibility with ``fg_pid`` code.
+        - ``check`` -- ignored, present for compatibility with ``fg_pid`` code
 
         EXAMPLES::
 
@@ -322,7 +325,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
 
     def order(self):
         r"""
-        Return the order of this group (an integer or infinity)
+        Return the order of this group (integer or infinity).
 
         EXAMPLES::
 
@@ -371,7 +374,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
 
     def is_cyclic(self):
         r"""
-        Returns ``True`` if the group is cyclic.
+        Return ``True`` if the group is cyclic.
 
         EXAMPLES:
 
@@ -406,7 +409,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
     """
     def __init__(self, cover, rels, gens):
         r"""
-        Standard initialisation function
+        Standard initialisation function.
 
         EXAMPLES::
 
@@ -418,7 +421,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
 
     def gens(self) -> tuple:
         r"""
-        Return the specified generators for self (as a tuple). Compare
+        Return the specified generators for ``self`` (as a tuple). Compare
         ``self.smithform_gens()``.
 
         EXAMPLES::
@@ -451,7 +454,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
 
             sage: G = AdditiveAbelianGroup([2, 3])
             sage: G.permutation_group()                                                 # needs sage.groups
-            Permutation Group with generators [(3,4,5), (1,2)]
+            Permutation Group with generators [(1,2), (3,4,5)]
 
         TESTS:
 

@@ -47,16 +47,13 @@ class QmodnZ(Parent, UniqueRepresentation):
 
     #. ``QmodnZ(n)``, where
 
-        - `n` -- a rational number (including 0 or negative rational numbers).
+        - ``n`` -- a rational number (including 0 or negative rational numbers)
 
     #. ``QQ/(n*ZZ)``, where
 
-        - `n` -- an integer (including 0 or negative integers).
+        - ``n`` -- integer (including 0 or negative integers)
 
-
-    OUTPUT:
-
-    The abelian group `\Q/n\Z`.
+    OUTPUT: the abelian group `\Q/n\Z`
 
     EXAMPLES::
 

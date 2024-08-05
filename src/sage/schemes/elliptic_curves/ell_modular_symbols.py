@@ -39,7 +39,7 @@ EXAMPLES::
     1/3
     sage: m(1/17)
     -2/3
-    sage: m2 = E.modular_symbol(-1, implementation="sage")
+    sage: m2 = E.modular_symbol(-1, implementation='sage')
     sage: m2(0)
     0
     sage: m2(1/5)
@@ -70,7 +70,6 @@ AUTHORS:
 - Chris Wuthrich (2008): add scaling and reference to eclib
 
 - John Cremona (2016): reworked eclib interface
-
 """
 
 #*****************************************************************************
@@ -110,16 +109,16 @@ zero = Integer(0)
 
 def modular_symbol_space(E, sign, base_ring, bound=None):
     r"""
-    Creates the space of modular symbols of a given sign over a give base_ring,
+    Create the space of modular symbols of a given sign over a give base_ring,
     attached to the isogeny class of the elliptic curve ``E``.
 
     INPUT:
 
     - ``E`` -- an elliptic curve over `\QQ`
-    - ``sign`` -- integer, -1, 0, or 1
+    - ``sign`` -- integer; -1, 0, or 1
     - ``base_ring`` -- ring
-    - ``bound`` -- (default: None) maximum number of Hecke operators to
-      use to cut out modular symbols factor.  If None, use
+    - ``bound`` -- (default: ``None``) maximum number of Hecke operators to
+      use to cut out modular symbols factor.  If ``None``, use
       enough to provably get the correct answer.
 
     OUTPUT: a space of modular symbols
@@ -173,7 +172,7 @@ class ModularSymbol(SageObject):
             sage: m = EllipticCurve('11a1').modular_symbol()
             sage: m.sign()
             1
-            sage: m = EllipticCurve('11a1').modular_symbol(sign=-1, implementation="sage")
+            sage: m = EllipticCurve('11a1').modular_symbol(sign=-1, implementation='sage')
             sage: m.sign()
             -1
         """
@@ -213,7 +212,7 @@ class ModularSymbol(SageObject):
             sage: m
             Modular symbol with sign 1 over Rational Field attached to
              Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
-            sage: m = EllipticCurve('43a1').modular_symbol(sign=-1, implementation="sage")
+            sage: m = EllipticCurve('43a1').modular_symbol(sign=-1, implementation='sage')
             sage: m
             Modular symbol with sign -1 over Rational Field attached to
              Elliptic Curve defined by y^2 + y = x^3 + x^2 over Rational Field
@@ -237,10 +236,10 @@ class ModularSymbolECLIB(ModularSymbol):
 
         - ``E`` -- an elliptic curve
 
-        - ``sign`` -- an integer, -1 or 1
+        - ``sign`` -- integer; -1 or 1
 
-        - ``nap`` -- (int, default 1000): the number of ap of E to use
-          in determining the normalisation of the modular symbols.
+        - ``nap`` -- integer (default: 1000); the number of ap of E to use
+          in determining the normalisation of the modular symbols
 
         EXAMPLES::
 
@@ -266,12 +265,12 @@ class ModularSymbolECLIB(ModularSymbol):
             sage: M(1/7)
             1/2
 
-            sage: M = EllipticCurve('121d1').modular_symbol(implementation="eclib")
+            sage: M = EllipticCurve('121d1').modular_symbol(implementation='eclib')
             sage: M(0)
             2
 
             sage: E = EllipticCurve('15a1')
-            sage: [C.modular_symbol(implementation="eclib")(0) for C in E.isogeny_class()]
+            sage: [C.modular_symbol(implementation='eclib')(0) for C in E.isogeny_class()]
             [1/4, 1/8, 1/4, 1/2, 1/8, 1/16, 1/2, 1]
 
         Since :issue:`10256`, the interface for negative modular symbols in eclib is available::
@@ -298,7 +297,7 @@ class ModularSymbolECLIB(ModularSymbol):
         TESTS (for :issue:`10236`)::
 
             sage: E = EllipticCurve('11a1')
-            sage: m = E.modular_symbol(implementation="eclib")
+            sage: m = E.modular_symbol(implementation='eclib')
             sage: m(1/7)
             7/10
             sage: m(0)
@@ -345,7 +344,7 @@ class ModularSymbolECLIB(ModularSymbol):
 
         EXAMPLES::
 
-            sage: m = EllipticCurve('11a1').modular_symbol(implementation="eclib")
+            sage: m = EllipticCurve('11a1').modular_symbol(implementation='eclib')
             sage: m._call_with_caching(0)
             1/5
         """
@@ -364,7 +363,7 @@ class ModularSymbolECLIB(ModularSymbol):
 
         EXAMPLES::
 
-            sage: m = EllipticCurve('11a1').modular_symbol(implementation="eclib")
+            sage: m = EllipticCurve('11a1').modular_symbol(implementation='eclib')
             sage: m(0)
             1/5
         """
@@ -376,21 +375,21 @@ class ModularSymbolECLIB(ModularSymbol):
 
 
 class ModularSymbolSage(ModularSymbol):
-    def __init__(self, E, sign, normalize="L_ratio"):
+    def __init__(self, E, sign, normalize='L_ratio'):
         """Modular symbols attached to `E` using ``sage``.
 
         INPUT:
 
         - ``E`` -- an elliptic curve
-        - ``sign`` -- an integer, -1 or 1
-        - ``normalize`` -- either 'L_ratio' (default), 'period', or
-          'none'; For 'L_ratio', the modular symbol is correctly
+        - ``sign`` -- integer; -1 or 1
+        - ``normalize`` -- either ``'L_ratio'`` (default), ``'period'``, or
+          ``'none'``; For ``'L_ratio'``, the modular symbol is correctly
           normalized by comparing it to the quotient of `L(E,1)` by
           the least positive period for the curve and some small
-          twists.  The normalization 'period' uses the
+          twists.  The normalization ``'period'`` uses the
           integral_period_map for modular symbols and is known to be
           equal to the above normalization up to the sign and a
-          possible power of 2.  For 'none', the modular symbol is
+          possible power of 2.  For ``'none'``, the modular symbol is
           almost certainly not correctly normalized, i.e. all values
           will be a fixed scalar multiple of what they should be.  But
           the initial computation of the modular symbol is much
@@ -425,22 +424,22 @@ class ModularSymbolSage(ModularSymbol):
             sage: M._scaling
             1
 
-            sage: M = EllipticCurve('121d1').modular_symbol(implementation="sage")
+            sage: M = EllipticCurve('121d1').modular_symbol(implementation='sage')
             sage: M(0)
             2
-            sage: M = EllipticCurve('121d1').modular_symbol(implementation="sage",
+            sage: M = EllipticCurve('121d1').modular_symbol(implementation='sage',
             ....:                                           normalize='none')
             sage: M(0)
             1
 
             sage: E = EllipticCurve('15a1')
-            sage: [C.modular_symbol(implementation="sage", normalize='L_ratio')(0)
+            sage: [C.modular_symbol(implementation='sage', normalize='L_ratio')(0)
             ....:  for C in E.isogeny_class()]
             [1/4, 1/8, 1/4, 1/2, 1/8, 1/16, 1/2, 1]
-            sage: [C.modular_symbol(implementation="sage", normalize='period')(0)
+            sage: [C.modular_symbol(implementation='sage', normalize='period')(0)
             ....:  for C in E.isogeny_class()]
             [1/8, 1/16, 1/8, 1/4, 1/16, 1/32, 1/4, 1/2]
-            sage: [C.modular_symbol(implementation="sage", normalize='none')(0)
+            sage: [C.modular_symbol(implementation='sage', normalize='none')(0)
             ....:  for C in E.isogeny_class()]
             [1, 1, 1, 1, 1, 1, 1, 1]
         """
@@ -473,27 +472,27 @@ class ModularSymbolSage(ModularSymbol):
         r"""
         This function is use to set ``_scaling``, the factor used to adjust the
         scalar multiple of the modular symbol.
-        If `[0]`, the modular symbol evaluated at 0, is non-zero, we can just scale
+        If `[0]`, the modular symbol evaluated at 0, is nonzero, we can just scale
         it with respect to the approximation of the L-value. It is known that
         the quotient is a rational number with small denominator.
         Otherwise we try to scale using quadratic twists.
 
-        ``_scaling`` will be set to a rational non-zero multiple if we succeed and to 1 otherwise.
+        ``_scaling`` will be set to a rational nonzero multiple if we succeed and to 1 otherwise.
         Even if we fail we scale at least to make up the difference between the periods
         of the `X_0`-optimal curve and our given curve `E` in the isogeny class.
 
         EXAMPLES::
 
-            sage: m = EllipticCurve('11a1').modular_symbol(implementation="sage")
+            sage: m = EllipticCurve('11a1').modular_symbol(implementation='sage')
             sage: m._scaling
             1/5
-            sage: m = EllipticCurve('11a2').modular_symbol(implementation="sage")
+            sage: m = EllipticCurve('11a2').modular_symbol(implementation='sage')
             sage: m._scaling
             1
-            sage: m = EllipticCurve('11a3').modular_symbol(implementation="sage")
+            sage: m = EllipticCurve('11a3').modular_symbol(implementation='sage')
             sage: m._scaling
             1/25
-            sage: m = EllipticCurve('37a1').modular_symbol(implementation="sage")
+            sage: m = EllipticCurve('37a1').modular_symbol(implementation='sage')
             sage: m._scaling
             -1
             sage: m = EllipticCurve('37a1').modular_symbol()
@@ -502,16 +501,16 @@ class ModularSymbolSage(ModularSymbol):
             sage: m = EllipticCurve('389a1').modular_symbol()
             sage: m._scaling
             1
-            sage: m = EllipticCurve('389a1').modular_symbol(implementation="sage")
+            sage: m = EllipticCurve('389a1').modular_symbol(implementation='sage')
             sage: m._scaling
             1
-            sage: m = EllipticCurve('196a1').modular_symbol(implementation="sage")
+            sage: m = EllipticCurve('196a1').modular_symbol(implementation='sage')
             sage: m._scaling
             1
 
         Some harder cases fail::
 
-            sage: m = EllipticCurve('121b1').modular_symbol(implementation="sage")
+            sage: m = EllipticCurve('121b1').modular_symbol(implementation='sage')
             Warning : Could not normalize the modular symbols, maybe all further results will be multiplied by -1 and a power of 2
             sage: m._scaling
             1
@@ -521,8 +520,8 @@ class ModularSymbolSage(ModularSymbol):
             sage: rk0 = ['11a1', '11a2', '15a1', '27a1', '37b1']
             sage: for la in rk0:  # long time (3s on sage.math, 2011)
             ....:          E = EllipticCurve(la)
-            ....:          me = E.modular_symbol(implementation="eclib")
-            ....:          ms = E.modular_symbol(implementation="sage")
+            ....:          me = E.modular_symbol(implementation='eclib')
+            ....:          ms = E.modular_symbol(implementation='sage')
             ....:          print("{} {} {}".format(E.lseries().L_ratio()*E.real_components(), me(0), ms(0)))
             1/5 1/5 1/5
             1 1 1
@@ -559,7 +558,7 @@ class ModularSymbolSage(ModularSymbol):
                 Dlist = [5,8,12,13,17,21,24,28,29, 33, 37, 40, 41, 44, 53, 56, 57, 60, 61, 65, 69, 73, 76, 77, 85, 88, 89, 92, 93, 97]  # a list of positive fundamental discriminants
                 j = 0
                 at0 = 0
-                # computes [0]+ for the twist of E by D until one value is non-zero
+                # computes [0]+ for the twist of E by D until one value is nonzero
                 while j < 30 and at0 == 0 :
                     D = Dlist[j]
                     # the following line checks if the twist of the newform of E by D is a newform
@@ -581,7 +580,7 @@ class ModularSymbolSage(ModularSymbol):
             j = 0
             at0 = 0
             while j < 30 and at0 == 0 :
-                # computes [0]+ for the twist of E by D until one value is non-zero
+                # computes [0]+ for the twist of E by D until one value is nonzero
                 D = Dlist[j]
                 if all( valuation(E.conductor(),ell) <= valuation(D,ell) for ell in prime_divisors(D) ) :
                     at0 = - sum([kronecker_symbol(D,u) * self(ZZ(u)/D) for u in range(1,abs(D))])
@@ -713,7 +712,7 @@ class ModularSymbolSage(ModularSymbol):
 
         EXAMPLES::
 
-            sage: m = EllipticCurve('11a1').modular_symbol(implementation="sage")
+            sage: m = EllipticCurve('11a1').modular_symbol(implementation='sage')
             sage: m._call_with_caching(0)
             1/5
         """
@@ -734,7 +733,7 @@ class ModularSymbolSage(ModularSymbol):
 
         EXAMPLES::
 
-            sage: m = EllipticCurve('11a1').modular_symbol(implementation="sage")
+            sage: m = EllipticCurve('11a1').modular_symbol(implementation='sage')
             sage: m(0)
             1/5
         """

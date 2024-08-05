@@ -210,6 +210,7 @@ class Function_tan(GinacFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: tan(3.1415)
             -0.0000926535900581913
             sage: tan(3.1415/4)
@@ -323,20 +324,20 @@ class Function_cot(GinacFunction):
 
         TESTS::
 
-            sage: cot(float(0))                                                         # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))                                                            # needs sage.symbolic
+            sage: cot(SR(0))
             Infinity
-            sage: cot(float(0.1))                                                       # needs sage.symbolic
+            sage: cot(float(0.1))
             9.966644423259238
             sage: type(_)
             <... 'float'>
-
-            sage: cot(float(0))                                                         # needs sage.symbolic
+            sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))                                                            # needs sage.symbolic
+            sage: cot(SR(0))
             Infinity
-            sage: cot(float(0.1))                                                       # needs sage.symbolic
+            sage: cot(float(0.1))
             9.966644423259238
             sage: type(_)
             <... 'float'>
@@ -520,7 +521,7 @@ class Function_arcsin(GinacFunction):
 
         EXAMPLES::
 
-            sage: arcsin(0.5)
+            sage: arcsin(0.5)                                                           # needs sage.rings.real_mpfr
             0.523598775598299
             sage: arcsin(1/2)                                                           # needs sage.symbolic
             1/6*pi
@@ -571,7 +572,7 @@ class Function_arcsin(GinacFunction):
         GinacFunction.__init__(self, 'arcsin', latex_name=r"\arcsin",
                 conversions=dict(maxima='asin', sympy='asin',
                                  mathematica='ArcSin',
-                                 fricas="asin", giac="asin"))
+                                 fricas='asin', giac='asin'))
 
 
 arcsin = asin = Function_arcsin()
@@ -584,7 +585,7 @@ class Function_arccos(GinacFunction):
 
         EXAMPLES::
 
-            sage: arccos(0.5)
+            sage: arccos(0.5)                                                           # needs sage.rings.real_mpfr
             1.04719755119660
             sage: arccos(1/2)                                                           # needs sage.symbolic
             1/3*pi
@@ -761,7 +762,6 @@ class Function_arccot(GinacFunction):
             (0.5535743588970452-0.4023594781085251j)
             sage: arccot(1.+I)                                                          # needs sage.symbolic
             0.553574358897045 - 0.402359478108525*I
-
         """
         GinacFunction.__init__(self, 'arccot', latex_name=r"\operatorname{arccot}",
                 conversions=dict(maxima='acot', sympy='acot',
@@ -926,7 +926,6 @@ class Function_arctan2(GinacFunction):
 
         Note that the `y`-coordinate is by convention the first input.
 
-
         EXAMPLES:
 
         Note the difference between the two functions::
@@ -940,7 +939,7 @@ class Function_arctan2(GinacFunction):
 
             sage: maxima.atan2(1, -1)                                                   # needs sage.symbolic
             (3*%pi)/4
-            sage: math.atan2(1,-1)
+            sage: math.atan2(1, -1)
             2.356194490192345
 
         More examples::

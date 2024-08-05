@@ -124,7 +124,7 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
     """
     A class implementing sections of embeddings between finite fields.
     """
-    cpdef Element _call_(self, x) noexcept:  # Not optimized
+    cpdef Element _call_(self, x):  # Not optimized
         """
         TESTS::
 
@@ -185,7 +185,6 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
         return '\\verb"Section of "' + self._inverse._latex_()
 
 
-
 cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
     """
     A class implementing embeddings between finite fields.
@@ -197,7 +196,6 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         sage: K.<T> = GF(3^21)
         sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
         sage: TestSuite(f).run()
-
     """
     def __init__(self, parent, im_gens=None, base_map=None, check=True, section_class=None):
         """
@@ -299,7 +297,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         """
         return self.domain()._latex_() + " \\hookrightarrow " + self.codomain()._latex_()
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         TESTS::
 
@@ -424,7 +422,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
     def __hash__(self):
         r"""
-        Return a hash of this morphism
+        Return a hash of this morphism.
 
         TESTS::
 
@@ -436,9 +434,9 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         """
         return Morphism.__hash__(self)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         r"""
-        Helper function for copying and pickling
+        Helper function for copying and pickling.
 
         TESTS::
 
@@ -464,9 +462,9 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         slots['_section_class'] = self._section_class
         return slots
 
-    cdef _update_slots(self, dict slots) noexcept:
+    cdef _update_slots(self, dict slots):
         r"""
-        Helper function for copying and pickling
+        Helper function for copying and pickling.
 
         TESTS::
 
@@ -495,15 +493,14 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         sage: k.<a> = GF(7^11)
         sage: Frob = k.frobenius_endomorphism(5)
         sage: TestSuite(Frob).run()
-
     """
     def __init__(self, domain, n=1):
         """
         INPUT:
 
-        -  ``domain`` -- a finite field
+        - ``domain`` -- a finite field
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         .. NOTE::
 
@@ -619,7 +616,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         return s
 
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         TESTS::
 
@@ -714,7 +711,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def _composition(self, right):
         """
-        Return self o right.
+        Return ``self`` o ``right``.
 
         EXAMPLES::
 
@@ -831,7 +828,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def __hash__(self):
         r"""
-        Return a hash of this morphism
+        Return a hash of this morphism.
 
         EXAMPLES::
 
@@ -842,9 +839,9 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         return Morphism.__hash__(self)
 
-    cdef _update_slots(self, dict slots) noexcept:
+    cdef _update_slots(self, dict slots):
         r"""
-        Helper function for copying and pickling
+        Helper function for copying and pickling.
 
         TESTS::
 

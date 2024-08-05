@@ -31,20 +31,20 @@ AUTHORS:
 from sage.ext.fast_callable import fast_callable, Wrapper
 
 
-def fast_float(f, *vars, old=None, expect_one_var=False):
+def fast_float(f, *vars, expect_one_var=False):
     """
-    Tries to create a function that evaluates f quickly using
-    floating-point numbers, if possible.  There are two implementations
-    of fast_float in Sage; by default we use the newer, which is
-    slightly faster on most tests.
+    Try to create a function that evaluates f quickly using
+    floating-point numbers, if possible.
 
     On failure, returns the input unchanged.
 
+    This is an alternative interface to :func:`sage.ext.fast_callable.fast_callable`.
+    :issue:`32268` proposes to deprecate this function.
+
     INPUT:
 
-    - ``f``    -- an expression
+    - ``f`` -- an expression
     - ``vars`` -- the names of the arguments
-    - ``old``  -- deprecated, do not use
     - ``expect_one_var`` -- don't give deprecation warning if ``vars`` is
       omitted, as long as expression has only one var
 
@@ -67,12 +67,6 @@ def fast_float(f, *vars, old=None, expect_one_var=False):
         sage: f(1,2)
         1.0
     """
-    if old:
-        raise ValueError("the old implementation of fast_float has been removed")
-    if old is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(32234, "passing old=False to fast_float is deprecated")
-
     if isinstance(f, (tuple, list)):
         return tuple([fast_float(x, *vars, expect_one_var=expect_one_var) for x in f])
 

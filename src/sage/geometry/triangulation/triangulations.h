@@ -34,8 +34,6 @@ public:
 };
 
 
-
-
 typedef triangulations* triangulations_ptr;
 
 triangulations_ptr init_triangulations

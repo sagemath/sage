@@ -142,7 +142,7 @@ We illustrate arithmetic with integers and rationals in KASH.
       ext1 := 1,
       ext2 := Unassign
 
-.. note::
+.. NOTE::
 
    For some very large numbers KASH's integer factorization seems much
    faster than PARI's (which is the default in Sage).
@@ -405,7 +405,7 @@ Long Input
 The KASH interface reads in even very long input (using files) in a
 robust manner, as long as you are creating a new object.
 
-.. note::
+.. NOTE::
 
    Using ``kash.eval`` for long input is much less robust, and is not
    recommended.
@@ -460,11 +460,12 @@ class Kash(Expect):
                  server_tmpdir=None):
         """
         INPUT:
-            max_workspace_size -- (default: None)
-                    set maximal workspace memory usage to <mem>
-                    <mem> stands for byte-wise allocation
-                    <mem>k stands for kilobyte-wise allocation
-                    <mem>m stands for megabyte-wise allocation
+
+        - ``max_workspace_size`` -- (default: ``None``)
+          set maximal workspace memory usage to <mem>
+          <mem> stands for byte-wise allocation
+          <mem>k stands for kilobyte-wise allocation
+          <mem>m stands for megabyte-wise allocation
         """
         cmd = "kash3 -b -c -d  "
         if max_workspace_size is not None:
@@ -527,12 +528,7 @@ class Kash(Expect):
         return 'quit;'
 
     def _start(self):
-        try:
-            Expect._start(self)
-        except RuntimeError:
-            # TODO: replace this error with something more accurate.
-            from sage.misc.package import PackageNotFoundError
-            raise PackageNotFoundError("kash")
+        Expect._start(self)
         # Turn off the annoying timer.
         self.eval('Time(false);')
 
@@ -546,14 +542,12 @@ class Kash(Expect):
 
         INPUT:
 
+        - ``s`` -- string containing Kash code
 
-        -  ``s`` - string containing Kash code.
+        - ``newlines`` -- boolean (default: ``True``); if ``False``,
+          remove all backslash-newlines inserted by the Kash output formatter
 
-        -  ``newlines`` - bool (default: True); if False,
-           remove all backslash-newlines inserted by the Kash output
-           formatter.
-
-        -  ``strip`` - ignored
+        - ``strip`` -- ignored
         """
         x = str(x)
         x = x.rstrip()
@@ -768,7 +762,6 @@ class KashElement(ExpectElement):
             sage541.1^2 + sage541.1
             sage: ka.sage({kR.1: x})                    # optional -- kash
             x^2 + x
-
         """
 
         string = self._sage_repr()
@@ -796,7 +789,7 @@ class KashDocumentation(list):
 
 def is_KashElement(x):
     """
-    Returns True if ``x`` is of type :class:`KashElement`.
+    Return ``True`` if ``x`` is of type :class:`KashElement`.
 
     EXAMPLES::
 

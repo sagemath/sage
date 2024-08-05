@@ -17,13 +17,11 @@ def theta2_qexp(prec=10, var='q', K=ZZ, sparse=False):
 
     INPUT:
 
-    - prec -- integer; the absolute precision of the output
-    - var -- (default: 'q') variable name
-    - K -- (default: ZZ) base ring of answer
+    - ``prec`` -- integer; the absolute precision of the output
+    - ``var`` -- (default: ``'q'``) variable name
+    - ``K`` -- (default: ZZ) base ring of answer
 
-    OUTPUT:
-
-    a power series over K
+    OUTPUT: a power series over K
 
     EXAMPLES::
 
@@ -67,13 +65,11 @@ def theta_qexp(prec=10, var='q', K=ZZ, sparse=False):
 
     INPUT:
 
-    - prec -- integer; the absolute precision of the output
-    - var -- (default: 'q') variable name
-    - K -- (default: ZZ) base ring of answer
+    - ``prec`` -- integer; the absolute precision of the output
+    - ``var`` -- (default: ``'q'``) variable name
+    - ``K`` -- (default: ZZ) base ring of answer
 
-    OUTPUT:
-
-    a power series over K
+    OUTPUT: a power series over K
 
     EXAMPLES::
 
@@ -91,7 +87,6 @@ def theta_qexp(prec=10, var='q', K=ZZ, sparse=False):
         1 + 2*q + 2*q^4 + 2*q^9 + 2*q^16 + O(q^20)
         sage: parent(f)
         Sparse Power Series Ring in q over Integer Ring
-
     """
     prec = Integer(prec)
     if prec <= 0:

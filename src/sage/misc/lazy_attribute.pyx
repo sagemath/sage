@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Lazy attributes
 
@@ -35,7 +36,6 @@ cdef class _lazy_attribute():
         Traceback (most recent call last):
         ...
         NotImplementedError: Only instantiate wrapper python class
-
     """
 
     cdef public f
@@ -67,7 +67,7 @@ cdef class _lazy_attribute():
             sage: Parent.element_class
             <sage.misc.lazy_attribute.lazy_attribute object at 0x...>
             sage: Parent.element_class.__doc__[91:147]
-            'The (default) class for the elements of this parent\n\n   '
+            'The (default) class for the elements of this parent.\n\n   '
             sage: Parent.element_class.__name__
             'element_class'
             sage: Parent.element_class.__module__
@@ -87,7 +87,7 @@ cdef class _lazy_attribute():
             sage: src[0]
             'def banner():\n'
             sage: lines
-            88
+            87
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
@@ -589,7 +589,7 @@ class lazy_class_attribute(lazy_attribute):
     """
     def __get__(self, _, cls):
         """
-        Implements the attribute access protocol.
+        Implement the attribute access protocol.
 
         EXAMPLES::
 

@@ -44,17 +44,16 @@ Test pickling/unpickling::
     sage: u = vector(SR, [sin(x^2)], sparse=True)
     sage: loads(dumps(u)) == u
     True
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Joris Vankerschaver (jv@caltech.edu)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.modules import free_module_element
 from sage.symbolic.expression import Expression
@@ -62,7 +61,7 @@ from sage.symbolic.expression import Expression
 
 def apply_map(phi):
     """
-    Returns a function that applies phi to its argument.
+    Return a function that applies ``phi`` to its argument.
 
     EXAMPLES::
 
@@ -71,7 +70,6 @@ def apply_map(phi):
         sage: f = apply_map(lambda x: x+1)
         sage: f(v)
         (2, 3, 4)
-
     """
     def apply(self, *args, **kwds):
         """

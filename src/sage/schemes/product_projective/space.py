@@ -63,20 +63,25 @@ from sage.schemes.product_projective.subscheme import AlgebraicScheme_subscheme_
 
 def is_ProductProjectiveSpaces(x):
     r"""
-    Return True if ``x`` is a product of projective spaces.
+    Return ``True`` if ``x`` is a product of projective spaces.
 
     This is an ambient space defined by `\mathbb{P}^n_R \times \cdots \times \mathbb{P}^m_R`,
     where `R` is a ring and `n,\ldots, m\geq 0` are integers.
 
-    OUTPUT: Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
         sage: is_ProductProjectiveSpaces(ProjectiveSpace(5, names='x'))
+        doctest:warning...
+        DeprecationWarning: The function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: is_ProductProjectiveSpaces(ProductProjectiveSpaces([1, 2, 3], ZZ, 'x'))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead.")
     return isinstance(x, ProductProjectiveSpaces_ring)
 
 
@@ -90,11 +95,11 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
 
     INPUT:
 
-    - ``n`` -- a list of integers or a list of projective spaces
+    - ``n`` -- list of integers or a list of projective spaces
 
     - ``R`` -- a ring
 
-    - ``names`` -- a string or list of strings
+    - ``names`` -- string or list of strings
 
     EXAMPLES::
 
@@ -200,11 +205,11 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        - ``N`` -- a list or tuple of positive integers
+        - ``N`` -- list or tuple of positive integers
 
         - ``R`` -- a ring
 
-        - ``names`` -- a tuple or list of strings; this must either be a single
+        - ``names`` -- tuple or list of strings; this must either be a single
           variable name or the complete list of variables
 
         EXAMPLES::
@@ -256,7 +261,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             Product of projective spaces P^1 x P^1 x P^1 over Integer Ring
         """
         return ''.join(['Product of projective spaces ',
-                        ' x '.join('P^{0}'.format(d) for d in self._dims),
+                        ' x '.join('P^{}'.format(d) for d in self._dims),
                         ' over ', str(self.base_ring())])
 
     def _repr_generic_point(self, v=None):
@@ -288,8 +293,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         EXAMPLES::
 
             sage: latex(ProductProjectiveSpaces([1, 2, 3], ZZ, 'x'))
-            {\mathbf P}_{\Bold{Z}}^1 \times {\mathbf P}_{\Bold{Z}}^2 \times {\mathbf
-            P}_{\Bold{Z}}^3
+            {\mathbf P}_{\Bold{Z}}^{1} \times {\mathbf P}_{\Bold{Z}}^{2} \times
+             {\mathbf P}_{\Bold{Z}}^{3}
         """
         return " \\times ".join(PS._latex_() for PS in self)
 
@@ -317,7 +322,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         OUTPUT: a projective space
 
@@ -337,7 +342,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         - ``right`` -- a product of projective spaces
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -359,7 +364,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         - ``other`` -- a product of projective spaces
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -390,9 +395,11 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         Return the Cartesian power of this space.
 
-        INPUT: ``m`` -- integer.
+        INPUT:
 
-        OUTPUT: product of projective spaces.
+        - ``m`` -- integer
+
+        OUTPUT: product of projective spaces
 
         EXAMPLES::
 
@@ -475,7 +482,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Return the components of this product of projective spaces.
 
-        OUTPUT: a list of projective spaces
+        OUTPUT: list of projective spaces
 
         EXAMPLES::
 
@@ -525,7 +532,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Return the relative dimension of the product of projective spaces.
 
-        OUTPUT: a list of positive integers
+        OUTPUT: list of positive integers
 
         EXAMPLES::
 
@@ -539,7 +546,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Return the absolute dimension of the product of projective spaces.
 
-        OUTPUT: a list of positive integers
+        OUTPUT: list of positive integers
 
         EXAMPLES::
 
@@ -558,9 +565,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
     def num_components(self):
         r"""
-        Returns the number of components of this space.
+        Return the number of components of this space.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -577,7 +584,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         This is the number of variables in the coordinate ring of the
         projective space.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -593,9 +600,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        - ``v`` -- a list or tuple
+        - ``v`` -- list or tuple
 
-        OUTPUT: a list of lists
+        OUTPUT: list of lists
 
         EXAMPLES::
 
@@ -623,8 +630,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         - ``polynomial`` -- a polynomial in the coordinate_ring
 
-        OUTPUT: A tuple of integers, one for each projective space component. A
-        :class:`ValueError` is raised if the polynomial is not multihomogeneous.
+        OUTPUT: a tuple of integers, one for each projective space component. A
+        :exc:`ValueError` is raised if the polynomial is not multihomogeneous.
 
         EXAMPLES::
 
@@ -694,17 +701,16 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
     def _validate(self, polynomials):
         r"""
         If ``polynomials`` is a tuple of valid polynomial functions on this space,
-        return ``polynomials``, otherwise raise a :class:`TypeError`.
+        return ``polynomials``, otherwise raise a :exc:`TypeError`.
 
         Since this is a product of projective spaces, the polynomials must be multi-homogeneous.
 
         INPUT:
 
-        - ``polynomials`` -- tuple of polynomials in the coordinate ring of this projective space.
+        - ``polynomials`` -- tuple of polynomials in the coordinate ring of
+          this projective space
 
-        OUTPUT:
-
-        - tuple of polynomials in the coordinate ring of this space.
+        OUTPUT: tuple of polynomials in the coordinate ring of this space
 
         EXAMPLES::
 
@@ -745,7 +751,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
     def _check_satisfies_equations(self, v):
         """
         Return ``True`` if ``v`` defines a point on the scheme this space;
-        raise a :class:`TypeError` otherwise.
+        raise a :exc:`TypeError` otherwise.
 
         EXAMPLES::
 
@@ -805,13 +811,11 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
     def _an_element_(self):
         r"""
-        Returns a (preferably typical) element of this space.
+        Return a (preferably typical) element of this space.
 
         This is used both for illustration and testing purposes.
 
-        OUTPUT:
-
-        A point in the this projective space.
+        OUTPUT: a point in the this projective space
 
         EXAMPLES::
 
@@ -829,11 +833,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        - ``X`` -- a list or tuple of equations
+        - ``X`` -- list or tuple of equations
 
-        OUTPUT:
-
-        :class:`AlgebraicScheme_subscheme_projective_cartesian_product`.
+        OUTPUT: :class:`AlgebraicScheme_subscheme_projective_cartesian_product`
 
         EXAMPLES::
 
@@ -865,15 +867,14 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
     def change_ring(self, R):
         r"""
-        Return a product of projective spaces over a ring ``R`` and otherwise the same as this projective space.
+        Return a product of projective spaces over a ring ``R`` and otherwise
+        the same as this projective space.
 
         INPUT:
 
         - ``R`` -- commutative ring or morphism
 
-        OUTPUT:
-
-        - Product of projective spaces over ``R``.
+        OUTPUT: product of projective spaces over ``R``
 
         .. NOTE::
 
@@ -892,14 +893,15 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
     def affine_patch(self, I, return_embedding=False):
         r"""
-        Return the `I^{th}` affine patch of this projective space product
+        Return the `I`-th affine patch of this projective space product
         where ``I`` is a multi-index.
 
         INPUT:
 
-        - ``I`` -- a list or tuple of positive integers.
+        - ``I`` -- list or tuple of positive integers
 
-        - ``return_embedding`` -- Boolean, if true the projective embedding is also returned.
+        - ``return_embedding`` -- boolean; if ``True`` the projective embedding
+          is also returned
 
         OUTPUT:
 
@@ -961,14 +963,14 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        -  ``PP`` -- (default: ``None``) ambient image projective space;
-            this is constructed if it is not given.
+        - ``PP`` -- (default: ``None``) ambient image projective space;
+            this is constructed if it is not given
 
-        - ``var`` -- string, variable name of the image projective space, default `u` (optional).
+        - ``var`` -- string (default: ``'u'``); variable name of the image
+          projective space
 
-        OUTPUT:
-
-        Hom -- from this space to the appropriate subscheme of projective space.
+        OUTPUT: Hom; from this space to the appropriate subscheme of projective
+        space
 
         .. TODO::
 
@@ -1112,13 +1114,13 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
 
     def points_of_bounded_height(self, **kwds):
         r"""
-        Returns an iterator of the points in this product of projective spaces with the absolute heights of the
-        components of at most the given bound.
+        Return an iterator of the points in this product of projective spaces
+        with the absolute heights of the components of at most the given bound.
 
-        Bound check is strict for the rational field. Requires the base field of this space to be a number field.
-        Uses the
-        Doyle-Krumm algorithm 4 (algorithm 5 for imaginary quadratic) for
-        computing algebraic numbers up to a given height [DK2013]_.
+        Bound check is strict for the rational field. Requires the base field
+        of this space to be a number field. Uses the Doyle-Krumm algorithm 4
+        (algorithm 5 for imaginary quadratic) for computing algebraic numbers
+        up to a given height [DK2013]_.
 
         The algorithm requires floating point arithmetic, so the user is
         allowed to specify the precision for such calculations.
@@ -1131,9 +1133,11 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
 
         - ``bound`` -- a real number
 
-        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+          algorithm-4
 
-        - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
+        - ``precision`` -- the precision to use for computing the elements of
+          bounded height of number fields
 
         OUTPUT: an iterator of points in this space
 
@@ -1197,8 +1201,8 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
         P = []
         for i in range(m):
             pt = next(iters[i])
-            for j in range(dim[i]):
-                P.append(pt[j]) # initial value of P
+            P.extend(pt[j] for j in range(dim[i]))
+            # initial value of P
         yield self(P)
 
         i = 0
@@ -1233,7 +1237,7 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
 
     def __iter__(self):
         r"""
-        Returns iterator over the elements of this product of projective spaces.
+        Return an iterator over the elements of this product of projective spaces.
 
         EXAMPLES::
 
@@ -1248,9 +1252,7 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
              (1 : 0 : 0 , 1 : 0)]
         """
         iters = [iter(T) for T in self._components]
-        L = []
-        for x in iters:
-            L.append(next(x))  # put at zero
+        L = [next(x) for x in iters]  # put at zero
         yield self(L)
         j = 0
         while j < self.num_components():

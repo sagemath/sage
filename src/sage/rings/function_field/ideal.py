@@ -77,7 +77,6 @@ AUTHORS:
 - Maarten Derickx (2011-09-14): fixed ideal_with_gens_over_base()
 
 - Kwankyu Lee (2017-04-30): added ideals for global function fields
-
 """
 
 # ****************************************************************************
@@ -446,7 +445,6 @@ class FunctionFieldIdeal(Element):
             sage: I = O.ideal(y)
             sage: I == I.factor().prod()
             True
-
         """
         return Factorization(self._factor(), cr=True)
 
@@ -456,14 +454,14 @@ class FunctionFieldIdeal(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: O = K.maximal_order()
             sage: I = O.ideal(x*(x + 1)^2/(x^2 + x + 1))
             sage: I.divisor()
             Place (x) + 2*Place (x + 1) - Place (x + z2) - Place (x + z2 + 1)
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x + 1)/(x^3 + 1))
             sage: I.divisor()
@@ -529,7 +527,7 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor_of_zeros()
             2*Place (1/x)
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: O = L.maximal_order()
@@ -566,7 +564,7 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor_of_poles()
             0
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: O = L.maximal_order()
@@ -701,9 +699,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         The formation of the module is compatible with the vector
         space corresponding to the function field.
 
-        OUTPUT:
-
-        - a module over the maximal order of the base field of the ideal
+        OUTPUT: a module over the maximal order of the base field of the ideal
 
         EXAMPLES::
 
@@ -968,7 +964,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
     def __hash__(self):
         """
-        Return the hash of this ideal
+        Return the hash of this ideal.
 
         EXAMPLES::
 

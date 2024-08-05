@@ -129,12 +129,10 @@ class JonesDatabase:
 
         INPUT:
 
-
-        -  ``path`` - (default works on William Stein install.)
-           path must be the path to Jones's Number_Fields directory
-           http://hobbes.la.asu.edu/Number_Fields These files should have
-           been downloaded using wget.
-
+        - ``path`` -- (default: works on William Stein install)
+          path must be the path to Jones's Number_Fields directory
+          (http://hobbes.la.asu.edu/Number_Fields); these files should have
+          been downloaded using wget
 
         EXAMPLES: This is how to create the database from scratch, assuming
         that the number fields are in the default directory above: From a
@@ -171,12 +169,12 @@ class JonesDatabase:
 
         INPUT:
 
-        -  ``S`` - list or set of primes, or a single prime
+        - ``S`` -- list or set of primes, or a single prime
 
-        -  ``d`` - None (default, in which case all fields of degree <= 6 are returned)
-           or a positive integer giving the degree of the number fields returned.
+        - ``d`` -- ``None`` (default, in which case all fields of degree <= 6 are returned)
+          or a positive integer giving the degree of the number fields returned
 
-        -  ``var`` - the name used for the generator of the number fields (default 'a').
+        - ``var`` -- the name used for the generator of the number fields (default: ``'a'``)
 
         EXAMPLES::
 
@@ -211,9 +209,9 @@ class JonesDatabase:
 
         INPUT:
 
-        -  ``S`` - list or set of primes, or a single prime
+        - ``S`` -- list or set of primes, or a single prime
 
-        -  ``var`` - the name used for the generator of the number fields (default 'a').
+        - ``var`` -- the name used for the generator of the number fields (default: ``'a'``)
 
         EXAMPLES::
 
@@ -248,12 +246,12 @@ class JonesDatabase:
 
         INPUT:
 
-        -  ``S`` - list or set of primes
+        - ``S`` -- list or set of primes
 
-        -  ``d`` - None (default, in which case all fields of degree <= 6 are returned)
-           or a positive integer giving the degree of the number fields returned.
+        - ``d`` -- ``None`` (default, in which case all fields of degree <= 6 are returned)
+          or a positive integer giving the degree of the number fields returned
 
-        -  ``var`` - the name used for the generator of the number fields (default 'a').
+        - ``var`` -- the name used for the generator of the number fields (default: ``'a'``)
 
         EXAMPLES::
 

@@ -145,7 +145,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             for j in range(ma.ncols):
                 self.set_unsafe(i, j, next(it))
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object value) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object value):
         """
         Set the (i,j) entry to value without any bounds checking,
         mutability checking, etc.
@@ -169,7 +169,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
                         self._python_dtype(value))
         #TODO: Throw an error if status == -1
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         """
         Get the (i,j) entry without any bounds checking, etc.
         """
@@ -177,15 +177,14 @@ cdef class Matrix_numpy_dense(Matrix_dense):
         return self._sage_dtype(cnumpy.PyArray_GETITEM(self._matrix_numpy,
                                                 cnumpy.PyArray_GETPTR2(self._matrix_numpy, i, j)))
 
-    cdef Matrix_numpy_dense _new(self, int nrows=-1, int ncols=-1) noexcept:
+    cdef Matrix_numpy_dense _new(self, int nrows=-1, int ncols=-1):
         """
         Return a new uninitialized matrix with same parent as ``self``.
 
         INPUT:
 
-        - nrows -- (default self._nrows) number of rows in returned matrix
-        - ncols -- (default self._ncols) number of columns in returned matrix
-
+        - ``nrows`` -- (default: ``self._nrows``) number of rows in returned matrix
+        - ``ncols`` -- (default: ``self._ncols``) number of columns in returned matrix
         """
         cdef Matrix_numpy_dense m
         if nrows == -1 and ncols == -1:
@@ -240,7 +239,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
     def transpose(self):
         """
-        Return the transpose of this matrix, without changing self.
+        Return the transpose of this matrix, without changing ``self``.
 
         EXAMPLES::
 
@@ -267,7 +266,6 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             []
             sage: m.transpose().parent()
             Full MatrixSpace of 3 by 0 dense matrices over Real Double Field
-
         """
         if self._nrows == 0 or self._ncols == 0:
             return self.new_matrix(self._ncols, self._nrows)
@@ -336,7 +334,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - ``tol`` -  the largest value of the absolute value of the
+        - ``tol`` -- the largest value of the absolute value of the
           difference between two matrix entries for which they will
           still be considered equal.
 
@@ -374,7 +372,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - ``dtype`` - The desired data-type for the array. If not given,
+        - ``dtype`` -- the desired data-type for the array. If not given,
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
 

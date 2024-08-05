@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Display Preferences
 
@@ -83,15 +83,15 @@ class Property(property):
 
     def __init__(self, name, allowed_values, doc=None):
         r"""
-        Preference item
+        Preference item.
 
         INPUT:
 
-        - ``name`` -- string. The name of the property.
+        - ``name`` -- string; the name of the property
 
-        - ``allowed_values`` -- list/tuple/iterable of allowed values.
+        - ``allowed_values`` -- list/tuple/iterable of allowed values
 
-        - ``doc`` -- string (optional). The docstring of the property.
+        - ``doc`` -- string (optional); the docstring of the property
 
         EXAMPLES::
 
@@ -115,12 +115,12 @@ class Property(property):
 
         INPUT:
 
-        - ``doc`` -- the title line of the documentation.
+        - ``doc`` -- the title line of the documentation
 
         OUTPUT:
 
-        String. The docstring with auto-generated documentation about
-        the allowed values added.
+        string; the docstring with auto-generated documentation about
+        the allowed values added
 
         EXAMPLES::
 
@@ -142,19 +142,16 @@ class Property(property):
         doc = dedent(doc)
         doc += '\n\n'
         doc += 'Allowed values:\n\n'
-        values_doc = []
-        values_doc.append('* ``None`` (default): no preference')
-        for value in self.allowed_values:
-            values_doc.append('* {0}'.format(repr(value)))
+        values_doc = ['* ``None`` (default): no preference']
+        values_doc.extend('* {0}'.format(repr(value))
+                          for value in self.allowed_values)
         return doc + '\n\n'.join(values_doc)
 
     def __repr__(self):
         """
-        Return a string representation
+        Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -167,16 +164,14 @@ class Property(property):
 
     def getter(self, prefs):
         """
-        Get the current value of the property
+        Get the current value of the property.
 
         INPUT:
 
         - ``prefs`` -- the :class:`PreferencesABC` instance that the
-          property is bound to.
+          property is bound to
 
-        OUTPUT:
-
-        One of the allowed values or ``None`` if not set.
+        OUTPUT: one of the allowed values or ``None`` if not set
 
         EXAMPLES::
 
@@ -196,12 +191,12 @@ class Property(property):
 
     def setter(self, prefs, value):
         """
-        Get the current value of the property
+        Get the current value of the property.
 
         INPUT:
 
         - ``prefs`` -- the :class:`PreferencesABC` instance that the
-          property is bound to.
+          property is bound to
 
         - ``value`` -- anything. The new value of the
           property. Setting a property to ``None`` is equivalent to
@@ -209,7 +204,7 @@ class Property(property):
 
         OUTPUT:
 
-        This method does not return anything. A ``ValueError`` is
+        This method does not return anything. A :exc:`ValueError` is
         raised if the given ``value`` is not one of the allowed
         values.
 
@@ -238,12 +233,12 @@ class Property(property):
 
     def deleter(self, prefs):
         """
-        Delete the current value of the property
+        Delete the current value of the property.
 
         INPUT:
 
         - ``prefs`` -- the :class:`PreferencesABC` instance that the
-          property is bound to.
+          property is bound to
 
         EXAMPLES::
 
@@ -268,7 +263,7 @@ class PreferencesABC(SageObject):
 
     def __init__(self, *args, **kwds):
         """
-        Preferences for displaying graphics
+        Preferences for displaying graphics.
 
         These can be preferences expressed by the user or by the
         display backend. They are specified as keyword arguments.
@@ -280,8 +275,8 @@ class PreferencesABC(SageObject):
           to right, that is, later parents override values from
           earlier parents.
 
-        - ``**kwds`` -- keyword arguments. Will be used to initialize
-          properties, and override inherited values if necessary.
+        - ``**kwds`` -- keyword arguments; will be used to initialize
+          properties, and override inherited values if necessary
 
         EXAMPLES::
 
@@ -332,11 +327,11 @@ class PreferencesABC(SageObject):
 
         INPUT:
 
-        - ``name`` -- the name of the option.
+        - ``name`` -- the name of the option
 
-        - ``values`` -- the allowed values.
+        - ``values`` -- the allowed values
 
-        - ``doc`` -- docstring.
+        - ``doc`` -- docstring
 
         EXAMPLES::
 
@@ -355,12 +350,11 @@ class PreferencesABC(SageObject):
 
     def available_options(self):
         """
-        Return the available options
+        Return the available options.
 
         OUTPUT:
 
-        Tuple of the preference items as instances of
-        :class:`Property`.
+        tuple of the preference items as instances of :class:`Property`
 
         EXAMPLES::
 
@@ -369,18 +363,16 @@ class PreferencesABC(SageObject):
             (align_latex, graphics, supplemental_plot, text)
         """
         options = []
-        for key, value in self.__class__.__dict__.items():
+        for value in self.__class__.__dict__.values():
             if isinstance(value, Property):
                 options.append(value)
         return tuple(sorted(options, key=str))
 
     def _repr_(self):
         r"""
-        Return a string representation
+        Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
