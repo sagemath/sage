@@ -41,7 +41,7 @@ class SchemePoint(Element):
 
     def scheme(self):
         """
-        Return the scheme on which self is a point.
+        Return the scheme on which ``self`` is a point.
 
         EXAMPLES::
 
@@ -170,8 +170,8 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
              the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         R = S.coordinate_ring()
-        from sage.rings.ideal import is_Ideal
-        if not is_Ideal(P):
+        from sage.rings.ideal import Ideal_generic
+        if not isinstance(P, Ideal_generic):
             P = R.ideal(P)
         elif P.ring() is not R:
             P = R.ideal(P.gens())

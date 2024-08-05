@@ -17,7 +17,7 @@ from sage.rings.integer_ring import IntegerRing
 
 class Example(UniqueRepresentation, Parent):
     r"""
-    An example of a finite enumerated set: `\{1,2,3\}`
+    An example of a finite enumerated set: `\{1,2,3\}`.
 
     This class provides a minimal implementation of a finite enumerated set.
 
@@ -107,7 +107,6 @@ class Example(UniqueRepresentation, Parent):
 
             sage: list(FiniteEnumeratedSets().example()) # indirect doctest
             [1, 2, 3]
-
         """
         return iter(self._set)
 
@@ -131,7 +130,7 @@ class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     def ambient(self):
         """
-        Returns the ambient space for ``self``, as per
+        Return the ambient space for ``self``, as per
         :meth:`Sets.Subquotients.ParentMethods.ambient()
         <sage.categories.sets_cat.Sets.Subquotients.ParentMethods.ambient>`.
 

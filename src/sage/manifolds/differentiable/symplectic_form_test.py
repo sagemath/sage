@@ -56,11 +56,11 @@ class TestCoherenceOfFormulas:
     We check it for the examples of `\R^2` and `S^2`, which should be enough.
     """
 
-    @pytest.fixture(params=["R2", "S2"])
+    @pytest.fixture(params=['R2', 'S2'])
     def M(self, request: FixtureRequest):
-        if request.param == "R2":
-            return StandardSymplecticSpace(2, "R2", symplectic_name="omega")
-        elif request.param == "S2":
+        if request.param == 'R2':
+            return StandardSymplecticSpace(2, 'R2', symplectic_name='omega')
+        elif request.param == 'S2':
             # Init stereographic coordinates to get a complete atlas
             return Sphere(2, coordinates='stereographic')
 
@@ -166,7 +166,7 @@ def generic_scalar_field(M: DifferentiableManifold, name: str) -> DiffScalarFiel
 class TestR2VectorSpace:
     @pytest.fixture
     def M(self):
-        return StandardSymplecticSpace(2, "R2", symplectic_name="omega")
+        return StandardSymplecticSpace(2, 'R2', symplectic_name='omega')
 
     @pytest.fixture
     def omega(self, M):
@@ -187,7 +187,7 @@ class TestR2VectorSpace:
         assert str(XH.display()) == r"XH = d(H)/dp e_q - d(H)/dq e_p"
 
     def test_flat(self, M: StandardSymplecticSpace, omega: SymplecticForm):
-        X = M.vector_field(1, 2, name="X")
+        X = M.vector_field(1, 2, name='X')
         assert str(X.display()) == r"X = e_q + 2 e_p"
         assert str(omega.flat(X).display()) == r"X_flat = 2 dq - dp"
 

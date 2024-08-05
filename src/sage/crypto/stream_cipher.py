@@ -21,13 +21,11 @@ class LFSRCipher(SymmetricKeyCipher):
 
         INPUT:
 
+        - ``parent`` -- parent
 
-        -  ``parent`` -- parent
+        - ``poly`` -- connection polynomial
 
-        -  ``poly`` -- connection polynomial
-
-        -  ``IS`` -- initial state
-
+        - ``IS`` -- initial state
 
         EXAMPLES::
 
@@ -64,17 +62,15 @@ class LFSRCipher(SymmetricKeyCipher):
         """
         SymmetricKeyCipher.__init__(self, parent, key=(poly, IS))
 
-    def __call__(self, M, mode="ECB"):
+    def __call__(self, M, mode='ECB'):
         r"""
         Generate key stream from the binary string ``M``.
 
         INPUT:
 
+        - ``M`` -- a StringMonoidElement
 
-        -  ``M`` -- a StringMonoidElement
-
-        -  ``mode`` -- ignored (default: 'ECB')
-
+        - ``mode`` -- ignored (default: ``'ECB'``)
 
         EXAMPLES::
 
@@ -154,13 +150,11 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
 
         INPUT:
 
+        - ``parent`` -- parent
 
-        -  ``parent`` -- parent
+        - ``poly`` -- connection polynomial
 
-        -  ``poly`` -- connection polynomial
-
-        -  ``IS`` -- initial state
-
+        - ``IS`` -- initial state
 
         EXAMPLES::
 
@@ -222,15 +216,13 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         """
         return self.key()[1]
 
-    def __call__(self, M, mode="ECB"):
+    def __call__(self, M, mode='ECB'):
         r"""
         INPUT:
 
+        - ``M`` -- a StringMonoidElement
 
-        -  ``M`` -- a StringMonoidElement
-
-        -  ``mode`` -- ignored (default: 'ECB')
-
+        - ``mode`` -- ignored (default: ``'ECB'``)
 
         EXAMPLES::
 
