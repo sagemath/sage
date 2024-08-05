@@ -8059,10 +8059,10 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.Wheel(2)
-            sage: A = M.chow_ring(); A
+            sage: A = M.chow_ring(R=ZZ, augmented=False); A
             Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements
              with 5 bases over Integer Ring
-            sage: A.gens()                                                              # needs sage.libs.singular
+            sage: A._gens_constructor()                                                              # needs sage.libs.singular
             (A23, A23, A23)
             sage: A23 = A.gen(0)                                                        # needs sage.libs.singular
             sage: A23*A23                                                               # needs sage.libs.singular
@@ -8071,28 +8071,17 @@ cdef class Matroid(SageObject):
         We construct a more interesting example using the Fano matroid::
 
             sage: M = matroids.catalog.Fano()
-            sage: A = M.chow_ring(QQ); A
+            sage: A = M.chow_ring(QQ, augmented=False); A
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
-             type (3, 0) over Rational Field
+             type (3, 0) over Rational Field.
 
-        Next we get the non-trivial generators and do some computations::
+        The augmented Chow ring can also be instantiated with the
+        Feitchner-Yuzvinsky and atom-free presentation::
 
-            sage: # needs sage.libs.singular sage.rings.finite_rings
-            sage: G = A.gens()[6:]
-            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G
-            sage: Ag * Ag
-            2*Adef^2
-            sage: Ag * Abeg
-            -Adef^2
-            sage: matrix([[x * y for x in G] for y in G])
-            [2*Adef^2        0        0  -Adef^2        0  -Adef^2  -Adef^2        0]
-            [       0   Adef^2        0        0        0        0        0        0]
-            [       0        0   Adef^2        0        0        0        0        0]
-            [ -Adef^2        0        0   Adef^2        0        0        0        0]
-            [       0        0        0        0   Adef^2        0        0        0]
-            [ -Adef^2        0        0        0        0   Adef^2        0        0]
-            [ -Adef^2        0        0        0        0        0   Adef^2        0]
-            [       0        0        0        0        0        0        0   Adef^2]
+            sage: M = matroids.Wheel(3)
+            sage: ch = M.chow_ring(QQ, augmented=True, presentation='fy')
+            Augmented Chow ring of Wheel(3): Regular matroid of rank 3 on 
+            6 elements with 16 bases of Feitchner-Yuzvinsky presentation
 
         REFERENCES:
 
