@@ -78,13 +78,9 @@ mailing list](https://groups.google.com/group/sage-devel).
 [Windows] Preparing the Platform
 --------------------------------
 
-The recommended way to run Sage on Windows is [using Visual Studio Code with
-SageMath devcontainers](https://doc.sagemath.org/html/en/installation/index.html#windows)
-(Docker with WSL 2 backend).
-
-Alternatively, you can install Sage manually using the Windows Subsystem for
-Linux (WSL).
-Follow the [official WSL setup guide](https://docs.microsoft.com/en-us/windows/wsl/faq)
+The preferred way to run Sage on Windows is using Windows Subsystem for
+Linux (WSL). Follow the
+[official WSL setup guide](https://docs.microsoft.com/en-us/windows/wsl/faq)
 to install Ubuntu (or another Linux distribution).
 Make sure you allocate WSL sufficient RAM; 5GB is known to work, while
 2GB might be not enough for building Sage from source.
