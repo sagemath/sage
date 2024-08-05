@@ -1,6 +1,7 @@
 from itertools import chain
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.monoids import Monoids
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
@@ -9,12 +10,12 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedFreeAbelianMonoidElement
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedFreeAbelianMonoidElement, IndexedMonoid
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import Element, parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 
 GAP_FAIL = libgap.eval('fail')
 
@@ -57,14 +58,9 @@ class ElementCache():
             for other_elm in lookup:
                 if elm == other_elm:
                     return other_elm
-            elm = self._canonical_label(elm)
             lookup.append(elm)
         else:
-            elm = self._canonical_label(elm)
             self._cache[key] = [elm]
-        return elm
-
-    def _canonical_label(self, elm):
         return elm
 
 
@@ -75,23 +71,17 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
         """
         Element.__init__(self, parent)
         self._C = C
-        self._smallgen = C.gens_small()
-
-    @cached_method
-    def _element_key(self):
-        r"""
-        Return the key for this element.
-        """
-        return self._C.degree(), self._C.order()
+        self._sorted_orbits = tuple(sorted(len(orbit) for orbit in C.orbits()))
+        self._order = C.order()
 
     def __hash__(self):
-        return hash(self._element_key)
+        return hash(self._C)
 
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
         """
-        return f"{self._smallgen}"
+        return f"{self._C.gens_small()}"
 
     def __eq__(self, other):
         r"""
@@ -101,13 +91,12 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
         and order and are conjugate within `S_n`.
         """
         return (isinstance(other, ConjugacyClassOfDirectlyIndecomposableSubgroups)
-                and self._element_key() == other._element_key()
-                and _is_conjugate(SymmetricGroup(self._C.degree()),
-                                  self._C, other._C))
+                and self._C.degree() == other._C.degree()
+                and  _is_conjugate(SymmetricGroup(self._C.degree()),
+                                   self._C, other._C))
 
 
-class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation,
-                                                        Parent, ElementCache):
+class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Parent):
     def __init__(self):
         r"""
         Conjugacy classes of directly indecomposable subgroups.
@@ -119,21 +108,6 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation,
         r"""
         ``x`` is an element of ``self`` or a group `H` such that
         `H` is directly indecomposable.
-        """
-        if parent(x) == self:
-            return x
-        if isinstance(x, PermutationGroup_generic):
-            if len(x.disjoint_direct_product_decomposition()) > 1:
-                raise ValueError(f"{x} is not directly indecomposable")
-            elm = self.element_class(self, x)
-            return self._cache_get(elm)
-        raise ValueError(f"unable to convert {x} to {self}")
-
-    def _repr_(self):
-        return "Infinite set of conjugacy classes of directly indecomposable subgroups"
-
-    def _canonical_label(self, elm):
-        """
 
         EXAMPLES::
 
@@ -142,11 +116,25 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation,
             sage: A(G)
             {[(5,6)(7,8), (1,2)(5,7)(6,8), (1,2)(3,4)]: (8,)}
         """
-        orbits = sorted(elm._C.orbits(), key=len)
-        pi = PermutationGroupElement([e for o in orbits for e in o])
-        pi_inv = pi.inverse()
-        gens = [pi * g * pi_inv for g in elm._smallgen]
-        return self.element_class(self, PermutationGroup(gens))
+        if parent(x) == self:
+            return x
+        if isinstance(x, PermutationGroup_generic):
+            if len(x.disjoint_direct_product_decomposition()) > 1:
+                raise ValueError(f"{x} is not directly indecomposable")
+            pi = self.canonical_label(x)
+            return self.element_class(self, PermutationGroup(gap_group=libgap.ConjugateGroup(x, pi)))
+        raise ValueError(f"unable to convert {x} to {self}")
+
+    def _repr_(self):
+        return "Infinite set of conjugacy classes of directly indecomposable subgroups"
+
+    @cached_method
+    def canonical_label(self, H):
+        r"""
+        Return the permutation group element `g` such that
+        `g^{-1} H g` is a canonical representative.
+        """
+        return PermutationGroupElement([e for o in sorted([sorted(orbit) for orbit in H.orbits()], key=len) for e in o], check=False)
 
     Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
 
@@ -177,18 +165,17 @@ class AtomicSpeciesElement(Element):
         self._mc = tuple(L)
         self._tc = sum(self._mc)
 
-    @cached_method
     def _element_key(self):
         r"""
         Return a lookup key for ``self``.
         """
-        return self._dis._C, self._mc
+        return self._mc, self._dis._order, self._dis._sorted_orbits
 
     def __hash__(self):
         r"""
         Return the hash of the atomic species.
         """
-        return hash(self._element_key())
+        return hash((self._mc, self._dis))
 
     def __eq__(self, other):
         r"""
@@ -197,8 +184,7 @@ class AtomicSpeciesElement(Element):
         """
         if parent(self) != parent(other):
             return False
-        # Here it is enough to compare mc
-        return self._mc == other._mc and self._dis == self._dis
+        return self._mc == other._mc and self._dis == other._dis
 
     def _repr_(self):
         r"""
@@ -245,10 +231,12 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         if not set(M.values()).issubset(range(1, self._k + 1)):
             raise ValueError(f"Values of {M} must be in the range [1, {self._k}]")
         # normalize domain to {1..n}
+        if sorted(M.keys()) == list(range(1, H.degree() + 1)):
+            return H, M
         mapping = {v: i for i, v in enumerate(H.domain(), 1)}
         normalized_gens = [[tuple(mapping[x] for x in cyc)
                             for cyc in gen.cycle_tuples()]
-                           for gen in H.gens_small()]
+                           for gen in H.gens()]
         P = PermutationGroup(gens=normalized_gens)
         # Fix for SymmetricGroup(0)
         if H.degree() == 0:
@@ -290,8 +278,10 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             raise ValueError(f"{x} must be a tuple for multivariate species")
         H_norm, dompart = self._normalize(H, M)
         dis_elm = self._dis_ctor(H_norm)
-        perm = libgap.RepresentativeAction(SymmetricGroup(H_norm.degree()), H_norm, dis_elm._C)
-        dompart_norm = {ZZ(k ** perm): v for k, v in dompart.items()}
+        # Python sorts are stable so we can use sorted twice without worrying about a change
+        # in the output.
+        pi = self._dis_ctor.canonical_label(H_norm)
+        dompart_norm = {pi(k): v for k, v in dompart.items()}
         elm = self.element_class(self, dis_elm, dompart_norm)
         return self._cache_get(elm)
 
@@ -305,16 +295,12 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         r"""
         Return if ``x`` is in ``self``.
         """
-        # This needs to be improved.
         if parent(x) == self:
             return True
         H, M = x
-        try:
-            H_norm, _ = self._normalize(H, M)
-            self._dis_ctor(H_norm)
-        except ValueError:
-            return False
-        return True
+        return (set(H.domain()) == set(M.keys())
+                and set(M.values()).issubset(range(1, self._k + 1))
+                and len(H.disjoint_direct_product_decomposition()) == 1)
 
     def _repr_(self):
         r"""
@@ -333,22 +319,123 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
     Element = AtomicSpeciesElement
 
-class MolecularSpecies(IndexedFreeAbelianMonoid):
+class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
+    @staticmethod
+    def __classcall__(cls, indices, prefix, **kwds):
+        return super(IndexedMonoid, cls).__classcall__(cls, indices, prefix, **kwds)
+
+    def __init__(self, indices, prefix, **kwds):
+        category = Monoids() & InfiniteEnumeratedSets()
+        IndexedFreeAbelianMonoid.__init__(self, indices, prefix=prefix, category=category, **kwds)
+        ElementCache.__init__(self)
+
+    def _element_constructor_(self, x=None):
+        elm = self._cache_get(super()._element_constructor_(x))
+        if elm._group is None:
+            elm._group_constructor()
+        return elm
+
+    @cached_method
+    def one(self):
+        elm = super().one()
+        elm._group = SymmetricGroup(0)
+        return elm
+
+    def gen(self, x):
+        elm = self._cache_get(super().gen(x))
+        if elm._group is None:
+            elm._group_constructor()
+        return elm
+
     class Element(IndexedFreeAbelianMonoidElement):
-        @lazy_attribute
-        def _group(self):
-            def gmul(H, K):
-                n, m = H.degree(), K.degree()
-                gens = H.gens_small()
-                for gen in K.gens_small():
-                    shift = libgap.MappingPermListList(K.domain().list(), [n + k for k in K.domain()])
-                    gens.append(shift ** -1 * gen * shift)
-                return PermutationGroup(gens, domain=range(1, n + m + 1))
-            G = SymmetricGroup(0)
+        def __init__(self, F, x):
+            super().__init__(F, x)
+            self._group = None
+
+        def _group_constructor(self):
+            r"""
+            Construct the group of ``self``.
+            """
+            if self._group is None:
+                self._group = SymmetricGroup(0)
             for A, p in self._monomial.items():
-                for _ in range(p):
-                    G = gmul(G, A._dis._C)
-            return G
+                curgrp = self._groupexp(A._dis._C, p)
+                self._group = self._groupmul(self._group, curgrp)
+
+        def _groupmul(self, G1, G2):
+            r"""
+            Multiply two groups.
+            """
+            # Would be great to be able to cache the intermediate results
+            if G1.degree() + G2.degree() == 0:
+                return SymmetricGroup(0)
+            if G1.degree() == 0:
+                return G2
+            if G2.degree() == 0:
+                return G1
+            gens1 = G1.gens()
+            if len(gens1) > 50:
+                gens1 = G1.gens_small()
+            gens2 = G2.gens()
+            if len(gens2) > 50:
+                gens1 = G2.gens_small()
+            # always loop over the smaller gens list
+            if len(gens1) < len(gens2):
+                gens1, gens2 = gens2, gens1
+                G1, G2 = G2, G1
+            gens = list(gens1)
+            for gen in gens2:
+                gens.append([tuple(G1.degree() + k for k in cyc) for cyc in gen.cycle_tuples()])
+            return PermutationGroup(gens, domain=range(1, G1.degree() + G2.degree() + 1))
+
+        def _groupexp(self, G, n):
+            r"""
+            Exponentiate a group.
+            """
+            grp = SymmetricGroup(0)
+            while n > 0:
+                if n % 2 == 1:
+                    grp = self._groupmul(grp, G)
+                G = self._groupmul(G, G)
+                n //= 2
+            return grp
+
+        # TODO: didn't override __floordiv__
+        def _mul_(self, other):
+            res = super()._mul_(other)
+            elm = self.parent()._cache_get(res)
+            if self._group is None:
+                self._group = SymmetricGroup(0)
+            if elm._group is None:
+                # Multiply two groups
+                elm._group = elm._groupmul(self._group, other._group)
+            return elm
+
+        def __pow__(self, n):
+            res = super().__pow__(n)
+            elm = self.parent()._cache_get(res)
+            if self._group is None:
+                self._group = SymmetricGroup(0)
+            if elm._group is None:
+                # Exponentiate the group
+                elm._group = elm._groupexp(self._group, n)
+            return elm
+
+        def _element_key(self):
+            return self
+
+        def grade(self):
+            r"""
+            Return the grade of ``self``.
+            """
+            return sum(A._tc * p for A, p in self._monomial.items())
+
+        def domain(self):
+            r"""
+            Return the domain of ``self``.
+            """
+            return FiniteEnumeratedSet(range(1, self.grade() + 1))
+
 
 class PolynomialSpecies(CombinatorialFreeModule):
     def __init__(self, k, base_ring=ZZ):
@@ -374,13 +461,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
         self._k = k
         self._atomic_basis = basis_keys.indices()
 
+    def degree_on_basis(self, m):
+        r"""
+        Return the degree of the molecular species indexed by ``m``.
+        """
+        return m.grade()
+
     def _project(self, H, f, part):
         r"""
         Project `H` onto a subset ``part`` of its domain.
 
         ``part`` must be a union of cycles, but this is not checked.
         """
-        restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part] for gen in H.gens_small()]
+        restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part] for gen in H.gens()]
         mapping = {p: f[p] for p in part}
         return PermutationGroup(gens=restricted_gens, domain=part), mapping
 
@@ -495,14 +588,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
         """
         return self._from_dict({H * K: 1})
 
-    def degree_on_basis(self, m):
-        r"""
-        Return the degree of the basis element indexed by ``m``
-        in ``self``.
-        """
-        d = m.dict()
-        return sum(at._tc * p for at, p in d.items())
-
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
@@ -519,15 +604,12 @@ class PolynomialSpecies(CombinatorialFreeModule):
         return f"Ring of {self._k}-variate virtual species"
 
     class Element(CombinatorialFreeModule.Element):
-        @cached_method
         def is_virtual(self):
             return any(x < 0 for x in self.coefficients(sort=False))
 
-        @cached_method
         def is_molecular(self):
             return len(self.coefficients(sort=False)) == 1 and self.coefficients(sort=False)[0] == 1
 
-        @cached_method
         def is_atomic(self):
             return self.is_molecular() and len(self.support()[0]) == 1
 
@@ -547,15 +629,13 @@ class PolynomialSpecies(CombinatorialFreeModule):
             Gm = args[0].monomial_coefficients()
             for M, fM in self.monomial_coefficients().items():
                 term = 0
-                # maybe move degree_on_basis to MolecularSpecies (and it will become "grade")
-                n = self.parent().degree_on_basis(M)
-                powvecs = IntegerVectors(n, len(Gm))
+                powvecs = IntegerVectors(M.grade(), len(Gm))
                 for vec in powvecs:
                     coeff = 1
                     for fN, exponent in zip(Gm.values(), vec):
                         coeff *= fN ** exponent
-                    N_list = list(chain.from_iterable([[N._group for _ in range(c)] for N, c in zip(Gm.keys(), vec)]))
-                    R = self.parent()(wreath_imprimitive_general(N_list, M._group))
+                    N_list = list(chain.from_iterable([[N for _ in range(c)] for N, c in zip(Gm.keys(), vec)]))
+                    R = self.parent()(wreath_imprimitive_general(N_list, M))
                     term += coeff * R
                 res += fM * term
             return res
@@ -564,17 +644,20 @@ class PolynomialSpecies(CombinatorialFreeModule):
 def wreath_imprimitive_general(G_list, H):
     r"""
     H([G[0]] - [G[1]] - ... - [G[m]])
+    All members of MolecularSpecies.
     """
-    if len(G_list) != H.degree():
-        raise ValueError(f"length of G_list (= {len(G_list)}) must be equal to degree of H (= {H.degree()})")
+    if len(G_list) != H.grade():
+        raise ValueError(f"length of G_list (= {len(G_list)}) must be equal to degree of H (= {H.grade()})")
+
     gens, dlist = [], []
     dsum = 0
     for G in G_list:
-        dlist.append(list(range(dsum + 1, dsum + G.degree() + 1)))
-        dsum += G.degree()
+        dlist.append(list(range(dsum + 1, dsum + G.grade() + 1)))
+        dsum += G.grade()
 
+    Hgens = H._group.gens()
     # First find gens of H
-    for gen in H.gens():
+    for gen in Hgens:
         # each cycle must be homogenous in the degrees of groups shifted
         # bad things happen if this isn't checked
         # example: partitional_composition(E2, X+X^2)
@@ -590,8 +673,9 @@ def wreath_imprimitive_general(G_list, H):
 
     # Then find gens of G_i
     for i in range(len(G_list)):
-        for gen in G_list[i].gens():
-            images = libgap.MappingPermListList(G_list[i].domain().list(),dlist[i])
+        Ggens = G_list[i]._group.gens()
+        for gen in Ggens:
+            images = libgap.MappingPermListList(G_list[i].domain().list(), dlist[i])
             gens.append(gen ** images)
 
     # Finally create group

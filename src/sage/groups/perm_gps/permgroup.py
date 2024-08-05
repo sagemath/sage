@@ -1628,6 +1628,8 @@ class PermutationGroup_generic(FiniteGroup):
         """
         from sage.combinat.set_partition import SetPartition
         from sage.sets.disjoint_set import DisjointSet
+        if len(self.orbits()) <= 1:
+            return SetPartition(self.orbits())
         H = self._libgap_()
         # sort each orbit and order list by smallest element of each orbit
         O = libgap.List([libgap.ShallowCopy(orbit) for orbit in libgap.Orbits(H)])
@@ -1639,7 +1641,7 @@ class PermutationGroup_generic(FiniteGroup):
         for i in range(num_orbits):
             for x in O[i]:
                 OrbitMapping[x] = i
-        C = libgap.StabChain(H, libgap.Concatenation(O))
+        C = libgap.StabChain(H, libgap.Flat(O))
         X = libgap.StrongGeneratorsStabChain(C)
         P = DisjointSet(num_orbits)
         R = libgap.List([])
@@ -5056,6 +5058,7 @@ class PermutationGroup_generic(FiniteGroup):
 
 
 class PermutationGroup_subgroup(PermutationGroup_generic):
+
     """
     Subgroup subclass of ``PermutationGroup_generic``, so instance methods
     are inherited.
