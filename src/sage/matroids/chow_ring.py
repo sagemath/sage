@@ -72,6 +72,16 @@ class ChowRing(QuotientRing_nc):
         QuotientRing_nc.__init__(self, R=self._ideal.ring(), I=self._ideal, names=self._ideal.ring().variable_names(), category=GradedAlgebrasWithBasis(R))
 
     def _repr_(self):
+        r"""
+        EXAMPLE::
+
+        sage: from sage.matroids.chow_ring import ChowRing
+
+        sage: M1 = matroids.catalog.Fano()
+        sage: ch = ChowRing(M=M1, R=QQ, augmented=False)
+        sage: ch
+        Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
+        """
         return "Chow ring of {}".format(self._matroid)    
 
     def _latex_(self):
@@ -84,14 +94,21 @@ class ChowRing(QuotientRing_nc):
 
         TESTS::
 
-            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
-            sage: GP = SGA.garsia_procesi_module([2, 2])
-            sage: GP._coerce_map_from_base_ring() is None
+            sage: ch = ChowRing(M=matroids.Wheel(3), R=QQ, augmented=False)
+            sage: ch._coerce_map_from_base_ring() is None
             True
         """
         return None  # don't need anything special
 
     def basis(self):
+        r"""
+        Return the monomial basis of the given Chow ring.
+        
+        EXAMPLES::
+
+            sage: ch = ChowRing(M=matroids.Uniform(3, 6), augmented=True, presentation='fy')
+            sage: ch.basis()
+        """
         flats = [Set(X) for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
         flats.append(Set([]))
@@ -120,7 +137,7 @@ class ChowRing(QuotientRing_nc):
                                     term *= flats_gen[flats[j]]**(i + 1)
                     monomial_basis.append(term)
                 
-            elif self._presentation == 'atom-free': #all double equals need spacing
+            elif self._presentation == 'atom-free': #all double equals need spacing DEBUG
                 first_rank = self._matroid.rank(flats[len(flats)])
                 for i in range(maximum_rank):
                     pow = []
@@ -131,7 +148,6 @@ class ChowRing(QuotientRing_nc):
                         term = prod(flats_gen[flats[p[0]]] ** p[1] for p in pow) 
                         monomial_basis.append(term)
         
-
         else:
             for i in range(maximum_rank):
                     term = self._ideal.ring().one()
@@ -146,19 +162,6 @@ class ChowRing(QuotientRing_nc):
 
         m_basis = PolynomialSequence(self._ideal.ring(), monomial_basis)
         return m_basis
-                        
-                
-
-
-
-                    
-                        
-
-
-
-
-
-
 
     class Element(QuotientRing_nc.Element):
         def to_vector(self, order=None):
@@ -167,12 +170,11 @@ class ChowRing(QuotientRing_nc):
 
             EXAMPLES::
 
-                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
-                sage: GP22 = SGA.garsia_procesi_module([2, 2])
-                sage: v = GP22.an_element(); v
-                -gp1 - gp2 - gp3
-                sage: v.to_vector()
-                (0, 0, 2, 2, 2, 0)
+                sage: ch = ChowRing(M=matroids.Uniform(3, 6), R=QQ, augmented=False)
+                sage: v = ch.an_element(); v #WHAT IS OUTPUT?
+                
+                sage: v.to_vector() #WHAT IS OUTPUT?
+
             """
             P = self.parent()
             B = P.basis()
@@ -188,12 +190,11 @@ class ChowRing(QuotientRing_nc):
 
             EXAMPLES::
 
-                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
-                sage: GP31 = SGA.garsia_procesi_module([3, 1])
-                sage: v = GP31.an_element(); v
-                -gp1 - gp2 - gp3
-                sage: v.monomial_coefficients()
-                {0: 2, 1: 2, 2: 2, 3: 0}
+                sage: ch = ChowRing(M=matroids.catalog.NonFano(), R=QQ, augmented=True, presentation='fy')
+                sage: v = ch.an_element(); v #WHAT IS OUTPUT
+
+                sage: v.monomial_coefficients() #WHAT IS OUTPUT
+
             """
             B = self.parent().basis()
             f = self.lift()
@@ -205,9 +206,8 @@ class ChowRing(QuotientRing_nc):
 
             EXAMPLES::
 
-                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
-                sage: GP22 = SGA.garsia_procesi_module([2, 2])
-                sage: for b in GP22.basis():
+                sage: ch = ChowRing(M=matroids.catalog.Fano(), R=QQ, augmented=True, presentation='atom-free')
+                sage: for b in ch.basis():
                 ....:     print(b, b.degree())
                 gp2*gp3 2
                 gp1*gp3 2
@@ -215,7 +215,7 @@ class ChowRing(QuotientRing_nc):
                 gp2 1
                 gp1 1
                 1 0
-                sage: v = sum(GP22.basis())
+                sage: v = sum(ch.basis())
                 sage: v.degree()
                 2
             """
@@ -228,15 +228,14 @@ class ChowRing(QuotientRing_nc):
 
             EXAMPLES::
 
-                sage: SGA = SymmetricGroupAlgebra(GF(2), 4)
-                sage: GP31 = SGA.garsia_procesi_module([3, 1])
-                sage: for b in GP31.basis():
+                ch = ChowRing(M=matroids.Uniform(2, 5), R=QQ, augmented=False)
+                sage: for b in ch.basis():
                 ....:     print(b, b.homogeneous_degree())
                 gp3 1
                 gp2 1
                 gp1 1
                 1 0
-                sage: v = sum(GP31.basis()); v
+                sage: v = sum(ch.basis()); v
                 gp1 + gp2 + gp3 + 1
                 sage: v.homogeneous_degree()
                 Traceback (most recent call last):
@@ -244,10 +243,9 @@ class ChowRing(QuotientRing_nc):
                 ValueError: element is not homogeneous
 
             TESTS::
-
-                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
-                sage: GP4 = SGA.garsia_procesi_module([4])
-                sage: GP4.zero().homogeneous_degree()
+              
+                sage: ch = ChowRing(M=matroids.Wheel(3), R=QQ, augmented=False)
+                sage: ch.zero().homogeneous_degree()
                 Traceback (most recent call last):
                 ...
                 ValueError: the zero element does not have a well-defined degree
