@@ -1,9 +1,9 @@
 #!/bin/sh
 if [ $# != 2 ]; then
-    echo >&2 "usage: $0 DIFF_TEXT DOC_REPO"
-    echo >&2 "creates CHANGES.html in the current directory"
-    echo >&2 "and plant targets of anchors in DOC_REPO"
-    echo >&2 "according to diff hunks in DIFF_TEXT"
+    echo >&2 "Usage: $0 DIFF_TEXT DOC_REPO"
+    echo >&2 "This script generates a CHANGES.html file in the current directory"
+    echo >&2 "and adds anchor targets in the documents within DOC_REPO"
+    echo >&2 "based on the diff hunks in the DIFF_TEXT file."
     exit 1
 fi
 DIFF_TEXT="$1"
