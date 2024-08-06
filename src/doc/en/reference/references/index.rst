@@ -1658,6 +1658,11 @@ REFERENCES:
 .. [CIA] CIA Factbook 09
          https://www.cia.gov/library/publications/the-world-factbook/
 
+.. [CJ2022] \M. Chang, C. Jefferson, *Disjoint direct product decomposition
+            of permutation groups*, Journal of Symbolic Computation (2022),
+            Volume 108, pages 1-16. :doi:`10.1016/j.jsc.2021.04.003`.
+            Preprint: :arxiv:`2004.11618v3`.
+
 .. [CK1986] \R. Calderbank, W.M. Kantor,
             *The geometry of two-weight codes*,
             Bull. London Math. Soc. 18(1986) 97-122.
@@ -3486,6 +3491,10 @@ REFERENCES:
               Trans. Am. Math. Soc. 375, No. 6, 4411-4427 (2022).
               :arxiv:`1906.09633`, :doi:`10.1090/tran/8606`.
 
+.. [Humphreys08] James E. Humphreys. *Representations of Semisimple Lie
+                 Algebras in the BGG Category* `\mathcal{O}`.
+                 Graduate Studies in Mathematics. Amer. Math. Soc., 2008.
+
 .. [Hutz2007] \B. Hutz. Arithmetic Dynamics on Varieties of dimension greater
               than one. PhD Thesis, Brown University 2007
 
@@ -3836,6 +3845,10 @@ REFERENCES:
             *Convex polytopes and related complexes.*, in \R. L. Graham,
             \M. Grötschel, \L Lovász, *Handbook of combinatorics*,
             Vol. 1, Chapter 18, 1995
+
+.. [KK2003] T. Kivinen and M. Kojo. *More Modular Exponential (MODP)
+            Diffie-Hellman groups for Internet Key Exchange (IKE)*, in RFC 3526.
+            Available at https://www.rfc-editor.org/rfc/rfc3526
 
 .. [KKMMNN1992] S-J. Kang, M. Kashiwara, K. C. Misra, T. Miwa, T. Nakashima,
                 and A. Nakayashiki. *Affine crystals and vertex models*.
@@ -4386,6 +4399,10 @@ REFERENCES:
 
 .. [LM2018] \A. Lauve, M. Mastnak. *Bialgebra coverings and transfer
             of structure*. Preprint, :arxiv:`1803.02691`.
+
+.. [LM2024] C.L. Lucchesi, U.S.R. Murty. *Perfect Matchings: A Theory of
+            Matching Covered Graphs*. Algorithms and Computation in Mathematics.
+            Springer Cham, 1st edition, 2024, :doi:`10.1007/978-3-031-47504-7`.
 
 .. [LMR2010] \N. Linial, R. Meshulam and M. Rosenthal, "Sum complexes
              -- a new family of hypertrees", Discrete & Computational
@@ -5343,6 +5360,11 @@ REFERENCES:
              Mathematical Physics, Analysis and Geometry 1, 171-191 (1998).
              :doi:`10.1023/A:1009724323513`
 
+.. [PP2010] \C. Paar and J. Pelzl.
+            *Understanding Cryptography: A Textbook for Students and Practitioners*.
+            Springer Berlin, Heidelberg, 2010.
+            :doi:`10.1007/978-3-642-04101-3`
+
 .. [PPW2013] \D. Perkinson, J. Perlman, and J. Wilmes.
              *Primer for the algebraic geometry of sandpiles*.
              Tropical and Non-Archimedean
@@ -6295,6 +6317,11 @@ REFERENCES:
              graph-theoretic approach, II*.
              Discrete Mathematics,
              Volume 63, Issues 2-3, 1987, Pages 279-295.
+
+.. [SYKU2010] Toshiki Saitoh, Katsuhisa Yamanaka, Masashi Kiyomi, Ryuhei Uehara:
+              Random Generation and Enumeration of Proper Interval Graphs.
+              IEICE Trans. Inf. Syst. 93-D(7): 1816-1823 (2010)
+              :doi:`10.1587/transinf.E93.D.1816`
 
 .. [SYYTIYTT2002] \T. Shimoyama, H. Yanami, K. Yokoyama, M. Takenaka, K. Itoh,
                   \J. Yajima, N. Torii, and H. Tanaka, *The block cipher SC2000*; in

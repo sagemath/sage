@@ -241,7 +241,7 @@ class HyperplaneArrangementLibrary:
         - ``data`` -- either an integer or a Cartan type (or coercible
           into; see "CartanType")
 
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
 
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
@@ -367,9 +367,7 @@ class HyperplaneArrangementLibrary:
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
 
-        OUTPUT:
-
-        The Shi hyperplane arrangement of the given graph ``G``.
+        OUTPUT: the Shi hyperplane arrangement of the given graph ``G``
 
         EXAMPLES::
 
@@ -456,7 +454,7 @@ class HyperplaneArrangementLibrary:
 
         - ``n`` -- integer
 
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
 
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
@@ -515,13 +513,11 @@ class HyperplaneArrangementLibrary:
         INPUT:
 
         - ``n`` -- integer
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
 
-        OUTPUT:
-
-        The type `B` Ish arrangement, which is the set of `2n^2` hyperplanes
+        OUTPUT: the type `B` Ish arrangement, which is the set of `2n^2` hyperplanes
 
         .. MATH::
 
@@ -691,7 +687,7 @@ class HyperplaneArrangementLibrary:
         - ``data`` -- either an integer or a Cartan type (or coercible
           into; see "CartanType")
 
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
 
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
