@@ -420,6 +420,7 @@ def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=
 
     return M
 
+
 def _multiply_point(E, R, P, m):
     r"""
     Compute coordinates of a multiple of `P` with entries in a ring.
@@ -578,6 +579,7 @@ def _multiply_point(E, R, P, m):
 
     return theta, omega, psi_m * d
 
+
 def _multiple_to_make_good_reduction(E):
     r"""
     Return the integer `n_2` such that for all points `P` in `E(\QQ)`
@@ -652,6 +654,7 @@ def _multiple_to_make_good_reduction(E):
         li += [E.tamagawa_number(p) for p in otherbad]
         n2 = LCM(li)
     return n2
+
 
 def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
     r"""

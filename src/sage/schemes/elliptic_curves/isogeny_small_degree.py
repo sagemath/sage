@@ -45,6 +45,7 @@ from sage.misc.cachefunc import cached_function
 # only finitely many `j`-invariants each. are also implemented.
 ##########################################################################
 
+
 @cached_function
 def Fricke_polynomial(l):
     r"""
@@ -813,6 +814,7 @@ def isogenies_3(E, minimal_models=True):
 
 # 6 special cases: `l` = 5, 7, 13 and `j` = 0, 1728.
 
+
 def isogenies_5_0(E, minimal_models=True):
     r"""
     Return a list of all the 5-isogenies with domain ``E`` when the
@@ -915,6 +917,7 @@ def isogenies_5_0(E, minimal_models=True):
     iso = E.isomorphism_to(Ew)
     isogs = [isog * iso for isog in isogs]
     return isogs
+
 
 def isogenies_5_1728(E, minimal_models=True):
     r"""
@@ -1050,6 +1053,7 @@ def isogenies_5_1728(E, minimal_models=True):
         isogs += [Ew.isogeny(x**2+beta*x+gamma, model=model) for beta,gamma in zip(betas,gammas)]
     isogs = [isog * iso for isog in isogs]
     return isogs
+
 
 def isogenies_7_0(E, minimal_models=True):
     r"""
@@ -1191,6 +1195,7 @@ def isogenies_7_0(E, minimal_models=True):
     isogs = [isog * iso for isog in isogs]
     return isogs
 
+
 def isogenies_7_1728(E, minimal_models=True):
     r"""
     Return list of all 7-isogenies from E when the j-invariant is 1728.
@@ -1289,6 +1294,7 @@ def isogenies_7_1728(E, minimal_models=True):
         isogs += [Ew.isogeny(k.monic(), model=model) for k in kers]
     isogs = [isog * iso for isog in isogs]
     return isogs
+
 
 def isogenies_13_0(E, minimal_models=True):
     """
@@ -1598,6 +1604,7 @@ def isogenies_13_1728(E, minimal_models=True):
 
 
 hyperelliptic_primes = [11, 17, 19, 23, 29, 31, 41, 47, 59, 71]
+
 
 @cached_function
 def _hyperelliptic_isogeny_data(l):

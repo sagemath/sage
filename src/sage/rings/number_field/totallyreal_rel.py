@@ -227,6 +227,7 @@ def integral_elements_in_box(K, C):
 
 eps_global = 10**(-6)
 
+
 class tr_data_rel:
     r"""
     This class encodes the data used in the enumeration of totally real

@@ -95,6 +95,7 @@ AUTHORS:
 
 from sage.rings.integer_ring import ZZ
 
+
 class Small_primes_of_degree_one_iter():
     r"""
     Iterator that finds primes of a number field of absolute degree

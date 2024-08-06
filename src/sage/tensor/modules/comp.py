@@ -5504,6 +5504,7 @@ class CompFullyAntiSym(CompWithSym):
 
 #******************************************************************************
 
+
 class KroneckerDelta(CompFullySym):
     r"""
     Kronecker delta `\delta_{ij}`.

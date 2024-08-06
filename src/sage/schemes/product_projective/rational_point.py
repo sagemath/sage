@@ -173,6 +173,7 @@ def enum_product_projective_rational_field(X, B):
 
     return pts
 
+
 def enum_product_projective_number_field(X, **kwds):
     r"""
     Enumerates product projective points on scheme ``X`` defined over a number field.
@@ -246,6 +247,7 @@ def enum_product_projective_number_field(X, **kwds):
             pass
     pts.sort()
     return pts
+
 
 def enum_product_projective_finite_field(X):
     r"""

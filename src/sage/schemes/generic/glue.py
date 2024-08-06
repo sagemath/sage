@@ -11,6 +11,7 @@ Scheme obtained by gluing two other schemes
 from . import morphism
 from . import scheme
 
+
 class GluedScheme(scheme.Scheme):
     r"""
     INPUT:

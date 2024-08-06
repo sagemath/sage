@@ -1775,6 +1775,7 @@ def basis_to_module(B, K):
     C = [to_V(K(b)) for b in B]
     return M.span_of_basis(C)
 
+
 def is_NumberFieldIdeal(x):
     """
     Return ``True`` if `x` is an ideal of a number field.

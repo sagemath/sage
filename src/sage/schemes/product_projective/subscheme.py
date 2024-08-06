@@ -23,6 +23,7 @@ from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.schemes.projective.projective_space import ProjectiveSpace
 
+
 class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_projective):
     r"""
     Construct an algebraic subscheme of a product of projective spaces.

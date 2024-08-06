@@ -22,6 +22,7 @@ from . import kummer_surface
 #     + (4*a4 + 2*c0*c4 + c2^2)*x^4 + (4*a6 + 2*c0*c6 + 2*c2*c4)*x^3
 #     + (4*a8 + 2*c2*c6 + c4^2)*x^2 + (4*a10 + 2*c4*c6)*x + 4*a12 + c6^2
 
+
 class HyperellipticJacobian_g2(jacobian_generic.HyperellipticJacobian_generic):
     def kummer_surface(self):
         try:

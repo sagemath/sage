@@ -48,6 +48,7 @@ from sage.misc.cachefunc import cached_method
 
 from sage.rings.infinity import infinity
 
+
 class PadicValuationFactory(UniqueFactory):
     r"""
     Create a ``prime``-adic valuation on ``R``.
@@ -1390,6 +1391,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
                 approximant = self._base_valuation.change_domain(G.parent())._initial_approximation
                 return [pAdicValuation(ring, approximant)]
         return super().extensions(ring)
+
 
 def _fraction_field(ring):
     r"""

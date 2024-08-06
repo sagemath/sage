@@ -26,6 +26,8 @@ from sage.symbolic.operators import arithmetic_operators
 #########
 # Sympy #
 #########
+
+
 class SympyConverter(Converter):
     """
     Convert any expression to SymPy.

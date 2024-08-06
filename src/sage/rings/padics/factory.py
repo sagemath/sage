@@ -99,6 +99,7 @@ ext_table['re', pAdicFieldCappedRelative] = RelativeRamifiedExtensionFieldCapped
 ext_table['re', pAdicRingFloatingPoint] = RelativeRamifiedExtensionRingFloatingPoint
 ext_table['re', pAdicFieldFloatingPoint] = RelativeRamifiedExtensionFieldFloatingPoint
 
+
 def _canonicalize_show_prec(type, print_mode, show_prec=None):
     r"""
     Return a canonical string value for show_prec depending of the type,
@@ -327,6 +328,7 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
 
 padic_field_cache = {}
 DEFAULT_PREC = Integer(20)
+
 
 class Qp_class(UniqueFactory):
     r"""
@@ -1382,6 +1384,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
 # Short constructor names for different types
 ######################################################
 
+
 def QpCR(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative `p`-adic fields.
@@ -1396,6 +1399,7 @@ def QpCR(p, prec=None, *args, **kwds):
     """
     return Qp(p, prec, 'capped-rel', *args, **kwds)
 
+
 def QpFP(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point `p`-adic fields.
@@ -1409,6 +1413,7 @@ def QpFP(p, prec=None, *args, **kwds):
         5-adic Field with floating precision 40
     """
     return Qp(p, prec, 'floating-point', *args, **kwds)
+
 
 def QqCR(q, prec=None, *args, **kwds):
     r"""
@@ -1425,6 +1430,7 @@ def QqCR(q, prec=None, *args, **kwds):
     """
     return Qq(q, prec, 'capped-rel', *args, **kwds)
 
+
 def QqFP(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point unramified `p`-adic
@@ -1439,6 +1445,7 @@ def QqFP(q, prec=None, *args, **kwds):
         5-adic Unramified Extension Field in a defined by x^2 + 4*x + 2
     """
     return Qq(q, prec, 'floating-point', *args, **kwds)
+
 
 @experimental(23505)
 def QpLC(p, prec=None, *args, **kwds):
@@ -1455,6 +1462,7 @@ def QpLC(p, prec=None, *args, **kwds):
     """
     return Qp(p, prec, 'lattice-cap', *args, **kwds)
 
+
 @experimental(23505)
 def QpLF(p, prec=None, *args, **kwds):
     r"""
@@ -1469,6 +1477,7 @@ def QpLF(p, prec=None, *args, **kwds):
         2-adic Field with lattice-float precision
     """
     return Qp(p, prec, 'lattice-float', *args, **kwds)
+
 
 def QpER(p, prec=None, halt=None, secure=False, *args, **kwds):
     r"""
@@ -1491,6 +1500,7 @@ def QpER(p, prec=None, halt=None, secure=False, *args, **kwds):
 #  ZpCR, ZpCA, ZpFM, ZpL, ZqCR, ZqCA, ZqFM, ZqL -- shortcuts for precision-type versions of Zp and Zq
 #
 #######################################################################################################
+
 
 class Zp_class(UniqueFactory):
     r"""
@@ -2619,6 +2629,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 # Short constructor names for different types
 ######################################################
 
+
 def ZpCR(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative `p`-adic rings.
@@ -2633,6 +2644,7 @@ def ZpCR(p, prec=None, *args, **kwds):
     """
     return Zp(p, prec, 'capped-rel', *args, **kwds)
 
+
 def ZpCA(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped absolute `p`-adic rings.
@@ -2646,6 +2658,7 @@ def ZpCA(p, prec=None, *args, **kwds):
     """
     return Zp(p, prec, 'capped-abs', *args, **kwds)
 
+
 def ZpFM(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create fixed modulus `p`-adic rings.
@@ -2658,6 +2671,7 @@ def ZpFM(p, prec=None, *args, **kwds):
         5-adic Ring of fixed modulus 5^40
     """
     return Zp(p, prec, 'fixed-mod', *args, **kwds)
+
 
 def ZpFP(p, prec=None, *args, **kwds):
     r"""
@@ -2673,6 +2687,7 @@ def ZpFP(p, prec=None, *args, **kwds):
     """
     return Zp(p, prec, 'floating-point', *args, **kwds)
 
+
 def ZqCR(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative unramified `p`-adic rings.
@@ -2687,6 +2702,7 @@ def ZqCR(q, prec=None, *args, **kwds):
     """
     return Zq(q, prec, 'capped-rel', *args, **kwds)
 
+
 def ZqCA(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped absolute unramified `p`-adic rings.
@@ -2699,6 +2715,7 @@ def ZqCA(q, prec=None, *args, **kwds):
         5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
     """
     return Zq(q, prec, 'capped-abs', *args, **kwds)
+
 
 def ZqFM(q, prec=None, *args, **kwds):
     r"""
@@ -2713,6 +2730,7 @@ def ZqFM(q, prec=None, *args, **kwds):
     """
     return Zq(q, prec, 'fixed-mod', *args, **kwds)
 
+
 def ZqFP(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point unramified `p`-adic rings.
@@ -2726,6 +2744,7 @@ def ZqFP(q, prec=None, *args, **kwds):
         5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
     """
     return Zq(q, prec, 'floating-point', *args, **kwds)
+
 
 @experimental(23505)
 def ZpLC(p, prec=None, *args, **kwds):
@@ -2988,6 +3007,7 @@ def ZpLC(p, prec=None, *args, **kwds):
     """
     return Zp(p, prec, 'lattice-cap', *args, **kwds)
 
+
 @experimental(23505)
 def ZpLF(p, prec=None, *args, **kwds):
     r"""
@@ -3014,6 +3034,7 @@ def ZpLF(p, prec=None, *args, **kwds):
         :func:`ZpLC`
     """
     return Zp(p, prec, 'lattice-float', *args, **kwds)
+
 
 def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
     r"""
@@ -3494,6 +3515,7 @@ def split(poly, prec):
     """
     raise NotImplementedError("Extensions by general polynomials not yet supported.  Please use an unramified or Eisenstein polynomial.")
 
+
 def truncate_to_prec(poly, R, absprec):
     r"""
     Truncates the unused precision off of a polynomial.
@@ -3508,6 +3530,7 @@ def truncate_to_prec(poly, R, absprec):
         (1 + O(5^5))*x^4 + (3 + O(5^5))*x^3 + O(5^5)*x^2 + O(5^5)*x + O(5^4)
     """
     return R[poly.variable_name()]([R(a, absprec=absprec) for a in poly.list()]) # Is this quite right?  We don't want flat necessarily...
+
 
 def krasner_check(poly, prec):
     r"""
@@ -3525,6 +3548,7 @@ def krasner_check(poly, prec):
         True
     """
     return True #This needs to be implemented
+
 
 def is_eisenstein(poly):
     r"""
@@ -3554,6 +3578,7 @@ def is_eisenstein(poly):
     if reduce(lambda a, b: a or b, [(c.valuation() < 1) for c in poly.list()[1:poly.degree()]]):
         return False
     return True
+
 
 def is_unramified(poly):
     r"""
