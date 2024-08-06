@@ -896,11 +896,7 @@ def is_edge_cut(G, edges):
 
 def is_cut_edge(G, u, v=None, label=None):
     """
-<<<<<<< HEAD
-    Return ``True`` if the input edge is a cut-edge or a bridge.
-=======
     Check whether the input edge is a cut-edge or a bridge.
->>>>>>> 676db03765d (expose in generic_graph.py)
 
     A cut edge (or bridge) is an edge that when removed increases
     the number of connected components. This function works with
