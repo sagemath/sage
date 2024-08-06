@@ -1,1 +1,1 @@
-ipython
+python3-ipython

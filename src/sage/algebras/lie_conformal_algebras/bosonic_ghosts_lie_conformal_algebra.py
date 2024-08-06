@@ -41,14 +41,14 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
 
     INPUT:
 
-    - ``R`` -- a commutative ring.
+    - ``R`` -- a commutative ring
     - ``ngens`` -- an even positive Integer (default: ``2``); the
       number of non-central generators of this Lie conformal
       algebra.
-    - ``names`` -- a list of ``str``; alternative names for the
+    - ``names`` -- list of ``str``; alternative names for the
       generators
-    - ``index_set`` -- an enumerated set; An indexing set for the
-      generators.
+    - ``index_set`` -- an enumerated set; an indexing set for the
+      generators
 
     OUTPUT:
 
@@ -81,7 +81,7 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
 
     def __init__(self, R, ngens=2, names=None, index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

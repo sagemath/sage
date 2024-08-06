@@ -146,10 +146,9 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
     def unify_arguments(self, x):
         r"""
-        Takes the variable list from another
-        ``CallableSymbolicExpression`` object and compares it with the
-        current ``CallableSymbolicExpression`` object's variable list,
-        combining them according to the following rules:
+        Take the variable list from another ``CallableSymbolicExpression``
+        object and compare it with the current ``CallableSymbolicExpression``
+        object's variable list, combining them according to the following rules:
 
         Let ``a`` be ``self``'s variable list, let ``b`` be ``y``'s
         variable list.
@@ -176,9 +175,9 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        -  ``x`` -- A CallableSymbolicExpression
+        - ``x`` -- a ``CallableSymbolicExpression``
 
-        OUTPUT: A tuple of variables.
+        OUTPUT: a tuple of variables
 
         EXAMPLES::
 
@@ -348,7 +347,6 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             (y, x) |--> x + y
             sage: f.parent()
             Callable function ring with arguments (y, x)
-
         """
         args = self.arguments()
         repr_x = SymbolicRing._repr_element_(self, x)

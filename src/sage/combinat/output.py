@@ -24,13 +24,14 @@ lr_macro = Template(r'\def\lr#1{\multicolumn{1}{$bar@{\hspace{.6ex}}c@{\hspace{.
 
 def tex_from_array(array, with_lines=True):
     r"""
-    Return a latex string for a two dimensional array of partition, composition or skew composition shape
+    Return a latex string for a two dimensional array of partition, composition
+    or skew composition shape.
 
     INPUT:
 
-    - ``array`` -- a list of list
-    - ``with_lines`` -- a boolean (default: ``True``)
-       Whether to draw a line to separate the entries in the array.
+    - ``array`` -- list of list
+    - ``with_lines`` -- boolean (default: ``True``); whether to draw a line to
+      separate the entries in the array
 
     Empty rows are allowed; however, such rows should be given as
     ``[None]`` rather than ``[]``.
@@ -248,9 +249,9 @@ def tex_from_array_tuple(a_tuple, with_lines=True):
 
     INPUT:
 
-    - ``a_tuple`` -- a tuple of lists of lists
-    - ``with_lines`` -- a boolean (default: ``True``)
-      Whether to draw lines to separate the entries in the components of ``a_tuple``.
+    - ``a_tuple`` -- tuple of lists of lists
+    - ``with_lines`` -- boolean (default: ``True``); whether to draw lines to
+      separate the entries in the components of ``a_tuple``
 
     .. SEEALSO:: :meth:`tex_from_array` for the description of each array
 
@@ -347,12 +348,12 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
 
     INPUT:
 
-    - ``array`` -- The array
+    - ``array`` -- the array
 
-    - ``with_lines`` -- (Default: ``False``) If ``True`` lines are drawn, if
+    - ``with_lines`` -- (default: ``False``) if ``True`` lines are drawn, if
       ``False`` they are not
 
-    - ``align`` -- (Default: ``'b'``) Determines the alignment on the latex
+    - ``align`` -- (default: ``'b'``) determine the alignment on the latex
       array environments
 
     EXAMPLES::
@@ -412,7 +413,7 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     return tex+r'\end{array}$'+raisebox_end
 
 
-def ascii_art_table(data, use_unicode=False, convention="English"):
+def ascii_art_table(data, use_unicode=False, convention='English'):
     r"""
     Return an ascii art table of ``data``.
 
@@ -772,7 +773,7 @@ def box_exists(tab, i, j):
 
     INPUT:
 
-    - ``tab`` -- a list of lists
+    - ``tab`` -- list of lists
     - ``i`` -- first coordinate
     - ``j`` -- second coordinate
 

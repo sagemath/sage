@@ -27,7 +27,7 @@ from sage.structure.element import coerce_binop
 class Fields(CategoryWithAxiom):
     """
     The category of (commutative) fields, i.e. commutative rings where
-    all non-zero elements have multiplicative inverses
+    all nonzero elements have multiplicative inverses
 
     EXAMPLES::
 
@@ -125,7 +125,6 @@ class Fields(CategoryWithAxiom):
             sage: len([X for X in gc.get_objects()
             ....:      if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]) - n
             0
-
         """
         from sage.rings.ring import _is_Field
         try:
@@ -160,13 +159,12 @@ class Fields(CategoryWithAxiom):
             True
             sage: F._contains_helper(Q)
             True
-
         """
         return Category_contains_method_by_parent_class(cls())
 
     def _call_(self, x):
         """
-        Construct a field from the data in ``x``
+        Construct a field from the data in ``x``.
 
         EXAMPLES::
 
@@ -197,7 +195,7 @@ class Fields(CategoryWithAxiom):
 
         def is_field( self, proof=True ):
             r"""
-            Returns True as ``self`` is a field.
+            Return ``True`` as ``self`` is a field.
 
             EXAMPLES::
 
@@ -413,7 +411,6 @@ class Fields(CategoryWithAxiom):
                 True
                 sage: FunctionField(GF(2), 'x').is_perfect()
                 False
-
             """
             if self.characteristic() == 0:
                 return True
@@ -452,7 +449,7 @@ class Fields(CategoryWithAxiom):
 
         def fraction_field(self):
             r"""
-            Returns the *fraction field* of ``self``, which is ``self``.
+            Return the *fraction field* of ``self``, which is ``self``.
 
             EXAMPLES::
 
@@ -470,7 +467,7 @@ class Fields(CategoryWithAxiom):
 
             INPUT:
 
-            - ``f`` -- a univariate non-zero polynomial over this field
+            - ``f`` -- a univariate nonzero polynomial over this field
 
             ALGORITHM: For rings of characteristic zero, we use the algorithm
             described in [Yun1976]_. Other fields may provide their own
@@ -520,7 +517,7 @@ class Fields(CategoryWithAxiom):
 
         def vector_space(self, *args, **kwds):
             r"""
-            Gives an isomorphism of this field with a vector space over a subfield.
+            Give an isomorphism of this field with a vector space over a subfield.
 
             This method is an alias for ``free_module``, which may have more documentation.
 
@@ -590,7 +587,7 @@ class Fields(CategoryWithAxiom):
 
         def is_unit( self ):
             r"""
-            Returns True if ``self`` has a multiplicative inverse.
+            Return ``True`` if ``self`` has a multiplicative inverse.
 
             EXAMPLES::
 
@@ -749,7 +746,7 @@ class Fields(CategoryWithAxiom):
                 sage: GF(5)(0).xgcd(GF(5)(0))
                 (0, 0, 0)
 
-            The xgcd of non-zero floating point numbers will be a triple of
+            The xgcd of nonzero floating point numbers will be a triple of
             floating points. But if the input are two integral floating points
             the result is a floating point version of the standard gcd on
             `\ZZ`::
@@ -814,7 +811,7 @@ class Fields(CategoryWithAxiom):
                 1/2
 
             Trying to invert the zero element typically raises a
-            :class:`ZeroDivisionError`::
+            :exc:`ZeroDivisionError`::
 
                 sage: QQ(0).inverse_of_unit()
                 Traceback (most recent call last):

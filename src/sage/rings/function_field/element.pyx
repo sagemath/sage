@@ -64,8 +64,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.structure.element cimport FieldElement
+from sage.categories.function_fields import FunctionFields
 from sage.misc.cachefunc import cached_method
+from sage.structure.element cimport FieldElement
 
 
 def is_FunctionFieldElement(x):
@@ -76,14 +77,24 @@ def is_FunctionFieldElement(x):
 
         sage: t = FunctionField(QQ,'t').gen()
         sage: sage.rings.function_field.element.is_FunctionFieldElement(t)
+        doctest:warning...
+        DeprecationWarning: The function is_FunctionFieldElement is deprecated;
+        use '....parent() in FunctionFields()' instead.
+        See https://github.com/sagemath/sage/issues/38289 for details.
         True
         sage: sage.rings.function_field.element.is_FunctionFieldElement(0)
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38289,
+                       "The function is_FunctionFieldElement is deprecated; "
+                       "use '....parent() in FunctionFields()' instead.")
     if isinstance(x, FunctionFieldElement):
         return True
-    from sage.rings.function_field.function_field import is_FunctionField
-    return is_FunctionField(x.parent())
+    from sage.rings.function_field.function_field import FunctionField
+    if isinstance(x.parent(), FunctionField):
+        return True
+    return x.parent() in FunctionFields()
 
 
 def make_FunctionFieldElement(parent, element_class, representing_element):
@@ -146,7 +157,6 @@ cdef class FunctionFieldElement(FieldElement):
             Traceback (most recent call last):
             ...
             NotImplementedError: PARI does not support general function field elements.
-
         """
         raise NotImplementedError("PARI does not support general function field elements.")
 
@@ -172,8 +182,8 @@ cdef class FunctionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``base`` -- a function field (default: ``None``), if ``None``, then
-          the matrix is formed over the base field of this function field.
+        - ``base`` -- a function field (default: ``None``); if ``None``, then
+          the matrix is formed over the base field of this function field
 
         EXAMPLES:
 
@@ -641,8 +651,8 @@ cdef class FunctionFieldElement(FieldElement):
         OUTPUT:
 
         If the element is in the valuation ring at the place, then an element
-        in the residue field at the place is returned. Otherwise, ``ValueError``
-        is raised.
+        in the residue field at the place is returned. Otherwise, a
+        :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -683,7 +693,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -709,7 +719,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 

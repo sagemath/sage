@@ -95,15 +95,13 @@ def CurvePointToIdeal(C,P):
 
 def is_Divisor(x):
     r"""
-    Test whether ``x`` is an instance of :class:`Divisor_generic`
+    Test whether ``x`` is an instance of :class:`Divisor_generic`.
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    ``True`` or ``False``.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -162,16 +160,15 @@ class Divisor_generic(FormalSum):
 
         INPUT:
 
-        - ``v`` -- object. Usually a list of pairs
-          ``(coefficient,divisor)``.
+        - ``v`` -- object; usually a list of pairs ``(coefficient,divisor)``
 
         - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
 
-        - ``check`` -- bool (default: ``True``). Whether to coerce
+        - ``check`` -- boolean (default: ``True``); whether to coerce
           coefficients into base ring. Setting it to ``False`` can
           speed up construction.
 
-        - ``reduce`` -- reduce (default: ``True``). Whether to combine
+        - ``reduce`` -- reduce (default: ``True``); whether to combine
           common terms. Setting it to ``False`` can speed up
           construction.
 
@@ -195,9 +192,7 @@ class Divisor_generic(FormalSum):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -225,9 +220,7 @@ class Divisor_generic(FormalSum):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -272,14 +265,12 @@ class Divisor_curve(Divisor_generic):
     For any curve `C`, use ``C.divisor(v)`` to
     construct a divisor on `C`. Here `v` can be either
 
+    - a rational point on `C`
 
-    -  a rational point on `C`
+    - a list of rational points
 
-    -  a list of rational points
-
-    -  a list of 2-tuples `(c,P)`, where `c` is an
-       integer and `P` is a rational point.
-
+    - a list of 2-tuples `(c,P)`, where `c` is an
+      integer and `P` is a rational point
 
     TODO: Divisors shouldn't be restricted to rational points. The
     problem is that the divisor group is the formal sum of the group of
@@ -310,12 +301,11 @@ class Divisor_curve(Divisor_generic):
 
         INPUT:
 
-        - ``v`` -- a list of pairs ``(c, P)``, where ``c`` is an
-           integer and ``P`` is a point on a curve. The P's must all
-           lie on the same curve.
+        - ``v`` -- list of pairs ``(c, P)``, where ``c`` is an
+          integer and ``P`` is a point on a curve. The P's must all
+          lie on the same curve.
 
-
-        - To create the divisor 0 use ``[(0, P)]``, so as to give the curve.
+        To create the divisor 0 use ``[(0, P)]``, so as to give the curve.
 
         EXAMPLES::
 
@@ -382,9 +372,7 @@ class Divisor_curve(Divisor_generic):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
