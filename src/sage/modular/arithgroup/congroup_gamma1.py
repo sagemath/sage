@@ -645,8 +645,10 @@ class Gamma1_class(GammaH_class):
             return Gamma0(N).dimension_new_cusp_forms(k, p)
 
         if algorithm == "Ross":
-            if p != 0: raise ValueError("Algorithm 'Ross' not defined for p-new subspace")
-            if k < 2:  raise ValueError("Algorithm 'Ross' only defined for k >= 2")
+            if p != 0:
+                raise ValueError("Algorithm 'Ross' not defined for p-new subspace")
+            if k < 2:
+                raise ValueError("Algorithm 'Ross' only defined for k >= 2")
             return _dimension_new_cusp_forms_Ross(N, k, eps)
 
         from .congroup_gammaH import mumu
@@ -659,86 +661,75 @@ class Gamma1_class(GammaH_class):
         return self.dimension_cusp_forms(k, eps, algorithm) - 2*old
 
 
-def _dimension_new_cusp_forms_Ross(N,k,chi):
+def _dimension_new_cusp_forms_Ross(N, k, chi):
     r"""
     Compute the dimension formula given in Theorem 1.4 of :arxiv:`2407.08881`.
-    
+
     For more tests, see :meth:`sage.modular.arithgroup.tests.Test.test_dim_formula_Ross()`.
-    
+
     TESTS::
 
         sage: chi = DirichletGroup(60)[5]
         sage: sage.modular.arithgroup.congroup_gamma1._dimension_new_cusp_forms_Ross(60,12,chi)
         66
     """
-    
+
     # First term of explicit dimension formula
-    def psi_local(p,r):
-        assert r >= 1
-        return (p+1)*p**(r-1)
-    
-    def psi(n):
-        ret = 1
-        for p,r in factor(n):
-            ret *= psi_local(p,r)
-        return ret
-    
-    def beta_psi_f_local(p,r,alpha):
-        assert r >= 1
-        if alpha == 0:
-            if r == 1:
-                return p-1
-            elif r==2:
-                return p**2-p-1
-            else:
-                return (p**3-p**2-p+1) * p**(r-3)
-        else:
-            if r==1:
-                return p-2
-            else:
-                return (p**2-2*p+1) * p**(r-2)
-            
-    def beta_psi_f(n, f):
-        ret = 1
-        for p,r in factor(n):
-            ret *= beta_psi_f_local(p,r,f.valuation(p))
+    def psi(n_fact):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            ret *= (p+1) * p**(r-1)
         return ret
 
+    def beta_psi_f(n_fact, f):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            alpha = f.valuation(p)
+            if alpha == 0:
+                if r == 1:
+                    ret *= p-1
+                elif r == 2:
+                    ret *= p**2-p-1
+                else:
+                    ret *= (p**3-p**2-p+1) * p**(r-3)
+            else:
+                if r == 1:
+                    ret *= p-2
+                else:
+                    ret *= (p**2-2*p+1) * p**(r-2)
+        return ret
 
     # Second term of explicit dimension formula
-    def beta_sigma_f_local(p,r,alpha):
-        assert r>=1
-        if alpha == 0:
-            if r % 2 == 1:
-                return 0
-            elif r == 2:
-                return p-2
+    def beta_sigma_f(n_fact, f):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            alpha = f.valuation(p)
+            if alpha == 0:
+                if r % 2 == 1:
+                    ret *= 0
+                elif r == 2:
+                    ret *= p-2
+                else:
+                    ret *= (p**2-2*p+1) * p**(r//2-2)
+            elif r == 1:
+                if alpha == 1:
+                    ret *= (p-3)/2
+                else:
+                    ret *= p-2
             else:
-                return (p**2-2*p+1) * p**(r//2-2)
-        elif r == 1:
-            if alpha == 1:
-                return (p-3)/2
-            else:
-                return p-2
-        else:
-            if r >= alpha+1 and (r+alpha)%2==1:
-                return 0
-            elif r >= alpha+2 and (r+alpha)%2==0:
-                return ZZ(1)/2 * (p**2-2*p+1) * p**((r+alpha)/2-2) 
-            elif r == alpha:
-                return ZZ(1)/2 * (p**2-3*p+2) * p**(r-2)
-            else:
-                return (p**2-2*p+1) * p**(r-2) 
-
-    def beta_sigma_f(n,f):
-        ret = 1
-        for p,r in factor(n):
-            ret *= beta_sigma_f_local(p,r,f.valuation(p))
+                if r >= alpha+1 and (r+alpha) % 2 == 1:
+                    ret *= 0
+                elif r >= alpha+2 and (r+alpha) % 2 == 0:
+                    ret *= ZZ(1)/2 * (p**2-2*p+1) * p**((r+alpha)/2-2)
+                elif r == alpha:
+                    ret *= ZZ(1)/2 * (p**2-3*p+2) * p**(r-2)
+                else:
+                    ret *= (p**2-2*p+1) * p**(r-2)
         return ret
 
-    
     # Third term of explicit dimension formula
-    def get_chi_p_alpha(f_fact, chi, p, x):
+    def get_chi_p_alpha(f, chi, p, x):
+        f_fact = factor(f)
         rems = [(int(x) if q == p else 1) for (q,alpha) in f_fact]
         mods = [p**alpha for (p,alpha) in f_fact]
         assert rems.count(1) == len(rems) - 1
@@ -746,164 +737,123 @@ def _dimension_new_cusp_forms_Ross(N,k,chi):
         chi_prim = chi.primitive_character()
         return chi_prim(x_hat)
 
-    def rho_local(p,r,alpha,chi,f_fact):
-        assert r >= alpha
-        assert r >= 1
-        if p == 2:
-            return 0
-        elif p == 3:
+    def rho(n_fact,chi,f):
+        ret = 1
+        for p,r in n_fact:
+            if p == 2:
+                ret *= 0
+            elif p == 3:
+                if r == 1:
+                    ret *= 1
+                else:
+                    ret *= 0
+            elif kronecker(-3,p) == -1:
+                ret *= 0
+            else:
+                u = Zmod(p**r)(-3).sqrt(extend=False)
+                chi_x = get_chi_p_alpha(f, chi, p, (-1+u)/2)
+                assert chi_x**3 == 1
+                if chi_x == 1:
+                    ret *= 2
+                else:
+                    ret *= -1
+        return ret
+
+    def beta_rho_f(n_fact, f):
+        ret = 1
+        for p,r in n_fact:
+            alpha = f.valuation(p)
             if r == 1:
-                return 1
+                if p == 3 and alpha == 0:
+                    ret *= -1
+                elif p != 3 and alpha >= 1:
+                    ret *= -1
+                elif p != 2 and p != 3 and alpha == 0 and kronecker(-3,p) == 1:
+                    ret *= 0
+                else:
+                    ret *= -2
+            elif r == 2:
+                if p == 3 and alpha == 0:
+                    ret *= -1
+                elif p != 3 and alpha >= 1:
+                    ret *= 0
+                elif p != 2 and p != 3 and alpha == 0 and kronecker(-3,p) == 1:
+                    ret *= -1
+                else:
+                    ret *= 1
             else:
-                return 0
-        elif kronecker(-3,p) == -1:
-            return 0
-        else:
-            u = Zmod(p**r)(-3).sqrt(extend=False)
-            chi_x = get_chi_p_alpha(f_fact, chi, p, (-1+u)/2)
-            assert chi_x**3 == 1
-            if chi_x == 1:
-                return 2
-            else:
-                return -1
-    
-    def rho(n,chi,f):
-        f_fact = factor(f)
-        ret = 1
-        for p,r in factor(n):
-            ret *= rho_local(p,r,f.valuation(p),chi,f_fact)
+                if p == 3 and r == 3 and alpha == 0:
+                    ret *= 1
+                else:
+                    ret *= 0
         return ret
-
-    def beta_rho_f_local(p,r,alpha):
-        assert r >= 1
-        if r == 1:
-            if p == 3 and alpha == 0:
-                return -1
-            elif p != 3 and alpha >= 1:
-                return -1
-            elif p != 2 and p != 3 and alpha == 0 and kronecker(-3,p)==1:
-                return 0
-            else:
-                return -2
-        elif r == 2:
-            if p == 3 and alpha == 0:
-                return -1
-            elif p != 3 and alpha >= 1:
-                return 0
-            elif p != 2 and p != 3 and alpha == 0 and kronecker(-3,p)==1:
-                return -1
-            else:
-                return 1
-        else:
-            if p == 3 and r == 3 and alpha == 0:
-                return 1
-            else:
-                return 0
-
-    def beta_rho_f(n,f):
-        ret = 1
-        for p,r in factor(n):
-            ret *= beta_rho_f_local(p,r,f.valuation(p))
-        return ret
-
 
     # Fourth term of explicit dimension formula
-    def rhopm_local(p,r,alpha,chi,f_fact):
-        assert r >= alpha
-        assert r >= 1
+    def rhopm(n_fact,chi,f):
+        ret = 1
+        for p,r in n_fact:
+            if p == 2:
+                if r == 1:
+                    ret *= 1
+                else:
+                    ret *= 0
+            elif kronecker(-1,p) == -1:
+                ret *= 0
+            else:
+                upm = Zmod(p**r)(-1).sqrt(extend=False)
+                chi_x = get_chi_p_alpha(f, chi, p, upm)
+                assert chi_x**4 == 1
+                if chi_x == 1:
+                    ret *= 2
+                elif chi_x == -1:
+                    ret *= -2
+                else:
+                    ret *= 0
+        return ret
 
-        if p == 2:
+    def beta_rhopm_f(n_fact, f):
+        ret = 1
+        for p,r in n_fact:
+            alpha = f.valuation(p)
             if r == 1:
-                return 1
+                if p == 2 and alpha == 0:
+                    ret *= -1
+                elif p != 2 and alpha >= 1:
+                    ret *= -1
+                elif p != 2 and alpha == 0 and kronecker(-1,p) == 1:
+                    ret *= 0
+                else:
+                    ret *= -2
+            elif r == 2:
+                if p == 2 and alpha == 0:
+                    ret *= -1
+                elif p != 2 and alpha >= 1:
+                    ret *= 0
+                elif p != 2 and alpha == 0 and kronecker(-1,p) == 1:
+                    ret *= -1
+                else:
+                    ret *= 1
             else:
-                return 0
-        elif kronecker(-1,p) == -1:
-            return 0
-        else:
-            upm = Zmod(p**r)(-1).sqrt(extend=False)
-            chi_x = get_chi_p_alpha(f_fact, chi, p, upm)
-            assert chi_x**4 == 1
-            if chi_x == 1:
-                return 2
-            elif chi_x == -1:
-                return -2
-            else:
-                return 0
-
-    def rhopm(n,chi,f):
-        f_fact = factor(f)
-        ret = 1
-        for p,r in factor(n):
-            ret *= rhopm_local(p,r,f.valuation(p),chi,f_fact)
+                if p == 2 and r == 3 and alpha == 0:
+                    ret *= 1
+                else:
+                    ret *= 0
         return ret
-
-    def beta_rhopm_f_local(p,r,alpha):
-        assert r >= 1
-        if r == 1:
-            if p == 2 and alpha == 0:
-                return -1
-            elif p != 2 and alpha >= 1:
-                return -1
-            elif p != 2 and alpha == 0 and kronecker(-1,p)==1:
-                return 0
-            else:
-                return -2
-        elif r == 2:
-            if p == 2 and alpha == 0:
-                return -1
-            elif p != 2 and alpha >= 1:
-                return 0
-            elif p != 2 and alpha == 0 and kronecker(-1,p)==1:
-                return -1
-            else:
-                return 1
-        else:
-            if p == 2 and r == 3 and alpha == 0:
-                return 1
-            else:
-                return 0
-
-    def beta_rhopm_f(n,f):
-        ret = 1
-        for p,r in factor(n):
-            ret *= beta_rhopm_f_local(p,r,f.valuation(p))
-        return ret
-
-
-
-    # Constant factors for each term of the explicit dimension formula
-    def c3(k):
-        return (k-1)/3 - k//3
-
-    def c4(k):
-        return (k-1)/4 - k//4
-
-    def c0(k,f):
-        if k == 2 and f == 1:
-            return 1
-        else:
-            return 0
-
-    def omega(n):
-        return len(factor(n))
-
 
     # Finally, compute the actual dimension formula
     k = ZZ(k)
     N = ZZ(N)
     assert k >= 2
     if chi(-1) != (-1)**k:
-        return 0
+        return ZZ(0)
     f = chi.conductor()
-    ret = 0
-    ret += (k-1)/12 * psi(f) * beta_psi_f(N//f, f)
-    ret += -1 * c3(k) * rho(f, chi, f) * beta_rho_f(N//f, f)
-    ret += -1 * c4(k) * rhopm(f, chi, f) * beta_rhopm_f(N//f, f)
-    ret += ZZ(-1)/2 * 2**omega(f) * beta_sigma_f(N//f, f) 
-    ret += c0(k,f) * moebius(N//f)
+    f_fact = factor(f)
+    Nf_fact = factor(N//f)
+    ret = ZZ(0)
+    ret += (k-1)/12 * psi(f_fact) * beta_psi_f(Nf_fact, f)
+    ret -= ((k-1)/3 - k//3) * rho(f_fact, chi, f) * beta_rho_f(Nf_fact, f)
+    ret -= ((k-1)/4 - k//4) * rhopm(f_fact, chi, f) * beta_rhopm_f(Nf_fact, f)
+    ret -= ZZ(1)/2 * 2**len(f_fact) * beta_sigma_f(Nf_fact, f)
+    ret += (1 if k == 2 and f == 1 else 0) * moebius(N//f)
     assert ret.is_integral()
     return ZZ(ret)
-
-
-
-

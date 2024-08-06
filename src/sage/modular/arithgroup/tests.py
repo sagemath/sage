@@ -434,6 +434,5 @@ class Test:
             for eps in DirichletGroup(N):
                 for k in range(2,k_ub+1):
                     Ross_dim = Gamma1_N.dimension_new_cusp_forms(k,eps,algorithm="Ross")
-                    CO_dim   = Gamma1_N.dimension_new_cusp_forms(k,eps,algorithm="CohenOesterle")
+                    CO_dim = Gamma1_N.dimension_new_cusp_forms(k,eps,algorithm="CohenOesterle")
                     assert Ross_dim == CO_dim
-
