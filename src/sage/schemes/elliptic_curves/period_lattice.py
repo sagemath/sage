@@ -213,6 +213,15 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L = PeriodLattice_ell(E,emb)
             sage: L == loads(dumps(L))
             True
+
+        Elliptic curve over imaginary number field without ``embedding`` specified::
+
+            sage: E = EllipticCurve(QQ[I], [5, -3*I])
+            sage: L = PeriodLattice_ell(E, embedding=None)
+            sage: L.elliptic_logarithm(E(I+1, I+2))
+            -0.773376784700140 - 0.177736018028666*I
+            sage: L.elliptic_exponential(_)
+            (1.00000000000000 - 1.00000000000000*I : 2.00000000000000 - 1.00000000000000*I : 1.00000000000000)
         """
         # First we cache the elliptic curve with this period lattice:
 
