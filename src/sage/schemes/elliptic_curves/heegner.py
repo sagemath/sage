@@ -138,6 +138,7 @@ lazy_import('sage.rings.real_mpfr', 'RealField')
 #
 ###############################################################################
 
+
 def heegner_points(N, D=None, c=None):
     """
     Return all Heegner points of given level `N`.  Can also restrict
@@ -596,6 +597,7 @@ class RingClassField(SageObject):
 # Galois groups of ring class fields
 #
 ##################################################################################
+
 
 class GaloisGroup(SageObject):
     """
@@ -2110,6 +2112,7 @@ class HeegnerPoints_level(HeegnerPoints):
                     continue
                 v.append(D)
         return v
+
 
 class HeegnerPoints_level_disc(HeegnerPoints):
     """
@@ -4003,6 +4006,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 #########################################################################################
 # Kolyvagin Points P_c
 #########################################################################################
+
+
 class KolyvaginPoint(HeegnerPoint):
     """
     A Kolyvagin point.
@@ -4611,6 +4616,7 @@ class KolyvaginCohomologyClass(SageObject):
              on elliptic curve of conductor 37
         """
         return self.__kolyvagin_point.heegner_point()
+
 
 class KolyvaginCohomologyClassEn(KolyvaginCohomologyClass):
     def _repr_(self):
@@ -5630,6 +5636,7 @@ class HeegnerQuatAlg(SageObject):
         V = self.modp_dual_elliptic_curve_factor(E, p, bound)
         return [b.dot_product(k.element().change_ring(GF(p))) for b in V.basis()]
 
+
 def kolyvagin_reduction_data(E, q, first_only=True):
     r"""
     Given an elliptic curve of positive rank and a prime `q`, this
@@ -5835,6 +5842,7 @@ def kolyvagin_reduction_data(E, q, first_only=True):
     return (ell_1, ell_2, D, class_number(D),
             BrandtModule(ell_1,N).dimension(),
             BrandtModule(ell_2,N).dimension())
+
 
 class HeegnerQuatAlgEmbedding(SageObject):
     r"""
@@ -6119,6 +6127,7 @@ def quadratic_order(D, c, names='a'):
     R = K.order([t])
     return R, R(t)
 
+
 def class_number(D):
     """
     Return the class number of the quadratic field with fundamental
@@ -6149,6 +6158,7 @@ def class_number(D):
         raise ValueError("D (=%s) must be a fundamental discriminant" % D)
     return D.class_number()
 
+
 def is_inert(D, p):
     r"""
     Return ``True`` if p is an inert prime in the field `\QQ(\sqrt{D})`.
@@ -6171,6 +6181,7 @@ def is_inert(D, p):
     K = QuadraticField(D,'a')
     F = K.factor(p)
     return len(F) == 1 and F[0][1] == 1
+
 
 def is_split(D, p):
     r"""
@@ -6195,6 +6206,7 @@ def is_split(D, p):
     F = K.factor(p)
     return len(F) == 2
 
+
 def is_ramified(D, p):
     r"""
     Return ``True`` if p is a ramified prime in the field `\QQ(\sqrt{D})`.
@@ -6215,6 +6227,7 @@ def is_ramified(D, p):
         True
     """
     return QuadraticField(D,'a').discriminant() % p == 0
+
 
 def nearby_rational_poly(f, **kwds):
     r"""
@@ -6241,6 +6254,7 @@ def nearby_rational_poly(f, **kwds):
     R = QQ['X']
     return R([a.nearby_rational(**kwds) for a in f])
 
+
 def simplest_rational_poly(f, prec):
     """
     Return a polynomial whose coefficients are as simple as possible
@@ -6262,6 +6276,7 @@ def simplest_rational_poly(f, prec):
     R = QQ['X']
     Z = RealField(prec)
     return R([Z(a).simplest_rational() for a in f])
+
 
 def satisfies_weak_heegner_hypothesis(N, D):
     r"""
@@ -6438,6 +6453,7 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
     y = HeegnerPointOnX0N(self.conductor(), D, c, f, check=check)
     return y.map_to_curve(self)
 
+
 def kolyvagin_point(self, D, c=ZZ(1), check=True):
     r"""
     Return the Kolyvagin point on this curve associated to the
@@ -6469,6 +6485,7 @@ def kolyvagin_point(self, D, c=ZZ(1), check=True):
         (6 : -15 : 1)
     """
     return self.heegner_point(D,c,check=check).kolyvagin_point()
+
 
 def ell_heegner_discriminants(self, bound):
     """
@@ -6518,6 +6535,7 @@ def ell_heegner_discriminants_list(self, n):
         v.append(D)
         D -= 1
     return v
+
 
 def heegner_point_height(self, D, prec=2, check_rank=True):
     r"""
@@ -7050,6 +7068,7 @@ def _heegner_index_in_EK(self, D):
     self.__heegner_index_in_EK[D] = index
     return index
 
+
 def heegner_sha_an(self, D, prec=53):
     r"""
     Return the conjectural (analytic) order of Sha for E over the field `K=\QQ(\sqrt{D})`.
@@ -7261,6 +7280,7 @@ def _heegner_forms_list(self, D, beta=None, expected_count=None):
                     return all
         b += 2*N
 
+
 def _heegner_best_tau(self, D, prec=None):
     r"""
     Given a discriminant `D`, find the Heegner point `\tau` in the
@@ -7284,6 +7304,7 @@ def _heegner_best_tau(self, D, prec=None):
     b = ZZ(Integers(4*N)(D).sqrt(extend=False) % (2*N))
     # TODO: make sure a different choice of b is not better?
     return (-b + ZZ(D).sqrt(prec=prec)) / (2*N)
+
 
 def satisfies_heegner_hypothesis(self, D):
     """

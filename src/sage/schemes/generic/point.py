@@ -16,6 +16,7 @@ from sage.structure.richcmp import richcmp
 # or defined by a morphism.
 ########################################################
 
+
 class SchemePoint(Element):
     """
     Base class for points on a scheme, either topological or defined
@@ -72,8 +73,10 @@ class SchemePoint(Element):
 # Topological points on a scheme
 ########################################################
 
+
 def is_SchemeTopologicalPoint(x):
     return isinstance(x, SchemeTopologicalPoint)
+
 
 class SchemeTopologicalPoint(SchemePoint):
     """

@@ -56,6 +56,7 @@ DEFAULT_THRESHOLD_DELETION = 50
 # The number of additional digits used for internal computations
 STARTING_ADDITIONAL_PREC = 5
 
+
 class pRational:
     r"""
     This class implements rational numbers viewed as elements of ``Qp``.
@@ -2740,6 +2741,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
             M *= self._p ** val
         return M
 
+
 class pAdicLatticeElementWeakProxy():
     r"""
     The implementations of :class:`DifferentialPrecisionGeneric` hold
@@ -2850,6 +2852,7 @@ class pAdicLatticeElementWeakProxy():
             [WeakProxy#...]
         """
         return "WeakProxy#%s" % (self._id,)
+
 
 def list_of_padics(elements):
     r"""

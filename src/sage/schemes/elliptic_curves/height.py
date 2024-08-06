@@ -514,6 +514,7 @@ def nonneg_region(f):
         sign_changes += [infinity]
     return UnionOfIntervals(sign_changes)
 
+
 def inf_max_abs(f, g, D):
     r"""
     Return `\inf_D(\max(|f|, |g|))`.

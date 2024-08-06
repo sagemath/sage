@@ -95,6 +95,7 @@ def _make_integral_poly(exact_modulus, p, prec):
     except TypeError:
         return exact_modulus.change_ring(Zmod(p**prec)).change_ring(ZZ)
 
+
 class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCappedRelativeRingGeneric):
     """
     TESTS::
@@ -152,6 +153,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
             from .qadic_flint_CR import pAdicCoercion_ZZ_CR, pAdicConvert_QQ_CR
             self.register_coercion(pAdicCoercion_ZZ_CR(self))
             self.register_conversion(pAdicConvert_QQ_CR(self))
+
 
 class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCappedRelativeFieldGeneric):
     """
@@ -298,6 +300,7 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
             self.register_coercion(pAdicCoercion_ZZ_CA(self))
             self.register_conversion(pAdicConvert_QQ_CA(self))
 
+
 class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModRingGeneric):
     """
     TESTS::
@@ -359,6 +362,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
     #    elif isinstance(S, pAdicRingFixedMod) and S.prime() == self.prime():
     #        return Morphism_ZpFM_UnrFM(S, self)
     #    return None
+
 
 class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloatingPointRingGeneric):
     """
@@ -484,6 +488,7 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
 
         return super()._coerce_map_from_(R)
 
+
 class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeRingGeneric):
     """
     TESTS::
@@ -538,6 +543,7 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
         self._exact_modulus = exact_modulus
         self._implementation = implementation
         EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXCRElement)
+
 
 class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeFieldGeneric):
     """
@@ -595,6 +601,7 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
         self._implementation = implementation
         EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXCRElement)
 
+
 class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCappedAbsoluteRingGeneric):
     """
     TESTS::
@@ -649,6 +656,7 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
         self._exact_modulus = exact_modulus
         self._implementation = implementation
         EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXCAElement)
+
 
 class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModRingGeneric):
     """

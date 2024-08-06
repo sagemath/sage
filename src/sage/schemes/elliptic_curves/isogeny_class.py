@@ -1319,6 +1319,7 @@ def isogeny_degrees_cm(E, verbose=False):
         print("List of primes after filtering: %s" % L)
     return L
 
+
 def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
                              num_l=None, exact=True, verbose=False):
     r"""
