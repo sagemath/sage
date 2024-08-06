@@ -981,7 +981,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         else:
             norm_f = numfield_f
 
-        R = norm_f._singular_().absFactorize()
+        R = norm_f._singular_().absFactorize('"_SAGE_ALGEBRAIC_"')
 
         singular.setring(R)
         L = singular('absolute_factors')
