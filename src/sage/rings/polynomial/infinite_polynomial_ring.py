@@ -889,11 +889,11 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             ...
             ValueError: cannot convert 1/3 into an element of Infinite polynomial ring in x over Integer Ring
 
-        .. WARNING:
+        .. WARNING::
 
-        The :issue:`37756` is not yet fixed::
+            The :issue:`37756` is not yet fixed::
 
-            sage: L.<x, y> = QQ[]
+                sage: L.<x, y> = QQ[]
             sage: R.<a> = InfinitePolynomialRing(QQ)
             sage: M = InfinitePolynomialRing(L, names=["a"])
             sage: c = a[0]
