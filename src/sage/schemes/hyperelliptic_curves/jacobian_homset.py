@@ -119,7 +119,7 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             sage: K.<u> = QQ[]
             sage: C = HyperellipticCurve(u^5 - 1)
             sage: J = C.jacobian()
-            sage: J(u-1,0)
+            sage: J(u - 1, 0)
             (x - 1, y)
         """
         if isinstance(P, (Integer, int)) and P == 0:
