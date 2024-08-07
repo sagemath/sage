@@ -1431,6 +1431,11 @@ REFERENCES:
              for closed Riemannian manifolds*, Ann. of Math. (2) 45 (1944),
              747–752.
 
+.. [CHNP2020] Kieran Clancy, Michael Haythorpe, Alex Newcombe and Ed Pegg Jr,
+              *There Are No Cubic Graphs on 26 Vertices with Crossing Number 10
+              or 11*, Graphs and Combinatorics 36, pages: 1713 -- 1721, (2020),
+              :doi:`10.1007/s00373-020-02204-6`.
+
 .. [CP2023] \M. Cati and D.V. Pasechnik.
             *Implementing Hadamard Matrices in SageMath*.
             Preprint, :arxiv:`2306.16812`, (2023).
