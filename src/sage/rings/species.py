@@ -792,3 +792,36 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 stab = libgap.Stabilizer(F, domain, orbit[0], libgap.Permuted)
                 grps.append(libgap.ConjugateGroup(stab, pi))
             return grps
+
+        def cartesian_product(self, other):
+            r"""
+            Return the cartesian product of ``self`` with ``other``.
+            """
+            if not isinstance(other, PolynomialSpecies.Element):
+                raise ValueError(f"{other} must be a polynomial species")
+
+            # Do we want to allow cartesian products between different k-variates?
+            if self.parent()._k != other.parent()._k:
+                return self.parent().zero()
+
+            terms = cartesian_product([self.terms(), other.terms()])
+            res = 0
+            for t1, t2 in terms:
+                H, coeffH = t1.support()[0], t1.coefficients()[0]
+                K, coeffK = t2.support()[0], t2.coefficients()[0]
+                if H._mc != K._mc:
+                    continue
+                coeff = coeffH * coeffK
+                Sn = SymmetricGroup(H._tc).young_subgroup(H._mc)
+                Hgap, Kgap = libgap(H._group), libgap(K._group)
+                # We need to normalize H and K to have the same domparts
+                Hd = sorted(H._dompart.keys(), key=lambda x: H._dompart[x])
+                Kd = sorted(K._dompart.keys(), key=lambda x: K._dompart[x])
+                piH = libgap.MappingPermListList(Hd, Kd)
+                taus = libgap.DoubleCosetRepsAndSizes(Sn, Hgap, Kgap)
+                Hgap = libgap.ConjugateGroup(Hgap, piH)
+                for tau, _ in taus:
+                    tHt = libgap.ConjugateSubgroup(Hgap, tau)
+                    G = PermutationGroup(gap_group=libgap.Intersection(tHt, Kgap), domain=K._dompart.keys())
+                    res += coeff * self.parent()((G, K._dompart))
+            return res
