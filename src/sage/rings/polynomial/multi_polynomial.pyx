@@ -2683,7 +2683,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         if gens:
             # substituting all variables (in a polynomial ring with variables) with 0
-            d = {str(gen): 0 for gen in gens}
+            d = {str(gen): self.base_ring().zero() for gen in gens}
             tester.assertEqual(self.subs(**d).parent(), self.parent().base_ring())
 
             # substituting all variables (in a polynomial ring with variables)

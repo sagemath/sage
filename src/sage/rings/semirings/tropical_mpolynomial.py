@@ -182,28 +182,22 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1.subs({x: 4})
             0*y + 8
         """
-        def check_type(dict, var):
-            try:
-                variables[i] = T(dict[var])
-            except TypeError:
-                variables[i] = dict[var]
-
         variables = list(self.parent().gens())
-        T = self.parent().base()
         for i in range(len(variables)):
             if str(variables[i]) in kwds:
-                check_type(kwds, str(variables[i]))
+                variables[i] = kwds[str(variables[i])]
             elif fixed:
                 if variables[i] in fixed:
-                    check_type(fixed, variables[i])
+                    variables[i] = fixed[variables[i]]
                 elif i in fixed:
-                    check_type(fixed, i)
+                    variables[i] = fixed[i]
+        T = self.parent().base()
         if len(kwds) < len(variables):
-            for i, var in enumerate(variables):
-                if var.parent() is T:
-                    variables[i] = self.parent()(var.lift())
+            for i, v in enumerate(variables):
+                if v.parent() is T:
+                    variables[i] = self.parent()(v.lift())
                 else:
-                    variables[i] = self.parent()(var)
+                    variables[i] = self.parent()(v)
         return self(tuple(variables))
 
     def plot3d(self, color='random'):
