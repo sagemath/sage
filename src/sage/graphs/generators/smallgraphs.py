@@ -1968,7 +1968,7 @@ def CubeplexGraph(embedding='LM'):
         1
         sage: g.show()                          # long time                             # needs sage.plot
 
-    TEST:
+    TESTS:
 
     Note that all three embeddings refer to the same graph, the Cubeplex graph,
     aka `\Gamma_1`::
@@ -4997,7 +4997,7 @@ def TwinplexGraph(embedding='LM'):
         2
         sage: g.show()                          # long time                             # needs sage.plot
 
-    TEST:
+    TESTS:
 
     Note that all four embeddings refer to the same graph, the Twinplex graph,
     aka `\Gamma_2`::
