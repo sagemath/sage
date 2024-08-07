@@ -2602,6 +2602,11 @@ REFERENCES:
             Wehler K3 Surfaces over finite fields*. New Zealand Journal
             of Mathematics 45 (2015), 19–31.
 
+.. [FiLi2001] Ilse Fischer and Charles H.C. Little, *A Characterisation of
+              Pfaffian Near Bipartite Graphs*, Journal of Combinatorial Theory,
+              Series B, vol. 82, issue 2, (2001), pages: 175 -- 222, ISSN:
+              0095 -- 8956, :doi:`10.1006/jctb.2000.2025`.
+
 .. [FIV2012] \H. Fournier, A. Ismail, and A. Vigneron. *Computing the Gromov
              hyperbolicity of a discrete metric space*. 2012.
              :arxiv:`1210.3323`.
