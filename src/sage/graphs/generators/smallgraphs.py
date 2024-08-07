@@ -4928,11 +4928,210 @@ def TutteGraph():
     return g
 
 
-def TwinplexGraph():
+def TwinplexGraph(embedding='LM'):
     r"""
     Return the Twinplex graph.
+
+    The Twinplex graph is a cubic hamiltonian graph of order 12 with the graph
+    crossing number 2 and has a girth 5 (that is the maximal girth among all
+    cubic graphs on 12 vertices [CHNP2020]_). It corresponds to the graph
+    labeled as `\Gamma_2` by Fischer and Little [FiLi2001]_. The Twinplex graph
+    has LCF notation `[-5, -4, 4, -4, 4, 5, -4, 5, -4, 4, -5, 4]`.
+
+    The Fischer-Little Theorem [FiLi2001]_ may be stated as follows [LM2024]_:
+
+    A near-bipartite graph is non-Pfaffian if and only if it contains one of
+    the graphs `K_{3, 3}`, `\Gamma_1` and `\Gamma_2` as an `S`-minor.
+
+    Norine and Thomas [NT2007]_ use the term ``Twinplex`` to describe one of
+    the 12-vertex cubic graphs, `\Gamma_1` and `\Gamma_2`, as defined by
+    Fischer and Little [FiLi2001]_. However, the figure in their paper that
+    supposedly provides embeddings for the graphs labeled Cubeplex and Twinplex
+    actually shows both embeddings corresponding to Fischer and Little's
+    `\Gamma_1`, which is the Cubeplex graph. Followingly, for
+    ``embedding='NT'``, we present a correct version of the Twinplex graph
+    with a slight modification of the embedding that is labeled as ``Twinplex``
+    in the paper of Norine and Thomas [NT2007]_.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. For different values of the parameter
+    ``embedding``, the Twinplex graph is displayed as it is mentioned in the
+    respective paper/ book. Note that for ``embedding='NT'``, a correct
+    embedding of the Twinplex graph is displayed with a minor modification to
+    the (incorrect) embedding shown in the paper [NT2007]_.
+
+    INPUT:
+
+    - ``embedding`` -- string (default: ``'LM'``)
+
+      - ``'LM'`` displays the embedding as shown for `\Gamma_2` by Lucchesi and
+        Murty [LM2024]_
+
+      - ``'FL'`` displays the embedding as shown for `\Gamma_2` by Fischer and
+        Little [FiLi2001]_
+
+      - ``'NT'`` displays the correct embedding with a minor modification to
+        the one shown as the (incorrect) ``Twinplex`` by Norine and Thomas
+        [NT2007]_
+
+      - ``'RST'`` displays the embedding as shown for the ``Twinplex`` by
+        Robertson, Seymour and Thomas [RST2019]_
+
+    OUTPUT:
+
+    - ``G`` -- the Twinplex graph; note that a :class:`ValueError` is returned
+      if ``embedding`` is none of ``'FT'``, ``'NT'``, ``'RST'`` or ``'LM'``
+
+    EXAMPLES:
+
+    Construct and show the Twinplex graph::
+
+        sage: g = graphs.TwinplexGraph()
+        sage: g.name()
+        'Twinplex Graph'
+        sage: g.order()
+        12
+        sage: g.size()
+        18
+        sage: g.girth()
+        5
+        sage: g.diameter()
+        3
+        sage: g.is_hamiltonian()
+        True
+        sage: g.crossing_number()
+        2
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    TEST:
+
+    Note that all four embeddings refer to the same graph, the Twinplex graph,
+    aka `\Gamma_2`::
+
+        sage: fl = graphs.TwinplexGraph(embedding='FL')
+        sage: nt = graphs.TwinplexGraph(embedding='NT')
+        sage: rst = graphs.TwinplexGraph(embedding='RST')
+        sage: lm = graphs.TwinplexGraph(embedding='LM')
+        sage: fl.is_isomorphic(nt) and fl.is_isomorphic(rst) and \
+              fl.is_isomorphic(lm)
+        True
+
+    The input parameter must be one of 'FL', 'NT', 'RST' or 'LM'::
+
+        sage: g = graphs.TwinplexGraph(embedding='embedding')
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter 'embedding' must be either 'FL' or 'NT' or
+                    'LM' or otherwise 'RST'
+
+    REFERENCES:
+
+    - [FiLi2001]_
+    - [LM2024]_
+    - [NT2007]_
+    - [RST2019]_
+
+    .. SEEALSO::
+
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CubeplexGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-08-03)
     """
-    raise NotImplementedError()
+    if embedding == 'FL':
+        from math import pi
+
+        G = Graph(12, name='Twinplex Graph')
+        G._circle_embedding(list(range(12)), angle=5*pi/12)
+        G.add_cycle(list(range(12)))
+
+        G.add_edges([
+            (0, 8), (1, 5), (2, 9),
+            (3, 7), (4, 11), (6, 10)
+        ])
+
+    elif embedding == 'NT':
+        pos_dict = {
+            0: (1, 2),
+            1: (3, 2),
+            2: (0, 1),
+            3: (1, 1),
+            4: (2, 1),
+            5: (3, 1),
+            6: (4, 1),
+            7: (0, -1),
+            8: (1, 0),
+            9: (2, 0),
+            10: (3, 0),
+            11: (4, -1),
+        }
+
+        G = Graph(12, pos=pos_dict, name='Twinplex Graph')
+        G.add_edges([
+            (0, 2), (0, 4), (0, 6),
+            (1, 3), (1, 5), (1, 6),
+            (2, 7), (2, 9), (3, 7),
+            (3, 8), (4, 8), (4, 10),
+            (5, 9), (5, 10), (6, 11),
+            (7, 11), (8, 9), (10, 11)
+        ])
+
+    elif embedding == 'RST':
+        pos_dict = {
+            0: (-1, 3),
+            1: (1, 3),
+            2: (3, 1),
+            3: (3, -1),
+            4: (1, -3),
+            5: (-1, -3),
+            6: (-3, -1),
+            7: (-3, 1),
+            8: (-1, 1),
+            9: (1, 1),
+            10: (1, -1),
+            11: (-1, -1)
+        }
+
+        G = Graph(12, pos=pos_dict, name='Twinplex Graph')
+
+        G.add_cycle(list(range(8)))
+        G.add_edges([
+            (0, 4), (1, 8), (2, 10),
+            (3, 9), (5, 10), (6, 8),
+            (7, 11), (8, 9), (9, 11),
+            (10, 11)
+        ])
+
+    elif embedding == 'LM':
+        from math import pi
+
+        pos_dict = {
+            8: (0, 1),
+            9: (1, 0),
+            10: (-3*cos(pi/16), -3*sin(pi/16)),
+            11: (3*cos(pi/16), -3*sin(pi/16))
+        }
+
+        for v in range(8):
+            t = pi * (v+2)/4
+            pos_dict[v] = (-2*cos(t), 2*sin(t))
+
+        G = Graph(12, pos=pos_dict, name='Twinplex Graph')
+
+        G.add_cycle(list(range(8)))
+        G.add_edges([
+            (0, 8), (1, 11), (2, 9), (3, 10), (4, 8),
+            (5, 11), (6, 9), (7, 10), (8, 9), (10, 11)
+        ])
+
+    else:
+        raise ValueError("parameter 'embedding' must be either 'FL' or 'NT' or\
+                          'LM' or otherwise 'RST'")
+
+    return G
 
 
 def WagnerGraph():
