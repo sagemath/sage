@@ -129,19 +129,20 @@ def Constellations(*data, **options):
 
 def Constellation(g=None, mutable=False, connected=True, check=True):
     r"""
-    Constellation
+    Constellation.
 
     INPUT:
 
-    - ``g`` -- a list of permutations
+    - ``g`` -- list of permutations
 
-    - ``mutable`` -- whether the result is mutable or not. Default is ``False``.
+    - ``mutable`` -- boolean (default: ``False``); whether the result is
+      mutable or not
 
-    - ``connected`` -- whether the result should be connected. Default is
-      ``True``.
+    - ``connected`` -- boolean (default: ``True``); whether the result should
+      be connected
 
-    - ``check`` -- whether or not to check. If it is ``True``, then the
-      list ``g`` must contains no ``None``.
+    - ``check`` -- boolean (default: ``True``); whether or not to check. If it
+      is ``True``, then the list ``g`` must contain no ``None``.
 
     EXAMPLES:
 
@@ -181,7 +182,7 @@ def Constellation(g=None, mutable=False, connected=True, check=True):
 
 class Constellation_class(Element):
     r"""
-    Constellation
+    Constellation.
 
     A constellation or a tuple of permutations `(g_0,g_1,...,g_k)`
     such that the product `g_0 g_1 ... g_k` is the identity.
@@ -360,7 +361,8 @@ class Constellation_class(Element):
 
     def _check(self):
         r"""
-        Check that the constellation is valid and if not raise ValueError.
+        Check that the constellation is valid and if not raise
+        :exc:`ValueError`.
 
         TESTS::
 
@@ -447,9 +449,7 @@ class Constellation_class(Element):
         """
         Return the connected components.
 
-        OUTPUT:
-
-        A list of connected constellations.
+        OUTPUT: list of connected constellations
 
         EXAMPLES::
 
@@ -675,7 +675,7 @@ class Constellation_class(Element):
 
         INPUT:
 
-        - i -- integer or ``None`` (default)
+        - ``i`` -- integer or ``None`` (default)
 
         If ``None`` , return instead the list of all `g_i`.
 
@@ -932,9 +932,9 @@ class Constellations_ld(UniqueRepresentation, Parent):
         self._length = length
         self._degree = degree
         if self._length < 0:
-            raise ValueError("length should be a non-negative integer")
+            raise ValueError("length should be a nonnegative integer")
         if self._degree < 0:
-            raise ValueError("degree should be a non-negative integer")
+            raise ValueError("degree should be a nonnegative integer")
 
         self._sym = sym
 
@@ -1187,9 +1187,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
         Return a list of graphs that corresponds to the braid group action on
         ``self`` up to isomorphism.
 
-        OUTPUT:
-
-        - list of graphs
+        OUTPUT: list of graphs
 
         EXAMPLES::
 
@@ -1278,10 +1276,10 @@ class Constellations_p(UniqueRepresentation, Parent):
         r"""
         OPTIONS:
 
-        - ``profile`` -- a list of integer partitions of the same integer
+        - ``profile`` -- list of integer partitions of the same integer
 
-        - ``connected`` -- a boolean (default: ``True``) that specify
-          if we consider only connected constellations.
+        - ``connected`` -- boolean (default: ``True``); whether we consider
+          only connected constellations
 
         TESTS::
 
@@ -1469,7 +1467,7 @@ def perms_sym_init(g, sym=None):
 
     - ``sym`` -- a symmetric group
 
-    - ``gg`` -- a list of permutations
+    - ``gg`` -- list of permutations
 
     EXAMPLES::
 
@@ -1520,13 +1518,13 @@ def perms_sym_init(g, sym=None):
 
 def perms_are_connected(g, n):
     """
-    Checks that the action of the generated group is transitive
+    Check that the action of the generated group is transitive.
 
     INPUT:
 
-    - a list of permutations of `[0, n-1]` (in a SymmetricGroup)
+    - ``g`` -- list of permutations of `[0, n-1]` (in a SymmetricGroup)
 
-    - an integer `n`
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -1547,7 +1545,7 @@ def perms_are_connected(g, n):
 
 def perms_canonical_labels_from(x, y, j0, verbose=False):
     r"""
-    Return canonical labels for ``x``, ``y`` that starts at ``j0``
+    Return canonical labels for ``x``, ``y`` that starts at ``j0``.
 
     .. WARNING::
 
@@ -1562,9 +1560,7 @@ def perms_canonical_labels_from(x, y, j0, verbose=False):
 
     - ``j0`` -- an index in [0, ..., n]
 
-    OUTPUT:
-
-    mapping: a permutation that specify the new labels
+    OUTPUT: mapping: a permutation that specify the new labels
 
     EXAMPLES::
 
@@ -1636,11 +1632,9 @@ def perm_invert(p):
 
     INPUT:
 
-    a permutation of {0,..,n-1} given by a list of values
+    - ``p`` -- a permutation of {0,..,n-1} given by a list of values
 
-    OUTPUT:
-
-    a permutation of {0,..,n-1} given by a list of values
+    OUTPUT: a permutation of {0,..,n-1} given by a list of values
 
     EXAMPLES::
 
@@ -1656,15 +1650,13 @@ def perm_invert(p):
 
 def perm_conjugate(p, s):
     """
-    Return the conjugate of the permutation `p`  by the permutation `s`.
+    Return the conjugate of the permutation `p` by the permutation `s`.
 
     INPUT:
 
-    two permutations of {0,..,n-1} given by lists of values
+    - ``p``, ``s`` -- two permutations of {0,..,n-1} given by lists of values
 
-    OUTPUT:
-
-    a permutation of {0,..,n-1} given by a list of values
+    OUTPUT: a permutation of {0,..,n-1} given by a list of values
 
     EXAMPLES::
 
@@ -1685,16 +1677,14 @@ def perms_canonical_labels(p, e=None):
 
     INPUT:
 
-    - ``p`` is a list of at least 2 permutations
+    - ``p`` -- list of at least 2 permutations
 
-    - ``e`` is None or a list of integer in the domain of the
+    - ``e`` -- ``None`` or a list of integer in the domain of the
       permutations. If provided, then the renumbering algorithm is
       only performed from the elements of ``e``.
 
-    OUTPUT:
-
-    - a pair made of a list of permutations (as a list of lists) and a
-      list that corresponds to the conjugacy used.
+    OUTPUT: a pair made of a list of permutations (as a list of lists) and a
+    list that corresponds to the conjugacy used.
 
     EXAMPLES::
 

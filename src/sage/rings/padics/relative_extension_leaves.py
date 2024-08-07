@@ -1,7 +1,7 @@
 """
 Relative extensions of `p`-adic rings
 
-We represent general extensions of p-adic rings as a two-step extension:
+We represent general extensions of `p`-adic rings as a two-step extension:
 first an unramified extension of Qp, followed by an Eisenstein extension
 of the result.
 
@@ -35,7 +35,7 @@ class pAdicRelativeBaseringInjection(Morphism):
     INPUT:
 
     - ``R`` -- an unramified `p`-adic ring or field
-    - ``S`` -- an eisenstein extension of ``R``.
+    - ``S`` -- an eisenstein extension of ``R``
 
     EXAMPLES::
 

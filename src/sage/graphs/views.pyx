@@ -204,7 +204,7 @@ cdef class EdgesView:
         sage: G.has_edge(1, 0)
         False
 
-    We can consider only the edges between two specifed sets of vertices::
+    We can consider only the edges between two specified sets of vertices::
 
         sage: G = Graph([(0, 1), (1, 2)])
         sage: E = EdgesView(G, vertices=[0], vertices2=[1], labels=False)

@@ -25,10 +25,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.calculus.functions import jacobian
-from sage.functions.hyperbolic import cosh, sinh
-from sage.functions.log import exp
 from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.rings.cc import CC
@@ -39,6 +37,10 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
+
+lazy_import("sage.calculus.functions", "jacobian")
+lazy_import("sage.functions.hyperbolic", ["cosh", "sinh"])
+lazy_import("sage.functions.log", "exp")
 
 
 def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
@@ -60,8 +62,7 @@ def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
 
     - ``emb`` -- embedding into CC
 
-    - ``error_limit`` -- sets the error tolerance (default:0.000001)
-
+    - ``error_limit`` -- sets the error tolerance (default: 0.000001)
 
     OUTPUT: a complex number, a real number
 
@@ -77,8 +78,8 @@ def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
         sage: F = -x^8 + 6*x^7*y - 7*x^6*y^2 - 12*x^5*y^3 + 27*x^4*y^4\
         ....: - 4*x^3*y^5 - 19*x^2*y^6 + 10*x*y^7 - 5*y^8
         sage: covariant_z0(F, prec=80)
-        (0.64189877107807122203369 + 1.1852516565091601348355*I,
-         3134.5148284344627168275)
+        (0.64189877107807122203366 + 1.1852516565091601348355*I,
+        3134.5148284344627168276)
 
     ::
 
@@ -269,15 +270,15 @@ def epsinv(F, target, prec=53, target_tol=0.001, z=None, emb=None):
 
     - ``F`` -- binary form of degree at least 3 with no multiple roots
 
-    - ``target`` --  positive real number. The value we want to attain, i.e.,
+    - ``target`` -- positive real number; the value we want to attain, i.e.,
       the value we are taking the inverse of
 
-    - ``prec`` -- positive integer. precision to use in CC
+    - ``prec`` -- positive integer; precision to use in CC
 
-    - ``target_tol`` -- positive real number. The tolerance with which we
-      attain the target value.
+    - ``target_tol`` -- positive real number; the tolerance with which we
+      attain the target value
 
-    - ``z`` -- complex number. ``z_0`` covariant for F.
+    - ``z`` -- complex number; ``z_0`` covariant for F
 
     - ``emb`` -- embedding into CC
 
@@ -433,7 +434,7 @@ def get_bound_poly(F, prec=53, norm_type='norm', emb=None):
 
 def smallest_poly(F, prec=53, norm_type='norm', emb=None):
     r"""
-    Determine the poly with smallest coefficients in `SL(2,\Z)` orbit of ``F``
+    Determine the poly with smallest coefficients in `SL(2,\Z)` orbit of ``F``.
 
     Smallest can be in the sense of `L_2` norm or height.
     The method is the algorithm in Hutz-Stoll [HS2018]_.
@@ -446,8 +447,8 @@ def smallest_poly(F, prec=53, norm_type='norm', emb=None):
 
     - ``F`` -- binary form of degree at least 3 with no multiple roots
 
-    - ``norm_type`` -- string; ``norm`` or ``height`` controlling what ``smallest``
-      means for the coefficients.
+    - ``norm_type`` -- string; ``'norm'`` or ``'height'`` controlling what
+      ``smallest`` means for the coefficients
 
     OUTPUT: pair [poly, matrix]
 

@@ -21,7 +21,7 @@ completion of `K`. Next, we define `\mathbb{C}_{\infty}` to be the
 completion of an algebraic closure of `K_{\infty}`. Lastly, we denote
 by `\tau : x\mapsto x^q` the `q`-Frobenius.
 
-.. note::
+.. NOTE::
 
     The above construction of `\mathbb{C}_{\infty}` is the same as the
     construction of `\mathbb{C}_p` in the case of `p`-adic numbers
