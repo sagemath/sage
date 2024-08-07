@@ -262,6 +262,7 @@ cdef class Group(Parent):
         """
         raise NotImplementedError
 
+
 cdef class AbelianGroup(Group):
     """
     Generic abelian group.
