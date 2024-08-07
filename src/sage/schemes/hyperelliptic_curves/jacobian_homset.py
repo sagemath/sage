@@ -111,6 +111,15 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             (x + 2, y)
             sage: D1 + D2
             (x^2 + 2*x + 2, y + 2*x + 1)
+
+        TESTS:
+
+        Test :issue:`38459`::
+
+            sage: C=HyperellipticCurve(u^5-1)
+            sage: J=C.jacobian()
+            sage: J(u-1,0)
+            (x - 1, y)
         """
         if isinstance(P, (Integer, int)) and P == 0:
             R = self.curve().hyperelliptic_polynomials()[0].parent()
