@@ -369,7 +369,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         INPUT:
 
-        - ``right`` -- a boolean; if ``True``, return right divisors,
+        - ``right`` -- boolean; if ``True``, return right divisors,
           otherwise, return left divisors
 
         TESTS::
@@ -476,7 +476,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the
+        - ``uniform`` -- boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
@@ -551,7 +551,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the
+        - ``uniform`` -- boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
@@ -933,7 +933,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the
+        - ``uniform`` -- boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
