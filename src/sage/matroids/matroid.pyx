@@ -8082,6 +8082,10 @@ cdef class Matroid(SageObject):
             sage: ch = M.chow_ring(QQ, augmented=True, presentation='fy')
             Augmented Chow ring of Wheel(3): Regular matroid of rank 3 on 
             6 elements with 16 bases of Feitchner-Yuzvinsky presentation
+            sage: M = matroids.Uniform(3, 6)
+            sage: ch = M.chow_ring(QQ, augmented=True, presentation='atom-free')
+            Augmented Chow ring of U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
+            {3: {{0, 1, 2, 3, 4, 5}}} of atom-free presentation
 
         REFERENCES:
 
