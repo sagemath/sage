@@ -51,8 +51,16 @@ class ChowRingIdeal(MPolynomialIdeal):
 
         EXAMPLE::
 
+            sage: from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug
+
             sage: ch = ChowRingIdeal_nonaug(M=matroids.catalog.Fano(), R=QQ)
-            sage: ch.flats_generator() #WHERE IS OUTPUT?
+            sage: ch.flats_generator()
+            {frozenset({'a'}): Aa, frozenset({'b'}): Ab, frozenset({'c'}): Ac,
+            frozenset({'d'}): Ad, frozenset({'e'}): Ae, frozenset({'f'}): Af,
+            frozenset({'g'}): Ag, frozenset({'b', 'a', 'f'}): Aabf,
+            frozenset({'c', 'e', 'a'}): Aace, frozenset({'d', 'g', 'a'}): Aadg,
+            frozenset({'c', 'b', 'd'}): Abcd, frozenset({'b', 'g', 'e'}): Abeg,
+            frozenset({'c', 'g', 'f'}): Acfg, frozenset({'d', 'e', 'f'}): Adef}
         """
         return dict(self._flats_generator)
     
@@ -107,11 +115,51 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
     def _gens_constructor(self, poly_ring):
         r"""
-        Returns the generators of the Chow ring ideal.
+        Returns the generators of the Chow ring ideal. Takes in the
+        ring of Chow ring ideal as input.
         
         EXAMPLE::
+
+            sage: from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug
+
             sage: ch = ChowRingIdeal_nonaug(M=matroids.catalog.NonFano(), R=QQ)
-            sage: ch._gens_constructor() #WHERE IS OUTPUT?
+            sage: ch._gens_constructor(ch.ring())
+            [Aa*Ab, Aa*Ac, Aa*Ad, Aa*Ae, Aa*Af, Aa*Ag, Aa*Abcd, Aa*Abeg,
+            Aa*Acfg, Aa*Ade, Aa*Adf, Aa*Aef, Ab*Ac, Ab*Ad, Ab*Ae, Ab*Af, Ab*Ag,
+            Ab*Aace, Ab*Aadg, Ab*Acfg, Ab*Ade, Ab*Adf, Ab*Aef, Ac*Ad, Ac*Ae,
+            Ac*Af, Ac*Ag, Ac*Aabf, Ac*Aadg, Ac*Abeg, Ac*Ade, Ac*Adf, Ac*Aef,
+            Ad*Ae, Ad*Af, Ad*Ag, Ad*Aabf, Ad*Aace, Ad*Abeg, Ad*Acfg, Ad*Aef,
+            Ae*Af, Ae*Ag, Ae*Aabf, Ae*Aadg, Ae*Abcd, Ae*Acfg, Ae*Adf, Af*Ag,
+            Af*Aace, Af*Aadg, Af*Abcd, Af*Abeg, Af*Ade, Ag*Aabf, Ag*Aace,
+            Ag*Abcd, Ag*Ade, Ag*Adf, Ag*Aef, Aabf*Aace, Aabf*Aadg, Aabf*Abcd,
+            Aabf*Abeg, Aabf*Acfg, Aabf*Ade, Aabf*Adf, Aabf*Aef, Aace*Aadg,
+            Aace*Abcd, Aace*Abeg, Aace*Acfg, Aace*Ade, Aace*Adf, Aace*Aef,
+            Aadg*Abcd, Aadg*Abeg, Aadg*Acfg, Aadg*Ade, Aadg*Adf, Aadg*Aef,
+            Abcd*Abeg, Abcd*Acfg, Abcd*Ade, Abcd*Adf, Abcd*Aef, Abeg*Acfg,
+            Abeg*Ade, Abeg*Adf, Abeg*Aef, Acfg*Ade, Acfg*Adf, Acfg*Aef,
+            Ade*Adf, Ade*Aef, Adf*Aef,
+            -Ab + Ae - Aabf + Aace - Abcd + Ade + Aef,
+            -Ac + Ae - Abcd + Abeg - Acfg + Ade + Aef,
+            Ae - Ag + Aace - Aadg - Acfg + Ade + Aef,
+            -Ad + Ae + Aace - Aadg - Abcd + Abeg - Adf + Aef,
+            -Aa + Ae - Aabf - Aadg + Abeg + Ade + Aef,
+            Ae - Af - Aabf + Aace + Abeg - Acfg + Ade - Adf,
+            Ab - Ac + Aabf - Aace + Abeg - Acfg,
+            Ab - Ag + Aabf - Aadg + Abcd - Acfg,
+            Ab - Ad + Aabf - Aadg + Abeg - Ade - Adf,
+            -Aa + Ab - Aace - Aadg + Abcd + Abeg,
+            Ab - Af + Abcd + Abeg - Acfg - Adf - Aef,
+            Ac - Ag + Aace - Aadg + Abcd - Abeg,
+            Ac - Ad + Aace - Aadg + Acfg - Ade - Adf,
+            -Aa + Ac - Aabf - Aadg + Abcd + Acfg,
+            Ac - Af - Aabf + Aace + Abcd - Adf - Aef,
+            -Ad + Ag - Abcd + Abeg + Acfg - Ade - Adf,
+            -Aa + Ag - Aabf - Aace + Abeg + Acfg,
+            -Af + Ag - Aabf + Aadg + Abeg - Adf - Aef,
+            -Aa + Ad - Aabf - Aace + Abcd + Ade + Adf,
+            Ad - Af - Aabf + Aadg + Abcd - Acfg + Ade - Aef,
+            Aa - Af + Aace + Aadg - Acfg - Adf - Aef]
+
 
         """
         E = list(self._matroid.groundset())
@@ -131,6 +179,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
     def _repr_(self):
         r"""
         EXAMPLE::
+
+            sage: from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug
 
             sage: ch = ChowRingIdeal_nonaug(M=matroids.catalog.Fano(), R=QQ)
             sage: ch
@@ -217,7 +267,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             sage: from sage.matroids.chow_ring_ideal import AugmentedChowRingIdeal_fy
 
             sage: I = AugmentedChowRingIdeal_fy(M=matroids.Wheel(3), R=QQ)
-            sage: TestSuite(I).run()
+            sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
         self._flats = [X for i in range(1, self._matroid.rank())
@@ -240,12 +290,39 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
     def _gens_constructor(self, poly_ring):
         r"""
         Return the generators of augmented Chow ring ideal of
-        Feitchner-Yuzvinsky presentation.
+        Feitchner-Yuzvinsky presentation. Takes in the ring of
+        that augmented Chow ring ideal as input.
 
         EXAMPLES::
 
+            sage: from sage.matroids.chow_ring_ideal import AugmentedChowRingIdeal_fy
+
             sage: ch = AugmentedChowRingIdeal_fy(M=matroids.Wheel(3), R=QQ)
-            sage: ch._gens_constructor() #WHERE IS OUTPUT?
+            sage: ch._gens_constructor(ch.ring())
+            [B0^2, B0*B1, B0*B2, B0*B3, B0*B4, B0*B5, B0*B124, B0*B15, B0*B23,
+            B0*B345, B0*B1, B1^2, B1*B2, B1*B3, B1*B4, B1*B5, B1*B025, B1*B04,
+            B1*B23, B1*B345, B0*B2, B1*B2, B2^2, B2*B3, B2*B4, B2*B5, B2*B013,
+            B2*B04, B2*B15, B2*B345, B0*B3, B1*B3, B2*B3, B3^2, B3*B4, B3*B5,
+            B3*B025, B3*B04, B3*B124, B3*B15, B0*B4, B1*B4, B2*B4, B3*B4, B4^2,
+            B4*B5, B4*B013, B4*B025, B4*B15, B4*B23, B0*B5, B1*B5, B2*B5,
+            B3*B5, B4*B5, B5^2, B5*B013, B5*B04, B5*B124, B5*B23, B2*B013,
+            B4*B013, B5*B013, B013^2, B013*B025, B013*B04, B013*B124, B013*B15,
+            B013*B23, B013*B345, B1*B025, B3*B025, B4*B025, B013*B025, B025^2,
+            B025*B04, B025*B124, B025*B15, B025*B23, B025*B345, B1*B04, B2*B04,
+            B3*B04, B5*B04, B013*B04, B025*B04, B04^2, B04*B124, B04*B15,
+            B04*B23, B04*B345, B0*B124, B3*B124, B5*B124, B013*B124, B025*B124,
+            B04*B124, B124^2, B124*B15, B124*B23, B124*B345, B0*B15, B2*B15,
+            B3*B15, B4*B15, B013*B15, B025*B15, B04*B15, B124*B15, B15^2,
+            B15*B23, B15*B345, B0*B23, B1*B23, B4*B23, B5*B23, B013*B23,
+            B025*B23, B04*B23, B124*B23, B15*B23, B23^2, B23*B345, B0*B345,
+            B1*B345, B2*B345, B013*B345, B025*B345, B04*B345, B124*B345,
+            B15*B345, B23*B345, B345^2,
+            A0 - B1 - B2 - B3 - B4 - B5 - B124 - B15 - B23 - B345,
+            A1 - B0 - B2 - B3 - B4 - B5 - B025 - B04 - B23 - B345,
+            A2 - B0 - B1 - B3 - B4 - B5 - B013 - B04 - B15 - B345,
+            A3 - B0 - B1 - B2 - B4 - B5 - B025 - B04 - B124 - B15,
+            A4 - B0 - B1 - B2 - B3 - B5 - B013 - B025 - B15 - B23,
+            A5 - B0 - B1 - B2 - B3 - B4 - B013 - B04 - B124 - B23]
 
         """
         E = list(self._matroid.groundset())
@@ -271,6 +348,8 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
     def _repr_(self):
         r"""
         EXAMPLES::
+
+            sage: from sage.matroids.chow_ring_ideal import AugmentedChowRingIdeal_fy
 
             sage: ch = AugmentedChowRingIdeal_fy(M=matroids.Wheel(3), R=QQ)
             sage: ch
@@ -384,12 +463,23 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
     def _gens_constructor(self, poly_ring):
         r"""
         Return the generators of augmented Chow ring ideal of
-        atom-free presentation.
+        atom-free presentation. Takes in the ring of that augmented
+        Chow ring ideal as input.
 
         EXAMPLES::
 
-            sage: ch = AugmentedChowRingIdeal_atom_free(M=matroids.Wheel(3), R=QQ)
-            sage: ch._gens_constructor() #WHERE IS OUTPUT?
+            sage: from sage.matroids.chow_ring_ideal import AugmentedChowRingIdeal_atom_free
+            sage: from sage.matroids.graphic_matroid import GraphicMatroid
+
+            sage: M1 = GraphicMatroid(graphs.CycleGraph(3))
+            sage: ch = AugmentedChowRingIdeal_atom_free(M=M1, R=QQ)
+            sage: ch._gens_constructor(ch.ring())
+            [A0^2, A0^2, A1^2, A0*A1, A2^2, A0*A2, A0*A1, A0^2, A1^2, A0*A1,
+            A2^2, A0*A2, A0*A2, A0^2, A1^2, A0*A1, A2^2, A0*A2, A0*A1, A0^2,
+            A0*A1, A1^2, A2^2, A1*A2, A1^2, A0^2, A0*A1, A1^2, A2^2, A1*A2,
+            A1*A2, A0^2, A0*A1, A1^2, A2^2, A1*A2, A0*A2, A0^2, A0*A2, A1^2,
+            A1*A2, A2^2, A1*A2, A0^2, A0*A2, A1^2, A1*A2, A2^2, A2^2, A0^2,
+            A0*A2, A1^2, A1*A2, A2^2]
 
         """
         E = list(self._matroid.groundset())
@@ -419,6 +509,8 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
     def _repr_(self):
         r"""
         EXAMPLE::
+
+            sage: from sage.matroids.chow_ring_ideal import AugmentedChowRingIdeal_atom_free
 
             sage: ch = AugmentedChowRingIdeal_atom_free(M=matroids.Wheel(3), R=QQ)
             sage: ch
