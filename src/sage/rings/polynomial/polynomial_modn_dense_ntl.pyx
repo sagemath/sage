@@ -424,7 +424,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         """
         return small_roots(self, *args, **kwds)
 
-    def modular_composition(self, other, modulus):
+    def compose_mod(self, other, modulus):
         r"""
         Compute `f(g) \pmod h`.
 
@@ -441,16 +441,16 @@ cdef class Polynomial_dense_mod_n(Polynomial):
             sage: R.<x> = GF(2**127 - 1)[]
             sage: f = R.random_element()
             sage: g = R.random_element()
-            sage: g.modular_composition(g, f) == g(g) % f
+            sage: g.compose_mod(g, f) == g(g) % f
             True
 
             sage: R.<x> = GF(163)[]
             sage: f = R([i for i in range(100)])
             sage: g = R([i**2 for i in range(100)])
             sage: h = 1 + x + x**5
-            sage: f.modular_composition(g, h)
+            sage: f.compose_mod(g, h)
             82*x^4 + 56*x^3 + 45*x^2 + 60*x + 127
-            sage: f.modular_composition(g, h) == f(g) % h
+            sage: f.compose_mod(g, h) == f(g) % h
             True
 
         AUTHORS:
@@ -460,8 +460,12 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         elt = self.ntl_ZZ_pX()
         mod = modulus.ntl_ZZ_pX()
         other = other.ntl_ZZ_pX()
-        res = elt.modular_composition(other, mod)
+        res = elt.compose_mod(other, mod)
         return self.parent()(res, construct=True)
+
+    # compose_mod is the natural name from the NTL bindings, but polynomial_gf2x
+    # has modular_composition as the method name so here we allow both
+    modular_composition = compose_mod
 
 
 def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):

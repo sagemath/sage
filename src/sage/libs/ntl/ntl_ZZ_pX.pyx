@@ -1472,7 +1472,7 @@ cdef class ntl_ZZ_pX():
         #ZZ_pX_preallocate_space(&self.x, n)
         sig_off()
 
-    def modular_composition(self, ntl_ZZ_pX other, ntl_ZZ_pX modulus):
+    def compose_mod(self, ntl_ZZ_pX other, ntl_ZZ_pX modulus):
         r"""
         Compute `f(g) \pmod h`.
 
@@ -1490,7 +1490,7 @@ cdef class ntl_ZZ_pX():
             sage: f = ntl.ZZ_pX([1,2,3],c)
             sage: g = ntl.ZZ_pX([3,2,1],c)
             sage: h = ntl.ZZ_pX([1,0,1],c)
-            sage: f.modular_composition(g, h)
+            sage: f.compose_mod(g, h)
             [5 11]
 
         AUTHORS:

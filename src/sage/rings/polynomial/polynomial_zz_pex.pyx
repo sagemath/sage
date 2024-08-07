@@ -712,7 +712,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         sig_off()
         return r
 
-    def modular_composition(self, other, modulus):
+    def compose_mod(self, other, modulus):
         r"""
         Compute `f(g) \pmod h`.
 
@@ -729,7 +729,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: R.<x> = GF(3**6)[]
             sage: f = R.random_element()
             sage: g = R.random_element()
-            sage: g.modular_composition(g, f) == g(g) % f
+            sage: g.compose_mod(g, f) == g(g) % f
             True
 
             sage: F.<z3> = GF(3**6)
@@ -737,9 +737,9 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: f = 2*z3^2*x^2 + (z3 + 1)*x + z3^2 + 2
             sage: g = (z3^2 + 2*z3)*x^2 + (2*z3 + 2)*x + 2*z3^2 + z3 + 2
             sage: h = (2*z3 + 2)*x^2 + (2*z3^2 + 1)*x + 2*z3^2 + z3 + 2
-            sage: f.modular_composition(g, h)
+            sage: f.compose_mod(g, h)
             (z3^5 + z3^4 + z3^3 + z3^2 + z3)*x + z3^5 + z3^3 + 2*z3 + 2
-            sage: f.modular_composition(g, h) == f(g) % h
+            sage: f.compose_mod(g, h) == f(g) % h
             True
 
         AUTHORS:
@@ -771,3 +771,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         sig_off()
 
         return r
+
+    # compose_mod is the natural name from the NTL bindings, but polynomial_gf2x
+    # has modular_composition as the method name so here we allow both
+    modular_composition = compose_mod
