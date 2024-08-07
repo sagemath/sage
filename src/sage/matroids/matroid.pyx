@@ -8027,7 +8027,7 @@ cdef class Matroid(SageObject):
 
         return [F for F in FF if fsol[F]]
 
-    def chow_ring(self, R=None):
+    def chow_ring(self, R, augmented=False, presentation=None):
         r"""
         Return the Chow ring of ``self`` over ``R``.
 
@@ -8059,10 +8059,10 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.Wheel(2)
-            sage: A = M.chow_ring(); A
+            sage: A = M.chow_ring(R=ZZ, augmented=False); A
             Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements
              with 5 bases over Integer Ring
-            sage: A.gens()                                                              # needs sage.libs.singular
+            sage: A._gens_constructor()                                                              # needs sage.libs.singular
             (A23, A23, A23)
             sage: A23 = A.gen(0)                                                        # needs sage.libs.singular
             sage: A23*A23                                                               # needs sage.libs.singular
@@ -8071,65 +8071,29 @@ cdef class Matroid(SageObject):
         We construct a more interesting example using the Fano matroid::
 
             sage: M = matroids.catalog.Fano()
-            sage: A = M.chow_ring(QQ); A
+            sage: A = M.chow_ring(QQ, augmented=False); A
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
-             type (3, 0) over Rational Field
+             type (3, 0) over Rational Field.
 
-        Next we get the non-trivial generators and do some computations::
+        The augmented Chow ring can also be instantiated with the
+        Feitchner-Yuzvinsky and atom-free presentation::
 
-            sage: # needs sage.libs.singular sage.rings.finite_rings
-            sage: G = A.gens()[6:]
-            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G
-            sage: Ag * Ag
-            2*Adef^2
-            sage: Ag * Abeg
-            -Adef^2
-            sage: matrix([[x * y for x in G] for y in G])
-            [2*Adef^2        0        0  -Adef^2        0  -Adef^2  -Adef^2        0]
-            [       0   Adef^2        0        0        0        0        0        0]
-            [       0        0   Adef^2        0        0        0        0        0]
-            [ -Adef^2        0        0   Adef^2        0        0        0        0]
-            [       0        0        0        0   Adef^2        0        0        0]
-            [ -Adef^2        0        0        0        0   Adef^2        0        0]
-            [ -Adef^2        0        0        0        0        0   Adef^2        0]
-            [       0        0        0        0        0        0        0   Adef^2]
+            sage: M = matroids.Wheel(3)
+            sage: ch = M.chow_ring(QQ, augmented=True, presentation='fy')
+            Augmented Chow ring of Wheel(3): Regular matroid of rank 3 on 
+            6 elements with 16 bases of Feitchner-Yuzvinsky presentation
+            sage: M = matroids.Uniform(3, 6)
+            sage: ch = M.chow_ring(QQ, augmented=True, presentation='atom-free')
+            Augmented Chow ring of U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
+            {3: {{0, 1, 2, 3, 4, 5}}} of atom-free presentation
 
         REFERENCES:
 
         - [FY2004]_
         - [AHK2015]_
         """
-        # Setup
-        if R is None:
-            R = ZZ
-        # We only want proper flats
-        flats = [X for i in range(1, self.rank())
-                 for X in self.flats(i)]
-        E = list(self.groundset())
-        flats_containing = {x: [] for x in E}
-        for i,F in enumerate(flats):
-            for x in F:
-                flats_containing[x].append(i)
-
-        # Create the ambient polynomial ring
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        try:
-            names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-            P = PolynomialRing(R, names)
-        except ValueError: # variables are not proper names
-            P = PolynomialRing(R, 'A', len(flats))
-            names = P.variable_names()
-        gens = P.gens()
-        # Create the ideal of quadratic relations
-        Q = [gens[i] * gens[i+j+1] for i,F in enumerate(flats)
-             for j,G in enumerate(flats[i+1:]) if not (F < G or G < F)]
-        # Create the ideal of linear relations
-        L = [sum(gens[i] for i in flats_containing[x])
-             - sum(gens[i] for i in flats_containing[y])
-             for j,x in enumerate(E) for y in E[j+1:]]
-        ret = P.quotient(Q + L, names=names)
-        ret.rename("Chow ring of {} over {}".format(self, R))
-        return ret
+        from sage.matroids.chow_ring import ChowRing
+        return ChowRing(M=self, R=R, augmented=augmented, presentation=presentation)
 
     cpdef plot(self, B=None, lineorders=None, pos_method=None,pos_dict=None,save_pos=False):
         """
