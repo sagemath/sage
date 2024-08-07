@@ -622,7 +622,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p2.is_monic()
             False
         """
-        if self[self.degree()] == self.base_ring()(0):
+        if self[self.degree()] == self.base_ring().one():
             return True
         return False
 
