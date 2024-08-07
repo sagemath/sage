@@ -2053,7 +2053,6 @@ def CubeplexGraph(embedding='LM'):
             t = pi * (v+2)/4
             pos_dict[v] = (-2*cos(t), 2*sin(t))
 
-
         G = Graph(12, pos=pos_dict, name='Cubeplex Graph')
 
         G.add_cycle(list(range(8)))
