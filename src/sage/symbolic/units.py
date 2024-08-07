@@ -928,16 +928,14 @@ unit_derivations = {'acceleration': 'length/time^2',
 
 def vars_in_str(s):
     """
-    Given a string like 'mass/(length*time)', return the list
-    ['mass', 'length', 'time'].
+    Given a string like ``'mass/(length*time)'``, return the list
+    ``['mass', 'length', 'time']``.
 
     INPUT:
 
-    - ``s`` -- a string
+    - ``s`` -- string
 
-    OUTPUT:
-
-    - a list of strings (unit names)
+    OUTPUT: list of strings (unit names)
 
     EXAMPLES::
 
@@ -949,17 +947,16 @@ def vars_in_str(s):
 
 def unit_derivations_expr(v):
     """
-    Given derived units name, returns the corresponding units
-    expression.  For example, given 'acceleration' output the symbolic
-    expression length/time^2.
+    Given derived units name, returns the corresponding units expression.
+
+    For example, given ``'acceleration'`` output the symbolic expression
+    ``length/time^2``.
 
     INPUT:
 
-    - ``v`` -- a string, name of a unit type such as 'area', 'volume', etc.
+    - ``v`` -- string; name of a unit type such as ``'area'``, ``'volume'``, etc.
 
-    OUTPUT:
-
-    - a symbolic expression
+    OUTPUT: a symbolic expression
 
     EXAMPLES::
 
@@ -968,7 +965,7 @@ def unit_derivations_expr(v):
         sage: sage.symbolic.units.unit_derivations_expr('electric_potential')
         length^2*mass/(current*time^3)
 
-    If the unit name is unknown, a :class:`KeyError` is raised::
+    If the unit name is unknown, a :exc:`KeyError` is raised::
 
         sage: sage.symbolic.units.unit_derivations_expr('invalid')
         Traceback (most recent call last):
@@ -1024,12 +1021,9 @@ def str_to_unit(name):
 
     INPUT:
 
-    - ``name`` -- a string
+    - ``name`` -- string
 
-    OUTPUT:
-
-    - a :class:`UnitExpression`
-
+    OUTPUT: a :class:`UnitExpression`
 
     EXAMPLES::
 
@@ -1168,7 +1162,6 @@ class Units(ExtraTabCompletion):
 
             sage: units.area.acre is units.area.acre
             True
-
         """
         if name in self.__units:
             return self.__units[name]
@@ -1205,15 +1198,13 @@ units = Units(unitdict, '')
 
 def unitdocs(unit):
     r"""
-    Returns docstring for the given unit.
+    Return docstring for the given unit.
 
     INPUT:
 
     - ``unit`` -- a unit
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -1242,9 +1233,7 @@ def is_unit(s) -> bool:
 
     - ``s`` -- an object
 
-    OUTPUT:
-
-    - a boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -1269,17 +1258,16 @@ def is_unit(s) -> bool:
 
 def convert(expr, target):
     """
-    Converts units between expr and target. If target is None then converts to SI base units.
+    Convert units between ``expr`` and ``target``. If ``target`` is ``None``
+    then converts to SI base units.
 
     INPUT:
 
     - ``expr`` -- the symbolic expression converting from
 
-    - ``target`` -- (default None) the symbolic expression converting to
+    - ``target`` -- (default: ``None``) the symbolic expression converting to
 
-    OUTPUT:
-
-    - a symbolic expression
+    OUTPUT: a symbolic expression
 
     EXAMPLES::
 
@@ -1288,7 +1276,7 @@ def convert(expr, target):
         sage: sage.symbolic.units.convert(units.mass.kilogram, units.mass.pound)
         100000000/45359237*pound
 
-    Raises ValueError if expr and target are not convertible::
+    Raises :exc:`ValueError` if expr and target are not convertible::
 
         sage: sage.symbolic.units.convert(units.mass.kilogram, units.length.foot)
         Traceback (most recent call last):
@@ -1362,15 +1350,13 @@ def convert(expr, target):
 
 def base_units(unit):
     """
-    Converts unit to base SI units.
+    Convert unit to base SI units.
 
     INPUT:
 
     - ``unit`` -- a unit
 
-    OUTPUT:
-
-    - a symbolic expression
+    OUTPUT: a symbolic expression
 
     EXAMPLES::
 
@@ -1420,9 +1406,7 @@ def convert_temperature(expr, target):
     - ``expr`` -- a unit of temperature
     - ``target`` -- a units of temperature
 
-    OUTPUT:
-
-    - a symbolic expression
+    OUTPUT: a symbolic expression
 
     EXAMPLES::
 
@@ -1437,7 +1421,7 @@ def convert_temperature(expr, target):
         sage: t.convert()
         273.150000000000*kelvin
 
-    Raises ValueError when either input is not a unit of temperature::
+    Raises :exc:`ValueError` when either input is not a unit of temperature::
 
         sage: t.convert(units.length.foot)
         Traceback (most recent call last):

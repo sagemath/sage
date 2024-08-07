@@ -27,9 +27,14 @@ pairs of integers.
 from sage.rings.integer import Integer
 from sage.structure.element import MonoidElement
 from sage.structure.richcmp import richcmp, richcmp_not_equal
+from sage.rings.semirings.non_negative_integer_semiring import NN
 
 
 def is_FreeMonoidElement(x):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_FreeMonoidElement is deprecated; "
+                "use 'isinstance(..., FreeMonoidElement)' instead.")
     return isinstance(x, FreeMonoidElement)
 
 
@@ -130,7 +135,7 @@ class FreeMonoidElement(MonoidElement):
 
     def _latex_(self) -> str:
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -172,16 +177,6 @@ class FreeMonoidElement(MonoidElement):
         """
         EXAMPLES::
 
-            sage: M.<x,y,z> = FreeMonoid(3)
-            sage: (x*y).subs(x=1,y=2,z=14)
-            2
-            sage: (x*y).subs({x:z,y:z})
-            z^2
-            sage: M1 = MatrixSpace(ZZ,1,2)                                              # needs sage.modules
-            sage: M2 = MatrixSpace(ZZ,2,1)                                              # needs sage.modules
-            sage: (x*y).subs({x: M1([1,2]), y: M2([3,4])})                              # needs sage.modules
-            [11]
-
             sage: M.<x,y> = FreeMonoid(2)
             sage: (x*y).substitute(x=1)
             y
@@ -189,6 +184,37 @@ class FreeMonoidElement(MonoidElement):
             sage: M.<a> = FreeMonoid(1)
             sage: a.substitute(a=5)
             5
+
+            sage: M.<x,y,z> = FreeMonoid(3)
+            sage: (x*y).subs(x=1,y=2,z=14)
+            2
+            sage: (x*y).subs({x:z,y:z})
+            z^2
+
+        It is still possible to substitute elements
+        that have no common parent::
+
+            sage: M1 = MatrixSpace(ZZ,1,2)                                              # needs sage.modules
+            sage: M2 = MatrixSpace(ZZ,2,1)                                              # needs sage.modules
+            sage: (x*y).subs({x: M1([1,2]), y: M2([3,4])})                              # needs sage.modules
+            [11]
+
+        TESTS::
+
+            sage: M.<x,y> = FreeMonoid(2)
+            sage: (x*y)(QQ(4),QQ(5)).parent()
+            Rational Field
+
+        The codomain is by default the first parent::
+
+            sage: M.one()(QQ(4),QQ(5)).parent()
+            Rational Field
+
+        unless there is no variable and no substitution::
+
+            sage: M = FreeMonoid(0, [])
+            sage: M.one()().parent()
+            Free monoid on 0 generators ()
 
         AUTHORS:
 
@@ -206,34 +232,28 @@ class FreeMonoidElement(MonoidElement):
                 if key in gens_dict:
                     x[gens_dict[key]] = value
 
-        if isinstance(x[0], tuple):
+        if x and isinstance(x[0], tuple):
             x = x[0]
 
         if len(x) != self.parent().ngens():
             raise ValueError("must specify as many values as generators in parent")
 
-        # I don't start with 0, because I don't want to preclude evaluation with
-        # arbitrary objects (e.g. matrices) because of funny coercion.
-        one = P.one()
-        result = None
+        # if no substitution, do nothing
+        if not x:
+            return self
+
+        try:
+            # This will land in the parent of the first element
+            result = x[0].parent().one()
+        except (AttributeError, TypeError):
+            # unless the parent has no unit
+            result = NN.one()
         for var_index, exponent in self._element_list:
-            # Take further pains to ensure that non-square matrices are not exponentiated.
             replacement = x[var_index]
             if exponent > 1:
-                c = replacement ** exponent
+                result *= replacement ** exponent
             elif exponent == 1:
-                c = replacement
-            else:
-                c = one
-
-            if result is None:
-                result = c
-            else:
-                result *= c
-
-        if result is None:
-            return one
-
+                result *= replacement
         return result
 
     def _mul_(self, y):

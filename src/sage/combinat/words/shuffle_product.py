@@ -56,7 +56,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``check`` -- boolean (default ``True``) whether to check that
+        - ``check`` -- boolean (default: ``True``); whether to check that
           all words in the shuffle product belong to the correct parent
 
         EXAMPLES::
@@ -243,7 +243,7 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
 
         INPUT:
 
-        - ``check`` -- boolean (default ``True``) whether to check that
+        - ``check`` -- boolean (default: ``True``); whether to check that
           all words in the shuffle product belong to the correct parent
 
         EXAMPLES::

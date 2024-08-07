@@ -56,9 +56,9 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
         INPUT:
 
-        - ``p`` -- an integer at least 2
+        - ``p`` -- integer at least 2
 
-        - ``check`` -- bool (default: ``True``); if ``False``, do not
+        - ``check`` -- boolean (default: ``True``); if ``False``, do not
           check ``p`` for primality
 
         EXAMPLES::
@@ -154,7 +154,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
     def _convert_map_from_(self, R):
         """
-        Conversion from p-adic fields.
+        Conversion from `p`-adic fields.
 
         EXAMPLES::
 
@@ -174,7 +174,8 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
     def construction(self):
         """
-        Returns the construction of this finite field (for use by sage.categories.pushout)
+        Return the construction of this finite field (for use by
+        ``sage.categories.pushout``).
 
         EXAMPLES::
 
@@ -214,7 +215,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
     def polynomial(self, name=None):
         """
-        Returns the polynomial ``name``.
+        Return the polynomial ``name``.
 
         EXAMPLES::
 
@@ -278,7 +279,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             1
 
             sage: # needs sage.rings.finite_rings
-            sage: k = GF(1009, modulus="primitive")
+            sage: k = GF(1009, modulus='primitive')
             sage: k.gen()  # this gives a primitive element
             11
             sage: k.gen(1)

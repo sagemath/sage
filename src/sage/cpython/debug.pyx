@@ -73,7 +73,7 @@ def getattr_debug(obj, name, default=_no_default):
 
     - ``obj`` -- the object whose attribute is requested
 
-    - ``name`` -- (string) the name of the attribute
+    - ``name`` -- string; the name of the attribute
 
     - ``default`` -- default value to return if attribute was not found
 
@@ -220,7 +220,7 @@ def getattr_debug(obj, name, default=_no_default):
 
 def type_debug(cls):
     """
-    Print all internals of the type ``cls``
+    Print all internals of the type ``cls``.
 
     EXAMPLES::
 

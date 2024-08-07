@@ -27,15 +27,18 @@ REFERENCES:
 
 from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.laurent_series_ring_element import LaurentSeries
-from sage.rings.power_series_ring import is_PowerSeriesRing
 from sage.rings.power_series_ring_element import PowerSeries
 from sage.rings.puiseux_series_ring_element import PuiseuxSeries
 from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
 class PuiseuxSeriesRing(UniqueRepresentation, Parent):
@@ -204,7 +207,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
         If the base ring is a field, then Puiseux series are already a field.
         If the base ring is a domain, then the Puiseux series over its fraction
-        field is returned. Otherwise, raise a :class:`ValueError`.
+        field is returned. Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -340,7 +343,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
     def _coerce_map_from_(self, P):
         r"""
-        Return a coercion map from `P` to `self`, or `True`, or `None`.
+        Return a coercion map from `P` to ``self``, or ``True``, or ``None``.
 
         The following rings admit a coercion map to the Puiseux series ring
         `A((x-a)^(1/e))`:
@@ -351,7 +354,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
           variable `(x-a)` over a ring admitting a coercion map to `A`
 
         - any Puiseux series ring with the same center `a` and ramification
-          index equal to a multiple of `self`'s ramification index. For
+          index equal to a multiple of ``self``'s ramification index. For
           example, Puiseux series in (x-a)^(1/2) can be interpreted as Puiseux
           series in (x-a)^(1/4).
 
@@ -379,10 +382,10 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
         # Laurent series rings, power series rings, and polynomial rings with
         # the same variable name and the base rings are coercible
-        if ((isinstance(P, PuiseuxSeriesRing) or isinstance(P, LaurentSeriesRing) or
-             is_PowerSeriesRing(P)) and
-                P.variable_name() == self.variable_name() and
-                A.has_coerce_map_from(P.base_ring())):
+        if (isinstance(P, (PuiseuxSeriesRing, LaurentSeriesRing,
+                           PowerSeriesRing_generic, LazyPowerSeriesRing))
+                and P.variable_name() == self.variable_name()
+                and A.has_coerce_map_from(P.base_ring())):
             return True
 
         # # other Puiseux series rings with the same variable name and

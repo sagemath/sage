@@ -26,7 +26,7 @@ from sage.structure.richcmp import richcmp
 class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
     def __invert__(self):
         r"""
-        Return the inverse of an isomorphism of absolute number fields
+        Return the inverse of an isomorphism of absolute number fields.
 
         EXAMPLES::
 
@@ -88,16 +88,16 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
     def preimage(self, y):
         r"""
         Compute a preimage of `y` in the domain, provided one exists.
-        Raises a :class:`ValueError` if `y` has no preimage.
+        Raises a :exc:`ValueError` if `y` has no preimage.
 
         INPUT:
 
-        - ``y`` -- an element of the codomain of ``self``.
+        - ``y`` -- an element of the codomain of ``self``
 
         OUTPUT:
 
         Returns the preimage of `y` in the domain, if one exists.
-        Raises a :class:`ValueError` if `y` has no preimage.
+        Raises a :exc:`ValueError` if `y` has no preimage.
 
         EXAMPLES::
 
@@ -221,7 +221,7 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
     def _richcmp_(self, other, op):
         """
-        Compare
+        Compare.
 
         EXAMPLES::
 

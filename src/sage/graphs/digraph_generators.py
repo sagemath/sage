@@ -80,9 +80,9 @@ class DiGraphGenerators:
     A class consisting of constructors for several common digraphs,
     including orderly generation of isomorphism class representatives.
 
-    A list of all graphs and graph structures in this database is
-    available via tab completion. Type "digraphs." and then hit tab to
-    see which graphs are available.
+    A list of all graphs and graph structures in this database is available via
+    tab completion. Type ``digraphs.`` and then hit :kbd:`Tab` to see which
+    digraphs are available.
 
     The docstrings include educational information about each named
     digraph with the hopes that this class can be used as a reference.
@@ -120,7 +120,7 @@ class DiGraphGenerators:
     INPUT:
 
     - ``vertices`` -- natural number or ``None`` to infinitely generate bigger
-      and bigger digraphs.
+      and bigger digraphs
 
     - ``property`` -- any property to be tested on digraphs before generation
 
@@ -216,7 +216,7 @@ class DiGraphGenerators:
 
         INPUT:
 
-        - ``n`` -- a non negative integer; the dimension of the butterfly graph
+        - ``n`` -- nonnegative integer; the dimension of the butterfly graph
 
         - ``vertices`` -- string (default: ``'strings'``); specifies whether the
           vertices are zero-one strings (default) or tuples over GF(2)
@@ -342,7 +342,7 @@ class DiGraphGenerators:
             sage: g.automorphism_group().cardinality()                                  # needs sage.groups
             1
         """
-        g = DiGraph(n, name="Path")
+        g = DiGraph(n, name='Path')
 
         if n:
             g.add_path(list(range(n)))
@@ -359,7 +359,7 @@ class DiGraphGenerators:
 
         INPUT:
 
-        - ``n`` -- integer, the number of vertices of the digraph.
+        - ``n`` -- integer; the number of vertices of the digraph
 
         .. SEEALSO::
 
@@ -387,7 +387,6 @@ class DiGraphGenerators:
             Traceback (most recent call last):
             ...
             ValueError: strongly regular digraph with 73 vertices not yet implemented
-
         """
         from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
         from sage.matrix.constructor import ones_matrix, identity_matrix
@@ -569,7 +568,7 @@ class DiGraphGenerators:
 
         - ``options`` -- string; anything else that should be forwarded as input
           to Nauty's genbg. See its documentation for more information :
-          `<http://cs.anu.edu.au/~bdm/nauty/>`_.
+          `<https://pallini.di.uniroma1.it>`_.
 
         EXAMPLES::
 
@@ -637,11 +636,11 @@ class DiGraphGenerators:
 
             yield G
 
-    def nauty_directg(self, graphs, options="", debug=False):
+    def nauty_directg(self, graphs, options='', debug=False):
         r"""
         Return an iterator yielding digraphs using nauty's ``directg`` program.
 
-        Description from directg --help:
+        Description from ``directg --help``:
         Read undirected graphs and orient their edges in all possible ways.
         Edges can be oriented in either or both directions (3 possibilities).
         Isomorphic directed graphs derived from the same input are suppressed.
@@ -653,8 +652,8 @@ class DiGraphGenerators:
           :class:`Graph`.  The graph6 string of these graphs is used as an input
           for ``directg``.
 
-        - ``options`` (str) -- a string passed to directg as if it was run at
-          a system command line. Available options from directg --help::
+        - ``options`` -- string passed to ``directg`` as if it was run at
+          a system command line. Available options from ``directg --help``::
 
             -e<int> | -e<int>:<int>  specify a value or range of the total number of arcs
             -o       orient each edge in only one direction, never both
@@ -666,8 +665,8 @@ class DiGraphGenerators:
                      the part number (first is 0) and the second is the number of
                      parts. Splitting is done per input graph independently.
 
-        - ``debug`` -- boolean (default: ``False``); if ``True``
-          directg standard error and standard output are displayed.
+        - ``debug`` -- boolean (default: ``False``); if ``True`` ``directg``
+          standard error and standard output are displayed
 
         EXAMPLES::
 
@@ -679,7 +678,7 @@ class DiGraphGenerators:
             Digraph on 3 vertices
             sage: dgs[0]._bit_vector()
             '001001000'
-            sage: len(list(digraphs.nauty_directg(graphs.PetersenGraph(), options="-o")))
+            sage: len(list(digraphs.nauty_directg(graphs.PetersenGraph(), options='-o')))
             324
 
         Generate non-isomorphic acyclic orientations::
@@ -703,7 +702,7 @@ class DiGraphGenerators:
             ...
             ValueError: directg output options [-u|-T|-G] are not allowed
             sage: next(digraphs.nauty_directg(graphs.nauty_geng("-c 3"),
-            ....:     options="-o", debug=True))
+            ....:     options='-o', debug=True))
             &BH?
             &BGO
             &B?o
@@ -809,7 +808,8 @@ class DiGraphGenerators:
         r"""
         Return the circuit on `n` vertices.
 
-        The circuit is an oriented ``CycleGraph``.
+        The circuit is an oriented
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CycleGraph`.
 
         EXAMPLES:
 
@@ -819,7 +819,7 @@ class DiGraphGenerators:
             sage: len(circuit.strongly_connected_components()) == 1
             True
         """
-        g = DiGraph(n, name="Circuit")
+        g = DiGraph(n, name='Circuit')
 
         if n == 1:
             g.allow_loops(True)
@@ -846,8 +846,8 @@ class DiGraphGenerators:
         - ``n`` -- integer; number of vertices
 
         - ``integers`` -- iterable container (list, set, etc.) of integers such
-          that there is an edge from `i` to `j` if and only if ``(j-i)%n in
-          integers``
+          that there is an edge from `i` to `j` if and only if `(j-i) \pmod{n}`
+          is an integer
 
         EXAMPLES:
 
@@ -916,7 +916,7 @@ class DiGraphGenerators:
               of the resulting digraph is the cardinality of the set of letters.
 
         - ``n`` -- integer; length of words in the De Bruijn digraph when
-          ``vertices == 'strings'``, and also the diameter of the digraph.
+          ``vertices == 'strings'``, and also the diameter of the digraph
 
         - ``vertices`` -- string (default: ``'strings'``); whether the vertices
           are words over an alphabet (default) or integers
@@ -1169,7 +1169,6 @@ class DiGraphGenerators:
           are words over an alphabet (default) or integers
           (``vertices='strings'``)
 
-
         EXAMPLES::
 
             sage: # needs sage.combinat
@@ -1297,7 +1296,7 @@ class DiGraphGenerators:
 
         - ``p`` -- probability of an edge
 
-        - ``weight_max`` -- (default: ``None``); by default, the returned DAG is
+        - ``weight_max`` -- (default: ``None``) by default, the returned DAG is
           unweighted. When ``weight_max`` is set to a positive integer, edges
           are assigned a random integer weight between ``1`` and ``weight_max``.
 
