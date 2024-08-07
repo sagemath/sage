@@ -206,7 +206,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
                     variables[i] = self.parent()(var)
         return self(tuple(variables))
 
-    def plot3d(self):
+    def plot3d(self, color='random'):
         """
         Return the 3d plot of ``self``.
 
@@ -216,7 +216,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         OUTPUT: Graphics3d Object
 
-        EXAMPLES::
+        EXAMPLES:
+
+        A simple tropical polynomial that consist of only one surface::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R.<x,y> = PolynomialRing(T)
@@ -233,10 +235,10 @@ class TropicalMPolynomial(MPolynomial_polydict):
             p1 = x**2
             sphinx_plot(p1.plot3d())
 
-        ::
+        Tropical polynomials often have graphs that represent a combination
+        of multiple surfaces::
 
-            sage: p2 = R(3)+R(2)*x+R(2)*y+R(3)*x*y; p2
-            3*x*y + 2*x + 2*y + 3
+            sage: p2 = R(3) + R(2)*x + R(2)*y + R(3)*x*y
             sage: p2.plot3d()
             Graphics3d Object
 
@@ -246,8 +248,25 @@ class TropicalMPolynomial(MPolynomial_polydict):
             T = TropicalSemiring(QQ, use_min=False)
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
-            p2 = R(3)+R(2)*x+R(2)*y+R(3)*x*y
+            p2 = R(3) + R(2)*x + R(2)*y + R(3)*x*y
             sphinx_plot(p2.plot3d())
+
+        ::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p3 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p3.plot3d()
+            Graphics3d Object
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p3 = R(2)*x**2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sphinx_plot(p3.plot3d())
 
         TESTS::
 
@@ -260,25 +279,89 @@ class TropicalMPolynomial(MPolynomial_polydict):
             NotImplementedError: can only plot the graph of tropical
             multivariate polynomial in two variables
         """
-        from sage.arith.srange import srange
-        from sage.plot.plot3d.list_plot3d import list_plot3d
+        from random import random
+        from sage.plot.graphics import Graphics
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.sets.real_set import RealSet
+        from sage.symbolic.relation import solve
 
         if len(self.parent().variable_names()) != 2:
             raise NotImplementedError("can only plot the graph of tropical "
                                       "multivariate polynomial in two variables")
-        axes = self.tropical_variety()._axes()
-        xmin, xmax = axes[0][0], axes[0][1]
-        ymin, ymax = axes[1][0], axes[1][1]
-        step = 0.5
-        x_point = srange(xmin, xmax+step, step)
-        y_point = srange(ymin, ymax+step, step)
-        res = []
+        tv = self.tropical_variety()
+        axes = tv._axes()
+        edge = set()
+        if tv.components():
+            v = tv._vars[0]
         T = self.parent().base()
-        for x in x_point:
-            for y in y_point:
-                val = self(T(x),T(y)).lift()
-                res.append([x,y,val])
-        return list_plot3d(res, point_list=True)
+        R = self.base_ring().base_ring()
+
+        # finding the point of cuve that touch the edge of axes
+        for comp in tv.components():
+            if len(comp[1]) == 1:
+                valid_int = RealSet(comp[1][0])
+            else:
+                valid_int = RealSet(comp[1][0]).intersection(RealSet(comp[1][1]))
+            for i, eqn in enumerate(comp[0]):
+                if not eqn.is_numeric():
+                    sol1 = solve(eqn == axes[i][0], v)
+                    sol2 = solve(eqn == axes[i][1], v)
+                    if sol1[0].rhs() in valid_int:
+                        valid_point = [R(eq.subs(v==sol1[0].rhs())) for eq in comp[0]]
+                        edge.add(tuple(valid_point))
+                    if sol2[0].rhs() in valid_int:
+                        valid_point = [R(eq.subs(v==sol2[0].rhs())) for eq in comp[0]]
+                        edge.add(tuple(valid_point))
+
+        # combine the edge, vertices, and corner point
+        vertices = self.tropical_variety().vertices()
+        corner = set()
+        for i in axes[0]:
+            for j in axes[1]:
+                corner.add((i,j))
+        marks = corner | vertices | edge
+
+        # calculate the value of polynomial at each marked point
+        variables = self.parent().gens()
+        terms = [a*variables[0]**b[0]*variables[1]**b[1] for a, b in zip(self.coefficients(), self.exponents())]
+        point_terms = {}
+        for mark in marks:
+            mark_terms = []
+            value = self(T(mark[0]), T(mark[1]))
+            value_terms = [term(T(mark[0]), T(mark[1])) for term in terms]
+            for i in range(len(terms)):
+                if value_terms[i] == value:
+                    mark_terms.append(terms[i])
+            point_terms[(R(mark[0]), R(mark[1]), value.lift())] = mark_terms
+
+        # checking the points that attained its value at one term only
+        combined_plot = Graphics()
+        for elms in point_terms.values():
+            if len(elms) == 1:
+                poly_vert = []
+                term = elms[0]
+                for p, t in  point_terms.items():
+                    if term in t:
+                        poly_vert.append(p)
+                        t.remove(term)
+                if color == 'random':
+                    rand_color = (random(), random(), random())
+                plot = Polyhedron(vertices=poly_vert).plot(color=rand_color)
+                combined_plot += plot
+
+        # check the remaining points
+        for remain in point_terms.values():
+            for term in remain:
+                poly_vert = []
+                for p, t in  point_terms.items():
+                    if term in t:
+                        poly_vert.append(p)
+                        t.remove(term)
+                if color == 'random':
+                    rand_color = (random(), random(), random())
+                plot = Polyhedron(vertices=poly_vert).plot(color=rand_color)
+                combined_plot += plot
+        return combined_plot
 
     def tropical_variety(self):
         r"""

@@ -929,7 +929,7 @@ class TropicalCurve(TropicalVariety):
             {(1, -1/2), (7/6, -1/3)}
         """
         if len(self._hypersurface) < 3:
-            return {}
+            return set()
 
         vertices = set()
         for i, component in enumerate(self._hypersurface):
