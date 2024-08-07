@@ -1474,10 +1474,10 @@ cdef class ntl_ZZ_pX():
 
     def compose_mod(self, ntl_ZZ_pX other, ntl_ZZ_pX modulus):
         r"""
-        Compute `f(g) \pmod h`.
+        Compute `f(g) \bmod h`.
 
         To be precise about the order fo compostion, given ``self``, ``other``
-        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \mod h(x)`.
+        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \bmod h(x)`.
 
         INPUT:
 

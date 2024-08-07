@@ -429,7 +429,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         Compute `f(g) \pmod h`.
 
         To be precise about the order fo compostion, given ``self``, ``other``
-        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \mod h(x)`.
+        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \bmod h(x)`.
 
         INPUT:
 
