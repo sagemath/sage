@@ -890,11 +890,11 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             The :issue:`37756` is not yet fixed::
 
                 sage: L.<x, y> = QQ[]
-            sage: R.<a> = InfinitePolynomialRing(QQ)
-            sage: M = InfinitePolynomialRing(L, names=["a"])
-            sage: c = a[0]
-            sage: M(c)  # known bug
-            a_0
+                sage: R.<a> = InfinitePolynomialRing(QQ)
+                sage: M = InfinitePolynomialRing(L, names=["a"])
+                sage: c = a[0]
+                sage: M(c)  # known bug
+                a_0
         """
         from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
         # In many cases, the easiest solution is to "simply" evaluate
