@@ -117,7 +117,6 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
         Test :issue:`38459`::
 
             sage: K.<u> = QQ[]
-            sage: K.<u> = QQ[]
             sage: C = HyperellipticCurve(u^5 - 1)
             sage: J = C.jacobian()
             sage: J(u - 1, 0)
