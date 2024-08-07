@@ -5611,6 +5611,11 @@ REFERENCES:
 .. [RS2012] G. Rudolph and M. Schmidt, "Differential Geometry and Mathematical Physics.
             Part I. Manifolds, Lie Groups and Hamiltonian Systems", Springer, 2012.
 
+.. [RST2019] Neil Robertson, Paul Seymour and Robin Thomas, *Excluded minors in
+             cubic graphs*, Journal of Combinatorial Theory, Series B, vol. 138,
+             (2019), pages: 219 -- 285, ISSN: 0095 -- 8956,
+             :doi:`10.1016/j.jctb.2019.02.002`.
+
 .. [RSW2011] Victor Reiner, Franco Saliola, Volkmar Welker.
              *Spectra of Symmetrized Shuffling Operators*.
              :arxiv:`1102.2460v2`.
