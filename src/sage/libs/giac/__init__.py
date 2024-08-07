@@ -57,7 +57,6 @@ class GiacSettingsDefaultContext:
            sage: with GiacSettingsDefaultContext(): giacsettings.proba_epsilon = 1e-12
            sage: giacsettings.proba_epsilon < 1e-14
            True
-
         """
         self.proba_epsilon = giacsettings.proba_epsilon
         self.threads = giacsettings.threads
@@ -74,7 +73,6 @@ class GiacSettingsDefaultContext:
            sage: with GiacSettingsDefaultContext(): giacsettings.proba_epsilon = 1e-30
            sage: giacsettings.proba_epsilon < 1e-20
            False
-
         """
         # Restore the debug level first to not have messages at each modification
         libgiac('debug_infolevel')(self.debuginfolevel)
@@ -104,7 +102,6 @@ def local_giacsettings(func):
         True
         sage: gp<gporig, gt-gtorig
         (True, 2)
-
     """
     from sage.misc.decorators import sage_wraps
 
@@ -122,7 +119,7 @@ def local_giacsettings(func):
 @local_giacsettings
 def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
                    elim_variables=None, *args, **kwds):
-    """
+    r"""
     Compute a Groebner Basis of an ideal using ``giacpy_sage``. The result is
     automatically converted to sage.
 
@@ -132,10 +129,10 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
     INPUT:
 
     - ``gens`` -- an ideal (or a list) of polynomials over a prime field
-      of characteristic 0 or p<2^31
+      of characteristic 0 or `p<2^31`
 
-    - ``proba_epsilon`` -- (default: None) majoration of the probability
-       of a wrong answer when probabilistic algorithms are allowed.
+    - ``proba_epsilon`` -- (default: ``None``) majoration of the probability
+      of a wrong answer when probabilistic algorithms are allowed
 
         * if ``proba_epsilon`` is None, the value of
           ``sage.structure.proof.all.polynomial()`` is taken. If it is
@@ -145,14 +142,14 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         * if ``proba_epsilon`` is 0, probabilistic algorithms are
           disabled.
 
-    - ``threads`` -- (default: None) Maximal number of threads allowed
-      for giac. If None, the global ``giacpy_sage.giacsettings.threads`` is
+    - ``threads`` -- (default: ``None``) maximal number of threads allowed
+      for giac. If ``None``, the global ``giacpy_sage.giacsettings.threads`` is
       considered.
 
-    - ``prot`` -- (default: ``False``) if True print detailled informations
+    - ``prot`` -- boolean (default: ``False``); if ``True`` print detailled informations
 
-    - ``elim_variables`` -- (default: None) a list of variables to eliminate
-      from the ideal.
+    - ``elim_variables`` -- (default: ``None``) a list of variables to eliminate
+      from the ideal
 
         * if ``elim_variables`` is None, a Groebner basis with respect to the
           term ordering of the parent polynomial ring of the polynomials
@@ -162,9 +159,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
           elimination ideal with respect to a ``degrevlex`` term order is
           computed, regardless of the term order of the polynomial ring.
 
-    OUTPUT:
-
-    Polynomial sequence of the reduced Groebner basis.
+    OUTPUT: polynomial sequence of the reduced Groebner basis
 
     EXAMPLES::
 
@@ -274,7 +269,6 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         ...
         sage: B.is_groebner(), B.ideal() == Cyclic(P)
         (True, True)
-
     """
     try:
         iter(gens)

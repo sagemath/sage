@@ -29,12 +29,12 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
     """
     def T(self, n=1):
         r"""
-        The n-th derivative of this element.
+        The `n`-th derivative of this element.
 
         INPUT:
 
-        - ``n`` -- a non-negative integer (default:``1``); how many
-          times to apply `T` to this element.
+        - ``n`` -- nonnegative integer (default: `1`); how many
+          times to apply `T` to this element
 
         We use the *divided powers* notation
         `T^{(j)} = \frac{T^j}{j!}`.
@@ -97,7 +97,7 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         """
         The lambda bracket of these two elements.
 
-        The result is a dictionary with non-negative integer keys.
+        The result is a dictionary with nonnegative integer keys.
         The value corresponding to the entry `j` is ``self_{(j)}right``.
 
         EXAMPLES::

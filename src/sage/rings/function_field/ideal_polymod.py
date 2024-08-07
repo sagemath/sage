@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 r"""
 Ideals of function fields: extension
 """
@@ -30,7 +30,7 @@ from .ideal import FunctionFieldIdeal, FunctionFieldIdealInfinite
 
 class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
     """
-    Fractional ideals of algebraic function fields
+    Fractional ideals of algebraic function fields.
 
     INPUT:
 
@@ -468,7 +468,6 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: J = O.ideal(x)
             sage: I.intersect(J) == I * J * (I + J)^-1
             True
-
         """
         from sage.matrix.special import block_matrix
         from .hermite_form_polynomial import reversed_hermite_form
@@ -1025,7 +1024,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
 
 class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
     """
-    Fractional ideals of canonical function fields
+    Fractional ideals of canonical function fields.
 
     INPUT:
 
