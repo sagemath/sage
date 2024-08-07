@@ -4063,13 +4063,9 @@ def MurtyGraph():
 
     G.add_edge(0, 1)
     for v in range(2, 5):
-        G.add_edges([
-            (0, v), (1, v), (v, v+3)
-        ])
+        G.add_edges([(0, v), (1, v), (v, v+3)])
 
-    G.add_edges([
-        (5, 6), (5, 7), (6, 7)
-    ])
+    G.add_edges([(5, 6), (5, 7), (6, 7)])
 
     return G
 
