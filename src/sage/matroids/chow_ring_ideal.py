@@ -224,7 +224,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                     for H in flats:
                         if H > G:
                             term += self._flats_generator[H]
-                    if Set(F).is_empty():
+                    if F.is_empty():
                         gb.append(term**self._matroid.rank(G)) 
                     elif F < G:
                         gb.append(term**(self._matroid.rank(G)-self._matroid.rank(F)))
