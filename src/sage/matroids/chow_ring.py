@@ -17,17 +17,17 @@ REFERENCES
 """
 
 from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRingIdeal_fy, AugmentedChowRingIdeal_atom_free
-from sage.rings.quotient_ring import QuotientRing_nc
+from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.sets.set import Set
 from functools import cmp_to_key
 from sage.misc.misc_c import prod
 
-class ChowRing(QuotientRing_nc):
+class ChowRing(QuotientRing_generic):
     r"""
     The class of Chow ring, a multi-polynomial quotient ring.
-    Base class - ``QuotientRing_nc``.
 
     INPUT:
 
@@ -69,7 +69,8 @@ class ChowRing(QuotientRing_nc):
                 self._ideal = AugmentedChowRingIdeal_atom_free(M, R)
         else:
             self._ideal = ChowRingIdeal_nonaug(M, R) #check method to get ring
-        QuotientRing_nc.__init__(self, R=self._ideal.ring(), I=self._ideal, names=self._ideal.ring().variable_names(), category=GradedAlgebrasWithBasis(R))
+        C = CommutativeRings().Quotients() & GradedAlgebrasWithBasis(R).FiniteDimensional()
+        QuotientRing_generic.__init__(self, R=self._ideal.ring(), I=self._ideal, names=self._ideal.ring().variable_names(), category=C)
 
     def _repr_(self):
         r"""
@@ -139,19 +140,12 @@ class ChowRing(QuotientRing_nc):
             sage: ch = ChowRing(M=matroids.Wheel(3), R=ZZ, augmented=False)
             [A0*A013, 1]
         """
-        flats = [Set(X) for i in range(1, self._matroid.rank())
+        flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
-        flats.append(Set([]))
-        maximum_rank = max([self._matroid.rank(F) for F in flats])
+        flats.append(frozenset())
+        maximum_rank = max(self._matroid.rank(F) for F in flats)
         flats_gen = self._ideal.flats_generator()
-        def func(A, B):
-            if A.issubset(B):
-                return -1
-            elif B.issubset(A):
-                return 1
-            else:
-                return 0
-        flats = sorted(flats, key=cmp_to_key(func))
+        flats = sorted(flats, key=lambda X: (len(X), sorted(X)))
         ranks = [self._matroid.rank(F) for F in flats]
         monomial_basis = []
         if self._augmented:
@@ -193,11 +187,10 @@ class ChowRing(QuotientRing_nc):
                                 term *= flats_gen[flats[j]]**(i + 1)
                     monomial_basis.append(term)
 
+        from sage.sets.family import Family
+        return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
 
-        m_basis = PolynomialSequence(self._ideal.ring(), monomial_basis)
-        return m_basis
-
-    class Element(QuotientRing_nc.Element):
+    class Element(QuotientRing_generic.Element):
         def to_vector(self, order=None):
             r"""
             Return ``self`` as a (dense) free module vector.
