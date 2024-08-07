@@ -1,10 +1,13 @@
-from itertools import chain
+from itertools import accumulate, chain, combinations
+from sage.categories.cartesian_product import cartesian_product
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.monoids import Monoids
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.partition import Partitions
+from sage.combinat.permutation import Permutations
 from sage.groups.perm_gps.constructor import PermutationGroupElement
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -247,9 +250,13 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         """
         # TODO: Complete the documentation.
         if set(H.domain()) != set(M.keys()):
-            raise ValueError(f"Keys of {M} do not match with domain of {H} (= {H.domain()})")
+            raise ValueError(f"Keys of mapping do not match with domain of {H}")
         if not set(M.values()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"Values of {M} must be in the range [1, {self._k}]")
+            raise ValueError(f"Values of mapping must be in the range [1, {self._k}]")
+        # each orbit of H must only contain elements from one sort
+        for orbit in H.orbits():
+            if len(set(M[k] for k in orbit)) > 1:
+                raise ValueError(f"For each orbit of {H}, all elements must belong to the same set")
         # normalize domain to {1..n}
         if sorted(M.keys()) == list(range(1, H.degree() + 1)):
             return H, M
@@ -418,7 +425,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             if elm2.grade() == 0:
                 self._assign_group_info(elm1)
                 return
-            self._mc = [elm1._mc[i] + elm2._mc[i] for i in range(self.parent()._k)]
+            self._mc = tuple(elm1._mc[i] + elm2._mc[i] for i in range(self.parent()._k))
             self._tc = elm1._tc + elm2._tc
             gens1 = elm1._group.gens()
             # Try to avoid gens_small unless necessary
@@ -668,69 +675,120 @@ class PolynomialSpecies(CombinatorialFreeModule):
             return self.is_molecular() and len(self.support()[0]) == 1
 
         def __call__(self, *args):
+            r"""
+            Return the (partitional) composition of ``self`` with ``args``.
+            Uses the word class expansion (Theorem 2.3, Auger paper).
+            """
             # should this also have a base ring check or is it coerced?
-            # the usage of type(self)(...), is it correct?
             if len(args) != self.parent()._k:
                 raise ValueError(f"Number of args (= {len(args)}) must equal arity of self (= {len(args)})")
             if any(not isinstance(arg, PolynomialSpecies.Element) for arg in args):
                 raise ValueError("All args must be elements of PolynomialSpecies")
-            if self.parent()._k > 1 or max(arg.parent()._k for arg in args) > 1:
-                raise NotImplementedError("Only univariate species are supported")
+            if min(arg.parent()._k for arg in args) != max(arg.parent()._k for arg in args):
+                raise ValueError("All args must have same arity")
             if self.is_virtual() or any(arg.is_virtual() for arg in args):
                 raise NotImplementedError(f"Only non-virtual species are supported")
-            # Now we only have non-virtual univariate species
+
+            # Now we only have non-virtual species
             res = 0
-            Gm = args[0].monomial_coefficients()
-            for M, fM in self.monomial_coefficients().items():
+            for F, coeff in self.monomial_coefficients().items():
                 term = 0
-                powvecs = IntegerVectors(M.grade(), len(Gm))
-                for vec in powvecs:
-                    coeff = 1
-                    for fN, exponent in zip(Gm.values(), vec):
-                        coeff *= fN ** exponent
-                    N_list = list(chain.from_iterable([[N for _ in range(c)] for N, c in zip(Gm.keys(), vec)]))
-                    R = self.parent()(wreath_imprimitive_general(N_list, M))
-                    term += coeff * R
-                res += fM * term
+                # F(G1;G2;...) each Gi has some molecular decomposition
+                # Find the automorphisms
+                combos = [Partitions(p, max_length=len(arg)) for arg, p in zip(args, F._mc)]
+                # make F such that sort 1 is [123...], and so on
+                # cache? lol, cache everything
+                dominverted = sorted(F._dompart.keys(), key=lambda x: F._dompart[x])
+                pi = libgap.MappingPermListList(dominverted, libgap.eval(f'[1..{F.grade()}]'))
+                Fconj = libgap.ConjugateGroup(F._group, pi)
+                for IVcombo in cartesian_product(combos):
+                    # TODO: calculate coefficient (because each group has some multiplicity)
+                    # Use F(...) x E(..)^m1 ...
+                    dsumpartial = list(accumulate(chain.from_iterable(IVcombo),initial=0))
+                    Autlist = self._word_automorphism_groups(Fconj, F._mc, IVcombo, dsumpartial)
+                    Gcombos = cartesian_product([[zip(Gs, permedpart)
+                                                  # for each permutation of the partition
+                                                  for permedpart in Permutations(IV)
+                                                  # we want an embedding of permedpart into the Gs
+                                                  for Gs in combinations(arg.support(), r=len(IV))]
+                                                  # for each sort
+                                                  for arg, IV in zip(args, IVcombo)])
+                    for Gcombo in Gcombos:
+                        gens = []
+                        mapping = dict()
+                        Fdom = []
+                        # Find the gens for each group
+                        # Also handles mapping
+                        dsum = 0
+                        # For the i-th sort
+                        for Gs_sort in Gcombo:
+                            # For each (group, power) pair
+                            for G, cnt in Gs_sort:
+                                dlist = G.domain().list()
+                                Gdeg = G.grade()
+                                curgens = G._group.gens()
+                                cur_mapping = G._dompart
+                                # calculate the gens
+                                for i in range(cnt):
+                                    Fdom.append([k + dsum + Gdeg * i for k in sorted(cur_mapping.keys(), key=lambda x: cur_mapping[x])])
+                                    images = libgap.MappingPermListList(dlist, [k + dsum + Gdeg * i for k in dlist])
+                                    mapping |= {(k + dsum + Gdeg * i): v for k, v in cur_mapping.items()}
+                                    # Find the gens for this group
+                                    for gen in curgens:
+                                        gens.append(gen ** images)
+                                dsum += Gdeg * cnt
+
+                        Fdom = libgap(Fdom)
+                        Fdomf = libgap.Flat(Fdom)
+                        # for each automorphism group
+                        for Aut in Autlist:
+                            gensrem = []
+                            # Find the gens for F
+                            for gen in libgap.GeneratorsOfGroup(Aut):
+                                # Since we picked F as the stabilizer subgroup of our current class,
+                                # we don't have to worry about any extra conditions.
+                                perm = libgap.MappingPermListList(Fdomf, libgap.Flat(libgap.Permuted(Fdom, gen)))
+                                gensrem.append(perm)
+                            totgens = gens + gensrem
+                            term += args[0].parent()((PermutationGroup(totgens, domain=range(1, dsum + 1)), mapping))
+                res += coeff * term
             return res
+        
+        def _word_automorphism_groups(self, F, Fmc, IVcombo, dsumpartial):
+            r"""
+            Given a group F and a tuple of partitions on sorts,
+            find the word classes and corresponding stabilizer subgroups.
+            See Theorem 2.3 of the Auger paper.
+            IVcombo is a tuple of integer partitions. 
+            (I1[x1, x2,...], ..., In[z1,z2,...])
+            """
+            # It feels like the output of this function can be HEAVILY optimised.
+            # For example, we only care about unordered integer vectors here.
+            # Wait, we don't want 0 either. So we actually just want normal integer
+            # partitions.
 
+            # create domain
+            # can this be taken out? you could cache this too
+            domain = list(list(chain.from_iterable(x)) for x in
+                          cartesian_product([Permutations(list(chain.from_iterable([i + precard] * v for i, v in enumerate(part, 1))))
+                                    for precard, part in zip(accumulate(Fmc, initial=0), IVcombo)]))
 
-def wreath_imprimitive_general(G_list, H):
-    r"""
-    H([G[0]] - [G[1]] - ... - [G[m]])
-    All members of MolecularSpecies.
-    """
-    if len(G_list) != H.grade():
-        raise ValueError(f"length of G_list (= {len(G_list)}) must be equal to degree of H (= {H.grade()})")
-
-    gens, dlist = [], []
-    dsum = 0
-    for G in G_list:
-        dlist.append(list(range(dsum + 1, dsum + G.grade() + 1)))
-        dsum += G.grade()
-
-    Hgens = H._group.gens()
-    # First find gens of H
-    for gen in Hgens:
-        # each cycle must be homogenous in the degrees of groups shifted
-        # bad things happen if this isn't checked
-        # example: partitional_composition(E2, X+X^2)
-        # look at the structure with 1 X and 1 X^2, like {(1), (2,3)}
-        all_homogenous = True
-        for cyc in gen.cycle_tuples():
-            cyclens = [len(dlist[x - 1]) for x in cyc]
-            all_homogenous &= min(cyclens) == max(cyclens)
-        if not all_homogenous:
-            continue
-        perm = libgap.Flat(libgap.Permuted(dlist, gen))
-        gens.append(perm)
-
-    # Then find gens of G_i
-    for i in range(len(G_list)):
-        Ggens = G_list[i]._group.gens()
-        for gen in Ggens:
-            images = libgap.MappingPermListList(G_list[i].domain().list(), dlist[i])
-            gens.append(gen ** images)
-
-    # Finally create group
-    return PermutationGroup(gens, domain = range(1, dsum + 1))
+            orig = domain[0]
+            orbits = libgap.OrbitsDomain(F, domain, libgap.Permuted)
+            grps = []
+            def relabel(arr):
+                from collections import Counter
+                C = Counter({k: v for k, v in enumerate(dsumpartial[:-1], 1)})
+                for i in range(len(arr)):
+                    C[arr[i]] += 1
+                    arr[i] = C[arr[i]]
+                return arr
+            origl = relabel(orig)
+            for orbit in orbits:
+                # Ok, now I have to find a mapping from orbrep to the original
+                mutorb = orbit[0].sage()
+                mutorbl = relabel(mutorb)
+                pi = libgap.MappingPermListList(mutorbl, origl)
+                stab = libgap.Stabilizer(F, domain, orbit[0], libgap.Permuted)
+                grps.append(libgap.ConjugateGroup(stab, pi))
+            return grps
