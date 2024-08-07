@@ -1981,11 +1981,10 @@ def CubeplexGraph(embedding='LM'):
 
     The input parameter must be one of 'FL', 'NT' or 'LM'::
 
-        sage: g = graphs.TwinplexGraph(embedding='embedding')
+        sage: g = graphs.CubeplexGraph(embedding='embedding')
         Traceback (most recent call last):
         ...
-        ValueError: parameter 'embedding' must be either 'FL' or 'NT' or
-                    otherwise 'LM'
+        ValueError: parameter 'embedding' must be 'FL', 'NT' or 'LM'
 
     REFERENCES:
 
@@ -2062,8 +2061,7 @@ def CubeplexGraph(embedding='LM'):
         ])
 
     else:
-        raise ValueError("parameter 'embedding' must be either 'FL' or 'NT' or\
-                         otherwise 'LM'")
+        raise ValueError("parameter 'embedding' must be 'FL', 'NT' or 'LM'")
 
     return G
 
@@ -5014,8 +5012,7 @@ def TwinplexGraph(embedding='LM'):
         sage: g = graphs.TwinplexGraph(embedding='embedding')
         Traceback (most recent call last):
         ...
-        ValueError: parameter 'embedding' must be either 'FL' or 'NT' or
-                    'LM' or otherwise 'RST'
+        ValueError: parameter 'embedding' must be 'FL', 'NT', 'LM' or 'RST'
 
     REFERENCES:
 
@@ -5119,8 +5116,8 @@ def TwinplexGraph(embedding='LM'):
         ])
 
     else:
-        raise ValueError("parameter 'embedding' must be either 'FL' or 'NT' or\
-                          'LM' or otherwise 'RST'")
+        raise ValueError("parameter 'embedding' must be 'FL', 'NT', 'LM' or" +
+                         " 'RST'")
 
     return G
 
