@@ -29,14 +29,14 @@ from sage.rings.integer import Integer
 
 def polynomial_to_list(p, len):
     r"""
-    Returns ``p`` as a list of its coefficients of length ``len``.
+    Return ``p`` as a list of its coefficients of length ``len``.
 
     INPUT:
 
     - ``p`` -- a polynomial
 
-    - ``len`` -- an integer. If ``len`` is smaller than the degree of ``p``, the
-      returned list will be of size degree of ``p``, else it will be of size ``len``.
+    - ``len`` -- integer; if ``len`` is smaller than the degree of ``p``, the
+      returned list will be of size degree of ``p``, else it will be of size ``len``
 
     EXAMPLES::
 
@@ -51,14 +51,14 @@ def polynomial_to_list(p, len):
 
 def johnson_radius(n, d):
     r"""
-    Returns the Johnson-radius for the code length `n` and the minimum distance `d`.
+    Return the Johnson-radius for the code length `n` and the minimum distance `d`.
 
     The Johnson radius is defined as `n - \sqrt(n(n-d))`.
 
     INPUT:
 
-    - ``n`` -- an integer, the length of the code
-    - ``d`` -- an integer, the minimum distance of the code
+    - ``n`` -- integer; the length of the code
+    - ``d`` -- integer; the minimum distance of the code
 
     EXAMPLES::
 
@@ -70,7 +70,7 @@ def johnson_radius(n, d):
 
 def ligt(x):
     r"""
-    Returns the least integer greater than ``x``.
+    Return the least integer greater than ``x``.
 
     EXAMPLES::
 
@@ -88,7 +88,7 @@ def ligt(x):
 
 def gilt(x):
     r"""
-    Returns the greatest integer smaller than ``x``.
+    Return the greatest integer smaller than ``x``.
 
     EXAMPLES::
 
@@ -109,16 +109,17 @@ def gilt(x):
 
 def solve_degree2_to_integer_range(a, b, c):
     r"""
-    Returns the greatest integer range `[i_1, i_2]` such that
-    `i_1 > x_1` and `i_2 < x_2` where `x_1, x_2` are the two zeroes of the equation in `x`:
-    `ax^2+bx+c=0`.
+    Return the greatest integer range `[i_1, i_2]` such that
+    `i_1 > x_1` and `i_2 < x_2` where `x_1, x_2` are the two zeroes of the
+    equation in `x`: `ax^2+bx+c=0`.
 
-    If there is no real solution to the equation, it returns an empty range with negative coefficients.
+    If there is no real solution to the equation, it returns an empty range
+    with negative coefficients.
 
     INPUT:
 
-    - ``a``, ``b`` and ``c`` -- coefficients of a second degree equation, ``a`` being the coefficient of
-      the higher degree term.
+    - ``a``, ``b`` and ``c`` -- coefficients of a second degree equation, ``a``
+      being the coefficient of the higher degree term
 
     EXAMPLES::
 
@@ -145,11 +146,11 @@ def solve_degree2_to_integer_range(a, b, c):
 
 def _degree_of_vector(v, shifts=None):
     r"""
-    Returns the greatest degree among the entries of the polynomial vector `v`.
+    Return the greatest degree among the entries of the polynomial vector `v`.
 
     INPUT:
 
-    - ``v`` -- a vector of polynomials.
+    - ``v`` -- a vector of polynomials
 
     - ``shifts`` -- (default: ``None``) a list of integer shifts to consider
       ``v`` under, i.e. compute `\max(\deg v_i + s_i)`, where `s_1,\ldots, s_n`

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 """
 Places of function fields: extension
 """
@@ -387,7 +387,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         INPUT:
 
-        - ``name`` -- string (default: `None`); name of the generator
+        - ``name`` -- string (default: ``None``); name of the generator
           of the residue field
 
         EXAMPLES::

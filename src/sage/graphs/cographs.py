@@ -7,7 +7,7 @@ sequence of join and disjoint union operations. See the :wikipedia:`Cograph` for
 more details on this graph class, and :oeis:`A000084` to know the number of
 cographs of order `n \geq 1`.
 
-This module implements the folowing methods concerning cographs:
+This module implements the following methods concerning cographs:
 
 .. csv-table::
     :class: contentstable
@@ -295,7 +295,7 @@ def cographs(n, as_graph=True, immutable=False):
 
     INPUT:
 
-    - ``n`` -- an integer larger or equal to 1
+    - ``n`` -- integer larger or equal to 1
 
     - ``as_graph`` -- boolean (default: ``True``); whether to return graphs or
       the tree data structure encoding the graph

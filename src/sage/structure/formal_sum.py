@@ -17,9 +17,9 @@ AUTHORS:
 FUNCTIONS:
 
 - ``FormalSums(ring)`` -- create the module of formal finite sums with
-  coefficients in the given ring.
+  coefficients in the given ring
 
-- ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum.
+- ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum
 
 EXAMPLES::
 
@@ -90,10 +90,9 @@ class FormalSum(ModuleElement):
 
         - ``x`` -- object
         - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
-        - ``check`` -- bool (default: ``True``) if ``False``, might not coerce
-          coefficients into base ring, which can speed
-          up constructing a formal sum.
-        - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
+        - ``check`` -- boolean (default: ``True``); if ``False``, might not coerce
+          coefficients into base ring, which can speed up constructing a formal sum
+        - ``reduce`` -- boolean (default: ``True``); if ``False``, do not
           combine common terms
 
         .. WARNING::
@@ -203,7 +202,7 @@ class FormalSum(ModuleElement):
         r"""
         EXAMPLES::
 
-            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))
+            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))                          # needs sage.rings.real_mpfr
             2 + 5\cdot \frac{8}{9} - 3\cdot 7
         """
         from sage.misc.latex import repr_lincomb
@@ -342,7 +341,6 @@ class FormalSums(UniqueRepresentation, Module):
     TESTS::
 
         sage: TestSuite(FormalSums(QQ)).run()
-
     """
     Element = FormalSum
 
@@ -371,15 +369,15 @@ class FormalSums(UniqueRepresentation, Module):
 
     def _element_constructor_(self, x, check=True, reduce=True):
         """
-        Make a formal sum in self from x.
+        Make a formal sum in ``self`` from x.
 
         INPUT:
 
         - ``x`` -- formal sum, list or number
 
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
-        - ``reduce`` -- bool (default: ``True``); whether to combine terms
+        - ``reduce`` -- boolean (default: ``True``); whether to combine terms
 
         EXAMPLES::
 
@@ -402,7 +400,7 @@ class FormalSums(UniqueRepresentation, Module):
 
     def _coerce_map_from_(self, X):
         r"""
-        Return whether there is a coercion from ``X``
+        Return whether there is a coercion from ``X``.
 
         EXAMPLES::
 
@@ -441,7 +439,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest
+            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest          # needs sage.rings.real_mpfr
             Right scalar multiplication by Real Field with 53 bits of precision
              on Abelian Group of all Formal Finite Sums over Real Field with 53 bits of precision
 

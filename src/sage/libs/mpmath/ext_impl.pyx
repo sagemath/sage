@@ -397,7 +397,7 @@ cdef MPF_to_fixed(mpz_t r, MPF *x, long prec, bint truncate):
 
 cdef int MPF_sgn(MPF *x) noexcept:
     """
-    Gives the sign of an MPF (-1, 0, or 1).
+    Give the sign of an MPF (-1, 0, or 1).
     """
     if x.special:
         if x.special == S_INF:
@@ -409,7 +409,7 @@ cdef int MPF_sgn(MPF *x) noexcept:
 
 cdef void MPF_neg(MPF *r, MPF *s) noexcept:
     """
-    Sets r = -s. MPF_neg(x, x) negates in place.
+    Set r = -s. MPF_neg(x, x) negates in place.
     """
     if s.special:
         if s.special == S_ZERO:
@@ -430,7 +430,7 @@ cdef void MPF_neg(MPF *r, MPF *s) noexcept:
 
 cdef void MPF_abs(MPF *r, MPF *s) noexcept:
     """
-    Sets r = abs(s). MPF_abs(r, r) sets the absolute value in place.
+    Set r = abs(s). MPF_abs(r, r) sets the absolute value in place.
     """
     if s.special:
         if s.special == S_NINF:
@@ -1108,7 +1108,7 @@ cdef mpz_set_ln2(mpz_t x, int prec):
 
 cdef void _cy_exp_mpfr(mpz_t y, mpz_t x, int prec) noexcept:
     """
-    Computes y = exp(x) for fixed-point numbers y and x using MPFR,
+    Compute y = exp(x) for fixed-point numbers y and x using MPFR,
     assuming that no overflow will occur.
     """
     cdef mpfr_t yf, xf
@@ -1124,7 +1124,7 @@ cdef void _cy_exp_mpfr(mpz_t y, mpz_t x, int prec) noexcept:
 
 cdef cy_exp_basecase(mpz_t y, mpz_t x, int prec):
     """
-    Computes y = exp(x) for fixed-point numbers y and x, assuming
+    Compute y = exp(x) for fixed-point numbers y and x, assuming
     that x is small (|x| ~< 1). At small precisions, this function
     is equivalent to the exp_basecase function in
     mpmath.libmp.exp_fixed.
@@ -1421,7 +1421,7 @@ cdef MPF_set_ln2(MPF *x, MPopts opts):
 
 def exp_fixed(Integer x, int prec, ln2=None):
     """
-    Returns a fixed-point approximation of exp(x) where x is a fixed-point
+    Return a fixed-point approximation of exp(x) where x is a fixed-point
     number.
 
     EXAMPLES::
@@ -1430,7 +1430,6 @@ def exp_fixed(Integer x, int prec, ln2=None):
         sage: y = exp_fixed(1<<53, 53)
         sage: float(y) / 2^53
         2.718281828459044
-
     """
     cdef Integer v
     cdef mpz_t n, t
@@ -1456,7 +1455,7 @@ def exp_fixed(Integer x, int prec, ln2=None):
 
 def cos_sin_fixed(Integer x, int prec, pi2=None):
     """
-    Returns fixed-point approximations of cos(x), sin(x) where
+    Return fixed-point approximations of cos(x), sin(x) where
     x is a fixed-point number.
 
     EXAMPLES::
@@ -1467,7 +1466,6 @@ def cos_sin_fixed(Integer x, int prec, pi2=None):
         0.5403023058681398
         sage: float(s) / 2^53
         0.8414709848078965
-
     """
     cdef Integer cv, sv
     cdef mpfr_t t, cf, sf
@@ -1511,7 +1509,7 @@ cdef mpz_log_int(mpz_t v, mpz_t n, int prec):
 
 def log_int_fixed(n, long prec, ln2=None):
     """
-    Returns fixed-point approximation of log(n).
+    Return fixed-point approximation of log(n).
 
     EXAMPLES::
 
@@ -1520,7 +1518,6 @@ def log_int_fixed(n, long prec, ln2=None):
         1.6094379124341003
         sage: float(log_int_fixed(5, 53)) / 2^53   # exercise cache
         1.6094379124341003
-
     """
     global log_int_cache_initialized
     cdef Integer t
@@ -1548,7 +1545,7 @@ def log_int_fixed(n, long prec, ln2=None):
 
 cdef _MPF_cos_python(MPF *c, MPF *x, MPopts opts):
     """
-    Computes c = cos(x) by calling the mpmath.libmp Python implementation.
+    Compute c = cos(x) by calling the mpmath.libmp Python implementation.
     """
     from mpmath.libmp.libelefun import mpf_cos_sin
     ct = mpf_cos_sin(MPF_to_tuple(x), opts.prec,
@@ -1557,7 +1554,7 @@ cdef _MPF_cos_python(MPF *c, MPF *x, MPopts opts):
 
 cdef _MPF_sin_python(MPF *s, MPF *x, MPopts opts):
     """
-    Computes s = sin(x) by calling the mpmath.libmp Python implementation.
+    Compute s = sin(x) by calling the mpmath.libmp Python implementation.
     """
     from mpmath.libmp.libelefun import mpf_cos_sin
     st = mpf_cos_sin(MPF_to_tuple(x), opts.prec,
@@ -1992,7 +1989,6 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
 
     This function is not intended to be called directly; it is wrapped
     by the hypsum_internal function in ext_main.pyx.
-
     """
     cdef long i, j, k, n, p_mag, cancellable_real, MAX, magn
     cdef int have_complex_param, have_complex_arg, have_complex

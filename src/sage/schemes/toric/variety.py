@@ -226,7 +226,7 @@ space with a curve of `\ZZ_3`-orbifold singularities::
     sage: P4_11133 = toric_varieties.P4_11133()
     sage: P4_11133.is_smooth(), P4_11133.is_orbifold()
     (False, True)
-    sage: cone = P4_11133.fan(3)[8]
+    sage: cone = P4_11133.fan(3)[9]
     sage: cone.is_smooth(), cone.is_simplicial()
     (False, True)
     sage: HH = P4_11133.cohomology_ring();  HH
@@ -236,6 +236,7 @@ space with a curve of `\ZZ_3`-orbifold singularities::
 
 Every cone defines a torus orbit closure, and hence a (co)homology class::
 
+    sage: # needs sage.libs.singular
     sage: HH.gens()
     ([3*z4], [3*z4], [z4], [z4], [z4])
     sage: list(map(HH, P4_11133.fan(1)))
@@ -248,6 +249,7 @@ Every cone defines a torus orbit closure, and hence a (co)homology class::
 We can compute intersection numbers by integrating top-dimensional
 cohomology classes::
 
+    sage: # needs sage.libs.singular
     sage: D = P4_11133.divisor(0)
     sage: HH(D)
     [3*z4]
@@ -261,12 +263,14 @@ computations with the rational Chow group::
 
     sage: AA = P4_11133.Chow_group(QQ)
     sage: list(map(AA, P4_11133.fan(1)))  # long time (5s on sage.math, 2012)
-    [( 0 | 0 | 0 | 3 | 0 ), ( 0 | 0 | 0 | 3 | 0 ), ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 )]
+    [( 0 | 0 | 0 | 3 | 0 ), ( 0 | 0 | 0 | 3 | 0 ),
+     ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 ), ( 0 | 0 | 0 | 1 | 0 )]
     sage: list(map(AA, P4_11133.fan(4)))  # long time (5s on sage.math, 2012)
-    [( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 )]
-    sage: AA(cone).intersection_with_divisor(D)  # long time (4s on sage.math, 2013)
+    [( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ),
+     ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 )]
+    sage: AA(cone).intersection_with_divisor(D)  # long time (4s on sage.math, 2013)    # needs sage.libs.singular
     ( 1 | 0 | 0 | 0 | 0 )
-    sage: AA(cone).intersection_with_divisor(D).count_points()  # long time
+    sage: AA(cone).intersection_with_divisor(D).count_points()  # long time             # needs sage.libs.singular
     1
 
 The real advantage of the Chow group is that
@@ -302,25 +306,29 @@ implementing them on your own as a patch for inclusion!
 
 import sys
 
-from sage.functions.all import factorial
 import sage.geometry.abc
+
+from sage.categories.fields import Fields
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan
-from sage.misc.latex import latex
-from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.quotient_ring_element import QuotientRingElement
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.quotient_ring import QuotientRing_generic
+from sage.rings.quotient_ring_element import QuotientRingElement
+from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.toric.homset import SchemeHomset_points_toric_field
 from sage.structure.category_object import certify_names
-from sage.categories.fields import Fields
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import("sage.functions.all", "factorial")
+
 _Fields = Fields()
 
 
@@ -334,7 +342,7 @@ def is_ToricVariety(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT:
 
@@ -380,27 +388,27 @@ def ToricVariety(fan,
     INPUT:
 
     - ``fan`` -- :class:`rational polyhedral fan
-      <sage.geometry.fan.RationalPolyhedralFan>`;
+      <sage.geometry.fan.RationalPolyhedralFan>`
 
     - ``coordinate_names`` -- names of variables for the coordinate ring, see
       :func:`normalize_names` for acceptable formats. If not given, indexed
-      variable names will be created automatically;
+      variable names will be created automatically.
 
     - ``names`` -- an alias of ``coordinate_names`` for internal
       use. You may specify either ``names`` or ``coordinate_names``,
-      but not both;
+      but not both.
 
     - ``coordinate_indices`` -- list of integers, indices for indexed
       variables. If not given, the index of each variable will coincide with
-      the index of the corresponding ray of the fan;
+      the index of the corresponding ray of the fan.
 
     - ``base_ring`` -- base ring of the toric variety (default:
-      `\QQ`). Must be a field.
+      `\QQ`); must be a field
 
-    - ``base_field`` -- alias for ``base_ring``. Takes precedence if
-      both are specified.
+    - ``base_field`` -- alias for ``base_ring``; takes precedence if
+      both are specified
 
-    OUTPUT: A :class:`toric variety <ToricVariety_field>`.
+    OUTPUT: a :class:`toric variety <ToricVariety_field>`
 
     EXAMPLES:
 
@@ -470,13 +478,13 @@ def AffineToricVariety(cone, *args, **kwds):
     INPUT:
 
     - ``cone`` -- :class:`strictly convex rational polyhedral cone
-      <sage.geometry.cone.ConvexRationalPolyhedralCone>`.
+      <sage.geometry.cone.ConvexRationalPolyhedralCone>`
 
     This cone will be used to construct a :class:`rational polyhedral fan
     <sage.geometry.fan.RationalPolyhedralFan>`, which will be passed to
     :func:`ToricVariety` with the rest of positional and keyword arguments.
 
-    OUTPUT: A :class:`toric variety <ToricVariety_field>`.
+    OUTPUT: a :class:`toric variety <ToricVariety_field>`
 
     .. NOTE::
 
@@ -521,19 +529,19 @@ class ToricVariety_field(AmbientSpace):
     INPUT:
 
     - ``fan`` -- :class:`rational polyhedral fan
-      <sage.geometry.fan.RationalPolyhedralFan>`;
+      <sage.geometry.fan.RationalPolyhedralFan>`
 
     - ``coordinate_names`` -- names of variables, see :func:`normalize_names`
       for acceptable formats. If ``None``, indexed variable names will be
-      created automatically;
+      created automatically.
 
     - ``coordinate_indices`` -- list of integers, indices for indexed
       variables. If ``None``, the index of each variable will coincide with
-      the index of the corresponding ray of the fan;
+      the index of the corresponding ray of the fan.
 
-    - ``base_field`` -- base field of the toric variety.
+    - ``base_field`` -- base field of the toric variety
 
-    OUTPUT: A :class:`toric variety <ToricVariety_field>`.
+    OUTPUT: a :class:`toric variety <ToricVariety_field>`
 
     TESTS::
 
@@ -568,7 +576,7 @@ class ToricVariety_field(AmbientSpace):
 
         - ``right`` -- anything
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         ``True`` if and only if ``right`` is of the same type as ``self``,
         their fans are the same, names of variables are the same and
@@ -604,7 +612,7 @@ class ToricVariety_field(AmbientSpace):
 
         - ``other`` -- anything
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         ``True`` if and only if ``other`` is of the same type as ``self``,
         their fans are the same, names of variables are the same and
@@ -648,9 +656,7 @@ class ToricVariety_field(AmbientSpace):
 
         This function is needed (in particular) for the test framework.
 
-        OUTPUT:
-
-        - a point of ``self`` with coordinates [1 : 2: ... : n].
+        OUTPUT: a point of ``self`` with coordinates [1 : 2: ... : n]
 
         TESTS::
 
@@ -666,12 +672,12 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``coordinates`` -- list of elements of the base field of ``self``.
+        - ``coordinates`` -- list of elements of the base field of ``self``
 
         OUTPUT:
 
         - ``True`` if ``coordinates`` do define a valid point of ``self``,
-          otherwise a :class:`TypeError` or :class:`ValueError` exception
+          otherwise a :exc:`TypeError` or :exc:`ValueError` exception
           is raised.
 
         TESTS::
@@ -760,9 +766,7 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -778,12 +782,10 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``coordinates`` -- list of coordinates of a point of ``self``.
-          If not given, names of coordinates of ``self`` will be used.
+        - ``coordinates`` -- list of coordinates of a point of ``self``;
+          if not given, names of coordinates of ``self`` will be used
 
-        OUTPUT:
-
-        string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -807,9 +809,7 @@ class ToricVariety_field(AmbientSpace):
         - same as for
           :class:`~sage.schemes.generic.morphism.SchemeMorphism_point_toric_field`.
 
-        OUTPUT:
-
-        :class:`~sage.schemes.generic.morphism.SchemeMorphism_point_toric_field`.
+        OUTPUT: :class:`~sage.schemes.generic.morphism.SchemeMorphism_point_toric_field`
 
         TESTS::
 
@@ -828,9 +828,7 @@ class ToricVariety_field(AmbientSpace):
 
         Same as :class:`sage.schemes.generic.homset.SchemeHomset_generic`.
 
-        OUTPUT:
-
-        A :class:`sage.schemes.toric.homset.SchemeHomset_toric_variety`.
+        OUTPUT: a :class:`sage.schemes.toric.homset.SchemeHomset_toric_variety`
 
         EXAMPLES::
 
@@ -874,9 +872,7 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -898,12 +894,10 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``coordinates`` -- list of coordinates of a point of ``self``.
-          If not given, names of coordinates of ``self`` will be used.
+        - ``coordinates`` -- list of coordinates of a point of ``self``;
+          if not given, names of coordinates of ``self`` will be used
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -927,13 +921,13 @@ class ToricVariety_field(AmbientSpace):
         INPUT:
 
         - ``polynomials`` -- list of polynomials in the coordinate ring of
-          ``self`` (this function does not perform any conversions).
+          ``self`` (this function does not perform any conversions)
 
         OUTPUT:
 
-        - ``polynomials`` (the input parameter without any modifications) if
+        - ``polynomials`` -- the input parameter without any modifications if
           ``polynomials`` do define valid polynomial functions on ``self``,
-          otherwise a :class:`ValueError` exception is raised.
+          otherwise a :exc:`ValueError` exception is raised.
 
         TESTS:
 
@@ -962,7 +956,7 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``i`` -- integer, index of a generating cone of the fan of ``self``.
+        - ``i`` -- integer; index of a generating cone of the fan of ``self``
 
         OUTPUT:
 
@@ -1027,9 +1021,9 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``F`` -- field.
+        - ``F`` -- field
 
-        OUTPUT: :class:`toric variety <ToricVariety_field>` over ``F``.
+        OUTPUT: :class:`toric variety <ToricVariety_field>` over ``F``
 
         .. NOTE::
 
@@ -1076,7 +1070,7 @@ class ToricVariety_field(AmbientSpace):
         For toric varieties this is the homogeneous coordinate ring (a.k.a.
         Cox's ring and total ring).
 
-        OUTPUT: A polynomial ring.
+        OUTPUT: a polynomial ring
 
         EXAMPLES::
 
@@ -1108,7 +1102,7 @@ class ToricVariety_field(AmbientSpace):
         - :class:`scheme morphism
           <sage.schemes.generic.morphism.SchemeMorphism_polynomial_toric_variety>`
           if the default embedding morphism was defined for ``self``,
-          otherwise a :class:`ValueError` exception is raised.
+          otherwise a :exc:`ValueError` exception is raised.
 
         EXAMPLES::
 
@@ -1139,9 +1133,9 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``dim`` -- dimension of the requested cones;
+        - ``dim`` -- dimension of the requested cones
 
-        - ``codim`` -- codimension of the requested cones.
+        - ``codim`` -- codimension of the requested cones
 
         OUTPUT:
 
@@ -1173,12 +1167,12 @@ class ToricVariety_field(AmbientSpace):
         INPUT:
 
         - ``scope`` -- namespace (default: global, not just the scope from
-          which this function was called);
+          which this function was called)
 
         - ``verbose`` -- if ``True`` (default), names of injected generators
-          will be printed.
+          will be printed
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1248,11 +1242,9 @@ class ToricVariety_field(AmbientSpace):
         INPUT:
 
         - ``polynomial`` -- polynomial in the coordinate ring of ``self`` or
-          its quotient.
+          its quotient
 
-        OUTPUT:
-
-        - ``True`` if ``polynomial`` is homogeneous and ``False`` otherwise.
+        OUTPUT: ``True`` if ``polynomial`` is homogeneous and ``False`` otherwise
 
         EXAMPLES:
 
@@ -1321,7 +1313,7 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``another`` -- :class:`toric variety <ToricVariety_field>`.
+        - ``another`` -- :class:`toric variety <ToricVariety_field>`
 
         OUTPUT:
 
@@ -1358,7 +1350,7 @@ class ToricVariety_field(AmbientSpace):
         face lattice of a single cone. See also
         :func:`AffineToricVariety`.
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1373,9 +1365,7 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Check if ``self`` is complete.
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is complete and ``False`` otherwise.
+        OUTPUT: ``True`` if ``self`` is complete and ``False`` otherwise
 
         EXAMPLES::
 
@@ -1418,9 +1408,7 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Check if ``self`` is smooth.
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is smooth and ``False`` otherwise.
+        OUTPUT: ``True`` if ``self`` is smooth and ``False`` otherwise
 
         EXAMPLES::
 
@@ -1440,7 +1428,7 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Return the closure of the Kähler cone of ``self``.
 
-        OUTPUT: :class:`cone <sage.geometry.cone.ConvexRationalPolyhedralCone>`.
+        OUTPUT: :class:`cone <sage.geometry.cone.ConvexRationalPolyhedralCone>`
 
         .. NOTE::
 
@@ -1485,7 +1473,7 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Return the Mori cone of ``self``.
 
-        OUTPUT: :class:`cone <sage.geometry.cone.ConvexRationalPolyhedralCone>`.
+        OUTPUT: :class:`cone <sage.geometry.cone.ConvexRationalPolyhedralCone>`
 
         .. NOTE::
 
@@ -1532,7 +1520,7 @@ class ToricVariety_field(AmbientSpace):
         - any options for toric plots (see :func:`toric_plotter.options
           <sage.geometry.toric_plotter.options>`), none are mandatory.
 
-        OUTPUT: A plot.
+        OUTPUT: a plot
 
         .. NOTE::
 
@@ -1597,10 +1585,10 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``base_ring`` -- either ``ZZ`` (default) or ``QQ``. The
-          coefficient ring of the Chow group.
+        - ``base_ring`` -- either ``ZZ`` (default) or ``QQ``; the
+          coefficient ring of the Chow group
 
-        OUTPUT: A :class:`sage.schemes.toric.chow_group.ChowGroup_class`.
+        OUTPUT: a :class:`sage.schemes.toric.chow_group.ChowGroup_class`
 
         EXAMPLES::
 
@@ -1619,17 +1607,17 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``other`` -- a :class:`toric variety <ToricVariety_field>`;
+        - ``other`` -- a :class:`toric variety <ToricVariety_field>`
 
         - ``coordinate_names`` -- names of variables for the coordinate ring,
           see :func:`normalize_names` for acceptable formats. If not given,
-          indexed variable names will be created automatically;
+          indexed variable names will be created automatically.
 
         - ``coordinate_indices`` -- list of integers, indices for indexed
           variables. If not given, the index of each variable will coincide
           with the index of the corresponding ray of the fan.
 
-        OUTPUT: A :class:`toric variety <ToricVariety_field>`.
+        OUTPUT: a :class:`toric variety <ToricVariety_field>`
 
         EXAMPLES::
 
@@ -1661,10 +1649,10 @@ class ToricVariety_field(AmbientSpace):
         - ``coordinate_names`` -- names for coordinates of the new variety. If
           not given, will be constructed from the coordinate names of ``self``
           and necessary indexed ones. See :func:`normalize_names` for the
-          description of acceptable formats;
+          description of acceptable formats.
 
         - ``coordinate_indices`` -- coordinate indices which should be used
-          for indexed variables of the new variety;
+          for indexed variables of the new variety
 
         - all other arguments will be passed to
           :meth:`~sage.geometry.fan.RationalPolyhedralFan.subdivide` method of
@@ -1672,7 +1660,7 @@ class ToricVariety_field(AmbientSpace):
           <sage.geometry.fan.RationalPolyhedralFan>`, see its documentation
           for the available options.
 
-        OUTPUT: A :class:`toric variety <ToricVariety_field>`.
+        OUTPUT: a :class:`toric variety <ToricVariety_field>`
 
         EXAMPLES:
 
@@ -1719,7 +1707,7 @@ class ToricVariety_field(AmbientSpace):
             (z0, z1, z2, z3, z4, z5, z6, z7)
             sage: TV_res.gens()
             (z0, z1, z2, z3, z4, z5, z6, z7)
-            sage: TV_res = TV.resolve(coordinate_names="x+",
+            sage: TV_res = TV.resolve(coordinate_names='x+',
             ....:                     make_simplicial=True)
             sage: TV_res.gens()
             (x0, x1, x2, x3, x4, x5, x6, x7)
@@ -1774,7 +1762,7 @@ class ToricVariety_field(AmbientSpace):
         - this function accepts only keyword arguments. See :meth:`resolve`
           for documentation.
 
-        OUTPUT: A :class:`toric variety <ToricVariety_field>`.
+        OUTPUT: a :class:`toric variety <ToricVariety_field>`
 
         EXAMPLES::
 
@@ -1803,9 +1791,9 @@ class ToricVariety_field(AmbientSpace):
         INPUT:
 
         - ``polynomials`` -- list of polynomials in the coordinate ring of
-          ``self``.
+          ``self``
 
-        OUTPUT: A :class:`subscheme of a toric variety
+        OUTPUT: a :class:`subscheme of a toric variety
         <sage.schemes.toric.toric_subscheme.AlgebraicScheme_subscheme_toric>`.
 
         EXAMPLES:
@@ -1868,7 +1856,7 @@ class ToricVariety_field(AmbientSpace):
 
     def linear_equivalence_ideal(self):
         r"""
-        Return the ideal generated by linear relations
+        Return the ideal generated by linear relations.
 
         OUTPUT:
 
@@ -1955,11 +1943,11 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``d`` (optional) -- integer.
+        - ``d`` -- (optional) integer
 
         OUTPUT:
 
-        - Without the optional argument, a list whose d-th entry is a
+        - Without the optional argument, a list whose `d`-th entry is a
           basis for `H^{2d}(X,\QQ)`
 
         - If the argument is an integer ``d``, returns basis for
@@ -2000,14 +1988,14 @@ class ToricVariety_field(AmbientSpace):
         the variety is non-compact this is dual to homology without
         any support condition. In particular, for non-compact
         varieties the volume form `\mathrm{dVol}=\wedge_i(dx_i \wedge
-        dy_i)` does not define a (non-zero) cohomology class.
+        dy_i)` does not define a (nonzero) cohomology class.
 
         OUTPUT:
 
         A :class:`CohomologyClass`. If it exists, it is the class of
         the (properly normalized) volume form, that is, it is the
         Poincaré dual of a single point. If it does not exist, a
-        :class:`ValueError` is raised.
+        :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -2071,7 +2059,7 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``cohomology_class`` -- A cohomology class given as a
+        - ``cohomology_class`` -- a cohomology class given as a
           polynomial in ``self.cohomology_ring()``
 
         OUTPUT:
@@ -2153,11 +2141,9 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``deg`` -- integer (optional). The degree of the Chern class.
+        - ``deg`` -- integer (optional); the degree of the Chern class
 
-        OUTPUT:
-
-        - If the degree is specified, the ``deg``-th Chern class.
+        OUTPUT: if the degree is specified, the ``deg``-th Chern class
 
         - If no degree is specified, the total Chern class.
 
@@ -2195,8 +2181,8 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``deg`` -- integer (optional). The degree of the Chern
-          character.
+        - ``deg`` -- integer (optional); the degree of the Chern
+          character
 
         OUTPUT:
 
@@ -2233,7 +2219,7 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``deg`` -- integer (optional). The desired degree part.
+        - ``deg`` -- integer (optional); the desired degree part
 
         OUTPUT:
 
@@ -2342,9 +2328,7 @@ class ToricVariety_field(AmbientSpace):
         exception of defining a divisor with a single integer: this method
         considers it to be the index of a ray of the :meth:`fan` of ``self``.
 
-        OUTPUT:
-
-        - A :class:`sage.schemes.toric.divisor.ToricDivisor_generic`
+        OUTPUT: a :class:`sage.schemes.toric.divisor.ToricDivisor_generic`
 
         EXAMPLES::
 
@@ -2395,7 +2379,7 @@ class ToricVariety_field(AmbientSpace):
         INPUT:
 
         - ``base_ring`` -- the coefficient ring, usually ``ZZ``
-          (default) or ``QQ``.
+          (default) or ``QQ``
 
         OUTPUT:
 
@@ -2432,7 +2416,7 @@ class ToricVariety_field(AmbientSpace):
         INPUT:
 
         - ``base_ring`` -- the coefficient ring, usually ``ZZ``
-          (default) or ``QQ``.
+          (default) or ``QQ``
 
         OUTPUT:
 
@@ -2552,9 +2536,7 @@ class ToricVariety_field(AmbientSpace):
           formats. If not given, indexed variable names will be
           created automatically.
 
-        OUTPUT:
-
-        The spectrum of the semigroup ring `\CC[\sigma^\vee \cap M]`.
+        OUTPUT: the spectrum of the semigroup ring `\CC[\sigma^\vee \cap M]`
 
         EXAMPLES::
 
@@ -2619,9 +2601,9 @@ class ToricVariety_field(AmbientSpace):
 
         - ``cone`` -- a :class:`cone
           <sage.geometry.cone.ConvexRationalPolyhedralCone>` of the :meth:`fan`
-          of ``self``;
+          of ``self``
 
-        - ``x`` -- a lattice point or a cone of the :meth:`fan` of ``self``.
+        - ``x`` -- a lattice point or a cone of the :meth:`fan` of ``self``
 
         OUTPUT:
 
@@ -2630,7 +2612,7 @@ class ToricVariety_field(AmbientSpace):
           This quotient lattice is the ambient lattice for the fan of the orbit
           closure corresponding to ``cone``.
 
-        If ``x`` is a cone not in the star of ``cone``, an :class:`IndexError`
+        If ``x`` is a cone not in the star of ``cone``, an :exc:`IndexError`
         is raised.
 
         See :meth:`orbit_closure` for more details.
@@ -2686,7 +2668,7 @@ class ToricVariety_field(AmbientSpace):
         INPUT:
 
         - ``cone`` -- a :class:`cone
-          <sage.geometry.cone.ConvexRationalPolyhedralCone>` of the fan.
+          <sage.geometry.cone.ConvexRationalPolyhedralCone>` of the fan
 
         OUTPUT:
 
@@ -2759,9 +2741,7 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Return the Demazure roots.
 
-        OUTPUT:
-
-        The roots as points of the `M`-lattice.
+        OUTPUT: the roots as points of the `M`-lattice
 
         REFERENCES:
 
@@ -2811,7 +2791,7 @@ class ToricVariety_field(AmbientSpace):
 
     def Aut_dimension(self):
         r"""
-        Return the dimension of the automorphism group
+        Return the dimension of the automorphism group.
 
         There are three kinds of symmetries of toric varieties:
 
@@ -2861,24 +2841,22 @@ def normalize_names(names=None, ngens=None, prefix=None, indices=None,
       names separated by commas or spaces) or a list of strings with each
       string specifying a name. If the last name ends with the plus sign,
       "+", this name will be used as ``prefix`` (even if ``prefix`` was
-      given explicitly);
+      given explicitly).
 
-    - ``ngens`` -- number of names to be returned;
+    - ``ngens`` -- number of names to be returned
 
-    - ``prefix`` -- prefix for the indexed names given as a string;
+    - ``prefix`` -- prefix for the indexed names given as a string
 
     - ``indices`` -- list of integers (default: ``range(ngens)``) used as
       indices for names with ``prefix``. If given, must be of length
-      ``ngens``;
+      ``ngens``.
 
     - ``return_prefix`` -- if ``True``, the last element of the returned list
       will contain the prefix determined from ``names`` or given as the
       parameter ``prefix``. This is useful if you may need more names in the
       future.
 
-    OUTPUT:
-
-    - list of names given as strings.
+    OUTPUT: list of names given as strings
 
     These names are constructed in the following way:
 
@@ -2933,18 +2911,18 @@ def normalize_names(names=None, ngens=None, prefix=None, indices=None,
     This is especially useful if you get ``names`` from a user but want to
     specify all default names::
 
-        sage: normalize_names("x, y", 4, prefix="t")
+        sage: normalize_names("x, y", 4, prefix='t')
         ['x', 'y', 't2', 't3']
 
     In this format, the user can easily override your choice for automatic
     names::
 
-        sage: normalize_names("x y s+", 4, prefix="t")
+        sage: normalize_names("x y s+", 4, prefix='t')
         ['x', 'y', 's2', 's3']
 
     Let's now use all parameters at once::
 
-        sage: normalize_names("x, y, s+", 4, prefix="t",
+        sage: normalize_names("x, y, s+", 4, prefix='t',
         ....:     indices=list(range(1,5)), return_prefix=True)
         ['x', 'y', 's3', 's4', 's']
 
@@ -2967,7 +2945,7 @@ def normalize_names(names=None, ngens=None, prefix=None, indices=None,
 
     A more subtle one::
 
-        sage: normalize_names("x1", 4, prefix="x")
+        sage: normalize_names("x1", 4, prefix='x')
         Traceback (most recent call last):
         ...
         ValueError: variable name 'x1' appears more than once
@@ -3107,9 +3085,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         r"""
         Return a string representation of the cohomology ring.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3122,9 +3098,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         r"""
         Return a latex representation of the cohomology ring.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3145,9 +3119,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
           be converted into a polynomial in the homogeneous
           coordinates.
 
-        OUTPUT:
-
-        The :class:`CohomologyClass` defined by ``x``.
+        OUTPUT: the :class:`CohomologyClass` defined by ``x``
 
         EXAMPLES::
 
@@ -3267,7 +3239,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
         OUTPUT:
 
@@ -3292,7 +3264,7 @@ def is_CohomologyClass(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT:
 
@@ -3305,12 +3277,20 @@ def is_CohomologyClass(x):
         sage: HH = P2.cohomology_ring()
         sage: from sage.schemes.toric.variety import is_CohomologyClass
         sage: is_CohomologyClass( HH.one() )                                            # needs sage.libs.singular
+        doctest:warning...
+        DeprecationWarning: The function is_CohomologyClass is deprecated;
+        use 'isinstance(..., CohomologyClass)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         True
         sage: is_CohomologyClass( HH(P2.fan(1)[0]) )                                    # needs sage.libs.singular
         True
         sage: is_CohomologyClass('z')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_CohomologyClass is deprecated; "
+                "use 'isinstance(..., CohomologyClass)' instead.")
     return isinstance(x, CohomologyClass)
 
 
@@ -3345,13 +3325,11 @@ class CohomologyClass(QuotientRingElement):
 
         INPUT:
 
-        - ``cohomology_ring`` -- :class:`CohomologyRing`.
+        - ``cohomology_ring`` -- :class:`CohomologyRing`
 
-        - ``representative`` -- a polynomial in the generators of the cohomology ring.
+        - ``representative`` -- a polynomial in the generators of the cohomology ring
 
-        OUTPUT:
-
-        An instance of :class:`CohomologyClass`.
+        OUTPUT: an instance of :class:`CohomologyClass`
 
         EXAMPLES::
 
@@ -3369,9 +3347,7 @@ class CohomologyClass(QuotientRingElement):
         r"""
         Return a string representation of the cohomology class.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3384,9 +3360,7 @@ class CohomologyClass(QuotientRingElement):
         r"""
         Return a latex representation of the cohomology class.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3428,9 +3402,7 @@ class CohomologyClass(QuotientRingElement):
 
         - An integer ``d``
 
-        OUTPUT:
-
-        - The degree-``2d`` part of the cohomology class.
+        OUTPUT: the degree-``2d`` part of the cohomology class
 
         EXAMPLES::
 
@@ -3467,7 +3439,7 @@ class CohomologyClass(QuotientRingElement):
         OUTPUT:
 
         The cohomology class `\exp(` ``self`` `)` if the constant part
-        vanishes, otherwise a :class:`ValueError` is raised.
+        vanishes, otherwise a :exc:`ValueError` is raised.
 
         EXAMPLES::
 

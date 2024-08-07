@@ -92,10 +92,10 @@ class MinorMatroid(Matroid):
     INPUT:
 
     - ``matroid`` -- matroid
-    - ``contractions`` -- An object with Python's ``frozenset`` interface
+    - ``contractions`` -- an object with Python's ``frozenset`` interface
       containing a subset of ``self.groundset()``.
-    - ``deletions`` -- An object with Python's ``frozenset`` interface
-      containing a subset of ``self.groundset()``.
+    - ``deletions`` -- an object with Python's ``frozenset`` interface
+      containing a subset of ``self.groundset()``
 
     OUTPUT:
 
@@ -169,9 +169,7 @@ class MinorMatroid(Matroid):
 
         - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        The rank of ``X`` in the matroid.
+        OUTPUT: the rank of ``X`` in the matroid
 
         EXAMPLES::
 
@@ -192,9 +190,7 @@ class MinorMatroid(Matroid):
         - ``X`` -- an object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        The corank of ``X``.
+        OUTPUT: the corank of ``X``
 
         EXAMPLES::
 
@@ -215,9 +211,7 @@ class MinorMatroid(Matroid):
         - ``X`` -- an object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        A maximal independent subset of ``X``.
+        OUTPUT: a maximal independent subset of ``X``
 
         EXAMPLES::
 
@@ -243,9 +237,7 @@ class MinorMatroid(Matroid):
         - ``X`` -- an object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        The smallest closed set containing ``X``.
+        OUTPUT: the smallest closed set containing ``X``
 
         EXAMPLES::
 
@@ -254,7 +246,6 @@ class MinorMatroid(Matroid):
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: sorted(M._closure(frozenset(['a', 'e', 'd'])))
             ['a', 'd', 'e', 'g', 'h']
-
         """
         return self._matroid._closure(self._contractions.union(X)).difference(self._contractions.union(self._deletions))
 
@@ -267,9 +258,7 @@ class MinorMatroid(Matroid):
         - ``X`` -- an object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        A maximal coindependent subset of ``X``.
+        OUTPUT: a maximal coindependent subset of ``X``
 
         EXAMPLES::
 
@@ -295,9 +284,7 @@ class MinorMatroid(Matroid):
         - ``X`` -- an object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        The smallest coclosed set containing ``X``.
+        OUTPUT: the smallest coclosed set containing ``X``
 
         EXAMPLES::
 
@@ -306,7 +293,6 @@ class MinorMatroid(Matroid):
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: sorted(M._coclosure(frozenset(['a', 'b', 'c'])))
             ['a', 'd', 'e', 'g', 'h']
-
         """
         return self._matroid._coclosure(self._deletions.union(X)).difference(self._contractions.union(self._deletions))
 

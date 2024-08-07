@@ -139,7 +139,6 @@ class SectionModule(UniqueRepresentation, Parent):
 
     The conversion map is actually the restriction of sections defined
     on `M` to `U`.
-
     """
     Element = Section
 
@@ -170,7 +169,6 @@ class SectionModule(UniqueRepresentation, Parent):
             Module C^0(S^1;E) of sections on the 1-dimensional topological
              manifold S^1 with values in the real vector bundle E of rank 1
             sage: TestSuite(C0).run()
-
         """
         base_space = vbundle.base_space()
         if not domain.is_subset(base_space):
@@ -217,7 +215,6 @@ class SectionModule(UniqueRepresentation, Parent):
             s = -x e_0 + y e_1
             sage: C0(0) is C0.zero()
             True
-
         """
         try:
             if comp.is_trivial_zero():
@@ -255,7 +252,6 @@ class SectionModule(UniqueRepresentation, Parent):
             sage: C0._an_element_()
             Section on the 2-dimensional topological manifold M with values in
              the real vector bundle E of rank 2
-
         """
         resu = self.element_class(self)
         for oc in self._domain.open_covers(trivial=False):
@@ -281,7 +277,6 @@ class SectionModule(UniqueRepresentation, Parent):
             False
             sage: C0_U._coerce_map_from_(C0)
             True
-
         """
         if isinstance(other, (SectionModule, SectionFreeModule)):
             return self._domain.is_subset(other._domain)
@@ -308,7 +303,6 @@ class SectionModule(UniqueRepresentation, Parent):
             sage: C0  # indirect doctest
             Module C^0(M;E) of sections on the 2-dimensional topological
              manifold M with values in the real vector bundle E of rank 2
-
         """
         desc = "Module {} of sections on the {} with values in the {} vector " \
                "bundle {} of rank {}"
@@ -331,7 +325,6 @@ class SectionModule(UniqueRepresentation, Parent):
             'C^{\\infty}(M;E)'
             sage: latex(C) # indirect doctest
             C^{\infty}(M;E)
-
         """
         return self._latex_name
 
@@ -350,7 +343,6 @@ class SectionModule(UniqueRepresentation, Parent):
              bundle E of rank 2
             sage: C0.base_space()
             Open subset U of the 3-dimensional topological manifold M
-
         """
         return self._base_space
 
@@ -369,7 +361,6 @@ class SectionModule(UniqueRepresentation, Parent):
              bundle E of rank 2
             sage: C0_U.domain()
             Open subset U of the 3-dimensional topological manifold M
-
         """
         return self._domain
 
@@ -390,7 +381,6 @@ class SectionModule(UniqueRepresentation, Parent):
              3-dimensional topological manifold M
             sage: E is C0.vector_bundle()
             True
-
         """
         return self._vbundle
 
@@ -410,7 +400,6 @@ class SectionModule(UniqueRepresentation, Parent):
              in the real vector bundle E of rank 2
             sage: z == 0
             True
-
         """
         res = self.element_class(self, name='zero', latex_name='0')
         for frame in self._vbundle._frames:
@@ -442,7 +431,6 @@ class SectionModule(UniqueRepresentation, Parent):
 
             sage: e is C0.default_frame()
             True
-
         """
         return self._def_frame
 
@@ -477,7 +465,6 @@ class SectionModule(UniqueRepresentation, Parent):
 
             sage: C0.default_frame().domain()
             Open subset U of the 3-dimensional topological manifold M
-
         """
         from .local_frame import LocalFrame
         if not isinstance(basis, LocalFrame):
@@ -577,7 +564,6 @@ class SectionFreeModule(FiniteRankFreeModule):
     The test suite is passed as well::
 
         sage: TestSuite(C0).run()
-
     """
     Element = TrivialSection
 
@@ -598,7 +584,6 @@ class SectionFreeModule(FiniteRankFreeModule):
             sage: C0 is E.section_module(force_free=True)
             True
             sage: TestSuite(C0).run()
-
         """
         from .scalarfield import ScalarField
         self._domain = domain
@@ -639,7 +624,6 @@ class SectionFreeModule(FiniteRankFreeModule):
             s = -x e_0 + y e_1
             sage: C0(0) is C0.zero()
             True
-
         """
         try:
             if comp.is_trivial_zero():
@@ -679,7 +663,6 @@ class SectionFreeModule(FiniteRankFreeModule):
             False
             sage: C0_U._coerce_map_from_(C0)
             True
-
         """
         if isinstance(other, (SectionModule, SectionFreeModule)):
             return self._domain.is_subset(other._domain)
@@ -706,7 +689,6 @@ class SectionFreeModule(FiniteRankFreeModule):
             sage: C0  # indirect doctest
             Free module C^0(M;E) of sections on the 2-dimensional topological
              manifold M with values in the real vector bundle E of rank 2
-
         """
         desc = "Free module {} of sections on the {} with values in the {} " \
                "vector bundle {} of rank {}"
@@ -731,7 +713,6 @@ class SectionFreeModule(FiniteRankFreeModule):
              bundle E of rank 2
             sage: C0_U.domain()
             Open subset U of the 3-dimensional topological manifold M
-
         """
         return self._domain
 
@@ -770,7 +751,6 @@ class SectionFreeModule(FiniteRankFreeModule):
              3-dimensional topological manifold M
             sage: E is C0.vector_bundle()
             True
-
         """
         return self._vbundle
 
@@ -826,7 +806,6 @@ class SectionFreeModule(FiniteRankFreeModule):
 
         See :class:`~sage.manifolds.local_frame.LocalFrame` for more examples
         and documentation.
-
         """
         from sage.manifolds.local_frame import LocalFrame
         if symbol is None:
