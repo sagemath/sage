@@ -43,10 +43,10 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
     Tropical polynomial is a polynomial with coefficients from tropical
     semiring. Tropical polynomial induces a function which is piecewise
-    linear and each piece has an integer slope. Tropical roots (zeros) of
-    polynomial `P(x)` is defined as all points `x_0` for which the graph
-    of `P(x)` change its slope. The difference in the slopes of the two
-    pieces adjacent to this root gives the order of the root.
+    linear and each piece has a nonnegative integer slope. Tropical roots
+    (zeros) of polynomial `P(x)` is defined as all points `x_0` for which
+    the graph of `P(x)` change its slope. The difference in the slopes of
+    the two pieces adjacent to this root gives the order of the root.
 
     The tropical polynomials are implemented with a sparse format by using
     a ``dict`` whose keys are the exponent and values the corresponding
@@ -111,7 +111,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         (1) * (0*x + 1)^2
 
     Every tropical polynomial `p(x)` have a corresponding unique tropical
-    polynomial `\bar{p}(x)` with the same roots which can be factored. We
+    polynomial `\bar{p}(x)` with the same roots that can be factored. We
     call `\bar{p}(x)` the tropical polynomial split form of `p(x)`::
 
         sage: p1.split_form()
@@ -252,7 +252,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         its split form is the tropical product of linear terms of the form
         `(x + x_i)` for all `i=1,2,\ldots,n`.
 
-        OUTPUT: new :class:`TropicalPolynomial`
+        OUTPUT: :class:`TropicalPolynomial`
 
         EXAMPLES::
 
@@ -296,8 +296,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         Note that the factor `x - x_0` in classical algebra gets transformed
         to the factor `x + x_0`, since the root of the tropical polynomial
-        `x + x_0` is `x_0` and not `-x_0`. However, similar to classical
-        algebra, not every tropical polynomial can be factored.
+        `x + x_0` is `x_0` and not `-x_0`. However, not every tropical
+        polynomial can be factored.
 
         OUTPUT: a :class:'Factorization'
 
@@ -533,7 +533,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 return plot(f, xmin=roots[0]-1, xmax=roots[-1]+1)
         elif xmin is None or xmax is None:
             raise ValueError("expected 2 inputs for xmin and xmax, but got 1")
-        elif (xmin >= xmax):
+        elif xmin >= xmax:
             raise ValueError(f"xmin = {xmin} should be less than xmax = {xmax}")
         else:
             return plot(f, xmin=xmin, xmax=xmax)
@@ -557,12 +557,12 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             return f'({match.group(0)})'
 
         s = super()._repr()
-        var = self.parent().variable_name()
-        if s[0] == var:
+        v = self.parent().variable_name()
+        if s[0] == v:
             s = "1*" + s
         s = s.replace(" - ", " + -")
-        s = s.replace(" + "+var, " + 1*"+var)
-        s = s.replace("-"+var, "-1*"+var)
+        s = s.replace(" + "+v, " + 1*"+v)
+        s = s.replace("-"+v, "-1*"+v)
         s = re.sub(r'-\d+', replace_negatives, s)
         return s
 
@@ -591,31 +591,51 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 if x.find("-") == 0:
                     x = "\\left(" + x + "\\right)"
                 if n > 1:
-                    var = "|%s^{%s}" % (name, n)
+                    v = "|%s^{%s}" % (name, n)
                 elif n == 1:
-                    var = "|%s" % name
+                    v = "|%s" % name
                 else:
-                    var = ""
-                s += "%s %s" % (x, var)
+                    v = ""
+                s += "%s %s" % (x, v)
         s = s.replace("|", "")
         if s == " ":
             return self.parent().base().zero()._latex_()
         return s[1:].lstrip().rstrip()
+
+    def is_monic(self):
+        r"""
+        Return ``True`` if ``self`` is a monic tropical polynomial.
+
+        In the context of tropical polynomial, a monic polynomial has a
+        leading coefficient `0`.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x> = PolynomialRing(T)
+            sage: p1 = R([2,1,0]); p1
+            0*x^2 + 1*x + 2
+            sage: p1.is_monic()
+            True
+            sage: p2 = R([2,1,1]); p2
+            1*x^2 + 1*x + 2
+            sage: p2.is_monic()
+            False
+        """
+        if self[self.degree()] == self.base_ring()(0):
+            return True
+        return False
 
 
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
     The semiring of univariate tropical polynomials.
 
-    The tropical additive operation is defined as min/max and the
-    tropical multiplicative operation is defined as classical addition.
-    The set of tropical polynomials form a semiring. Tropical addition
-    is associative and commutative, with the identity element being
-    `+\infty` (or `-\infty`). Tropical multiplication is associative,
-    with the identity element being `0`, and it distributes over tropical
-    addition. Furthermore, multiplication by the additive identity results
-    in the additive identity, preserving the annihilation property.
-    However, it fails to become a ring because it lacks additive inverses.
+    This is the commutative semiring consisting of finite linear
+    combinations of tropical monomials under (tropical)
+    addition and multiplication with the identity element
+    being `+\infty` (or `-\infty` depending on whether the
+    base tropical semiring is using min-plus or max-plus algebra).
 
     EXAMPLES::
 
@@ -731,7 +751,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.one()
             0
         """
-        return self._element_constructor_(self.base().one())
+        return self.element_class(self, [self.base().one()])
 
     @cached_method
     def zero(self):
@@ -745,7 +765,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.zero()
             +infinity
         """
-        return self._element_constructor_(self.base().zero())
+        return self.element_class(self, [self.base().zero()])
 
     def _repr_(self):
         """
@@ -794,7 +814,8 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.gens()
             (0*abc,)
         """
-        return tuple([self([None,0])])
+        R = self.base()
+        return (self.element_class(self, [R.zero(), R.one()]),)
 
     def ngens(self):
         """
@@ -812,11 +833,8 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return ZZ.one()
 
     def random_element(self, degree=(-1, 2), monic=False, *args, **kwds):
-        """
+        r"""
         Return a random tropical polynomial of given degrees (bounds).
-
-        In the context of tropical polynomial, a monic polynomial is the one
-        with the leading coefficient 0.
 
         OUTPUT: a :class:`TropicalPolynomial`
 
@@ -824,16 +842,39 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
             :meth:`sage.rings.polynomial.polynomial_ring.PolynomialRing_general.random_element`
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: T = TropicalSemiring(QQ)
+        Tropical polynomial over an integer with each coefficient bounded
+        between ``x`` and ``y``::
+
+            sage: T = TropicalSemiring(ZZ)
             sage: R = PolynomialRing(T, 'x')
-            sage: f = R.random_element(5, monic=True)
+            sage: f = R.random_element(8, x=3, y=10)
             sage: f.degree()
-            5
-            sage: f[f.degree()]
-            0
+            8
             sage: f.parent() is R
+            True
+            sage: all(a >= T(3) for a in f.coefficients())
+            True
+            sage: all(a < T(10) for a in f.coefficients())
+            True
+
+        If a tuple of two integers is provided for the ``degree`` argument,
+        a polynomial is selected with degrees within that range::
+
+            sage: all(R.random_element(degree=(1, 5)).degree() in range(1, 6) for _ in range(10^3))
+            True
+
+        Note that the zero polynomial (`\pm \infty`) has degree `-1`.
+        To include it, set the minimum degree to `-1`::
+
+            sage: while R.random_element(degree=(-1,2), x=-1, y=1) != R.zero():
+            ....:     pass
+
+        Monic polynomials are chosen among all monic polynomials with degree
+        between the given ``degree`` argument::
+
+            sage: all(R.random_element(degree=(-1, 2), monic=True).is_monic() for _ in range(10^3))
             True
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -842,7 +883,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         new_dict = f.dict()
         if monic:
             new_dict[f.degree()] = 0
-        return self(new_dict)
+        return self.element_class(self, new_dict)
 
     def is_sparse(self):
         """

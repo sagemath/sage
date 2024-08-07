@@ -923,7 +923,7 @@ class TropicalCurve(TropicalVariety):
             sage: R.<x,y> = PolynomialRing(T)
             sage: p1 = x + y
             sage: p1.tropical_variety().vertices()
-            {}
+            set()
             sage: p2 = R(-2)*x^2 + R(-1)*x + R(1/2)*y + R(1/6)
             sage: p2.tropical_variety().vertices()
             {(1, -1/2), (7/6, -1/3)}
@@ -1121,4 +1121,4 @@ class TropicalCurve(TropicalVariety):
             sage: (x^2+R(0)).tropical_variety()
             Tropical curve of 0*x^2 + 0
         """
-        return (f"Tropical curve of {self._poly}")
+        return f"Tropical curve of {self._poly}"

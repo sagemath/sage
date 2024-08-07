@@ -290,7 +290,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         T = self.parent().base()
         R = self.base_ring().base_ring()
 
-        # finding the point of cuve that touch the edge of axes
+        # finding the point of curve that touch the edge of axes
         for comp in tv.components():
             if len(comp[1]) == 1:
                 valid_int = RealSet(comp[1][0])
@@ -301,10 +301,10 @@ class TropicalMPolynomial(MPolynomial_polydict):
                     sol1 = solve(eqn == axes[i][0], v)
                     sol2 = solve(eqn == axes[i][1], v)
                     if sol1[0].rhs() in valid_int:
-                        valid_point = [R(eq.subs(v==sol1[0].rhs())) for eq in comp[0]]
+                        valid_point = [R(eq.subs(v == sol1[0].rhs())) for eq in comp[0]]
                         edge.add(tuple(valid_point))
                     if sol2[0].rhs() in valid_int:
-                        valid_point = [R(eq.subs(v==sol2[0].rhs())) for eq in comp[0]]
+                        valid_point = [R(eq.subs(v == sol2[0].rhs())) for eq in comp[0]]
                         edge.add(tuple(valid_point))
 
         # combine the edge, vertices, and corner point
@@ -447,13 +447,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
     The semiring of tropical polynomials in multiple variables.
 
-    The tropical additive operation is defined as min/max and the
-    tropical multiplicative operation is defined as classical addition.
-    Similar to the single-variable case, the set of multivariate tropical
-    polynomials `R` also form a semiring because `(R,+)` is a commutative
-    monoid and `(R,\cdot)` is a monoid. Additionally, R satisfy the
-    distributive and annihilation property. Therefore, this semiring
-    extends the concepts to polynomials with multiple variables.
+    This is the commutative semiring consisting of all finite linear
+    combinations of tropical monomials under (tropical) addition
+    and multiplication with coefficients in a tropical semiring.
 
     EXAMPLES::
 
@@ -561,11 +557,12 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
-            sage: R = PolynomialRing(T, 'x')
+            sage: R = PolynomialRing(T, 'x,y')
             sage: R.one()
             0
         """
-        return self._element_constructor_(self.base().one())
+        exponent = [0 for _ in range(self.ngens())]
+        return self.element_class(self, {tuple(exponent): self.base().one()})
 
     @cached_method
     def zero(self):
@@ -575,11 +572,12 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
-            sage: R = PolynomialRing(T, 'x')
+            sage: R = PolynomialRing(T, 'x,y')
             sage: R.zero()
             +infinity
         """
-        return self._element_constructor_(self.base().zero())
+        exponent = [0 for _ in range(self.ngens())]
+        return self.element_class(self, {tuple(exponent): self.base().zero()})
 
     def _repr_(self):
         r"""
@@ -609,23 +607,36 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
             :meth:`sage.rings.polynomial.multi_polynomial_ring_base.MPolynomialRing_base.random_element`
 
-        EXAMPLES::
+        EXAMPLES:
+
+        A random polynomial of at most degree `d` and at most `t` terms::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,b,c> = PolynomialRing(T)
-            sage: f = R.random_element()
+            sage: f = R.random_element(2, 5)
             sage: f.degree() <= 2
+            True
+            sage: f.parent() is R
             True
             sage: len(list(f)) <= 5
             True
+
+        Choose degrees of monomials randomly first rather than monomials
+        uniformly random::
+
+            sage: f = R.random_element(3, 6, choose_degree=True)
+            sage: f.degree() <= 3
+            True
             sage: f.parent() is R
+            True
+            sage: len(list(f)) <= 6
             True
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
-        return self(R.random_element(degree=degree, terms=terms,
-                                     choose_degree=choose_degree,
-                                     *args, **kwargs))
+        f = R.random_element(degree=degree, terms=terms, choose_degree=choose_degree,
+                             *args, **kwargs)
+        return self.element_class(self, f.dict())
 
     def gen(self, n=0):
         r"""
@@ -665,7 +676,8 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         for i in range(self.ngens()):
             exponent = [0] * self.ngens()
             exponent[i] = 1
-            gens.append(self({tuple(exponent):self.base()(0)}))
+            element = self.element_class(self, {tuple(exponent): self.base().one()})
+            gens.append(element)
         return tuple(gens)
 
     def ngens(self):
