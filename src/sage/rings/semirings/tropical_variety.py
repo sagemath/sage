@@ -353,7 +353,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
     def _repr_(self):
         """
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -363,6 +363,20 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             Tropical hypersurface of 0*w
         """
         return f"Tropical hypersurface of {self._poly}"
+    
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<w,x,y,z> = PolynomialRing(T)
+            sage: tv = (R(1)*w^2 + x*y*z + R(-1)).tropical_variety()
+            sage: latex(tv)
+            Tropical hypersurface of 0 x y z + 1 w^{2} + \left(-1\right)
+        """
+        return f"Tropical hypersurface of {self._poly._latex_()}"
 
     def components(self):
         """
@@ -374,12 +388,12 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: R.<a,x,y,z> = PolynomialRing(T)
             sage: tv = (a+x+y+z).tropical_variety()
             sage: tv.components()
-            [[(t1, t1, t2, t3), [t1 <= t3, t1 <= t2], 1],
-            [(t1, t2, t1, t3), [t1 <= t3, t1 <= t2], 1],
-            [(t1, t2, t3, t1), [t1 <= min(t3, t2)], 1],
-            [(t1, t2, t2, t3), [t2 <= t1, t2 <= t3], 1],
-            [(t1, t2, t3, t2), [t2 <= min(t3, t1)], 1],
-            [(t1, t2, t3, t3), [t3 <= min(t1, t2)], 1]]
+            [[(t1, t1, t2, t3), [t1 <= min(t3, t2)], 1],
+             [(t1, t2, t1, t3), [t1 <= t3, t1 <= t2], 1],
+             [(t1, t2, t3, t1), [t1 <= min(t3, t2)], 1],
+             [(t1, t2, t2, t3), [t2 <= t3, t2 <= t1], 1],
+             [(t1, t2, t3, t2), [t2 <= min(t3, t1)], 1],
+             [(t1, t2, t3, t3), [t3 <= min(t1, t2)], 1]]
         """
         return self._hypersurface
 
@@ -624,7 +638,7 @@ class TropicalSurface(TropicalVariety):
                     checkpoint = True
                     for exp in comp[1]:
                         final_exp = exp.subs(**{str(self._vars[0]): u, str(self._vars[1]): v})
-                        if not bool(final_exp):
+                        if not final_exp:
                             checkpoint = False
                             break
                     if checkpoint:
@@ -833,6 +847,20 @@ class TropicalSurface(TropicalVariety):
             Tropical surface of 0*x^4 + 0*z^2
         """
         return f"Tropical surface of {self._poly}"
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: tv = (x^2 + R(-1)*x*y*z + R(1)).tropical_variety()
+            sage: latex(tv)
+            Tropical surface of \left(-1\right) x y z + 0 x^{2} + 1
+        """
+        return f"Tropical surface of {self._poly._latex_()}"
 
 
 class TropicalCurve(TropicalVariety):
@@ -1122,3 +1150,17 @@ class TropicalCurve(TropicalVariety):
             Tropical curve of 0*x^2 + 0
         """
         return f"Tropical curve of {self._poly}"
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: tv = (x^2 + x*y + R(-1)).tropical_variety()
+            sage: latex(tv)
+            Tropical curve of 0 x^{2} + 0 x y + \left(-1\right)
+        """
+        return f"Tropical curve of {self._poly._latex_()}"
