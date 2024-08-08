@@ -191,10 +191,10 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
             sage: P.<x> = QQ[]
             sage: f = 4*x^5 - 30*x^3 + 45*x - 22
-            sage: C = HyperellipticCurve(f); C
-            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $y^2 = 4 x^{5} - 30 x^{3} + 45 x - 22$}
-            sage: C = HyperellipticCurve(f,names='u,v'); C
-            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $v^2 = 4 u^{5} - 30 u^{3} + 45 {u} - 22$}
+            sage: C = HyperellipticCurve(f); latex(C)
+            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $y^{2} = 4 x^{5} - 30 x^{3} + 45 x - 22$}
+            sage: C = HyperellipticCurve(f,names='u,v'); latex(C)
+            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $v^{2} = 4 u^{5} - 30 u^{3} + 45 u - 22$}
         """
 
         f, h = self._hyperelliptic_polynomials
