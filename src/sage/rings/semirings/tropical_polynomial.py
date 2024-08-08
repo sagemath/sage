@@ -210,10 +210,10 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             if exponent == 0:
                 return tropical_roots
             else:
-                return [self.parent().base_ring().zero()]*exponent
+                return [self.parent().base_ring().zero()] * exponent
 
         dict_root = {}
-        dict_coeff = {i:c.lift() for i,c in self.dict().items()}
+        dict_coeff = {i: c.lift() for i, c in self.dict().items()}
         for comb in combinations(dict_coeff, 2):
             index1, index2 = comb[0], comb[1]
             root = (dict_coeff[index1]-dict_coeff[index2])/(index2 - index1)
@@ -237,10 +237,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 else:
                     if order > dict_root[root]:
                         dict_root[root] = order
-
         for root in dict_root:
             tropical_roots += [root] * dict_root[root]
-
         return sorted(tropical_roots)
 
     def split_form(self):
@@ -273,12 +271,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         TESTS:
 
-        Checking that the roots of tropical polynomial and its split form
+        We verify that the roots of tropical polynomial and its split form
         is really the same::
 
-            sage: T = TropicalSemiring(QQ, use_min=True)
-            sage: R.<x> = PolynomialRing(T)
-            sage: p1 = R([5,4,1,0,2,4,3])
             sage: p1.roots() == p1.split_form().roots()
             True
         """
@@ -326,14 +321,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             (3) * 0
         """
         from sage.structure.factorization import Factorization
-
-        if self.parent().base()._use_min:
-            form = self.split_form()
-        else:
-            form = self.split_form()
-
         unit = self.dict()[self.degree()]
-        if self != form or not self.roots():
+        if (self != self.split_form()) or (not self.roots()):
             factor = [(self * self.parent(-unit.lift()), 1)]
             return Factorization(factor, unit=unit)
 
@@ -525,9 +514,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         from sage.plot.plot import plot
         f = self.piecewise_function()
-        if xmin is None and xmax is None:
+        if (xmin is None) and (xmax is None):
             roots = sorted(self.roots())
-            if (not roots) or self.parent().base().zero() in roots:
+            if (not roots) or (self.parent().base().zero() in roots):
                 return plot(f, xmin=-1, xmax=1)
             else:
                 return plot(f, xmin=roots[0]-1, xmax=roots[-1]+1)
@@ -1000,7 +989,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         if len(all_slope) == 1:  # constant polynomial
             return self(points[0][1])
 
-        result = self()
+        result = self.one()
         for root, ord in roots.items():
             result *= self([root,0])**ord
         test_value = result(self.base()(points[0][0]))

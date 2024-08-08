@@ -301,10 +301,10 @@ class TropicalMPolynomial(MPolynomial_polydict):
                     sol1 = solve(eqn == axes[i][0], v)
                     sol2 = solve(eqn == axes[i][1], v)
                     if sol1[0].rhs() in valid_int:
-                        valid_point = [R(eq.subs(v == sol1[0].rhs())) for eq in comp[0]]
+                        valid_point = [R(eq.subs(**{str(v): sol1[0].rhs()})) for eq in comp[0]]
                         edge.add(tuple(valid_point))
                     if sol2[0].rhs() in valid_int:
-                        valid_point = [R(eq.subs(v == sol2[0].rhs())) for eq in comp[0]]
+                        valid_point = [R(eq.subs(**{str(v): sol2[0].rhs()})) for eq in comp[0]]
                         edge.add(tuple(valid_point))
 
         # combine the edge, vertices, and corner point
@@ -561,7 +561,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.one()
             0
         """
-        exponent = [0 for _ in range(self.ngens())]
+        exponent = [0] * self.ngens()
         return self.element_class(self, {tuple(exponent): self.base().one()})
 
     @cached_method
@@ -576,7 +576,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.zero()
             +infinity
         """
-        exponent = [0 for _ in range(self.ngens())]
+        exponent = [0] * self.ngens()
         return self.element_class(self, {tuple(exponent): self.base().zero()})
 
     def _repr_(self):
@@ -691,4 +691,5 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R.ngens()
             10
         """
-        return self._ngens
+        from sage.rings.integer_ring import ZZ
+        return ZZ(self._ngens)
