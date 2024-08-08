@@ -384,7 +384,7 @@ def eisenstein_series_lseries(weight, prec=53,
                               max_imaginary_part=0,
                               max_asymp_coeffs=40):
     r"""
-    Return the `L`-series of the weight `2k` Eisenstein series
+    Return the `L`-series of the weight `2k` Eisenstein series `E_{2k}`
     on `\SL_2(\ZZ)`.
 
     This actually returns an interface to Tim Dokchitser's program
