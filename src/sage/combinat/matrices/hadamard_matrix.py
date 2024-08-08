@@ -306,10 +306,10 @@ def hadamard_matrix_paleyII(n):
         True
     """
     q = n//2 - 1
-    if not (n % 2 == 0 and is_prime_power(q) and (q % 4 == 1)):
-        raise ValueError("The order %s is not covered by the Paley type II construction." % n)
+    # if not (n % 2 == 0 and is_prime_power(q) and (q % 4 == 1)):
+    #    raise ValueError("The order %s is not covered by the Paley type II construction." % n)
 
-    H = symmetric_conference_matrix_paley(q+1)
+    H = symmetric_conference_matrix(q+1)
 
     tr = { 0: matrix(2, 2, [ 1, -1, -1, -1]),
            1: matrix(2, 2, [ 1,  1,  1, -1]),
@@ -363,6 +363,10 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
         True
         sage: hadamard_matrix_miyamoto_construction(64, existence=True)
         False
+        sage: hadamard_matrix_miyamoto_construction(4*65, existence=True)
+        True
+        sage: is_hadamard_matrix(hadamard_matrix_miyamoto_construction(4*65, check=False))
+        True
         sage: hadamard_matrix_miyamoto_construction(64)
         Traceback (most recent call last):
         ...
@@ -377,14 +381,16 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
 
     q = n // 4
     if existence:
-        return is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True) is True
+        # return is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True) is True
+        return symmetric_conference_matrix(q+1, existence=True) and hadamard_matrix(q-1, existence=True) is True
 
-    if not (is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True)):
+    # if not (is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True)):
+    if not (symmetric_conference_matrix(q+1, existence=True) and hadamard_matrix(q-1, existence=True)):
         raise ValueError(f'The order {n} is not covered by Miyamoto construction.')
 
     m = (q-1) // 2
 
-    C = symmetric_conference_matrix_paley(q + 1)
+    C = symmetric_conference_matrix(q + 1)
 
     neg = [i for i in range(2, m+2) if C[1, i] == -1]
     pos = [i for i in range(m+2, 2*m+2) if C[1, i] == 1]
@@ -3262,7 +3268,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
     return M
 
 
-def symmetric_conference_matrix(n, check=True):
+def symmetric_conference_matrix(n, check=True, existence=False):
     r"""
     Try to construct a symmetric conference matrix.
 
@@ -3279,6 +3285,8 @@ def symmetric_conference_matrix(n, check=True):
     - ``check`` -- boolean (default: ``True``); whether to check that output is
       correct before returning it. As this is expected to be useless, you may
       want to disable it whenever you want speed.
+    - ``existence`` -- boolean (default: ``False``); if true, only check that such
+      a matrix exists.
 
     EXAMPLES::
 
@@ -3299,9 +3307,11 @@ def symmetric_conference_matrix(n, check=True):
     """
     from sage.graphs.strongly_regular_db import strongly_regular_graph as srg
     try:
-        m = srg(n-1, (n-2)/2, (n-6)/4, (n-2)/4)
+        m = srg(n-1, (n-2)/2, (n-6)/4, (n-2)/4, existence=existence)
     except ValueError:
         raise
+    if existence:
+        return m
     C = matrix([0]+[1]*(n-1)).stack(matrix([1]*(n-1)).stack(m.seidel_adjacency_matrix()).T)
     if check:
         assert (C == C.T and C**2 == (n-1)*I(n))
