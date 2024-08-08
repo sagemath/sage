@@ -2068,7 +2068,69 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             return self._dft_seminormal(mult=mult)
         if form == "modular":
             return self._dft_modular()
+        if form == "unitary":
+            return self._dft_unitary()
         raise ValueError("invalid form (= %s)" % form)
+
+    def _dft_unitary(self):
+        """
+        Return the unitary form of the discrete Fourier transform for ``self``.
+
+        EXAMPLES::
+
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: QS3._dft_unitary()
+            [-1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3]
+            [      -1/3*sqrt3                0              1/2        1/6*sqrt3        1/6*sqrt3             -1/2]
+            [               0       -1/3*sqrt3        1/6*sqrt3              1/2             -1/2        1/6*sqrt3]
+            [               0       -1/3*sqrt3        1/6*sqrt3             -1/2              1/2        1/6*sqrt3]
+            [      -1/3*sqrt3                0             -1/2        1/6*sqrt3        1/6*sqrt3              1/2]
+            [-1/6*sqrt2*sqrt3  1/6*sqrt2*sqrt3  1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3 -1/6*sqrt2*sqrt3  1/6*sqrt2*sqrt3]
+        """
+        from sage.matrix.special import diagonal_matrix
+        from sage.misc.functional import sqrt
+        from sage.misc.flatten import flatten
+
+        def all_roots_field():
+            required_square_roots = []
+            for partition in Partitions(self.group().degree()):
+                specht_module = self.specht_module(partition)
+                rho = specht_module.representation_matrix
+                group_size = self.group().cardinality()
+                P = (1/group_size)*sum(rho(g)*rho(g).conjugate().transpose() for g in self.group())
+                d, L = P.eigenmatrix_left()
+                required_square_roots += [specht_module.dimension(),self.group().cardinality()] + d.diagonal()
+            required_square_roots = flatten([[QQ(q).numerator(),QQ(q).denominator()] if q in QQ else q for q in required_square_roots])
+            K = self.base_ring()
+            for n in set(required_square_roots):
+                R = PolynomialRing(K, 'x')
+                x = R.gen()
+                if n.is_rational() and (x**2 - n).is_irreducible():
+                    gen_name = "sqrt"+str(n).replace("/","over")
+                    K = K.extension(sqrt(n).minpoly(),names=gen_name)
+                if not n.is_rational() and sqrt(n).minpoly().is_irreducible():
+                    gen_name = "deg" + str(n.minpoly().degree()) + "index" + str(list(set(required_square_roots)).index(n))
+                    K = K.extension(sqrt(n).minpoly(),names=gen_name)
+            return K
+
+        def unitary_change_of_basis(partition,K):
+            rho = self.specht_module(partition).representation_matrix
+            group_size = self.group().cardinality()
+            P = (1/group_size)*sum(rho(g)*rho(g).conjugate().transpose() for g in self.group())
+            d, L = P.eigenmatrix_left()
+            return L.inverse() * diagonal_matrix([sqrt(K(a)) for a in d.diagonal()]) * L
+
+        def hat(f,partition,K):
+            specht_module = self.specht_module(partition)
+            rho = specht_module.representation_matrix
+            Q = unitary_change_of_basis(partition,K)
+            unitary_factor = specht_module.dimension()/self.group().cardinality()
+            sqrt_unitary_factor = sqrt(K(unitary_factor))
+            return sqrt_unitary_factor*sum(f(g)*Q.inverse()*rho(g)*Q for g in self.group())
+
+        K = all_roots_field()
+        delta = lambda s: lambda t: 1 if t == s else 0
+        return matrix(K,[flatten([hat(delta(g),partition,K).list() for partition in Partitions(self.group().degree())]) for g in self.group()]).transpose()
 
     def _dft_seminormal(self, mult='l2r'):
         """
