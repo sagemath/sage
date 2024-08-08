@@ -228,7 +228,7 @@ class Yangian(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: Y = Yangian(QQ, 4, filtration='loop')
-            sage: TestSuite(Y).run(skip="_test_antipode") # Not implemented
+            sage: TestSuite(Y).run(skip='_test_antipode') # Not implemented
             sage: Y = Yangian(QQ, 4, filtration='natural')
             sage: G = Y.algebra_generators()
             sage: elts = [Y.one(), G[1,2,2], G[1,1,4], G[3,3,1], G[1,2,1]*G[2,1,4]]
@@ -395,7 +395,7 @@ class Yangian(CombinatorialFreeModule):
             Lazy family (generator(i))_{i in The Cartesian product of
              (Positive integers, {1, 2, 3, 4}, {1, 2, 3, 4})}
         """
-        return Family(self._indices._indices, self.gen, name="generator")
+        return Family(self._indices._indices, self.gen, name='generator')
 
     @cached_method
     def one_basis(self):
@@ -657,7 +657,7 @@ class YangianLevel(Yangian):
         EXAMPLES::
 
             sage: Y = Yangian(QQ, 4, 3)
-            sage: TestSuite(Y).run(skip="_test_antipode")
+            sage: TestSuite(Y).run(skip='_test_antipode')
         """
         self._level = level
         self._n = n

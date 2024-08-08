@@ -44,7 +44,7 @@ class PBWDatum():
             sage: from sage.combinat.crystals.pbw_datum import PBWData, PBWDatum
             sage: P = PBWData("A2")
             sage: L = PBWDatum(P, (1,2,1), (1,4,7))
-            sage: TestSuite(L).run(skip="_test_pickling")
+            sage: TestSuite(L).run(skip='_test_pickling')
         """
         self.parent = parent
         self.long_word = tuple(long_word)
@@ -195,7 +195,7 @@ class PBWData(): # UniqueRepresentation?
 
             sage: from sage.combinat.crystals.pbw_datum import PBWData
             sage: P = PBWData(["A",2])
-            sage: TestSuite(P).run(skip="_test_pickling")
+            sage: TestSuite(P).run(skip='_test_pickling')
         """
         self.cartan_type = CartanType(cartan_type)
         self.root_system = RootSystem(self.cartan_type)
@@ -243,7 +243,7 @@ class PBWData(): # UniqueRepresentation?
 
         INPUT:
 
-        - ``reduced_word`` -- a tuple corresponding to a reduced word
+        - ``reduced_word`` -- tuple corresponding to a reduced word
 
         EXAMPLES::
 
@@ -422,10 +422,10 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
     ``(interval_of_change, cartan_sub_matrix)`` where
 
     - ``interval_of_change`` is the (half-open) interval of indices where
-      the braid move occurs; this is `None` for the first tuple
+      the braid move occurs; this is ``None`` for the first tuple
     - ``cartan_sub_matrix`` is the off-diagonal entries of the `2 \times 2`
       submatrix of the Cartan matrix corresponding to the braid move;
-      this is `None` for the first tuple
+      this is ``None`` for the first tuple
 
     For a matrix::
 

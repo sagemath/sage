@@ -94,7 +94,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
 
     - ``x`` -- a libgap element
     - ``parent`` -- the parent :class:`~AbelianGroupAutomorphismGroup_gap`
-    - ``check`` -- bool (default: ``True``) checks if ``x`` is an element
+    - ``check`` -- boolean (default: ``True``); checks if ``x`` is an element
       of the group
 
     EXAMPLES::
@@ -481,7 +481,7 @@ class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     INPUT:
 
     - ``ambient`` -- the ambient group
-    - ``generators`` -- a tuple of gap elements of the ambient group
+    - ``generators`` -- tuple of gap elements of the ambient group
 
     EXAMPLES::
 

@@ -124,7 +124,8 @@ jobs:
       # with only a small number of test failures as of 10.2.rc0
       tox_system_factors: >-
         ["gentoo-python3.11",
-         "archlinux-latest"]
+         "archlinux-latest",
+         "fedora-40"]
       tox_packages_factors: >-
           ["standard-sitepackages"]
       docker_push_repository: ghcr.io/${{ github.repository }}/

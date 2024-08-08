@@ -30,7 +30,7 @@ class SimplicialSets(Category_singleton):
     The category of simplicial sets.
 
     A simplicial set `X` is a collection of sets `X_i`, indexed by
-    the non-negative integers, together with maps
+    the nonnegative integers, together with maps
 
     .. math::
 
@@ -203,7 +203,7 @@ class SimplicialSets(Category_singleton):
         class ParentMethods:
             def base_point(self):
                 """
-                Return this simplicial set's base point
+                Return this simplicial set's base point.
 
                 EXAMPLES::
 
@@ -229,11 +229,11 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``domain`` -- optional, default ``None``. Use
-                  this to specify a particular one-point space as
-                  the domain. The default behavior is to use the
-                  :func:`sage.topology.simplicial_set.Point`
-                  function to use a standard one-point space.
+                - ``domain`` -- (default: ``None``) use this to specify a
+                  particular one-point space as the domain. The default
+                  behavior is to use the
+                  :func:`sage.topology.simplicial_set.Point` function to use a
+                  standard one-point space.
 
                 EXAMPLES::
 
@@ -278,7 +278,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``simplify`` (bool, optional ``True``) -- if
+                - ``simplify`` -- boolean (default: ``True``); if
                   ``False``, then return a presentation of the group
                   in terms of generators and relations. If ``True``,
                   the default, simplify as much as GAP is able to.
@@ -420,7 +420,6 @@ class SimplicialSets(Category_singleton):
                          (f, e): ((1, 1), (1, e)),
                          (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
                          (f * f, e): ((f, 1), s_0 (1, e), (f, e))}
-
                 """
                 edges = self.n_cells(1)
                 if not edges:
@@ -439,8 +438,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``character`` -- a dictionary
-
+                - ``character`` -- dictionary
 
                 EXAMPLES::
 
@@ -527,7 +525,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``character`` -- a dictionary
+                - ``character`` -- dictionary
 
                 EXAMPLES::
 
@@ -602,7 +600,6 @@ class SimplicialSets(Category_singleton):
                     {f: F1bar}
                     sage: list(d2.values())[0].parent()
                     Quotient of Univariate Laurent Polynomial Ring in F1 over Integer Ring by the ideal (-1 + F1^2)
-
                 """
                 G, d = self._universal_cover_dict()
                 phi = G.abelianization_map()
@@ -624,7 +621,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``twisting_operator`` -- a dictionary, associating the twist of each
+                - ``twisting_operator`` -- dictionary, associating the twist of each
                   simplex. If it is not given, the canonical one (associated to the
                   laurent polynomial ring abelianization of the fundamental group, ignoring
                   torsion) is used.
@@ -634,20 +631,20 @@ class SimplicialSets(Category_singleton):
                   chain complex in those dimensions, setting the chain groups
                   in all other dimensions to zero.
 
-                - ``augmented`` (default: ``False``) -- if ``True``,
+                - ``augmented`` -- boolean (default: ``False``); if ``True``,
                   return the augmented chain complex (that is, include a class
                   in dimension `-1` corresponding to the empty cell).
 
-                - ``cochain`` (default: ``False``) -- if ``True``,
+                - ``cochain`` -- boolean (default: ``False``); if ``True``,
                   return the cochain complex (that is, the dual of the chain
                   complex).
 
-                - ``verbose`` (default: ``False``) -- ignored.
+                - ``verbose`` -- boolean (default: ``False``); ignored
 
-                - ``subcomplex`` (default: ``None``) -- if present,
-                  compute the chain complex relative to this subcomplex.
+                - ``subcomplex`` -- (default: ``None``) if present,
+                  compute the chain complex relative to this subcomplex
 
-                - ``check`` (default: ``False``) -- If ``True``, make
+                - ``check`` -- boolean (default: ``False``); if ``True``, make
                   sure that the chain complex is actually a chain complex:
                   the differentials are composable and their product is zero.
 
@@ -696,7 +693,6 @@ class SimplicialSets(Category_singleton):
                     [1 + F1]
                     sage: C.differential(3)
                     []
-
                 """
                 from sage.homology.chain_complex import ChainComplex
                 from sage.structure.element import get_coercion_model
@@ -825,10 +821,10 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``n`` -- a positive integer.
+                - ``n`` -- positive integer
 
-                - ``reduced`` -- (default: ``False``) if set to True, the presentation matrix
-                  will be reduced.
+                - ``reduced`` -- boolean (default: ``False``); if set to True,
+                  the presentation matrix will be reduced
 
                 EXAMPLES::
 
@@ -893,7 +889,6 @@ class SimplicialSets(Category_singleton):
                     sage: X.universal_cover().homology(2)
                     Z^5
                     sage: from sage.libs.singular.function import singular_function
-
                 """
                 from sage.libs.singular.function import singular_function
                 from sage.libs.singular.option import opt_verb

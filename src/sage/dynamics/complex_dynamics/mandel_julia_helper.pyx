@@ -78,27 +78,25 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
 
     INPUT:
 
-    - ``x_center`` -- double, real part of the center point in the complex plane.
+    - ``x_center`` -- double; real part of the center point in the complex plane
 
-    - ``y_center`` -- double, imaginary part of the center point in the complex
-      plane.
+    - ``y_center`` -- double; imaginary part of the center point in the complex
+      plane
 
-    - ``image_width`` -- double, width of the image in the complex plane.
+    - ``image_width`` -- double; width of the image in the complex plane
 
-    - ``max_iteration`` -- long, maximum number of iterations the map `Q_c(z)`
-      considered.
+    - ``max_iteration`` -- long; maximum number of iterations the map `Q_c(z)`
+      considered
 
-    - ``pixel_count`` -- long, side length of image in number of pixels.
+    - ``pixel_count`` -- long; side length of image in number of pixels
 
-    - ``level_sep`` -- long, number of iterations between each color level.
+    - ``level_sep`` -- long; number of iterations between each color level
 
-    - ``color_num`` -- long, number of colors used to plot image.
+    - ``color_num`` -- long; number of colors used to plot image
 
-    - ``base_color`` -- list, RGB color used to determine the coloring of set.
+    - ``base_color`` -- list; RGB color used to determine the coloring of set
 
-    OUTPUT:
-
-    24-bit RGB image of the Mandelbrot set in the complex plane.
+    OUTPUT: 24-bit RGB image of the Mandelbrot set in the complex plane
 
     EXAMPLES:
 
@@ -185,32 +183,30 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
 
     INPUT:
 
-    - ``theta`` -- double, angle between 0 and 1 inclusive.
+    - ``theta`` -- double; angle between 0 and 1 inclusive
 
-    - ``D`` -- long (default: ``25``) depth of the approximation.
+    - ``D`` -- long (default: ``25``); depth of the approximation.
      As ``D`` increases, the external ray gets closer to the boundary of the
      Mandelbrot set.
 
-    - ``S`` -- long (default: ``10``) sharpness of the approximation.
+    - ``S`` -- long (default: ``10``); sharpness of the approximation.
      Adjusts the number of points used to approximate the external ray (number
      of points is equal to ``S*D``).
 
-    - ``R`` -- long (default: ``100``) radial parameter. If ``R`` is
+    - ``R`` -- long (default: ``100``); radial parameter. If ``R`` is
      sufficiently large, the external ray reaches enough close to infinity.
 
-    - ``pixel_count`` -- long (default: ``500``) side length of image
-     in number of pixels.
+    - ``pixel_count`` -- long (default: ``500``); side length of image
+     in number of pixels
 
-    - ``image_width`` -- double (default: ``4``) width of the image
-     in the complex plane.
+    - ``image_width`` -- double (default: ``4``); width of the image
+     in the complex plane
 
-    - ``prec`` -- long (default: ``300``) specifies the bits of
+    - ``prec`` -- long (default: ``300``); specifies the bits of
      precision used by the Complex Field when using Newton's method to compute
-     points on the external ray.
+     points on the external ray
 
-    OUTPUT:
-
-    List of tuples of Real Interval Field Elements.
+    OUTPUT: list of tuples of Real Interval Field Elements
 
     EXAMPLES::
 
@@ -292,23 +288,21 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
 cpdef convert_to_pixels(point_list, double x_0, double y_0, double width,
  long number_of_pixels):
     r"""
-    Converts cartesian coordinates to pixels within a specified window.
+    Convert cartesian coordinates to pixels within a specified window.
 
     INPUT:
 
-    - ``point_list`` -- list of tuples, points in cartesian coordinates.
+    - ``point_list`` -- list of tuples; points in cartesian coordinates
 
-    - ``x_0`` -- double, x-coordinate of the center of the image.
+    - ``x_0`` -- double; x-coordinate of the center of the image
 
-    - ``y_0`` -- double, y-coordinate of the center of the image.
+    - ``y_0`` -- double; y-coordinate of the center of the image
 
-    - ``width`` -- double, width of visible window in cartesian coordinates.
+    - ``width`` -- double; width of visible window in cartesian coordinates
 
-    - ``number_of_pixels`` -- long, width of image in pixels.
+    - ``number_of_pixels`` -- long; width of image in pixels
 
-    OUTPUT:
-
-    List of tuples of integers representing pixels.
+    OUTPUT: list of tuples of integers representing pixels
 
     EXAMPLES::
 
@@ -345,13 +339,11 @@ cpdef get_line(start, end):
 
     INPUT:
 
-    - ``start`` -- tuple, starting point of line.
+    - ``start`` -- tuple; starting point of line
 
-    - ``end`` -- tuple, ending point of line.
+    - ``end`` -- tuple; ending point of line
 
-    OUTPUT:
-
-    List of tuples of integers approximating the line between two pixels.
+    OUTPUT: list of tuples of integers approximating the line between two pixels
 
     EXAMPLES::
 
@@ -427,38 +419,36 @@ cpdef fast_julia_plot(double c_real, double c_imag,
 
     INPUT:
 
-    - ``c_real`` -- double, Real part of `c` value that determines Julia set.
+    - ``c_real`` -- double; Real part of `c` value that determines Julia set
 
-    - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
-      set.
+    - ``c_imag`` -- double; Imaginary part of `c` value that determines Julia
+      set
 
-    - ``x_center`` -- double (default: ``0.0``), Real part of center
-      point.
+    - ``x_center`` -- double (default: ``0.0``); real part of center
+      point
 
-    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
-      center point.
+    - ``y_center`` -- double (default: ``0.0``); imaginary part of
+      center point
 
-    - ``image_width`` -- double (default: ``4.0``), width of image
-      in the complex plane.
+    - ``image_width`` -- double (default: ``4.0``); width of image
+      in the complex plane
 
-    - ``max_iteration`` -- long (default: ``500``), maximum number of
-      iterations the map ``Q_c(z)``.
+    - ``max_iteration`` -- long (default: ``500``); maximum number of
+      iterations the map ``Q_c(z)``
 
-    - ``pixel_count`` -- long (default: ``500``), side length of
-      image in number of pixels.
+    - ``pixel_count`` -- long (default: ``500``); side length of
+      image in number of pixels
 
-    - ``level_sep`` -- long (default: ``2``), number of iterations
-      between each color level.
+    - ``level_sep`` -- long (default: ``2``); number of iterations
+      between each color level
 
-    - ``color_num`` -- long (default: ``40``), number of colors used
-      to plot image.
+    - ``color_num`` -- long (default: ``40``); number of colors used
+      to plot image
 
-    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``), color
-      used to determine the coloring of set.
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``); color
+      used to determine the coloring of set
 
-    OUTPUT:
-
-    24-bit RGB image of the Julia set in the complex plane.
+    OUTPUT: 24-bit RGB image of the Julia set in the complex plane
 
     EXAMPLES:
 
@@ -548,41 +538,39 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
 
     INPUT:
 
-    - ``c_real`` -- double, Real part of `c` value that determines Julia set.
+    - ``c_real`` -- double; Real part of `c` value that determines Julia set
 
-    - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
-      set.
+    - ``c_imag`` -- double; Imaginary part of `c` value that determines Julia
+      set
 
-    - ``x_center`` -- double (default: ``0.0``), Real part of center
-      point.
+    - ``x_center`` -- double (default: ``0.0``); Real part of center
+      point
 
-    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
-      center point.
+    - ``y_center`` -- double (default: ``0.0``); Imaginary part of
+      center point
 
-    - ``image_width`` -- double (default: ``4.0``), width of image in
-      the complex plane.
+    - ``image_width`` -- double (default: ``4.0``); width of image in
+      the complex plane
 
-    - ``max_iteration`` -- long (default: ``500``), maximum number of
-      iterations the map ``Q_c(z)``.
+    - ``max_iteration`` -- long (default: ``500``); maximum number of
+      iterations the map ``Q_c(z)``
 
-    - ``pixel_count`` -- long (default: ``500``), side length of
-      image in number of pixels.
+    - ``pixel_count`` -- long (default: ``500``); side length of
+      image in number of pixels
 
-    - ``level_sep`` -- long (default: ``2``), number of iterations
-      between each color level.
+    - ``level_sep`` -- long (default: ``2``); number of iterations
+      between each color level
 
-    - ``color_num`` -- long (default: ``40``), number of colors used
-      to plot image.
+    - ``color_num`` -- long (default: ``40``); number of colors used
+      to plot image
 
-    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``), color
-      used to determine the coloring of set.
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``); color
+      used to determine the coloring of set
 
-    - ``point_color`` -- RGB color (default: ``[255, 0, 0]``), color
-      of the point `c` in the Mandelbrot set.
+    - ``point_color`` -- RGB color (default: ``[255, 0, 0]``); color
+      of the point `c` in the Mandelbrot set
 
-    OUTPUT:
-
-    24-bit RGB image of the Julia and Mandelbrot sets in the complex plane.
+    OUTPUT: 24-bit RGB image of the Julia and Mandelbrot sets in the complex plane
 
     EXAMPLES:
 
@@ -637,33 +625,31 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
 
     INPUT:
 
-    - ``f`` -- a one parameter family of polynomial maps defined over the multivariate polynomial ring in
-      z, c over the Complex field.
+    - ``f`` -- a one parameter family of polynomial maps defined over the
+      multivariate polynomial ring in z, c over the Complex field
 
-    - ``parameter`` -- designates which variable is used as the parameter.
-      If no parameter is provided, ``c`` will be used as the parameter.
+    - ``parameter`` -- designates which variable is used as the parameter
+      If no parameter is provided, ``c`` will be used as the parameter
 
-    - ``x_center`` -- double, real part of the center point in the complex plane.
+    - ``x_center`` -- double, real part of the center point in the complex plane
 
     - ``y_center`` -- double, imaginary part of the center point in the complex
-      plane.
+      plane
 
-    - ``image_width`` -- double, width of the image in the complex plane.
+    - ``image_width`` -- double, width of the image in the complex plane
 
     - ``max_iteration`` -- long, maximum number of iterations the map `f(z)`
-      considered.
+      considered
 
-    - ``pixel_count`` -- long, side length of image in number of pixels.
+    - ``pixel_count`` -- long, side length of image in number of pixels
 
-    - ``level_sep`` -- long, number of iterations between each color level.
+    - ``level_sep`` -- long, number of iterations between each color level
 
-    - ``color_num`` -- long, number of colors used to plot image.
+    - ``color_num`` -- long, number of colors used to plot image
 
-    - ``base_color`` -- list, RGB color used to determine the coloring of set.
+    - ``base_color`` -- list; RGB color used to determine the coloring of set
 
-    OUTPUT:
-
-    24-bit RGB image of a Mandelbrot set in the complex plane.
+    OUTPUT: 24-bit RGB image of a Mandelbrot set in the complex plane
 
     EXAMPLES::
 

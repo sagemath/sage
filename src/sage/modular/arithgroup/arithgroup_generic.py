@@ -74,7 +74,7 @@ class ArithmeticSubgroup(Group):
 
     def _repr_(self) -> str:
         r"""
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         NOTE: This function should be overridden by all subclasses.
 
@@ -102,7 +102,7 @@ class ArithmeticSubgroup(Group):
 
     def __reduce__(self):
         r"""
-        Used for pickling self.
+        Used for pickling ``self``.
 
         NOTE: This function should be overridden by all subclasses.
 
@@ -119,8 +119,8 @@ class ArithmeticSubgroup(Group):
         r"""
         Create an element of this congruence subgroup from x.
 
-        If the optional flag check is True (default), check whether
-        x actually gives an element of self.
+        If the optional flag check is ``True`` (default), check whether
+        x actually gives an element of ``self``.
 
         EXAMPLES::
 
@@ -183,7 +183,7 @@ class ArithmeticSubgroup(Group):
     def _contains_sl2(self, a,b,c,d):
         r"""
         Test whether the matrix [a,b;c,d], which may be assumed to have
-        determinant 1, is an element of self. This must be overridden by all
+        determinant 1, is an element of ``self``. This must be overridden by all
         subclasses.
 
         EXAMPLES::
@@ -198,7 +198,7 @@ class ArithmeticSubgroup(Group):
 
     def __hash__(self):
         r"""
-        Return a hash of self.
+        Return a hash of ``self``.
 
         EXAMPLES::
 
@@ -254,12 +254,12 @@ class ArithmeticSubgroup(Group):
 
     def coset_reps(self, G=None):
         r"""
-        Return right coset representatives for self \\ G, where G is another
-        arithmetic subgroup that contains self.  If G = None, default to G =
-        SL2Z.
+        Return right coset representatives for ``self \\ G``, where `G` is
+        another arithmetic subgroup that contains ``self``.  If ``G == None``,
+        default to ``G = SL2Z``.
 
-        For generic arithmetic subgroups G this is carried out by Todd-Coxeter
-        enumeration; here G is treated as a black box, implementing nothing but
+        For generic arithmetic subgroups `G` this is carried out by Todd-Coxeter
+        enumeration; here `G` is treated as a black box, implementing nothing but
         membership testing.
 
         EXAMPLES::
@@ -279,7 +279,7 @@ class ArithmeticSubgroup(Group):
     @cached_method
     def todd_coxeter(self, G=None, on_right=True):
         r"""
-        Compute coset representatives for self \\ G and action of standard
+        Compute coset representatives for ``self \\ G`` and action of standard
         generators on them via Todd-Coxeter enumeration.
 
         If ``G`` is ``None``, default to ``SL2Z``. The method also computes
@@ -290,23 +290,21 @@ class ArithmeticSubgroup(Group):
         - ``G`` -- intermediate subgroup (currently not implemented if different
           from SL(2,Z))
 
-        - ``on_right`` -- boolean (default: ``True``); if True return right coset
-          enumeration, if False return left one.
+        - ``on_right`` -- boolean (default: ``True``); if ``True`` return right
+          coset enumeration, if ``False`` return left one
 
         This is *extremely* slow in general.
 
-        OUTPUT:
-
-        - a list of coset representatives
+        OUTPUT: list of coset representatives
 
         - a list of generators for the group
 
         - ``l`` -- list of integers that correspond to the action of the
           standard parabolic element [[1,1],[0,1]] of `SL(2,\ZZ)` on the cosets
-          of self.
+          of ``self``.
 
         - ``s`` -- list of integers that correspond to the action of the standard
-          element of order `2` [[0,-1],[1,0]] on the cosets of self.
+          element of order `2` [[0,-1],[1,0]] on the cosets of ``self``
 
         EXAMPLES::
 
@@ -518,10 +516,10 @@ class ArithmeticSubgroup(Group):
 
     def is_abelian(self):
         r"""
-        Return True if this arithmetic subgroup is abelian.
+        Return ``True`` if this arithmetic subgroup is abelian.
 
         Since arithmetic subgroups are always nonabelian, this always
-        returns False.
+        returns ``False``.
 
         EXAMPLES::
 
@@ -538,10 +536,10 @@ class ArithmeticSubgroup(Group):
 
     def is_finite(self):
         r"""
-        Return True if this arithmetic subgroup is finite.
+        Return ``True`` if this arithmetic subgroup is finite.
 
         Since arithmetic subgroups are always infinite, this always
-        returns False.
+        returns ``False``.
 
         EXAMPLES::
 
@@ -558,10 +556,10 @@ class ArithmeticSubgroup(Group):
 
     def is_subgroup(self, right):
         r"""
-        Return True if self is a subgroup of right, and False otherwise. For
+        Return ``True`` if ``self`` is a subgroup of right, and ``False`` otherwise. For
         generic arithmetic subgroups this is done by the absurdly slow
-        algorithm of checking all of the generators of self to see if they are
-        in right.
+        algorithm of checking all of the generators of ``self`` to see if they are
+        in ``right``.
 
         EXAMPLES::
 
@@ -582,7 +580,8 @@ class ArithmeticSubgroup(Group):
 
     def is_normal(self):
         r"""
-        Return True precisely if this subgroup is a normal subgroup of SL2Z.
+        Return ``True`` precisely if this subgroup is a normal subgroup of
+        ``SL2Z``.
 
         EXAMPLES::
 
@@ -599,7 +598,7 @@ class ArithmeticSubgroup(Group):
 
     def is_odd(self):
         r"""
-        Return True precisely if this subgroup does not contain the
+        Return ``True`` precisely if this subgroup does not contain the
         matrix -1.
 
         EXAMPLES::
@@ -617,7 +616,7 @@ class ArithmeticSubgroup(Group):
 
     def is_even(self):
         r"""
-        Return True precisely if this subgroup contains the matrix -1.
+        Return ``True`` precisely if this subgroup contains the matrix -1.
 
         EXAMPLES::
 
@@ -634,7 +633,7 @@ class ArithmeticSubgroup(Group):
 
     def to_even_subgroup(self):
         r"""
-        Return the smallest even subgroup of `SL(2, \ZZ)` containing self.
+        Return the smallest even subgroup of `SL(2, \ZZ)` containing ``self``.
 
         EXAMPLES::
 
@@ -673,7 +672,7 @@ class ArithmeticSubgroup(Group):
         r"""
         Given a cusp `c \in \mathbb{P}^1(\QQ)`, return the unique reduced cusp
         equivalent to c under the action of self, where a reduced cusp is an
-        element `\tfrac{r}{s}` with r,s coprime non-negative integers, s as
+        element `\tfrac{r}{s}` with r,s coprime nonnegative integers, s as
         small as possible, and r as small as possible for that s.
 
         NOTE: This function should be overridden by all subclasses.
@@ -690,7 +689,7 @@ class ArithmeticSubgroup(Group):
     def cusps(self, algorithm='default'):
         r"""
         Return a sorted list of inequivalent cusps for ``self``, i.e. a set of
-        representatives for the orbits of self on `\mathbb{P}^1(\QQ)`.
+        representatives for the orbits of ``self`` on `\mathbb{P}^1(\QQ)`.
 
         These should be returned in a reduced form where this makes sense.
 
@@ -745,7 +744,7 @@ class ArithmeticSubgroup(Group):
             NotImplementedError
 
         NOTE: There is a generic algorithm implemented at the top level that
-        uses the coset representatives of self. This is *very slow* and for all
+        uses the coset representatives of ``self``. This is *very slow* and for all
         the standard congruence subgroups there is a quicker way of doing it,
         so this should usually be overridden in subclasses; but it doesn't have
         to be.
@@ -765,13 +764,14 @@ class ArithmeticSubgroup(Group):
 
     def are_equivalent(self, x, y, trans=False):
         r"""
-        Test whether or not cusps x and y are equivalent modulo self.
+        Test whether or not cusps `x` and `y` are equivalent modulo ``self``.
 
-        If self has a reduce_cusp() method, use that; otherwise do a
+        If ``self`` has a ``reduce_cusp()`` method, use that; otherwise do a
         slow explicit test.
 
-        If trans = False, returns True or False. If trans = True, then return
-        either False or an element of self mapping x onto y.
+        If ``trans == False``, returns ``True`` or ``False``. If
+        ``trans == True``, then return either ``False`` or an element of
+        ``self`` mapping `x` onto `y`.
 
         EXAMPLES::
 
@@ -817,9 +817,9 @@ class ArithmeticSubgroup(Group):
 
     def cusp_data(self, c):
         r"""
-        Return a triple (g, w, t) where g is an element of self generating the
-        stabiliser of the given cusp, w is the width of the cusp, and t is 1 if
-        the cusp is regular and -1 if not.
+        Return a triple `(g, w, t)` where `g` is an element of ``self``
+        generating the stabiliser of the given cusp, `w` is the width of the
+        cusp, and `t` is 1 if the cusp is regular and -1 if not.
 
         EXAMPLES::
 
@@ -844,8 +844,9 @@ class ArithmeticSubgroup(Group):
 
     def is_regular_cusp(self, c):
         r"""
-        Return True if the orbit of the given cusp is a regular cusp for self,
-        otherwise False. This is automatically true if -1 is in self.
+        Return ``True`` if the orbit of the given cusp is a regular cusp for
+        ``self``, otherwise ``False``. This is automatically true if -1 is in
+        ``self``.
 
         EXAMPLES::
 
@@ -875,7 +876,7 @@ class ArithmeticSubgroup(Group):
 
     def index(self):
         r"""
-        Return the index of self in the full modular group.
+        Return the index of ``self`` in the full modular group.
 
         EXAMPLES::
 
@@ -923,11 +924,11 @@ class ArithmeticSubgroup(Group):
 
     def projective_index(self):
         r"""
-        Return the index of the image of self in `\PSL_2(\ZZ)`. This is equal
-        to the index of self if self contains -1, and half of this otherwise.
+        Return the index of the image of ``self`` in `\PSL_2(\ZZ)`. This is equal
+        to the index of ``self`` if ``self`` contains -1, and half of this otherwise.
 
         This is equal to the degree of the natural map from the modular curve
-        of self to the `j`-line.
+        of ``self`` to the `j`-line.
 
         EXAMPLES::
 
@@ -944,7 +945,7 @@ class ArithmeticSubgroup(Group):
 
     def is_congruence(self):
         r"""
-        Return True if self is a congruence subgroup.
+        Return ``True`` if ``self`` is a congruence subgroup.
 
         EXAMPLES::
 
@@ -995,20 +996,20 @@ class ArithmeticSubgroup(Group):
         return Farey(self)
 
     @cached_method
-    def generators(self, algorithm="farey"):
+    def generators(self, algorithm='farey'):
         r"""
         Return a list of generators for this congruence subgroup. The result is cached.
 
         INPUT:
 
-        - ``algorithm`` (string): either ``farey`` or ``todd-coxeter``.
+        - ``algorithm`` -- string; either ``farey`` or ``todd-coxeter``
 
-        If ``algorithm`` is set to ``"farey"``, then the generators will be
+        If ``algorithm`` is set to ``'farey'``, then the generators will be
         calculated using Farey symbols, which will always return a *minimal*
         generating set. See :mod:`~sage.modular.arithgroup.farey_symbol` for
         more information.
 
-        If ``algorithm`` is set to ``"todd-coxeter"``, a simpler algorithm
+        If ``algorithm`` is set to ``'todd-coxeter'``, a simpler algorithm
         based on Todd-Coxeter enumeration will be used. This is *exceedingly*
         slow for general subgroups, and the list of generators will be far from
         minimal (indeed it may contain repetitions).
@@ -1020,7 +1021,7 @@ class ArithmeticSubgroup(Group):
             [1 2]  [ 3 -2]  [-1  0]
             [0 1], [ 2 -1], [ 0 -1]
             ]
-            sage: Gamma(2).generators(algorithm="todd-coxeter")
+            sage: Gamma(2).generators(algorithm='todd-coxeter')
             [
             [1 2]  [-1  0]  [ 1  0]  [-1  0]  [-1  2]  [-1  0]  [1 0]
             [0 1], [ 0 -1], [-2  1], [ 0 -1], [-2  3], [ 2 -1], [2 1]
@@ -1051,8 +1052,8 @@ class ArithmeticSubgroup(Group):
 
     def gen(self, i):
         r"""
-        Return the i-th generator of self, i.e. the i-th element of the
-        tuple self.gens().
+        Return the `i`-th generator of self, i.e. the `i`-th element of the
+        tuple ``self.gens()``.
 
         EXAMPLES::
 
@@ -1064,7 +1065,7 @@ class ArithmeticSubgroup(Group):
 
     def ngens(self):
         r"""
-        Return the size of the minimal generating set of self returned by
+        Return the size of the minimal generating set of ``self`` returned by
         :meth:`generators`.
 
         EXAMPLES::
@@ -1097,7 +1098,7 @@ class ArithmeticSubgroup(Group):
 
     def nregcusps(self):
         r"""
-        Return the number of cusps of self that are "regular", i.e. their
+        Return the number of cusps of ``self`` that are "regular", i.e. their
         stabiliser has a generator with both eigenvalues +1 rather than -1. If
         the group contains -1, every cusp is clearly regular.
 
@@ -1110,7 +1111,7 @@ class ArithmeticSubgroup(Group):
 
     def nirregcusps(self):
         r"""
-        Return the number of cusps of self that are "irregular", i.e. their
+        Return the number of cusps of ``self`` that are "irregular", i.e. their
         stabiliser can only be generated by elements with both eigenvalues -1
         rather than +1. If the group contains -1, every cusp is clearly
         regular.
@@ -1141,7 +1142,7 @@ class ArithmeticSubgroup(Group):
         cases where one can prove solely via Riemann-Roch theory that there
         aren't any cusp forms (i.e. when the number of regular cusps is
         strictly greater than the degree of the canonical divisor). Otherwise a
-        NotImplementedError is raised.
+        :exc:`NotImplementedError` is raised.
 
         EXAMPLES::
 
@@ -1174,7 +1175,7 @@ class ArithmeticSubgroup(Group):
         where one can prove solely via Riemann-Roch theory that there aren't
         any cusp forms (i.e. when the number of regular cusps is strictly
         greater than the degree of the canonical divisor). Otherwise a
-        NotImplementedError is raised.
+        :exc:`NotImplementedError` is raised.
 
         EXAMPLES::
 
@@ -1228,7 +1229,7 @@ class ArithmeticSubgroup(Group):
 
         INPUT:
 
-        - ``k`` -- an integer (default 2).
+        - ``k`` -- integer (default: 2)
 
         EXAMPLES::
 
@@ -1305,12 +1306,12 @@ class ArithmeticSubgroup(Group):
 
     def sturm_bound(self, weight=2):
         r"""
-        Returns the Sturm bound for modular forms of the given weight and level
+        Return the Sturm bound for modular forms of the given weight and level
         this subgroup.
 
         INPUT:
 
-        -  ``weight`` -- an integer `\geq 2` (default: 2)
+        - ``weight`` -- integer `\geq 2` (default: 2)
 
         EXAMPLES::
 

@@ -118,7 +118,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: G.cardinality()
             21499084800
             sage: P = G.as_permutation_group()
-            sage: Psmaller = G.as_permutation_group(algorithm="smaller", seed=6)
+            sage: Psmaller = G.as_permutation_group(algorithm='smaller', seed=6)
             sage: P.cardinality()
             21499084800
             sage: P.degree()
@@ -426,7 +426,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         INPUT:
 
         - ``chi`` -- (default: trivial character) a linear group character of this group
-        - ``return_series`` -- boolean (default: ``True``) if ``True``, then returns
+        - ``return_series`` -- boolean (default: ``True``); if ``True``, then returns
           the Molien series as a power series, ``False`` as a rational function
         - ``prec`` -- integer (default: 20); power series default precision
           (possibly infinite, in which case it is computed lazily)
@@ -835,7 +835,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         INPUT:
 
-        - ``degree`` -- a positive integer
+        - ``degree`` -- positive integer
 
         - ``chi`` -- (default: trivial character) a linear group character of this group
 

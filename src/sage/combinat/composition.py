@@ -51,7 +51,7 @@ lazy_import("sage.combinat.partition", "Partition")
 
 class Composition(CombinatorialElement):
     r"""
-    Integer compositions
+    Integer compositions.
 
     A composition of a nonnegative integer `n` is a list
     `(i_1, \ldots, i_k)` of positive integers with total sum `n`.
@@ -209,7 +209,7 @@ class Composition(CombinatorialElement):
             [ *  **   *        *                 ]
             [ *  *   **  ***   *   **    *       ]
             [ *, * , * , *  , **, ** , ***, **** ]
-            sage: Partitions.options(diagram_str='#', convention="French")
+            sage: Partitions.options(diagram_str='#', convention='French')
             sage: ascii_art(Compositions(4).list())
             [ #                                  ]
             [ #  #   #        ##                 ]
@@ -231,7 +231,7 @@ class Composition(CombinatorialElement):
             ⎢ ├┤  ├┼┘  ┌┼┤  ┌┬┬┐   ├┤   ┌┬┐    ┌┐        ⎥
             ⎢ ├┤  ├┤   ├┼┘  ├┼┴┘  ┌┼┤  ┌┼┼┘  ┌┬┼┤  ┌┬┬┬┐ ⎥
             ⎣ └┘, └┘ , └┘ , └┘  , └┴┘, └┴┘ , └┴┴┘, └┴┴┴┘ ⎦
-            sage: Partitions.options(diagram_str='#', convention="French")
+            sage: Partitions.options(diagram_str='#', convention='French')
             sage: unicode_art(Compositions(4).list())
             ⎡ ┌┐                                         ⎤
             ⎢ ├┤  ┌┐   ┌┐         ┌┬┐                    ⎥
@@ -392,7 +392,7 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``compositions`` -- a list (or iterable) of compositions
+        - ``compositions`` -- list (or iterable) of compositions
 
         EXAMPLES::
 
@@ -473,8 +473,8 @@ class Composition(CombinatorialElement):
 
         - ``other`` -- composition of same size as ``self``
 
-        - ``check`` -- (default: ``True``) a Boolean determining whether
-          to check the input compositions for having the same size
+        - ``check`` -- boolean (default: ``True``); whether to check the input
+          compositions for having the same size
 
         OUTPUT:
 
@@ -585,12 +585,10 @@ class Composition(CombinatorialElement):
 
         - ``other`` -- composition of same size as ``self``
 
-        - ``check`` -- (default: ``True``) a Boolean determining whether
-          to check the input compositions for having the same size
+        - ``check`` -- boolean (default: ``True``); whether to check the input
+          compositions for having the same size
 
-        OUTPUT:
-
-        - the join of the compositions ``self`` and ``other``
+        OUTPUT: the join of the compositions ``self`` and ``other``
 
         EXAMPLES::
 
@@ -710,12 +708,10 @@ class Composition(CombinatorialElement):
 
         - ``other`` -- composition of same size as ``self``
 
-        - ``check`` -- (default: ``True``) a Boolean determining whether
-          to check the input compositions for having the same size
+        - ``check`` -- boolean (default: ``True``); whether to check the input
+          compositions for having the same size
 
-        OUTPUT:
-
-        - the meet of the compositions ``self`` and ``other``
+        OUTPUT: the meet of the compositions ``self`` and ``other``
 
         EXAMPLES::
 
@@ -952,7 +948,7 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``J`` -- A composition such that ``self`` is finer than ``J``
+        - ``J`` -- a composition such that ``self`` is finer than ``J``
 
         OUTPUT:
 
@@ -1080,8 +1076,8 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``final`` -- (default: ``True``) whether or not to include the final
-          partial sum, which is always the size of the composition.
+        - ``final`` -- boolean (default: ``True``); whether or not to include
+          the final partial sum, which is always the size of the composition
 
         .. SEEALSO::
 
@@ -1116,8 +1112,8 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``final`` -- (default: ``False``) whether or not to include the final
-          partial sum, which is always the size of the composition.
+        - ``final`` -- boolean (default: ``False``); whether or not to include
+          the final partial sum, which is always the size of the composition
 
         .. SEEALSO::
 
@@ -1169,7 +1165,7 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``final_descent`` -- (Default: ``False``) a boolean integer
+        - ``final_descent`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -1282,10 +1278,10 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        -  ``other`` -- composition
+        - ``other`` -- composition
 
-        -  ``overlap`` -- boolean (default: ``False``); if ``True``, the
-           overlapping shuffle product is returned.
+        - ``overlap`` -- boolean (default: ``False``); if ``True``, the
+          overlapping shuffle product is returned
 
         OUTPUT:
 
@@ -1510,10 +1506,10 @@ class Compositions(UniqueRepresentation, Parent):
         [1, 2, 1]
 
     If `n` is not specified, this returns the combinatorial class of
-    all (non-negative) integer compositions::
+    all (nonnegative) integer compositions::
 
         sage: Compositions()
-        Compositions of non-negative integers
+        Compositions of nonnegative integers
         sage: [] in Compositions()
         True
         sage: [2,3,1] in Compositions()
@@ -1826,7 +1822,7 @@ class Compositions(UniqueRepresentation, Parent):
 
         - ``descents`` -- an iterable
 
-        - ``nps`` -- (default: ``None``) an integer or ``None``
+        - ``nps`` -- integer or ``None`` (default: ``None``)
 
         OUTPUT:
 
@@ -1861,7 +1857,7 @@ class Compositions(UniqueRepresentation, Parent):
 
         - ``S`` -- an iterable, a subset of `\{1, 2, \ldots, n-1\}`
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -1976,9 +1972,9 @@ class Compositions_all(Compositions):
         TESTS::
 
             sage: repr(Compositions())
-            'Compositions of non-negative integers'
+            'Compositions of nonnegative integers'
         """
-        return "Compositions of non-negative integers"
+        return "Compositions of nonnegative integers"
 
     def subset(self, size=None):
         """
@@ -2161,7 +2157,7 @@ class Compositions_n(Compositions):
 
 def composition_iterator_fast(n):
     """
-    Iterator over compositions of ``n`` yielded as lists.
+    Iterator over compositions of `n` yielded as lists.
 
     TESTS::
 

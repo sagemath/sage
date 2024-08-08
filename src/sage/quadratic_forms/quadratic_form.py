@@ -76,14 +76,12 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
     - ``F`` -- the base field; currently only ``QQ`` is allowed
     - ``rk`` -- integer; the rank
     - ``det`` -- rational; the determinant
-    - ``P`` -- a list of primes where Cassel's Hasse invariant
+    - ``P`` -- list of primes where Cassel's Hasse invariant
       is negative
     - ``sminus`` -- integer; the number of negative eigenvalues
       of any Gram matrix
 
-    OUTPUT:
-
-    - a quadratic form with the specified invariants
+    OUTPUT: a quadratic form with the specified invariants
 
     Let `(a_1, \ldots, a_n)` be the gram marix of a regular quadratic space.
     Then Cassel's Hasse invariant is defined as
@@ -194,8 +192,8 @@ class QuadraticForm(SageObject):
     #. ``QuadraticForm(R, n, entries)``, where
 
        - ``R`` -- ring for which the quadratic form is defined
-       - ``n`` -- an integer `\geq 0`
-       - ``entries`` -- a list of `n(n+1)/2` coefficients of the quadratic form
+       - ``n`` -- integer `\geq 0`
+       - ``entries`` -- list of `n(n+1)/2` coefficients of the quadratic form
          in `R` (given lexicographically, or equivalently, by rows of the
          matrix)
 
@@ -220,7 +218,6 @@ class QuadraticForm(SageObject):
 
     - ``number_of_automorphisms``
     - ``determinant``
-
 
     OUTPUT: quadratic form
 
@@ -365,9 +362,9 @@ class QuadraticForm(SageObject):
         count_congruence_solutions__bad_type_II
 
     # Routines to be called by the user to compute local densities
-    lazy_import("sage.quadratic_forms.quadratic_form__local_density_interfaces", [
-        "local_density",
-        "local_primitive_density"
+    lazy_import('sage.quadratic_forms.quadratic_form__local_density_interfaces', [
+        'local_density',
+        'local_primitive_density'
     ])
 
     # Routines for computing with ternary forms
@@ -404,8 +401,8 @@ class QuadraticForm(SageObject):
         theta_by_cholesky
 
     # Routines to compute the product of all local densities
-    lazy_import("sage.quadratic_forms.quadratic_form__siegel_product", [
-        "siegel_product"
+    lazy_import('sage.quadratic_forms.quadratic_form__siegel_product', [
+        'siegel_product'
     ])
 
     # Routines to compute p-neighbors
@@ -424,50 +421,50 @@ class QuadraticForm(SageObject):
         minkowski_reduction, \
         minkowski_reduction_for_4vars__SP
     # Wrappers for Conway-Sloane genus routines (in ./genera/)
-    lazy_import("sage.quadratic_forms.quadratic_form__genus", [
-        "global_genus_symbol",
-        "local_genus_symbol",
-        "CS_genus_symbol_list"
+    lazy_import('sage.quadratic_forms.quadratic_form__genus', [
+        'global_genus_symbol',
+        'local_genus_symbol',
+        'CS_genus_symbol_list'
     ])
 
     # Routines to compute local masses for ZZ.
-    lazy_import("sage.quadratic_forms.quadratic_form__mass", [
-        "shimura_mass__maximal",
-        "GHY_mass__maximal"
+    lazy_import('sage.quadratic_forms.quadratic_form__mass', [
+        'shimura_mass__maximal',
+        'GHY_mass__maximal'
     ])
-    lazy_import("sage.quadratic_forms.quadratic_form__mass__Siegel_densities", [
-        "mass__by_Siegel_densities",
-        "Pall_mass_density_at_odd_prime",
-        "Watson_mass_at_2",
-        "Kitaoka_mass_at_2",
-        "mass_at_two_by_counting_mod_power"
+    lazy_import('sage.quadratic_forms.quadratic_form__mass__Siegel_densities', [
+        'mass__by_Siegel_densities',
+        'Pall_mass_density_at_odd_prime',
+        'Watson_mass_at_2',
+        'Kitaoka_mass_at_2',
+        'mass_at_two_by_counting_mod_power'
     ])
-    lazy_import("sage.quadratic_forms.quadratic_form__mass__Conway_Sloane_masses", [
-        "parity",
-        "is_even",
-        "is_odd",
-        "conway_species_list_at_odd_prime",
-        "conway_species_list_at_2",
-        "conway_octane_of_this_unimodular_Jordan_block_at_2",
-        "conway_diagonal_factor",
-        "conway_cross_product_doubled_power",
-        "conway_type_factor",
-        "conway_p_mass",
-        "conway_standard_p_mass",
-        "conway_standard_mass",
-        "conway_mass"
+    lazy_import('sage.quadratic_forms.quadratic_form__mass__Conway_Sloane_masses', [
+        'parity',
+        'is_even',
+        'is_odd',
+        'conway_species_list_at_odd_prime',
+        'conway_species_list_at_2',
+        'conway_octane_of_this_unimodular_Jordan_block_at_2',
+        'conway_diagonal_factor',
+        'conway_cross_product_doubled_power',
+        'conway_type_factor',
+        'conway_p_mass',
+        'conway_standard_p_mass',
+        'conway_standard_mass',
+        'conway_mass'
         #            conway_generic_mass, \
         #            conway_p_mass_adjustment
     ])
 
     # Routines to check local representability of numbers
-    lazy_import("sage.quadratic_forms.quadratic_form__local_representation_conditions", [
-        "local_representation_conditions",
-        "is_locally_universal_at_prime",
-        "is_locally_universal_at_all_primes",
-        "is_locally_universal_at_all_places",
-        "is_locally_represented_number_at_place",
-        "is_locally_represented_number"
+    lazy_import('sage.quadratic_forms.quadratic_form__local_representation_conditions', [
+        'local_representation_conditions',
+        'is_locally_universal_at_prime',
+        'is_locally_universal_at_all_primes',
+        'is_locally_universal_at_all_places',
+        'is_locally_represented_number_at_place',
+        'is_locally_represented_number'
     ])
 
     # Routines to make a split local covering of the given quadratic form.
@@ -478,15 +475,15 @@ class QuadraticForm(SageObject):
         split_local_cover
 
     # Routines to make automorphisms of the given quadratic form.
-    lazy_import("sage.quadratic_forms.quadratic_form__automorphisms", [
-        "basis_of_short_vectors",
-        "short_vector_list_up_to_length",
-        "short_primitive_vector_list_up_to_length",
-        "_compute_automorphisms",
-        "automorphism_group",
-        "automorphisms",
-        "number_of_automorphisms",
-        "set_number_of_automorphisms"
+    lazy_import('sage.quadratic_forms.quadratic_form__automorphisms', [
+        'basis_of_short_vectors',
+        'short_vector_list_up_to_length',
+        'short_primitive_vector_list_up_to_length',
+        '_compute_automorphisms',
+        'automorphism_group',
+        'automorphisms',
+        'number_of_automorphisms',
+        'set_number_of_automorphisms'
     ])
 
     # Routines to test the local and global equivalence/isometry of two quadratic forms.
@@ -497,13 +494,13 @@ class QuadraticForm(SageObject):
         is_rationally_isometric
 
     # Routines for solving equations of the form Q(x) = c.
-    lazy_import("sage.quadratic_forms.qfsolve", [
-        "solve"
+    lazy_import('sage.quadratic_forms.qfsolve', [
+        'solve'
     ])
 
     # Genus
-    lazy_import("sage.quadratic_forms.genera.genus",
-                "_genera_staticmethod", as_="genera")
+    lazy_import('sage.quadratic_forms.genera.genus',
+                '_genera_staticmethod', as_='genera')
 
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
@@ -539,7 +536,7 @@ class QuadraticForm(SageObject):
             sage: QuadraticForm(ZZ, -1)
             Traceback (most recent call last):
             ...
-            ValueError: the size must be a non-negative integer, not -1
+            ValueError: the size must be a nonnegative integer, not -1
 
             sage: x = polygen(ZZ, 'x')
             sage: QuadraticForm(x**2)
@@ -618,7 +615,7 @@ class QuadraticForm(SageObject):
         # Verify the size of the matrix is an integer >= 0
         n = ZZ(n)
         if n < 0:
-            raise ValueError(f"the size must be a non-negative integer, not {n}")
+            raise ValueError(f"the size must be a nonnegative integer, not {n}")
 
         # Store the relevant variables
         N = n * (n + 1) // 2
@@ -702,7 +699,6 @@ class QuadraticForm(SageObject):
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
             sage: Q.__pari__()                                                          # needs sage.libs.pari
             [2, 0; 0, 10]
-
         """
         return self.matrix().__pari__()
 
@@ -780,7 +776,6 @@ class QuadraticForm(SageObject):
             [1 2 3]
             [2 4 5]
             [3 5 6]
-
         """
         # Unpack the list of indices
         i, j = ij
@@ -813,7 +808,6 @@ class QuadraticForm(SageObject):
             [ 1 2 3 ]
             [ * 4 17 ]
             [ * * 6 ]
-
         """
         # Unpack the list of indices
         i, j = ij
@@ -869,7 +863,6 @@ class QuadraticForm(SageObject):
             False
             sage: Q1 == Q2
             False
-
         """
         if not isinstance(right, QuadraticForm):
             return False
@@ -1043,7 +1036,6 @@ class QuadraticForm(SageObject):
             sage: Q(M)
             Quadratic form in 1 variables over Integer Ring with coefficients:
             [ 14 ]
-
         """
         # If we are passed a matrix A, return the quadratic form Q(A(x))
         # (In matrix notation: A^t * Q * A)
@@ -1081,7 +1073,7 @@ class QuadraticForm(SageObject):
 
     def _is_even_symmetric_matrix_(self, A, R=None):
         """
-        Tests if a matrix is symmetric, defined over `R`, and has even diagonal in `R`.
+        Test if a matrix is symmetric, defined over `R`, and has even diagonal in `R`.
 
         INPUT:
 
@@ -1101,7 +1093,6 @@ class QuadraticForm(SageObject):
             sage: A[0,0] = 1
             sage: Q._is_even_symmetric_matrix_(A)
             False
-
         """
         if not isinstance(A, Matrix):
             raise TypeError("A is not a matrix.")
@@ -1148,7 +1139,6 @@ class QuadraticForm(SageObject):
             [ 0  1  2]
             [ 1  6  4]
             [ 2  4 10]
-
         """
         return self.Hessian_matrix()
 
@@ -1167,7 +1157,6 @@ class QuadraticForm(SageObject):
             [2 6]
             sage: Q.matrix().base_ring()
             Rational Field
-
         """
         mat_entries = []
         for i in range(self.dim()):
@@ -1200,7 +1189,6 @@ class QuadraticForm(SageObject):
             [0 0 0 7]
             sage: A.base_ring()
             Rational Field
-
         """
         return (ZZ(1) / ZZ(2)) * self.matrix()
 
@@ -1214,7 +1202,7 @@ class QuadraticForm(SageObject):
             Q(x) = x^t\cdot A\cdot x,
 
         defined over the base ring of `Q`.  If this is not possible,
-        then a :class:`TypeError` is raised.
+        then a :exc:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -1258,7 +1246,6 @@ class QuadraticForm(SageObject):
             sage: Q = QuadraticForm(ZZ, 2, [4,5,6])
             sage: Q.has_integral_Gram_matrix()
             False
-
         """
         # Warning over fields
         if self.base_ring() in Fields():
@@ -1301,7 +1288,7 @@ class QuadraticForm(SageObject):
 
         - ``names`` -- specification of the names of the variables; see :func:`PolynomialRing`
 
-        OUTPUT: The polynomial form of the quadratic form.
+        OUTPUT: the polynomial form of the quadratic form
 
         EXAMPLES::
 
@@ -1436,7 +1423,6 @@ class QuadraticForm(SageObject):
             Quadratic form in 2 variables over Integer Ring with coefficients:
             [ 3 -2 ]
             [ *  1 ]
-
         """
         return QuadraticForm(self.Hessian_matrix().adjoint_classical()).primitive()
 
@@ -1489,7 +1475,7 @@ class QuadraticForm(SageObject):
         Return the determinant of the Gram matrix of `2\cdot Q`, or
         equivalently the determinant of the Hessian matrix of `Q`.
 
-        .. NOTE:
+        .. NOTE::
 
             This is always defined over the same ring as the quadratic form.
 
@@ -1581,7 +1567,7 @@ class QuadraticForm(SageObject):
         generator for the smallest ideal `N` of `R` such that `N\cdot (` the matrix of
         `2*Q` `)^{(-1)}` is in `R` with diagonal in `2R`.
 
-        Over `\ZZ` this returns a non-negative number.
+        Over `\ZZ` this returns a nonnegative number.
 
         (Caveat: This always returns the unit ideal when working over a field!)
 
@@ -1680,7 +1666,7 @@ class QuadraticForm(SageObject):
 
     def bilinear_map(self, v, w):
         r"""
-        Return the value of the associated bilinear map on two vectors
+        Return the value of the associated bilinear map on two vectors.
 
         Given a quadratic form `Q` over some base ring `R` with
         characteristic not equal to 2, this gives the image of two
@@ -1691,7 +1677,7 @@ class QuadraticForm(SageObject):
 
         - ``v``, ``w`` -- two vectors
 
-        OUTPUT: an element of the base ring `R`.
+        OUTPUT: an element of the base ring `R`
 
         EXAMPLES:
 

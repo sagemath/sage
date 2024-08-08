@@ -127,7 +127,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
 
         def e(self, i):
             r"""
-            Returns the action of `e_i` on ``self``.
+            Return the action of `e_i` on ``self``.
 
             EXAMPLES::
 
@@ -143,7 +143,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
 
         def f(self, i):
             r"""
-            Returns the action of `f_i` on ``self``.
+            Return the action of `f_i` on ``self``.
 
             EXAMPLES::
 
@@ -204,7 +204,7 @@ class NaiveCrystal(UniqueRepresentation, Parent):
     class Element(ElementWrapper):
         def e(self, i):
             r"""
-            Returns the action of `e_i` on ``self``.
+            Return the action of `e_i` on ``self``.
 
             EXAMPLES::
 
@@ -220,7 +220,7 @@ class NaiveCrystal(UniqueRepresentation, Parent):
 
         def f(self, i):
             r"""
-            Returns the action of `f_i` on ``self``.
+            Return the action of `f_i` on ``self``.
 
             EXAMPLES::
 

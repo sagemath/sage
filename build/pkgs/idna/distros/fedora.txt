@@ -1,1 +1,1 @@
-python-idna
+python3-idna

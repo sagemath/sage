@@ -41,7 +41,7 @@ class Lseries(SageObject):
     """
     def __init__(self, abvar):
         """
-        Called when creating an L-series.
+        Called when creating an `L`-series.
 
         INPUT:
 
@@ -60,9 +60,7 @@ class Lseries(SageObject):
         """
         Return the abelian variety that this `L`-series is attached to.
 
-        OUTPUT:
-
-        a modular abelian variety
+        OUTPUT: a modular abelian variety
 
         EXAMPLES::
 
@@ -90,12 +88,10 @@ class Lseries_complex(Lseries):
 
         - ``s`` -- complex number
 
-        - ``prec`` -- integer (default: 53) the number of bits of precision
-          used in computing the lseries of the newforms.
+        - ``prec`` -- integer (default: 53); the number of bits of precision
+          used in computing the lseries of the newforms
 
-        OUTPUT:
-
-        a complex number L(A, s).
+        OUTPUT: a complex number L(A, s)
 
         EXAMPLES::
 
@@ -124,7 +120,6 @@ class Lseries_complex(Lseries):
             sage: L = JH(17,[2]).lseries()
             sage: L(1)                                                                  # needs sage.symbolic
             0.386769938387780
-
         """
         abelian_variety = self.abelian_variety()
         # Check for easy dimension zero case
@@ -155,9 +150,7 @@ class Lseries_complex(Lseries):
 
         - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -180,9 +173,7 @@ class Lseries_complex(Lseries):
 
         - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -199,9 +190,7 @@ class Lseries_complex(Lseries):
         """
         String representation of `L`-series.
 
-        OUTPUT:
-
-        a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -213,11 +202,9 @@ class Lseries_complex(Lseries):
 
     def vanishes_at_1(self):
         """
-        Return True if `L(1)=0` and return False otherwise.
+        Return ``True`` if `L(1)=0` and return ``False`` otherwise.
 
-        OUTPUT:
-
-        a boolean
+        OUTPUT: boolean
 
         EXAMPLES:
 
@@ -272,9 +259,7 @@ class Lseries_complex(Lseries):
         Return the rational part of this `L`-function at the central critical
         value 1.
 
-        OUTPUT:
-
-        a rational number
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -335,11 +320,9 @@ class Lseries_padic(Lseries):
 
         INPUT:
 
-        other -- object
+        - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -364,11 +347,9 @@ class Lseries_padic(Lseries):
 
         INPUT:
 
-        other -- object
+        - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 

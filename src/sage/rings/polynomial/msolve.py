@@ -136,18 +136,18 @@ def variety(ideal, ring, *, proof=True):
         sage: R.<x, y> = PolynomialRing(GF(p), 2, order='lex')
         sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
 
-        sage: sorted(I.variety(algorithm="msolve", proof=False), key=str) # optional - msolve
+        sage: sorted(I.variety(algorithm='msolve', proof=False), key=str) # optional - msolve
         [{x: 1, y: 1}, {x: 267525699, y: 473946006}]
 
         sage: K.<a> = GF(p^2)
-        sage: sorted(I.variety(K, algorithm="msolve", proof=False), key=str) # optional - msolve
+        sage: sorted(I.variety(K, algorithm='msolve', proof=False), key=str) # optional - msolve
         [{x: 1, y: 1},
          {x: 118750849*a + 194048031, y: 510295713*a + 18174854},
          {x: 267525699, y: 473946006},
          {x: 418120060*a + 75297182, y: 26575196*a + 44750050}]
 
         sage: R.<x, y> = PolynomialRing(GF(2147483659), 2, order='lex')
-        sage: ideal([x, y]).variety(algorithm="msolve", proof=False)
+        sage: ideal([x, y]).variety(algorithm='msolve', proof=False)
         Traceback (most recent call last):
         ...
         NotImplementedError: unsupported base field: Finite Field of size 2147483659

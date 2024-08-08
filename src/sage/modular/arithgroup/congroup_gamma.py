@@ -66,7 +66,7 @@ class Gamma_class(CongruenceSubgroup):
     """
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -77,7 +77,7 @@ class Gamma_class(CongruenceSubgroup):
 
     def _latex_(self):
         r"""
-        Return the \LaTeX representation of self.
+        Return the \LaTeX representation of ``self``.
 
         EXAMPLES::
 
@@ -90,7 +90,7 @@ class Gamma_class(CongruenceSubgroup):
 
     def __reduce__(self):
         """
-        Used for pickling self.
+        Used for pickling ``self``.
 
         EXAMPLES::
 
@@ -101,7 +101,7 @@ class Gamma_class(CongruenceSubgroup):
 
     def __richcmp__(self, other, op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -123,7 +123,7 @@ class Gamma_class(CongruenceSubgroup):
 
     def index(self):
         r"""
-        Return the index of self in the full modular group. This is given by
+        Return the index of ``self`` in the full modular group. This is given by
 
         .. MATH::
 
@@ -178,7 +178,8 @@ class Gamma_class(CongruenceSubgroup):
 
     def nirregcusps(self):
         r"""
-        Return the number of irregular cusps of self. For principal congruence subgroups this is always 0.
+        Return the number of irregular cusps of ``self``. For principal
+        congruence subgroups this is always 0.
 
         EXAMPLES::
 
@@ -245,7 +246,6 @@ class Gamma_class(CongruenceSubgroup):
 
             sage: Gamma(7).reduce_cusp(Cusp(6,7))
             Infinity
-
         """
         N = self.level()
         c = Cusp(c)
@@ -309,7 +309,7 @@ class Gamma_class(CongruenceSubgroup):
 
 def is_Gamma(x):
     r"""
-    Return True if x is a congruence subgroup of type Gamma.
+    Return ``True`` if x is a congruence subgroup of type Gamma.
 
     EXAMPLES::
 

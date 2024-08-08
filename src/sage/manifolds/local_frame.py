@@ -252,7 +252,6 @@ class LocalCoFrame(FreeModuleCoBasis):
         (0, 1, 0)
         sage: f[3](e[1]).expr(), f[3](e[2]).expr(), f[3](e[3]).expr()
         (0, 0, 1)
-
     """
     def __init__(self, frame, symbol, latex_symbol=None, indices=None,
                  latex_indices=None):
@@ -268,7 +267,6 @@ class LocalCoFrame(FreeModuleCoBasis):
             sage: f = LocalCoFrame(e, 'f'); f
             Local coframe (E|_M, (f^0,f^1))
             sage: TestSuite(f).run()
-
         """
         self._domain = frame.domain()
         self._base_space = frame.base_space()
@@ -295,7 +293,6 @@ class LocalCoFrame(FreeModuleCoBasis):
             'Local coframe (E|_M, (e^0,e^1))'
             sage: f  # indirect doctest
             Local coframe (E|_M, (e^0,e^1))
-
         """
         desc = "Local coframe " + self._name
         return desc
@@ -340,7 +337,6 @@ class LocalCoFrame(FreeModuleCoBasis):
              topological manifold M
             sage: e_dual_p is e.at(p).dual_basis()
             True
-
         """
         return self._basis.at(point).dual_basis()
 
@@ -370,7 +366,7 @@ class LocalCoFrame(FreeModuleCoBasis):
         - ``index_position`` -- (default: ``'up'``) determines the position
           of the indices labelling the linear forms of the coframe; can be
           either ``'down'`` or ``'up'``
-        - ``include_domain`` -- (default: ``True``) boolean determining whether
+        - ``include_domain`` -- boolean (default: ``True``); determining whether
           the name of the domain is included in the beginning of the coframe
           name
 
@@ -396,7 +392,6 @@ class LocalCoFrame(FreeModuleCoBasis):
             Local coframe (E|_M, (e^x,e^y))
             sage: latex(e)
             \left(E|_{M}, \left(e^{\xi},e^{\zeta}\right)\right)
-
         """
         super().set_name(symbol, latex_symbol=latex_symbol,
                          indices=indices,
@@ -556,7 +551,6 @@ class LocalFrame(FreeModuleBasis):
         sage: f.at(p)
         Basis (f_1,f_2) on the Fiber of F at Point p on the 2-dimensional
          topological manifold N
-
     """
 
     # The following class attribute must be redefined by any derived class:
@@ -583,7 +577,6 @@ class LocalFrame(FreeModuleBasis):
             Local coframe (E|_M, (A,B))
             sage: e is LocalFrame(C0, ('a', 'b'), symbol_dual=('A', 'B'))
             True
-
         """
         if isinstance(symbol, list):
             symbol = tuple(symbol)
@@ -618,7 +611,6 @@ class LocalFrame(FreeModuleBasis):
             sage: e = LocalFrame(C0, 'e', latex_symbol=r'\epsilon'); e
             Local frame (E|_M, (e_0,e_1))
             sage: TestSuite(e).run()
-
         """
         ###
         # Some sanity check:
@@ -679,7 +671,6 @@ class LocalFrame(FreeModuleBasis):
             'Local frame (E|_M, (e_0,e_1))'
             sage: e  # indirect doctest
             Local frame (E|_M, (e_0,e_1))
-
         """
         desc = "Local frame " + self._name
         return desc
@@ -716,9 +707,7 @@ class LocalFrame(FreeModuleBasis):
         - ``latex_symbol_dual`` -- (default: ``None``) same as ``latex_symbol``
           but for the dual coframe
 
-        OUTPUT:
-
-        - instance of :class:`LocalFrame`
+        OUTPUT: instance of :class:`LocalFrame`
 
         TESTS::
 
@@ -727,7 +716,6 @@ class LocalFrame(FreeModuleBasis):
             sage: e = E.local_frame('e')
             sage: e._new_instance('f')
             Local frame (E|_M, (f_0,f_1))
-
         """
         return LocalFrame(self._fmodule, symbol, latex_symbol=latex_symbol,
                            indices=indices, latex_indices=latex_indices,
@@ -749,7 +737,6 @@ class LocalFrame(FreeModuleBasis):
             Local frame (E|_U, (e_0,e_1))
             sage: e.domain()
             Open subset U of the 3-dimensional topological manifold M
-
         """
         return self._domain
 
@@ -765,7 +752,6 @@ class LocalFrame(FreeModuleBasis):
             sage: e = E.local_frame('e', domain=U)
             sage: e.base_space()
             3-dimensional topological manifold M
-
         """
         return self._base_space
 
@@ -784,7 +770,6 @@ class LocalFrame(FreeModuleBasis):
             3-dimensional topological manifold M
             sage: e.vector_bundle() is E
             True
-
         """
         return self._vbundle
 
@@ -800,7 +785,6 @@ class LocalFrame(FreeModuleBasis):
             Local frame (E|_M, (e_0,e_1))
             sage: e.coframe()
             Local coframe (E|_M, (e^0,e^1))
-
         """
         return self._coframe
 
@@ -892,7 +876,6 @@ class LocalFrame(FreeModuleBasis):
             [1/2*sqrt(3), -1/2]
             sage: e[2].comp(f)[:]
             [1/2, 1/2*sqrt(3)]
-
         """
         the_new_frame = self.new_basis(change_of_frame, symbol,
                                        latex_symbol=latex_symbol,
@@ -916,9 +899,7 @@ class LocalFrame(FreeModuleBasis):
 
         - ``subdomain`` -- open subset `V` of the current frame domain `U`
 
-        OUTPUT:
-
-        - the restriction of the current frame to `V` as a :class:`LocalFrame`
+        OUTPUT: the restriction of the current frame to `V` as a :class:`LocalFrame`
 
         EXAMPLES:
 
@@ -954,7 +935,6 @@ class LocalFrame(FreeModuleBasis):
             True
             sage: f_U[2] is f[2].restrict(U)
             True
-
         """
         if subdomain == self._domain:
             return self
@@ -1111,7 +1091,6 @@ class LocalFrame(FreeModuleBasis):
              2-dimensional topological manifold M
             sage: fp.dual_basis() is f.coframe().at(p)
             True
-
         """
         # Determination of the vector bundle fiber:
         if point not in self._domain:
@@ -1209,7 +1188,7 @@ class LocalFrame(FreeModuleBasis):
         - ``index_position`` -- (default: ``'down'``) determines the position
           of the indices labelling the local sections of the frame; can be
           either ``'down'`` or ``'up'``
-        - ``include_domain`` -- (default: ``True``) boolean determining whether
+        - ``include_domain`` -- boolean (default: ``True``); determining whether
           the name of the domain is included in the beginning of the vector
           frame name
 
@@ -1237,7 +1216,6 @@ class LocalFrame(FreeModuleBasis):
             ....:            latex_indices=[r'\alpha', r'\beta'])
             sage: latex(e)
             \left(E|_{M}, \left(E_{\alpha},E_{\beta}\right)\right)
-
         """
         super().set_name(symbol, latex_symbol=latex_symbol,
                          indices=indices,
@@ -1341,7 +1319,6 @@ class TrivializationCoFrame(LocalCoFrame):
         (0, 1, 0)
         sage: f[3](e[1]).expr(), f[3](e[2]).expr(), f[3](e[3]).expr()
         (0, 0, 1)
-
     """
     def __init__(self, triv_frame, symbol, latex_symbol=None,
                  indices=None, latex_indices=None):
@@ -1357,7 +1334,6 @@ class TrivializationCoFrame(LocalCoFrame):
             sage: f = TrivializationCoFrame(phi.frame(), 'omega'); f
             Trivialization coframe (E|_M, (omega^0,omega^1))
             sage: TestSuite(f).run()
-
         """
         if not isinstance(triv_frame, TrivializationFrame):
             raise TypeError("the first argument must be a local trivialization "
@@ -1383,7 +1359,6 @@ class TrivializationCoFrame(LocalCoFrame):
             'Trivialization coframe (E|_M, ((phi^*e^1),(phi^*e^2)))'
             sage: e  # indirect doctest
             Trivialization coframe (E|_M, ((phi^*e^1),(phi^*e^2)))
-
         """
         return "Trivialization coframe " + self._name
 
@@ -1419,7 +1394,6 @@ class TrivializationFrame(LocalFrame):
         Trivialization frame (E|_U, ((phi_U^*e_1),(phi_U^*e_2)))
         sage: latex(phi_U.frame())
         \left(E|_{U}, \left(\left(phi_U^* e_{ 1 }\right),\left(phi_U^* e_{ 2 }\right)\right)\right)
-
     """
 
     # The following class attribute must be redefined by any derived class:
@@ -1436,7 +1410,6 @@ class TrivializationFrame(LocalFrame):
             sage: phi = E.trivialization('phi')
             sage: e = phi.frame()
             sage: TestSuite(e).run()
-
         """
         from sage.misc.latex import latex
         from .trivialization import Trivialization
@@ -1492,7 +1465,6 @@ class TrivializationFrame(LocalFrame):
             'Trivialization frame (E|_M, ((phi^*e_1),(phi^*e_2)))'
             sage: e  # indirect doctest
             Trivialization frame (E|_M, ((phi^*e_1),(phi^*e_2)))
-
         """
         return "Trivialization frame " + self._name
 
@@ -1511,6 +1483,5 @@ class TrivializationFrame(LocalFrame):
             Trivialization (phi_U, E|_U)
             sage: e.trivialization() is phi_U
             True
-
         """
         return self._trivialization

@@ -106,7 +106,7 @@ cdef class Set_PythonType_class(Set_generic):
 
     def __reduce__(self):
         r"""
-        Pickling support
+        Pickling support.
 
         TESTS::
 

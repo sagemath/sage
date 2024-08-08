@@ -496,9 +496,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
             """
             Generate the Hall set of grade ``k``.
 
-            OUTPUT:
-
-            A sorted tuple of :class:`GradedLieBracket` elements.
+            OUTPUT: a sorted tuple of :class:`GradedLieBracket` elements
 
             EXAMPLES::
 

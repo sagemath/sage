@@ -50,11 +50,12 @@ class StandardSymplecticSpace(EuclideanSpace):
 
         - ``dimension`` -- dimension of the space over the real field (has to be even)
         - ``name`` -- name (symbol) given to the underlying vector space;
-            if ``None``, the name will be set to ``'Rn'``, where ``n`` is the ``dimension``
-        - ``latex_name`` -- LaTeX symbol to denote the underlying vector space; if ``None``, it is set to ``name``
+          if ``None``, the name will be set to ``'Rn'``, where ``n`` is the ``dimension``
+        - ``latex_name`` -- LaTeX symbol to denote the underlying vector space;
+          if ``None``, it is set to ``name``
         - ``coordinates`` -- (default: ``'Cartesian'``) the
-            type of coordinates to be initialized at the Euclidean space
-            creation; allowed values are
+          type of coordinates to be initialized at the Euclidean space
+          creation; allowed values are
 
             - ``'Cartesian'`` (canonical coordinates on `\RR^{2n}`)
             - ``'polar'`` for ``dimension=2`` only (see
@@ -111,7 +112,6 @@ class StandardSymplecticSpace(EuclideanSpace):
             Inner product matrix:
             [0.000000000000000 -1.00000000000000]
             [ 1.00000000000000 0.000000000000000]
-
         """
         # Check that manifold is even dimensional
         if dimension % 2 == 1:

@@ -22,7 +22,7 @@ enumerated in the Shephard-Todd classification as `G_{4}`, `G_{25}` and
 
 Coxeter realized these groups as subgroups of unitary groups with respect
 to a certain Hermitian form over the complex numbers (in fact over `\QQ`
-adjoined with a primitive 12-th root of unity).
+adjoined with a primitive `12`-th root of unity).
 
 In "Einige endliche Faktorgruppen der Zopfgruppen" (Math. Z., 163 (1978),
 291-302) J. Assion considered two series `S(m)` and `U(m)` of finite
@@ -368,7 +368,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
         - ``root_bur`` -- six (resp. twelfth) root of unity in some field
           (default: root of unity over `\QQ`)
-        - ``domain``  -- (default: cyclotomic field of order 3 and degree 2, resp.
+        - ``domain`` -- (default: cyclotomic field of order 3 and degree 2, resp.
           the domain of `root_bur` if given) base ring for the Burau matrix
         - ``characteristic`` -- integer giving the characteristic of the
           domain (default: 0 or the characteristic of ``domain`` if given)
@@ -669,7 +669,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         r"""
         Enum class to select the type of the group:
 
-        - ``Coxeter`` -- ``'C'`` the full cubic braid group.
+        - ``Coxeter`` -- ``'C'`` the full cubic braid group
         - ``AssionS`` -- ``'S'`` finite factor group of type S considered by Assion
         - ``AssionU`` -- ``'U'`` finite factor group of type U considered by Assion
 
@@ -1040,7 +1040,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
          - self._classical_group            This is the classical group returned by as_classical_group method.
          - self._classical_base_group       this only differs in special cases for Assion groups from the former.
          - self._classical_invariant_form   invariant form of the classical base group.
-         - self._centralizing_matrix        for Assion groups: element in classical base group commuting with self.
+         - self._centralizing_matrix        for Assion groups: element in classical base group commuting with ``self``.
          - self._centralizing_element       image under natural map of the former one in the projective classical group.
          - self._classical_embedding        as subgroup of classical base group (if different from classical group).
 
@@ -1150,7 +1150,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             INPUT:
 
-            - ``m`` --  integer; the dimension of the classical groups
+            - ``m`` -- integer; the dimension of the classical groups
               vector-space of operation
 
             The function calculates the centralizing matrix and the
@@ -1223,7 +1223,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             INPUT:
 
-            - ``m`` --  integer; the dimension of the classical groups
+            - ``m`` -- integer; the dimension of the classical groups
               vector-space of operation
 
             The function calculates the centralizing_matrix and the
@@ -1469,7 +1469,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         - ``root_bur`` -- (default: root of unity over `\QQ`) six (resp. twelfth)
           root of unity in some field
-        - ``domain``  -- (default: cyclotomic field of order 3 and degree 2, resp.
+        - ``domain`` -- (default: cyclotomic field of order 3 and degree 2, resp.
           the domain of ``root_bur`` if given) base ring for the Burau matrix
         - ``characteristic`` -- integer (optional); the characteristic of the
           domain; if none of the keywords ``root_bur``, ``domain`` and

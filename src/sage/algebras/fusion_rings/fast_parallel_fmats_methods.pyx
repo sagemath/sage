@@ -406,7 +406,7 @@ cdef list compute_gb(factory, tuple args):
     for eq_tup in eqns:
         eq_tup = _unflatten_coeffs(F, eq_tup)
         polys.append(_tup_to_poly(resize(eq_tup, idx_map, nvars), parent=R))
-    gb = Ideal(sorted(polys)).groebner_basis(algorithm="libsingular:slimgb")
+    gb = Ideal(sorted(polys)).groebner_basis(algorithm='libsingular:slimgb')
 
     # Change back to fmats poly ring and append to temp_eqns
     cdef dict inv_idx_map = {v: k for k, v in idx_map.items()}
@@ -460,7 +460,7 @@ cpdef executor(tuple params):
 
     INPUT:
 
-    - ``params`` -- a tuple ``((fn_name, fmats_id), fn_args)`` where
+    - ``params`` -- tuple ``((fn_name, fmats_id), fn_args)`` where
       ``fn_name`` is the name of the function to be executed, ``fmats_id``
       is the ``id`` of the :class:`FMatrix` object, and ``fn_args`` is a
       tuple containing all arguments to be passed to the function ``fn_name``.

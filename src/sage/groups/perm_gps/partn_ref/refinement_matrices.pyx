@@ -130,7 +130,7 @@ cdef class MatrixStruct:
         INPUT:
 
         - ``partition`` -- an optional list of lists partition of the columns;
-          default is the unit partition.
+          default is the unit partition
 
         EXAMPLES::
 
@@ -303,11 +303,11 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
 
     INPUT:
 
-    - n -- run tests on this many matrices
-    - nrows_max -- test matrices with at most this many rows
-    - ncols_max -- test matrices with at most this many columns
-    - perms_per_matrix -- test each matrix with this many random permutations
-    - nsymbols_max -- maximum number of distinct symbols in the matrix
+    - ``n`` -- run tests on this many matrices
+    - ``nrows_max`` -- test matrices with at most this many rows
+    - ``ncols_max`` -- test matrices with at most this many columns
+    - ``perms_per_matrix`` -- test each matrix with this many random permutations
+    - ``nsymbols_max`` -- maximum number of distinct symbols in the matrix
 
     This code generates n random matrices M on at most ncols_max columns and at
     most nrows_max rows. The density of entries in the basis is chosen randomly

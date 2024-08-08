@@ -117,7 +117,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         [1, 3, 5, 9]
 
         sage: # needs sage.graphs
-        sage: G = M.cayley_graph(side="twosided"); G
+        sage: G = M.cayley_graph(side='twosided'); G
         Looped multi-digraph on 4 vertices
         sage: G.edges(sort=True, key=str)
         [([1, 1], [1, 1], (2, 'left')),
@@ -184,8 +184,8 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
     Let us construct and play with the 0-Hecke Monoid::
 
         sage: # needs sage.graphs sage.modules
-        sage: W = WeylGroup(['A',4]); W.rename("W")
-        sage: ambient_monoid = FiniteSetMaps(W, action="right")
+        sage: W = WeylGroup(['A',4]); W.rename('W')
+        sage: ambient_monoid = FiniteSetMaps(W, action='right')
         sage: pi = W.simple_projections(length_increasing=True).map(ambient_monoid)
         sage: M = AutomaticSemigroup(pi, one=ambient_monoid.one()); M
         A submonoid of (Maps from W to itself) with 4 generators
@@ -351,7 +351,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
     def __init__(self, generators, ambient, one, mul, category):
         """
-        Initializes this semigroup.
+        Initialize this semigroup.
 
         TESTS::
 
@@ -409,7 +409,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: AutomaticSemigroup(Family({1: R(3), 2: R(5)}), mul=operator.add, one=R.zero())
             A semigroup with 2 generators
 
-            sage: S5 = SymmetricGroup(5); S5.rename("S5")                               # needs sage.groups
+            sage: S5 = SymmetricGroup(5); S5.rename('S5')                               # needs sage.groups
             sage: AutomaticSemigroup(Family({1: S5((1,2))}),                            # needs sage.groups
             ....:                    category=Groups().Finite().Subobjects())
             A subgroup of (S5) with 1 generators
@@ -429,9 +429,9 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
         return f"{typ}{of} with {len(self._generators)} generators"
 
-    def repr_element_method(self, style="ambient"):
+    def repr_element_method(self, style='ambient'):
         """
-        Sets the representation of the elements of the monoid.
+        Set the representation of the elements of the monoid.
 
         INPUT:
 
@@ -501,7 +501,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
             sage: # needs sage.groups
             sage: from sage.monoids.automatic_semigroup import AutomaticSemigroup
-            sage: S5 = SymmetricGroup(5); S5.rename("S5")
+            sage: S5 = SymmetricGroup(5); S5.rename('S5')
             sage: M = AutomaticSemigroup(Family({1:S5((1,2)), 2:S5((1,2,3,4))}),
             ....:                        one=S5.one())
             sage: m = M.retract(S5((3,1))); m
@@ -773,7 +773,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``l`` -- a list of indices of the generators
+        - ``l`` -- list of indices of the generators
 
         .. NOTE::
 
@@ -804,9 +804,9 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``up_to`` -- an element of ``self`` or of the ambient semigroup.
+        - ``up_to`` -- an element of ``self`` or of the ambient semigroup
 
-        - ``n`` -- an integer or ``None`` (default: ``None``)
+        - ``n`` -- integer or ``None`` (default: ``None``)
 
         This construct all the elements of this semigroup, their
         reduced words, and the right Cayley graph. If `n` is
@@ -818,8 +818,8 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
             sage: # needs sage.groups sage.modules
             sage: from sage.monoids.automatic_semigroup import AutomaticSemigroup
-            sage: W = WeylGroup(['A',3]); W.rename("W")
-            sage: ambient_monoid = FiniteSetMaps(W, action="right")
+            sage: W = WeylGroup(['A',3]); W.rename('W')
+            sage: ambient_monoid = FiniteSetMaps(W, action='right')
             sage: pi = W.simple_projections(length_increasing=True).map(ambient_monoid)
             sage: M = AutomaticSemigroup(pi, one=ambient_monoid.one()); M
             A submonoid of (Maps from W to itself) with 3 generators
@@ -876,7 +876,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             r"""
             Return the length-lexicographic shortest word of ``self``.
 
-            OUTPUT: a list of indexes of the generators
+            OUTPUT: list of indexes of the generators
 
             Obtaining the reduced word requires having constructed the
             Cayley graph of the semigroup up to ``self``. If this is

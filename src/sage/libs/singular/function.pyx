@@ -56,7 +56,7 @@ TESTS::
 AUTHORS:
 
 - Michael Brickenstein (2009-07): initial implementation, overall design
-- Martin Albrecht (2009-07): clean up, enhancements, etc
+- Martin Albrecht (2009-07): clean up, enhancements, etc.
 - Michael Brickenstein (2009-10): extension to more Singular types
 - Martin Albrecht (2010-01): clean up, support for attributes
 - Simon King (2011-04): include the documentation provided by Singular as a code block
@@ -358,7 +358,7 @@ cdef free_leftv(leftv *args, ring *r = NULL):
 
     INPUT:
 
-    - ``args`` -- a list of Singular arguments
+    - ``args`` -- list of Singular arguments
     """
     args.CleanUp(r)
     omFreeBin(args, sleftv_bin)
@@ -385,7 +385,6 @@ def is_sage_wrapper_for_singular_ring(ring):
         sage: P = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
         sage: is_sage_wrapper_for_singular_ring(P)
         True
-
     """
     if isinstance(ring, MPolynomialRing_libsingular):
         return True
@@ -420,7 +419,7 @@ def is_singular_poly_wrapper(p):
 
 def all_singular_poly_wrapper(s):
     """
-    Tests for a sequence ``s``, whether it consists of
+    Test for a sequence ``s``, whether it consists of
     singular polynomials.
 
     EXAMPLES::
@@ -496,7 +495,7 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``args`` -- a list of Python objects
+        - ``args`` -- list of Python objects
         - ``ring`` -- a multivariate polynomial ring
         - ``attributes`` -- an optional dictionary of Singular
           attributes (default: ``None``)
@@ -1209,13 +1208,13 @@ cdef class SingularFunction(SageObject):
 
         INPUT:
 
-        - ``args`` -- a list of arguments
+        - ``args`` -- list of arguments
         - ``ring`` -- a multivariate polynomial ring
         - ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C`
           during the execution of this function will interrupt the computation
           (default: ``True``)
 
-        - ``attributes`` -- a dictionary of optional Singular
+        - ``attributes`` -- dictionary of optional Singular
           attributes assigned to Singular objects (default: ``None``)
 
         If ``ring`` is not specified, it is guessed from the given arguments.
@@ -1303,7 +1302,7 @@ cdef class SingularFunction(SageObject):
                 if dummy_ring is None:
                     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                     from sage.rings.rational_field import QQ
-                    dummy_ring = PolynomialRing(QQ, "dummy", implementation="singular") # seems a reasonable default
+                    dummy_ring = PolynomialRing(QQ, "dummy", implementation='singular') # seems a reasonable default
                 ring = dummy_ring
         if not (isinstance(ring, MPolynomialRing_libsingular) or isinstance(ring, NCPolynomialRing_plural)):
             raise TypeError("cannot call Singular function '%s' with ring parameter of type '%s'" % (self._name,type(ring)))
@@ -1331,12 +1330,12 @@ accepts the following keyword parameters:
 
 INPUT:
 
-- ``args`` -- a list of arguments
+- ``args`` -- list of arguments
 - ``ring`` -- a multivariate polynomial ring
 - ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C` during the
   execution of this function will interrupt the computation
   (default: ``True``)
-- ``attributes`` -- a dictionary of optional Singular attributes
+- ``attributes`` -- dictionary of optional Singular attributes
   assigned to Singular objects (default: ``None``)
 
 If ``ring`` is not specified, it is guessed from the given arguments.
@@ -1381,7 +1380,7 @@ The Singular documentation for '%s' is given below.
 
         INPUT:
 
-        - ``args`` -- a list of Python objects
+        - ``args`` -- list of Python objects
         - ``ring`` -- an optional ring to check
         """
         from sage.matrix.matrix_mpolynomial_dense import Matrix_mpolynomial_dense
@@ -1824,13 +1823,52 @@ def lib(name):
         raise NameError("Singular library {!r} not found".format(name))
 
 
+def get_printlevel():
+    """
+    Return the value of the variable ``printlevel``.
+
+    This is useful to switch off and back the comments.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.function import get_printlevel, set_printlevel
+        sage: l = get_printlevel()
+        sage: set_printlevel(-1)
+        sage: get_printlevel()
+        -1
+        sage: set_printlevel(l)
+    """
+    global printlevel
+    cdef int pl = printlevel
+    return pl
+
+
+def set_printlevel(l):
+    """
+    Set the  value of the variable ``printlevel``.
+
+    This is useful to switch off and back the comments.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.function import get_printlevel, set_printlevel
+        sage: l = get_printlevel()
+        sage: set_printlevel(2)
+        sage: get_printlevel()
+        2
+        sage: set_printlevel(l)
+    """
+    global printlevel
+    printlevel = <int>l
+
+
 def list_of_functions(packages=False):
     """
     Return a list of all function names currently available.
 
     INPUT:
 
-    - ``packages`` -- include local functions in packages.
+    - ``packages`` -- include local functions in packages
 
     EXAMPLES::
 

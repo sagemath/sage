@@ -146,7 +146,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M = BasisExchangeMatroid(groundset=[1, 2, 3], rank=2)
-            sage: TestSuite(M).run(skip="_test_pickling")
+            sage: TestSuite(M).run(skip='_test_pickling')
 
         .. NOTE::
 
@@ -199,7 +199,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
           label of `e`
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         .. NOTE::
 
@@ -805,7 +805,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``F`` -- an object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT: integer; the corank of ``F``
+        OUTPUT: integer; the corank of `F`
 
         EXAMPLES::
 
@@ -1503,6 +1503,8 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``k`` -- integer (optional); if specified, return the size-`k`
           independent sets of the matroid
 
+        OUTPUT: :class:`SetSystem`
+
         EXAMPLES::
 
             sage: M = matroids.catalog.Fano()
@@ -2001,7 +2003,7 @@ cdef class BasisExchangeMatroid(Matroid):
         INPUT:
 
         - ``other`` -- matroid
-        - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
+        - ``morphism`` -- dictionary mapping the groundset of ``self`` to
           the groundset of ``other``
 
         OUTPUT: boolean

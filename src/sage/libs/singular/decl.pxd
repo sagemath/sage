@@ -425,6 +425,7 @@ cdef extern from "singular/Singular/libsingular.h":
     cdef int si_opt_2    #  previously 'verbose'
     cdef void * currentVoice
     cdef int myynest
+    cdef int printlevel
 
     ctypedef char * const_char_ptr "const char *"
     cdef extern void (*WerrorS_callback)(const_char_ptr)

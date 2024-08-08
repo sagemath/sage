@@ -134,7 +134,7 @@ class GaloisRepresentation(SageObject):
 
     def __eq__(self,other):
         r"""
-        Compares two Galois representations.
+        Compare two Galois representations.
 
         We define two compatible families of representations attached
         to elliptic curves to be equal if the curves are isomorphic.
@@ -178,15 +178,14 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``A`` -- int (a bound on the number of traces of Frobenius to use
-          while trying to prove surjectivity).
+        - ``A`` -- integer; a bound on the number of traces of Frobenius to use
+          while trying to prove surjectivity
 
         OUTPUT:
 
-        - ``list`` -- A list of primes where mod-`p` representation is
-          very likely not surjective. At any prime not in this list,
-          the representation is definitely surjective. If `E` has CM,
-          the list [0] is returned.
+        A list of primes where mod-`p` representation is very likely not
+        surjective. At any prime not in this list, the representation is
+        definitely surjective. If `E` has CM, the list ``[0]`` is returned.
 
         EXAMPLES::
 
@@ -234,10 +233,10 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        * ``p`` -- a prime number.
+        - ``p`` -- prime number
 
-        * ``A`` -- (integer) a bound on the number of traces of Frobenius to use
-          while trying to prove surjectivity.
+        - ``A`` -- integer; a bound on the number of traces of Frobenius to use
+          while trying to prove surjectivity
 
         EXAMPLES::
 
@@ -292,18 +291,17 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``A`` -- int (a bound on the number of traces of Frobenius to
-          use while trying to prove the mod-`p`
-          representation is not contained in a Borel).
+        - ``A`` -- integer; a bound on the number of traces of Frobenius to
+          use while trying to prove the mod-`p` representation is not contained
+          in a Borel
 
         OUTPUT:
 
-        - ``list`` -- A list of primes which contains (but may not be
-          equal to) all `p` for which the image of the mod-`p`
-          representation is contained in a Borel subgroup.  At any
-          prime not in this list, the image is definitely not
-          contained in a Borel. If E has `CM` defined over `K`, the list
-          [0] is returned.
+        A list of primes which contains (but may not be equal to) all `p` for
+        which the image of the mod-`p` representation is contained in a Borel
+        subgroup.  At any prime not in this list, the image is definitely not
+        contained in a Borel. If E has `CM` defined over `K`, the list ``[0]``
+        is returned.
 
         EXAMPLES::
 
@@ -379,11 +377,10 @@ class GaloisRepresentation(SageObject):
 
         OUTPUT:
 
-        - ``list`` -- A list of those primes `p` for which the mod-`p`
-          representation is contained in a Borel subgroup, i.e. is
-          reducible.  If E has CM *defined over K*, the list [0] is
-          returned (in this case the representation is reducible for
-          infinitely many primes).
+        A list of those primes `p` for which the mod-`p` representation is
+        contained in a Borel subgroup, i.e. is reducible.  If E has CM
+        *defined over K*, the list ``[0]`` is returned (in this case the
+        representation is reducible for infinitely many primes).
 
         EXAMPLES::
 
@@ -432,16 +429,16 @@ def _non_surjective(E, patience=100):
 
     INPUT:
 
-    - ``E`` -- EllipticCurve (over a number field).
+    - ``E`` -- :class:`EllipticCurve` (over a number field)
 
-    - ``A`` -- int (a bound on the number of traces of Frobenius to use
-      while trying to prove surjectivity).
+    - ``A`` -- integer; a bound on the number of traces of Frobenius to use
+      while trying to prove surjectivity
 
     OUTPUT:
 
-    - ``list`` -- A list of primes where mod-`p` representation is very likely
-      not surjective. At any prime not in this list, the representation is
-      definitely surjective. If E has CM, a :class:`ValueError` is raised.
+    A list of primes where mod-`p` representation is very likely not
+    surjective. At any prime not in this list, the representation is
+    definitely surjective. If E has CM, a :exc:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -505,19 +502,17 @@ def Frobenius_filter(E, L, patience=100):
 
     INPUT:
 
-    - ``E`` -- EllipticCurve over a number field.
+    - ``E`` -- :class:`EllipticCurve` over a number field
 
-    - ``L`` -- a list of prime numbers.
+    - ``L`` -- list of prime numbers
 
-    - ``patience`` (int), default 100 -- a positive integer bounding
-      the number of traces of Frobenius to use while trying to prove
-      irreducibility.
+    - ``patience`` -- positive integer (default: 100) bounding the number of
+      traces of Frobenius to use while trying to prove irreducibility
 
     OUTPUT:
 
-    - list -- The list of all primes `\ell` in L for which the mod
-      `\ell` image might be contained in a Borel subgroup of
-      `GL_2(\mathbf{F}_{\ell})`.
+    The list of all primes `\ell` in L for which the mod `\ell` image might be
+    contained in a Borel subgroup of `GL_2(\mathbf{F}_{\ell})`.
 
     EXAMPLES::
 
@@ -606,17 +601,17 @@ def _exceptionals(E, L, patience=1000):
 
     INPUT:
 
-    - ``E`` -- EllipticCurve over a number field.
+    - ``E`` -- :class:`EllipticCurve` over a number field
 
-    - ``L`` -- a list of prime numbers.
+    - ``L`` -- list of prime numbers
 
-    - ``patience`` (int) -- a bound on the number of traces of Frobenius to
-      use while trying to prove surjectivity.
+    - ``patience`` -- integer; a bound on the number of traces of Frobenius to
+      use while trying to prove surjectivity
 
     OUTPUT:
 
-    - list -- The list of all primes l in L for which the mod l image
-      might fail to be surjective.
+    The list of all primes l in L for which the mod l image might fail to be
+    surjective.
 
     EXAMPLES::
 
@@ -755,7 +750,7 @@ def _over_numberfield(E):
 
     INPUT:
 
-    - ``E`` -- EllipticCurve over a number field.
+    - ``E`` -- :class:`EllipticCurve` over a number field
 
     OUTPUT:
 
@@ -770,7 +765,6 @@ def _over_numberfield(E):
         sage: E = EllipticCurve([1, 2])
         sage: sage.schemes.elliptic_curves.gal_reps_number_field._over_numberfield(E)
         Elliptic Curve defined by y^2 = x^3 + x + 2 over Number Field in a with defining polynomial x
-
     """
     K = E.base_field()
 
@@ -788,7 +782,7 @@ def deg_one_primes_iter(K, principal_only=False):
     INPUT:
 
     - ``K`` -- a number field
-    - ``principal_only`` -- bool; if ``True``, only yield principal primes
+    - ``principal_only`` -- boolean; if ``True``, only yield principal primes
 
     OUTPUT:
 
@@ -835,14 +829,14 @@ def _semistable_reducible_primes(E, verbose=False):
 
     INPUT:
 
-    - ``E`` -- EllipticCurve over a number field.
+    - ``E`` -- :class:`EllipticCurve` over a number field
 
     OUTPUT:
 
     A list of primes, which contains all primes `l` unramified in
     `K/\mathbb{QQ}`, such that `E` is semistable at all primes lying
     over `l`, and the Galois image at `l` is reducible. If `E` has CM
-    defined over its ground field, a :class:`ValueError` is raised.
+    defined over its ground field, a :exc:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -1011,19 +1005,18 @@ def _possible_normalizers(E, SA):
 
     INPUT:
 
-    - ``E`` -- EllipticCurve over a number field K.
+    - ``E`` -- :class:`EllipticCurve` over a number field K
 
-    - ``SA`` -- a list of primes of K.
+    - ``SA`` -- list of primes of K
 
     OUTPUT:
 
-    - list -- A list of primes, which contains all primes `l` such that the
-             Galois image at `l` is contained in the normalizer of a Cartan
-             subgroup, such that the corresponding quadratic character is
-             ramified only at primes in SA.
+    - a list of primes, which contains all primes `l` such that the Galois
+      image at `l` is contained in the normalizer of a Cartan subgroup, such
+      that the corresponding quadratic character is ramified only at primes in SA.
 
-    - If `E` has geometric CM that is not defined over its ground field, a
-      ValueError is raised.
+    - if `E` has geometric CM that is not defined over its ground field, a
+      :exc:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -1165,7 +1158,7 @@ def Billerey_P_l(E, l):
     INPUT:
 
     - ``E`` -- an elliptic curve over a number field `K`, given by a
-      global integral model.
+      global integral model
 
     - ``l`` -- a rational prime
 
@@ -1200,11 +1193,12 @@ def Billerey_B_l(E,l,B=0):
     INPUT:
 
     - ``E`` -- an elliptic curve over a number field `K`, given by a
-      global integral model.
+      global integral model
 
-    - ``l`` (int) -- a rational prime
+    - ``l`` -- integer; a rational prime
 
-    - ``B`` (int) -- 0 or LCM of previous `B_l`: the prime-to-B part of this `B_l` is ignored.
+    - ``B`` -- integer; 0 or LCM of previous `B_l` the prime-to-B part of this
+      `B_l` is ignored
 
     EXAMPLES::
 
@@ -1242,11 +1236,12 @@ def Billerey_R_q(E, q, B=0):
     INPUT:
 
     - ``E`` -- an elliptic curve over a number field `K`, given by a
-      global integral model.
+      global integral model
 
     - ``q`` -- a prime ideal of `K`
 
-    - ``B`` (int) -- 0 or LCM of previous `R_q`: the prime-to-B part of this `R_q` is ignored.
+    - ``B`` -- integer; 0 or LCM of previous `R_q` the prime-to-B part of this
+      `R_q` is ignored
 
     EXAMPLES::
 
@@ -1286,21 +1281,21 @@ def Billerey_B_bound(E, max_l=200, num_l=8, small_prime_bound=0, debug=False):
     nonzero values are found (at most).  Return the list of primes
     dividing all `B_l` computed, excluding those dividing 6 or
     ramified or of bad reduction or less than small_prime_bound.  If
-    no non-zero values are found return [0].
+    no nonzero values are found return ``[0]``.
 
     INPUT:
 
     - ``E`` -- an elliptic curve over a number field `K`, given by a
-      global integral model.
+      global integral model
 
-    - ``max_l`` (int, default 200) -- maximum size of primes l to check.
+    - ``max_l`` -- integer (default: 200); maximum size of primes l to check
 
-    - ``num_l`` (int, default 8)  -- maximum number of primes l to check.
+    - ``num_l`` integer (default: 8); maximum number of primes l to check
 
-    - ``small_prime_bound`` (int, default 0) -- remove primes less
-      than this from the output.
+    - ``small_prime_bound`` -- integer (default: 0); remove primes less
+      than this from the output
 
-    - ``debug`` (bool, default ``False``)  -- if ``True`` prints details.
+    - ``debug`` -- boolean (default: ``False``); if ``True`` prints details
 
     .. NOTE::
 
@@ -1394,23 +1389,23 @@ def Billerey_R_bound(E, max_l=200, num_l=8, small_prime_bound=None, debug=False)
     (at most) until ``num_l`` nonzero values are found (at most).
     Return the list of primes dividing all ``R_q`` computed, excluding
     those dividing 6 or ramified or of bad reduction or less than
-    small_prime_bound.  If no non-zero values are found return [0].
+    small_prime_bound.  If no nonzero values are found return ``[0]``.
 
     INPUT:
 
     - ``E`` -- an elliptic curve over a number field `K`, given by a
-      global integral model.
+      global integral model
 
-    - ``max_l`` (int, default 200) -- maximum size of rational primes
-      l for which the primes q above l are checked.
+    - ``max_l`` -- integer (default: 200); maximum size of rational primes
+      l for which the primes q above l are checked
 
-    - ``num_l`` (int, default 8) -- maximum number of rational primes
-      l for which the primes q above l are checked.
+    - ``num_l`` -- integer (default: 8); maximum number of rational primes
+      l for which the primes q above l are checked
 
-    - ``small_prime_bound`` (int, default 0) -- remove primes less
-      than this from the output.
+    - ``small_prime_bound`` -- integer (default: 0); remove primes less
+      than this from the output
 
-    - ``debug`` (bool, default ``False``)  -- if ``True`` prints details.
+    - ``debug`` -- boolean (default: ``False``); if ``True`` prints details
 
     .. NOTE::
 
@@ -1503,13 +1498,13 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve defined over a number field `K`.
+    - ``E`` -- an elliptic curve defined over a number field `K`
 
-    - ``max_l`` (int or ``None`` (default)) -- the maximum prime
+    - ``max_l`` -- integer or ``None`` (default); the maximum prime
       `\ell` to use for the B-bound and R-bound.  If ``None``, a
       default value will be used.
 
-    - ``num_l`` (int or ``None`` (default)) -- the number of primes
+    - ``num_l`` -- integer or ``None`` (default); the number of primes
       `\ell` to use for the B-bound and R-bound.  If ``None``, a
       default value will be used.
 
@@ -1526,7 +1521,7 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
     Provided that one of these methods succeeds in producing a finite
     list of primes we check these using a local condition, and finally
     test that the primes returned actually are reducible.  Otherwise
-    we return [0].
+    we return ``[0]``.
 
     EXAMPLES::
 
@@ -1632,11 +1627,11 @@ def reducible_primes_naive(E, max_l=None, num_P=None, verbose=False):
 
     - ``E`` -- an elliptic curve defined over a number field `K`
 
-    - ``max_l`` (int or ``None`` (default)) -- the maximum prime
-      `\ell` to test.
+    - ``max_l`` -- integer or ``None`` (default); the maximum prime
+      `\ell` to test
 
-    - ``num_P`` (int or ``None`` (default)) -- the number of primes
-      `P` of `K` to use in testing each `\ell`.
+    - ``num_P`` -- integer or ``None`` (default); the number of primes
+      `P` of `K` to use in testing each `\ell`
 
     EXAMPLES::
 

@@ -6,7 +6,7 @@ Lazy format strings
 
 class LazyFormat(str):
     """
-    Lazy format strings
+    Lazy format strings.
 
     .. NOTE::
 
@@ -84,7 +84,7 @@ class LazyFormat(str):
 
     def __mod__(self, args):
         """
-        Binds the lazy format string with its parameters
+        Bind the lazy format string with its parameters.
 
         EXAMPLES::
 

@@ -297,7 +297,7 @@ def expovariate(lambd):
 
 def gammavariate(alpha, beta):
     r"""
-    Gamma distribution.  Not the gamma function!
+    Gamma distribution.  (Not the gamma function.)
 
     Conditions on the parameters are alpha > 0 and beta > 0.
 

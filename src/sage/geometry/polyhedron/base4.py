@@ -218,8 +218,8 @@ class Polyhedron_base4(Polyhedron_base3):
             - a vector ; in this case the linear form is obtained by duality
               using the dot product: ``f(v) = v.dot_product(f)``.
 
-        - ``increasing`` -- boolean (default ``True``) whether to orient
-          edges in the increasing or decreasing direction.
+        - ``increasing`` -- boolean (default: ``True``); whether to orient
+          edges in the increasing or decreasing direction
 
         By default, an edge is oriented from `v` to `w` if
         `f(v) \leq f(w)`.
@@ -383,7 +383,6 @@ class Polyhedron_base4(Polyhedron_base3):
             [[()], [(0, 1)]]
             sage: [[ls.ambient_V_indices() for ls in lss] for lss in Polyhedron(lines=[(1,0)], vertices=[(0,0)]).face_lattice().level_sets()]
             [[()], [(0, 1)]]
-
         """
         from sage.combinat.posets.lattices import FiniteLatticePoset
         return FiniteLatticePoset(self.hasse_diagram())
@@ -471,12 +470,10 @@ class Polyhedron_base4(Polyhedron_base3):
 
         INPUT:
 
-        - ``args`` -- integers (optional); specify an entry of the
+        - ``args`` -- integer (optional); specify an entry of the
           flag-f-vector; must be an increasing sequence of integers
 
-        OUTPUT:
-
-        - a dictionary, if no arguments were given
+        OUTPUT: a dictionary, if no arguments were given
 
         - an Integer, if arguments were given
 
@@ -603,7 +600,7 @@ class Polyhedron_base4(Polyhedron_base3):
     @cached_method
     def combinatorial_automorphism_group(self, vertex_graph_only=False):
         """
-        Computes the combinatorial automorphism group.
+        Compute the combinatorial automorphism group.
 
         If ``vertex_graph_only`` is ``True``,  the automorphism group
         of the vertex-edge graph of the polyhedron is returned. Otherwise
@@ -688,7 +685,6 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: QG = Q.hasse_diagram().automorphism_group()
             sage: Q.combinatorial_automorphism_group().is_isomorphic(QG)
             True
-
         """
         if vertex_graph_only:
             G = self.graph()
@@ -697,7 +693,7 @@ class Polyhedron_base4(Polyhedron_base3):
         return G.automorphism_group(edge_labels=True)
 
     @cached_method
-    def restricted_automorphism_group(self, output="abstract"):
+    def restricted_automorphism_group(self, output='abstract'):
         r"""
         Return the restricted automorphism group.
 
@@ -764,22 +760,22 @@ class Polyhedron_base4(Polyhedron_base3):
 
         - ``output`` -- how the group should be represented:
 
-          - ``"abstract"`` (default) -- return an abstract permutation
-            group without further meaning.
+          - ``'abstract'`` -- default; return an abstract permutation
+            group without further meaning
 
-          - ``"permutation"`` -- return a permutation group on the
+          - ``'permutation'`` -- return a permutation group on the
             indices of the polyhedron generators. For example, the
             permutation ``(0,1)`` would correspond to swapping
             ``self.Vrepresentation(0)`` and ``self.Vrepresentation(1)``.
 
-          - ``"matrix"`` -- return a matrix group representing affine
+          - ``'matrix'`` -- return a matrix group representing affine
             transformations. When acting on affine vectors, you should
             append a `1` to every vector. If the polyhedron is not full
             dimensional, the returned matrices act as the identity on
             the orthogonal complement of the affine space spanned by
             the polyhedron.
 
-          - ``"matrixlist"`` -- like ``matrix``, but return the list of
+          - ``'matrixlist'`` -- like ``matrix``, but return the list of
             elements of the matrix group. Useful for fields without a
             good implementation of matrix groups or to avoid the
             overhead of creating the group.
@@ -805,14 +801,14 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: P = polytopes.cross_polytope(3)
             sage: P.restricted_automorphism_group() == PermutationGroup([[(3,4)], [(2,3),(4,5)],[(2,5)],[(1,2),(5,6)],[(1,6)]])
             True
-            sage: P.restricted_automorphism_group(output="permutation") == PermutationGroup([[(2,3)],[(1,2),(3,4)],[(1,4)],[(0,1),(4,5)],[(0,5)]])
+            sage: P.restricted_automorphism_group(output='permutation') == PermutationGroup([[(2,3)],[(1,2),(3,4)],[(1,4)],[(0,1),(4,5)],[(0,5)]])
             True
             sage: mgens = [[[1,0,0,0],[0,1,0,0],[0,0,-1,0],[0,0,0,1]], [[1,0,0,0],[0,0,1,0],[0,1,0,0],[0,0,0,1]], [[0,1,0,0],[1,0,0,0],[0,0,1,0],[0,0,0,1]]]
 
         We test groups for equality in a fool-proof way; they can have different generators, etc::
 
             sage: # needs sage.groups
-            sage: poly_g = P.restricted_automorphism_group(output="matrix")
+            sage: poly_g = P.restricted_automorphism_group(output='matrix')
             sage: matrix_g = MatrixGroup([matrix(QQ,t) for t in mgens])
             sage: all(t.matrix() in poly_g for t in matrix_g.gens())
             True
@@ -838,7 +834,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: P = Polyhedron(rays=[(1,0),(0,1)])
             sage: P.Vrepresentation()
             (A vertex at (0, 0), A ray in the direction (0, 1), A ray in the direction (1, 0))
-            sage: P.restricted_automorphism_group(output="permutation")
+            sage: P.restricted_automorphism_group(output='permutation')
             Permutation Group with generators [(1,2)]
 
         Also, the polyhedron need not be full-dimensional::
@@ -847,7 +843,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: P = Polyhedron(vertices=[(1,2,3,4,5),(7,8,9,10,11)])
             sage: P.restricted_automorphism_group()
             Permutation Group with generators [(1,2)]
-            sage: G = P.restricted_automorphism_group(output="matrixlist"); G
+            sage: G = P.restricted_automorphism_group(output='matrixlist'); G
             (
             [1 0 0 0 0 0]  [ -87/55  -82/55    -2/5   38/55   98/55   12/11]
             [0 1 0 0 0 0]  [-142/55  -27/55    -2/5   38/55   98/55   12/11]
@@ -901,7 +897,7 @@ class Polyhedron_base4(Polyhedron_base3):
             A 3-dimensional polyhedron in (Number Field in sqrt5 with defining
              polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^3
              defined as the convex hull of 20 vertices
-            sage: G = P.restricted_automorphism_group(output="matrixlist")
+            sage: G = P.restricted_automorphism_group(output='matrixlist')
             sage: len(G)
             120
 
@@ -912,21 +908,21 @@ class Polyhedron_base4(Polyhedron_base3):
             ....:                base_ring=RDF)
             sage: P.restricted_automorphism_group()                                     # needs sage.groups
             Permutation Group with generators [(2,3), (1,2)]
-            sage: len(P.restricted_automorphism_group(output="matrixlist"))
+            sage: len(P.restricted_automorphism_group(output='matrixlist'))
             6
 
         TESTS::
 
             sage: P = Polyhedron(vertices=[(1,0), (1,1)], rays=[(1,0)])
-            sage: P.restricted_automorphism_group(output="permutation")                 # needs sage.groups
+            sage: P.restricted_automorphism_group(output='permutation')                 # needs sage.groups
             Permutation Group with generators [(1,2)]
-            sage: P.restricted_automorphism_group(output="matrix")
+            sage: P.restricted_automorphism_group(output='matrix')
             Matrix group over Rational Field with 1 generators (
             [ 1  0  0]
             [ 0 -1  1]
             [ 0  0  1]
             )
-            sage: P.restricted_automorphism_group(output="foobar")
+            sage: P.restricted_automorphism_group(output='foobar')
             Traceback (most recent call last):
             ...
             ValueError: unknown output 'foobar', valid values are
@@ -934,7 +930,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
         Check that :issue:`28828` is fixed::
 
-            sage: P.restricted_automorphism_group(output="matrixlist")[0].is_immutable()
+            sage: P.restricted_automorphism_group(output='matrixlist')[0].is_immutable()
             True
         """
         # The algorithm works as follows:
@@ -1072,8 +1068,8 @@ class Polyhedron_base4(Polyhedron_base3):
         INPUT:
 
         - ``other`` -- a polyhedron object
-        - ``algorithm`` (default = ``'bipartite_graph'``) -- the algorithm to use.
-          The other possible value is ``'face_lattice'``.
+        - ``algorithm`` -- (default: ``'bipartite_graph'``) the algorithm to
+          use; the other possible value is ``'face_lattice'``
 
         OUTPUT:
 
@@ -1173,7 +1169,6 @@ class Polyhedron_base4(Polyhedron_base3):
             Traceback (most recent call last):
             ...
             AssertionError: polyhedron `other` must be bounded
-
         """
         assert isinstance(other, Polyhedron_base4), "input `other` must be a polyhedron"
         assert self.is_compact(), "polyhedron `self` must be bounded"
@@ -1250,7 +1245,6 @@ class Polyhedron_base4(Polyhedron_base3):
             Traceback (most recent call last):
             ...
             ValueError: polyhedron has to be compact
-
         """
         if not self.is_compact():
             raise ValueError("polyhedron has to be compact")

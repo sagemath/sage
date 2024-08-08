@@ -55,7 +55,7 @@ from sage.symbolic.ring import SR
 class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_generic_dense):
     def _repr_(self):
         """
-        Returns the string representation of the vector
+        Return the string representation of the vector.
 
         EXAMPLES::
 

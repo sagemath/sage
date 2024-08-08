@@ -277,7 +277,6 @@ class SkewPartition(CombinatorialElement):
 
             sage: print(SkewPartition([[],[]])._latex_diagram())
             {\emptyset}
-
         """
         if not any(self._list):
             return "{\\emptyset}"
@@ -392,7 +391,7 @@ class SkewPartition(CombinatorialElement):
              ***
             ***
             *
-            sage: SkewPartitions.options(diagram_str='#', convention="French")
+            sage: SkewPartitions.options(diagram_str='#', convention='French')
             sage: print(SkewPartition([[5,4,3,1],[3,1]]).diagram())
             #
             ###
@@ -441,7 +440,7 @@ class SkewPartition(CombinatorialElement):
             [                        *   *   *    * ]
             [      **   **   *    *  *   *  *    *  ]
             [ ***, * , *  , **, ** , *, * , * , *   ]
-            sage: SkewPartitions.options(diagram_str='#', convention="French")
+            sage: SkewPartitions.options(diagram_str='#', convention='French')
             sage: ascii_art(SkewPartitions(3).list())
             [                        #  #   #   #   ]
             [      #   #    ##  ##   #   #  #    #  ]
@@ -816,7 +815,7 @@ class SkewPartition(CombinatorialElement):
         icorners += [(nn, 0)]
         return icorners
 
-    def cell_poset(self, orientation="SE"):
+    def cell_poset(self, orientation='SE'):
         """
         Return the Young diagram of ``self`` as a poset. The optional
         keyword variable ``orientation`` determines the order relation
@@ -825,10 +824,10 @@ class SkewPartition(CombinatorialElement):
         The poset always uses the set of cells of the Young diagram
         of ``self`` as its ground set. The order relation of the poset
         depends on the ``orientation`` variable (which defaults to
-        ``"SE"``). Concretely, ``orientation`` has to be specified to
-        one of the strings ``"NW"``, ``"NE"``, ``"SW"``, and ``"SE"``,
+        ``'SE'``). Concretely, ``orientation`` has to be specified to
+        one of the strings ``'NW'``, ``'NE'``, ``'SW'``, and ``'SE'``,
         standing for "northwest", "northeast", "southwest" and
-        "southeast", respectively. If ``orientation`` is ``"SE"``, then
+        "southeast", respectively. If ``orientation`` is ``'SE'``, then
         the order relation of the poset is such that a cell `u` is
         greater or equal to a cell `v` in the poset if and only if `u`
         lies weakly southeast of `v` (this means that `u` can be
@@ -1054,7 +1053,7 @@ class SkewPartition(CombinatorialElement):
         """
         return [list(r) for r in list(self)]
 
-    def to_dag(self, format="string"):
+    def to_dag(self, format='string'):
         """
         Return a directed acyclic graph corresponding to the skew
         partition ``self``.
@@ -1081,7 +1080,7 @@ class SkewPartition(CombinatorialElement):
             ('1,1', '1,2', None)]
             sage: dag.vertices(sort=True)
             ['0,1', '0,2', '1,1', '1,2', '2,0']
-            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")
+            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format='tuple')
             sage: dag.edges(sort=True)
             [((0, 1), (0, 2), None), ((0, 1), (1, 1), None)]
             sage: dag.vertices(sort=True)
@@ -1414,7 +1413,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         """
-        Sets and displays the options for elements of the skew partition
+        Set and display the options for elements of the skew partition
         classes.  If no parameters are set, then the function returns a copy of
         the options dictionary.
 
@@ -1436,7 +1435,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
         Changing the ``convention`` for skew partitions also changes the
         ``convention`` option for partitions and tableaux and vice versa::
 
-            sage: SkewPartitions.options(display="diagram", convention='French')
+            sage: SkewPartitions.options(display='diagram', convention='French')
             sage: SP
             *
              *
@@ -1465,24 +1464,24 @@ class SkewPartitions(UniqueRepresentation, Parent):
         """
         NAME = 'SkewPartitions'
         module = 'sage.combinat.skew_partition'
-        display = dict(default="quotient",
+        display = dict(default='quotient',
                      description='Specifies how skew partitions should be printed',
                      values=dict(lists='displayed as a pair of lists',
                                  quotient='displayed as a quotient of partitions',
                                  diagram='as a skew Ferrers diagram'),
-                     alias=dict(array="diagram", ferrers_diagram="diagram",
-                                young_diagram="diagram", pair="lists"),
+                     alias=dict(array='diagram', ferrers_diagram='diagram',
+                                young_diagram='diagram', pair='lists'),
                      case_sensitive=False)
-        latex = dict(default="young_diagram",
+        latex = dict(default='young_diagram',
                    description='Specifies how skew partitions should be latexed',
                    values=dict(diagram='latex as a skew Ferrers diagram',
                                young_diagram='latex as a skew Young diagram',
                                marked='latex as a partition where the skew shape is marked'),
-                   alias=dict(array="diagram", ferrers_diagram="diagram"),
+                   alias=dict(array='diagram', ferrers_diagram='diagram'),
                    case_sensitive=False)
         diagram_str = dict(link_to=(Partitions.options,'diagram_str'))
         latex_diagram_str = dict(link_to=(Partitions.options,'latex_diagram_str'))
-        latex_marking_str = dict(default="X",
+        latex_marking_str = dict(default='X',
                          description='The character used to marked the deleted cells when latexing marked partitions',
                          checker=lambda char: isinstance(char, str))
         convention = dict(link_to=(Tableaux.options,'convention'))
@@ -1571,15 +1570,15 @@ class SkewPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``rowL`` -- A composition or a list of positive integers
+        - ``rowL`` -- a composition or a list of positive integers
 
-        - ``colL`` -- A composition or a list of positive integers
+        - ``colL`` -- a composition or a list of positive integers
 
         OUTPUT:
 
         - If it exists the unique skew-partitions with row lengths ``rowL``
           and column lengths ``colL``.
-        - Raise a :class:`ValueError` if ``rowL`` and ``colL`` are not compatible.
+        - Raise a :exc:`ValueError` if ``rowL`` and ``colL`` are not compatible.
 
         EXAMPLES::
 
@@ -1610,7 +1609,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
 
             If some rows and columns have length zero, there is no way to retrieve
             unambiguously the skew partition. We therefore raise
-            a :class:`ValueError`.
+            a :exc:`ValueError`.
             For examples here are two skew partitions with the same row and column
             lengths::
 
@@ -1716,9 +1715,9 @@ class SkewPartitions_n(SkewPartitions):
 
     INPUT:
 
-    - ``n`` -- a non-negative integer
+    - ``n`` -- nonnegative integer
 
-    - ``overlap`` -- an integer (default: `0`)
+    - ``overlap`` -- integer (default: `0`)
 
     Caveat: this set is stable under conjugation only for ``overlap`` equal
     to 0 or 1. What exactly happens for negative overlaps is not yet
@@ -1768,8 +1767,8 @@ class SkewPartitions_n(SkewPartitions):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer
-        - ``overlap`` -- an integer
+        - ``n`` -- nonnegative integer
+        - ``overlap`` -- integer
 
         TESTS::
 

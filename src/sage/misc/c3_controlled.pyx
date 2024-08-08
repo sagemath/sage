@@ -496,7 +496,7 @@ cdef class CmpKey:
 
     def __init__(self):
         """
-        Sets the internal category counter to zero.
+        Set the internal category counter to zero.
 
         EXAMPLES::
 
@@ -507,7 +507,7 @@ cdef class CmpKey:
 
     def __get__(self, object inst, object cls):
         """
-        Bind the comparison key to the given instance
+        Bind the comparison key to the given instance.
 
         EXAMPLES::
 
@@ -555,7 +555,6 @@ cdef class CmpKeyNamed:
         True
         sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key
         True
-
     """
     def __get__(self, object inst, object cls):
         """
@@ -565,7 +564,6 @@ cdef class CmpKeyNamed:
             True
             sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key
             True
-
         """
         cdef dict D = cls._make_named_class_cache
         cdef str name = "_cmp_key"
@@ -1208,7 +1206,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     @lazy_attribute
     def _bases_controlled(self):
         """
-        A list of bases controlled by :meth:`C3_sorted_merge`
+        A list of bases controlled by :meth:`C3_sorted_merge`.
 
         This triggers the calculation of the MRO using
         :meth:`C3_sorted_merge`, which sets this attribute as a side
@@ -1231,7 +1229,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     @lazy_attribute
     def mro_standard(self):
         """
-        The MRO for this object, calculated with :meth:`C3_merge`
+        The MRO for this object, calculated with :meth:`C3_merge`.
 
         EXAMPLES::
 

@@ -89,7 +89,7 @@ def test_valuation(a, p):
 
 cdef int padic_square(mpz_t a, mpz_t p) noexcept:
     """
-    Test if a is a p-adic square.
+    Test if a is a `p`-adic square.
     """
     cdef unsigned long v
     cdef mpz_t aa
@@ -134,7 +134,7 @@ def test_padic_square(a, p):
 cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
                 mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
-    Implements Lemma 6 of BSD's "Notes on elliptic curves, I" for odd p.
+    Implement Lemma 6 of BSD's "Notes on elliptic curves, I" for odd `p`.
 
     Returns -1 for insoluble, 0 for undecided, +1 for soluble.
     """
@@ -184,7 +184,7 @@ cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
                 mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
-    Implements Lemma 7 of BSD's "Notes on elliptic curves, I" for p=2.
+    Implement Lemma 7 of BSD's "Notes on elliptic curves, I" for `p=2`.
 
     Returns -1 for insoluble, 0 for undecided, +1 for soluble.
     """
@@ -948,7 +948,7 @@ def test_qpls(a, b, c, d, e, p):
 
 cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e) except -1:
     """
-    Returns whether the quartic has local solutions at all primes p.
+    Return whether the quartic has local solutions at all primes `p`.
     """
     cdef Integer A, B, C, D, E, Delta,p
     cdef mpz_t mpz_2

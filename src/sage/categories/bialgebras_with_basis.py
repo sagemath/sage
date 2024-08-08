@@ -156,11 +156,9 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
-            OUTPUT:
-
-            - the image of ``self`` under the convolution power `\mathrm{Id}^{*n}`
+            OUTPUT: the image of ``self`` under the convolution power `\mathrm{Id}^{*n}`
 
             .. NOTE::
 
@@ -249,9 +247,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
               \ldots, f_n` on ``self.parent()``; or a single ``list`` or
               ``tuple`` of such maps
 
-            OUTPUT:
-
-            - the convolution product of ``maps`` applied to ``self``
+            OUTPUT: the convolution product of ``maps`` applied to ``self``
 
             AUTHORS:
 

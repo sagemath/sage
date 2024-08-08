@@ -38,9 +38,9 @@ def default_viewer(viewer=None):
 
     INPUT:
 
-    - ``viewer``: ``None`` or a string: one of 'browser', 'pdf', 'png',
-      'dvi' -- return the name of the corresponding program.  ``None``
-      is treated the same as 'browser'.
+    - ``viewer`` -- ``None`` or a string; one of ``'browser'``, ``'pdf'``,
+      ``'png'``, ``'dvi'``. Return the name of the corresponding program.
+      ``None`` is treated the same as ``'browser'``.
 
     EXAMPLES::
 
@@ -149,9 +149,9 @@ class Viewer(SageObject):
 
         INPUT:
 
-        - ``app`` -- ``None`` or a string, the program to use
-        - ``TYPE`` -- a string, must be in the list ``VIEWERS`` defined in
-          :mod:`sage.misc.viewer`.  Default 'browser'.
+        - ``app`` -- ``None`` or a string; the program to use
+        - ``TYPE`` -- string (default: ``'browser'``); must be in the list
+          ``VIEWERS`` defined in :mod:`sage.misc.viewer`
 
         EXAMPLES::
 

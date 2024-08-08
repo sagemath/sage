@@ -17,7 +17,7 @@ from sage.misc.cachefunc import cached_method
 
 class GradedCoalgebras(GradedModulesCategory):
     """
-    The category of graded coalgebras
+    The category of graded coalgebras.
 
     EXAMPLES::
 

@@ -84,7 +84,7 @@ def multiply_variable(self, c, i, in_place=False):
 
     - ``c`` -- an element of ``self.base_ring()``
 
-    - ``i`` -- an integer `\geq 0`
+    - ``i`` -- integer `\geq 0`
 
     OUTPUT: a :class:`QuadraticForm` (by default, otherwise none)
 
@@ -127,7 +127,7 @@ def divide_variable(self, c, i, in_place=False):
 
     - ``c`` -- an element of ``self.base_ring()``
 
-    - ``i`` -- an integer `\geq 0`
+    - ``i`` -- integer `\geq 0`
 
     OUTPUT:
 
@@ -218,7 +218,7 @@ def extract_variables(QF, var_indices):
 
     INPUT:
 
-    - ``var_indices`` -- a list of integers `\geq 0`
+    - ``var_indices`` -- list of integers `\geq 0`
 
     OUTPUT: a :class:`QuadraticForm`
 

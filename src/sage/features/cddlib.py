@@ -34,5 +34,5 @@ class CddExecutable(Executable):
             sage: isinstance(CddExecutable(), CddExecutable)
             True
         """
-        Executable.__init__(self, name=name, executable=name, spkg="cddlib",
-                            url="https://github.com/cddlib/cddlib", type="standard")
+        Executable.__init__(self, name=name, executable=name, spkg='cddlib',
+                            url='https://github.com/cddlib/cddlib', type='standard')

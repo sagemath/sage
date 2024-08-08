@@ -1,1 +1,1 @@
-python-matplotlib
+python3-matplotlib

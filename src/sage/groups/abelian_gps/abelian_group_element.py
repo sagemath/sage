@@ -13,7 +13,6 @@ AUTHORS:
 
 - Volker Braun (2012-11) port to new Parent base. Use tuples for immutables.
 
-
 EXAMPLES:
 
 Recall an example from abelian groups::
@@ -105,7 +104,7 @@ class AbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(3, [2,3,4], names="abc"); G
+            sage: G = AbelianGroup(3, [2,3,4], names='abc'); G
             Multiplicative Abelian group isomorphic to C2 x C3 x C4
             sage: a,b,c = G.gens()
             sage: Gp = G.permutation_group(); Gp                                        # needs sage.groups
@@ -149,7 +148,7 @@ class AbelianGroupElement(AbelianGroupElementBase):
         EXAMPLES::
 
             sage: # needs sage.libs.gap
-            sage: G = AbelianGroup(2, [2,3], names="xy")
+            sage: G = AbelianGroup(2, [2,3], names='xy')
             sage: x,y = G.gens()
             sage: x.word_problem([x,y])
             [[x, 1]]

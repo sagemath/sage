@@ -77,14 +77,13 @@ class InlineFortran:
 
     def eval(self, x, globals=None, locals=None):
         """
-        Compile fortran code ``x`` and adds the functions in it to
-        ``globals``.
+        Compile fortran code ``x`` and adds the functions in it to ``globals``.
 
         INPUT:
 
-        - ``x`` -- Fortran code
+        - ``x`` -- fortran code
 
-        - ``globals`` -- a dict to which to add the functions from the
+        - ``globals`` -- dictionary to which to add the functions from the
           fortran module
 
         - ``locals`` -- ignored

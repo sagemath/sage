@@ -28,9 +28,9 @@ class SurfaceGenerators:
     in 3D.
     """
     @staticmethod
-    def Catenoid(c=1, name="Catenoid"):
+    def Catenoid(c=1, name='Catenoid'):
         r"""
-        Return a catenoid surface, with parametric representation
+        Return a catenoid surface, with parametric representation.
 
         .. MATH::
 
@@ -42,9 +42,9 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``c`` -- surface parameter.
+        - ``c`` -- surface parameter
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Catenoid`.
 
@@ -61,9 +61,9 @@ class SurfaceGenerators:
         return ParametrizedSurface3D(catenoid_eq, coords, name)
 
     @staticmethod
-    def Crosscap(r=1, name="Crosscap"):
+    def Crosscap(r=1, name='Crosscap'):
         r"""
-        Return a crosscap surface, with parametrization
+        Return a crosscap surface, with parametrization.
 
         .. MATH::
 
@@ -75,9 +75,9 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``r`` -- surface parameter.
+        - ``r`` -- surface parameter
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Cross-cap`.
 
@@ -97,7 +97,7 @@ class SurfaceGenerators:
     @staticmethod
     def Dini(a=1, b=1, name="Dini's surface"):
         r"""
-        Return Dini's surface, with parametrization
+        Return Dini's surface, with parametrization.
 
         .. MATH::
 
@@ -109,9 +109,9 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``a``, ``b`` -- surface parameters.
+        - ``a``, ``b`` -- surface parameters
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Dini%27s_surface`.
 
@@ -129,7 +129,7 @@ class SurfaceGenerators:
         return ParametrizedSurface3D(dini_eq, coords, name)
 
     @staticmethod
-    def Ellipsoid(center=(0, 0, 0), axes=(1, 1, 1), name="Ellipsoid"):
+    def Ellipsoid(center=(0, 0, 0), axes=(1, 1, 1), name='Ellipsoid'):
         r"""
         Return an ellipsoid centered at ``center`` whose semi-principal axes
         have lengths given by the components of ``axes``. The
@@ -145,11 +145,11 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``center`` -- 3-tuple. Coordinates of the center of the ellipsoid.
+        - ``center`` -- 3-tuple; coordinates of the center of the ellipsoid
 
-        - ``axes`` -- 3-tuple. Lengths of the semi-principal axes.
+        - ``axes`` -- 3-tuple; lengths of the semi-principal axes
 
-        - ``name`` -- string. Name of the ellipsoid.
+        - ``name`` -- string; name of the ellipsoid
 
         For more information, see :wikipedia:`Ellipsoid`.
 
@@ -172,7 +172,7 @@ class SurfaceGenerators:
     @staticmethod
     def Enneper(name="Enneper's surface"):
         r"""
-        Return Enneper's surface, with parametrization
+        Return Enneper's surface, with parametrization.
 
         .. MATH::
 
@@ -184,7 +184,7 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Enneper_surface`.
 
@@ -201,9 +201,9 @@ class SurfaceGenerators:
         return ParametrizedSurface3D(enneper_eq, coords, name)
 
     @staticmethod
-    def Helicoid(h=1, name="Helicoid"):
+    def Helicoid(h=1, name='Helicoid'):
         r"""
-        Return a helicoid surface, with parametrization
+        Return a helicoid surface, with parametrization.
 
         .. MATH::
 
@@ -216,9 +216,9 @@ class SurfaceGenerators:
         INPUT:
 
         - ``h`` -- distance along the z-axis between two
-          successive turns of the helicoid.
+          successive turns of the helicoid
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Helicoid`.
 
@@ -249,9 +249,9 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``r`` -- radius of the "figure-8" circle.
+        - ``r`` -- radius of the "figure-8" circle
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Klein_bottle`.
 
@@ -282,7 +282,7 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Monkey_saddle`.
 
@@ -302,7 +302,7 @@ class SurfaceGenerators:
     @staticmethod
     def Paraboloid(a=1, b=1, c=1, elliptic=True, name=None):
         r"""
-        Return a paraboloid with equation
+        Return a paraboloid with equation.
 
         .. MATH::
 
@@ -313,12 +313,12 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``a``, ``b``, ``c`` -- Surface parameters.
+        - ``a``, ``b``, ``c`` -- surface parameters
 
-        - ``elliptic`` (default: ``True``) -- whether to create an elliptic or
-          hyperbolic paraboloid.
+        - ``elliptic`` -- boolean (default: ``True``); whether to create an
+          elliptic or hyperbolic paraboloid
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Paraboloid`.
 
@@ -353,17 +353,17 @@ class SurfaceGenerators:
         return ParametrizedSurface3D(paraboloid_eq, coords, name)
 
     @staticmethod
-    def Sphere(center=(0, 0, 0), R=1, name="Sphere"):
+    def Sphere(center=(0, 0, 0), R=1, name='Sphere'):
         r"""
         Return a sphere of radius ``R`` centered at ``center``.
 
         INPUT:
 
-        - ``center`` -- 3-tuple, center of the sphere.
+        - ``center`` -- 3-tuple; center of the sphere
 
-        - ``R`` -- Radius of the sphere.
+        - ``R`` -- radius of the sphere
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Sphere`.
 
@@ -394,7 +394,7 @@ class SurfaceGenerators:
         return SurfaceGenerators.Ellipsoid(center, (R, R, R), name)
 
     @staticmethod
-    def Torus(r=2, R=3, name="Torus"):
+    def Torus(r=2, R=3, name='Torus'):
         r"""
         Return a torus obtained by revolving a circle of radius ``r`` around
         a coplanar axis ``R`` units away from the center of the circle. The
@@ -410,9 +410,9 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``r``, ``R`` -- Minor and major radius of the torus.
+        - ``r``, ``R`` -- minor and major radius of the torus
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Torus`.
 
@@ -439,7 +439,7 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``name`` -- string. Name of the surface.
+        - ``name`` -- string; name of the surface
 
         For more information, see :wikipedia:`Whitney_umbrella`.
 

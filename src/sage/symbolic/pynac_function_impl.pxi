@@ -13,7 +13,7 @@ cpdef call_registered_function(unsigned serial,
 
     - ``nargs`` -- declared number of args (0 is variadic)
 
-    - ``args`` -- a list of arguments to pass to the function;
+    - ``args`` -- list of arguments to pass to the function;
       each must be an :class:`Expression`
 
     - ``hold`` -- whether to leave the call unevaluated
@@ -66,11 +66,9 @@ cpdef unsigned find_registered_function(name, int nargs) except -1:
     r"""
     Look up a function registered with Pynac (GiNaC).
 
-    This raises a :class:`ValueError` if the function is not registered.
+    Raise a :exc:`ValueError` if the function is not registered.
 
-    OUTPUT:
-
-    - serial number of the function, for use in :func:`call_registered_function`
+    OUTPUT: serial number of the function, for use in :func:`call_registered_function`
 
     EXAMPLES::
 
@@ -93,9 +91,7 @@ cpdef unsigned register_or_update_function(self, name, latex_name, int nargs,
     r"""
     Register the function ``self`` with Pynac (GiNaC).
 
-    OUTPUT:
-
-    - serial number of the function, for use in :func:`call_registered_function`
+    OUTPUT: serial number of the function, for use in :func:`call_registered_function`
 
     EXAMPLES::
 

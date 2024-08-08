@@ -215,9 +215,7 @@ def show_pentaminos(box=(5,8,2)):
     - ``box`` -- tuple of size three (default: ``(5,8,2)``),
       size of the box
 
-    OUTPUT:
-
-    3D Graphic object
+    OUTPUT: 3D Graphic object
 
     EXAMPLES::
 
@@ -348,9 +346,7 @@ class QuantuminoState(SageObject):
         r"""
         Return the solution as a 3D Graphic object.
 
-        OUTPUT:
-
-            3D Graphic Object
+        OUTPUT: 3D Graphic Object
 
         EXAMPLES::
 
@@ -429,7 +425,7 @@ class QuantuminoSolver(SageObject):
 
     def __repr__(self):
         r"""
-        String representation
+        String representation.
 
         EXAMPLES::
 
@@ -484,9 +480,7 @@ class QuantuminoSolver(SageObject):
           - ``'common'`` -- common part between two consecutive solutions
           - ``'incremental'`` -- one piece change at a time
 
-        OUTPUT:
-
-            iterator of QuantuminoState
+        OUTPUT: iterator of :class:`QuantuminoState`
 
         EXAMPLES:
 
@@ -574,9 +568,7 @@ class QuantuminoSolver(SageObject):
         r"""
         Return the number of solutions.
 
-        OUTPUT:
-
-            integer
+        OUTPUT: integer
 
         EXAMPLES::
 

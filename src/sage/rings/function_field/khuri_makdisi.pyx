@@ -472,7 +472,7 @@ cdef class KhuriMakdisi_large(KhuriMakdisi_base):
 
     cpdef Matrix addflip(self, Matrix wd1, Matrix wd2):
         """
-        Theorem 4.3 (addflip)
+        Theorem 4.3 (addflip).
 
         TESTS::
 

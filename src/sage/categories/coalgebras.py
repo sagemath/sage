@@ -27,7 +27,7 @@ from sage.misc.lazy_import import LazyImport
 
 class Coalgebras(Category_over_base_ring):
     """
-    The category of coalgebras
+    The category of coalgebras.
 
     EXAMPLES::
 

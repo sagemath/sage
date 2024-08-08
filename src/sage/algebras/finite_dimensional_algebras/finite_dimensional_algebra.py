@@ -36,12 +36,12 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
     - ``k`` -- a field
 
-    - ``table`` -- a list of matrices
+    - ``table`` -- list of matrices
 
-    - ``names`` -- (default: ``'e'``) string; names for the basis
+    - ``names`` -- string (default: ``'e'``); names for the basis
       elements
 
-    - ``assume_associative`` -- (default: ``False``) boolean; if
+    - ``assume_associative`` -- boolean (default: ``False``); if
       ``True``, then the category is set to ``category.Associative()``
       and methods requiring associativity assume this
 
@@ -310,7 +310,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
     def __iter__(self):
         """
-        Iterates over the elements of ``self``.
+        Iterate over the elements of ``self``.
 
         EXAMPLES::
 
@@ -439,11 +439,11 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         - ``A`` -- a :class:`FiniteDimensionalAlgebra`
 
-        - ``gens`` -- (default: None); either an element of ``A`` or a
-          list of elements of ``A``, given as vectors, matrices, or
+        - ``gens`` -- (default: ``None``) either an element of `A` or a
+          list of elements of `A`, given as vectors, matrices, or
           FiniteDimensionalAlgebraElements.  If ``given_by_matrix`` is
           ``True``, then ``gens`` should instead be a matrix whose rows
-          form a basis of an ideal of ``A``.
+          form a basis of an ideal of `A`.
 
         - ``given_by_matrix`` -- boolean (default: ``False``); if
           ``True``, no checking is done
@@ -811,7 +811,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         - :class:`~sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_ideal.FiniteDimensionalAlgebraIdeal`;
           the unique maximal ideal of ``self``.  If ``self`` is not a local
-          algebra, a :class:`ValueError` is raised.
+          algebra, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 

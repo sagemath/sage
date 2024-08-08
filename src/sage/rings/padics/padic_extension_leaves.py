@@ -117,7 +117,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -175,7 +175,7 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -261,7 +261,7 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -320,7 +320,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -382,7 +382,7 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -401,7 +401,6 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
             sage: a % R.prime()                                                         # needs sage.libs.flint
             a
-
         """
         self._shift_seed = None
         self._exact_modulus = exact_modulus
@@ -439,7 +438,7 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -508,7 +507,7 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -563,7 +562,7 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -619,7 +618,7 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -674,7 +673,7 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 

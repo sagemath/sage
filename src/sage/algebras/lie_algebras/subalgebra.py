@@ -35,8 +35,8 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
     INPUT:
 
     - ``ambient`` -- the Lie algebra containing the subalgebra
-    - ``gens`` -- a list of generators of the subalgebra
-    - ``ideal`` -- (default: ``False``) a boolean; if ``True``, then ``gens``
+    - ``gens`` -- list of generators of the subalgebra
+    - ``ideal`` -- boolean (default: ``False``); if ``True``, then ``gens``
       is interpreted as the generating set of an ideal instead of a subalgebra
     - ``order`` -- (optional) the key used to sort the indices of ``ambient``
     - ``category`` -- (optional) a subcategory of subobjects of finite
@@ -311,7 +311,6 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: I = L.subalgebra(x)
             sage: I(x) in I
             True
-
         """
         if x in self._ambient:
             x = self._ambient(x)
@@ -770,7 +769,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
     def from_vector(self, v, order=None, coerce=False):
         r"""
-        Return the element of ``self`` corresponding to the vector ``v``
+        Return the element of ``self`` corresponding to the vector ``v``.
 
         INPUT:
 

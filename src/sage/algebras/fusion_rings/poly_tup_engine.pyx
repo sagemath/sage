@@ -259,7 +259,7 @@ cpdef list get_variables_degrees(list eqns, int nvars):
 
 cpdef list variables(tuple eq_tup):
     """
-    Return indices of all variables appearing in eq_tup
+    Return indices of all variables appearing in ``eq_tup``.
 
     EXAMPLES::
 
@@ -348,9 +348,9 @@ cdef dict subs_squares(dict eq_dict, KSHandler known_sq):
 
     INPUT:
 
-    - ``eq_dict`` -- a dictionary of ``(ETuple, coeff)`` pairs representing
+    - ``eq_dict`` -- dictionary of ``(ETuple, coeff)`` pairs representing
       a polynomial
-    - ``known_sq`` -- a dictionary of ``(int i, NumberFieldElement a)`` pairs
+    - ``known_sq`` -- dictionary of ``(int i, NumberFieldElement a)`` pairs
       such that `x_i^2 - a = 0`
 
     OUTPUT:
@@ -446,8 +446,8 @@ cpdef dict compute_known_powers(max_degs, dict val_dict, one):
 
     - ``max_deg`` -- an ``ETuple`` indicating the maximal degree of
       each variable
-    - ``val_dict`` -- a dictionary of ``(var_idx, poly_tup)`` key-value pairs
-    - ``poly_tup`` -- a tuple of ``(ETuple, coeff)`` pairs reperesenting a
+    - ``val_dict`` -- dictionary of ``(var_idx, poly_tup)`` key-value pairs
+    - ``poly_tup`` -- tuple of ``(ETuple, coeff)`` pairs reperesenting a
       multivariate polynomial
 
     EXAMPLES::

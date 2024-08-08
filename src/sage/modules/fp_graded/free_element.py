@@ -164,9 +164,7 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
 
         - ``a`` -- an element of the algebra the parent module is defined over
 
-        OUTPUT:
-
-        The module element `a \cdot x` where `x` is this module element.
+        OUTPUT: the module element `a \cdot x` where `x` is this module element
 
         EXAMPLES::
 
@@ -198,7 +196,7 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
     @cached_method
     def vector_presentation(self):
         r"""
-        A coordinate vector representing ``self`` when it is a non-zero
+        A coordinate vector representing ``self`` when it is a nonzero
         homogeneous element.
 
         These are coordinates with respect to the basis chosen by
@@ -209,7 +207,7 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
         OUTPUT:
 
         A vector of elements in the ground ring of the algebra for
-        this module when this element is non-zero.  Otherwise, the value
+        this module when this element is nonzero.  Otherwise, the value
         ``None``.
 
         .. SEEALSO::

@@ -66,10 +66,10 @@ class HeckeSubmodule(module.HeckeModule_free_module):
           be invariant under all Hecke operators.
 
         - ``dual_free_module`` -- the submodule of the dual of the ambient
-          module corresponding to this submodule (or None).
+          module corresponding to this submodule (or ``None``)
 
         - ``check`` -- whether or not to explicitly check that the submodule is
-          Hecke equivariant.
+          Hecke equivariant
 
         EXAMPLES::
 
@@ -110,7 +110,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -124,7 +124,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def __add__(self, other):
         r"""
-        Sum of self and other (as submodules of a common ambient
+        Sum of ``self`` and ``other`` (as submodules of a common ambient
         module).
 
         EXAMPLES::
@@ -170,7 +170,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def __richcmp__(self, other, op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -201,8 +201,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
     ################################
     def _compute_dual_hecke_matrix(self, n):
         """
-        Compute the matrix for the nth Hecke operator acting on
-        the dual of self.
+        Compute the matrix for the `n`-th Hecke operator acting on
+        the dual of ``self``.
 
         EXAMPLES::
 
@@ -223,9 +223,9 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def _compute_hecke_matrix(self, n):
         r"""
-        Compute the matrix of the nth Hecke operator acting on this space, by
+        Compute the matrix of the `n`-th Hecke operator acting on this space, by
         calling the corresponding function for the ambient space and
-        restricting. If n is not coprime to the level, we check that the
+        restricting. If `n` is not coprime to the level, we check that the
         restriction is well-defined.
 
         EXAMPLES::
@@ -262,7 +262,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
     def _compute_atkin_lehner_matrix(self, d):
         """
         Compute the Atkin-Lehner matrix corresponding to the
-        divisor d of the level of self.
+        divisor d of the level of ``self``.
 
         EXAMPLES::
 
@@ -283,9 +283,9 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def _set_dual_free_module(self, V):
         """
-        Set the dual free module of self to V. Here V must be a vector
-        space of the same dimension as self, embedded in a space of
-        the same dimension as the ambient space of self.
+        Set the dual free module of ``self`` to V. Here V must be a vector
+        space of the same dimension as ``self``, embedded in a space of
+        the same dimension as the ambient space of ``self``.
 
         EXAMPLES::
 
@@ -405,23 +405,22 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def degeneracy_map(self, level, t=1):
         """
-        The t-th degeneracy map from self to the space of ambient modular
-        symbols of the given level. The level of self must be a divisor or
-        multiple of level, and t must be a divisor of the quotient.
+        The `t`-th degeneracy map from ``self`` to the space of ambient modular
+        symbols of the given level. The level of ``self`` must be a divisor or
+        multiple of level, and `t` must be a divisor of the quotient.
 
         INPUT:
 
+        - ``level`` -- positive integer; the level of the codomain of the
+          map
 
-        -  ``level`` -- int, the level of the codomain of the
-           map (positive int).
+        - ``t`` -- integer; the parameter of the degeneracy map,
+          i.e., the map is related to `f(q)` - `f(q^t)`
 
-        -  ``t`` -- int, the parameter of the degeneracy map,
-           i.e., the map is related to `f(q)` - `f(q^t)`.
+        OUTPUT:
 
-
-        OUTPUT: A linear function from self to the space of modular symbols
-        of given level with the same weight, character, sign, etc., as this
-        space.
+        A linear function from ``self`` to the space of modular symbols of given
+        level with the same weight, character, sign, etc., as this space.
 
         EXAMPLES::
 
@@ -459,12 +458,12 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         In general this will not be possible, e.g., if this space is
         not Hecke equivariant, possibly if it is not cuspidal, or if
         the characteristic is not 0. In all these cases we raise a
-        :class:`RuntimeError` exception.
+        :exc:`RuntimeError` exception.
 
-        If use_star is True (which is the default), we also use the +/-
-        eigenspaces for the star operator to find the dual free module of self.
-        If self does not have a star involution, use_star will automatically be
-        set to False.
+        If ``use_star`` is ``True`` (which is the default), we also use the +/-
+        eigenspaces for the star operator to find the dual free module of ``self``.
+        If ``self`` does not have a star involution, ``use_star`` will automatically be
+        set to ``False``.
 
         EXAMPLES::
 
@@ -516,7 +515,6 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
             sage: EllipticCurve('128a').congruence_number()
             32
-
         """
 
         # if we know the complement we can read off the dual module
@@ -601,7 +599,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def free_module(self):
         """
-        Return the free module corresponding to self.
+        Return the free module corresponding to ``self``.
 
         EXAMPLES::
 
@@ -633,7 +631,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def intersection(self, other):
         """
-        Returns the intersection of self and other, which must both lie in
+        Return the intersection of ``self`` and ``other``, which must both lie in
         a common ambient space of modular symbols.
 
         EXAMPLES::
@@ -678,8 +676,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def is_ambient(self):
         r"""
-        Return ``True`` if self is an ambient space of modular
-        symbols.
+        Return ``True`` if ``self`` is an ambient space of modular symbols.
 
         EXAMPLES::
 
@@ -695,8 +692,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def is_new(self, p=None):
         """
-        Returns True if this Hecke module is p-new. If p is None,
-        returns True if it is new.
+        Return ``True`` if this Hecke module is `p`-new. If `p` is None,
+        returns ``True`` if it is new.
 
         EXAMPLES::
 
@@ -717,8 +714,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def is_old(self, p=None):
         """
-        Returns True if this Hecke module is p-old. If p is None,
-        returns True if it is old.
+        Return ``True`` if this Hecke module is `p`-old. If `p` is ``None``,
+        returns ``True`` if it is old.
 
         EXAMPLES::
 
@@ -742,7 +739,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def is_submodule(self, V):
         """
-        Returns True if and only if self is a submodule of V.
+        Return ``True`` if and only if ``self`` is a submodule of V.
 
         EXAMPLES::
 
@@ -785,14 +782,13 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             ]
             sage: S.linear_combination_of_basis([3, 10])
             3*q + 10*q^2 + 756*q^3 - 6384*q^4 + 14490*q^5 + O(q^6)
-
         """
         x = self.free_module().linear_combination_of_basis(v)
         return self(x)
 
     def new_submodule(self, p=None):
         """
-        Return the new or p-new submodule of this space of modular
+        Return the new or `p`-new submodule of this space of modular
         symbols.
 
         EXAMPLES::
@@ -834,7 +830,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def nonembedded_free_module(self):
         """
-        Return the free module corresponding to self as an abstract
+        Return the free module corresponding to ``self`` as an abstract
         free module, i.e. not as an embedded vector space.
 
         EXAMPLES::
@@ -850,7 +846,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def old_submodule(self, p=None):
         r"""
-        Return the old or p-old submodule of this space of modular
+        Return the old or `p`-old submodule of this space of modular
         symbols.
 
         EXAMPLES: We compute the old and new submodules of
@@ -893,7 +889,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def rank(self):
         r"""
-        Return the rank of self as a free module over the base ring.
+        Return the rank of ``self`` as a free module over the base ring.
 
         EXAMPLES::
 
@@ -906,8 +902,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def submodule(self, M, Mdual=None, check=True):
         """
-        Construct a submodule of self from the free module M, which
-        must be a subspace of self.
+        Construct a submodule of ``self`` from the free module M, which
+        must be a subspace of ``self``.
 
         EXAMPLES::
 
@@ -933,19 +929,17 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def submodule_from_nonembedded_module(self, V, Vdual=None, check=True):
         """
-        Construct a submodule of self from V. Here V should be a
+        Construct a submodule of ``self`` from V. Here V should be a
         subspace of a vector space whose dimension is the same as that
-        of self.
+        of ``self``.
 
         INPUT:
 
+        - ``V`` -- submodule of ambient free module of the same
+          rank as the rank of ``self``
 
-        -  ``V`` -- submodule of ambient free module of the same
-           rank as the rank of self.
-
-        -  ``check`` -- whether to check that V is Hecke
-           equivariant.
-
+        - ``check`` -- whether to check that V is Hecke
+          equivariant
 
         OUTPUT: Hecke submodule of self
 

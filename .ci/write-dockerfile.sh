@@ -354,7 +354,7 @@ RUN cd /new && rm -rf .git && \
         mv src /sage/src;                                    \
         cd /sage && ./bootstrap && ./config.status;          \
     fi; \
-    cd /sage && rm -rf /new .git
+    cd /sage && rm -rf .git; rm -rf /new || echo "(error ignored)"
 
 ARG TARGETS="build"
 $RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN $THEN_SAVE_STATUS

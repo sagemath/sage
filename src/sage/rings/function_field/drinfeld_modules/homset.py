@@ -64,7 +64,6 @@ class DrinfeldModuleMorphismAction(Action):
           From: Drinfeld module defined by T |--> z*t^2 + t + z
           To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^2 + (z^2 + 4*z + 3)*t + z
           Defn: t + 2
-
     """
     def __init__(self, A, H, is_left, op):
         r"""
@@ -76,7 +75,7 @@ class DrinfeldModuleMorphismAction(Action):
 
         - ``H`` -- a homset between Drinfeld modules
 
-        - ``is_left`` -- a boolean
+        - ``is_left`` -- boolean
 
         - ``op`` -- an operator
 
@@ -95,7 +94,6 @@ class DrinfeldModuleMorphismAction(Action):
 
             sage: right_action = DrinfeldModuleMorphismAction(A, H, False, operator.mul)
             sage: TestSuite(right_action).run(skip='_test_pickling')
-
         """
         Action.__init__(self, A, H, is_left, op)
         if is_left:
@@ -120,7 +118,6 @@ class DrinfeldModuleMorphismAction(Action):
               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
               To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^3 + (3*z^2 + 2*z + 2)*t^2 + (2*z^2 + 3*z + 4)*t + z
               Defn: (2*z^2 + 4*z + 4)*t^4 + (z + 1)*t^3 + t^2 + (2*z^2 + 4*z + 4)*t + z
-
         """
         u = f.ore_polynomial()
         if self._is_left:
@@ -234,7 +231,6 @@ class DrinfeldModuleHomset(Homset):
         False
         sage: frobenius_endomorphism in H
         False
-
     """
     Element = DrinfeldModuleMorphism
 
@@ -248,10 +244,11 @@ class DrinfeldModuleHomset(Homset):
 
         - ``Y`` -- the codomain of the homset
 
-        - ``category`` (default: ``None``) -- the Drinfeld modules category of
+        - ``category`` -- (default: ``None``) the Drinfeld modules category of
           the domain and codomain
 
-        - ``check`` (default: ``True``) -- check the validity of the category
+        - ``check`` -- boolean (default: ``True``); check the validity of the
+          category
 
         TESTS::
 

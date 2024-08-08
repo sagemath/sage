@@ -86,7 +86,6 @@ class PoissonTensorField(MultivectorField):
 
         sage: varpi.bracket(varpi).display()
         [varpi,varpi] = 0
-
     """
 
     def __init__(
@@ -106,7 +105,6 @@ class PoissonTensorField(MultivectorField):
             sage: varpi
             2-vector field varpi on the 2-sphere S^2 of radius 1 smoothly
              embedded in the Euclidean space E^3
-
         """
         try:
             vector_field_module = manifold.vector_field_module()
@@ -245,7 +243,6 @@ class PoissonTensorFieldParal(PoissonTensorField, MultivectorFieldParal):
         2-vector field varpi on the Euclidean plane E^2
         sage: varpi.display()
         varpi = -e_q∧e_p
-
     """
 
     def __init__(
@@ -264,7 +261,6 @@ class PoissonTensorFieldParal(PoissonTensorField, MultivectorFieldParal):
             sage: poisson = PoissonTensorFieldParal(M, name='varpi', latex_name=r'\varpi')
             sage: poisson
             2-vector field varpi on the Euclidean plane E^2
-
         """
         PoissonTensorField.__init__(self, manifold, name, latex_name)
         MultivectorFieldParal.__init__(self, self._vmodule, 2, name, latex_name)

@@ -50,7 +50,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
       ``None`` then :class:`sage.sat.solvers.cryptominisat.CryptoMiniSat`
       is used to construct a new converter.  (default: ``None``)
 
-    - ``target_variables`` -- a list of variables. The elements of the list are
+    - ``target_variables`` -- list of variables. The elements of the list are
       used to exclude a particular combination of variable assignments of a
       solution from any further solution. Furthermore ``target_variables``
       denotes which variable-value pairs appear in the solutions. If
@@ -59,14 +59,14 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
       (default: ``None``)
 
     - ``**kwds`` -- parameters can be passed to the converter and the
-       solver by prefixing them with ``c_`` and ``s_`` respectively. For
-       example, to increase CryptoMiniSat's verbosity level, pass
-       ``s_verbosity=1``.
+      solver by prefixing them with ``c_`` and ``s_`` respectively. For
+      example, to increase CryptoMiniSat's verbosity level, pass
+      ``s_verbosity=1``.
 
     OUTPUT:
 
-        A list of dictionaries, each of which contains a variable
-        assignment solving ``F``.
+    A list of dictionaries, each of which contains a variable assignment
+    solving ``F``.
 
     EXAMPLES:
 
@@ -335,9 +335,7 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
        ``s_`` respectively. For example, to increase CryptoMiniSat's verbosity level, pass
        ``s_verbosity=1``.
 
-    OUTPUT:
-
-        A sequence of Boolean polynomials.
+    OUTPUT: a sequence of Boolean polynomials
 
     EXAMPLES::
 

@@ -57,7 +57,7 @@ class sage_interactive(interactive):
     EXAMPLES::
 
         sage: from sage.repl.ipython_kernel.interact import sage_interactive
-        sage: def myfunc(x=10, y="hello", z=None): pass
+        sage: def myfunc(x=10, y='hello', z=None): pass
         sage: sage_interactive(myfunc, x=(0,100), z=["one", "two", "three"])
         ...Interactive function <function myfunc at ...> with 3 widgets
           x: IntSlider(value=10, description='x')
@@ -66,7 +66,7 @@ class sage_interactive(interactive):
     """
     def __init__(self, *args, **kwds):
         """
-        See :class:`ipywidgets.widgets.interaction.interactive`
+        See :class:`ipywidgets.widgets.interaction.interactive`.
 
         TESTS::
 

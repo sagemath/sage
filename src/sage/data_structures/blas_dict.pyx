@@ -19,7 +19,7 @@ meaningful in those cases. We are also assuming that ``-1 * x = -x``
 and ``bool(x) == bool(-x)`` for all ``x`` in `K`.
 
 Unless stated overwise, all values `v` in the dictionaries should be
-non zero (as tested with `bool(v)`).
+nonzero (as tested with `bool(v)`).
 
 This is mostly used by :class:`CombinatorialFreeModule`.
 """
@@ -208,7 +208,7 @@ cpdef dict negate(dict D):
 
     INPUT:
 
-    - ``X`` -- a dictionary representing a vector `X`
+    - ``X`` -- dictionary representing a vector `X`
 
     EXAMPLES::
 
@@ -226,7 +226,7 @@ cpdef dict scal(a, dict D, bint factor_on_left=True):
     INPUT:
 
     - ``a`` -- an element of the base ring `K`
-    - ``X`` -- a dictionary representing a vector `X`
+    - ``X`` -- dictionary representing a vector `X`
 
     EXAMPLES::
 
@@ -248,7 +248,7 @@ cpdef dict add(dict D, dict D2):
     INPUT:
 
     - ``D``, ``D2`` -- dictionaries whose values are in a common ring
-      and all values are non-zero
+      and all values are nonzero
 
     EXAMPLES::
 
@@ -275,7 +275,7 @@ cpdef dict sum(dict_iter):
     INPUT:
 
     - ``dict_iter`` -- iterator of dictionaries whose values are in
-      a common ring and all values are non-zero
+      a common ring and all values are nonzero
 
     OUTPUT:
 
@@ -360,7 +360,7 @@ cpdef dict sum_of_monomials(monomials, scalar):
 
     INPUT:
 
-    - ``monomials`` -- a list (or iterable) of indices representing the monomials
+    - ``monomials`` -- list (or iterable) of indices representing the monomials
     - ``scalar`` -- the scalar for each monomial
 
     EXAMPLES::
@@ -388,7 +388,7 @@ cpdef dict sum_of_terms(index_coeff_pairs):
 
     INPUT:
 
-    - ``index_coeff_pairs`` -- a list (or iterable) of pairs ``(index, coeff)``
+    - ``index_coeff_pairs`` -- list (or iterable) of pairs ``(index, coeff)``
 
     EXAMPLES::
 

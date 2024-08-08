@@ -91,7 +91,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     - ``n`` -- the number of variables (> 0)
 
-    - ``names`` -- a list of names of length ``n``
+    - ``names`` -- list of names of length ``n``
 
     - ``term_order`` -- a term ordering
 
@@ -170,7 +170,6 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         sage: sing_print = singular_function('print')
         sage: sing_print(R)
         'polynomial ring, over a field, global ordering\n// coefficients: QQ(s, t)\n// number of vars : 3\n//        block   1 : ordering dp\n//                  : names    x y z\n//        block   2 : ordering C'
-
     """
     cdef long cexponent
     cdef GFInfo* _param
@@ -299,7 +298,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), RationalField):
         characteristic = 1
         k = PolynomialRing(RationalField(),
-            names=base_ring.variable_names(), order="lex", implementation="singular")
+            names=base_ring.variable_names(), order='lex', implementation='singular')
 
         ngens = len(k.gens())
 
@@ -325,7 +324,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             raise NotImplementedError("Transcental extension are not implemented for non-prime finite fields")
         characteristic = int(base_ring.characteristic())
         k = PolynomialRing(base_ring.base_ring(),
-            names=base_ring.variable_names(), order="lex", implementation="singular")
+            names=base_ring.variable_names(), order='lex', implementation='singular')
 
         ngens = len(k.gens())
 
@@ -349,7 +348,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     elif isinstance(base_ring, NumberField) and base_ring.is_absolute():
         characteristic = 1
         k = PolynomialRing(RationalField(),
-            name=base_ring.variable_name(), order="lex", implementation="singular")
+            name=base_ring.variable_name(), order='lex', implementation='singular')
 
         minpoly = base_ring.polynomial()(k.gen())
 
@@ -395,7 +394,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         # TODO: This is lazy, it should only call Singular stuff not PolynomialRing()
         k = PolynomialRing(base_ring.prime_subfield(),
-            name=base_ring.variable_name(), order="lex", implementation="singular")
+            name=base_ring.variable_name(), order='lex', implementation='singular')
         minpoly = base_ring.polynomial()(k.gen())
 
         ch = base_ring.characteristic()
@@ -545,9 +544,7 @@ cdef class ring_wrapper_Py():
         """
         Return a hash value so that instances can be used as dictionary keys.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -562,9 +559,7 @@ cdef class ring_wrapper_Py():
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -588,9 +583,7 @@ cdef class ring_wrapper_Py():
 
         - ``right`` -- a :class:`ring_wrapper_Py`
 
-        OUTPUT:
-
-        True if both ``ring_wrapper_Py`` wrap the same pointer.
+        OUTPUT: ``True`` if both ``ring_wrapper_Py`` wrap the same pointer
 
         EXAMPLES::
 
@@ -627,7 +620,7 @@ cdef wrap_ring(ring* R):
 
     INPUT:
 
-    - ``R`` -- a singular ring (a C datastructure).
+    - ``R`` -- a singular ring (a C datastructure)
 
     OUTPUT:
 
@@ -644,7 +637,7 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
 
     INPUT:
 
-    - ``existing_ring`` -- a Singular ring.
+    - ``existing_ring`` -- a Singular ring
 
     OUTPUT:
 
@@ -760,7 +753,7 @@ cpdef poison_currRing(frame, event, arg):
     INPUT:
 
     - ``frame``, ``event``, ``arg`` -- the standard arguments for the
-      CPython debugger hook. They are not used.
+      CPython debugger hook; they are not used
 
     OUTPUT:
 
@@ -802,7 +795,8 @@ cpdef print_currRing():
 
 def currRing_wrapper():
     """
-    Returns a wrapper for the current ring, for use in debugging ring_refcount_dict.
+    Return a wrapper for the current ring, for use in debugging
+    ``ring_refcount_dict``.
 
     EXAMPLES::
 

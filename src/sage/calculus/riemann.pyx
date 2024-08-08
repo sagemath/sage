@@ -89,42 +89,41 @@ cdef class Riemann_Map:
 
     INPUT:
 
-    - ``fs`` -- A list of the boundaries of the region, given as
+    - ``fs`` -- list of the boundaries of the region, given as
       complex-valued functions with domain `0` to `2*pi`. Note that the
       outer boundary must be parameterized counter clockwise
       (i.e. ``e^(I*t)``) while the inner boundaries must be clockwise
       (i.e. ``e^(-I*t)``).
 
-    - ``fprimes`` -- A list of the derivatives of the boundary functions.
-      Must be in the same order as ``fs``.
+    - ``fprimes`` -- list of the derivatives of the boundary functions
+      (Must be in the same order as ``fs``)
 
-    - ``a`` -- Complex, the center of the Riemann map. Will be mapped to
+    - ``a`` -- complex, the center of the Riemann map. Will be mapped to
       the origin of the unit disc. Note that ``a`` MUST be within
       the region in order for the results to be mathematically valid.
 
     The following inputs may be passed in as named parameters:
 
-    - ``N`` -- integer (default: ``500``), the number of collocation points
+    - ``N`` -- integer (default: `500`); the number of collocation points
       used to compute the map. More points will give more accurate results,
       especially near the boundaries, but will take longer to compute.
 
-    - ``exterior`` -- boolean (default: ``False``), if set to ``True``, the
+    - ``exterior`` -- boolean (default: ``False``); if set to ``True``, the
       exterior map will be computed, mapping the exterior of the region to the
       exterior of the unit circle.
 
     The following inputs may be passed as named parameters in unusual
     circumstances:
 
-    - ``ncorners`` -- integer (default: ``4``), if mapping a figure with
+    - ``ncorners`` -- integer (default: `4`); if mapping a figure with
       (equally t-spaced) corners -- corners that make a significant change in
       the direction of the boundary -- better results may be sometimes obtained by
       accurately giving this parameter. Used to add the proper constant to
       the theta correspondence function.
 
-    - ``opp`` -- boolean (default: ``False``), set to ``True`` in very rare
+    - ``opp`` -- boolean (default: ``False``); set to ``True`` in very rare
       cases where the theta correspondence function is off by ``pi``, that
       is, if red is mapped left of the origin in the color plot.
-
 
     EXAMPLES:
 
@@ -190,8 +189,6 @@ cdef class Riemann_Map:
 
     This class computes the Riemann Map via the Szego kernel using an
     adaptation of the method described by [KT1986]_.
-
-
     """
     cdef int N, B, ncorners
     cdef f
@@ -205,9 +202,8 @@ cdef class Riemann_Map:
 
     def __init__(self, fs, fprimes, COMPLEX_T a, int N=500, int ncorners=4,
         opp=False, exterior = False):
-
         """
-        Initializes the ``Riemann_Map`` class. See the class :class:`Riemann_Map`
+        Initialize the ``Riemann_Map`` class. See the class :class:`Riemann_Map`
         for full documentation on the input of this initialization method.
 
         TESTS::
@@ -388,12 +384,12 @@ cdef class Riemann_Map:
 
         The following inputs may be passed in as named parameters:
 
-        - ``boundary`` -- integer (default: ``-1``) if < 0,
+        - ``boundary`` -- integer (default: `-1`); if < 0,
           :meth:`get_theta_points` will return the points for all boundaries.
           If >= 0, :meth:`get_theta_points` will return only the points for
           the boundary specified.
 
-        - ``absolute_value`` -- boolean (default: ``False``) if ``True``, will
+        - ``absolute_value`` -- boolean (default: ``False``); if ``True``, will
           return the absolute value of the (complex valued) Szego kernel
           instead of the kernel itself. Useful for plotting.
 
@@ -468,7 +464,7 @@ cdef class Riemann_Map:
 
         The following input must all be passed in as named parameters:
 
-        - ``boundary`` -- integer (default: ``-1``) if < 0,
+        - ``boundary`` -- integer (default: `-1`); if < 0,
           ``get_theta_points()`` will return the points for all boundaries.
           If >= 0, ``get_theta_points()`` will return only the points for
           the boundary specified.
@@ -583,8 +579,8 @@ cdef class Riemann_Map:
 
         INPUT:
 
-        - ``pt`` -- A complex number representing the point to be
-          inverse mapped.
+        - ``pt`` -- a complex number representing the point to be
+          inverse mapped
 
         OUTPUT:
 
@@ -670,12 +666,10 @@ cdef class Riemann_Map:
 
         INPUT:
 
-        - ``pt`` -- A complex number (usually with absolute value <= 1)
-          representing the point to be inverse mapped.
+        - ``pt`` -- a complex number (usually with absolute value <= 1)
+          representing the point to be inverse mapped
 
-        OUTPUT:
-
-        The point on the region that Riemann maps to the input point.
+        OUTPUT: the point on the region that Riemann maps to the input point
 
         EXAMPLES:
 
@@ -721,17 +715,17 @@ cdef class Riemann_Map:
 
         The following inputs may be passed in as named parameters:
 
-        - ``plotjoined`` -- boolean (default: ``True``) If ``False``,
+        - ``plotjoined`` -- boolean (default: ``True``); if ``False``,
           discrete points will be drawn; otherwise they will be connected
           by lines. In this case, if ``plotjoined=False``, the points shown
           will be the original collocation points used to generate the
           Riemann map.
 
         - ``rgbcolor`` -- float array (default: ``[0,0,0]``) the
-          red-green-blue color of the boundary.
+          red-green-blue color of the boundary
 
         - ``thickness`` -- positive float (default: ``1``) the thickness of
-          the lines or points in the boundary.
+          the lines or points in the boundary
 
         EXAMPLES:
 
@@ -775,12 +769,12 @@ cdef class Riemann_Map:
 
         INPUT:
 
-        - ``plot_range`` -- a tuple of the form ``[xmin, xmax, ymin, ymax]``.
-          If the value is ``[]``, the default plotting window of the map will
-          be used.
+        - ``plot_range`` -- tuple of the form ``[xmin, xmax, ymin, ymax]``;
+          if the value is ``[]``, the default plotting window of the map will
+          be used
 
-        - ``x_points`` -- int, the size of the grid in the x direction
-          The number of points in the y_direction is scaled accordingly
+        - ``x_points`` -- integer; the size of the grid in the x direction;
+          the number of points in the y direction is scaled accordingly
 
         OUTPUT:
 
@@ -856,42 +850,43 @@ cdef class Riemann_Map:
 
         The following inputs may be passed in as named parameters:
 
-        - ``spokes`` -- integer (default: ``16``) the number of equally
-          spaced radial lines to plot.
+        - ``spokes`` -- integer (default: 16); the number of equally
+          spaced radial lines to plot
 
-        - ``circles`` -- integer (default: ``4``) the number of equally
-          spaced circles about the center to plot.
+        - ``circles`` -- integer (default: 4); the number of equally
+          spaced circles about the center to plot
 
-        - ``pts`` -- integer (default: ``32``) the number of points to
+        - ``pts`` -- integer (default: 32); the number of points to
           plot. Each radial line is made by ``1*pts`` points, each circle
           has ``2*pts`` points. Note that high values may cause erratic
           behavior of the radial lines near the boundaries.
           - only for simply connected domains
 
-        - ``linescale`` -- float between 0 and 1. Shrinks the radial lines
-          away from the boundary to reduce erratic behavior.
+        - ``linescale`` -- float between 0 and 1; shrinks the radial lines
+          away from the boundary to reduce erratic behavior
           - only for simply connected domains
 
-        - ``rgbcolor`` -- float array (default: ``[0,0,0]``) the
-          red-green-blue color of the spiderweb.
+        - ``rgbcolor`` -- float array (default: ``[0,0,0]``); the
+          red-green-blue color of the spiderweb
 
-        - ``thickness`` -- positive float (default: ``1``) the thickness of
-          the lines or points in the spiderweb.
+        - ``thickness`` -- positive float (default: 1); the thickness of
+          the lines or points in the spiderweb
 
-        - ``plotjoined`` -- boolean (default: ``True``) If ``False``,
+        - ``plotjoined`` -- boolean (default: ``True``); if ``False``,
           discrete points will be drawn; otherwise they will be connected
-          by lines.
+          by lines
           - only for simply connected domains
 
-        - ``withcolor`` -- boolean (default: ``False``) If ``True``,
-          The spiderweb will be overlaid on the basic color plot.
+        - ``withcolor`` -- boolean (default: ``False``); if ``True``,
+          the spiderweb will be overlaid on the basic color plot
 
-        - ``plot_points`` -- integer (default: ``200``) the size of the grid in the x direction
-          The number of points in the y_direction is scaled accordingly.
-          Note that very large values can cause this function to run slowly.
+        - ``plot_points`` -- integer (default: 200); the size of the grid
+          in the x direction. The number of points in the y_direction is scaled
+          accordingly. Note that very large values can cause this function to
+          run slowly.
           - only for multiply connected domains
 
-        - ``min_mag`` -- float (default: ``0.001``) The magnitude cutoff
+        - ``min_mag`` -- float (default: 0.001); the magnitude cutoff
           below which spiderweb points are not drawn. This only applies
           to multiply connected domains and is designed to prevent
           "fuzz" at the edge of the domain. Some complicated multiply
@@ -1021,11 +1016,10 @@ cdef class Riemann_Map:
           ``(xmin, xmax, ymin, ymax)``. Declare if you do not want the plot
           to use the default range for the figure.
 
-        - ``plot_points`` -- integer (default: ``100``), number of points to
+        - ``plot_points`` -- integer (default: 100); number of points to
           plot in the x direction. Points in the y direction are scaled
           accordingly. Note that very large values can cause this function to
           run slowly.
-
 
         EXAMPLES:
 
@@ -1075,10 +1069,10 @@ cdef comp_pt(clist, loop=True):
 
     INPUT:
 
-    - ``clist`` -- a list of complex numbers.
+    - ``clist`` -- list of complex numbers
 
-    - ``loop`` -- boolean (default: ``True``) controls whether or not the
-      first point will be added as the last to plot a closed circle.
+    - ``loop`` -- boolean (default: ``True``); controls whether or not the
+      first point will be added as the last to plot a closed circle
 
     EXAMPLES:
 
@@ -1098,7 +1092,7 @@ cdef comp_pt(clist, loop=True):
 cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
     FLOAT_T ystep):
     """
-    Computes the r*e^(I*theta) form of derivatives from the grid of points. The
+    Compute the r*e^(I*theta) form of derivatives from the grid of points. The
     derivatives are computed using quick-and-dirty taylor expansion and
     assuming analyticity. As such ``get_derivatives`` is primarily intended
     to be used for comparisons in ``plot_spiderweb`` and not for
@@ -1106,8 +1100,8 @@ cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
 
     INPUT:
 
-    - ``z_values`` -- The values for a complex function evaluated on a grid
-      in the complex plane, usually from ``compute_on_grid``.
+    - ``z_values`` -- the values for a complex function evaluated on a grid
+      in the complex plane, usually from ``compute_on_grid``
 
     - ``xstep`` -- float, the spacing of the grid points in the real direction
 
@@ -1154,34 +1148,34 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
     np.ndarray[FLOAT_T, ndim = 2] dr, np.ndarray[FLOAT_T, ndim = 2] dtheta,
     spokes, circles, rgbcolor, thickness, withcolor, min_mag):
     """
-    Converts a grid of complex numbers into a matrix containing rgb data
+    Convert a grid of complex numbers into a matrix containing rgb data
     for the Riemann spiderweb plot.
 
     INPUT:
 
-    - ``z_values`` -- A grid of complex numbers, as a list of lists.
+    - ``z_values`` -- a grid of complex numbers, as a list of lists
 
-    - ``dr`` -- grid of floats, the r derivative of ``z_values``.
-      Used to determine precision.
+    - ``dr`` -- grid of floats, the r derivative of ``z_values``
+      Used to determine precision
 
-    - ``dtheta`` -- grid of floats, the theta derivative of ``z_values``.
-      Used to determine precision.
+    - ``dtheta`` -- grid of floats, the theta derivative of ``z_values``
+      Used to determine precision
 
-    - ``spokes`` -- integer; the number of equally spaced radial lines to plot.
+    - ``spokes`` -- integer; the number of equally spaced radial lines to plot
 
     - ``circles`` -- integer; the number of equally spaced circles about the
-      center to plot.
+      center to plot
 
     - ``rgbcolor`` -- float array; the red-green-blue color of the
-      lines of the spiderweb.
+      lines of the spiderweb
 
     - ``thickness`` -- positive float; the thickness of the lines or points
-      in the spiderweb.
+      in the spiderweb
 
-    - ``withcolor`` -- boolean; If ``True`` the spiderweb will be overlaid
-      on the basic color plot.
+    - ``withcolor`` -- boolean; if ``True`` the spiderweb will be overlaid
+      on the basic color plot
 
-    - ``min_mag`` -- float; The magnitude cutoff below which spiderweb
+    - ``min_mag`` -- float; the magnitude cutoff below which spiderweb
       points are not drawn. This only applies to multiply connected
       domains and is designed to prevent "fuzz" at the edge of the
       domain. Some complicated multiply connected domains (particularly
@@ -1277,7 +1271,7 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
 
     INPUT:
 
-    - ``z_values`` -- A Numpy array of complex numbers.
+    - ``z_values`` -- numpy array of complex numbers
 
     OUTPUT:
 
@@ -1375,18 +1369,19 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
     return rgb
 
 cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
-    """
-    Provides an exact (for n = infinity) Riemann boundary
-    correspondence for the ellipse with axes 1 + epsilon and 1 - epsilon. The
-    boundary is therefore given by e^(I*t)+epsilon*e^(-I*t). It is primarily
-    useful for testing the accuracy of the numerical :class:`Riemann_Map`.
+    r"""
+    Provides an exact (for `n = \infty`) Riemann boundary
+    correspondence for the ellipse with axes `1 + \epsilon` and `1 - \epsilon`.
+    The boundary is therefore given by `\exp(I t)+\epsilon\exp(-I t)`. It is
+    primarily useful for testing the accuracy of the numerical
+    :class:`Riemann_Map`.
 
     INPUT:
 
-    - ``t`` -- The boundary parameter, from 0 to 2*pi
+    - ``t`` -- the boundary parameter, from `0` to `2 \pi`
 
-    - ``n`` -- integer; the number of terms to include.
-      10 is fairly accurate, 20 is very accurate.
+    - ``n`` -- integer; the number of terms to include
+      (10 is fairly accurate, 20 is very accurate)
 
     - ``epsilon`` -- float; the skew of the ellipse (0 is circular)
 
@@ -1429,16 +1424,16 @@ cpdef cauchy_kernel(t, args):
 
     INPUT:
 
-    - ``t`` -- The boundary parameter, meant to be integrated over
+    - ``t`` -- the boundary parameter, meant to be integrated over
 
-    - ``args`` -- a tuple containing:
+    - ``args`` -- tuple containing:
 
       - ``epsilon`` -- float; the skew of the ellipse (0 is circular)
 
-      - ``z`` -- complex; the point to be mapped.
+      - ``z`` -- complex; the point to be mapped
 
-      - ``n`` -- integer; the number of terms to include.
-        10 is fairly accurate, 20 is very accurate.
+      - ``n`` -- integer; the number of terms to include
+        (10 is fairly accurate, 20 is very accurate)
 
       - ``part`` -- will return the real ('r'), imaginary ('i') or
         complex ('c') value of the kernel
@@ -1477,10 +1472,10 @@ cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
 
     INPUT:
 
-    - ``z`` -- complex; the point to be mapped.
+    - ``z`` -- complex; the point to be mapped
 
-    - ``n`` -- integer; the number of terms to include.
-      10 is fairly accurate, 20 is very accurate.
+    - ``n`` -- integer; the number of terms to include
+      (10 is fairly accurate, 20 is very accurate)
 
     TESTS:
 

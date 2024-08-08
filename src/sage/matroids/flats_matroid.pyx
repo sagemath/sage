@@ -42,7 +42,7 @@ cdef class FlatsMatroid(Matroid):
 
     - ``M`` -- matroid (default: ``None``)
     - ``groundset`` -- list (default: ``None``); the groundset of the matroid
-    - ``flats`` -- (default: ``None``); the dictionary of the lists of flats
+    - ``flats`` -- (default: ``None``) the dictionary of the lists of flats
       (indexed by their rank), or the list of all flats, or the lattice of
       flats of the matroid
 
@@ -225,7 +225,6 @@ cdef class FlatsMatroid(Matroid):
 
         - ``other`` -- matroid
         - ``certificate`` -- boolean (default: ``False``)
-
 
         OUTPUT: boolean, and, if ``certificate=True``, a dictionary giving the
         isomorphism or ``None``

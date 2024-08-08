@@ -223,7 +223,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         EXAMPLES::
@@ -330,7 +330,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
     # this exists for compatibility with matrix_modn_dense
     cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         """
-        Set the (i,j) entry of self to the int value.
+        Set the (i,j) entry of ``self`` to the int value.
         """
         mzd_write_bit(self._entries, i, j, int(value))
 
@@ -352,7 +352,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``rep_mapping`` -- a dictionary or callable used to override
+        - ``rep_mapping`` -- dictionary or callable used to override
           the usual representation of elements.  For a dictionary,
           keys should be elements of the base ring and values the
           desired string representation.
@@ -365,14 +365,14 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
           use the value of ``plus_one`` as the representation of the
           one element.
 
-        - ``minus_one`` -- Ignored.  Only for compatibility with
+        - ``minus_one`` -- ignored.  Only for compatibility with
           generic matrices.
 
-        - ``unicode`` -- boolean (default: ``False``).
-          Whether to use Unicode symbols instead of ASCII symbols
-          for brackets and subdivision lines.
+        - ``unicode`` -- boolean (default: ``False``);
+          whether to use Unicode symbols instead of ASCII symbols
+          for brackets and subdivision lines
 
-        - ``shape`` -- one of ``"square"`` or ``"round"`` (default: ``None``).
+        - ``shape`` -- one of ``'square'`` or ``'round'`` (default: ``None``).
           Switches between round and square brackets.
           The default depends on the setting of the ``unicode`` keyword
           argument. For Unicode symbols, the default is round brackets
@@ -477,7 +477,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def row(self, Py_ssize_t i, from_list=False):
         """
-        Return the ``i``'th row of this matrix as a vector.
+        Return the ``i``-th row of this matrix as a vector.
 
         This row is a dense vector if and only if the matrix is a dense
         matrix.
@@ -486,8 +486,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         - ``i`` -- integer
 
-        - ``from_list`` -- bool (default: ``False``); if ``True``,
-          returns the ``i``'th element of ``self.rows()`` (see
+        - ``from_list`` -- boolean (default: ``False``); if ``True``,
+          returns the ``i``-th element of ``self.rows()`` (see
           :func:`rows`), which may be faster, but requires building a
           list of all rows the first time it is called after an entry
           of the matrix is changed.
@@ -527,7 +527,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def columns(self, copy=True):
         """
-        Return list of the columns of self.
+        Return list of the columns of ``self``.
 
         INPUT:
 
@@ -582,7 +582,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - right -- matrix of dimension self.nrows() x self.ncols()
+        - ``right`` -- matrix of dimension self.nrows() x self.ncols()
 
         EXAMPLES::
 
@@ -620,7 +620,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - right -- matrix of dimension self.nrows() x self.ncols()
+        - ``right`` -- matrix of dimension self.nrows() x self.ncols()
 
         EXAMPLES::
 
@@ -713,8 +713,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - right -- Matrix
-        - k -- parameter `k` for the Gray Code table size. If `k=0` a suitable
+        - ``right`` -- Matrix
+        - ``k`` -- parameter `k` for the Gray Code table size. If `k=0` a suitable
           value is chosen by the function. (`0<= k <= 16`, default: 0)
 
         EXAMPLES::
@@ -847,7 +847,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``right`` -- a matrix of matching dimensions.
+        - ``right`` -- a matrix of matching dimensions
         - ``cutoff`` -- matrix dimension where M4RM should be used
           instead of Strassen (default: let M4RI decide)
 
@@ -921,10 +921,10 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def __invert__(self):
         """
-        Inverts self using the 'Method of the Four Russians'
+        Invert ``self`` using the 'Method of the Four Russians'
         inversion.
 
-        If ``self`` is not invertible a ``ZeroDivisionError`` is
+        If ``self`` is not invertible a :exc:`ZeroDivisionError` is
         raised.
 
         EXAMPLES::
@@ -971,7 +971,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def __copy__(self):
         """
-        Returns a copy of ``self``.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -991,7 +991,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
              sage: A.echelonize()
              sage: A.__copy__() == A
              True
-
         """
         cdef Matrix_mod2_dense A
         A = Matrix_mod2_dense.__new__(Matrix_mod2_dense, self._parent, 0, 0, 0)
@@ -1006,7 +1005,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def _list(self):
         """
-        Returns list of the elements of ``self`` in row major
+        Return list of the elements of ``self`` in row major
         ordering.
 
         EXAMPLES::
@@ -1044,22 +1043,22 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def echelonize(self, algorithm='heuristic', cutoff=0, reduced=True, **kwds):
         """
-        Puts self in (reduced) row echelon form.
+        Puts ``self`` in (reduced) row echelon form.
 
         INPUT:
 
-        - self -- a mutable matrix
-        - algorithm
+        - ``self`` -- a mutable matrix
+        - ``algorithm`` -- string; one of
 
-            - 'heuristic' -- uses M4RI and PLUQ (default)
-            - 'm4ri' -- uses M4RI
-            - 'pluq' -- uses PLUQ factorization
-            - 'classical' -- uses classical Gaussian elimination
+          - ``'heuristic'`` -- uses M4RI and PLUQ (default)
+          - ``'m4ri'`` -- uses M4RI
+          - ``'pluq'`` -- uses PLUQ factorization
+          - ``'classical'`` -- uses classical Gaussian elimination
 
-        - k --  the parameter 'k' of the M4RI algorithm. It MUST be between 1
+        - ``k`` -- the parameter 'k' of the M4RI algorithm. It MUST be between 1
           and 16 (inclusive). If it is not specified it will be calculated as
           3/4 * log_2( min(nrows, ncols) ) as suggested in the M4RI paper.
-        - reduced -- return reduced row echelon form (default: ``True``)
+        - ``reduced`` -- return reduced row echelon form (default: ``True``)
 
         EXAMPLES::
 
@@ -1168,7 +1167,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def _pivots(self):
         """
-        Returns the pivot columns of ``self`` if ``self`` is in
+        Return the pivot columns of ``self`` if ``self`` is in
         row echelon form.
 
         EXAMPLES::
@@ -1207,14 +1206,12 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        -  ``density`` -- float; proportion (roughly) to be considered for
-           changes
-        -  ``nonzero`` -- Bool (default: ``False``); whether the new entries
-           are forced to be non-zero
+        - ``density`` -- float; proportion (roughly) to be considered for
+          changes
+        - ``nonzero`` -- boolean (default: ``False``); whether the new entries
+          are forced to be nonzero
 
-        OUTPUT:
-
-        -  None, the matrix is modified in-space
+        OUTPUT: None, the matrix is modified in-space
 
         EXAMPLES::
 
@@ -1379,7 +1376,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def _magma_init_(self, magma):
         """
-        Returns a string of self in ``Magma`` form. Does not return
+        Return a string of ``self`` in ``Magma`` form. Does not return
         ``Magma`` object but string.
 
         EXAMPLES::
@@ -1425,7 +1422,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def transpose(self):
         """
-        Returns transpose of self and leaves self untouched.
+        Return transpose of ``self`` and leaves ``self`` untouched.
 
         EXAMPLES::
 
@@ -1700,10 +1697,10 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - row -- index of start row
-        - col -- index of start column
-        - nrows -- number of rows of submatrix
-        - ncols -- number of columns of submatrix
+        - ``row`` -- index of start row
+        - ``col`` -- index of start column
+        - ``nrows`` -- number of rows of submatrix
+        - ``ncols`` -- number of columns of submatrix
 
         EXAMPLES::
 
@@ -1853,7 +1850,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - approx -- return floating point approximation (default: ``False``)
+        - ``approx`` -- return floating point approximation (default: ``False``)
 
         EXAMPLES::
 
@@ -1924,7 +1921,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def _right_kernel_matrix(self, **kwds):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         INPUT:
@@ -2051,9 +2048,9 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
 
     - ``r`` -- number of rows of matrix
     - ``c`` -- number of columns of matrix
-    - ``s`` -- a string
+    - ``s`` -- string
     - ``size`` -- length of the string ``s``
-    - ``immutable`` -- (default: ``False``) whether the
+    - ``immutable`` -- boolean (default: ``False``); whether the
       matrix is immutable or not
 
     EXAMPLES::
@@ -2127,13 +2124,13 @@ register_unpickle_override('sage.matrix.matrix_mod2_dense',
 
 def from_png(filename):
     """
-    Returns a dense matrix over GF(2) from a 1-bit PNG image read from
+    Return a dense matrix over GF(2) from a 1-bit PNG image read from
     ``filename``. No attempt is made to verify that the filename string
     actually points to a PNG image.
 
     INPUT:
 
-    - filename -- a string
+    - ``filename`` -- string
 
     EXAMPLES::
 
@@ -2176,12 +2173,12 @@ def from_png(filename):
 
 def to_png(Matrix_mod2_dense A, filename):
     """
-    Saves the matrix ``A`` to filename as a 1-bit PNG image.
+    Save the matrix ``A`` to filename as a 1-bit PNG image.
 
     INPUT:
 
     - ``A`` -- a matrix over GF(2)
-    - ``filename`` -- a string for a file in a writable position
+    - ``filename`` -- string for a file in a writable position
 
     EXAMPLES::
 
@@ -2219,21 +2216,21 @@ def to_png(Matrix_mod2_dense A, filename):
     fclose(out)
 
 
-def pluq(Matrix_mod2_dense A, algorithm="standard", int param=0):
+def pluq(Matrix_mod2_dense A, algorithm='standard', int param=0):
     """
     Return PLUQ factorization of A.
 
     INPUT:
 
-    - A -- matrix
-    - algorithm
+    - ``A`` -- matrix
+    - ``algorithm`` -- string; one of
 
-      * 'standard' asymptotically fast (default)
-      * 'mmpf' M4RI inspired
-      * 'naive' naive cubic
+      * ``'standard'`` asymptotically fast (default)
+      * ``'mmpf'`` M4RI inspired
+      * ``'naive'`` naive cubic
 
-    - param -- either k for 'mmpf' is chosen or matrix multiplication cutoff
-      for 'standard' (default: 0)
+    - ``param`` -- either k for 'mmpf' is chosen or matrix multiplication cutoff
+      for ``'standard'`` (default: 0)
 
     EXAMPLES::
 
@@ -2283,20 +2280,20 @@ def pluq(Matrix_mod2_dense A, algorithm="standard", int param=0):
     return B, P, Q
 
 
-def ple(Matrix_mod2_dense A, algorithm="standard", int param=0):
+def ple(Matrix_mod2_dense A, algorithm='standard', int param=0):
     """
     Return PLE factorization of A.
 
     INPUT:
 
-    - A -- matrix
-    - algorithm
+    - ``A`` -- matrix
+    - ``algorithm`` -- string; one of
 
-      - 'standard' asymptotically fast (default)
-      - 'russian' M4RI inspired
-      - 'naive' naive cubic
+      - ``'standard'`` asymptotically fast (default)
+      - ``'russian'`` M4RI inspired
+      - ``'naive'`` naive cubic
 
-    - param -- either k for 'mmpf' is chosen or matrix multiplication
+    - ``param`` -- either k for 'mmpf' is chosen or matrix multiplication
       cutoff for 'standard' (default: 0)
 
     EXAMPLES::

@@ -14,7 +14,7 @@ Tate-Shafarevich group is finite for any elliptic curve over a global field.
 But it is not known in general.
 
 A theorem of Kolyvagin and Gross-Zagier using Heegner points shows that if the
-L-series of an elliptic curve `E/\QQ` does not vanish at 1 or has a simple
+`L`-series of an elliptic curve `E/\QQ` does not vanish at 1 or has a simple
 zero there, then `Sha` is finite.
 
 A theorem of Kato, together with theorems from Iwasawa theory, allows for
@@ -22,7 +22,7 @@ certain primes `p` to show that the `p`-primary part of `Sha` is finite and
 gives an effective upper bound for it.
 
 The (`p`-adic) conjecture of Birch and Swinnerton-Dyer predicts the order of
-`Sha` from the leading term of the (`p`-adic) L-series of the elliptic curve.
+`Sha` from the leading term of the (`p`-adic) `L`-series of the elliptic curve.
 
 Sage can compute a few things about `Sha`. The commands ``an``,
 ``an_numerical`` and ``an_padic`` compute the conjectural order of `Sha` as a
@@ -143,7 +143,7 @@ class Sha(SageObject):
 
         INPUT:
 
-        - E -- an elliptic curve over `\QQ`
+        - ``E`` -- an elliptic curve over `\QQ`
 
         EXAMPLES::
 
@@ -213,11 +213,11 @@ class Sha(SageObject):
 
         INPUT:
 
-        - ``prec`` -- integer (default: 53) bits precision -- used
-          for the L-series computation, period,  regulator, etc.
+        - ``prec`` -- integer (default: 53); bits precision -- used
+          for the `L`-series computation, period,  regulator, etc.
         - ``use_database`` -- whether the rank and generators should
           be looked up in the database if possible. Default is ``True``
-        - ``proof`` -- bool or ``None`` (default: ``None``, see proof.[tab] or
+        - ``proof`` -- boolean or ``None`` (default: ``None``, see proof.[tab] or
           sage.structure.proof) proof option passed
           onto regulator and rank computation.
 
@@ -230,7 +230,7 @@ class Sha(SageObject):
 
             If the curve's generators are not known, computing
             them may be very time-consuming.  Also, computation of the
-            L-series derivative will be time-consuming for large rank and
+            `L`-series derivative will be time-consuming for large rank and
             large conductor, and the computation time for this may
             increase substantially at greater precision.  However, use of
             very low precision less than about 10 can cause the underlying
@@ -304,12 +304,12 @@ class Sha(SageObject):
 
         INPUT:
 
-        - ``use_database`` -- bool (default: ``False``); if ``True``, try
+        - ``use_database`` -- boolean (default: ``False``); if ``True``, try
           to use any databases installed to lookup the analytic order of
           `Sha`, if possible.  The order of `Sha` is computed if it cannot
           be looked up.
 
-        - ``descent_second_limit`` -- int (default: 12); limit to use on
+        - ``descent_second_limit`` -- integer (default: 12); limit to use on
           point searching for the quartic twist in the hard case
 
         This result is proved correct if the order of vanishing is 0
@@ -466,16 +466,16 @@ class Sha(SageObject):
 
         - ``p`` -- a prime > 3
 
-        - ``prec`` (optional) -- the precision used in the computation of the
+        - ``prec`` -- (optional) the precision used in the computation of the
           `p`-adic L-Series
 
-        - ``use_twists`` (default: ``True``) -- If ``True`` the algorithm may
+        - ``use_twists`` -- boolean (default: ``True``); if ``True`` the algorithm may
           change to a quadratic twist with minimal conductor to do the modular
           symbol computations rather than using the modular symbols of the
           curve itself. If ``False`` it forces the computation using the
           modular symbols of the curve itself.
 
-        OUTPUT:  `p`-adic number - that conjecturally equals `\# Sha(E/\QQ)`.
+        OUTPUT: `p`-adic number - that conjecturally equals `\# Sha(E/\QQ)`.
 
         If ``prec`` is set to zero (default) then the precision is set so that
         at least the first `p`-adic digit of conjectural `\# Sha(E/\QQ)` is
@@ -724,13 +724,13 @@ class Sha(SageObject):
 
         INPUT:
 
-        - `p` -- an odd prime
+        - ``p`` -- an odd prime
 
         OUTPUT:
 
-        - `e` -- a non-negative integer such that `p^e` is the
+        - ``e`` -- nonnegative integer such that `p^e` is the
           order of the `p`-primary order if the conditions are satisfied
-          and raises a :class:`ValueError` otherwise.
+          and raises a :exc:`ValueError` otherwise.
 
         EXAMPLES::
 
@@ -775,7 +775,7 @@ class Sha(SageObject):
 
         OUTPUT:
 
-        - ``e`` -- a non-negative integer such that `p^e` is an upper
+        - ``e`` -- nonnegative integer such that `p^e` is an upper
           bound for the order of `Sha(E)(p)`
 
         In particular, if this algorithm does not fail, then it proves
@@ -920,19 +920,19 @@ class Sha(SageObject):
           the Heegner hypothesis for `E`; if not given, use the first such `D`
         - ``regulator`` -- (optional) regulator of `E(K)`; if not given, will
           be computed (which could take a long time)
-        - ``ignore_nonsurj_hypothesis`` (optional: default ``False``) --
-          If ``True``, then gives the bound coming from Heegner point
+        - ``ignore_nonsurj_hypothesis`` -- (default: ``False``);
+          if ``True``, then gives the bound coming from Heegner point
           index, but without any hypothesis on surjectivity
-          of the mod-`p` representation.
+          of the mod-`p` representation
 
         OUTPUT:
 
-        - list -- a list of primes such that if `p` divides `Sha(E/K)`, then
+        - ``list`` -- list of primes such that if `p` divides `Sha(E/K)`, then
           `p` is in this list, unless `E/K` has complex multiplication or
-          analytic rank greater than 2 (in which case we return 0).
+          analytic rank greater than 2 (in which case we return 0)
 
-        - index -- the odd part of the index of the Heegner point in the full
-          group of `K`-rational points on E.  (If `E` has CM, returns 0.)
+        - ``index`` -- the odd part of the index of the Heegner point in the full
+          group of `K`-rational points on `E` (if `E` has CM, returns 0)
 
         REMARKS:
 
@@ -1081,7 +1081,7 @@ class Sha(SageObject):
 
         Then `{ord}_p(\#Sha(E))` is bounded from above by the `p`-adic valuation of  `L(E,1)\cdot\#E(\QQ)_{tor}^2 / (\Omega_E \cdot \prod c_v)`.
 
-        If the L-series vanishes, the method ``p_primary_bound`` can be used instead.
+        If the `L`-series vanishes, the method ``p_primary_bound`` can be used instead.
 
         EXAMPLES::
 

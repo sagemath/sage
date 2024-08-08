@@ -10,7 +10,7 @@ This module contains the following methods:
     :widths: 30, 70
     :delim: |
 
-    :meth:`matching_polynomial` | Computes the matching polynomial of a given graph
+    :meth:`matching_polynomial` | Compute the matching polynomial of a given graph.
     :meth:`complete_poly` | Compute the matching polynomial of the complete graph on `n` vertices.
 
 AUTHORS:
@@ -53,7 +53,7 @@ x = polygen(ZZ, 'x')
 
 def matching_polynomial(G, complement=True, name=None):
     r"""
-    Computes the matching polynomial of the graph `G`.
+    Compute the matching polynomial of the graph `G`.
 
     If `p(G, k)` denotes the number of `k`-matchings (matchings with `k` edges)
     in `G`, then the matching polynomial is defined as [God1993]_:
@@ -64,11 +64,11 @@ def matching_polynomial(G, complement=True, name=None):
 
     INPUT:
 
-    - ``complement`` -- (default: ``True``) whether to use Godsil's duality
+    - ``complement`` -- boolean (default: ``True``); whether to use Godsil's duality
       theorem to compute the matching polynomial from that of the graphs
-      complement (see ALGORITHM).
+      complement (see ALGORITHM)
 
-    - ``name`` -- optional string for the variable name in the polynomial
+    - ``name`` -- (optional) string for the variable name in the polynomial
 
     .. NOTE::
 

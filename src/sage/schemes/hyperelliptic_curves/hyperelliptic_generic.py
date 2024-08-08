@@ -130,7 +130,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def change_ring(self, R):
         """
-        Returns this HyperellipticCurve over a new base ring ``R``.
+        Return this HyperellipticCurve over a new base ring ``R``.
 
         EXAMPLES::
 
@@ -201,7 +201,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def is_singular(self):
         r"""
-        Returns False, because hyperelliptic curves are smooth projective
+        Return ``False``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.
 
         EXAMPLES::
@@ -229,7 +229,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def is_smooth(self):
         r"""
-        Returns True, because hyperelliptic curves are smooth projective
+        Return ``True``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.
 
         EXAMPLES::
@@ -258,7 +258,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def is_x_coord(self, x):
         """
-        Return True if ``x`` is the `x`-coordinate of a point on this curve.
+        Return ``True`` if ``x`` is the `x`-coordinate of a point on this curve.
 
         .. SEEALSO::
 
@@ -271,9 +271,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         - ``x`` -- an element of the base ring of the curve
 
-        OUTPUT:
-
-        A bool stating whether or not `x` is a x-coordinate of a point on the curve
+        OUTPUT: boolean stating whether or not `x` is a x-coordinate of a point
+        on the curve
 
         EXAMPLES:
 
@@ -373,13 +372,11 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         - ``x`` -- an element of the base ring of the curve
 
-        - ``all`` (bool, default ``False``) -- if ``True``, return a
-          (possibly empty) list of all points; if ``False``, return
-          just one point, or raise a :class:`ValueError` if there are none.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a
+          (possibly empty) list of all points. If ``False``, return
+          just one point, or raise a :exc:`ValueError` if there are none.
 
-        OUTPUT:
-
-        A point or list of up to two points on this curve.
+        OUTPUT: a point or list of up to two points on this curve
 
         .. SEEALSO::
 
@@ -525,7 +522,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def odd_degree_model(self):
         r"""
-        Return an odd degree model of self, or raise ValueError if one does not exist over the field of definition.
+        Return an odd degree model of ``self``, or raise :exc:`ValueError` if
+        one does not exist over the field of definition.
 
         EXAMPLES::
 
@@ -606,7 +604,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def has_odd_degree_model(self):
         r"""
-        Return True if an odd degree model of self exists over the field of definition; False otherwise.
+        Return ``True`` if an odd degree model of ``self`` exists over the
+        field of definition; ``False`` otherwise.
 
         Use ``odd_degree_model`` to calculate an odd degree model.
 
@@ -657,8 +656,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def invariant_differential(self):
         """
-        Returns `dx/2y`, as an element of the Monsky-Washnitzer cohomology
-        of self
+        Return `dx/2y`, as an element of the Monsky-Washnitzer cohomology
+        of ``self``.
 
         EXAMPLES::
 
@@ -666,7 +665,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             sage: C = HyperellipticCurve(x^5 - 4*x + 4)
             sage: C.invariant_differential()
             1 dx/2y
-
         """
         import sage.schemes.hyperelliptic_curves.monsky_washnitzer as m_w
         S = m_w.SpecialHyperellipticQuotientRing(self)
@@ -681,8 +679,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``P = (a, b)`` -- a non-Weierstrass point on self
-        - ``prec`` --  desired precision of the local coordinates
+        - ``P = (a, b)`` -- a non-Weierstrass point on ``self``
+        - ``prec`` -- desired precision of the local coordinates
         - ``name`` -- gen of the power series ring (default: ``t``)
 
         OUTPUT:
@@ -733,7 +731,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``P`` -- a finite Weierstrass point on self
+        - ``P`` -- a finite Weierstrass point on ``self``
         - ``prec`` -- desired precision of the local coordinates
         - ``name`` -- gen of the power series ring (default: `t`)
 
@@ -835,11 +833,11 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def local_coord(self, P, prec=20, name='t'):
         """
-        Calls the appropriate local_coordinates function
+        Call the appropriate local_coordinates function.
 
         INPUT:
 
-        - ``P`` -- a point on self
+        - ``P`` -- a point on ``self``
         - ``prec`` -- desired precision of the local coordinates
         - ``name`` -- generator of the power series ring (default: ``t``)
 

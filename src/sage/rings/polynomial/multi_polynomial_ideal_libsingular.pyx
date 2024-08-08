@@ -69,8 +69,8 @@ from sage.rings.polynomial.plural cimport NCPolynomialRing_plural, NCPolynomial_
 
 cdef object singular_ideal_to_sage_sequence(ideal *i, ring *r, object parent):
     """
-    convert a SINGULAR ideal to a Sage Sequence (the format Sage
-    stores a Groebner basis in)
+    Convert a SINGULAR ideal to a Sage Sequence (the format Sage
+    stores a Groebner basis in).
 
     INPUT:
 
@@ -102,7 +102,8 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
     INPUT:
 
     - ``I`` -- a Sage ideal in a ring of type
-      :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular` or a list of generators.
+      :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular`
+      or a list of generators
 
     TESTS:
 

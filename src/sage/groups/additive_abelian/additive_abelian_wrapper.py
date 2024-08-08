@@ -6,7 +6,6 @@ functionality of abelian groups. One can create an ``AdditiveAbelianGroupWrapper
 object from any given set of elements in some given parent, as long as an
 ``_add_`` method has been defined.
 
-
 EXAMPLES:
 
 We create a toy example based on the Mordell-Weil group of an elliptic curve over `\QQ`::

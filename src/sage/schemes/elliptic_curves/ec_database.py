@@ -80,18 +80,16 @@ class EllipticCurves:
 
         INPUT:
 
-        - ``rank`` (int) -- the desired rank
+        - ``rank`` -- integer; the desired rank
 
-        - ``tors`` (int, default 0) -- the desired torsion order (ignored if 0)
+        - ``tors`` -- integer (default: 0); the desired torsion order (ignored if 0)
 
-        - ``n`` (int, default 10) -- the maximum number of curves returned.
+        - ``n`` -- integer (default: 10); the maximum number of curves returned
 
-        - ``labels`` (bool, default: ``False``) -- if True, return Cremona
-          labels instead of curves.
+        - ``labels`` -- boolean (default: ``False``); if ``True``, return Cremona
+          labels instead of curves
 
-        OUTPUT:
-
-        (list) A list at most `n` of elliptic curves of required rank.
+        OUTPUT: list at most `n` of elliptic curves of required rank
 
         EXAMPLES::
 

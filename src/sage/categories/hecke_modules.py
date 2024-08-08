@@ -104,7 +104,7 @@ class HeckeModules(Category_module):
 
         def _Hom_(self, Y, category):
             r"""
-            Return the homset from ``self`` to ``Y`` in the category ``category``
+            Return the homset from ``self`` to ``Y`` in the category ``category``.
 
             INPUT:
 
@@ -115,7 +115,7 @@ class HeckeModules(Category_module):
             The sole purpose of this method is to construct the homset
             as a :class:`~sage.modular.hecke.homspace.HeckeModuleHomspace`. If
             ``category`` is specified and is not a subcategory of
-            :class:`HeckeModules`, a :class:`TypeError` is raised instead
+            :class:`HeckeModules`, a :exc:`TypeError` is raised instead
 
             This method is not meant to be called directly. Please use
             :func:`sage.categories.homset.Hom` instead.

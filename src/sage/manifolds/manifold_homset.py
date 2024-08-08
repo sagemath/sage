@@ -1,5 +1,5 @@
 r"""
-Sets of Morphisms between Topological Manifolds
+Set of Morphisms between Topological Manifolds
 
 The class :class:`TopologicalManifoldHomset` implements sets of
 morphisms between two topological manifolds over the same topological
@@ -134,7 +134,6 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
 
     This test suite includes more tests than in the case of ``H``, since ``E``
     has some extra structure (monoid).
-
     """
 
     Element = ContinuousMap
@@ -171,7 +170,6 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             sage: iota * phi
             Differentiable map iota from the 1-sphere S^1 of radius 1 smoothly
              embedded in the Euclidean plane E^2 to the Euclidean plane E^2
-
         """
         from sage.manifolds.manifold import TopologicalManifold
         if not isinstance(domain, TopologicalManifold):
@@ -220,7 +218,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
 
         INPUT:
 
-        - ``coord_functions`` -- a dictionary of the coordinate expressions
+        - ``coord_functions`` -- dictionary of the coordinate expressions
           (as lists or tuples of the coordinates of the image expressed in
           terms of the coordinates of the considered point) with the pairs
           of charts ``(chart1, chart2)`` as keys (``chart1`` being a chart
@@ -230,10 +228,10 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         - ``name`` -- (default: ``None``) name given to the continuous map
         - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           continuous map; if ``None``, the LaTeX symbol is set to ``name``
-        - ``is_isomorphism`` -- (default: ``False``) determines whether the
+        - ``is_isomorphism`` -- boolean (default: ``False``); determines whether the
           constructed object is a isomorphism (i.e. a homeomorphism); if set to
           ``True``, then the manifolds `M` and `N` must have the same dimension
-        - ``is_identity`` -- (default: ``False``) determines whether the
+        - ``is_identity`` -- boolean (default: ``False``); determines whether the
           constructed object is the identity map; if set to ``True``,
           then `N` must be `M` and the entry ``coord_functions`` is not used
 
@@ -244,9 +242,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             continuous map, further coordinate expressions, in other charts,
             can be subsequently added by means of the method :meth:`add_expr`
 
-        OUTPUT:
-
-        - a :class:`~sage.manifolds.continuous_map.ContinuousMap`
+        OUTPUT: a :class:`~sage.manifolds.continuous_map.ContinuousMap`
 
         EXAMPLES::
 
@@ -267,7 +263,6 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             sage: id.display()
             Id_M: M → M
                (x, y) ↦ (x, y)
-
         """
         # Standard construction
         return self.element_class(self, coord_functions=coord_functions,
@@ -279,9 +274,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         r"""
         Construct some element of ``self``.
 
-        OUTPUT:
-
-        - a :class:`~sage.manifolds.continuous_map.ContinuousMap`
+        OUTPUT: a :class:`~sage.manifolds.continuous_map.ContinuousMap`
 
         EXAMPLES::
 
@@ -303,7 +296,6 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             sage: f(p).coord(Y)
             (0, 0, 0)
             sage: TestSuite(f).run()
-
         """
         dom = self.domain()
         codom = self.codomain()
@@ -335,7 +327,6 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             False
             sage: H._coerce_map_from_(H)
             True
-
         """
         if isinstance(other, TopologicalManifoldHomset):
             return (other.domain().has_coerce_map_from(self.domain())
@@ -434,7 +425,6 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
              to 3-dimensional topological manifold N
              in Category of manifolds over Real Field with 53 bits of precision
              is not a monoid
-
         """
         if self.codomain() != self.domain():
             raise TypeError("{} is not a monoid".format(self))

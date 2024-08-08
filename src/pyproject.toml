@@ -7,7 +7,7 @@ requires = [
     # version constraint for macOS Big Sur support (see https://github.com/sagemath/sage/issues/31050)
     'wheel >=0.36.2',
     'cypari2 >=2.1.1',
-    'cysignals >=1.10.2',
+    'cysignals >=1.11.4',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
     'cython >=3.0, != 3.0.3, <4.0',
     'gmpy2 ~=2.1.b999',
@@ -20,4 +20,69 @@ build-backend = "setuptools.build_meta"
 [tool.conda-lock]
 platforms = [
     'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
+]
+
+[external]
+# External dependencies in the format proposed by https://peps.python.org/pep-0725
+# In the future, sage-the-distribution can read this information
+build-requires = [
+  "virtual:compiler/c",
+  "virtual:compiler/cpp",
+  "pkg:generic/pkg-config"
+]
+
+host-requires = [
+  "virtual:interface/blas",
+  "pkg:generic/boost",
+  "pkg:generic/brial",
+  "pkg:generic/cddlib",
+  "pkg:generic/cliquer",
+  "pkg:generic/ecl",
+  "pkg:generic/eclib",
+  "pkg:generic/ecm",
+  "pkg:generic/fflas-ffpack",
+  "pkg:generic/fplll",
+  "pkg:generic/flint",
+  "pkg:generic/libgd",
+  "pkg:generic/gap",
+  "pkg:generic/gfan",
+  "pkg:generic/giac",
+  "pkg:generic/givaro",
+  "pkg:generic/glpk",
+  "pkg:generic/gmp",
+  "pkg:generic/gsl",
+  "pkg:generic/iml",
+  "pkg:generic/lcalc",
+  "pkg:generic/libbraiding",
+  "pkg:generic/libhomfly",
+  "pkg:generic/linbox",
+  "pkg:generic/lrcalc",
+  "pkg:generic/m4ri",
+  "pkg:generic/m4rie",
+  "pkg:generic/maxima",
+  "pkg:generic/mpc",
+  "pkg:generic/mpfi",
+  "pkg:generic/mpfr",
+  "pkg:generic/nauty",
+  "pkg:generic/ntl",
+  "pkg:generic/palp",
+  "pkg:generic/pari",
+  "pkg:generic/pari-elldata",
+  "pkg:generic/pari-galdata",
+  "pkg:generic/pari-seadata",
+  "pkg:generic/planarity",
+  "pkg:generic/ppl",
+  "pkg:generic/primesieve",
+  "pkg:generic/primecount",
+  "pkg:generic/qhull",
+  "pkg:generic/rw",
+  "pkg:generic/singular",
+  "pkg:generic/symmetrica",
+  "pkg:generic/sympow",
+]
+
+dependencies = [
+  "pkg:generic/tachyon",
+  "pkg:generic/sagemath-polytopes-db",
+  "pkg:generic/sagemath-elliptic-curves",
 ]

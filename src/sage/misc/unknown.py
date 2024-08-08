@@ -5,12 +5,12 @@ The Unknown truth value
 The ``Unknown`` object is used in Sage in several places as return value
 in addition to ``True`` and ``False``, in order to signal uncertainty
 about or inability to compute the result. ``Unknown`` can be identified
-using ``is``, or by catching :class:`UnknownError` from a boolean operation.
+using ``is``, or by catching :exc:`UnknownError` from a boolean operation.
 
 .. WARNING::
 
     Calling ``bool()`` with ``Unknown`` as argument will throw an
-    ``UnknownError``. This also means that in the following cases,
+    :exc:`UnknownError`. This also means that in the following cases,
     ``and``, ``not``, and ``or`` fail or return a somewhat wrong value::
 
         sage: not Unknown         # should return Unknown
@@ -50,7 +50,7 @@ Using direct identification::
     n=0 is neither positive nor negative
     n=12 is positive
 
-Using ``UnknownError``::
+Using :exc:`UnknownError`::
 
     sage: for n in [-3, 0, 12]:
     ....:    try:
@@ -102,18 +102,18 @@ class UnknownError(TypeError):
 @richcmp_method
 class UnknownClass(UniqueRepresentation):
     """
-    The Unknown truth value
+    The Unknown truth value.
 
     The ``Unknown`` object is used in Sage in several places as return value
     in addition to ``True`` and ``False``, in order to signal uncertainty
     about or inability to compute the result. ``Unknown`` can be identified
-    using ``is``, or by catching :class:`UnknownError` from a boolean
+    using ``is``, or by catching :exc:`UnknownError` from a boolean
     operation.
 
     .. WARNING::
 
         Calling ``bool()`` with ``Unknown`` as argument will throw an
-        ``UnknownError``. This also means that applying ``and``, ``not``,
+        :exc:`UnknownError`. This also means that applying ``and``, ``not``,
         and ``or`` to ``Unknown`` might fail.
 
     TESTS::
@@ -131,7 +131,7 @@ class UnknownClass(UniqueRepresentation):
 
     def __bool__(self):
         """
-        When evaluated in a boolean context ``Unknown`` raises a ``UnknownError``.
+        When evaluated in a boolean context ``Unknown`` raises a :exc:`UnknownError`.
 
         EXAMPLES::
 

@@ -38,7 +38,7 @@ cdef extern from "Python.h":
 
 cdef class AttributeErrorMessage:
     """
-    Tries to emulate the standard Python :class:`AttributeError` message.
+    Try to emulate the standard Python :exc:`AttributeError` message.
 
     .. NOTE::
 
@@ -69,7 +69,7 @@ cdef class AttributeErrorMessage:
 
     TESTS:
 
-    The error message used for the :class:`AttributeError` is a unique object
+    The error message used for the :exc:`AttributeError` is a unique object
     and is changed inplace. This is for reasons of efficiency.
     Hence, if one really needs the error message as a string, then one should
     make a copy of its string representation before it changes. ::
@@ -239,12 +239,12 @@ cpdef getattr_from_other_class(self, cls, name):
 
     - ``cls`` -- a new-style class
 
-    - ``name`` -- a string
+    - ``name`` -- string
 
-    If self is an instance of cls, raises an :class:`AttributeError`, to
+    If ``self`` is an instance of cls, raises an :exc:`AttributeError`, to
     avoid a double lookup. This function is intended to be called from
     __getattr__, and so should not be called if name is an attribute
-    of self.
+    of ``self``.
 
     EXAMPLES::
 
@@ -301,7 +301,7 @@ cpdef getattr_from_other_class(self, cls, name):
         TypeError: descriptor '__weakref__' for 'A' objects doesn't apply
         to ...'sage.rings.integer.Integer' object
 
-    When this occurs, an :class:`AttributeError` is raised::
+    When this occurs, an :exc:`AttributeError` is raised::
 
         sage: getattr_from_other_class(1, A, "__weakref__")
         Traceback (most recent call last):
@@ -368,7 +368,7 @@ cpdef getattr_from_other_class(self, cls, name):
         # Not a descriptor
         return attribute
     # Conditionally defined lazy_attributes don't work well with fake subclasses
-    # (a :class:`TypeError` is raised if the lazy attribute is not defined).
+    # (a :exc:`TypeError` is raised if the lazy attribute is not defined).
     # For the moment, we ignore that when this occurs.
     # Other descriptors (including __weakref__) also break.
     try:
@@ -382,7 +382,7 @@ cpdef getattr_from_other_class(self, cls, name):
 
 def dir_with_other_class(self, *cls):
     r"""
-    Emulates ``dir(self)``, as if self was also an instance ``cls``,
+    Emulates ``dir(self)``, as if ``self`` was also an instance ``cls``,
     right after ``caller_class`` in the method resolution order
     (``self.__class__.mro()``)
 

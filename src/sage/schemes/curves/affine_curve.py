@@ -229,13 +229,13 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
 
         INPUT:
 
-        - ``i`` -- (default: 0) the index of the affine coordinate chart of the projective space that the affine
-          ambient space of this curve embeds into.
+        - ``i`` -- (default: 0) the index of the affine coordinate chart of the
+          projective space that the affine ambient space of this curve embeds into
 
-        - ``PP`` -- (default: None) ambient projective space to compute the projective closure in. This is
-          constructed if it is not given.
+        - ``PP`` -- (default: ``None``) ambient projective space to compute the
+          projective closure in; this is constructed if it is not given
 
-        OUTPUT: A curve in projective space.
+        OUTPUT: a curve in projective space
 
         EXAMPLES::
 
@@ -317,15 +317,15 @@ class AffinePlaneCurve(AffineCurve):
         """
         Return the divisor of a function on a curve.
 
-        INPUT: r is a rational function on X
+        INPUT:
+
+        - ``r`` -- a rational function on X
 
         OUTPUT:
 
-
-        -  ``list`` -- The divisor of r represented as a list of
-           coefficients and points. (TODO: This will change to a more
-           structural output in the future.)
-
+        - ``list`` -- the divisor of r represented as a list of coefficients
+          and points. (TODO: This will change to a more structural output in
+          the future.)
 
         EXAMPLES::
 
@@ -372,12 +372,10 @@ class AffinePlaneCurve(AffineCurve):
 
         INPUT:
 
+        - ``pt`` -- an F-rational point on X which is not a
+          point of ramification for the projection (x,y) - x
 
-        -  ``pt`` -- an F-rational point on X which is not a
-           point of ramification for the projection (x,y) - x.
-
-        -  ``n`` -- the number of terms desired
-
+        - ``n`` -- the number of terms desired
 
         OUTPUT: x = x0 + t y = y0 + power series in t
 
@@ -442,11 +440,10 @@ class AffinePlaneCurve(AffineCurve):
 
         INPUT:
 
-        -  ``*args`` -- optional tuples (variable, minimum, maximum) for
-           plotting dimensions
+        - ``*args`` -- (optional) tuples (variable, minimum, maximum) for
+          plotting dimensions
 
-        -  ``**kwds`` -- optional keyword arguments passed on to
-           ``implicit_plot``
+        - ``**kwds`` -- optional keyword arguments passed on to ``implicit_plot``
 
         EXAMPLES:
 
@@ -487,11 +484,11 @@ class AffinePlaneCurve(AffineCurve):
 
         INPUT:
 
-        - ``C`` -- a curve in the ambient space of this curve.
+        - ``C`` -- a curve in the ambient space of this curve
 
-        - ``P`` -- a point in the intersection of both curves.
+        - ``P`` -- a point in the intersection of both curves
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -545,9 +542,9 @@ class AffinePlaneCurve(AffineCurve):
 
         INPUT:
 
-        - ``P`` -- a point in the ambient space of this curve.
+        - ``P`` -- a point in the ambient space of this curve
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -609,12 +606,12 @@ class AffinePlaneCurve(AffineCurve):
 
         - ``P`` -- a point on this curve
 
-        - ``factor`` -- (default: ``True``) whether to attempt computing the
+        - ``factor`` -- boolean (default: ``True``); whether to attempt computing the
           polynomials of the individual tangent lines over the base field of this
           curve, or to just return the polynomial corresponding to the union of
           the tangent lines (which requires fewer computations)
 
-        OUTPUT: A list of polynomials in the coordinate ring of the ambient space.
+        OUTPUT: list of polynomials in the coordinate ring of the ambient space
 
         EXAMPLES::
 
@@ -778,9 +775,8 @@ class AffinePlaneCurve(AffineCurve):
         The rational parameterization may have coefficients in a quadratic extension of the rational
         field.
 
-        OUTPUT:
-
-        - a birational map between `\mathbb{A}^{1}` and this curve, given as a scheme morphism.
+        OUTPUT: a birational map between `\mathbb{A}^{1}` and this curve, given
+        as a scheme morphism
 
         EXAMPLES::
 
@@ -873,7 +869,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``indices`` -- a list or tuple of distinct integers specifying the
+        - ``indices`` -- list or tuple of distinct integers specifying the
           indices of the coordinates to use in the projection. Can also be a list
           or tuple consisting of variables of the coordinate ring of the ambient
           space of this curve. If integers are used to specify the coordinates, 0
@@ -881,12 +877,12 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
           two and one less than the dimension of the ambient space of this curve,
           inclusive.
 
-        - ``AS`` -- (default: None) the affine space the projected curve will
+        - ``AS`` -- (default: ``None``) the affine space the projected curve will
           be defined in. This space must be defined over the same base field as
           this curve, and must have dimension equal to the length of ``indices``.
           This space is constructed if not specified.
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a scheme morphism from this curve to affine space of dimension equal
           to the number of coordinates specified in ``indices``
@@ -1042,12 +1038,12 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``AP`` -- (default: None) the affine plane to project this curve
+        - ``AP`` -- (default: ``None``) the affine plane to project this curve
           into. This space must be defined over the same base field as this
           curve, and must have dimension two. This space will be constructed if
           not specified.
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a scheme morphism from this curve into an affine plane
 
@@ -1109,21 +1105,21 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point on this curve at which to blow up;
-          if ``None``, then ``P`` is taken to be the origin.
+        - ``P`` -- (default: ``None``) a point on this curve at which to blow up;
+          if ``None``, then ``P`` is taken to be the origin
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a tuple of curves in affine space of the same dimension as the
           ambient space of this curve, which define the blow up in each affine
           chart.
 
-        - a tuple of tuples such that the jth element of the ith tuple is the
-          transition map from the ith affine patch to the jth affine patch.
+        - a tuple of tuples such that the j-th element of the i-th tuple is the
+          transition map from the i-th affine patch to the j-th affine patch.
 
         - a tuple consisting of the restrictions of the projection map from the
           blow up back to the original curve, restricted to each affine patch.
-          There the ith element will be the projection from the ith affine patch.
+          There the i-th element will be the projection from the i-th affine patch.
 
         EXAMPLES::
 
@@ -1416,26 +1412,26 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``extend`` -- (default: ``False``) specifies whether to extend the base
-          field when necessary to find all singular points when this curve is
-          defined over a number field. If ``extend`` is ``False``, then only
-          singularities with coordinates in the base field of this curve will be
-          resolved. However, setting ``extend`` to ``True`` will slow down
-          computations.
+        - ``extend`` -- boolean (default: ``False``); specifies whether to
+          extend the base field when necessary to find all singular points when
+          this curve is defined over a number field. If ``extend`` is
+          ``False``, then only singularities with coordinates in the base field
+          of this curve will be resolved. However, setting ``extend`` to
+          ``True`` will slow down computations.
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a tuple of curves in affine space of the same dimension as the
           ambient space of this curve, which represent affine patches of the
           resolution of singularities.
 
-        - a tuple of tuples such that the jth element of the ith tuple is the
-          transition map from the ith patch to the jth patch.
+        - a tuple of tuples such that the j-th element of the i-th tuple is the
+          transition map from the i-th patch to the j-th patch.
 
         - a tuple consisting of birational maps from the patches back to the
           original curve that were created by composing the projection maps
-          generated from the blow up computations. There the ith element will be
-          a map from the ith patch.
+          generated from the blow up computations. There the i-th element will
+          be a map from the i-th patch.
 
         EXAMPLES::
 
@@ -1801,11 +1797,11 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         INPUT:
 
-        - ``simplified`` -- (default: ``True``) boolean to simplify the presentation.
+        - ``simplified`` -- boolean (default: ``True``); to simplify the presentation
 
-        - ``puiseux`` -- (default: ``True``) boolean to decide if the
+        - ``puiseux`` -- boolean (default: ``True``); to decide if the
           presentation is constructed in the classical way or using Puiseux
-          shortcut.
+          shortcut
 
         OUTPUT:
 
@@ -1909,7 +1905,6 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             Traceback (most recent call last):
             ...
             NotImplementedError: the base field must have an embedding to the algebraic field
-
         """
         from sage.schemes.curves.zariski_vankampen import braid_monodromy
         F = self.base_ring()
@@ -1922,9 +1917,9 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
     def riemann_surface(self, **kwargs):
         r"""
-        Return the complex Riemann surface determined by this curve
+        Return the complex Riemann surface determined by this curve.
 
-        OUTPUT: A :class:`~sage.schemes.riemann_surfaces.riemann_surface.RiemannSurface` object.
+        OUTPUT: a :class:`~sage.schemes.riemann_surfaces.riemann_surface.RiemannSurface` object
 
         EXAMPLES::
 
@@ -1965,7 +1960,7 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
           divisor `Div = d_1P_1 + \dots + d_nP_n`, where `X(F) = \{P_1, \dots,
           P_n\}`.  The ordering is that dictated by ``places_on_curve``.
 
-        OUTPUT: A basis of `L(Div)`.
+        OUTPUT: a basis of `L(Div)`.
 
         EXAMPLES::
 
@@ -1997,13 +1992,13 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
 
         return [g[1].sage() / g[2].sage() for g in G.BrillNoether(P)]
 
-    def rational_points(self, algorithm="enum"):
+    def rational_points(self, algorithm='enum'):
         r"""
         Return sorted list of all rational points on this curve.
 
         INPUT:
 
-        -  ``algorithm`` -- possible choices:
+        - ``algorithm`` -- possible choices:
 
            +  ``'enum'`` -- use *very* naive point enumeration to find all
               rational points on this curve over a finite field.
@@ -2016,7 +2011,7 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
         .. NOTE::
 
            The Brill-Noether package does not always work. When it fails, a
-           RuntimeError exception is raised.
+           :exc:`RuntimeError` exception is raised.
 
         EXAMPLES::
 
@@ -2084,8 +2079,8 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
             return sorted(set(pnts))
 
         elif algorithm == "all":
-            S_enum = self.rational_points(algorithm="enum")
-            S_bn = self.rational_points(algorithm="bn")
+            S_enum = self.rational_points(algorithm='enum')
+            S_bn = self.rational_points(algorithm='bn')
             if S_enum != S_bn:
                 raise RuntimeError("Bug in rational_points -- different algorithms give different answers for curve %s!" % self)
             return S_enum
@@ -2197,7 +2192,7 @@ class IntegralAffineCurve(AffineCurve_field):
         - ``f`` -- an element of the fraction field of the coordinate ring of
           the ambient space or the coordinate ring of the curve
 
-        OUTPUT: An element of the function field of this curve.
+        OUTPUT: an element of the function field of this curve
 
         EXAMPLES::
 
@@ -2245,7 +2240,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         INPUT:
 
-        -  ``f`` -- an element of the function field
+        - ``f`` -- an element of the function field
 
         OUTPUT:
 
@@ -2686,7 +2681,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         - ``point`` -- a closed point of the curve
 
-        OUTPUT: A list of the places of the function field of the curve.
+        OUTPUT: list of the places of the function field of the curve
 
         EXAMPLES::
 
@@ -2859,7 +2854,7 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
 
         INPUT:
 
-        - ``degree`` -- a positive integer
+        - ``degree`` -- positive integer
 
         EXAMPLES::
 

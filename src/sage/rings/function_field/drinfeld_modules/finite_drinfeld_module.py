@@ -125,7 +125,7 @@ class DrinfeldModule_finite(DrinfeldModule):
 
     def __init__(self, gen, category):
         """
-        Initialize `self`.
+        Initialize ``self``.
 
         Validity of the input is checked in `__classcall_private__`. The
         `__init__` just saves attributes.
@@ -138,7 +138,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         - ``gen`` -- the generator of the Drinfeld module as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` (default: `'t'`) -- the name of the Ore polynomial
+        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
           ring gen
 
         TESTS::
@@ -290,8 +290,8 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         INPUT:
 
-        - ``var`` (default: ``'X'``) -- the name of the second variable
-        - ``algorithm`` (default: ``'crystalline'``) -- the algorithm
+        - ``var`` -- (default: ``'X'``) the name of the second variable
+        - ``algorithm`` -- (default: ``'crystalline'``) the algorithm
           used to compute the characteristic polynomial
 
         EXAMPLES::
@@ -336,11 +336,11 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         The available options for 'algorithm' are:
 
-        - ``'crystalline'`` -- Computes the characteristic polynomial of the
+        - ``'crystalline'`` -- computes the characteristic polynomial of the
           Frobenius endomorphism on the crystalline cohomology of a Drinfeld
           module.
 
-        - ``'motive'`` -- Based on computing the characteristic polynomial of
+        - ``'motive'`` -- based on computing the characteristic polynomial of
           the Frobenius endomorphism on the motive of a Drinfeld module. This
           instantiates the Frobenius as a morphism object and calls its
           ``'characteristic_polynomial'`` method.
@@ -639,7 +639,6 @@ class DrinfeldModule_finite(DrinfeldModule):
             Traceback (most recent call last):
             ...
             TypeError: input must be an Ore polynomial
-
         """
         deg = ore_pol.degree()
         r = self.rank()
@@ -763,7 +762,6 @@ class DrinfeldModule_finite(DrinfeldModule):
             False
             sage: psi.is_supersingular()
             False
-
         """
         return self.height() == self.rank()
 
@@ -788,6 +786,5 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: phi = DrinfeldModule(A, [1, z6, 0, z6])
             sage: phi.is_ordinary()
             True
-
         """
         return self.height() == 1

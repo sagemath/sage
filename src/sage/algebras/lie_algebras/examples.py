@@ -211,7 +211,7 @@ def affine_transformations_line(R, names=['X', 'Y'], representation='bracket'):
         sage: L[X, Y] == Y
         True
         sage: TestSuite(L).run()
-        sage: L = lie_algebras.affine_transformations_line(QQ, representation="matrix")
+        sage: L = lie_algebras.affine_transformations_line(QQ, representation='matrix')
         sage: X, Y = L.lie_algebra_generators()
         sage: L[X, Y] == Y
         True
@@ -264,7 +264,7 @@ def abelian(R, names=None, index_set=None):
     return AbelianLieAlgebra(R, names=names, index_set=index_set)
 
 
-def Heisenberg(R, n, representation="structure"):
+def Heisenberg(R, n, representation='structure'):
     """
     Return the rank ``n`` Heisenberg algebra in the given representation.
 
@@ -272,10 +272,11 @@ def Heisenberg(R, n, representation="structure"):
 
     - ``R`` -- the base ring
     - ``n`` -- the rank (a nonnegative integer or infinity)
-    - ``representation`` -- (default: "structure") can be one of the following:
+    - ``representation`` -- (default: ``'structure'``) can be one of the
+      following:
 
-      - ``"structure"`` -- using structure coefficients
-      - ``"matrix"`` -- using matrices
+      - ``'structure'`` -- using structure coefficients
+      - ``'matrix'`` -- using matrices
 
     EXAMPLES::
 
@@ -322,7 +323,7 @@ def pwitt(R, p):
     INPUT:
 
     - ``R`` -- the base ring
-    - ``p`` -- a positive integer that is `0` in ``R``
+    - ``p`` -- positive integer that is `0` in `R`
 
     EXAMPLES::
 

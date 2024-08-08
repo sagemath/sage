@@ -56,7 +56,7 @@ class FreeMagma(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``alphabet`` -- a tuple of strings; the generators of the magma
+        - ``alphabet`` -- tuple of strings; the generators of the magma
 
         EXAMPLES::
 
@@ -136,7 +136,7 @@ class FreeMagma(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- a string
+        - ``x`` -- string
 
         EXAMPLES::
 

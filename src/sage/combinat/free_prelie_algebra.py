@@ -227,7 +227,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         cat = MagmaticAlgebras(R).WithBasis().Graded() & LieAlgebras(R).WithBasis().Graded()
         CombinatorialFreeModule.__init__(self, R, Trees,
-                                         latex_prefix="",
+                                         latex_prefix='',
                                          sorting_key=key,
                                          category=cat)
 
@@ -263,7 +263,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             sage: enum = EnumeratedSets().Infinite().example()
             sage: algebras.FreePreLie(QQ, enum)  # indirect doctest
             Free PreLie algebra on generators indexed by An example of an
-            infinite enumerated set: the non negative integers
+            infinite enumerated set: the nonnegative integers
             over Rational Field
         """
         n = self.algebra_generators().cardinality()
@@ -289,7 +289,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -337,7 +337,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - `R` -- a ring
+        - ``R`` -- a ring
 
         EXAMPLES::
 
@@ -716,7 +716,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         The things that coerce into ``self`` are
 
         - free pre-Lie algebras whose set `E` of labels is
-          a subset of the corresponding self of ``set`, and whose base
+          a subset of the corresponding ``self`` of ``set``, and whose base
           ring has a coercion map into ``self.base_ring()``
 
         EXAMPLES::
@@ -1048,8 +1048,8 @@ def tree_from_sortkey(ch, labels=True):
 
     INPUT:
 
-    - ``ch`` -- a list of pairs ``(integer, label)``
-    - ``labels`` -- (default ``True``) whether to use labelled trees
+    - ``ch`` -- list of pairs ``(integer, label)``
+    - ``labels`` -- boolean (default: ``True``); whether to use labelled trees
 
     OUTPUT:
 
@@ -1101,7 +1101,7 @@ def corolla_gen(tx, list_ty, labels=True):
     INPUT:
 
     - ``tx`` -- a tree
-    - ``list_ty`` -- a list of trees
+    - ``list_ty`` -- list of trees
 
     EXAMPLES::
 

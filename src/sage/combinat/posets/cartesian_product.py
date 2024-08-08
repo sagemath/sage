@@ -25,25 +25,24 @@ class CartesianProductPoset(CartesianProduct):
 
     INPUT:
 
-    - ``sets`` -- a tuple of parents.
+    - ``sets`` -- tuple of parents
 
-    - ``category`` -- a subcategory of
-      ``Sets().CartesianProducts() & Posets()``.
+    - ``category`` -- a subcategory of ``Sets().CartesianProducts() & Posets()``
 
-    - ``order`` -- a string or function specifying an order less or equal.
-      It can be one of the following:
+    - ``order`` -- string or function specifying an order less or equal;
+      it can be one of the following:
 
       - ``'native'`` -- elements are ordered by their native ordering,
-        i.e., the order the wrapped elements (tuples) provide.
+        i.e., the order the wrapped elements (tuples) provide
 
-      - ``'lex'`` -- elements are ordered lexicographically.
+      - ``'lex'`` -- elements are ordered lexicographically
 
       - ``'product'`` -- an element is less or equal to another
         element, if less or equal is true for all its components
-        (Cartesian projections).
+        (Cartesian projections)
 
-      - A function which performs the comparison `\leq`. It takes two
-        input arguments and outputs a boolean.
+      - a function which performs the comparison `\leq`; it takes two
+        input arguments and outputs a boolean
 
     Other keyword arguments (``kwargs``) are passed to the constructor
     of :class:`CartesianProduct`.
@@ -118,13 +117,11 @@ class CartesianProductPoset(CartesianProduct):
 
         INPUT:
 
-        - ``left`` -- an element.
+        - ``left`` -- an element
 
-        - ``right`` -- an element.
+        - ``right`` -- an element
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -156,13 +153,11 @@ class CartesianProductPoset(CartesianProduct):
 
         INPUT:
 
-        - ``left`` -- an element.
+        - ``left`` -- an element
 
-        - ``right`` -- an element.
+        - ``right`` -- an element
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -220,13 +215,11 @@ class CartesianProductPoset(CartesianProduct):
 
         INPUT:
 
-        - ``left`` -- an element.
+        - ``left`` -- an element
 
-        - ``right`` -- an element.
+        - ``right`` -- an element
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         The comparison is ``True`` if the result of the
         comparison in each component is ``True``.
@@ -269,13 +262,11 @@ class CartesianProductPoset(CartesianProduct):
 
         INPUT:
 
-        - ``left`` -- an element.
+        - ``left`` -- an element
 
-        - ``right`` -- an element.
+        - ``right`` -- an element
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -313,11 +304,9 @@ class CartesianProductPoset(CartesianProduct):
 
             INPUT:
 
-            - ``other`` -- an element.
+            - ``other`` -- an element
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 
@@ -348,11 +337,9 @@ class CartesianProductPoset(CartesianProduct):
 
             INPUT:
 
-            - ``other`` -- an element.
+            - ``other`` -- an element
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 
@@ -411,11 +398,9 @@ class CartesianProductPoset(CartesianProduct):
 
             INPUT:
 
-            - ``other`` -- an element.
+            - ``other`` -- an element
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 
@@ -446,11 +431,9 @@ class CartesianProductPoset(CartesianProduct):
 
             INPUT:
 
-            - ``other`` -- an element.
+            - ``other`` -- an element
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 
@@ -481,11 +464,9 @@ class CartesianProductPoset(CartesianProduct):
 
             INPUT:
 
-            - ``other`` -- an element.
+            - ``other`` -- an element
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 

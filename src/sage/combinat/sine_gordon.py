@@ -66,7 +66,7 @@ lazy_import("sage.plot.line", "line")
 
 class SineGordonYsystem(SageObject):
     r"""
-    A class to model a (reduced) sine-Gordon Y-system
+    A class to model a (reduced) sine-Gordon Y-system.
 
     Note that the generations, together with all integer tuples, in this
     implementation are numbered from 0 while in [NS]_ they are numbered from 1

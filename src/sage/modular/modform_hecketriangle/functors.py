@@ -33,7 +33,7 @@ from .abstract_space import FormsSpace_abstract
 from .subspace import SubSpaceForms
 
 
-def _get_base_ring(ring, var_name="d"):
+def _get_base_ring(ring, var_name='d'):
     r"""
     Return the base ring of the given ``ring``:
 
@@ -56,7 +56,7 @@ def _get_base_ring(ring, var_name="d"):
     whose construction should be based on the returned base ring
     (and not on ``ring``!).
 
-    If ``var_name`` (default: "d") is specified then this variable
+    If ``var_name`` (default: ``'d'``) is specified then this variable
     name is used for the polynomial ring.
 
     EXAMPLES::
@@ -79,7 +79,7 @@ def _get_base_ring(ring, var_name="d"):
     """
 
     # from sage.rings.fraction_field import FractionField_generic
-    from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
     from sage.categories.pushout import FractionField as FractionFieldFunctor
 
     base_ring = ring
@@ -87,7 +87,7 @@ def _get_base_ring(ring, var_name="d"):
     #    base_ring = base_ring.base()
     if (base_ring.construction() and base_ring.construction()[0] == FractionFieldFunctor()):
         base_ring = base_ring.construction()[1]
-    if (is_PolynomialRing(base_ring) and base_ring.ngens() == 1 and base_ring.variable_name() == var_name):
+    if (isinstance(base_ring, PolynomialRing_general) and base_ring.ngens() == 1 and base_ring.variable_name() == var_name):
         base_ring = base_ring.base()
     if (base_ring.construction() and base_ring.construction()[0] == FractionFieldFunctor()):
         base_ring = base_ring.construction()[1]
@@ -164,14 +164,12 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``ambient_space_functor`` -- A FormsSpaceFunctor
+        - ``ambient_space_functor`` -- a FormsSpaceFunctor
 
-        - ``generators``            -- A list of elements of some ambient space
-                                       over some base ring.
+        - ``generators`` -- a list of elements of some ambient space
+          over some base ring
 
-        OUTPUT:
-
-        The construction functor for the corresponding forms sub space.
+        OUTPUT: the construction functor for the corresponding forms sub space
 
         EXAMPLES::
 
@@ -268,7 +266,6 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
         If ``other`` is not a ``FormsSubSpaceFunctor`` then ``self``
         is merged as if it was its ambient space functor.
 
-
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.functors import (FormsSpaceFunctor, FormsSubSpaceFunctor)
@@ -359,17 +356,15 @@ class FormsSpaceFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``analytic_type``  -- An element of ``AnalyticType()``.
+        - ``analytic_type`` -- an element of ``AnalyticType()``
 
-        - ``group``          -- The index of a Hecke Triangle group.
+        - ``group`` -- the index of a Hecke Triangle group
 
-        - ``k``              -- A rational number, the weight of the space.
+        - ``k`` -- a rational number, the weight of the space
 
-        - ``ep``             -- `1` or `-1`, the multiplier of the space.
+        - ``ep`` -- `1` or `-1`, the multiplier of the space
 
-        OUTPUT:
-
-        The construction functor for the corresponding forms space/ring.
+        OUTPUT: the construction functor for the corresponding forms space/ring
 
         EXAMPLES::
 
@@ -453,7 +448,6 @@ class FormsSpaceFunctor(ConstructionFunctor):
 
         Two ``FormsRingFunctors`` are merged to the corresponding
         (extended) ``FormsRingFunctor``.
-
 
         EXAMPLES::
 
@@ -545,16 +539,14 @@ class FormsRingFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``analytic_type``  -- An element of ``AnalyticType()``.
+        - ``analytic_type`` -- an element of ``AnalyticType()``
 
-        - ``group``          -- The index of a Hecke Triangle group.
+        - ``group`` -- the index of a Hecke Triangle group
 
-        - ``red_hom``        -- A boolean variable for the parameter ``red_hom``
-                                (also see ``FormsRing_abstract``).
+        - ``red_hom`` -- a boolean variable for the parameter ``red_hom``
+          (also see ``FormsRing_abstract``)
 
-        OUTPUT:
-
-        The construction functor for the corresponding forms ring.
+        OUTPUT: the construction functor for the corresponding forms ring
 
         EXAMPLES::
 
@@ -643,7 +635,6 @@ class FormsRingFunctor(ConstructionFunctor):
 
         Two ``FormsRingFunctors`` are merged to the corresponding
         (extended) ``FormsRingFunctor``.
-
 
         EXAMPLES::
 

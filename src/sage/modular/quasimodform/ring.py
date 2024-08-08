@@ -222,15 +222,15 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         r"""
         INPUT:
 
-        - ``group`` (default: `\SL_2(\ZZ)`) -- a congruence subgroup of
+        - ``group`` -- (default: `\SL_2(\ZZ)`) a congruence subgroup of
           `\SL_2(\ZZ)`, or a positive integer `N` (interpreted as
-          `\Gamma_0(N)`).
+          `\Gamma_0(N)`)
 
-        - ``base_ring`` (ring, default: `\QQ`) -- a base ring, which should be
-          `\QQ`, `\ZZ`, or the integers mod `p` for some prime `p`.
+        - ``base_ring`` -- a base ring (default: `\QQ`); should be
+          `\QQ`, `\ZZ`, or the integers mod `p` for some prime `p`
 
-        - ``name`` (str, default: ``'E2'``) -- a variable name corresponding to
-          the weight 2 Eisenstein series.
+        - ``name`` -- string (default: ``'E2'``); a variable name corresponding to
+          the weight 2 Eisenstein series
 
         TESTS:
 
@@ -321,9 +321,9 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``weight`` (int, Integer)
+        - ``weight`` -- integer
 
-        OUTPUT: A quasimodular forms space of the given weight.
+        OUTPUT: a quasimodular forms space of the given weight
 
         EXAMPLES::
 
@@ -331,13 +331,12 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             NotImplementedError: spaces of quasimodular forms of fixed weight not yet implemented
-
         """
         raise NotImplementedError("spaces of quasimodular forms of fixed weight not yet implemented")
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -377,11 +376,11 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
     def _element_constructor_(self, datum):
         r"""
-        The call method of self.
+        The call method of ``self``.
 
         INPUT:
 
-        - ``datum`` -- list, GradedModularFormElement, ModularFormElement,
+        - ``datum`` -- list; GradedModularFormElement, ModularFormElement,
           Polynomial, base ring element
 
         OUTPUT: QuasiModularFormElement
@@ -605,7 +604,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``names`` (str, default: ``None``) -- a list or tuple of names
+        - ``names``-- string (default: ``None``); list or tuple of names
           (strings), or a comma separated string. Defines the names for the
           generators of the multivariate polynomial ring. The default names are
           of the following form:
@@ -621,7 +620,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
           - In any other cases, we use the letters ``Fk``, ``Gk``, ``Hk``, ...,
             ``FFk``, ``FGk``, ... to denote any generator of weight `k`.
 
-        OUTPUT: A multivariate polynomial ring in the variables ``names``
+        OUTPUT: a multivariate polynomial ring in the variables ``names``
 
         EXAMPLES::
 
@@ -728,7 +727,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``polynomial`` -- A multivariate polynomial
+        - ``polynomial`` -- a multivariate polynomial
 
         OUTPUT: the graded quasimodular forms `P(g_0, \ldots, g_n)`
 
@@ -789,11 +788,9 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``weight`` (integer) -- the weight of the subspace
+        - ``weight`` -- integer; the weight of the subspace
 
-        OUTPUT:
-
-        A list of quasimodular forms of the given weight.
+        OUTPUT: list of quasimodular forms of the given weight
 
         EXAMPLES::
 

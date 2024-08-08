@@ -65,16 +65,16 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
 
     INPUT:
 
-    - ``v``, ``k`` (integers)
+    - ``v``, ``k`` -- integers
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
     .. SEEALSO::
 
@@ -150,10 +150,10 @@ def kirkman_triple_system(v,existence=False):
 
     INPUT:
 
-    - `n` (integer)
+    - ``n`` -- integer
 
-    - ``existence`` (boolean; ``False`` by default) -- whether to build the
-      `KTS(n)` or only answer whether it exists.
+    - ``existence`` -- boolean (default: ``False``); whether to build the
+      `KTS(n)` or only answer whether it exists
 
     .. SEEALSO::
 
@@ -374,10 +374,10 @@ def v_4_1_rbibd(v,existence=False):
 
     INPUT:
 
-    - `n` (integer)
+    - ``n`` -- integer
 
-    - ``existence`` (boolean; ``False`` by default) -- whether to build the
-      design or only answer whether it exists.
+    - ``existence`` -- boolean (default: ``False``); whether to build the
+      design or only answer whether it exists
 
     .. SEEALSO::
 
@@ -441,7 +441,7 @@ def v_4_1_rbibd(v,existence=False):
 
 def PBD_4_7(v,check=True, existence=False):
     r"""
-    Return a `(v,\{4,7\})`-PBD
+    Return a `(v,\{4,7\})`-PBD.
 
     For all `v` such that `n\equiv 1\pmod{3}` and `n\neq 10,19, 31` there exists
     a `(v,\{4,7\})`-PBD. This is proved in Proposition IX.4.5 from [BJL99]_,
@@ -704,12 +704,11 @@ def PBD_4_7_from_Y(gdd,check=True):
 
     INPUT:
 
-    - ``gdd`` -- a `(v,\{4,5,7\},Y)`-GDD where `Y=\NN-\{3,6,10\}`.
+    - ``gdd`` -- a `(v,\{4,5,7\},Y)`-GDD where `Y=\NN-\{3,6,10\}`
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 

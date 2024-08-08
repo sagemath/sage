@@ -99,9 +99,7 @@ class Parallel():
 
         - ``f`` -- Python callable object or function
 
-        OUTPUT:
-
-        - Decorated version of ``f``
+        OUTPUT: decorated version of ``f``
 
         EXAMPLES::
 
@@ -129,7 +127,7 @@ class ParallelFunction():
     """
     def __init__(self, parallel, func):
         """
-        .. note::
+        .. NOTE::
 
             This is typically accessed indirectly through
             :meth:`Parallel.__call__`.
@@ -137,10 +135,9 @@ class ParallelFunction():
         INPUT:
 
         - ``parallel`` -- a :class:`Parallel` object which controls
-          how the parallel execution will be done.
+          how the parallel execution will be done
 
         - ``func`` -- Python callable object or function
-
         """
         self.parallel = parallel
         self.func = func
@@ -170,7 +167,7 @@ class ParallelFunction():
         Implement part of the descriptor protocol for
         :class:`ParallelFunction` objects.
 
-        .. note::
+        .. NOTE::
 
             This is the key to fixing :issue:`11461`.
 
@@ -228,7 +225,7 @@ class ParallelFunction():
 
     def _sage_argspec_(self):
         """
-        Returns the argument specification for this object, which is
+        Return the argument specification for this object, which is
         just the argument specification for the underlying function.
         See :mod:`sage.misc.sageinspect` for more information on
         this convention.
@@ -249,7 +246,7 @@ class ParallelFunction():
 
     def _sage_src_(self):
         """
-        Returns the source code for this object, which is just the
+        Return the source code for this object, which is just the
         source code for the underlying function.  See
         :mod:`sage.misc.sageinspect` for more information on this
         convention.
@@ -269,7 +266,7 @@ class ParallelFunction():
 
     def _instancedoc_(self):
         r"""
-        Returns the docstring for this object, which is just the
+        Return the docstring for this object, which is just the
         docstring for the underlying function.  See
         :mod:`sage.misc.sageinspect` for more information on this
         convention.
@@ -304,20 +301,19 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 
     INPUT:
 
-     - ``p_iter`` -- parallel iterator function or string:
-            - ``'fork'``            -- (default) use a new forked subprocess for each input
-            - ``'multiprocessing'`` -- use multiprocessing library
-            - ``'reference'``       -- use a fake serial reference implementation
-     - ``ncpus`` -- integer, maximal number of subprocesses to use at the same time
-     - ``timeout`` -- number of seconds until each subprocess is killed (only supported
-       by 'fork'; zero means not at all)
+    - ``p_iter`` -- parallel iterator function or string:
+      - ``'fork'`` -- (default) use a new forked subprocess for each input
+      - ``'multiprocessing'`` -- use multiprocessing library
+      - ``'reference'`` -- use a fake serial reference implementation
+    - ``ncpus`` -- integer; maximal number of subprocesses to use at the same time
+    - ``timeout`` -- number of seconds until each subprocess is killed (only supported
+      by ``'fork'``; zero means not at all)
 
     .. warning::
 
          If you use anything but ``'fork'`` above, then a whole new
          subprocess is spawned, so none of your local state (variables,
          certain functions, etc.) is available.
-
 
     EXAMPLES:
 
@@ -436,7 +432,7 @@ class Fork():
 
         - ``timeout`` -- (default: 0) kill the subprocess after it has run this
           many seconds (wall time), or if ``timeout`` is zero, do not kill it.
-        - ``verbose`` -- (default: ``False``) whether to print anything about
+        - ``verbose`` -- boolean (default: ``False``); whether to print anything about
           what the decorator does (e.g., killing the subprocess)
 
         EXAMPLES::
@@ -455,9 +451,7 @@ class Fork():
 
         - ``f`` -- a function
 
-        OUTPUT:
-
-        - A decorated function.
+        OUTPUT: a decorated function
 
         EXAMPLES::
 
@@ -488,7 +482,7 @@ def fork(f=None, timeout=0, verbose=False):
     - ``f`` -- a function
     - ``timeout`` -- (default: 0) if positive, kill the subprocess after
       this many seconds (wall time)
-    - ``verbose`` -- (default: ``False``) whether to print anything
+    - ``verbose`` -- boolean (default: ``False``); whether to print anything
       about what the decorator does (e.g., killing the subprocess)
 
     .. warning::

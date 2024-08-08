@@ -38,7 +38,7 @@ from sage.cpython.string cimport char_to_str
 
 cdef class stl_int_vector(SageObject):
     """
-    Example class wrapping an STL vector
+    Example class wrapping an STL vector.
 
     EXAMPLES::
 

@@ -123,7 +123,7 @@ def difference_matrix_product(k, M1, G1, lmbda1, M2, G2, lmbda2, check=True):
 
 def difference_matrix(g,k,lmbda=1,existence=False,check=True):
     r"""
-    Return a `(g,k,\lambda)`-difference matrix
+    Return a `(g,k,\lambda)`-difference matrix.
 
     A matrix `M` is a `(g,k,\lambda)`-difference matrix if it has size `\lambda
     g\times k`, its entries belong to the group `G` of cardinality `g`, and
@@ -132,27 +132,26 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
 
     INPUT:
 
-    - ``k`` -- (integer) number of columns. If ``k=None`` it is set to the
-      largest value available.
+    - ``k`` -- integer; number of columns. If ``k`` is ``None`` it is set to the
+      largest value available
 
-    - ``g`` -- (integer) cardinality of the group `G`
+    - ``g`` -- integer; cardinality of the group `G`
 
-    - ``lmbda`` -- (integer; default: 1) -- number of times each element of `G`
-      appears as a difference.
+    - ``lmbda`` -- integer (default: 1); number of times each element of `G`
+      appears as a difference
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
       - ``True`` -- meaning that Sage knows how to build the design
 
       - ``Unknown`` -- meaning that Sage does not know how to build the
-        design, but that the design may exist (see :mod:`sage.misc.unknown`).
+        design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
-      - ``False`` -- meaning that the design does not exist.
+      - ``False`` -- meaning that the design does not exist
 
       .. NOTE::
 

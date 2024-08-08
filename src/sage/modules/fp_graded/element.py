@@ -65,9 +65,7 @@ class FPElement(IndexedFreeModuleElement):
         r"""
         The degree of ``self``.
 
-        OUTPUT:
-
-        The integer degree of ``self`` or raise an error if the zero element.
+        OUTPUT: the integer degree of ``self`` or raise an error if the zero element
 
         EXAMPLES::
 
@@ -147,9 +145,7 @@ class FPElement(IndexedFreeModuleElement):
 
         - ``a`` -- an element of the algebra the parent module is defined over
 
-        OUTPUT:
-
-        The module element `a \cdot x` where `x` is ``self``.
+        OUTPUT: the module element `a \cdot x` where `x` is ``self``
 
         EXAMPLES::
 
@@ -180,7 +176,7 @@ class FPElement(IndexedFreeModuleElement):
 
     def vector_presentation(self):
         r"""
-        A coordinate vector representing ``self`` when it is non-zero.
+        A coordinate vector representing ``self`` when it is nonzero.
 
         These are coordinates with respect to the basis chosen by
         :meth:`~sage.modules.fp_graded.module.FPModule.basis_elements`.
@@ -190,7 +186,7 @@ class FPElement(IndexedFreeModuleElement):
         OUTPUT:
 
         A vector of elements in the ground ring of the algebra for
-        this module when this element is non-zero.  Otherwise, the
+        this module when this element is nonzero.  Otherwise, the
         value ``None``.
 
         .. SEEALSO::
@@ -250,11 +246,11 @@ class FPElement(IndexedFreeModuleElement):
 
     def __bool__(self):
         r"""
-        Determine if this element is non-zero.
+        Determine if this element is nonzero.
 
         OUTPUT:
 
-        The boolean value ``True`` if this element is non-zero
+        The boolean value ``True`` if this element is nonzero
         and ``False`` otherwise.
 
         EXAMPLES::
@@ -281,7 +277,7 @@ class FPElement(IndexedFreeModuleElement):
 
     def __eq__(self, other):
         r"""
-        True iff ``self`` and ``other`` are equal.
+        ``True`` iff ``self`` and ``other`` are equal.
 
         EXAMPLES::
 

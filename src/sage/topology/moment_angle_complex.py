@@ -513,7 +513,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``dim`` -- integer, or a list of integers; represents the
+        - ``dim`` -- integer or a list of integers; represents the
           homology (or homologies) we want to compute
         - ``base_ring`` -- commutative ring (default: ``ZZ``); must be ``ZZ``
           or a field

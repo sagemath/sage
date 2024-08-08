@@ -22,9 +22,10 @@ from sage_docbuild.conf import *
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
-# Add a small edit button.
+# Add small view/edit buttons.
 html_theme_options.update({
-  'source_edit_link': os.path.join(source_repository, 'blob/develop/src/doc/en/faq', '{filename}'),
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/en/faq', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/en/faq', '{filename}'),
 })
 
 # General information about the project.

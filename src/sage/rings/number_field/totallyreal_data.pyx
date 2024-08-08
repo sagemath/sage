@@ -457,10 +457,10 @@ cdef class tr_data:
 
         INPUT:
 
-        n -- integer, the degree
-        B -- integer, the discriminant bound
-        a -- list (default: ``[]``), the coefficient list to begin with, where
-             a[len(a)]*x^n + ... + a[0]x^(n-len(a))
+        - ``n`` -- integer; the degree
+        - ``B`` -- integer; the discriminant bound
+        - ``a`` -- list (default: ``[]``); the coefficient list to begin with,
+          where ``a[len(a)]*x^n + ... + a[0]x^(n-len(a))``
 
         OUTPUT:
 
@@ -593,14 +593,12 @@ cdef class tr_data:
         INPUT:
 
         - ``verbose`` -- boolean to print verbosely computational details
-        - ``haltk`` -- integer, the level at which to halt the inductive
+        - ``haltk`` -- integer; the level at which to halt the inductive
           coefficient bounds
         - ``phc`` -- boolean, if PHCPACK is available, use it when `k = n-5` to
           compute an improved Lagrange multiplier bound
 
-        OUTPUT:
-
-        The next polynomial, as a sequence of integers
+        OUTPUT: the next polynomial, as a sequence of integers
 
         EXAMPLES::
 
@@ -648,13 +646,13 @@ cdef class tr_data:
 
         INPUT:
 
-        - f_out -- an integer sequence, to be written with the coefficients of
+        - ``f_out`` -- integer sequence, to be written with the coefficients of
           the next polynomial
-        - verbose -- boolean to print verbosely computational details
-        - haltk -- integer, the level at which to halt the inductive
+        - ``verbose`` -- boolean to print verbosely computational details
+        - ``haltk`` -- integer; the level at which to halt the inductive
           coefficient bounds
-        - phc -- boolean, if PHCPACK is available, use it when k == n-5 to
-          compute an improved Lagrange multiplier bound
+        - ``phc`` -- boolean; if PHCPACK is available, use it when ``k == n-5``
+          to compute an improved Lagrange multiplier bound
 
         OUTPUT:
 
@@ -915,7 +913,6 @@ cdef class tr_data:
             amax = [0, 0, 0, 1]
             beta =  [...]
             gnk =  [...]
-
         """
         print("k =", self.k)
         print("a =", [self.a[i] for i in range(self.n + 1)])

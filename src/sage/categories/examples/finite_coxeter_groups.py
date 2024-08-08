@@ -92,7 +92,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `n` -- an integer with `n \geq 2`
+        - ``n`` -- integer with `n \geq 2`
 
         EXAMPLES::
 
@@ -117,7 +117,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
     def __contains__(self, x):
         r"""
-        Check in the element x is in the mathematical parent self.
+        Check if the element ``x`` is in the mathematical parent ``self``.
 
         EXAMPLES::
 
@@ -135,7 +135,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
     @cached_method
     def one(self):
         r"""
-        Implements :meth:`Monoids.ParentMethods.one`.
+        Implement :meth:`Monoids.ParentMethods.one`.
 
         EXAMPLES::
 
@@ -147,7 +147,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
     def index_set(self):
         r"""
-        Implements :meth:`CoxeterGroups.ParentMethods.index_set`.
+        Implement :meth:`CoxeterGroups.ParentMethods.index_set`.
 
         EXAMPLES::
 
@@ -185,9 +185,9 @@ class DihedralGroup(UniqueRepresentation, Parent):
         wrapped_class = tuple
         __lt__ = ElementWrapper._lt_by_value
 
-        def has_right_descent(self, i, positive=False, side="right"):
+        def has_right_descent(self, i, positive=False, side='right'):
             r"""
-            Implements :meth:`SemiGroups.ElementMethods.has_right_descent`.
+            Implement :meth:`SemiGroups.ElementMethods.has_right_descent`.
 
             EXAMPLES::
 
@@ -222,7 +222,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
         def apply_simple_reflection_right(self, i):
             r"""
-            Implements :meth:`CoxeterGroups.ElementMethods.apply_simple_reflection`.
+            Implement :meth:`CoxeterGroups.ElementMethods.apply_simple_reflection`.
 
             EXAMPLES::
 

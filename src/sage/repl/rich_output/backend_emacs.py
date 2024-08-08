@@ -21,7 +21,7 @@ from sage.repl.rich_output.output_catalog import *
 
 class BackendEmacs(BackendIPythonCommandline):
     """
-    Emacs Backend
+    Emacs Backend.
 
     This backend is used by Emacs' sage-mode to have typeset output
     and inline images.
@@ -35,11 +35,9 @@ class BackendEmacs(BackendIPythonCommandline):
 
     def _repr_(self):
         r"""
-        Return string representation of the backend
+        Return string representation of the backend.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -52,7 +50,7 @@ class BackendEmacs(BackendIPythonCommandline):
 
     def default_preferences(self):
         """
-        Return the backend's display preferences
+        Return the backend's display preferences.
 
         Override this method to change the default preferences when
         using your backend.
@@ -78,7 +76,7 @@ class BackendEmacs(BackendIPythonCommandline):
 
     def displayhook(self, plain_text, rich_output):
         r"""
-        Backend implementation of the displayhook
+        Backend implementation of the displayhook.
 
         INPUT:
 

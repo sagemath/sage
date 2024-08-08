@@ -3846,6 +3846,10 @@ REFERENCES:
             \M. Grötschel, \L Lovász, *Handbook of combinatorics*,
             Vol. 1, Chapter 18, 1995
 
+.. [KK2003] T. Kivinen and M. Kojo. *More Modular Exponential (MODP)
+            Diffie-Hellman groups for Internet Key Exchange (IKE)*, in RFC 3526.
+            Available at https://www.rfc-editor.org/rfc/rfc3526
+
 .. [KKMMNN1992] S-J. Kang, M. Kashiwara, K. C. Misra, T. Miwa, T. Nakashima,
                 and A. Nakayashiki. *Affine crystals and vertex models*.
                 Int. J. Mod. Phys. A, **7** (suppl. 1A), (1992) pp. 449-484.
@@ -4395,6 +4399,10 @@ REFERENCES:
 
 .. [LM2018] \A. Lauve, M. Mastnak. *Bialgebra coverings and transfer
             of structure*. Preprint, :arxiv:`1803.02691`.
+
+.. [LM2024] C.L. Lucchesi, U.S.R. Murty. *Perfect Matchings: A Theory of
+            Matching Covered Graphs*. Algorithms and Computation in Mathematics.
+            Springer Cham, 1st edition, 2024, :doi:`10.1007/978-3-031-47504-7`.
 
 .. [LMR2010] \N. Linial, R. Meshulam and M. Rosenthal, "Sum complexes
              -- a new family of hypertrees", Discrete & Computational
@@ -5351,6 +5359,11 @@ REFERENCES:
              Minimal Terminal Q-Factorial Models of Drinfeld Coarse Moduli Schemes.
              Mathematical Physics, Analysis and Geometry 1, 171-191 (1998).
              :doi:`10.1023/A:1009724323513`
+
+.. [PP2010] \C. Paar and J. Pelzl.
+            *Understanding Cryptography: A Textbook for Students and Practitioners*.
+            Springer Berlin, Heidelberg, 2010.
+            :doi:`10.1007/978-3-642-04101-3`
 
 .. [PPW2013] \D. Perkinson, J. Perlman, and J. Wilmes.
              *Primer for the algebraic geometry of sandpiles*.

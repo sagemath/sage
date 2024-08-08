@@ -61,7 +61,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         TESTS:
@@ -151,8 +151,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def __copy__(self):
         """
-        Creates a copy of self, which may be changed without altering
-        self.
+        Create a copy of self, which may be changed without altering
+        ``self``.
 
         EXAMPLES::
 
@@ -330,7 +330,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def _list(self):
         """
-        Return reference to list of entries of self.  For internal use
+        Return reference to list of entries of ``self``.  For internal use
         only, since this circumvents immutability.
 
         EXAMPLES::

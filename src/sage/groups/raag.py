@@ -90,7 +90,7 @@ class RightAngledArtinGroup(ArtinGroup):
     INPUT:
 
     - ``G`` -- a graph
-    - ``names`` -- a string or a list of generator names
+    - ``names`` -- string or list of generator names
 
     EXAMPLES::
 

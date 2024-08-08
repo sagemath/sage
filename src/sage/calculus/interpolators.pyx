@@ -36,14 +36,13 @@ cdef double TWOPI = 2*pi
 
 def polygon_spline(pts):
     """
-    Creates a polygon from a set of complex or `(x,y)` points. The polygon
+    Create a polygon from a set of complex or `(x,y)` points. The polygon
     will be a parametric curve from 0 to 2*pi. The returned values will be
     complex, not `(x,y)`.
 
     INPUT:
 
-    - ``pts`` -- A list or array of complex numbers of tuples of the form
-      `(x,y)`.
+    - ``pts`` -- list or array of complex numbers of tuples of the form `(x,y)`
 
     EXAMPLES:
 
@@ -109,8 +108,8 @@ cdef class PSpline:
 
         INPUT:
 
-        - ``t`` -- double, the parameter value for the parameterized curve,
-          between 0 and 2*pi.
+        - ``t`` -- double; the parameter value for the parameterized curve,
+          between 0 and 2*pi
 
         OUTPUT:
 
@@ -142,8 +141,8 @@ cdef class PSpline:
 
         INPUT:
 
-        - ``t`` -- double, the parameter value for the parameterized curve,
-          between 0 and 2*pi.
+        - ``t`` -- double; the parameter value for the parameterized curve,
+          between 0 and 2*pi
 
         OUTPUT:
 
@@ -172,14 +171,13 @@ cdef class PSpline:
 
 def complex_cubic_spline(pts):
     """
-    Creates a cubic spline interpolated figure from a set of complex or
+    Create a cubic spline interpolated figure from a set of complex or
     `(x,y)` points. The figure will be a parametric curve from 0 to 2*pi.
     The returned values will be complex, not `(x,y)`.
 
     INPUT:
 
-    - ``pts`` -- A list or array of complex numbers, or tuples of the form
-      `(x,y)`.
+    - ``pts`` -- list or array of complex numbers, or tuples of the form `(x,y)`
 
     EXAMPLES:
 
@@ -267,8 +265,8 @@ cdef class CCSpline:
 
         INPUT:
 
-        - ``t`` -- double, the parameter value for the parameterized curve,
-          between 0 and 2*pi.
+        - ``t`` -- double; the parameter value for the parameterized curve,
+          between 0 and 2*pi
 
         OUTPUT:
 
@@ -301,8 +299,8 @@ cdef class CCSpline:
 
         INPUT:
 
-        - ``t`` -- double, the parameter value for the parameterized curve,
-          between 0 and 2*pi.
+        - ``t`` -- double; the parameter value for the parameterized curve,
+          between 0 and 2*pi
 
         OUTPUT:
 

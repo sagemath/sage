@@ -101,7 +101,7 @@ cdef inline void digit_set_ui(fmpz_t a, slong b) noexcept:
     INPUT:
 
     - ``a`` -- the ``cdigit`` to set up
-    - ``b`` -- an integer, the value of assign
+    - ``b`` -- integer; the value of assign
     """
     fmpz_set_ui(a, b)
 
@@ -140,7 +140,7 @@ cdef inline bint digit_equal_ui(fmpz_t a, slong b) noexcept:
     INPUT:
 
     - ``a`` -- a ``cdigit``
-    - ``b`` -- an integer
+    - ``b`` -- integer
 
     OUTPUT:
 
@@ -369,7 +369,7 @@ cdef inline fmpz* element_get_digit(fmpz_poly_t x, slong i) noexcept:
     INPUT:
 
     - ``x`` -- a ``celement``
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     return get_coeff(x, i)
 
@@ -381,8 +381,8 @@ cdef inline void element_get_slice(fmpz_poly_t res, fmpz_poly_t x, slong start, 
 
     - ``res`` -- a ``celement`` to store the slice
     - ``x`` -- a ``celement``, the element from which the slice is extracted
-    - ``start`` -- an integer, the start position of the slice
-    - ``length`` -- an integer, the length of the slice
+    - ``start`` -- integer; the start position of the slice
+    - ``length`` -- integer; the length of the slice
 
     .. NOTE::
 
@@ -400,7 +400,7 @@ cdef inline void element_set_digit(fmpz_poly_t x, fmpz_t a, slong i) noexcept:
 
     - ``x`` -- a ``celement``
     - ``a`` -- a ``cdigit``
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     fmpz_poly_set_coeff_fmpz(x, i, a)
 
@@ -411,8 +411,8 @@ cdef inline void element_set_digit_ui(fmpz_poly_t x, slong a, slong i) noexcept:
     INPUT:
 
     - ``x`` -- a ``celement``
-    - ``a`` -- an integer
-    - ``i`` -- an integer
+    - ``a`` -- integer
+    - ``i`` -- integer
     """
     fmpz_poly_set_coeff_ui(x, i, a)
 
@@ -424,7 +424,7 @@ cdef inline void element_set_digit_sage(fmpz_poly_t x, Integer a, slong i) noexc
 
     - ``x`` -- a ``celement``
     - ``a`` -- a Sage element
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     fmpz_poly_set_coeff_mpz(x, i, a.value)
 
@@ -439,7 +439,7 @@ cdef inline void element_iadd_digit(fmpz_poly_t x, fmpz_t a, slong i) noexcept:
 
     - ``x`` -- a ``celement``
     - ``a`` -- a ``cdigit``
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     iadd_coeff(x, a, i)
 
@@ -452,7 +452,7 @@ cdef inline void element_isub_digit(fmpz_poly_t x, fmpz_t a, slong i) noexcept:
 
     - ``x`` -- a ``celement``
     - ``a`` -- a ``cdigit``
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     isub_coeff(x, a, i)
 
@@ -500,7 +500,7 @@ cdef inline void element_reduce_digit(fmpz_poly_t x, slong i, PowComputer_flint 
     INPUT:
 
     - ``x`` -- a ``celement``, the element to update
-    - ``i`` -- an integer
+    - ``i`` -- integer
     - ``prime_pow`` -- the PowComputer for the ring
     """
     reduce_coeff(x, i, prime_pow.fprime)
@@ -513,7 +513,7 @@ cdef inline void element_reducesmall_digit(fmpz_poly_t x, slong i, PowComputer_f
     INPUT:
 
     - ``x`` -- a ``celement``, the element to update
-    - ``i`` -- an integer
+    - ``i`` -- integer
     - ``prime_pow`` -- the PowComputer for the ring
     """
     reducesmall_coeff(x, i, prime_pow.fprime)
@@ -526,7 +526,7 @@ cdef inline void element_reduceneg_digit(fmpz_poly_t x, slong i, PowComputer_fli
     INPUT:
 
     - ``x`` -- a ``celement``, the element to update
-    - ``i`` -- an integer
+    - ``i`` -- integer
     - ``prime_pow`` -- the PowComputer for the ring
     """
     reduceneg_coeff(x, i, prime_pow.fprime)

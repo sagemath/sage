@@ -34,27 +34,25 @@ scipy = None
 @richcmp_method
 class NumericalEigenforms(SageObject):
     """
-    numerical_eigenforms(group, weight=2, eps=1e-20, delta=1e-2, tp=[2,3,5])
+    numerical_eigenforms(group, weight=2, eps=1e-20, delta=1e-2, tp=[2,3,5]).
 
     INPUT:
 
     - ``group`` -- a congruence subgroup of a Dirichlet character of
       order 1 or 2
 
-    - ``weight`` -- an integer >= 2
+    - ``weight`` -- integer >= 2
 
     - ``eps`` -- a small float; abs( ) < eps is what "equal to zero" is
-      interpreted as for floating point numbers.
+      interpreted as for floating point numbers
 
     - ``delta`` -- a small-ish float; eigenvalues are considered distinct
       if their difference has absolute value at least delta
 
     - ``tp`` -- use the Hecke operators T_p for p in tp when searching
-      for a random Hecke operator with distinct Hecke eigenvalues.
+      for a random Hecke operator with distinct Hecke eigenvalues
 
-    OUTPUT:
-
-    A numerical eigenforms object, with the following useful methods:
+    OUTPUT: a numerical eigenforms object, with the following useful methods:
 
     - :meth:`ap` -- return all eigenvalues of `T_p`
 
@@ -65,7 +63,7 @@ class NumericalEigenforms(SageObject):
            [eigenvalues of T_3],
            [eigenvalues of T_5], ...]
 
-    - :meth:`systems_of_eigenvalues` -- a list of the systems of
+    - :meth:`systems_of_eigenvalues` -- list of the systems of
       eigenvalues of eigenforms such that the chosen random linear
       combination of Hecke operators has multiplicity 1 eigenvalues.
 
@@ -154,7 +152,7 @@ class NumericalEigenforms(SageObject):
 
     def _repr_(self):
         """
-        Print string representation of self.
+        Print string representation of ``self``.
 
         EXAMPLES::
 
@@ -367,11 +365,9 @@ class NumericalEigenforms(SageObject):
 
         INPUT:
 
-        - ``p`` -- integer, a prime number
+        - ``p`` -- integer; a prime number
 
-        OUTPUT:
-
-        - ``list`` -- a list of double precision complex numbers
+        OUTPUT: list of double precision complex numbers
 
         EXAMPLES::
 
@@ -400,11 +396,9 @@ class NumericalEigenforms(SageObject):
 
         INPUT:
 
-        - ``primes`` -- a list of primes
+        - ``primes`` -- list of primes
 
-        OUTPUT:
-
-        list of lists of eigenvalues.
+        OUTPUT: list of lists of eigenvalues
 
         EXAMPLES::
 
@@ -442,7 +436,7 @@ class NumericalEigenforms(SageObject):
 
     def systems_of_eigenvalues(self, bound):
         """
-        Return all systems of eigenvalues for self for primes
+        Return all systems of eigenvalues for ``self`` for primes
         up to bound.
 
         EXAMPLES::
@@ -470,7 +464,7 @@ class NumericalEigenforms(SageObject):
     def systems_of_abs(self, bound):
         """
         Return the absolute values of all systems of eigenvalues for
-        self for primes up to bound.
+        ``self`` for primes up to bound.
 
         EXAMPLES::
 
@@ -506,6 +500,5 @@ def support(v, eps):
 
         sage: sage.modular.modform.numerical.support( numerical_eigenforms(61)._easy_vector(), 0.5 )
         [0, 4]
-
     """
     return [i for i in range(v.degree()) if abs(v[i]) > eps]

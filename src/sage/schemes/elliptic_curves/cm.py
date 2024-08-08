@@ -51,9 +51,9 @@ def hilbert_class_polynomial(D, algorithm=None):
 
     INPUT:
 
-    - ``D`` (int) -- a negative integer congruent to 0 or 1 modulo 4.
+    - ``D`` -- negative integer congruent to 0 or 1 modulo 4
 
-    - ``algorithm`` (string, default None).
+    - ``algorithm`` -- string (default: ``None``)
 
     OUTPUT:
 
@@ -89,19 +89,19 @@ def hilbert_class_polynomial(D, algorithm=None):
         x^3 + 3491750*x^2 - 5151296875*x + 12771880859375
         sage: hilbert_class_polynomial(-37*4)
         x^2 - 39660183801072000*x - 7898242515936467904000000
-        sage: hilbert_class_polynomial(-37*4, algorithm="magma") # optional - magma
+        sage: hilbert_class_polynomial(-37*4, algorithm='magma') # optional - magma
         x^2 - 39660183801072000*x - 7898242515936467904000000
         sage: hilbert_class_polynomial(-163)
         x + 262537412640768000
-        sage: hilbert_class_polynomial(-163, algorithm="sage")
+        sage: hilbert_class_polynomial(-163, algorithm='sage')
         x + 262537412640768000
-        sage: hilbert_class_polynomial(-163, algorithm="magma") # optional - magma
+        sage: hilbert_class_polynomial(-163, algorithm='magma') # optional - magma
         x + 262537412640768000
 
     TESTS::
 
-        sage: all(hilbert_class_polynomial(d, algorithm="arb") ==
-        ....:      hilbert_class_polynomial(d, algorithm="sage")
+        sage: all(hilbert_class_polynomial(d, algorithm='arb') ==
+        ....:      hilbert_class_polynomial(d, algorithm='sage')
         ....:        for d in range(-1,-100,-1) if d % 4 in [0, 1])
         True
     """
@@ -182,10 +182,9 @@ def is_HCP(f, check_monic_irreducible=True):
 
     INPUT:
 
-    - ``f`` -- a polynomial in `\ZZ[X]`.
-    - ``check_monic_irreducible`` (boolean, default ``True``) -- if
-      ``True``, check that ``f`` is a monic, irreducible, integer
-      polynomial.
+    - ``f`` -- a polynomial in `\ZZ[X]`
+    - ``check_monic_irreducible`` -- boolean (default: ``True``); if ``True``,
+      check that ``f`` is a monic, irreducible, integer polynomial
 
     OUTPUT:
 
@@ -294,9 +293,9 @@ def OrderClassNumber(D0,h0,f):
 
     INPUT:
 
-    - ``D0`` (integer) -- a negative fundamental discriminant
-    - ``h0`` (integer) -- the class number of the (maximal) imaginary quadratic order of discriminant ``D0``
-    - ``f`` (integer) -- a positive integer
+    - ``D0`` -- integer; a negative fundamental discriminant
+    - ``h0`` -- integer; the class number of the (maximal) imaginary quadratic order of discriminant ``D0``
+    - ``f`` -- positive integer
 
     OUTPUT:
 
@@ -321,7 +320,6 @@ def OrderClassNumber(D0,h0,f):
         [1, 1, 2, 2, 2, 4, 4, 4, 6, 4, 6, 8, 6, 8, 8, 8, 8, 12, 10]
         sage: all([OrderClassNumber(D0,h,f) == (D0*f**2).class_number() for f in srange(1,20)])
         True
-
     """
     if not D0.is_fundamental_discriminant():
         raise ValueError("{} is not a fundamental discriminant".format(D0))
@@ -401,9 +399,8 @@ def cm_j_invariants_and_orders(K, proof=None):
 
     OUTPUT:
 
-    (list) A list of 3-tuples `(D,f,j)` where `j` is a CM
-    `j`-invariant in `K` with quadratic fundamental discriminant `D`
-    and conductor `f`.
+    A list of 3-tuples `(D,f,j)` where `j` is a CM `j`-invariant in `K` with
+    quadratic fundamental discriminant `D` and conductor `f`.
 
     EXAMPLES::
 
@@ -478,12 +475,10 @@ def cm_orders(h, proof=None):
 
     INPUT:
 
-    - `h` -- positive integer
+    - ``h`` -- positive integer
     - ``proof`` -- (default: proof.number_field())
 
-    OUTPUT:
-
-    - list of 2-tuples `(D,f)` sorted lexicographically by `(|D|, f)`
+    OUTPUT: list of 2-tuples `(D,f)` sorted lexicographically by `(|D|, f)`
 
     EXAMPLES::
 
@@ -628,7 +623,7 @@ def largest_fundamental_disc_with_class_number(h):
 
     INPUT:
 
-    - `h` -- integer
+    - ``h`` -- integer
 
     EXAMPLES::
 
@@ -647,7 +642,6 @@ def largest_fundamental_disc_with_class_number(h):
         Traceback (most recent call last):
         ...
         NotImplementedError: largest fundamental discriminant not available for class number 101
-
     """
     h = Integer(h)
     if h <= 0:
@@ -678,7 +672,7 @@ def largest_disc_with_class_number(h):
 
     INPUT:
 
-    - `h` -- integer
+    - ``h`` -- integer
 
     EXAMPLES::
 
@@ -709,7 +703,6 @@ def largest_disc_with_class_number(h):
         (3763, 51)
         sage: largest_disc_with_class_number(6)
         (4075, 101)
-
     """
     h = Integer(h)
     if h <= 0:
@@ -739,15 +732,13 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     INPUT:
 
     - ``hmax`` -- integer
-    - `B` -- integer or None; if None returns all pairs
+    - ``B`` -- integer or ``None``; if ``None`` returns all pairs
     - ``proof`` -- this code calls the PARI function :pari:`qfbclassno`, so it
       could give wrong answers when ``proof``==``False`` (though only for
       discriminants greater than `2\cdot10^{10}`).  The default is
       the current value of ``proof.number_field()``.
 
-    OUTPUT:
-
-    - dictionary
+    OUTPUT: dictionary
 
     .. NOTE::
 
@@ -783,7 +774,6 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
         sage: sage.schemes.elliptic_curves.cm.discriminants_with_bounded_class_number(hmax=5, B=50)
         {1: [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2), (-8, 1), (-11, 1), (-19, 1), (-43, 1)], 2: [(-3, 4), (-4, 3), (-8, 2), (-15, 1), (-20, 1), (-24, 1), (-35, 1), (-40, 1)], 3: [(-11, 2), (-23, 1), (-31, 1)], 4: [(-39, 1)], 5: [(-47, 1)]}
-
     """
     hmax = Integer(hmax)
     global hDf_dict
@@ -900,11 +890,11 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
 
     - ``j`` -- an element of a number field `K`
 
-    - ``algorithm`` (string, default 'CremonaSutherland') -- the algorithm
-      used, either 'CremonaSutherland' (the default, very much faster
-      for all but very small degrees), 'exhaustive' or 'reduction'
+    - ``algorithm`` -- string (default: ``'CremonaSutherland'``); the algorithm
+      used, either ``'CremonaSutherland'`` (the default, very much faster
+      for all but very small degrees), ``'exhaustive'`` or ``'reduction'``
 
-    - ``method`` (string) -- deprecated name for ``algorithm``
+    - ``method`` -- string; deprecated name for ``algorithm``
 
     OUTPUT:
 
@@ -965,7 +955,6 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
         sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
         sage: all(is_cm_j_invariant(j) == (True, (d,f)) for d,f,j in cm_j_invariants_and_orders(QQ))
         True
-
     """
     if method:
         if not algorithm:

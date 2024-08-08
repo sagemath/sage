@@ -13,7 +13,7 @@ Finite dimensional coalgebras with basis
 
 def FiniteDimensionalCoalgebrasWithBasis(base_ring):
     """
-    The category of finite dimensional coalgebras with a distinguished basis
+    The category of finite dimensional coalgebras with a distinguished basis.
 
     EXAMPLES::
 

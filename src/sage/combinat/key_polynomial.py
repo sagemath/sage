@@ -649,7 +649,6 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             sage: T = crystals.Tableaux(['A', 4], shape=[4,2,1,1])
             sage: k.from_polynomial(T.demazure_character([2]))
             k[4, 1, 2, 1]
-
         """
         if f not in self._polynomial_ring:
             try:  # to accept elements of SymbolicRing

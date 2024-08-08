@@ -140,10 +140,10 @@ class FullyCommutativeElement(NormalizedClonableList):
         r"""
         Check if ``self`` is the reduced word of an FC element.
 
-        To check if `self` is FC, we use the well-known characterization that an
-        element `w` in a Coxeter system `(W,S)` is FC if and only if for every
-        pair of generators `s,t \in S` for which `m(s,t)>2`, no reduced word of
-        `w` contains the 'braid' word `sts...` of length `m(s,t)` as a
+        To check if ``self`` is FC, we use the well-known characterization that
+        an element `w` in a Coxeter system `(W,S)` is FC if and only if for
+        every pair of generators `s,t \in S` for which `m(s,t)>2`, no reduced
+        word of `w` contains the 'braid' word `sts...` of length `m(s,t)` as a
         contiguous subword. See [Ste1996]_.
 
         :func:`check` is an alias of this method, and is called automatically
@@ -189,13 +189,13 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         INPUT:
 
-        - ``self`` -- list, a reduced word `w=s_0... s_{k-1}` of an FC element
+        - ``self`` -- list; a reduced word `w=s_0... s_{k-1}` of an FC element
 
-        - ``one_index`` -- boolean (default: ``False``). Setting the value to True
+        - ``one_index`` -- boolean (default: ``False``); setting the value to True
           will change the underlying set of the poset to `\{1, 2, \dots, n\}`
 
-        - ``display_labeling`` -- boolean (default: ``False``). Setting the value to
-          True will display the label `s_i` for each element `i` of the poset
+        - ``display_labeling`` -- boolean (default: ``False``); setting the value to
+          ``True`` will display the label `s_i` for each element `i` of the poset
 
         OUTPUT:
 
@@ -387,7 +387,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         - ``side`` -- string (default: ``'left'``); if set to 'right', determine
           if ``self`` has ``s`` as a right descent
 
-        OUTPUT: a boolean value
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -657,7 +657,7 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         INPUT:
 
-        - ``J`` -- a set of two integers representing two noncommuting
+        - ``J`` -- set of two integers representing two noncommuting
           generators of the Coxeter system
 
         - ``direction`` -- string, ``'upper'`` or ``'lower'``; the function
@@ -803,7 +803,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         True
 
     Attempting to create an element from an input that is not the reduced word
-    of a fully commutative element throws a :class:`ValueError`::
+    of a fully commutative element throws a :exc:`ValueError`::
 
         sage: FC([1,2,1])
         Traceback (most recent call last):

@@ -8,7 +8,7 @@ a natural generalization of the Iwahori-Hecke algebras of types `A` and `B`
 Soon afterwards,  Broué and Malle defined analogues of the Hecke
 algebras for all complex reflection groups
 
-Fix non-negative integers `r` an `n`. The Ariki-Koike algebras are
+Fix nonnegative integers `r` an `n`. The Ariki-Koike algebras are
 deformations of the group algebra of the complex reflection group
 `G(r, 1, n) = \ZZ / r\ZZ \wr \mathfrak{S}_n`. If `R` is a ring containing a
 *Hecke parameter* `q` and *cyclotomic parameters* `u_0, \ldots, u_{r-1}` then
@@ -465,7 +465,6 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 [Category of realizations of Ariki-Koike algebra of rank 5 and order 2
                     with q=q and u=(u0, u1, u2, u3, u4) over ...,
                  Category of finite dimensional algebras with basis over ...]
-
             """
             return [Realizations(self.base()), self.base()._category]
 
@@ -935,9 +934,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             - ``w`` -- the permutation ``w``
             - ``v`` -- the permutation ``v``
 
-            OUTPUT:
-
-            The corresponding element represented as a ``dict``.
+            OUTPUT: the corresponding element represented as a ``dict``
 
             EXAMPLES::
 
@@ -962,8 +959,8 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     c = ret[p]
                     # We have to flip the side due to Sage's
                     # convention for multiplying permutations
-                    pi = p.apply_simple_reflection(i, side="left")
-                    if p.has_descent(i, side="left"):
+                    pi = p.apply_simple_reflection(i, side='left')
+                    if p.has_descent(i, side='left'):
                         iaxpy(1, {p: c * qm1, pi: c * self._q}, temp)
                     else:
                         iaxpy(1, {pi: c}, temp)
@@ -994,7 +991,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             INPUT:
 
             - ``w`` -- a permutation
-            - ``L`` -- a tuple `(a_1, \ldots, a_n)`
+            - ``L`` -- tuple `(a_1, \ldots, a_n)`
 
             EXAMPLES::
 
@@ -1557,8 +1554,8 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                         c = sprod[p]
                         # We have to flip the side due to Sage's
                         # convention for multiplying permutations
-                        pj = p.apply_simple_reflection(j, side="left")
-                        if p.has_descent(j, side="left"):
+                        pj = p.apply_simple_reflection(j, side='left')
+                        if p.has_descent(j, side='left'):
                             iaxpy(1, {p: c * qm1, pj: c * self._q}, temp)
                         else:
                             iaxpy(1, {pj: c}, temp)
@@ -1602,9 +1599,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             r"""
             Return `p` such that `T0^{r-1} - p = \prod_{i=0}^{r-1} (T_0 - u_i)`.
 
-            OUTPUT:
-
-            A ``dict`` representing the polynomial `p`.
+            OUTPUT: a ``dict`` representing the polynomial `p`
 
             EXAMPLES::
 

@@ -42,9 +42,9 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
     - ``X`` -- a subscheme of an ambient affine space over a ring `R`
 
-    - ``v`` -- a list/tuple/iterable of coordinates in `R`
+    - ``v`` -- list/tuple/iterable of coordinates in `R`
 
-    - ``check`` -- boolean (default:``True``); whether to
+    - ``check`` -- boolean (default: ``True``); whether to
       check the input for consistency
 
     EXAMPLES::
@@ -91,7 +91,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
     def _matrix_times_point_(self, mat, dom):
         r"""
-        Multiplies the point on the left by a matrix ``mat``.
+        Multiply the point on the left by a matrix ``mat``.
 
         INPUT:
 
@@ -138,7 +138,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
     def __hash__(self):
         r"""
-        Computes the hash value of this affine point.
+        Compute the hash value of this affine point.
 
         EXAMPLES::
 
@@ -152,22 +152,19 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             sage: pt = A([1, 2, -i])                                                    # needs sage.rings.real_mpfr sage.symbolic
             sage: hash(pt) == hash(tuple(pt))                                           # needs sage.rings.real_mpfr sage.symbolic
             True
-
         """
         return hash(tuple(self))
 
     def global_height(self, prec=None):
         r"""
-        Returns the logarithmic height of the point.
+        Return the logarithmic height of the point.
 
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -214,11 +211,9 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
         INPUT:
 
-        - ``n`` -- integer between 0 and dimension of the map, inclusive.
+        - ``n`` -- integer between 0 and dimension of the map, inclusive
 
-        OUTPUT:
-
-        - A point in the projectivization of the codomain of the map .
+        OUTPUT: a point in the projectivization of the codomain of the map
 
         EXAMPLES::
 
@@ -278,7 +273,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
         the equivalent point on the Weil restriction of its
         codomain.
 
-        OUTPUT: Scheme point on the Weil restriction of the codomain of this point.
+        OUTPUT: scheme point on the Weil restriction of the codomain of this point
 
         EXAMPLES::
 
@@ -345,9 +340,9 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
         INPUT:
 
-        - ``X`` -- a subscheme in the same ambient space as that of the codomain of this point.
+        - ``X`` -- a subscheme in the same ambient space as that of the codomain of this point
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -384,7 +379,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
         Uses the subscheme multiplicity implementation. This point must be a point on an
         affine subscheme.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -430,9 +425,9 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
 
     def __hash__(self):
         r"""
-        Returns the integer hash of the point.
+        Return the integer hash of the point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

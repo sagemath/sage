@@ -52,11 +52,10 @@ class SageTimeitResult:
         sage: SageTimeitResult(stats)                                                   # needs sage.symbolic
         7 loops, best of 13: 3.1416 ns per loop
 
-    If the third argument is not a Python integer, a ``TypeError`` is raised::
+    If the third argument is not a Python integer, a :exc:`TypeError` is raised::
 
         sage: SageTimeitResult( (1, 2, 3, 4, 's') )
         <repr(<sage.misc.sage_timeit.SageTimeitResult at 0x...>) failed: TypeError: * wants int>
-
     """
     def __init__(self, stats, series=None):
         r"""
@@ -104,25 +103,23 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
 
     INPUT:
 
-    - ``stmt`` -- a text string.
+    - ``stmt`` -- a text string
 
-    - ``globals_dict`` -- a dictionary or ``None`` (default). Evaluate
+    - ``globals_dict`` -- dictionary or ``None`` (default). Evaluate
       ``stmt`` in the context of the globals dictionary. If not set,
       the current ``globals()`` dictionary is used.
 
     - ``preparse`` -- (default: use globals preparser default) if
-      ``True`` preparse ``stmt`` using the Sage preparser.
+      ``True`` preparse ``stmt`` using the Sage preparser
 
-    - ``number`` -- integer, (default: 0), number of loops.
+    - ``number`` -- integer; (default: 0); number of loops
 
-    - ``repeat`` -- integer, (default: 3), number of
-      repetition.
+    - ``repeat`` -- integer; (default: 3); number of repetition
 
-    - ``precision`` -- integer, (default: 3), precision of
-      output time.
+    - ``precision`` -- integer; (default: 3); precision of output time
 
-    - ``seconds`` -- boolean (default: ``False``). Whether to just
-      return time in seconds.
+    - ``seconds`` -- boolean (default: ``False``); whether to just
+      return time in seconds
 
     OUTPUT:
 
@@ -226,8 +223,8 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     # to the shell namespace?
 
     src = timeit_.template.format(stmt=timeit_.reindent(stmt, 8),
-                                  setup="pass", init='')
-    code = compile(src, "<magic-timeit>", "exec")
+                                  setup='pass', init='')
+    code = compile(src, '<magic-timeit>', 'exec')
     ns = {}
     if not globals_dict:
         globals_dict = globals()

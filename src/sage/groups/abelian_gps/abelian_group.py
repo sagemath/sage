@@ -15,9 +15,9 @@ integer vector
 
     \vec{k} = (0, \dots, 0, k_1, \dots, k_t)
 
-where there are `r` zeroes and `t` non-zero values. To construct this
+where there are `r` zeroes and `t` nonzero values. To construct this
 Abelian group in Sage, you can either specify all entries of `\vec{k}`
-or only the non-zero entries together with the total number of
+or only the nonzero entries together with the total number of
 generators::
 
     sage: AbelianGroup([0,0,0,2,3])
@@ -324,7 +324,7 @@ def word_problem(words, g, verbose=False):
     return [[words[indi - 1], powi] for indi, powi in zip(indices, powers)]
 
 
-def _normalize(n, gens_orders=None, names="f"):
+def _normalize(n, gens_orders=None, names='f'):
     """
     Helper function for :func:`AbelianGroup`. Beat some sense into the
     arguments.
@@ -334,7 +334,7 @@ def _normalize(n, gens_orders=None, names="f"):
 
     INPUT:
 
-    See :func:`AbelianGroup`
+    See :func:`AbelianGroup`.
 
     OUTPUT:
 
@@ -383,26 +383,26 @@ def _normalize(n, gens_orders=None, names="f"):
     return (gens_orders, names)
 
 
-def AbelianGroup(n, gens_orders=None, names="f"):
+def AbelianGroup(n, gens_orders=None, names='f'):
     r"""
     Create the multiplicative abelian group in `n` generators
     with given orders of generators (which need not be prime powers).
 
     INPUT:
 
-    - ``n`` -- integer (optional). If not specified, will be derived
-       from ``gens_orders``.
+    - ``n`` -- integer (optional); if not specified, will be derived
+      from ``gens_orders``
 
-    - ``gens_orders`` -- a list of non-negative integers in the form
+    - ``gens_orders`` -- list of nonnegative integers in the form
        `[a_0, a_1, \dots, a_{n-1}]`, typically written in increasing
        order. This list is padded with zeros if it has length less
        than `n`. The orders of the commuting generators, with `0`
        denoting an infinite cyclic factor.
 
-    -  ``names`` -- (optional) names of generators
+    - ``names`` -- (optional) names of generators
 
     Alternatively, you can also give input in the form
-    ``AbelianGroup(gens_orders, names="f")``, where the names keyword
+    ``AbelianGroup(gens_orders, names='f')``, where the names keyword
     argument must be explicitly named.
 
     OUTPUT:
@@ -422,7 +422,7 @@ def AbelianGroup(n, gens_orders=None, names="f"):
         b^2*c^3*d
         sage: F = AbelianGroup(3, [2]*3); F
         Multiplicative Abelian group isomorphic to C2 x C2 x C2
-        sage: H = AbelianGroup([2,3], names="xy"); H
+        sage: H = AbelianGroup([2,3], names='xy'); H
         Multiplicative Abelian group isomorphic to C2 x C3
         sage: AbelianGroup(5)
         Multiplicative Abelian group isomorphic to Z x Z x Z x Z x Z
@@ -486,7 +486,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
       (commuting) generators. Zero denotes an infinite cyclic
       generator.
 
-    - ``names`` -- names of the group generators (optional).
+    - ``names`` -- names of the group generators (optional)
 
     EXAMPLES::
 
@@ -564,7 +564,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         INPUT:
 
-        - ``right`` -- anything.
+        - ``right`` -- anything
 
         OUTPUT: boolean; whether ``left`` and ``right`` are isomorphic as abelian groups
 
@@ -676,17 +676,17 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         return not self.is_trivial()
 
     @cached_method
-    def dual_group(self, names="X", base_ring=None):
+    def dual_group(self, names='X', base_ring=None):
         """
         Return the dual group.
 
         INPUT:
 
         - ``names`` -- string or list of strings. The generator names
-          for the dual group.
+          for the dual group
 
-        - ``base_ring`` -- the base ring. If ``None`` (default), then
-          a suitable cyclotomic field is picked automatically.
+        - ``base_ring`` -- the base ring; if ``None`` (default), then
+          a suitable cyclotomic field is picked automatically
 
         OUTPUT: the :class:`dual abelian group <sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class>`
 
@@ -861,7 +861,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         Requires the optional ``gap_packages`` for infinite groups::
 
-            sage: G = AbelianGroup(3, [0,3,4], names="abc")
+            sage: G = AbelianGroup(3, [0,3,4], names='abc')
             sage: libgap(G)   # optional - gap_package_polycyclic
             Pcp-group with orders [ 0, 3, 4 ]
         """
@@ -872,7 +872,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         # Make sure to LoadPackage("Polycyclic") in gap
         from sage.features.gap import GapPackage
-        GapPackage("polycyclic", spkg="gap_packages").require()
+        GapPackage("polycyclic", spkg='gap_packages').require()
         return libgap.AbelianPcpGroup(self.gens_orders())
 
     def _gap_init_(self):
@@ -889,7 +889,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         Requires the optional ``gap_packages`` for infinite groups::
 
-            sage: G = AbelianGroup(3,[0,3,4], names="abc"); G
+            sage: G = AbelianGroup(3,[0,3,4], names='abc'); G
             Multiplicative Abelian group isomorphic to Z x C3 x C4
             sage: G._gap_init_()   # optional - gap_package_polycyclic
             'AbelianPcpGroup([0, 3, 4])'
@@ -899,7 +899,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         from sage.features.gap import GapPackage
         # Make sure to LoadPackage("Polycyclic") in gap
-        GapPackage("polycyclic", spkg="gap_packages").require()
+        GapPackage("polycyclic", spkg='gap_packages').require()
         return 'AbelianPcpGroup(%s)' % list(self.gens_orders())
 
     def gen(self, i=0):
@@ -1192,7 +1192,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         g = self._group_notation(eldv)
         return "Multiplicative Abelian group isomorphic to " + g
 
-    def subgroup(self, gensH, names="f"):
+    def subgroup(self, gensH, names='f'):
         """
         Create a subgroup of this group.
 
@@ -1293,7 +1293,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: L[0] = 0
             sage: list(G)
             [1, b, b^2, a, a*b, a*b^2]
-            sage: G = AbelianGroup([1], names="a")
+            sage: G = AbelianGroup([1], names='a')
             sage: list(G)
             [1]
             sage: G = AbelianGroup([])
@@ -1616,7 +1616,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         There should be a way to coerce an element of a subgroup
         into the ambient group.
     """
-    def __init__(self, ambient, gens, names="f", category=None):
+    def __init__(self, ambient, gens, names='f', category=None):
         """
         EXAMPLES::
 
@@ -1646,7 +1646,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             5
             sage: z.order()
             64
-            sage: A = AbelianGroup(5, [3, 5, 5, 7, 8], names="abcde")
+            sage: A = AbelianGroup(5, [3, 5, 5, 7, 8], names='abcde')
             sage: a,b,c,d,e = A.gens()
             sage: A.subgroup([a,b])
             Multiplicative Abelian subgroup isomorphic to C3 x C5 generated by {a, b}
@@ -1658,7 +1658,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             Multiplicative Abelian subgroup isomorphic to C4 x C5 x C5 x C7 generated by {b, c, d, e^2}
             sage: B.gens_orders()
             (4, 5, 5, 7)
-            sage: A = AbelianGroup(4,[1009, 2003, 3001, 4001], names="abcd")
+            sage: A = AbelianGroup(4,[1009, 2003, 3001, 4001], names='abcd')
             sage: a,b,c,d = A.gens()
             sage: B = A.subgroup([a^3,b,c,d])
             sage: B.gens_orders()
@@ -1667,7 +1667,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             24266473210027
             sage: B.order()
             24266473210027
-            sage: A = AbelianGroup(4, [1008, 2003, 3001, 4001], names="abcd")
+            sage: A = AbelianGroup(4, [1008, 2003, 3001, 4001], names='abcd')
             sage: a,b,c,d = A.gens()
             sage: B = A.subgroup([a^3,b,c,d]); B
             Multiplicative Abelian subgroup isomorphic
@@ -1676,7 +1676,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         Infinite groups can also be handled::
 
             sage: # needs sage.libs.gap  # optional - gap_package_polycyclic
-            sage: G = AbelianGroup([3,4,0], names="abc")
+            sage: G = AbelianGroup([3,4,0], names='abc')
             sage: a,b,c = G.gens()
             sage: F = G.subgroup([a, b^2, c]); F
             Multiplicative Abelian subgroup isomorphic to C2 x C3 x Z
@@ -1808,7 +1808,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         EXAMPLES::
 
             sage: # needs sage.libs.gap  # optional - gap_package_polycyclic
-            sage: G = AbelianGroup(3, [2,3,4], names="abc"); G
+            sage: G = AbelianGroup(3, [2,3,4], names='abc'); G
             Multiplicative Abelian group isomorphic to C2 x C3 x C4
             sage: a,b,c = G.gens()
             sage: F = G.subgroup([a,b^2]); F
@@ -1882,7 +1882,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
 
     def gen(self, n):
         """
-        Return the nth generator of this subgroup.
+        Return the `n`-th generator of this subgroup.
 
         EXAMPLES::
 

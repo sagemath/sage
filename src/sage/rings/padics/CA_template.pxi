@@ -48,7 +48,7 @@ from sage.categories.homset import Hom
 cdef class CAElement(pAdicTemplateElement):
     cdef int _set(self, x, long val, long xprec, absprec, relprec) except -1:
         """
-        Sets the value of this element from given defining data.
+        Set the value of this element from given defining data.
 
         This function is intended for use in conversion, and should
         not be called on an element created with :meth:`_new_c`.
@@ -134,7 +134,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef int _get_unit(self, celement value) except -1:
         """
-        Set ``value`` to the unit of this p-adic element.
+        Set ``value`` to the unit of this `p`-adic element.
         """
         cremove(value, self.value, self.absprec, self.prime_pow, True)
 
@@ -410,11 +410,9 @@ cdef class CAElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``_right`` -- currently integers and `p`-adic exponents are
-          supported.
+        - ``_right`` -- currently integers and `p`-adic exponents are supported
 
-        - ``dummy`` -- not used (Python's ``__pow__`` signature
-          includes it)
+        - ``dummy`` -- not used (Python's ``__pow__`` signature includes it)
 
         EXAMPLES::
 
@@ -536,7 +534,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef pAdicTemplateElement _lshift_c(self, long shift):
         r"""
-        Multiplies by `\pi^{\mbox{shift}}`.
+        Multiply by `\pi^{\mbox{shift}}`.
 
         Negative shifts may truncate the result.
 
@@ -568,7 +566,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef pAdicTemplateElement _rshift_c(self, long shift):
         r"""
-        Divides by ``π^{\mbox{shift}}``.
+        Divide by ``π^{\mbox{shift}}``.
 
         Positive shifts may truncate the result.
 
@@ -605,11 +603,10 @@ cdef class CAElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or infinity
+        - ``absprec`` -- integer or infinity
 
-        OUTPUT:
-
-        ``self`` with precision set to the minimum of ``self's`` precision and ``prec``
+        OUTPUT: ``self`` with precision set to the minimum of ``self``'s
+        precision and ``prec``
 
         EXAMPLES::
 
@@ -630,7 +627,6 @@ cdef class CAElement(pAdicTemplateElement):
 
             sage: k(3).add_bigoh(-1)
             O(3^-1)
-
         """
         cdef long aprec, newprec
         if absprec is infinity:
@@ -698,7 +694,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer, infinity, or ``None``
+        - ``absprec`` -- integer, infinity, or ``None``
 
         EXAMPLES::
 
@@ -758,7 +754,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         - ``right`` -- a `p`-adic element with the same parent
 
-        - ``absprec`` -- an integer, infinity, or ``None``
+        - ``absprec`` -- integer, infinity, or ``None``
 
         EXAMPLES::
 
@@ -824,8 +820,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer, at most the precision cap of the
-          parent
+        - ``absprec`` -- integer; at most the precision cap of the parent
 
         EXAMPLES::
 
@@ -1103,7 +1098,6 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
     TESTS::
 
         sage: TestSuite(f).run()
-
     """
     def __init__(self, R):
         """
@@ -1242,11 +1236,11 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
 cdef class pAdicConvert_CA_ZZ(RingMap):
     """
     The map from a capped absolute ring back to the ring of integers that
-    returns the smallest non-negative integer approximation to its input
+    returns the smallest nonnegative integer approximation to its input
     which is accurate up to the precision.
 
-    Raises a ``ValueError`` if the input is not in the closure of the image of
-    the ring of integers.
+    Raises a :exc:`ValueError` if the input is not in the closure of the image
+    of the ring of integers.
 
     EXAMPLES::
 
@@ -1291,7 +1285,7 @@ cdef class pAdicConvert_CA_ZZ(RingMap):
 cdef class pAdicConvert_QQ_CA(Morphism):
     """
     The inclusion map from the rationals to a capped absolute ring that is
-    defined on all elements with non-negative `p`-adic valuation.
+    defined on all elements with nonnegative `p`-adic valuation.
 
     EXAMPLES::
 
@@ -1433,7 +1427,6 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
     TESTS::
 
         sage: TestSuite(f).run()                                                        # needs sage.libs.flint
-
     """
     def __init__(self, R, K):
         """
@@ -1533,7 +1526,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
     def section(self):
         """
         Return a map back to the ring that converts elements of
-        non-negative valuation.
+        nonnegative valuation.
 
         EXAMPLES::
 
@@ -1577,7 +1570,6 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             a + O(3^20)
             sage: g(a) == f(a)
             True
-
         """
         _slots = RingHomomorphism._extra_slots(self)
         _slots['_zero'] = self._zero
@@ -1607,7 +1599,6 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             a + O(3^20)
             sage: g(a) == f(a)
             True
-
         """
         self._zero = _slots['_zero']
         self._section = _slots['_section']
@@ -1625,7 +1616,6 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             sage: f = K.coerce_map_from(R)
             sage: f.is_injective()
             True
-
         """
         return True
 
@@ -1641,7 +1631,6 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             sage: f = K.coerce_map_from(R)
             sage: f.is_surjective()
             False
-
         """
         return False
 
@@ -1816,7 +1805,6 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             a + O(3^20)
             sage: g(a) == f(a)
             True
-
         """
         self._zero = _slots['_zero']
         Morphism._update_slots(self, _slots)

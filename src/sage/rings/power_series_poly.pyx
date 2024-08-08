@@ -174,21 +174,21 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __call__(self, *x, **kwds):
         """
-        Evaluate the series at x=a.
+        Evaluate the series at `x=a`.
 
         INPUT:
 
-        -  ``x``:
+        - ``x``:
 
-           - a tuple of elements the first of which can be meaningfully
-             substituted in ``self``, with the remainder used for substitution
-             in the coefficients of ``self``.
+          - a tuple of elements the first of which can be meaningfully
+            substituted in ``self``, with the remainder used for substitution
+            in the coefficients of ``self``.
 
-           - a dictionary for kwds:value pairs. If the variable name of
-             self is a keyword it is substituted for.  Other keywords
-             are used for substitution in the coefficients of self.
+          - a dictionary for kwds:value pairs. If the variable name of
+            ``self`` is a keyword it is substituted for.  Other keywords
+            are used for substitution in the coefficients of ``self``.
 
-        OUTPUT: the value of ``self`` after substitution.
+        OUTPUT: the value of ``self`` after substitution
 
         EXAMPLES::
 
@@ -232,7 +232,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f(2*u + u^3 + O(u^5))
             4*u^2 + u^3 + 4*u^4 + 5*u^5 + O(u^6)
 
-        As can a p-adic integer as long as the coefficient ring is compatible::
+        As can a `p`-adic integer as long as the coefficient ring is compatible::
 
             sage: f(100 + O(5^7))                                                       # needs sage.rings.padics
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
@@ -409,7 +409,7 @@ cdef class PowerSeries_poly(PowerSeries):
         Return the ``n``-th coefficient of ``self``.
 
         This returns 0 for negative coefficients and raises an
-        ``IndexError`` if trying to access beyond known coefficients.
+        :exc:`IndexError` if trying to access beyond known coefficients.
 
         If ``n`` is a slice object ``[:k]``, this will return a power
         series of the same precision, whose coefficients are the same
@@ -675,7 +675,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: u*v
             1 + O(t^12)
 
-        If we try a non-zero, non-unit constant term, we end up in
+        If we try a nonzero, non-unit constant term, we end up in
         the fraction field, i.e. the Laurent series ring::
 
             sage: R.<t> = PowerSeriesRing(ZZ)
@@ -700,7 +700,6 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: must be an integral domain
-
         """
         if self.is_one():
             return self
@@ -765,7 +764,7 @@ cdef class PowerSeries_poly(PowerSeries):
     def truncate_powerseries(self, long prec):
         r"""
         Given input ``prec`` = `n`, returns the power series of degree
-        `< n` which is equivalent to self modulo `x^n`.
+        `< n` which is equivalent to ``self`` modulo `x^n`.
 
         EXAMPLES::
 
@@ -1122,9 +1121,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         - ``m``, ``n`` -- integers, describing the degrees of the polynomials
 
-        OUTPUT:
-
-        a ratio of two polynomials
+        OUTPUT: a ratio of two polynomials
 
         ALGORITHM:
 

@@ -4,7 +4,7 @@ Class functions of groups.
 
 This module implements a wrapper of GAP's ClassFunction function.
 
-.. NOTE:
+.. NOTE::
 
     The ordering of the columns of the character table of a group
     corresponds to the ordering of the list. However, in general there is
@@ -250,9 +250,7 @@ class ClassFunction_gap(SageObject):
         r"""
         Return the domain of the ``self``.
 
-        OUTPUT:
-
-        The underlying group of the class function.
+        OUTPUT: the underlying group of the class function
 
         EXAMPLES::
 
@@ -293,7 +291,7 @@ class ClassFunction_gap(SageObject):
 
     def __add__(self, other):
         r"""
-        Return the sum of the characters of ``self`` and other.
+        Return the sum of the characters of ``self`` and ``other``.
 
         INPUT:
 
@@ -483,14 +481,14 @@ class ClassFunction_gap(SageObject):
 
     def exterior_power(self, n):
         r"""
-        Return the antisymmetrized product of ``self`` with itself ``n``
+        Return the antisymmetrized product of ``self`` with itself `n`
         times.
 
         INPUT:
 
-        - ``n`` -- positive integer.
+        - ``n`` -- positive integer
 
-        OUTPUT: the ``n``-th antisymmetrized power of ``self`` as a :class:`ClassFunction`
+        OUTPUT: the `n`-th antisymmetrized power of ``self`` as a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -509,7 +507,7 @@ class ClassFunction_gap(SageObject):
 
     def scalar_product(self, other):
         r"""
-        Return the scalar product of ``self`` with other.
+        Return the scalar product of ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -540,7 +538,7 @@ class ClassFunction_gap(SageObject):
 
     def degree(self):
         r"""
-        Return the degree of the character self.
+        Return the degree of the character ``self``.
 
         EXAMPLES::
 

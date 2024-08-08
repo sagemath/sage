@@ -44,7 +44,7 @@ class Function_zeta(GinacFunction):
 
         INPUT:
 
-        -  ``s`` -- real or complex number
+        - ``s`` -- real or complex number
 
         If s is a real number, the computation is done using the MPFR
         library. When the input is not real, the computation is done using
@@ -173,7 +173,7 @@ class Function_stieltjes(GinacFunction):
 
         INPUT:
 
-        -  ``n`` -- non-negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -305,7 +305,7 @@ def hurwitz_zeta(s, x, **kwargs):
 
 
     When `x = 1`, this coincides with Riemann's zeta function.
-    The Dirichlet L-functions may be expressed as linear combinations
+    The Dirichlet `L`-functions may be expressed as linear combinations
     of Hurwitz zeta functions.
 
     EXAMPLES:
@@ -378,7 +378,7 @@ class Function_zetaderiv(GinacFunction):
             zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
         GinacFunction.__init__(self, "zetaderiv", nargs=2,
-                               conversions=dict(maple="Zeta"))
+                               conversions=dict(maple='Zeta'))
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         r"""
@@ -412,9 +412,7 @@ def zeta_symmetric(s):
 
     INPUT:
 
-
-    -  ``s`` -- real or complex number
-
+    - ``s`` -- real or complex number
 
     If s is a real number the computation is done using the MPFR
     library. When the input is not real, the computation is done using
@@ -425,7 +423,6 @@ def zeta_symmetric(s):
     .. MATH::
 
                 xi(s) = \gamma(s/2 + 1) * (s-1) * \pi^{-s/2} * \zeta(s).
-
 
     EXAMPLES::
 
@@ -518,7 +515,7 @@ class DickmanRho(BuiltinFunction):
     """
     def __init__(self):
         """
-        Constructs an object to represent Dickman's rho function.
+        Construct an object to represent Dickman's rho function.
 
         TESTS::
 
@@ -574,11 +571,11 @@ class DickmanRho(BuiltinFunction):
 
         INPUT:
 
-        -  ``n`` -- the lower endpoint of the interval for which
-           this power series holds
+        - ``n`` -- the lower endpoint of the interval for which
+          this power series holds
 
-        -  ``abs_prec`` -- the absolute precision of the
-           resulting power series
+        - ``abs_prec`` -- the absolute precision of the
+          resulting power series
 
         EXAMPLES::
 
@@ -602,14 +599,14 @@ class DickmanRho(BuiltinFunction):
 
         INPUT:
 
-        -  ``n`` -- the lower endpoint of the interval for which
-           this power series holds
+        - ``n`` -- the lower endpoint of the interval for which
+          this power series holds
 
-        -  ``abs_prec`` -- the absolute precision of the
-           resulting power series
+        - ``abs_prec`` -- the absolute precision of the
+          resulting power series
 
-        -  ``cache_ring`` -- for internal use, caches the power
-           series at this precision.
+        - ``cache_ring`` -- for internal use, caches the power
+          series at this precision
 
         EXAMPLES::
 
@@ -653,7 +650,7 @@ class DickmanRho(BuiltinFunction):
 
     def approximate(self, x, parent=None):
         r"""
-        Approximate using de Bruijn's formula
+        Approximate using de Bruijn's formula.
 
         .. MATH::
 

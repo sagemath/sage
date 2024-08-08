@@ -42,7 +42,7 @@ from sage.rings.integer_ring import ZZ
 
 cdef class ImmutableListWithParent(ClonableArray):
     r"""
-    A class for lists having a parent
+    A class for lists having a parent.
 
     Specification: any subclass ``C`` should implement ``__init__`` which
     accepts the following form ``C(parent, list=list)``
@@ -76,7 +76,7 @@ cdef class ImmutableListWithParent(ClonableArray):
     cpdef _set_index(self, k, value):
         r"""
         Return a sibling of ``self`` obtained by setting the
-        `k^{th}` entry of self to value.
+        `k`-th entry of ``self`` to value.
 
         EXAMPLES::
 
@@ -948,7 +948,6 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
             [2, 1]
             sage: x.shape()
             [2, 1]
-
         """
         return self.to_tableau().shape()
 

@@ -31,7 +31,7 @@ cdef object _check_schubert(object a, OP ca):
 
 def mult_schubert_schubert_symmetrica(a, b):
     """
-    Multiplies the Schubert polynomials a and b.
+    Multiply the Schubert polynomials `a` and `b`.
 
     EXAMPLES::
 
@@ -64,9 +64,10 @@ def mult_schubert_schubert_symmetrica(a, b):
 
     return res
 
+
 def t_SCHUBERT_POLYNOM_symmetrica(a):
     """
-    Converts a Schubert polynomial to a 'regular' multivariate
+    Convert a Schubert polynomial to a 'regular' multivariate
     polynomial.
 
     EXAMPLES::
@@ -96,9 +97,10 @@ def t_SCHUBERT_POLYNOM_symmetrica(a):
 
     return res
 
+
 def t_POLYNOM_SCHUBERT_symmetrica(a):
     """
-    Converts a multivariate polynomial a to a Schubert polynomial.
+    Convert a multivariate polynomial a to a Schubert polynomial.
 
     EXAMPLES::
 
@@ -135,9 +137,10 @@ def t_POLYNOM_SCHUBERT_symmetrica(a):
 
     return res
 
+
 def mult_schubert_variable_symmetrica(a, i):
     """
-    Returns the product of a and x_i.  Note that indexing with i
+    Return the product of `a` and `x_i`.  Note that indexing with `i`
     starts at 1.
 
     EXAMPLES::
@@ -176,9 +179,9 @@ def mult_schubert_variable_symmetrica(a, i):
 
 def divdiff_perm_schubert_symmetrica(perm, a):
     r"""
-    Returns the result of applying the divided difference operator
+    Return the result of applying the divided difference operator
     `\delta_i` to `a` where `a` is either a permutation or a
-    Schubert polynomial over QQ.
+    Schubert polynomial over `\QQ`.
 
     EXAMPLES::
 
@@ -270,11 +273,12 @@ def scalarproduct_schubert_symmetrica(a, b):
 
     return res
 
+
 def divdiff_schubert_symmetrica(i, a):
     r"""
-    Returns the result of applying the divided difference operator
+    Return the result of applying the divided difference operator
     `\delta_i` to `a` where `a` is either a permutation or a
-    Schubert polynomial over QQ.
+    Schubert polynomial over `\QQ`.
 
     EXAMPLES::
 

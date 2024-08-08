@@ -33,14 +33,13 @@ def _simplify_full_rad(f):
 
     INPUT:
 
-     - ``f`` -- a symbolic expression.
+    - ``f`` -- a symbolic expression
 
     EXAMPLES::
 
         sage: from sage.geometry.riemannian_manifolds.parametrized_surface3d import _simplify_full_rad
         sage: _simplify_full_rad(sqrt(x^2)/x)
         1
-
     """
     return f.simplify_full().canonicalize_radical()
 
@@ -56,26 +55,24 @@ class ParametrizedSurface3D(SageObject):
 
     INPUT:
 
-     - ``surface_equation`` -- a 3-tuple of functions specifying a parametric
-       representation of the surface.
+    - ``surface_equation`` -- a 3-tuple of functions specifying a parametric
+      representation of the surface
 
-     - ``variables`` -- a 2-tuple of intrinsic coordinates `(u, v)` on the
-       surface, with `u` and `v` symbolic variables, or a 2-tuple of triples
-       `(u, u_{min}, u_{max})`,
-       `(v, v_{min}, v_{max})` when the parameter range
-       for the coordinates is known.
+    - ``variables`` -- a 2-tuple of intrinsic coordinates `(u, v)` on the
+      surface, with `u` and `v` symbolic variables, or a 2-tuple of triples
+      `(u, u_{min}, u_{max})`, `(v, v_{min}, v_{max})` when the parameter range
+      for the coordinates is known
 
-     - ``name`` -- name of the surface (optional).
+    - ``name`` -- name of the surface (optional)
 
 
-    .. note::
+    .. NOTE::
 
        Throughout the documentation, we use the Einstein summation
        convention: whenever an index appears twice, once as a
        subscript, and once as a superscript, summation over that index
        is implied.  For instance, `g_{ij} g^{jk}` stands for `\sum_j
        g_{ij}g^{jk}`.
-
 
     EXAMPLES:
 
@@ -343,20 +340,18 @@ class ParametrizedSurface3D(SageObject):
         ....:                                            (0,2*pi,100))]
         sage: (S.plot(opacity=0.3) + line3d(g1, color='red')                            # needs sage.plot
         ....:     + line3d(g2, color='red') + line3d(g3, color='red')).show()
-
     """
 
     def __init__(self, equation, variables, name=None):
         r"""
         See ``ParametrizedSurface3D`` for full documentation.
 
-        .. note::
+        .. NOTE::
 
             The orientation of the surface is determined by the
             parametrization, that is, the natural frame with positive
             orientation is given by `\partial_1 \vec r`, `\partial_2 \vec
             r`.
-
 
         EXAMPLES::
 
@@ -365,7 +360,6 @@ class ParametrizedSurface3D(SageObject):
             sage: enneper = ParametrizedSurface3D(eq, (u, v),'Enneper Surface'); enneper
             Parametrized surface ('Enneper Surface') with equation
             (-u^3 + 3*u*v^2 + 3*u, 3*u^2*v - v^3 + 3*v, 3*u^2 - 3*v^2)
-
         """
         self.equation = tuple(equation)
 
@@ -391,14 +385,13 @@ class ParametrizedSurface3D(SageObject):
             \left(\cos\left(u\right) \cos\left(v\right), \cos\left(v\right) \sin\left(u\right), \sin\left(v\right)\right)
             sage: sphere._latex_()
             \left(\cos\left(u\right) \cos\left(v\right), \cos\left(v\right) \sin\left(u\right), \sin\left(v\right)\right)
-
         """
         from sage.misc.latex import latex
         return latex(self.equation)
 
     def _repr_(self):
         r"""
-        Returns the string representation of this parametrized surface.
+        Return the string representation of this parametrized surface.
 
         EXAMPLES::
 
@@ -409,7 +402,6 @@ class ParametrizedSurface3D(SageObject):
             Parametrized surface ('enneper_surface') with equation (-u^3 + 3*u*v^2 + 3*u, 3*u^2*v - v^3 + 3*v, 3*u^2 - 3*v^2)
             sage: enneper._repr_()
             "Parametrized surface ('enneper_surface') with equation (-u^3 + 3*u*v^2 + 3*u, 3*u^2*v - v^3 + 3*v, 3*u^2 - 3*v^2)"
-
         """
         name = 'Parametrized surface'
         if self.name is not None:
@@ -420,15 +412,13 @@ class ParametrizedSurface3D(SageObject):
 
     def point(self, coords):
         r"""
-        Returns a point on the surface given its intrinsic coordinates.
+        Return a point on the surface given its intrinsic coordinates.
 
         INPUT:
 
-         - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
+        - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point
 
-        OUTPUT:
-
-         - 3-vector specifying the coordinates in `\RR^3` of the point.
+        OUTPUT: 3-vector specifying the coordinates in `\RR^3` of the point
 
         EXAMPLES::
 
@@ -442,7 +432,6 @@ class ParametrizedSurface3D(SageObject):
             (-2, 0, 1)
             sage: torus.point((pi, pi/2))
             (0, 1, 0)
-
         """
 
         d = dict(zip(self.variables_list, coords))
@@ -450,19 +439,18 @@ class ParametrizedSurface3D(SageObject):
 
     def tangent_vector(self, coords, components):
         r"""
-        Returns the components of a tangent vector given the intrinsic
+        Return the components of a tangent vector given the intrinsic
         coordinates of the base point and the components of the vector
         in the intrinsic frame.
 
         INPUT:
 
-         - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
+        - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point
 
-         - ``components`` -- 2-tuple specifying the components of the tangent vector in the intrinsic coordinate frame.
+        - ``components`` -- 2-tuple specifying the components of the tangent
+          vector in the intrinsic coordinate frame
 
-        OUTPUT:
-
-         - 3-vector specifying the components in `\RR^3` of the vector.
+        OUTPUT: 3-vector specifying the components in `\RR^3` of the vector
 
         EXAMPLES:
 
@@ -485,7 +473,6 @@ class ParametrizedSurface3D(SageObject):
             (-108, 216, -216)
             sage: n == w1.cross_product(w2)
             True
-
         """
 
         components = vector(components)
@@ -506,8 +493,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``urange`` -- 2-tuple specifying the parameter range for `u`.
-         - ``vrange`` -- 2-tuple specifying the parameter range for `v`.
+        - ``urange`` -- 2-tuple specifying the parameter range for `u`
+        - ``vrange`` -- 2-tuple specifying the parameter range for `v`
 
         EXAMPLES::
 
@@ -516,7 +503,6 @@ class ParametrizedSurface3D(SageObject):
             sage: enneper = ParametrizedSurface3D(eq, (u, v), 'Enneper Surface')
             sage: enneper.plot((-5, 5), (-5, 5))                                        # needs sage.plot
             Graphics3d Object
-
         """
 
         from sage.plot.plot3d.parametric_plot3d import parametric_plot3d
@@ -541,13 +527,11 @@ class ParametrizedSurface3D(SageObject):
     @cached_method
     def natural_frame(self):
         """
-        Returns the natural tangent frame on the parametrized surface.
+        Return the natural tangent frame on the parametrized surface.
         The vectors of this frame are tangent to the coordinate lines
         on the surface.
 
-        OUTPUT:
-
-        - The natural frame as a dictionary.
+        OUTPUT: the natural frame as a dictionary
 
         EXAMPLES::
 
@@ -570,15 +554,14 @@ class ParametrizedSurface3D(SageObject):
     @cached_method
     def normal_vector(self, normalized=False):
         """
-        Returns the normal vector field of the parametrized surface.
+        Return the normal vector field of the parametrized surface.
 
         INPUT:
 
-          - ``normalized`` -- (default ``False``); specifies whether the normal vector should be normalized.
+          - ``normalized`` -- boolean (default: ``False``); specifies whether
+            the normal vector should be normalized
 
-        OUTPUT:
-
-         - Normal vector field.
+        OUTPUT: normal vector field
 
         EXAMPLES::
 
@@ -591,7 +574,6 @@ class ParametrizedSurface3D(SageObject):
             (-2*u/sqrt(4*u^2 + 4*v^2 + 1),
              -2*v/sqrt(4*u^2 + 4*v^2 + 1),
              1/sqrt(4*u^2 + 4*v^2 + 1))
-
         """
 
         dr = self.natural_frame()
@@ -616,7 +598,6 @@ class ParametrizedSurface3D(SageObject):
             sage: eparaboloid = ParametrizedSurface3D((u, v, u^2+v^2), (u, v))
             sage: eparaboloid._compute_first_fundamental_form_coefficient((1,2))
             4*u*v
-
         """
         dr = self.natural_frame()
         return _simplify_full_rad(dr[index[0]]*dr[index[1]])
@@ -630,11 +611,9 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g_{ij}`.
+        - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g_{ij}`
 
-        OUTPUT:
-
-         - Component `g_{ij}` of the first fundamental form
+        OUTPUT: component `g_{ij}` of the first fundamental form
 
         EXAMPLES::
 
@@ -651,7 +630,6 @@ class ParametrizedSurface3D(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: Index (1, 5) out of bounds.
-
         """
         index = tuple(sorted(index))
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
@@ -661,13 +639,11 @@ class ParametrizedSurface3D(SageObject):
 
     def first_fundamental_form_coefficients(self):
         r"""
-        Returns the coefficients of the first fundamental form as a dictionary.
+        Return the coefficients of the first fundamental form as a dictionary.
         The keys are tuples `(i, j)`, where `i` and `j` range over `1, 2`,
         while the values are the corresponding coefficients `g_{ij}`.
 
-        OUTPUT:
-
-         - Dictionary of first fundamental form coefficients.
+        OUTPUT: dictionary of first fundamental form coefficients
 
         EXAMPLES::
 
@@ -675,7 +651,6 @@ class ParametrizedSurface3D(SageObject):
             sage: sphere = ParametrizedSurface3D((cos(u)*cos(v), sin(u)*cos(v), sin(v)), (u, v), 'sphere')
             sage: sphere.first_fundamental_form_coefficients()
             {(1, 1): cos(v)^2, (1, 2): 0, (2, 1): 0, (2, 2): 1}
-
         """
         coefficients = {}
         for index in product((1, 2), repeat=2):
@@ -693,11 +668,9 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` -- vectors on the surface.
+        - ``vector1``, ``vector2`` -- vectors on the surface
 
-        OUTPUT:
-
-         - First fundamental form evaluated on the input vectors.
+        OUTPUT: first fundamental form evaluated on the input vectors
 
         EXAMPLES::
 
@@ -720,16 +693,14 @@ class ParametrizedSurface3D(SageObject):
 
     def area_form_squared(self):
         """
-        Returns the square of the coefficient of the area form on the surface.
+        Return the square of the coefficient of the area form on the surface.
         In terms of the coefficients `g_{ij}` (where `i, j = 1, 2`) of the
         first fundamental form, this invariant is given by
         `A^2 = g_{11}g_{22} - g_{12}^2`.
 
         See also :meth:`.area_form`.
 
-        OUTPUT:
-
-         - Square of the area form
+        OUTPUT: square of the area form
 
         EXAMPLES::
 
@@ -737,7 +708,6 @@ class ParametrizedSurface3D(SageObject):
             sage: sphere = ParametrizedSurface3D([cos(u)*cos(v),sin(u)*cos(v),sin(v)],[u,v],'sphere')
             sage: sphere.area_form_squared()
             cos(v)^2
-
         """
         gamma = self.first_fundamental_form_coefficients()
         sq = gamma[(1,1)] * gamma[(2,2)] - gamma[(1,2)]**2
@@ -745,16 +715,14 @@ class ParametrizedSurface3D(SageObject):
 
     def area_form(self):
         r"""
-        Returns the coefficient of the area form on the surface.  In terms of
+        Return the coefficient of the area form on the surface.  In terms of
         the coefficients `g_{ij}` (where `i, j = 1, 2`) of the first
         fundamental form, the coefficient of the area form is given by
         `A = \sqrt{g_{11}g_{22} - g_{12}^2}`.
 
         See also :meth:`.area_form_squared`.
 
-        OUTPUT:
-
-         - Coefficient of the area form
+        OUTPUT: coefficient of the area form
 
         EXAMPLES::
 
@@ -762,21 +730,18 @@ class ParametrizedSurface3D(SageObject):
             sage: sphere = ParametrizedSurface3D([cos(u)*cos(v),sin(u)*cos(v),sin(v)],[u,v],'sphere')
             sage: sphere.area_form()
             cos(v)
-
         """
         f = abs(sqrt(self.area_form_squared()))
         return _simplify_full_rad(f)
 
     def first_fundamental_form_inverse_coefficients(self):
         r"""
-        Returns the coefficients `g^{ij}` of the inverse of the fundamental
+        Return the coefficients `g^{ij}` of the inverse of the fundamental
         form, as a dictionary.  The inverse coefficients are defined by
         `g^{ij} g_{jk} = \delta^i_k`  with `\delta^i_k` the Kronecker
         delta.
 
-        OUTPUT:
-
-         - Dictionary of the inverse coefficients.
+        OUTPUT: dictionary of the inverse coefficients
 
         EXAMPLES::
 
@@ -784,7 +749,6 @@ class ParametrizedSurface3D(SageObject):
             sage: sphere = ParametrizedSurface3D([cos(u)*cos(v),sin(u)*cos(v),sin(v)],[u,v],'sphere')
             sage: sphere.first_fundamental_form_inverse_coefficients()
             {(1, 1): cos(v)^(-2), (1, 2): 0, (2, 1): 0, (2, 2): 1}
-
         """
 
         g = self.first_fundamental_form_coefficients()
@@ -799,16 +763,14 @@ class ParametrizedSurface3D(SageObject):
 
     def first_fundamental_form_inverse_coefficient(self, index):
         r"""
-        Returns a specific component `g^{ij}` of the inverse of the fundamental
+        Return a specific component `g^{ij}` of the inverse of the fundamental
         form.
 
         INPUT:
 
-         - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g^{ij}`.
+        - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g^{ij}`
 
-        OUTPUT:
-
-         - Component of the inverse of the fundamental form.
+        OUTPUT: component of the inverse of the fundamental form
 
         EXAMPLES::
 
@@ -818,7 +780,6 @@ class ParametrizedSurface3D(SageObject):
             0
             sage: sphere.first_fundamental_form_inverse_coefficient((1, 1))
             cos(v)^(-2)
-
         """
 
         index = tuple(sorted(index))
@@ -830,16 +791,14 @@ class ParametrizedSurface3D(SageObject):
     @cached_method
     def rotation(self,theta):
         r"""
-        Gives the matrix of the rotation operator over a given angle `\theta`
+        Give the matrix of the rotation operator over a given angle `\theta`
         with respect to the natural frame.
 
         INPUT:
 
-         - ``theta`` -- rotation angle
+        - ``theta`` -- rotation angle
 
-        OUTPUT:
-
-         - Rotation matrix with respect to the natural frame.
+        OUTPUT: rotation matrix with respect to the natural frame
 
         ALGORITHM:
 
@@ -864,7 +823,6 @@ class ParametrizedSurface3D(SageObject):
             sage: rotation^3
             [-1  0]
             [ 0 -1]
-
         """
 
         from sage.functions.trig import sin, cos
@@ -880,18 +838,16 @@ class ParametrizedSurface3D(SageObject):
     @cached_method
     def orthonormal_frame(self, coordinates='ext'):
         r"""
-        Returns the orthonormal frame field on the surface, expressed either
+        Return the orthonormal frame field on the surface, expressed either
         in exterior coordinates (i.e. expressed as vector fields in the
         ambient space `\mathbb{R}^3`, the default) or interior coordinates
         (with respect to the natural frame)
 
         INPUT:
 
-         - ``coordinates`` -- either ``ext`` (default) or ``int``.
+        - ``coordinates`` -- either ``ext`` (default) or ``int``
 
-        OUTPUT:
-
-         - Orthogonal frame field as a dictionary.
+        OUTPUT: orthogonal frame field as a dictionary
 
         ALGORITHM:
 
@@ -945,18 +901,16 @@ class ParametrizedSurface3D(SageObject):
 
     def orthonormal_frame_vector(self, index, coordinates='ext'):
         r"""
-        Returns a specific basis vector field of the orthonormal frame field on
+        Return a specific basis vector field of the orthonormal frame field on
         the surface, expressed in exterior or interior coordinates.  See
         :meth:`orthogonal_frame` for more details.
 
         INPUT:
 
-         - ``index`` -- index of the basis vector;
-         - ``coordinates`` -- either ``ext`` (default) or ``int``.
+        - ``index`` -- index of the basis vector
+        - ``coordinates`` -- either ``ext`` (default) or ``int``
 
-        OUTPUT:
-
-         - Orthonormal frame vector field.
+        OUTPUT: orthonormal frame vector field
 
         EXAMPLES::
 
@@ -981,19 +935,16 @@ class ParametrizedSurface3D(SageObject):
 
     def lie_bracket(self, v, w):
         r"""
-        Returns the Lie bracket of two vector fields that are tangent
+        Return the Lie bracket of two vector fields that are tangent
         to the surface. The vector fields should be given in intrinsic
         coordinates, i.e. with respect to the natural frame.
 
         INPUT:
 
-         - ``v`` and ``w`` -- vector fields on the surface, expressed
-           as pairs of functions or as vectors of length 2.
+        - ``v``, ``w`` -- vector fields on the surface, expressed
+          as pairs of functions or as vectors of length 2
 
-        OUTPUT:
-
-         - The Lie bracket `[v, w]`.
-
+        OUTPUT: the Lie bracket `[v, w]`
 
         EXAMPLES::
 
@@ -1019,22 +970,21 @@ class ParametrizedSurface3D(SageObject):
 
     def frame_structure_functions(self, e1, e2):
         r"""
-        Returns the structure functions `c^k_{ij}` for a frame field
+        Return the structure functions `c^k_{ij}` for a frame field
         `e_1, e_2`, i.e. a pair of vector fields on the surface which are
         linearly independent at each point.  The structure functions are
         defined using the Lie bracket by `[e_i,e_j] = c^k_{ij}e_k`.
 
         INPUT:
 
-         - ``e1``, ``e2`` -- vector fields in intrinsic coordinates on
-           the surface, expressed as pairs of functions, or as vectors of
-           length 2.
+        - ``e1``, ``e2`` -- vector fields in intrinsic coordinates on
+          the surface, expressed as pairs of functions, or as vectors of
+          length 2
 
         OUTPUT:
 
-         - Dictionary of structure functions, where the key ``(i, j, k)`` refers to
-           the structure function `c_{i,j}^k`.
-
+        Dictionary of structure functions, where the key ``(i, j, k)`` refers to
+        the structure function `c_{i,j}^k`.
 
         EXAMPLES::
 
@@ -1095,7 +1045,6 @@ class ParametrizedSurface3D(SageObject):
             (0, 0, 0)
             sage: paraboloid._compute_second_order_frame_element((2, 2))
             (0, 0, 2)
-
         """
         variables = [self.variables[i] for i in index]
         ddr_element = vector([_simplify_full_rad(diff(f, variables))
@@ -1105,7 +1054,7 @@ class ParametrizedSurface3D(SageObject):
 
     def second_order_natural_frame(self):
         r"""
-        Returns the second-order frame of the surface, i.e. computes the
+        Return the second-order frame of the surface, i.e. computes the
         second-order derivatives (with respect to the parameters on the
         surface) of the parametric expression `\vec r = \vec r(u^1,u^2)`
         of the surface.
@@ -1125,7 +1074,6 @@ class ParametrizedSurface3D(SageObject):
              (1, 2): (sin(u)*sin(v), -cos(u)*sin(v), 0),
              (2, 1): (sin(u)*sin(v), -cos(u)*sin(v), 0),
              (2, 2): (-cos(u)*cos(v), -cos(v)*sin(u), -sin(v))}
-
         """
 
         vectors = {}
@@ -1137,18 +1085,16 @@ class ParametrizedSurface3D(SageObject):
 
     def second_order_natural_frame_element(self, index):
         r"""
-        Returns a vector in the second-order frame of the surface, i.e.
+        Return a vector in the second-order frame of the surface, i.e.
         computes the second-order derivatives of the parametric expression
         `\vec{r}` of the surface with respect to the parameters listed in the
         argument.
 
         INPUT:
 
-         - ``index`` -- a 2-tuple ``(i, j)`` specifying the element of the second-order frame.
+        - ``index`` -- a 2-tuple ``(i, j)`` specifying the element of the second-order frame
 
-        OUTPUT:
-
-         - The second-order derivative `r_{ij}`.
+        OUTPUT: the second-order derivative `r_{ij}`
 
         EXAMPLES::
 
@@ -1156,7 +1102,6 @@ class ParametrizedSurface3D(SageObject):
             sage: sphere = ParametrizedSurface3D([cos(u)*cos(v),sin(u)*cos(v),sin(v)],[u,v],'sphere')
             sage: sphere.second_order_natural_frame_element((1, 2))
             (sin(u)*sin(v), -cos(u)*sin(v), 0)
-
         """
 
         index = tuple(sorted(index))
@@ -1180,7 +1125,6 @@ class ParametrizedSurface3D(SageObject):
             sage: paraboloid = ParametrizedSurface3D([u, v, u^2+v^2], [u, v], 'paraboloid')
             sage: paraboloid._compute_second_fundamental_form_coefficient((1,1))
             2/sqrt(4*u^2 + 4*v^2 + 1)
-
         """
         N = self.normal_vector(normalized=True)
         v = self.second_order_natural_frame_element(index)
@@ -1188,18 +1132,16 @@ class ParametrizedSurface3D(SageObject):
 
     def second_fundamental_form_coefficient(self, index):
         r"""
-        Returns the coefficient `h_{ij}` of the second fundamental form
+        Return the coefficient `h_{ij}` of the second fundamental form
         corresponding to the index `(i, j)`.  If the equation of the surface
         is `\vec{r}(u^1, u^2)`, then `h_{ij} = \vec{r}_{u^i u^j} \cdot \vec{n}`,
         where `\vec{n}` is the unit normal.
 
         INPUT:
 
-         - ``index`` -- a 2-tuple ``(i, j)``
+        - ``index`` -- a 2-tuple ``(i, j)``
 
-        OUTPUT:
-
-         - Component `h_{ij}` of the second fundamental form.
+        OUTPUT: component `h_{ij}` of the second fundamental form
 
         EXAMPLES::
 
@@ -1210,7 +1152,6 @@ class ParametrizedSurface3D(SageObject):
             -cos(v)^2
             sage: sphere.second_fundamental_form_coefficient((2, 1))
             0
-
         """
         index = tuple(index)
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
@@ -1220,16 +1161,14 @@ class ParametrizedSurface3D(SageObject):
 
     def second_fundamental_form_coefficients(self):
         """
-        Returns the coefficients `h_{ij}` of the second fundamental form as
+        Return the coefficients `h_{ij}` of the second fundamental form as
         a dictionary, where the keys are the indices `(i, j)` and the values
         are the corresponding components `h_{ij}`.
 
         When only one component is needed, consider instead the function
         :meth:`second_fundamental_form_coefficient`.
 
-        OUTPUT:
-
-        Dictionary of second fundamental form coefficients.
+        OUTPUT: dictionary of second fundamental form coefficients
 
         EXAMPLES::
 
@@ -1238,7 +1177,6 @@ class ParametrizedSurface3D(SageObject):
             sage: sphere = ParametrizedSurface3D([cos(u)*cos(v),sin(u)*cos(v),sin(v)],[u,v],'sphere')
             sage: sphere.second_fundamental_form_coefficients()
             {(1, 1): -cos(v)^2, (1, 2): 0, (2, 1): 0, (2, 2): -1}
-
         """
 
         coefficients = {}
@@ -1255,11 +1193,9 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` -- 2-tuples representing the input vectors.
+        - ``vector1``, ``vector2`` -- 2-tuples representing the input vectors
 
-        OUTPUT:
-
-         - Value of the second fundamental form evaluated on the given vectors.
+        OUTPUT: value of the second fundamental form evaluated on the given vectors
 
         EXAMPLES:
 
@@ -1280,7 +1216,6 @@ class ParametrizedSurface3D(SageObject):
            -cos(v)^2 - 4
            sage: sphere.second_fundamental_form([1,1], [2,1])
            -2*cos(v)^2 - 1
-
         """
         hh = self.second_fundamental_form_coefficients()
         return sum(hh[(i, j)] * vector1[i - 1] * vector2[j - 1]
@@ -1293,9 +1228,7 @@ class ParametrizedSurface3D(SageObject):
         where `g_{ij}` and `h_{ij}` are the coefficients of the first
         and second fundamental form, respectively.
 
-        OUTPUT:
-
-         - Gaussian curvature of the surface.
+        OUTPUT: Gaussian curvature of the surface.
 
         EXAMPLES::
 
@@ -1306,7 +1239,6 @@ class ParametrizedSurface3D(SageObject):
            sage: sphere = ParametrizedSurface3D([R*cos(u)*cos(v),R*sin(u)*cos(v),R*sin(v)],[u,v],'sphere')
            sage: sphere.gauss_curvature()
            R^(-2)
-
         """
         hh = self.second_fundamental_form_coefficients()
         return _simplify_full_rad(
@@ -1319,9 +1251,7 @@ class ParametrizedSurface3D(SageObject):
         where `g_{ij}` and `h_{ij}` are the components of the first and second
         fundamental forms, respectively.
 
-        OUTPUT:
-
-         - Mean curvature of the surface
+        OUTPUT: mean curvature of the surface
 
         EXAMPLES::
 
@@ -1332,7 +1262,6 @@ class ParametrizedSurface3D(SageObject):
            sage: sphere = ParametrizedSurface3D([R*cos(u)*cos(v),R*sin(u)*cos(v),R*sin(v)],[u,v],'sphere')
            sage: sphere.mean_curvature()
            -1/R
-
         """
         gg = self.first_fundamental_form_coefficients()
         hh = self.second_fundamental_form_coefficients()
@@ -1344,13 +1273,13 @@ class ParametrizedSurface3D(SageObject):
     @cached_method
     def shape_operator_coefficients(self):
         r"""
-        Returns the components of the shape operator of the surface as a
+        Return the components of the shape operator of the surface as a
         dictionary. See ``shape_operator`` for more information.
 
         OUTPUT:
 
-         - Dictionary where the keys are two-tuples ``(i, j)``, with values the
-           corresponding component of the shape operator.
+        Dictionary where the keys are two-tuples ``(i, j)``, with values the
+        corresponding component of the shape operator.
 
         EXAMPLES::
 
@@ -1360,7 +1289,6 @@ class ParametrizedSurface3D(SageObject):
            sage: sphere = ParametrizedSurface3D([R*cos(u)*cos(v),R*sin(u)*cos(v),R*sin(v)],[u,v],'sphere')
            sage: sphere.shape_operator_coefficients()
            {(1, 1): -1/R, (1, 2): 0, (2, 1): 0, (2, 2): -1/R}
-
         """
 
         gi = self.first_fundamental_form_inverse_coefficients()
@@ -1375,14 +1303,12 @@ class ParametrizedSurface3D(SageObject):
 
     def shape_operator(self):
         r"""
-        Returns the shape operator of the surface as a matrix.  The shape
+        Return the shape operator of the surface as a matrix.  The shape
         operator is defined as the derivative of the Gauss map, and is
         computed here in terms of the first and second fundamental form by
         means of the Weingarten equations.
 
-        OUTPUT:
-
-         - Matrix of the shape operator
+        OUTPUT: matrix of the shape operator
 
         EXAMPLES::
 
@@ -1405,7 +1331,6 @@ class ParametrizedSurface3D(SageObject):
             [       -8*u*v/(4*u^2 + 4*v^2 + 1)^(3/2) 2*(4*u^2 + 1)/(4*u^2 + 4*v^2 + 1)^(3/2)]
             sage: S.eigenvalues()
             [2*sqrt(4*u^2 + 4*v^2 + 1)/(16*u^4 + 16*v^4 + 8*(4*u^2 + 1)*v^2 + 8*u^2 + 1), 2/sqrt(4*u^2 + 4*v^2 + 1)]
-
         """
 
         shop = self.shape_operator_coefficients()
@@ -1415,7 +1340,7 @@ class ParametrizedSurface3D(SageObject):
 
     def principal_directions(self):
         r"""
-        Finds the principal curvatures and principal directions of the surface
+        Finds the principal curvatures and principal directions of the surface.
 
         OUTPUT:
 
@@ -1447,7 +1372,7 @@ class ParametrizedSurface3D(SageObject):
     @cached_method
     def connection_coefficients(self):
         r"""
-        Computes the connection coefficients or Christoffel symbols
+        Compute the connection coefficients or Christoffel symbols
         `\Gamma^k_{ij}` of the surface. If the coefficients of the first
         fundamental form are given by `g_{ij}` (where `i, j = 1, 2`), then
         `\Gamma^k_{ij} = \frac{1}{2} g^{kl} \left( \frac{\partial g_{li}}{\partial x^j}
@@ -1478,7 +1403,6 @@ class ParametrizedSurface3D(SageObject):
             (2, 1, 2): 0,
             (2, 2, 1): 0,
             (2, 2, 2): 0}
-
         """
         x = self.variables
         gg = self.first_fundamental_form_coefficients()
@@ -1509,7 +1433,6 @@ class ParametrizedSurface3D(SageObject):
            sage: ode = sphere._create_geodesic_ode_system()
            sage: ode.function(0.0, (1.0, 0.0, 1.0, 1.0))
            [1.00000000000000, 1.00000000000000, -0.4546487134128409, 3.114815449309804]
-
         """
         from sage.ext.fast_eval import fast_float
         from sage.calculus.ode import ode_solver
@@ -1551,23 +1474,25 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``p0`` -- 2-tuple with coordinates of the initial point.
+        - ``p0`` -- 2-tuple with coordinates of the initial point
 
-         - ``v0`` -- 2-tuple with components of the initial tangent vector to the geodesic.
+        - ``v0`` -- 2-tuple with components of the initial tangent vector to the geodesic
 
-         - ``tinterval`` -- List ``[a, b, M]``, where ``(a,b)`` is the domain of the geodesic and ``M`` is the number of subdivision points used when returning the solution.
+        - ``tinterval`` -- list ``[a, b, M]``, where ``(a,b)`` is the domain
+          of the geodesic and ``M`` is the number of subdivision points used
+          when returning the solution
 
         OUTPUT:
 
         List of lists ``[t, [u1(t), u2(t)], [v1(t), v2(t)], [x1(t), x2(t), x3(t)]]``, where
 
-         - ``t`` is a subdivision point;
+        - ``t`` -- a subdivision point;
 
-         - ``[u1(t), u2(t)]`` are the intrinsic coordinates of the geodesic point;
+        - ``[u1(t), u2(t)]`` are the intrinsic coordinates of the geodesic point;
 
-         - ``[v1(t), v2(t)]`` are the intrinsic coordinates of the tangent vector to the geodesic;
+        - ``[v1(t), v2(t)]`` are the intrinsic coordinates of the tangent vector to the geodesic;
 
-         - ``[x1(t), x2(t), x3(t)]`` are the coordinates of the geodesic point in the three-dimensional space.
+        - ``[x1(t), x2(t), x3(t)]`` are the coordinates of the geodesic point in the three-dimensional space.
 
         EXAMPLES::
 
@@ -1605,8 +1530,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``curve`` -- curve in intrinsic coordinates along which to do parallel transport.
-         - ``t`` -- curve parameter
+        - ``curve`` -- curve in intrinsic coordinates along which to do parallel transport
+        - ``t`` -- curve parameter
 
         EXAMPLES::
 
@@ -1616,7 +1541,6 @@ class ParametrizedSurface3D(SageObject):
            sage: ode = sphere._create_pt_ode_system((s, s), s)
            sage: ode.function(0.0, (1.0, 1.0))
            [-0.0, 0.0]
-
         """
 
         from sage.ext.fast_eval import fast_float
@@ -1647,7 +1571,7 @@ class ParametrizedSurface3D(SageObject):
 
     def parallel_translation_numerical(self,curve,t,v0,tinterval):
         r"""
-        Numerically solves the equations for parallel translation of a vector
+        Numerically solve the equations for parallel translation of a vector
         along a curve on the surface.  Explicitly, the equations for parallel
         translation are given by
         `\frac{d u^i}{dt} + u^j \frac{d c^k}{dt} \Gamma^i_{jk} = 0`,
@@ -1663,24 +1587,24 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``curve`` -- 2-tuple of functions which determine the curve with respect to
-           the local coordinate system;
+        - ``curve`` -- 2-tuple of functions which determine the curve with respect to
+          the local coordinate system
 
-         - ``t`` -- symbolic variable denoting the curve parameter;
+        - ``t`` -- symbolic variable denoting the curve parameter
 
-         - ``v0`` -- 2-tuple representing the initial vector;
+        - ``v0`` -- 2-tuple representing the initial vector
 
-         - ``tinterval`` -- list ``[a, b, N]``, where ``(a, b)`` is the domain of the curve
-           and ``N`` is the number of subdivision points.
+        - ``tinterval`` -- list ``[a, b, N]``, where ``(a, b)`` is the domain of the curve
+          and ``N`` is the number of subdivision points
 
         OUTPUT:
 
         The list consisting of lists ``[t, [v1(t), v2(t)]]``, where
 
-         - ``t`` is a subdivision point;
+        - ``t`` -- a subdivision point;
 
-         - ``[v1(t), v2(t)]`` is the list of coordinates of the vector parallel translated
-           along the curve.
+        - ``[v1(t), v2(t)]`` is the list of coordinates of the vector parallel translated
+          along the curve.
 
         EXAMPLES::
 
@@ -1697,7 +1621,6 @@ class ParametrizedSurface3D(SageObject):
            [0.0000, 0.1571, 0.3142, 0.4712, 0.6283, 0.7854]
            sage: [round4(v) for v in components]
            [[1.000, 1.000], [0.9876, 1.025], [0.9499, 1.102], [0.8853, 1.238], [0.7920, 1.448], [0.6687, 1.762]]
-
         """
         solver = self._create_pt_ode_system(tuple(curve), t)
 

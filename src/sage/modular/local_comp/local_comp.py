@@ -44,11 +44,11 @@ def LocalComponent(f, p, twist_factor=None):
 
     INPUT:
 
-    - ``f`` (:class:`~sage.modular.modform.element.Newform`) a newform of weight `k \ge 2`
-    - ``p`` (integer) a prime
-    - ``twist_factor`` (integer) an integer congruent to `k` modulo 2 (default: `k - 2`)
+    - ``f`` -- (:class:`~sage.modular.modform.element.Newform`) a newform of weight `k \ge 2`
+    - ``p`` -- integer; prime
+    - ``twist_factor`` -- integer congruent to `k` modulo 2 (default: `k - 2`)
 
-    .. note::
+    .. NOTE::
 
         The argument ``twist_factor`` determines the choice of normalisation: if it is
         set to `j \in \ZZ`, then the central character of `\pi_{f, \ell}` maps `\ell`
@@ -169,7 +169,7 @@ class LocalComponentBase(SageObject):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -298,7 +298,7 @@ class LocalComponentBase(SageObject):
 
     def __ne__(self, other):
         """
-        Return True if ``self != other``.
+        Return ``True`` if ``self != other``.
 
         EXAMPLES::
 
@@ -323,7 +323,7 @@ class PrimitiveLocalComponent(LocalComponentBase):
 
     def is_primitive(self):
         r"""
-        Return True if this local component is primitive (has minimal level
+        Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
 
         EXAMPLES::
@@ -445,7 +445,7 @@ class UnramifiedPrincipalSeries(PrincipalSeries):
         `\pi_{f, p}` is equal to the principal series `\pi(\chi_1, \chi_2)`.
         These are the unramified characters mapping `p` to the roots of the Satake polynomial,
         so in most cases (but not always) they will be defined over an
-        extension of the coefficient field of self.
+        extension of the coefficient field of ``self``.
 
         EXAMPLES::
 
@@ -991,7 +991,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
 
     def is_primitive(self):
         r"""
-        Return True if this local component is primitive (has minimal level
+        Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
 
         EXAMPLES::

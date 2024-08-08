@@ -21,7 +21,7 @@ def QuarticCurve(F, PP=None, check=False):
 
     - ``F`` -- a polynomial in three variables, homogeneous of degree 4
 
-    - ``PP`` -- a projective plane (default: None)
+    - ``PP`` -- a projective plane (default: ``None``)
 
     - ``check`` -- whether to check for smoothness or not (default: ``False``)
 
@@ -48,7 +48,6 @@ def QuarticCurve(F, PP=None, check=False):
         Traceback (most recent call last):
         ...
         ValueError: Argument F (=x^4 + y^4) must be a polynomial in 3 variables
-
     """
     if not isinstance(F, MPolynomial):
         raise ValueError(f"Argument F (={F}) must be a multivariate polynomial")

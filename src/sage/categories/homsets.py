@@ -27,8 +27,8 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
         INPUT:
 
-         - ``cls`` -- the category class for the functor `F`
-         - ``category`` -- a category `Cat`
+        - ``cls`` -- the category class for the functor `F`
+        - ``category`` -- a category `Cat`
 
         OUTPUT: a category
 
@@ -122,7 +122,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
     def _test_homsets_category(self, **options):
         r"""
-        Run generic tests on this homsets category
+        Run generic tests on this homsets category.
 
         .. SEEALSO:: :class:`TestSuite`.
 
@@ -148,7 +148,6 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
             sage: ModulesWithBasis(ZZ).Homsets().base()
             Integer Ring
-
         """
         from sage.categories.category_types import Category_over_base
         for C in self._all_super_categories_proper:

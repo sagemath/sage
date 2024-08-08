@@ -592,9 +592,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
 
         - ``base_ring`` -- the base ring of the group algebra
 
-        OUTPUT:
-
-        A group algebra.
+        OUTPUT: a group algebra
 
         EXAMPLES::
 
@@ -615,9 +613,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
 
         - ``f`` -- a morphism of rings
 
-        OUTPUT:
-
-        A morphism of group algebras.
+        OUTPUT: a morphism of group algebras
 
         EXAMPLES::
 
