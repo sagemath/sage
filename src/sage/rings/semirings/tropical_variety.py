@@ -938,30 +938,31 @@ class TropicalCurve(TropicalVariety):
             [[-3/2, 1/2], [25/2, 29/2]]
         """
         if self.number_of_components() == 0:  # constant or monomial
-            return [[-1,1], [-1,1]]
+            return [[-1, 1], [-1, 1]]
 
         if self.number_of_components() == 1:
             eq = self._hypersurface[0][0]
             if not eq[0].is_numeric() and not eq[1].is_numeric():
-                return [[-1,1], [-1,1]]
+                return [[-1, 1], [-1, 1]]
             elif eq[0].is_numeric():
-                return [[eq[0]-1, eq[0]+1], [-1,1]]
+                return [[eq[0]-1, eq[0]+1], [-1, 1]]
             else:
-                return [[-1,1], [eq[1]-1, eq[1]+1]]
+                return [[-1, 1], [eq[1]-1, eq[1]+1]]
 
-        xmin = xmax = list(self.vertices())[0][0]
-        for vertice in self.vertices():
-            if vertice[0] < xmin:
-                xmin = vertice[0]
-            elif vertice[0] > xmax:
-                xmax = vertice[0]
+        verts = self.vertices()
+        xmin = xmax = list(verts)[0][0]
+        for vertex in verts:
+            if vertex[0] < xmin:
+                xmin = vertex[0]
+            elif vertex[0] > xmax:
+                xmax = vertex[0]
 
-        ymin = ymax = list(self.vertices())[0][1]
-        for vertice in self.vertices():
-            if vertice[1] < ymin:
-                ymin = vertice[1]
-            elif vertice[1] > ymax:
-                ymax = vertice[1]
+        ymin = ymax = list(verts)[0][1]
+        for vertex in verts:
+            if vertex[1] < ymin:
+                ymin = vertex[1]
+            elif vertex[1] > ymax:
+                ymax = vertex[1]
 
         return [[xmin-1, xmax+1], [ymin-1, ymax+1]]
 
