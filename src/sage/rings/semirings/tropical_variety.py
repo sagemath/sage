@@ -476,13 +476,24 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                             sol_param_sim.add(eqn.lhs() >= eqn.rhs())
                 else:
                     sol_param_sim.add(sol)
-            if (sol_param_sim) or (self.dimension() == 2):
-                if not sol_param_sim:
-                    sol_param_sim = Set()
+            # checking there are no conditions with the same variables 
+            # and having operator <= and >= simultaneously
+            unique_sol_param = set()
+            temp = [s for s in sol_param_sim]
+            op_temp = {i: set(temp[i].operands()) for i in range(len(temp))}
+            for s_value in op_temp.values():
+                match_keys = [k for k, v in op_temp.items() if v == s_value]
+                if len(match_keys) == 1:
+                    for i in match_keys:
+                        unique_sol_param.add(temp[i])
+            
+            if (unique_sol_param) or (self.dimension() == 2):
+                if not unique_sol_param:
+                    unique_sol_param = Set()
                 if index not in result:
-                    result[index] = [(tuple(points), sol_param_sim)]
+                    result[index] = [(tuple(points), unique_sol_param)]
                 else:
-                    result[index].append((tuple(points), sol_param_sim))
+                    result[index].append((tuple(points), unique_sol_param))
 
         result = {}
         vars = self._vars
@@ -581,6 +592,14 @@ class TropicalSurface(TropicalVariety):
 
         if not self._hypersurface:  # no components
             return [[-1, 1], [-1, 1], [-1, 1]]
+        elif len(self._hypersurface) == 1:
+            bound = 1
+            for eqn in self._hypersurface[0][0]:
+                for op in eqn.operands():
+                    if op.is_numeric():
+                        if op > bound:
+                            bound = op
+            return [[-bound, bound]] * 3
         u_set = set()
         v_set = set()
         for comp in self._hypersurface:
@@ -680,8 +699,8 @@ class TropicalSurface(TropicalVariety):
         """
         from sage.sets.real_set import RealSet
         from sage.symbolic.relation import solve
+        from sage.rings.rational_field import QQ
 
-        R = self._poly.parent().base().base_ring()
         vertices = {i: set() for i in range(self.number_of_components())}
         axes = self._axes()
         comps = self.components()
@@ -695,13 +714,14 @@ class TropicalSurface(TropicalVariety):
                     left = param.lhs()
                     right = param.rhs()
                     if left.is_numeric():
-                        vertex = [R(e.subs(**{str(v): left})) for e in line[0]]
+                        vertex = [QQ(e.subs(**{str(v): left})) for e in line[0]]
                         vertices[index].add(tuple(vertex))
                     elif right.is_numeric():
-                        vertex = [R(e.subs(**{str(v): right})) for e in line[0]]
+                        vertex = [QQ(e.subs(**{str(v): right})) for e in line[0]]
                         vertices[index].add(tuple(vertex))
 
-            # find the interval of parameter for outer vertex
+        # find the interval of parameter for outer vertex
+        for index in range(len(comps)):
             interval1 = RealSet(-infinity,infinity)  # represent t1
             interval2 = RealSet(-infinity,infinity)  # represent t2
             is_doublevar = False
@@ -728,30 +748,33 @@ class TropicalSurface(TropicalVariety):
                     interval_param = RealSet()
                     for t in temp:
                         if t != []:
-                            interval_param = interval_param + RealSet(t[0])
+                            try:
+                                interval_param += RealSet(t[0])
+                            except:
+                                interval_param += RealSet(-infinity, infinity)
                         else:
-                            interval_param = interval_param + RealSet(-infinity, infinity)
+                            interval_param += RealSet(-infinity, infinity)
                     interval_param = interval_param.intersection(interval2)
                     if is_doublevar:
                         int1 = RealSet()
                         for s1 in sol1:
                             subs1 = solve(s1[0].subs(**{str(vars[0]): p}), vars[1])
                             try:
-                                int1 = int1 + RealSet(subs1[0])
+                                int1 += RealSet(subs1[0])
                             except TypeError:
-                                int1 = int1 + RealSet(subs1[0][0])
+                                int1 += RealSet(subs1[0][0])
                         int2 = RealSet()
                         for s2 in sol2:
                             subs2 = solve(s2[0].subs(**{str(vars[0]): p}), vars[1])
                             try:
-                                int2 = int2 + RealSet(subs2[0])
+                                int2 += RealSet(subs2[0])
                             except TypeError:
-                                int2 = int2 + RealSet(subs2[0][0])
+                                int2 += RealSet(subs2[0][0])
                         final_int = int1.intersection(int2)
                         interval_param = interval_param.intersection(final_int)
                     if interval_param:
-                        vertex1 = [R(e.subs(**{str(vars[0]): p, str(vars[1]): interval_param.inf()})) for e in comps[index][0]]
-                        vertex2 = [R(e.subs(**{str(vars[0]): p, str(vars[1]): interval_param.sup()})) for e in comps[index][0]]
+                        vertex1 = [QQ(e.subs(**{str(vars[0]): p, str(vars[1]): interval_param.inf()})) for e in comps[index][0]]
+                        vertex2 = [QQ(e.subs(**{str(vars[0]): p, str(vars[1]): interval_param.sup()})) for e in comps[index][0]]
                         vertices[index].add(tuple(vertex1))
                         vertices[index].add(tuple(vertex2))
 
@@ -763,30 +786,33 @@ class TropicalSurface(TropicalVariety):
                     interval_param = RealSet()
                     for t in temp:
                         if t != []:
-                            interval_param = interval_param + RealSet(t[0])
+                            try:
+                                interval_param += RealSet(t[0])
+                            except:
+                                interval_param += RealSet(-infinity, infinity)
                         else:
-                            interval_param = interval_param + RealSet(-infinity, infinity)
+                            interval_param += RealSet(-infinity, infinity)
                     interval_param = interval_param.intersection(interval1)
                     if is_doublevar:
                         int1 = RealSet()
                         for s1 in sol1:
                             subs1 = solve(s1[0].subs(**{str(vars[1]): p}), vars[0])
                             try:
-                                int1 = int1 + RealSet(subs1[0])
+                                int1 += RealSet(subs1[0])
                             except TypeError:
-                                int1 = int1 + RealSet(subs1[0][0])
+                                int1 += RealSet(subs1[0][0])
                         int2 = RealSet()
                         for s2 in sol2:
                             subs2 = solve(s2[0].subs(**{str(vars[1]): p}), vars[0])
                             try:
-                                int2 = int2 + RealSet(subs2[0])
+                                int2 += RealSet(subs2[0])
                             except TypeError:
-                                int2 = int2 + RealSet(subs2[0][0])
+                                int2 += RealSet(subs2[0][0])
                         final_int = int1.intersection(int2)
                         interval_param = interval_param.intersection(final_int)
                     if interval_param:
-                        vertex1 = [R(e.subs(**{str(vars[0]): interval_param.inf(), str(vars[1]): p})) for e in comps[index][0]]
-                        vertex2 = [R(e.subs(**{str(vars[0]): interval_param.sup(), str(vars[1]): p})) for e in comps[index][0]]
+                        vertex1 = [QQ(e.subs(**{str(vars[0]): interval_param.inf(), str(vars[1]): p})) for e in comps[index][0]]
+                        vertex2 = [QQ(e.subs(**{str(vars[0]): interval_param.sup(), str(vars[1]): p})) for e in comps[index][0]]
                         vertices[index].add(tuple(vertex1))
                         vertices[index].add(tuple(vertex2))
         return vertices
