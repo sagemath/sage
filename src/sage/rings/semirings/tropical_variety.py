@@ -363,7 +363,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             Tropical hypersurface of 0*w
         """
         return f"Tropical hypersurface of {self._poly}"
-    
+
     def _latex_(self):
         r"""
         Return a latex representation of ``self``.
