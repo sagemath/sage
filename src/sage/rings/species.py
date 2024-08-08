@@ -564,7 +564,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         elif self._k == 1:
             if isinstance(x, PermutationGroup_generic):
                 H = x
-                M = {e: 1 for e in H.domain()}
+                M = {e: ZZ.one() for e in H.domain()}
             else:
                 raise ValueError(f"{x} must be a permutation group")
         else:
@@ -573,7 +573,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         term = self._indices.one()
         for part in domain_partition:
             term *= self._indices.gen(self._project(H, M, part))
-        return self._from_dict({term: 1})
+        return self._from_dict({term: ZZ.one()})
 
     def __getitem__(self, x):
         r"""
@@ -701,11 +701,16 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 dominverted = sorted(F._dompart.keys(), key=lambda x: F._dompart[x])
                 pi = libgap.MappingPermListList(dominverted, libgap.eval(f'[1..{F.grade()}]'))
                 Fconj = libgap.ConjugateGroup(F._group, pi)
+                print('Fconj',Fconj)
                 for IVcombo in cartesian_product(combos):
                     # TODO: calculate coefficient (because each group has some multiplicity)
                     # Use F(...) x E(..)^m1 ...
+                    print('IVcombo',IVcombo)
                     dsumpartial = list(accumulate(chain.from_iterable(IVcombo),initial=0))
-                    Autlist = self._word_automorphism_groups(Fconj, F._mc, IVcombo, dsumpartial)
+                    print('dsumpartial',dsumpartial)
+                    Gtop = libgap.eval(f'SymmetricGroup({F._tc})')
+                    Autlist = self._word_automorphism_groups(Fconj, F._mc, IVcombo, Gtop, dsumpartial)
+                    print('Autlist',Autlist)
                     Gcombos = cartesian_product([[zip(Gs, permedpart)
                                                   # for each permutation of the partition
                                                   for permedpart in Permutations(IV)
@@ -714,6 +719,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                                                   # for each sort
                                                   for arg, IV in zip(args, IVcombo)])
                     for Gcombo in Gcombos:
+                        print('Gcombo',Gcombo)
                         gens = []
                         mapping = dict()
                         Fdom = []
@@ -754,7 +760,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 res += coeff * term
             return res
         
-        def _word_automorphism_groups(self, F, Fmc, IVcombo, dsumpartial):
+        def _word_automorphism_groups(self, F, Fmc, IVcombo, Gtop, dsumpartial):
             r"""
             Given a group F and a tuple of partitions on sorts,
             find the word classes and corresponding stabilizer subgroups.
@@ -772,24 +778,18 @@ class PolynomialSpecies(CombinatorialFreeModule):
             domain = list(list(chain.from_iterable(x)) for x in
                           cartesian_product([Permutations(list(chain.from_iterable([i + precard] * v for i, v in enumerate(part, 1))))
                                     for precard, part in zip(accumulate(Fmc, initial=0), IVcombo)]))
+            print('domain', domain)
 
             orig = domain[0]
             orbits = libgap.OrbitsDomain(F, domain, libgap.Permuted)
             grps = []
-            def relabel(arr):
-                from collections import Counter
-                C = Counter({k: v for k, v in enumerate(dsumpartial[:-1], 1)})
-                for i in range(len(arr)):
-                    C[arr[i]] += 1
-                    arr[i] = C[arr[i]]
-                return arr
-            origl = relabel(orig)
             for orbit in orbits:
                 # Ok, now I have to find a mapping from orbrep to the original
-                mutorb = orbit[0].sage()
-                mutorbl = relabel(mutorb)
-                pi = libgap.MappingPermListList(mutorbl, origl)
+                pi = libgap.RepresentativeAction(Gtop, domain, orbit[0], orig, libgap.Permuted)
+                print(pi)
                 stab = libgap.Stabilizer(F, domain, orbit[0], libgap.Permuted)
+                print('stab',stab)
+                print('cj',libgap.ConjugateGroup(stab, pi))
                 grps.append(libgap.ConjugateGroup(stab, pi))
             return grps
 
@@ -824,4 +824,40 @@ class PolynomialSpecies(CombinatorialFreeModule):
                     tHt = libgap.ConjugateSubgroup(Hgap, tau)
                     G = PermutationGroup(gap_group=libgap.Intersection(tHt, Kgap), domain=K._dompart.keys())
                     res += coeff * self.parent()((G, K._dompart))
+            return res
+
+        def addition_formula(self, arg):
+            r"""
+            args is a list of the number of terms in each sort.
+            Returns the addition formula decomposition of
+            H(X1+X2..+Xk, Y1+Y2+..., ...).
+            """
+            if len(arg) != self.parent()._k:
+                raise ValueError(f"Number of args (= {len(arg)}) must equal arity of self (= {len(arg)})")
+            if self.is_virtual() or any(x < 0 for x in arg):
+                raise NotImplementedError(f"Only non-virtual species are supported")
+
+            # Now we only have non-virtual species
+            res = 0
+            Parg = PolynomialSpecies(sum(arg))
+            for F, coeff in self.monomial_coefficients().items():
+                term = 0
+                S_top = SymmetricGroup(F._tc).young_subgroup(F._mc)
+                dominv = sorted(F._dompart.keys(),key=lambda x: F._dompart[x])
+                pi = libgap.MappingPermListList(dominv, libgap.eval(f'[1..{F.grade()}]'))
+                Fconj = libgap.ConjugateGroup(F._group, pi)
+                for parts in cartesian_product([IntegerVectors(k, l) for k, l in zip(F._mc, arg)]):
+                    term2 = 0
+                    # parts is a tuple of partitions
+                    part = list(chain.from_iterable(parts))
+                    S_bottom = SymmetricGroup(F._tc).young_subgroup(part)
+                    taus = libgap.DoubleCosetRepsAndSizes(S_top, Fconj, S_bottom)
+                    domvals = chain.from_iterable([[i] * v for i, v in enumerate(part, 1)])
+                    newdom = {k: v for k, v in zip(range(1, F.grade() + 1), domvals)}
+                    for tau, _ in taus:
+                        tHt = libgap.ConjugateGroup(Fconj, tau)
+                        G = PermutationGroup(gap_group=libgap.Intersection(tHt, S_bottom), domain=F.domain())
+                        term2 += Parg((G, newdom))
+                    term += term2
+                res += coeff * term
             return res
