@@ -800,7 +800,9 @@ cdef class PolyDict:
             ring = self.__repn[E[0]].parent()
             pos_one = ring.one()
             neg_one = -pos_one
-        except AttributeError:
+        except (AttributeError, ArithmeticError):
+            # AritchmeticError occurs when self.__repn[E[0]] is a tropical
+            # semiring element
             # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
@@ -901,7 +903,9 @@ cdef class PolyDict:
             ring = self.__repn[E[0]].parent()
             pos_one = ring.one()
             neg_one = -pos_one
-        except AttributeError:
+        except (AttributeError, ArithmeticError):
+            # AritchmeticError occurs when self.__repn[E[0]] is a tropical
+            # semiring element
             # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
