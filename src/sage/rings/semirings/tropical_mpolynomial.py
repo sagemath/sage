@@ -636,7 +636,10 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
         f = R.random_element(degree=degree, terms=terms, choose_degree=choose_degree,
                              *args, **kwargs)
-        return self.element_class(self, f.dict())
+        new_dict = {}
+        for key, value in f.dict().items():
+            new_dict[key] = self.base()(value)
+        return self.element_class(self, new_dict)
 
     def gen(self, n=0):
         r"""
