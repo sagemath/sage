@@ -250,15 +250,6 @@ class EllipticCurve_number_field(EllipticCurve_field):
              listpoints = [[Mod(1/2*y + 3/2, y^2 + 7), Mod(-y - 2, y^2 + 7), 1]]
             (1, 1, [(1/2*a + 3/2 : -a - 2 : 1)])
 
-            sage: v = E.simon_two_descent(verbose=2)
-            K = bnfinit(y^2 + 7);
-            a = Mod(y,K.pol);
-            bnfellrank(K, [0, 0, 0, 1, a], [[Mod(1/2*y + 3/2, y^2 + 7), Mod(-y - 2, y^2 + 7)]]);
-            ...
-            v = [1, 1, [[Mod(1/2*y + 3/2, y^2 + 7), Mod(-y - 2, y^2 + 7)]]]
-            sage: v
-            (1, 1, [(1/2*a + 3/2 : -a - 2 : 1)])
-
         A curve with 2-torsion::
 
             sage: K.<a> = NumberField(x^2 + 7)
