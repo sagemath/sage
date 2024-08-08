@@ -451,7 +451,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         from sage.symbolic.relation import solve
         from sage.symbolic.expression import Expression
         from sage.sets.set import Set
-        
+
         def update_result(result):
             sol_param = solve(new_expr, vars)
             sol_param_sim = set()
@@ -486,7 +486,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                 if len(match_keys) == 1:
                     for i in match_keys:
                         unique_sol_param.add(temp[i])
-            
+
             if (unique_sol_param) or (self.dimension() == 2):
                 if not unique_sol_param:
                     unique_sol_param = Set()
@@ -600,6 +600,7 @@ class TropicalSurface(TropicalVariety):
                         if op > bound:
                             bound = op
             return [[-bound, bound]] * 3
+
         u_set = set()
         v_set = set()
         for comp in self._hypersurface:
