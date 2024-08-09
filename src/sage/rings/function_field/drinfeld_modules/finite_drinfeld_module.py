@@ -470,7 +470,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         return self._frobenius_charpoly.change_variable_name(var)
 
     @cached_method
-    def _frobenius_charpoly_CSA(self, var='X'):
+    def _frobenius_charpoly_CSA(self):
         r"""
         Return the characteristic polynomial of the Frobenius
         endomorphism using Crystalline cohomology.
@@ -481,10 +481,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         This method is private and should not be directly called.
         Instead, use :meth:`frobenius_charpoly` with the option
         `algorithm='CSA'`.
-
-        INPUT:
-
-        - ``var`` (default: ``'X'``) -- the name of the second variable
 
         EXAMPLES::
 
@@ -517,7 +513,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         return PolynomialRing(A, name=var)(coeffs)
 
     @cached_method
-    def _frobenius_charpoly_crystalline(self, var='X'):
+    def _frobenius_charpoly_crystalline(self):
         r"""
         Return the characteristic polynomial of the Frobenius
         endomorphism using Crystalline cohomology.
@@ -528,10 +524,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         This method is private and should not be directly called.
         Instead, use :meth:`frobenius_charpoly` with the option
         `algorithm='crystalline'`.
-
-        INPUT:
-
-        - ``var`` -- the name of the second variable
 
         OUTPUT: a univariate polynomial with coefficients in the
                 function ring
@@ -585,7 +577,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         return PolynomialRing(A, name=var)(coeffs_A)
 
     @cached_method
-    def _frobenius_charpoly_gekeler(self, var='X'):
+    def _frobenius_charpoly_gekeler(self):
         r"""
         Return the characteristic polynomial of the Frobenius
         endomorphism using Gekeler's algorithm.
@@ -597,10 +589,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         This method is private and should not be directly called.
         Instead, use :meth:`frobenius_charpoly` with the option
         `algorithm='gekeler'`.
-
-        INPUT:
-
-        - ``var`` (default: ``'X'``) -- the name of the second variable
 
         .. WARNING:
 
@@ -671,7 +659,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         return PolynomialRing(A, name=var)(char_poly + [1])
 
     @cached_method
-    def _frobenius_charpoly_motive(self, var='X'):
+    def _frobenius_charpoly_motive(self):
         r"""
         Return the characteristic polynomial of the Frobenius
         endomorphism using Motivic cohomology.
@@ -682,10 +670,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         This method is private and should not be directly called.
         Instead, use :meth:`frobenius_charpoly` with the option
         `algorithm='motive'`.
-
-        INPUT:
-
-        - ``var`` -- the name of the second variable
 
         OUTPUT: a univariate polynomial with coefficients in the
                 function ring
