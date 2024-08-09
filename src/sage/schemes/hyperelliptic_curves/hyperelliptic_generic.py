@@ -172,16 +172,17 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             Hyperelliptic Curve over Rational Field defined by y^2 = 4*x^5 - 30*x^3 + 45*x - 22
             sage: C = HyperellipticCurve(f,names='u,v'); C
             Hyperelliptic Curve over Rational Field defined by v^2 = 4*u^5 - 30*u^3 + 45*u - 22
+            sage: C = HyperellipticCurve(x^5 + 1, x^3 + 2); C
+            Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + 2)*y = x^5 + 1
         """
 
         f, h = self._hyperelliptic_polynomials
         R = self.base_ring()
         y = self._printing_ring.gen()
         x = self._printing_ring.base_ring().gen()
-        if h == 0:
+        if h.is_zero():
             return "Hyperelliptic Curve over %s defined by %s = %s" % (R, y**2, f(x))
-        else:
-            return "Hyperelliptic Curve over %s defined by %s + %s = %s" % (R, y**2, h(x)*y, f(x))
+        return "Hyperelliptic Curve over %s defined by %s + %s = %s" % (R, y**2, h(x)*y, f(x))
 
     def _latex_(self):
         r"""
