@@ -130,7 +130,6 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField, RR
 from sage.schemes.curves.projective_curve import Hasse_bounds
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.schemes.generic.morphism import is_SchemeMorphism
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
                                                       SchemeMorphism_point_abelian_variety_field)
 from sage.structure.coerce_actions import IntegerMulAction
@@ -139,6 +138,7 @@ from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 
 lazy_import('sage.rings.padics.factory', 'Qp')
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 try:
     from sage.libs.pari.all import pari, PariError
@@ -175,7 +175,8 @@ class EllipticCurvePoint(AdditiveGroupElement,
             sage: K.<a> = NumberField(x^2 - 3,'a')                                      # needs sage.rings.number_field
             sage: P = E.base_extend(K)(1, a)                                            # needs sage.rings.number_field
             sage: P.scheme()                                                            # needs sage.rings.number_field
-            Elliptic Curve defined by y^2 = x^3 + x + 1 over Number Field in a with defining polynomial x^2 - 3
+            Elliptic Curve defined by y^2 = x^3 + x + 1 over
+             Number Field in a with defining polynomial x^2 - 3
         """
         return self.scheme()
 
@@ -290,7 +291,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         point_homset = curve.point_homset()
         R = point_homset.value_ring()
-        if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
+        if isinstance(v, SchemeMorphism):
             v = list(v)
         elif v == 0:
             v = (R.zero(), R.one(), R.zero())
