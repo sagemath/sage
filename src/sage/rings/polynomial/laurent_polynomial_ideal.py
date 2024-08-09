@@ -10,7 +10,6 @@ saturated with respect to the ideal `(x_1 \cdots x_n)`.
 AUTHORS:
 
 - Kiran S. Kedlaya (2020): initial implementation
-
 """
 # ****************************************************************************
 #       Copyright (C) 2020 Kiran S. Kedlaya <kedlaya@ucsd.edu>
@@ -49,7 +48,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         INPUT:
 
         - ``ring`` -- the ring the ideal is defined in
-        - ``gens`` -- a list of generators for the ideal
+        - ``gens`` -- list of generators for the ideal
         - ``coerce`` -- whether or not to coerce elements into ``ring``
         - ``hint`` -- an ideal in the associated polynomial ring (optional; see above)
 

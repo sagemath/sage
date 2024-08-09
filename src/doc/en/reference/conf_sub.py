@@ -42,6 +42,12 @@ if not title:
     title = name.capitalize()
 title = title.replace('`', '$')
 
+# We use the directory's name to add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, f'blob/develop/src/doc/en/reference/{name}', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, f'edit/develop/src/doc/en/reference/{name}', '{filename}'),
+})
+
 # General information about the project.
 project = title
 

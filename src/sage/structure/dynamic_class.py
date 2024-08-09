@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Dynamic classes
 
@@ -106,7 +107,6 @@ Cython classes cannot inherit from a dynamic class (there might be
 some partial support for this in the future). On the other hand, such
 an inheritance can be partially emulated using :meth:`__getattr__`. See
 ``sage.categories.examples.semigroups_cython`` for an example.
-
 """
 
 # ****************************************************************************
@@ -131,13 +131,13 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     r"""
     INPUT:
 
-    - ``name`` -- a string
-    - ``bases`` -- a tuple of classes
+    - ``name`` -- string
+    - ``bases`` -- tuple of classes
     - ``cls`` -- a class or ``None``
-    - ``reduction`` -- a tuple or ``None``
+    - ``reduction`` -- tuple or ``None``
     - ``doccls`` -- a class or ``None``
-    - ``prepend_cls_bases`` -- a boolean (default: ``True``)
-    - ``cache`` -- a boolean or ``"ignore_reduction"`` (default: ``True``)
+    - ``prepend_cls_bases`` -- boolean (default: ``True``)
+    - ``cache`` -- boolean or ``'ignore_reduction'`` (default: ``True``)
 
     Constructs dynamically a new class ``C`` with name ``name``, and
     bases ``bases``. If ``cls`` is provided, then its methods will be
@@ -147,7 +147,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     The module, documentation and source instrospection is taken from
     ``doccls``, or ``cls`` if ``doccls`` is ``None``, or ``bases[0]``
     if both are ``None`` (therefore ``bases`` should be non empty if
-    ``cls` is ``None``).
+    ``cls`` is ``None``).
 
     The constructed class can safely be pickled (assuming the
     arguments themselves can).
@@ -236,7 +236,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     The following (meaningless) example illustrates how to customize
     the result of the reduction::
 
-        sage: BarFoo = dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (3,)))
+        sage: BarFoo = dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (3,)))
         sage: type(BarFoo).__reduce__(BarFoo)
         (<class 'str'>, (3,))
         sage: loads(dumps(BarFoo))
@@ -253,9 +253,9 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
 
     and the result depends on the reduction::
 
-        sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (3,))) is BarFoo
+        sage: dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (3,))) is BarFoo
         True
-        sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (2,))) is BarFoo
+        sage: dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (2,))) is BarFoo
         False
 
     With ``cache=False``, a new class is created each time::
@@ -272,14 +272,14 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     With ``cache="ignore_reduction"``, the class does not depend on
     the reduction::
 
-        sage: BarFoo = dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (3,)), cache="ignore_reduction")
-        sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (2,)), cache="ignore_reduction") is BarFoo
+        sage: BarFoo = dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (3,)), cache='ignore_reduction')
+        sage: dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (2,)), cache='ignore_reduction') is BarFoo
         True
 
     In particular, the reduction used is that provided upon creating the
     first class::
 
-        sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (2,)), cache="ignore_reduction")._reduction
+        sage: dynamic_class('BarFoo', (Foo,), Bar, reduction = (str, (2,)), cache='ignore_reduction')._reduction
         (<class 'str'>, (3,))
 
     .. WARNING::

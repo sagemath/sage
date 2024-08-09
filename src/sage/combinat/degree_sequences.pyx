@@ -286,7 +286,7 @@ class DegreeSequences:
 
     def __init__(self, n):
         r"""
-        Degree Sequences
+        Degree Sequences.
 
         An instance of this class represents the degree sequences of graphs on a
         given number `n` of vertices. It can be used to list and count them, as
@@ -383,7 +383,7 @@ class DegreeSequences:
 
     def __repr__(self):
         """
-        Representing the element
+        Representing the element.
 
         TESTS::
 
@@ -414,9 +414,9 @@ class DegreeSequences:
         sig_free(seq)
 
 
-cdef init(int n) noexcept:
+cdef init(int n):
     """
-    Initializes the memory and starts the enumeration algorithm.
+    Initialize the memory and starts the enumeration algorithm.
     """
     global seq
     global N
@@ -438,7 +438,7 @@ cdef init(int n) noexcept:
     sig_free(seq)
     return sequences
 
-cdef inline add_seq() noexcept:
+cdef inline add_seq():
     """
     This function is called whenever a sequence is found.
 

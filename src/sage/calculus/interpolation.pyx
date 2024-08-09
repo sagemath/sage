@@ -173,7 +173,6 @@ cdef class Spline:
             [(2, 3), (4, 5), (5, 5)]
             sage: S(3)
             4.25
-
         """
         del self.v[i]
         self.stop_interp()
@@ -195,7 +194,6 @@ cdef class Spline:
             [(1, 1), (2, 3), (4, 5), (5, 5)]
             sage: S(3)
             4.375
-
         """
         self.v.append(xy)
         self.stop_interp()
@@ -219,7 +217,6 @@ cdef class Spline:
             [(1, 1), (2, 3), (3, 2)]
             sage: S.list()
             [(1, 1), (2, 3), (4, 5)]
-
         """
         return self.v[:]
 
@@ -243,7 +240,7 @@ cdef class Spline:
         """
         return str(self.v)
 
-    cdef start_interp(self) noexcept:
+    cdef start_interp(self):
         if self.started:
             sig_free(self.x)
             sig_free(self.y)
@@ -271,7 +268,7 @@ cdef class Spline:
         gsl_spline_init (self.spline, self.x, self.y, n)
         self.started = 1
 
-    cdef stop_interp(self) noexcept:
+    cdef stop_interp(self):
         if not self.started:
             return
         sig_free(self.x)
@@ -309,9 +306,9 @@ cdef class Spline:
 
         INPUT:
 
-        - ``x`` -- value at which to evaluate the derivative.
+        - ``x`` -- value at which to evaluate the derivative
 
-        - ``order`` (default: 1) -- order of the derivative. Must be 1 or 2.
+        - ``order`` -- (default: 1) order of the derivative; must be 1 or 2
 
         EXAMPLES:
 
@@ -329,7 +326,6 @@ cdef class Spline:
             -1.125
             sage: s.derivative(3, order=2)
             -1.125
-
         """
         if (order!=1) and (order!=2):
             raise ValueError("Order of derivative must be 1 or 2.")
@@ -352,9 +348,9 @@ cdef class Spline:
 
         INPUT:
 
-        - ``a`` -- Lower bound for the integral.
+        - ``a`` -- lower bound for the integral
 
-        - ``b`` -- Upper bound for the integral.
+        - ``b`` -- upper bound for the integral
 
         EXAMPLES:
 
@@ -370,7 +366,6 @@ cdef class Spline:
             3.75
             sage: s.definite_integral(2, 0)
             -3.75
-
         """
         # GSL chokes when the upper bound is smaller than the lower bound
         bounds_swapped = False

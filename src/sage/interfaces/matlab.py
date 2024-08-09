@@ -192,7 +192,7 @@ class Matlab(Expect):
 
     def _read_in_file_command(self, filename):
         """
-        Returns the command used to read in and execute a file in Matlab.
+        Return the command used to read in and execute a file in Matlab.
 
         EXAMPLES::
 
@@ -268,7 +268,7 @@ for hints on how to do that).
 
     def strip_answer(self, s):
         r"""
-        Returns the string s with Matlab's answer prompt removed.
+        Return the string s with Matlab's answer prompt removed.
 
         EXAMPLES::
 
@@ -294,7 +294,6 @@ for hints on how to do that).
             sage: matlab.chdir('/')          # optional - matlab
             sage: matlab.pwd()               # optional - matlab
             /
-
         """
         self.eval("cd('{0}')".format(directory))
 
@@ -302,9 +301,11 @@ for hints on how to do that).
         """
         Return a matlab matrix from a Sage matrix.
 
-        INPUT: A Sage matrix with entries in the rationals or reals.
+        INPUT:
 
-        OUTPUT: A string that evaluates to a Matlab matrix.
+        - ``A`` -- Sage matrix with entries in the rationals or reals
+
+        OUTPUT: string that evaluates to a Matlab matrix
 
         EXAMPLES::
 
@@ -347,7 +348,6 @@ class MatlabElement(ExpectElement):
             sage: a = matlab('eye(50)')         # optional - matlab
             sage: matrix(RR, a)                 # optional - matlab
             50 x 50 dense matrix over Real Field with 53 bits of precision
-
         """
         from sage.matrix.constructor import matrix
         matlab = self.parent()

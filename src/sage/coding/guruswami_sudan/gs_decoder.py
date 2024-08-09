@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings sage.symbolic
 r"""
 Guruswami-Sudan decoder for (Generalized) Reed-Solomon codes
 
@@ -25,6 +25,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.arith.misc import integer_floor as floor
 from sage.coding.grs_code import GeneralizedReedSolomonCode
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
@@ -47,14 +48,14 @@ def n_k_params(C, n_k):
 
     INPUT:
 
-    - ``C`` -- A GRS code or ``None``
+    - ``C`` -- a GRS code or ``None``
 
-    - ``n_k`` -- A tuple `(n,k)` being length and dimension of a GRS code, or
-      ``None``.
+    - ``n_k`` -- tuple `(n,k)` being length and dimension of a GRS code, or
+      ``None``
 
     OUTPUT:
 
-    - ``n_k`` -- A tuple `(n,k)` being length and dimension of a GRS code.
+    - ``n_k`` -- tuple `(n,k)` being length and dimension of a GRS code
 
     EXAMPLES::
 
@@ -101,7 +102,7 @@ def roth_ruckenstein_root_finder(p, maxd=None, precision=None):
     gens = p.parent().gens()
     if len(gens) == 2:
         p = p.polynomial(gens[1])
-    return p.roots(multiplicities=False, degree_bound=maxd, algorithm="Roth-Ruckenstein")
+    return p.roots(multiplicities=False, degree_bound=maxd, algorithm='Roth-Ruckenstein')
 
 def alekhnovich_root_finder(p, maxd=None, precision=None):
     """
@@ -120,7 +121,7 @@ def alekhnovich_root_finder(p, maxd=None, precision=None):
     gens = p.parent().gens()
     if len(gens) == 2:
         p = p.polynomial(gens[1])
-    return p.roots(multiplicities=False, degree_bound=maxd, algorithm="Alekhnovich")
+    return p.roots(multiplicities=False, degree_bound=maxd, algorithm='Alekhnovich')
 
 class GRSGuruswamiSudanDecoder(Decoder):
     r"""
@@ -151,10 +152,10 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- A code associated to this decoder.
+    - ``code`` -- a code associated to this decoder
 
-    - ``tau`` -- (default: ``None``) an integer, the number of errors one wants the
-      Guruswami-Sudan algorithm to correct.
+    - ``tau`` -- integer (default: ``None``); the number of errors one wants the
+      Guruswami-Sudan algorithm to correct
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
@@ -164,8 +165,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
     - ``interpolation_alg`` -- (default: ``None``) the interpolation algorithm
       that will be used. The following possibilities are currently available:
 
-      * ``"LinearAlgebra"`` -- uses a linear system solver.
-      * ``"LeeOSullivan"`` -- uses Lee O'Sullivan method based on row reduction
+      * ``'LinearAlgebra'`` -- uses a linear system solver.
+      * ``'LeeOSullivan'`` -- uses Lee O'Sullivan method based on row reduction
         of a matrix
       * ``None`` -- one of the above will be chosen based on the size of the
         code and the parameters.
@@ -176,9 +177,9 @@ class GRSGuruswamiSudanDecoder(Decoder):
     - ``root_finder`` -- (default: ``None``) the rootfinding algorithm that will
       be used. The following possibilities are currently available:
 
-      * ``"Alekhnovich"`` -- uses Alekhnovich's algorithm.
+      * ``'Alekhnovich'`` -- uses Alekhnovich's algorithm.
 
-      * ``"RothRuckenstein"`` -- uses Roth-Ruckenstein algorithm.
+      * ``'RothRuckenstein'`` -- uses Roth-Ruckenstein algorithm.
 
       * ``None`` -- one of the above will be chosen based on the size of the
         code and the parameters.
@@ -230,7 +231,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
 
         sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters=(1,2),
-        ....:                                             root_finder="RothRuckenstein"); D
+        ....:                                             root_finder='RothRuckenstein'); D
         Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251)
          decoding 97 errors with parameters (1, 2)
 
@@ -251,7 +252,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         INPUT:
 
-        - ``tau`` -- an integer, number of errors one wants the Guruswami-Sudan
+        - ``tau`` -- integer; number of errors one wants the Guruswami-Sudan
           algorithm to correct
         - ``C`` -- (default: ``None``) a :class:`GeneralizedReedSolomonCode`
         - ``n_k`` -- (default: ``None``) a pair of integers, respectively the
@@ -330,8 +331,9 @@ class GRSGuruswamiSudanDecoder(Decoder):
         - ``C`` -- (default: ``None``) a :class:`GeneralizedReedSolomonCode`
         - ``n_k`` -- (default: ``None``) a pair of integers, respectively the
           length and the dimension of the :class:`GeneralizedReedSolomonCode`
-        - ``s`` -- (default: ``None``) an integer, the multiplicity parameter of Guruswami-Sudan algorithm
-        - ``l`` -- (default: ``None``) an integer, the list size parameter
+        - ``s`` -- integer (default: ``None``); the multiplicity parameter of
+          Guruswami-Sudan algorithm
+        - ``l`` -- integer (default: ``None``); the list size parameter
 
         .. NOTE::
 
@@ -344,8 +346,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
           - ``tau`` is the obtained decoding radius, and
 
-          - ``s, ell`` are the multiplicity parameter, respectively list size
-            parameter giving this radius.
+          - ``(s, l)`` are the multiplicity parameter and the list size
+            parameter giving the radius
 
         EXAMPLES::
 
@@ -426,7 +428,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         INPUT:
 
-        - ``tau`` -- an integer, number of errors one wants the Guruswami-Sudan
+        - ``tau`` -- integer; number of errors one wants the Guruswami-Sudan
           algorithm to correct
         - ``C`` -- (default: ``None``) a :class:`GeneralizedReedSolomonCode`
         - ``n_k`` -- (default: ``None``) a pair of integers, respectively the
@@ -496,10 +498,10 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         INPUT:
 
-        - ``tau`` -- an integer, number of errors one expects Guruswami-Sudan algorithm
+        - ``tau`` -- integer; number of errors one expects Guruswami-Sudan algorithm
           to correct
-        - ``s`` -- an integer, multiplicity parameter of Guruswami-Sudan algorithm
-        - ``l`` -- an integer, list size parameter
+        - ``s`` -- integer; multiplicity parameter of Guruswami-Sudan algorithm
+        - ``l`` -- integer; list size parameter
         - ``C`` -- (default: ``None``) a :class:`GeneralizedReedSolomonCode`
         - ``n_k`` -- (default: ``None``) a tuple of integers, respectively the
           length and the dimension of the :class:`GeneralizedReedSolomonCode`
@@ -575,7 +577,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         Same thing for ``root_finder``::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = GSD(C, tau=97, root_finder="FortyTwo")
+            sage: D = GSD(C, tau=97, root_finder='FortyTwo')
             Traceback (most recent call last):
             ...
             ValueError: Please provide a method or one of the allowed strings for root_finder
@@ -659,7 +661,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between GRSGuruswamiSudanDecoder objects.
+        Test equality between GRSGuruswamiSudanDecoder objects.
 
         EXAMPLES::
 
@@ -761,7 +763,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         INPUT:
 
         - ``r`` -- a received word, i.e. a vector in `F^n` where `F` and `n` are
-          the base field respectively length of :meth:`self.code`.
+          the base field respectively length of :meth:`self.code`
 
         EXAMPLES::
 
@@ -806,7 +808,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         INPUT:
 
         - ``r`` -- a received word, i.e. a vector in `F^n` where `F` and `n` are
-          the base field respectively length of :meth:`self.code`.
+          the base field respectively length of :meth:`self.code`
 
         EXAMPLES::
 

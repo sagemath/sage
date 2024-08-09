@@ -19,7 +19,6 @@ REFERENCES:
    A Generating Function of Strict Gelfand Patterns and Some Formulas on
    Characters of General Linear Groups.
    J. Math. Soc. Japan **40** (4), pp. 671--685, 1988.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim@ucdavis.edu>
@@ -480,8 +479,8 @@ class GelfandTsetlinPattern(ClonableArray,
 
         INPUT:
 
-        - ``name`` -- (Default: ``'t'``) An alternative name for the
-          variable `t`.
+        - ``name`` -- (default: ``'t'``) an alternative name for the
+          variable `t`
 
         EXAMPLES::
 
@@ -580,15 +579,15 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``n`` -- The width or depth of the array, also known as the rank
+    - ``n`` -- the width or depth of the array, also known as the rank
 
-    - ``k`` -- (Default: ``None``) If specified, this is the maximum value that
+    - ``k`` -- (default: ``None``) if specified, this is the maximum value that
       can occur in the patterns
 
-    - ``top_row`` -- (Default: ``None``) If specified, this is the fixed top
+    - ``top_row`` -- (default: ``None``) if specified, this is the fixed top
       row of all patterns
 
-    - ``strict`` -- (Default: ``False``) Set to ``True`` if all patterns are
+    - ``strict`` -- (default: ``False``) set to ``True`` if all patterns are
       strict patterns
 
     TESTS:
@@ -1019,14 +1018,12 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``chain_state`` -- A GelfandTsetlin pattern represented as a list of lists
-        - ``row`` -- The row of the cell being modified
-        - ``col`` -- The column of the cell being modified
-        - ``direction`` -- The direction to change the cell 1 = increase, 0 = decrease
+        - ``chain_state`` -- a GelfandTsetlin pattern represented as a list of lists
+        - ``row`` -- the row of the cell being modified
+        - ``col`` -- the column of the cell being modified
+        - ``direction`` -- the direction to change the cell 1 = increase, 0 = decrease
 
-        OUTPUT:
-
-        ``chain_state`` is possibly modified.
+        OUTPUT: ``chain_state`` is possibly modified
 
         TESTS:
 
@@ -1342,8 +1339,8 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
 
         INPUT:
 
-        - ``name`` -- (Default: ``'t'``) An alternative name for the
-          variable `t`.
+        - ``name`` -- (default: ``'t'``) an alternative name for the
+          variable `t`
 
         EXAMPLES::
 

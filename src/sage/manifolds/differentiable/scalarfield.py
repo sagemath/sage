@@ -24,7 +24,6 @@ REFERENCES:
 - [KN1963]_
 - [Lee2013]_
 - [ONe1983]_
-
 """
 
 #******************************************************************************
@@ -620,7 +619,6 @@ class DiffScalarField(ScalarField):
 
         sage: TestSuite(f).run()
         sage: TestSuite(zer).run()
-
     """
     def __init__(self, parent, coord_expression=None, chart=None, name=None,
                  latex_name=None):
@@ -640,7 +638,6 @@ class DiffScalarField(ScalarField):
             Algebra of differentiable scalar fields on the 2-dimensional
              differentiable manifold M
             sage: TestSuite(f).run()
-
         """
         ScalarField.__init__(self, parent, coord_expression=coord_expression,
                              chart=chart, name=name, latex_name=latex_name)
@@ -659,7 +656,6 @@ class DiffScalarField(ScalarField):
             sage: X.<x,y> = M.chart()
             sage: f = M.scalar_field({X: x+y})
             sage: f._init_derived()
-
         """
         ScalarField._init_derived(self) # derived quantities of the parent class
         self._differential = None  # differential 1-form of the scalar field
@@ -685,12 +681,11 @@ class DiffScalarField(ScalarField):
             sage: f._del_derived()
             sage: f._restrictions  # restrictions are derived quantities
             {}
-
         """
         ScalarField._del_derived(self) # derived quantities of the mother class
         self._differential = None  # reset of the differential
         # First deletes any reference to self in the vectors' dictionaries:
-        for vid, val in self._lie_derivatives.items():
+        for val in self._lie_derivatives.values():
             del val[0]._lie_der_along_self[id(self)]
         # Then clears the dictionary of Lie derivatives
         self._lie_derivatives.clear()
@@ -711,7 +706,6 @@ class DiffScalarField(ScalarField):
             sage: f = M.scalar_field(x+2*y)
             sage: f.tensor_type()
             (0, 0)
-
         """
         return self._tensor_type
 
@@ -794,7 +788,6 @@ class DiffScalarField(ScalarField):
             2-form ddg on the 3-dimensional differentiable manifold M
             sage: ddg == 0
             True
-
         """
         from sage.tensor.modules.format_utilities import (format_unop_txt,
                                                           format_unop_latex)
@@ -874,7 +867,6 @@ class DiffScalarField(ScalarField):
             sage: f.lie_der(v).display()
             M → ℝ
             (x, y) ↦ 0
-
         """
         # The Lie derivative is cached in _lie_derivatives if neither
         #   the scalar field nor ``vector`` have been modified.
@@ -907,14 +899,12 @@ class DiffScalarField(ScalarField):
 
         INPUT:
 
-        - ``nondegenerate_tensor``: a non-degenerate bilinear form defined on the same manifold
+        - ``nondegenerate_tensor`` -- a non-degenerate bilinear form defined on the same manifold
           as the current differential form; must be an instance of
           :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric` or
           :class:`~sage.manifolds.differentiable.symplectic_form.SymplecticForm`.
 
-        OUTPUT:
-
-        - the `n`-form `*f`
+        OUTPUT: the `n`-form `*f`
 
         EXAMPLES:
 
@@ -944,7 +934,6 @@ class DiffScalarField(ScalarField):
 
             sage: f.hodge_dual(g) == g.hodge_star(f)
             True
-
         """
         from sage.tensor.modules.format_utilities import (
             format_unop_txt,
@@ -1010,7 +999,6 @@ class DiffScalarField(ScalarField):
         See
         :meth:`~sage.manifolds.differentiable.multivectorfield.MultivectorFieldParal.bracket`
         for other examples.
-
         """
         if isinstance(other, DiffScalarField):
             return self._domain.intersection(other._domain).zero_scalar_field()
@@ -1036,9 +1024,7 @@ class DiffScalarField(ScalarField):
 
         - ``other`` -- a differential form or a multivector field `a`
 
-        OUTPUT:
-
-        - the product `f a`, where `f` is ``self``
+        OUTPUT: the product `f a`, where `f` is ``self``
 
         EXAMPLES::
 
@@ -1051,7 +1037,6 @@ class DiffScalarField(ScalarField):
             2-form f*a on the 2-dimensional differentiable manifold M
             sage: s.display()
             f*a = (x*y^3 + x^2*y) dx∧dy
-
         """
         return self * other
 
@@ -1067,9 +1052,7 @@ class DiffScalarField(ScalarField):
         :meth:`~sage.manifolds.differentiable.multivectorfield.MultivectorField.degree`
         (multivector fields).
 
-        OUTPUT:
-
-        - 0
+        OUTPUT: 0
 
         EXAMPLES::
 
@@ -1078,7 +1061,6 @@ class DiffScalarField(ScalarField):
             sage: f = M.scalar_field({X: x+y^2})
             sage: f.degree()
             0
-
         """
         return self._tensor_rank
 
@@ -1165,7 +1147,6 @@ class DiffScalarField(ScalarField):
             Vector field grad_h(f) on the Euclidean plane E^2
             sage: v.display()
             grad_h(f) = -cos(phi) e_r + (-r^2*sin(phi) - sin(phi)) e_phi
-
         """
         default_metric = metric is None
         if default_metric:
@@ -1258,7 +1239,6 @@ class DiffScalarField(ScalarField):
 
             sage: s == f.gradient(h).div(h)
             True
-
         """
         default_metric = metric is None
         if default_metric:
@@ -1335,7 +1315,6 @@ class DiffScalarField(ScalarField):
             sage: from sage.manifolds.operators import dalembertian
             sage: dalembertian(f) == s
             True
-
         """
         default_metric = metric is None
         if default_metric:

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 import os
 
 from . import StaticFile
@@ -31,11 +32,11 @@ class JmolDataJar(StaticFile):
                 )
 
         StaticFile.__init__(
-            self, name="jmol",
-            filename="JmolData.jar",
+            self, name='jmol',
+            filename='JmolData.jar',
             search_path=jmol_search_path,
-            spkg="jmol",
-            type="standard",
+            spkg='jmol',
+            type='standard',
             description="Java viewer for chemical structures in 3D")
 
 

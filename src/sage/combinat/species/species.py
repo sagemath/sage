@@ -350,9 +350,9 @@ class GenericCombinatorialSpecies(SageObject):
 
         INPUT:
 
-        - ``min`` -- optional integer
+        - ``min`` -- (optional) integer
 
-        - ``max`` -- optional integer
+        - ``max`` -- (optional) integer
 
         EXAMPLES::
 
@@ -501,17 +501,16 @@ class GenericCombinatorialSpecies(SageObject):
 
         INPUT:
 
-        -  ``series_ring_class`` - A class for the series
-           ring such as ExponentialGeneratingSeriesRing, etc.
+        - ``series_ring_class`` -- a class for the series ring such as
+          ``ExponentialGeneratingSeriesRing``, etc.
 
-        -  ``prefix`` - The string prefix associated with the
-           generating series such as "cis" for the cycle index series. This
-           prefix appears in the methods that are implemented in the
-           subclass.
+        - ``prefix`` -- the string prefix associated with the generating series
+          such as "cis" for the cycle index series. This prefix appears in the
+          methods that are implemented in the subclass.
 
-        -  ``base_ring`` - The ring in which the coefficients
-           of the generating series live. If it is not specified, then it is
-           determined by the weight of the species.
+        - ``base_ring`` -- the ring in which the coefficients of the generating
+          series live. If it is not specified, then it is determined by the
+          weight of the species.
 
         EXAMPLES::
 

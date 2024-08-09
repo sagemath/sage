@@ -120,7 +120,7 @@ def CFiniteSequences(base_ring, names=None, category=None):
 
     - ``base_ring`` -- the base ring to construct the fraction field
       representing the C-Finite sequences
-    - ``names`` -- (optional) the list of variables.
+    - ``names`` -- (optional) the list of variables
 
     EXAMPLES::
 
@@ -172,9 +172,7 @@ class CFiniteSequence(FieldElement,
       (can be an element from the symbolic ring, fraction field or polynomial
       ring)
 
-    OUTPUT:
-
-    A CFiniteSequence object
+    OUTPUT: a CFiniteSequence object
 
     EXAMPLES::
 
@@ -329,12 +327,12 @@ class CFiniteSequence(FieldElement,
 
         INPUT:
 
-        - ``ogf`` -- the ordinary generating function, a fraction of polynomials over the rationals
-        - ``parent`` --  the parent of the C-Finite sequence, an occurrence of :class:`CFiniteSequences`
+        - ``ogf`` -- the ordinary generating function, a fraction of
+          polynomials over the rationals
+        - ``parent`` -- the parent of the C-Finite sequence, an occurrence of
+          :class:`CFiniteSequences`
 
-        OUTPUT:
-
-        - A CFiniteSequence object
+        OUTPUT: a CFiniteSequence object
 
         TESTS::
 
@@ -511,9 +509,7 @@ class CFiniteSequence(FieldElement,
         Return the coefficients of the recurrence representation of the
         C-finite sequence.
 
-        OUTPUT:
-
-        - A list of values
+        OUTPUT: list of values
 
         EXAMPLES::
 
@@ -728,9 +724,7 @@ class CFiniteSequence(FieldElement,
         Return a string with the recurrence representation of
         the C-finite sequence.
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -784,7 +778,7 @@ class CFiniteSequence(FieldElement,
 
         INPUT:
 
-        - `n` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -891,7 +885,7 @@ class CFiniteSequence(FieldElement,
 
 class CFiniteSequences_generic(Parent, UniqueRepresentation):
     r"""
-    The class representing the ring of C-Finite Sequences
+    The class representing the ring of C-Finite Sequences.
 
     TESTS::
 
@@ -960,7 +954,8 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
 
         INPUT:
 
-         - ``ogf`` -- the ordinary generating function, a fraction of polynomials over the rationals
+        - ``ogf`` -- the ordinary generating function, a fraction of
+          polynomials over the rationals
 
         TESTS::
 
@@ -1005,7 +1000,7 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``i`` -- an integer (default:0)
+        - ``i`` -- integer (default: 0)
 
         EXAMPLES::
 
@@ -1042,9 +1037,7 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
         r"""
         Return an element of C-Finite Sequences.
 
-        OUTPUT:
-
-        The Lucas sequence.
+        OUTPUT: the Lucas sequence
 
         EXAMPLES::
 
@@ -1134,12 +1127,10 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``coefficients`` -- a list of rationals
+        - ``coefficients`` -- list of rationals
         - ``values`` -- start values, a list of rationals
 
-        OUTPUT:
-
-        - A CFiniteSequence object
+        OUTPUT: a CFiniteSequence object
 
         EXAMPLES::
 
@@ -1185,14 +1176,12 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
         INPUT:
 
         - ``sequence`` -- list of integers
-        - ``algorithm`` -- string
-            - 'sage' - the default is to use Sage's matrix kernel function
-            - 'pari' - use Pari's implementation of LLL
-            - 'bm' - use Sage's Berlekamp-Massey algorithm
+        - ``algorithm`` -- string; one of
+          - ``'sage'`` -- the default is to use Sage's matrix kernel function
+          - ``'pari'`` -- use Pari's implementation of LLL
+          - ``'bm'`` -- use Sage's Berlekamp-Massey algorithm
 
-        OUTPUT:
-
-        - a CFiniteSequence, or 0 if none could be found
+        OUTPUT: a CFiniteSequence, or 0 if none could be found
 
         With the default kernel method, trailing zeroes are chopped
         off before a guessing attempt. This may reduce the data

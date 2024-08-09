@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Kasami code
 
@@ -49,21 +49,22 @@ AUTHORS:
 - Ivo Maffei (2020-07-09): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2020 Ivo Maffei <ivomaffei@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.matrix.constructor import matrix
 from sage.coding.linear_code import (AbstractLinearCode,
                                      LinearCodeGeneratorMatrixEncoder)
 from sage.arith.misc import is_prime_power, gcd
+
 
 class KasamiCode(AbstractLinearCode):
     r"""
@@ -89,16 +90,16 @@ class KasamiCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``s,t`` -- (integer) the parameters of the Kasami code
+    - ``s``, ``t`` -- integer; the parameters of the Kasami code
 
-    - ``extended`` -- (default: ``True``) if set to ``True``,
-      creates an extended Kasami code.
+    - ``extended`` -- boolean (default: ``True``); if set to ``True``,
+      creates an extended Kasami code
 
     EXAMPLES::
 
         sage: codes.KasamiCode(16,4)
         [16, 9] Extended (16, 4)-Kasami code
-        sage: _.minimum_distance()
+        sage: _.minimum_distance()                                                      # needs sage.libs.gap
         4
 
         sage: codes.KasamiCode(8, 2, extended=False)
@@ -134,7 +135,7 @@ class KasamiCode(AbstractLinearCode):
         True
         sage: C1 == C2
         False
-        sage: C1.minimum_distance() == C2.minimum_distance()+1
+        sage: C1.minimum_distance() == C2.minimum_distance() + 1                        # needs sage.libs.gap
         True
         sage: C = codes.KasamiCode(4,2)
         sage: C.dimension()

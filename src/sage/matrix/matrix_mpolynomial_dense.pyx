@@ -9,23 +9,22 @@ AUTHOR:
 * Martin Albrecht <malb@informatik.uni-bremen.de>
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
+from sage.categories.fields import Fields
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
-from sage.libs.singular.function import singular_function, lib
-
-from cysignals.signals cimport sig_on, sig_off
+from sage.libs.singular.function import singular_function
 
 
 cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
@@ -130,9 +129,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         This returns a list, of the position of the first nonzero entry in each
         row of the echelon form.
 
-        OUTPUT:
-
-        A list of Python ints.
+        OUTPUT: list of Python ints
 
         EXAMPLES::
 
@@ -159,7 +156,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
     def echelonize(self, algorithm='row_reduction', **kwds):
         """
-        Transform self into a matrix in echelon form over the same base ring as
+        Transform ``self`` into a matrix in echelon form over the same base ring as
         ``self``.
 
         If Gauss-Bareiss algorithm is chosen, column swaps are recorded and can
@@ -426,14 +423,14 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
     def swapped_columns(self):
         """
-        Return which columns were swapped during the Gauss-Bareiss reduction
+        Return which columns were swapped during the Gauss-Bareiss reduction.
 
         OUTPUT:
 
         Return a tuple representing the column swaps during the last application
         of the Gauss-Bareiss algorithm (see :meth:`echelon_form` for details).
 
-        The tuple as length equal to the rank of self and the value at the
+        The tuple as length equal to the rank of ``self`` and the value at the
         `i`-th position indicates the source column which was put as the `i`-th
         column.
 
@@ -460,11 +457,9 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        ``i`` -- an integer
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        An ideal on the base ring.
+        OUTPUT: an ideal on the base ring
 
         EXAMPLES::
 
@@ -486,7 +481,6 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             Ideal (1) of Multivariate Polynomial Ring in x, y, z over Rational Field
             sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)]
             [True, True, True, True, True]
-
         """
         minor = singular_function("minor")
         R = self.base_ring()
@@ -517,7 +511,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
     def determinant(self, algorithm=None):
         """
-        Return the determinant of this matrix
+        Return the determinant of this matrix.
 
         INPUT:
 
@@ -605,7 +599,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         else:
             R = self._base_ring
 
-            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring().is_field():
+            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring() in Fields():
                 singular_det = singular_function("det")
                 d = singular_det(self)
 

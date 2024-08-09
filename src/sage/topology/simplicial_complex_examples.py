@@ -168,8 +168,8 @@ def matching(A, B):
 
     INPUT:
 
-    -  ``A``, ``B`` -- list, tuple, or indeed anything which can be
-       converted to a set.
+    - ``A``, ``B`` -- list, tuple, or indeed anything which can be
+      converted to a set
 
     EXAMPLES::
 
@@ -204,7 +204,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
       ``is_mutable`` and ``is_immutable`` are ignored: all instances
       of this class are immutable. The addition:
 
-    - ``name`` -- string (optional), the string representation for this complex.
+    - ``name`` -- string (optional); the string representation for this complex
 
     EXAMPLES::
 
@@ -274,7 +274,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         If the argument ``name`` was specified when defining the
         complex, use that. Otherwise, use the print representation
@@ -301,7 +301,7 @@ def Sphere(n):
 
     INPUT:
 
-    -  ``n`` -- positive integer
+    - ``n`` -- positive integer
 
     EXAMPLES::
 
@@ -331,7 +331,7 @@ def Simplex(n):
 
     INPUT:
 
-    -  ``n`` -- a non-negative integer
+    - ``n`` -- nonnegative integer
 
     OUTPUT: the simplicial complex consisting of the `n`-simplex
     on vertices `(0, 1, ..., n)` and all of its faces.
@@ -435,11 +435,11 @@ def SurfaceOfGenus(g, orientable=True):
 
     INPUT:
 
-    -  ``g`` -- a non-negative integer.  The desired genus
+    - ``g`` -- nonnegative integer; the desired genus
 
-    -  ``orientable`` -- boolean (optional, default ``True``). If
-       ``True``, return an orientable surface, and if ``False``,
-       return a non-orientable surface.
+    - ``orientable`` -- boolean (default: ``True``); if
+      ``True``, return an orientable surface, and if ``False``,
+      return a non-orientable surface.
 
     In the orientable case, return a sphere if `g` is zero, and
     otherwise return a `g`-fold connected sum of a torus with itself.
@@ -481,7 +481,7 @@ def MooreSpace(q):
 
     INPUT:
 
-    -  ``q`` -- integer, at least 2
+    - ``q`` -- integer; at least 2
 
     This is a simplicial complex with simplices of dimension 0, 1,
     and 2, such that its reduced homology is isomorphic to
@@ -674,7 +674,7 @@ def RealProjectiveSpace(n):
 
     INPUT:
 
-    - ``n`` -- integer, the dimension of the real projective space
+    - ``n`` -- integer; the dimension of the real projective space
       to construct
 
     The first few cases are pretty trivial:
@@ -1069,7 +1069,7 @@ def NotIConnectedGraphs(n, i):
 
     INPUT:
 
-    -  ``n``, ``i`` -- non-negative integers with `i` at most `n`
+    - ``n``, ``i`` -- nonnegative integers with `i` at most `n`
 
     See Dumas et al. [DHSW2003]_ for information on computing its homology
     by computer, and see Babson et al. [BBLSW1999]_ for theory.  For
@@ -1124,7 +1124,7 @@ def MatchingComplex(n):
 
     INPUT:
 
-    -  ``n`` -- positive integer.
+    - ``n`` -- positive integer
 
     See Dumas et al. [DHSW2003]_ for information on computing its homology
     by computer, and see Wachs [Wac2003]_ for an expository article about
@@ -1201,7 +1201,7 @@ def ChessboardComplex(n, i):
 
     INPUT:
 
-    -  ``n, i`` -- positive integers.
+    - ``n``, ``i`` -- positive integers
 
     See Dumas et al. [DHSW2003]_ for information on computing its homology
     by computer, and see Wachs [Wac2003]_ for an expository article about
@@ -1234,7 +1234,7 @@ def ChessboardComplex(n, i):
 
 def RandomComplex(n, d, p=0.5):
     """
-    A random ``d``-dimensional simplicial complex on ``n`` vertices.
+    A random `d`-dimensional simplicial complex on `n` vertices.
 
     INPUT:
 
@@ -1242,8 +1242,7 @@ def RandomComplex(n, d, p=0.5):
 
     - ``d`` -- dimension of the complex
 
-    -  ``p`` -- floating point number between 0 and 1
-       (optional, default 0.5)
+    - ``p`` -- floating point number between 0 and 1 (default: 0.5)
 
     A random `d`-dimensional simplicial complex on `n` vertices,
     as defined for example by Meshulam and Wallach [MW2009]_, is
@@ -1308,7 +1307,7 @@ def SumComplex(n, A):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     - ``A`` -- a subset of `\ZZ/(n)`
 
@@ -1387,7 +1386,7 @@ def RandomTwoSphere(n):
 
     INPUT:
 
-    `n` -- an integer
+    - ``n`` -- integer
 
     OUTPUT:
 
@@ -1466,7 +1465,7 @@ def ShiftedComplex(generators):
 
     INPUT:
 
-    - ``generators`` -- a list of generators of the order ideal, which may
+    - ``generators`` -- list of generators of the order ideal, which may
       be lists, tuples or simplices
 
     EXAMPLES::
@@ -1586,9 +1585,9 @@ def FareyMap(p):
 
     INPUT:
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    The vertices are the non-zero pairs `(x,y)` in `\GF(p)^2` modulo
+    The vertices are the nonzero pairs `(x,y)` in `\GF(p)^2` modulo
     the identification of `(-x, -y)` with `(x,y)`.
 
     The triangles are the images of the base triangle ((1,0),(0,1),(1,1))

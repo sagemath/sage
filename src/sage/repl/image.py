@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
+# sage.doctest: needs pillow
 """
 Sage Wrapper for Bitmap Images
 
@@ -42,7 +43,7 @@ class Image(SageObject):
 
     def __init__(self, mode, size, color='white'):
         """
-        Creates a new image with the given mode and size.
+        Create a new image with the given mode and size.
 
         INPUT:
 
@@ -75,7 +76,7 @@ class Image(SageObject):
 
               * ``'F'`` (32-bit floating point pixels)
 
-        - ``size`` -- 2-tuple, containing (width, height) in pixels.
+        - ``size`` -- 2-tuple, containing (width, height) in pixels
 
         - ``color`` -- string, numeric or tuple of numeric. What colour to use
           for the image. Default is black.  If given, this should be a
@@ -84,9 +85,7 @@ class Image(SageObject):
           ImageColor module.  If the colour is None, the image is not
           initialised.
 
-        OUTPUT:
-
-        A new :class:`Image` object.
+        OUTPUT: a new :class:`Image` object
 
         EXAMPLES::
 
@@ -105,11 +104,9 @@ class Image(SageObject):
     @property
     def pil(self):
         """
-        Access the wrapped PIL(low) Image
+        Access the wrapped PIL(low) Image.
 
-        OUTPUT:
-
-        The underlying ``PIL.Image.Image object``.
+        OUTPUT: the underlying ``PIL.Image.Image object``
 
         EXAMPLES::
 
@@ -122,7 +119,7 @@ class Image(SageObject):
 
     def pixels(self):
         """
-        Return the pixel map
+        Return the pixel map.
 
         OUTPUT:
 
@@ -142,9 +139,7 @@ class Image(SageObject):
         """
         Return string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -174,11 +169,9 @@ class Image(SageObject):
 
     def mode(self):
         """
-        Return the color mode
+        Return the color mode.
 
-        OUTPUT:
-
-        String. As given when constructing the image.
+        OUTPUT: string; as given when constructing the image
 
         EXAMPLES::
 
@@ -191,11 +184,9 @@ class Image(SageObject):
 
     def width(self):
         """
-        Return the horizontal dimension in pixels
+        Return the horizontal dimension in pixels.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -210,11 +201,9 @@ class Image(SageObject):
 
     def height(self):
         """
-        Return the vertical dimension in pixels
+        Return the vertical dimension in pixels.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -229,12 +218,12 @@ class Image(SageObject):
 
     def save(self, filename):
         r"""
-        Save the bitmap image
+        Save the bitmap image.
 
         INPUT:
 
-        - ``filename`` -- string. The filename to save as. The given
-          extension automatically determines the image file type.
+        - ``filename`` -- string; the filename to save as. The given
+          extension automatically determines the image file type
 
         EXAMPLES::
 
@@ -275,7 +264,7 @@ class Image(SageObject):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 

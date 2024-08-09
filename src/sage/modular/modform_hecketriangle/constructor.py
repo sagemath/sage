@@ -5,7 +5,6 @@ Constructor for spaces of modular forms for Hecke triangle groups based on a typ
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -43,36 +42,35 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
 
     INPUT:
 
-    - ``f`` -- A rational function in ``x,y,z,d`` over ``base_ring``.
+    - ``f`` -- a rational function in ``x,y,z,d`` over ``base_ring``
 
-    - ``n`` -- An integer greater or equal to `3` corresponding
-      to the ``HeckeTriangleGroup`` with that parameter (default: `3`).
+    - ``n`` -- integer greater or equal to `3` corresponding
+      to the ``HeckeTriangleGroup`` with that parameter (default: `3`)
 
-    - ``base_ring`` -- The base ring of the corresponding forms ring, resp.
-      polynomial ring (default: ``ZZ``).
+    - ``base_ring`` -- the base ring of the corresponding forms ring, resp.
+      polynomial ring (default: ``ZZ``)
 
     OUTPUT:
 
     A tuple ``(elem, homo, k, ep, analytic_type)`` describing the basic
     analytic properties of `f` (with the interpretation indicated above).
 
-    - ``elem`` -- ``True`` if `f` has a homogeneous denominator.
+    - ``elem`` -- ``True`` if `f` has a homogeneous denominator
 
-    - ``homo`` -- ``True`` if `f` also has a homogeneous numerator.
+    - ``homo`` -- ``True`` if `f` also has a homogeneous numerator
 
     - ``k`` -- ``None`` if `f` is not homogeneous, otherwise
-      the weight of `f` (which is the first component of its degree).
+      the weight of `f` (which is the first component of its degree)
 
     - ``ep`` -- ``None`` if `f` is not homogeneous, otherwise
       the multiplier of `f` (which is the second component of its degree)
 
-    - ``analytic_type``  -- The :class:`AnalyticType` of `f`.
+    - ``analytic_type`` -- the :class:`AnalyticType` of `f`
 
-    For the zero function the degree `(0, 1)` is choosen.
+    For the zero function the degree `(0, 1)` is chosen.
 
     This function is (heavily) used to determine the type of elements
     and to check if the element really is contained in its parent.
-
 
     EXAMPLES::
 
@@ -210,16 +208,16 @@ def FormsSpace(analytic_type, group=3, base_ring=ZZ, k=QQ(0), ep=None):
 
     INPUT:
 
-    - ``analytic_type`` -- An element of ``AnalyticType()`` describing
-      the analytic type of the space.
+    - ``analytic_type`` -- an element of ``AnalyticType()`` describing
+      the analytic type of the space
 
-    - ``group`` -- The index of the (Hecke triangle) group of the space (default: `3`).
+    - ``group`` -- the index of the (Hecke triangle) group of the space (default: `3`)
 
-    - ``base_ring`` -- The base ring of the space (default: ``ZZ``).
+    - ``base_ring`` -- the base ring of the space (default: ``ZZ``)
 
-    - ``k`` -- The weight of the space, a rational number (default: ``0``).
+    - ``k`` -- the weight of the space, a rational number (default: ``0``)
 
-    - ``ep`` -- The multiplier of the space, `1`, `-1` or ``None``
+    - ``ep`` -- the multiplier of the space, `1`, `-1` or ``None``
       (in which case ``ep`` should be determined from ``k``). Default: ``None``.
 
     For the variables ``group``, ``base_ring``, ``k``, ``ep``
@@ -228,9 +226,7 @@ def FormsSpace(analytic_type, group=3, base_ring=ZZ, k=QQ(0), ep=None):
     In particular the multiplier ``ep`` is calculated
     as usual from ``k`` if ``ep == None``.
 
-    OUTPUT:
-
-    The FormsSpace with the given properties.
+    OUTPUT: the FormsSpace with the given properties
 
     EXAMPLES::
 
@@ -324,24 +320,22 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
 
     INPUT:
 
-    - ``analytic_type`` -- An element of ``AnalyticType()`` describing
-      the analytic type of the space.
+    - ``analytic_type`` -- an element of ``AnalyticType()`` describing
+      the analytic type of the space
 
-    - ``group`` -- The index of the (Hecke triangle) group of the space
-      (default: 3`).
+    - ``group`` -- the index of the (Hecke triangle) group of the space
+      (default: 3`)
 
-    - ``base_ring`` -- The base ring of the space (default: ``ZZ``).
+    - ``base_ring`` -- the base ring of the space (default: ``ZZ``)
 
-    - ``red_hom`` -- The (boolean) variable ``red_hom`` of the space
-      (default: ``False``).
+    - ``red_hom`` -- the (boolean) variable ``red_hom`` of the space
+      (default: ``False``)
 
     For the variables ``group``, ``base_ring``, ``red_hom``
     the same arguments as for the class :class:`FormsRing_abstract` can be used.
     The variables will then be put in canonical form.
 
-    OUTPUT:
-
-    The FormsRing with the given properties.
+    OUTPUT: the FormsRing with the given properties
 
     EXAMPLES::
 

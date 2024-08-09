@@ -137,11 +137,9 @@ def diamond_cut(V, GM, C, verbose=False):
 
     - ``C`` -- radius to use in cutting algorithm
 
-    - ``verbose`` -- (default: ``False``) whether to print debug information
+    - ``verbose`` -- boolean (default: ``False``); whether to print debug information
 
-    OUTPUT:
-
-    A :class:`Polyhedron` instance.
+    OUTPUT: a :class:`Polyhedron` instance
 
     EXAMPLES::
 
@@ -234,7 +232,7 @@ def diamond_cut(V, GM, C, verbose=False):
 
 def calculate_voronoi_cell(basis, radius=None, verbose=False):
     """
-    Calculate the Voronoi cell of the lattice defined by basis
+    Calculate the Voronoi cell of the lattice defined by basis.
 
     INPUT:
 
@@ -244,9 +242,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
 
     - ``verbose`` -- whether to print debug information
 
-    OUTPUT:
-
-    A :class:`Polyhedron` instance.
+    OUTPUT: a :class:`Polyhedron` instance
 
     EXAMPLES::
 
@@ -260,7 +256,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     if dim[0] < dim[1]:
         # introduce "artificial" basis points (representing infinity)
         def approx_norm(v):
-            r,r1 = (v.inner_product(v)).sqrtrem()
+            r, r1 = (v.inner_product(v)).sqrtrem()
             return r + (r1 > 0)
         artificial_length = max(approx_norm(v) for v in basis) * 2
         additional_vectors = identity_matrix(dim[1]) * artificial_length

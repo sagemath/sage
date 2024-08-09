@@ -16,13 +16,13 @@ def have_program(program, path=None):
 
     INPUT:
 
-    - ``program`` - a string, the name of the program to check.
+    - ``program`` -- string, the name of the program to check
 
-    - ``path`` - string or None. Paths to search for ``program``,
+    - ``path`` -- string or ``None``. Paths to search for ``program``,
       separated by ``os.pathsep``. If ``None``, use the :envvar:`PATH`
       environment variable.
 
-    OUTPUT: bool
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -80,12 +80,12 @@ def restore_cwd(chdir=None):
         os.chdir(orig_cwd)
 
 
-cdef file_and_fd(x, int* fd) noexcept:
+cdef file_and_fd(x, int* fd):
     """
     If ``x`` is a file, return ``x`` and set ``*fd`` to its file
     descriptor. If ``x`` is an integer, return ``None`` and set
     ``*fd`` to ``x``. Otherwise, set ``*fd = -1`` and raise a
-    ``TypeError``.
+    :exc:`TypeError`.
     """
     fd[0] = -1
     try:
@@ -116,7 +116,7 @@ cdef class redirection:
 
     - ``dest`` -- where the source file should be redirected to
 
-    - ``close`` -- (boolean, default: ``True``) whether to close the
+    - ``close`` -- boolean (default: ``True``); whether to close the
       destination file upon exiting the context. This is only supported
       if ``dest`` is a Python file.
 

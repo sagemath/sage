@@ -274,7 +274,7 @@ cdef inline void bitset_fix(fused_bitset_t bits) noexcept:
 
 cdef inline void sparse_bitset_set_non_zero(sparse_bitset_t bits) noexcept nogil:
     """
-    Set the non zero chunks of ``bits``.
+    Set the nonzero chunks of ``bits``.
     """
     bits.n_non_zero_chunks = _set_non_zero(bits.bits, bits.non_zero_chunks, bits.limbs)
     bits.non_zero_chunks_are_initialized = True
@@ -331,15 +331,15 @@ cdef inline bint mpn_equal_bits_shifted(mp_srcptr b1, mp_srcptr b2, mp_bitcnt_t 
 
 cdef inline bint bitset_isempty(fused_bitset_t bits) noexcept nogil:
     """
-    Test whether bits is empty.  Return True (i.e., 1) if the set is
-    empty, False (i.e., 0) otherwise.
+    Test whether bits is empty.  Return ``True`` (i.e., 1) if the set is
+    empty, ``False`` (i.e., 0) otherwise.
     """
     return _bitset_isempty(bits.bits, bits.limbs)
 
 cdef inline bint bitset_is_zero(fused_bitset_t bits) noexcept:
     """
-    Test whether bits is empty (i.e., zero).  Return True (1) if
-    the set is empty, False (0) otherwise.
+    Test whether bits is empty (i.e., zero).  Return ``True`` (1) if
+    the set is empty, ``False`` (0) otherwise.
 
     This function is the same as bitset_is_empty(bits).
     """
@@ -347,8 +347,8 @@ cdef inline bint bitset_is_zero(fused_bitset_t bits) noexcept:
 
 cdef inline bint bitset_eq(fused_bitset_t a, fused_bitset_t b) noexcept:
     """
-    Compare bitset a and b.  Return True (i.e., 1) if the sets are
-    equal, and False (i.e., 0) otherwise.
+    Compare bitset a and b.  Return ``True`` (i.e., 1) if the sets are
+    equal, and ``False`` (i.e., 0) otherwise.
 
     We assume ``a.limbs >= b.limbs``.
     """
@@ -378,7 +378,7 @@ cdef inline int bitset_lex_cmp(fused_bitset_t a, fused_bitset_t b) noexcept:
     INPUT:
 
     - ``a`` -- a bitset
-    - ``b`` -- a bitset, assumed to have the same size as ``a``.
+    - ``b`` -- a bitset, assumed to have the same size as ``a``
 
     OUTPUT:
 
@@ -416,7 +416,7 @@ cdef inline bint bitset_issuperset(fused_bitset_t a, fused_bitset_t b) noexcept 
 
 cdef inline bint bitset_are_disjoint(fused_bitset_t a, fused_bitset_t b) noexcept:
     """
-    Tests whether ``a`` and ``b`` have an empty intersection.
+    Test whether ``a`` and ``b`` have an empty intersection.
 
     We assume ``a.limbs <= b.limbs``.
     """
@@ -432,15 +432,15 @@ cdef inline bint bitset_are_disjoint(fused_bitset_t a, fused_bitset_t b) noexcep
 
 cdef inline bint bitset_in(fused_bitset_t bits, mp_bitcnt_t n) noexcept:
     """
-    Check if n is in bits.  Return True (i.e., 1) if n is in the
-    set, False (i.e., 0) otherwise.
+    Check if n is in bits.  Return ``True`` (i.e., 1) if n is in the
+    set, ``False`` (i.e., 0) otherwise.
     """
     return (bits.bits[n >> index_shift] >> (n % GMP_LIMB_BITS)) & 1
 
 cdef inline bint bitset_check(fused_bitset_t bits, mp_bitcnt_t n) noexcept:
     """
-    Check if n is in bits.  Return True (i.e., 1) if n is in the
-    set, False (i.e., 0) otherwise.
+    Check if n is in bits.  Return ``True`` (i.e., 1) if n is in the
+    set, ``False`` (i.e., 0) otherwise.
 
     This function is the same as bitset_in(bits, n).
     """
@@ -448,14 +448,16 @@ cdef inline bint bitset_check(fused_bitset_t bits, mp_bitcnt_t n) noexcept:
 
 cdef inline bint bitset_not_in(fused_bitset_t bits, mp_bitcnt_t n) noexcept:
     """
-    Check if n is not in bits.  Return True (i.e., 1) if n is not in the
-    set, False (i.e., 0) otherwise.
+    Check if n is not in bits.  Return ``True`` (i.e., 1) if n is not in the
+    set, ``False`` (i.e., 0) otherwise.
     """
     return not bitset_in(bits, n)
 
 cdef inline bint bitset_remove(fused_bitset_t bits, mp_bitcnt_t n) except -1:
     """
-    Remove n from bits.  Raise KeyError if n is not contained in bits.
+    Remove ``n`` from ``bits``.
+
+    This raises a :exc:`KeyError` if ``n`` is not contained in ``bits``.
     """
     if not bitset_in(bits, n):
         raise KeyError(n)
@@ -558,8 +560,9 @@ cdef inline long bitset_first_in_complement(fused_bitset_t a) noexcept:
 
 cdef inline long bitset_pop(fused_bitset_t a) except -1:
     """
-    Remove and return an arbitrary element from the set. Raise
-    KeyError if the set is empty.
+    Remove and return an arbitrary element from the set.
+
+    This raises a :exc:`KeyError` if the set is empty.
     """
     cdef long i = bitset_first(a)
     if i == -1:
@@ -678,7 +681,7 @@ cdef inline void sparse_bitset_intersection(sparse_bitset_t r, fused_bitset_t a,
     """
     Set r to the intersection of a and b, overwriting r.
 
-    Also set the non zero positions of ``r``.
+    Also set the nonzero positions of ``r``.
 
     We assume ``a.limbs >= r.limbs == b.limbs``.
     """
@@ -710,7 +713,7 @@ cdef inline void sparse_bitset_union(sparse_bitset_t r, fused_bitset_t a, fused_
     """
     Set r to the union of a and b, overwriting r.
 
-    Also set the non zero positions of ``r``.
+    Also set the nonzero positions of ``r``.
 
     We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
     or ``r.limbs == b.limbs``.
@@ -746,7 +749,7 @@ cdef inline void sparse_bitset_difference(sparse_bitset_t r, fused_bitset_t a, f
     Set r to the difference of a and b (i.e., things in a that are not
     in b), overwriting r.
 
-    Also set the non zero positions of ``r``.
+    Also set the nonzero positions of ``r``.
 
     We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
     or ``r.limbs == b.limbs``.
@@ -769,7 +772,7 @@ cdef inline void sparse_bitset_symmetric_difference(sparse_bitset_t r, fused_bit
     """
     Set r to the symmetric difference of a and b, overwriting r.
 
-    Also set the non zero positions of ``r``.
+    Also set the nonzero positions of ``r``.
 
     We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
     or ``r.limbs == b.limbs``.
@@ -911,12 +914,12 @@ cdef int bitset_from_char(bitset_t bits, char* s, char zero=*, char one=*) excep
 
 cdef int bitset_from_str(bitset_t bits, object s, char zero=*, char one=*) except -1
 
-cdef bitset_string(fused_bitset_t bits) noexcept
+cdef bitset_string(fused_bitset_t bits)
 
-cdef bitset_bytes(fused_bitset_t bits) noexcept
+cdef bitset_bytes(fused_bitset_t bits)
 
-cdef list bitset_list(fused_bitset_t bits) noexcept
+cdef list bitset_list(fused_bitset_t bits)
 
-cdef bitset_pickle(bitset_t bs) noexcept
+cdef bitset_pickle(bitset_t bs)
 
-cdef bitset_unpickle(bitset_t bs, tuple input) noexcept
+cdef bitset_unpickle(bitset_t bs, tuple input)

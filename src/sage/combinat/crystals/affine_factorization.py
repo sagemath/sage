@@ -10,6 +10,7 @@ Affine factorization crystal of type `A`
 #******************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
@@ -18,8 +19,9 @@ from sage.categories.crystals import CrystalMorphism
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.homset import Hom
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.rsk import RSK
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
 class AffineFactorizationCrystal(UniqueRepresentation, Parent):
@@ -323,7 +325,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
                     right_n.remove(min(l))
                 else:
                     left_unbracketed += [m]
-            return [[j for j in left_unbracketed],[j for j in right_n]]
+            return [list(left_unbracketed), list(right_n)]
 
         def to_tableau(self):
             """
@@ -364,7 +366,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
 
 def affine_factorizations(w, l, weight=None):
     r"""
-    Return all factorizations of ``w`` into ``l`` factors or of weight ``weight``.
+    Return all factorizations of `w` into `l` factors or of weight ``weight``.
 
     INPUT:
 
@@ -372,7 +374,8 @@ def affine_factorizations(w, l, weight=None):
 
     - ``l`` -- nonnegative integer
 
-    - ``weight`` -- (default: None) tuple of nonnegative integers specifying the length of the factors
+    - ``weight`` -- (default: ``None``) tuple of nonnegative integers
+      specifying the length of the factors
 
     EXAMPLES::
 
@@ -473,16 +476,16 @@ class FactorizationToTableaux(CrystalMorphism):
         """
         p = []
         q = []
-        for i,factor in enumerate(reversed(x.value)):
+        for i, factor in enumerate(reversed(x.value)):
             word = factor.reduced_word()
-            p += [i+1]*len(word)
+            p += [i + 1] * len(word)
             # We sort for those pesky commutative elements
             # The word is most likely in reverse order to begin with
             q += sorted(reversed(word))
         C = self.codomain()
         return C(RSK(p, q, insertion=RSK.rules.EG)[1])
 
-    def is_isomorphism(self):
+    def is_isomorphism(self) -> bool:
         """
         Return ``True`` as this is an isomorphism.
 

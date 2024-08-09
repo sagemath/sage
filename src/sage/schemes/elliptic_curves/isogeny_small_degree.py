@@ -18,7 +18,6 @@ AUTHORS:
 
 - Kimi Tsukazaki and John Cremona: 2013-07: The 10 (hyper)-elliptic cases and
   the generic algorithm.  See [KT2013]_.
-
 """
 
 # ****************************************************************************
@@ -171,10 +170,10 @@ def Psi(l, use_stored=True):
 
     INPUT:
 
-    - ``l`` -- either 2, 3, 5, 7, or 13.
+    - ``l`` -- either 2, 3, 5, 7, or 13
 
-    - ``use_stored`` (boolean, default True) -- If True, use
-      precomputed values, otherwise compute them on the fly.
+    - ``use_stored``-- boolean (default: ``True``); if ``True``, use
+      precomputed values, otherwise compute them on the fly
 
     .. NOTE::
 
@@ -239,11 +238,11 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve.
+    - ``E`` -- an elliptic curve
 
-    - ``l`` -- either None or 2, 3, 5, 7, or 13.
+    - ``l`` -- either ``None`` or 2, 3, 5, 7, or 13
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -374,8 +373,8 @@ def _sporadic_Q_data(j):
 
     INPUT:
 
-    - ``j`` -- The `j`-invariant of a sporadic curve, i.e. one of the
-      keys of ``sporadic_j``.
+    - ``j`` -- the `j`-invariant of a sporadic curve, i.e. one of the
+      keys of ``sporadic_j``
 
     OUTPUT:
 
@@ -564,7 +563,7 @@ def _sporadic_Q_data(j):
     w = w1 # real period
     if j in [-121, -24729001, -162677523113838677, QQ(-882216989)/131072]:
         w = 2*w2-w1 # imaginary period
-    kerpol = prod(([X-L.elliptic_exponential(n*w/ell)[0] for n in range(1,(ell+1)//2)]))
+    kerpol = prod([X-L.elliptic_exponential(n*w/ell)[0] for n in range(1,(ell+1)//2)])
     if j == -162677523113838677:
         kerpolcoeffs = [(37*c.real()).round()/37 for c in list(kerpol)]
     else:
@@ -579,9 +578,9 @@ def isogenies_sporadic_Q(E, l=None, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve defined over `\QQ`.
+    - ``E`` -- an elliptic curve defined over `\QQ`
 
-    - ``l`` -- either None or a prime number.
+    - ``l`` -- either ``None`` or a prime number
 
     OUTPUT:
 
@@ -726,9 +725,9 @@ def isogenies_2(E, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve.
+    - ``E`` -- an elliptic curve
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -771,9 +770,9 @@ def isogenies_3(E, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve.
+    - ``E`` -- an elliptic curve
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -821,9 +820,9 @@ def isogenies_5_0(E, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve with j-invariant 0.
+    - ``E`` -- an elliptic curve with j-invariant 0
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -924,9 +923,9 @@ def isogenies_5_1728(E, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve with j-invariant 1728.
+    - ``E`` -- an elliptic curve with j-invariant 1728
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -1058,9 +1057,9 @@ def isogenies_7_0(E, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve with j-invariant 0.
+    - ``E`` -- an elliptic curve with j-invariant 0
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -1198,9 +1197,9 @@ def isogenies_7_1728(E, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve with j-invariant 1728.
+    - ``E`` -- an elliptic curve with j-invariant 1728
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -1297,9 +1296,9 @@ def isogenies_13_0(E, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve with j-invariant 0.
+    - ``E`` -- an elliptic curve with j-invariant 0
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -1449,9 +1448,9 @@ def isogenies_13_1728(E, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve with j-invariant 1728.
+    - ``E`` -- an elliptic curve with j-invariant 1728
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -1609,9 +1608,8 @@ def _hyperelliptic_isogeny_data(l):
 
     - ``l`` -- a prime in [11, 17, 19, 23, 29, 31, 41, 47, 59, 71]
 
-    OUTPUT:
-
-    - A dict holding a collection of precomputed data needed for computing `l`-isogenies.
+    OUTPUT: a dict holding a collection of precomputed data needed for
+    computing `l`-isogenies
 
     EXAMPLES::
 
@@ -1751,11 +1749,9 @@ def Psi2(l):
 
     INPUT:
 
-    - ``l`` -- either 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71.
+    - ``l`` -- either 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71
 
-    OUTPUT:
-
-    The generic `l`-kernel polynomial.
+    OUTPUT: the generic `l`-kernel polynomial
 
     EXAMPLES::
 
@@ -1822,11 +1818,11 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve.
+    - ``E`` -- an elliptic curve
 
-    - ``l`` -- either None or 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71.
+    - ``l`` -- either ``None`` or 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -2043,8 +2039,8 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
 
     psi = Fxuv(Psi2(l))
     for u0, v0 in S:
-        A4 = Fuv(data['A4'])(u0,v0) #non-zero since j!=0
-        A6 = Fuv(data['A6'])(u0,v0) #non-zero since j!=1728
+        A4 = Fuv(data['A4'])(u0,v0)  # nonzero since j!=0
+        A6 = Fuv(data['A6'])(u0,v0)  # nonzero since j!=1728
         T = (c4*A6)/(2*c6*A4)
         kernels += [psi((36*X+3*b2)*T,u0,v0).monic()]
     return [E.isogeny(ker) for ker in kernels]
@@ -2056,11 +2052,11 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve with j-invariant 0.
+    - ``E`` -- an elliptic curve with j-invariant 0
 
-    - ``l`` -- 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71.
+    - ``l`` -- 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -2110,7 +2106,7 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
         raise ValueError("%s must be one of %s." % (l,hyperelliptic_primes))
     F = E.base_field()
     if E.j_invariant() != 0:
-        raise ValueError(("j-invariant must be 0."))
+        raise ValueError("j-invariant must be 0.")
     if F.characteristic() in [2,3,l]:
         raise NotImplementedError("Not implemented in characteristic 2, 3 or l.")
 
@@ -2147,7 +2143,7 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
 
     psi = Fxuv(Psi2(l))
     for u0,v0 in S:
-        A6 = Fuv(data['A6'])(u0,v0) # non-zero since j!=1728
+        A6 = Fuv(data['A6'])(u0,v0) # nonzero since j!=1728
         kernels += [psi((36*X+3*b2)*T,u0,v0).monic() for T in (X**3-A6/(-54*c6)).roots(multiplicities=False)]
     return [E.isogeny(ker) for ker in kernels]
 
@@ -2158,11 +2154,11 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve with j-invariant 1728.
+    - ``E`` -- an elliptic curve with j-invariant 1728
 
-    - ``l`` -- 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71.
+    - ``l`` -- 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -2271,7 +2267,7 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
 
     psi = Fxuv(Psi2(l))
     for u0,v0 in S:
-        A4 = Fuv(data['A4'])(u0,v0) # non-zero since j!=0
+        A4 = Fuv(data['A4'])(u0,v0) # nonzero since j!=0
         kernels += [psi((36*X+3*b2)*T,u0,v0).monic() for T in (X**2-A4/(-27*c4)).roots(multiplicities=False)]
     return [E.isogeny(ker) for ker in kernels]
 
@@ -2283,11 +2279,9 @@ def _least_semi_primitive(p):
 
     INPUT:
 
-    - ``p`` -- an odd prime power.
+    - ``p`` -- an odd prime power
 
-    OUTPUT:
-
-    the smallest semi-primitive root modulo `p`.
+    OUTPUT: the smallest semi-primitive root modulo `p`
 
     .. NOTE::
 
@@ -2326,15 +2320,15 @@ def is_kernel_polynomial(E, m, f):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve.
+    - ``E`` -- an elliptic curve
 
-    - ``m`` -- a positive integer.
+    - ``m`` -- positive integer
 
-    - ``f`` -- a polynomial over the base field of ``E``.
+    - ``f`` -- a polynomial over the base field of ``E``
 
     OUTPUT:
 
-    (bool) ``True`` if ``E`` has a cyclic isogeny of degree ``m`` with
+    boolean; ``True`` if ``E`` has a cyclic isogeny of degree ``m`` with
     kernel polynomial ``f``, else ``False``.
 
     ALGORITHM:
@@ -2435,11 +2429,11 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve.
+    - ``E`` -- an elliptic curve
 
-    - ``l`` -- a prime.
+    - ``l`` -- a prime
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.
@@ -2624,19 +2618,17 @@ def isogenies_prime_degree(E, l, minimal_models=True):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve.
+    - ``E`` -- an elliptic curve
 
-    - ``l`` -- a prime.
+    - ``l`` -- a prime
 
-    - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
+    - ``minimal_models`` -- boolean (default: ``True``); if ``True``, all
       curves computed will be minimal or semi-minimal models.  Over
       fields of larger degree it can be expensive to compute these so
       set to ``False``.  Ignored except over number fields other than
       `QQ`.
 
-    OUTPUT:
-
-    A list of all separable isogenies of degree `l` with domain ``E``.
+    OUTPUT: list of all separable isogenies of degree `l` with domain ``E``
 
     EXAMPLES::
 

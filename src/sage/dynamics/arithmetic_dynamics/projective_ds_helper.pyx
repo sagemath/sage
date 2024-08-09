@@ -6,7 +6,6 @@ This is the helper file providing functionality for projective_ds.py.
 AUTHORS:
 
 - Dillon Rose (2014-01):  Speed enhancements
-
 """
 
 # ****************************************************************************
@@ -24,7 +23,7 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.combinat.subset import subsets
 
 
-cpdef _fast_possible_periods(self, return_points=False) noexcept:
+cpdef _fast_possible_periods(self, return_points=False):
     r"""
     Return the list of possible minimal periods of a periodic point
     over `\QQ` and (optionally) a point in each cycle.
@@ -35,7 +34,7 @@ cpdef _fast_possible_periods(self, return_points=False) noexcept:
 
     INPUT:
 
-    - ``return_points`` - (default: ``False``) boolean; if ``True``, then
+    - ``return_points`` -- boolean (default: ``False``); if ``True``, then
       return the points as well as the possible periods
 
     OUTPUT:
@@ -82,8 +81,8 @@ cpdef _fast_possible_periods(self, return_points=False) noexcept:
         raise TypeError("must be prime field")
 
     PS = self.domain()
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if not is_ProjectiveSpace(PS) or PS != self.codomain():
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if not isinstance(PS, ProjectiveSpace_ring) or PS != self.codomain():
         raise NotImplementedError("must be an endomorphism of projective space")
 
     p = PS.base_ring().order()
@@ -151,7 +150,8 @@ cpdef _fast_possible_periods(self, return_points=False) noexcept:
     if not return_points:
         return sorted(periods)
     else:
-        return(points_periods)
+        return points_periods
+
 
 def _enum_points(int prime, int dimension):
     """
@@ -177,6 +177,7 @@ def _enum_points(int prime, int dimension):
             yield _get_point_from_hash(value, prime, dimension)
         current_range = current_range * prime
 
+
 cpdef int _hash(list Point, int prime) noexcept:
     """
     Hash point given as list to unique number.
@@ -186,7 +187,6 @@ cpdef int _hash(list Point, int prime) noexcept:
         sage: from sage.dynamics.arithmetic_dynamics.projective_ds_helper import _hash
         sage: _hash([1, 2, 1], 3)
         16
-
     """
     cdef int hash_q
     cdef int coefficient
@@ -198,7 +198,7 @@ cpdef int _hash(list Point, int prime) noexcept:
 
     return hash_q
 
-cpdef list _get_point_from_hash(int value, int prime, int dimension) noexcept:
+cpdef list _get_point_from_hash(int value, int prime, int dimension):
     """
     Hash unique number to point as a list.
 
@@ -240,7 +240,7 @@ cdef inline int _mod_inv(int num, int prime) noexcept:
     else:
         return y
 
-cpdef _normalize_coordinates(list point, int prime, int len_points) noexcept:
+cpdef _normalize_coordinates(list point, int prime, int len_points):
     """
     Normalize the coordinates of the point for the given prime.
 
@@ -269,7 +269,7 @@ cpdef _normalize_coordinates(list point, int prime, int len_points) noexcept:
     for coefficient in range(len_points):
         point[coefficient] = (point[coefficient] * mod_inverse) % prime
 
-cpdef _all_periodic_points(self) noexcept:
+cpdef _all_periodic_points(self):
     """
     Find all periodic points over a finite field.
 

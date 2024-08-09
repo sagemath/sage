@@ -8,23 +8,23 @@
 
    AVAILABLE ALGORITHMS:
 
-   - ``DGS_DISC_GAUSS_UNIFORM_TABLE`` - classical rejection sampling, sampling
+   - ``DGS_DISC_GAUSS_UNIFORM_TABLE`` -- classical rejection sampling, sampling
      from the uniform distribution and accepted with probability proportional to
      `\exp(-(x-c)²/(2σ²))` where `\exp(-(x-c)²/(2σ²))` is precomputed and
      stored in a table. Any real-valued `c` is supported.
 
- - ``DGS_DISC_GAUSS_UNIFORM_LOGTABLE`` - samples are drawn from a uniform
+ - ``DGS_DISC_GAUSS_UNIFORM_LOGTABLE`` -- samples are drawn from a uniform
    distribution and accepted with probability proportional to
    `\exp(-(x-c)²/(2σ²))` where `\exp(-(x-c)²/(2σ²))` is computed using
    logarithmically many calls to Bernoulli distributions. Only integer-valued
    `c` are supported.
 
- - ``DGS_DISC_GAUSS_UNIFORM_ONLINE`` - samples are drawn from a uniform
+ - ``DGS_DISC_GAUSS_UNIFORM_ONLINE`` -- samples are drawn from a uniform
    distribution and accepted with probability proportional to
    `\exp(-(x-c)²/(2σ²))` where `\exp(-(x-c)²/(2σ²))` is computed in each
    invocation. Typically this is very slow. Any real-valued `c` is accepted.
 
-  - ``DGS_DISC_SIGMA2_LOGTABLE`` - samples are drawn from an easily samplable
+  - ``DGS_DISC_SIGMA2_LOGTABLE`` -- samples are drawn from an easily samplable
     distribution with `σ = k·σ₂` where `σ₂ := \sqrt{1/(2\log 2)}` and
     accepted  with probability proportional to `\exp(-(x-c)²/(2σ²))` where
     `\exp(-(x-c)²/(2σ²))` is computed using logarithmically many calls to
@@ -34,9 +34,9 @@
 
   AVAILABLE PRECISIONS:
 
-  - ``mp`` - multi-precision using MPFR, cf. ``dgs_gauss_mp.c``
+  - ``mp`` -- multi-precision using MPFR, cf. ``dgs_gauss_mp.c``
 
-  - ``dp`` - double precision using machine doubles, cf. ``dgs_gauss_dp.c``.
+  - ``dp`` -- double precision using machine doubles, cf. ``dgs_gauss_dp.c``
 
   For readers unfamiliar with the implemented algorithms it makes sense to start
   with ``dgs_gauss_dp.c`` which implements the same algorithms as
@@ -94,7 +94,7 @@
 /**
    We consider a double ``x`` an integer if ``fmod(x,1.0) <= DGS_DISC_GAUSS_INTEGER_CUTOFF``
 
-   .. note::
+   .. NOTE::
 
        it is okay put 0.0 here as for typical inputs the above inequality holds
        exactly
@@ -105,7 +105,7 @@
 /**
    We consider two doubles ``x`` and ``y`` equal if ``abs(x-y) <= DGS_DISC_GAUSS_EQUAL_DIFF``
 
-   .. note::
+   .. NOTE::
 
        the value picked here is somewhat arbitrary
 */
@@ -322,7 +322,7 @@ long dgs_disc_gauss_dp_call_uniform_online(dgs_disc_gauss_dp_t *self);
 
    :param self: discrete Gaussian sampler
 
-   .. note::
+   .. NOTE::
 
       `c` must be an integer in this algorithm
  */
@@ -335,7 +335,7 @@ long dgs_disc_gauss_dp_call_uniform_table(dgs_disc_gauss_dp_t *self);
 
    :param self: discrete Gaussian sampler
 
-   .. note::
+   .. NOTE::
 
       This function makes no assumptions about `c` but requires more resources
       than ``dgs_disc_gauss_dp_call_uniform_table()``.
@@ -351,7 +351,7 @@ long dgs_disc_gauss_dp_call_uniform_table_offset(dgs_disc_gauss_dp_t *self);
 
   :param self: discrete Gaussian sampler
 
-  .. note::
+  .. NOTE::
 
       `c` must be an integer in this algorithm
  */
@@ -365,7 +365,7 @@ long dgs_disc_gauss_dp_call_uniform_logtable(dgs_disc_gauss_dp_t *self);
 
    :param self: discrete Gaussian sampler
 
-   .. note::
+   .. NOTE::
 
       `c` must be an integer in this algorithm
 
@@ -531,7 +531,7 @@ dgs_disc_gauss_mp_t *dgs_disc_gauss_mp_init(mpfr_t sigma, mpfr_t c, size_t tau, 
 
    :param self: discrete Gaussian sampler
 
-   .. note::
+   .. NOTE::
 
       `c` must be an integer in this algorithm
 
@@ -545,7 +545,7 @@ void dgs_disc_gauss_mp_call_uniform_table(mpz_t rop, dgs_disc_gauss_mp_t *self, 
 
    :param self: discrete Gaussian sampler
 
-   .. note::
+   .. NOTE::
 
       This function makes no assumptions about `c` but requires more resources
       than ``dgs_disc_gauss_dp_call_uniform_table()``.
@@ -560,7 +560,7 @@ void dgs_disc_gauss_mp_call_uniform_table_offset(mpz_t rop, dgs_disc_gauss_mp_t 
 
   :param self: discrete Gaussian sampler
 
-  .. note::
+  .. NOTE::
 
      `c` must be an integer in this algorithm
  */
@@ -582,7 +582,7 @@ void dgs_disc_gauss_mp_call_uniform_online(mpz_t rop, dgs_disc_gauss_mp_t *self,
 
   :param self: Discrete Gaussian sampler
 
-  .. note::
+  .. NOTE::
 
      `c` must be an integer in this algorithm.
  */

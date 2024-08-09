@@ -96,7 +96,6 @@ in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
     ....:     os.wait()
     ....: '''])
     sage: tmpdir.cleanup()
-
 """
 
 # ****************************************************************************
@@ -277,7 +276,7 @@ def stdout_to_string(s):
 
     INPUT:
 
-    - ``s`` - string; command to evaluate
+    - ``s`` -- string; command to evaluate
 
     OUTPUT: string
 
@@ -301,7 +300,7 @@ def max_to_string(s):
 
     INPUT:
 
-    - ``s`` - ECL object
+    - ``s`` -- ECL object
 
     OUTPUT: string
 
@@ -327,7 +326,7 @@ def parse_max_string(s):
 
     INPUT:
 
-    - ``s`` - string
+    - ``s`` -- string
 
     OUTPUT: ECL object
 
@@ -343,8 +342,6 @@ def parse_max_string(s):
 class MaximaLib(MaximaAbstract):
     """
     Interface to Maxima as a Library.
-
-    INPUT: none
 
     OUTPUT: Maxima interface as a Library
 
@@ -393,11 +390,11 @@ class MaximaLib(MaximaAbstract):
 
     def _coerce_from_special_method(self, x):
         r"""
-        Coerce ``x`` into self trying to call a special underscore method.
+        Coerce ``x`` into ``self`` trying to call a special underscore method.
 
         INPUT:
 
-        - ``x`` - object to coerce into self
+        - ``x`` -- object to coerce into self
 
         OUTPUT: Maxima element equivalent to ``x``
 
@@ -416,11 +413,7 @@ class MaximaLib(MaximaAbstract):
         r"""
         Implement __reduce__ for ``MaximaLib``.
 
-        INPUT: none
-
-        OUTPUT:
-
-        A couple consisting of:
+        OUTPUT: a couple consisting of:
 
         - the function to call for unpickling
 
@@ -441,14 +434,14 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``line`` - string; text to evaluate
+        - ``line`` -- string; text to evaluate
 
-        - ``locals`` - None (ignored); this is used for compatibility with the
-          Sage notebook's generic system interface.
+        - ``locals`` -- ``None`` (ignored); this is used for compatibility with the
+          Sage notebook's generic system interface
 
-        - ``reformat`` - boolean; whether to strip output or not
+        - ``reformat`` -- boolean; whether to strip output or not
 
-        - ``**kwds`` - All other arguments are currently ignored.
+        - ``**kwds`` -- all other arguments are currently ignored
 
         OUTPUT: string representing Maxima output
 
@@ -499,11 +492,11 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``cmd`` - string
+        - ``cmd`` -- string
 
         OUTPUT: ECL object
 
-        .. note::
+        .. NOTE::
 
            The output of this command is very raw - not pretty.
 
@@ -521,9 +514,9 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        -  ``var`` - string
+        - ``var`` -- string
 
-        -  ``value`` - string
+        - ``value`` -- string
 
         OUTPUT: none
 
@@ -545,7 +538,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
         OUTPUT: none
 
@@ -571,7 +564,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
         OUTPUT: string
 
@@ -591,14 +584,12 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``value`` - string or ECL object
+        - ``value`` -- string or ECL object
 
-        - ``name`` - string (default: None); name to use for the variable,
+        - ``name`` -- string (default: ``None``); name to use for the variable,
           an automatically generated name is used if this is none
 
-        OUTPUT:
-
-        - string; the name of the created variable
+        OUTPUT: string; the name of the created variable
 
         EXAMPLES:
 
@@ -642,8 +633,6 @@ class MaximaLib(MaximaAbstract):
         r"""
         Return the Python class of Maxima functions.
 
-        INPUT: none
-
         OUTPUT: type
 
         EXAMPLES::
@@ -657,8 +646,6 @@ class MaximaLib(MaximaAbstract):
     def _object_class(self):
         r"""
         Return the Python class of Maxima elements.
-
-        INPUT: none
 
         OUTPUT: type
 
@@ -674,8 +661,6 @@ class MaximaLib(MaximaAbstract):
         r"""
         Return the Python class of Maxima functions of elements.
 
-        INPUT: none
-
         OUTPUT: type
 
         EXAMPLES::
@@ -689,8 +674,6 @@ class MaximaLib(MaximaAbstract):
     def _object_function_class(self):
         r"""
         Return the Python class of Maxima user-defined functions.
-
-        INPUT: none
 
         OUTPUT: type
 
@@ -811,7 +794,6 @@ class MaximaLib(MaximaAbstract):
             0.124756040961038
             sage: a.imag().abs() < 3e-17
             True
-
         """
         try:
             return max_to_sr(maxima_eval(([max_integrate],
@@ -929,7 +911,6 @@ class MaximaLib(MaximaAbstract):
             factorial(n)
             sage: symbolic_product(2*x,x,1,n)
             2^n*factorial(n)
-
         """
         try:
             return max_to_sr(maxima_eval([[max_ratsimp],
@@ -1014,7 +995,6 @@ class MaximaLib(MaximaAbstract):
             sage: limit(gamma(x + 1/2)/(sqrt(x)*gamma(x)), x=infinity)
             1
             sage: _ = m.eval('domain: complex')
-
         """
         try:
             L = [sr_to_max(SR(aa)) for aa in [expr, v, a]]
@@ -1076,7 +1056,7 @@ class MaximaLib(MaximaAbstract):
 
 def is_MaximaLibElement(x):
     r"""
-    Return True if ``x`` is of type :class:`MaximaLibElement`.
+    Return ``True`` if ``x`` is of type :class:`MaximaLibElement`.
 
     EXAMPLES::
 
@@ -1116,8 +1096,6 @@ class MaximaLibElement(MaximaAbstractElement):
         r"""
         Return the underlying ECL object of this MaximaLib object.
 
-        INPUT: none
-
         OUTPUT: ECL object
 
         EXAMPLES::
@@ -1138,9 +1116,9 @@ class MaximaLibElement(MaximaAbstractElement):
 
         INPUT:
 
-        - ``vars`` - symbolic expressions
+        - ``vars`` -- symbolic expressions
 
-        - ``options`` - string (default="")
+        - ``options`` -- string (default="")
 
         OUTPUT: Maxima object
 
@@ -1167,7 +1145,7 @@ class MaximaLibElement(MaximaAbstractElement):
 
         INPUT:
 
-        - ``onscreen`` - boolean (default: True); whether to print or return
+        - ``onscreen`` -- boolean (default: ``True``); whether to print or return
 
         OUTPUT:
 
@@ -1278,9 +1256,9 @@ def sage_rat(x, y):
 
     INPUT:
 
-    - ``x`` - integer
+    - ``x`` -- integer
 
-    - ``y`` - integer
+    - ``y`` -- integer
 
     OUTPUT: rational
 
@@ -1321,7 +1299,7 @@ def mrat_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima MRAT expression
+    - ``expr`` -- ECL object; a Maxima MRAT expression
 
     OUTPUT: symbolic expression
 
@@ -1353,7 +1331,7 @@ def mqapply_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima MQAPPLY expression
+    - ``expr`` -- ECL object; a Maxima MQAPPLY expression
 
     OUTPUT: symbolic expression
 
@@ -1391,7 +1369,7 @@ def mdiff_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima %DERIVATIVE expression
+    - ``expr`` -- ECL object; a Maxima %DERIVATIVE expression
 
     OUTPUT: symbolic expression
 
@@ -1413,9 +1391,9 @@ def mlist_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima MLIST expression (i.e., a list)
+    - ``expr`` -- ECL object; a Maxima MLIST expression (i.e., a list)
 
-    OUTPUT: a Python list of converted expressions.
+    OUTPUT: a Python list of converted expressions
 
     EXAMPLES::
 
@@ -1435,7 +1413,7 @@ def max_at_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima AT expression
+    - ``expr`` -- ECL object; a Maxima AT expression
 
     OUTPUT: symbolic expression
 
@@ -1471,7 +1449,7 @@ def dummy_integrate(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima %INTEGRATE expression
+    - ``expr`` -- ECL object; a Maxima %INTEGRATE expression
 
     OUTPUT: symbolic expression
 
@@ -1570,11 +1548,11 @@ def pyobject_to_max(obj):
 
     INPUT:
 
-    - ``expr`` - Python object
+    - ``expr`` -- Python object
 
     OUTPUT: ECL object
 
-    .. note::
+    .. NOTE::
 
        This uses functions defined in sage.libs.ecl.
 
@@ -1609,7 +1587,7 @@ def sr_to_max(expr):
 
     INPUT:
 
-    - ``expr`` - symbolic expression
+    - ``expr`` -- symbolic expression
 
     OUTPUT: ECL object
 
@@ -1717,7 +1695,7 @@ def max_to_sr(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object
+    - ``expr`` -- ECL object
 
     OUTPUT: symbolic expression
 

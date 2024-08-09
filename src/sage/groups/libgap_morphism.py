@@ -46,9 +46,10 @@ class GroupMorphism_libgap(Morphism):
     INPUT:
 
     - ``homset`` -- the parent
-    - ``gap_hom`` -- a :class:`sage.libs.gap.element.GapElement` consisting of a group homomorphism
-    - ``check`` -- (default: ``True``) check if the ``gap_hom`` is a group
-      homomorphism; this can be expensive
+    - ``gap_hom`` -- a :class:`sage.libs.gap.element.GapElement` consisting of
+      a group homomorphism
+    - ``check`` -- boolean (default: ``True``); check if the ``gap_hom`` is a group
+      homomorphism (this can be expensive)
 
     EXAMPLES::
 
@@ -283,7 +284,7 @@ class GroupMorphism_libgap(Morphism):
 
     def __reduce__(self):
         r"""
-        Implements pickling.
+        Implement pickling.
 
         We have to work around the fact that GAP does not provide pickling.
 
@@ -378,9 +379,7 @@ class GroupMorphism_libgap(Morphism):
 
         - ``J`` -- a subgroup or an element of the domain of ``self``
 
-        OUTPUT:
-
-        The image of ``J`` under ``self``.
+        OUTPUT: the image of ``J`` under ``self``
 
         .. NOTE::
 
@@ -558,13 +557,12 @@ class GroupMorphism_libgap(Morphism):
 
     def section(self):
         r"""
-        This method returns a section map of self by use of :meth:`lift`.
+        Return a section map of ``self`` by use of :meth:`lift`.
+
         See :meth:`section` of :class:`sage.categories.map.Map`, as well.
 
-        OUTPUT:
-
-        an instance of :class:`sage.categories.morphism.SetMorphism`
-        mapping an element of the codomain of self to one of its preimages
+        OUTPUT: an instance of :class:`sage.categories.morphism.SetMorphism`
+        mapping an element of the codomain of ``self`` to one of its preimages
 
         EXAMPLES::
 
@@ -596,9 +594,7 @@ class GroupHomset_libgap(HomsetWithBase):
     - ``H`` -- a libgap group
     - ``category`` -- a category
 
-    OUTPUT:
-
-    The homset of two libgap groups.
+    OUTPUT: the homset of two libgap groups
 
     EXAMPLES::
 
@@ -730,9 +726,10 @@ class GroupHomset_libgap(HomsetWithBase):
 
         OUTPUT:
 
-        an instance of the element class of self if there exists a group homomorphism
-        mapping the generators of the domain of self to the according generators of
-        the codomain. Else the method falls back to the default.
+        An instance of the element class of ``self`` if there exists a group
+        homomorphism mapping the generators of the domain of ``self`` to the
+        according generators of the codomain. Otherwise, the method falls back
+        to the default.
 
         EXAMPLES::
 

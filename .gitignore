@@ -53,7 +53,6 @@
 
 /src/setup.cfg
 /src/requirements.txt
-/src/pyproject.toml
 /src/Pipfile
 /src/Pipfile.lock
 /Pipfile
@@ -186,12 +185,27 @@ __pycache__/
 build/temp.*/
 build/bin/sage-build-env-config
 
+# Generated files in build
+build/pkgs/cypari/version_requirements.txt
+build/pkgs/cysignals/version_requirements.txt
+build/pkgs/cython/version_requirements.txt
+build/pkgs/gmpy2/version_requirements.txt
+build/pkgs/jupyter_core/version_requirements.txt
+build/pkgs/memory_allocator/version_requirements.txt
+build/pkgs/numpy/version_requirements.txt
+build/pkgs/pkgconfig/version_requirements.txt
+build/pkgs/pplpy/version_requirements.txt
+build/pkgs/setuptools/version_requirements.txt
+build/pkgs/wheel/version_requirements.txt
+
 # Generated files in the top-level source trees
 /pkgs/*/build
 /pkgs/*/dist
 /pkgs/*/MANIFEST
 /pkgs/*/*.egg-info
 /pkgs/*/.tox
+/pkgs/*/venv*
+/pkgs/*/.venv*
 
 /pkgs/sage-conf_pypi/sage_root/config.log
 /pkgs/sage-conf_pypi/sage_root/config.status
@@ -223,16 +237,16 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-categories/pyproject.toml
 /pkgs/sagemath-environment/pyproject.toml
 /pkgs/sagemath-repl/pyproject.toml
-/pkgs/sagemath-objects/requirements.txt
-/pkgs/sagemath-bliss/requirements.txt
-/pkgs/sagemath-coxeter3/requirements.txt
-/pkgs/sagemath-mcqd/requirements.txt
-/pkgs/sagemath-meataxe/requirements.txt
-/pkgs/sagemath-sirocco/requirements.txt
-/pkgs/sagemath-tdlib/requirements.txt
-/pkgs/sagemath-categories/requirements.txt
-/pkgs/sagemath-environment/requirements.txt
-/pkgs/sagemath-repl/requirements.txt
+/pkgs/sagemath-objects/requirements*.txt
+/pkgs/sagemath-bliss/requirements*.txt
+/pkgs/sagemath-coxeter3/requirements*.txt
+/pkgs/sagemath-mcqd/requirements*.txt
+/pkgs/sagemath-meataxe/requirements*.txt
+/pkgs/sagemath-sirocco/requirements*.txt
+/pkgs/sagemath-tdlib/requirements*.txt
+/pkgs/sagemath-categories/requirements*.txt
+/pkgs/sagemath-environment/requirements*.txt
+/pkgs/sagemath-repl/requirements*.txt
 /pkgs/sagemath-categories/MANIFEST.in
 
 # same for old locations - before Issue #31577
@@ -247,6 +261,7 @@ build/bin/sage-build-env-config
 /src/doc/en/reference/*/sage_docbuild
 /src/doc/en/reference/sage
 /src/doc/en/reference/spkg/*.rst
+!/src/doc/en/reference/spkg/index.rst
 /src/doc/output
 /src/doc/en/installation/*.txt
 /src/doc/en/reference/repl/*.txt

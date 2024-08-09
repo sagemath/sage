@@ -50,7 +50,6 @@ test.spyx
 AUTHORS:
 
 - Jeroen Demeyer (2010-11-20): initial version (:issue:`10300`)
-
 """
 from subprocess import Popen, PIPE
 import os
@@ -58,21 +57,21 @@ import sys
 import select
 
 
-def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False, **kwds):
+def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False, **kwds):
     r"""
     Run the program defined by ``args`` using the string ``input`` on
     the standard input.
 
     INPUT:
 
-    - ``args`` -- a list of program arguments, the first being the
-      executable.
+    - ``args`` -- list of program arguments, the first being the
+      executable
 
-    - ``input`` -- a string serving as standard input.  Usually, this
-      should end with a newline.
+    - ``input`` -- string serving as standard input; usually, this
+      should end with a newline
 
     - ``timeout`` -- if the program produces no output for ``timeout``
-      seconds, a :class:`RuntimeError` is raised.
+      seconds, a :exc:`RuntimeError` is raised
 
     - ``pydebug_ignore_warnings`` -- boolean. Set the PYTHONWARNINGS environment variable to ignore
       Python warnings when on a Python debug build (`--with-pydebug`, e.g. from building with
@@ -81,12 +80,11 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
       so the filter will catch a bit more than the default filters. Hence we only enable it on debug
       builds.
 
-    - ``**kwds`` -- Additional keyword arguments passed to the
-      :class:`Popen` constructor.
+    - ``**kwds`` -- additional keyword arguments passed to the
+      :class:`Popen` constructor
 
     OUTPUT: a tuple ``(out, err, ret)`` with the standard output,
     standard error and exitcode of the program run.
-
 
     EXAMPLES::
 

@@ -29,7 +29,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.classcall_metaclass import typecall
@@ -349,11 +349,11 @@ class CartanMatrix(Base, CartanType_abstract,
 
         INPUT:
 
-        - ``nrows`` - number of rows
+        - ``nrows`` -- number of rows
 
-        - ``ncols`` - number of columns
+        - ``ncols`` -- number of columns
 
-        - ``sparse`` - (boolean) sparseness
+        - ``sparse`` -- boolean
 
         EXAMPLES::
 
@@ -388,6 +388,14 @@ class CartanMatrix(Base, CartanType_abstract,
 
             sage: C = CartanMatrix(['A',1,1])  # indirect doctest                       # needs sage.graphs
             sage: TestSuite(C).run(skip=["_test_category", "_test_change_ring"])        # needs sage.graphs
+
+        Check that :issue:`37979` is fixed::
+
+            sage: C = CartanMatrix([[2]], index_set=(4,))
+            sage: C.index_set()
+            (4,)
+            sage: CartanType("A3").subtype((2,)) is CartanType("A1").relabel({1:2})
+            True
         """
         self._index_set = index_set
         self.set_immutable()
@@ -396,6 +404,8 @@ class CartanMatrix(Base, CartanType_abstract,
             cartan_type = CartanType(cartan_type)
         elif self.nrows() == 1:
             cartan_type = CartanType(['A', 1])
+            if index_set != (1,):
+                cartan_type = cartan_type.relabel({1: index_set[0]})
         elif cartan_type_check:
             # Placeholder so we don't have to reimplement creating a
             #   Dynkin diagram from a Cartan matrix
@@ -445,7 +455,7 @@ class CartanMatrix(Base, CartanType_abstract,
         """
         return self.root_system().root_space()
 
-    def reflection_group(self, type="matrix"):
+    def reflection_group(self, type='matrix'):
         """
         Return the reflection group corresponding to ``self``.
 
@@ -707,7 +717,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def is_simply_laced(self):
         """
-        Implements :meth:`CartanType_abstract.is_simply_laced()`.
+        Implement :meth:`CartanType_abstract.is_simply_laced()`.
 
         A Cartan matrix is simply-laced if all non diagonal entries are `0`
         or `-1`.
@@ -727,7 +737,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def is_crystallographic(self):
         """
-        Implements :meth:`CartanType_abstract.is_crystallographic`.
+        Implement :meth:`CartanType_abstract.is_crystallographic`.
 
         A Cartan matrix is crystallographic if it is symmetrizable.
 
@@ -740,7 +750,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def column_with_indices(self, j):
         """
-        Return the `j^{th}` column `(a_{i,j})_i` of ``self`` as a container
+        Return the `j`-th column `(a_{i,j})_i` of ``self`` as a container
         (or iterator) of tuples `(i, a_{i,j})`
 
         EXAMPLES::
@@ -753,7 +763,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def row_with_indices(self, i):
         """
-        Return the `i^{th}` row `(a_{i,j})_j` of ``self`` as a container
+        Return the `i`-th row `(a_{i,j})_j` of ``self`` as a container
         (or iterator) of tuples `(j, a_{i,j})`
 
         EXAMPLES::
@@ -1007,7 +1017,6 @@ class CartanMatrix(Base, CartanType_abstract,
             ]
             sage: M.principal_submatrices(proper=True)                                  # needs sage.graphs
             [[], [2], [2]]
-
         """
         iset = list(range(self.ncols()))
         ret = []
@@ -1064,7 +1073,7 @@ def is_borcherds_cartan_matrix(M):
         sage: is_borcherds_cartan_matrix(O)
         False
     """
-    if not is_Matrix(M):
+    if not isinstance(M, Matrix):
         return False
     if not M.is_square():
         return False

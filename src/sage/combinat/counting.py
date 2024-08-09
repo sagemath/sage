@@ -12,5 +12,4 @@ Counting
 .. TODO::
 
    Mention sage/combinat/degree_sequences?
-
 """

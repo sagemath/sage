@@ -37,7 +37,7 @@ class SpinorOperator(AbelianGroupElement_gap):
     A spinor operator seen as a tuple of square classes.
 
     For `2` the square class is represented as one of `1,3,5,7` and for
-    `p` odd it is `1` for a p-adic unit square and `-1` for a non-square.
+    `p` odd it is `1` for a `p`-adic unit square and `-1` for a non-square.
 
     EXAMPLES::
 
@@ -61,16 +61,16 @@ class SpinorOperator(AbelianGroupElement_gap):
         e = self.exponents()
         p = self.parent()._primes
         s = "[2:"
-        if e[0] == 0 and e[1] == 0:
+        if e[0] == 0 == e[1]:
             s += "1"
         elif e[0] == 1 and e[1] == 0:
             s += "3"
         elif e[0] == 0 and e[1] == 1:
             s += "5"
-        elif e[0] == 1 and e[1] == 1:
+        elif e[0] == 1 == e[1]:
             s += "7"
         for k in range(1, len(p)):
-            s += ", %s:%s" % (p[k], (-1)**e[k + 1])
+            s += f", {p[k]}:{(-1)**e[k + 1]}"
         s += "]"
         return s
 
@@ -116,7 +116,7 @@ class SpinorOperators(AbelianGroupGap):
 
         OUTPUT:
 
-        - a tuple ``f`` such that this element is ``f[0](*f[1])``
+        a tuple ``f`` such that this element is ``f[0](*f[1])``
 
         EXAMPLES::
 
@@ -139,7 +139,7 @@ class SpinorOperators(AbelianGroupGap):
             sage: SpinorOperators((2, 3, 7))
             Group of SpinorOperators at primes (2, 3, 7)
         """
-        return "Group of SpinorOperators at primes %s" % (self._primes,)
+        return f"Group of SpinorOperators at primes {self._primes}"
 
     def to_square_class(self, x, p):
         r"""
@@ -149,7 +149,7 @@ class SpinorOperators(AbelianGroupGap):
 
         - ``p`` -- a prime
 
-        - ``x```-- a non zero rational number
+        - ``x`` -- nonzero rational number
 
         EXAMPLES::
 
@@ -166,7 +166,7 @@ class SpinorOperators(AbelianGroupGap):
         """
         x = QQ(x)
         if x == 0:
-            raise ValueError("x must be non zero")
+            raise ValueError("x must be nonzero")
         if p not in self._primes:
             raise ValueError("not a coordinate prime")
         v, u = x.val_unit(p)
@@ -194,11 +194,10 @@ class SpinorOperators(AbelianGroupGap):
 
         INPUT:
 
-        - ``r`` -- a non zero integer;
-          if ``prime`` is ``None``, ``r`` must not be divisible
-          by the defining primes of ``self``
+        - ``r`` -- a nonzero integer; if ``prime`` is ``None``, ``r`` must not
+          be divisible by the defining primes of ``self``
 
-        - ``prime`` --(default:``None``) a prime or `-1`
+        - ``prime`` -- (default: ``None``) a prime or `-1`
 
         OUTPUT:
 
