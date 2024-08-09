@@ -1,4 +1,6 @@
 from itertools import accumulate, chain, combinations
+from math import prod
+from sage.arith.misc import binomial
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -834,10 +836,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
             """
             if len(arg) != self.parent()._k:
                 raise ValueError(f"Number of args (= {len(arg)}) must equal arity of self (= {len(arg)})")
-            if self.is_virtual() or any(x < 0 for x in arg):
-                raise NotImplementedError(f"Only non-virtual species are supported")
+            if any(x <= 0 for x in arg):
+                raise ValueError(f"All values must be strictly positive")
 
-            # Now we only have non-virtual species
             res = 0
             Parg = PolynomialSpecies(sum(arg))
             for F, coeff in self.monomial_coefficients().items():
@@ -847,7 +848,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 pi = libgap.MappingPermListList(dominv, libgap.eval(f'[1..{F.grade()}]'))
                 Fconj = libgap.ConjugateGroup(F._group, pi)
                 for parts in cartesian_product([IntegerVectors(k, l) for k, l in zip(F._mc, arg)]):
-                    term2 = 0
                     # parts is a tuple of partitions
                     part = list(chain.from_iterable(parts))
                     S_bottom = SymmetricGroup(F._tc).young_subgroup(part)
@@ -857,7 +857,46 @@ class PolynomialSpecies(CombinatorialFreeModule):
                     for tau, _ in taus:
                         tHt = libgap.ConjugateGroup(Fconj, tau)
                         G = PermutationGroup(gap_group=libgap.Intersection(tHt, S_bottom), domain=F.domain())
-                        term2 += Parg((G, newdom))
-                    term += term2
+                        term += Parg((G, newdom))
                 res += coeff * term
+            return res
+
+        def _embedding_coeff(self, part, n):
+            r"""
+            Number of embeddings of the partition ``part`` into a
+            list of length `n` (where holes are filled with `0`).
+            """
+            return Permutations(part).cardinality() * binomial(n, len(part))
+
+        def _multiplicity_handling(self, F, coeffs):
+            r"""
+            Handles cases of the form F(m1X1,m2X2,...).
+            coeffs is the mi. Hmc is the cardinality on each sort.
+            F is a PolynomialSpeciesElement.
+            """
+            if len(coeffs) != self.parent()._k:
+                raise ValueError(f"Number of args (= {len(coeffs)}) must equal arity of self (= {len(coeffs)})")
+            if any(x <= 0 for x in coeffs):
+                raise ValueError(f"All values must be strictly positive")
+
+            Fm = F.support()[0]
+            Fmc = Fm._mc
+            Fgap = Fm._group.gap()
+            # What we basically have is a specialisation of the addition
+            # formula, but setting X1=...=Xk=X.
+            res = 0
+            PF = F.parent()
+            S_top = SymmetricGroup(Fm._tc).young_subgroup(Fmc)
+            for parts in cartesian_product([Partitions(k, max_length=l) for k, l in zip(Fmc, coeffs)]):
+                term = 0
+                # parts is a tuple of partitions
+                part = list(chain.from_iterable(parts))
+                S_bottom = SymmetricGroup(Fm._tc).young_subgroup(part)
+                taus = libgap.DoubleCosetRepsAndSizes(S_top, Fgap, S_bottom)
+                for tau, _ in taus:
+                    tHt = libgap.ConjugateGroup(Fgap, tau)
+                    G = PermutationGroup(gap_group=libgap.Intersection(tHt, S_bottom), domain=Fm.domain())
+                    term += PF((G, Fm._dompart))
+                term *= prod([self._embedding_coeff(p, n) for p, n in zip(parts, coeffs)])
+                res += term
             return res
