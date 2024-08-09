@@ -464,7 +464,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         method_name = f'_frobenius_charpoly_{algorithm}'
         if not hasattr(self, method_name):
             raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
-        self._frobenius_charpoly = getattr(self, method_name)
+        self._frobenius_charpoly = getattr(self, method_name)()
         return self._frobenius_charpoly.change_variable_name(var)
 
     def _frobenius_charpoly_CSA(self):
@@ -904,7 +904,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         matrix_method_name = f'_frobenius_matrix_{algorithm}'
         if not hasattr(self, matrix_method_name):
             raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
-        matrix = getattr(self, matrix_method_name)
+        matrix = getattr(self, matrix_method_name)()
         trace = matrix.trace()
         A = self.function_ring()
         self._frobenius_trace = A([x.in_base() for x in trace])
