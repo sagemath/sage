@@ -1,4 +1,6 @@
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
+# distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 # sage.doctest: needs sage.libs.pari
 r"""
 Farey symbol for arithmetic subgroups of `\PSL_2(\ZZ)`
@@ -31,14 +33,14 @@ from sage.rings.real_mpfr import RR
 from sage.rings.cc import CC
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
-from .congroup_gammaH import is_GammaH
-from .congroup_gamma1 import is_Gamma1
-from .congroup_gamma0 import is_Gamma0
-from .congroup_gamma import is_Gamma
+from .congroup_gammaH import GammaH_class
+from .congroup_gamma1 import Gamma1_class
+from .congroup_gamma0 import Gamma0_class
+from .congroup_gamma import Gamma_class
 from .congroup_sl2z import SL2Z
 from sage.modular.cusps import Cusp
 
-from sage.misc.decorators import options, rename_keyword
+from sage.misc.decorators import options
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp cimport richcmp_not_equal
 
@@ -108,7 +110,7 @@ cdef class Farey:
 
     INPUT:
 
-    - `G` - an arithmetic subgroup of `\PSL_2(\ZZ)`
+    - ``G`` -- an arithmetic subgroup of `\PSL_2(\ZZ)`
 
     EXAMPLES:
 
@@ -216,19 +218,19 @@ cdef class Farey:
             sig_on()
             self.this_ptr = new cpp_farey()
             sig_off()
-        elif is_Gamma0(group):
+        elif isinstance(group, Gamma0_class):
             sig_on()
             self.this_ptr = new cpp_farey(group, new is_element_Gamma0(p))
             sig_off()
-        elif is_Gamma1(group):
+        elif isinstance(group, Gamma1_class):
             sig_on()
             self.this_ptr = new cpp_farey(group, new is_element_Gamma1(p))
             sig_off()
-        elif is_Gamma(group):
+        elif isinstance(group, Gamma_class):
             sig_on()
             self.this_ptr = new cpp_farey(group, new is_element_Gamma(p))
             sig_off()
-        elif is_GammaH(group):
+        elif isinstance(group, GammaH_class):
             sig_on()
             l = group._GammaH_class__H
             self.this_ptr = new cpp_farey(group, new is_element_GammaH(p, l))
@@ -303,12 +305,8 @@ cdef class Farey:
     @cached_method
     def _get_minus_one(self):
         r"""
-        If -I belongs to self, return a Tietze word representing it.
-
-        OUTPUT:
-
-        A Tietze word representing the element -I if it belongs to self.
-        Otherwise return []
+        If -I belongs to ``self``, return a Tietze word representing it.
+        Otherwise return ``[]``.
 
         EXAMPLES::
 
@@ -350,10 +348,11 @@ cdef class Farey:
 
         INPUT:
 
-        - ``M`` -- An element `M` of `\SL_2(\ZZ)`.
-        - ``output`` -- (default: ``'standard'``) Should be one of ``'standard'``,
+        - ``M`` -- an element `M` of `\SL_2(\ZZ)`
+        - ``output`` -- (default: ``'standard'``) should be one of ``'standard'``,
           ``'syllables'``, ``'gens'``.
-        - ``check`` -- (default: ``True``) Whether to check for correct input and output.
+        - ``check`` -- boolean (default: ``True``); whether to check for
+          correct input and output
 
         OUTPUT:
 
@@ -362,7 +361,7 @@ cdef class Farey:
 
         - ``standard`` returns the so called the Tietze representation,
           consists of a tuple of nonzero integers `i`, where if `i` > 0
-          then it indicates the `i`th generator (that is, ``self.generators()[0]``
+          then it indicates the `i`-th generator (that is, ``self.generators()[0]``
           would correspond to `i` = 1), and if `i` < 0 then it indicates
           the inverse of the `i`-th generator.
         - ``syllables`` returns a tuple of tuples of the form `(i,n)`, where
@@ -418,13 +417,13 @@ cdef class Farey:
             sage: g == g1
             True
 
-        Check that it works for GammaH as well (:trac:`19660`)::
+        Check that it works for GammaH as well (:issue:`19660`)::
 
             sage: G = GammaH(147, [8])
             sage: G.farey_symbol().word_problem(G([1,1,0,1]))
             (1,)
 
-        Check that :trac:`20347` is solved::
+        Check that :issue:`20347` is solved::
 
             sage: from sage.misc.misc_c import prod
             sage: G = ArithmeticSubgroup_Permutation(S2="(1,2)(3,4)",S3="(1,2,3)")
@@ -512,7 +511,7 @@ cdef class Farey:
 
     def __contains__(self, M):
         r"""
-        Tests if element is in the arithmetic group of the Farey symbol
+        Test if element is in the arithmetic group of the Farey symbol
         via LLT algorithm.
 
         EXAMPLES::
@@ -534,7 +533,7 @@ cdef class Farey:
 
     def __richcmp__(self, other, op):
         r"""
-        Compare self to others.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -565,7 +564,6 @@ cdef class Farey:
 
             sage: FareySymbol(Gamma0(4)).__reduce__()
             (<class 'sage.modular.arithgroup.farey_symbol.Farey'>, ...))
-
         """
         return Farey, (self.group, self.this_ptr.dumps())
 
@@ -591,8 +589,8 @@ cdef class Farey:
 
         INPUT:
 
-        - ``forced_format`` -- A format string ('plain' or 'xymatrix')
-                               or ``None``.
+        - ``forced_format`` -- a format string ('plain' or 'xymatrix')
+          or ``None``
 
         EXAMPLES::
 
@@ -846,7 +844,7 @@ cdef class Farey:
 
         INPUT:
 
-        ``c`` -- a cusp
+        - ``c`` -- a cusp
 
         EXAMPLES::
 
@@ -867,7 +865,7 @@ cdef class Farey:
 
         INPUT:
 
-        ``r`` -- a rational number
+        - ``r`` -- a rational number
 
         EXAMPLES::
 
@@ -895,7 +893,6 @@ cdef class Farey:
         sig_off()
         return result
 
-    @rename_keyword(rgbcolor='color')
     @options(alpha=1, fill=True, thickness=1, color='lightgray',
              color_even='white',
              zorder=2, linestyle='solid', show_pairing=True,
@@ -907,23 +904,23 @@ cdef class Farey:
 
         OPTIONS:
 
-        - ``fill`` -- boolean (default ``True``) fill the fundamental domain
+        - ``fill`` -- boolean (default: ``True``); fill the fundamental domain
 
-        - ``linestyle`` -- string (default: 'solid') The style of the line,
+        - ``linestyle`` -- string (default: ``'solid'``); the style of the line,
           which is one of 'dashed', 'dotted', 'solid', 'dashdot', or '--',
           ':', '-', '-.', respectively
 
-        - ``color`` -- (default: 'lightgray') fill color; fill
-          color for odd part of Dedekind tesselation.
+        - ``color`` -- (default: ``'lightgray'``) fill color for odd part of
+          Dedekind tesselation
 
-        - ``show_pairing`` -- boolean (default: ``True``) flag for pairing
+        - ``show_pairing`` -- boolean (default: ``True``); flag for pairing
 
-        - ``tesselation`` -- (default: 'Dedekind') The type of
+        - ``tesselation`` -- (default: ``'Dedekind'``) the type of
           hyperbolic tesselation which is one of
-          'coset', 'Dedekind' or ``None`` respectively
+          ``'coset'``, ``'Dedekind'`` or ``None`` respectively
 
         - ``color_even`` -- fill color for even parts of Dedekind
-          tesselation (default 'white'); ignored for other tesselations
+          tesselation (default: ``'white'``); ignored for other tesselations
 
         - ``thickness`` -- float (default: `1`) the thickness of the line
 
@@ -1029,6 +1026,7 @@ cdef class Farey:
                                         thickness=options['thickness'])
         d = g.get_minmax_data()
         g.set_axes_range(d['xmin'], d['xmax'], 0, options['ymax'])
+        g.set_aspect_ratio(1)
         return g
 
 
@@ -1038,26 +1036,26 @@ cdef public long convert_to_long(n) noexcept:
     cdef long m = n
     return m
 
-cdef public object convert_to_Integer(mpz_class a) noexcept:
+cdef public object convert_to_Integer(mpz_class a):
     A = Integer()
     A.set_from_mpz(a.get_mpz_t())
     return A
 
-cdef public object convert_to_rational(mpq_class r) noexcept:
+cdef public object convert_to_rational(mpq_class r):
     a = Integer()
     a.set_from_mpz(r.get_num_mpz_t())
     b = Integer()
     b.set_from_mpz(r.get_den_mpz_t())
     return a/b
 
-cdef public object convert_to_cusp(mpq_class r) noexcept:
+cdef public object convert_to_cusp(mpq_class r):
     a = Integer()
     a.set_from_mpz(r.get_num_mpz_t())
     b = Integer()
     b.set_from_mpz(r.get_den_mpz_t())
     return Cusp(a/b)
 
-cdef public object convert_to_SL2Z(cpp_SL2Z M) noexcept:
+cdef public object convert_to_SL2Z(cpp_SL2Z M):
     a = convert_to_Integer(M.a())
     b = convert_to_Integer(M.b())
     c = convert_to_Integer(M.c())

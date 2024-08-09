@@ -8,7 +8,6 @@ conventions for conversion functions
 - ``new_sage_XXX``   : create a new Sage object
 - ``set_ntl_XXX`` : set the entries of the ntl object
 - ``set_sage_XXX``   : set the entries of the Sage object
-
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht
@@ -42,8 +41,8 @@ cdef inline void set_ntl_matrix_modn_dense_float(mat_ZZ_p_c& A, ntl_ZZ_pContext_
 
     INPUT:
 
-    - A -- NTL matrix
-    - m -- Sage matrix
+    - ``A`` -- NTL matrix
+    - ``m`` -- Sage matrix
     """
     cdef size_t i, j
     cdef ntl_ZZ_p tmp
@@ -59,8 +58,8 @@ cdef inline void set_ntl_matrix_modn_dense_double(mat_ZZ_p_c& A, ntl_ZZ_pContext
 
     INPUT:
 
-    - A -- NTL matrix
-    - m -- Sage matrix
+    - ``A`` -- NTL matrix
+    - ``m`` -- Sage matrix
     """
     cdef size_t i, j
     cdef ntl_ZZ_p tmp
@@ -76,8 +75,8 @@ cdef inline void set_ntl_matrix_modn_generic_dense(mat_ZZ_p_c& A, ntl_ZZ_pContex
 
     INPUT:
 
-    - A -- NTL matrix
-    - m -- Sage matrix
+    - ``A`` -- NTL matrix
+    - ``m`` -- Sage matrix
     """
     cdef size_t i, j
     cdef ntl_ZZ_p tmp
@@ -93,8 +92,8 @@ cdef inline void set_ntl_matrix_modn_dense(mat_ZZ_p_c& A, ntl_ZZ_pContext_class 
 
     INPUT:
 
-    - A -- NTL matrix
-    - m -- Sage matrix
+    - ``A`` -- NTL matrix
+    - ``m`` -- Sage matrix
     """
     if isinstance(m, Matrix_modn_dense_float):
         set_ntl_matrix_modn_dense_float(A, c, m)

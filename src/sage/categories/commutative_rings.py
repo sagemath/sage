@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Commutative rings
 """
@@ -13,11 +14,12 @@ Commutative rings
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.structure.sequence import Sequence
 
 
 class CommutativeRings(CategoryWithAxiom):
     """
-    The category of commutative rings
+    The category of commutative rings.
 
     commutative rings with unity, i.e. rings with commutative * and
     a multiplicative identity
@@ -44,9 +46,59 @@ class CommutativeRings(CategoryWithAxiom):
 
         sage: GroupAlgebra(CyclicPermutationGroup(3), QQ) in CommutativeRings()     # not implemented, needs sage.groups sage.modules
         True
-
     """
     class ParentMethods:
+        def is_commutative(self) -> bool:
+            """
+            Return whether the ring is commutative.
+
+            The answer is ``True`` only if the category is a sub-category of
+            ``CommutativeRings``.
+
+            It is recommended to use instead ``R in Rings().Commutative()``.
+
+            EXAMPLES::
+
+                sage: QQ.is_commutative()
+                True
+                sage: QQ['x,y,z'].is_commutative()
+                True
+            """
+            return True
+
+        def _ideal_class_(self, n=0):
+            r"""
+            Return a callable object that can be used to create ideals in this
+            commutative ring.
+
+            This class can depend on `n`, the number of generators of the ideal.
+            The default input of `n=0` indicates an unspecified number of generators,
+            in which case a class that works for any number of generators is returned.
+
+            EXAMPLES::
+
+                sage: ZZ._ideal_class_()
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: RR._ideal_class_()
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: R.<x,y> = GF(5)[]
+                sage: R._ideal_class_(1)
+                <class 'sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal'>
+                sage: S = R.quo(x^3 - y^2)
+                sage: S._ideal_class_(1)
+                <class 'sage.rings.quotient_ring.QuotientRingIdeal_principal'>
+                sage: S._ideal_class_(2)
+                <class 'sage.rings.quotient_ring.QuotientRingIdeal_generic'>
+                sage: T.<z> = S[]                                                           # needs sage.libs.singular
+                sage: T._ideal_class_(5)                                                    # needs sage.libs.singular
+                <class 'sage.rings.ideal.Ideal_generic'>
+                sage: T._ideal_class_(1)                                                    # needs sage.libs.singular
+                <class 'sage.rings.ideal.Ideal_principal'>
+            """
+            # One might need more than just n
+            from sage.rings.ideal import Ideal_generic, Ideal_principal
+            return Ideal_principal if n == 1 else Ideal_generic
+
         def _test_divides(self, **options):
             r"""
             Run generic tests on the method :meth:`divides`.
@@ -96,14 +148,14 @@ class CommutativeRings(CategoryWithAxiom):
               morphism
 
             - ``gen`` -- a generator of this extension (over its base) or ``None``
-              (default: ``None``);
+              (default: ``None``)
 
-            - ``gens`` -- a list of generators of this extension (over its base)
-              or ``None`` (default: ``None``);
+            - ``gens`` -- list of generators of this extension (over its base)
+              or ``None`` (default: ``None``)
 
             - ``name`` -- a variable name or ``None`` (default: ``None``)
 
-            - ``names`` -- a list or a tuple of variable names or ``None``
+            - ``names`` -- list or a tuple of variable names or ``None``
               (default: ``None``)
 
             EXAMPLES:
@@ -216,6 +268,204 @@ class CommutativeRings(CategoryWithAxiom):
                 gens = (gen,)
             return RingExtension(self, base, gens, names)
 
+        def frobenius_endomorphism(self, n=1):
+            """
+            Return the Frobenius endomorphism.
+
+            INPUT:
+
+            - ``n`` -- nonnegative integer (default: 1)
+
+            OUTPUT:
+
+            The `n`-th power of the absolute arithmetic Frobenius
+            endomorphism on this commutative ring.
+
+            EXAMPLES::
+
+                sage: K.<u> = PowerSeriesRing(GF(5))
+                sage: Frob = K.frobenius_endomorphism(); Frob
+                Frobenius endomorphism x |--> x^5 of Power Series Ring in u
+                 over Finite Field of size 5
+                sage: Frob(u)
+                u^5
+
+            We can specify a power::
+
+                sage: f = K.frobenius_endomorphism(2); f
+                Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
+                 over Finite Field of size 5
+                sage: f(1+u)
+                1 + u^25
+            """
+            from sage.rings.morphism import FrobeniusEndomorphism_generic
+            return FrobeniusEndomorphism_generic(self, n)
+
+        def derivation_module(self, codomain=None, twist=None):
+            r"""
+            Return the module of derivations over this ring.
+
+            INPUT:
+
+            - ``codomain`` -- an algebra over this ring or a ring homomorphism
+              whose domain is this ring or ``None`` (default: ``None``); if it
+              is a morphism, the codomain of derivations will be the codomain
+              of the morphism viewed as an algebra over ``self`` through the
+              given morphism; if ``None``, the codomain will be this ring
+
+            - ``twist`` -- a morphism from this ring to ``codomain``
+              or ``None`` (default: ``None``); if ``None``, the coercion
+              map from this ring to ``codomain`` will be used
+
+            .. NOTE::
+
+                A twisted derivation with respect to `\theta` (or a
+                `\theta`-derivation for short) is an additive map `d`
+                satisfying the following axiom for all `x, y` in the domain:
+
+                .. MATH::
+
+                    d(xy) = \theta(x) d(y) + d(x) y.
+
+            EXAMPLES::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: M = R.derivation_module(); M                                          # needs sage.modules
+                Module of derivations over
+                 Multivariate Polynomial Ring in x, y, z over Rational Field
+                sage: M.gens()                                                              # needs sage.modules
+                (d/dx, d/dy, d/dz)
+
+            We can specify a different codomain::
+
+                sage: K = R.fraction_field()
+                sage: M = R.derivation_module(K); M                                         # needs sage.modules
+                Module of derivations
+                 from Multivariate Polynomial Ring in x, y, z over Rational Field
+                   to Fraction Field of
+                      Multivariate Polynomial Ring in x, y, z over Rational Field
+                sage: M.gen() / x                                                           # needs sage.modules
+                1/x*d/dx
+
+            Here is an example with a non-canonical defining morphism::
+
+                sage: ev = R.hom([QQ(0), QQ(1), QQ(2)])
+                sage: ev
+                Ring morphism:
+                  From: Multivariate Polynomial Ring in x, y, z over Rational Field
+                  To:   Rational Field
+                  Defn: x |--> 0
+                        y |--> 1
+                        z |--> 2
+                sage: M = R.derivation_module(ev)                                           # needs sage.modules
+                sage: M                                                                     # needs sage.modules
+                Module of derivations
+                 from Multivariate Polynomial Ring in x, y, z over Rational Field
+                   to Rational Field
+
+            Elements in `M` acts as derivations at `(0,1,2)`::
+
+                sage: # needs sage.modules
+                sage: Dx = M.gen(0); Dx
+                d/dx
+                sage: Dy = M.gen(1); Dy
+                d/dy
+                sage: Dz = M.gen(2); Dz
+                d/dz
+                sage: f = x^2 + y^2 + z^2
+                sage: Dx(f)  # = 2*x evaluated at (0,1,2)
+                0
+                sage: Dy(f)  # = 2*y evaluated at (0,1,2)
+                2
+                sage: Dz(f)  # = 2*z evaluated at (0,1,2)
+                4
+
+            An example with a twisting homomorphism::
+
+                sage: theta = R.hom([x^2, y^2, z^2])
+                sage: M = R.derivation_module(twist=theta); M                               # needs sage.modules
+                Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
+                 over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
+
+            .. SEEALSO::
+
+                :meth:`derivation`
+            """
+            from sage.rings.derivation import RingDerivationModule
+            if codomain is None:
+                codomain = self
+            return RingDerivationModule(self, codomain, twist)
+
+        def derivation(self, arg=None, twist=None):
+            r"""
+            Return the twisted or untwisted derivation over this ring
+            specified by ``arg``.
+
+            .. NOTE::
+
+                A twisted derivation with respect to `\theta` (or a
+                `\theta`-derivation for short) is an additive map `d`
+                satisfying the following axiom for all `x, y` in the domain:
+
+                .. MATH::
+
+                    d(xy) = \theta(x) d(y) + d(x) y.
+
+            INPUT:
+
+            - ``arg`` -- (optional) a generator or a list of coefficients
+              that defines the derivation
+
+            - ``twist`` -- (optional) the twisting homomorphism
+
+            EXAMPLES::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: R.derivation()                                                        # needs sage.modules
+                d/dx
+
+            In that case, ``arg`` could be a generator::
+
+                sage: R.derivation(y)                                                       # needs sage.modules
+                d/dy
+
+            or a list of coefficients::
+
+                sage: R.derivation([1,2,3])                                                 # needs sage.modules
+                d/dx + 2*d/dy + 3*d/dz
+
+            It is not possible to define derivations with respect to a
+            polynomial which is not a variable::
+
+                sage: R.derivation(x^2)                                                     # needs sage.modules
+                Traceback (most recent call last):
+                ...
+                ValueError: unable to create the derivation
+
+            Here is an example with twisted derivations::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: theta = R.hom([x^2, y^2, z^2])
+                sage: f = R.derivation(twist=theta); f                                      # needs sage.modules
+                0
+                sage: f.parent()                                                            # needs sage.modules
+                Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
+                 over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
+
+            Specifying a scalar, the returned twisted derivation is the
+            corresponding multiple of `\theta - id`::
+
+                sage: R.derivation(1, twist=theta)                                          # needs sage.modules
+                [x |--> x^2, y |--> y^2, z |--> z^2] - id
+                sage: R.derivation(x, twist=theta)                                          # needs sage.modules
+                x*([x |--> x^2, y |--> y^2, z |--> z^2] - id)
+            """
+            if isinstance(arg, (list, tuple)):
+                codomain = Sequence([self(0)] + list(arg)).universe()
+            else:
+                codomain = self
+            return self.derivation_module(codomain, twist=twist)(arg)
+
     class ElementMethods:
         pass
 
@@ -230,6 +480,18 @@ class CommutativeRings(CategoryWithAxiom):
             ....:                    GF(5)]) in Rings().Commutative().Finite()
             True
         """
+        def extra_super_categories(self):
+            r"""
+            Let Sage know that finite commutative rings are Noetherian.
+
+            EXAMPLES::
+
+                sage: CommutativeRings().Finite().extra_super_categories()
+                [Category of noetherian rings]
+            """
+            from sage.categories.noetherian_rings import NoetherianRings
+            return [NoetherianRings()]
+
         class ParentMethods:
             def cyclotomic_cosets(self, q, cosets=None):
                 r"""
@@ -269,9 +531,7 @@ class CommutativeRings(CategoryWithAxiom):
                   provided, the function only return the list of cosets that
                   contain some element from ``cosets``.
 
-                OUTPUT:
-
-                A list of lists.
+                OUTPUT: list of lists
 
                 EXAMPLES::
 
@@ -349,7 +609,7 @@ class CommutativeRings(CategoryWithAxiom):
                 try:
                     ~q
                 except ZeroDivisionError:
-                    raise ValueError("%s is not invertible in %s" % (q,self))
+                    raise ValueError("%s is not invertible in %s" % (q, self))
 
                 if cosets is None:
                     rest = set(self)
@@ -360,7 +620,7 @@ class CommutativeRings(CategoryWithAxiom):
                 while rest:
                     x0 = rest.pop()
                     o = [x0]
-                    x = q*x0
+                    x = q * x0
                     while x != x0:
                         o.append(x)
                         rest.discard(x)

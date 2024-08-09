@@ -137,11 +137,11 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
     """
     def __init__(self, E):
         r"""
-        Initialization function for EllipticCurveTorsionSubgroup class
+        Initialization function for EllipticCurveTorsionSubgroup class.
 
         INPUT:
 
-        - ``E`` -- An elliptic curve defined over a number field (including `\QQ`)
+        - ``E`` -- an elliptic curve defined over a number field (including `\QQ`)
 
         EXAMPLES::
 
@@ -287,7 +287,7 @@ def torsion_bound(E, number_of_places=20):
 
     - ``E`` -- an elliptic curve over `\QQ` or a number field
 
-    - ``number_of_places`` (positive integer, default = 20) -- the
+    - ``number_of_places`` -- positive integer (default: 20); the
       number of places that will be used to find the bound
 
     OUTPUT:
@@ -316,7 +316,7 @@ def torsion_bound(E, number_of_places=20):
         sage: [E.torsion_order() for E in CDB.iter([14])]
         [6, 6, 2, 6, 2, 6]
 
-    An example over a relative number field (see :trac:`16011`)::
+    An example over a relative number field (see :issue:`16011`)::
 
         sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]

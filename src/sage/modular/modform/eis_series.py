@@ -30,21 +30,21 @@ lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
     r"""
     Return the `q`-expansion of the normalized weight `k` Eisenstein series on
-    `\SL_2(\ZZ)` to precision prec in the ring `K`. Three normalizations
+    `\SL_2(\ZZ)` to precision ``prec`` in the ring `K`. Three normalizations
     are available, depending on the parameter ``normalization``; the default
     normalization is the one for which the linear coefficient is 1.
 
     INPUT:
 
-    - ``k`` - an even positive integer
+    - ``k`` -- an even positive integer
 
-    - ``prec`` - (default: 10) a nonnegative integer
+    - ``prec`` -- (default: 10) a nonnegative integer
 
-    - ``K`` - (default: `\QQ`) a ring
+    - ``K`` -- (default: `\QQ`) a ring
 
-    - ``var`` - (default: ``'q'``) variable name to use for q-expansion
+    - ``var`` -- (default: ``'q'``) variable name to use for `q`-expansion
 
-    - ``normalization`` - (default: ``'linear'``) normalization to use. If this
+    - ``normalization`` -- (default: ``'linear'``) normalization to use. If this
       is ``'linear'``, then the series will be normalized so that the linear
       term is 1. If it is ``'constant'``, the series will be normalized to have
       constant term 1. If it is ``'integral'``, then the series will be
@@ -78,37 +78,37 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
         1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + O(q^5)
         sage: eisenstein_series_qexp(12, 5, normalization='linear')
         691/65520 + q + 2049*q^2 + 177148*q^3 + 4196353*q^4 + O(q^5)
-        sage: eisenstein_series_qexp(12, 50, K=GF(13), normalization="constant")
+        sage: eisenstein_series_qexp(12, 50, K=GF(13), normalization='constant')
         1 + O(q^50)
 
     TESTS:
 
-    Test that :trac:`5102` is fixed::
+    Test that :issue:`5102` is fixed::
 
         sage: eisenstein_series_qexp(10, 30, GF(17))
         15 + q + 3*q^2 + 15*q^3 + 7*q^4 + 13*q^5 + 11*q^6 + 11*q^7 + 15*q^8 + 7*q^9 + 5*q^10 + 7*q^11 + 3*q^12 + 14*q^13 + 16*q^14 + 8*q^15 + 14*q^16 + q^17 + 4*q^18 + 3*q^19 + 6*q^20 + 12*q^21 + 4*q^22 + 12*q^23 + 4*q^24 + 4*q^25 + 8*q^26 + 14*q^27 + 9*q^28 + 6*q^29 + O(q^30)
 
-    This shows that the bug reported at :trac:`8291` is fixed::
+    This shows that the bug reported at :issue:`8291` is fixed::
 
         sage: eisenstein_series_qexp(26, 10, GF(13))
         7 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + 12*q^6 + 8*q^7 + 2*q^8 + O(q^10)
 
     We check that the function behaves properly over finite-characteristic base rings::
 
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization="integral")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization='integral')
         566*q + 236*q^2 + 286*q^3 + 194*q^4 + O(q^5)
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization="constant")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization='constant')
         Traceback (most recent call last):
         ...
         ValueError: The numerator of -B_k/(2*k) (=691) must be invertible in the ring Ring of integers modulo 691
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization="linear")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization='linear')
         q + 667*q^2 + 252*q^3 + 601*q^4 + O(q^5)
 
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization="integral")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization='integral')
         1 + O(q^5)
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization="constant")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization='constant')
         1 + O(q^5)
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization="linear")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization='linear')
         Traceback (most recent call last):
         ...
         ValueError: The denominator of -B_k/(2*k) (=65520) must be invertible in the ring Ring of integers modulo 2
@@ -124,7 +124,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
     - David Loeffler (2010-04-07): work around an integer overflow when `k` is large
 
     - David Loeffler (2012-03-15): add options for alternative normalizations
-      (motivated by :trac:`12043`)
+      (motivated by :issue:`12043`)
     """
     # we use this to prevent computation if it would fail anyway.
     if k <= 0 or k % 2 == 1:
@@ -385,34 +385,32 @@ def eisenstein_series_lseries(weight, prec=53,
                max_imaginary_part=0,
                max_asymp_coeffs=40):
     r"""
-    Return the L-series of the weight `2k` Eisenstein series
+    Return the `L`-series of the weight `2k` Eisenstein series
     on `\SL_2(\ZZ)`.
 
     This actually returns an interface to Tim Dokchitser's program
-    for computing with the L-series of the Eisenstein series
+    for computing with the `L`-series of the Eisenstein series
 
     INPUT:
 
-    - ``weight`` - even integer
+    - ``weight`` -- even integer
 
-    - ``prec`` - integer (bits precision)
+    - ``prec`` -- integer (bits precision)
 
-    - ``max_imaginary_part`` - real number
+    - ``max_imaginary_part`` -- real number
 
-    - ``max_asymp_coeffs`` - integer
+    - ``max_asymp_coeffs`` -- integer
 
-    OUTPUT:
-
-    The L-series of the Eisenstein series.
+    OUTPUT: the `L`-series of the Eisenstein series
 
     EXAMPLES:
 
-    We compute with the L-series of `E_{16}` and then `E_{20}`::
+    We compute with the `L`-series of `E_{16}` and then `E_{20}`::
 
        sage: L = eisenstein_series_lseries(16)
        sage: L(1)
        -0.291657724743874
-       sage: L = eisenstein_series_lseries(20)
+      sage: L = eisenstein_series_lseries(20)
        sage: L(2)
        -5.02355351645998
 

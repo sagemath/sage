@@ -106,11 +106,12 @@ def read_distribution(src_file):
 
     OUTPUT:
 
-    - a string, the name of the distribution package (``PKG``); or the empty
-      string if no directive was found.
+    A string, the name of the distribution package (``PKG``), or the empty
+    string if no directive was found.
 
     EXAMPLES::
 
+        sage: # needs SAGE_SRC
         sage: from sage.env import SAGE_SRC
         sage: from sage.misc.package_dir import read_distribution
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'tdlib.pyx'))
@@ -118,8 +119,7 @@ def read_distribution(src_file):
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'modular_decomposition.py'))
         ''
     """
-    from Cython.Utils import open_source_file
-    with open_source_file(src_file, error_handling='ignore') as fh:
+    with open(src_file, encoding='utf-8', errors='ignore') as fh:
         for line in fh:
             # Adapted from Cython's Build/Dependencies.py
             line = line.lstrip()
@@ -199,7 +199,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
         distribution = ''
     directive = 'sage_setup: ' f'distribution = {distribution}'.rstrip()
     try:
-        with open(src_file, 'r') as f:
+        with open(src_file) as f:
             src_lines = f.read().splitlines()
     except UnicodeDecodeError:
         # Silently skip binary files
@@ -251,9 +251,9 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     INPUT:
 
-    - ``path`` -- a directory name.
+    - ``path`` -- a directory name
 
-    - ``distribution_filter`` -- (optional, default: ``None``)
+    - ``distribution_filter`` -- (default: ``None``)
       only consider ``all*.py`` files whose distribution (from a
       ``# sage_setup:`` ``distribution = PACKAGE`` directive in the source file)
       is an element of ``distribution_filter``.
@@ -273,14 +273,14 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
         sage: directory = os.path.join(sage.libs.__path__[0], 'mpfr'); directory
         '.../sage/libs/mpfr'
-        sage: is_package_or_sage_namespace_package_dir(directory)
+        sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
         True
 
     :mod:`sage` is designated to become an implicit namespace package::
 
         sage: directory = sage.__path__[0]; directory
         '.../sage'
-        sage: is_package_or_sage_namespace_package_dir(directory)
+        sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
         True
 
     Not a package::
@@ -307,7 +307,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 @contextmanager
 def cython_namespace_package_support():
     r"""
-    Activate namespace package support in Cython 0.x
+    Activate namespace package support in Cython 0.x.
 
     See https://github.com/cython/cython/issues/2918#issuecomment-991799049
     """
@@ -333,16 +333,16 @@ def walk_packages(path=None, prefix='', onerror=None):
 
     INPUT:
 
-    - ``path`` -- a list of paths to look for modules in or
-      ``None`` (all accessible modules).
+    - ``path`` -- list of paths to look for modules in or
+      ``None`` (all accessible modules)
 
-    - ``prefix`` -- a string to output on the front of every module name
-      on output.
+    - ``prefix`` -- string to output on the front of every module name
+      on output
 
     - ``onerror`` -- a function which gets called with one argument (the
       name of the package which was being imported) if any exception
       occurs while trying to import a package.  If ``None``, ignore
-      :class:`ImportError` but propagate all other exceptions.
+      :exc:`ImportError` but propagate all other exceptions.
 
     EXAMPLES::
 
@@ -469,7 +469,7 @@ if __name__ == '__main__':
                               "do not change files that already have a nonempty directive"))
     parser.add_argument('--set', metavar='DISTRIBUTION', type=str, default=None,
                         help="add or update the 'sage_setup: DISTRIBUTION' directive in FILES")
-    parser.add_argument('--from-egg-info', action="store_true", default=False,
+    parser.add_argument('--from-egg-info', action='store_true', default=False,
                         help="take FILES from pkgs/DISTRIBUTION/DISTRIBUTION.egg-info/SOURCES.txt")
     parser.add_argument("filename", metavar='FILES', nargs='*', type=str,
                         help=("source files or directories (default: all files from SAGE_SRC, "
@@ -566,7 +566,7 @@ if __name__ == '__main__':
             distribution_underscore = distribution.replace('-', '_')
             try:
                 with open(os.path.join(distribution_dir,
-                                       f'{distribution_underscore}.egg-info', 'SOURCES.txt'), "r") as f:
+                                       f'{distribution_underscore}.egg-info', 'SOURCES.txt')) as f:
                     paths.extend(os.path.join(SAGE_ROOT, 'src', line.strip())
                                  for line in f
                                  if line.startswith('sage/'))
@@ -615,7 +615,7 @@ if __name__ == '__main__':
         if package in ordinary_packages:
             pass
         elif ((missing_all_files := distributions_per_directives - package_distributions_per_all_files[package])
-                and not (missing_all_files == set(['']) and len(distributions_per_directives) < 2)):
+                and not (missing_all_files == {''} and len(distributions_per_directives) < 2)):
             s = '' if len(missing_all_files) == 1 else 's'
             print(f'{package}: missing file{s} ' + ', '.join(_all_filename(distribution)
                                                              for distribution in missing_all_files))

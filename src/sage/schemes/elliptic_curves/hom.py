@@ -56,7 +56,7 @@ class EllipticCurveHom(Morphism):
             sage: E.isogeny(P)                        # indirect doctest
             Isogeny of degree 127 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2 to Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
             sage: E.isogeny(P, algorithm='factored')  # indirect doctest
-            Composite morphism of degree 127 = 127:
+            Composite morphism of degree 127:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
               To:   Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
             sage: E.isogeny(P, algorithm='velusqrt')  # indirect doctest
@@ -561,8 +561,8 @@ class EllipticCurveHom(Morphism):
 
         INPUT:
 
-        - ``prec`` -- (default: 20), the precision with which the
-          computations in the formal group are carried out.
+        - ``prec`` -- (default: 20) the precision with which the
+          computations in the formal group are carried out
 
         EXAMPLES::
 
@@ -755,11 +755,9 @@ class EllipticCurveHom(Morphism):
             sage: E = EllipticCurve(GF(7^2), [3,2])
             sage: P = E.lift_x(1)
             sage: phi = EllipticCurveHom_composite(E, P); phi
-            Composite morphism of degree 7 = 7:
-              From: Elliptic Curve defined by y^2 = x^3 + 3*x + 2
-                    over Finite Field in z2 of size 7^2
-              To:   Elliptic Curve defined by y^2 = x^3 + 3*x + 2
-                    over Finite Field in z2 of size 7^2
+            Composite morphism of degree 7:
+              From: Elliptic Curve defined by y^2 = x^3 + 3*x + 2 over Finite Field in z2 of size 7^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 3*x + 2 over Finite Field in z2 of size 7^2
             sage: phi.is_separable()
             True
 

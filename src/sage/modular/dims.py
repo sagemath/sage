@@ -47,8 +47,8 @@ REFERENCES:
 
 from sage.arith.misc import factor, is_prime, valuation
 from sage.misc.misc_c import prod
-from sage.modular.arithgroup.all import (Gamma0, Gamma1, is_ArithmeticSubgroup,
-                                         is_GammaH)
+from sage.modular.arithgroup.all import (Gamma0, Gamma1, ArithmeticSubgroup,
+                                         GammaH_class)
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
@@ -69,7 +69,7 @@ def eisen(p):
 
     - ``p`` -- a prime
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -96,13 +96,13 @@ def CO_delta(r, p, N, eps):
 
     INPUT:
 
-    -  ``r`` -- positive integer
+    - ``r`` -- positive integer
 
-    -  ``p`` -- a prime
+    - ``p`` -- a prime
 
-    -  ``N`` -- positive integer
+    - ``N`` -- positive integer
 
-    -  ``eps`` -- character
+    - ``eps`` -- character
 
     OUTPUT: element of the base ring of the character
 
@@ -140,13 +140,13 @@ def CO_nu(r, p, N, eps):
 
     INPUT:
 
-    -  ``r`` -- positive integer
+    - ``r`` -- positive integer
 
-    -  ``p`` -- a prime
+    - ``p`` -- a prime
 
-    -  ``N`` -- positive integer
+    - ``N`` -- positive integer
 
-    -  ``eps`` -- character
+    - ``eps`` -- character
 
     OUTPUT: element of the base ring of the character
 
@@ -185,11 +185,11 @@ def CohenOesterle(eps, k):
 
     INPUT:
 
-    -  ``eps`` -- Dirichlet character
+    - ``eps`` -- Dirichlet character
 
-    -  ``k`` -- integer
+    - ``k`` -- integer
 
-    OUTPUT: element of the base ring of eps.
+    OUTPUT: element of the base ring of eps
 
     EXAMPLES::
 
@@ -219,9 +219,9 @@ def CohenOesterle(eps, k):
 
         INPUT:
 
-        -  ``r, s, p`` -- integers
+        - ``r``, ``s``, ``p`` -- integers
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES: (indirect doctest)
 
@@ -258,12 +258,12 @@ def dimension_new_cusp_forms(X, k=2, p=0):
 
     INPUT:
 
-    -  ``X`` -- integer, congruence subgroup or Dirichlet
-       character
+    - ``X`` -- integer, congruence subgroup or Dirichlet
+      character
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- weight (integer)
 
-    -  ``p`` -- 0 or a prime
+    - ``p`` -- 0 or a prime
 
     EXAMPLES::
 
@@ -291,14 +291,14 @@ def dimension_new_cusp_forms(X, k=2, p=0):
         sage: dimension_new_cusp_forms(Gamma1(30),3)
         12
 
-    Check that :trac:`12640` is fixed::
+    Check that :issue:`12640` is fixed::
 
         sage: dimension_new_cusp_forms(DirichletGroup(1)(1), 12)
         1
         sage: dimension_new_cusp_forms(DirichletGroup(2)(1), 24)
         1
     """
-    if is_GammaH(X):
+    if isinstance(X, GammaH_class):
         return X.dimension_new_cusp_forms(k, p=p)
     elif isinstance(X, dirichlet.DirichletCharacter):
         N = X.modulus()
@@ -320,10 +320,10 @@ def dimension_cusp_forms(X, k=2):
 
     INPUT:
 
-    -  ``X`` -- congruence subgroup or Dirichlet character
-       or integer
+    - ``X`` -- congruence subgroup or Dirichlet character
+      or integer
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- weight (integer)
 
     EXAMPLES::
 
@@ -388,7 +388,7 @@ def dimension_cusp_forms(X, k=2):
         sage: dimension_cusp_forms(e^2,2)
         1
 
-    Check that :trac:`12640` is fixed::
+    Check that :issue:`12640` is fixed::
 
         sage: dimension_cusp_forms(DirichletGroup(1)(1), 12)
         1
@@ -401,7 +401,7 @@ def dimension_cusp_forms(X, k=2):
             return Gamma0(N).dimension_cusp_forms(k)
         else:
             return Gamma1(N).dimension_cusp_forms(k, X)
-    elif is_ArithmeticSubgroup(X):
+    elif isinstance(X, ArithmeticSubgroup):
         return X.dimension_cusp_forms(k)
     elif isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_cusp_forms(k)
@@ -416,10 +416,10 @@ def dimension_eis(X, k=2):
 
     INPUT:
 
-    -  ``X`` -- congruence subgroup or Dirichlet character
-       or integer
+    - ``X`` -- congruence subgroup or Dirichlet character
+      or integer
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- integer; weight
 
     EXAMPLES::
 
@@ -471,7 +471,7 @@ def dimension_eis(X, k=2):
         sage: dimension_modular_forms(Gamma1(4), 11)
         6
     """
-    if is_ArithmeticSubgroup(X):
+    if isinstance(X, ArithmeticSubgroup):
         return X.dimension_eis(k)
     elif isinstance(X, dirichlet.DirichletCharacter):
         return Gamma1(X.modulus()).dimension_eis(k, X)
@@ -488,9 +488,9 @@ def dimension_modular_forms(X, k=2):
 
     INPUT:
 
-    -  ``X`` -- congruence subgroup or Dirichlet character
+    - ``X`` -- congruence subgroup or Dirichlet character
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- integer; weight
 
     EXAMPLES::
 
@@ -521,7 +521,7 @@ def dimension_modular_forms(X, k=2):
     """
     if isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_modular_forms(k)
-    elif is_ArithmeticSubgroup(X):
+    elif isinstance(X, ArithmeticSubgroup):
         return X.dimension_modular_forms(k)
     elif isinstance(X, dirichlet.DirichletCharacter):
         return Gamma1(X.modulus()).dimension_modular_forms(k, eps=X)
@@ -539,10 +539,10 @@ def sturm_bound(level, weight=2):
 
     INPUT:
 
-    - ``level`` -- an integer (interpreted as a level for Gamma0) or a
-       congruence subgroup
+    - ``level`` -- integer (interpreted as a level for `\Gamma0`) or a
+      congruence subgroup
 
-    -  ``weight`` -- an integer `\geq 2` (default: 2)
+    - ``weight`` -- integer `\geq 2` (default: 2)
 
     EXAMPLES::
 
@@ -560,7 +560,7 @@ def sturm_bound(level, weight=2):
         sage: sturm_bound(11)
         2
     """
-    if is_ArithmeticSubgroup(level):
+    if isinstance(level, ArithmeticSubgroup):
         if level.is_congruence():
             return level.sturm_bound(weight)
         raise ValueError("no Sturm bound defined for noncongruence subgroups")

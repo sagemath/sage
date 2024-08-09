@@ -33,20 +33,20 @@ from .base_ZZ import Polyhedron_ZZ
 #########################################################################
 class Polyhedron_polymake(Polyhedron_base):
     """
-    Polyhedra with polymake
+    Polyhedra with polymake.
 
     INPUT:
 
     - ``parent`` -- :class:`~sage.geometry.polyhedron.parent.Polyhedra`
       the parent
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``; the
-      V-representation of the polyhedron; if ``None``, the polyhedron
-      is determined by the H-representation
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``; the
+      V-representation of the polyhedron. If ``None``, the polyhedron
+      is determined by the H-representation.
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``; the
-      H-representation of the polyhedron; if ``None``, the polyhedron
-      is determined by the V-representation
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``; the
+      H-representation of the polyhedron. If ``None``, the polyhedron
+      is determined by the V-representation.
 
     - ``polymake_polytope`` -- a polymake polytope object
 
@@ -96,8 +96,8 @@ class Polyhedron_polymake(Polyhedron_base):
 
     Quadratic fields work::
 
-        sage: V = polytopes.dodecahedron().vertices_list()                              # needs sage.rings.number_field
-        sage: Polyhedron(vertices=V, backend='polymake')        # optional - jupymake, needs sage.rings.number_field
+        sage: V = polytopes.dodecahedron().vertices_list()                              # needs sage.groups sage.rings.number_field
+        sage: Polyhedron(vertices=V, backend='polymake')        # optional - jupymake, needs sage.groups sage.rings.number_field
         A 3-dimensional polyhedron
          in (Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?)^3
@@ -133,7 +133,6 @@ class Polyhedron_polymake(Polyhedron_base):
         ....:                backend='polymake')
         sage: p.n_lines()                                                  # optional - jupymake
         1
-
     """
 
     def _is_zero(self, x):
@@ -142,11 +141,9 @@ class Polyhedron_polymake(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -164,11 +161,9 @@ class Polyhedron_polymake(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -186,11 +181,9 @@ class Polyhedron_polymake(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -204,7 +197,7 @@ class Polyhedron_polymake(Polyhedron_base):
 
     def __init__(self, parent, Vrep, Hrep, polymake_polytope=None, **kwds):
         """
-        Initializes the polyhedron.
+        Initialize the polyhedron.
 
         See :class:`Polyhedron_polymake` for a description of the input
         data.
@@ -266,8 +259,8 @@ class Polyhedron_polymake(Polyhedron_base):
         INPUT:
 
         - ``vertices`` -- list of points; each point can be specified
-           as any iterable container of
-           :meth:`~sage.geometry.polyhedron.base.base_ring` elements
+          as any iterable container of
+          :meth:`~sage.geometry.polyhedron.base.base_ring` elements
 
         - ``rays`` -- list of rays; each ray can be specified as any
           iterable container of
@@ -299,8 +292,8 @@ class Polyhedron_polymake(Polyhedron_base):
         INPUT:
 
         - ``vertices`` -- list of points; each point can be specified
-           as any iterable container of
-           :meth:`~sage.geometry.polyhedron.base.base_ring` elements
+          as any iterable container of
+          :meth:`~sage.geometry.polyhedron.base.base_ring` elements
 
         - ``rays`` -- list of rays; each ray can be specified as any
           iterable container of
@@ -492,7 +485,6 @@ class Polyhedron_polymake(Polyhedron_base):
              An inequality (-5, 12) x + 10 >= 0}
             sage: set(p.Vrepresentation())                                 # optional - jupymake
             {A vertex at (0, 1/2), A vertex at (2, 0), A vertex at (4, 5/6)}
-
         """
         self._Vrepresentation = []
         parent = self.parent()
@@ -527,7 +519,6 @@ class Polyhedron_polymake(Polyhedron_base):
              An inequality (-5, 12) x + 10 >= 0}
             sage: set(p.Vrepresentation())                                 # optional - jupymake
             {A vertex at (0, 1/2), A vertex at (2, 0), A vertex at (4, 5/6)}
-
         """
         p = self._polymake_polytope
         if not p.FEASIBLE:
@@ -548,7 +539,7 @@ class Polyhedron_polymake(Polyhedron_base):
     @classmethod
     def _from_polymake_polytope(cls, parent, polymake_polytope):
         r"""
-        Initializes a polyhedron from a polymake Polytope object.
+        Initialize a polyhedron from a polymake Polytope object.
 
         TESTS::
 
@@ -739,8 +730,8 @@ class Polyhedron_QQ_polymake(Polyhedron_polymake, Polyhedron_QQ):
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -759,8 +750,8 @@ class Polyhedron_ZZ_polymake(Polyhedron_polymake, Polyhedron_ZZ):
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 

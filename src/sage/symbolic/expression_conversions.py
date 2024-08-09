@@ -234,7 +234,7 @@ class Converter():
             sage: c.get_fake_div((2*x^3+2*x-1)/((x-2)*(x+1)))
             FakeExpression([2*x^3 + 2*x - 1, FakeExpression([x + 1, x - 2], <built-in function mul>)], <built-in function truediv>)
 
-        Check if :trac:`8056` is fixed, i.e., if numerator is 1.::
+        Check if :issue:`8056` is fixed, i.e., if numerator is 1.::
 
             sage: c.get_fake_div(1/pi/x)
             FakeExpression([1, FakeExpression([pi, x], <built-in function mul>)], <built-in function truediv>)
@@ -278,7 +278,7 @@ class Converter():
         The input to this method is the result of calling
         :meth:`pyobject` on a symbolic expression.
 
-        .. note::
+        .. NOTE::
 
            Note that if a constant such as ``pi`` is encountered in
            the expression tree, its corresponding pyobject which is an
@@ -400,7 +400,6 @@ class InterfaceInit(Converter):
             'sin((%pi)+(2))'
             sage: m(exp(x^2) + pi + 2)
             '(%pi)+(exp((_SAGE_VAR_x)^(2)))+(2)'
-
         """
         self.name_init = "_%s_init_" % interface.name()
         self.interface = interface
@@ -512,7 +511,7 @@ class InterfaceInit(Converter):
 
         TESTS:
 
-        Most of these confirm that :trac:`7401` was fixed::
+        Most of these confirm that :issue:`7401` was fixed::
 
             sage: t = var('t'); f = function('f')(t)
             sage: a = 2^e^t * f.subs(t=e^t) * diff(f, t).subs(t=e^t) + 2*t
@@ -574,7 +573,7 @@ class InterfaceInit(Converter):
             sage: bool(b.sage() == a)
             True
 
-        Test a special case (:trac:`16697`)::
+        Test a special case (:issue:`16697`)::
 
             sage: x,y = var('x,y')
             sage: (gamma_inc(x,y).diff(x))
@@ -662,7 +661,7 @@ class InterfaceInit(Converter):
 ##########
 class FriCASConverter(InterfaceInit):
     """
-    Converts any expression to FriCAS.
+    Convert any expression to FriCAS.
 
     EXAMPLES::
 
@@ -675,7 +674,6 @@ class FriCASConverter(InterfaceInit):
         y %e   - asin(x + %pi)
         ----------------------
                    y
-
     """
     def __init__(self):
         import sage.interfaces.fricas
@@ -690,37 +688,37 @@ class FriCASConverter(InterfaceInit):
         `Expression Integer` and `Expression Complex Integer` to make
         sure that elements of the symbolic ring are translated to
         these.  In particular, this is needed for integration, see
-        :trac:`28641` and :trac:`28647`.
+        :issue:`28641` and :issue:`28647`.
 
         EXAMPLES::
 
             sage: 2._fricas_().domainOf()                                       # optional - fricas
-            PositiveInteger()
+            PositiveInteger...
 
             sage: (-1/2)._fricas_().domainOf()                                  # optional - fricas
-            Fraction(Integer())
+            Fraction(Integer...)
 
             sage: SR(2)._fricas_().domainOf()                                   # optional - fricas
-            Expression(Integer())
+            Expression(Integer...)
 
             sage: (sqrt(2))._fricas_().domainOf()                               # optional - fricas
-            Expression(Integer())
+            Expression(Integer...)
 
             sage: pi._fricas_().domainOf()                                      # optional - fricas
-            Pi()
+            Pi...
 
             sage: asin(pi)._fricas_()                                           # optional - fricas
             asin(%pi)
 
             sage: I._fricas_().domainOf()                                   # optional - fricas
-            Complex(Integer())
+            Complex(Integer...)
 
             sage: SR(I)._fricas_().domainOf()                                   # optional - fricas
-            Expression(Complex(Integer()))
+            Expression(Complex(Integer...))
 
             sage: ex = (I+sqrt(2)+2)
             sage: ex._fricas_().domainOf()                                      # optional - fricas
-            Expression(Complex(Integer()))
+            Expression(Complex(Integer...))
 
             sage: ex._fricas_()^2                                               # optional - fricas
                        +-+
@@ -729,7 +727,6 @@ class FriCASConverter(InterfaceInit):
             sage: (ex^2)._fricas_()                                             # optional - fricas
                        +-+
             (4 + 2 %i)\|2  + 5 + 4 %i
-
         """
         try:
             result = getattr(obj, self.name_init)()
@@ -759,12 +756,11 @@ class FriCASConverter(InterfaceInit):
             Variable(x)
 
             sage: (x^2)._fricas_().domainOf()                                   # optional - fricas
-            Expression(Integer())
+            Expression(Integer...)
 
             sage: (2*x)._fricas_().integrate(x)                                 # optional - fricas
              2
             x
-
         """
         return repr(ex)
 
@@ -780,7 +776,6 @@ class FriCASConverter(InterfaceInit):
 
         Note that ``ex.operator() == operator``.
 
-
         EXAMPLES::
 
             sage: var('x,y,z')
@@ -792,18 +787,18 @@ class FriCASConverter(InterfaceInit):
             F      (x,y,z)
              ,1,1,3
 
-        Check that :trac:`25838` is fixed::
+        Check that :issue:`25838` is fixed::
 
             sage: var('x')
             x
             sage: F = function('F')
-            sage: integrate(F(x), x, algorithm="fricas")                        # optional - fricas
+            sage: integrate(F(x), x, algorithm='fricas')                        # optional - fricas
             integral(F(x), x)
 
-            sage: integrate(diff(F(x), x)*sin(F(x)), x, algorithm="fricas")     # optional - fricas
+            sage: integrate(diff(F(x), x)*sin(F(x)), x, algorithm='fricas')     # optional - fricas
             -cos(F(x))
 
-        Check that :trac:`27310` is fixed::
+        Check that :issue:`27310` is fixed::
 
             sage: f = function("F")
             sage: var("y")
@@ -813,7 +808,6 @@ class FriCASConverter(InterfaceInit):
             sage: fricas(ex)                                                    # optional - fricas
             F      (x,y + x)
              ,1,1,2
-
         """
         args = ex.operands()  # the arguments the derivative is evaluated at
         params = operator.parameter_set()
@@ -914,7 +908,7 @@ class PolynomialConverter(Converter):
 
     def symbol(self, ex):
         """
-        Returns a variable in the polynomial ring.
+        Return a variable in the polynomial ring.
 
         EXAMPLES::
 
@@ -1034,15 +1028,13 @@ def polynomial(ex, base_ring=None, ring=None):
 
     - ``ex`` -- a symbolic expression
 
-    - ``base_ring``, ``ring`` -- Either a
+    - ``base_ring``, ``ring`` -- either a
       ``base_ring`` or a polynomial ``ring`` can be
       specified for the parent of result.
       If just a ``base_ring`` is given, then the variables
       of the ``base_ring`` will be the variables of the expression ``ex``.
 
-    OUTPUT:
-
-    A polynomial.
+    OUTPUT: a polynomial
 
     EXAMPLES::
 
@@ -1123,15 +1115,13 @@ def laurent_polynomial(ex, base_ring=None, ring=None):
 
     - ``ex`` -- a symbolic expression
 
-    - ``base_ring``, ``ring`` -- Either a
+    - ``base_ring``, ``ring`` -- either a
       ``base_ring`` or a Laurent polynomial ``ring`` can be
       specified for the parent of result.
       If just a ``base_ring`` is given, then the variables
       of the ``base_ring`` will be the variables of the expression ``ex``.
 
-    OUTPUT:
-
-    A Laurent polynomial.
+    OUTPUT: a Laurent polynomial
 
     EXAMPLES::
 
@@ -1235,7 +1225,7 @@ class FastCallableConverter(Converter):
         TESTS:
 
         Check if rational functions with numerator 1 can
-        be converted. (:trac:`8056`)::
+        be converted. (:issue:`8056`)::
 
             sage: (1/pi/x)._fast_callable_(etb)
             div(1, mul(pi, v_0))
@@ -1338,7 +1328,6 @@ def fast_callable(ex, etb):
         sage: f = (2*x^3+2*x-1)/((x-2)*(x+1))
         sage: f._fast_callable_(etb)
         div(add(add(mul(ipow(v_0, 3), 2), mul(v_0, 2)), -1), mul(add(v_0, 1), add(v_0, -2)))
-
     """
     return FastCallableConverter(ex, etb)()
 
@@ -1642,13 +1631,12 @@ class SubstituteFunction(ExpressionTreeWalker):
         TESTS:
 
         We can substitute functions under a derivative operator,
-        :trac:`12801`::
+        :issue:`12801`::
 
             sage: f = function('f')
             sage: g = function('g')
             sage: f(g(x)).diff(x).substitute_function({g: sin})
             cos(x)*D[0](f)(sin(x))
-
         """
         new = self.substitutions.get(operator.function())
         if new is not None:

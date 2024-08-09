@@ -55,7 +55,7 @@ from sage.arith.misc import prime_powers
 @cached_function
 def find_recursive_construction(k, n):
     r"""
-    Find a recursive construction of an `OA(k,n)` (calls all others ``find_*`` functions)
+    Find a recursive construction of an `OA(k,n)` (calls all others ``find_*`` functions).
 
     This determines whether an `OA(k,n)` can be built through the following
     constructions:
@@ -73,7 +73,7 @@ def find_recursive_construction(k, n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -116,7 +116,7 @@ def find_recursive_construction(k, n):
     return False
 
 
-cpdef find_product_decomposition(int k,int n) noexcept:
+cpdef find_product_decomposition(int k,int n):
     r"""
     Find `n_1n_2=n` to obtain an `OA(k,n)` by the product construction.
 
@@ -129,7 +129,7 @@ cpdef find_product_decomposition(int k,int n) noexcept:
 
     INPUT:
 
-    - ``k,n`` (integers) -- see above.
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -157,7 +157,7 @@ cpdef find_product_decomposition(int k,int n) noexcept:
             return wilson_construction, (None,k,n1,n2,(),False)
     return False
 
-cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n) noexcept:
+cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n):
     r"""
     Find `rm+u=n` to obtain an `OA(k,n)` by Wilson's construction with one truncated column.
 
@@ -167,7 +167,7 @@ cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n) noexcept:
 
     INPUT:
 
-    - ``k,n`` (integers) -- see above
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -208,7 +208,7 @@ cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n) noexcept:
 
     return False
 
-cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n) noexcept:
+cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
     r"""
     Find `rm+r_1+r_2=n` to obtain an `OA(k,n)` by Wilson's construction with two truncated columns.
 
@@ -218,7 +218,7 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n) noexcept:
 
     INPUT:
 
-    - ``k,n`` (integers) -- see above
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -270,13 +270,13 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n) noexcept:
                     return wilson_construction, (None,k,r,m,(r1,r2),False)
     return False
 
-cpdef find_construction_3_3(int k,int n) noexcept:
+cpdef find_construction_3_3(int k,int n):
     r"""
-    Find a decomposition for construction 3.3 from [AC07]_
+    Find a decomposition for construction 3.3 from [AC07]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -309,13 +309,13 @@ cpdef find_construction_3_3(int k,int n) noexcept:
                 from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_3
                 return construction_3_3, (k,nn,mm,i)
 
-cpdef find_construction_3_4(int k,int n) noexcept:
+cpdef find_construction_3_4(int k,int n):
     r"""
-    Find a decomposition for construction 3.4 from [AC07]_
+    Find a decomposition for construction 3.4 from [AC07]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -352,13 +352,13 @@ cpdef find_construction_3_4(int k,int n) noexcept:
                     from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_4
                     return construction_3_4, (k,nn,mm,r,s)
 
-cpdef find_construction_3_5(int k,int n) noexcept:
+cpdef find_construction_3_5(int k,int n):
     r"""
-    Find a decomposition for construction 3.5 from [AC07]_
+    Find a decomposition for construction 3.5 from [AC07]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -402,13 +402,13 @@ cpdef find_construction_3_5(int k,int n) noexcept:
                         from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_5
                         return construction_3_5, (k,nn,mm,r,s,t)
 
-cpdef find_construction_3_6(int k,int n) noexcept:
+cpdef find_construction_3_6(int k,int n):
     r"""
-    Find a decomposition for construction 3.6 from [AC07]_
+    Find a decomposition for construction 3.6 from [AC07]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -443,7 +443,7 @@ cpdef find_construction_3_6(int k,int n) noexcept:
                 from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_6
                 return construction_3_6, (k,nn,mm,i)
 
-cpdef find_q_x(int k,int n) noexcept:
+cpdef find_q_x(int k,int n):
     r"""
     Find integers `q,x` such that the `q-x` construction yields an `OA(k,n)`.
 
@@ -461,7 +461,7 @@ cpdef find_q_x(int k,int n) noexcept:
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -496,7 +496,7 @@ cpdef find_q_x(int k,int n) noexcept:
             return construction_q_x, (k,q,x)
     return False
 
-cpdef find_thwart_lemma_3_5(int k,int N) noexcept:
+cpdef find_thwart_lemma_3_5(int k,int N):
     r"""
     Find the values on which Lemma 3.5 from [Thwarts]_ applies.
 
@@ -617,13 +617,13 @@ cpdef find_thwart_lemma_3_5(int k,int N) noexcept:
 
     return False
 
-cpdef find_thwart_lemma_4_1(int k,int n) noexcept:
+cpdef find_thwart_lemma_4_1(int k,int n):
     r"""
     Find a decomposition for Lemma 4.1 from [Thwarts]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -666,13 +666,13 @@ cpdef find_thwart_lemma_4_1(int k,int n) noexcept:
 
     return False
 
-cpdef find_three_factor_product(int k,int n) noexcept:
+cpdef find_three_factor_product(int k,int n):
     r"""
-    Find `n_1n_2n_3=n` to obtain an `OA(k,n)` by the three-factor product from [DukesLing14]_
+    Find `n_1n_2n_3=n` to obtain an `OA(k,n)` by the three-factor product from [DukesLing14]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -711,13 +711,13 @@ cpdef find_three_factor_product(int k,int n) noexcept:
 
     return False
 
-cpdef find_brouwer_separable_design(int k,int n) noexcept:
+cpdef find_brouwer_separable_design(int k,int n):
     r"""
     Find `t(q^2+q+1)+x=n` to obtain an `OA(k,n)` by Brouwer's separable design construction.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     The assumptions made on the parameters `t,q,x` are explained in the
     documentation of
@@ -818,11 +818,11 @@ def int_as_sum(int value, list S, int k_max):
 
     INPUT:
 
-    - ``value`` (integer)
+    - ``value`` -- integer
 
-    - ``S`` -- a list of integers
+    - ``S`` -- list of integers
 
-    - ``k_max`` (integer)
+    - ``k_max`` -- integer
 
     EXAMPLES::
 
@@ -882,7 +882,7 @@ def int_as_sum(int value, list S, int k_max):
     return None
 
 
-cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n) noexcept:
+cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n):
     r"""
     Find `rm+x_1+...+x_c=n` such that the Brouwer-van Rees constructions yields a `OA(k,n)`.
 
@@ -898,7 +898,7 @@ cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n) noexcept:
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     EXAMPLES::
 
@@ -957,7 +957,7 @@ cdef int is_available(int k,int n) except -1:
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
     """
     if n >= _OA_cache_size:
         return orthogonal_array(k,n,existence=True) is True

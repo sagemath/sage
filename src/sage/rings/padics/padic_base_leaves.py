@@ -98,7 +98,7 @@ when cast into the ring.::
     sage: type((a * b) / 5^3)
     <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
 
-The fixed modulus type is the leanest of the p-adic rings: it is
+The fixed modulus type is the leanest of the `p`-adic rings: it is
 basically just a wrapper around `\ZZ / p^n \ZZ`
 providing a unified interface with the rest of the `p`-adics.  This is
 the type you should use if your primary interest is in speed (though
@@ -174,7 +174,6 @@ TESTS::
     sage: repr(R(2777))[3:]
     '0&0&0&0&0&0&0&0&0&0&4&2&1&0&2'
     sage: TestSuite(R).run()                                                            # needs sage.geometry.polyhedron
-
 """
 
 #*****************************************************************************
@@ -220,8 +219,8 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -318,8 +317,8 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -418,8 +417,8 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -506,14 +505,14 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
     """
     def __init__(self, p, prec, print_mode, names):
         """
-        Initialization
+        Initialization.
 
         INPUT:
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -541,7 +540,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
             ....:                  max_runs=2^6, skip='_test_log')
             sage: R._test_log(max_runs=2, elements=[R.random_element() for i in range(4)])
 
-        Fraction fields work after :trac:`23510`::
+        Fraction fields work after :issue:`23510`::
 
             sage: R = ZpFM(5)
             sage: K = R.fraction_field(); K
@@ -614,7 +613,6 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
         sage: K = Qp(17, 1000000)  # indirect doctest
         sage: K = Qp(101)  # indirect doctest
-
     """
 
     def __init__(self, p, prec, print_mode, names):
@@ -625,8 +623,8 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -650,7 +648,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
             sage: R = Qp(3, 2)
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^9)],  # long time, needs sage.geometry.polyhedron
-            ....:                  skip="_test_metric_function")
+            ....:                  skip='_test_metric_function')
             sage: R._test_metric_function(elements=[R.random_element() for i in range(3^3)])
 
             sage: R = Qp(next_prime(10^60))
@@ -686,7 +684,6 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
             True
             sage: K.has_coerce_map_from(Zp(17,40))
             True
-
         """
         #if isinstance(R, pAdicRingRelaxed) or isinstance(R, pAdicFieldRelaxed) and R.prime() == self.prime():
         #    return True
@@ -756,8 +753,8 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -942,7 +939,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (the default): the
+        - ``prec`` -- integer or ``None`` (default); the
           absolute precision of the generated random element
 
         EXAMPLES::
@@ -1073,16 +1070,16 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (the default): the
+        - ``prec`` -- integer or ``None`` (default); the
           absolute precision of the generated random element
 
-        - ``integral`` -- a boolean (default: ``False``); if ``True``,
+        - ``integral`` -- boolean (default: ``False``); if ``True``,
           return an element in the ring of integers
 
         EXAMPLES::
 
             sage: K = QpLC(2)
-            sage: K.random_element()   # not tested, known bug (see :trac:`32126`)
+            sage: K.random_element()   # not tested, known bug (see :issue:`32126`)
             2^-8 + 2^-7 + 2^-6 + 2^-5 + 2^-3 + 1 + 2^2 + 2^3 + 2^5 + O(2^12)
             sage: K.random_element(integral=True)    # random
             2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16

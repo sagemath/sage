@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 
 """Utilities for interfacing with the standard library's atexit module."""
 
@@ -25,12 +25,12 @@ cdef class restore_atexit:
 
     INPUT:
 
-    - ``run`` (bool, default: False) -- if True, when exiting the
+    - ``run`` -- boolean (default: ``False``); if ``True``, when exiting the
       context (but before restoring the old exit functions), run all
-      atexit functions which were added inside the context.
+      atexit functions which were added inside the context
 
-    - ``clear`` (bool, default: equal to ``run``) -- if True, clear
-      already registered atexit handlers upon entering the context.
+    - ``clear`` -- boolean (default: equal to ``run``); if ``True``, clear
+      already registered atexit handlers upon entering the context
 
     .. WARNING::
 

@@ -15,7 +15,7 @@ AUTHORS:
 
 TESTS:
 
-Check :trac:`12482` (shall be run in a fresh session)::
+Check :issue:`12482` (shall be run in a fresh session)::
 
     sage: P = Partitions(3)                                                             # needs sage.combinat
     sage: Family(P, lambda x: x).category()                                             # needs sage.combinat
@@ -49,13 +49,10 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.call import AttrCallObject
-from sage.misc.lazy_import import LazyImport
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.sets.non_negative_integers import NonNegativeIntegers
-
-CombinatorialClass = LazyImport('sage.combinat.combinat', 'CombinatorialClass')
 
 
 def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=False, name=None):
@@ -373,7 +370,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
         sage: list(f)
         ['cc', 'aa', 'bb']
 
-    Even with hidden keys (see :trac:`22955`)::
+    Even with hidden keys (see :issue:`22955`)::
 
         sage: f = Family(["c", "a", "b"], lambda i: 2*i,
         ....:           hidden_keys=[5], hidden_function=lambda i: i%2)
@@ -424,13 +421,13 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
 
 cdef class AbstractFamily(Parent):
     """
-    The abstract class for family
+    The abstract class for family.
 
     Any family belongs to a class which inherits from :class:`AbstractFamily`.
     """
     def hidden_keys(self):
         """
-        Returns the hidden keys of the family, if any.
+        Return the hidden keys of the family, if any.
 
         EXAMPLES::
 
@@ -503,9 +500,7 @@ cdef class AbstractFamily(Parent):
     def map(self, f, name=None):
         r"""
         Return the family `( f(\mathtt{self}[i]) )_{i \in I}`, where
-        `I` is the index set of self.
-
-        .. TODO:: good name?
+        `I` is the index set of ``self``.
 
         EXAMPLES::
 
@@ -522,9 +517,8 @@ cdef class AbstractFamily(Parent):
     @cached_method
     def inverse_family(self):
         """
-        Returns the inverse family, with keys and values
-        exchanged. This presumes that there are no duplicate values in
-        ``self``.
+        Return the inverse family, with keys and values exchanged. This
+        presumes that there are no duplicate values in ``self``.
 
         This default implementation is not lazy and therefore will
         only work with not too big finite families. It is also cached
@@ -537,7 +531,6 @@ cdef class AbstractFamily(Parent):
             Finite family {3: 0, 4: 1, 7: 2}
         """
         return Family({self[k]: k for k in self.keys()})
-
 
 
 cdef class FiniteFamily(AbstractFamily):
@@ -579,7 +572,6 @@ cdef class FiniteFamily(AbstractFamily):
         sage: f = FiniteFamily({"a": "aa", "b": "bb", "c" : "cc" }, keys = ["c", "a", "b"])
         sage: list(f)
         ['cc', 'aa', 'bb']
-
     """
 
     def __init__(self, dictionary, keys=None):
@@ -590,7 +582,7 @@ cdef class FiniteFamily(AbstractFamily):
             sage: f = FiniteFamily({3: 'a', 4: 'b', 7: 'd'})
             sage: TestSuite(f).run()
 
-        Check for bug :trac:`5538`::
+        Check for bug :issue:`5538`::
 
             sage: d = {1:"a", 3:"b", 4:"c"}
             sage: f = Family(d)
@@ -653,7 +645,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def keys(self):
         """
-        Returns the index set of this family
+        Return the index set of this family.
 
         EXAMPLES::
 
@@ -666,7 +658,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def values(self):
         """
-        Returns the elements of this family
+        Return the elements of this family.
 
         EXAMPLES::
 
@@ -681,7 +673,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def has_key(self, k):
         """
-        Returns whether ``k`` is a key of ``self``
+        Return whether ``k`` is a key of ``self``.
 
         EXAMPLES::
 
@@ -757,7 +749,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def __len__(self):
         """
-        Returns the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -770,7 +762,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def cardinality(self):
         """
-        Returns the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -888,7 +880,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
 
     def hidden_keys(self):
         """
-        Returns self's hidden keys.
+        Return ``self``'s hidden keys.
 
         EXAMPLES::
 
@@ -935,7 +927,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
             hidden_function = unpickle_function(hidden_function)
         self.__init__(d['dictionary'], d['hidden_keys'], hidden_function)
         self.hidden_dictionary = d['hidden_dictionary']
-        # Old pickles from before trac #22955 may not have a 'keys'
+        # Old pickles from before Issue #22955 may not have a 'keys'
         if 'keys' in d:
             self._keys = d['keys']
         else:
@@ -959,7 +951,7 @@ class LazyFamily(AbstractFamily):
             Lazy family (<lambda>(i))_{i in [3, 4, 7]}
             sage: TestSuite(f).run()
 
-        Check for :trac:`5538`::
+        Check for :issue:`5538`::
 
             sage: l = [3,4,7]
             sage: f = LazyFamily(l, lambda i: 2*i)
@@ -971,7 +963,7 @@ class LazyFamily(AbstractFamily):
             category = FiniteEnumeratedSets()
         elif set in InfiniteEnumeratedSets():
             category = InfiniteEnumeratedSets()
-        elif isinstance(set, (list, tuple, range, CombinatorialClass)):
+        elif isinstance(set, (list, tuple, range)):
             category = FiniteEnumeratedSets()
         else:
             category = EnumeratedSets()
@@ -1094,7 +1086,7 @@ class LazyFamily(AbstractFamily):
 
     def keys(self):
         """
-        Returns self's keys.
+        Return ``self``'s keys.
 
         EXAMPLES::
 
@@ -1107,7 +1099,7 @@ class LazyFamily(AbstractFamily):
 
     def cardinality(self):
         """
-        Return the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -1121,7 +1113,7 @@ class LazyFamily(AbstractFamily):
 
         TESTS:
 
-        Check that :trac:`15195` is fixed::
+        Check that :issue:`15195` is fixed::
 
             sage: C = cartesian_product([PositiveIntegers(), [1,2,3]])
             sage: C.cardinality()
@@ -1310,7 +1302,7 @@ class TrivialFamily(AbstractFamily):
 
     def keys(self):
         """
-        Returns self's keys.
+        Return ``self``'s keys.
 
         EXAMPLES::
 
@@ -1323,7 +1315,7 @@ class TrivialFamily(AbstractFamily):
 
     def cardinality(self):
         """
-        Return the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -1432,7 +1424,7 @@ class EnumeratedFamily(LazyFamily):
 
         TESTS:
 
-        Check that category and keys are set correctly (:trac:`28274`)::
+        Check that category and keys are set correctly (:issue:`28274`)::
 
             sage: from sage.sets.family import EnumeratedFamily
             sage: f = EnumeratedFamily(Permutations(4))
@@ -1491,7 +1483,7 @@ class EnumeratedFamily(LazyFamily):
 
     def cardinality(self):
         """
-        Return the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 

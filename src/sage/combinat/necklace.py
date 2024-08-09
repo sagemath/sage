@@ -47,7 +47,7 @@ def Necklaces(content):
 
     INPUT:
 
-    - ``content`` -- a list or tuple of non-negative integers
+    - ``content`` -- list or tuple of nonnegative integers
 
     EXAMPLES::
 
@@ -75,7 +75,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``content`` -- a list or tuple of non-negative integers
+    - ``content`` -- list or tuple of nonnegative integers
     """
     @staticmethod
     def __classcall_private__(cls, content):
@@ -134,7 +134,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- a list of integers
+        - ``x`` -- list of integers
 
         EXAMPLES::
 
@@ -210,7 +210,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
         ::
 
-            sage: comps = [[],[2,2],[3,2,7],[4,2],[0,4,2],[2,0,4]]+Compositions(4).list()
+            sage: comps = [[],[2,2],[3,2,7],[4,2],[0,4,2],[2,0,4]] + Compositions(4).list()
             sage: ns = [Necklaces(comp) for comp in comps]
             sage: all(n.cardinality() == len(n.list()) for n in ns)                     # needs sage.libs.pari
             True
@@ -456,13 +456,13 @@ def _sfc(content, equality=False):
 
     INPUT:
 
-    - ``content`` -- a list of non-negative integers with no leading 0s
-    - ``equality`` -- boolean (optional, default: ``True``)
+    - ``content`` -- list of nonnegative integers with no leading 0s
+    - ``equality`` -- boolean (default: ``True``)
 
     .. WARNING::
 
-        You will get incorrect results if there are leading 0's in ``content``.
-        See :trac:`12997` and :trac:`17436`.
+        You will get incorrect results if there are leading 0s in ``content``.
+        See :issue:`12997` and :issue:`17436`.
 
     EXAMPLES::
 

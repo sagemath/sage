@@ -20,7 +20,6 @@ AUTHORS:
 
 - Dima Pasechnik (2021): removed buggy cython code, replaced it with
   calls to primecount/primecountpy spkg
-
 """
 
 # ****************************************************************************
@@ -50,14 +49,12 @@ cdef class PrimePi(BuiltinFunction):
         INPUT:
 
         - ``x`` -- a real number
-        - ``prime_bound`` -- (default 0) a real number < 2^32; :func:`prime_pi` will
-          make sure to use all the primes up to ``prime_bound`` (although,
+        - ``prime_bound`` -- (default: 0) a real number `< 2^32`; :func:`prime_pi`
+          will make sure to use all the primes up to ``prime_bound`` (although,
           possibly more) in computing ``prime_pi``, this can potentially
           speedup the time of computation, at a cost to memory usage.
 
-        OUTPUT:
-
-        integer -- the number of primes :math:`\leq` ``x``
+        OUTPUT: integer; the number of primes :math:`\leq` ``x``
 
         EXAMPLES:
 
@@ -75,7 +72,7 @@ cdef class PrimePi(BuiltinFunction):
             sage: prime_pi(500509)
             41581
 
-        The following test is to verify that :trac:`4670` has been essentially
+        The following test is to verify that :issue:`4670` has been essentially
         resolved::
 
             sage: prime_pi(10^10)                                                       # needs sage.symbolic
@@ -85,7 +82,6 @@ cdef class PrimePi(BuiltinFunction):
         plots quickly and perfectly as a step function::
 
             sage: P = plot(prime_pi, 50, 100)                                           # needs sage.plot sage.symbolic
-
         """
         super(PrimePi, self).__init__('prime_pi', latex_name=r"\pi",
                                       conversions={'mathematica': 'PrimePi',
@@ -157,7 +153,7 @@ cdef class PrimePi(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`24960` is fixed::
+        Check that :issue:`24960` is fixed::
 
             sage: prime_pi(642763101936913)
             19439675999019
@@ -210,7 +206,7 @@ cdef class PrimePi(BuiltinFunction):
 prime_pi = PrimePi()
 
 
-cpdef Integer legendre_phi(x, a) noexcept:
+cpdef Integer legendre_phi(x, a):
     r"""
     Legendre's formula, also known as the partial sieve function, is a useful
     combinatorial function for computing the prime counting function (the
@@ -221,12 +217,10 @@ cpdef Integer legendre_phi(x, a) noexcept:
 
     - ``x`` -- a real number
 
-    - ``a`` -- a non-negative integer
+    - ``a`` -- nonnegative integer
 
-    OUTPUT:
-
-    integer -- the number of positive integers :math:`\leq` ``x`` that are not
-    divisible by the first ``a`` primes
+    OUTPUT: integer; the number of positive integers :math:`\leq` ``x`` that
+    are not divisible by the first ``a`` primes
 
     EXAMPLES::
 
@@ -238,12 +232,11 @@ cpdef Integer legendre_phi(x, a) noexcept:
         2893
         sage: legendre_phi(4215701455, 6450023226)
         1
-
     """
     if not isinstance(a, Integer):
         a = Integer(a)
     if a < Integer(0):
-        raise ValueError("a (=%s) must be non-negative" % a)
+        raise ValueError("a (=%s) must be nonnegative" % a)
     y = Integer(x)
 
     # legendre_phi(x, a) = 0 when x <= 0

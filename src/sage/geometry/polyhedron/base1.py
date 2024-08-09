@@ -205,7 +205,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: P == Q
             False
 
-        Test that we have fixed a problem revealed in :trac:`31701`,
+        Test that we have fixed a problem revealed in :issue:`31701`,
         where neither of the two polyhedra contains the other::
 
             sage: P = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
@@ -243,9 +243,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``other`` -- a :class:`Polyhedron`
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -262,11 +260,9 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
     def is_empty(self):
         """
-        Test whether the polyhedron is the empty polyhedron
+        Test whether the polyhedron is the empty polyhedron.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -289,11 +285,9 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
     def is_universe(self):
         """
-        Test whether the polyhedron is the whole ambient space
+        Test whether the polyhedron is the whole ambient space.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -318,9 +312,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         """
         Return the dimension of the polyhedron.
 
-        OUTPUT:
-
-        -1 if the polyhedron is empty, otherwise a non-negative integer.
+        OUTPUT: -1 if the polyhedron is empty, otherwise a nonnegative integer
 
         EXAMPLES::
 
@@ -330,7 +322,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: simplex.ambient_dim()
             4
 
-        The empty set is a special case (:trac:`12193`)::
+        The empty set is a special case (:issue:`12193`)::
 
             sage: P1=Polyhedron(vertices=[[1,0,0],[0,1,0],[0,0,1]])
             sage: P2=Polyhedron(vertices=[[2,0,0],[0,2,0],[0,0,2]])
@@ -351,9 +343,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         r"""
         Return the ambient free module.
 
-        OUTPUT:
-
-        A free module over the base ring of dimension :meth:`ambient_dim`.
+        OUTPUT: a free module over the base ring of dimension :meth:`ambient_dim`
 
         EXAMPLES::
 
@@ -369,9 +359,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         r"""
         Return the linear space containing the H-representation vectors.
 
-        OUTPUT:
-
-        A free module over the base ring of dimension :meth:`ambient_dim` + 1.
+        OUTPUT: a free module over the base ring of dimension :meth:`ambient_dim` + 1
 
         EXAMPLES::
 
@@ -392,7 +380,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         INPUT:
 
-        - ``base_field`` -- (default: the fraction field of the base ring) a field.
+        - ``base_field`` -- a field (default: the fraction field of the base ring)
 
         EXAMPLES::
 
@@ -599,9 +587,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``point`` -- coordinates of a point (an iterable)
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -634,7 +620,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: ray.contains(['hello', 'kitty'])   # no common ring for coordinates
             False
 
-        The empty polyhedron needs extra care, see :trac:`10238`::
+        The empty polyhedron needs extra care, see :issue:`10238`::
 
             sage: empty = Polyhedron(); empty
             The empty polyhedron in ZZ^0
@@ -651,7 +637,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         TESTS:
 
-        Passing non-iterable objects does not cause an exception, see :trac:`32013`::
+        Passing non-iterable objects does not cause an exception, see :issue:`32013`::
 
             sage: None in Polyhedron(vertices=[(0,0)], rays=[(1,0)], base_ring=QQ)
             False
@@ -731,9 +717,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``point`` -- coordinates of a point
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -752,7 +736,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: P.interior_contains( [0,0] )
             False
 
-        The empty polyhedron needs extra care, see :trac:`10238`::
+        The empty polyhedron needs extra care, see :issue:`10238`::
 
             sage: empty = Polyhedron(); empty
             The empty polyhedron in ZZ^0
@@ -783,9 +767,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         r"""
         Return whether ``self`` is relatively open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -808,7 +790,6 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
             sage: Line.is_relatively_open()
             True
-
         """
         return not self.inequalities()
 
@@ -857,9 +838,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``point`` -- coordinates of a point
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -873,7 +852,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: P.relative_interior_contains( (1,0) )
             False
 
-        The empty polyhedron needs extra care, see :trac:`10238`::
+        The empty polyhedron needs extra care, see :issue:`10238`::
 
             sage: empty = Polyhedron(); empty
             The empty polyhedron in ZZ^0

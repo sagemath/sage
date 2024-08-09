@@ -2,12 +2,11 @@
 """
 Interpreter reset
 """
-
 import sys
 
 # Exclude these from the reset command.
 # DATA, base64 -- needed by the notebook
-# Add exit and quit to EXCLUDE to resolve trac #22529 and trac #16704
+# Add exit and quit to EXCLUDE to resolve Issue #22529 and Issue #16704
 EXCLUDE = set(['sage_mode', '__DIR__', 'DIR', 'DATA', 'base64', 'exit', 'quit'])
 
 
@@ -25,10 +24,10 @@ def reset(vars=None, attached=False):
 
     INPUT:
 
-    - ``vars`` -- a list, or space or comma separated string (default:
-      ``None``), variables to restore
+    - ``vars`` -- list or space or comma separated string (default:
+      ``None``); variables to restore
 
-    - ``attached`` -- boolean (default: ``False``), if ``vars`` is not None,
+    - ``attached`` -- boolean (default: ``False``); if ``vars`` is not ``None``,
       whether to detach all attached files
 
     EXAMPLES::
@@ -38,24 +37,26 @@ def reset(vars=None, attached=False):
         sage: x                                                                         # needs sage.symbolic
         x
 
-        sage: fn = tmp_filename(ext='foo.py')
+        sage: fn = tmp_filename(ext='.py')
         sage: sage.misc.reset.EXCLUDE.add('fn')
         sage: with open(fn, 'w') as f:
         ....:     _ = f.write('a = 111')
         sage: attach(fn)
-        sage: [fn] == attached_files()
+        sage: af = attached_files(); len(af)
+        1
+        sage: af == [fn]
         True
         sage: reset()
-        sage: [fn] == attached_files()
-        True
+        sage: af = attached_files(); len(af)
+        1
         sage: reset(attached=True)
-        sage: [fn] == attached_files()
-        False
+        sage: af = attached_files(); len(af)
+        0
         sage: sage.misc.reset.EXCLUDE.remove('fn')
 
     TESTS:
 
-    Confirm that assumptions don't survive a reset (:trac:`10855`)::
+    Confirm that assumptions do not survive a reset (:issue:`10855`)::
 
         sage: # needs sage.symbolic
         sage: assume(x > 3)
@@ -68,7 +69,6 @@ def reset(vars=None, attached=False):
         []
         sage: bool(x > 3)
         False
-
     """
     from sage.symbolic.assumptions import forget
     if vars is not None:
@@ -96,8 +96,8 @@ def restore(vars=None):
 
     INPUT:
 
-    - ``vars`` -- string or list (default: ``None``), if not ``None``, restores
-      just the given variables to the default value.
+    - ``vars`` -- string or list (default: ``None``); if not ``None``, restores
+      just the given variables to the default value
 
     EXAMPLES::
 

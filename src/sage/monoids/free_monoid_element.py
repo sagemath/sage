@@ -9,7 +9,7 @@ Elements of free monoids are represented internally as lists of
 pairs of integers.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -22,14 +22,19 @@ pairs of integers.
 #  is available at:
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.structure.element import MonoidElement
 from sage.structure.richcmp import richcmp, richcmp_not_equal
+from sage.rings.semirings.non_negative_integer_semiring import NN
 
 
 def is_FreeMonoidElement(x):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_FreeMonoidElement is deprecated; "
+                "use 'isinstance(..., FreeMonoidElement)' instead.")
     return isinstance(x, FreeMonoidElement)
 
 
@@ -123,14 +128,14 @@ class FreeMonoidElement(MonoidElement):
             if e == 1:
                 s += "%s" % g
             else:
-                s += "%s^%s" % (g,e)
+                s += f"{g}^{e}"
         if len(s) == 0:
             s = "1"
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -142,8 +147,9 @@ class FreeMonoidElement(MonoidElement):
             sage: latex(alpha*beta*gamma)
             \alpha \beta \gamma
 
-        Check that :trac:`14509` is fixed::
+        Check that :issue:`14509` is fixed::
 
+            sage: # needs sage.symbolic
             sage: K.< alpha,b > = FreeAlgebra(SR)
             sage: latex(alpha*b)
             \alpha b
@@ -159,9 +165,9 @@ class FreeMonoidElement(MonoidElement):
             g = x[int(v[i][0])]
             e = v[i][1]
             if e == 1:
-                s += "%s " % (g,)
+                s += f"{g} "
             else:
-                s += "%s^{%s}" % (g, e)
+                s += f"{g}^{{{e}}}"
         s = s.rstrip(" ")  # strip the trailing whitespace caused by adding a space after each element name
         if len(s) == 0:
             s = "1"
@@ -171,16 +177,6 @@ class FreeMonoidElement(MonoidElement):
         """
         EXAMPLES::
 
-            sage: M.<x,y,z>=FreeMonoid(3)
-            sage: (x*y).subs(x=1,y=2,z=14)
-            2
-            sage: (x*y).subs({x:z,y:z})
-            z^2
-            sage: M1=MatrixSpace(ZZ,1,2)
-            sage: M2=MatrixSpace(ZZ,2,1)
-            sage: (x*y).subs({x:M1([1,2]),y:M2([3,4])})
-            [11]
-
             sage: M.<x,y> = FreeMonoid(2)
             sage: (x*y).substitute(x=1)
             y
@@ -188,6 +184,37 @@ class FreeMonoidElement(MonoidElement):
             sage: M.<a> = FreeMonoid(1)
             sage: a.substitute(a=5)
             5
+
+            sage: M.<x,y,z> = FreeMonoid(3)
+            sage: (x*y).subs(x=1,y=2,z=14)
+            2
+            sage: (x*y).subs({x:z,y:z})
+            z^2
+
+        It is still possible to substitute elements
+        that have no common parent::
+
+            sage: M1 = MatrixSpace(ZZ,1,2)                                              # needs sage.modules
+            sage: M2 = MatrixSpace(ZZ,2,1)                                              # needs sage.modules
+            sage: (x*y).subs({x: M1([1,2]), y: M2([3,4])})                              # needs sage.modules
+            [11]
+
+        TESTS::
+
+            sage: M.<x,y> = FreeMonoid(2)
+            sage: (x*y)(QQ(4),QQ(5)).parent()
+            Rational Field
+
+        The codomain is by default the first parent::
+
+            sage: M.one()(QQ(4),QQ(5)).parent()
+            Rational Field
+
+        unless there is no variable and no substitution::
+
+            sage: M = FreeMonoid(0, [])
+            sage: M.one()().parent()
+            Free monoid on 0 generators ()
 
         AUTHORS:
 
@@ -205,34 +232,28 @@ class FreeMonoidElement(MonoidElement):
                 if key in gens_dict:
                     x[gens_dict[key]] = value
 
-        if isinstance(x[0], tuple):
+        if x and isinstance(x[0], tuple):
             x = x[0]
 
         if len(x) != self.parent().ngens():
             raise ValueError("must specify as many values as generators in parent")
 
-        # I don't start with 0, because I don't want to preclude evaluation with
-        #arbitrary objects (e.g. matrices) because of funny coercion.
-        one = P.one()
-        result = None
+        # if no substitution, do nothing
+        if not x:
+            return self
+
+        try:
+            # This will land in the parent of the first element
+            result = x[0].parent().one()
+        except (AttributeError, TypeError):
+            # unless the parent has no unit
+            result = NN.one()
         for var_index, exponent in self._element_list:
-            # Take further pains to ensure that non-square matrices are not exponentiated.
             replacement = x[var_index]
             if exponent > 1:
-                c = replacement ** exponent
+                result *= replacement ** exponent
             elif exponent == 1:
-                c = replacement
-            else:
-                c = one
-
-            if result is None:
-                result = c
-            else:
-                result *= c
-
-        if result is None:
-            return one
-
+                result *= replacement
         return result
 
     def _mul_(self, y):
@@ -262,7 +283,7 @@ class FreeMonoidElement(MonoidElement):
                 z._element_list = x_elt + y_elt
             else:
                 m = (y_elt[0][0], x_elt[k][1]+y_elt[0][1])
-                z._element_list = x_elt[:k] + [ m ] + y_elt[1:]
+                z._element_list = x_elt[:k] + [m] + y_elt[1:]
         return z
 
     def __invert__(self):
@@ -278,7 +299,7 @@ class FreeMonoidElement(MonoidElement):
         """
         raise NotImplementedError
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the degree of the monoid element ``self``, where each
         generator of the free monoid is given degree `1`.
@@ -296,12 +317,9 @@ class FreeMonoidElement(MonoidElement):
             sage: len(a[0]**2 * a[1])
             3
         """
-        s = 0
-        for x in self._element_list:
-            s += x[1]
-        return s
+        return sum(x[1] for x in self._element_list)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare two free monoid elements with the same parents.
 
@@ -334,8 +352,7 @@ class FreeMonoidElement(MonoidElement):
 
     def _acted_upon_(self, x, self_on_left):
         """
-        Currently, returns the action of the integer 1 on this
-        element.
+        Return the action of the integer 1 on this element.
 
         EXAMPLES::
 
@@ -373,11 +390,11 @@ class FreeMonoidElement(MonoidElement):
         gens = self.parent().gens()
         if alph is None:
             alph = gens
-        alph = [str(_) for _ in alph]
-        W = Words(alph)
-        return W(sum([ [alph[gens.index(i[0])]] * i[1] for i in list(self) ], []))
+        alph = [str(c) for c in alph]
+        W = Words(alph, infinite=False)
+        return W(sum([[alph[gens.index(i[0])]] * i[1] for i in self], []))
 
-    def to_list(self, indices=False):
+    def to_list(self, indices=False) -> list:
         r"""
         Return ``self`` as a list of generators.
 

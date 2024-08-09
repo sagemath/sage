@@ -72,7 +72,7 @@ corresponding Sage datatype:
 
 #. GAP booleans ``true`` / ``false`` to Sage booleans ``True`` /
    ``False``. The third GAP boolean value ``fail`` raises a
-   ``ValueError``.
+   :exc:`ValueError`.
 
 #. GAP integers to Sage integers.
 
@@ -134,7 +134,7 @@ convert the entries into Sage objects, you should use the
 
 Now ``rec['a']`` is a Sage integer. We have not implemented the
 conversion of the GAP symmetric group to the Sage symmetric group yet,
-so you end up with a ``NotImplementedError`` exception object. The
+so you end up with a :exc:`NotImplementedError` exception object. The
 exception is returned and not raised so that you can work with the
 partial result.
 
@@ -257,9 +257,7 @@ class Gap(Parent):
         """
         Whether a coercion from `S` exists.
 
-        INPUT / OUTPUT:
-
-        See :mod:`sage.structure.parent`.
+        INPUT / OUTPUT: see :mod:`sage.structure.parent`
 
         EXAMPLES::
 
@@ -276,11 +274,9 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``x`` -- anything that defines a GAP object.
+        - ``x`` -- anything that defines a GAP object
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -296,7 +292,6 @@ class Gap(Parent):
             [ 1/3, 2/3, 4/5 ]
             sage: libgap(vector((1/3, 0.8, 3)))
             [ 0.333333, 0.8, 3. ]
-
         """
         initialize()
         if isinstance(x, GapElement):
@@ -328,7 +323,7 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``M`` -- a matrix.
+        - ``M`` -- a matrix
 
         OUTPUT:
 
@@ -360,9 +355,9 @@ class Gap(Parent):
 
         TESTS:
 
-        We gracefully handle the case that the conversion fails (:trac:`18039`)::
+        We gracefully handle the case that the conversion fails (:issue:`18039`)::
 
-            sage: F.<a> = GF(9, modulus="first_lexicographic")                          # needs sage.rings.finite_rings
+            sage: F.<a> = GF(9, modulus='first_lexicographic')                          # needs sage.rings.finite_rings
             sage: libgap(Matrix(F, [[a]]))                                              # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -383,12 +378,10 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``gap_command`` -- a string containing a valid gap command
-          without the trailing semicolon.
+        - ``gap_command`` -- string containing a valid gap command
+          without the trailing semicolon
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -413,7 +406,7 @@ class Gap(Parent):
 
     def load_package(self, pkg):
         """
-        If loading fails, raise a :class:`RuntimeError` exception.
+        If loading fails, raise a :exc:`RuntimeError` exception.
 
         TESTS::
 
@@ -438,7 +431,7 @@ class Gap(Parent):
     @cached_method
     def function_factory(self, function_name):
         """
-        Return a GAP function wrapper
+        Return a GAP function wrapper.
 
         This is almost the same as calling
         ``libgap.eval(function_name)``, but faster and makes it
@@ -446,7 +439,7 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``function_name`` -- string. The name of a GAP function.
+        - ``function_name`` -- string; the name of a GAP function
 
         OUTPUT:
 
@@ -465,13 +458,13 @@ class Gap(Parent):
 
     def set_global(self, variable, value):
         """
-        Set a GAP global variable
+        Set a GAP global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
-        - ``value`` -- anything that defines a GAP object.
+        - ``value`` -- anything that defines a GAP object
 
         EXAMPLES::
 
@@ -490,11 +483,11 @@ class Gap(Parent):
 
     def unset_global(self, variable):
         """
-        Remove a GAP global variable
+        Remove a GAP global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
         EXAMPLES::
 
@@ -514,16 +507,16 @@ class Gap(Parent):
 
     def get_global(self, variable):
         """
-        Get a GAP global variable
+        Get a GAP global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
         OUTPUT:
 
         A :class:`~sage.libs.gap.element.GapElement` wrapping the GAP
-        output. A ``ValueError`` is raised if there is no such
+        output. A :exc:`ValueError` is raised if there is no such
         variable in GAP.
 
         EXAMPLES::
@@ -539,17 +532,15 @@ class Gap(Parent):
 
     def global_context(self, variable, value):
         """
-        Temporarily change a global variable
+        Temporarily change a global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
-        - ``value`` -- anything that defines a GAP object.
+        - ``value`` -- anything that defines a GAP object
 
-        OUTPUT:
-
-        A context manager that sets/reverts the given global variable.
+        OUTPUT: a context manager that sets/reverts the given global variable
 
         EXAMPLES::
 
@@ -590,9 +581,7 @@ class Gap(Parent):
         r"""
         Return a :class:`GapElement`.
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -605,9 +594,7 @@ class Gap(Parent):
         """
         Return (integer) zero in GAP.
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -646,9 +633,7 @@ class Gap(Parent):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -660,7 +645,7 @@ class Gap(Parent):
     @cached_method
     def __dir__(self):
         """
-        Customize tab completion
+        Customize tab completion.
 
         EXAMPLES::
 
@@ -677,12 +662,12 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``name`` -- string. The name of the GAP function you want to
-          call.
+        - ``name`` -- string; the name of the GAP function you want to
+          call
 
         OUTPUT:
 
-        A :class:`GapElement`. A ``AttributeError`` is raised
+        A :class:`GapElement`. A :exc:`AttributeError` is raised
         if there is no such function or global variable.
 
         EXAMPLES::
@@ -705,7 +690,7 @@ class Gap(Parent):
 
     def show(self):
         """
-        Return statistics about the GAP owned object list
+        Return statistics about the GAP owned object list.
 
         This includes the total memory allocated by GAP as returned by
         ``libgap.eval('TotalMemoryAllocated()'), as well as garbage collection
@@ -718,7 +703,7 @@ class Gap(Parent):
         allocated for GAP objects (see
         ``libgap.eval('TotalMemoryAllocated()')``).
 
-        .. note::
+        .. NOTE::
 
             Slight complication is that we want to do it without accessing
             libgap objects, so we don't create new GapElements as a side
@@ -755,9 +740,7 @@ class Gap(Parent):
         Return the number of GAP objects that are being tracked by
         GAP.
 
-        OUTPUT:
-
-        An integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -768,7 +751,7 @@ class Gap(Parent):
 
     def collect(self):
         """
-        Manually run the garbage collector
+        Manually run the garbage collector.
 
         EXAMPLES::
 

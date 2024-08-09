@@ -15,14 +15,14 @@ AUTHOR:
 #############################################################################
 
 
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.flatten  import flatten
 
 cdef class HMM_Util:
     """
     A class used in order to share cdef's methods between different files.
     """
-    cpdef normalize_probability_TimeSeries(self, TimeSeries T, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cpdef normalize_probability_TimeSeries(self, TimeSeries T, Py_ssize_t i, Py_ssize_t j):
         """
         This function is used internally by the Hidden Markov Models code.
 
@@ -38,9 +38,7 @@ cdef class HMM_Util:
         - ``i`` -- nonnegative integer
         - ``j`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``T`` is modified
+        OUTPUT: ``T`` is modified
 
         EXAMPLES::
 
@@ -84,9 +82,7 @@ cdef class HMM_Util:
             for k in range(i, j):
                 T._values[k] /= s
 
-
-
-    cpdef TimeSeries initial_probs_to_TimeSeries(self, pi, bint normalize) noexcept:
+    cpdef TimeSeries initial_probs_to_TimeSeries(self, pi, bint normalize):
         """
         This function is used internally by the __init__ methods of
         various Hidden Markov Models.
@@ -99,9 +95,7 @@ cdef class HMM_Util:
           equal to 1.  If the sum of the entries in a row is 0, replace them
           all by `1/N`.
 
-        OUTPUT:
-
-        - a :class:`TimeSeries` of length `N`
+        OUTPUT: a :class:`TimeSeries` of length `N`
 
         EXAMPLES::
 
@@ -124,8 +118,7 @@ cdef class HMM_Util:
             self.normalize_probability_TimeSeries(T, 0, T._length)
         return T
 
-
-    cpdef TimeSeries state_matrix_to_TimeSeries(self, A, int N, bint normalize) noexcept:
+    cpdef TimeSeries state_matrix_to_TimeSeries(self, A, int N, bint normalize):
         """
         This function is used internally by the ``__init__`` methods of
         Hidden Markov Models to make a transition matrix from ``A``.
@@ -140,9 +133,7 @@ cdef class HMM_Util:
           equal to 1.  If the sum of the entries in a row is 0, replace them
           all by `1/N`.
 
-        OUTPUT:
-
-        - a :class:`TimeSeries`
+        OUTPUT: a :class:`TimeSeries`
 
         EXAMPLES::
 
@@ -156,7 +147,7 @@ cdef class HMM_Util:
         cdef TimeSeries T
         if isinstance(A, TimeSeries):
             T = A
-        elif is_Matrix(A):
+        elif isinstance(A, Matrix):
             T = TimeSeries(A.list())
         elif isinstance(A, list):
             T = TimeSeries(flatten(A))

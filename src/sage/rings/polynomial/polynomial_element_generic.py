@@ -80,7 +80,6 @@ class Polynomial_generic_sparse(Polynomial):
         s + Tbar
         sage: (s + T)**2
         s^2 + 2*Tbar*s + 4
-
     """
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
         """
@@ -248,7 +247,7 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f._derivative(x)
             3*x^2*y^4
 
-        Check that :trac:`28187` is fixed::
+        Check that :issue:`28187` is fixed::
 
             sage: R = PolynomialRing(ZZ, 't', sparse=True)
             sage: t, u = var('t, u')                                                    # needs sage.symbolic
@@ -297,7 +296,7 @@ class Polynomial_generic_sparse(Polynomial):
 
         TESTS:
 
-        Check that :trac:`18600` is fixed::
+        Check that :issue:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: (x^2^100).integral()
@@ -446,7 +445,7 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f[:2]                                                                 # needs sage.rings.real_mpfr
             -42.000*x + 8.0000
 
-        Any other kind of slicing is an error, see :trac:`18940`::
+        Any other kind of slicing is an error, see :issue:`18940`::
 
             sage: f[1:3]                                                                # needs sage.rings.real_mpfr
             Traceback (most recent call last):
@@ -569,7 +568,6 @@ class Polynomial_generic_sparse(Polynomial):
             -3/2
             sage: f.quo_rem(1+2*x)
             (4*x^2 + 4*x + 5/2, -3/2)
-
         """
         P = self.parent()
         if P is parent(right):
@@ -769,7 +767,7 @@ class Polynomial_generic_sparse(Polynomial):
 
         TESTS:
 
-        Check that :trac:`18600` is fixed::
+        Check that :issue:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: p = x^2^100 - 5
@@ -801,10 +799,10 @@ class Polynomial_generic_sparse(Polynomial):
         Return the quotient and remainder of the Euclidean division of
         ``self`` and ``other``.
 
-        Raises :class:`ZeroDivisionError` if ``other`` is zero.
+        Raises :exc:`ZeroDivisionError` if ``other`` is zero.
 
-        Raises :class:`ArithmeticError` if ``other`` has a nonunit leading coefficient
-        and this causes the Euclidean division to fail.
+        Raises :exc:`ArithmeticError` if ``other`` has a nonunit leading
+        coefficient and this causes the Euclidean division to fail.
 
         EXAMPLES::
 
@@ -869,7 +867,7 @@ class Polynomial_generic_sparse(Polynomial):
             sage: g == f*q + r and r.degree() < f.degree()
             True
 
-        The following shows that :trac:`16649` is indeed fixed. ::
+        The following shows that :issue:`16649` is indeed fixed. ::
 
             sage: P.<x> = PolynomialRing(ZZ, sparse=True)
             sage: (4*x).quo_rem(2*x)
@@ -906,26 +904,26 @@ class Polynomial_generic_sparse(Polynomial):
         return (quo,rem)
 
     @coerce_binop
-    def gcd(self,other,algorithm=None):
+    def gcd(self, other, algorithm=None):
         r"""
-        Return the gcd of this polynomial and ``other``
+        Return the gcd of this polynomial and ``other``.
 
         INPUT:
 
         - ``other`` -- a polynomial defined over the same ring as this
-          polynomial.
+          polynomial
 
         ALGORITHM:
 
         Two algorithms are provided:
 
-        - ``generic`` -- Uses the generic implementation, which depends on the
-          base ring being a UFD or a field.
-        - ``dense`` -- The polynomials are converted to the dense representation,
-          their gcd is computed and is converted back to the sparse
-          representation.
+        - ``'generic'`` -- uses the generic implementation, which depends on the
+          base ring being a UFD or a field
+        - ``'dense'`` -- the polynomials are converted to the dense
+          representation, their gcd is computed and is converted back to the
+          sparse representation
 
-        Default is ``dense`` for polynomials over `\ZZ` and ``generic`` in the
+        Default is ``'dense'`` for polynomials over `\ZZ` and ``'generic'`` in the
         other cases.
 
         EXAMPLES::
@@ -935,18 +933,18 @@ class Polynomial_generic_sparse(Polynomial):
             sage: q = 2*x^4 - x^3 - 2*x^2 - 4*x - 1
             sage: gcd(p, q)
             x^2 + x + 1
-            sage: gcd(p, q, algorithm="dense")
+            sage: gcd(p, q, algorithm='dense')
             x^2 + x + 1
-            sage: gcd(p, q, algorithm="generic")
+            sage: gcd(p, q, algorithm='generic')
             x^2 + x + 1
-            sage: gcd(p, q, algorithm="foobar")
+            sage: gcd(p, q, algorithm='foobar')
             Traceback (most recent call last):
             ...
             ValueError: Unknown algorithm 'foobar'
 
         TESTS:
 
-        Check that :trac:`19676` is fixed::
+        Check that :issue:`19676` is fixed::
 
             sage: S.<y> = R[]
             sage: x.gcd(y)
@@ -954,7 +952,7 @@ class Polynomial_generic_sparse(Polynomial):
             sage: (6*x).gcd(9)
             3
 
-        Check that :trac:`36427` is fixed::
+        Check that :issue:`36427` is fixed::
 
             sage: P = PolynomialRing(ZZ, "q", sparse=True)
             sage: q = P.gen()
@@ -1209,7 +1207,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS:
 
-        Check that :trac:`22936` is fixed::
+        Check that :issue:`22936` is fixed::
 
             sage: S.<x> = PowerSeriesRing(GF(5))
             sage: R.<y> = S[]
@@ -1352,8 +1350,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         """
         INPUT:
 
-        -  ``slope`` -- a rational number (default: the first slope
-           in the Newton polygon of ``self``)
+        - ``slope`` -- a rational number (default: the first slope
+          in the Newton polygon of ``self``)
 
         OUTPUT:
 
@@ -1494,17 +1492,15 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         INPUT:
 
-        - ``secure`` -- a boolean; whether we raise an error or
+        - ``secure`` -- boolean; whether we raise an error or
           not in case of multiple roots
 
-        - ``minval`` -- an integer
+        - ``minval`` -- integer
 
-        - ``hint`` -- a list or ``None``; if given, it must be the
+        - ``hint`` -- list or ``None``; if given, it must be the
           list of roots of the residual polynomial of slope ``minval``
 
-        OUTPUT:
-
-        A list of pairs ``(root, multiplicity)``
+        OUTPUT: list of pairs ``(root, multiplicity)``
 
         TESTS::
 
@@ -1513,13 +1509,12 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             sage: S.<x> = R[]
             sage: P = (x-1) * (x-2) * (x-4) * (x-8) * (x-16)
             sage: Q = P^2
-            sage: Q.roots(algorithm="sage")  # indirect doctest
+            sage: Q.roots(algorithm='sage')  # indirect doctest
             [(2^4 + O(2^14), 2),
              (2^3 + O(2^13), 2),
              (2^2 + O(2^12), 2),
              (2 + O(2^11), 2),
              (1 + O(2^10), 2)]
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         K = self.base_ring()

@@ -7,6 +7,7 @@ Coding in Python for Sage
 This chapter discusses some issues with, and advice for, coding in
 Sage.
 
+.. _section-python-language-standard:
 
 Python language standard
 ========================
@@ -64,7 +65,7 @@ scratch. Try to figure out how your code should fit in with other Sage
 code, and design it accordingly.
 
 
-Special sage functions
+Special Sage functions
 ======================
 
 Functions with leading and trailing double underscores ``__XXX__`` are
@@ -94,17 +95,17 @@ or from some other already existing Sage class:
 
 .. CODE-BLOCK:: python
 
-    from sage.rings.ring import Algebra
+    from sage.structure.parent import Parent
 
-    class MyFavoriteAlgebra(Algebra):
+    class MyFavoriteAlgebra(Parent):
         ...
 
 You should implement the ``_latex_`` and ``_repr_`` method for every
 object. The other methods depend on the nature of the object.
 
 
-LaTeX Representation
---------------------
+LaTeX representation
+====================
 
 Every object ``x`` in Sage should support the command ``latex(x)``, so
 that any Sage object can be easily and accurately displayed via
@@ -127,8 +128,7 @@ support the command ``latex``.
    illustrates LaTeX generation for your object.
 
 #. You can use any macros included in ``amsmath``, ``amssymb``, or
-   ``amsfonts``, or the ones defined in
-   ``SAGE_ROOT/doc/commontex/macros.tex``.
+   ``amsfonts``, or the ones defined in :mod:`sage.misc.latex_macros`.
 
 An example template for a ``_latex_`` method follows. Note that the
 ``.. skip`` line should not be included in your code; it is here to
@@ -158,10 +158,10 @@ typeset version of this.
 
 
 Print representation
---------------------
+====================
 
 The standard Python printing method is ``__repr__(self)``. In Sage,
-that is for objects that derive from ``SageObject`` (which is
+that is for objects that derive from :class:`SageObject` (which is
 everything in Sage), instead define ``_repr_(self)``. This is
 preferable because if you only define ``_repr_(self)`` and not
 ``__repr__(self)``, then users can rename your object to print however
@@ -170,7 +170,7 @@ the context.
 
 Here is an example of the ``_latex_`` and ``_repr_`` functions for the
 ``Pi`` class. It is from the file
-``SAGE_ROOT/src/sage/symbolic/constants.py``:
+:sage_root:`src/sage/symbolic/constants.py`:
 
 .. CODE-BLOCK:: python
 
@@ -194,14 +194,14 @@ Here is an example of the ``_latex_`` and ``_repr_`` functions for the
 
 
 Matrix or vector from object
-----------------------------
+============================
 
 Provide a ``_matrix_`` method for an object that can be coerced to a
 matrix over a ring `R`. Then the Sage function ``matrix`` will work
 for this object.
 
 The following is from
-``SAGE_ROOT/src/sage/graphs/generic_graph.py``:
+:sage_root:`src/sage/graphs/generic_graph.py`:
 
 .. CODE-BLOCK:: python
 
@@ -220,7 +220,7 @@ The following is from
 Similarly, provide a ``_vector_`` method for an object that can be
 coerced to a vector over a ring `R`. Then the Sage function ``vector``
 will work for this object. The following is from the file
-``SAGE_ROOT/src/sage/modules/free_module_element.pyx``:
+:sage_root:`src/sage/modules/free_module_element.pyx`:
 
 .. CODE-BLOCK:: python
 
@@ -259,9 +259,9 @@ replacements are made:
       3 * 29
 
 - Raw literals are not preparsed, which can be useful from an
-  efficiency point of view. Just like Python ints are denoted by an L,
-  in Sage raw integer and floating literals are followed by an "r" (or
-  "R") for raw, meaning not preparsed. For example::
+  efficiency point of view. In Sage raw integer and floating
+  literals are followed by an "r" (or "R") for raw, meaning
+  not preparsed. For example::
 
       sage: a = 393939r
       sage: a
@@ -297,11 +297,11 @@ creates the file ``foo.sage.py``.
 
 The following files are relevant to preparsing in Sage:
 
-#. ``SAGE_ROOT/src/bin/sage``
+#. :sage_root:`src/bin/sage`
 
-#. ``SAGE_ROOT/src/bin/sage-preparse``
+#. :sage_root:`src/bin/sage-preparse`
 
-#. ``SAGE_ROOT/src/sage/repl/preparse.py``
+#. :sage_root:`src/sage/repl/preparse.py`
 
 In particular, the file ``preparse.py`` contains the Sage preparser
 code.
@@ -343,7 +343,7 @@ scope variable.
 
 Certain objects, e.g. matrices, may start out mutable and become
 immutable later. See the file
-``SAGE_ROOT/src/sage/structure/mutability.py``.
+:sage_root:`src/sage/structure/mutability.py`.
 
 
 The  __hash__ special method
@@ -473,6 +473,34 @@ example:
 Note that the syntax in ``except`` is to list all the exceptions that
 are caught as a tuple, followed by an error message.
 
+A method or a function accepts input described in the ``INPUT`` block of
+:ref:`the docstring <section-docstring-function>`. If the input cannot be
+handled by the code, then it may raise an exception. The following aims to
+guide you in choosing from the most relevant exceptions to Sage. Raise
+
+- :class:`TypeError`: if the input belongs to a class of objects that is not
+  supported by the method. For example, a method works only with monic
+  polynomials over a finite field, but a polynomial over rationals was given.
+
+- :class:`ValueError`: if the input has a value not supported by the method.
+  For example, the above method was given a non-monic polynomial.
+
+- :class:`ArithmeticError`: if the method performs an arithmetic operation
+  (sum, product, quotient, and the like) but the input is not appropriate.
+
+- :class:`ZeroDivisionError`: if the method performs division but the input is
+  zero. Note that for non-invertible input values, :class:`ArithmeticError` is
+  more appropriate. As derived from :class:`ArithmeticError`,
+  :class:`ZeroDivisionError` can be caught as :class:`ArithmeticError`.
+
+- :class:`NotImplementedError`: if the input is for a feature not yet
+  implemented by the method. Note that this exception is derived from
+  :class:`RuntimeError`.
+
+If no specific error seems to apply for your situation, :class:`RuntimeError`
+can be used. In all cases, the string associated with the exception should
+describe the details of what went wrong.
+
 
 Integer return values
 =====================
@@ -509,7 +537,7 @@ large third-party modules. See also :ref:`section_dependencies_distributions`
 for a discussion of imports from the viewpoint of modularization.
 
 First, you must avoid circular imports. For example, suppose that the
-file ``SAGE_ROOT/src/sage/algebras/steenrod_algebra.py``
+file :sage_root:`src/sage/algebras/steenrod_algebra.py`
 started with a line:
 
 .. CODE-BLOCK:: python
@@ -517,7 +545,7 @@ started with a line:
     from sage.sage.algebras.steenrod_algebra_bases import *
 
 and that the file
-``SAGE_ROOT/src/sage/algebras/steenrod_algebra_bases.py``
+:sage_root:`src/sage/algebras/steenrod_algebra_bases.py`
 started with a line:
 
 .. CODE-BLOCK:: python
@@ -618,17 +646,17 @@ When importing from other Python libraries that do not provide sufficient typing
 information, it is possible to augment the library's typing information for
 the purposes of typechecking the Sage library:
 
-- Create typestub files and place them in the directory ``SAGE_ROOT/src/typings``.
+- Create typestub files and place them in the directory :file:`SAGE_ROOT/src/typings`.
   For example, the distribution **pplpy** provides the top-level package :mod:`ppl`,
   which publishes no typing information. We can create a typestub file
-  ``SAGE_ROOT/src/typings/ppl.pyi`` or ``SAGE_ROOT/src/typings/ppl/__init__.pyi``.
+  :file:`SAGE_ROOT/src/typings/ppl.pyi` or :file:`SAGE_ROOT/src/typings/ppl/__init__.pyi`.
 
 - When these typestub files are working well, it is preferable from the viewpoint
   of the Sage project that they are "upstreamed", i.e., contributed to the
   project that maintains the library. If a new version of the upstream library
   becomes available that provides the necessary typing information, we can
   update the package in the Sage distribution and remove the typestub files again
-  from ``SAGE_ROOT/src/typings``.
+  from :file:`SAGE_ROOT/src/typings`.
 
 - As a fallback, when neither adding typing annotations to source files
   nor adding typestub files is welcomed by the upstream project, it is possible
@@ -719,6 +747,13 @@ documentation for more information on its behaviour and optional arguments.
 
       from sage.misc.superseded import deprecation
       deprecation(666, "Do not use your computer to compute 1+1. Use your brain.")
+
+Note that these decorators only work for (pure) Python. There is no implementation
+of decorators in Cython. Hence, when in need to rename a keyword/function/method/...
+in a Cython (.pyx) file and/or to deprecate something, forget about decorators and
+just use :func:`~sage.misc.superseded.deprecation_cython` instead. The usage of
+:func:`~sage.misc.superseded.deprecation_cython` is exactly the same as
+:func:`~sage.misc.superseded.deprecation`.
 
 
 Experimental/unstable code

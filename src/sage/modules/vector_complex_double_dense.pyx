@@ -71,7 +71,7 @@ cdef class Vector_complex_double_dense(Vector_double_dense):
 
     def __reduce__(self):
         """
-        Pickling
+        Pickling.
 
         EXAMPLES::
 
@@ -96,6 +96,7 @@ def unpickle_v0(parent, entries, degree):
         True
     """
     return unpickle_v1(parent, entries, degree)
+
 
 def unpickle_v1(parent, entries, degree, is_mutable=None):
     """

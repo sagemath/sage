@@ -27,7 +27,7 @@ case "$UNAME" in
     ppc*|powerpc*)
         TARGET=linux-ppc
         ;;
-    armv6l*|armv7l*)
+    armv6l*|armv7l*|aarch64*)
         TARGET=linux-arm-thr
         ;;
     esac

@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 Parsing docstrings
 
@@ -9,7 +9,7 @@ AUTHORS:
 - David Roe (2012-03-27) -- initial version, based on Robert Bradshaw's code.
 
 - Jeroen Demeyer(2014-08-28) -- much improved handling of tolerances
-  using interval arithmetic (:trac:`16889`).
+  using interval arithmetic (:issue:`16889`).
 """
 
 # ****************************************************************************
@@ -95,7 +95,7 @@ def RIFtol(*args):
 ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])")
 
 special_optional_regex = (
-    "arb216|arb218|py2|long time|not implemented|not tested|optional|needs|known bug"
+    "py2|long time|not implemented|not tested|optional|needs|known bug"
 )
 tag_with_explanation_regex = r"((?:\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
 optional_regex = re.compile(
@@ -136,9 +136,7 @@ def parse_optional_tags(
     - ``'not tested'``
     - ``'known bug'`` (possible values are ``None``, ``linux`` and ``macos``)
     - ``'py2'``
-    - ``'arb216'``
-    - ``'arb218'``
-    - ``'optional - FEATURE...'`` or ``'needs FEATURE...'`` --
+    - ``'optional -- FEATURE...'`` or ``'needs FEATURE...'`` --
       the dictionary will just have the key ``'FEATURE'``
 
     The values, if non-``None``, are strings with optional explanations
@@ -146,9 +144,9 @@ def parse_optional_tags(
 
     INPUT:
 
-    - ``string`` -- a string
+    - ``string`` -- string
 
-    - ``return_string_sans_tags`` -- (boolean, default ``False``); whether to
+    - ``return_string_sans_tags`` -- boolean (default: ``False``); whether to
       additionally return ``string`` with the optional tags removed but other
       comments kept and a boolean ``is_persistent``
 
@@ -207,7 +205,6 @@ def parse_optional_tags(
         sage: parse_optional_tags("sage: #this is not #needs scipy\n....: import scipy",
         ....:                     return_string_sans_tags=True)
         ({'scipy': None}, 'sage: #this is not \n....: import scipy', False)
-
     """
     safe, literals, state = strip_string_literals(string)
     split = safe.split('\n', 1)
@@ -279,16 +276,15 @@ def parse_file_optional_tags(lines):
 
     INPUT:
 
-    - ``lines`` -- iterable of pairs ``(lineno, line)``.
+    - ``lines`` -- iterable of pairs ``(lineno, line)``
 
-    OUTPUT:
-
-    a dictionary whose keys are strings (tags); see :func:`parse_optional_tags`
+    OUTPUT: dictionary whose keys are strings (tags);
+    see :func:`parse_optional_tags`
 
     EXAMPLES::
 
         sage: from sage.doctest.parsing import parse_file_optional_tags
-        sage: filename = tmp_filename(ext=".pyx")
+        sage: filename = tmp_filename(ext='.pyx')
         sage: with open(filename, "r") as f:
         ....:     parse_file_optional_tags(enumerate(f))
         {}
@@ -340,9 +336,7 @@ def _tag_group(tag):
 
     - ``tag`` -- string
 
-    OUTPUT:
-
-    a string; one of ``'special'``, ``'optional'``, ``'standard'``, ``'sage'``
+    OUTPUT: string; one of ``'special'``, ``'optional'``, ``'standard'``, ``'sage'``
 
     EXAMPLES::
 
@@ -372,7 +366,8 @@ def unparse_optional_tags(tags, prefix='# '):
 
     INPUT:
 
-    - ``tags`` -- dict or iterable of tags, as output by :func:`parse_optional_tags`
+    - ``tags`` -- dictionary or iterable of tags, as output by
+      :func:`parse_optional_tags`
 
     - ``prefix`` -- to be put before a nonempty string
 
@@ -587,13 +582,11 @@ def parse_tolerance(source, want):
 
     INPUT:
 
-    - ``source`` -- a string, the source of a doctest
-    - ``want`` -- a string, the desired output of the doctest
+    - ``source`` -- string, the source of a doctest
+    - ``want`` -- string, the desired output of the doctest
 
-    OUTPUT:
-
-    ``want`` if there are no tolerance tags specified; a
-    :class:`MarkedOutput` version otherwise.
+    OUTPUT: ``want`` if there are no tolerance tags specified; a
+    :class:`MarkedOutput` version otherwise
 
     EXAMPLES::
 
@@ -784,10 +777,8 @@ class OriginalSource():
 
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.control import DocTestDefaults
-        sage: from sage.env import SAGE_SRC
-        sage: import os
-        sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-        sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+        sage: filename = sage.doctest.forker.__file__
+        sage: FDS = FileDocTestSource(filename, DocTestDefaults())
         sage: doctests, extras = FDS.create_doctests(globals())
         sage: ex = doctests[0].examples[0]
         sage: ex.sage_source
@@ -811,10 +802,8 @@ class OriginalSource():
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: from sage.doctest.parsing import OriginalSource
@@ -829,10 +818,8 @@ class OriginalSource():
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: from sage.doctest.parsing import OriginalSource
@@ -849,10 +836,8 @@ class OriginalSource():
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: from sage.doctest.parsing import OriginalSource
@@ -877,17 +862,17 @@ class SageDocTestParser(doctest.DocTestParser):
     optional_tags: Union[bool, set[str]]
     optional_only: bool
     optionals: dict[str, int]
-    probed_tags: set[str]
+    probed_tags: Union[bool, set[str]]
 
     def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
         r"""
         INPUT:
 
-        - ``optional_tags`` -- a list or tuple of strings.
+        - ``optional_tags`` -- list or tuple of strings
         - ``long`` -- boolean, whether to run doctests marked as taking a
-          long time.
-        - ``probed_tags`` -- a list or tuple of strings.
-        - ``file_optional_tags`` -- an iterable of strings.
+          long time
+        - ``probed_tags`` -- list or tuple of strings
+        - ``file_optional_tags`` -- an iterable of strings
 
         EXAMPLES::
 
@@ -916,7 +901,10 @@ class SageDocTestParser(doctest.DocTestParser):
                 self.optional_tags.remove('sage')
             else:
                 self.optional_only = True
-        self.probed_tags = set(probed_tags)
+        if probed_tags is True:
+            self.probed_tags = True
+        else:
+            self.probed_tags = set(probed_tags)
         self.file_optional_tags = set(file_optional_tags)
 
     def __eq__(self, other):
@@ -955,9 +943,9 @@ class SageDocTestParser(doctest.DocTestParser):
 
         INPUT:
 
-        - ``string`` -- the string to parse.
-        - ``name`` -- optional string giving the name identifying string,
-          to be used in error messages.
+        - ``string`` -- the string to parse
+        - ``name`` -- (optional) string giving the name identifying string,
+          to be used in error messages
 
         OUTPUT:
 
@@ -1045,7 +1033,7 @@ class SageDocTestParser(doctest.DocTestParser):
             ...
             ValueError: the order of a finite field must be a prime power
 
-        Test that :trac:`26575` is resolved::
+        Test that :issue:`26575` is resolved::
 
             sage: example3 = 'sage: Zp(5,4,print_mode="digits")(5)\n...00010'
             sage: parsed3 = DTP.parse(example3)
@@ -1385,9 +1373,7 @@ class SageOutputChecker(doctest.OutputChecker):
         - ``wantval`` -- a real interval element
         - ``want`` -- a :class:`MarkedOutput` describing the tolerance
 
-        OUTPUT:
-
-        - an interval element containing ``wantval``
+        OUTPUT: an interval element containing ``wantval``
 
         EXAMPLES::
 
@@ -1429,19 +1415,18 @@ class SageOutputChecker(doctest.OutputChecker):
 
     def check_output(self, want, got, optionflags):
         r"""
-        Checks to see if the output matches the desired output.
+        Check to see if the output matches the desired output.
 
         If ``want`` is a :class:`MarkedOutput` instance, takes into account the desired tolerance.
 
         INPUT:
 
-        - ``want`` -- a string or :class:`MarkedOutput`
-        - ``got`` -- a string
-        - ``optionflags`` -- an integer, passed down to :class:`doctest.OutputChecker`
+        - ``want`` -- string or :class:`MarkedOutput`
+        - ``got`` -- string
+        - ``optionflags`` -- integer; passed down to :class:`doctest.OutputChecker`
 
-        OUTPUT:
-
-        - boolean, whether ``got`` matches ``want`` up to the specified tolerance.
+        OUTPUT: boolean; whether ``got`` matches ``want`` up to the specified
+        tolerance
 
         EXAMPLES::
 
@@ -1538,7 +1523,7 @@ class SageOutputChecker(doctest.OutputChecker):
             sage: c = 'you'; c
             'you'
 
-        This illustrates that :trac:`33588` is fixed::
+        This illustrates that :issue:`33588` is fixed::
 
             sage: from sage.doctest.parsing import SageOutputChecker, SageDocTestParser
             sage: import doctest
@@ -1595,20 +1580,18 @@ class SageOutputChecker(doctest.OutputChecker):
 
     def do_fixup(self, want, got):
         r"""
-        Performs few changes to the strings ``want`` and ``got``.
+        Perform few changes to the strings ``want`` and ``got``.
 
         For example, remove warnings to be ignored.
 
         INPUT:
 
-        - ``want`` -- a string or :class:`MarkedOutput`
-        - ``got`` -- a string
+        - ``want`` -- string or :class:`MarkedOutput`
+        - ``got`` -- string
 
-        OUTPUT:
+        OUTPUT: a tuple:
 
-        A tuple:
-
-        - bool, ``True`` when some fixup were performed and ``False`` otherwise
+        - boolean, ``True`` when some fixup were performed and ``False`` otherwise
         - string, edited wanted string
         - string, edited got string
 
@@ -1648,7 +1631,6 @@ class SageOutputChecker(doctest.OutputChecker):
             (False, '1.3090169943749475\n', 'ANYTHING1.3090169943749475')
             sage: OC.do_fixup(ex.want,'Long-step dual simplex will be used\n1.3090169943749475')
             (True, '1.3090169943749475\n', '\n1.3090169943749475')
-
         """
         did_fixup = False
 
@@ -1659,19 +1641,19 @@ class SageOutputChecker(doctest.OutputChecker):
             # Version 4.65 of glpk prints the warning "Long-step dual
             # simplex will be used" frequently. When Sage uses a system
             # installation of glpk which has not been patched, we need to
-            # ignore that message. See :trac:`29317`.
+            # ignore that message. See :issue:`29317`.
             glpk_simplex_warning_regex = re.compile(r'(Long-step dual simplex will be used)')
             got = glpk_simplex_warning_regex.sub('', got)
             did_fixup = True
 
         if "chained fixups" in got:
-            # :trac:`34533` -- suppress warning on OS X 12.6 about chained fixups
+            # :issue:`34533` -- suppress warning on OS X 12.6 about chained fixups
             chained_fixup_warning_regex = re.compile(r'ld: warning: -undefined dynamic_lookup may not work with chained fixups')
             got = chained_fixup_warning_regex.sub('', got)
             did_fixup = True
 
         if "newer macOS version" in got:
-            # :trac:`34741` -- suppress warning arising after
+            # :issue:`34741` -- suppress warning arising after
             # upgrading from macOS 12.X to 13.X.
             newer_macOS_version_regex = re.compile(r'.*dylib \(.*\) was built for newer macOS version \(.*\) than being linked \(.*\)')
             got = newer_macOS_version_regex.sub('', got)
@@ -1683,16 +1665,22 @@ class SageOutputChecker(doctest.OutputChecker):
             did_fixup = True
 
         if "dylib" in got:
-            # :trac:`31204` -- suppress warning about ld and OS version for
+            # :issue:`31204` -- suppress warning about ld and OS version for
             # dylib files.
             ld_warning_regex = re.compile(r'^.*dylib.*was built for newer macOS version.*than being linked.*')
             got = ld_warning_regex.sub('', got)
             did_fixup = True
 
         if "pie being ignored" in got:
-            # :trac:`30845` -- suppress warning on conda about ld
+            # :issue:`30845` -- suppress warning on conda about ld
             ld_pie_warning_regex = re.compile(r'ld: warning: -pie being ignored. It is only used when linking a main executable')
             got = ld_pie_warning_regex.sub('', got)
+            did_fixup = True
+
+        if "R[write to console]" in got:
+            # Supress R warnings
+            r_warning_regex = re.compile(r'R\[write to console\]:.*')
+            got = r_warning_regex.sub('', got)
             did_fixup = True
 
         if "Overriding pythran description" in got:
@@ -1718,12 +1706,10 @@ class SageOutputChecker(doctest.OutputChecker):
         INPUT:
 
         - ``example`` -- a :class:`doctest.Example` instance
-        - ``got`` -- a string
-        - ``optionflags`` -- an integer, passed down to :class:`doctest.OutputChecker`
+        - ``got`` -- string
+        - ``optionflags`` -- integer; passed down to :class:`doctest.OutputChecker`
 
-        OUTPUT:
-
-        - a string, describing how ``got`` fails to match ``example.want``
+        OUTPUT: string, describing how ``got`` fails to match ``example.want``
 
         EXAMPLES::
 

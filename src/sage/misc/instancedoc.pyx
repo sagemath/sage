@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Dynamic documentation for instances of classes
 
@@ -136,12 +137,12 @@ cdef class InstanceDocDescriptor:
 
     INPUT:
 
-    - ``classdoc`` -- (string) class documentation
+    - ``classdoc`` -- string; class documentation
 
     - ``instancedoc`` -- (method) documentation for an instance
 
-    - ``attr`` -- (string, default ``__doc__``) attribute name to use
-      for custom docstring on the instance.
+    - ``attr`` -- string (default: ``__doc__``); attribute name to use
+      for custom docstring on the instance
 
     EXAMPLES::
 
@@ -170,7 +171,7 @@ cdef class InstanceDocDescriptor:
     cdef instancedoc
     cdef attr
 
-    def __init__(self, classdoc, instancedoc, attr="__doc__"):
+    def __init__(self, classdoc, instancedoc, attr='__doc__'):
         """
         TESTS::
 

@@ -39,9 +39,9 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
 
     INPUT:
 
-     - ``n`` -- a non negative integer (optional)
+    - ``n`` -- nonnegative integer (optional)
 
-     - ``weight`` -- a tuple (or list or iterable) of positive integers
+    - ``weight`` -- tuple (or list or iterable) of positive integers
 
     EXAMPLES::
 
@@ -134,7 +134,6 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
             ...
             ValueError: cannot convert [1, 2, 0] into Integer vectors of 3
              weighted by [2, 1, 1]
-
         """
         if isinstance(lst, IntegerVector):
             if lst.parent() is self:
@@ -184,10 +183,10 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
         if len(self._weights) != len(x):
             return False
         s = 0
-        for i, val in enumerate(x):
-            if (not isinstance(val, (int, Integer))) and (val not in ZZ):
+        for i, xi in enumerate(x):
+            if not isinstance(xi, (int, Integer)) and xi not in ZZ:
                 return False
-            s += x[i] * self._weights[i]
+            s += xi * self._weights[i]
         return s == self._n
 
     def _recfun(self, n, l):
@@ -240,7 +239,7 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
 
         perm = Word(self._weights).standard_permutation()
         perm = [len(self._weights) - i for i in perm]
-        l = [x for x in sorted(self._weights, reverse=True)]
+        l = sorted(self._weights, reverse=True)
         for x in iterator_fast(self._n, l):
             yield self.element_class(self, [x[i] for i in perm])
             # .action(x)
@@ -350,7 +349,7 @@ def iterator_fast(n, l):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
     - ``l`` -- the weights in weakly decreasing order
 
     EXAMPLES::
@@ -361,7 +360,7 @@ def iterator_fast(n, l):
         sage: list(iterator_fast(2, [2]))
         [[1]]
 
-    Test that :trac:`20491` is fixed::
+    Test that :issue:`20491` is fixed::
 
         sage: type(list(iterator_fast(2, [2]))[0][0])
         <class 'sage.rings.integer.Integer'>

@@ -37,4 +37,4 @@ cdef class CVXPYBackend(GenericBackend):
                            coefficients=*) \
                            except -1
 
-    cpdef cvxpy_problem(self) noexcept
+    cpdef cvxpy_problem(self)

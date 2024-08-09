@@ -144,7 +144,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: loads(R.dumps()) == R
             True
         """
-        if not is_MPolynomialRing(other):
+        if not isinstance(other, MPolynomialRing_base):
             return False
         return ((self.base_ring(), self.ngens(),
                 self.variable_names(), self.term_order()) ==
@@ -356,7 +356,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         TESTS:
 
-        Check if we still allow nonsense (see :trac:`7951`)::
+        Check if we still allow nonsense (see :issue:`7951`)::
 
             sage: P = PolynomialRing(QQ, 0, '')
             sage: P('pi')
@@ -365,7 +365,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             TypeError: unable to convert pi to a rational
 
         Check that it is possible to convert strings to iterated
-        polynomial rings (see :trac:`13327`)::
+        polynomial rings (see :issue:`13327`)::
 
             sage: Rm = QQ["a"]["b, c"]
             sage: Rm("a*b")
@@ -374,7 +374,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             True
 
         Check that conversion from PARI works correctly (see
-        :trac:`17974`)::
+        :issue:`17974`)::
 
             sage: A.<a> = PolynomialRing(QQ)
             sage: B.<d,e> = PolynomialRing(A)
@@ -403,7 +403,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: f.sage(locals={'a': a, 'd': d})
             a*d
 
-        Check that :trac:`21999` is fixed::
+        Check that :issue:`21999` is fixed::
 
             sage: R = QQbar['s,t']                                                      # needs sage.rings.number_field
             sage: type(R({(1,2): 3}).coefficients()[0])
@@ -554,14 +554,13 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``f`` - monomial.
+        - ``f`` -- monomial
 
-        -  ``g`` - monomial.
+        - ``g`` -- monomial
 
-        -  ``coeff`` - divide coefficients as well (default:
-           False).
+        - ``coeff`` -- divide coefficients as well (default: ``False``)
 
-        OUTPUT: monomial.
+        OUTPUT: monomial
 
         EXAMPLES::
 
@@ -650,11 +649,11 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``f`` - monomial.
+        - ``f`` -- monomial
 
-        -  ``g`` - monomial.
+        - ``g`` -- monomial
 
-        OUTPUT: monomial.
+        OUTPUT: monomial
 
         EXAMPLES::
 
@@ -703,11 +702,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
+        - ``f`` -- monomial
 
-        -  ``f`` - monomial
-
-        -  ``G`` - list/set of mpolynomials
-
+        - ``G`` -- list/set of mpolynomials
 
         EXAMPLES::
 
@@ -765,7 +762,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         - ``b`` -- monomial
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -802,11 +799,11 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``h`` - monomial.
+        - ``h`` -- monomial
 
-        -  ``g`` - monomial.
+        - ``g`` -- monomial
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -853,9 +850,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``t`` - a monomial.
+        - ``t`` -- a monomial
 
-        OUTPUT: a list of monomials.
+        OUTPUT: list of monomials
 
         EXAMPLES::
 
@@ -943,8 +940,8 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
         """
         do_coerce = False
         if len(gens) == 1:
-            from sage.rings.ideal import is_Ideal
-            if is_Ideal(gens[0]):
+            from sage.rings.ideal import Ideal_generic
+            if isinstance(gens[0], Ideal_generic):
                 if gens[0].ring() is self:
                     return gens[0]
                 gens = gens[0].gens()

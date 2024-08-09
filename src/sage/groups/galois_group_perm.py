@@ -17,11 +17,13 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
 
     - ``field`` -- a field, separable over its base
 
-    - ``names`` -- a string or tuple of length 1, giving a variable name for the splitting field
+    - ``names`` -- string or tuple of length 1, giving a variable name for
+      the splitting field
 
-    - ``gc_numbering`` -- boolean, whether to express permutations in terms of the
-        roots of the defining polynomial of the splitting field (versus the defining polynomial
-        of the original extension).  The default value may vary based on the type of field.
+    - ``gc_numbering`` -- boolean, whether to express permutations in terms of
+      the roots of the defining polynomial of the splitting field (versus the
+      defining polynomial of the original extension); the default value may
+      vary based on the type of field
     """
     @abstract_method
     def transitive_number(self, algorithm=None, recompute=False):
@@ -86,7 +88,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         r"""
         The number of moved points in the permutation representation.
 
-        This will be the degree of the original number field if `_gc_numbering``
+        This will be the degree of the original number field if ``_gc_numbering``
         is ``False``, or the degree of the Galois closure otherwise.
 
         EXAMPLES::

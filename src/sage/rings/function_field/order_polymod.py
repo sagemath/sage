@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 r"""
 Orders of function fields: extension
 """
@@ -17,6 +17,7 @@ Orders of function fields: extension
 # ****************************************************************************
 
 from sage.arith.functions import lcm
+from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -248,8 +249,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         - ``d`` -- (default: 1) a nonzero element of the polynomial ring
 
-        - ``check`` -- boolean (default: ``True``); if ``True``, compute the real
-          denominator of the vectors, possibly different from ``d``.
+        - ``check`` -- boolean (default: ``True``); if ``True``, compute the
+          real denominator of the vectors, possibly different from ``d``
 
         EXAMPLES::
 
@@ -547,7 +548,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             + 6*x/(x^4 + 4*x^3 + 3*x^2 + 6*x + 4)) of Maximal order of Function field
             in y defined by y^4 + x*y + 4*x + 1
         """
-        T  = self._codifferent_matrix()
+        T = self._codifferent_matrix()
         return self._ideal_from_vectors(T.inverse().columns())
 
     @cached_method
@@ -611,13 +612,12 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         finite-dimensional algebra, a construct for which we do
         support primary decomposition.
 
-        See :trac:`28094` and https://github.com/sagemath/sage/files/10659303/decomposition.pdf.gz
+        See :issue:`28094` and https://github.com/sagemath/sage/files/10659303/decomposition.pdf.gz
 
         .. TODO::
 
             Use Kummer's theorem to shortcut this code if possible, like as
             done in :meth:`FunctionFieldMaximalOrder_global.decomposition()`
-
         """
         from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
         from sage.matrix.constructor import matrix
@@ -649,7 +649,10 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         # matrices_reduced give the multiplication matrices used to form the
         # algebra O mod pO.
         matrices_reduced = list(map(lambda M: M.mod(p), matrices))
-        A = FiniteDimensionalAlgebra(k, matrices_reduced)
+        cat = CommutativeAlgebras(k).FiniteDimensional().WithBasis()
+        A = FiniteDimensionalAlgebra(k, matrices_reduced,
+                                     assume_associative=True,
+                                     category=cat)
 
         # Each prime ideal of the algebra A corresponds to a prime ideal of O,
         # and since the algebra is an Artinian ring, all of its prime ideals
@@ -680,13 +683,13 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
                 # not be in pO. To ensure that beta*P is in pO, multiplying
                 # beta by each of P's generators must produce a vector whose
                 # elements are multiples of p. We can ensure that all this
-                # occurs by constructing a matrix in k, and finding a non-zero
+                # occurs by constructing a matrix in k, and finding a nonzero
                 # vector in the kernel of the matrix.
 
                 m = []
                 for g in q.basis_matrix():
                     m.extend(matrix([g * mr for mr in matrices_reduced]).columns())
-                beta  = [c.lift() for c in matrix(m).right_kernel().basis()[0]]
+                beta = [c.lift() for c in matrix(m).right_kernel().basis()[0]]
 
                 r = q
                 index = 1
@@ -1291,7 +1294,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 m = []
                 for i in range(n):
                     m.append(sum(qgenb[j] * mtable[i][j] for j in range(n)))
-                beta  = [fr(coeff) for coeff in matrix(m).left_kernel().basis()[0]]
+                beta = [fr(coeff) for coeff in matrix(m).left_kernel().basis()[0]]
 
                 prime.is_prime.set_cache(True)
                 prime._prime_below = ideal

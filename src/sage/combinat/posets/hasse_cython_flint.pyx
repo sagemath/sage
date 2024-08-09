@@ -22,18 +22,16 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
 
 
-cpdef Matrix_integer_dense moebius_matrix_fast(list positions) noexcept:
+cpdef Matrix_integer_dense moebius_matrix_fast(list positions):
     """
     Compute the Möbius matrix of a poset by a specific triangular inversion.
 
     INPUT:
 
-    a list of sets of integers describing the poset, as given by the
-    lazy attribute ``_leq_storage`` of Hasse diagrams.
+    - ``positions`` -- a list of sets of integers describing the poset, as
+      given by the lazy attribute ``_leq_storage`` of Hasse diagrams
 
-    OUTPUT:
-
-    a dense matrix
+    OUTPUT: a dense matrix
 
     EXAMPLES::
 
@@ -81,18 +79,16 @@ cpdef Matrix_integer_dense moebius_matrix_fast(list positions) noexcept:
     return A
 
 
-cpdef Matrix_integer_dense coxeter_matrix_fast(list positions) noexcept:
+cpdef Matrix_integer_dense coxeter_matrix_fast(list positions):
     """
     Compute the Coxeter matrix of a poset by a specific algorithm.
 
     INPUT:
 
-    a list of sets of integers describing the poset, as given by the
-    lazy attribute ``_leq_storage`` of Hasse diagrams.
+    - ``positions`` -- a list of sets of integers describing the poset, as
+      given by the lazy attribute ``_leq_storage`` of Hasse diagrams
 
-    OUTPUT:
-
-    a dense matrix
+    OUTPUT: a dense matrix
 
     EXAMPLES::
 

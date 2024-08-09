@@ -1,5 +1,6 @@
 cimport cython
 
+
 @cython.binding(True)
 def frobenius_unram(self, arithmetic=True):
     """
@@ -8,7 +9,7 @@ def frobenius_unram(self, arithmetic=True):
 
     INPUT:
 
-    - ``self`` -- an element of an unramified extension.
+    - ``self`` -- an element of an unramified extension
     - ``arithmetic`` -- whether to apply the arithmetic Frobenius (acting
       by raising to the `p`-th power on the residue field). If ``False`` is
       provided, the image of geometric Frobenius (raising to the `(1/p)`-th
@@ -39,7 +40,7 @@ def frobenius_unram(self, arithmetic=True):
         sage: c.frobenius().frobenius()
         (a + 1)*7^-1 + O(7^3)
 
-    An error will be raised if the parent of self is a ramified extension::
+    An error will be raised if the parent of ``self`` is a ramified extension::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = Qp(5).extension(x^2 - 5)
@@ -50,12 +51,11 @@ def frobenius_unram(self, arithmetic=True):
 
     TESTS:
 
-    We check that :trac:`23575` is resolved::
+    We check that :issue:`23575` is resolved::
 
         sage: x = R.random_element()
         sage: x.frobenius(arithmetic=false).frobenius() == x
         True
-
     """
     if self == 0:
         return self
@@ -95,9 +95,9 @@ def norm_unram(self, base = None):
 
     INPUT:
 
-    - ``base`` -- a subfield of the parent `L` of this element.
-                  The norm is the relative norm from ``L`` to ``base``.
-                  Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
+    - ``base`` -- a subfield of the parent `L` of this element; the norm is the
+      relative norm from ``L`` to ``base``. Defaults to the absolute norm down
+      to `\QQ_p` or `\ZZ_p`.
 
     EXAMPLES::
 
@@ -131,7 +131,7 @@ def norm_unram(self, base = None):
 
     TESTS:
 
-    Check that :trac:`11586` has been resolved::
+    Check that :issue:`11586` has been resolved::
 
         sage: R.<x> = QQ[]
         sage: f = x^2 + 3*x + 1
@@ -144,7 +144,7 @@ def norm_unram(self, base = None):
         sage: b*b.frobenius()
         4*7^2 + 7^3 + O(7^22)
 
-    Check that :trac:`31845` is fixed::
+    Check that :issue:`31845` is fixed::
 
         sage: R.<a> = Zq(4)
         sage: (a - a).norm()
@@ -223,7 +223,7 @@ def trace_unram(self, base = None):
         sage: (a+b).trace()
         4*5 + 5^2 + 5^3 + 2*5^4
 
-    Check that :trac:`31845` is fixed::
+    Check that :issue:`31845` is fixed::
 
         sage: R.<a> = Zq(4)
         sage: (a - a).trace()

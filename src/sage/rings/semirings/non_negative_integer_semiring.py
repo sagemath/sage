@@ -15,7 +15,7 @@ from sage.sets.family import Family
 
 class NonNegativeIntegerSemiring(NonNegativeIntegers):
     r"""
-    A class for the semiring of the non negative integers
+    A class for the semiring of the nonnegative integers.
 
     This parent inherits from the infinite enumerated set of non
     negative integers and endows it with its natural semiring
@@ -58,7 +58,6 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
         Integer Ring
         sage: x+3
         18
-
     """
     def __init__(self):
         r"""
@@ -83,7 +82,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
 
     def additive_semigroup_generators(self):
         r"""
-        Returns the additive semigroup generators of ``self``.
+        Return the additive semigroup generators of ``self``.
 
         EXAMPLES::
 

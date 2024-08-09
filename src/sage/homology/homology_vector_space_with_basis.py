@@ -1,5 +1,4 @@
 # sage.doctest: needs sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
-
 """
 Homology and cohomology with a basis
 
@@ -71,7 +70,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     - ``base_ring`` -- must be a field
     - ``cell_complex`` -- the cell complex whose homology we are
       computing
-    - ``cohomology`` -- (default: ``False``) if ``True``, return
+    - ``cohomology`` -- boolean (default: ``False``); if ``True``, return
       the cohomology as a module
     - ``category`` -- (optional) a subcategory of modules with basis
 
@@ -341,7 +340,6 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             sage: co = simplicial_complexes.KleinBottle().cohomology_ring(GF(2))
             sage: co.basis()[1,0] # indirect doctest
             h^{1,0}
-
         """
         sym = '^' if self._cohomology else '_'
         return 'h{}{{{},{}}}'.format(sym, i[0], i[1])
@@ -609,7 +607,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
 
             INPUT:
 
-            - ``a`` - an element of the mod 2 Steenrod algebra
+            - ``a`` -- an element of the mod 2 Steenrod algebra
             - ``self_on_left`` -- ``True`` if we are computing ``self * a``,
               otherwise ``a * self``
 
@@ -935,7 +933,6 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 sage: a,b = K.cohomology_ring(QQ).basis(2)
                 sage: a**0
                 h^{0,0} + h^{0,1}
-
             """
             return self * other
 
@@ -1283,7 +1280,7 @@ class CohomologyRing_mod2(CohomologyRing):
         - ``deg_codomain`` -- the degree of the codomain in the
           cohomology ring
 
-        - ``side`` -- (default ``'left'``) whether we are computing
+        - ``side`` -- (default: ``'left'``) whether we are computing
           the action as a left module action or a right module
 
         We will write this with respect to the left action;
@@ -1420,7 +1417,7 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
 
     INPUT:
 
-    - ``k`` -- non-negative integer
+    - ``k`` -- nonnegative integer
     - ``i_k_plus_one`` -- the positive integer `i_{k+1}`
     - ``S_k_plus_one`` -- the integer `S(k+1)`
 

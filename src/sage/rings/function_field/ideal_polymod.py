@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 r"""
 Ideals of function fields: extension
 """
@@ -27,9 +27,10 @@ from sage.matrix.constructor import matrix
 
 from .ideal import FunctionFieldIdeal, FunctionFieldIdealInfinite
 
+
 class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
     """
-    Fractional ideals of algebraic function fields
+    Fractional ideals of algebraic function fields.
 
     INPUT:
 
@@ -407,7 +408,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
                 g1, g2 = other._gens_two_vecs
                 vecs = list(g1 * self._hnf) + [mul(g2, v) for v in self._hnf]
         else:
-            vecs = [mul(r1,r2) for r1 in self._hnf for r2 in other._hnf]
+            vecs = [mul(r1, r2) for r1 in self._hnf for r2 in other._hnf]
 
         return O._ideal_from_vectors_and_denominator(vecs, self._denominator * other._denominator)
 
@@ -467,7 +468,6 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: J = O.ideal(x)
             sage: I.intersect(J) == I * J * (I + J)^-1
             True
-
         """
         from sage.matrix.special import block_matrix
         from .hermite_form_polynomial import reversed_hermite_form
@@ -488,7 +488,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         n = A.ncols()
 
         # intersect the row spaces of A and B
-        M = block_matrix([[I,I],[A,O],[O,B]])
+        M = block_matrix([[I, I], [A, O], [O, B]])
 
         # reversed Hermite form
         U = reversed_hermite_form(M, transformation=True)
@@ -601,7 +601,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: I.gens_over_base()
             (x^3 + 1, y + x)
         """
-        gens, d  = self._gens_over_base
+        gens, d = self._gens_over_base
         return tuple([~d * b for b in gens])
 
     @lazy_attribute
@@ -620,9 +620,8 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: I._gens_over_base
             ([x, y], x)
         """
-        gens = []
-        for row in self._hnf:
-            gens.append(sum([c1*c2 for c1,c2 in zip(row, self._ring.basis())]))
+        gens = [sum([c1 * c2 for c1, c2 in zip(row, self._ring.basis())])
+                for row in self._hnf]
         return gens, self._denominator
 
     def gens(self):
@@ -864,7 +863,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             [True, True]
         """
         factors = self.factor()
-        if len(factors) == 1 and factors[0][1] == 1: # prime!
+        if len(factors) == 1 and factors[0][1] == 1:  # prime!
             prime = factors[0][0]
             assert self == prime
             self._relative_degree = prime._relative_degree
@@ -1013,19 +1012,19 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         i = d * self
 
         factors = []
-        primes = set([o.ideal(p) for p,_ in d.factor()] + [p for p,_ in i.ideal_below().factor()])
+        primes = set([o.ideal(p) for p, _ in d.factor()] + [p for p, _ in i.ideal_below().factor()])
         for prime in primes:
             qs = [q[0] for q in O.decomposition(prime)]
             for q in qs:
                 exp = q.valuation(self)
                 if exp != 0:
-                    factors.append((q,exp))
+                    factors.append((q, exp))
         return factors
 
 
 class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
     """
-    Fractional ideals of canonical function fields
+    Fractional ideals of canonical function fields.
 
     INPUT:
 
@@ -1100,10 +1099,10 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
                 J = [ppow * v for v in I]
             else:
                 p, q = self._gens_two_vecs
-                q = sum(e1 * e2 for e1,e2 in zip(O.basis(), q))
+                q = sum(e1 * e2 for e1, e2 in zip(O.basis(), q))
                 ppow = p**mod
                 qpow = O._coordinate_vector(q**mod)
-                J = [ppow * v for v in I] + [mul(qpow,v) for v in I]
+                J = [ppow * v for v in I] + [mul(qpow, v) for v in I]
 
             return O._ideal_from_vectors_and_denominator(J, self._denominator**mod)
 
@@ -1171,7 +1170,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             of Function field in y defined by y^2 + y + (x^2 + 1)/x
         """
         d = self.denominator()
-        return tuple(e/d for e in self._gens_two())
+        return tuple(e / d for e in self._gens_two())
 
     @cached_method
     def _gens_two(self):
@@ -1219,18 +1218,18 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         O = self.ring()
         F = O.fraction_field()
 
-        if self._kummer_form is not None: # prime ideal
+        if self._kummer_form is not None:  # prime ideal
             _g1, _g2 = self._kummer_form
             g1 = F(_g1)
-            g2 = sum([c1*c2 for c1,c2 in zip(_g2, O.basis())])
+            g2 = sum([c1 * c2 for c1, c2 in zip(_g2, O.basis())])
             if g2:
                 self._gens_two_vecs = (_g1, _g2)
-                return (g1,g2)
+                return (g1, g2)
             else:
                 self._gens_two_vecs = (_g1,)
                 return (g1,)
 
-        ### start to search for two generators
+        # ---- start to search for two generators
 
         hnf = self._hnf
 
@@ -1238,7 +1237,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         for e in hnf.diagonal():
             norm *= e
 
-        if norm.is_constant(): # unit ideal
+        if norm.is_constant():  # unit ideal
             self._gens_two_vecs = (1,)
             return (F(1),)
 
@@ -1247,7 +1246,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         p = _l.degree()
         l = F(_l)
 
-        if self._hnf == O.ideal(l)._hnf: # principal ideal
+        if self._hnf == O.ideal(l)._hnf:  # principal ideal
             self._gens_two_vecs = (_l,)
             return (l,)
 
@@ -1255,13 +1254,13 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
 
         basis = []
         for row in hnf:
-            basis.append(sum([c1*c2 for c1,c2 in zip(row, O.basis())]))
+            basis.append(sum([c1 * c2 for c1, c2 in zip(row, O.basis())]))
 
         n = len(basis)
         alpha = None
 
         def check(alpha):
-            alpha_norm = alpha.norm().numerator() # denominator is 1
+            alpha_norm = alpha.norm().numerator()  # denominator is 1
             return norm.gcd(alpha_norm // norm) == 1
 
         # Trial 1: search for alpha among generators
@@ -1273,9 +1272,9 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         # Trial 2: exhaustive search for alpha using only polynomials
         # with coefficients 0 or 1
         for d in range(p):
-            G = itertools.product(itertools.product([0,1],repeat=d+1), repeat=n)
+            G = itertools.product(itertools.product([0, 1], repeat=d + 1), repeat=n)
             for g in G:
-                alpha = sum([R(c1)*c2 for c1,c2 in zip(g, basis)])
+                alpha = sum([R(c1) * c2 for c1, c2 in zip(g, basis)])
                 if check(alpha):
                     self._gens_two_vecs = (_l, O._coordinate_vector(alpha))
                     return (l, alpha)
@@ -1293,7 +1292,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
                 if g[j].leading_coefficient() != 1:
                     continue
 
-                alpha = sum([c1*c2 for c1,c2 in zip(g, basis)])
+                alpha = sum([c1 * c2 for c1, c2 in zip(g, basis)])
                 if check(alpha):
                     self._gens_two_vecs = (_l, O._coordinate_vector(alpha))
                     return (l, alpha)
@@ -1383,7 +1382,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
             True
         """
         F = self.ring().fraction_field()
-        iF,from_iF,to_iF = F._inversion_isomorphism()
+        iF, from_iF, to_iF = F._inversion_isomorphism()
         return to_iF(x) in self._ideal
 
     def _add_(self, other):
@@ -1580,7 +1579,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
             (x, y)
         """
         F = self.ring().fraction_field()
-        iF,from_iF,to_iF = F._inversion_isomorphism()
+        iF, from_iF, to_iF = F._inversion_isomorphism()
         return tuple(from_iF(b) for b in self._ideal.gens())
 
     def gens_two(self):
@@ -1606,7 +1605,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
             (x,)
         """
         F = self.ring().fraction_field()
-        iF,from_iF,to_iF = F._inversion_isomorphism()
+        iF, from_iF, to_iF = F._inversion_isomorphism()
         return tuple(from_iF(b) for b in self._ideal.gens_two())
 
     def gens_over_base(self):
@@ -1624,7 +1623,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
             (x, y, 1/x^2*y^2)
         """
         F = self.ring().fraction_field()
-        iF,from_iF,to_iF = F._inversion_isomorphism()
+        iF, from_iF, to_iF = F._inversion_isomorphism()
         return tuple(from_iF(g) for g in self._ideal.gens_over_base())
 
     def ideal_below(self):

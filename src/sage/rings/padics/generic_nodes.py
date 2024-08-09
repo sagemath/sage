@@ -186,7 +186,7 @@ class FloatingPointGeneric(LocalGeneric):
         Test the distributivity of `*` on `+` on (not necessarily
         all) elements of this set.
 
-        p-adic floating point rings only satisfy distributivity
+        `p`-adic floating point rings only satisfy distributivity
         up to a precision that depends on the elements.
 
         INPUT:
@@ -276,10 +276,10 @@ class pAdicLatticeGeneric(pAdicGeneric):
 
     - ``prec`` -- the precision
 
-    - ``subtype`` -- either ``"cap"`` or ``"float"``,
+    - ``subtype`` -- either ``'cap'`` or ``'float'``,
       specifying the precision model used for tracking precision
 
-    - ``label`` -- a string or ``None`` (default: ``None``)
+    - ``label`` -- string or ``None`` (default: ``None``)
 
     TESTS::
 
@@ -546,9 +546,9 @@ class pAdicLatticeGeneric(pAdicGeneric):
 
         INPUT:
 
-        - ``x``: the datum from which the element is created
+        - ``x`` -- the datum from which the element is created
 
-        - ``prec`` -- an integer or ``None`` (the default); the
+        - ``prec`` -- integer or ``None`` (the default); the
           absolute precision of the created element
 
         NOTE:
@@ -683,10 +683,8 @@ class pAdicLatticeGeneric(pAdicGeneric):
                     raise NotImplementedError("multiple conversion of a set of variables for which the module precision is not a lattice is not implemented yet")
                 for j in range(len(L)):
                     x = L[j]
-                    dx = []
-                    for i in range(j):
-                        dx.append([L[i], lattice[i,j]])
-                    prec = lattice[j,j].valuation(p)
+                    dx = [[L[i], lattice[i, j]] for i in range(j)]
+                    prec = lattice[j, j].valuation(p)
                     y = self._element_class(self, x.value(), prec, dx=dx, dx_mode='values', check=False, reduce=False)
                     for i in indices[id(x)]:
                         ans[i] = y
@@ -699,6 +697,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
 
         # We return the created elements
         return ans
+
 
 class pAdicRelaxedGeneric(pAdicGeneric):
     r"""
@@ -722,7 +721,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         INPUT:
 
-        - ``name`` -- a string or ``None`` (default: ``None``); if ``None``,
+        - ``name`` -- string or ``None`` (default: ``None``); if ``None``,
           return the generic class from which all the others derive
 
         TESTS::
@@ -814,12 +813,12 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         EXAMPLES::
 
             sage: # needs sage.libs.flint
-            sage: R = ZpER(5, print_mode="digits")
+            sage: R = ZpER(5, print_mode='digits')
             sage: R.default_prec()
             20
             sage: R(1/17)
             ...34024323104201213403
-            sage: S = ZpER(5, prec=10, print_mode="digits")
+            sage: S = ZpER(5, prec=10, print_mode='digits')
             sage: S.default_prec()
             10
             sage: S(1/17)
@@ -838,7 +837,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: R = ZpER(5, print_mode="digits")                                      # needs sage.libs.flint
+            sage: R = ZpER(5, print_mode='digits')                                      # needs sage.libs.flint
             sage: R.halting_prec()                                                      # needs sage.libs.flint
             40
         """
@@ -882,7 +881,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         - ``x`` -- the datum from which the element is created
 
-        - ``prec`` -- an integer or ``None`` (default: ``None``);
+        - ``prec`` -- integer or ``None`` (default: ``None``);
           if given, bound the precision of the element to ``prec``
 
         EXAMPLES::
@@ -1013,10 +1012,10 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         INPUT:
 
-        - ``start_val`` -- an integer (default: 0); a lower bound on the
+        - ``start_val`` -- integer (default: 0); a lower bound on the
           valuation of the returned element
 
-        - ``digits`` -- an element, a list or ``None`` (default: ``None``);
+        - ``digits`` -- an element, a list, or ``None`` (default: ``None``);
           the first digit or the list of the digits of the returned element
 
         NOTE:
@@ -1112,10 +1111,10 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         INPUT:
 
-        - ``integral`` -- a boolean (default: ``False``); if ``True``,
+        - ``integral`` -- boolean (default: ``False``); if ``True``,
           return a random element in the ring of integers of this ring
 
-        - ``prec`` -- an integer or ``None`` (default: ``None``);
+        - ``prec`` -- integer or ``None`` (default: ``None``);
           if given, bound the precision of the output to ``prec``
 
         EXAMPLES::
@@ -1150,7 +1149,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: R = ZpER(5, print_mode="digits")                                      # needs sage.libs.flint
+            sage: R = ZpER(5, print_mode='digits')                                      # needs sage.libs.flint
             sage: R.teichmuller(2)                                                      # needs sage.libs.flint
             ...40423140223032431212
         """
@@ -1166,7 +1165,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: R = ZpER(7, print_mode="digits")                                      # needs sage.libs.flint
+            sage: R = ZpER(7, print_mode='digits')                                      # needs sage.libs.flint
             sage: R.teichmuller_system()                                                # needs sage.libs.flint
             [...00000000000000000001,
              ...16412125443426203642,
@@ -1193,16 +1192,14 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
     def krull_dimension(self):
         r"""
-        Return the Krull dimension of self, i.e. 1
+        Return the Krull dimension of self, i.e. 1.
 
         INPUT:
 
-        - self -- a `p`-adic ring
+        - ``self`` -- a `p`-adic ring
 
-        OUTPUT:
-
-        - the Krull dimension of self.  Since self is a `p`-adic ring,
-          this is 1.
+        OUTPUT: the Krull dimension of ``self``.  Since ``self`` is a `p`-adic
+        ring, this is 1.
 
         EXAMPLES::
 
@@ -1219,18 +1216,18 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         INPUT:
 
-         - ``f``, ``g`` - the polynomials of which to take the xgcd
+        - ``f``, ``g`` -- the polynomials of which to take the xgcd
 
         OUTPUT:
 
-         - A tuple (a, b, c) which satisfies ``a = b*f + c*g``. There
-           is no guarantee that a, b, and c are minimal.
+        A tuple (a, b, c) which satisfies a = b*f + c*g. There
+        is no guarantee that a, b, and c are minimal.
 
         .. WARNING::
 
             The computations are performed using the standard Euclidean
             algorithm which might produce mathematically incorrect results in
-            some cases. See :trac:`13439`.
+            some cases. See :issue:`13439`.
 
         EXAMPLES::
 
@@ -1239,7 +1236,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
             sage: f.xgcd(f^2)                                                           # needs sage.libs.ntl
             ((1 + O(3^3))*x + 1 + O(3^3), 1 + O(3^3), 0)
 
-        We check that :trac:`13439` has been fixed::
+        We check that :issue:`13439` has been fixed::
 
             sage: # needs sage.libs.ntl
             sage: R.<x> = Zp(3,3)[]
@@ -1292,9 +1289,9 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         INPUT:
 
-         - ``f``, ``g`` - the polynomials of which to take the gcd
+        - ``f``, ``g`` -- the polynomials of which to take the gcd
 
-        OUTPUT: A polynomial
+        OUTPUT: a polynomial
 
         EXAMPLES::
 
@@ -1366,7 +1363,7 @@ class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
 
         INPUT:
 
-        - ``forbid_frac_field`` -- ignored, for compatibility with other p-adic types.
+        - ``forbid_frac_field`` -- ignored, for compatibility with other `p`-adic types
 
         EXAMPLES::
 
@@ -1458,9 +1455,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
         - ``subfield1`` -- a subfield
         - ``subfield2`` -- a subfield
 
-        OUTPUT:
-
-        the composite of ``subfield1`` and ``subfield2``
+        OUTPUT: the composite of ``subfield1`` and ``subfield2``
 
         EXAMPLES::
 
@@ -1474,12 +1469,12 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
 
     def subfields_of_degree(self, n):
         r"""
-        Return the number of subfields of ``self`` of degree `n`
+        Return the number of subfields of ``self`` of degree `n`.
 
         INPUT:
 
         - ``self`` -- a `p`-adic field
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -1498,16 +1493,14 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
 
     def subfield(self, list):
         r"""
-        Return the subfield generated by the elements in ``list``
+        Return the subfield generated by the elements in ``list``.
 
         INPUT:
 
         - ``self`` -- a `p`-adic field
-        - ``list`` -- a list of elements of ``self``
+        - ``list`` -- list of elements of ``self``
 
-        OUTPUT:
-
-        the subfield of ``self`` generated by the elements of ``list``
+        OUTPUT: the subfield of ``self`` generated by the elements of ``list``
 
         EXAMPLES::
 

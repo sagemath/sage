@@ -31,20 +31,20 @@ over `|V(H_1)|` points. In particular, two sets of distinct cardinalities
 require the same memory space. A hypergraph is a C struct with the following
 fields:
 
-* ``n,m`` (``int``) -- number of points and edges.
+* ``n``, ``m`` -- (``int``) number of points and edges
 
-* ``limbs`` (``int``) -- number of 64-bits blocks per set.
+* ``limbs`` -- (``int``) number of 64-bits blocks per set
 
-* ``set_space`` (``uint64_t *``) -- address of the memory used to store the
-  sets.
+* ``set_space`` -- (``uint64_t *``) address of the memory used to store the
+  sets
 
-* ``sets`` (``uint64_t **``) -- ``sets[i]`` points toward the ``limbs``
+* ``sets`` -- (``uint64_t **``) ``sets[i]`` points toward the ``limbs``
   blocks encoding set `i`. Note also that ``sets[i][limbs]`` is equal to the
   cardinality of ``set[i]``, so that ``sets`` has length
   ``m*(limbs+1)*sizeof(uint64_t)``.
 
-* ``names`` (``int *``) -- associates an integer 'name' to each of the ``n``
-  points.
+* ``names`` -- (``int *``) associates an integer 'name' to each of the ``n``
+  points
 
 The operations used on this data structure are:
 
@@ -229,7 +229,7 @@ cdef inline void permute(hypergraph * h,int n1,int n2) noexcept:
         bs_set(h.sets[i],n1,b2)
         bs_set(h.sets[i],n2,b1)
 
-cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp) noexcept:
+cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp):
     r"""
     Fills tmp with the hypergraph induced by points {0,...,n-1} in h.
 
@@ -249,7 +249,7 @@ cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp) noexcept:
 
 cdef void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp) noexcept:
     r"""
-    Stores in `tmp` the trace of the sets on {0,...,n-1} in h1.
+    Store in `tmp` the trace of the sets on `\{0, \ldots, n-1\}` in h1.
 
     Note that the size of the sets are kept as they are, i.e. the size of a set
     stored in tmp is what it was in h. This is useful information we use to cut
@@ -295,7 +295,7 @@ cdef int is_subhypergraph_admissible(hypergraph h1,hypergraph * h2_trace,int n,h
 
     return 1
 
-cdef int cmp_128_bits(void * a, void * b) noexcept nogil:
+cdef int cmp_128_bits(const void * a, const void * b) noexcept nogil:
     r"""
     Lexicographic order on 128-bits words
     """
@@ -426,7 +426,7 @@ cdef class SubHypergraphSearch:
 
     def relabel_heuristic(self):
         r"""
-        Relabels `H_2` in order to make the algorithm faster.
+        Relabel `H_2` in order to make the algorithm faster.
 
         Objective: we try to pick an ordering `p_1,...,p_k` of the points of
         `H_2` that maximizes the number of sets involving the first points in
@@ -474,7 +474,7 @@ cdef class SubHypergraphSearch:
 
     def __iter__(self):
         r"""
-        Iterates over all copies of h2 in h1.
+        Iterate over all copies of h2 in h1.
 
         EXAMPLES:
 
