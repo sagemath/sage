@@ -704,7 +704,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         """
         return self.frobenius_endomorphism().characteristic_polynomial(var)
 
-    @cached_method
     def frobenius_norm(self):
         r"""
         Return the Frobenius norm of the Drinfeld module.
@@ -778,7 +777,6 @@ class DrinfeldModule_finite(DrinfeldModule):
                                * p ** (n//p.degree())
         return self._frobenius_norm
 
-    @cached_method
     def frobenius_trace(self, algorithm=None):
         r"""
         Return the Frobenius trace of the Drinfeld module.
