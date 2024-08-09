@@ -918,6 +918,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             if self._frobenius_charpoly is not None:
                 self._frobenius_trace = -self._frobenius_charpoly \
                                         .coefficients(sparse=False)[-2]
+                return self._frobenius_trace
             else:
                 if self.rank() < self._base_degree_over_constants:
                     algorithm = 'crystalline'
