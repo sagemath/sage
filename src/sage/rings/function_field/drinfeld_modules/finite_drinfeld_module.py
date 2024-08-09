@@ -246,7 +246,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         f = self.gen()  # phi_T, which is updated in the subsequent loop
         t = self.ore_variable()
         rows = []
-        # Compute the reduced charpoly
         for i in range(n):
             m = phi_T.degree() + 1
             row = [EZ([phi_T[jj] for jj in range(j, m, n)]) for j in range(n)]
