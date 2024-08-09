@@ -245,7 +245,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         t = self.ore_variable()
         rows = []
         for i in range(n):
-            m = phi_T.degree() + 1
+            m = f.degree() + 1
             row = [EZ([phi_T[jj] for jj in range(j, m, n)]) for j in range(n)]
             rows.append(row)
             f = t * f  # f is phi_T at first
