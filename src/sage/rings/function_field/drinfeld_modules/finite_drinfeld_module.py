@@ -243,7 +243,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         E = self._base
         EZ = PolynomialRing(E, name='Z')
         n = self._base_degree_over_constants
-        phi_T = self.gen()
+        f = self.gen()  # phi_T, which is updated in the subsequent loop
         t = self.ore_variable()
         rows = []
         # Compute the reduced charpoly
@@ -251,7 +251,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             m = phi_T.degree() + 1
             row = [EZ([phi_T[jj] for jj in range(j, m, n)]) for j in range(n)]
             rows.append(row)
-            phi_T = t * phi_T
+            f = t * f  # f is phi_T at first
         return Matrix(rows)
 
     def frobenius_endomorphism(self):
