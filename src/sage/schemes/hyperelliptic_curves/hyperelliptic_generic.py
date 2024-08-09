@@ -203,13 +203,12 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         R = self.base_ring()
         y = self._printing_ring.gen()
         x = self._printing_ring.base_ring().gen()
-        if h == 0:
+        if h.is_zero():
             return (fr'\text{{Hyperelliptic Curve over ${R._latex_()}$ '
                     f'defined by ${(y**2)._latex_()} = {(f(x))._latex_()}$}}')
-        else:
-            return (fr'\text{{Hyperelliptic Curve over ${R._latex_()}$ '
-                    f'defined by ${(y**2)._latex_()} + {(h(x)*y)._latex_()} = '
-                    f'{(f(x))._latex_()}$}}')
+        return (fr'\text{{Hyperelliptic Curve over ${R._latex_()}$ '
+                f'defined by ${(y**2)._latex_()} + {(h(x)*y)._latex_()} = '
+                f'{(f(x))._latex_()}$}}')
 
     def hyperelliptic_polynomials(self, K=None, var='x'):
         """
