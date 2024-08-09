@@ -236,16 +236,14 @@ def reorder_sets(sets):
 
     INPUT:
 
-    - ``sets`` -- a list of instances of ``list, Set`` or ``set``
+    - ``sets`` -- list of instances of ``list, Set`` or ``set``
 
-    ALGORITHM:
-
-    PQ-Trees
+    ALGORITHM: PQ-Trees
 
     EXAMPLES:
 
     There is only one way (up to reversal) to represent contiguously
-    the sequence ofsets `\{i-1, i, i+1\}`::
+    the sequence of sets `\{i-1, i, i+1\}`::
 
         sage: from sage.graphs.pq_trees import reorder_sets
         sage: seq = [Set([i-1,i,i+1]) for i in range(1,15)]
@@ -289,7 +287,7 @@ class PQ:
 
     def __init__(self, seq):
         r"""
-        Construction of a PQ-Tree
+        Construction of a PQ-Tree.
 
         EXAMPLES::
 
@@ -313,7 +311,7 @@ class PQ:
 
     def reverse(self):
         r"""
-        Recursively reverses ``self`` and its children
+        Recursively reverse ``self`` and its children.
 
         EXAMPLES::
 
@@ -333,8 +331,8 @@ class PQ:
 
     def __contains__(self, v):
         r"""
-        Tests whether there exists an element of ``self`` containing
-        an element ``v``
+        Test whether there exists an element of ``self`` containing
+        an element ``v``.
 
         INPUT:
 
@@ -353,7 +351,7 @@ class PQ:
 
     def __iter__(self):
         r"""
-        Iterates over the children of ``self``.
+        Iterate over the children of ``self``.
 
         EXAMPLES::
 
@@ -369,7 +367,7 @@ class PQ:
 
     def number_of_children(self):
         r"""
-        Returns the number of children of ``self``
+        Return the number of children of ``self``.
 
         EXAMPLES::
 
@@ -382,7 +380,7 @@ class PQ:
 
     def ordering(self):
         r"""
-        Returns the current ordering given by listing the leaves from
+        Return the current ordering given by listing the leaves from
         left to right.
 
         EXAMPLES::
@@ -401,9 +399,9 @@ class PQ:
 
         return value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
-        Succintly represents ``self``.
+        Succinctly represent ``self``.
 
         EXAMPLES::
 
@@ -416,7 +414,7 @@ class PQ:
 
     def simplify(self, v, left=False, right=False):
         r"""
-        Returns a simplified copy of self according to the element ``v``
+        Return a simplified copy of ``self`` according to the element ``v``.
 
         If ``self`` is a partial P-tree for ``v``, we would like to
         restrict the permutations of its children to permutations
@@ -502,9 +500,9 @@ class PQ:
 
     def flatten(self):
         r"""
-        Returns a flattened copy of ``self``
+        Return a flattened copy of ``self``.
 
-        If self has only one child, we may as well consider its
+        If ``self`` has only one child, we may as well consider its
         child's children, as ``self`` encodes no information. This
         method recursively "flattens" trees having only on PQ-tree
         child, and returns it.
@@ -531,7 +529,7 @@ class P(PQ):
     """
     def set_contiguous(self, v):
         r"""
-        Updates ``self`` so that the sets containing ``v`` are
+        Update ``self`` so that the sets containing ``v`` are
         contiguous for any admissible permutation of its subtrees.
 
         INPUT:
@@ -540,7 +538,7 @@ class P(PQ):
 
         OUTPUT:
 
-        According to the cases :
+        According to the cases:
 
             * ``(EMPTY, ALIGNED)`` if no set of the tree contains
               an occurrence of ``v``
@@ -558,7 +556,7 @@ class P(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a :class:`ValueError` exception.
+        raises a :exc:`ValueError` exception.
 
         EXAMPLES:
 
@@ -803,14 +801,14 @@ class P(PQ):
 
 class Q(PQ):
     r"""
-    A Q-Tree is a PQ-Tree whose children are ordered up to reversal
+    A Q-Tree is a PQ-Tree whose children are ordered up to reversal.
 
     For more information, see the documentation of :mod:`sage.graphs.pq_trees`.
     """
 
     def set_contiguous(self, v):
         r"""
-        Updates ``self`` so that the sets containing ``v`` are
+        Update ``self`` so that the sets containing ``v`` are
         contiguous for any admissible permutation of its subtrees.
 
         INPUT:
@@ -819,7 +817,7 @@ class Q(PQ):
 
         OUTPUT:
 
-        According to the cases :
+        According to the cases:
 
             * ``(EMPTY, ALIGNED)`` if no set of the tree contains
               an occurrence of ``v``
@@ -837,7 +835,7 @@ class Q(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a :class:`ValueError` exception.
+        raises a :exc:`ValueError` exception.
 
         EXAMPLES:
 
@@ -1104,7 +1102,7 @@ class Q(PQ):
 
     def orderings(self):
         r"""
-        Iterates over all orderings of the sets allowed by the structure
+        Iterate over all orderings of the sets allowed by the structure.
 
         .. SEEALSO::
 

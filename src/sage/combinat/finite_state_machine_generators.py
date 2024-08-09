@@ -39,19 +39,19 @@ of :ref:`examples <finite_state_machine_examples>`.
     :widths: 30, 70
     :delim: |
 
-    :meth:`~TransducerGenerators.Identity` | Returns a transducer realizing the identity map.
-    :meth:`~TransducerGenerators.abs` | Returns a transducer realizing absolute value.
-    :meth:`~TransducerGenerators.map` | Returns a transducer realizing a function.
-    :meth:`~TransducerGenerators.operator` | Returns a transducer realizing a binary operation.
-    :meth:`~TransducerGenerators.all` | Returns a transducer realizing logical ``and``.
-    :meth:`~TransducerGenerators.any` | Returns a transducer realizing logical ``or``.
-    :meth:`~TransducerGenerators.add` | Returns a transducer realizing addition.
-    :meth:`~TransducerGenerators.sub` | Returns a transducer realizing subtraction.
-    :meth:`~TransducerGenerators.CountSubblockOccurrences` | Returns a transducer counting the occurrences of a subblock.
-    :meth:`~TransducerGenerators.Wait` | Returns a transducer writing ``False`` until first (or k-th) true input is read.
-    :meth:`~TransducerGenerators.weight` | Returns a transducer realizing the Hamming weight.
-    :meth:`~TransducerGenerators.GrayCode` | Returns a transducer realizing binary Gray code.
-    :meth:`~TransducerGenerators.Recursion` | Returns a transducer defined by recursions.
+    :meth:`~TransducerGenerators.Identity` | Return a transducer realizing the identity map.
+    :meth:`~TransducerGenerators.abs` | Return a transducer realizing absolute value.
+    :meth:`~TransducerGenerators.map` | Return a transducer realizing a function.
+    :meth:`~TransducerGenerators.operator` | Return a transducer realizing a binary operation.
+    :meth:`~TransducerGenerators.all` | Return a transducer realizing logical ``and``.
+    :meth:`~TransducerGenerators.any` | Return a transducer realizing logical ``or``.
+    :meth:`~TransducerGenerators.add` | Return a transducer realizing addition.
+    :meth:`~TransducerGenerators.sub` | Return a transducer realizing subtraction.
+    :meth:`~TransducerGenerators.CountSubblockOccurrences` | Return a transducer counting the occurrences of a subblock.
+    :meth:`~TransducerGenerators.Wait` | Return a transducer writing ``False`` until first (or `k`-th) true input is read.
+    :meth:`~TransducerGenerators.weight` | Return a transducer realizing the Hamming weight.
+    :meth:`~TransducerGenerators.GrayCode` | Return a transducer realizing binary Gray code.
+    :meth:`~TransducerGenerators.Recursion` | Return a transducer defined by recursions.
 
 AUTHORS:
 
@@ -120,11 +120,9 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- a list, the input alphabet
+        - ``input_alphabet`` -- list; the input alphabet
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -155,11 +153,9 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- a list, the input alphabet
+        - ``input_alphabet`` -- list; the input alphabet
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -197,12 +193,9 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- (default: ``None``) an iterable
-          or ``None``.
+        - ``input_alphabet`` -- iterable or ``None`` (default: ``None``)
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -228,14 +221,12 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``word`` -- an iterable.
+        - ``word`` -- an iterable
 
-        - ``input_alphabet`` -- a list or ``None``. If ``None``,
-          then the letters occurring in the word are used.
+        - ``input_alphabet`` -- list or ``None``; if ``None``,
+          then the letters occurring in the word are used
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -268,8 +259,8 @@ class AutomatonGenerators:
 
         TESTS::
 
-            sage: from sage.rings.integer import is_Integer
-            sage: all(is_Integer(s.label()) for s in A.states())
+            sage: from sage.rings.integer import Integer
+            sage: all(isinstance(s.label(), Integer) for s in A.states())
             True
         """
         letters = list(word)
@@ -288,15 +279,13 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``word`` -- a list (or other iterable) of letters, the
-          word we are looking for.
+        - ``word`` -- list (or other iterable) of letters; the
+          word we are looking for
 
-        - ``input_alphabet`` -- a list or other iterable, the input
-          alphabet.
+        - ``input_alphabet`` -- list or other iterable; the input
+          alphabet
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -370,16 +359,14 @@ class TransducerGenerators:
 
     def Identity(self, input_alphabet):
         """
-        Returns the identity transducer realizing the identity map.
+        Return the identity transducer realizing the identity map.
 
         INPUT:
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
-        OUTPUT:
-
-        A transducer mapping each word over ``input_alphabet`` to
-        itself.
+        OUTPUT: a transducer mapping each word over ``input_alphabet`` to
+        itself
 
         EXAMPLES::
 
@@ -397,7 +384,6 @@ class TransducerGenerators:
             [0, 1]
             sage: T([0, 1, 0, 1, 1])
             [0, 1, 0, 1, 1]
-
         """
         return Transducer(
             [(0, 0, d, d) for d in input_alphabet],
@@ -408,14 +394,14 @@ class TransducerGenerators:
 
     def CountSubblockOccurrences(self, block, input_alphabet):
         r"""
-        Returns a transducer counting the number of (possibly
+        Return a transducer counting the number of (possibly
         overlapping) occurrences of a block in the input.
 
         INPUT:
 
-        - ``block`` -- a list (or other iterable) of letters.
+        - ``block`` -- list (or other iterable) of letters
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -533,10 +519,10 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
-        - ``threshold`` -- a positive integer specifying how many
-          occurrences of ``True`` inputs are waited for.
+        - ``threshold`` -- positive integer specifying how many
+          occurrences of ``True`` inputs are waited for
 
         OUTPUT:
 
@@ -576,9 +562,9 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``f`` -- function to realize.
+        - ``f`` -- function to realize
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -616,19 +602,19 @@ class TransducerGenerators:
 
     def operator(self, operator, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes an operation
+        Return a transducer which realizes an operation
         on tuples over the given input alphabet.
 
         INPUT:
 
-        - ``operator`` -- operator to realize. It is a function which
+        - ``operator`` -- operator to realize; it is a function which
           takes ``number_of_operands`` input arguments (each out of
-          ``input_alphabet``).
+          ``input_alphabet``)
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) it specifies the number
-          of input arguments the operator takes.
+          of input arguments the operator takes
 
         OUTPUT:
 
@@ -642,7 +628,7 @@ class TransducerGenerators:
         EXAMPLES:
 
         The following binary transducer realizes component-wise
-        addition (this transducer is also available as :meth:`.add`)::
+        addition (this transducer is also available as :meth:`add`)::
 
             sage: import operator
             sage: T = transducers.operator(operator.add, [0, 1])
@@ -698,15 +684,15 @@ class TransducerGenerators:
 
     def all(self, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes logical ``and`` over the given
+        Return a transducer which realizes logical ``and`` over the given
         input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) specifies the number
-          of input arguments for the ``and`` operation.
+          of input arguments for the ``and`` operation
 
         OUTPUT:
 
@@ -749,15 +735,15 @@ class TransducerGenerators:
 
     def any(self, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes logical ``or`` over the given
+        Return a transducer which realizes logical ``or`` over the given
         input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) specifies the number
-          of input arguments for the ``or`` operation.
+          of input arguments for the ``or`` operation
 
         OUTPUT:
 
@@ -800,15 +786,15 @@ class TransducerGenerators:
 
     def add(self, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes addition on pairs over the
+        Return a transducer which realizes addition on pairs over the
         given input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) it specifies the number
-          of input arguments the operator takes.
+          of input arguments the operator takes
 
         OUTPUT:
 
@@ -854,12 +840,12 @@ class TransducerGenerators:
 
     def sub(self, input_alphabet):
         r"""
-        Returns a transducer which realizes subtraction on pairs over
+        Return a transducer which realizes subtraction on pairs over
         the given input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -893,12 +879,12 @@ class TransducerGenerators:
 
     def weight(self, input_alphabet, zero=0):
         r"""
-        Returns a transducer which realizes the Hamming weight of the input
+        Return a transducer which realizes the Hamming weight of the input
         over the given input alphabet.
 
         INPUT:
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``zero`` -- the zero symbol in the alphabet used
 
@@ -906,7 +892,7 @@ class TransducerGenerators:
 
         A transducer mapping `i_0\ldots i_k` to `(i_0\neq 0)\ldots(i_k\neq 0)`.
 
-        The Hamming weight is defined as the number of non-zero digits in the
+        The Hamming weight is defined as the number of nonzero digits in the
         input sequence over the alphabet ``input_alphabet`` (see
         :wikipedia:`Hamming_weight`). The output sequence of the transducer is
         a unary encoding of the Hamming weight. Thus the sum of the output
@@ -959,12 +945,12 @@ class TransducerGenerators:
 
     def abs(self, input_alphabet):
         r"""
-        Returns a transducer which realizes the letter-wise
+        Return a transducer which realizes the letter-wise
         absolute value of an input word over the given input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -987,22 +973,15 @@ class TransducerGenerators:
             [0]
             sage: T([-1, -1, 0, 1])
             [1, 1, 0, 1]
-
         """
         return self.map(abs, input_alphabet)
 
     def GrayCode(self):
         """
-        Returns a transducer converting the standard binary
+        Return a transducer converting the standard binary
         expansion to Gray code.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A transducer.
+        OUTPUT: a transducer
 
         Cf. the :wikipedia:`Gray_code` for a description of the Gray code.
 
@@ -1052,24 +1031,24 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``equation`` -- An equation of the form
+        - ``equation`` -- an equation of the form
 
           - ``f(base^K * n + r) == f(base^k * n + s) + t`` for some
             integers ``0 <= k < K``, ``r`` and some ``t``---valid for
             all ``n`` such that the arguments on both sides are
-            non-negative---
+            nonnegative---
 
           or the form
 
           - ``f(r) == t`` for some integer ``r`` and some ``t``.
 
-        - ``base`` -- see :meth:`~Recursion`.
+        - ``base`` -- see :meth:`~Recursion`
 
-        - ``function`` -- see :meth:`~Recursion`.
+        - ``function`` -- see :meth:`~Recursion`
 
-        - ``var`` -- see :meth:`~Recursion`.
+        - ``var`` -- see :meth:`~Recursion`
 
-        - ``output_rings`` -- see :meth:`~Recursion`.
+        - ``output_rings`` -- see :meth:`~Recursion`
 
         OUTPUT:
 
@@ -1373,7 +1352,7 @@ class TransducerGenerators:
           - ``f(base^K * n + r) == f(base^k * n + s) + t`` for some
             integers ``0 <= k < K``, ``r`` and some ``t``---valid for
             all ``n`` such that the arguments on both sides are
-            non-negative---
+            nonnegative---
 
           or the form
 
@@ -1384,12 +1363,12 @@ class TransducerGenerators:
           ``r``, ``k``, ``s``, ``t`` as above or a tuple ``(r, t)``.
           Note that ``t`` *must* be a list in this case.
 
-        - ``base`` -- base of the digit expansion.
+        - ``base`` -- base of the digit expansion
 
         - ``function`` -- symbolic function ``f`` occurring in the
-          recursions.
+          recursions
 
-        - ``var`` -- symbolic variable.
+        - ``var`` -- symbolic variable
 
         - ``input_alphabet`` -- (default: ``None``) a list of digits
           to be used as the input alphabet. If ``None`` and the base
@@ -1405,9 +1384,9 @@ class TransducerGenerators:
 
         - ``is_zero`` -- (default: ``None``) a callable. The recursion
           relations are only well-posed if there is no cycle with
-          non-zero output and input consisting of zeros. This parameter
+          nonzero output and input consisting of zeros. This parameter
           is used to determine whether the output of such a cycle is
-          non-zero. By default, the output must evaluate to ``False`` as
+          nonzero. By default, the output must evaluate to ``False`` as
           a boolean.
 
         - ``output_rings`` -- (default: ``[ZZ, QQ]``) a list of
@@ -1416,9 +1395,7 @@ class TransducerGenerators:
           contained in any ring, they remain in whatever ring they are
           after parsing the recursions, typically the symbolic ring.
 
-        OUTPUT:
-
-        A transducer ``T``.
+        OUTPUT: a transducer ``T``
 
         The transducer is constructed such that ``T(expansion) == f(n)``
         if ``expansion`` is the digit expansion of ``n`` to the base
@@ -1515,7 +1492,7 @@ class TransducerGenerators:
                 sage: sum(T(binary_expansion))                                          # needs sage.symbolic
                 3
 
-            Indeed, the given non-adjacent form has three non-zero
+            Indeed, the given non-adjacent form has three nonzero
             digits.
 
         -   The following example computes the non-adjacent form from the
@@ -1856,13 +1833,13 @@ class TransducerGenerators:
 
             INPUT:
 
-            - ``carry`` -- integer.
+            - ``carry`` -- integer
 
-            - ``level`` -- integer.
+            - ``level`` -- integer
 
-            - ``force_nonnegative_target`` -- boolean. If ``True``, only
-              recursion transitions leading to a non-negative carry are
-              returned.
+            - ``force_nonnegative_target`` -- boolean; if ``True``, only
+              recursion transitions leading to a nonnegative carry are
+              returned
 
             OUTPUT:
 
@@ -1895,13 +1872,13 @@ class TransducerGenerators:
 
             INPUT:
 
-            - ``carry`` -- integer.
+            - ``carry`` -- integer
 
-            - ``level`` -- integer.
+            - ``level`` -- integer
 
-            - ``force_nonnegative_target`` -- boolean. If ``True``, only
-              recursion transitions leading to a non-negative carry are
-              allowed.
+            - ``force_nonnegative_target`` -- boolean; if ``True``, only
+              recursion transitions leading to a nonnegative carry are
+              allowed
 
             OUTPUT:
 
@@ -1928,7 +1905,7 @@ class TransducerGenerators:
             carry += input * base**level
             level += 1
             # We now may proceed along recursion transitions
-            # as long as the carries stay non-negative.
+            # as long as the carries stay nonnegative.
             ((carry, level), new_output) = recursion_transitions(
                 carry, level, True)
             return ((carry, level), output + new_output)
@@ -1943,7 +1920,7 @@ class TransducerGenerators:
 
             INPUT:
 
-            - ``n`` -- integer.
+            - ``n`` -- integer
 
             OUTPUT:
 

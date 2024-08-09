@@ -34,15 +34,18 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from ipywidgets.widgets import SelectionSlider, ValueWidget, ToggleButtons
-from ipywidgets.widgets.interaction import interactive, signature
 from collections import OrderedDict
 from collections.abc import Iterable, Iterator
-from .widgets import EvalText, SageColorPicker
-from sage.structure.element import parent
+
+from ipywidgets.widgets import SelectionSlider, ValueWidget, ToggleButtons
+from ipywidgets.widgets.interaction import interactive, signature
+
 import sage.rings.abc
+
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import Matrix
+from sage.repl.ipython_kernel.widgets import EvalText, SageColorPicker
+from sage.structure.element import Matrix, parent
+
 lazy_import("sage.plot.colors", "Color")
 
 
@@ -54,7 +57,7 @@ class sage_interactive(interactive):
     EXAMPLES::
 
         sage: from sage.repl.ipython_kernel.interact import sage_interactive
-        sage: def myfunc(x=10, y="hello", z=None): pass
+        sage: def myfunc(x=10, y='hello', z=None): pass
         sage: sage_interactive(myfunc, x=(0,100), z=["one", "two", "three"])
         ...Interactive function <function myfunc at ...> with 3 widgets
           x: IntSlider(value=10, description='x')
@@ -63,7 +66,7 @@ class sage_interactive(interactive):
     """
     def __init__(self, *args, **kwds):
         """
-        See :class:`ipywidgets.widgets.interaction.interactive`
+        See :class:`ipywidgets.widgets.interaction.interactive`.
 
         TESTS::
 
@@ -173,6 +176,7 @@ class sage_interactive(interactive):
 
             return input_grid(abbrev.nrows(), abbrev.ncols(),
                               default=abbrev.list(), to_value=abbrev.parent())
+
         if isinstance(abbrev, Color):
             return SageColorPicker(value=abbrev.html_color())
         # Get widget from IPython if possible

@@ -128,7 +128,7 @@ def _random_admissible_cone(ambient_dim):
 
     INPUT:
 
-    - ``ambient_dim`` -- a positive integer representing the dimension
+    - ``ambient_dim`` -- positive integer representing the dimension
       of the ambient lattice in which the returned cone lives
 
     OUTPUT:
@@ -136,7 +136,7 @@ def _random_admissible_cone(ambient_dim):
     A "random" nontrivial closed convex cone in a lattice of dimension
     ``ambient_dim``.
 
-    A :class:`ValueError` is raised if ``ambient_dim`` is not
+    A :exc:`ValueError` is raised if ``ambient_dim`` is not
     positive.
 
     EXAMPLES:
@@ -458,7 +458,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     ALGORITHM:
 
     According to Proposition 5 [Or2020]_, the solutions corresponding
-    to non-zero eigenvalues can be found by solving a smaller
+    to nonzero eigenvalues can be found by solving a smaller
     eigenvalue problem in only the variable `\xi`. So, we do that, and
     then solve for `\eta` in terms of `\xi` as described in the
     proposition.
@@ -626,9 +626,7 @@ def compute_gevp_M(gs, hs):
     - ``hs`` -- a linearly independent list of unit-norm generators
       for the cone `Q`
 
-    OUTPUT:
-
-    A tuple containing four elements, in order:
+    OUTPUT: a tuple containing four elements, in order:
 
     - The matrix `M` described in Proposition 6
 
