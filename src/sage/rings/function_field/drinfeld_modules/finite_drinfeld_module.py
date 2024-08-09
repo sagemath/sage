@@ -163,7 +163,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         self._frobenius_trace = None
         self._frobenius_charpoly = None
 
-    @cached_method
     def _frobenius_matrix_crystalline(self):
         r"""
         Return the matrix representing the Frobenius endomorphism on the
@@ -230,7 +229,6 @@ class DrinfeldModule_finite(DrinfeldModule):
             reduced_companions.append(M)
         return (prod(reduced_companions) * companion_step * companion_initial)
 
-    @cached_method
     def _frobenius_matrix_CSA(self):
         r"""
         Return the matrix of the left-multiplication by `\phi_T` with
@@ -469,7 +467,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         self._frobenius_charpoly = getattr(self, method_name)
         return self._frobenius_charpoly.change_variable_name(var)
 
-    @cached_method
     def _frobenius_charpoly_CSA(self):
         r"""
         Return the characteristic polynomial of the Frobenius
@@ -512,7 +509,6 @@ class DrinfeldModule_finite(DrinfeldModule):
                   for j in range(r+1)]
         return PolynomialRing(A, name=var)(coeffs)
 
-    @cached_method
     def _frobenius_charpoly_crystalline(self):
         r"""
         Return the characteristic polynomial of the Frobenius
@@ -576,7 +572,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         coeffs_A = [A([x.in_base() for x in coeff]) for coeff in charpoly_K]
         return PolynomialRing(A, name=var)(coeffs_A)
 
-    @cached_method
     def _frobenius_charpoly_gekeler(self):
         r"""
         Return the characteristic polynomial of the Frobenius
@@ -658,7 +653,6 @@ class DrinfeldModule_finite(DrinfeldModule):
                               for j in range(shifts[i])])
         return PolynomialRing(A, name=var)(char_poly + [1])
 
-    @cached_method
     def _frobenius_charpoly_motive(self):
         r"""
         Return the characteristic polynomial of the Frobenius
