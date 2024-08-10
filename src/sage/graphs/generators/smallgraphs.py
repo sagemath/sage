@@ -1986,12 +1986,6 @@ def CubeplexGraph(embedding='LM'):
         ...
         ValueError: parameter 'embedding' must be 'FL', 'NT' or 'LM'
 
-    REFERENCES:
-
-    - [FiLi2001]_
-    - [LM2024]_
-    - [NT2007]_
-
     .. SEEALSO::
 
         :meth:`~sage.graphs.graph_generators.GraphGenerators.TwinplexGraph`
@@ -2004,13 +1998,14 @@ def CubeplexGraph(embedding='LM'):
         from math import pi
 
         G = Graph(12, name='Cubeplex Graph')
-        G._circle_embedding(list(range(12)), angle=2*pi/3)
         G.add_cycle(list(range(12)))
 
         G.add_edges([
             (0, 3), (1, 6), (2, 8),
             (4, 9), (5, 11), (7, 10)
         ])
+
+        G._circle_embedding(list(range(12)), angle=2*pi/3)
 
     elif embedding == 'NT':
         pos_dict = {
@@ -5003,8 +4998,7 @@ def TwinplexGraph(embedding='LM'):
         sage: nt = graphs.TwinplexGraph(embedding='NT')
         sage: rst = graphs.TwinplexGraph(embedding='RST')
         sage: lm = graphs.TwinplexGraph(embedding='LM')
-        sage: fl.is_isomorphic(nt) and fl.is_isomorphic(rst) and \
-              fl.is_isomorphic(lm)
+        sage: all(fl.is_isomorphic(g) for g in (nt, rst, lm))
         True
 
     The input parameter must be one of 'FL', 'NT', 'RST' or 'LM'::
@@ -5013,13 +5007,6 @@ def TwinplexGraph(embedding='LM'):
         Traceback (most recent call last):
         ...
         ValueError: parameter 'embedding' must be 'FL', 'NT', 'LM' or 'RST'
-
-    REFERENCES:
-
-    - [FiLi2001]_
-    - [LM2024]_
-    - [NT2007]_
-    - [RST2019]_
 
     .. SEEALSO::
 
@@ -5033,13 +5020,14 @@ def TwinplexGraph(embedding='LM'):
         from math import pi
 
         G = Graph(12, name='Twinplex Graph')
-        G._circle_embedding(list(range(12)), angle=5*pi/12)
         G.add_cycle(list(range(12)))
 
         G.add_edges([
             (0, 8), (1, 5), (2, 9),
             (3, 7), (4, 11), (6, 10)
         ])
+
+        G._circle_embedding(list(range(12)), angle=5*pi/12)
 
     elif embedding == 'NT':
         pos_dict = {
@@ -5116,8 +5104,8 @@ def TwinplexGraph(embedding='LM'):
         ])
 
     else:
-        raise ValueError("parameter 'embedding' must be 'FL', 'NT', 'LM' or" +
-                         " 'RST'")
+        raise ValueError("parameter 'embedding' must be 'FL', 'NT',"
+                         " 'LM' or 'RST'")
 
     return G
 

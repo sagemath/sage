@@ -835,11 +835,11 @@ class DiGraphGenerators:
         r"""
         Return a circulant digraph on `n` vertices from a set of integers.
 
-        Note that ``digraphs.Circulant(7, [1, 5])`` is also known as the
-        ``Koh-Tindell digraph``. It is a directed circulant based on
-        `\mathbb{Z}_7`. This `2`-diregular digraph is is vertex-transitive
-        but not arc-transitive. The associated bipartite digraph of the
-        Koh-Tindell digraph is a Pfaffian orientation of the Heawood graph.
+        The Koh-Tindell digraph [LM2024]_ is the circulant digraph of order 7
+        with parameters `[1, 5]`.  This `2`-diregular digraph is is
+        vertex-transitive but not arc-transitive. The associated bipartite
+        digraph of the Koh-Tindell digraph is a Pfaffian orientation of the
+        Heawood graph.
 
         INPUT:
 
@@ -851,10 +851,10 @@ class DiGraphGenerators:
 
         EXAMPLES:
 
-        Construct and show the circulant graph ([3, 5, 7]): a digraph on 13
+        Construct and show the circulant graph [3, 5, 7], a digraph on 13
         vertices::
 
-            sage: g = digraphs.Circulant(13,[3,5,7])
+            sage: g = digraphs.Circulant(13, [3, 5, 7])
             sage: g.show()                          # long time                             # needs sage.plot
 
         Construct and show the Koh-Tindell digraph::
@@ -872,10 +872,6 @@ class DiGraphGenerators:
             Traceback (most recent call last):
             ...
             ValueError: the list must contain only integers
-
-        REFERENCES:
-
-        - [LM2024]_
         """
         from sage.rings.integer_ring import ZZ
 
