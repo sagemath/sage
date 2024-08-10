@@ -191,13 +191,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
                     variables[i] = fixed[variables[i]]
                 elif i in fixed:
                     variables[i] = fixed[i]
-        T = self.parent().base()
         if len(kwds) < len(variables):
             for i, v in enumerate(variables):
-                if v.parent() is T:
-                    variables[i] = self.parent()(v.lift())
-                else:
-                    variables[i] = self.parent()(v)
+                variables[i] = self.parent()(v)
         return self(tuple(variables))
 
     def plot3d(self, color='random'):
