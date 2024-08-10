@@ -506,7 +506,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         coeffs = [A([K(chi[i][j]/lc).in_base()
                      for i in range((r-j)*n // r + 1)])
                   for j in range(r+1)]
-        return PolynomialRing(A, name=var)(coeffs)
+        return PolynomialRing(A)(coeffs)
 
     def _frobenius_charpoly_crystalline(self):
         r"""
@@ -563,13 +563,13 @@ class DrinfeldModule_finite(DrinfeldModule):
         """
         A = self.function_ring()
         charpoly_K = self._frobenius_matrix_crystalline() \
-                         .charpoly(var).coefficients(sparse=False)
+                         .charpoly().coefficients(sparse=False)
 
         # The above line obtains the char poly with coefficients in K[T]
         # This maps them into A = Fq[T]
 
         coeffs_A = [A([x.in_base() for x in coeff]) for coeff in charpoly_K]
-        return PolynomialRing(A, name=var)(coeffs_A)
+        return PolynomialRing(A)(coeffs_A)
 
     def _frobenius_charpoly_gekeler(self):
         r"""
@@ -650,7 +650,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         for i in range(r):
             char_poly.append([sol_Fq[block_shifts[i] + j]
                               for j in range(shifts[i])])
-        return PolynomialRing(A, name=var)(char_poly + [1])
+        return PolynomialRing(A)(char_poly + [1])
 
     def _frobenius_charpoly_motive(self):
         r"""
@@ -695,7 +695,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: phi.frobenius_charpoly(algorithm='motive') # indirect doctest
             X^11 + (z3^2 + 2*z3)*X^10 + ((z3 + 1)*T + z3)*X^9 + ((2*z3^2 + z3 + 2)*T^2 + ... + (2*z3^2 + 2*z3 + 2)*T + z3^2
         """
-        return self.frobenius_endomorphism().characteristic_polynomial(var)
+        return self.frobenius_endomorphism().characteristic_polynomial()
 
     def frobenius_norm(self):
         r"""
