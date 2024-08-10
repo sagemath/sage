@@ -330,7 +330,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             if len(elms) == 1:
                 poly_vert = []
                 term = elms[0]
-                for p, t in  point_terms.items():
+                for p, t in point_terms.items():
                     if term in t:
                         poly_vert.append(p)
                         t.remove(term)
@@ -343,7 +343,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         for remain in point_terms.values():
             for term in remain:
                 poly_vert = []
-                for p, t in  point_terms.items():
+                for p, t in point_terms.items():
                     if term in t:
                         poly_vert.append(p)
                         t.remove(term)

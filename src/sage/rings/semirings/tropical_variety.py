@@ -476,7 +476,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                             sol_param_sim.add(eqn.lhs() >= eqn.rhs())
                 else:
                     sol_param_sim.add(sol)
-            # checking there are no conditions with the same variables 
+            # checking there are no conditions with the same variables
             # and having operator <= and >= simultaneously
             unique_sol_param = set()
             temp = [s for s in sol_param_sim]
@@ -507,7 +507,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                         points = list(comp[0])
                         new_expr = [e.subs(**{str(right): operand}) for e in comp[1]]
                         for i, p in enumerate(points):
-                            new_eq = p.subs(right==operand)
+                            new_eq = p.subs(**{str(right): operand})
                             points[i] = new_eq
                         update_result(result)
                 # if the rhs contains a min or max operator
@@ -709,7 +709,7 @@ class TropicalSurface(TropicalVariety):
         comps_int = self._components_intersection()
 
         for index, lines in comps_int.items():  # find the inside vertex
-            for line in lines:  
+            for line in lines:
                 v = list(line[1])[0].variables()[0]
                 for param in line[1]:
                     left = param.lhs()
@@ -751,7 +751,7 @@ class TropicalSurface(TropicalVariety):
                         if t != []:
                             try:
                                 interval_param += RealSet(t[0])
-                            except:
+                            except (IndexError, ValueError):
                                 interval_param += RealSet(-infinity, infinity)
                         else:
                             interval_param += RealSet(-infinity, infinity)
@@ -789,7 +789,7 @@ class TropicalSurface(TropicalVariety):
                         if t != []:
                             try:
                                 interval_param += RealSet(t[0])
-                            except:
+                            except (IndexError, ValueError):
                                 interval_param += RealSet(-infinity, infinity)
                         else:
                             interval_param += RealSet(-infinity, infinity)
