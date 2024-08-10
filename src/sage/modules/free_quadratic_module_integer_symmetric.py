@@ -1551,10 +1551,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         basis = L.basis_matrix()
 
         import fpylll
-        gmat = fpylll.IntegerMatrix(dim, dim)
-        for i in range(dim):
-            for j in range(dim):
-                gmat[i,j] = gram[i,j]
+        gmat = fpylll.IntegerMatrix.from_matrix(gram)
         gso = fpylll.GSO.Mat(gmat, gram=True)
         ok = gso.update_gso()
         assert ok
@@ -1562,7 +1559,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         coord = None
         if target is not None:
             coord = basis.solve_left(target)
-            Mu = 1 + matrix([gso.get_mu(i,j) for j in range(dim)] for i in range(dim))
+            Mu = 1 + matrix(gso.G)
             coord *= Mu
 
         count = 8
