@@ -173,7 +173,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         else:
             ans = ""
         # Use repr_lincomb for the other coefficients.
-        ans += repr_lincomb([(1 if i==1 else str(i)+'^-s', coeffs[i]) for i in sorted(coeffs.keys()) if i>1])
+        ans += repr_lincomb([(str(i) + '^-s', coeffs[i]) for i in sorted(coeffs.keys()) if i > 1])
         # Append the precision marker.
         ans += " + O({}^-s)".format(prec)
         return ans
