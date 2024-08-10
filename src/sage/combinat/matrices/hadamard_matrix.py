@@ -306,10 +306,10 @@ def hadamard_matrix_paleyII(n):
         True
     """
     q = n//2 - 1
-    # if not (n % 2 == 0 and is_prime_power(q) and (q % 4 == 1)):
-    #    raise ValueError("The order %s is not covered by the Paley type II construction." % n)
+    if not (n % 2 == 0 and is_prime_power(q) and (q % 4 == 1)):
+        raise ValueError("The order %s is not covered by the Paley type II construction." % n)
 
-    H = symmetric_conference_matrix(q+1)
+    H = symmetric_conference_matrix_paley(q+1)
 
     tr = { 0: matrix(2, 2, [ 1, -1, -1, -1]),
            1: matrix(2, 2, [ 1,  1,  1, -1]),
@@ -318,6 +318,85 @@ def hadamard_matrix_paleyII(n):
     H = block_matrix(q+1, q+1, [tr[v] for r in H for v in r])
 
     return normalise_hadamard(H)
+
+
+def hadamard_matrix_from_symmetric_conference_matrix(n, existence=False, check=True):
+    r"""Construct a Hadamard matrix of order `n` from a symmetric conference matrix
+    of order `n/2`.
+
+    The construction is described in Theorem 4.3.24 of [IS2006]_.
+    The symmetric conference matrices are obtained from
+    :func:`sage.combinat.matrices.hadamard_matrix.symmetric_conference_matrix`.
+
+    INPUT:
+
+    - ``n`` -- integer; the order of the matrix to be constructed
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
+      the matrix exists
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
+      is a Hadamard before returning
+
+    OUTPUT:
+
+    If ``existence=False``, returns the Hadamard matrix of order `n`. It raises
+    an error if no data is available to construct the matrix of the given order,
+    or if `n` does not satisfies the constraints.
+    If ``existence=True``, returns a boolean representing whether the matrix
+    can be constructed or not.
+
+    EXAMPLES:
+
+    By default the function returns the Hadamard matrix ::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_from_symmetric_conference_matrix
+        sage: hadamard_matrix_from_symmetric_conference_matrix(20)
+        20 x 20 dense matrix over Integer Ring...
+
+    If ``existence`` is set to True, the function returns True if the matrix exists,
+    False if the conference matrix does not exist, and Unknown if the conference
+    matrix cannot be constructed yet ::
+
+        sage: hadamard_matrix_from_symmetric_conference_matrix(12, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(hadamard_matrix_from_symmetric_conference_matrix(60, check=False))
+        True
+        sage: hadamard_matrix_from_symmetric_conference_matrix(64, existence=True)
+        False
+        sage: hadamard_matrix_from_symmetric_conference_matrix(4*787, existence=True)
+        True
+        sage: hadamard_matrix_from_symmetric_conference_matrix(64)
+        Traceback (most recent call last):
+        ...
+        ValueError: Cannot construct Hadamard matrix of order 64, a symmetric conference matrix of order 32 is not available in sage.
+        sage: hadamard_matrix_from_symmetric_conference_matrix(14)
+        Traceback (most recent call last):
+        ...
+        ValueError: No Hadamard matrix of order 14 exists.
+    """
+    if n < 0 or n % 4 != 0:
+        raise ValueError(f'No Hadamard matrix of order {n} exists.')
+
+    m = n//2
+    exists = symmetric_conference_matrix(m, existence=True)
+
+    if existence:
+        return exists
+
+    if not exists:
+        raise ValueError(f'Cannot construct Hadamard matrix of order {n}, a symmetric conference matrix of order {m} is not available in sage.')
+
+    C = symmetric_conference_matrix(m)
+
+    H = block_matrix([[C + I(m), C - I(m)],
+                      [C - I(m), -C - I(m)]])
+
+    if check:
+        assert is_hadamard_matrix(H)
+    return H
 
 
 def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
@@ -1824,6 +1903,11 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         if existence:
             return report_name(name)
         M = regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1)
+    elif hadamard_matrix_from_symmetric_conference_matrix(n, existence=True) is True:
+        name = "Construction from symmetric conference matrix " + name
+        if existence:
+            return report_name(name)
+        M = hadamard_matrix_from_symmetric_conference_matrix(n, check=False)
     else:
         if existence:
             return Unknown
