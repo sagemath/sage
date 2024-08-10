@@ -245,7 +245,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         rows = []
         for i in range(n):
             m = f.degree() + 1
-            row = [EZ([phi_T[jj] for jj in range(j, m, n)]) for j in range(n)]
+            row = [EZ([f[jj] for jj in range(j, m, n)]) for j in range(n)]
             rows.append(row)
             f = t * f  # f is phi_T at first
         return Matrix(rows)
