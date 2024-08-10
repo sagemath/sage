@@ -331,7 +331,6 @@ class ChainComplexMorphism(Morphism):
                 [ 0 -1  0  0]
                 [ 0  0 -1  0]
                 [ 0  0  0 -1]}
-
         """
         f = dict()
         for i in self._matrix_dictionary.keys():
@@ -431,7 +430,7 @@ class ChainComplexMorphism(Morphism):
             [2]
 
         Before :issue:`19065`, the following multiplication produced a
-        :class:`KeyError` because `f` was not explicitly defined in degree 2::
+        :exc:`KeyError` because `f` was not explicitly defined in degree 2::
 
             sage: C0 = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
             sage: C1 = ChainComplex({1: zero_matrix(ZZ, 0, 1)})

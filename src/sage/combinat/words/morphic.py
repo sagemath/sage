@@ -18,7 +18,7 @@ Creation of the fixed point of a morphism::
     sage: w.length()
     +Infinity
 
-Computing the n-th letter of a fixed point is fast as it is using the
+Computing the `n`-th letter of a fixed point is fast as it is using the
 abstract numeration system associated to the morphism and the starting
 letter, see chapter 3 of the book [BR2010b]_::
 
@@ -45,7 +45,7 @@ class WordDatatype_morphic(WordDatatype_callable):
         - ``parent`` -- a parent
         - ``morphism`` -- a word morphism
         - ``letter`` -- a starting letter
-        - ``coding`` -- dict (default: ``None``), if ``None``
+        - ``coding`` -- dictionary (default: ``None``); if ``None``
           the identity map is used for the coding
         - ``length`` -- integer or ``'finite'`` or ``Infinity`` or
           ``'unknown'`` (default: ``Infinity``) the length of the word
@@ -106,7 +106,6 @@ class WordDatatype_morphic(WordDatatype_callable):
             word: dddcdddcba
             sage: list(w[10000:10010]) == L                                             # needs sage.modules
             True
-
         """
         self._parent = parent
         # self._func = callable
@@ -153,7 +152,6 @@ class WordDatatype_morphic(WordDatatype_callable):
               'a',
               {'a': 'a', 'b': 'b'},
               2))
-
         """
         return self.__class__, (self._parent, self._morphism, self._letter,
                                 self._coding, self._len)
@@ -167,9 +165,7 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -243,11 +239,9 @@ class WordDatatype_morphic(WordDatatype_callable):
         INPUT:
 
         - ``self`` -- a fixed point of a morphism
-        - ``key`` -- an integer, the position
+        - ``key`` -- integer; the position
 
-        OUTPUT:
-
-        - a letter
+        OUTPUT: a letter
 
         EXAMPLES::
 
@@ -271,7 +265,6 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w = WordDatatype_morphic(W, m, 'a')
             sage: w._func(5)                                                            # needs sage.modules
             'a'
-
         """
         letter = self._letter
         for a in self.representation(key):
@@ -291,13 +284,11 @@ class WordDatatype_morphic(WordDatatype_callable):
         INPUT:
 
         - ``self`` -- an endomorphism, must be prolongable on
-           letter
+          letter
 
         - ``letter`` -- a letter in the domain of ``self``
 
-        OUTPUT:
-
-        - iterator of the fixed point
+        OUTPUT: iterator of the fixed point
 
         EXAMPLES::
 

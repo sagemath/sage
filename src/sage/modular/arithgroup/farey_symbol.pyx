@@ -110,7 +110,7 @@ cdef class Farey:
 
     INPUT:
 
-    - `G` -- an arithmetic subgroup of `\PSL_2(\ZZ)`
+    - ``G`` -- an arithmetic subgroup of `\PSL_2(\ZZ)`
 
     EXAMPLES:
 
@@ -305,12 +305,8 @@ cdef class Farey:
     @cached_method
     def _get_minus_one(self):
         r"""
-        If -I belongs to self, return a Tietze word representing it.
-
-        OUTPUT:
-
-        A Tietze word representing the element -I if it belongs to self.
-        Otherwise return []
+        If -I belongs to ``self``, return a Tietze word representing it.
+        Otherwise return ``[]``.
 
         EXAMPLES::
 
@@ -352,10 +348,11 @@ cdef class Farey:
 
         INPUT:
 
-        - ``M`` -- An element `M` of `\SL_2(\ZZ)`.
-        - ``output`` -- (default: ``'standard'``) Should be one of ``'standard'``,
+        - ``M`` -- an element `M` of `\SL_2(\ZZ)`
+        - ``output`` -- (default: ``'standard'``) should be one of ``'standard'``,
           ``'syllables'``, ``'gens'``.
-        - ``check`` -- (default: ``True``) Whether to check for correct input and output.
+        - ``check`` -- boolean (default: ``True``); whether to check for
+          correct input and output
 
         OUTPUT:
 
@@ -364,7 +361,7 @@ cdef class Farey:
 
         - ``standard`` returns the so called the Tietze representation,
           consists of a tuple of nonzero integers `i`, where if `i` > 0
-          then it indicates the `i`th generator (that is, ``self.generators()[0]``
+          then it indicates the `i`-th generator (that is, ``self.generators()[0]``
           would correspond to `i` = 1), and if `i` < 0 then it indicates
           the inverse of the `i`-th generator.
         - ``syllables`` returns a tuple of tuples of the form `(i,n)`, where
@@ -514,7 +511,7 @@ cdef class Farey:
 
     def __contains__(self, M):
         r"""
-        Tests if element is in the arithmetic group of the Farey symbol
+        Test if element is in the arithmetic group of the Farey symbol
         via LLT algorithm.
 
         EXAMPLES::
@@ -536,7 +533,7 @@ cdef class Farey:
 
     def __richcmp__(self, other, op):
         r"""
-        Compare self to others.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -567,7 +564,6 @@ cdef class Farey:
 
             sage: FareySymbol(Gamma0(4)).__reduce__()
             (<class 'sage.modular.arithgroup.farey_symbol.Farey'>, ...))
-
         """
         return Farey, (self.group, self.this_ptr.dumps())
 
@@ -593,8 +589,8 @@ cdef class Farey:
 
         INPUT:
 
-        - ``forced_format`` -- A format string ('plain' or 'xymatrix')
-                               or ``None``.
+        - ``forced_format`` -- a format string ('plain' or 'xymatrix')
+          or ``None``
 
         EXAMPLES::
 
@@ -908,23 +904,23 @@ cdef class Farey:
 
         OPTIONS:
 
-        - ``fill`` -- boolean (default ``True``) fill the fundamental domain
+        - ``fill`` -- boolean (default: ``True``); fill the fundamental domain
 
-        - ``linestyle`` -- string (default: 'solid') The style of the line,
+        - ``linestyle`` -- string (default: ``'solid'``); the style of the line,
           which is one of 'dashed', 'dotted', 'solid', 'dashdot', or '--',
           ':', '-', '-.', respectively
 
-        - ``color`` -- (default: 'lightgray') fill color; fill
-          color for odd part of Dedekind tesselation.
+        - ``color`` -- (default: ``'lightgray'``) fill color for odd part of
+          Dedekind tesselation
 
-        - ``show_pairing`` -- boolean (default: ``True``) flag for pairing
+        - ``show_pairing`` -- boolean (default: ``True``); flag for pairing
 
-        - ``tesselation`` -- (default: 'Dedekind') The type of
+        - ``tesselation`` -- (default: ``'Dedekind'``) the type of
           hyperbolic tesselation which is one of
-          'coset', 'Dedekind' or ``None`` respectively
+          ``'coset'``, ``'Dedekind'`` or ``None`` respectively
 
         - ``color_even`` -- fill color for even parts of Dedekind
-          tesselation (default 'white'); ignored for other tesselations
+          tesselation (default: ``'white'``); ignored for other tesselations
 
         - ``thickness`` -- float (default: `1`) the thickness of the line
 

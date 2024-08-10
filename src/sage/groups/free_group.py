@@ -115,7 +115,7 @@ def _lexi_gen(zeroes=False):
 
     Python generator object which outputs a character from the alphabet on each
     ``next()`` call in lexicographical order. The integer `i` is appended
-    to the output string on the `i^{th}` iteration through the alphabet.
+    to the output string on the `i`-th iteration through the alphabet.
 
     EXAMPLES::
 
@@ -142,7 +142,6 @@ def _lexi_gen(zeroes=False):
         sage: ls = [next(test) for i in range(500)]
         sage: ls[234], ls[260]
         ('a9', 'a10')
-
     """
     count = Integer(0)
     while True:
@@ -243,7 +242,7 @@ class FreeGroupElement(ElementLibGAP):
         r"""
         Return a LaTeX representation.
 
-        OUTPUT: a string; a valid LaTeX math command sequence
+        OUTPUT: string; a valid LaTeX math command sequence
 
         EXAMPLES::
 
@@ -362,14 +361,14 @@ class FreeGroupElement(ElementLibGAP):
           derivative will be computed. If this is `x_j`, then the
           method will return `\partial_j`.
 
-        - ``im_gens`` (optional) -- the images of the generators
+        - ``im_gens`` -- (optional) the images of the generators
           (given as a list or iterable). This is the list
           `(a_1, a_2, \ldots, a_n)`.
           If not provided, it defaults to
           `(x_1, x_2, \ldots, x_n)` in the group ring
           `\ZZ [F]`.
 
-        - ``ring`` (optional) -- the ring in which the elements
+        - ``ring`` -- (optional) the ring in which the elements
           of the list  `(a_1, a_2, \ldots, a_n)` lie. If not
           provided, this ring is inferred from these elements.
 
@@ -488,7 +487,7 @@ class FreeGroupElement(ElementLibGAP):
         OUTPUT:
 
         The tuple of syllables. Each syllable is given as a pair
-        `(x_i, e_i)` consisting of a generator and a non-zero integer.
+        `(x_i, e_i)` consisting of a generator and a nonzero integer.
 
         EXAMPLES::
 
@@ -606,7 +605,7 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
     - ``index_set`` -- (optional) an index set for the generators; if
       specified then the optional keyword ``abelian`` can be used
 
-    - ``abelian`` -- (default: ``False``) whether to construct a free
+    - ``abelian`` -- boolean (default: ``False``); whether to construct a free
       abelian group or a free group
 
     .. NOTE::
@@ -724,7 +723,7 @@ def wrap_FreeGroup(libgap_free_group):
 
 class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     """
-    A class that wraps GAP's FreeGroup
+    A class that wraps GAP's FreeGroup.
 
     See :func:`FreeGroup` for details.
 
@@ -743,7 +742,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         INPUT:
 
-        - ``generator_names`` -- a tuple of strings; the names of the
+        - ``generator_names`` -- tuple of strings; the names of the
           generators
 
         - ``libgap_free_group`` -- a LibGAP free group (default: ``None``);
@@ -907,7 +906,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         INPUT:
 
-        - ``relations`` -- a list/tuple/iterable with the elements of
+        - ``relations`` -- list/tuple/iterable with the elements of
           the free group
         - further named arguments, that are passed to the constructor
           of a finitely presented group

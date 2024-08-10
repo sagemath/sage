@@ -223,9 +223,7 @@ def coproduct_iterator(paire) -> Iterator[list]:
 
     - ``paire`` -- a pair (list of indices, end of word)
 
-    OUTPUT:
-
-    iterator for terms in the motivic coproduct
+    OUTPUT: iterator for terms in the motivic coproduct
 
     Each term is seen as a list of positions.
 
@@ -329,9 +327,7 @@ def dual_composition(c) -> tuple[int, ...]:
 
     - ``c`` -- a composition
 
-    OUTPUT:
-
-    a composition
+    OUTPUT: a composition
 
     EXAMPLES::
 
@@ -560,11 +556,9 @@ def extend_multiplicative_basis(B, n) -> Iterator:
 
     - ``B`` -- function mapping integer to list of tuples of compositions
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    OUTPUT:
-
-    Each term is a tuple of tuples of compositions.
+    OUTPUT: each term is a tuple of tuples of compositions
 
     EXAMPLES::
 
@@ -665,7 +659,7 @@ class Multizetas(CombinatorialFreeModule):
         if R in Domains():
             cat = cat & Domains()
         W = Words(PositiveIntegers(), infinite=False)
-        CombinatorialFreeModule.__init__(self, R, W, prefix="Z", category=cat)
+        CombinatorialFreeModule.__init__(self, R, W, prefix='Z', category=cat)
 
     def _repr_(self) -> str:
         r"""
@@ -951,7 +945,7 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -972,7 +966,7 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -996,7 +990,7 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -1022,9 +1016,9 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``d`` -- (non-negative integer) the weight
+        - ``d`` -- nonnegative integer; the weight
 
-        - ``reverse`` -- (boolean, default ``False``) change the ordering of compositions
+        - ``reverse`` -- boolean (default: ``False``); change the ordering of compositions
 
         EXAMPLES::
 
@@ -1045,7 +1039,7 @@ class Multizetas(CombinatorialFreeModule):
             []
         """
         if d < 0:
-            raise ValueError('d must be a non-negative integer')
+            raise ValueError('d must be a nonnegative integer')
         if d == 0:
             return [self([])]
         if d == 1:
@@ -1148,7 +1142,7 @@ class Multizetas(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``basis`` (optional) -- either ``None`` or a function such that
+            - ``basis`` -- either ``None`` (default) or a function such that
               ``basis(d)`` is a basis of the weight ``d`` multiple zeta values.
               If ``None``, the Hoffman basis is used.
 
@@ -1422,7 +1416,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         cat = GradedAlgebrasWithBasis(R).Commutative()
         if R in Domains():
             cat = cat & Domains()
-        CombinatorialFreeModule.__init__(self, R, Words10, prefix="I",
+        CombinatorialFreeModule.__init__(self, R, Words10, prefix='I',
                                          category=cat)
 
     def _repr_(self) -> str:
@@ -1624,7 +1618,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``basering`` -- optional choice of the coefficient ring
+        - ``basering`` -- (optional) choice of the coefficient ring
 
         EXAMPLES::
 
@@ -1754,9 +1748,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
 
         - ``w`` -- a word in 0 and 1
 
-        OUTPUT:
-
-        an element in the auxiliary F-algebra
+        OUTPUT: an element in the auxiliary F-algebra
 
         The coefficients are in the base ring.
 
@@ -2081,7 +2073,7 @@ class All_iterated(CombinatorialFreeModule):
         """
         if R not in Rings():
             raise TypeError("argument R must be a ring")
-        CombinatorialFreeModule.__init__(self, R, Words10, prefix="I")
+        CombinatorialFreeModule.__init__(self, R, Words10, prefix='I')
 
     def _repr_(self) -> str:
         """
@@ -2379,9 +2371,7 @@ def coeff_phi(w):
 
     - ``w`` -- a word in 0 and 1 with `k` letters (where `k` is odd)
 
-    OUTPUT:
-
-    a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -2414,9 +2404,7 @@ def phi_on_multiplicative_basis(compo):
 
     - ``compo`` -- a composition (in the hardcoded multiplicative base)
 
-    OUTPUT:
-
-    an element in :func:`F_ring` with rational coefficients
+    OUTPUT: an element in :func:`F_ring` with rational coefficients
 
     EXAMPLES::
 
@@ -2444,13 +2432,11 @@ def phi_on_basis(L):
 
     INPUT:
 
-    a list of compositions, each composition in the hardcoded basis
+    - ``L`` -- list of compositions; each composition in the hardcoded basis
 
     This encodes a product of multiple zeta values.
 
-    OUTPUT:
-
-    an element in :func:`F_ring`
+    OUTPUT: an element in :func:`F_ring`
 
     EXAMPLES::
 
@@ -2518,9 +2504,7 @@ def compute_u_on_compo(compo):
 
     - ``compo`` -- a composition
 
-    OUTPUT:
-
-    an element of :func:`F_ring` over `\QQ`
+    OUTPUT: an element of :func:`F_ring` over `\QQ`
 
     EXAMPLES::
 
@@ -2544,9 +2528,7 @@ def compute_u_on_basis(w):
 
     - ``w`` -- a word in 0,1
 
-    OUTPUT:
-
-    an element of :func:`F_ring` over `\QQ`
+    OUTPUT: an element of :func:`F_ring` over `\QQ`
 
     EXAMPLES::
 
@@ -2587,7 +2569,7 @@ def rho_matrix_inverse(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -2617,9 +2599,7 @@ def rho_inverse(elt):
 
     - ``elt`` -- an homogeneous element of the F ring
 
-    OUTPUT:
-
-    a linear combination of multiple zeta values
+    OUTPUT: a linear combination of multiple zeta values
 
     EXAMPLES::
 

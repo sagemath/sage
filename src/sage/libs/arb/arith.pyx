@@ -69,7 +69,7 @@ def hilbert_class_polynomial(D):
 
     - ``D`` -- negative integer
 
-    OUTPUT: an integer polynomial.
+    OUTPUT: integer polynomial
 
     EXAMPLES::
 
