@@ -76,6 +76,7 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.commutative_rings import CommutativeRings
 from sage.misc.misc_c import prod
+from itertools import product
 
 class ChowRing(QuotientRing_generic):
     r"""
@@ -228,16 +229,30 @@ class ChowRing(QuotientRing_generic):
                         monomial_basis.append(term)
 
         else:
-            for i in range(maximum_rank):
+            print(ranks)
+            rank_diff = []
+            for i in range(len(flats)):
+                max_pow = 0
+                for j in range(i):
+                    if flats[j] < flats[i]:
+                        max_pow += ranks[j]
+                rank_diff.append(ranks[i] - max_pow)
+            print(rank_diff)
+            def generate_terms(current_term, index, max_powers, f_dict):
+                if index == len(max_powers):
                     term = self._ideal.ring().one()
-                    for j in range(len(flats)):
-                        if i > ranks[j] - ranks[j-1] - 1:
-                                if flats[j] in list(flats_gen):
-                                    term *= flats_gen[flats[j]]**(0)
-                        else:
-                            if flats[j] in list(flats_gen):
-                                term *= flats_gen[flats[j]]**(i + 1)
-                    monomial_basis.append(term)
+                    term *= f_dict[i+1]**(current_term[i] for i in range(len(current_term)))
+                    yield term
+                    return
+                
+                for power in range(max_powers[index]):
+                    current_term[index] = power
+                    generate_terms(current_term, index + 1, max_powers, f_dict)
+
+            current_term = [0]*len(flats)
+            monomial_basis = list(generate_terms(current_term, 0, rank_diff, flats_gen))
+            print(monomial_basis)
+            
 
         from sage.sets.family import Family
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
