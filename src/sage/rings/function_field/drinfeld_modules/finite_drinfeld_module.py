@@ -29,7 +29,6 @@ from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import companion_matrix
 from sage.misc.misc_c import prod
-from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
