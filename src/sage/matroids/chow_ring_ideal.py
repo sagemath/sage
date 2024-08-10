@@ -317,10 +317,11 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                     for H in flats:
                         if H > G:
                             term += self._flats_generator[H]
-                    if F.is_empty():
-                        gb.append(term**self._matroid.rank(G)) 
-                    elif F < G:
-                        gb.append(term**(self._matroid.rank(G)-self._matroid.rank(F)))
+                    if term != R.zero():
+                        if Set(F).is_empty():
+                            gb.append(term**self._matroid.rank(G)) 
+                        elif F < G:
+                            gb.append(term**(self._matroid.rank(G)-self._matroid.rank(F)))
 
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
@@ -462,36 +463,37 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
             sage: ch = AugmentedChowRingIdeal_fy(M=matroids.catalog.Fano(), R=QQ)
             sage: ch.groebner_basis()
-            Polynomial Sequence with 4116 Polynomials in 21 Variables
+            Polynomial Sequence with 1400 Polynomials in 10 Variables
+            sage: ch.groebner_basis().is_groebner()
+            True
         """
         gb = []
         E = list(self._matroid.groundset())
         poly_ring = self.ring()
-        for i in E:
-            for F in self._flats:
-                for G in self._flats:
+        for F in self._flats:
+            for G in self._flats:
+                if not (F < G or G < F):
+                        gb.append(self._flats_generator[F]*self._flats_generator[G])
+                for i in E:
                     term = poly_ring.zero()
                     term1 = poly_ring.zero()
                     for H in self._flats:
-                        if i in Set(H):
+                        if i in H:
                             term += self._flats_generator[H]
                         if H > F:
                             term1 += self._flats_generator[H]
 
-                    gb.append(self._flats_generator[i] + term)
-                    gb.append(term1**(self._matroid.rank(Set(F))) + 1)
+                        gb.append(self._flats_generator[i] + term)
+                        gb.append(term1**(self._matroid.rank(F)) + 1)
 
-                    if i in Set(F):
-                        gb.append(self._flats_generator[i]*((term1)**self._matroid.rank(Set(F))))
+                    if i in F:
+                        gb.append(self._flats_generator[i]*((term1)**self._matroid.rank(F)))
             
-                    elif not i in Set(F):
+                    elif not i in F:
                         gb.append(self._flats_generator[i]*self._flats_generator[F])
                     
-                    elif not (F < G or G < F):
-                        gb.append(self._flats_generator[F]*self._flats_generator[G])
-                    
                     elif G < F:
-                        gb.append(self._flats_generator[G]*term1**(self._matroid.rank(Set(F))-self._matroid.rank(Set(G))))
+                        gb.append(self._flats_generator[G]*term1**(self._matroid.rank(F)-self._matroid.rank(G)))
 
         g_basis = PolynomialSequence(poly_ring, [gb])
         return g_basis
@@ -626,6 +628,8 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: ch = AugmentedChowRingIdeal_atom_free(M=M1, R=QQ)
             sage: ch.groebner_basis()
             [A0^2, A0*A1, A0*A2, A0*A1, A1^2, A1*A2, A0*A2, A1*A2, A2^2]
+            sage: ch.groebner_basis().is_groebner()
+            True
         """
         gb = []
         flats = [X for i in range(1, self._matroid.rank())
@@ -642,8 +646,9 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                     for H in flats:
                         if H < F:
                             term += self._flats_generator[H]
-                    gb.append(self._flats_generator[F]*(term**self._matroid.rank(Set(G)))*
-                            (term**(self._matroid.rank(Set(G))-self._matroid.rank(Set(F)))))
+                    if term != poly_ring.zero():
+                        gb.append(self._flats_generator[F]*(term**self._matroid.rank(G))*
+                            (term**(self._matroid.rank(G)-self._matroid.rank(F))))
 
         g_basis = PolynomialSequence(poly_ring, [gb])
         return g_basis
