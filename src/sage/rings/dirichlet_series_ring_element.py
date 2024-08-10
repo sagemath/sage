@@ -159,29 +159,23 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         EXAMPLES::
 
             sage: R = DirichletSeriesRing(ZZ, 10)
-            sage: f = R([1, 2, 3])
-            sage: f
+            sage: R([1, 2, 3])
             1 + 2*2^-s + 3*3^-s + O(10^-s)
+            sage: R([2, 3, 0, 5])
+            2 + 3*2^-s + 5*4^-s + O(10^-s)
         """
+        from sage.misc.repr import repr_lincomb
         coeffs = self.coefficients()
-        ans = ""
         prec = self.parent().precision()
-        atomic_repr = self.parent().base_ring()._repr_option('element_is_atomic')
-        for i in range(1, prec):
-            if i in coeffs:
-                x = repr(self[i])
-                if x != "0":
-                    if not atomic_repr and i > 1 and (x.find("+") != -1 or x.find("-") != -1):
-                        x = "(%s)" % x
-                    if i > 1:
-                        var = "*%s^-s" % (i)
-                    else:
-                        var = ""
-                    ans += "%s%s + " % (x,var)
-        ans = ans.replace(" + -", " - ")
-        ans = ans.replace(" 1*", " ")
-        ans = ans.replace(" -1*", " -")
-        ans += "O({}^-s)".format(prec)
+        # Handle the constant coefficient separately.
+        if coeffs[1]:
+            ans = repr(coeffs[1]) + " + "
+        else:
+            ans = ""
+        # Use repr_lincomb for the other coefficients.
+        ans += repr_lincomb([(1 if i==1 else str(i)+'^-s', coeffs[i]) for i in sorted(coeffs.keys()) if i>1])
+        # Append the precision marker.
+        ans += " + O({}^-s)".format(prec)
         return ans
 
     def _add_(self, other):
