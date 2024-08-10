@@ -9,20 +9,72 @@ These are the classes of Chow rings for matroids. It also takes in
 a parameter boolean ``augmented`` which creates the augmented Chow
 ring if given ``True``.
 
+INPUT::
 
-REFERENCES
+- `R` -- commutative ring
+- `M` -- matroid
+- `augmented` -- If `True`, returns augmented Chow ring of input presentation
+  and returns non-augmented Chow ring if `False`.
+- `presentation` -- Takes in augmented Chow ring presentation as a string if
+  augmented is `True`. Implemented resentations are `fy` and `atom-free`,
+  default value is `None`
 
-- :arxiv:`2309.14312`
-- :arxiv:`2111.00393`
+The Chow ring of a matroid is defined as the quotient ring:
+
+.. MATH::
+
+    A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (Q_M + L_M)
+
+    where
+
+..MATH::
+
+    (Q_M + L_M)
+
+    is the Chow ring ideal of matroid `M`.
+
+The augmented Chow ring of matroid `M` of Feitchner-Yuzvinsky presentation
+is the quotient ring:
+
+..MATH::
+
+    A(M)_R := R[y_{e_1}, \ldots, y_{e_n}, x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M)
+
+    where
+
+..MATH::
+
+    (I_M + J_M)
+
+    is the augmented Chow ring ideal of matroid `M` of Feitchner-Yuzvinsky
+    presentation.
+
+The augmented Chow ring ideal of atom-free presentation is the quotient ring:
+
+..MATH::
+
+    A(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / I_{af}M
+
+    where
+
+    I_{af}M
+    
+    is the augmented Chow ring ideal of matroid `M` of atom-free presentation.
+
+.. SEEALSO::
+
+    :mod: sage.matroids.chow_ring_ideal
+
+REFERENCES:
+
+    - [FY2004]_
+    - [AHK2015]_
 """
 
 from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRingIdeal_fy, AugmentedChowRingIdeal_atom_free
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.commutative_rings import CommutativeRings
-from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-from sage.sets.set import Set
-from functools import cmp_to_key
 from sage.misc.misc_c import prod
 
 class ChowRing(QuotientRing_generic):
