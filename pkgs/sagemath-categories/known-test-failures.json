@@ -781,6 +781,10 @@
     "sage.data_structures.mutable_poset": {
         "ntests": 441
     },
+    "sage.doctest.check_tolerance": {
+        "failed": true,
+        "ntests": 19
+    },
     "sage.doctest.control": {
         "failed": true,
         "ntests": 230
@@ -795,12 +799,20 @@
         "failed": true,
         "ntests": 414
     },
+    "sage.doctest.marked_output": {
+        "failed": true,
+        "ntests": 21
+    },
     "sage.doctest.parsing": {
         "failed": true,
-        "ntests": 313
+        "ntests": 275
     },
     "sage.doctest.reporting": {
         "ntests": 126
+    },
+    "sage.doctest.rif_tol": {
+        "failed": true,
+        "ntests": 18
     },
     "sage.doctest.sources": {
         "ntests": 343
