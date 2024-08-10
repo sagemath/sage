@@ -592,7 +592,7 @@ class TropicalSurface(TropicalVariety):
 
         if not self._hypersurface:  # no components
             return [[-1, 1], [-1, 1], [-1, 1]]
-        elif len(self._hypersurface) == 1:
+        elif len(self._hypersurface) == 1:  # one components
             bound = 1
             for eqn in self._hypersurface[0][0]:
                 for op in eqn.operands():
@@ -674,7 +674,7 @@ class TropicalSurface(TropicalVariety):
         axes.append([zmin, zmax])
         return axes
 
-    def polygon_vertices(self):
+    def _polygon_vertices(self):
         r"""
         Return the vertices of the polygon for each components of ``self``
         to be used for plotting.
@@ -684,31 +684,43 @@ class TropicalSurface(TropicalVariety):
         A dictionary where the keys represent component indices and the
         values are a set of points in three dimensional space.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        A tropical surface with only one component::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
-            sage: p1 = x + y + z + x^2
-            sage: tv = p1.tropical_variety()
-            sage: tv.polygon_vertices()
-            {0: {(0, 0, 0), (0, 0, 1), (1, 1, 1)},
-            1: {(0, 0, 0), (0, 1, 0), (1, 1, 1)},
-            2: {(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1)},
-            3: {(-1/2, -1, -1), (0, 0, 0), (1, -1, -1), (1, 1, 1)},
-            4: {(-1/2, -1, -1), (-1/2, -1, 1), (0, 0, 0), (0, 0, 1)},
-            5: {(-1/2, -1, -1), (-1/2, 1, -1), (0, 0, 0), (0, 1, 0)}}
+            sage: p1 = x + z
+            sage: tv1 = p1.tropical_variety()
+            sage: tv1._polygon_vertices()
+            {0: {(-1, -1, -1), (-1, 1, -1), (1, -1, 1), (1, 1, 1)}}
+
+        A tropical surface with multiple components::
+
+            sage: p2 = x^2 + x + y + z + R(1)
+            sage: tv2 = p2.tropical_variety()
+            sage: tv2._polygon_vertices()
+            {0: {(0, 0, 0), (0, 0, 2), (1, 1, 1), (2, 2, 2)},
+            1: {(0, 0, 0), (0, 2, 0), (1, 1, 1), (2, 2, 2)},
+            2: {(0, 0, 0), (0, 0, 2), (0, 2, 0), (0, 2, 2)},
+            3: {(1, 1, 1), (1, 1, 2), (1, 2, 1), (1, 2, 2)},
+            4: {(-1/2, -1, -1), (0, 0, 0), (1, 1, 1), (2, -1, -1), (2, 1, 1)},
+            5: {(-1/2, -1, -1), (-1/2, -1, 2), (0, 0, 0), (0, 0, 2)},
+            6: {(1, 1, 1), (1, 1, 2), (2, 1, 1), (2, 1, 2)},
+            7: {(-1/2, -1, -1), (-1/2, 2, -1), (0, 0, 0), (0, 2, 0)},
+            8: {(1, 1, 1), (1, 2, 1), (2, 1, 1), (2, 2, 1)}}
         """
         from sage.sets.real_set import RealSet
         from sage.symbolic.relation import solve
         from sage.rings.rational_field import QQ
 
-        vertices = {i: set() for i in range(self.number_of_components())}
+        poly_verts = {i: set() for i in range(self.number_of_components())}
         axes = self._axes()
         comps = self.components()
         vars = self._vars
         comps_int = self._components_intersection()
 
-        for index, lines in comps_int.items():  # find the inside vertex
+        for index, lines in comps_int.items():  # finding the inside vertices
             for line in lines:
                 v = list(line[1])[0].variables()[0]
                 for param in line[1]:
@@ -716,10 +728,54 @@ class TropicalSurface(TropicalVariety):
                     right = param.rhs()
                     if left.is_numeric():
                         vertex = [QQ(e.subs(**{str(v): left})) for e in line[0]]
-                        vertices[index].add(tuple(vertex))
+                        poly_verts[index].add(tuple(vertex))
                     elif right.is_numeric():
                         vertex = [QQ(e.subs(**{str(v): right})) for e in line[0]]
-                        vertices[index].add(tuple(vertex))
+                        poly_verts[index].add(tuple(vertex))
+
+        def find_edge_vertices(i):
+            if i == 0:  # interval for t1
+                interval = interval1
+                j = 1
+            else: # interval for t2
+                interval = interval2
+                j = 0
+            for p in [interval.inf(), interval.sup()]:
+                new_param = [e.subs(**{str(vars[i]): p}) for e in comps[index][1]]
+                sol = solve(new_param, vars[j])
+                if sol:
+                    interval_param = RealSet()
+                    for s in sol:
+                        if s != []:
+                            try:
+                                interval_param += RealSet(s[0])
+                            except (IndexError, ValueError):
+                                interval_param += RealSet(-infinity, infinity)
+                        else:
+                            interval_param += RealSet(-infinity, infinity)
+                    interval_param = interval_param.intersection(interval2)
+                    if is_doublevar:
+                        int1 = RealSet()
+                        for s1 in sol1:
+                            subs1 = solve(s1[0].subs(**{str(vars[i]): p}), vars[j])
+                            try:
+                                int1 += RealSet(subs1[0])
+                            except TypeError:
+                                int1 += RealSet(subs1[0][0])
+                        int2 = RealSet()
+                        for s2 in sol2:
+                            subs2 = solve(s2[0].subs(**{str(vars[i]): p}), vars[j])
+                            try:
+                                int2 += RealSet(subs2[0])
+                            except TypeError:
+                                int2 += RealSet(subs2[0][0])
+                        final_int = int1.intersection(int2)
+                        interval_param = interval_param.intersection(final_int)
+                    if interval_param:
+                        vertex1 = [QQ(e.subs(**{str(vars[i]): p, str(vars[j]): interval_param.inf()})) for e in comps[index][0]]
+                        vertex2 = [QQ(e.subs(**{str(vars[i]): p, str(vars[j]): interval_param.sup()})) for e in comps[index][0]]
+                        poly_verts[index].add(tuple(vertex1))
+                        poly_verts[index].add(tuple(vertex2))
 
         # find the interval of parameter for outer vertex
         for index in range(len(comps)):
@@ -740,83 +796,10 @@ class TropicalSurface(TropicalVariety):
                     sol1 = solve(point >= axes[i][0], pv)
                     sol2 = solve(point <= axes[i][1], pv)
                     is_doublevar = True
-
-            # calculate the outer vertex with t1 fixed
-            for p in [interval1.inf(), interval1.sup()]:
-                new_param = [e.subs(**{str(vars[0]): p}) for e in comps[index][1]]
-                temp = solve(new_param, vars[1])
-                if temp:
-                    interval_param = RealSet()
-                    for t in temp:
-                        if t != []:
-                            try:
-                                interval_param += RealSet(t[0])
-                            except (IndexError, ValueError):
-                                interval_param += RealSet(-infinity, infinity)
-                        else:
-                            interval_param += RealSet(-infinity, infinity)
-                    interval_param = interval_param.intersection(interval2)
-                    if is_doublevar:
-                        int1 = RealSet()
-                        for s1 in sol1:
-                            subs1 = solve(s1[0].subs(**{str(vars[0]): p}), vars[1])
-                            try:
-                                int1 += RealSet(subs1[0])
-                            except TypeError:
-                                int1 += RealSet(subs1[0][0])
-                        int2 = RealSet()
-                        for s2 in sol2:
-                            subs2 = solve(s2[0].subs(**{str(vars[0]): p}), vars[1])
-                            try:
-                                int2 += RealSet(subs2[0])
-                            except TypeError:
-                                int2 += RealSet(subs2[0][0])
-                        final_int = int1.intersection(int2)
-                        interval_param = interval_param.intersection(final_int)
-                    if interval_param:
-                        vertex1 = [QQ(e.subs(**{str(vars[0]): p, str(vars[1]): interval_param.inf()})) for e in comps[index][0]]
-                        vertex2 = [QQ(e.subs(**{str(vars[0]): p, str(vars[1]): interval_param.sup()})) for e in comps[index][0]]
-                        vertices[index].add(tuple(vertex1))
-                        vertices[index].add(tuple(vertex2))
-
-            # calculate the outer vertex with t2 fixed
-            for p in [interval2.inf(), interval2.sup()]:
-                new_param = [e.subs(**{str(vars[1]): p}) for e in comps[index][1]]
-                temp = solve(new_param, vars[0])
-                if temp:
-                    interval_param = RealSet()
-                    for t in temp:
-                        if t != []:
-                            try:
-                                interval_param += RealSet(t[0])
-                            except (IndexError, ValueError):
-                                interval_param += RealSet(-infinity, infinity)
-                        else:
-                            interval_param += RealSet(-infinity, infinity)
-                    interval_param = interval_param.intersection(interval1)
-                    if is_doublevar:
-                        int1 = RealSet()
-                        for s1 in sol1:
-                            subs1 = solve(s1[0].subs(**{str(vars[1]): p}), vars[0])
-                            try:
-                                int1 += RealSet(subs1[0])
-                            except TypeError:
-                                int1 += RealSet(subs1[0][0])
-                        int2 = RealSet()
-                        for s2 in sol2:
-                            subs2 = solve(s2[0].subs(**{str(vars[1]): p}), vars[0])
-                            try:
-                                int2 += RealSet(subs2[0])
-                            except TypeError:
-                                int2 += RealSet(subs2[0][0])
-                        final_int = int1.intersection(int2)
-                        interval_param = interval_param.intersection(final_int)
-                    if interval_param:
-                        vertex1 = [QQ(e.subs(**{str(vars[0]): interval_param.inf(), str(vars[1]): p})) for e in comps[index][0]]
-                        vertex2 = [QQ(e.subs(**{str(vars[0]): interval_param.sup(), str(vars[1]): p})) for e in comps[index][0]]
-                        vertices[index].add(tuple(vertex1))
-                        vertices[index].add(tuple(vertex2))
-        return vertices
+            # finding the edge vertices (vertices that touch the axes)
+            find_edge_vertices(0)  # t1 fixed
+            find_edge_vertices(1)  # t2 fixed
+        return poly_verts
 
     def plot(self, color='random'):
         """
@@ -832,14 +815,42 @@ class TropicalSurface(TropicalVariety):
 
         OUTPUT: Graphics3d Object
 
-        EXAMPLES::
+        EXAMPLES:
+
+        A tropical surface that consist of only one cell::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
-            sage: p1 = x + y + z + x^2
+            sage: p1 = x + z
             sage: tv = p1.tropical_variety()
             sage: tv.plot()
             Graphics3d Object
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y,z'))
+            x, y, z = R.gen(), R.gen(1), R.gen(2)
+            p1 = x + z
+            sphinx_plot(p1.tropical_variety().plot())
+
+        A tropical surface with multiple cell that exhibit complex and
+        intriguing geometric structures::
+
+            sage: p2 = x^2 + x + y + z + R(1)
+            sage: tv = p2.tropical_variety()
+            sage: tv.plot()
+            Graphics3d Object
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y,z'))
+            x, y, z = R.gen(), R.gen(1), R.gen(2)
+            p2 = x**2 + x + y + z + R(1)
+            sphinx_plot(p2.tropical_variety().plot())
         """
         from random import random
         from sage.plot.graphics import Graphics
@@ -856,7 +867,7 @@ class TropicalSurface(TropicalVariety):
             colors = color
 
         combined_plot = Graphics()
-        for i, vertex in self.polygon_vertices().items():
+        for i, vertex in self._polygon_vertices().items():
             points = list(vertex)
             plot = Polyhedron(vertices=points).plot(color=colors[i])
             combined_plot += plot
