@@ -42,14 +42,15 @@ EXAMPLES::
 #*******************************************************************************
 
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.repr import repr_lincomb
 from sage.misc.search import search
 from sage.rings.integer_ring import ZZ
-from sage.structure.formal_sum import FormalSum
-
-from .morphism import is_SchemeMorphism
 from sage.schemes.affine.affine_space import AffineSpace_generic
 from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+from sage.structure.formal_sum import FormalSum
+
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 
 def CurvePointToIdeal(C,P):
@@ -356,7 +357,7 @@ class Divisor_curve(Divisor_generic):
                 else:
                     n = ZZ(1)
                     I = t
-                if is_SchemeMorphism(I):
+                if isinstance(I, SchemeMorphism):
                     I = CurvePointToIdeal(C,I)
                 else:
                     know_points = False
