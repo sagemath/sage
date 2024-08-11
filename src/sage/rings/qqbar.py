@@ -927,6 +927,15 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             sage: # needs sage.libs.singular
             sage: AA['x','y'](1).factor()   # indirect doctest
             1
+
+        Test :issue:`#33327`::
+
+            sage: # needs sage.libs.singular
+            sage: S.<a,c> = QQbar[]
+            sage: p = a^2 + 7*c^2
+            sage: factor(p)
+            (a + (-2.645751311064591?*I)*c) * (a + 2.645751311064591?*I*c)
+
         """
         from sage.interfaces.singular import singular
         from sage.structure.factorization import Factorization
@@ -981,7 +990,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         else:
             norm_f = numfield_f
 
-        R = norm_f._singular_().absFactorize()
+        R = norm_f._singular_().absFactorize('"SAGE_ALGEBRAIC"')
 
         singular.setring(R)
         L = singular('absolute_factors')
