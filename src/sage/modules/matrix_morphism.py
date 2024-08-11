@@ -52,6 +52,7 @@ AUTHOR:
 import sage.categories.morphism
 import sage.categories.homset
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.all import Sequence, parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
@@ -92,6 +93,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
     det = determinant = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.determinant
     fcp = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.fcp
     trace = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.trace
+    rank = FiniteDimensionalModulesWithBasis.MorphismMethods.rank
 
     def __init__(self, parent, side='left'):
         """
@@ -978,23 +980,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             V = B.row_module(self.domain().base_ring())
         return self.codomain().submodule(V, check=False)
 
-    def matrix(self):
-        """
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom(V.basis())
-            sage: phi.matrix()
-            [1 0]
-            [0 1]
-            sage: sage.modules.matrix_morphism.MatrixMorphism_abstract.matrix(phi)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: this method must be overridden in the extension class
-        """
-        raise NotImplementedError("this method must be overridden in the extension class")
-
     def _matrix_(self):
         """
+        Return the matrix representing ``self``.
+
         EXAMPLES:
 
         Check that this works with the :func:`matrix` function
@@ -1025,96 +1014,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
         """
         return self.matrix()
-
-    def rank(self):
-        r"""
-        Return the rank of the matrix representing this morphism.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom(V.basis())
-            sage: phi.rank()
-            2
-            sage: V = ZZ^2; phi = V.hom([V.0, V.0])
-            sage: phi.rank()
-            1
-        """
-        return self.matrix().rank()
-
-    def nullity(self):
-        r"""
-        Return the nullity of the matrix representing this morphism, which is the
-        dimension of its kernel.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom(V.basis())
-            sage: phi.nullity()
-            0
-            sage: V = ZZ^2; phi = V.hom([V.0, V.0])
-            sage: phi.nullity()
-            1
-
-        ::
-
-            sage: m = matrix(2, [1, 2])
-            sage: V = ZZ^2
-            sage: h1 = V.hom(m)
-            sage: h1.nullity()
-            1
-            sage: W = ZZ^1
-            sage: h2 = W.hom(m, side='right')
-            sage: h2.nullity()
-            0
-        """
-        if self.side() == "left":
-            return self._matrix.left_nullity()
-        else:
-            return self._matrix.right_nullity()
-
-    def is_bijective(self):
-        r"""
-        Tell whether ``self`` is bijective.
-
-        EXAMPLES:
-
-        Two morphisms that are obviously not bijective, simply on
-        considerations of the dimensions.  However, each fullfills
-        half of the requirements to be a bijection.  ::
-
-            sage: V1 = QQ^2
-            sage: V2 = QQ^3
-            sage: m = matrix(QQ, [[1, 2, 3], [4, 5, 6]])
-            sage: phi = V1.hom(m, V2)
-            sage: phi.is_injective()
-            True
-            sage: phi.is_bijective()
-            False
-            sage: rho = V2.hom(m.transpose(), V1)
-            sage: rho.is_surjective()
-            True
-            sage: rho.is_bijective()
-            False
-
-        We construct a simple bijection between two one-dimensional
-        vector spaces.  ::
-
-            sage: V1 = QQ^3
-            sage: V2 = QQ^2
-            sage: phi = V1.hom(matrix(QQ, [[1, 2], [3, 4], [5, 6]]), V2)
-            sage: x = vector(QQ, [1, -1, 4])
-            sage: y = phi(x); y
-            (18, 22)
-            sage: rho = phi.restrict_domain(V1.span([x]))
-            sage: zeta = rho.restrict_codomain(V2.span([y]))
-            sage: zeta.is_bijective()
-            True
-
-        AUTHOR:
-
-        - Rob Beezer (2011-06-28)
-        """
-        return self.is_injective() and self.is_surjective()
 
     def is_identity(self):
         r"""
@@ -1650,30 +1549,131 @@ class MatrixMorphism(MatrixMorphism_abstract):
             return self._matrix
         return self._matrix.transpose()
 
-    def is_injective(self):
-        """
-        Tell whether ``self`` is injective.
+    def _matrix_side_bases_orders(self, base_ring=None, side='left', *,
+                                  row_order=None, column_order=None):
+        r"""
+        Return the matrix of this morphism in the distinguished
+        bases of the domain and codomain.
+
+        INPUT:
+
+        - ``base_ring`` -- a ring (default: ``None``, meaning the
+          base ring of the codomain)
+
+        - ``side`` -- one of the following:
+
+          - ``'left'`` (the default): this morphism is considered as
+            acting on the left; thus the matrix representing the morphism
+            is to be multiplied by a column vector representing an element
+            of the domain, and each column of the matrix represents the
+            image of an element of the basis of the domain
+
+          - ``'right'``: this morphism is considered as acting on
+            the right; thus a row vector representing an element of the
+            domain is to be multiplied by the matrix representing the
+            morphism, and each row of the matrix represents the image of
+            an element of the basis of the domain
+
+          - ``'any'``: the implementation is allowed to choose a side
+
+        - ``row_order``, ``column_order`` -- each either ``None`` or
+          a sequence that indexes a subfamily of either ``domain_basis`` or
+          ``codomain_basis``, depending on ``side``.
+
+          If ``None``, the order of the rows or columns matches with
+          the order in which the basis is enumerated.
+
+        OUTPUT: a tuple consisting of:
+
+        - ``matrix`` -- an immutable matrix,
+
+        - ``side`` -- either ``'left'`` or ``'right'``,
+
+        - ``domain_basis``, ``codomain_basis`` -- bases,
+
+        - ``row_order``, ``column_order`` -- sequences of objects,
+          each of which indexes a subfamily of either ``domain_basis``
+          or ``codomain_basis``, depending on ``side``.
 
         EXAMPLES::
 
-            sage: V1 = QQ^2
-            sage: V2 = QQ^3
-            sage: phi = V1.hom(Matrix([[1,2,3], [4,5,6]]),V2)
-            sage: phi.is_injective()
+            sage: V = ZZ^2; W = ZZ^3
+            sage: m = column_matrix([3*V.0 - 5*V.1, 4*V.0 + 2*V.1, V.0 + V.1])
+            sage: phi = V.hom(m, W)
+            sage: phi._matrix_side_bases_orders(side='any')
+            (                               [
+                                   [        (1, 0, 0),
+                                   (1, 0),  (0, 1, 0),
+              [ 3  4  1]           (0, 1)   (0, 0, 1)
+              [-5  2  1], 'right', ]      , ]         , range(0, 2), range(0, 3) )
+            sage: _[0] is phi._matrix
             True
-            sage: psi = V2.hom(Matrix([[1,2], [3,4], [5,6]]),V1)
-            sage: psi.is_injective()
-            False
-
-        AUTHOR:
-
-        -- Simon King (2010-05)
+            sage: phi._matrix_side_bases_orders(side='right')
+            (                               [
+                                   [        (1, 0, 0),
+                                   (1, 0),  (0, 1, 0),
+              [ 3  4  1]           (0, 1)   (0, 0, 1)
+              [-5  2  1], 'right', ]      , ]         , range(0, 2), range(0, 3) )
+            sage: _[0] is phi._matrix
+            True
+            sage: phi._matrix_side_bases_orders(side='left')
+            (                           [
+                               [        (1, 0, 0),
+              [ 3 -5]          (1, 0),  (0, 1, 0),
+              [ 4  2]          (0, 1)   (0, 0, 1)
+              [ 1  1], 'left', ]      , ]         , range(0, 3), range(0, 2) )
+            sage: _[0].parent()
+            Full MatrixSpace of 3 by 2 dense matrices over Integer Ring
+            sage: phi._matrix_side_bases_orders(base_ring=QQ)
+            (                           [
+                               [        (1, 0, 0),
+              [ 3 -5]          (1, 0),  (0, 1, 0),
+              [ 4  2]          (0, 1)   (0, 0, 1)
+              [ 1  1], 'left', ]      , ]         , range(0, 3), range(0, 2) )
+            sage: _[0].parent()
+            Full MatrixSpace of 3 by 2 dense matrices over Rational Field
         """
-        if self.side() == 'left':
-            ker = self._matrix.left_kernel()
+        if (base_ring is not None and base_ring != self._matrix.base_ring()) \
+           or row_order is not None or column_order is not None:
+            # Delegate to general method from category
+            return ModulesWithBasis.MorphismMethods._matrix_side_bases_orders(
+                self, base_ring, side=side,
+                row_order=row_order,
+                column_order=column_order)
+
+        # Fast path
+
+        m = self._matrix
+        if side == 'any':
+            # Choose the side that allows us to return our stored _matrix
+            # without transposing it. Note the opposite meaning of side.
+            side = 'left' if self.side() == 'right' else 'right'
+        elif side == 'left':
+            if self.side() == 'left':
+                m = m.transpose()
+        elif side == 'right':
+            if self.side() == 'right':
+                m = m.transpose()
         else:
-            ker = self._matrix.right_kernel()
-        return ker.dimension() == 0
+            raise ValueError(f"side must be 'left' or 'right', not {side}")
+
+        domain_basis = self.domain().basis()
+        codomain_basis = self.codomain().basis()
+
+        try:
+            row_order = sorted(domain_basis.keys())
+        except AttributeError:  # Not a family, assume it is list-like
+            row_order = range(self.domain().dimension())
+
+        try:
+            column_order = sorted(codomain_basis.keys())
+        except AttributeError:  # Not a family, assume it is list-like
+            column_order = range(self.codomain().dimension())
+
+        if side == 'left':
+            column_order, row_order = row_order, column_order
+
+        return m, side, domain_basis, codomain_basis, row_order, column_order
 
     def is_surjective(self):
         r"""
