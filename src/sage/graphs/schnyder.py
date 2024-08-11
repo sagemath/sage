@@ -509,7 +509,7 @@ def _compute_coordinates(g, x):
     for v in g.vertices(sort=False):
         if v not in [t1.label, t2.label, t3.label]:
             # Computing coordinates for v
-            r = list((0, 0, 0))
+            r = [0, 0, 0]
 
             for i in [0, 1, 2]:
                 # Computing size of region i:

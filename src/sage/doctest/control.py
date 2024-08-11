@@ -970,7 +970,7 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: len(DC.sources)
-            12
+            15
             sage: DC.sources[0].options.optional
             True
 
@@ -1071,13 +1071,16 @@ class DocTestController(SageObject):
             sage.doctest.util
             sage.doctest.test
             sage.doctest.sources
+            sage.doctest.rif_tol
             sage.doctest.reporting
             sage.doctest.parsing_test
             sage.doctest.parsing
+            sage.doctest.marked_output
             sage.doctest.forker
             sage.doctest.fixtures
             sage.doctest.external
             sage.doctest.control
+            sage.doctest.check_tolerance
             sage.doctest.all
             sage.doctest
         """
