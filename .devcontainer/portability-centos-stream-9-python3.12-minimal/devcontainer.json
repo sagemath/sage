@@ -3,12 +3,12 @@
 //      from .devcontainer/portability-devcontainer.json.in
 // See https://aka.ms/devcontainer.json for format details.
 {
-    "name": "centos-stream-9-python3.9-minimal (≥ 8-core)",
+    "name": "centos-stream-9-python3.12-minimal (≥ 8-core)",
     "build": {
         "dockerfile": "portability-Dockerfile",
         // See tox.ini for definitions
         "args": {
-            "SYSTEM_FACTOR": "centos-stream-9-python3.9",
+            "SYSTEM_FACTOR": "centos-stream-9-python3.12",
             "PACKAGE_FACTOR": "minimal",
             "DOCKER_TARGET": "with-targets",
             "DOCKER_TAG": "dev"
