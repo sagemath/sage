@@ -140,7 +140,9 @@ EXAMPLES::
     Order of Quaternion Algebra (-1, -23) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
 
     sage: B.right_ideals()
-    (Fractional ideal (2 + 2*j, 2*i + 2*k, 4*j, 4*k), Fractional ideal (2 + 2*j, 2*i + 6*k, 8*j, 8*k), Fractional ideal (2 + 10*j + 8*k, 2*i + 8*j + 6*k, 16*j, 16*k))
+    (Fractional ideal (4, 4*i, 2 + 2*j, 2*i + 2*k),
+         Fractional ideal (8, 8*i, 2 + 2*j, 6*i + 2*k),
+         Fractional ideal (16, 16*i, 10 + 8*i + 2*j, 8 + 6*i + 2*k))
 
     sage: B.hecke_matrix(2)
     [1 2 0]
@@ -803,14 +805,14 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: B = BrandtModule(11)
             sage: I = B.order_of_level_N().unit_ideal()
             sage: B.cyclic_submodules(I, 2)
-            [Fractional ideal (1/2 + 3/2*j + k, 1/2*i + j + 1/2*k, 2*j, 2*k),
-             Fractional ideal (1/2 + 1/2*i + 1/2*j + 1/2*k, i + k, j + k, 2*k),
-             Fractional ideal (1/2 + 1/2*j + k, 1/2*i + j + 3/2*k, 2*j, 2*k)]
+            [Fractional ideal (2, 2*i, 3/2 + i + 1/2*j, 1 + 1/2*i + 1/2*k),
+             Fractional ideal (2, 1 + i, 1 + j, 1/2 + 1/2*i + 1/2*j + 1/2*k),
+             Fractional ideal (2, 2*i, 1/2 + i + 1/2*j, 1 + 3/2*i + 1/2*k)]
             sage: B.cyclic_submodules(I, 3)
-            [Fractional ideal (1/2 + 1/2*j, 1/2*i + 5/2*k, 3*j, 3*k),
-             Fractional ideal (1/2 + 3/2*j + 2*k, 1/2*i + 2*j + 3/2*k, 3*j, 3*k),
-             Fractional ideal (1/2 + 3/2*j + k, 1/2*i + j + 3/2*k, 3*j, 3*k),
-             Fractional ideal (1/2 + 5/2*j, 1/2*i + 1/2*k, 3*j, 3*k)]
+            [Fractional ideal (3, 3*i, 1/2 + 1/2*j, 5/2*i + 1/2*k),
+             Fractional ideal (3, 3*i, 3/2 + 2*i + 1/2*j, 2 + 3/2*i + 1/2*k),
+             Fractional ideal (3, 3*i, 3/2 + i + 1/2*j, 1 + 3/2*i + 1/2*k),
+             Fractional ideal (3, 3*i, 5/2 + 1/2*j, 1/2*i + 1/2*k)]
             sage: B.cyclic_submodules(I, 11)
             Traceback (most recent call last):
             ...
@@ -1252,9 +1254,9 @@ class BrandtModule_class(AmbientHeckeModule):
 
             sage: B = BrandtModule(23)
             sage: B.right_ideals()
-            (Fractional ideal (2 + 2*j, 2*i + 2*k, 4*j, 4*k),
-             Fractional ideal (2 + 2*j, 2*i + 6*k, 8*j, 8*k),
-             Fractional ideal (2 + 10*j + 8*k, 2*i + 8*j + 6*k, 16*j, 16*k))
+            (Fractional ideal (4, 4*i, 2 + 2*j, 2*i + 2*k),
+             Fractional ideal (8, 8*i, 2 + 2*j, 6*i + 2*k),
+             Fractional ideal (16, 16*i, 10 + 8*i + 2*j, 8 + 6*i + 2*k))
 
         TESTS::
 
