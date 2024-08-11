@@ -970,7 +970,7 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: len(DC.sources)
-            15
+            16
             sage: DC.sources[0].options.optional
             True
 
@@ -1082,6 +1082,7 @@ class DocTestController(SageObject):
             sage.doctest.control
             sage.doctest.check_tolerance
             sage.doctest.all
+            sage.doctest.__main__
             sage.doctest
         """
         if self.options.nthreads > 1 and len(self.sources) > self.options.nthreads:
@@ -1308,7 +1309,7 @@ class DocTestController(SageObject):
             sage: DD = DocTestDefaults(valgrind=True, optional='all', timeout=172800)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions="...valgrind/pyalloc.supp" --suppressions="...valgrind/sage.supp" --suppressions="...valgrind/sage-additional.supp"  --log-file=.../valgrind/sage-memcheck.%p... sage-runtests --serial --timeout=172800 --optional=all hello_world.py
+            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions=.../valgrind/pyalloc.supp --suppressions=.../valgrind/sage.supp --suppressions=.../valgrind/sage-additional.supp --suppressions=.../valgrind/valgrind-python.supp  --log-file=.../valgrind/sage-memcheck.%p ...python... -m sage.doctest --serial --timeout=172800 --optional=all hello_world.py
         """
         try:
             sage_cmd = self._assemble_cmd()
