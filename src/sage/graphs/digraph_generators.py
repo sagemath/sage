@@ -855,7 +855,7 @@ class DiGraphGenerators:
             sage: g.show()                          # long time                             # needs sage.plot
 
         The Koh-Tindell digraph [LM2024]_ is the circulant digraph of order 7
-        with parameters `[1, 5]`.  This `2`-diregular digraph is is
+        with parameters `[1, 5]`.  This `2`-diregular digraph is
         vertex-transitive but not arc-transitive. The associated bipartite
         digraph of the Koh-Tindell digraph is a Pfaffian orientation of the
         Heawood graph. Construct and show the Koh-Tindell digraph::
@@ -865,11 +865,11 @@ class DiGraphGenerators:
 
         TESTS:
 
-            sage: digraphs.Circulant(13,[3,5,7,"hey"])
+            sage: digraphs.Circulant(13, [3, 5, 7, "hey"])
             Traceback (most recent call last):
             ...
             ValueError: the list must contain only integers
-            sage: digraphs.Circulant(3,[3,5,7,3.4])
+            sage: digraphs.Circulant(3, [3, 5, 7, 3.4])
             Traceback (most recent call last):
             ...
             ValueError: the list must contain only integers
