@@ -114,7 +114,7 @@ cdef class FlatsMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) noexcept:
         """
         Return the rank of a set ``X``.
 
@@ -191,7 +191,7 @@ cdef class FlatsMatroid(Matroid):
                 if f >= X:
                     return f
 
-    cpdef bint _is_closed(self, frozenset X):
+    cpdef bint _is_closed(self, frozenset X) noexcept:
         """
         Test if input is a closed set.
 
@@ -539,7 +539,7 @@ cdef class FlatsMatroid(Matroid):
 
     # verification
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if ``self`` obeys the matroid axioms.
 

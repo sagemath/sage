@@ -100,7 +100,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) noexcept:
         """
         Return the rank of a set ``X``.
 
@@ -140,7 +140,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         return self._matroid_rank
 
-    cpdef bint _is_independent(self, frozenset X):
+    cpdef bint _is_independent(self, frozenset X) noexcept:
         """
         Test if input is independent.
 
@@ -850,7 +850,7 @@ cdef class CircuitsMatroid(Matroid):
         from sage.rings.infinity import infinity
         return min(self._k_C, default=infinity)
 
-    cpdef bint is_paving(self):
+    cpdef bint is_paving(self) noexcept:
         """
         Return if ``self`` is paving.
 
@@ -869,7 +869,7 @@ cdef class CircuitsMatroid(Matroid):
 
     # verification
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if ``self`` obeys the matroid axioms.
 

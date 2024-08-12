@@ -492,7 +492,7 @@ cdef class Matroid(SageObject):
         """
         raise NotImplementedError("subclasses need to implement this")
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) noexcept:
         r"""
         Return the rank of a set ``X``.
 
@@ -732,7 +732,7 @@ cdef class Matroid(SageObject):
                 XX.pop()
         return frozenset(XX)
 
-    cpdef int _corank(self, frozenset X):
+    cpdef int _corank(self, frozenset X) noexcept:
         """
         Return the corank of a set.
 
@@ -904,7 +904,7 @@ cdef class Matroid(SageObject):
 
     # override the following methods for even better efficiency
 
-    cpdef bint _is_independent(self, frozenset X):
+    cpdef bint _is_independent(self, frozenset X) noexcept:
         """
         Test if input is independent.
 
@@ -925,7 +925,7 @@ cdef class Matroid(SageObject):
         """
         return len(X) == self._rank(X)
 
-    cpdef bint _is_basis(self, frozenset X):
+    cpdef bint _is_basis(self, frozenset X) noexcept:
         """
         Test if input is a basis.
 
@@ -958,7 +958,7 @@ cdef class Matroid(SageObject):
         """
         return self._is_independent(X)
 
-    cpdef bint _is_circuit(self, frozenset X):
+    cpdef bint _is_circuit(self, frozenset X) noexcept:
         """
         Test if input is a circuit.
 
@@ -990,7 +990,7 @@ cdef class Matroid(SageObject):
             Z.add(x)
         return True
 
-    cpdef bint _is_closed(self, frozenset X):
+    cpdef bint _is_closed(self, frozenset X) noexcept:
         """
         Test if input is a closed set.
 
@@ -1019,7 +1019,7 @@ cdef class Matroid(SageObject):
             XX.discard(y)
         return True
 
-    cpdef bint _is_coindependent(self, frozenset X):
+    cpdef bint _is_coindependent(self, frozenset X) noexcept:
         """
         Test if input is coindependent.
 
@@ -1040,7 +1040,7 @@ cdef class Matroid(SageObject):
         """
         return self._corank(X) == len(X)
 
-    cpdef bint _is_cobasis(self, frozenset X):
+    cpdef bint _is_cobasis(self, frozenset X) noexcept:
         """
         Test if input is a cobasis.
 
@@ -1068,7 +1068,7 @@ cdef class Matroid(SageObject):
         """
         return self._is_basis(self.groundset().difference(X))
 
-    cpdef bint _is_cocircuit(self, frozenset X):
+    cpdef bint _is_cocircuit(self, frozenset X) noexcept:
         """
         Test if input is a cocircuit.
 
@@ -1100,7 +1100,7 @@ cdef class Matroid(SageObject):
             Z.add(x)
         return True
 
-    cpdef bint _is_coclosed(self, frozenset X):
+    cpdef bint _is_coclosed(self, frozenset X) noexcept:
         """
         Test if input is a coclosed set.
 
@@ -2305,7 +2305,7 @@ cdef class Matroid(SageObject):
 
     # verification
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if the data obey the matroid axioms.
 
@@ -6187,7 +6187,7 @@ cdef class Matroid(SageObject):
                 return False
         return True
 
-    cpdef bint is_paving(self):
+    cpdef bint is_paving(self) noexcept:
         """
         Return if ``self`` is paving.
 
@@ -6210,7 +6210,7 @@ cdef class Matroid(SageObject):
                     return False
         return True
 
-    cpdef bint is_sparse_paving(self):
+    cpdef bint is_sparse_paving(self) noexcept:
         """
         Return if ``self`` is sparse-paving.
 
@@ -6577,7 +6577,7 @@ cdef class Matroid(SageObject):
         """
         return self.ternary_matroid(randomized_tests=randomized_tests, verify=True) is not None
 
-    cpdef bint is_graphic(self):
+    cpdef bint is_graphic(self) noexcept:
         r"""
         Return if ``self`` is graphic.
 
@@ -6611,7 +6611,7 @@ cdef class Matroid(SageObject):
                 return False
         return True
 
-    cpdef bint is_regular(self):
+    cpdef bint is_regular(self) noexcept:
         r"""
         Return if ``self`` is regular.
 

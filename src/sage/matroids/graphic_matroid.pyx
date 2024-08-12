@@ -238,7 +238,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) noexcept:
         """
         Return the rank of a set ``X``.
 
@@ -625,7 +625,7 @@ cdef class GraphicMatroid(Matroid):
                 N = N.regular_matroid()
             return M._has_minor(N, certificate=certificate)
 
-    cpdef int _corank(self, frozenset X):
+    cpdef int _corank(self, frozenset X) noexcept:
         """
         Return the corank of the set `X` in the matroid.
 
@@ -653,7 +653,7 @@ cdef class GraphicMatroid(Matroid):
             DS_vertices.union(u, v)
         return len(X) - (DS_vertices.number_of_subsets() - Integer(1))
 
-    cpdef bint _is_circuit(self, frozenset X):
+    cpdef bint _is_circuit(self, frozenset X) noexcept:
         """
         Test if input is a circuit.
 
@@ -918,7 +918,7 @@ cdef class GraphicMatroid(Matroid):
             g.add_edge(e)
         return frozenset(XX)
 
-    cpdef bint _is_closed(self, frozenset X):
+    cpdef bint _is_closed(self, frozenset X) noexcept:
         """
         Test if input is a closed set.
 
@@ -1093,7 +1093,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return self.is_isomorphic(other, certificate=True)[1]
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         """
         Test if the data obey the matroid axioms.
 
@@ -1110,7 +1110,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return True
 
-    cpdef bint is_graphic(self):
+    cpdef bint is_graphic(self) noexcept:
         r"""
         Return if ``self`` is graphic.
 
@@ -1124,7 +1124,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return True
 
-    cpdef bint is_regular(self):
+    cpdef bint is_regular(self) noexcept:
         r"""
         Return if ``self`` is regular.
 
