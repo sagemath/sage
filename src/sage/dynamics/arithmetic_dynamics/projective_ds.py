@@ -9134,15 +9134,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 phi = self.base_ring().coerce_map_from(self.base_ring())
             else:
                 phi = self.base_ring().embeddings(M.base_ring())[0]
-        else:
+        else: #both are number fields
             Fields = self.base_ring().composite_fields(M.base_ring(), both_maps=True)
             F , selftoF, MtoF, k = Fields[0]
-            if M.base_ring() is F:
-                phi = selftoF
-            elif self.base_ring() is F:
-                phi = MtoF
-                M = matrix(self.base_ring(), 2, [phi(M[0,0]), phi(M[0,1]), phi(M[1,0]), phi(M[1,1])])
-                phi = self.base_ring().embeddings(self.base_ring())[0]
+            phi = selftoF
+            M = matrix(F, 2, [MtoF(M[0,0]), MtoF(M[0,1]), MtoF(M[1,0]), MtoF(M[1,1])])
         New_aff = self.change_ring(phi).conjugate(M).dehomogenize(1)
         poly = New_aff.domain().gens()[0]*New_aff[0].denominator() - New_aff[0].numerator()
         if return_conjugation:
