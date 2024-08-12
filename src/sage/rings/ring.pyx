@@ -18,7 +18,7 @@ The class inheritance hierarchy is:
 
 - :class:`Ring` (to be deprecated)
 
-  - :class:`Algebra` (to be deprecated)
+  - :class:`Algebra` (deprecated and essentially removed)
   - :class:`CommutativeRing`
 
     - :class:`NoetherianRing` (deprecated)
@@ -86,6 +86,17 @@ This is to test a deprecation::
     See https://github.com/sagemath/sage/issues/37719 for details.
     sage: F.category()
     Category of principal ideal domains
+
+    sage: from sage.rings.ring import Algebra
+    sage: class Nichts(Algebra):
+    ....:     pass
+    sage: F = Nichts(QQ, QQ)
+    ...:
+    DeprecationWarning: use the category Algebras
+    See https://github.com/sagemath/sage/issues/38000 for details.
+    sage: F.category()
+    Category of rings
+
 """
 
 # ****************************************************************************
@@ -1474,24 +1485,11 @@ cdef class Field(CommutativeRing):
 
 
 cdef class Algebra(Ring):
-    """
-    Generic algebra
-    """
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        """
-        Initialize ``self``.
+    _default_category = _Rings
 
-        EXAMPLES::
-
-            sage: A = Algebra(ZZ); A                                                    # needs sage.modules
-            <sage.rings.ring.Algebra object at ...>
-        """
-        # This is a low-level class. For performance, we trust that the category
-        # is fine, if it is provided. If it isn't, we use the category of Algebras(base_ring).
-        if category is None:
-            category = check_default_category(Algebras(base_ring), category)
-        Ring.__init__(self,base_ring, names=names, normalize=normalize,
-                      category=category)
+    def __init__(self, base_ring, *args, **kwds):
+        deprecation(38000, "use the category Algebras")
+        super().__init__(*args, **kwds)
 
 
 cdef class CommutativeAlgebra(CommutativeRing):
