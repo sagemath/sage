@@ -1,5 +1,5 @@
 # distutils: language = c++
-# distutils: extra_compile_args = -std=c++11
+# distutils: extra_compile_args = -std=c++17
 
 #*****************************************************************************
 #       Copyright (C) 2015 Michele Borassi michele.borassi@imtlucca.it
