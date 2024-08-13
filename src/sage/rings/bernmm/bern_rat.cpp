@@ -87,7 +87,7 @@ struct Item
 */
 struct Item_cmp
 {
-   bool operator()(const Item* x, const Item* y)
+   bool operator()(const Item* x, const Item* y) const
    {
       return mpz_cmp(x->modulus, y->modulus) < 0;
    }
