@@ -592,30 +592,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             return self.parent().base().zero()._latex_()
         return s[1:].lstrip().rstrip()
 
-    def is_monic(self):
-        r"""
-        Return ``True`` if ``self`` is a monic tropical polynomial.
-
-        In the context of tropical polynomial, a monic polynomial has a
-        leading coefficient `0`.
-
-        EXAMPLES::
-
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<x> = PolynomialRing(T)
-            sage: p1 = R([2,1,0]); p1
-            0*x^2 + 1*x + 2
-            sage: p1.is_monic()
-            True
-            sage: p2 = R([2,1,1]); p2
-            1*x^2 + 1*x + 2
-            sage: p2.is_monic()
-            False
-        """
-        if self[self.degree()] == self.base_ring().one():
-            return True
-        return False
-
 
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     r"""
