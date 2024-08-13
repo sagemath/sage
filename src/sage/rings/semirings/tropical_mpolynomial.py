@@ -255,7 +255,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             T = TropicalSemiring(QQ)
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
-            p3 = R(2)*x**2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            p3 = R(2)*x**2 + x*y + R(2)*y**2 + x + R(-1)*y + R(3)
             sphinx_plot(p3.plot3d())
 
         TESTS::
