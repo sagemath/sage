@@ -25,7 +25,7 @@ def wronskian(*args):
     function.
 
     The Wronskian of a list of functions is a determinant of derivatives.
-    The nth row (starting from 0) is a list of the nth derivatives of the
+    The `n`-th row (starting from 0) is a list of the `n`-th derivatives of the
     given functions.
 
     For two functions::

@@ -233,7 +233,7 @@ class HeckeModule_generic(Module):
 
     def _compute_hecke_matrix_prime(self, p, **kwds):
         """
-        Compute and return the matrix of the p-th Hecke operator for p prime.
+        Compute and return the matrix of the `p`-th Hecke operator for `p` prime.
 
         Derived classes should overload this function, and they will inherit
         the machinery for calculating general Hecke operators.
@@ -444,11 +444,9 @@ class HeckeModule_generic(Module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` -- an arbitrary space of modular symbols
+        - ``ModularSymbols self`` -- an arbitrary space of modular symbols
 
-        OUTPUT:
-
-        -  ``int`` -- the level
+        OUTPUT: integer; the level
 
         EXAMPLES::
 
@@ -462,7 +460,7 @@ class HeckeModule_generic(Module):
         r"""
         Return the rank of this module over its base ring.
 
-        This raises a :class:`NotImplementedError`, since this is an
+        This raises a :exc:`NotImplementedError`, since this is an
         abstract base class.
 
         EXAMPLES::
@@ -479,7 +477,7 @@ class HeckeModule_generic(Module):
         Return the submodule of ``self`` corresponding to ``X``.
 
         As this is an abstract base class, this raises a
-        :class:`NotImplementedError`.
+        :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -535,7 +533,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def __getitem__(self, n):
         r"""
-        Return the nth term in the decomposition of ``self``.
+        Return the `n`-th term in the decomposition of ``self``.
 
         See the docstring for :meth:`decomposition` for further information.
 
@@ -559,7 +557,6 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: MS = ModularSymbols(22)
             sage: hash(MS) == hash((MS.weight(), MS.level(), MS.base_ring()))
             True
-
         """
         return hash((self.__weight, self.level(), self.base_ring()))
 
@@ -618,7 +615,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Return `T_n(x)` where `x` is a sparse modular
         symbol such that the image of `x` is nonzero under the dual
         projection map associated to this space, and `T_n` is the
-        `n^{th}` Hecke operator.
+        `n`-th Hecke operator.
 
         Used in the :meth:`dual_eigenvector` and :meth:`eigenvalue` methods.
 
@@ -745,7 +742,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Return the ambient module associated to this module.
 
-        As this is an abstract base class, raise :class:`NotImplementedError`.
+        As this is an abstract base class, raise :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -930,21 +927,19 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``anemic`` -- bool (default: ``True``), if True, use only
-           Hecke operators of index coprime to the level.
+        - ``anemic`` -- boolean (default: ``True``); if ``True``, use only
+          Hecke operators of index coprime to the level
 
-        -  ``bound`` -- int or None, (default: None). If None,
-           use all Hecke operators up to the Sturm bound, and hence obtain the
-           same result as one would obtain by using every element of the Hecke
-           ring. If a fixed integer, decompose using only Hecke operators
-           `T_p`, with `p` prime, up to bound.
-        -  ``sort_by_basis`` -- bool (default: ``False``); If True the resulting
-           decomposition will be sorted as if it was free modules, ignoring the
-           Hecke module structure. This will save a lot of time.
+        - ``bound`` -- integer or ``None`` (default: ``None``); if ``None``,
+          use all Hecke operators up to the Sturm bound, and hence obtain the
+          same result as one would obtain by using every element of the Hecke
+          ring. If a fixed integer, decompose using only Hecke operators
+          `T_p`, with `p` prime, up to bound.
+        - ``sort_by_basis`` -- boolean (default: ``False``); if ``True`` the
+          resulting decomposition will be sorted as if it was free modules,
+          ignoring the Hecke module structure. This will save a lot of time.
 
-        OUTPUT:
-
-        -  ``list`` -- a list of subspaces of ``self``.
+        OUTPUT: list of subspaces of ``self``
 
         EXAMPLES::
 
@@ -1086,15 +1081,17 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``name`` -- print name of generator for eigenvalue
-           field.
+        - ``name`` -- print name of generator for eigenvalue
+          field
 
-        -  ``lift`` -- bool (default: ``True``)
+        - ``lift`` -- boolean (default: ``True``)
 
-        -  ``nz`` -- if not ``None``, then normalize vector so dot
-           product with this basis vector of ambient space is 1.
+        - ``nz`` -- if not ``None``, then normalize vector so dot
+          product with this basis vector of ambient space is 1
 
-        OUTPUT: A vector with entries possibly in an extension of the base
+        OUTPUT:
+
+        A vector with entries possibly in an extension of the base
         ring. This vector is an eigenvector for all Hecke operators acting
         via their transpose.
 
@@ -1206,7 +1203,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def dual_hecke_matrix(self, n):
         """
-        Return the matrix of the `n^{th}` Hecke operator acting on the dual
+        Return the matrix of the `n`-th Hecke operator acting on the dual
         embedded representation of ``self``.
 
         EXAMPLES::
@@ -1228,14 +1225,14 @@ class HeckeModule_free_module(HeckeModule_generic):
     def eigenvalue(self, n, name='alpha'):
         r"""
         Assuming that ``self`` is a simple space, return the eigenvalue of the
-        `n^{th}` Hecke operator on ``self``.
+        `n`-th Hecke operator on ``self``.
 
         INPUT:
 
-        -  ``n`` -- index of Hecke operator
+        - ``n`` -- index of Hecke operator
 
-        -  ``name`` -- print representation of generator of
-           eigenvalue field
+        - ``name`` -- print representation of generator of
+          eigenvalue field
 
         EXAMPLES::
 
@@ -1263,11 +1260,11 @@ class HeckeModule_free_module(HeckeModule_generic):
 
            #. In fact there are `d` systems of eigenvalues
               associated to self, where `d` is the rank of
-              self. Each of the systems of eigenvalues is conjugate
+              ``self``. Each of the systems of eigenvalues is conjugate
               over the base field. This function chooses one of the
               systems and consistently returns eigenvalues from that
               system. Thus these are the coefficients `a_n` for
-              `n\geq 1` of a modular eigenform attached to self.
+              `n\geq 1` of a modular eigenform attached to ``self``.
 
            #. This function works even for Eisenstein subspaces,
               though it will not give the constant coefficient of one
@@ -1370,7 +1367,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def gen(self, n):
         r"""
-        Return the nth basis vector of the space.
+        Return the `n`-th basis vector of the space.
 
         EXAMPLES::
 
@@ -1381,8 +1378,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the `n^{th}` Hecke operator acting on given
-        basis.
+        Return the matrix of the `n`-th Hecke operator acting on given basis.
 
         EXAMPLES::
 
@@ -1405,10 +1401,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``ModularSymbols self`` -- Hecke equivariant space of
-           modular symbols
-
-        -  ``int n`` -- an integer at least 1.
+        - ``n`` -- integer at least 1
 
         EXAMPLES::
 
@@ -1460,7 +1453,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def diamond_bracket_operator(self, d):
         r"""
-        Return the diamond bracket operator `\langle d \rangle` on self.
+        Return the diamond bracket operator `\langle d \rangle` on ``self``.
 
         EXAMPLES::
 
@@ -1472,7 +1465,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def T(self, n):
         r"""
-        Return the `n^{th}` Hecke operator `T_n`.
+        Return the `n`-th Hecke operator `T_n`.
 
         This function is a synonym for :meth:`hecke_operator`.
 
@@ -1486,12 +1479,12 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def hecke_polynomial(self, n, var='x'):
         """
-        Return the characteristic polynomial of the `n^{th}` Hecke operator
+        Return the characteristic polynomial of the `n`-th Hecke operator
         acting on this space.
 
         INPUT:
 
-        -  ``n`` -- integer
+        - ``n`` -- integer
 
         OUTPUT: a polynomial
 
@@ -1507,7 +1500,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Return ``True`` if this space is simple as a module for the
         corresponding Hecke algebra.
 
-        This raises :class:`NotImplementedError`, as this is an abstract base
+        This raises :exc:`NotImplementedError`, as this is an abstract base
         class.
 
         EXAMPLES::
@@ -1599,14 +1592,14 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         ALGORITHM: Let `B` be the matrix whose columns are obtained
         by concatenating together a basis for the factors of the ambient
-        space. Then the projection matrix onto self is the submatrix of
+        space. Then the projection matrix onto ``self`` is the submatrix of
         `B^{-1}` obtained from the rows corresponding to self,
-        i.e., if the basis vectors for self appear as columns `n`
+        i.e., if the basis vectors for ``self`` appear as columns `n`
         through `m` of `B`, then the projection matrix is
         got from rows `n` through `m` of `B^{-1}`.
         This is because projection with respect to the B basis is just
         given by an `m-n+1` row slice `P` of a diagonal
-        matrix D with 1's in the `n` through `m` positions,
+        matrix D with 1s in the `n` through `m` positions,
         so projection with respect to the standard basis is given by
         `P\cdot B^{-1}`, which is just rows `n`
         through `m` of `B^{-1}`.
@@ -1673,14 +1666,14 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Assuming that ``self`` is a simple space of modular symbols, return the
         eigenvalues `[a_1, \ldots, a_nmax]` of the Hecke
-        operators on self. See ``self.eigenvalue(n)`` for more
+        operators on ``self``. See ``self.eigenvalue(n)`` for more
         details.
 
         INPUT:
 
-        -  ``n`` -- number of eigenvalues
+        - ``n`` -- number of eigenvalues
 
-        -  ``alpha`` -- name of generate for eigenvalue field
+        - ``alpha`` -- name of generate for eigenvalue field
 
         EXAMPLES:
 
@@ -1741,11 +1734,9 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``self`` -- an arbitrary Hecke module
+        - ``self`` -- an arbitrary Hecke module
 
-        OUTPUT:
-
-        -  ``int`` -- the weight
+        OUTPUT: integer; the weight
 
         EXAMPLES::
 

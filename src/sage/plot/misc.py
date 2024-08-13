@@ -32,18 +32,18 @@ def setup_for_eval_on_grid(funcs,
 
     - ``funcs`` -- a function, or a list, tuple, or vector of functions
 
-    - ``ranges`` -- a list of ranges.  A range can be a 2-tuple of
+    - ``ranges`` -- list of ranges.  A range can be a 2-tuple of
       numbers specifying the minimum and maximum, or a 3-tuple giving
       the variable explicitly.
 
-    - ``plot_points`` -- a tuple of integers specifying the number of
+    - ``plot_points`` -- tuple of integers specifying the number of
       plot points for each range.  If a single number is specified, it
       will be the value for all ranges.  This defaults to 2.
 
-    - ``return_vars`` -- (default ``False``) If ``True``, return the variables,
-      in order.
+    - ``return_vars`` -- (default: ``False``) if ``True``, return the variables,
+      in order
 
-    - ``imaginary_tolerance`` -- (default: ``1e-8``); if an imaginary
+    - ``imaginary_tolerance`` -- (default: ``1e-8``) if an imaginary
       number arises (due, for example, to numerical issues), this
       tolerance specifies how large it has to be in magnitude before
       we raise an error. In other words, imaginary parts smaller than
@@ -51,12 +51,11 @@ def setup_for_eval_on_grid(funcs,
 
     OUTPUT:
 
-
     - ``fast_funcs`` -- if only one function passed, then a fast
       callable function.  If funcs is a list or tuple, then a tuple
       of fast callable functions is returned.
 
-    - ``range_specs`` -- a list of range_specs: for each range, a
+    - ``range_specs`` -- list of range_specs: for each range, a
       tuple is returned of the form (range_min, range_max,
       range_step) such that ``srange(range_min, range_max,
       range_step, include_endpoint=True)`` gives the correct points
@@ -125,7 +124,6 @@ def setup_for_eval_on_grid(funcs,
         Graphics3d Object
         sage: streamline_plot(abs(x+i*y), (x,-1,1),(y,-1,1))
         Graphics object consisting of 1 graphics primitive
-
     """
     if max(map(len, ranges)) > 3:
         raise ValueError("At least one variable range has more than 3 entries: each should either have 2 or 3 entries, with one of the forms (xmin, xmax) or (x, xmin, xmax)")
@@ -233,8 +231,8 @@ def unify_arguments(funcs):
 
     INPUT:
 
-    - ``funcs`` -- a list of functions; these can be symbolic
-      expressions, polynomials, etc
+    - ``funcs`` -- list of functions; these can be symbolic
+      expressions, polynomials, etc.
 
     OUTPUT: functions, expected arguments
 
@@ -327,32 +325,32 @@ def get_matplotlib_linestyle(linestyle, return_type):
     'dotted', 'dashdot' ).
 
     If linestyle is none of these allowed options, the function raises
-    a ValueError.
+    a :exc:`ValueError`.
 
     INPUT:
 
-    - ``linestyle`` -- The style of the line, which is one of
-       - ``"-"`` or ``"solid"``
-       - ``"--"`` or ``"dashed"``
-       - ``"-."`` or ``"dash dot"``
-       - ``":"`` or ``"dotted"``
+    - ``linestyle`` -- the style of the line, which is one of
+       - ``'-'`` or ``'solid'``
+       - ``'--'`` or ``'dashed'``
+       - ``'-.'`` or ``'dash dot'``
+       - ``':'`` or ``'dotted'``
        - ``"None"`` or ``" "`` or ``""`` (nothing)
 
-       The linestyle can also be prefixed with a drawing style (e.g., ``"steps--"``)
+       The linestyle can also be prefixed with a drawing style (e.g., ``'steps--'``)
 
-       - ``"default"`` (connect the points with straight lines)
-       - ``"steps"`` or ``"steps-pre"`` (step function; horizontal
+       - ``'default'`` (connect the points with straight lines)
+       - ``'steps'`` or ``'steps-pre'`` (step function; horizontal
          line is to the left of point)
-       - ``"steps-mid"`` (step function; points are in the middle of
+       - ``'steps-mid'`` (step function; points are in the middle of
          horizontal lines)
-       - ``"steps-post"`` (step function; horizontal line is to the
+       - ``'steps-post'`` (step function; horizontal line is to the
          right of point)
 
        If ``linestyle`` is ``None`` (of type NoneType), then we return it
        back unmodified.
 
-    - ``return_type`` -- The type of linestyle that should be output. This
-      argument takes only two values - ``"long"`` or ``"short"``.
+    - ``return_type`` -- the type of linestyle that should be output. This
+      argument takes only two values - ``'long'`` or ``'short'``
 
     EXAMPLES:
 
@@ -382,9 +380,9 @@ def get_matplotlib_linestyle(linestyle, return_type):
         sage: get_matplotlib_linestyle(None, 'short') is None
         True
 
-    Linestyles with ``"default"`` or ``"steps"`` in them should also be
+    Linestyles with ``'default'`` or ``'steps'`` in them should also be
     properly handled.  For instance, matplotlib understands only the short
-    version when ``"steps"`` is used::
+    version when ``'steps'`` is used::
 
         sage: get_matplotlib_linestyle("default", "short")
         ''
@@ -402,7 +400,6 @@ def get_matplotlib_linestyle(linestyle, return_type):
         linestyle options are:
         {'solid', 'dashed', 'dotted', dashdot', 'None'}, respectively {'-',
         '--', ':', '-.', ''}
-
     """
     long_to_short_dict = {'solid' : '-','dashed' : '--', 'dotted' : ':',
                         'dashdot':'-.'}
@@ -496,7 +493,6 @@ class FastCallablePlotWrapper(FastCallableFloatWrapper):
             sage: fff = FastCallablePlotWrapper(ff, imag_tol=0.1)
             sage: type(fff(CDF.random_element())) is float
             True
-
         """
         try:
             return super().__call__(*args)

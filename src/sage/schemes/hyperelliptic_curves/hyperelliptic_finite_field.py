@@ -56,11 +56,13 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.arith.misc import binomial
 from sage.rings.power_series_ring import PowerSeriesRing
 from . import hyperelliptic_generic
-from sage.schemes.hyperelliptic_curves.hypellfrob import hypellfrob
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.functional import rank
-from sage.libs.pari.all import pari
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.schemes.hyperelliptic_curves.hypellfrob', 'hypellfrob')
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
 
@@ -69,9 +71,9 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
                                       ProjectivePlaneCurve_finite_field):
     def _frobenius_coefficient_bound_charpoly(self):
         r"""
-        Computes bound on number of `p`-adic digits needed to recover
+        Compute bound on number of `p`-adic digits needed to recover
         frobenius polynomial computing the characteristic polynomial
-        of the frobenius matrix, i.e. returns `B` so that knowledge of
+        of the frobenius matrix, i.e. return `B` so that knowledge of
         `a_1`, ..., `a_g` modulo `p^B` determine frobenius polynomial
         uniquely.
 
@@ -123,9 +125,9 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
     def _frobenius_coefficient_bound_traces(self, n=1):
         r"""
-        Computes bound on number of `p`-adic digits needed to recover
+        Compute bound on number of `p`-adic digits needed to recover
         the number of rational points on `n` extensions computing
-        traces of the frobenius matrix powers, i.e. returns `B` so that
+        traces of the frobenius matrix powers, i.e. return `B` so that
         knowledge of `\tr(M^1)`, ..., `\tr(M^n)` modulo `p^B` determine
         `N_1`, ..., `N_n` uniquely.
 
@@ -182,7 +184,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         If `N` not supplied, a default value is selected, which is the
         minimum needed to recover the charpoly unambiguously.
 
-        .. note::
+        .. NOTE::
 
             Implemented using ``hypellfrob``, which means it only works
             over the prime field `GF(p)`, and requires `p > (2g+1)(2N-1)`.
@@ -257,7 +259,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         If `N` not supplied, a default value is selected, which is the
         minimum needed to recover the charpoly unambiguously.
 
-        .. note::
+        .. NOTE::
 
             Currently only implemented using ``hypellfrob``,
             which means it only works over the prime field `GF(p)`,
@@ -478,7 +480,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H.frobenius_polynomial_pari()
             x^2 - 15*x + 12167
 
-        Over prime fields of odd characteristic, `h` may be non-zero::
+        Over prime fields of odd characteristic, `h` may be nonzero::
 
             sage: K = GF(101)
             sage: R.<t> = PolynomialRing(K)
@@ -541,7 +543,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H.frobenius_polynomial()
             x^4 - 3*x^3 + 10*x^2 - 81*x + 729
 
-        Over prime fields of odd characteristic, `h` may be non-zero::
+        Over prime fields of odd characteristic, `h` may be nonzero::
 
             sage: K = GF(101)
             sage: R.<t> = PolynomialRing(K)
@@ -968,7 +970,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         S = PowerSeriesRing(QQ, default_prec=n+1, names='t')
         frev = f.reverse()
         # the coefficients() method of power series only returns
-        # non-zero coefficients so let us use the list() method but
+        # nonzero coefficients so let us use the list() method but
         # this does not work for zero which gives the empty list
         flog = S(frev).log()
         return [q**(i+1) + 1 + ZZ((i+1)*flog[i+1]) for i in range(n)]
@@ -1125,7 +1127,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         INPUT:
 
-        - ``n`` -- integer.
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -1441,12 +1443,12 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - 'E' -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
           finite field, `\GF{q}`
 
         OUTPUT:
 
-        - matrix(Fq,M)' The matrix `M = (c_(pi-j)), f(x)^((p-1)/2) = \sum c_i x^i`
+        - 'matrix(Fq,M)' The matrix `M = (c_(pi-j)), f(x)^((p-1)/2) = \sum c_i x^i`
         - 'Coeff' List of Coeffs of F, this is needed for Hasse-Witt function.
         - 'g' genus of the curve self, this is needed by a-number.
         - 'Fq' is the base field of self, and it is needed for Hasse-Witt
@@ -1576,11 +1578,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+          finite field, `\GF{q}`
 
         OUTPUT:
 
-        - ``M``: The matrix `M = (c_{pi-j})`, where `c_i` are the coefficients of  `f(x)^{(p-1)/2} = \sum c_i x^i`
+        The matrix `M = (c_{pi-j})`, where `c_i` are the coefficients of
+        `f(x)^{(p-1)/2} = \sum c_i x^i`.
 
         REFERENCES:
 
@@ -1774,11 +1778,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+          finite field, `\GF{q}`
 
         OUTPUT:
 
-        - ``N`` : The matrix `N = M M^p \dots M^{p^{g-1}}` where `M = c_{pi-j}`, and `f(x)^{(p-1)/2} = \sum c_i x^i`
+        The matrix `N = M M^p \dots M^{p^{g-1}}` where `M = c_{pi-j}`, and
+        `f(x)^{(p-1)/2} = \sum c_i x^i`.
 
         Reference-N. Yui. On the Jacobian varieties of hyperelliptic curves over fields of characteristic `p > 2`.
 
@@ -1831,12 +1837,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - ``E``: Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+          finite field, `\GF{q}`
 
-        OUTPUT:
-
-        - ``a`` : a-number
-
+        OUTPUT: a-number
 
         EXAMPLES::
 
@@ -1873,12 +1877,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``self`` -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
+          finite field, `\GF{q}`
 
-        OUTPUT:
-
-        - ``pr`` :p-rank
-
+        OUTPUT: p-rank
 
         EXAMPLES::
 

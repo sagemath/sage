@@ -54,8 +54,8 @@ class BlissLibrary(CythonFeature):
             Feature('libbliss')
         """
         CythonFeature.__init__(self, "libbliss", test_code=TEST_CODE,
-                               spkg="bliss",
-                               url="http://www.tcs.hut.fi/Software/bliss/")
+                               spkg='bliss',
+                               url='http://www.tcs.hut.fi/Software/bliss/')
 
 
 class Bliss(JoinFeature):
@@ -77,8 +77,8 @@ class Bliss(JoinFeature):
             Feature('bliss')
         """
         JoinFeature.__init__(self, "bliss",
-                             [PythonModule("sage.graphs.bliss", spkg="sagemath_bliss",
-                                           url="http://www.tcs.hut.fi/Software/bliss/")])
+                             [PythonModule("sage.graphs.bliss", spkg='sagemath_bliss',
+                                           url='http://www.tcs.hut.fi/Software/bliss/')])
 
 
 def all_features():
