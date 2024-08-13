@@ -70,7 +70,7 @@ This is to test a deprecation::
     sage: from sage.rings.ring import CommutativeAlgebra
     sage: class Nein(CommutativeAlgebra):
     ....:     pass
-    sage: F = Nein(QQ, QQ)
+    sage: F = Nein(QQ)
     ...:
     DeprecationWarning: use the category CommutativeAlgebras
     See https://github.com/sagemath/sage/issues/37999 for details.
@@ -90,7 +90,7 @@ This is to test a deprecation::
     sage: from sage.rings.ring import Algebra
     sage: class Nichts(Algebra):
     ....:     pass
-    sage: F = Nichts(QQ, QQ)
+    sage: F = Nichts(QQ)
     ...:
     DeprecationWarning: use the category Algebras
     See https://github.com/sagemath/sage/issues/38502 for details.
