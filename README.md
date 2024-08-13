@@ -92,7 +92,7 @@ below](#sagemath-docker-images)) or other virtualization solutions.
 [macOS] Preparing the Platform
 ------------------------------
 
-- If your Mac uses the Apple Silicon (M1, M2, M3; arm64) architecture and
+- If your Mac uses the Apple Silicon (M1, M2, M3, M4; arm64) architecture and
   you set up your Mac by transferring files from an older Mac, make sure
   that the directory ``/usr/local`` does not contain an old copy of Homebrew
   (or other software) for the x86_64 architecture that you may have copied
