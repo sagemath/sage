@@ -313,7 +313,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         # Calculate the value of polynomial at each marked point
         variables = self.parent().gens()
-        terms = [a*variables[0]**b[0]*variables[1]**b[1] for a, b in zip(self.coefficients(), self.exponents())]
+        terms = [a*variables[0]**b[0] * variables[1]**b[1] for a, b in zip(self.coefficients(), self.exponents())]
         point_terms = {}
         for mark in marks:
             mark_terms = []
@@ -538,8 +538,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             else:
                 raise ValueError(f"can not convert {x} to {self}")
         elif (x in self.base().base_ring()) or (x in self.base()):
-            term = [0]*self.ngens()
+            term = [0] * self.ngens()
             x = {tuple(term): x}
+
         if isinstance(x, dict):
             for key, value in x.items():
                 x[key] = self.base()(value)

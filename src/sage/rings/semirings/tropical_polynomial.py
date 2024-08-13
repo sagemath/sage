@@ -211,7 +211,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             if not exponent:
                 return tropical_roots
             return [self.parent().base().zero()] * exponent
-
         dict_root = {}
         dict_coeff = {i: c.lift() for i, c in data.items()}
         for comb in combinations(dict_coeff, 2):
@@ -336,7 +335,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         factors = []
         for root in roots_order:
             factors.append((R([root, 0]), roots_order[root]))
-
         return Factorization(factors, unit=unit)
 
     def piecewise_function(self):
@@ -393,11 +391,11 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         domain = []
         for i in range(len(unique_root)+1):
             if i == 0:
-                test_number = R(unique_root[i]-1)
+                test_number = R(unique_root[i] - 1)
             elif i == len(unique_root):
-                test_number = R(unique_root[i-1]+1)
+                test_number = R(unique_root[i-1] + 1)
             else:
-                test_number = R((unique_root[i]+unique_root[i-1])/2)
+                test_number = R((unique_root[i]+unique_root[i-1]) / 2)
             terms = {i: c * test_number**i for i, c in data.items()}
             if R._use_min:
                 critical = min(terms.values())
@@ -411,24 +409,24 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             gradient = found_key
             intercept = data[found_key].lift()
 
-            # to make sure all roots is included in the domain
+            # To make sure all roots is included in the domain
             if i == 0:
                 interval = RealSet.unbounded_below_closed(unique_root[i])
-                piecewise_linear = (interval, intercept+gradient*x)
+                piecewise_linear = (interval, intercept + gradient*x)
                 domain.append(interval)
             elif i == len(unique_root):
                 if domain[i-1][0].upper_closed():
                     interval = RealSet.unbounded_above_open(unique_root[i-1])
                 else:
                     interval = RealSet.unbounded_above_closed(unique_root[i-1])
-                piecewise_linear = (interval, intercept+gradient*x)
+                piecewise_linear = (interval, intercept + gradient*x)
                 domain.append(interval)
             else:
                 if domain[i-1][0].upper_closed():
                     interval = RealSet((unique_root[i-1], unique_root[i]))
                 else:
                     interval = RealSet([unique_root[i-1], unique_root[i]])
-                piecewise_linear = (interval, intercept+gradient*x)
+                piecewise_linear = (interval, intercept + gradient*x)
                 domain.append(interval)
             pieces.append(piecewise_linear)
 
@@ -964,6 +962,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
                 order = slope - all_slope[-1]
                 all_slope.append(slope)
                 roots[points[i][0]] = order
+
         if len(all_slope) == 1:  # constant polynomial
             return self(points[0][1])
 
@@ -971,7 +970,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         for root, order in roots.items():
             result *= self([root,0])**order
         test_value = result(R(points[0][0]))
-        unit = R(points[0][1]-test_value.lift())
+        unit = R(points[0][1] - test_value.lift())
         result *= unit
         return result
 

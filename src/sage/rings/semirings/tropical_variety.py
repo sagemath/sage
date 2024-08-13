@@ -206,9 +206,9 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             eq = sum(variables[i] * e for i, e in enumerate(key))
             eq += pd[key].lift()
             linear_eq[key] = eq
-
         temp_keys = []
         temp_order = []
+
         # Checking for all possible combinations of two terms
         for keys in combinations(pd, 2):
             sol = solve(linear_eq[keys[0]] == linear_eq[keys[1]], variables)
@@ -241,7 +241,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                         if isinstance(sol_compare[0], list):
                             if sol_compare[0]:
                                 all_sol_compare.append(sol_compare[0][0])
-                        else:  # Solution is unbounded on one side
+                        else:  # solution is unbounded on one side
                             all_sol_compare.append(sol_compare[0])
                     else:
                         no_solution = True
@@ -259,7 +259,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     # Calculate the order
                     index_diff = []
                     for i in range(len(keys[0])):
-                        index_diff.append(abs(keys[0][i]-keys[1][i]))
+                        index_diff.append(abs(keys[0][i] - keys[1][i]))
                     order = gcd(index_diff)
                     temp_order.append(order)
                     temp_keys.append(keys)
@@ -374,9 +374,9 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: R.<w,x,y,z> = PolynomialRing(T)
             sage: tv = (R(1)*w^2 + x*y*z + R(-1)).tropical_variety()
             sage: latex(tv)
-            Tropical hypersurface of 0 x y z + 1 w^{2} + \left(-1\right)
+            TV\left(0 x y z + 1 w^{2} + \left(-1\right)\right)
         """
-        return f"Tropical hypersurface of {self._poly._latex_()}"
+        return f"TV\\left({self._poly._latex_()}\\right)"
 
     def components(self):
         """
@@ -735,10 +735,10 @@ class TropicalSurface(TropicalVariety):
                         poly_verts[index].add(tuple(vertex))
 
         def find_edge_vertices(i):
-            if i == 0:  # Interval for t1
+            if i == 0:  # interval for t1
                 interval = interval1
                 j = 1
-            else: # Interval for t2
+            else:  # interval for t2
                 interval = interval2
                 j = 0
             for p in [interval.inf(), interval.sup()]:
@@ -748,6 +748,9 @@ class TropicalSurface(TropicalVariety):
                     interval_param = RealSet()
                     for s in sol:
                         if s != []:
+                            # Handle cases where 's' is not a list (s = r1 < +Infinity),
+                            # or if 's' is a list, ensure that its elements define a real
+                            # interval (catch invalid cases like s = [t1 == r100]).
                             try:
                                 interval_param += RealSet(s[0])
                             except (IndexError, ValueError):
@@ -780,8 +783,8 @@ class TropicalSurface(TropicalVariety):
 
         # Find the interval of parameter for outer vertex
         for index in range(len(comps)):
-            interval1 = RealSet(-infinity,infinity)  # Represent t1
-            interval2 = RealSet(-infinity,infinity)  # Represent t2
+            interval1 = RealSet(-infinity,infinity)  # represent t1
+            interval2 = RealSet(-infinity,infinity)  # represent t2
             is_doublevar = False
             for i, point in enumerate(comps[index][0]):
                 pv = point.variables()
@@ -887,20 +890,6 @@ class TropicalSurface(TropicalVariety):
         """
         return f"Tropical surface of {self._poly}"
 
-    def _latex_(self):
-        r"""
-        Return a latex representation of ``self``.
-
-        EXAMPLES::
-
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<x,y,z> = PolynomialRing(T)
-            sage: tv = (x^2 + R(-1)*x*y*z + R(1)).tropical_variety()
-            sage: latex(tv)
-            Tropical surface of \left(-1\right) x y z + 0 x^{2} + 1
-        """
-        return f"Tropical surface of {self._poly._latex_()}"
-
 
 class TropicalCurve(TropicalVariety):
     r"""
@@ -953,7 +942,7 @@ class TropicalCurve(TropicalVariety):
             return [[-1, 1], [-1, 1]]
         if self.number_of_components() == 1:
             eq = self._hypersurface[0][0]
-            if not eq[0].is_numeric() and not eq[1].is_numeric():
+            if (not eq[0].is_numeric()) and (not eq[1].is_numeric()):
                 return [[-1, 1], [-1, 1]]
             elif eq[0].is_numeric():
                 return [[eq[0]-1, eq[0]+1], [-1, 1]]
@@ -1148,13 +1137,13 @@ class TropicalCurve(TropicalVariety):
                 upper = interval[0].upper()
                 midpoint = (lower+upper) / 2
 
-            if lower == infinity and upper == infinity:
+            if (lower == infinity) and (upper == infinity):
                 midpoint = 0
                 plot = parametric_plot(parametric_function, (var, -large_int,
-                                        large_int), color='red')
+                                       large_int), color='red')
             else:
                 plot = parametric_plot(parametric_function, (var, lower, upper),
-                                    color='red')
+                                       color='red')
 
             # Add the order if it is greater than or equal to 2
             if component[2] > 1:
@@ -1188,17 +1177,3 @@ class TropicalCurve(TropicalVariety):
             Tropical curve of 0*x^2 + 0
         """
         return f"Tropical curve of {self._poly}"
-
-    def _latex_(self):
-        r"""
-        Return a latex representation of ``self``.
-
-        EXAMPLES::
-
-            sage: T = TropicalSemiring(QQ)
-            sage: R.<x,y> = PolynomialRing(T)
-            sage: tv = (x^2 + x*y + R(-1)).tropical_variety()
-            sage: latex(tv)
-            Tropical curve of 0 x^{2} + 0 x y + \left(-1\right)
-        """
-        return f"Tropical curve of {self._poly._latex_()}"
