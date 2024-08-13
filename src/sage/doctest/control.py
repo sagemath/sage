@@ -1292,13 +1292,13 @@ class DocTestController(SageObject):
                   "debug", "only_errors", "failed", "new",
                   "show_skipped"):
             if o in opt:
-                cmd += "--%s " % o
+                cmd += "--%s " % o.replace('_', '-')
         # Options with one argument
         for o in ("timeout", "die_timeout", "logfile", "warn_long", "randorder",
                   "random_seed", "global_iterations", "file_iterations",
                   "environment", "baseline_stats_path", "stats_path"):
             if o in opt:
-                cmd += "--%s=%s " % (o, opt[o])
+                cmd += "--%s=%s " % (o.replace('_', '-'), opt[o])
         # One with a different dest
         if "target_walltime" in opt:
             cmd += "--%s=%s " % ("short", opt[o])
