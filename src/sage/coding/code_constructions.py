@@ -178,6 +178,7 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
     else:
         return False
 
+
 def _lift2smallest_field(a):
     """
     INPUT:
@@ -327,6 +328,7 @@ def walsh_matrix(m0):
 
 ##################### main constructions #####################
 
+
 def DuadicCodeEvenPair(F,S1,S2):
     r"""
     Construct the "even pair" of duadic codes associated to the
@@ -375,6 +377,7 @@ def DuadicCodeEvenPair(F,S1,S2):
     C1 = CyclicCode(length=n, generator_pol=gg1)
     C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
+
 
 def DuadicCodeOddPair(F,S1,S2):
     """
@@ -431,6 +434,7 @@ def DuadicCodeOddPair(F,S1,S2):
     C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
 
+
 def ExtendedQuadraticResidueCode(n,F):
     r"""
     The extended quadratic residue code (or XQR code) is obtained from
@@ -471,6 +475,7 @@ def ExtendedQuadraticResidueCode(n,F):
     C = QuadraticResidueCodeOddPair(n,F)[0]
     return C.extended_code()
 
+
 def from_parity_check_matrix(H):
     r"""
     Return the linear code that has ``H`` as a parity check matrix.
@@ -493,6 +498,7 @@ def from_parity_check_matrix(H):
     """
     Cd = LinearCode(H)
     return Cd.dual_code()
+
 
 def QuadraticResidueCode(n,F):
     r"""
@@ -536,6 +542,7 @@ def QuadraticResidueCode(n,F):
     - David Joyner (11-2005)
     """
     return QuadraticResidueCodeOddPair(n,F)[0]
+
 
 def QuadraticResidueCodeEvenPair(n,F):
     r"""
@@ -687,6 +694,7 @@ def random_linear_code(F, length, dimension):
         G = random_matrix(F, dimension, length)
         if G.rank() == dimension:
             return LinearCode(G)
+
 
 def ToricCode(P,F):
     r"""

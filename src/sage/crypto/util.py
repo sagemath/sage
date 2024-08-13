@@ -93,6 +93,7 @@ def ascii_integer(B):
     return sum([L[7], L[6]*2, L[5]*4, L[4]*8,
                 L[3]*16, L[2]*32, L[1]*64, L[0]*128])
 
+
 def ascii_to_bin(A):
     r"""
     Return the binary representation of the ASCII string ``A``.
@@ -158,6 +159,7 @@ def ascii_to_bin(A):
     """
     bin = BinaryStrings()
     return bin.encoding("".join(list(A)))
+
 
 def bin_to_ascii(B):
     r"""
@@ -347,6 +349,7 @@ def has_blum_prime(lbound, ubound):
             return True
     return False
 
+
 def is_blum_prime(n):
     r"""
     Determine whether or not ``n`` is a Blum prime.
@@ -383,6 +386,7 @@ def is_blum_prime(n):
             return False
     else:
         return False
+
 
 def least_significant_bits(n, k):
     r"""
@@ -437,6 +441,7 @@ def least_significant_bits(n, k):
         [1, 1, 1, 1, 0, 1, 1]
     """
     return [int(_) for _ in list(n.binary()[-k:])]
+
 
 def random_blum_prime(lbound, ubound, ntries=100):
     r"""

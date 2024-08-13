@@ -44,6 +44,7 @@ from sage.misc.cachefunc import cached_method
 columns_white_list = ['knot_atlas_anon', 'knotilus_page_anon']
 columns_black_list = ['homfly_polynomial_old']
 
+
 class KnotInfoColumnTypes(Enum):
     r"""
     Enum class to specify if a column from the table of knots and links provided

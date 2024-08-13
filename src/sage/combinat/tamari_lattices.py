@@ -49,6 +49,7 @@ are also available directly using the catalogue of posets, as follows::
 from __future__ import annotations
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
 
+
 def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
     r"""
     Return all Dyck paths from `(0,0)` to `(i,j)` in the `(a \times

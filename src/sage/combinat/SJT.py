@@ -26,6 +26,7 @@ AUTHORS:
 # ****************************************************************************
 from sage.combinat.combinat import CombinatorialElement
 
+
 class SJT(CombinatorialElement):
     r"""
     A representation of a list permuted using the Steinhaus-Johnson-Trotter

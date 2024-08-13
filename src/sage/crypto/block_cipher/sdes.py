@@ -31,6 +31,7 @@ AUTHORS:
 from sage.monoids.string_monoid import BinaryStrings
 from sage.structure.sage_object import SageObject
 
+
 class SimplifiedDES(SageObject):
     r"""
     This class implements the Simplified Data Encryption Standard (S-DES)
