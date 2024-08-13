@@ -47,9 +47,9 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_function, cached_method, cached_in_parent_method
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
+from sage.interfaces.gap3 import gap3
 from sage.rings.integer_ring import ZZ
 from sage.combinat.root_system.reflection_group_complex import ComplexReflectionGroup, IrreducibleComplexReflectionGroup
-from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_element import RealReflectionGroupElement
 
 
@@ -695,7 +695,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
         from sage.combinat.root_system.reflection_group_element import _gap_return
         J_inv = [self._index_set_inverse[j] + 1 for j in J]
         S = str(gap3('ReducedRightCosetRepresentatives(%s,ReflectionSubgroup(%s,%s))' % (self._gap_group._name, self._gap_group._name, J_inv)))
-        return sage_eval(_gap_return(S), locals={'self': self})
+        return [self(w, check=False) for w in _gap_return(S)]
 
     def simple_root_index(self, i):
         r"""
@@ -820,8 +820,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
                      if self.fix_space().is_subspace(T[i].fix_space())]
             S = str(gap3('ReducedRightCosetRepresentatives(%s,ReflectionSubgroup(%s,%s))' % (W._gap_group._name, W._gap_group._name, T_fix)))
             from sage.combinat.root_system.reflection_group_element import _gap_return
-            return sage_eval(_gap_return(S, coerce_obj='W'),
-                             locals={'self': self, 'W': W})
+            return [W(w, check=False) for w in _gap_return(S)]
 
         def left_coset_representatives(self):
             r"""

@@ -73,6 +73,10 @@ class SchemePoint(Element):
 ########################################################
 
 def is_SchemeTopologicalPoint(x):
+    from sage.misc.superseded import deprecation
+    deprecation(38296,
+                "The function is_SchemeTopologicalPoint is deprecated; "
+                "use 'isinstance(..., SchemeTopologicalPoint)' instead.")
     return isinstance(x, SchemeTopologicalPoint)
 
 class SchemeTopologicalPoint(SchemePoint):

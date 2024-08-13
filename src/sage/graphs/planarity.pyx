@@ -134,6 +134,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
         elif status == NONEMBEDDABLE:
             # We now know that the graph is nonplanar.
             if not kuratowski:
+                gp_Free(&theGraph)
                 return False
             # With just the current edges, we have a nonplanar graph,
             # so to isolate a kuratowski subgraph, just keep going.
@@ -149,6 +150,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     if status == NONEMBEDDABLE:
         # Kuratowski subgraph isolator
         if not kuratowski:
+            gp_Free(&theGraph)
             return False
         g_dict = {}
         for i in range(1, theGraph.N + 1):
