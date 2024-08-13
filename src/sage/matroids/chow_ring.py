@@ -4,71 +4,6 @@ Chow rings of matroids
 AUTHORS:
 
 - Shriya M
-
-These are the classes of Chow rings for matroids. It also takes in
-a parameter boolean ``augmented`` which creates the augmented Chow
-ring if given ``True``.
-
-INPUT::
-
-- `R` -- commutative ring
-- `M` -- matroid
-- `augmented` -- If `True`, returns augmented Chow ring of input presentation
-  and returns non-augmented Chow ring if `False`.
-- `presentation` -- Takes in augmented Chow ring presentation as a string if
-  augmented is `True`. Implemented resentations are `fy` and `atom-free`,
-  default value is `None`
-
-The Chow ring of a matroid is defined as the quotient ring:
-
-.. MATH::
-
-    A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (Q_M + L_M)
-
-    where
-
-..MATH::
-
-    (Q_M + L_M)
-
-    is the Chow ring ideal of matroid `M`.
-
-The augmented Chow ring of matroid `M` of Feitchner-Yuzvinsky presentation
-is the quotient ring:
-
-..MATH::
-
-    A(M)_R := R[y_{e_1}, \ldots, y_{e_n}, x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M)
-
-    where
-
-..MATH::
-
-    (I_M + J_M)
-
-    is the augmented Chow ring ideal of matroid `M` of Feitchner-Yuzvinsky
-    presentation.
-
-The augmented Chow ring ideal of atom-free presentation is the quotient ring:
-
-..MATH::
-
-    A(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / I_{af}M
-
-    where
-
-    I_{af}M
-    
-    is the augmented Chow ring ideal of matroid `M` of atom-free presentation.
-
-.. SEEALSO::
-
-    :mod: sage.matroids.chow_ring_ideal
-
-REFERENCES:
-
-    - [FY2004]_
-    - [AHK2015]_
 """
 
 from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRingIdeal_fy, AugmentedChowRingIdeal_atom_free
@@ -85,19 +20,74 @@ class ChowRing(QuotientRing_generic):
     INPUT:
 
 
-    - `M` -- a matroid.
-    - `R` -- a ring.
-    - ``augmented`` -- a Boolean value. When ``True``, it returns the augmented Chow
-      ring. If ``False``, it returns the Chow ring
+    - `M` -- a matroid
+    - `R` -- a commutative ring
+    - ``augmented`` -- a Boolean value. When ``True``, it returns the augmented
+        Chow ring. If ``False``, it returns the Chow ring
+    - ``presentation`` -- a string literal. Takes in the presentation of
+        augmented Chow ring (`fy` or `atom-free`). Default value `None`
 
-    OUTPUT: Chow ring of matroid `M`.
+    OUTPUT: Chow ring of matroid `M`
+
+    These are the classes of Chow rings for matroids. It also takes in
+    a parameter boolean ``augmented`` which creates the augmented Chow
+    ring if given ``True``.
+
+    The Chow ring of a matroid is defined as the quotient ring:
+
+    .. MATH::
+
+        A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (Q_M + L_M)
+
+        where
+
+    ..MATH::
+
+        (Q_M + L_M)
+
+        is the Chow ring ideal of matroid `M`.
+
+    The augmented Chow ring of matroid `M` of Feitchner-Yuzvinsky presentation
+    is the quotient ring:
+
+    ..MATH::
+
+        A(M)_R := R[y_{e_1}, \ldots, y_{e_n}, x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M)
+
+        where
+
+    ..MATH::
+
+        (I_M + J_M)
+
+        is the augmented Chow ring ideal of matroid `M` of Feitchner-Yuzvinsky
+        presentation.
+
+    The augmented Chow ring of atom-free presentation is the quotient ring:
+
+    ..MATH::
+
+        A(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / I_{af}M
+
+        where
+
+        I_{af}M
+        
+        is the augmented Chow ring ideal of matroid `M` of atom-free presentation.
+
+    .. SEEALSO::
+
+        :mod: sage.matroids.chow_ring_ideal
+
+    REFERENCES:
+
+        - [FY2004]_
+        - [AHK2015]_
 
     EXAMPLES::
 
-        sage: from sage.matroids.chow_ring import ChowRing
-
         sage: M1 = matroids.catalog.P8pp()
-        sage: ch = ChowRing(M=M1, R=QQ, augmented=False)
+        sage: ch = M1.chow_ring(QQ, False)
         sage: ch
         Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning circuits
     """
@@ -107,18 +97,16 @@ class ChowRing(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: from sage.matroids.chow_ring import ChowRing
-
-            sage: I = ChowRing(M=matroids.Wheel(3), R=QQ, augmented=False)
+            sage: I = matroids.Wheel(3).chow_ring(QQ, False)
             sage: TestSuite(I).run()
         """
         self._matroid = M
         self._augmented = augmented
         self._presentation = presentation
-        if augmented:
-            if presentation=='fy':
+        if augmented is True:
+            if presentation == 'fy':
                 self._ideal = AugmentedChowRingIdeal_fy(M, R)
-            elif presentation=='atom-free':
+            elif presentation == 'atom-free':
                 self._ideal = AugmentedChowRingIdeal_atom_free(M, R)
         else:
             self._ideal = ChowRingIdeal_nonaug(M, R) #check method to get ring
@@ -127,19 +115,17 @@ class ChowRing(QuotientRing_generic):
 
     def _repr_(self):
         r"""
-        EXAMPLE::
-
-        sage: from sage.matroids.chow_ring import ChowRing
+        EXAMPLES::
 
         sage: M1 = matroids.catalog.Fano()
-        sage: ch = ChowRing(M=M1, R=QQ, augmented=False)
+        sage: ch = M1.chow_ring(QQ, False)
         sage: ch
         Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
         """
-        if self._augmented:
-            if self._presentation=='fy':
+        if self._augmented is True:
+            if self._presentation == 'fy':
                 return "Augmented Chow ring of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
-            elif self._presentation=='atom-free':
+            elif self._presentation == 'atom-free':
                 return "Augmented Chow ring of {} of atom-free presentation".format(self._matroid)
         return "Chow ring of {}".format(self._matroid)    
 
@@ -147,13 +133,12 @@ class ChowRing(QuotientRing_generic):
         r"""
         Return the LaTeX output of the polynomial ring and Chow ring ideal.
 
-        EXAMPLE::
+        EXAMPLES::
 
-            sage: from sage.matroids.chow_ring import ChowRing
             sage: from sage.matroids.graphic_matroid import GraphicMatroid
             
             sage: M1 = GraphicMatroid(graphs.CycleGraph(3))
-            sage: ch = ChowRing(M=M1, R=QQ, augmented=True, presentation='fy')
+            sage: ch = M1.chow_ring(QQ, True, 'fy')
             sage: ch._latex_()
             \Bold{Q}[A_{0}, A_{1}, A_{2}, B_{0}, B_{1}, B_{2}]/\left(B_{0}^{2},
             B_{0} B_{1}, B_{0} B_{2}, B_{0} B_{1}, B_{1}^{2}, B_{1} B_{2},
@@ -171,9 +156,8 @@ class ChowRing(QuotientRing_generic):
 
         TESTS::
 
-            sage: from sage.matroids.chow_ring import ChowRing
 
-            sage: ch = ChowRing(M=matroids.Wheel(3), R=QQ, augmented=False)
+            sage: ch = matroids.Wheel(3).chow_ring(QQ, False)
             sage: ch._coerce_map_from_base_ring() is None
             True
         """
@@ -185,12 +169,11 @@ class ChowRing(QuotientRing_generic):
         
         EXAMPLES::
 
-            sage: from sage.matroids.chow_ring import ChowRing
 
-            sage: ch = ChowRing(M=matroids.Uniform(3, 6), R=QQ, augmented=True, presentation='fy')
+            sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.basis()
             [B0*B01, 1]
-            sage: ch = ChowRing(M=matroids.Wheel(3), R=ZZ, augmented=False)
+            sage: ch = matroids.Wheel(3).chow_ring(ZZ, False)
             [A0*A013, 1]
         """
         flats = [X for i in range(1, self._matroid.rank())
@@ -201,7 +184,7 @@ class ChowRing(QuotientRing_generic):
         flats = sorted(flats, key=lambda X: (len(X), sorted(X)))
         ranks = [self._matroid.rank(F) for F in flats]
         monomial_basis = []
-        if self._augmented:
+        if self._augmented is True:
             if self._presentation == 'fy':
                 for i in range(maximum_rank):
                     term = self._ideal.ring().one()
@@ -264,7 +247,7 @@ class ChowRing(QuotientRing_generic):
 
             EXAMPLES::
 
-                sage: ch = ChowRing(M=matroids.Uniform(3, 6), R=QQ, augmented=False)
+                sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
                 sage: v = ch.an_element(); v
                 A0
                 sage: v.to_vector() #Error in output!
@@ -284,7 +267,7 @@ class ChowRing(QuotientRing_generic):
 
             EXAMPLES::
 
-                sage: ch = ChowRing(M=matroids.catalog.NonFano(), R=QQ, augmented=True, presentation='fy')
+                sage: ch = matroids.catalog.NonFano().chow_ring(QQ, True, 'fy')
                 sage: v = ch.an_element(); v
                 0
                 sage: v.monomial_coefficients() #error in output!
@@ -300,7 +283,7 @@ class ChowRing(QuotientRing_generic):
 
             EXAMPLES::
 
-                sage: ch = ChowRing(M=matroids.Uniform(3, 6), R=QQ, augmented=False)
+                sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
                 sage: for b in ch.basis():
                 ....:     print(b, b.degree())
                 A0*A01 2
@@ -318,7 +301,7 @@ class ChowRing(QuotientRing_generic):
 
             EXAMPLES::
 
-                ch = ChowRing(M=matroids.catalog.Fano(), R=QQ, augmented=True, presentation='fy')
+                ch = matroids.catalog.Fano().chow_ring(QQ, True, 'fy')
                 sage: for b in ch.basis():
                 ....:     print(b, b.homogeneous_degree())
                 Ba*Babf 2
@@ -332,7 +315,7 @@ class ChowRing(QuotientRing_generic):
 
             TESTS::
               
-                sage: ch = ChowRing(M=matroids.Wheel(3), R=QQ, augmented=False)
+                sage: ch = matroids.Wheel(3).chow_ring(QQ, False)
                 sage: ch.zero().homogeneous_degree() #error!
                 Traceback (most recent call last): 
                 ...
