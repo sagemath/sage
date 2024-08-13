@@ -262,7 +262,7 @@ REFERENCES:
              369–379. https://doi.org/10.1007/BF02677478
         
 .. [ANR2023] Robert Angarone, Anastasia Nathanson, and Victor Reiner. *Chow rings of
-                matroids as permutation representations*, 2023. :arxiv: `2309.14312`.
+             matroids as permutation representations*, 2023. :arxiv: `2309.14312`.
 
 .. [AP1986] \S. Arnborg, A. Proskurowski,
             *Characterization and Recognition of Partial 3-Trees*,
