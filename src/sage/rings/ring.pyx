@@ -93,7 +93,7 @@ This is to test a deprecation::
     sage: F = Nichts(QQ, QQ)
     ...:
     DeprecationWarning: use the category Algebras
-    See https://github.com/sagemath/sage/issues/38000 for details.
+    See https://github.com/sagemath/sage/issues/38502 for details.
     sage: F.category()
     Category of rings
 
@@ -1488,7 +1488,7 @@ cdef class Algebra(Ring):
     _default_category = _Rings
 
     def __init__(self, base_ring, *args, **kwds):
-        deprecation(38000, "use the category Algebras")
+        deprecation(38502, "use the category Algebras")
         super().__init__(*args, **kwds)
 
 
