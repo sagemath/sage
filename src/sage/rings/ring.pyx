@@ -1489,7 +1489,7 @@ cdef class Algebra(Ring):
 
     def __init__(self, base_ring, *args, **kwds):
         deprecation(38502, "use the category Algebras")
-        super().__init__(*args, **kwds)
+        super().__init__(base_ring, *args, **kwds)
 
 
 cdef class CommutativeAlgebra(CommutativeRing):
@@ -1497,7 +1497,7 @@ cdef class CommutativeAlgebra(CommutativeRing):
 
     def __init__(self, base_ring, *args, **kwds):
         deprecation(37999, "use the category CommutativeAlgebras")
-        super().__init__(*args, **kwds)
+        super().__init__(base_ring, *args, **kwds)
 
 
 def is_Ring(x):
