@@ -199,28 +199,28 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         for name in poly.parent().variable_names():
             variables.append(SR.var(name))
 
-        # convert each term to its linear function
+        # Convert each term to its linear function
         linear_eq = {}
         pd = poly.dict()
         for key in pd:
-            eq = sum(variables[i]*e for i, e in enumerate(key))
+            eq = sum(variables[i] * e for i, e in enumerate(key))
             eq += pd[key].lift()
             linear_eq[key] = eq
 
         temp_keys = []
         temp_order = []
-        # checking for all possible combinations of two terms
+        # Checking for all possible combinations of two terms
         for keys in combinations(pd, 2):
             sol = solve(linear_eq[keys[0]] == linear_eq[keys[1]], variables)
 
-            # parametric solution of the chosen two terms
+            # Parametric solution of the chosen two terms
             final_sol = []
             for s in sol[0]:
                 final_sol.append(s.right())
             xy_interval = []
             xy_interval.append(tuple(final_sol))
 
-            # comparing with other terms
+            # Comparing with other terms
             min_max = linear_eq[keys[0]]
             for i, v in enumerate(variables):
                 min_max = min_max.subs(**{str(v): final_sol[i]})
@@ -237,17 +237,17 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                         sol_compare = solve(min_max < temp_compare, variables)
                     else:
                         sol_compare = solve(min_max > temp_compare, variables)
-                    if sol_compare:  # if there is solution
+                    if sol_compare:
                         if isinstance(sol_compare[0], list):
                             if sol_compare[0]:
                                 all_sol_compare.append(sol_compare[0][0])
-                        else:  # solution is unbounded on one side
+                        else:  # Solution is unbounded on one side
                             all_sol_compare.append(sol_compare[0])
                     else:
                         no_solution = True
                         break
 
-            # solve the condition for parameter
+            # Solve the condition for parameter
             if not no_solution:
                 parameter = set()
                 for sol in all_sol_compare:
@@ -256,7 +256,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                 if parameter_solution:
                     xy_interval.append(parameter_solution[0])
                     tropical_roots.append(xy_interval)
-                    # calculate order
+                    # Calculate the order
                     index_diff = []
                     for i in range(len(keys[0])):
                         index_diff.append(abs(keys[0][i]-keys[1][i]))
@@ -264,7 +264,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     temp_order.append(order)
                     temp_keys.append(keys)
 
-        # changing all the operator symbol to be <= or >=
+        # Changing all the operator symbol to be <= or >=
         self._keys = []
         components = []
         dim_param = 0
@@ -306,7 +306,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                 arg.insert(1, new_param)
             components.append(arg)
 
-        # determine the order of each component
+        # Determine the order of each component
         self._vars = vars
         final_order = []
         for i, component in enumerate(components):
@@ -476,8 +476,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                             sol_param_sim.add(eqn.lhs() >= eqn.rhs())
                 else:
                     sol_param_sim.add(sol)
-            # checking there are no conditions with the same variables
-            # and having operator <= and >= simultaneously
+            # Checking there are no conditions with the same variables
+            # that use the <= and >= operators simultaneously
             unique_sol_param = set()
             temp = [s for s in sol_param_sim]
             op_temp = {i: set(temp[i].operands()) for i in range(len(temp))}
@@ -501,7 +501,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             for expr in comp[1]:
                 left = expr.lhs()
                 right = expr.rhs()
-                # if the lhs contains a min or max operator
+                # If the lhs contains a min or max operator
                 if (left.operator() == max_symbolic) or (left.operator() == min_symbolic):
                     for operand in expr.lhs().operands():
                         points = list(comp[0])
@@ -510,7 +510,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                             new_eq = p.subs(**{str(right): operand})
                             points[i] = new_eq
                         update_result(result)
-                # if the rhs contains a min or max operator
+                # If the rhs contains a min or max operator
                 elif (right.operator() == max_symbolic) or (right.operator() == min_symbolic):
                     for operand in expr.rhs().operands():
                         points = list(comp[0])
@@ -590,9 +590,9 @@ class TropicalSurface(TropicalVariety):
         from sage.symbolic.relation import solve
         from sage.arith.srange import srange
 
-        if not self._hypersurface:  # no components
+        if not self._hypersurface:
             return [[-1, 1], [-1, 1], [-1, 1]]
-        elif len(self._hypersurface) == 1:  # one components
+        elif len(self._hypersurface) == 1:
             bound = 1
             for eqn in self._hypersurface[0][0]:
                 for op in eqn.operands():
@@ -645,10 +645,10 @@ class TropicalSurface(TropicalVariety):
             v_set = v_set.union(temp_v)
         axes = [[min(u_set)-1, max(u_set)+1], [min(v_set)-1, max(v_set)+1]]
 
-        # finding the z-axis
+        # Finding the z-axis
         step = 10
-        du = (axes[0][1]-axes[0][0])/step
-        dv = (axes[1][1]-axes[1][0])/step
+        du = (axes[0][1]-axes[0][0]) / step
+        dv = (axes[1][1]-axes[1][0]) / step
         u_range = srange(axes[0][0], axes[0][1]+du, du)
         v_range = srange(axes[1][0], axes[1][1]+dv, dv)
         zmin, zmax = None, None
@@ -720,7 +720,8 @@ class TropicalSurface(TropicalVariety):
         vars = self._vars
         comps_int = self._components_intersection()
 
-        for index, lines in comps_int.items():  # finding the inside vertices
+        # Finding the inside vertices
+        for index, lines in comps_int.items():
             for line in lines:
                 v = list(line[1])[0].variables()[0]
                 for param in line[1]:
@@ -734,10 +735,10 @@ class TropicalSurface(TropicalVariety):
                         poly_verts[index].add(tuple(vertex))
 
         def find_edge_vertices(i):
-            if i == 0:  # interval for t1
+            if i == 0:  # Interval for t1
                 interval = interval1
                 j = 1
-            else: # interval for t2
+            else: # Interval for t2
                 interval = interval2
                 j = 0
             for p in [interval.inf(), interval.sup()]:
@@ -777,10 +778,10 @@ class TropicalSurface(TropicalVariety):
                         poly_verts[index].add(tuple(vertex1))
                         poly_verts[index].add(tuple(vertex2))
 
-        # find the interval of parameter for outer vertex
+        # Find the interval of parameter for outer vertex
         for index in range(len(comps)):
-            interval1 = RealSet(-infinity,infinity)  # represent t1
-            interval2 = RealSet(-infinity,infinity)  # represent t2
+            interval1 = RealSet(-infinity,infinity)  # Represent t1
+            interval2 = RealSet(-infinity,infinity)  # Represent t2
             is_doublevar = False
             for i, point in enumerate(comps[index][0]):
                 pv = point.variables()
@@ -796,7 +797,7 @@ class TropicalSurface(TropicalVariety):
                     sol1 = solve(point >= axes[i][0], pv)
                     sol2 = solve(point <= axes[i][1], pv)
                     is_doublevar = True
-            # finding the edge vertices (vertices that touch the axes)
+            # Finding the edge vertices (those that touch the axes)
             find_edge_vertices(0)  # t1 fixed
             find_edge_vertices(1)  # t2 fixed
         return poly_verts
@@ -948,9 +949,8 @@ class TropicalCurve(TropicalVariety):
             sage: p2.tropical_variety()._axes()
             [[-3/2, 1/2], [25/2, 29/2]]
         """
-        if self.number_of_components() == 0:  # constant or monomial
+        if self.number_of_components() == 0:
             return [[-1, 1], [-1, 1]]
-
         if self.number_of_components() == 1:
             eq = self._hypersurface[0][0]
             if not eq[0].is_numeric() and not eq[1].is_numeric():
@@ -967,14 +967,12 @@ class TropicalCurve(TropicalVariety):
                 xmin = vertex[0]
             elif vertex[0] > xmax:
                 xmax = vertex[0]
-
         ymin = ymax = list(verts)[0][1]
         for vertex in verts:
             if vertex[1] < ymin:
                 ymin = vertex[1]
             elif vertex[1] > ymax:
                 ymax = vertex[1]
-
         return [[xmin-1, xmax+1], [ymin-1, ymax+1]]
 
     def vertices(self):
@@ -1148,7 +1146,7 @@ class TropicalCurve(TropicalVariety):
             else:
                 lower = interval[0].lower()
                 upper = interval[0].upper()
-                midpoint = (lower+upper)/2
+                midpoint = (lower+upper) / 2
 
             if lower == infinity and upper == infinity:
                 midpoint = 0
@@ -1158,7 +1156,8 @@ class TropicalCurve(TropicalVariety):
                 plot = parametric_plot(parametric_function, (var, lower, upper),
                                     color='red')
 
-            if component[2] > 1:  # add order if >= 2
+            # Add the order if it is greater than or equal to 2
+            if component[2] > 1:
                 point = []
                 for eq in component[0]:
                     value = eq.subs(**{str(var): midpoint})
@@ -1169,7 +1168,7 @@ class TropicalCurve(TropicalVariety):
             else:
                 combined_plot += plot
 
-        # set default axes
+        # Set default axes
         axes = self._axes()
         xmin, xmax = axes[0][0], axes[0][1]
         ymin, ymax = axes[1][0], axes[1][1]

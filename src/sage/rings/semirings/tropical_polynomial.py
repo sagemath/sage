@@ -205,18 +205,18 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         from itertools import combinations
         tropical_roots = []
-        if len(self.dict()) == 1:
-            exponent = list(self.dict())[0]
-            if exponent == 0:
+        data = self.dict()
+        if len(data) == 1:
+            exponent = next(iter(data))
+            if not exponent:
                 return tropical_roots
-            else:
-                return [self.parent().base_ring().zero()] * exponent
+            return [self.parent().base().zero()] * exponent
 
         dict_root = {}
-        dict_coeff = {i: c.lift() for i, c in self.dict().items()}
+        dict_coeff = {i: c.lift() for i, c in data.items()}
         for comb in combinations(dict_coeff, 2):
             index1, index2 = comb[0], comb[1]
-            root = (dict_coeff[index1]-dict_coeff[index2])/(index2 - index1)
+            root = (dict_coeff[index1]-dict_coeff[index2]) / (index2-index1)
             val_root = dict_coeff[index1] + index1*root
             check_maks = True
             for key in dict_coeff:
@@ -376,13 +376,15 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         from sage.sets.real_set import RealSet
 
         x = SR.var('x')
+        data = self.dict()
+        R = self.base_ring()
         if not self.roots():
-            f = self.dict()[0].lift()
+            f = data[0].lift()
             return f
 
-        if len(self.dict()) == 1:
-            gradient = list(self.dict())[0]
-            intercept = self.dict()[gradient].lift()
+        if len(data) == 1:
+            gradient = list(data)[0]
+            intercept = data[gradient].lift()
             f = intercept + gradient * x
             return f
 
@@ -391,14 +393,13 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         domain = []
         for i in range(len(unique_root)+1):
             if i == 0:
-                test_number = self.base_ring()(unique_root[i]-1)
+                test_number = R(unique_root[i]-1)
             elif i == len(unique_root):
-                test_number = self.base_ring()(unique_root[i-1]+1)
+                test_number = R(unique_root[i-1]+1)
             else:
-                test_number = self.base_ring()((unique_root[i] +
-                                                unique_root[i-1])/2)
-            terms = {i: c * test_number**i for i, c in self.dict().items()}
-            if self.base_ring()._use_min:
+                test_number = R((unique_root[i]+unique_root[i-1])/2)
+            terms = {i: c * test_number**i for i, c in data.items()}
+            if R._use_min:
                 critical = min(terms.values())
             else:
                 critical = max(terms.values())
@@ -408,7 +409,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                     found_key = key
                     break
             gradient = found_key
-            intercept = self.dict()[found_key].lift()
+            intercept = data[found_key].lift()
 
             # to make sure all roots is included in the domain
             if i == 0:
@@ -721,10 +722,10 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         if isinstance(x, (list, tuple)):
             for i, coeff in enumerate(x):
                 if coeff == 0:
-                    x[i] = self.base()(0)
+                    x[i] = self.base().one()
         elif isinstance(x, TropicalPolynomial):
             if x.parent() is not self:
-                x = {0:x}
+                x = {0: x}
                 check = False
         return self.element_class(self, x, check=check)
 
@@ -969,15 +970,16 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         points = sorted(points, key=lambda point: point[0])
         all_slope = [0]
         roots = {}
-        if self.base()._use_min:
+        R = self.base()
+        if R._use_min:
             point_order = range(len(points)-1, 0, -1)
         else:
             point_order = range(len(points)-1)
         for i in point_order:
-            if self.base()._use_min:
-                slope = (points[i-1][1]-points[i][1])/(points[i-1][0]-points[i][0])
+            if R._use_min:
+                slope = (points[i-1][1]-points[i][1]) / (points[i-1][0]-points[i][0])
             else:
-                slope = (points[i+1][1]-points[i][1])/(points[i+1][0]-points[i][0])
+                slope = (points[i+1][1]-points[i][1]) / (points[i+1][0]-points[i][0])
             if not slope.is_integer():
                 raise ValueError("the slope is not an integer")
             if slope < all_slope[-1]:
@@ -990,10 +992,10 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             return self(points[0][1])
 
         result = self.one()
-        for root, ord in roots.items():
-            result *= self([root,0])**ord
-        test_value = result(self.base()(points[0][0]))
-        unit = self.base()(points[0][1]-test_value.lift())
+        for root, order in roots.items():
+            result *= self([root,0])**order
+        test_value = result(R(points[0][0]))
+        unit = R(points[0][1]-test_value.lift())
         result *= unit
         return result
 

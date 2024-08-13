@@ -286,7 +286,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         T = self.parent().base()
         R = self.base_ring().base_ring()
 
-        # finding the point of curve that touch the edge of axes
+        # Finding the point of curve that touch the edge of the axes
         for comp in tv.components():
             if len(comp[1]) == 1:
                 valid_int = RealSet(comp[1][0])
@@ -303,7 +303,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
                         valid_point = [R(eq.subs(**{str(v): sol2[0].rhs()})) for eq in comp[0]]
                         edge.add(tuple(valid_point))
 
-        # combine the edge, vertices, and corner point
+        # Combine the edge, vertices, and corner point
         vertices = self.tropical_variety().vertices()
         corner = set()
         for i in axes[0]:
@@ -311,7 +311,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
                 corner.add((i,j))
         marks = corner | vertices | edge
 
-        # calculate the value of polynomial at each marked point
+        # Calculate the value of polynomial at each marked point
         variables = self.parent().gens()
         terms = [a*variables[0]**b[0]*variables[1]**b[1] for a, b in zip(self.coefficients(), self.exponents())]
         point_terms = {}
@@ -324,7 +324,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
                     mark_terms.append(terms[i])
             point_terms[(R(mark[0]), R(mark[1]), value.lift())] = mark_terms
 
-        # checking the points that attained its value at one term only
+        # Plot the points that attained its value at one term only
         combined_plot = Graphics()
         for elms in point_terms.values():
             if len(elms) == 1:
@@ -339,7 +339,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
                 plot = Polyhedron(vertices=poly_vert).plot(color=rand_color)
                 combined_plot += plot
 
-        # check the remaining points
+        # Plot the remaining points
         for remain in point_terms.values():
             for term in remain:
                 poly_vert = []
@@ -541,7 +541,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             term = [0]*self.ngens()
             x = {tuple(term): x}
         if isinstance(x, dict):
-            for key, value in x.items():  # convert coefficient to tropical
+            for key, value in x.items():
                 x[key] = self.base()(value)
         return self.element_class(self, x)
 
