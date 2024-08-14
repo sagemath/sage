@@ -19,8 +19,8 @@ cdef class DisjointSet_class(SageObject):
     cpdef number_of_subsets(self)
 
 cdef class DisjointSet_of_integers(DisjointSet_class):
-    cpdef int find(self, int i) noexcept
-    cpdef void union(self, int i, int j) noexcept
+    cpdef int find(self, int i) except -1
+    cpdef void union(self, int i, int j) except *
     cpdef root_to_elements_dict(self)
     cpdef element_to_root_dict(self)
     cpdef to_digraph(self)

@@ -492,7 +492,7 @@ cdef class Matroid(SageObject):
         """
         raise NotImplementedError("subclasses need to implement this")
 
-    cpdef int _rank(self, frozenset X) noexcept:
+    cpdef int _rank(self, frozenset X) except -1:
         r"""
         Return the rank of a set ``X``.
 
@@ -513,8 +513,9 @@ cdef class Matroid(SageObject):
 
             sage: M = sage.matroids.matroid.Matroid()
             sage: M._rank(frozenset([0, 1, 2]))
-            NotImplementedError: subclasses need to implement this
+            Traceback (most recent call last):
             ...
+            NotImplementedError: subclasses need to implement this
         """
         raise NotImplementedError("subclasses need to implement this")
 
@@ -2338,7 +2339,7 @@ cdef class Matroid(SageObject):
         TESTS::
 
             sage: def r(X):
-            ....:     return -1
+            ....:     return -2
             sage: M = Matroid(groundset=[0,1,2], rank_function=r)
             sage: M.is_valid()
             False
