@@ -49,6 +49,12 @@ class ElementCache():
         """
         self._cache = dict()
 
+    def clear_cache(self):
+        r"""
+        Clear the cache.
+        """
+        self._cache = dict()
+
     def _cache_get(self, elm):
         r"""
         Return the cached element, or add it
@@ -79,6 +85,13 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
     def __init__(self, parent, C):
         r"""
         A conjugacy class of directly indecomposable subgroups.
+
+        TESTS::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: G = C(PermutationGroup([[(1,2),(3,4)],[(1,2),(5,6)]]))
+            sage: TestSuite(G).run()
         """
         Element.__init__(self, parent)
         self._C = C
@@ -86,16 +99,34 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
         self._orbit_lens = tuple(len(orbit) for orbit in self._sorted_orbits)
         self._order = C.order()
 
-    @lazy_attribute
-    def _canonicalizing_perm(self):
-        return PermutationGroupElement([e for o in self._sorted_orbits for e in o], check=False)
-
     def __hash__(self):
+        r"""
+        Return the hash for the conjugacy class.
+
+        TESTS::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
+            Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
+            sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
+            Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
+            sage: hash(C(G)) == hash(C(H))
+            True
+        """
         return hash(self._C)
 
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
+            sage: C(G)
+            [(2,5)(6,8), (1,3)(4,7), (1,4)(2,5)(3,7)]
         """
         return f"{self._C.gens_small()}"
 
@@ -108,6 +139,17 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
 
         ``self`` is equal to ``other`` if they have the same degree (say `n`)
         and order and are conjugate within `S_n`.
+
+        TESTS::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
+            Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
+            sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
+            Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
+            sage: C(G) == C(H)
+            True
         """
         return (isinstance(other, ConjugacyClassOfDirectlyIndecomposableSubgroups)
                 and self._C.degree() == other._C.degree()
@@ -120,9 +162,19 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
     def __init__(self):
         r"""
         Conjugacy classes of directly indecomposable subgroups.
+
+        TESTS::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: TestSuite(C).run(max_runs=5) # It takes far too long otherwise
         """
         Parent.__init__(self, category=InfiniteEnumeratedSets())
         ElementCache.__init__(self)
+
+    @cached_method
+    def an_element(self):
+        return self._element_constructor_(SymmetricGroup(1))
 
     def _element_constructor_(self, x):
         r"""
@@ -131,35 +183,83 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
 
         EXAMPLES::
 
-            sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
-            sage: A = AtomicSpecies(1)
-            sage: A(G)
-            {[(5,6)(7,8), (1,2)(5,7)(6,8), (1,2)(3,4)]: (8,)}
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: C.clear_cache()
+            sage: C(PermutationGroup([("a", "b", "c")]))
+            [(1,2,3)]
+            sage: C._cache
+            {(3, 3, (3,)): [[(1,2,3)]]}
+            sage: C(PermutationGroup([(1, 3, 5)], domain=[1,3,5]))
+            [(1,2,3)]
+            sage: C(PermutationGroup([[(1,3),(4,7)],[(2,5),(6,8)], [(1,4),(2,5),(3,7)]]))
+            [(2,5)(6,8), (1,3)(4,7), (1,4)(2,5)(3,7)]
+            sage: C._cache
+            {(3, 3, (3,)): [[(1,2,3)]],
+            (8, 8, (2, 2, 4)): [[(2,5)(6,8), (1,3)(4,7), (1,4)(2,5)(3,7)]]}
         """
         if parent(x) == self:
             return x
         if isinstance(x, PermutationGroup_generic):
             if len(x.disjoint_direct_product_decomposition()) > 1:
                 raise ValueError(f"{x} is not directly indecomposable")
-            elm = self.element_class(self, x)
+            mapping = {v: i for i, v in enumerate(x.domain(), 1)}
+            normalized_gens = [[tuple(mapping[x] for x in cyc)
+                                for cyc in gen.cycle_tuples()]
+                            for gen in x.gens()]
+            P = PermutationGroup(gens=normalized_gens)
+            # Fix for SymmetricGroup(0)
+            if x.degree() == 0:
+                P = SymmetricGroup(0)
+            elm = self.element_class(self, P)
             return self._cache_get(elm)
         raise ValueError(f"unable to convert {x} to {self}")
+    
+    def __iter__(self):
+        # Is SymmetricGroup(0) directly indecomposable?
+        n = 0
+        while True:
+            for G in SymmetricGroup(n).conjugacy_classes_subgroups():
+                if len(G.disjoint_direct_product_decomposition()) <= 1:
+                    yield self._element_constructor_(G)
+            n += 1
+
+    def __contains__(self, G):
+        r"""
+        Return if ``G`` is in ``self``.
+        """
+        if parent(G) == self:
+            return True
+        return len(G.disjoint_direct_product_decomposition()) <= 1
 
     def _repr_(self):
+        r"""
+        Return the string representation for ``self``.
+
+        TESTS::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups(); C
+            Infinite set of conjugacy classes of directly indecomposable subgroups
+        """
         return "Infinite set of conjugacy classes of directly indecomposable subgroups"
 
     @cached_method
     def canonical_label(self, elm):
         r"""
+        Construct the canonical representative of a conjugacy class
+        by sorting the orbits by length and making them consecutive.
 
         EXAMPLES::
 
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
             sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
-            sage: A = AtomicSpecies(1)
-            sage: A(G)
-            {[(5,6)(7,8), (1,2)(5,7)(6,8), (1,2)(3,4)]: (8,)}
+            sage: C(G)
+            [(2,5)(6,8), (1,3)(4,7), (1,4)(2,5)(3,7)]
         """
-        return self.element_class(self, PermutationGroup(gap_group=libgap.ConjugateGroup(elm._C, elm._canonicalizing_perm)))
+        pi = PermutationGroupElement([e for o in elm._sorted_orbits for e in o], check=False)
+        return self.element_class(self, PermutationGroup(gap_group=libgap.ConjugateGroup(elm._C, pi)))
 
     Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
 
@@ -176,6 +276,12 @@ class AtomicSpeciesElement(Element):
             - ``domain_partition``, a dict representing the
               assignment of each element of the domain of ``dis`` to
               a "variable".
+
+        TESTS::
+
+            sage: A = AtomicSpecies(1)
+            sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
+            sage: TestSuite(A(G)).run()
         """
         # Notice that a molecular species (and therefore an atomic species)
         # must be centered on a multicardinality, otherwise it wouldn't be
@@ -184,10 +290,7 @@ class AtomicSpeciesElement(Element):
         Element.__init__(self, parent)
         self._dis = dis
         self._dompart = domain_partition
-        L = [0 for _ in range(self.parent()._k)]
-        for v in self._dompart.values():
-            L[v - 1] += 1
-        self._mc = tuple(L)
+        self._mc = tuple(len(v) for v in self._dompart)
         self._tc = sum(self._mc)
 
     def _element_key(self):
@@ -205,11 +308,40 @@ class AtomicSpeciesElement(Element):
     def __eq__(self, other):
         r"""
         Two atomic species are equal if the underlying groups are conjugate,
-        and their multicardinalities are equal.
+        and their domain partitions are equal under the conjugating element.
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(2)
+            sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
+            Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
+            sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
+            Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
+            sage: A = P(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
+            sage: B = P(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
+            sage: C = P(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]})
+            sage: A != B
+            True
+            sage: A == C
+            True
         """
         if parent(self) != parent(other):
             return False
-        return self._mc == other._mc and self._dis == other._dis
+        # Check if multicardinalities match
+        if self._mc != other._mc:
+            return False
+        # If they do, construct the mapping between the groups
+        selflist, otherlist = [], []
+        for i in range(self.parent()._k):
+            if len(self._dompart[i]) != len(other._dompart[i]):
+                return False
+            selflist.extend(self._dompart[i])
+            otherlist.extend(other._dompart[i])
+        mapping = libgap.MappingPermListList(selflist, otherlist)
+        G = PermutationGroup(gap_group=libgap.ConjugateGroup(self._dis._C, mapping),
+                             domain=self._dis._C.domain())
+        # The conjugated group must be exactly equal to the other group
+        return G == other._dis._C
 
     def _repr_(self):
         r"""
@@ -243,74 +375,52 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         Return an element of ``self``.
         """
         G = SymmetricGroup(self._k).young_subgroup([1] * self._k)
-        m = {e: i for i, e in enumerate(range(1, self._k + 1), 1)}
-        return self._element_constructor_((G, m))
+        m = {i: i for i in range(1, self._k + 1)}
+        return self._element_constructor_(G, m)
 
-    def _normalize(self, H, M):
-        r"""
-        Normalize the domain of `H` and return `H` and the domain partition.
-        """
-        # TODO: Complete the documentation.
-        if set(H.domain()) != set(M.keys()):
-            raise ValueError(f"Keys of mapping do not match with domain of {H}")
-        if not set(M.values()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"Values of mapping must be in the range [1, {self._k}]")
-        # each orbit of H must only contain elements from one sort
-        for orbit in H.orbits():
-            if len(set(M[k] for k in orbit)) > 1:
-                raise ValueError(f"For each orbit of {H}, all elements must belong to the same set")
-        # normalize domain to {1..n}
-        if sorted(M.keys()) == list(range(1, H.degree() + 1)):
-            return H, M
-        mapping = {v: i for i, v in enumerate(H.domain(), 1)}
-        normalized_gens = [[tuple(mapping[x] for x in cyc)
-                            for cyc in gen.cycle_tuples()]
-                           for gen in H.gens()]
-        P = PermutationGroup(gens=normalized_gens)
-        # Fix for SymmetricGroup(0)
-        if H.degree() == 0:
-            P = SymmetricGroup(0)
-        # create domain partition
-        dompart = {mapping[k]: v for k, v in M.items()}
-        return P, dompart
-
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, G, pi=None):
         r"""
         Construct the `k`-variate atomic species with the given data.
 
         INPUT:
 
-        - ``x`` can be any of the following:
-            - an element of ``self``.
-            - a tuple ``(H, M)`` where `H` is the permutation group
-              representation for the atomic species and `M` is a
-              ``dict`` mapping each element of the domain of `H` to
-              integers in `\{ 1 \ldots k \}`, representing the set to
-              which the element belongs.
-            - if `k=1`, i.e. we are working with univariate atomic
-              species, the mapping `M` may be omitted and just the
-              group `H` may be passed.
-
+        - ``G`` - an element of ``self`` (in this case pi must be ``None``)
+          or a permutation group.
+        - ``pi`` - a dict mapping sorts to iterables whose union is the domain.
+          If `k=1`, `pi` can be omitted.
         """
-        if parent(x) == self:
-            return x
-        H, M = None, None
-        if isinstance(x, tuple):
-            H, M = x
-        elif self._k == 1:
-            if isinstance(x, PermutationGroup_generic):
-                H = x
-                M = {e: 1 for e in H.domain()}
+        if parent(G) == self:
+            if pi is not None:
+                raise ValueError("cannot reassign sorts to an atomic species")
+            return G
+        if not isinstance(G, PermutationGroup_generic):
+            raise ValueError(f"{G} must be a permutation group")
+        if pi is None:
+            if self._k == 1:
+                pi = {1: G.domain()}
             else:
-                raise ValueError(f"{x} must be a permutation group")
-        else:
-            raise ValueError(f"{x} must be a tuple for multivariate species")
-        H_norm, dompart = self._normalize(H, M)
-        dis_elm = self._dis_ctor(H_norm)
-        # Trying to avoid libgap.RepresentativeAction; it is slow
-        pi = dis_elm._canonicalizing_perm
-        dompart_norm = {pi(k): v for k, v in dompart.items()}
-        elm = self.element_class(self, dis_elm, dompart_norm)
+                raise ValueError("the assignment of sorts to the domain elements must be provided")
+        if any(len(set(v)) != len(v) for v in pi.values()):
+            raise ValueError("each sort must contain distinct elements")
+        pi = {k: set(v) for k, v in pi.items()}
+        if not set(pi.keys()).issubset(range(1, self._k + 1)):
+            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+        if sum(len(p) for p in pi.values()) != len(G.domain()) or set.union(*[p for p in pi.values()]) != set(G.domain()):
+            raise ValueError("values of pi must partition the domain of G")
+        for orbit in G.orbits():
+            if not any(set(orbit).issubset(p) for p in pi.values()):
+                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
+        dis_elm = self._dis_ctor(G)
+        # Now use this mapping to get dompart
+        mapping = {v: i for i, v in enumerate(G.domain(), 1)}
+        mapping2 = PermutationGroupElement([mapping[e] for o in
+                                            sorted([sorted(orbit) for orbit in G.orbits()], key=len)
+                                            for e in o], check=False)
+        # domain partition should be immutable
+        dpart = [frozenset() for _ in range(self._k)]
+        for k, v in pi.items():
+            dpart[k - 1] = frozenset(mapping2(mapping[x]) for x in v)
+        elm = self.element_class(self, dis_elm, tuple(dpart))
         return self._cache_get(elm)
 
     def __getitem__(self, x):
@@ -325,10 +435,26 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         """
         if parent(x) == self:
             return True
-        H, M = x
-        return (set(H.domain()) == set(M.keys())
-                and set(M.values()).issubset(range(1, self._k + 1))
-                and len(H.disjoint_direct_product_decomposition()) == 1)
+        G, pi = None, None
+        if isinstance(x, PermutationGroup_generic):
+            if self._k == 1:
+                G = x
+                pi = {1: G.domain()}
+            else:
+                raise ValueError("the assignment of sorts to the domain elements must be provided")
+        else:
+            G, pi = x
+        if not isinstance(G, PermutationGroup_generic):
+            raise ValueError(f"{G} must be a permutation group")
+        if not set(pi.keys()).issubset(range(1, self._k + 1)):
+            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+        pi = {k: set(v) for k, v in pi.items()}
+        if sum(len(p) for p in pi.values()) != len(G.domain()) or set.union(*[p for p in pi.values()]) != set(G.domain()):
+            raise ValueError("values of pi must partition the domain of G")
+        for orbit in G.orbits():
+            if not any(set(orbit).issubset(p) for p in pi.values()):
+                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
+        return len(G.disjoint_direct_product_decomposition()) <= 1
 
     def _repr_(self):
         r"""
@@ -367,8 +493,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
     def one(self):
         elm = super().one()
         elm._group = SymmetricGroup(0)
-        elm._dompart = dict()
-        elm._mc = [0 for _ in range(self._k)]
+        elm._dompart = tuple()
+        elm._mc = tuple(0 for _ in range(self._k))
         elm._tc = 0
         return elm
 
@@ -378,7 +504,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         """
         if x not in self._indices:
             raise IndexError(f"{x} is not in the index set")
-        at = self._indices(x)
+        at = self._indices(x[0], x[1])
         elm = self._cache_get(self.element_class(self, {at: ZZ.one()}))
         if elm._group is None:
             elm._group = at._dis._C
@@ -395,6 +521,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             self._mc = None
             self._tc = None
 
+        # There is weirdness going on here and below with copying
+        # and references.
         def _assign_group_info(self, other):
             self._group = other._group
             self._dompart = other._dompart
@@ -441,10 +569,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 gens1, gens2 = gens2, gens1
                 elm1, elm2 = elm2, elm1
             gens = list(gens1)
-            self._dompart = elm1._dompart | {(elm1._tc + k): v for k, v in elm2._dompart.items()}
             for gen in gens2:
                 gens.append([tuple(elm1._tc + k for k in cyc) for cyc in gen.cycle_tuples()])
             self._group = PermutationGroup(gens, domain=range(1, elm1._tc + elm2._tc + 1))
+            # TODO: Set the dompart
+            self._dompart = list(elm1._dompart)
+            for i in range(elm2.parent()._k):
+                self._dompart[i] = frozenset(list(self._dompart[i]) + [elm1._tc + e for e in elm2._dompart[i]])
+            self._dompart = tuple(self._dompart)
 
         def __floordiv__(self, elt):
             raise NotImplementedError("Cannot cancel in this monoid")
@@ -530,17 +662,21 @@ class PolynomialSpecies(CombinatorialFreeModule):
         """
         return m.grade()
 
-    def _project(self, H, f, part):
+    def _project(self, G, pi, part):
         r"""
-        Project `H` onto a subset ``part`` of its domain.
+        Project `G` onto a subset ``part`` of its domain.
 
         ``part`` must be a union of cycles, but this is not checked.
         """
-        restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part] for gen in H.gens()]
-        mapping = {p: f[p] for p in part}
+        restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part] for gen in G.gens()]
+        mapping = dict()
+        for k, v in pi.items():
+            es = [e for e in v if e in part]
+            if es:
+                mapping[k] = es
         return PermutationGroup(gens=restricted_gens, domain=part), mapping
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, G, pi=None):
         r"""
         Construct the `k`-variate molecular species with the given data.
 
@@ -558,23 +694,30 @@ class PolynomialSpecies(CombinatorialFreeModule):
               may be passed.
 
         """
-        if parent(x) == self:
-            return x
-        H, M = None, None
-        if isinstance(x, tuple):
-            H, M = x
-        elif self._k == 1:
-            if isinstance(x, PermutationGroup_generic):
-                H = x
-                M = {e: ZZ.one() for e in H.domain()}
+        if parent(G) == self:
+            if pi is not None:
+                raise ValueError("cannot reassign sorts to a polynomial species")
+            return G
+        if not isinstance(G, PermutationGroup_generic):
+            raise ValueError(f"{G} must be a permutation group")
+        if pi is None:
+            if self._k == 1:
+                pi = {1: G.domain()}
             else:
-                raise ValueError(f"{x} must be a permutation group")
-        else:
-            raise ValueError(f"{x} must be a tuple for multivariate species")
-        domain_partition = H.disjoint_direct_product_decomposition()
+                raise ValueError("the assignment of sorts to the domain elements must be provided")
+        if not set(pi.keys()).issubset(range(1, self._k + 1)):
+            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+        pi = {k: set(v) for k, v in pi.items()}
+        if sum(len(p) for p in pi.values()) != len(G.domain()) or set.union(*[p for p in pi.values()]) != set(G.domain()):
+            raise ValueError("values of pi must partition the domain of G")
+        for orbit in G.orbits():
+            if not any(set(orbit).issubset(p) for p in pi.values()):
+                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
+
+        domain_partition = G.disjoint_direct_product_decomposition()
         term = self._indices.one()
         for part in domain_partition:
-            term *= self._indices.gen(self._project(H, M, part))
+            term *= self._indices.gen(self._project(G, pi, part))
         return self._from_dict({term: ZZ.one()})
 
     def __getitem__(self, x):
@@ -591,13 +734,15 @@ class PolynomialSpecies(CombinatorialFreeModule):
             X^2
             sage: P2 = PolynomialSpecies(2)
             sage: At2 = AtomicSpecies(2)
-            sage: At2((SymmetricGroup(1), {1: 1})).rename("X")
-            sage: At2((SymmetricGroup(1), {1: 2})).rename("Y")
-            sage: XY = (SymmetricGroup(2).young_subgroup([1, 1]), {1: 1, 2: 2})
+            sage: At2(SymmetricGroup(1), {1: [1]}).rename("X")
+            sage: At2(SymmetricGroup(1), {2: [1]}).rename("Y")
+            sage: XY = (SymmetricGroup(2).young_subgroup([1, 1]), {1: [1], 2: [2]})
             sage: P2[XY]
             X*Y
         """
-        return self._element_constructor_(x)
+        if isinstance(x, PermutationGroup_generic):
+            return self._element_constructor_(x)
+        return self._element_constructor_(*x)
 
     @cached_method
     def one_basis(self):
@@ -861,10 +1006,30 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 res += coeff * term
             return res
 
-        def _embedding_coeff(self, part, n):
+        @staticmethod
+        def _embedding_coeff(part, n):
             r"""
             Number of embeddings of the partition ``part`` into a
             list of length `n` (where holes are filled with `0`).
+            
+            EXAMPLES:
+                Ways to fill [0, 0, 0, 0] with [2, 1, 1]:
+                    - [2, 1, 1, 0]
+                    - [2, 1, 0, 1]
+                    - [2, 0, 1, 1]
+                    - [0, 2, 1, 1]
+                    - [1, 2, 1, 0]
+                    - [1, 2, 0, 1]
+                    - [1, 0, 2, 1]
+                    - [0, 1, 2, 1]
+                    - [1, 1, 2, 0]
+                    - [1, 1, 0, 2]
+                    - [1, 0, 1, 2]
+                    - [0, 1, 1, 2]
+
+                So, 12 ways::
+                    sage: PolynomialSpecies.Element._embedding_coeff([2, 1, 1], 4)
+                    12
             """
             return Permutations(part).cardinality() * binomial(n, len(part))
 
@@ -874,11 +1039,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
             coeffs is the mi. Hmc is the cardinality on each sort.
             F is a PolynomialSpeciesElement.
             """
-            if len(coeffs) != self.parent()._k:
-                raise ValueError(f"Number of args (= {len(coeffs)}) must equal arity of self (= {len(coeffs)})")
-            if any(x <= 0 for x in coeffs):
-                raise ValueError(f"All values must be strictly positive")
-
+            # This is supposed to be an internal method so we perform
+            # no domain normalizations or argument checking.
             Fm = F.support()[0]
             Fmc = Fm._mc
             Fgap = Fm._group.gap()
