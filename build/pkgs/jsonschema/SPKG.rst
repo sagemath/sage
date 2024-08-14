@@ -1,19 +1,18 @@
-jsonschema: Python implementation of JSON Schema
-================================================
+jsonschema: Implementation of JSON Schema validation for Python
+===============================================================
 
 Description
 -----------
 
-jsonschema is an implementation of JSON Schema for Python
+Implementation of JSON Schema validation for Python
 
 License
 -------
 
-MIT License
-
+MIT
 
 Upstream Contact
 ----------------
 
-Home page: http://github.com/Julian/jsonschema
+https://pypi.org/project/jsonschema/
 

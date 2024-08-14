@@ -80,7 +80,7 @@ class Package(object):
             raise ValueError('package names use underscores, not dashes, got {0}'.format(package_name))
 
         self.__name = package_name
-        self.__tarball = None
+        self.__tarballs = None
         self._init_checksum()
         self._init_version()
         self._init_type()
@@ -108,28 +108,6 @@ class Package(object):
         return self.__name
 
     @property
-    def sha1(self):
-        """
-        Return the SHA1 checksum
-
-        OUTPUT:
-
-        String.
-        """
-        return self.__sha1
-
-    @property
-    def sha256(self):
-        """
-        Return the SHA256 checksum
-
-        OUTPUT:
-
-        String.
-        """
-        return self.__sha256
-
-    @property
     def tarball(self):
         """
         Return the (primary) tarball
@@ -141,10 +119,26 @@ class Package(object):
 
         Instance of :class:`sage_bootstrap.tarball.Tarball`
         """
-        if self.__tarball is None:
+        return self.tarballs()[None]
+
+    def tarballs(self):
+        """
+        Return a dictionary of the tarballs
+        """
+        if self.__tarballs is None:
             from sage_bootstrap.tarball import Tarball
-            self.__tarball = Tarball(self.tarball_filename, package=self)
-        return self.__tarball
+            self.__tarballs = dict()
+            for key in self.__checksums:
+                c = self.__checksums[key]
+                tarball_filename = self._substitute_variables(c['tarball'])
+                if 'upstream_url' in c:
+                    upstream_url = self._substitute_variables(c['upstream_url'])
+                else:
+                    upstream_url = None
+                self.__tarballs[key] = Tarball(tarball_filename, package=self,
+                                               upstream_url=upstream_url,
+                                               sha1=c.get('sha1'), sha256=c.get('sha256'))
+        return self.__tarballs
 
     def _substitute_variables_once(self, pattern):
         """
@@ -195,7 +189,10 @@ class Package(object):
         String. The full-qualified tarball filename, but with
         ``VERSION`` instead of the actual tarball filename.
         """
-        return self.__tarball_pattern
+        try:
+            return self.__checksums[None]['tarball']
+        except KeyError:
+            return None
 
     @property
     def tarball_filename(self):
@@ -225,7 +222,10 @@ class Package(object):
         String. The tarball upstream URL, but with the placeholder
         ``VERSION``.
         """
-        return self.__tarball_upstream_url_pattern
+        try:
+            return self.__checksums[None]['upstream_url']
+        except KeyError:
+            return None
 
     @property
     def tarball_upstream_url(self):
@@ -260,6 +260,16 @@ class Package(object):
             return self
         else:
             return type(self)(n)
+
+    def is_package_of_tarball(self, tarball_filename):
+        """
+        Whether ``tarball_filename`` is a tarball of ``self``.
+        """
+        tarballs = self.tarballs()
+        for key in tarballs:
+            if tarballs[key].filename == tarball_filename:
+                return True
+        return False
 
     @property
     def version(self):
@@ -349,10 +359,13 @@ class Package(object):
         """
         if self.__requirements is not None:
             return 'pip'
-        if self.tarball_filename:
-            if self.tarball_filename.endswith('.whl'):
+
+        tarballs = self.tarballs()
+        for key in tarballs:
+            if tarballs[key].filename.endswith('.whl'):
                 return 'wheel'
             return 'normal'
+
         if self.has_file('spkg-install') or self.has_file('spkg-install.in'):
             return 'script'
         return 'none'
@@ -512,22 +525,28 @@ class Package(object):
         Load the checksums from the appropriate ``checksums.ini`` file
         """
         checksums_ini = os.path.join(self.path, 'checksums.ini')
+        section = re.compile(r'\[(?P<section>[-a-zA-Z0-9_.]*)\]')
         assignment = re.compile('(?P<var>[a-zA-Z0-9_]*)=(?P<value>.*)')
         result = dict()
+        key = None
         try:
             with open(checksums_ini, 'rt') as f:
                 for line in f.readlines():
+                    match = section.match(line)
+                    if match is not None:
+                        key = match.group('section')
+                        result[key] = dict()
+                        continue
                     match = assignment.match(line)
                     if match is None:
                         continue
                     var, value = match.groups()
-                    result[var] = value
+                    if key not in result:
+                        result[key] = dict()
+                    result[key][var] = value
         except IOError:
             pass
-        self.__sha1 = result.get('sha1', None)
-        self.__sha256 = result.get('sha256', None)
-        self.__tarball_pattern = result.get('tarball', None)
-        self.__tarball_upstream_url_pattern = result.get('upstream_url', None)
+        self.__checksums = result
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
 

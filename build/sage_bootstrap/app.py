@@ -203,14 +203,16 @@ class Application(object):
 
     def tarball(self, package_name):
         """
-        Find the tarball filename given a package name
+        Find the tarball filenames given a package name
 
         $ sage --package tarball pari
         pari-2.8-1564-gdeac36e.tar.gz
         """
         log.debug('Looking up tarball name for %s', package_name)
         package = Package(package_name)
-        print(package.tarball.filename)
+        tarballs = package.tarballs()
+        for key in tarballs:
+            print(tarballs[key].filename)
 
     def apropos(self, incorrect_name):
         """
@@ -252,7 +254,7 @@ class Application(object):
         """
         log.debug('Updating %s to %s', package_name, new_version)
         update = PackageUpdater(package_name, new_version)
-        if url is not None or update.package.tarball_upstream_url:
+        if url is not None or update.package.tarball_upstream_url_pattern:
             log.debug('Downloading %s', url)
             update.download_upstream(url)
         update.fix_checksum()
@@ -302,7 +304,7 @@ class Application(object):
             except PyPiError as e:
                 log.warn('updating %s failed: %s', package_name, e)
 
-    def download(self, package_name, allow_upstream=False):
+    def download(self, package_name, allow_upstream=False, tags=()):
         """
         Download a package
 
@@ -312,8 +314,19 @@ class Application(object):
         """
         log.debug('Downloading %s', package_name)
         package = Package(package_name)
-        package.tarball.download(allow_upstream=allow_upstream)
-        print(package.tarball.upstream_fqn)
+        tarballs = package.tarballs()
+        sorted_tarballs = []
+        for tag in tags:
+            for key in tarballs:
+                if key is not None and tag in key:
+                    sorted_tarballs.append(tarballs[key])
+                    del tarballs[key]
+                    break
+        if not sorted_tarballs:
+            sorted_tarballs = tarballs.values()
+        for tarball in sorted_tarballs:
+            tarball.download(allow_upstream=allow_upstream)
+            print(tarball.upstream_fqn)
 
     def download_cls(self, *package_classes, **kwds):
         """
@@ -321,12 +334,13 @@ class Application(object):
         """
         allow_upstream = kwds.pop('allow_upstream', False)
         on_error = kwds.pop('on_error', 'stop')
+        tags = kwds.pop('tags', [])
         has_files = list(kwds.pop('has_files', []))
         pc = PackageClass(*package_classes, has_files=has_files + ['checksums.ini'], **kwds)
 
         def download_with_args(package):
             try:
-                self.download(package, allow_upstream=allow_upstream)
+                self.download(package, allow_upstream=allow_upstream, tags=tags)
             except FileNotMirroredError:
                 if on_error == 'stop':
                     raise
@@ -344,16 +358,18 @@ class Application(object):
         Uploading /home/vbraun/Code/sage.git/upstream/pari-2.8-2044-g89b0f1e.tar.gz
         """
         package = Package(package_name)
-        if not os.path.exists(package.tarball.upstream_fqn):
-            log.debug('Skipping %s because there is no local tarball', package_name)
-            return
-        if not package.tarball.is_distributable():
-            log.info('Skipping %s because the tarball is marked as not distributable',
-                     package_name)
-            return
-        log.info('Uploading %s', package.tarball.upstream_fqn)
-        fs = FileServer()
-        fs.upload(package)
+        tarballs = package.tarballs()
+        for key in tarballs:
+            tarball = tarballs[key]
+            if not os.path.exists(tarball.upstream_fqn):
+                log.debug('Skipping %s because it does not exist locally', tarball)
+                continue
+            if not tarball.is_distributable():
+                log.info('Skipping %s because it is marked as not distributable', tarball)
+                continue
+            log.info('Uploading %s', tarball.upstream_fqn)
+            fs = FileServer()
+            fs.upload(tarball)
 
     def upload_cls(self, package_name_or_class):
         pc = PackageClass(package_name_or_class)
@@ -381,7 +397,7 @@ class Application(object):
         log.debug('Correcting the checksum of %s', package_name)
         update = ChecksumUpdater(package_name)
         pkg = update.package
-        if not pkg.tarball_filename:
+        if not pkg.tarball_pattern:
             log.info('Ignoring {0} because it is not a normal package'.format(package_name))
             return
         if not os.path.exists(pkg.tarball.upstream_fqn):
@@ -417,13 +433,13 @@ class Application(object):
         if pypi:
             if source is None:
                 try:
-                    if PyPiVersion(package_name, source='wheel').tarball.endswith('-none-any.whl'):
+                    if PyPiVersion(package_name, source='wheel', version=version).tarball.endswith('-none-any.whl'):
                         source = 'wheel'
                     else:
                         source = 'normal'
                 except PyPiError:
                     source = 'normal'
-            pypi_version = PyPiVersion(package_name, source=source)
+            pypi_version = PyPiVersion(package_name, source=source, version=version)
             if source == 'normal':
                 if not tarball:
                     # Guess the general format of the tarball name.
@@ -434,10 +450,6 @@ class Application(object):
                 # because it follows a simple pattern.
                 upstream_url = 'https://pypi.io/packages/source/{0:1.1}/{0}/{1}'.format(package_name, tarball)
             elif source == 'wheel':
-                if not tarball:
-                    tarball = pypi_version.tarball.replace(pypi_version.version, 'VERSION')
-                if not tarball.endswith('-none-any.whl'):
-                    raise ValueError('Only platform-independent wheels can be used for wheel packages, got {0}'.format(tarball))
                 if not version:
                     version = pypi_version.version
                 if dependencies is None:
@@ -459,7 +471,6 @@ class Application(object):
                                 self.create(dep, pkg_type=pkg_type)
                                 dep = Package(dep).name
                             dependencies.append(dep)
-                upstream_url = 'https://pypi.io/packages/{2}/{0:1.1}/{0}/{1}'.format(package_name, tarball, pypi_version.python_version)
             if not description:
                 description = pypi_version.summary
             if not license:
@@ -470,9 +481,7 @@ class Application(object):
             tarball = upstream_url.rpartition('/')[2]
         if tarball and source is None:
             source = 'normal'
-        if tarball and not pkg_type:
-            # If we set a tarball, also make sure to create a "type" file,
-            # so that subsequent operations (downloading of tarballs) work.
+        if not pkg_type:
             pkg_type = 'optional'
         log.debug('Creating %s: %s, %s, %s', package_name, version, tarball, pkg_type)
         creator = PackageCreator(package_name)
@@ -485,6 +494,8 @@ class Application(object):
         if pypi or source == 'pip':
             creator.set_python_data_and_scripts(pypi_package_name=pypi_version.name, source=source,
                                                 dependencies=dependencies)
+        if source == 'wheel':
+            creator.set_pypi_urls(pypi_version)
         if tarball:
             creator.set_tarball(tarball, upstream_url)
             if upstream_url and version:
@@ -570,6 +581,6 @@ class Application(object):
                 if not key.startswith('distros_'):
                     metrics['line_count_file_' + key] += sum(package.line_count_file(filename)
                                                              for filename in filenames)
-            metrics['has_tarball_upstream_url'] += int(bool(package.tarball_upstream_url))
+            metrics['has_tarball_upstream_url'] += int(bool(package.tarball_upstream_url_pattern))
         for key, value in sorted(metrics.items()):
             print('{0}={1}'.format(key, value))
