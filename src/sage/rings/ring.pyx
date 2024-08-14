@@ -75,7 +75,7 @@ This is to test a deprecation::
     DeprecationWarning: use the category CommutativeAlgebras
     See https://github.com/sagemath/sage/issues/37999 for details.
     sage: F.category()
-    Category of commutative rings
+    Category of commutative algebras over Rational Field
 
     sage: from sage.rings.ring import PrincipalIdealDomain
     sage: class Non(PrincipalIdealDomain):
@@ -95,7 +95,7 @@ This is to test a deprecation::
     DeprecationWarning: use the category Algebras
     See https://github.com/sagemath/sage/issues/38502 for details.
     sage: F.category()
-    Category of rings
+    Category of algebras over Rational Field
 
 """
 
@@ -1488,14 +1488,15 @@ cdef class Field(CommutativeRing):
 
 cdef class Algebra(Ring):
     def __init__(self, base_ring, *args, **kwds):
-        self.__default_category = Algebras(base_ring)
+        if 'category' not in kwds:
+            kwds['category'] = Algebras(base_ring)
         deprecation(38502, "use the category Algebras")
         super().__init__(base_ring, *args, **kwds)
 
 
 cdef class CommutativeAlgebra(CommutativeRing):
     def __init__(self, base_ring, *args, **kwds):
-        self.__default_category = CommutativeAlgebras(base_ring)
+        self._default_category = CommutativeAlgebras(base_ring)
         deprecation(37999, "use the category CommutativeAlgebras")
         super().__init__(base_ring, *args, **kwds)
 
