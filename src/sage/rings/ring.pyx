@@ -116,6 +116,8 @@ from sage.structure.parent cimport Parent
 from sage.structure.category_object cimport check_default_category
 from sage.misc.prandom import randint
 from sage.categories.rings import Rings
+from sage.categories.algebras import Algebras
+from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.dedekind_domains import DedekindDomains
@@ -1485,17 +1487,15 @@ cdef class Field(CommutativeRing):
 
 
 cdef class Algebra(Ring):
-    _default_category = _Rings
-
     def __init__(self, base_ring, *args, **kwds):
+        self.__default_category = Algebras(base_ring)
         deprecation(38502, "use the category Algebras")
         super().__init__(base_ring, *args, **kwds)
 
 
 cdef class CommutativeAlgebra(CommutativeRing):
-    __default_category = _CommutativeRings
-
     def __init__(self, base_ring, *args, **kwds):
+        self.__default_category = CommutativeAlgebras(base_ring)
         deprecation(37999, "use the category CommutativeAlgebras")
         super().__init__(base_ring, *args, **kwds)
 
