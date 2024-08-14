@@ -285,7 +285,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             new_eq = tuple(new_eq)
             arg.remove(arg[0])
             arg.insert(0, new_eq)
-            if not arg[1]:
+            if not arg[1] or not isinstance(arg[1], list):
+                arg[1] = []
                 for var in vars:
                     expr1 = -infinity < var
                     expr2 = var < infinity
@@ -940,14 +941,21 @@ class TropicalCurve(TropicalVariety):
         """
         if self.number_of_components() == 0:
             return [[-1, 1], [-1, 1]]
-        if self.number_of_components() == 1:
-            eq = self._hypersurface[0][0]
-            if (not eq[0].is_numeric()) and (not eq[1].is_numeric()):
-                return [[-1, 1], [-1, 1]]
-            elif eq[0].is_numeric():
-                return [[eq[0]-1, eq[0]+1], [-1, 1]]
-            else:
-                return [[-1, 1], [eq[1]-1, eq[1]+1]]
+        if self.number_of_components() <= 2:
+            bound = 1
+            for comps in self._hypersurface:
+                eqns = comps[0]
+                temp_operands = []
+                for eq in eqns:
+                    if not eq.operator():
+                        temp_operands.append(eq)
+                    else:
+                        temp_operands += eq.operands()
+                for op in temp_operands:
+                    if op.is_numeric():
+                        if abs(op) > bound:
+                            bound = abs(op)
+            return [[-bound, bound]] * 2
 
         verts = self.vertices()
         xmin = xmax = list(verts)[0][0]
