@@ -614,8 +614,8 @@ def QuaternionicProjectivePlane():
 
         (3, 4, 6, 7, 11, 12, 13, 14, 15),   # L
         (3, 4, 6, 7, 10, 12, 13, 14, 15)]   # N
-    return UniqueSimplicialComplex([[g(index) for index in tuple]
-                                    for tuple in start_list
+    return UniqueSimplicialComplex([[g(index) for index in tup]
+                                    for tup in start_list
                                     for g in PermutationGroup([P, S])])
 
 
