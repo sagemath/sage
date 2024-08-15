@@ -1813,7 +1813,19 @@ end_scene""".format(
         opts = self._process_viewing_options(kwds)
         viewer = opts['viewer']
         if viewer == 'threejs':
-            viewer = 'jmol'  # since threejs has no png dump
+            try:
+                scene = self._rich_repr_threejs(**opts)
+                from playwright.sync_api import sync_playwright
+                with sync_playwright() as p:
+                    browser_type = getattr(p, kwds.pop('browser_type', 'chromium'))
+                    browser = browser_type.launch()
+                    page = browser.new_page()
+                    page.goto('file://' + scene.html.filename('html'))
+                    page.screenshot(path=filename)
+                    browser.close()
+                return
+            except Exception:
+                viewer = 'jmol'
         if viewer == 'tachyon':
             from sage.repl.rich_output.output_catalog import OutputImagePng
             render = self._rich_repr_tachyon(OutputImagePng, **opts)
