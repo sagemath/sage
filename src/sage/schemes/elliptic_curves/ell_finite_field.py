@@ -2812,10 +2812,17 @@ def EllipticCurve_with_prime_order(N):
         sage: E.order() == N
         True
 
-    The execution time largely depends on the input::
+    It works for large primes::
 
-        sage: N = 125577861263605878504082476745517446213
-        sage: E = EllipticCurve_with_prime_order(N) # Takes ~1 second.
+        sage: N = 0x6cbc824032974516623e732462f4b74b56c4ffbd984380d9
+        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E.order() == N
+        True
+
+    But the execution time largely depends on the input::
+
+        sage: N = 200396817641911230625970463749415493753
+        sage: E = EllipticCurve_with_prime_order(N)
         sage: E.order() == N
         True
 
@@ -2861,7 +2868,7 @@ def EllipticCurve_with_prime_order(N):
 
     ALGORITHM: [BS2007]_, Algorithm 2.2
     """
-    from sage.arith.misc import is_prime
+    from sage.arith.misc import is_prime, kronecker
     from sage.combinat.subset import powerset
     from sage.functions.other import ceil
     from sage.misc.functional import symbolic_prod as product, log
@@ -2883,7 +2890,8 @@ def EllipticCurve_with_prime_order(N):
 
     while True:
         # Iterating over the odd primes by chunks of size log(`N`).
-        S.extend(prime_range(prime_start, prime_end))
+        S.extend(p for p in prime_range(prime_start, prime_end)
+                 if kronecker(N, p) == 1)
 
         # Every possible products of distinct elements of `S`.
         # There probably is a more optimal way to compute all possible products
