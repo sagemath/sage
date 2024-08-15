@@ -104,7 +104,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         xi
         sage: (singular(xi)*singular(xi)).NF('std(0)')                                  # needs sage.libs.singular
         -1
-
     """
     def __init__(self, parent, polynomial, check=True):
         """
@@ -112,14 +111,13 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         INPUT:
 
+        - ``parent`` -- a quotient of a polynomial ring
 
-        -  ``parent`` -- a quotient of a polynomial ring
+        - ``polynomial`` -- a polynomial
 
-        -  ``polynomial`` -- a polynomial
-
-        -  ``check`` -- bool (optional): whether or not to
-           verify that x is a valid element of the polynomial ring and reduced
-           (mod the modulus).
+        - ``check`` -- boolean (default: ``True``); whether or not to
+          verify that x is a valid element of the polynomial ring and reduced
+          (mod the modulus).
         """
         from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
         from sage.rings.polynomial.polynomial_element import Polynomial
@@ -399,7 +397,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: (2*y)^(-1)
             -1/2*y - 1
 
-        Raises a ``ZeroDivisionError`` if this element is not a unit::
+        Raises a :exc:`ZeroDivisionError` if this element is not a unit::
 
             sage: (y+1)^(-1)
             Traceback (most recent call last):
@@ -457,7 +455,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         - ``names`` -- name of generator of output field
 
-
         OUTPUT:
 
         -  field
@@ -465,7 +462,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         -  homomorphism from ``self`` to field
 
         -  homomorphism from field to ``self``
-
 
         EXAMPLES::
 
@@ -584,9 +580,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         INPUT:
 
-
-        -  ``var`` -- string; the variable name
-
+        - ``var`` -- string; the variable name
 
         EXAMPLES::
 
@@ -721,7 +715,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         We make sure that the previous example works on random examples::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # long time, needs sage.rings.finite_rings
             sage: p = random_prime(50)
             sage: K.<u> = GF((p, randrange(1,20)))
             sage: L.<v> = K.extension(randrange(2,20))

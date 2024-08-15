@@ -44,7 +44,7 @@ from sage.structure.richcmp import rich_to_bool
 class pAdicExtensionGeneric(pAdicGeneric):
     def __init__(self, poly, prec, print_mode, names, element_class):
         """
-        Initialization
+        Initialization.
 
         EXAMPLES::
 
@@ -313,14 +313,14 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def defining_polynomial(self, var=None, exact=False):
         """
-        Returns the polynomial defining this extension.
+        Return the polynomial defining this extension.
 
         INPUT:
 
-        - ``var`` -- string (default: ``'x'``), the name of the variable
+        - ``var`` -- string (default: ``'x'``); the name of the variable
 
-        - ``exact`` -- boolean (default ``False``), whether to return the underlying exact
-            defining polynomial rather than the one with coefficients in the base ring.
+        - ``exact`` -- boolean (default: ``False``); whether to return the underlying exact
+            defining polynomial rather than the one with coefficients in the base ring
 
         EXAMPLES::
 
@@ -377,7 +377,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
         """
         Return the order with the same defining polynomial.
 
-        Will raise a :class:`ValueError` if the coefficients of the defining
+        Will raise a :exc:`ValueError` if the coefficients of the defining
         polynomial are not integral.
 
         EXAMPLES::
@@ -402,12 +402,12 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def modulus(self, exact=False):
         r"""
-        Returns the polynomial defining this extension.
+        Return the polynomial defining this extension.
 
         INPUT:
 
-        - ``exact`` -- boolean (default ``False``), whether to return the underlying exact
-                       defining polynomial rather than the one with coefficients in the base ring.
+        - ``exact`` -- boolean (default: ``False``); whether to return the underlying exact
+          defining polynomial rather than the one with coefficients in the base ring
 
         EXAMPLES::
 
@@ -429,7 +429,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def ground_ring(self):
         """
-        Returns the ring of which this ring is an extension.
+        Return the ring of which this ring is an extension.
 
         EXAMPLES::
 
@@ -444,10 +444,10 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def ground_ring_of_tower(self):
         """
-        Returns the p-adic base ring of which this is ultimately an
+        Return the `p`-adic base ring of which this is ultimately an
         extension.
 
-        Currently this function is identical to ground_ring(), since
+        Currently this function is identical to ``ground_ring()``, since
         relative extensions have not yet been implemented.
 
         EXAMPLES::
@@ -465,7 +465,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def polynomial_ring(self):
         """
-        Returns the polynomial ring of which this is a quotient.
+        Return the polynomial ring of which this is a quotient.
 
         EXAMPLES::
 
@@ -492,7 +492,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def construction(self, forbid_frac_field=False):
         """
-        Returns the functorial construction of this ring, namely,
+        Return the functorial construction of this ring, namely,
         the algebraic extension of the base ring defined by the given
         polynomial.
 
@@ -579,7 +579,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
         - ``basis`` -- a basis for this ring/field over the base
 
-        - ``map`` -- boolean (default ``True``), whether to return
+        - ``map`` -- boolean (default: ``True``); whether to return
           `R`-linear maps to and from `V`
 
         OUTPUT:
@@ -670,7 +670,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 # just stick with Map.
 class pAdicModuleIsomorphism(Map):
     r"""
-    A base class for various isomorphisms between p-adic rings/fields and free modules
+    A base class for various isomorphisms between `p`-adic rings/fields and free modules.
 
     EXAMPLES::
 
@@ -730,7 +730,7 @@ class pAdicModuleIsomorphism(Map):
 
 class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
     """
-    The isomorphism from the underlying module of a one-step p-adic extension
+    The isomorphism from the underlying module of a one-step `p`-adic extension
     to the extension.
 
     EXAMPLES::
@@ -765,7 +765,7 @@ class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
 
 class MapOneStepToFreeModule(pAdicModuleIsomorphism):
     """
-    The isomorphism from a one-step p-adic extension to its underlying free module
+    The isomorphism from a one-step `p`-adic extension to its underlying free module.
 
     EXAMPLES::
 
@@ -789,7 +789,7 @@ class MapOneStepToFreeModule(pAdicModuleIsomorphism):
 
 class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
     """
-    The isomorphism from the underlying module of a two-step p-adic extension
+    The isomorphism from the underlying module of a two-step `p`-adic extension
     to the extension.
 
     EXAMPLES::
@@ -836,7 +836,7 @@ class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
 
 class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
     """
-    The isomorphism from a two-step p-adic extension to its underlying free module
+    The isomorphism from a two-step `p`-adic extension to its underlying free module.
 
     EXAMPLES::
 
@@ -863,12 +863,12 @@ class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
 
 class DefPolyConversion(Morphism):
     """
-    Conversion map between p-adic rings/fields with the same defining polynomial.
+    Conversion map between `p`-adic rings/fields with the same defining polynomial.
 
     INPUT:
 
-    - ``R`` -- a p-adic extension ring or field.
-    - ``S`` -- a p-adic extension ring or field with the same defining polynomial.
+    - ``R`` -- a `p`-adic extension ring or field
+    - ``S`` -- a `p`-adic extension ring or field with the same defining polynomial
 
     EXAMPLES::
 
@@ -919,7 +919,6 @@ class DefPolyConversion(Morphism):
 
             sage: R(K(0))
             0
-
         """
         S = self.codomain()
         Sbase = S.base_ring()
@@ -962,7 +961,6 @@ class DefPolyConversion(Morphism):
             Traceback (most recent call last):
             ...
             TypeError: _call_with_args() got multiple values for keyword argument 'absprec'
-
         """
         S = self.codomain()
         Sbase = S.base_ring()

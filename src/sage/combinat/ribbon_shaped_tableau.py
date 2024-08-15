@@ -459,7 +459,6 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
              [[None, 2, 3], [1, 4]],
              [[None, 2, 4], [1, 3]],
              [[None, 1, 4], [2, 3]]]
-
         """
         for p in descents_composition_list(self.shape):
             yield self.from_permutation(p)

@@ -88,24 +88,21 @@ def it(M, B1, nB1, lps):
 
     INPUT:
 
-    - ``M`` -- A matroid.
-    - ``B1`` -- A list of groundset elements of ``M`` that corresponds to a
-      basis of matroid ``M``.
-    - ``nB1`` -- A list of elements in the ground set of M that corresponds to
-      ``M.simplify.groundset() \ B1``.
-    - ``lps`` -- A list of elements in the ground set of matroid M that are
-      loops.
+    - ``M`` -- matroid
+    - ``B1`` -- list of groundset elements of ``M`` that corresponds to a
+      basis of matroid ``M``
+    - ``nB1`` -- list of elements in the ground set of M that corresponds to
+      ``M.simplify.groundset() \ B1``
+    - ``lps`` -- list of elements in the ground set of matroid M that are loops
 
-    OUTPUT:
-
-    A tuple containing 4 elements in this order:
+    OUTPUT: a tuple containing 4 elements in this order:
 
     1. A dictionary containing 2-tuple (x,y) coordinates with
        ``M.simplify.groundset()`` elements that can be placed on the sides of
        the triangle as keys.
     2. A list of 3 lists of elements of ``M.simplify.groundset()`` that can
        be placed on the 3 sides of the triangle.
-    3. A list of elements of `M.simplify.groundset()`` that cane be placed
+    3. A list of elements of ``M.simplify.groundset()`` that cane be placed
        inside the triangle in the geometric representation.
     4. A list of lists of elements of ``M.simplify.groundset()`` that
        correspond to lines in the geometric representation other than the sides
@@ -171,11 +168,13 @@ def it(M, B1, nB1, lps):
             # loop over L1,L2,L3
             cc = interval*j
             pts[i[j-1]] = (cc*pt1[0]+(1-cc)*pt2[0], cc*pt1[1]+(1-cc)*pt2[1])
-    trilines = [list(set(x)) for x in lines if len(x) >= 3]
-    curvedlines = [list(set(list(x)).difference(set(lps)))
-                   for x in M.flats(2) if set(list(x)) not in trilines if
-                   len(list(x)) >= 3]
-    nontripts = [i for i in nB1 if i not in pts.keys()]
+    trilines = [set(x) for x in lines if len(x) >= 3]
+    set_lps = set(lps)
+    curvedlines = [list(sx.difference(set_lps))
+                   for x in M.flats(2) if (sx := set(x)) not in trilines
+                   and len(list(x)) >= 3]
+    nontripts = [i for i in nB1 if i not in pts]
+    trilines = [list(s) for s in trilines]
     return pts, trilines, nontripts, curvedlines
 
 
@@ -185,12 +184,10 @@ def trigrid(tripts):
 
     INPUT:
 
-    - ``tripts`` -- A list of 3 lists of the form [x,y] where x and y are the
-      Cartesian coordinates of a point.
+    - ``tripts`` -- list of 3 lists of the form [x,y] where x and y are the
+      Cartesian coordinates of a point
 
-    OUTPUT:
-
-    A list of lists containing 4 points in following order:
+    OUTPUT: list of lists containing 4 points in following order:
 
     - 1. Barycenter of 3 input points.
     - 2,3,4. Barycenters of 1. with 3 different 2-subsets of input points
@@ -211,12 +208,12 @@ def trigrid(tripts):
             This method does NOT do any checks.
     """
     pairs = [[0, 1], [1, 2], [0, 2]]
-    cpt = list((float(tripts[0][0]+tripts[1][0]+tripts[2][0])/3,
-               float(tripts[0][1]+tripts[1][1]+tripts[2][1])/3))
+    cpt = [float(tripts[0][0] + tripts[1][0] + tripts[2][0]) / 3,
+           float(tripts[0][1] + tripts[1][1] + tripts[2][1]) / 3]
     grid = [cpt]
-    for p in pairs:
-        pt = list((float(tripts[p[0]][0]+tripts[p[1]][0]+cpt[0])/3,
-                  float(tripts[p[0]][1]+tripts[p[1]][1]+cpt[1])/3))
+    for p, q in pairs:
+        pt = [float(tripts[p][0] + tripts[q][0] + cpt[0]) / 3,
+              float(tripts[p][1] + tripts[q][1] + cpt[1]) / 3]
         grid.append(pt)
     return grid
 
@@ -228,12 +225,12 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
 
     INPUT:
 
-    - ``tripts`` -- A list of 3 ground set elements that are to be placed on
-      vertices of the triangle.
-    - ``ptsdict`` -- A dictionary (at least) containing ground set elements in
-      ``tripts`` as keys and their (x,y) position as values.
-    - ``nontripts`` -- A list of ground set elements whose corresponding points
-      are to be placed inside the triangle.
+    - ``tripts`` -- list of 3 ground set elements that are to be placed on
+      vertices of the triangle
+    - ``ptsdict`` -- dictionary (at least) containing ground set elements in
+      ``tripts`` as keys and their (x,y) position as values
+    - ``nontripts`` -- list of ground set elements whose corresponding points
+      are to be placed inside the triangle
 
     OUTPUT:
 
@@ -295,18 +292,16 @@ def createline(ptsdict, ll, lineorders2=None):
 
     INPUT:
 
-    - ``ptsdict`` -- A dictionary containing keys and their (x,y) position as
-      values.
-    - ``ll`` -- A list of keys in ``ptsdict`` through which a line is to be
-      drawn.
-    - ``lineorders2`` -- (optional) A list of ordered lists of keys in
+    - ``ptsdict`` -- dictionary containing keys and their (x,y) position as
+      values
+    - ``ll`` -- list of keys in ``ptsdict`` through which a line is to be
+      drawn
+    - ``lineorders2`` -- (optional) list of ordered lists of keys in
       ``ptsdict`` such that if ll is setwise same as any of these then points
       corresponding to values of the keys will be traversed in that order thus
-      overriding internal order deciding heuristic.
+      overriding internal order deciding heuristic
 
-    OUTPUT:
-
-    A tuple containing 4 elements in this order:
+    OUTPUT: a tuple containing 4 elements in this order:
 
     1. Ordered list of x-coordinates of values of keys in ``ll`` specified in
        ptsdict.
@@ -378,17 +373,15 @@ def slp(M1, pos_dict=None, B=None):
 
     INPUT:
 
-    - ``M1`` -- A matroid.
-    - ``pos_dict`` -- (optional) A dictionary containing non loopy elements of
-      ``M`` as keys and their (x,y) positions.
-      as keys. While simplifying the matroid, all except one element in a
-      parallel class that is also specified in ``pos_dict`` will be retained.
-    - ``B`` -- (optional) A basis of M1 that has been chosen for placement on
-      vertices of triangle.
+    - ``M1`` -- matroid
+    - ``pos_dict`` -- (optional) dictionary containing non loopy elements of
+      ``M`` as keys and their (x,y) positions as keys. While simplifying the
+      matroid, all except one element in a parallel class that is also
+      specified in ``pos_dict`` will be retained.
+    - ``B`` -- (optional) a basis of M1 that has been chosen for placement on
+      vertices of triangle
 
-    OUTPUT:
-
-    A tuple containing 3 elements in this order:
+    OUTPUT: a tuple containing 3 elements in this order:
 
     1. Simple matroid corresponding to ``M1``.
     2. Loops of matroid ``M1``.
@@ -459,21 +452,19 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
 
     INPUT:
 
-    - ``M`` -- A matroid.
-    - ``M1`` -- A simple matroid corresponding to ``M``.
-    - ``L`` -- List of elements in ``M.groundset()`` that are loops of matroid
-      ``M``.
-    - ``P`` -- List of elements in ``M.groundset()`` not in
-      ``M.simplify.groundset()`` or ``L``.
-    - ``ptsdict`` -- A dictionary containing elements in ``M.groundset()`` not
-      necessarily containing elements of ``L``.
-    - ``G`` -- (optional) A sage graphics object to which loops and parallel
-      elements of matroid `M` added .
-    - ``limits`` -- (optional) Current axes limits [xmin,xmax,ymin,ymax].
+    - ``M`` -- matroid
+    - ``M1`` -- a simple matroid corresponding to ``M``
+    - ``L`` -- list of elements in ``M.groundset()`` that are loops of matroid
+      ``M``
+    - ``P`` -- list of elements in ``M.groundset()`` not in
+      ``M.simplify.groundset()`` or ``L``
+    - ``ptsdict`` -- dictionary containing elements in ``M.groundset()`` not
+      necessarily containing elements of ``L``
+    - ``G`` -- (optional) a sage graphics object to which loops and parallel
+      elements of matroid `M` added
+    - ``limits`` -- (optional) current axes limits [xmin,xmax,ymin,ymax]
 
-    OUTPUT:
-
-    A 2-tuple containing:
+    OUTPUT: a 2-tuple containing:
 
     1. A sage graphics object containing loops and parallel elements of
        matroid ``M``
@@ -562,18 +553,16 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
 
 def line_hasorder(l, lodrs=None):
     """
-    Determine if an order is specified for a line
+    Determine if an order is specified for a line.
 
     INPUT:
 
-    - ``l`` -- A line specified as a list of ground set elements.
-    - ``lordrs`` -- (optional) A list of lists each specifying an order on
+    - ``l`` -- a line specified as a list of ground set elements
+    - ``lordrs`` -- (optional) list of lists each specifying an order on
       a subset of ground set elements that may or may not correspond to a
-      line in geometric representation.
+      line in geometric representation
 
-    OUTPUT:
-
-    A tuple containing 2 elements in this order:
+    OUTPUT: a tuple containing 2 elements in this order:
 
     1. A boolean indicating whether there is any list in ``lordrs`` that is
        setwise equal to ``l``.
@@ -610,10 +599,10 @@ def lineorders_union(lineorders1, lineorders2):
 
     INPUT:
 
-    - ``lineorders1`` -- A list of ordered lists specifying orders on subsets
-      of ground set.
-    - ``lineorders2`` -- A list of ordered lists specifying orders subsets of
-      ground set.
+    - ``lineorders1`` -- list of ordered lists specifying orders on subsets
+      of ground set
+    - ``lineorders2`` -- list of ordered lists specifying orders subsets of
+      ground set
 
     OUTPUT:
 
@@ -650,9 +639,9 @@ def posdict_is_sane(M1, pos_dict):
 
     INPUT:
 
-    - ``M1`` -- A matroid.
-    - ``posdict`` -- A dictionary mapping ground set elements to (x,y)
-      positions.
+    - ``M1`` -- matroid
+    - ``posdict`` -- dictionary mapping ground set elements to (x,y)
+      positions
 
     OUTPUT:
 
@@ -700,13 +689,11 @@ def tracklims(lims, x_i=[], y_i=[]):
 
     INPUT:
 
-    - ``lims`` -- A list with 4 elements ``[xmin,xmax,ymin,ymax]``
-    - ``x_i`` -- New x values to track
-    - ``y_i`` -- New y values to track
+    - ``lims`` -- list with 4 elements ``[xmin,xmax,ymin,ymax]``
+    - ``x_i`` -- new x values to track
+    - ``y_i`` -- new y values to track
 
-    OUTPUT:
-
-    A list with 4 elements ``[xmin,xmax,ymin,ymax]``
+    OUTPUT: list with 4 elements ``[xmin,xmax,ymin,ymax]``
 
     EXAMPLES::
 
@@ -735,18 +722,18 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
 
     INPUT:
 
-    - ``M1`` -- A matroid.
-    - ``B1`` -- (optional) A list of elements in ``M1.groundset()`` that
+    - ``M1`` -- matroid
+    - ``B1`` -- (optional) list of elements in ``M1.groundset()`` that
       correspond to a basis of ``M1`` and will be placed as vertices of the
-      triangle in the geometric representation of ``M1``.
-    - ``lineorders1`` -- (optional) A list of ordered lists of elements of
+      triangle in the geometric representation of ``M1``
+    - ``lineorders1`` -- (optional) list of ordered lists of elements of
       ``M1.groundset()`` such that if a line in geometric representation is
       setwise same as any of these then points contained will be traversed in
-      that order thus overriding internal order deciding heuristic.
-    - ``pd`` -- (optional) A dictionary mapping ground set elements to their
-      (x,y) positions.
-    - ``sp`` -- (optional) If True, a positioning dictionary and line orders
-      will be placed in ``M._cached_info``.
+      that order thus overriding internal order deciding heuristic
+    - ``pd`` -- (optional) dictionary mapping ground set elements to their
+      (x,y) positions
+    - ``sp`` -- (optional) if ``True``, a positioning dictionary and line orders
+      will be placed in ``M._cached_info``
 
     OUTPUT:
 
@@ -867,9 +854,8 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
             trilines.extend(curvedlines)
         else:
             pts2 = M._cached_info['plot_positions']
-            trilines = [list(set(list(x)).difference(L | P))
-                        for x in M1.flats(2)
-                        if len(list(x)) >= 3]
+            trilines = [list(set(x).difference(L | P))
+                        for x in M1.flats(2) if len(list(x)) >= 3]
         pl = [list(x) for x in pts2.values()]
         lims = tracklims([None, None, None, None], [pt[0] for pt in pl],
                          [pt[1] for pt in pl])

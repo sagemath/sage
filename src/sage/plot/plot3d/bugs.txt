@@ -65,13 +65,13 @@ Jmol bugs:
    other things break.  Probably need to save the javascript and
    execute it each time we reload.
 
-* Sphere(0.3,color="red").translate([1,1,-1]) has *holes* in it!!
+* Sphere(0.3,color='red').translate([1,1,-1]) has *holes* in it!!
 
 * (done) Default zoom is useless -- we will have to rescale the whole scene I think.
    Basically we have to figure out the true range of the 3d plot in each direction,
    then rescale everything into a 10x10x10 square.
    We should draw axis and allow for aspect ratios.
- * Invalid color doesn't yield an error message, e.g., Icosahedron(texture="yello")
+ * Invalid color doesn't yield an error message, e.g., Icosahedron(texture='yello')
  * color --> rgbcolor
  * Observation:
       jmol embedded applets *crash* when more than 10 or so appear in
