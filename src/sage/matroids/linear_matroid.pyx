@@ -2614,7 +2614,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         cochains = self.linear_coextension_cochains(F, cosimple=cosimple, fundamentals=fundamentals)
         return self._linear_coextensions(element, cochains)
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if the data represent an actual matroid.
 
@@ -3793,7 +3793,7 @@ cdef class BinaryMatroid(LinearMatroid):
                              keep_initial_representation=False)
 
     # graphicness test
-    cpdef bint is_graphic(self):
+    cpdef bint is_graphic(self) noexcept:
         """
         Test if the binary matroid is graphic.
 
@@ -3862,7 +3862,7 @@ cdef class BinaryMatroid(LinearMatroid):
         # now self is graphic iff there is a binary vector x so that M*x = 0 and x_0 = 1, so:
         return BinaryMatroid(m).corank(frozenset([0])) > 0
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if the data obey the matroid axioms.
 
@@ -4724,7 +4724,7 @@ cdef class TernaryMatroid(LinearMatroid):
                              basis=bas,
                              keep_initial_representation=False)
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if the data obey the matroid axioms.
 
@@ -5488,7 +5488,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
                              basis=bas,
                              keep_initial_representation=False)
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if the data obey the matroid axioms.
 
@@ -6239,7 +6239,7 @@ cdef class RegularMatroid(LinearMatroid):
             fundamentals = set([1])
         return LinearMatroid._linear_extension_chains(self, F, fundamentals)
 
-    cpdef bint is_graphic(self):
+    cpdef bint is_graphic(self) noexcept:
         """
         Test if the regular matroid is graphic.
 
@@ -6270,7 +6270,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return BinaryMatroid(reduced_matrix=self._reduced_representation()).is_graphic()
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if the data obey the matroid axioms.
 
@@ -6299,7 +6299,7 @@ cdef class RegularMatroid(LinearMatroid):
 
     # representation
 
-    cpdef bint is_regular(self):
+    cpdef bint is_regular(self) noexcept:
         r"""
         Return if ``self`` is regular.
 
