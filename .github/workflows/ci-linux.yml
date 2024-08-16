@@ -100,8 +100,8 @@ jobs:
       free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
-      docker_targets: "with-targets"
-      targets: python3-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements
+      docker_targets: "with-targets-pre"
+      targets_pre: python3-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements
       tox_packages_factors: >-
           ["standard"]
       max_parallel: 15
