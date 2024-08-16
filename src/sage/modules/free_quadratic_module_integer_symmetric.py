@@ -39,6 +39,7 @@ AUTHORS:
 
 - Simon Brandhorst (2017-09): First created
 - Paolo Menegatti (2018-03): Added IntegralLatticeDirectSum, IntegralLatticeGluing
+- Lorenz Panny (2024): enumeration routines for short and close vectors
 """
 
 # ****************************************************************************
@@ -1526,6 +1527,105 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         q = QuadraticForm(e * self.gram_matrix())
         short = q.short_vector_list_up_to_length(n, *kwargs)
         return [[self(v * self.basis_matrix()) for v in L] for L in short]
+
+    def _fplll_enumerate(self, target=None):
+        r"""
+        Internal helper method to invoke the fplll enumeration routines.
+
+        EXAMPLES::
+
+            sage: L = IntegralLattice('A4')
+            sage: t = vector([1.2, -3/11, 5.5, -9.1])
+            sage: short = L.enumerate_short_vectors()   # implicit doctest
+            sage: [next(short) for _ in range(10)]
+            [(0, 0, 0, 1), (0, 0, 1, 1), (0, 1, 1, 1), (1, 1, 1, 1), (0, 0, 1, 0),
+             (1, 1, 1, 0), (0, 1, 1, 0), (0, 1, 0, 0), (1, 1, 0, 0), (1, 0, 0, 0)]
+            sage: close = L.enumerate_close_vectors(t)  # implicit doctest
+            sage: [next(close) for _ in range(10)]
+            [(1, 0, 6, -9), (1, -1, 5, -9), (2, 0, 6, -9), (1, 0, 5, -9), (1, -1, 5, -10),
+             (2, 1, 6, -9), (1, 0, 5, -10), (2, 0, 5, -9), (1, 0, 6, -8), (1, -1, 6, -9)]
+        """
+        L = self.LLL()
+        dim = L.dimension()
+        gram = L.gram_matrix()
+        basis = L.basis_matrix()
+
+        import fpylll
+        gmat = fpylll.IntegerMatrix(dim, dim)
+        for i in range(dim):
+            for j in range(dim):
+                gmat[i,j] = gram[i,j]
+        gso = fpylll.GSO.Mat(gmat, gram=True)
+        ok = gso.update_gso()
+        assert ok
+
+        coord = None
+        if target is not None:
+            coord = basis.solve_left(target)
+            Mu = 1 + matrix([gso.get_mu(i,j) for j in range(dim)] for i in range(dim))
+            coord *= Mu
+
+        count = 8
+        bound = gso.get_r(dim-1, dim-1)
+        seen = set()
+        while True:
+            enum = fpylll.Enumeration(gso, count, fpylll.EvaluatorStrategy.BEST_N_SOLUTIONS)
+            try:
+                combs = enum.enumerate(0, dim, bound, 0, coord)
+            except fpylll.EnumerationError:
+                combs = []
+            if len(combs) < count:
+                bound *= 2
+                continue
+            for length,comb in combs:
+                vec = sum(ZZ(c)*b for c,b in zip(comb,basis))
+                if tuple(vec) not in seen:
+                    yield vec
+                    seen.add(tuple(vec))
+            count *= 2
+
+    def enumerate_short_vectors(self):
+        r"""
+        Return an iterator over all the vectors in this lattice (modulo sign),
+        starting from shorter vectors.
+
+        .. WARNING::
+
+            The returned vectors are not necessarily ordered strictly
+            by length.
+
+        EXAMPLES::
+
+            sage: L = IntegralLattice(4, [[1,2,3,4], [7,7,8,8], [1,-1,1,0]])
+            sage: short = L.enumerate_short_vectors()
+            sage: [next(short) for _ in range(20)]
+            [(1, -1, 1, 0), (2, -2, 2, 0), (3, -3, 3, 0), (0, 3, 2, 4), (1, 2, 3, 4),
+             (4, 4, 1, 0), (3, 2, -2, -4), (3, 5, 0, 0), (4, 1, -1, -4), (-1, 4, 1, 4),
+             (2, 1, 4, 4), (5, 3, 2, 0), (2, 3, -3, -4), (2, 6, -1, 0), (5, 0, 0, -4),
+             (-2, 5, 0, 4), (4, -4, 4, 0), (6, 2, 3, 0), (1, 4, -4, -4), (3, 0, 5, 4)]
+        """
+        yield from self._fplll_enumerate()
+
+    def enumerate_close_vectors(self, target):
+        r"""
+        Return an iterator over all the vectors in this lattice, starting
+        from vectors relatively close to the given ``target`` vector.
+
+        .. WARNING::
+
+            The returned vectors are not necessarily ordered strictly
+            by their distance to the target.
+
+        EXAMPLES::
+
+            sage: L = IntegralLattice(4, [[1,2,3,4], [7,7,8,8], [1,-1,1,0]])
+            sage: t = vector([1/2, -133/7, 123.44, -11])
+            sage: close = L.enumerate_close_vectors(t)
+            sage: [next(close) for _ in range(10)]
+            [(1, -18, 123, 148), (2, -19, 124, 148), (0, -17, 122, 148), (3, -20, 125, 148), (-1, -16, 121, 148),
+             (-2, -20, 125, 152), (-2, -23, 123, 148), (4, -21, 126, 148), (-3, -22, 122, 148), (-3, -19, 124, 152)]
+        """
+        yield from self._fplll_enumerate(target)
 
     def twist(self, s, discard_basis=False):
         r"""
