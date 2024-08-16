@@ -4971,8 +4971,6 @@ class Graph(GenericGraph):
         .. SEEALSO::
             :meth:`~sage.graphs.graph.Graph.is_factor_critical`,
             :meth:`~sage.graphs.graph.Graph.is_matching_covered`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.canonical_partition`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brick`
 
         AUTHORS:
 
@@ -5313,7 +5311,6 @@ class Graph(GenericGraph):
         .. SEEALSO::
             :meth:`~sage.graphs.graph.Graph.is_factor_critical`,
             :meth:`~sage.graphs.graph.Graph.is_bicritical`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph`
 
         AUTHORS:
 
