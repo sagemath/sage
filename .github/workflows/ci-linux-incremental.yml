@@ -122,17 +122,12 @@ jobs:
       targets: "${{needs.changed_files.outputs.uninstall_targets}} reconfigure ${{needs.changed_files.outputs.build_targets}} sagelib-tox-sagepython-constraints_pkgs-norequirements"
       tox_system_factors: >-
         ["ubuntu-focal",
-         "ubuntu-jammy",
-         "ubuntu-mantic",
-         "debian-bullseye",
+         "ubuntu-noble",
          "debian-bookworm",
-         "fedora-30",
-         "fedora-38",
-         "gentoo-python3.11",
+         "fedora-40",
          "debian-bullseye-i386"]
       tox_packages_factors: >-
-          ["standard",
-           "minimal"]
+          ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 16
 
