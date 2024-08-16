@@ -11,7 +11,7 @@
 # [alice@localhost sage]$ export MAKE="make -j16" SAGE_NUM_THREADS=16
 # [alice@localhost sage]$ make all-sage-local
 # [alice@localhost sage]$ export PIP_CONSTRAINT="$(pwd)/pkgs/sagemath-standard/constraints_pkgs.txt"
-# [alice@localhost sage]$ ./sage -sh -c 'python3 -m build pkgs/sagemath-standard'
+# [alice@localhost sage]$ ./sage -sh -c 'python3 -m build -v -v pkgs/sagemath-standard'
 #
 # Reference on the format:
 # https://pip.pypa.io/en/stable/user_guide/#constraints-files
