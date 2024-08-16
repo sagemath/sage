@@ -88,7 +88,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          prerelease: contains(github.ref, 'beta') || contains(github.ref, 'rc')
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
           files: |
             dist/*
             upstream/*
