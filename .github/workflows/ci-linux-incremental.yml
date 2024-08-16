@@ -119,7 +119,7 @@ jobs:
       from_docker_target: "with-targets-pre"
       from_docker_tag: "dev"
       docker_targets: "with-targets-pre"
-      targets_pre: "${{needs.changed_files.outputs.build_targets}} all-sage-local sagelib-tox-sagepython-constraints_pkgs-norequirements"
+      targets_pre: "${{needs.changed_files.outputs.build_targets}} all-sage-local python3-ensure tox-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements"
       tox_system_factors: >-
         ["ubuntu-focal",
          "ubuntu-noble",
