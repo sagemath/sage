@@ -52,6 +52,19 @@ class ElementCache():
     def clear_cache(self):
         r"""
         Clear the cache.
+
+        EXAMPLES::
+
+            sage: A = AtomicSpecies(1)
+            sage: A(SymmetricGroup(1))
+            {[()]: (1,)}
+            sage: A(SymmetricGroup(0))
+            {[]: (0,)}
+            sage: A._cache
+            {((0,), []): [{[]: (0,)}], ((1,), [()]): [{[()]: (1,)}]}
+            sage: A.clear_cache()
+            sage: A._cache
+            {}
         """
         self._cache = dict()
 
@@ -70,15 +83,11 @@ class ElementCache():
             for other_elm in lookup:
                 if elm == other_elm:
                     return other_elm
-            elm = self._canonical_label(elm)
+            elm._canonicalize()
             lookup.append(elm)
         else:
-            elm = self._canonical_label(elm)
+            elm._canonicalize()
             self._cache[key] = [elm]
-        return elm
-
-    @cached_method
-    def _canonical_label(self, elm):
         return elm
 
 class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
@@ -95,9 +104,6 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
         """
         Element.__init__(self, parent)
         self._C = C
-        self._sorted_orbits = sorted([sorted(orbit) for orbit in C.orbits()], key=len)
-        self._orbit_lens = tuple(len(orbit) for orbit in self._sorted_orbits)
-        self._order = C.order()
 
     def __hash__(self):
         r"""
@@ -126,19 +132,42 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
             sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
             sage: C(G)
-            [(2,5)(6,8), (1,3)(4,7), (1,4)(2,5)(3,7)]
+            [(5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6)]
         """
         return f"{self._C.gens_small()}"
 
     def _element_key(self):
-        return self._C.degree(), self._order, self._orbit_lens
+        r"""
+        Return the cache lookup key for ``self``.
+        """
+        return self._C.degree(), self._C.order(), tuple(len(orbit) for orbit in sorted(self._C.orbits(), key=len))
+
+    @cached_method
+    def _canonicalize(self):
+        r"""
+        Canonicalize this conjugacy class by sorting the orbits by
+        length and making them consecutive.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
+            sage: C(G)
+            [(5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6)]
+        """
+        if self._C == SymmetricGroup(0):
+            return
+        sorted_orbits = sorted([sorted(orbit) for orbit in self._C.orbits()], key=len, reverse=True)
+        pi = PermutationGroupElement(list(chain.from_iterable(sorted_orbits))).inverse()
+        self._C = PermutationGroup(gap_group=libgap.ConjugateGroup(self._C, pi))
 
     def __eq__(self, other):
         r"""
         Return whether ``self`` is equal to ``other``.
 
         ``self`` is equal to ``other`` if they have the same degree (say `n`)
-        and order and are conjugate within `S_n`.
+        and are conjugate within `S_n`.
 
         TESTS::
 
@@ -174,6 +203,16 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
 
     @cached_method
     def an_element(self):
+        r"""
+        Return an element of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: C.an_element()
+            [()]
+        """
         return self._element_constructor_(SymmetricGroup(1))
 
     def _element_constructor_(self, x):
@@ -193,10 +232,10 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             sage: C(PermutationGroup([(1, 3, 5)], domain=[1,3,5]))
             [(1,2,3)]
             sage: C(PermutationGroup([[(1,3),(4,7)],[(2,5),(6,8)], [(1,4),(2,5),(3,7)]]))
-            [(2,5)(6,8), (1,3)(4,7), (1,4)(2,5)(3,7)]
+            [(5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6)]
             sage: C._cache
             {(3, 3, (3,)): [[(1,2,3)]],
-            (8, 8, (2, 2, 4)): [[(2,5)(6,8), (1,3)(4,7), (1,4)(2,5)(3,7)]]}
+            (8, 8, (2, 2, 4)): [[(5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6)]]}
         """
         if parent(x) == self:
             return x
@@ -216,6 +255,24 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
         raise ValueError(f"unable to convert {x} to {self}")
     
     def __iter__(self):
+        r"""
+        An iterator over all conjugacy classes of directly indecomposable
+        subgroups.
+
+        TESTS::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: iterC = iter(C)
+            sage: for i in range(5):
+            ....:     print(next(iterC))
+            ....: 
+            []
+            [()]
+            [(1,2)]
+            [(1,2,3)]
+            [(1,2,3), (2,3)]
+        """
         # Is SymmetricGroup(0) directly indecomposable?
         n = 0
         while True:
@@ -243,23 +300,6 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             Infinite set of conjugacy classes of directly indecomposable subgroups
         """
         return "Infinite set of conjugacy classes of directly indecomposable subgroups"
-
-    @cached_method
-    def canonical_label(self, elm):
-        r"""
-        Construct the canonical representative of a conjugacy class
-        by sorting the orbits by length and making them consecutive.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
-            sage: C(G)
-            [(2,5)(6,8), (1,3)(4,7), (1,4)(2,5)(3,7)]
-        """
-        pi = PermutationGroupElement([e for o in elm._sorted_orbits for e in o], check=False)
-        return self.element_class(self, PermutationGroup(gap_group=libgap.ConjugateGroup(elm._C, pi)))
 
     Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
 
@@ -298,6 +338,29 @@ class AtomicSpeciesElement(Element):
         Return a lookup key for ``self``.
         """
         return self._mc, self._dis
+
+    @cached_method
+    def _canonicalize(self):
+        r"""
+        Canonicalize this atomic species by sorting the orbits by
+        length and making them consecutive.
+
+        EXAMPLES::
+
+            sage: At = AtomicSpecies(2)
+            sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
+            Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
+            sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
+            Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
+            sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
+            sage: A._dompart
+            ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))
+            sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]})
+            sage: C._dompart
+            ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))
+        """
+        # The canonicalization is done in the element constructor.
+        pass
 
     def __hash__(self):
         r"""
@@ -413,13 +476,12 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         dis_elm = self._dis_ctor(G)
         # Now use this mapping to get dompart
         mapping = {v: i for i, v in enumerate(G.domain(), 1)}
-        mapping2 = PermutationGroupElement([mapping[e] for o in
-                                            sorted([sorted(orbit) for orbit in G.orbits()], key=len)
-                                            for e in o], check=False)
+        mapping2 = PermutationGroupElement([mapping[e] for o in sorted(G.orbits(), key=len, reverse=True)
+                                            for e in o]).inverse()
         # domain partition should be immutable
-        dpart = [frozenset() for _ in range(self._k)]
+        dpart = [tuple() for _ in range(self._k)]
         for k, v in pi.items():
-            dpart[k - 1] = frozenset(mapping2(mapping[x]) for x in v)
+            dpart[k - 1] = tuple(mapping2(mapping[x]) for x in v)
         elm = self.element_class(self, dis_elm, tuple(dpart))
         return self._cache_get(elm)
 
@@ -575,7 +637,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             # TODO: Set the dompart
             self._dompart = list(elm1._dompart)
             for i in range(elm2.parent()._k):
-                self._dompart[i] = frozenset(list(self._dompart[i]) + [elm1._tc + e for e in elm2._dompart[i]])
+                self._dompart[i] = tuple(list(self._dompart[i]) + [elm1._tc + e for e in elm2._dompart[i]])
             self._dompart = tuple(self._dompart)
 
         def __floordiv__(self, elt):
@@ -589,6 +651,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             elm = self.parent()._cache_get(res)
             if elm._group is None:
                 elm._elmmul(self, other)
+                elm._canonicalize()
             return elm
 
         def _elmexp(self, other, n):
@@ -614,10 +677,38 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             elm = self.parent()._cache_get(res)
             if elm._group is None:
                 elm._elmexp(self, n)
+                elm._canonicalize()
             return elm
 
         def _element_key(self):
             return self
+
+        @cached_method
+        def _canonicalize(self):
+            r"""
+            Canonicalize this molecular species by sorting the orbits by
+            length and making them consecutive.
+
+            EXAMPLES::
+
+                sage: P = PolynomialSpecies(2)
+                sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
+                Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
+                sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
+                Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
+                sage: A = P(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
+                sage: A.support()[0]._dompart
+                ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))
+                sage: C = P(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]})
+                sage: C.support()[0]._dompart
+                ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))
+            """
+            if self._group is None or self._group == SymmetricGroup(0):
+                return
+            sorted_orbits = sorted([sorted(orbit) for orbit in self._group.orbits()], key=len, reverse=True)
+            pi = PermutationGroupElement(list(chain.from_iterable(sorted_orbits))).inverse()
+            self._group = PermutationGroup(gap_group=libgap.ConjugateGroup(self._group, pi))
+            self._dompart = tuple(tuple(pi(k) for k in v) for v in self._dompart)
 
         def grade(self):
             r"""
@@ -949,7 +1040,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             # Do we want to allow cartesian products between different k-variates?
             if self.parent()._k != other.parent()._k:
-                return self.parent().zero()
+                return ValueError()
 
             terms = cartesian_product([self.terms(), other.terms()])
             res = 0
@@ -1062,3 +1153,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 term *= prod([self._embedding_coeff(p, n) for p, n in zip(parts, coeffs)])
                 res += term
             return res
+        
+        def substitution(self, args):
+            pass
