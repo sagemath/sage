@@ -74,7 +74,7 @@ jobs:
 
   standard-constraints_pkgs-norequirements:
     if: ${{ success() || failure() }}
-    needs: [standard-pre]
+    needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
       # Build incrementally from previous stage (pre)
