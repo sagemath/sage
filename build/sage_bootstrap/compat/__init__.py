@@ -28,3 +28,11 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
+
+
+try:
+    # Python >= 3.3
+    from shlex import quote
+except ImportError:
+    # Python < 3.13
+    from pipes import quote
