@@ -12,7 +12,7 @@ command on some systems).
 
 import fcntl
 import os
-import pipes
+import shlex
 import sys
 import argparse
 
@@ -105,7 +105,7 @@ def run(argv=None):
             kind = "exclusive"
 
         sys.stderr.write("Waiting for {0} lock to run {1} ... ".format(
-            kind, ' '.join(pipes.quote(arg) for arg in command)))
+            kind, ' '.join(shlex.quote(arg) for arg in command)))
         fcntl.flock(lock, locktype)
         sys.stderr.write("ok\n")
 
