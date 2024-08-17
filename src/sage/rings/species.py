@@ -284,6 +284,17 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
     def __contains__(self, G):
         r"""
         Return if ``G`` is in ``self``.
+
+        TESTS::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: G = PermutationGroup([[(1,2)], [(3,4)]]); G
+            Permutation Group with generators [(3,4), (1,2)]
+            sage: G.disjoint_direct_product_decomposition()
+            {{1, 2}, {3, 4}}
+            sage: G in C
+            False
         """
         if parent(G) == self:
             return True
@@ -335,7 +346,7 @@ class AtomicSpeciesElement(Element):
 
     def _element_key(self):
         r"""
-        Return a lookup key for ``self``.
+        Return the cache lookup key for ``self``.
         """
         return self._mc, self._dis
 
@@ -365,6 +376,24 @@ class AtomicSpeciesElement(Element):
     def __hash__(self):
         r"""
         Return the hash of the atomic species.
+
+        TESTS::
+
+            sage: At = AtomicSpecies(2)
+            sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
+            Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
+            sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
+            Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
+            sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
+            {[(1,2,3,4)(5,6)(7,8)(9,10)]: (4, 6)}
+            sage: B = At(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); B
+            {[(1,2,3,4)(5,6)(7,8)(9,10)]: (4, 6)}
+            sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]}); C
+            {[(1,2,3,4)(5,6)(7,8)(9,10)]: (4, 6)}
+            sage: hash(A) == hash(B)
+            True
+            sage: hash(A) == hash(C)
+            True
         """
         return hash(self._element_key())
 
@@ -375,14 +404,14 @@ class AtomicSpeciesElement(Element):
 
         TESTS::
 
-            sage: P = PolynomialSpecies(2)
+            sage: At = AtomicSpecies(2)
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
             Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
-            sage: A = P(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
-            sage: B = P(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
-            sage: C = P(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]})
+            sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
+            sage: B = At(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
+            sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]})
             sage: A != B
             True
             sage: A == C
@@ -409,15 +438,29 @@ class AtomicSpeciesElement(Element):
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
+
+        TESTS::
+
+            sage: At = AtomicSpecies(2)
+            sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
+            Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
+            sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
+            {[(1,2,3,4)(5,6)(7,8)(9,10)]: (4, 6)}
         """
         return "{" + f"{self._dis}: {self._mc}" + "}"
 
-# How to remember the names without ElementCache?
 class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
     def __init__(self, k):
         r"""
         Infinite set of `k`-variate atomic species graded by
         integer vectors of length `k`.
+
+        TESTS::
+
+            sage: At1 = AtomicSpecies(1)
+            sage: At2 = AtomicSpecies(2)
+            sage: TestSuite(At1).run(skip="_test_graded_components")
+            sage: TestSuite(At2).run(skip="_test_graded_components")
         """
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, category=category)
@@ -426,19 +469,22 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         self._grading_set = IntegerVectors(length=k)
         self._dis_ctor = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
 
-    def __hash__(self):
-        r"""
-        Return a hash for ``self``.
-        """
-        return hash(self._k)
-
     @cached_method
     def an_element(self):
         """
         Return an element of ``self``.
+
+        TESTS::
+
+            sage: At1 = AtomicSpecies(1)
+            sage: At2 = AtomicSpecies(2)
+            sage: At1.an_element()
+            {[(1,2)]: (2,)}
+            sage: At2.an_element()
+            {[(1,2)(3,4)]: (2, 2)}
         """
-        G = SymmetricGroup(self._k).young_subgroup([1] * self._k)
-        m = {i: i for i in range(1, self._k + 1)}
+        G = PermutationGroup([[(2 * i - 1, 2 * i) for i in range(1, self._k + 1)]])
+        m = {i: [2 * i - 1, 2 * i] for i in range(1, self._k + 1)}
         return self._element_constructor_(G, m)
 
     def _element_constructor_(self, G, pi=None):
@@ -474,11 +520,9 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             if not any(set(orbit).issubset(p) for p in pi.values()):
                 raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
         dis_elm = self._dis_ctor(G)
-        # Now use this mapping to get dompart
         mapping = {v: i for i, v in enumerate(G.domain(), 1)}
         mapping2 = PermutationGroupElement([mapping[e] for o in sorted(G.orbits(), key=len, reverse=True)
                                             for e in o]).inverse()
-        # domain partition should be immutable
         dpart = [tuple() for _ in range(self._k)]
         for k, v in pi.items():
             dpart[k - 1] = tuple(mapping2(mapping[x]) for x in v)
@@ -489,7 +533,8 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         r"""
         Call ``_element_constructor_`` on ``x``.
         """
-        return self._element_constructor_(x)
+        # TODO: This needs to be checked.
+        return self._element_constructor_(*x)
 
     def __contains__(self, x):
         r"""
@@ -524,11 +569,9 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
         TESTS::
 
-            sage: At1 = AtomicSpecies(1)
-            sage: At1
+            sage: At1 = AtomicSpecies(1); At1
             Infinite set of 1-variate atomic species
-            sage: At2 = AtomicSpecies(2)
-            sage: At2
+            sage: At2 = AtomicSpecies(2); At2
             Infinite set of 2-variate atomic species
         """
         return f"Infinite set of {self._k}-variate atomic species"
@@ -553,6 +596,15 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
 
     @cached_method
     def one(self):
+        r"""
+        Return the one of this monoid.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(2)
+            sage: P._indices.one()
+            1
+        """
         elm = super().one()
         elm._group = SymmetricGroup(0)
         elm._dompart = tuple()
@@ -583,9 +635,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             self._mc = None
             self._tc = None
 
-        # There is weirdness going on here and below with copying
-        # and references.
         def _assign_group_info(self, other):
+            r"""
+            Assign the group info of ``other`` to ``self``.
+            """
             self._group = other._group
             self._dompart = other._dompart
             self._mc = other._mc
@@ -634,7 +687,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             for gen in gens2:
                 gens.append([tuple(elm1._tc + k for k in cyc) for cyc in gen.cycle_tuples()])
             self._group = PermutationGroup(gens, domain=range(1, elm1._tc + elm2._tc + 1))
-            # TODO: Set the dompart
             self._dompart = list(elm1._dompart)
             for i in range(elm2.parent()._k):
                 self._dompart[i] = tuple(list(self._dompart[i]) + [elm1._tc + e for e in elm2._dompart[i]])
@@ -681,6 +733,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             return elm
 
         def _element_key(self):
+            r"""
+            Return the cache lookup key for ``self``.
+            """
             return self
 
         @cached_method
@@ -783,7 +838,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             - if `k=1`, i.e. we are working with univariate species,
               the mapping `M` may be omitted and just the group `H`
               may be passed.
-
         """
         if parent(G) == self:
             if pi is not None:
@@ -904,12 +958,72 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
     class Element(CombinatorialFreeModule.Element):
         def is_virtual(self):
+            r"""
+            Return if ``self`` is a virtual species.
+
+            TESTS::
+
+                sage: P = PolynomialSpecies(2)
+                sage: At = AtomicSpecies(2)
+                sage: X = P(SymmetricGroup(1), {1: [1]})
+                sage: Y = P(SymmetricGroup(1), {2: [1]})
+                sage: At(SymmetricGroup(1), {1: [1]}).rename("X")
+                sage: At(SymmetricGroup(1), {2: [1]}).rename("Y")
+                sage: V = 2 * X - 3 * Y; V
+                2*X - 3*Y
+                sage: V.is_virtual()
+                True
+                sage: (X * Y).is_virtual()
+                False
+            """
             return any(x < 0 for x in self.coefficients(sort=False))
 
         def is_molecular(self):
+            r"""
+            Return if ``self`` is a molecular species.
+
+            TESTS::
+
+                sage: P = PolynomialSpecies(2)
+                sage: At = AtomicSpecies(2)
+                sage: X = P(SymmetricGroup(1), {1: [1]})
+                sage: Y = P(SymmetricGroup(1), {2: [1]})
+                sage: At(SymmetricGroup(1), {1: [1]}).rename("X")
+                sage: At(SymmetricGroup(1), {2: [1]}).rename("Y")
+                sage: V = 2 * X - 3 * Y; V
+                2*X - 3*Y
+                sage: V.is_molecular()
+                False
+                sage: (2 * X).is_molecular()
+                False
+                sage: (X * Y).is_molecular()
+                True
+            """
             return len(self.coefficients(sort=False)) == 1 and self.coefficients(sort=False)[0] == 1
 
         def is_atomic(self):
+            r"""
+            Return if ``self`` is an atomic species.
+
+            TESTS::
+
+                sage: P = PolynomialSpecies(2)
+                sage: At = AtomicSpecies(2)
+                sage: X = P(SymmetricGroup(1), {1: [1]})
+                sage: Y = P(SymmetricGroup(1), {2: [1]})
+                sage: At(SymmetricGroup(1), {1: [1]}).rename("X")
+                sage: At(SymmetricGroup(1), {2: [1]}).rename("Y")
+                sage: V = 2 * X - 3 * Y; V
+                2*X - 3*Y
+                sage: V.is_atomic()
+                False
+                sage: (2 * X).is_atomic()
+                False
+                sage: (X * Y).is_atomic()
+                False
+                sage: Y.is_atomic()
+                True
+            """
             return self.is_molecular() and len(self.support()[0]) == 1
 
         def __call__(self, *args):
