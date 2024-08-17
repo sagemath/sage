@@ -54,45 +54,27 @@ jobs:
   # All platforms. This duplicates the default platform, but why not,
   # it makes it more robust regarding random timeouts.
 
-  standard-pre:
+  standard:
     if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
-      docker_targets: "with-system-packages configured with-targets-pre"
+      free_disk_space: true
+      docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
       # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
-      tox_packages_factors: >-
-          ["standard"]
-      docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Make sure that all "standard-pre" jobs can start simultaneously,
-      # so that runners are available by the time that "default" starts.
-      max_parallel: 50
-
-  standard:
-    if: ${{ success() || failure() }}
-    needs: [standard-pre]
-    uses: ./.github/workflows/docker.yml
-    with:
-      # Build incrementally from previous stage (pre)
-      incremental: true
-      free_disk_space: true
-      from_docker_repository: ghcr.io/${{ github.repository }}/
-      from_docker_target: "with-targets-pre"
-      docker_targets: "with-targets with-targets-optional"
-      # FIXME: duplicated from env.TARGETS
       targets: build doc-html
       targets_optional: ptest
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Reduce from 30 to 20 because it runs in parallel with 'standard-sitepackages'
-      # and 'minimal-pre' below
-      max_parallel: 20
+      # Make sure that all "standard" jobs can start simultaneously,
+      # so that runners are available by the time that "default" starts.
+      max_parallel: 50
 
   standard-sitepackages:
     if: ${{ success() || failure() }}
-    needs: [standard-pre]
+    needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
       # Build incrementally from previous stage (pre)
