@@ -736,12 +736,11 @@ class TropicalSurface(TropicalVariety):
                         poly_verts[index].add(tuple(vertex))
 
         def find_edge_vertices(i):
+            j = (i+1) % 2
             if i == 0:  # interval for t1
                 interval = interval1
-                j = 1
             else:  # interval for t2
                 interval = interval2
-                j = 0
             for p in [interval.inf(), interval.sup()]:
                 new_param = [e.subs(**{str(vars[i]): p}) for e in comps[index][1]]
                 sol = solve(new_param, vars[j])

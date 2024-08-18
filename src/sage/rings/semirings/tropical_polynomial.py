@@ -41,12 +41,13 @@ class TropicalPolynomial(Polynomial_generic_sparse):
     r"""
     A univariate tropical polynomial.
 
-    Tropical polynomial is a polynomial with coefficients from tropical
-    semiring. Tropical polynomial induces a function which is piecewise
-    linear and each piece has a nonnegative integer slope. Tropical roots
-    (zeros) of polynomial `P(x)` is defined as all points `x_0` for which
-    the graph of `P(x)` change its slope. The difference in the slopes of
-    the two pieces adjacent to this root gives the order of the root.
+    A tropical polynomial is a polynomial whose coefficients come from
+    a tropical semiring. Tropical polynomial induces a function which is
+    piecewise linear, where each segment of the function has a non-negative
+    integer slope. Tropical roots (zeros) of polynomial `P(x)` is defined
+    as all points `x_0` for which the graph of `P(x)` change its slope.
+    The difference in the slopes of the two pieces adjacent to this root
+    gives the order of the root.
 
     The tropical polynomials are implemented with a sparse format by using
     a ``dict`` whose keys are the exponent and values the corresponding
@@ -541,8 +542,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         if not self.dict():
             return str(self.parent().base().zero())
 
-        def replace_negatives(match):
-            return f'({match.group(0)})'
+        def replace_negatives(expr):
+            modified_expr = re.sub(r'(-\d+/\d+|-\d+)', r'(\1)', expr)
+            return modified_expr
 
         s = super()._repr()
         v = self.parent().variable_name()
@@ -551,7 +553,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         s = s.replace(" - ", " + -")
         s = s.replace(" + "+v, " + 1*"+v)
         s = s.replace("-"+v, "-1*"+v)
-        s = re.sub(r'-\d+', replace_negatives, s)
+        s = replace_negatives(s)
         return s
 
     def _latex_(self):

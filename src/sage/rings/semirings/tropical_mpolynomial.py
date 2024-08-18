@@ -293,15 +293,14 @@ class TropicalMPolynomial(MPolynomial_polydict):
             else:
                 valid_int = RealSet(comp[1][0]).intersection(RealSet(comp[1][1]))
             for i, eqn in enumerate(comp[0]):
+                j = (i+1) % 2
                 if not eqn.is_numeric():
-                    sol1 = solve(eqn == axes[i][0], v)
-                    sol2 = solve(eqn == axes[i][1], v)
-                    if sol1[0].rhs() in valid_int:
-                        valid_point = [R(eq.subs(**{str(v): sol1[0].rhs()})) for eq in comp[0]]
-                        edge.add(tuple(valid_point))
-                    if sol2[0].rhs() in valid_int:
-                        valid_point = [R(eq.subs(**{str(v): sol2[0].rhs()})) for eq in comp[0]]
-                        edge.add(tuple(valid_point))
+                    for k in range(2):
+                        sol = solve(eqn == axes[i][k], v)
+                        if sol[0].rhs() in valid_int:
+                            valid_point = [R(eq.subs(**{str(v): sol[0].rhs()})) for eq in comp[0]]
+                            if valid_point[j] in RealSet(axes[j]):
+                                edge.add(tuple(valid_point))
 
         # Combine the edge, vertices, and corner point
         vertices = self.tropical_variety().vertices()
