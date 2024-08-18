@@ -170,8 +170,8 @@ jobs:
       tox_packages_factors: >-
           ["maximal"]
       docker_targets: "with-targets-optional"
-      # [0-9a-o] excludes _, in particular package _develop
-      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc))'
+      # We remove packages starting with _, in particular package _develop
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep -v ^_))'
 
   experimental:
     if: ${{ success() || failure() }}
