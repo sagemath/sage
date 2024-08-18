@@ -1,7 +1,7 @@
 # This "constraints file" can be used for forcing pip
 # (and any tools that delegate to pip, such as pypa/build)
 # to install the dependencies of sagemath-standard that are
-# distribution packages included in # the SageMath monorepository
+# distribution packages included in the SageMath monorepository
 # only from their source trees in SAGE_ROOT/pkgs/
 # instead of from PyPI.
 #
