@@ -34,7 +34,7 @@ permissions:
 
 jobs:
 
-  # standard-pre and standard (without ptest) for the default platform (used by build.yml etc.)
+  # standard (without ptest) for the default platform (used by build.yml etc.)
   default:
     uses: ./.github/workflows/docker.yml
     with:
