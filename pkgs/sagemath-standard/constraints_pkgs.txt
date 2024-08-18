@@ -5,7 +5,7 @@
 # only from their source trees in SAGE_ROOT/pkgs/
 # instead of from PyPI.
 #
-# Example: Building a sagemath-standard wheel
+# Example:
 #
 # [alice@localhost sage]$ ./bootstrap
 # [alice@localhost sage]$ ./configure
