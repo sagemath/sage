@@ -1,11 +1,6 @@
 # libpng needs to have no default options set for grep
 unset GREP_OPTIONS
 
-export CFLAGS="$CFLAGS -fPIC -g"
-
-# Pick up Sage's zlib:
-export CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
-
 cd src
 
 sdh_configure --enable-shared=yes
