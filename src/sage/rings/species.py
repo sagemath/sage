@@ -57,11 +57,11 @@ class ElementCache():
 
             sage: A = AtomicSpecies(1)
             sage: A(SymmetricGroup(1))
-            {[()]: ((1,),)}
+            {((),): ((1,),)}
             sage: A(SymmetricGroup(0))
-            {[]: ((),)}
+            {(): ((),)}
             sage: A._cache
-            {((0,), []): [{[]: ((),)}], ((1,), [()]): [{[()]: ((1,),)}]}
+            {((0,), ()): [{(): ((),)}], ((1,), ((),)): [{((),): ((1,),)}]}
             sage: A.clear_cache()
             sage: A._cache
             {}
@@ -132,9 +132,9 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
             sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
             sage: C(G)
-            [(5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6)]
+            ((5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6))
         """
-        return f"{self._C.gens_small()}"
+        return f"{self._C.gens()}"
 
     def _element_key(self):
         r"""
@@ -154,7 +154,7 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
             sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
             sage: C(G)
-            [(5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6)]
+            ((5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6))
         """
         if self._C == SymmetricGroup(0):
             return
@@ -211,7 +211,7 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
             sage: C.an_element()
-            [()]
+            ((),)
         """
         return self._element_constructor_(SymmetricGroup(1))
 
@@ -226,16 +226,16 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
             sage: C.clear_cache()
             sage: C(PermutationGroup([("a", "b", "c")]))
-            [(1,2,3)]
+            ((1,2,3),)
             sage: C._cache
-            {(3, 3, (3,)): [[(1,2,3)]]}
+            {(3, 3, (3,)): [((1,2,3),)]}
             sage: C(PermutationGroup([(1, 3, 5)], domain=[1,3,5]))
-            [(1,2,3)]
+            ((1,2,3),)
             sage: C(PermutationGroup([[(1,3),(4,7)],[(2,5),(6,8)], [(1,4),(2,5),(3,7)]]))
-            [(5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6)]
+            ((5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6))
             sage: C._cache
-            {(3, 3, (3,)): [[(1,2,3)]],
-            (8, 8, (2, 2, 4)): [[(5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6)]]}
+            {(3, 3, (3,)): [((1,2,3),)],
+            (8, 8, (2, 2, 4)): [((5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6))]}
         """
         if parent(x) == self:
             return x
@@ -267,11 +267,11 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             sage: for i in range(5):
             ....:     print(next(iterC))
             ....: 
-            []
-            [()]
-            [(1,2)]
-            [(1,2,3)]
-            [(1,2,3), (2,3)]
+            ()
+            ((),)
+            ((1,2),)
+            ((1,2,3),)
+            ((2,3), (1,2,3))
         """
         n = 0
         while True:
@@ -384,11 +384,11 @@ class AtomicSpeciesElement(Element):
             sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
             Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {[(1,2,3,4)(5,6)(7,8)(9,10)]: ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
             sage: B = At(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); B
-            {[(1,2,3,4)(5,6)(7,8)(9,10)]: ((1, 2, 3, 4), (5, 6, 7, 8, 9, 10))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ((1, 2, 3, 4), (5, 6, 7, 8, 9, 10))}
             sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]}); C
-            {[(1,2,3,4)(5,6)(7,8)(9,10)]: ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
             sage: hash(A) == hash(B)
             True
             sage: hash(A) == hash(C)
@@ -444,7 +444,7 @@ class AtomicSpeciesElement(Element):
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {[(1,2,3,4)(5,6)(7,8)(9,10)]: ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
         """
         return "{" + f"{self._dis}: {self._dompart}" + "}"
 
@@ -466,7 +466,6 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         ElementCache.__init__(self)
         self._k = k
         self._grading_set = IntegerVectors(length=k)
-        self._dis_ctor = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
 
     @cached_method
     def an_element(self):
@@ -478,9 +477,9 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             sage: At1 = AtomicSpecies(1)
             sage: At2 = AtomicSpecies(2)
             sage: At1.an_element()
-            {[(1,2)]: ((1, 2),)}
+            {((1,2),): ((1, 2),)}
             sage: At2.an_element()
-            {[(1,2)(3,4)]: ((1, 2), (3, 4))}
+            {((1,2)(3,4),): ((1, 2), (3, 4))}
         """
         G = PermutationGroup([[(2 * i - 1, 2 * i) for i in range(1, self._k + 1)]])
         m = {i: [2 * i - 1, 2 * i] for i in range(1, self._k + 1)}
@@ -518,7 +517,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         for orbit in G.orbits():
             if not any(set(orbit).issubset(p) for p in pi.values()):
                 raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
-        dis_elm = self._dis_ctor(G)
+        dis_elm = ConjugacyClassesOfDirectlyIndecomposableSubgroups()(G)
         mapping = {v: i for i, v in enumerate(G.domain(), 1)}
         mapping2 = PermutationGroupElement([mapping[e] for o in sorted(G.orbits(), key=len, reverse=True)
                                             for e in o]).inverse()
@@ -527,13 +526,6 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             dpart[k - 1] = tuple(mapping2(mapping[x]) for x in v)
         elm = self.element_class(self, dis_elm, tuple(dpart))
         return self._cache_get(elm)
-
-    def __getitem__(self, x):
-        r"""
-        Call ``_element_constructor_`` on ``x``.
-        """
-        # TODO: This needs to be checked.
-        return self._element_constructor_(*x)
 
     def __contains__(self, x):
         r"""
@@ -779,6 +771,49 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             Return the domain of ``self``.
             """
             return FiniteEnumeratedSet(range(1, self._tc + 1))
+        
+        def inner_sum(self, *args):
+            r"""
+            Compute the inner sum of exercise 2.6.16 of BLL book.
+
+            args are the compositions (in Compositions) each of which
+            sum to the corresponding cardinality of ``self``. The number
+            of args is equal to the arity of ``self``.
+
+            EXAMPLES::
+
+                sage: P = PolynomialSpecies(1)
+                sage: C4 = P(CyclicPermutationGroup(4))
+                sage: C4.support()[0].inner_sum([2, 2]) # X^2Y^2 + C2(XY)
+                {((),): ((1,), ())}^2*{((),): ((), (1,))}^2 + {((1,2)(3,4),): ((1, 2), (3, 4))}
+            """
+            # TODO: No checks are performed right now, must be added.
+            # Checks: all args in compositions, sums must match cardinalities.
+
+            # NOTE: This method might not work correctly if self is multivariate.
+            # Or it might, I have not checked. Depends on the _canonicalize method.
+            # There are more problems actually.
+            # I think I need to do something with dompart.
+
+            if self.parent()._k != 1:
+                raise ValueError("self must be univariate")
+
+            res = 0
+            # Create group of the composition
+            Pn = PolynomialSpecies(len(args[0]))
+            comp = list(chain.from_iterable(args))
+            # Create the double coset representatives.
+            S_down = SymmetricGroup(sum(comp)).young_subgroup(comp)
+            S_up = SymmetricGroup(self._tc).young_subgroup(self._mc)
+            taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, self._group)
+            # Sum over double coset representatives.
+            for tau, _ in taus:
+                G = libgap.ConjugateGroup(self._group, tau)
+                H = libgap.Intersection(G, S_down)
+                grp = PermutationGroup(gap_group=H, domain=self.domain())
+                dpart = {i + 1: list(range(x - comp[i] + 1, x + 1)) for i, x in enumerate(accumulate(comp))}
+                res += Pn(grp, dpart)
+            return res
 
 
 class PolynomialSpecies(CombinatorialFreeModule):
@@ -1004,53 +1039,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 True
             """
             return self.is_molecular() and len(self.support()[0]) == 1
-
-        def inner_sum(self, *args):
-            r"""
-            Compute the inner sum of exercise 2.6.16 of BLL book.
-
-            args are the compositions (in Compositions) each of which
-            sum to the corresponding cardinality of ``self``. The number
-            of args is equal to the arity of ``self``.
-
-            EXAMPLES::
-
-                sage: P = PolynomialSpecies(1)
-                sage: C4 = P(CyclicPermutationGroup(4))
-                sage: C4.inner_sum([2, 2]) # X^2Y^2 + C2(XY)
-                {[()]: ((1,), ())}^2*{[()]: ((), (1,))}^2 + {[(1,2)(3,4)]: ((1, 2), (3, 4))}
-            """
-            # TODO: No checks are performed right now, must be added.
-            # Checks: all args in compositions, sums must match cardinalities.
-
-            # NOTE: This method might not work correctly if self is multivariate.
-            # Or it might, I have not checked. Depends on the _canonicalize method.
-            # There are more problems actually.
-
-            # Check for self: self is molecular and univariate.
-            if not self.is_molecular():
-                raise ValueError("self must be molecular")
-            if self.parent()._k != 1:
-                raise ValueError("self must be univariate")
-
-            res = 0
-            # Create group of the composition
-            Pn = PolynomialSpecies(len(args[0]))
-            comp = list(chain.from_iterable(args))
-            S_down = SymmetricGroup(sum(comp)).young_subgroup(comp)
-            for F, coeff in self.monomial_coefficients().items():
-                # First, create the double coset representatives.
-                term = 0
-                S_up = SymmetricGroup(F._tc).young_subgroup(F._mc)
-                taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, F._group)
-                for tau, _ in taus:
-                    G = libgap.ConjugateGroup(F._group, tau)
-                    H = libgap.Intersection(G, S_down)
-                    grp = PermutationGroup(gap_group=H, domain=F.domain())
-                    dpart = {i + 1: list(range(x - comp[i] + 1, x + 1)) for i, x in enumerate(accumulate(comp))}
-                    term += Pn(grp, dpart)
-                res += coeff * term
-            return res
 
         def substitution(self, *args):
             r"""
