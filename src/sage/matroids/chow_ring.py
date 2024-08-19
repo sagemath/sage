@@ -12,6 +12,8 @@ from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.commutative_rings import CommutativeRings
 from sage.misc.misc_c import prod
 from itertools import product
+from sage.combinat.posets.posets import Poset
+from sage.combinat.subset import Subsets
 
 class ChowRing(QuotientRing_generic):
     r"""
@@ -212,31 +214,55 @@ class ChowRing(QuotientRing_generic):
                         monomial_basis.append(term)
 
         else:
-            print(ranks)
-            rank_diff = []
-            for i in range(len(flats)):
-                max_pow = 0
-                for j in range(i):
-                    if flats[j] < flats[i]:
-                        max_pow += ranks[j]
-                rank_diff.append(ranks[i] - max_pow)
-            print(rank_diff)
-            def generate_terms(current_term, index, max_powers, f_dict):
+            def generate_combinations(current_combination, index, max_powers, x_dict):
+                # Base case: If index equals the length of max_powers, print the current combination
                 if index == len(max_powers):
-                    term = self._ideal.ring().one()
-                    term *= f_dict[i+1]**(current_term[i] for i in range(len(current_term)))
-                    yield term
+                    expression_terms = [x_dict[i+1] if current_combination[i] == 1 
+                                        else x_dict[i+1]**{current_combination[i]}
+                                        for i in range(len(current_combination)) if current_combination[i] != 0]
+                    if expression_terms:
+                        term = R.one()
+                        for t in expression_terms:
+                            term *= t
+                            monomial_basis.append(term)
+                    else:
+                        monomial_basis.append(R.one())
                     return
-                
+    
+                # Recursive case: Iterate over the range for the current index
                 for power in range(max_powers[index]):
-                    current_term[index] = power
-                    generate_terms(current_term, index + 1, max_powers, f_dict)
+                    current_combination[index] = power
+                    generate_combinations(current_combination, index + 1, max_powers, x_dict)
 
-            current_term = [0]*len(flats)
-            monomial_basis = list(generate_terms(current_term, 0, rank_diff, flats_gen))
-            print(monomial_basis)
+            def m_n(i):
+                if flats[i] == frozenset():
+                    return 0
+                else:
+                    sum1 = 0
+                    for j in range(len(flats)):
+                        if flats[j] < flats[i]:
+                            sum1 += m_n(j)
+                    
+                    return ranks[i] - sum1
             
-
+            print(ranks)
+            flats = list(self._ideal.flats_generator())
+            R = self._ideal.ring()
+            if frozenset() in flats:
+                flats.remove(frozenset())
+            reln = lambda p,q : p < q
+            P = Poset((flats, reln))
+            chains = P.chains()
+            for chain in chains:
+                max_powers = []
+                x_dict = dict()
+                for F in chain:
+                    max_powers.append(m_n(flats.index(F)))
+                    x_dict[F] = flats_gen[F]
+                k = len(chain)
+                print(max_powers, x_dict, k)
+                current_combination = [0] * k
+                generate_combinations(current_combination, 0, max_powers, x_dict)
         from sage.sets.family import Family
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
 
