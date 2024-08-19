@@ -57,11 +57,11 @@ class ElementCache():
 
             sage: A = AtomicSpecies(1)
             sage: A(SymmetricGroup(1))
-            {[()]: (1,)}
+            {[()]: ((1,),)}
             sage: A(SymmetricGroup(0))
-            {[]: (0,)}
+            {[]: ((),)}
             sage: A._cache
-            {((0,), []): [{[]: (0,)}], ((1,), [()]): [{[()]: (1,)}]}
+            {((0,), []): [{[]: ((),)}], ((1,), [()]): [{[()]: ((1,),)}]}
             sage: A.clear_cache()
             sage: A._cache
             {}
@@ -384,11 +384,11 @@ class AtomicSpeciesElement(Element):
             sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
             Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {[(1,2,3,4)(5,6)(7,8)(9,10)]: (4, 6)}
+            {[(1,2,3,4)(5,6)(7,8)(9,10)]: ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
             sage: B = At(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); B
-            {[(1,2,3,4)(5,6)(7,8)(9,10)]: (4, 6)}
+            {[(1,2,3,4)(5,6)(7,8)(9,10)]: ((1, 2, 3, 4), (5, 6, 7, 8, 9, 10))}
             sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]}); C
-            {[(1,2,3,4)(5,6)(7,8)(9,10)]: (4, 6)}
+            {[(1,2,3,4)(5,6)(7,8)(9,10)]: ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
             sage: hash(A) == hash(B)
             True
             sage: hash(A) == hash(C)
@@ -444,7 +444,7 @@ class AtomicSpeciesElement(Element):
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {[(1,2,3,4)(5,6)(7,8)(9,10)]: (4, 6)}
+            {[(1,2,3,4)(5,6)(7,8)(9,10)]: ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
         """
         return "{" + f"{self._dis}: {self._dompart}" + "}"
 
@@ -478,9 +478,9 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             sage: At1 = AtomicSpecies(1)
             sage: At2 = AtomicSpecies(2)
             sage: At1.an_element()
-            {[(1,2)]: (2,)}
+            {[(1,2)]: ((1, 2),)}
             sage: At2.an_element()
-            {[(1,2)(3,4)]: (2, 2)}
+            {[(1,2)(3,4)]: ((1, 2), (3, 4))}
         """
         G = PermutationGroup([[(2 * i - 1, 2 * i) for i in range(1, self._k + 1)]])
         m = {i: [2 * i - 1, 2 * i] for i in range(1, self._k + 1)}
