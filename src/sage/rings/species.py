@@ -273,7 +273,6 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             [(1,2,3)]
             [(1,2,3), (2,3)]
         """
-        # Is SymmetricGroup(0) directly indecomposable?
         n = 0
         while True:
             for G in SymmetricGroup(n).conjugacy_classes_subgroups():
@@ -447,7 +446,7 @@ class AtomicSpeciesElement(Element):
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
             {[(1,2,3,4)(5,6)(7,8)(9,10)]: (4, 6)}
         """
-        return "{" + f"{self._dis}: {self._mc}" + "}"
+        return "{" + f"{self._dis}: {self._dompart}" + "}"
 
 class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
     def __init__(self, k):
@@ -618,7 +617,11 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         """
         if x not in self._indices:
             raise IndexError(f"{x} is not in the index set")
-        at = self._indices(x[0], x[1])
+        at = None
+        if isinstance(x, PermutationGroup_generic):
+            at = self._indices(x)
+        else:
+            at = self._indices(x[0], x[1])
         elm = self._cache_get(self.element_class(self, {at: ZZ.one()}))
         if elm._group is None:
             elm._group = at._dis._C
@@ -865,30 +868,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             term *= self._indices.gen(self._project(G, pi, part))
         return self._from_dict({term: ZZ.one()})
 
-    def __getitem__(self, x):
-        r"""
-        Calls _element_constructor_ on x.
-
-        TESTS::
-
-            sage: P = PolynomialSpecies(1)
-            sage: At1 = AtomicSpecies(1)
-            sage: At1(SymmetricGroup(1)).rename("X")
-            sage: X2 = SymmetricGroup(2).young_subgroup([1, 1])
-            sage: P[X2]
-            X^2
-            sage: P2 = PolynomialSpecies(2)
-            sage: At2 = AtomicSpecies(2)
-            sage: At2(SymmetricGroup(1), {1: [1]}).rename("X")
-            sage: At2(SymmetricGroup(1), {2: [1]}).rename("Y")
-            sage: XY = (SymmetricGroup(2).young_subgroup([1, 1]), {1: [1], 2: [2]})
-            sage: P2[XY]
-            X*Y
-        """
-        if isinstance(x, PermutationGroup_generic):
-            return self._element_constructor_(x)
-        return self._element_constructor_(*x)
-
     @cached_method
     def one_basis(self):
         r"""
@@ -1025,3 +1004,70 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 True
             """
             return self.is_molecular() and len(self.support()[0]) == 1
+
+        def inner_sum(self, *args):
+            r"""
+            Compute the inner sum of exercise 2.6.16 of BLL book.
+
+            args are the compositions (in Compositions) each of which
+            sum to the corresponding cardinality of ``self``. The number
+            of args is equal to the arity of ``self``.
+
+            EXAMPLES::
+
+                sage: P = PolynomialSpecies(1)
+                sage: C4 = P(CyclicPermutationGroup(4))
+                sage: C4.inner_sum([2, 2]) # X^2Y^2 + C2(XY)
+                {[()]: ((1,), ())}^2*{[()]: ((), (1,))}^2 + {[(1,2)(3,4)]: ((1, 2), (3, 4))}
+            """
+            # TODO: No checks are performed right now, must be added.
+            # Checks: all args in compositions, sums must match cardinalities.
+
+            # NOTE: This method might not work correctly if self is multivariate.
+            # Or it might, I have not checked. Depends on the _canonicalize method.
+            # There are more problems actually.
+
+            # Check for self: self is molecular and univariate.
+            if not self.is_molecular():
+                raise ValueError("self must be molecular")
+            if self.parent()._k != 1:
+                raise ValueError("self must be univariate")
+
+            res = 0
+            # Create group of the composition
+            Pn = PolynomialSpecies(len(args[0]))
+            comp = list(chain.from_iterable(args))
+            S_down = SymmetricGroup(sum(comp)).young_subgroup(comp)
+            for F, coeff in self.monomial_coefficients().items():
+                # First, create the double coset representatives.
+                term = 0
+                S_up = SymmetricGroup(F._tc).young_subgroup(F._mc)
+                taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, F._group)
+                for tau, _ in taus:
+                    G = libgap.ConjugateGroup(F._group, tau)
+                    H = libgap.Intersection(G, S_down)
+                    grp = PermutationGroup(gap_group=H, domain=F.domain())
+                    dpart = {i + 1: list(range(x - comp[i] + 1, x + 1)) for i, x in enumerate(accumulate(comp))}
+                    term += Pn(grp, dpart)
+                res += coeff * term
+            return res
+
+        def substitution(self, *args):
+            r"""
+            Substitute M_1...M_k into self.
+            M_i must all have same arity and must be molecular.
+            """
+            if len(args) != self.parent()._k:
+                raise ValueError("len args != k")
+            if not all(isinstance(arg, PolynomialSpecies.Element) for arg in args):
+                raise ValueError("all args not polynomial species element")
+            if not all(arg.is_molecular() and not arg.is_virtual() for arg in args):
+                raise ValueError("all args must be non-virtual molecular species")
+            if len(set(arg.parent()._k for arg in args)) > 1:
+                raise ValueError("all args must have same arity")
+
+            res = 0
+            for F, coeff in self.monomial_coefficients():
+                term = 0
+
+                res = coeff * term
