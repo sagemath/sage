@@ -90,6 +90,7 @@ class ElementCache():
             self._cache[key] = [elm]
         return elm
 
+
 class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
     def __init__(self, parent, C):
         r"""
@@ -448,11 +449,50 @@ class AtomicSpeciesElement(Element):
         """
         return "{" + f"{self._dis}: {self._dompart}" + "}"
 
+
 class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
-    def __init__(self, k):
+    @staticmethod
+    def __classcall__(cls, k, singleton_names=None):
+        """
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: A1 = AtomicSpecies(1, "X")
+            sage: A2 = AtomicSpecies(1)
+            sage: A3 = AtomicSpecies(["X", "Y"])
+            sage: A4 = AtomicSpecies(2, ["X", "Y"])
+            sage: A1 is A2
+            False
+            sage: A3 is A4
+            True
+        """
+        if singleton_names is None:
+            if k in ZZ:
+                k = ZZ(k)
+            else:
+                singleton_names = tuple(k)
+                k = len(singleton_names)
+        else:
+            k = ZZ(k)
+            singleton_names = tuple(singleton_names)
+
+        if (singleton_names is not None
+            and (len(singleton_names) != k
+                 or not all(isinstance(X, str) for X in singleton_names))):
+            raise ValueError(f"singleton_names must be a tuple of {k} strings")
+
+        return super().__classcall__(cls, k, singleton_names)
+
+    def __init__(self, k, singleton_names):
         r"""
         Infinite set of `k`-variate atomic species graded by
         integer vectors of length `k`.
+
+        INPUT:
+
+        - ``k`` -- a non-negative integer, or an iterable of ``k`` strings
+        - ``singleton_names`` -- an iterable of ``k`` strings or ``None``
 
         TESTS::
 
@@ -466,6 +506,8 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         ElementCache.__init__(self)
         self._k = k
         self._grading_set = IntegerVectors(length=k)
+        self._singleton_names = singleton_names
+        self._renamed = set()  # the degrees that have been renamed already
 
     @cached_method
     def an_element(self):
@@ -524,8 +566,50 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         dpart = [tuple() for _ in range(self._k)]
         for k, v in pi.items():
             dpart[k - 1] = tuple(mapping2(mapping[x]) for x in v)
-        elm = self.element_class(self, dis_elm, tuple(dpart))
-        return self._cache_get(elm)
+        elm = self._cache_get(self.element_class(self, dis_elm, tuple(dpart)))
+        if self._singleton_names and elm._tc not in self._renamed:
+            self._rename(elm._tc)
+        return elm
+
+    def _rename(self, n):
+        from sage.groups.perm_gps.permgroup import PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import (SymmetricGroup,
+                                                            CyclicPermutationGroup,
+                                                            DihedralGroup,
+                                                            AlternatingGroup)
+
+        # prevent infinite recursion in self._element_constructor_
+        self._renamed.add(n)
+        for i in range(self._k):
+            if n == 1:
+                self(SymmetricGroup(1), {i+1: [1]}).rename(self._singleton_names[i])
+
+            if self._k == 1:
+                sort = ""
+            else:
+                sort = f"({self._singleton_names[i]})"
+
+            if n >= 2:
+                self(SymmetricGroup(n),
+                    {i+1: range(1, n+1)}).rename(f"E_{n}" + sort)
+
+            if n >= 3:
+                self(CyclicPermutationGroup(n),
+                    {i+1: range(1, n+1)}).rename(f"C_{n}" + sort)
+
+            if n >= 4:
+                self(DihedralGroup(n),
+                    {i+1: range(1, n+1)}).rename(f"P_{n}" + sort)
+
+            if n >= 4:
+                self(AlternatingGroup(n),
+                    {i+1: range(1, n+1)}).rename(f"Eo_{n}" + sort)
+
+            if n >= 4 and not n % 2:
+                gens = [[(i, n-i+1) for i in range(1, n//2 + 1)],
+                        [(i, i+1) for i in range(1, n, 2)]]
+                self(PermutationGroup(gens),
+                    {i+1: range(1, n+1)}).rename(f"Pb_{n}" + sort)
 
     def __contains__(self, x):
         r"""
@@ -568,6 +652,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         return f"Infinite set of {self._k}-variate atomic species"
 
     Element = AtomicSpeciesElement
+
 
 class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
     @staticmethod
@@ -815,9 +900,48 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 res += Pn(grp, dpart)
             return res
 
+        def substitution(self, *args):
+            r"""
+            Substitute M_1...M_k into self.
+            M_i must all have same arity and must be molecular.
+            """
+            if len(args) != self.parent()._k:
+                raise ValueError("number of args must match arity of self")
+            if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
+                raise ValueError("all args not molecular species")
+            if len(set(arg.parent()._k for arg in args)) > 1:
+                raise ValueError("all args must have same arity")
+
 
 class PolynomialSpecies(CombinatorialFreeModule):
-    def __init__(self, k, base_ring=ZZ):
+    def __classcall__(cls, k, singleton_names=None, base_ring=ZZ):
+        r"""
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: P1 = PolynomialSpecies(1, "X", ZZ)
+            sage: P2 = PolynomialSpecies(1, base_ring=ZZ)
+            sage: P3 = PolynomialSpecies(["X", "Y"], base_ring=ZZ)
+            sage: P4 = PolynomialSpecies(2, ["X", "Y"])
+            sage: P1 is P2
+            False
+            sage: P3 is P4
+            True
+
+        .. TODO::
+
+            Reconsider the order of the arguments.
+            ``singleton_names`` are not generators, and may even be
+            omitted, and ``base_ring`` will usually be ``ZZ``, but
+            maybe it would be nice to allow ``P.<X,Y,Z> =
+            PolynomialSpecies(ZZ)`` anyway.
+
+        """
+        A = AtomicSpecies(k, singleton_names=singleton_names)
+        return super().__classcall__(cls, A._k, A._singleton_names, base_ring)
+
+    def __init__(self, k, singleton_names, base_ring):
         r"""
         Ring of `k`-variate polynomial (virtual) species.
 
@@ -829,8 +953,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: TestSuite(P2).run()
         """
         # should we pass a category to basis_keys?
-        basis_keys = MolecularSpecies(AtomicSpecies(k),
-                                              prefix='', bracket=False)
+        A = AtomicSpecies(k, singleton_names=singleton_names)
+        basis_keys = MolecularSpecies(A, prefix='', bracket=False)
         category = GradedAlgebrasWithBasis(base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, base_ring,
                                         basis_keys=basis_keys,
@@ -940,13 +1064,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = AtomicSpecies(1)
-            sage: A(SymmetricGroup(1)).rename("X")
-            sage: [A(SymmetricGroup(n)).rename(f"E_{n}") for n in range(2, 5)]
-            [None, None, None]
-            sage: [A(CyclicPermutationGroup(n)).rename(f"C_{n}") for n in range(3, 5)]
-            [None, None]
-            sage: P = PolynomialSpecies(1)
+            sage: P = PolynomialSpecies("X")
             sage: L1 = [P(H) for H in SymmetricGroup(3).conjugacy_classes_subgroups()]
             sage: L2 = [P(H) for H in SymmetricGroup(2).conjugacy_classes_subgroups()]
             sage: matrix([[F * G for F in L1] for G in L2])
@@ -977,12 +1095,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             TESTS::
 
-                sage: P = PolynomialSpecies(2)
-                sage: At = AtomicSpecies(2)
+                sage: P = PolynomialSpecies(["X", "Y"])
                 sage: X = P(SymmetricGroup(1), {1: [1]})
                 sage: Y = P(SymmetricGroup(1), {2: [1]})
-                sage: At(SymmetricGroup(1), {1: [1]}).rename("X")
-                sage: At(SymmetricGroup(1), {2: [1]}).rename("Y")
                 sage: V = 2 * X - 3 * Y; V
                 2*X - 3*Y
                 sage: V.is_virtual()
@@ -998,12 +1113,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             TESTS::
 
-                sage: P = PolynomialSpecies(2)
-                sage: At = AtomicSpecies(2)
+                sage: P = PolynomialSpecies(["X", "Y"])
                 sage: X = P(SymmetricGroup(1), {1: [1]})
                 sage: Y = P(SymmetricGroup(1), {2: [1]})
-                sage: At(SymmetricGroup(1), {1: [1]}).rename("X")
-                sage: At(SymmetricGroup(1), {2: [1]}).rename("Y")
                 sage: V = 2 * X - 3 * Y; V
                 2*X - 3*Y
                 sage: V.is_molecular()
@@ -1021,12 +1133,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             TESTS::
 
-                sage: P = PolynomialSpecies(2)
-                sage: At = AtomicSpecies(2)
+                sage: P = PolynomialSpecies(["X", "Y"])
                 sage: X = P(SymmetricGroup(1), {1: [1]})
                 sage: Y = P(SymmetricGroup(1), {2: [1]})
-                sage: At(SymmetricGroup(1), {1: [1]}).rename("X")
-                sage: At(SymmetricGroup(1), {2: [1]}).rename("Y")
                 sage: V = 2 * X - 3 * Y; V
                 2*X - 3*Y
                 sage: V.is_atomic()
@@ -1039,23 +1148,3 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 True
             """
             return self.is_molecular() and len(self.support()[0]) == 1
-
-        def substitution(self, *args):
-            r"""
-            Substitute M_1...M_k into self.
-            M_i must all have same arity and must be molecular.
-            """
-            if len(args) != self.parent()._k:
-                raise ValueError("len args != k")
-            if not all(isinstance(arg, PolynomialSpecies.Element) for arg in args):
-                raise ValueError("all args not polynomial species element")
-            if not all(arg.is_molecular() and not arg.is_virtual() for arg in args):
-                raise ValueError("all args must be non-virtual molecular species")
-            if len(set(arg.parent()._k for arg in args)) > 1:
-                raise ValueError("all args must have same arity")
-
-            res = 0
-            for F, coeff in self.monomial_coefficients():
-                term = 0
-
-                res = coeff * term
