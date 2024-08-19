@@ -27,7 +27,6 @@ class LibSingularGBDefaultContext:
             sage: with LibSingularGBDefaultContext(): rgb = groebner(I)
             sage: rgb
             [84*c^4 - 40*c^3 + c^2 + c, 7*b + 210*c^3 - 79*c^2 + 3*c, 7*a - 420*c^3 + 158*c^2 + 8*c - 7]
-
         """
         from sage.libs.singular.option import opt_ctx
         self.libsingular_option_context = opt_ctx
@@ -60,7 +59,6 @@ class LibSingularGBDefaultContext:
              5913075*c + 371438283744*d^7 - 237550027104*d^6 + 22645939824*d^5 + 11520686172*d^4 - 2024910556*d^3 - 132524276*d^2 + 30947828*d,
              1971025*b - 97197721632*d^7 + 73975630752*d^6 - 12121915032*d^5 - 2760941496*d^4 + 814792828*d^3 - 1678512*d^2 - 9158924*d,
              5913075*a - 159690237696*d^7 + 31246269696*d^6 + 27439610544*d^5 - 6475723368*d^4 - 838935856*d^3 + 275119624*d^2 + 4884038*d - 5913075]
-
         """
         self.libsingular_option_context.__enter__()
         self.libsingular_option_context.opt.reset_default()
@@ -111,7 +109,7 @@ def libsingular_gb_standard_options(func):
         sage: "basis.reduced" in sage_getsource(J.interreduced_basis)
         True
 
-    The following tests against a bug that was fixed in :trac:`11298`::
+    The following tests against a bug that was fixed in :issue:`11298`::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines, sage_getargspec
         sage: P.<x,y> = QQ[]
@@ -127,7 +125,7 @@ def libsingular_gb_standard_options(func):
           ...
           '        return self.basis.reduced()\n'], ...)
 
-    .. note::
+    .. NOTE::
 
        This decorator is used automatically internally so the user
        does not need to use it manually.

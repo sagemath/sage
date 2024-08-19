@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of graph generator programs ``benzene``, ``buckygen``, ``plantri``
 """
@@ -39,9 +40,9 @@ class Plantri(Executable):
             sage: isinstance(Plantri(), Plantri)
             True
         """
-        Executable.__init__(self, name="plantri", spkg="plantri",
-                            executable="plantri",
-                            url="http://users.cecs.anu.edu.au/~bdm/plantri/")
+        Executable.__init__(self, name='plantri', spkg='plantri',
+                            executable='plantri',
+                            url='http://users.cecs.anu.edu.au/~bdm/plantri/')
 
     def is_functional(self):
         r"""
@@ -86,9 +87,9 @@ class Buckygen(Executable):
             sage: isinstance(Buckygen(), Buckygen)
             True
         """
-        Executable.__init__(self, name="buckygen", spkg="buckygen",
-                            executable="buckygen",
-                            url="http://caagt.ugent.be/buckygen/")
+        Executable.__init__(self, name='buckygen', spkg='buckygen',
+                            executable='buckygen',
+                            url='http://caagt.ugent.be/buckygen/')
 
     def is_functional(self):
         r"""
@@ -134,9 +135,9 @@ class Benzene(Executable):
             sage: isinstance(Benzene(), Benzene)
             True
         """
-        Executable.__init__(self, name="benzene", spkg="benzene",
-                            executable="benzene",
-                            url="http://www.grinvin.org/")
+        Executable.__init__(self, name='benzene', spkg='benzene',
+                            executable='benzene',
+                            url='http://www.grinvin.org/')
 
     def is_functional(self):
         r"""

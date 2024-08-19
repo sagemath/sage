@@ -41,7 +41,7 @@ from sage.algebras.quantum_groups.q_numbers import q_factorial
 
 class FockSpaceOptions(GlobalOptions):
     r"""
-    Sets and displays the global options for elements of the Fock
+    Set and display the global options for elements of the Fock
     space classes.  If no parameters are set, then the function
     returns a copy of the options dictionary.
 
@@ -444,7 +444,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default ``True``) if ``True``, prints
+        - ``verbose`` -- boolean (default: ``True``); if ``True``, prints
           the defined shorthands
 
         EXAMPLES::
@@ -759,7 +759,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
                 INPUT:
 
-                - ``*data`` -- a list of indices or pairs `(i, p)`
+                - ``*data`` -- list of indices or pairs `(i, p)`
 
                 EXAMPLES::
 
@@ -855,7 +855,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
                 INPUT:
 
-                - ``*data`` -- a list of indices or pairs `(i, p)`
+                - ``*data`` -- list of indices or pairs `(i, p)`
 
                 EXAMPLES::
 
@@ -1607,6 +1607,7 @@ class FockSpaceBases(Category_realization_of_parent):
 ###############################################################################
 ## Truncated Fock space
 
+
 class FockSpaceTruncated(FockSpace):
     r"""
     This is the Fock space given by partitions of length no more than `k`.
@@ -1818,7 +1819,7 @@ class FockSpaceTruncated(FockSpace):
 
         INPUT:
 
-        - ``algorithm`` -- (default ``'GW'``) the algorithm to use when
+        - ``algorithm`` -- (default: ``'GW'``) the algorithm to use when
           computing this basis in the Fock space; the possible values are:
 
           * ``'GW'`` -- use the algorithm given by Goodman and Wenzl
@@ -2019,7 +2020,7 @@ class FockSpaceTruncated(FockSpace):
 
             # For non-interior partitions
             # Construct the d's and the partition ``a``
-            a = list(la) + [0]*(k - 1 - len(la)) # Add 0's to get the correct length
+            a = list(la) + [0]*(k - 1 - len(la)) # Add 0s to get the correct length
             a = [a[i] + (k - 1 - i) for i in range(k-1)] # Shift the diagram
             #shifted = list(a) # Make a copy of the shifted partition in case we need it later
             d = [(a[i] - a[i+1]) % n for i in range(k-2)]

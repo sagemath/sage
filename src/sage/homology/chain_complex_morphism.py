@@ -78,8 +78,16 @@ def is_ChainComplexMorphism(x):
           From: Chain complex with at most 7 nonzero terms over Integer Ring
           To: Chain complex with at most 7 nonzero terms over Integer Ring
         sage: is_ChainComplexMorphism(x)
+        doctest:warning...
+        DeprecationWarning: The function is_ChainComplexMorphism is deprecated;
+        use 'isinstance(..., ChainComplexMorphism)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_ChainComplexMorphism is deprecated; "
+                "use 'isinstance(..., ChainComplexMorphism)' instead.")
     return isinstance(x, ChainComplexMorphism)
 
 
@@ -116,7 +124,7 @@ class ChainComplexMorphism(Morphism):
                 [0 0 0]
                 [0 0 0]}
 
-        Check that the bug in :trac:`13220` has been fixed::
+        Check that the bug in :issue:`13220` has been fixed::
 
             sage: # needs sage.graphs
             sage: X = simplicial_complexes.Simplex(1)
@@ -238,7 +246,7 @@ class ChainComplexMorphism(Morphism):
 
         INPUT:
 
-        - ``deg`` -- (optional, default ``None``) the degree
+        - ``deg`` -- (default: ``None``) the degree
 
         EXAMPLES::
 
@@ -323,7 +331,6 @@ class ChainComplexMorphism(Morphism):
                 [ 0 -1  0  0]
                 [ 0  0 -1  0]
                 [ 0  0  0 -1]}
-
         """
         f = dict()
         for i in self._matrix_dictionary.keys():
@@ -413,7 +420,7 @@ class ChainComplexMorphism(Morphism):
         TESTS:
 
         Make sure that the product is taken in the correct order
-        (``self * x``, not ``x * self`` -- see :trac:`19065`)::
+        (``self * x``, not ``x * self`` -- see :issue:`19065`)::
 
             sage: C = ChainComplex({0: zero_matrix(ZZ, 0, 2)})
             sage: D = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
@@ -422,8 +429,8 @@ class ChainComplexMorphism(Morphism):
             sage: (f*g).in_degree(0)
             [2]
 
-        Before :trac:`19065`, the following multiplication produced a
-        :class:`KeyError` because `f` was not explicitly defined in degree 2::
+        Before :issue:`19065`, the following multiplication produced a
+        :exc:`KeyError` because `f` was not explicitly defined in degree 2::
 
             sage: C0 = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
             sage: C1 = ChainComplex({1: zero_matrix(ZZ, 0, 1)})

@@ -5,7 +5,6 @@ Base class of number fields
 AUTHORS:
 
 - William Stein (2007-09-04): initial version
-
 """
 
 
@@ -257,9 +256,7 @@ cdef class NumberField(Field):
 
             :meth:`~bach_bound`
 
-        OUTPUT:
-
-        symbolic expression or Rational
+        OUTPUT: symbolic expression or Rational
 
         EXAMPLES:
 
@@ -337,9 +334,7 @@ cdef class NumberField(Field):
 
             :meth:`~minkowski_bound`
 
-        OUTPUT:
-
-        symbolic expression or the Integer 1
+        OUTPUT: symbolic expression or the Integer 1
 
         EXAMPLES:
 
@@ -413,13 +408,11 @@ cdef class NumberField(Field):
             self._gen_approx = []
             self._embedded_real = 1
 
-    cpdef _get_embedding_approx(self, size_t i) noexcept:
+    cpdef _get_embedding_approx(self, size_t i):
         r"""
         Return an interval approximation of the generator of this number field.
 
-        OUTPUT:
-
-        A real interval element with precision `53 \times 2^i`.
+        OUTPUT: a real interval element with precision `53 \times 2^i`
 
         EXAMPLES::
 

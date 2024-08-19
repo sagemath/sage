@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Brent Yorgey's fast algorithm for integer vector (multiset) partitions.
 
@@ -30,7 +29,7 @@ AUTHORS:
 #
 # To understand the code below, consult the ALGORITHM.
 
-cdef list vector_halve(list v) noexcept:
+cdef list vector_halve(list v):
     r"""
     Return the vector halfway (lexicographically) between ``v`` and zero.
 
@@ -38,7 +37,7 @@ cdef list vector_halve(list v) noexcept:
 
     INPUT:
 
-    - ``v`` -- list of non-negative integers, understood as a vector
+    - ``v`` -- list of nonnegative integers, understood as a vector
 
     OUTPUT:
 
@@ -83,11 +82,11 @@ def recursive_within_from_to(list m, list s, list e, bint useS, bint useE):
 
     INPUT:
 
-    - ``m`` -- list of non-negative integers, understood as a vector
-    - ``s`` -- list of non-negative integers, understood as a vector
-    - ``e`` -- list of non-negative integers, understood as a vector
-    - ``useS``  -- boolean
-    - ``useE``  -- boolean
+    - ``m`` -- list of nonnegative integers, understood as a vector
+    - ``s`` -- list of nonnegative integers, understood as a vector
+    - ``e`` -- list of nonnegative integers, understood as a vector
+    - ``useS`` -- boolean
+    - ``useE`` -- boolean
 
     EXAMPLES::
 
@@ -149,9 +148,9 @@ def within_from_to(list m, list s, list e):
 
     INPUT:
 
-    - ``m`` -- list of non-negative integers, understood as a vector
-    - ``s`` -- list of non-negative integers, understood as a vector
-    - ``e`` -- list of non-negative integers, understood as a vector
+    - ``m`` -- list of nonnegative integers, understood as a vector
+    - ``s`` -- list of nonnegative integers, understood as a vector
+    - ``e`` -- list of nonnegative integers, understood as a vector
 
     EXAMPLES::
 
@@ -231,7 +230,7 @@ def within_from_to(list m, list s, list e):
     yield from recursive_within_from_to(m, ss, e, True, True)
 
 
-cdef inline list vector_sub(list a, list b) noexcept:
+cdef inline list vector_sub(list a, list b):
     """
     Return ``a - b`` considered as vectors.
 
@@ -254,8 +253,8 @@ def recursive_vector_partitions(list v, list vL):
 
     INPUT:
 
-    - ``v`` -- list of non-negative integers, understood as a vector
-    - ``vL`` -- list of non-negative integers, understood as a vector
+    - ``v`` -- list of nonnegative integers, understood as a vector
+    - ``vL`` -- list of nonnegative integers, understood as a vector
 
     EXAMPLES::
 
@@ -285,15 +284,13 @@ def fast_vector_partitions(v, min_vals=None):
 
     INPUT:
 
-    - ``v`` -- list of non-negative integers, understood as the vector
+    - ``v`` -- list of nonnegative integers, understood as the vector
       to be partitioned
 
-    - ``min_vals`` -- optional list of non-negative integers, of same
+    - ``min_vals`` -- (optional) list of nonnegative integers, of same
       length as ``v``
 
-    OUTPUT:
-
-    A list of lists, each representing a vector partition of ``v``.
+    OUTPUT: list of lists, each representing a vector partition of ``v``
 
     If ``min_vals`` is given, only partitions with parts ``p >= min_vals`` in
     the lexicographic ordering will appear.

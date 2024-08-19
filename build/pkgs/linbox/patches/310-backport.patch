@@ -1,0 +1,69 @@
+From b8f2d4ccdc0af4418d14f72caf6c4d01969092a3 Mon Sep 17 00:00:00 2001
+From: Jean-Guillaume Dumas <Jean-Guillaume.Dumas@imag.fr>
+Date: Fri, 26 Jan 2024 16:31:56 +0100
+Subject: [PATCH] const_cast missing faster empty init
+
+---
+ linbox/algorithms/gauss/gauss-nullspace.inl   |  10 +-
+ .../matrix/sparsematrix/sparse-ell-matrix.h   |   8 +-
+ .../matrix/sparsematrix/sparse-ellr-matrix.h  |  18 +--
+ linbox/ring/ntl/ntl-lzz_p.h                   |  11 +-
+ linbox/ring/ntl/ntl-lzz_pe.h                  | 143 +++++++++---------
+ linbox/ring/ntl/ntl-zz_px.h                   |   6 +
+ 6 files changed, 104 insertions(+), 92 deletions(-)
+
+diff --git a/linbox/matrix/sparsematrix/sparse-ell-matrix.h b/linbox/matrix/sparsematrix/sparse-ell-matrix.h
+index 59006d6c5f..2604f47b81 100644
+--- a/linbox/matrix/sparsematrix/sparse-ell-matrix.h
++++ b/linbox/matrix/sparsematrix/sparse-ell-matrix.h
+@@ -1210,10 +1210,10 @@ namespace LinBox
+ 				_colid_beg = iter._colid_beg ;
+ 				_colid_it  = iter._colid_it ;
+ 				_data_it   = iter._data_it  ;
+-				_data_beg  = iter._data_beg ;
+-				_data_end  = iter._data_end  ;
+-				_field     = iter._field ;
+-				_ld        = iter._ld ;
++				const_cast<data_it>(_data_beg)  = iter._data_beg ;
++				const_cast<data_it>(_data_end)  = iter._data_end  ;
++				const_cast<Field &>(_field)     = iter._field ;
++				const_cast<size_t&>(_ld)         = iter._ld ;
+ 				_row       = iter._row ;
+ 
+ 				return *this;
+diff --git a/linbox/matrix/sparsematrix/sparse-ellr-matrix.h b/linbox/matrix/sparsematrix/sparse-ellr-matrix.h
+index 498a5525db..a60943868b 100644
+--- a/linbox/matrix/sparsematrix/sparse-ellr-matrix.h
++++ b/linbox/matrix/sparsematrix/sparse-ellr-matrix.h
+@@ -1102,11 +1102,11 @@ namespace LinBox
+ 			_Iterator &operator = (const _Iterator &iter)
+ 			{
+ 				_data_it  = iter._data_it  ;
+-				_data_beg  = iter._data_beg  ;
+-				_data_end  = iter._data_end  ;
+-				_field  = iter._field  ;
+-				_rowid = iter._rowid;
+-				_ld = iter._ld ;
++				const_cast<element_iterator>(_data_beg) = iter._data_beg  ;
++				const_cast<element_iterator>(_data_end)= iter._data_end  ;
++				const_cast<Field &>(_field) = iter._field  ;
++				const_cast<std::vector<size_t>&>(_rowid) = iter._rowid;
++				const_cast<size_t&>(_ld) = iter._ld ;
+ 				_row = iter._row ;
+ 
+ 				return *this;
+@@ -1252,10 +1252,10 @@ namespace LinBox
+ 				_colid_beg = iter._colid_beg ;
+ 				_colid_it  = iter._colid_it ;
+ 				_data_it   = iter._data_it  ;
+-				_data_beg  = iter._data_beg ;
+-				_data_end  = iter._data_end  ;
+-				_field     = iter._field ;
+-				_ld        = iter._ld ;
++				const_cast<data_it>(_data_beg) = iter._data_beg ;
++				const_cast<data_it>(_data_end) = iter._data_end  ;
++				const_cast<Field &>(_field)    = iter._field ;
++				const_cast<size_t&>(_ld)= iter._ld ;
+ 				_row       = iter._row ;
+ 
+ 				return *this;

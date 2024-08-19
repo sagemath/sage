@@ -40,8 +40,9 @@ cdef class SparseGraph(CGraph):
     cpdef int out_degree(self, int u) noexcept
     cpdef int in_degree(self, int u) noexcept
 
-    cdef int out_neighbors_BTNode_unsafe(self, int u, SparseGraphBTNode *** p_pointers) noexcept
-    cdef int in_neighbors_BTNode_unsafe(self, int u, SparseGraphBTNode *** p_pointers) noexcept
+    cdef inline int _neighbors_unsafe (self, int u, bint out, int *neighbors, int size) except -2
+
+    cdef inline int _neighbors_BTNode_unsafe (self, int u, bint out, SparseGraphBTNode **res, int size) except -2
 
     cdef inline SparseGraphBTNode* next_out_neighbor_BTNode_unsafe(self, int u, int v) noexcept:
         """
@@ -50,6 +51,13 @@ cdef class SparseGraph(CGraph):
         If ``v`` is ``-1`` return the first neighbor of ``u``.
 
         Return ``NULL`` in case there does not exist such an out-neighbor.
+
+        .. WARNING::
+
+            Repeated calls to this function until NULL is returned DOES NOT
+            yield a linear time algorithm in the number of neighbors of u.
+            To list the neighbors of a vertex in linear time, one should use
+            _neighbors_BTNode_unsafe.
         """
         return self.next_neighbor_BTNode_unsafe(self.vertices, u, v)
 
@@ -60,6 +68,13 @@ cdef class SparseGraph(CGraph):
         If ``u`` is ``-1`` return the first neighbor of ``v``.
 
         Return ``NULL`` in case there does not exist such an in-neighbor.
+
+        .. WARNING::
+
+            Repeated calls to this function until NULL is returned DOES NOT
+            yield a linear time algorithm in the number of neighbors of u.
+            To list the neighbors of a vertex in linear time, one should use
+            _neighbors_BTNode_unsafe.
         """
         return self.next_neighbor_BTNode_unsafe(self.vertices_rev, v, u)
 
@@ -70,5 +85,5 @@ cdef class SparseGraphBackend(CGraphBackend):
     cdef int edge_labels_max
     cdef list edge_labels_available_ids
     cdef SparseGraph _cg
-    cdef inline CGraph cg(self) noexcept:
+    cdef inline CGraph cg(self):
         return <CGraph> self._cg

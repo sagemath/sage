@@ -1,5 +1,5 @@
 r"""
-Field of Arbitrary Precision Complex Intervals
+Arbitrary precision complex intervals (parent class)
 
 AUTHORS:
 
@@ -12,7 +12,7 @@ heavily modified:
 
 - Carl Witty (2007-10-24): rewrite for intervals
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()``
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()``
   should pass on ``*args`` and ``**kwds``.
 
 - Travis Scrimshaw (2012-10-18): Added documentation to get full coverage.
@@ -148,11 +148,11 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         sage: CIF.category()
         Category of infinite fields
-        sage: TestSuite(CIF).run(skip="_test_gcd_vs_xgcd")
+        sage: TestSuite(CIF).run(skip='_test_gcd_vs_xgcd')
 
     TESTS:
 
-    This checks that :trac:`15355` is fixed::
+    This checks that :issue:`15355` is fixed::
 
         sage: x + CIF(RIF(-2,2), 0)
         x + 0.?e1
@@ -171,6 +171,12 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         sage: CIF.is_finite()
         False
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_mpfi`
+        - :class:`sage.rings.complex_arb.ComplexBallField` (alternative
+          implementation of complex intervals, with more features)
     """
     Element = complex_interval.ComplexIntervalFieldElement
 
@@ -189,7 +195,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         from sage.categories.fields import Fields
         Field.__init__(self, self.real_field(), ("I",), False,
                 category=Fields().Infinite())
-        self._populate_coercion_lists_(convert_method_name="_complex_mpfi_")
+        self._populate_coercion_lists_(convert_method_name='_complex_mpfi_')
 
     def __reduce__(self):
         """
@@ -204,7 +210,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     def construction(self):
         """
-        Returns the functorial construction of this complex interval field,
+        Return the functorial construction of this complex interval field,
         namely as the algebraic closure of the real interval field with
         the same precision.
 
@@ -218,7 +224,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         TESTS:
 
-        Test that :trac:`19922` is fixed::
+        Test that :issue:`19922` is fixed::
 
             sage: c = ComplexIntervalField(128).an_element()
             sage: r = RealIntervalField(64).an_element()
@@ -248,7 +254,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     def prec(self):
         """
-        Returns the precision of ``self`` (in bits).
+        Return the precision of ``self`` (in bits).
 
         EXAMPLES::
 
@@ -261,7 +267,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     def to_prec(self, prec):
         """
-        Returns a complex interval field with the given precision.
+        Return a complex interval field with the given precision.
 
         EXAMPLES::
 
@@ -619,7 +625,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     def pi(self):
         r"""
-        Returns `\pi` as an element in the complex (interval) field.
+        Return `\pi` as an element in the complex (interval) field.
 
         EXAMPLES::
 
@@ -653,11 +659,9 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         INPUT:
 
-        - ``n`` -- an integer (default: 2)
+        - ``n`` -- integer (default: 2)
 
-        OUTPUT:
-
-        A complex `n`-th root of unity.
+        OUTPUT: a complex `n`-th root of unity
 
         EXAMPLES::
 

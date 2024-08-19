@@ -15,11 +15,11 @@ environment.
 
 All code is peer-reviewed, all functions must be documented and
 unit-tested on a variety of platforms and systems. Python is used as a
-base language, Git is used as the source code revision system, and
-Trac is used to track all support/development issues. All of these
-tools are very capable and used in many other small and large-scale
-projects.  From a software engineering standpoint, SageMath is a
-wonderful project to be engaged in.
+base language, and development takes place on GitHub, with Git as the
+source code revision system. All of these tools are very capable and
+used in many other small and large-scale projects. From a software
+engineering standpoint, SageMath is a wonderful project to be engaged
+in.
 
 The mailing lists are extremely supportive and responsive. There are
 several hundred people that have contributed code directly to SageMath

@@ -22,9 +22,6 @@ from sage.features.cddlib import CddExecutable
 from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
 
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.geometry.polyhedron.backend_cdd_rdf', 'Polyhedron_RDF_cdd', deprecation=32592)
-
 
 class Polyhedron_cdd(Polyhedron_base):
     r"""
@@ -37,8 +34,8 @@ class Polyhedron_cdd(Polyhedron_base):
         INPUT:
 
         - ``vertices`` -- list of point. Each point can be specified
-           as any iterable container of
-           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
+          as any iterable container of
+          :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
         - ``rays`` -- list of rays. Each ray can be specified as any
           iterable container of
@@ -48,8 +45,8 @@ class Polyhedron_cdd(Polyhedron_base):
           any iterable container of
           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
         EXAMPLES::
 
@@ -100,8 +97,8 @@ class Polyhedron_cdd(Polyhedron_base):
           as any iterable container of
           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
         EXAMPLES::
 
@@ -113,7 +110,7 @@ class Polyhedron_cdd(Polyhedron_base):
         TESTS:
 
         The polyhedron with zero inequalities can be initialized from Hrepresentation;
-        see :trac:`29899`::
+        see :issue:`29899`::
 
             sage: Polyhedron(ieqs=[], ambient_dim=5, backend='cdd')
             A 5-dimensional polyhedron in QQ^5 defined as the convex hull of 1 vertex and 5 lines
@@ -196,7 +193,6 @@ class Polyhedron_cdd(Polyhedron_base):
             sage: Polyhedron_cdd._parse_block(cddout, 'HEADER', parser)
             INTRO: [['intro', '0', '1', '2']]
             DATA: [['data', '0', '1', '2'], ['data', '3', '4', '5']]
-
         """
         try:
             block = cddout[cddout.index(header)+1:]
@@ -220,7 +216,7 @@ class Polyhedron_cdd(Polyhedron_base):
             sage: p.vertices()
             (A vertex at (0, 0), A vertex at (1, 0), A vertex at (0, 1), A vertex at (1, 1))
 
-        Check that :trac:`29176` is fixed::
+        Check that :issue:`29176` is fixed::
 
             sage: e = [[11582947.657000002, 5374.38, 4177.06, 1.0], [11562795.9322, 5373.62, 4168.38, 1.0]]
             sage: p = Polyhedron(ieqs=e); p
@@ -241,7 +237,7 @@ class Polyhedron_cdd(Polyhedron_base):
             (P(-2686.81000000000, -2084.19000000000),
              A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex, 1 ray, 1 line)
 
-        Check that :trac:`31253` is fixed::
+        Check that :issue:`31253` is fixed::
 
             sage: P = polytopes.permutahedron(2, backend='cdd')
             sage: P.Hrepresentation()
@@ -410,16 +406,16 @@ class Polyhedron_cdd(Polyhedron_base):
 
 class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
     """
-    Polyhedra over QQ with cdd
+    Polyhedra over QQ with cdd.
 
     INPUT:
 
     - ``parent`` -- the parent, an instance of
-      :class:`~sage.geometry.polyhedron.parent.Polyhedra`.
+      :class:`~sage.geometry.polyhedron.parent.Polyhedra`
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -431,7 +427,7 @@ class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
 
     TESTS:
 
-    Check that :trac:`19803` is fixed::
+    Check that :issue:`19803` is fixed::
 
         sage: from sage.geometry.polyhedron.parent import Polyhedra
         sage: P_cdd = Polyhedra(QQ, 3, 'cdd')

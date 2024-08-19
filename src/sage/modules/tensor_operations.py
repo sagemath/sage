@@ -71,13 +71,13 @@ from sage.rings.integer_ring import ZZ
 
 def symmetrized_coordinate_sums(dim, n):
     """
-    Return formal symmetrized sum of multi-indices
+    Return formal symmetrized sum of multi-indices.
 
     INPUT:
 
-    - ``dim`` -- integer. The dimension (range of each index).
+    - ``dim`` -- integer; the dimension (range of each index)
 
-    - ``n`` -- integer. The total number of indices.
+    - ``n`` -- integer; the total number of indices
 
     OUTPUT:
 
@@ -103,13 +103,13 @@ def symmetrized_coordinate_sums(dim, n):
 
 def antisymmetrized_coordinate_sums(dim, n):
     """
-    Return formal anti-symmetrized sum of multi-indices
+    Return formal anti-symmetrized sum of multi-indices.
 
     INPUT:
 
-    - ``dim`` -- integer. The dimension (range of each index).
+    - ``dim`` -- integer; the dimension (range of each index)
 
-    - ``n`` -- integer. The total number of indices.
+    - ``n`` -- integer; the total number of indices
 
     OUTPUT:
 
@@ -122,17 +122,11 @@ def antisymmetrized_coordinate_sums(dim, n):
         ((0, 1) - (1, 0), (0, 2) - (2, 0), (1, 2) - (2, 1))
     """
     from sage.structure.formal_sum import FormalSum
-    table = []
     from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-    S_d = SymmetricGroup(n)
     from sage.combinat.combination import Combinations
-    for i in Combinations(range(dim), n):
-        i = tuple(i)
-        x = []
-        for g in S_d:
-            x.append([g.sign(), g(i)])
-        x = FormalSum(x)
-        table.append(x)
+    S_d = SymmetricGroup(n)
+    table = [FormalSum([[g.sign(), g(tuple(i))] for g in S_d])
+             for i in Combinations(range(dim), n)]
     return tuple(table)
 
 
@@ -149,9 +143,9 @@ class VectorCollection(FreeModule_ambient_field):
 
     INPUT:
 
-    - ``dim`` -- integer. The dimension of the ambient vector space.
+    - ``dim`` -- integer; the dimension of the ambient vector space
 
-    - ``base_ring`` -- a field. The base field of the ambient vector space.
+    - ``base_ring`` -- a field; the base field of the ambient vector space
 
     - ``rays`` -- any list/iterable of things than can be converted
       into vectors of the ambient vector space. These will be used to
@@ -195,7 +189,7 @@ class VectorCollection(FreeModule_ambient_field):
 
     def vectors(self):
         """
-        Return the collection of vectors
+        Return the collection of vectors.
 
         OUTPUT:
 
@@ -213,11 +207,9 @@ class VectorCollection(FreeModule_ambient_field):
 
     def n_vectors(self):
         """
-        Return the number of vectors
+        Return the number of vectors.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -242,10 +234,10 @@ class TensorOperation(VectorCollection):
     INPUT:
 
     - ``vector_collections`` -- a nonempty list/tuple/iterable of
-      :class:`VectorCollection` objects.
+      :class:`VectorCollection` objects
 
-    - ``operation`` -- string. The tensor operation. Currently allowed
-      values are ``product``, ``symmetric``, and ``antisymmetric``.
+    - ``operation`` -- string; the tensor operation. Currently allowed
+      values are ``'product'``, ``'symmetric'``, and ``'antisymmetric'``.
 
     .. TODO::
 
@@ -306,7 +298,7 @@ class TensorOperation(VectorCollection):
 
         INPUT:
 
-        - `i` -- list/tuple of integers. Multi-index of length equal
+        - ``i`` -- list/tuple of integers. Multi-index of length equal
           to the number of constituent vector collections. The `j`-th
           entry `i[j]` indexes a ray in the `j`-th vector
           collection. Hence, `i` specifies one element in each vector
@@ -359,12 +351,12 @@ class TensorOperation(VectorCollection):
 
         INPUT:
 
-        - `i` -- list/tuple of integers. Specifies one element
+        - ``i`` -- list/tuple of integers. Specifies one element
           (vector) in each vector collection as in
-          :meth:`_init_product_vector`.
+          :meth:`_init_product_vector`
 
         - ``linear_combination`` -- formal linear combination of
-          vector indices in the vectors specified by `i`.
+          vector indices in the vectors specified by `i`
 
         EXAMPLES::
 
@@ -397,7 +389,7 @@ class TensorOperation(VectorCollection):
 
     def _init_product(self):
         """
-        Initialization for the tensor product
+        Initialization for the tensor product.
 
         EXAMPLES::
 
@@ -439,7 +431,7 @@ class TensorOperation(VectorCollection):
 
     def _init_antisymmetric(self):
         """
-        Initialization for the antisymmetric product
+        Initialization for the antisymmetric product.
 
         EXAMPLES::
 
@@ -558,9 +550,7 @@ class TensorOperation(VectorCollection):
         """
         The codomain of the index map.
 
-        OUTPUT:
-
-        A list of integers. The image of :meth:`index_map`.
+        OUTPUT: list of integers; the image of :meth:`index_map`
 
         EXAMPLES::
 

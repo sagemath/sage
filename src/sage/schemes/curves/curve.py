@@ -19,7 +19,6 @@ EXAMPLES::
 AUTHORS:
 
 - William Stein (2005)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -154,8 +153,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``base_ring`` -- the base ring of the divisor group. Usually, this is
-          `\ZZ` (default) or `\QQ`.
+        - ``base_ring`` -- the base ring of the divisor group; usually, this is
+          `\ZZ` (default) or `\QQ`
 
         OUTPUT: the divisor group of the curve
 
@@ -209,17 +208,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
         r"""
         Return the geometric genus of the curve.
 
-        This is by definition the genus of the normalization of the projective
-        closure of the curve over the algebraic closure of the base field; the
-        base field must be a prime field.
-
-        .. NOTE::
-
-            This calls Singular's genus command.
-
         EXAMPLES:
 
-        Examples of projective curves. ::
+        Examples of projective curves::
 
             sage: P2 = ProjectiveSpace(2, GF(5), names=['x','y','z'])
             sage: x, y, z = P2.coordinate_ring().gens()
@@ -233,7 +224,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C.geometric_genus()
             3
 
-        Examples of affine curves. ::
+        Examples of affine curves::
 
             sage: x, y = PolynomialRing(GF(5), 2, 'xy').gens()
             sage: C = Curve(y^2 - x^3 - 17*x + y)
@@ -246,12 +237,22 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C.geometric_genus()
             3
 
+        .. WARNING::
+
+            Geometric genus is only defined for `geometrically irreducible curve
+            <https://stacks.math.columbia.edu/tag/0BYE>`_. This method does not
+            check the condition. You may get a nonsensical result if the curve is
+            not geometrically irreducible::
+
+                sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+                sage: C = Curve(x^2 + y^2, P2)
+                sage: C.geometric_genus()  # nonsense!
+                -1
         """
         try:
             return self._genus
         except AttributeError:
-            self._genus = self.defining_ideal().genus()
-            return self._genus
+            raise NotImplementedError
 
     def union(self, other):
         """
@@ -274,9 +275,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         r"""
         Return the subscheme of singular points of this curve.
 
-        OUTPUT:
-
-        - a subscheme in the ambient space of this curve.
+        OUTPUT: a subscheme in the ambient space of this curve
 
         EXAMPLES::
 
@@ -314,10 +313,10 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``F`` -- (default: None) field over which to find the singular
+        - ``F`` -- (default: ``None``) field over which to find the singular
           points; if not given, the base ring of this curve is used
 
-        OUTPUT: a list of points in the ambient space of this curve
+        OUTPUT: list of points in the ambient space of this curve
 
         EXAMPLES::
 
@@ -361,13 +360,13 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point on this curve
+        - ``P`` -- (default: ``None``) a point on this curve
 
         OUTPUT:
 
-        A boolean. If a point ``P`` is provided, and if ``P`` lies on this
-        curve, returns True if ``P`` is a singular point of this curve, and
-        False otherwise. If no point is provided, returns True or False
+        boolean; if a point ``P`` is provided, and if ``P`` lies on this
+        curve, returns ``True`` if ``P`` is a singular point of this curve, and
+        ``False`` otherwise. If no point is provided, returns ``True`` or False
         depending on whether this curve is or is not singular, respectively.
 
         EXAMPLES::
@@ -394,9 +393,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``C`` -- a curve in the same ambient space as this curve.
+        - ``C`` -- a curve in the same ambient space as this curve
 
-        - ``P`` -- a point in the ambient space of this curve.
+        - ``P`` -- a point in the ambient space of this curve
 
         EXAMPLES::
 
@@ -449,11 +448,11 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         - ``C`` -- a curve in the same ambient space as this curve
 
-        - ``F`` -- (default: None); field over which to compute the
+        - ``F`` -- (default: ``None``) field over which to compute the
           intersection points; if not specified, the base ring of this curve is
           used
 
-        OUTPUT: a list of points in the ambient space of this curve
+        OUTPUT: list of points in the ambient space of this curve
 
         EXAMPLES::
 

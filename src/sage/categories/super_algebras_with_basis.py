@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Super algebras with basis
 """
@@ -15,7 +16,7 @@ from sage.misc.cachefunc import cached_method
 
 class SuperAlgebrasWithBasis(SuperModulesCategory):
     """
-    The category of super algebras with a distinguished basis
+    The category of super algebras with a distinguished basis.
 
     EXAMPLES::
 

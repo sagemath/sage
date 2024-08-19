@@ -29,10 +29,10 @@ cdef class ModularSymbols:
 
         INPUT:
 
-        - ``level`` (int) -- the level: an integer, at least 2.
-        - ``sign`` (int, default 0) -- the sign: 0, +1 or -1
-        - ``cuspidal`` (boolean, default False) -- True for cuspidal homology
-        - ``verbose`` (int, default 0) -- verbosity level
+        - ``level`` -- integer; the level: at least 2
+        - ``sign`` -- integer (default: 0); the sign: 0, +1 or -1
+        - ``cuspidal`` -- boolean (default: ``False``); ``True`` for cuspidal homology
+        - ``verbose`` -- integer (default: 0); verbosity level
 
         EXAMPLES::
 
@@ -164,11 +164,11 @@ cdef class ModularSymbols:
 
         - ``p`` -- a prime number
 
-        - ``dual`` -- (default: False) whether to compute the Hecke
-                    operator acting on the dual space, i.e., the
-                    transpose of the Hecke operator
+        - ``dual`` -- boolean (default: ``False``); whether to compute the
+          Hecke operator acting on the dual space, i.e., the transpose of the
+          Hecke operator
 
-        - ``verbose`` -- (default: False) print verbose output
+        - ``verbose`` -- boolean (default: ``False``); print verbose output
 
         OUTPUT:
 
@@ -224,11 +224,11 @@ cdef class ModularSymbols:
 
         - ``p`` -- a prime number
 
-        - ``dual`` -- (default: False) whether to compute the Hecke
-                    operator acting on the dual space, i.e., the
-                    transpose of the Hecke operator
+        - ``dual`` -- boolean (default: ``False``); whether to compute the
+          Hecke operator acting on the dual space, i.e., the transpose of the Hecke
+          operator
 
-        - ``verbose`` -- (default: False) print verbose output
+        - ``verbose`` -- boolean (default: ``False``); print verbose output
 
         OUTPUT:
 
@@ -259,7 +259,7 @@ cdef class ModularSymbols:
             sage: print(T == U.change_ring(GF(7)))
             True
 
-        This concerns an issue reported on :trac:`21303`::
+        This concerns an issue reported on :issue:`21303`::
 
             sage: C = CremonaModularSymbols(45, cuspidal=True,sign=-1)
             sage: T2a = C.hecke_matrix(2).sage_matrix_over_ZZ()

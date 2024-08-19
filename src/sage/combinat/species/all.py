@@ -46,5 +46,6 @@ install_doc(__package__, __doc__)
 
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.combinat.species.recursive_species", "CombinatorialSpecies")
-lazy_import("sage.combinat.species", "library", as_="species")
+lazy_import("sage.combinat.species", "library", as_='species')
 del lazy_import
+del install_doc

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 
 
 def arithmetic(t=None):
@@ -7,7 +8,7 @@ def arithmetic(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -35,7 +36,7 @@ def arithmetic(t=None):
         sage: proof.arithmetic()
         True
     """
-    from .proof import _proof_prefs
+    from sage.structure.proof.proof import _proof_prefs
     return _proof_prefs.arithmetic(t)
 
 
@@ -45,7 +46,7 @@ def elliptic_curve(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -73,7 +74,7 @@ def elliptic_curve(t=None):
         sage: proof.elliptic_curve()
         True
     """
-    from .proof import _proof_prefs
+    from sage.structure.proof.proof import _proof_prefs
     return _proof_prefs.elliptic_curve(t)
 
 
@@ -83,7 +84,7 @@ def linear_algebra(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -111,7 +112,7 @@ def linear_algebra(t=None):
         sage: proof.linear_algebra()
         True
     """
-    from .proof import _proof_prefs
+    from sage.structure.proof.proof import _proof_prefs
     return _proof_prefs.linear_algebra(t)
 
 
@@ -121,7 +122,7 @@ def number_field(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -148,7 +149,7 @@ def number_field(t=None):
         sage: proof.number_field()
         True
     """
-    from .proof import _proof_prefs
+    from sage.structure.proof.proof import _proof_prefs
     return _proof_prefs.number_field(t)
 
 
@@ -158,7 +159,7 @@ def polynomial(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -185,7 +186,7 @@ def polynomial(t=None):
         sage: proof.polynomial()
         True
     """
-    from .proof import _proof_prefs
+    from sage.structure.proof.proof import _proof_prefs
     return _proof_prefs.polynomial(t)
 
 
@@ -195,7 +196,7 @@ def all(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -234,11 +235,11 @@ def all(t=None):
         sage: proof.number_field()
         True
     """
-    from .proof import _proof_prefs
+    from sage.structure.proof.proof import _proof_prefs
     if t is None:
         return _proof_prefs._require_proof.copy()
     for s in _proof_prefs._require_proof:
         _proof_prefs._require_proof[s] = bool(t)
 
 
-from .proof import WithProof
+from sage.structure.proof.proof import WithProof

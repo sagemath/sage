@@ -51,13 +51,11 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        String. A valid LaTeX math command sequence.
+        OUTPUT: string; a valid LaTeX math command sequence
 
         TESTS::
 
-            sage: A = ArtinGroup(['B',3])                                               # needs sage.rings.number_field
+            sage: A = ArtinGroup(['B', 3])                                              # needs sage.rings.number_field
             sage: b = A([1, 2, 3, -1, 2, -3])                                           # needs sage.rings.number_field
             sage: b._latex_()                                                           # needs sage.rings.number_field
             '\\sigma_{1}\\sigma_{2}\\sigma_{3}\\sigma_{1}^{-1}\\sigma_{2}\\sigma_{3}^{-1}'
@@ -66,17 +64,20 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             sage: b = B([1, 2, 3, -1, 2, -3])
             sage: b._latex_()
             '\\sigma_{1}\\sigma_{2}\\sigma_{3}\\sigma_{1}^{-1}\\sigma_{2}\\sigma_{3}^{-1}'
+            sage: B.one()._latex_()
+            '1'
         """
+        word = self.Tietze()
+        if not word:
+            return '1'
         return ''.join(r"\sigma_{%s}^{-1}" % (-i) if i < 0 else r"\sigma_{%s}" % i
-                       for i in self.Tietze())
+                       for i in word)
 
     def exponent_sum(self):
         """
         Return the exponent sum of ``self``.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -106,11 +107,10 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         INPUT:
 
-        - ``W`` -- (default: ``self.parent().coxeter_group()``) the image Coxeter group
+        - ``W`` -- (default: ``self.parent().coxeter_group()``) the image
+          Coxeter group
 
-        OUTPUT:
-
-        An element of the Coxeter group  ``W``.
+        OUTPUT: an element of the Coxeter group  ``W``
 
         EXAMPLES::
 
@@ -258,10 +258,8 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
         Return the left normal form of the element, in the `\Delta`
         exponent and Coxeter group element form.
 
-        OUTPUT:
-
-        A tuple whose first element is the power of `\Delta`, and the rest
-        are the Coxeter elements corresponding to the simple factors.
+        OUTPUT: tuple whose first element is the power of `\Delta`, and the
+        rest are the Coxeter elements corresponding to the simple factors
 
         EXAMPLES::
 
@@ -510,9 +508,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return the number of elements of ``self``.
 
-        OUTPUT:
-
-        Infinity.
+        OUTPUT: infinity
 
         EXAMPLES::
 
@@ -534,8 +530,8 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return an isomorphic permutation group.
 
-        Raises a ``ValueError`` error since Artin groups are infinite
-        and have no corresponding permutation group.
+        This raises a :exc:`ValueError` error since Artin groups are
+        infinite and have no corresponding permutation group.
 
         EXAMPLES::
 
@@ -600,9 +596,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return the index set of ``self``.
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: tuple
 
         EXAMPLES::
 
@@ -660,7 +654,7 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         INPUT:
 
-        - ``w`` -- an element of the Coxeter group of ``self``.
+        - ``w`` -- an element of the Coxeter group of ``self``
 
         EXAMPLES::
 
@@ -678,7 +672,7 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         INPUT:
 
-        - ``w`` -- an element of the Coxeter group of ``self``.
+        - ``w`` -- an element of the Coxeter group of ``self``
 
         EXAMPLES::
 
@@ -715,7 +709,7 @@ class FiniteTypeArtinGroup(ArtinGroup):
         Artin group of type ['E', 7]
 
     Since the word problem for finite-type Artin groups is solvable, their
-    Cayley graph can be locally obtained as follows (see :trac:`16059`)::
+    Cayley graph can be locally obtained as follows (see :issue:`16059`)::
 
         sage: def ball(group, radius):
         ....:     ret = set()

@@ -73,7 +73,7 @@ def _smallscale_present_linearlayer(nsboxes=16):
     .. TODO::
 
         switch to sage.crypto.linearlayer
-        (:trac:`25735`) as soon as it is included in sage
+        (:issue:`25735`) as soon as it is included in sage
 
     EXAMPLES::
 
@@ -179,11 +179,11 @@ class PRESENT(SageObject):
 
         INPUT:
 
-        - ``keySchedule`` -- (default: ``80``); the key schedule that will be
+        - ``keySchedule`` -- (default: ``80``) the key schedule that will be
           used for encryption and decryption. Use ``80`` or ``128`` as a
           shortcut for the original key schedules from [BKLPPRSV2007]_.
 
-        - ``rounds``  -- integer (default: ``None``); the number of rounds. If
+        - ``rounds`` -- integer (default: ``None``); the number of rounds. If
           ``None`` the number of rounds of the key schedule is used.
 
         - ``doFinalRound`` -- boolean (default: ``False``); flag to
@@ -355,7 +355,7 @@ class PRESENT(SageObject):
         INPUT:
 
         - ``plaintext`` -- integer or bit list-like; the plaintext that will be
-          encrypted.
+          encrypted
 
         - ``key`` -- integer or bit list-like; the key
 
@@ -716,10 +716,10 @@ class PRESENT_KS(SageObject):
 
         INPUT:
 
-        - ``keysize`` -- integer (default: ``80``); the size of the keys that
+        - ``keysize`` -- integer (default: 80); the size of the keys that
           will be used in bits. It must be either 80 or 128.
 
-        - ``rounds`` -- integer (default: ``31``); the number of rounds
+        - ``rounds`` -- integer (default: 31); the number of rounds
           ``self`` can create keys for
 
         - ``master_key`` -- integer or bit list-like (default: ``None``); the
@@ -836,14 +836,14 @@ class PRESENT_KS(SageObject):
 
     def __getitem__(self, r):
         r"""
-        Computes the sub key for round ``r`` derived from initial master key.
+        Compute the sub key for round ``r`` derived from initial master key.
 
         The key schedule object has to have been initialised with the
         ``master_key`` argument.
 
         INPUT:
 
-        - ``r`` integer; the round for which the sub key is computed
+        - ``r`` -- integer; the round for which the sub key is computed
 
         EXAMPLES::
 
@@ -887,9 +887,7 @@ def convert_to_vector(I, L):
 
     - ``L`` -- integer; the desired bit length of the ouput
 
-    OUTPUT:
-
-    - the ``L``-bit vector representation of ``I``
+    OUTPUT: the ``L``-bit vector representation of ``I``
 
     EXAMPLES::
 

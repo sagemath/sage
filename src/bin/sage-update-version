@@ -43,9 +43,9 @@ for version_file in "$SAGE_ROOT"/pkgs/*/VERSION.txt; do
     fi
 done
 
-# Update install-requires.txt for all distribution packages
+# Update version_requirements.txt for all distribution packages
 ( cd "$SAGE_ROOT"/build/pkgs/ && for spkg in sage*; do
-      if [ -f "$spkg"/install-requires.txt -a -d "$spkg"/src ]; then
+      if [ -f "$spkg"/version_requirements.txt -a -d "$spkg"/src ]; then
           ( echo "# This file is updated on every release by the sage-update-version script"
             # Normalize the package name to PyPI convention (dashes, not underscores)
             if [ "$spkg" = sagelib ]; then
@@ -58,7 +58,7 @@ done
             version=${version//.beta/b}
             version=${version//.rc/rc}
             # ~= asks for a compatible release. https://peps.python.org/pep-0440/#compatible-release
-            echo "$pkg ~= $version" ) > "$spkg"/install-requires.txt
+            echo "$pkg ~= $version" ) > "$spkg"/version_requirements.txt
       fi
   done )
 
@@ -112,6 +112,25 @@ export SAGE_VERSION
 export SAGE_RELEASE_DATE
 envsubst <"$SAGE_ROOT/CITATION.cff.in" >"$SAGE_ROOT/CITATION.cff"
 
+# Update src/doc/versions.txt file storing the URLs of the docs for the recent stable releases
+if [[ $SAGE_VERSION =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+    file_path="$SAGE_ROOT/src/doc/en/website/versions.txt"
+    # Extract the most recent version line from versions.txt
+    line_number=$(grep -n '^[0-9]' "$file_path" | head -n 1 | cut -d: -f1)
+    version_line=$(sed -n "${line_number}p" "$file_path")
+    domain=${version_line#*--}
+    version=${SAGE_VERSION//./-}
+    # For the origin of this format, see .github/workflows/doc-publish.yml
+    url="doc-$version--$domain"
+    # Add new line to versions.txt
+    sed -i "${line_number}i $SAGE_VERSION $url" "$file_path"
+    # If the number of version lines is more than 10, remove the last line
+    line_count=$(grep -c '^[0-9]' "$file_path")
+    if [ "$line_count" -gt 10 ]; then
+      sed -i '$ d' "$file_path"
+    fi
+fi
+
 # Commit auto-generated changes
 git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_ROOT/VERSION.txt" \
@@ -121,9 +140,10 @@ git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_SRC/bin/sage-version.sh" \
     "$SAGE_ROOT/build/pkgs/configure/checksums.ini" \
     "$SAGE_ROOT/build/pkgs/configure/package-version.txt" \
-    "$SAGE_ROOT/build/pkgs/*/install-requires.txt" \
+    "$SAGE_ROOT/build/pkgs/*/version_requirements.txt" \
     "$SAGE_ROOT"/pkgs/*/VERSION.txt \
     "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases" \
+    "$SAGE_ROOT/src/doc/en/website/versions.txt" \
     || die "Error committing to the repository."
 
 git tag -a "$SAGE_VERSION" -m "$SAGE_VERSION_BANNER" \

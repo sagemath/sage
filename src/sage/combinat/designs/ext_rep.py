@@ -18,7 +18,6 @@ written by Peter Dobcsanyi [Do2009]_ peter@designtheory.org.
 
 Functions
 ---------
-
 """
 
 ###########################################################################
@@ -612,7 +611,7 @@ class XTree:
 
     - ``t.attribute`` -- attribute named
     - ``t.child`` -- first child named
-    - ``t[i]`` -- i-th child
+    - ``t[i]`` -- `i`-th child
     - ``for child in t:`` -- iterate over ``t``'s children
     - ``len(t)`` -- number of ``t``'s children
 
@@ -922,7 +921,7 @@ class XTreeProcessor:
                     self.block_design_proc(self.current_node[2][0])
                 if self.save_designs:
                     init_bd = XTree(self.current_node[2][0])
-                    self.list_of_designs.append((init_bd.v, [b for b in init_bd.blocks]))
+                    self.list_of_designs.append((init_bd.v, list(init_bd.blocks)))
                 #print_subxt(self.current_node[2][0], level=2, outf=self.outf)
                 self._init()
             elif name == 'info':

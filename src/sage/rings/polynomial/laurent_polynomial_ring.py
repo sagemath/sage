@@ -95,14 +95,14 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     INPUT:
 
     - ``base_ring`` -- a commutative ring
-    - ``name`` -- a string
-    - ``names`` -- a list or tuple of names, or a comma separated string
-    - ``n`` -- a positive integer
-    - ``sparse`` -- bool (default: False), whether or not elements are sparse
+    - ``name`` -- string
+    - ``names`` -- list or tuple of names, or a comma separated string
+    - ``n`` -- positive integer
+    - ``sparse`` -- boolean (default: ``False``); whether or not elements are sparse
     - ``order`` -- string or
       :class:`~sage.rings.polynomial.term_order.TermOrder`, e.g.,
 
-      - ``'degrevlex'`` (default) -- degree reverse lexicographic
+      - ``'degrevlex'`` -- default; degree reverse lexicographic
       - ``'lex'`` -- lexicographic
       - ``'deglex'`` -- degree lexicographic
       - ``TermOrder('deglex',3) + TermOrder('deglex',3)`` -- block ordering
@@ -135,7 +135,6 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: variable names cannot be changed after object creation.
-
 
     EXAMPLES:
 
@@ -235,18 +234,18 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
            sage: (w0 + 2*w8 + w13)^2                                                    # needs sage.modules
            w0^2 + 4*w0*w8 + 4*w8^2 + 2*w0*w13 + 4*w8*w13 + w13^2
     """
-    from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-    from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+    from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 
     R = PolynomialRing(base_ring, *args, **kwds)
     if R in _cache:
         return _cache[R]   # put () here to re-enable weakrefs
 
-    if is_PolynomialRing(R):
+    if isinstance(R, PolynomialRing_general):
         # univariate case
         P = LaurentPolynomialRing_univariate(R)
     else:
-        assert is_MPolynomialRing(R)
+        assert isinstance(R, MPolynomialRing_base)
         P = LaurentPolynomialRing_mpair(R)
 
     _cache[R] = P
@@ -258,16 +257,14 @@ def _split_dict_(D, indices, group_by=None):
 
     INPUT:
 
-    - ``D`` -- a dictionary.
+    - ``D`` -- dictionary
 
-    - ``indices`` -- a tuple or list of nonnegative integers.
+    - ``indices`` -- tuple or list of nonnegative integers
 
-    - ``group_by`` -- a tuple or list of nonnegative integers.
-      If this is ``None`` (default), then no grouping is done.
+    - ``group_by`` -- tuple or list of nonnegative integers;
+      if this is ``None`` (default), then no grouping is done
 
-    OUTPUT:
-
-    A dictionary.
+    OUTPUT: a dictionary
 
     TESTS::
 
@@ -341,17 +338,15 @@ def _split_laurent_polynomial_dict_(P, M, d):
 
     INPUT:
 
-    - ``P`` -- the parent to which we want to convert.
+    - ``P`` -- the parent to which we want to convert
 
-    - ``M`` -- the parent from which we want to convert.
+    - ``M`` -- the parent from which we want to convert
 
-    - ``d`` -- a dictionary mapping tuples (representing the exponents)
+    - ``d`` -- dictionary mapping tuples (representing the exponents)
       to their coefficients. This is the dictionary corresponding to
       an element of ``M``.
 
-    OUTPUT:
-
-    A dictionary corresponding to an element of ``P``.
+    OUTPUT: a dictionary corresponding to an element of ``P``
 
     TESTS::
 
@@ -436,9 +431,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             sage: L = LaurentPolynomialRing(QQ,'x')
             sage: type(L)
             <class 'sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing_univariate_with_category'>
-            sage: L == loads(dumps(L))
-            True
-
+            sage: TestSuite(L).run()
 
         TESTS::
 
@@ -521,7 +514,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
         TESTS:
 
-        Check that conversion back from fraction field does work (:trac:`26425`)::
+        Check that conversion back from fraction field does work (:issue:`26425`)::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: F = FractionField(R)
@@ -557,11 +550,11 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         elif isinstance(x, FractionFieldElement):
             # since the field of fraction of self is defined corresponding to
             # the polynomial ring of self the conversion of its elements back
-            # must be treated separately (:trac:`26425`).
+            # must be treated separately (:issue:`26425`).
             return from_fraction_field(self, x)
 
         elif isinstance(x, LocalizationElement):
-            # see :trac:`33477`.
+            # see :issue:`33477`.
             F = self.fraction_field()
             return from_fraction_field(self, F(x))
 
@@ -785,11 +778,11 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         elif isinstance(x, FractionFieldElement):
             # since the field of fraction of self is defined corresponding to
             # the polynomial ring of self the conversion of its elements back
-            # must be treated separately (:trac:`33477`).
+            # must be treated separately (:issue:`33477`).
             return from_fraction_field(self, x)
 
         elif isinstance(x, LocalizationElement):
-            # see :trac:`33477`.
+            # see :issue:`33477`.
             F = self.fraction_field()
             return from_fraction_field(self, F(x))
 

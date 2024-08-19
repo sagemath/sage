@@ -71,7 +71,7 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
 
         - ``to_order`` -- the map from a lattice in that vector space to the maximal order
 
-        - ``PB`` -- a matrix used in defining the reduction and lifting maps.
+        - ``PB`` -- a matrix used in defining the reduction and lifting maps
 
         EXAMPLES::
 
@@ -104,7 +104,7 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
         """
         INPUT:
 
-            - ``x`` -- Something to cast into ``self``.
+            - ``x`` -- something to cast into ``self``
 
         EXAMPLES::
 
@@ -123,7 +123,7 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
 
             sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field()
             sage: V = k.vector_space(map=False); v = V([0,1,2,3])
-            sage: k(v) # indirect doctest
+            sage: k(v)  # indirect doctest
             2*a^2 + a
         """
         try:

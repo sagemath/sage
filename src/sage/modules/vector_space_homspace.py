@@ -208,7 +208,7 @@ def is_VectorSpaceHomspace(x):
 
     INPUT:
 
-    ``x`` - anything
+    - ``x`` -- anything
 
     EXAMPLES:
 
@@ -221,6 +221,10 @@ def is_VectorSpaceHomspace(x):
         sage: type(H)
         <class 'sage.modules.vector_space_homspace.VectorSpaceHomspace_with_category'>
         sage: sage.modules.vector_space_homspace.is_VectorSpaceHomspace(H)
+        doctest:warning...
+        DeprecationWarning: the function is_VectorSpaceHomspace is deprecated;
+        use 'isinstance(..., VectorSpaceHomspace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
 
         sage: K = Hom(QQ^3, ZZ^2)
@@ -238,6 +242,8 @@ def is_VectorSpaceHomspace(x):
         sage: sage.modules.vector_space_homspace.is_VectorSpaceHomspace('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_VectorSpaceHomspace is deprecated; use 'isinstance(..., VectorSpaceHomspace)' instead")
     return isinstance(x, VectorSpaceHomspace)
 
 
@@ -247,8 +253,8 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         r"""
         INPUT:
 
-        - ``A`` - one of several possible inputs representing
-          a morphism from this vector space homspace.
+        - ``A`` -- one of several possible inputs representing
+          a morphism from this vector space homspace:
 
           - a vector space morphism in this homspace
           - a matrix representation relative to the bases of the vector spaces,
@@ -256,13 +262,12 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
           - a list or tuple containing images of the domain's basis vectors
           - a function from the domain to the codomain
 
-        - ``check`` (default: True) - ``True`` or ``False``, required for
-          compatibility with calls from
-          :meth:`sage.structure.parent.Parent.hom`.
+        - ``check`` -- boolean (default: ``True``); required for compatibility
+          with calls from :meth:`sage.structure.parent.Parent.hom`
 
-        - the keyword ``side`` can be assigned the values ``"left"`` or
-          ``"right"``. It corresponds to the side of vectors relative to the
-          matrix.
+        - the keyword ``side`` can be assigned the values ``'left'`` or
+          ``'right'``; it corresponds to the side of vectors relative to the
+          matrix
 
         EXAMPLES::
 
@@ -365,17 +370,17 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
             sage: H.zero().is_zero()
             True
 
-        Previously the above code resulted in a :class:`TypeError` because the
+        Previously the above code resulted in a :exc:`TypeError` because the
         dimensions of the matrix were incorrect.
         """
-        from .vector_space_morphism import is_VectorSpaceMorphism, VectorSpaceMorphism
+        from .vector_space_morphism import VectorSpaceMorphism
         D = self.domain()
         C = self.codomain()
         side = kwds.get("side", "left")
-        from sage.structure.element import is_Matrix
-        if is_Matrix(A):
+        from sage.structure.element import Matrix
+        if isinstance(A, Matrix):
             pass
-        elif is_VectorSpaceMorphism(A):
+        elif isinstance(A, VectorSpaceMorphism):
             A = A.matrix()
         elif callable(A):
             try:

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite monoids
 """
@@ -46,7 +47,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 a_1 * a_2 * \cdots * a_k
 
-            The 0th face of this is obtained by deleting `a_1`, and
+            The `0`-th face of this is obtained by deleting `a_1`, and
             the `k`-th face is obtained by deleting `a_k`. The other
             faces are obtained by multiplying elements: the 1st face
             is
@@ -73,8 +74,8 @@ class FiniteMonoids(CategoryWithAxiom):
             2 is infinite-dimensional real projective space. ::
 
                 sage: Sigma2 = groups.permutation.Cyclic(2)                             # needs sage.groups
-                sage: BSigma2 = Sigma2.nerve()                                          # needs sage.groups
-                sage: BSigma2.cohomology(4, base_ring=GF(2))                            # needs sage.groups sage.modules
+                sage: BSigma2 = Sigma2.nerve()                                          # needs sage.graphs sage.groups
+                sage: BSigma2.cohomology(4, base_ring=GF(2))                            # needs sage.graphs sage.groups sage.modules
                 Vector space of dimension 1 over Finite Field of size 2
 
             The `k`-simplices of the nerve are named after the chains
@@ -83,15 +84,15 @@ class FiniteMonoids(CategoryWithAxiom):
             element) and ``(1,2)`` in Sage. So the 1-cells and 2-cells
             in `B\Sigma_2` are::
 
-                sage: BSigma2.n_cells(1)                                                # needs sage.groups
+                sage: BSigma2.n_cells(1)                                                # needs sage.graphs sage.groups
                 [(1,2)]
-                sage: BSigma2.n_cells(2)                                                # needs sage.groups
+                sage: BSigma2.n_cells(2)                                                # needs sage.graphs sage.groups
                 [(1,2) * (1,2)]
 
             Another construction of the group, with different names
             for its elements::
 
-                sage: # needs sage.groups
+                sage: # needs sage.groups sage.rings.number_field
                 sage: C2 = groups.misc.MultiplicativeAbelian([2])
                 sage: BC2 = C2.nerve()
                 sage: BC2.n_cells(0)
@@ -105,8 +106,8 @@ class FiniteMonoids(CategoryWithAxiom):
             first nonvanishing homology group in dimension `p`::
 
                 sage: Sigma3 = groups.permutation.Symmetric(3)                          # needs sage.groups
-                sage: BSigma3 = Sigma3.nerve()                                          # needs sage.groups
-                sage: BSigma3.homology(range(4), base_ring=GF(3))                       # needs sage.groups
+                sage: BSigma3 = Sigma3.nerve()                                          # needs sage.graphs sage.groups
+                sage: BSigma3.homology(range(4), base_ring=GF(3))                       # needs sage.graphs sage.groups
                 {0: Vector space of dimension 0 over Finite Field of size 3,
                  1: Vector space of dimension 0 over Finite Field of size 3,
                  2: Vector space of dimension 0 over Finite Field of size 3,
@@ -116,7 +117,7 @@ class FiniteMonoids(CategoryWithAxiom):
             `B\Sigma_2` for relatively large values of `n`, while for
             `B\Sigma_3`, the complexes get large pretty quickly::
 
-                sage: # needs sage.groups
+                sage: # needs sage.graphs sage.groups
                 sage: Sigma2.nerve().n_skeleton(14)
                 Simplicial set with 15 non-degenerate simplices
                 sage: BSigma3 = Sigma3.nerve()
@@ -130,7 +131,7 @@ class FiniteMonoids(CategoryWithAxiom):
             on `p` letters, and its first homology group appears
             earlier::
 
-                sage: # needs sage.groups
+                sage: # needs sage.graphs sage.groups sage.rings.number_field
                 sage: C3 = groups.misc.MultiplicativeAbelian([3])
                 sage: list(C3)
                 [1, f, f^2]
@@ -169,7 +170,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
             INPUT:
 
-            - ``base_ring`` (default: `\QQ`) a field
+            - ``base_ring`` -- (default: `\QQ`) a field
 
             OUTPUT:
 
@@ -185,14 +186,14 @@ class FiniteMonoids(CategoryWithAxiom):
                 sage: # needs sage.combinat sage.groups sage.modules
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
                 sage: H3 = HeckeMonoid(SymmetricGroup(3))
-                sage: H3.repr_element_method(style="reduced")
+                sage: H3.repr_element_method(style='reduced')
                 sage: H3.rhodes_radical_congruence()
                 [([1, 2], [2, 1]), ([1, 2], [1, 2, 1]), ([2, 1], [1, 2, 1])]
 
             By Maschke's theorem, every group algebra over `\QQ`
             is semisimple hence the Rhodes radical of a group must be trivial::
 
-                sage: SymmetricGroup(3).rhodes_radical_congruence()                     # needs sage.groups sage.modules
+                sage: SymmetricGroup(3).rhodes_radical_congruence()                     # needs sage.combinat sage.groups sage.modules
                 []
                 sage: DihedralGroup(10).rhodes_radical_congruence()                     # needs sage.groups sage.modules
                 []

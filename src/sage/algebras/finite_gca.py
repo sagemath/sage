@@ -5,7 +5,6 @@ Finite dimensional graded commutative algebras
 AUTHORS:
 
 - Michael Jung (2021): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2021 Michael Jung <m.jung at vu.nl>
@@ -17,18 +16,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from sage.combinat.free_module import CombinatorialFreeModule
+
 from sage.categories.algebras import Algebras
-from sage.misc.cachefunc import cached_method
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
-from sage.rings.ring import Algebra
-from sage.misc.functional import is_odd, is_even
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.sets.condition_set import ConditionSet
+from sage.misc.cachefunc import cached_method
+from sage.misc.functional import is_even
 from sage.rings.integer_ring import ZZ
+from sage.sets.condition_set import ConditionSet
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 
 
-class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
+class FiniteGCAlgebra(CombinatorialFreeModule):
     r"""
     Finite dimensional graded commutative algebras.
 
@@ -79,12 +78,12 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
     - ``degrees`` -- (optional) a tuple or list specifying the degrees
       of the generators; if omitted, each generator is given degree
       1, and if both ``names`` and ``degrees`` are omitted, an error is
-      raised.
-    - ``max_degree`` -- the maximal degree of the graded algebra.
-    - ``mul_symbol`` -- (optional) symbol used for multiplication. If omitted,
-      the string "*" is used.
-    - ``mul_latex_symbol`` -- (optional) latex symbol used for multiplication.
-      If omitted, the empty string is used.
+      raised
+    - ``max_degree`` -- the maximal degree of the graded algebra
+    - ``mul_symbol`` -- (optional) symbol used for multiplication; if omitted,
+      the string "*" is used
+    - ``mul_latex_symbol`` -- (optional) latex symbol used for multiplication;
+      if omitted, the empty string is used
 
     EXAMPLES::
 
@@ -133,7 +132,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,2,6,6))
             sage: type(A)
             <class 'sage.algebras.commutative_dga.GCAlgebra_with_category'>
-
     """
     @staticmethod
     def __classcall_private__(cls, base, names=None, degrees=None,
@@ -147,7 +145,7 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
         - ``base`` -- the base ring of the algebra
         - ``max_degree`` -- the maximal degree of the algebra
         - ``names`` -- the names of the variables; by default, set to ``x1``,
-          ``x2``, etc.
+          ``x2``, etc
         - ``degrees`` -- the degrees of the generators; by default, set to 1
 
         TESTS::
@@ -156,7 +154,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             sage: A2 = GradedCommutativeAlgebra(GF(2), ['x', 'y'], [3, 6], max_degree=12)
             sage: A1 is A2
             True
-
         """
         if max_degree is None:
             raise TypeError("max_degree must be specified")
@@ -165,7 +162,7 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
                 raise ValueError("You must specify names or degrees")
             else:
                 n = len(degrees)
-            names = tuple('x{}'.format(i) for i in range(n))
+            names = tuple(f'x{i}' for i in range(n))
         elif isinstance(names, str):
             names = tuple(names.split(','))
             n = len(names)
@@ -194,7 +191,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             sage: TestSuite(A).run()
             sage: A = GradedCommutativeAlgebra(QQ, ('x','y','z','t'), [1,2,3,4], max_degree=10)
             sage: TestSuite(A).run()
-
         """
         from sage.arith.misc import gcd
 
@@ -220,7 +216,7 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
                                          sorting_key=sorting_key,
                                          category=category)
 
-    def _valid_index(self, w):
+    def _valid_index(self, w) -> bool:
         r"""
         Return whether ``w`` is a valid index; no multiple powers in odd
         degrees.
@@ -234,11 +230,10 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             True
             sage: A._valid_index(w2)
             False
-
         """
-        return not any(i > 1 for i, d in zip(w, self._degrees) if is_odd(d))
+        return not any(i > 1 for i, d in zip(w, self._degrees) if d % 2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -249,7 +244,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             "Graded commutative algebra with generators ('x', 'y', 'z') in degrees (1, 2, 3) with maximal degree 8"
             sage: A  # indirect doctest
             Graded commutative algebra with generators ('x', 'y', 'z') in degrees (1, 2, 3) with maximal degree 8
-
         """
         desc = f'Graded commutative algebra with generators {self._names} in '
         desc += f'degrees {self._degrees} with maximal degree {self._max_deg}'
@@ -264,7 +258,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(4,8,2), max_degree=10)
             sage: A.ngens()
             3
-
         """
         return self.__ngens
 
@@ -327,7 +320,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             x*y^2*z
             sage: A.product_on_basis(w2, w1)
             -x*y^2*z
-
         """
         grading = self._weighted_vectors.grading
         deg_left = grading(w1)
@@ -375,11 +367,10 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             sage: i = A._weighted_vectors([1,1,0])
             sage: A.degree_on_basis(i)
             6
-
         """
         return self._weighted_vectors.grading(i)
 
-    def _repr_term(self, w):
+    def _repr_term(self, w) -> str:
         r"""
         Return the string representation of basis with index ``w``.
 
@@ -400,7 +391,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             'x⌣y^2⌣z'
             sage: x*y^2*z  # indirect doctest
             x⌣y^2⌣z
-
         """
         # Trivial case:
         if sum(w) == 0:
@@ -416,7 +406,7 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
                 terms.append(self._names[i] + f'^{w[i]}')
         return self._mul_symbol.join(terms)
 
-    def _latex_term(self, w):
+    def _latex_term(self, w) -> str:
         r"""
         Return the LaTeX representation of basis with index ``w``.
 
@@ -436,7 +426,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             'x\\smile y^{2}\\smile z'
             sage: latex(x*y^2*z)  # indirect doctest
             x\smile y^{2}\smile z
-
         """
         # Trivial case:
         if sum(w) == 0:
@@ -463,10 +452,8 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(4,8,2), max_degree=10)
             sage: A.algebra_generators()
             Family (x, y, z)
-
         """
         from sage.sets.family import Family
-
         return Family(self.gens())
 
     @cached_method
@@ -483,7 +470,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             1
             sage: A.one()  # indirect doctest
             1
-
         """
         n = len(self._degrees)
         return self._weighted_vectors([0 for _ in range(n)])
@@ -521,7 +507,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             y
             sage: A.gen(2)
             z
-
         """
         return self.gens()[i]
 
@@ -534,7 +519,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1,2,3), max_degree=8)
             sage: A.maximal_degree()
             8
-
         """
         return self._max_deg
 

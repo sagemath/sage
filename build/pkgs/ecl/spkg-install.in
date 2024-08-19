@@ -19,7 +19,7 @@ echo "configure scripts and/or makefiles might override these later"
 echo ""
 
 
-# Use newer version of config.guess and config.sub (see Trac #19732)
+# Use newer version of config.guess and config.sub (see Issue #19732)
 cp "$SAGE_ROOT"/config/config.* src
 
 if [ x"$SAGE_SPKG_INSTALL_DOCS" != xyes ] ; then

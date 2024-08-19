@@ -1,5 +1,5 @@
 r"""
-Double Precision Real Numbers
+Double precision floating point real numbers
 
 EXAMPLES:
 
@@ -92,7 +92,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         sage: RDF(2/3)
         0.6666666666666666
 
-    A ``TypeError`` is raised if the coercion doesn't make sense::
+    A :exc:`TypeError` is raised if the coercion doesn't make sense::
 
         sage: RDF(QQ['x'].0)
         Traceback (most recent call last):
@@ -151,7 +151,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
     cpdef bint is_exact(self) except -2:
         """
-        Returns ``False``, because doubles are not exact.
+        Return ``False``, because doubles are not exact.
 
         EXAMPLES::
 
@@ -233,7 +233,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
     def construction(self):
         r"""
-        Returns the functorial construction of ``self``, namely, completion of
+        Return the functorial construction of ``self``, namely, completion of
         the rational numbers with respect to the prime at `\infty`.
 
         Also preserves other information that makes this field unique (i.e.
@@ -250,7 +250,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         return (CompletionFunctor(sage.rings.infinity.Infinity,
                                   53,
                                   {'type': 'RDF'}),
-               sage.rings.rational_field.QQ)
+                sage.rings.rational_field.QQ)
 
     def complex_field(self):
         """
@@ -278,7 +278,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         from sage.rings.complex_double import CDF
         return CDF
 
-    cpdef _coerce_map_from_(self, S) noexcept:
+    cpdef _coerce_map_from_(self, S):
         """
         Canonical coercion of ``S`` to the real double field.
 
@@ -318,7 +318,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             ...
             TypeError: no canonical coercion from Symbolic Ring to Real Double Field
 
-        Test that :trac:`15695` is fixed (see also :trac:`18076`)::
+        Test that :issue:`15695` is fixed (see also :issue:`18076`)::
 
             sage: 1j + numpy.float64(2)                                                 # needs numpy
             2.00000000000000 + 1.00000000000000*I
@@ -431,10 +431,8 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         """
         if prec == 53:
             return self
-        else:
-            from sage.rings.real_mpfr import RealField
-            return RealField(prec)
-
+        from sage.rings.real_mpfr import RealField
+        return RealField(prec)
 
     def gen(self, n=0):
         """
@@ -464,7 +462,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
     def characteristic(self):
         """
-        Returns 0, since the field of real numbers has characteristic 0.
+        Return 0, since the field of real numbers has characteristic 0.
 
         EXAMPLES::
 
@@ -473,7 +471,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         """
         return Integer(0)
 
-    cdef _new_c(self, double value) noexcept:
+    cdef _new_c(self, double value):
         cdef RealDoubleElement x
         x = PY_NEW(RealDoubleElement)
         x._value = value
@@ -525,7 +523,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
     def pi(self):
         r"""
-        Returns `\pi` to double-precision.
+        Return `\pi` to double-precision.
 
         EXAMPLES::
 
@@ -574,7 +572,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
     def zeta(self, n=2):
         """
         Return an `n`-th root of unity in the real field, if one
-        exists, or raise a ``ValueError`` otherwise.
+        exists, or raise a :exc:`ValueError` otherwise.
 
         EXAMPLES::
 
@@ -741,7 +739,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         return RealDoubleElement, (self._value, )
 
-    cdef _new_c(self, double value) noexcept:
+    cdef _new_c(self, double value):
         cdef RealDoubleElement x
         x = PY_NEW(RealDoubleElement)
         x._value = value
@@ -762,7 +760,7 @@ cdef class RealDoubleElement(FieldElement):
 
     def ulp(self):
         """
-        Returns the unit of least precision of ``self``, which is the
+        Return the unit of least precision of ``self``, which is the
         weight of the least significant bit of ``self``. This is always
         a strictly positive number. It is also the gap between this
         number and the closest number with larger absolute value that
@@ -846,7 +844,6 @@ cdef class RealDoubleElement(FieldElement):
             sage: x = u * 2^52  # smallest normal number
             sage: x.ulp() == u
             True
-
         """
         # First, check special values
         if self._value == 0:
@@ -901,7 +898,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: complex(RDF(a))
             (2303+0j)
         """
-        return complex(self._value,0)
+        return complex(self._value, 0)
 
     def _integer_(self, ZZ=None):
         """
@@ -973,7 +970,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         TESTS:
 
-        Check that :trac:`28814` is fixed::
+        Check that :issue:`28814` is fixed::
 
             sage: mathematica(RDF(1e25))   # optional - mathematica
             1.*^25
@@ -1154,7 +1151,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: RDF(2.1)._im_gens_(R, [R(1)])                                         # needs sage.rings.real_mpfr
             2.1000
         """
-        return codomain(self) # since 1 |--> 1
+        return codomain(self)  # since 1 |--> 1
 
     def str(self):
         """
@@ -1310,7 +1307,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = 1.0 / self._value
         return x
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two real numbers with the same parent.
 
@@ -1323,7 +1320,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value + (<RealDoubleElement>right)._value
         return x
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract two real numbers with the same parent.
 
@@ -1336,7 +1333,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value - (<RealDoubleElement>right)._value
         return x
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply two real numbers with the same parent.
 
@@ -1349,7 +1346,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value * (<RealDoubleElement>right)._value
         return x
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Divide ``self`` by ``right``.
 
@@ -1366,7 +1363,7 @@ cdef class RealDoubleElement(FieldElement):
 
     def __neg__(self):
         """
-        Negates ``self``.
+        Negate ``self``.
 
         EXAMPLES::
 
@@ -1379,7 +1376,7 @@ cdef class RealDoubleElement(FieldElement):
 
     def conjugate(self):
         r"""
-        Returns the complex conjugate of this real number, which is
+        Return the complex conjugate of this real number, which is
         the real number itself.
 
         EXAMPLES::
@@ -1391,7 +1388,7 @@ cdef class RealDoubleElement(FieldElement):
 
     def __abs__(self):
         """
-        Returns the absolute value of ``self``.
+        Return the absolute value of ``self``.
 
         EXAMPLES::
 
@@ -1410,9 +1407,9 @@ cdef class RealDoubleElement(FieldElement):
         else:
             return self._new_c(-self._value)
 
-    cpdef RealDoubleElement abs(RealDoubleElement self) noexcept:
+    cpdef RealDoubleElement abs(RealDoubleElement self):
         """
-        Returns the absolute value of ``self``.
+        Return the absolute value of ``self``.
 
         EXAMPLES::
 
@@ -1456,7 +1453,7 @@ cdef class RealDoubleElement(FieldElement):
 
     def multiplicative_order(self):
         r"""
-        Returns `n` such that ``self^n == 1``.
+        Return `n` such that ``self^n == 1``.
 
         Only `\pm 1` have finite multiplicative order.
 
@@ -1477,7 +1474,7 @@ cdef class RealDoubleElement(FieldElement):
 
     def sign(self):
         """
-        Returns -1,0, or 1 if ``self`` is negative, zero, or positive;
+        Return -1, 0, or 1 if ``self`` is negative, zero, or positive;
         respectively.
 
         EXAMPLES::
@@ -1602,7 +1599,7 @@ cdef class RealDoubleElement(FieldElement):
 
     def _rpy_(self):
         """
-        Returns ``self.__float__()`` for rpy to convert into the
+        Return ``self.__float__()`` for rpy to convert into the
         appropriate R object.
 
         EXAMPLES::
@@ -1639,7 +1636,7 @@ cdef class RealDoubleElement(FieldElement):
             0.333333333333333
 
         If we coerce to a higher-precision field the extra bits appear
-        random; they are actually 0's in base 2.
+        random; they are actually 0s in base 2.
 
         ::
 
@@ -1741,7 +1738,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         return bool(libc.math.isinf(self._value))
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Rich comparison of ``left`` and ``right``.
 
@@ -1756,7 +1753,7 @@ cdef class RealDoubleElement(FieldElement):
 
         TESTS:
 
-        Check comparisons with ``NaN`` (:trac:`16515`)::
+        Check comparisons with ``NaN`` (:issue:`16515`)::
 
             sage: n = RDF('NaN')
             sage: n == n
@@ -1804,12 +1801,12 @@ cdef class RealDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, return a
-           square root in a complex field if necessary if ``self`` is negative;
-           otherwise raise a ``ValueError``.
+        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
+          square root in a complex field if necessary if ``self`` is negative.
+          Otherwise raise a :exc:`ValueError`.
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
-           list of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a
+          list of all square roots
 
         EXAMPLES::
 
@@ -1860,7 +1857,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         Return whether or not this number is a square in this field. For
         the real numbers, this is ``True`` if and only if ``self`` is
-        non-negative.
+        nonnegative.
 
         EXAMPLES::
 
@@ -1875,7 +1872,7 @@ cdef class RealDoubleElement(FieldElement):
 
     def is_integer(self):
         """
-        Return ``True`` if this number is a integer
+        Return ``True`` if this number is a integer.
 
         EXAMPLES::
 
@@ -1931,7 +1928,8 @@ cdef class RealDoubleElement(FieldElement):
         while True:
             a1 = (a+b)/2
             b1 = libc.math.sqrt(a*b)
-            if abs((b1/a1)-1) < eps: return self._new_c(a1)
+            if abs((b1/a1)-1) < eps:
+                return self._new_c(a1)
             a, b = a1, b1
 
     def algebraic_dependency(self, n):
@@ -1956,7 +1954,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: r.algebraic_dependency(5)                                             # needs sage.libs.pari
             x^2 - 2
         """
-        return sage.arith.misc.algdep(self,n)
+        return sage.arith.misc.algdep(self, n)
 
     algdep = algebraic_dependency
 
@@ -1999,7 +1997,7 @@ cdef class ToRDF(Morphism):
             R = Set_PythonType(R)
         Morphism.__init__(self, Hom(R, RDF))
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Send ``x`` to the image under this map.
 
@@ -2033,6 +2031,7 @@ _RDF = RealDoubleField_class()
 
 RDF = _RDF   # external interface
 
+
 def RealDoubleField():
     """
     Return the unique instance of the
@@ -2046,6 +2045,7 @@ def RealDoubleField():
     global _RDF
     return _RDF
 
+
 def is_RealDoubleElement(x):
     """
     Check if ``x`` is an element of the real double field.
@@ -2054,16 +2054,24 @@ def is_RealDoubleElement(x):
 
         sage: from sage.rings.real_double import is_RealDoubleElement
         sage: is_RealDoubleElement(RDF(3))
+        doctest:warning...
+        DeprecationWarning: The function is_RealDoubleElement is deprecated;
+        use 'isinstance(..., RealDoubleElement)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: is_RealDoubleElement(RIF(3))                                              # needs sage.rings.real_interval_field
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_RealDoubleElement is deprecated; "
+                       "use 'isinstance(..., RealDoubleElement)' instead.")
     return isinstance(x, RealDoubleElement)
 
 
-################# FAST CREATION CODE ######################
-########### Based on fast integer creation code   #########
-######## There is nothing to see here, move along   #######
+# ################ FAST CREATION CODE ######################
+#            Based on fast integer creation code
+#         There is nothing to see here, move along
 
 # We use a global element to steal all the references
 # from.  DO NOT INITIALIZE IT AGAIN and DO NOT REFERENCE IT!
@@ -2125,12 +2133,12 @@ cdef PyObject* fast_tp_new(type t, args, kwds) noexcept:
         # objects (As indicated by the Py_TPFLAGS_HAVE_GC flag).
         # See below for a more detailed description.
 
-        new = <PyObject*>PyObject_Malloc( sizeof(RealDoubleElement) )
+        new = <PyObject*>PyObject_Malloc(sizeof(RealDoubleElement))
 
         # Now set every member as set in z, the global dummy RealDoubleElement
         # created before this tp_new started to operate.
 
-        memcpy(new, (<void*>global_dummy_element), sizeof(RealDoubleElement) )
+        memcpy(new, (<void*>global_dummy_element), sizeof(RealDoubleElement))
 
     # This line is only needed if Python is compiled in debugging mode
     # './configure --with-pydebug' or SAGE_DEBUG=yes. If that is the
@@ -2186,7 +2194,7 @@ else:
     # From here on, calling PY_NEW(RealDoubleElement) actually creates an instance of RealDoubleElement_gsl
 
 
-cdef double_repr(double x) noexcept:
+cdef double_repr(double x):
     """
     Convert a double to a string with maximum precision.
     """

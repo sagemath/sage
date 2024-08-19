@@ -20,7 +20,7 @@ def cdd_Vrepresentation(cdd_type, vertices, rays, lines, file_output=None):
 
     INPUT:
 
-    - ``file_output`` (string; optional) -- a filename to which the
+    - ``file_output`` -- string (optional); a filename to which the
       representation should be written. If set to ``None`` (default),
       representation is returned as a string.
 
@@ -98,7 +98,7 @@ def cdd_Hrepresentation(cdd_type, ieqs, eqns, file_output=None):
 
     INPUT:
 
-    - ``file_output`` (string; optional) -- a filename to which the
+    - ``file_output`` -- string (optional); a filename to which the
       representation should be written. If set to ``None`` (default),
       representation is returned as a string.
 

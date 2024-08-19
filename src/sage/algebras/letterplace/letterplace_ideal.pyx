@@ -29,7 +29,7 @@ forms and can test containment in the ideal::
 
 AUTHOR:
 
-- Simon King (2011-03-22):  See :trac:`7797`.
+- Simon King (2011-03-22):  See :issue:`7797`.
 """
 # ****************************************************************************
 #       Copyright (C) 2011 Simon King <simon.king@uni-jena.de>
@@ -157,16 +157,16 @@ class LetterplaceIdeal(Ideal_nc):
         sage: (z*I.0-x*y*z).normal_form(I)
         -y*x*z + z*z
     """
-    def __init__(self, ring, gens, coerce=True, side="twosided"):
+    def __init__(self, ring, gens, coerce=True, side='twosided'):
         """
         INPUT:
 
-        - ``ring``: A free algebra in letterplace implementation.
-        - ``gens``: List, tuple or sequence of generators.
-        - ``coerce`` (optional bool, default ``True``):
-          Shall ``gens`` be coerced first?
-        - ``side``: optional string, one of ``"twosided"`` (default),
-          ``"left"`` or ``"right"``. Determines whether the ideal
+        - ``ring`` -- a free algebra in letterplace implementation
+        - ``gens`` -- list, tuple or sequence of generators
+        - ``coerce`` -- boolean (default: ``True``); whether ``gens`` shall be
+          coerced first
+        - ``side`` -- string; one of ``'twosided'`` (default),
+          ``'left'`` or ``'right'``. Determines whether the ideal
           is a left, right or twosided ideal. Groebner bases or
           only supported in the twosided case.
 
@@ -189,7 +189,6 @@ class LetterplaceIdeal(Ideal_nc):
             running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
-
         """
         Ideal_nc.__init__(self, ring, gens, coerce=coerce, side=side)
         self.__GB = self
@@ -201,7 +200,7 @@ class LetterplaceIdeal(Ideal_nc):
 
         INPUT:
 
-        - ``degbound`` (optional integer, or Infinity): If it is provided,
+        - ``degbound`` -- (optional) integer or Infinity; if it is provided,
           a Groebner basis at least out to that degree is returned. By
           default, the current degree bound of the underlying ring is used.
 
@@ -310,7 +309,7 @@ class LetterplaceIdeal(Ideal_nc):
                 degbound = max_deg
 
         # The following is a workaround for calling Singular's new Letterplace
-        # API (see :trac:`25993`). We construct a temporary polynomial ring L
+        # API (see :issue:`25993`). We construct a temporary polynomial ring L
         # with letterplace attributes set as required by the API. As L has
         # duplicate variable names, we need to handle this ring carefully; in
         # particular, we cannot coerce to and from L, so we use homomorphisms
@@ -358,8 +357,8 @@ class LetterplaceIdeal(Ideal_nc):
 
         INPUT:
 
-        - ``G``: A list or tuple of elements, an ideal,
-          the ambient algebra, or a single element.
+        - ``G`` -- a list or tuple of elements, an ideal,
+          the ambient algebra, or a single element
 
         OUTPUT:
 

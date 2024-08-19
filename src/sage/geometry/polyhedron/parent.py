@@ -9,10 +9,12 @@ Parents for Polyhedra
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.geometry.abc
+
 from sage.structure.parent import Parent
 from sage.structure.element import get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.modules.free_module import FreeModule, is_FreeModule
+from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.lazy_import import lazy_import
 import sage.rings.abc
@@ -22,44 +24,42 @@ from sage.rings.real_double import RDF
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules
-
-from sage.geometry.polyhedron.base import is_Polyhedron
 from .representation import Inequality, Equation, Vertex, Ray, Line
 
 
 def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *,
               ambient_space=None, base_ring=None):
     r"""
-    Construct a suitable parent class for polyhedra
+    Construct a suitable parent class for polyhedra.
 
     INPUT:
 
-    - ``base_ring`` -- A ring. Currently there are backends for `\ZZ`,
-      `\QQ`, and `\RDF`.
+    - ``base_ring`` -- a ring; currently there are backends for `\ZZ`,
+      `\QQ`, and `\RDF`
 
-    - ``ambient_dim`` -- integer. The ambient space dimension.
+    - ``ambient_dim`` -- integer; the ambient space dimension
 
-    - ``ambient_space`` -- A free module.
+    - ``ambient_space`` -- a free module
 
     - ``backend`` -- string. The name of the backend for computations. There are
-       several backends implemented:
+      several backends implemented:
 
-         * ``backend="ppl"`` uses the Parma Polyhedra Library
+        * ``backend="ppl"`` uses the Parma Polyhedra Library
 
-         * ``backend="cdd"`` uses CDD
+        * ``backend="cdd"`` uses CDD
 
-         * ``backend="normaliz"`` uses normaliz
+        * ``backend="normaliz"`` uses normaliz
 
-         * ``backend="polymake"`` uses polymake
+        * ``backend="polymake"`` uses polymake
 
-         * ``backend="field"`` a generic Sage implementation
+        * ``backend="field"`` a generic Sage implementation
 
     OUTPUT:
 
     A parent class for polyhedra over the given base ring if the
     backend supports it. If not, the parent base ring can be larger
     (for example, `\QQ` instead of `\ZZ`). If there is no
-    implementation at all, a ``ValueError`` is raised.
+    implementation at all, a :exc:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -125,7 +125,6 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
 
         sage: Polyhedra(SCR, 2, backend='number_field')                                 # needs sage.symbolic
         Polyhedra in (Symbolic Constants Subring)^2
-
     """
     if ambient_space_or_base_ring is not None:
         if ambient_space_or_base_ring in Rings():
@@ -202,13 +201,13 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``base_ring`` -- either ``ZZ``, ``QQ``, or ``RDF``. The base
-      ring of the ambient module/vector space.
+    - ``base_ring`` -- either ``ZZ``, ``QQ``, or ``RDF``; the base
+      ring of the ambient module/vector space
 
-    - ``ambient_dim`` -- integer. The ambient space dimension.
+    - ``ambient_dim`` -- integer; the ambient space dimension
 
-    - ``backend`` -- string. The name of the backend for computations. There are
-       several backends implemented:
+    - ``backend`` -- string; the name of the backend for computations. There are
+      several backends implemented:
 
       * ``backend="ppl"`` uses the Parma Polyhedra Library
 
@@ -263,7 +262,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
     def list(self):
         """
-        Return the two polyhedra in ambient dimension 0, raise an error otherwise
+        Return the two polyhedra in ambient dimension 0, raise an error otherwise.
 
         EXAMPLES::
 
@@ -297,8 +296,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``polyhedron`` -- a polyhedron whose parent is ``self``.
-
+        - ``polyhedron`` -- a polyhedron whose parent is ``self``
 
         EXAMPLES::
 
@@ -465,9 +463,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         This is the vector space or module containing the
         Vrepresentation vectors.
 
-        OUTPUT:
-
-        A free module over the base ring of dimension :meth:`ambient_dim`.
+        OUTPUT: a free module over the base ring of dimension :meth:`ambient_dim`
 
         EXAMPLES::
 
@@ -480,9 +476,8 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         if self.base_ring() in Fields():
             from sage.modules.free_module import VectorSpace
             return VectorSpace(self.base_ring(), self.ambient_dim())
-        else:
-            from sage.modules.free_module import FreeModule
-            return FreeModule(self.base_ring(), self.ambient_dim())
+        from sage.modules.free_module import FreeModule
+        return FreeModule(self.base_ring(), self.ambient_dim())
 
     ambient_space = Vrepresentation_space
 
@@ -491,9 +486,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         r"""
         Return the linear space containing the H-representation vectors.
 
-        OUTPUT:
-
-        A free module over the base ring of dimension :meth:`ambient_dim` + 1.
+        OUTPUT: a free module over the base ring of dimension :meth:`ambient_dim` + 1
 
         EXAMPLES::
 
@@ -521,7 +514,6 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: Polyhedra(K, 4)._repr_base_ring()                                     # needs sage.rings.number_field
             '(Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)'
         """
-
         if self.base_ring() is ZZ:
             return 'ZZ'
         if self.base_ring() is QQ:
@@ -535,16 +527,14 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         else:
             if self.base_ring() is AA:
                 return 'AA'
-        return '({0})'.format(self.base_ring())
+        return f'({self.base_ring()})'
 
-    def _repr_ambient_module(self):
+    def _repr_ambient_module(self) -> str:
         """
         Return an abbreviated string representation of the ambient
         space.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -564,9 +554,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -584,16 +572,15 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+        - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-        - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+        - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
-        - ``convert`` -- boolean keyword argument (default:
-          ``True``). Whether to convert the coordinates into the base
-          ring.
+        - ``convert`` -- boolean (default: ``True``); whether to convert the
+          coordinates into the base ring
 
-        - ``**kwds`` -- optional remaining keywords that are passed to the
-          polyhedron constructor.
+        - ``**kwds`` -- (optional) remaining keywords that are passed to the
+          polyhedron constructor
 
         EXAMPLES::
 
@@ -606,7 +593,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: P(0)
             A 0-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex
 
-        Check that :trac:`21270` is fixed::
+        Check that :issue:`21270` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: poly = polytopes.regular_polygon(7)
@@ -693,7 +680,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             if convert and Vrep:
                 Vrep = [convert_base_ring(_) for _ in Vrep]
             return self.element_class(self, Vrep, Hrep, **kwds)
-        if nargs == 1 and is_Polyhedron(args[0]):
+        if nargs == 1 and isinstance(args[0], sage.geometry.abc.Polyhedron):
             copy = kwds.pop('copy', args[0].parent() is not self)
             mutable = kwds.pop('mutable', False)
 
@@ -749,9 +736,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         INPUT:
 
         - ``base_ring``, ``backend`` -- see
-          :func:`~sage.geometry.polyhedron.constructor.Polyhedron`.
+          :func:`~sage.geometry.polyhedron.constructor.Polyhedron`
         - ``ambient_dim`` -- if not ``None`` change ambient dimension
-          accordingly.
+          accordingly
 
         EXAMPLES::
 
@@ -765,7 +752,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Test that :trac:`22575` is fixed::
+        Test that :issue:`22575` is fixed::
 
             sage: P = Polyhedra(ZZ,3).base_extend(QQ, backend='field')
             sage: P.backend()
@@ -785,9 +772,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         INPUT:
 
         - ``base_ring``, ``backend`` -- see
-          :func:`~sage.geometry.polyhedron.constructor.Polyhedron`.
+          :func:`~sage.geometry.polyhedron.constructor.Polyhedron`
         - ``ambient_dim`` -- if not ``None`` change ambient dimension
-          accordingly.
+          accordingly
 
         EXAMPLES::
 
@@ -837,7 +824,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         OUTPUT:
 
-        Either `\ZZ`, `\QQ`, or `RDF`. Raises :class:`TypeError` if
+        Either `\ZZ`, `\QQ`, or `RDF`. Raises :exc:`TypeError` if
         ``other`` is not a suitable input.
 
         .. NOTE::
@@ -866,7 +853,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Test that :trac:`28770` is fixed::
+        Test that :issue:`28770` is fixed::
 
             sage: z = QQ['z'].0
             sage: K = NumberField(z^2 - 2, 's')                                         # needs sage.rings.number_field
@@ -885,7 +872,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         from sage.structure.element import Element
         if isinstance(other, Element):
             other = other.parent()
-        if hasattr(other, "is_ring") and other.is_ring():
+        if other in Rings():
             other_ring = other
         else:
             try:
@@ -920,11 +907,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``X`` -- anything.
+        - ``X`` -- anything
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -951,16 +936,14 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``other`` -- a scalar or a vector.
+        - ``other`` -- a scalar or a vector
 
-        - ``op`` -- the operator.
+        - ``op`` -- the operator
 
-        - ``self_is_left`` -- boolean. Whether ``self`` is on the left
-          of the operator.
+        - ``self_is_left`` -- boolean; whether ``self`` is on the left
+          of the operator
 
-        OUTPUT:
-
-        An action that is used by the coercion model.
+        OUTPUT: an action that is used by the coercion model
 
         EXAMPLES::
 
@@ -1005,13 +988,12 @@ class Polyhedra_base(UniqueRepresentation, Parent):
              Identity endomorphism of Polyhedra in ZZ^2
             with precomposition on right by
              Generic endomorphism of Ambient free module of rank 2 over the principal ideal domain Integer Ring
-
         """
         import operator
         from sage.structure.coerce_actions import ActedUponAction
         from sage.categories.action import PrecomposedAction
 
-        if op is operator.add and is_FreeModule(other):
+        if op is operator.add and isinstance(other, FreeModule_generic):
             base_ring = self._coerce_base_ring(other)
             extended_self = self.base_extend(base_ring)
             extended_other = other.base_extend(base_ring)
@@ -1048,13 +1030,11 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``polyhedron`` -- the new polyhedron.
+        - ``polyhedron`` -- the new polyhedron
 
-        - ``data`` -- the H-representation data.
+        - ``data`` -- the H-representation data
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Inequality` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Inequality` object
 
         EXAMPLES::
 
@@ -1075,13 +1055,11 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``polyhedron`` -- the new polyhedron.
+        - ``polyhedron`` -- the new polyhedron
 
-        - ``data`` -- the H-representation data.
+        - ``data`` -- the H-representation data
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Equation` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Equation` object
 
         EXAMPLES::
 
@@ -1102,13 +1080,11 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``polyhedron`` -- the new polyhedron.
+        - ``polyhedron`` -- the new polyhedron
 
-        - ``data`` -- the V-representation data.
+        - ``data`` -- the V-representation data
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Vertex` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Vertex` object
 
         EXAMPLES::
 
@@ -1129,13 +1105,11 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``polyhedron`` -- the new polyhedron.
+        - ``polyhedron`` -- the new polyhedron
 
-        - ``data`` -- the V-representation data.
+        - ``data`` -- the V-representation data
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Ray` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Ray` object
 
         EXAMPLES::
 
@@ -1156,13 +1130,11 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``polyhedron`` -- the new polyhedron.
+        - ``polyhedron`` -- the new polyhedron
 
-        - ``data`` -- the V-representation data.
+        - ``data`` -- the V-representation data
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Line` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Line` object
 
         EXAMPLES::
 

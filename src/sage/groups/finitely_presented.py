@@ -269,10 +269,6 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
-
         EXAMPLES::
 
             sage: G.<a,b> = FreeGroup()
@@ -300,9 +296,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         the letter corresponding to the `i`-th generator of the group.
         Negative integers represent the inverses of generators.
 
-        OUTPUT:
-
-        A tuple of integers.
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -325,17 +319,15 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
 
         INPUT:
 
-        - ``*values`` -- a list/tuple/iterable of the same length as
-          the number of generators.
+        - ``*values`` -- list/tuple/iterable of the same length as
+          the number of generators
 
-        - ``check=True`` -- boolean keyword (default:
-          ``True``). Whether to verify that ``values`` satisfy the
-          relations in the finitely presented group.
+        - ``check=True`` -- boolean keyword (default: ``True``); whether to
+          verify that ``values`` satisfy the relations in the finitely
+          presented group
 
-        OUTPUT:
-
-        The product of ``values`` in the order and with exponents
-        specified by ``self``.
+        OUTPUT: the product of ``values`` in the order and with exponents
+        specified by ``self``
 
         EXAMPLES::
 
@@ -386,9 +378,7 @@ def wrap_FpGroup(libgap_fpgroup):
 
     - ``libgap_fpgroup`` -- a LibGAP finitely presented group
 
-    OUTPUT:
-
-    A Sage :class:`FinitelyPresentedGroup`.
+    OUTPUT: a Sage :class:`FinitelyPresentedGroup`
 
     EXAMPLES:
 
@@ -416,7 +406,7 @@ def wrap_FpGroup(libgap_fpgroup):
     return FinitelyPresentedGroup(free_group, relations)
 
 
-class RewritingSystem():
+class RewritingSystem:
     """
     A class that wraps GAP's rewriting systems.
 
@@ -519,7 +509,7 @@ class RewritingSystem():
 
     def free_group(self):
         """
-        The free group after which the rewriting system is defined
+        The free group after which the rewriting system is defined.
 
         EXAMPLES::
 
@@ -563,7 +553,7 @@ class RewritingSystem():
 
     def reduce(self, element):
         """
-        Applies the rules in the rewriting system to the element, to obtain
+        Apply the rules in the rewriting system to the element, to obtain
         a reduced form.
 
         If the rewriting system is confluent, this reduced form is unique
@@ -693,7 +683,7 @@ class RewritingSystem():
 
     def make_confluent(self):
         """
-        Applies Knuth-Bendix algorithm to try to transform the rewriting
+        Apply the Knuth-Bendix algorithm to try to transform the rewriting
         system into a confluent one.
 
         Note that this method does not return any object, just changes the
@@ -809,13 +799,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         ParentLibGAP.__init__(self, parent_gap)
         Group.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
-
-        OUTPUT:
-
-        String.
 
         TESTS::
 
@@ -827,16 +813,14 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             'Finitely presented group < a, b | a, b^3 >'
         """
         gens = ', '.join(self.variable_names())
-        rels = ', '.join([str(r) for r in self.relations()])
+        rels = ', '.join(str(r) for r in self.relations())
         return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):
         """
-        Return a LaTeX representation
+        Return a LaTeX representation.
 
-        OUTPUT:
-
-        String. A valid LaTeX math command sequence.
+        OUTPUT: string; a valid LaTeX math command sequence
 
         TESTS::
 
@@ -864,9 +848,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         Return the free group (without relations).
 
-        OUTPUT:
-
-        A :func:`~sage.groups.free_group.FreeGroup`.
+        OUTPUT: a :func:`~sage.groups.free_group.FreeGroup`
 
         EXAMPLES::
 
@@ -883,9 +865,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         Return the relations of the group.
 
-        OUTPUT:
-
-        The relations as a tuple of elements of :meth:`free_group`.
+        OUTPUT: the relations as a tuple of elements of :meth:`free_group`
 
         EXAMPLES::
 
@@ -907,12 +887,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``limit`` -- integer (default: 4096000). The maximal number
-          of cosets before the computation is aborted.
+        - ``limit`` -- integer (default: 4096000); the maximal number
+          of cosets before the computation is aborted
 
-        OUTPUT:
-
-        Integer or ``Infinity``. The number of elements in the group.
+        OUTPUT: integer or ``Infinity``; the number of elements in the group
 
         EXAMPLES::
 
@@ -959,15 +937,15 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``limit`` -- integer (default: 4096000). The maximal number
-          of cosets before the computation is aborted.
+        - ``limit`` -- integer (default: 4096000); the maximal number
+          of cosets before the computation is aborted
 
         OUTPUT:
 
         A Sage
         :func:`~sage.groups.perm_gps.permgroup.PermutationGroup`. If
         the number of cosets exceeds the given ``limit``, a
-        ``ValueError`` is returned.
+        :exc:`ValueError` is returned.
 
         EXAMPLES::
 
@@ -1005,7 +983,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         from sage.combinat.permutation import Permutation
         from sage.groups.perm_gps.permgroup import PermutationGroup
         return PermutationGroup([
-                Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
+            Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
 
     def direct_product(self, H, reduced=False, new_names=True):
         r"""
@@ -1025,10 +1003,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         - ``H`` -- a finitely presented group
 
-        - ``reduced`` -- (default: ``False``) boolean; if ``True``, then
+        - ``reduced`` -- boolean (default: ``False``); if ``True``, then
           attempt to reduce the presentation of the product group
 
-        - ``new_names`` -- (default: ``True``) boolean; If ``True``, then
+        - ``new_names`` -- boolean (default: ``True``); if ``True``, then
           lexicographical variable names are assigned to the generators of
           the group to be returned. If ``False``, the group to be returned
           keeps the generator names of the two groups forming the direct
@@ -1036,10 +1014,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
           to keep the old variable names, as they may change meaning
           in the output group if its presentation is reduced.
 
-        OUTPUT:
-
-        The direct product of ``self`` with ``H`` as a finitely
-        presented group.
+        OUTPUT: the direct product of ``self`` with ``H`` as a finitely
+        presented group
 
         EXAMPLES::
 
@@ -1139,23 +1115,23 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``H`` -- Finitely presented group which is implicitly acted on
+        - ``H`` -- finitely presented group which is implicitly acted on
           by ``self`` and can be naturally embedded as a normal subgroup
-          of the semidirect product.
+          of the semidirect product
 
-        - ``hom`` -- Homomorphism from ``self`` to the automorphism group
+        - ``hom`` -- homomorphism from ``self`` to the automorphism group
           of ``H``. Given as a pair, with generators of ``self`` in the
           first slot and the images of the corresponding generators in the
           second. These images must be automorphisms of ``H``, given again
           as a pair of generators and images.
 
-        - ``check`` -- Boolean (default ``True``). If ``False`` the defining
+        - ``check`` -- boolean (default: ``True``); if ``False`` the defining
           homomorphism and automorphism images are not tested for validity.
           This test can be costly with large groups, so it can be bypassed
           if the user is confident that his morphisms are valid.
 
-        - ``reduced`` -- Boolean (default ``False``). If ``True`` then the
-          method attempts to reduce the presentation of the output group.
+        - ``reduced`` -- boolean (default: ``False``); if ``True`` then the
+          method attempts to reduce the presentation of the output group
 
         OUTPUT:
 
@@ -1358,9 +1334,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         r"""
         Return the abelianization map of ``self``.
 
-        OUTPUT:
-
-        The abelianization map of ``self`` as a homomorphism of finitely presented groups.
+        OUTPUT: the abelianization map of ``self`` as a homomorphism of
+        finitely presented groups
 
         EXAMPLES::
 
@@ -1400,17 +1375,17 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``ring`` -- (default: ``QQ``); the base ring for
+        - ``ring`` -- (default: ``QQ``) the base ring for
           the group algebra of ``self``
 
         OUTPUT:
 
         - ``ab`` -- the abelianization  of ``self`` as a finitely presented group
-          with a minimal number `n` of generators.
-        -  ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``.
-        - ``ideal`` -- a list of generators of an ideal ``I`` in ``R`` such that ``R/I``
+          with a minimal number `n` of generators
+        - ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``
+        - ``ideal`` -- list of generators of an ideal ``I`` in ``R`` such that ``R/I``
           is the group algebra of the abelianization over ``ring``
-        - ``image`` -- a list  with the images of the generators of ``self`` in ``R/I``
+        - ``image`` -- list  with the images of the generators of ``self`` in ``R/I``
 
         EXAMPLES::
 
@@ -1530,11 +1505,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
     def sorted_presentation(self):
         """
-        Return the same presentation with the relations sorted to ensure equality.
+        Return the same presentation with the relations sorted to ensure
+        equality.
 
-        OUTPUT:
-
-        A new finitely presented group with the relations sorted.
+        OUTPUT: a new finitely presented group with the relations sorted
 
         EXAMPLES::
 
@@ -1548,14 +1522,13 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         L1 = []
         for rel in L0:
             C = [rel]
-            for j in range(len(rel) - 1):
-                C.append(rel[j + 1:] + rel[:j + 1])
+            C.extend(rel[j + 1:] + rel[:j + 1] for j in range(len(rel) - 1))
             C1 = [tuple(-j for j in reversed(l)) for l in C]
             C += C1
             C.sort()
             L1.append(C[0])
         L1.sort()
-        return F/L1
+        return F / L1
 
     def epimorphisms(self, H):
         r"""
@@ -1563,7 +1536,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - `H` -- Another group
+        - ``H`` -- another group
 
         EXAMPLES::
 
@@ -1681,8 +1654,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         OUTPUT:
 
         - ``A`` -- a matrix with coefficients in ``R``
-        - ``ideal`` -- an list of generators of an ideal ``I`` of ``R = A.base_ring()`` such that ``R/I`` is
-          the group algebra of the abelianization of ``self``
+        - ``ideal`` -- an list of generators of an ideal ``I`` of
+          ``R = A.base_ring()`` such that ``R/I`` is the group algebra of the
+          abelianization of ``self``
 
         EXAMPLES::
 
@@ -1747,10 +1721,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         r"""
         Return the characteristic varieties of the group ``self``.
 
-        There are several definitions of the characteristic varieties of a group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the
-        group algebra of `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus). Each
-        element `\xi\in\mathbb{T}` defines a local system of coefficients and the `k` th-characteristic
-        variety is
+        There are several definitions of the characteristic varieties of a
+        group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the group algebra of
+        `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus).
+        Each element `\xi\in\mathbb{T}` defines a local system of coefficients
+        and the `k`-th characteristic variety is
 
         .. MATH::
 
@@ -1761,7 +1736,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         INPUT:
 
         - ``ring`` -- (default: ``QQ``) the base ring of the group algebra
-        - ``groebner`` -- boolean (default: ``False``); If set to
+        - ``groebner`` -- boolean (default: ``False``); if set to
           ``True`` the minimal associated primes of the ideals and their
           groebner bases are computed; ignored if the base ring
           is not a field

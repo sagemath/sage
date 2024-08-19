@@ -26,20 +26,10 @@ Highlights are:
 License
 -------
 
-Modified BSD
-
+BSD-2-Clause
 
 Upstream Contact
 ----------------
 
-- Author: Georg Brandl
-- Home Page: https://pygments.org
+https://pypi.org/project/Pygments/
 
-Special Update/Build Instructions
----------------------------------
-
-Patches included:
-
--  sage_prompt.patch: patch pygments/lexers/agile.py to treat the
-   "sage:" prompt like Python's ">>>" prompt. This allows a very
-   kludgy patch to be removed from the Sphinx package (see #10118).

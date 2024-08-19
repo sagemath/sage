@@ -43,7 +43,7 @@ class HyperbolicPolygon(HyperbolicArcCore):
 
     - ``pts`` -- coordinates of the polygon (as complex numbers)
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -62,7 +62,7 @@ class HyperbolicPolygon(HyperbolicArcCore):
 
             sage: from sage.plot.hyperbolic_polygon import HyperbolicPolygon
             sage: HP = HyperbolicPolygon([0, 1/2, I], "UHP", {})
-            sage: TestSuite(HP).run(skip ="_test_pickling")
+            sage: TestSuite(HP).run(skip ='_test_pickling')
         """
         if model == "HM":
             raise ValueError("the hyperboloid model is not supported")
@@ -109,6 +109,7 @@ class HyperbolicPolygon(HyperbolicArcCore):
         """
         return "Hyperbolic polygon ({})".format(", ".join(map(str, self._pts)))
 
+
 def _winding_number(vertices, point):
     r"""
     Compute the winding number of the given point in the plane `z = 0`.
@@ -136,23 +137,23 @@ def _winding_number(vertices, point):
 
     sides = []
     wn = 0
-    for i in range(0, len(vertices)-1):
-        if _intersects(vertices[i], vertices[i+1], point[1]):
-            sides.append([vertices[i], vertices[i + 1]])
+    sides = [[vertices[i], vertices[i + 1]] for i in range(len(vertices) - 1)
+             if _intersects(vertices[i], vertices[i + 1], point[1])]
+
     if _intersects(vertices[-1], vertices[0], point[1]):
         sides.append([vertices[-1], vertices[0]])
     for side in sides:
         if _is_left(point, side):
             if side[1][1] > side[0][1]:
-                wn = wn + 1
+                wn += 1
             if side[1][1] < side[0][1]:
-                wn = wn - 1
+                wn -= 1
     return wn
 
 
 @rename_keyword(color='rgbcolor')
-@options(alpha=1, fill=False, thickness=1, rgbcolor="blue", zorder=2, linestyle='solid')
-def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
+@options(alpha=1, fill=False, thickness=1, rgbcolor='blue', zorder=2, linestyle='solid')
+def hyperbolic_polygon(pts, model='UHP', resolution=200, **options):
     r"""
     Return a hyperbolic polygon in the hyperbolic plane with vertices ``pts``.
 
@@ -160,19 +161,19 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
 
     INPUT:
 
-    - ``pts`` -- a list or tuple of complex numbers
+    - ``pts`` -- list or tuple of complex numbers
 
     OPTIONS:
 
-    - ``model`` -- default: ``UHP`` Model used for hyperbolic plane
+    - ``model`` -- (default: ``UHP``) Model used for hyperbolic plane
 
-    - ``alpha`` -- default: 1
+    - ``alpha`` -- (default: 1)
 
-    - ``fill`` -- default: ``False``
+    - ``fill`` -- (default: ``False``)
 
-    - ``thickness`` -- default: 1
+    - ``thickness`` -- (default: 1)
 
-    - ``rgbcolor`` -- default: ``'blue'``
+    - ``rgbcolor`` -- (default: ``'blue'``)
 
     - ``linestyle`` -- (default: ``'solid'``) the style of the line, which is
       one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or
@@ -213,21 +214,21 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
     Show a hyperbolic polygon in the Poincare disc model with coordinates
     `1`, `i`, `-1`, `-i`::
 
-        sage: hyperbolic_polygon([1,I,-1,-I], model="PD", color='green')
+        sage: hyperbolic_polygon([1,I,-1,-I], model='PD', color='green')
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        sphinx_plot(hyperbolic_polygon([1,I,-1,-I], model="PD", color='green'))
+        sphinx_plot(hyperbolic_polygon([1,I,-1,-I], model='PD', color='green'))
 
     With more options::
 
-        sage: hyperbolic_polygon([1,I,-1,-I], model="PD", color='green', fill=True, linestyle="-")
+        sage: hyperbolic_polygon([1,I,-1,-I], model='PD', color='green', fill=True, linestyle='-')
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        P = hyperbolic_polygon([1,I,-1,-I], model="PD", color='green', fill=True, linestyle="-")
+        P = hyperbolic_polygon([1,I,-1,-I], model='PD', color='green', fill=True, linestyle='-')
         sphinx_plot(P)
 
     Klein model is also supported via the parameter ``model``.
@@ -240,7 +241,7 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
         sage: p4 = -1
         sage: p5 = (cos(4*pi/3), sin(4*pi/3))
         sage: p6 = (cos(5*pi/3), sin(5*pi/3))
-        sage: hyperbolic_polygon([p1,p2,p3,p4,p5,p6], model="KM", fill=True, color='purple')
+        sage: hyperbolic_polygon([p1,p2,p3,p4,p5,p6], model='KM', fill=True, color='purple')
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -251,7 +252,7 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
         p4=-1
         p5=(cos(4*pi/3),sin(4*pi/3))
         p6=(cos(5*pi/3),sin(5*pi/3))
-        P = hyperbolic_polygon([p1,p2,p3,p4,p5,p6], model="KM", fill=True, color='purple')
+        P = hyperbolic_polygon([p1,p2,p3,p4,p5,p6], model='KM', fill=True, color='purple')
         sphinx_plot(P)
 
     Hyperboloid model is supported partially,  via the parameter ``model``.
@@ -260,13 +261,13 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
     `(-3,3,\sqrt(19))`::
 
         sage: pts = [(3,3,sqrt(19)),(3,-3,sqrt(19)),(-3,-3,sqrt(19)),(-3,3,sqrt(19))]
-        sage: hyperbolic_polygon(pts, model="HM")
+        sage: hyperbolic_polygon(pts, model='HM')
         Graphics3d Object
 
     .. PLOT::
 
         pts = [(3,3,sqrt(19)),(3,-3,sqrt(19)),(-3,-3,sqrt(19)),(-3,3,sqrt(19))]
-        P = hyperbolic_polygon(pts, model="HM")
+        P = hyperbolic_polygon(pts, model='HM')
         sphinx_plot(P)
 
     Filling a hyperbolic_polygon in hyperboloid model is possible although
@@ -276,16 +277,15 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
     give a faster result.) ::
 
         sage: pts = [(1,1,sqrt(3)), (0,2,sqrt(5)), (2,0,sqrt(5))]
-        sage: hyperbolic_polygon(pts, model="HM", resolution=50,
+        sage: hyperbolic_polygon(pts, model='HM', resolution=50,
         ....:                    color='yellow', fill=True)
         Graphics3d Object
 
     .. PLOT::
 
         pts = [(1,1,sqrt(3)),(0,2,sqrt(5)),(2,0,sqrt(5))]
-        P = hyperbolic_polygon(pts, model="HM", color='yellow', fill=True)
+        P = hyperbolic_polygon(pts, model='HM', color='yellow', fill=True)
         sphinx_plot(P)
-
     """
     from sage.plot.all import Graphics
     g = Graphics()
@@ -328,7 +328,7 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
     return g
 
 
-def hyperbolic_triangle(a, b, c, model="UHP", **options):
+def hyperbolic_triangle(a, b, c, model='UHP', **options):
     r"""
     Return a hyperbolic triangle in the hyperbolic plane with
     vertices ``(a,b,c)``.
@@ -337,21 +337,21 @@ def hyperbolic_triangle(a, b, c, model="UHP", **options):
 
     INPUT:
 
-    - ``a, b, c`` -- complex numbers in the upper half complex plane
+    - ``a``, ``b``, ``c`` -- complex numbers in the upper half complex plane
 
     OPTIONS:
 
-    - ``alpha`` -- default: 1
+    - ``alpha`` -- (default: 1)
 
-    - ``fill`` -- default: ``False``
+    - ``fill`` -- (default: ``False``)
 
-    - ``thickness`` -- default: 1
+    - ``thickness`` -- (default: 1)
 
-    - ``rgbcolor`` -- default: ``'blue'``
+    - ``rgbcolor`` -- (default: ``'blue'``)
 
     - ``linestyle`` -- (default: ``'solid'``) the style of the line, which is
       one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or
-      ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
+      ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively
 
     EXAMPLES:
 
@@ -391,7 +391,7 @@ def hyperbolic_triangle(a, b, c, model="UHP", **options):
         sage: z1 = CC((cos(pi/3),sin(pi/3)))
         sage: z2 = CC((0.6*cos(3*pi/4),0.6*sin(3*pi/4)))
         sage: z3 = 1
-        sage: hyperbolic_triangle(z1, z2, z3, model="PD", color="red")
+        sage: hyperbolic_triangle(z1, z2, z3, model='PD', color='red')
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -399,18 +399,17 @@ def hyperbolic_triangle(a, b, c, model="UHP", **options):
         z1 = CC((cos(pi/3),sin(pi/3)))
         z2 = CC((0.6*cos(3*pi/4),0.6*sin(3*pi/4)))
         z3 = 1
-        P = hyperbolic_triangle(z1, z2, z3, model="PD", color="red")
+        P = hyperbolic_triangle(z1, z2, z3, model='PD', color='red')
         sphinx_plot(P)
 
     ::
 
-        sage: hyperbolic_triangle(0.3+0.3*I, 0.8*I, -0.5-0.5*I, model="PD", color='magenta')
+        sage: hyperbolic_triangle(0.3+0.3*I, 0.8*I, -0.5-0.5*I, model='PD', color='magenta')
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        P = hyperbolic_triangle(0.3+0.3*I, 0.8*I, -0.5-0.5*I, model="PD", color='magenta')
+        P = hyperbolic_triangle(0.3+0.3*I, 0.8*I, -0.5-0.5*I, model='PD', color='magenta')
         sphinx_plot(P)
-
     """
     return hyperbolic_polygon((a, b, c), model, **options)

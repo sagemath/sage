@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Attribute and method calling
 """
@@ -17,7 +18,9 @@ Attribute and method calling
 #############################################
 # Operators
 #############################################
-class AttrCallObject():
+
+
+class AttrCallObject:
     def __init__(self, name, args, kwds):
         """
         TESTS::
@@ -32,7 +35,7 @@ class AttrCallObject():
 
     def __call__(self, x, *args):
         """
-        Gets the ``self.name`` method from ``x``, calls it with
+        Get the ``self.name`` method from ``x``, calls it with
         ``self.args`` and ``args`` as positional parameters and
         ``self.kwds`` as keyword parameters, and returns the result.
 
@@ -73,7 +76,7 @@ class AttrCallObject():
 
     def __eq__(self, other):
         """
-        Equality testing
+        Equality testing.
 
         EXAMPLES::
 
@@ -88,7 +91,7 @@ class AttrCallObject():
 
     def __ne__(self, other):
         """
-        Equality testing
+        Equality testing.
 
         EXAMPLES::
 
@@ -103,7 +106,7 @@ class AttrCallObject():
 
     def __hash__(self):
         """
-        Hash value
+        Hash value.
 
         This method tries to ensure that, when two ``attrcall``
         objects are equal, they have the same hash value.
@@ -135,7 +138,7 @@ class AttrCallObject():
 
         Note: a missing ``__hash__`` method here used to break the
         unique representation of parents taking ``attrcall`` objects
-        as input; see :trac:`8911`.
+        as input; see :issue:`8911`.
         """
         return hash((self.args, tuple(sorted(self.kwds.items()))))
 
@@ -148,11 +151,11 @@ def attrcall(name, *args, **kwds):
 
     INPUT:
 
-    -  ``name`` - a string of the name of the method you
-       want to call
+    - ``name`` -- string of the name of the method you
+      want to call
 
-    -  ``args, kwds`` - arguments and keywords to be passed
-       to the method
+    - ``args, kwds`` -- arguments and keywords to be passed
+      to the method
 
     EXAMPLES::
 

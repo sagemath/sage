@@ -14,7 +14,6 @@ AUTHORS:
 .. TODO::
 
     Smooth triangles using vertex normals
-
 """
 # ****************************************************************************
 #      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -69,7 +68,7 @@ from sage.plot.plot3d.transform cimport Transformation
 # Fast routines for generating string representations of the polygons.
 # --------------------------------------------------------------------
 
-cdef inline format_tachyon_texture(color_c rgb) noexcept:
+cdef inline format_tachyon_texture(color_c rgb):
     cdef char rs[200]
     cdef Py_ssize_t cr = sprintf_3d(rs,
                                    "TEXTURE\n AMBIENT 0.3 DIFFUSE 0.7 SPECULAR 0 OPACITY 1.0\n COLOR %g %g %g \n TEXFUNC 0",
@@ -77,7 +76,7 @@ cdef inline format_tachyon_texture(color_c rgb) noexcept:
     return bytes_to_str(PyBytes_FromStringAndSize(rs, cr))
 
 
-cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R) noexcept:
+cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R):
     cdef char ss[250]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_9d(ss,
@@ -88,22 +87,22 @@ cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R) noexcept:
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
 
-cdef inline format_json_vertex(point_c P) noexcept:
+cdef inline format_json_vertex(point_c P):
     cdef char ss[100]
     cdef Py_ssize_t r = sprintf_3d(ss, '{"x":%g,"y":%g,"z":%g}', P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_json_face(face_c face) noexcept:
+cdef inline format_json_face(face_c face):
     s = "[{}]".format(",".join(str(face.vertices[i]) for i in range(face.n)))
     return s
 
-cdef inline format_obj_vertex(point_c P) noexcept:
+cdef inline format_obj_vertex(point_c P):
     cdef char ss[100]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_3d(ss, "v %g %g %g", P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_obj_face(face_c face, int off) noexcept:
+cdef inline format_obj_face(face_c face, int off):
     cdef char ss[100]
     cdef Py_ssize_t r, i
     if face.n == 3:
@@ -115,7 +114,7 @@ cdef inline format_obj_face(face_c face, int off) noexcept:
     # PyBytes_FromFormat is almost twice as slow
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_obj_face_back(face_c face, int off) noexcept:
+cdef inline format_obj_face_back(face_c face, int off):
     cdef char ss[100]
     cdef Py_ssize_t r, i
     if face.n == 3:
@@ -126,13 +125,13 @@ cdef inline format_obj_face_back(face_c face, int off) noexcept:
         return "f " + " ".join(str(face.vertices[i] + off) for i from face.n > i >= 0)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_pmesh_vertex(point_c P) noexcept:
+cdef inline format_pmesh_vertex(point_c P):
     cdef char ss[100]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_3d(ss, "%g %g %g", P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_pmesh_face(face_c face, int has_color) noexcept:
+cdef inline format_pmesh_face(face_c face, int has_color):
     cdef char ss[100]
     cdef Py_ssize_t r, i
     cdef int color
@@ -197,6 +196,7 @@ cdef inline format_pmesh_face(face_c face, int has_color) noexcept:
     # PyBytes_FromFormat is almost twice as slow
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
+
 def midpoint(pointa, pointb, w):
     """
     Return the weighted mean of two points in 3-space.
@@ -205,7 +205,7 @@ def midpoint(pointa, pointb, w):
 
     - ``pointa``, ``pointb`` -- two points in 3-dimensional space
 
-    - ``w`` -- a real weight between 0 and 1.
+    - ``w`` -- a real weight between 0 and 1
 
     If the weight is zero, the result is ``pointb``. If the weight is
     one, the result is ``pointa``.
@@ -328,7 +328,7 @@ cdef class IndexFaceSet(PrimitiveObject):
          [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 7.0)]]
         sage: S.show()
 
-    A simple example of colored IndexFaceSet (:trac:`12212`)::
+    A simple example of colored IndexFaceSet (:issue:`12212`)::
 
         sage: from sage.plot.plot3d.index_face_set import IndexFaceSet
         sage: from sage.plot.plot3d.texture import Texture
@@ -393,7 +393,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
     cdef int realloc(self, Py_ssize_t vcount, Py_ssize_t fcount, Py_ssize_t icount) except -1:
         r"""
-        Allocates memory for vertices, faces, and face indices.  Can
+        Allocate memory for vertices, faces, and face indices.  Can
         only be called from Cython, so the doctests must be indirect.
 
         EXAMPLES::
@@ -512,9 +512,9 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         INPUT:
 
-        ``threshold`` -- the minimum cosine of the angle between adjacent
-        faces a higher threshold separates more, all faces if >= 1, no
-        faces if <= -1
+        - ``threshold`` -- the minimum cosine of the angle between adjacent
+          faces a higher threshold separates more, all faces if >= 1, no
+          faces if <= -1
         """
         cdef Py_ssize_t i, j, k
         cdef face_c *face
@@ -930,7 +930,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         INPUT:
 
-        - `f` -- a function from `\RR^3` to `\ZZ`
+        - ``f`` -- a function from `\RR^3` to `\ZZ`
 
         EXAMPLES::
 
@@ -1003,9 +1003,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         - ``eps`` -- target accuracy in the intersection (default: 1.0e-6)
 
-        OUTPUT:
-
-        an ``IndexFaceSet``
+        OUTPUT: an ``IndexFaceSet``
 
         This will contain both triangular and quadrilateral faces.
 
@@ -1084,7 +1082,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         TESTS:
 
-        One test for preservation of transparency :trac:`28783`::
+        One test for preservation of transparency :issue:`28783`::
 
             sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
@@ -1409,7 +1407,6 @@ cdef class IndexFaceSet(PrimitiveObject):
                 {'x': 0.0, 'y': 1.0, 'z': 1.0},
                 {'x': 1.0, 'y': 0.0, 'z': 1.0},
                 {'x': 1.0, 'y': 1.0, 'z': 0.0}]})]
-
         """
         surface = {}
 
@@ -1711,9 +1708,7 @@ cdef class IndexFaceSet(PrimitiveObject):
           the original surface so it shows, typically this value is very
           small compared to the actual object
 
-        OUTPUT:
-
-        Graphics3dGroup of stickers
+        OUTPUT: Graphics3dGroup of stickers
 
         EXAMPLES::
 
@@ -1757,8 +1752,6 @@ cdef class FaceIter:
         True
     """
     def __init__(self, face_set):
-        """
-        """
         self.set = face_set
         self.i = 0
 

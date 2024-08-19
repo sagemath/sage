@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 KnotInfo database
 
@@ -23,7 +22,6 @@ EXAMPLES::
 AUTHORS:
 
 - Sebastian Oehms (2020-08): initial version
-
 """
 ##############################################################################
 #       Copyright (C) 2020 Sebastian Oehms <seb.oehms@gmail.com>
@@ -336,7 +334,7 @@ class KnotInfoFilename(Enum):
 #----------------------------------------------------------------------------------------------------------------------------
 class KnotInfoDataBase(SageObject, UniqueRepresentation):
     r"""
-    Database interface to KnotInfo
+    Database interface to KnotInfo.
 
     The original data are obtained from KnotInfo web-page (URL see the example
     below). In order to have these data installed during the build process as
@@ -387,8 +385,8 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``force`` -- optional boolean. If set to ``True`` the existing
-          file-cache is overwritten
+        - ``force`` -- boolean (default: ``False``); if set to ``True`` the
+          existing file-cache is overwritten
 
         EXAMPLES::
 
@@ -660,11 +658,9 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     @cached_method
     def read_column_dict(self):
         r"""
-        Read the dictionary for the column names from the according sobj-file
+        Read the dictionary for the column names from the according sobj-file.
 
-        OUTPUT:
-
-        A python dictionary containing the column names and types
+        OUTPUT: a Python dictionary containing the column names and types
 
         EXAMPLES::
 
@@ -713,12 +709,10 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     @cached_method
     def row_names(self):
         r"""
-        Return a dictionary to obtain the original name to a row_dict key
+        Return a dictionary to obtain the original name to a row_dict key.
 
-        OUTPUT:
-
-        A python dictionary containing the names of the knots and links
-        together with their original names from the database,
+        OUTPUT: a Python dictionary containing the names of the knots and links
+        together with their original names from the database
 
         EXAMPLES::
 
@@ -739,9 +733,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         Read the number of knots contained in the database (without
         proper links) from the according sobj-file.
 
-        OUTPUT:
-
-        Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -760,16 +752,14 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     @cached_method
     def read(self, column):
         r"""
-        Access a column of KnotInfo / LinkInfo
+        Access a column of KnotInfo / LinkInfo.
 
         INPUT:
 
-        ``column`` -- instance of enum :class:`KnotInfoColumns`
+        - ``column`` -- instance of enum :class:`KnotInfoColumns`
           to select the data to be read in
 
-        OUTPUT:
-
-        A python list containing the data corresponding to the column.
+        OUTPUT: a Python list containing the data corresponding to the column
 
         EXAMPLES::
 

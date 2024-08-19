@@ -71,7 +71,7 @@ TESTS::
 from sage.arith.misc import is_prime, sigma
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.modular.arithgroup.all import is_CongruenceSubgroup, is_Gamma0, is_Gamma1
+from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0_class, Gamma1_class
 from sage.modular.dirichlet import TrivialCharacter
 from sage.modular.hecke.ambient_module import AmbientHeckeModule
 from sage.modular.modsym.modsym import ModularSymbols
@@ -102,11 +102,11 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m.is_ambient()
             True
         """
-        if not is_CongruenceSubgroup(group):
+        if not isinstance(group, CongruenceSubgroupBase):
             raise TypeError('group (=%s) must be a congruence subgroup' % group)
         weight = Integer(weight)
 
-        if character is None and is_Gamma0(group):
+        if character is None and isinstance(group, Gamma0_class):
             character = TrivialCharacter(group.level(), base_ring)
 
         self._eis_only = eis_only
@@ -119,7 +119,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _repr_(self):
         """
-        Return string representation of self.
+        Return string representation of ``self``.
 
         EXAMPLES::
 
@@ -159,9 +159,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         INPUT:
 
-
-        -  ``R`` - ring
-
+        - ``R`` -- ring
 
         EXAMPLES::
 
@@ -208,8 +206,8 @@ class ModularFormsAmbient(space.ModularFormsSpace,
     def hecke_module_of_level(self, N):
         r"""
         Return the Hecke module of level N corresponding to self, which is the
-        domain or codomain of a degeneracy map from self. Here N must be either
-        a divisor or a multiple of the level of self.
+        domain or codomain of a degeneracy map from ``self``. Here N must be either
+        a divisor or a multiple of the level of ``self``.
 
         EXAMPLES::
 
@@ -229,7 +227,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _degeneracy_raising_matrix(self, M, t):
         r"""
-        Calculate the matrix of the degeneracy map from self to M corresponding
+        Calculate the matrix of the degeneracy map from ``self`` to M corresponding
         to `f(q) \mapsto f(q^t)`. Here the level of M should be a multiple of
         the level of self, and t should divide the quotient.
 
@@ -288,9 +286,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def is_ambient(self):
         """
-        Return True if this an ambient space of modular forms.
+        Return ``True`` if this an ambient space of modular forms.
 
-        This is an ambient space, so this function always returns True.
+        This is an ambient space, so this function always returns ``True``.
 
         EXAMPLES::
 
@@ -365,11 +363,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         INPUT:
 
+        - ``new_prec`` -- positive integer (default: ``None``)
 
-        -  ``new_prec`` - positive integer (default: None)
-
-
-        OUTPUT: if new_prec is None, returns the current precision.
+        OUTPUT: if ``new_prec`` is ``None``, returns the current precision
 
         EXAMPLES::
 
@@ -468,10 +464,8 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         INPUT:
 
-
-        -  ``p`` - (default: None), if specified return only
-           the `p`-new submodule.
-
+        - ``p`` -- (default: ``None``), if specified return only
+          the `p`-new submodule
 
         EXAMPLES::
 
@@ -518,7 +512,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _q_expansion(self, element, prec):
         r"""
-        Return the q-expansion of a particular element of this space of
+        Return the `q`-expansion of a particular element of this space of
         modular forms, where the element should be a vector, list, or tuple
         (not a ModularFormElement). Here element should have length =
         self.dimension(). If element = [ a_i ] and self.basis() = [ v_i
@@ -526,11 +520,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         INPUT:
 
+        - ``element`` -- vector, list or tuple
 
-        -  ``element`` - vector, list or tuple
-
-        -  ``prec`` - desired precision of q-expansion
-
+        - ``prec`` -- desired precision of `q`-expansion
 
         EXAMPLES::
 
@@ -583,7 +575,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         if self._eis_only:
             return 0
-        if is_Gamma1(self.group()) and self.character() is not None:
+        if isinstance(self.group(), Gamma1_class) and self.character() is not None:
             return self.group().dimension_cusp_forms(self.weight(),
                                                      self.character())
         else:
@@ -609,12 +601,12 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m._dim_cuspidal()
             6
 
-        Test that :trac:`24030` is fixed::
+        Test that :issue:`24030` is fixed::
 
             sage: ModularForms(GammaH(40, [21]), 1).dimension() # indirect doctest
             16
         """
-        if is_Gamma1(self.group()) and self.character() is not None:
+        if isinstance(self.group(), Gamma1_class) and self.character() is not None:
             return self.group().dimension_eis(self.weight(), self.character())
         else:
             return self.group().dimension_eis(self.weight())
@@ -636,7 +628,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m._dim_cuspidal()
             22
         """
-        if is_Gamma1(self.group()) and self.character() is not None:
+        if isinstance(self.group(), Gamma1_class) and self.character() is not None:
             return self.group().dimension_new_cusp_forms(self.weight(), self.character())
         else:
             return self.group().dimension_new_cusp_forms(self.weight())
@@ -662,7 +654,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m._dim_eisenstein()
             8
         """
-        if is_Gamma0(self.group()) and self.weight() == 2:
+        if isinstance(self.group(), Gamma0_class) and self.weight() == 2:
             if is_prime(self.level()):
                 d = 1
             else:
@@ -679,7 +671,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
     @cached_method
     def eisenstein_params(self):
         """
-        Return parameters that define all Eisenstein series in self.
+        Return parameters that define all Eisenstein series in ``self``.
 
         OUTPUT: an immutable Sequence
 
@@ -693,7 +685,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         eps = self.character()
         if eps is None:
-            if is_Gamma1(self.group()):
+            if isinstance(self.group(), Gamma1_class):
                 eps = self.level()
             else:
                 raise NotImplementedError
@@ -752,12 +744,12 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _compute_hecke_matrix(self, n):
         """
-        Compute the matrix of the Hecke operator T_n acting on self.
+        Compute the matrix of the Hecke operator `T_n` acting on ``self``.
 
-        NOTE:
+        .. NOTE::
 
-        If self is a level 1 space, the much faster Victor Miller basis
-        is used for this computation.
+            If ``self`` is a level 1 space, the much faster Victor Miller basis
+            is used for this computation.
 
         EXAMPLES::
 
@@ -766,7 +758,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             [ 2  0]
             [ 0 12]
 
-        Check that :trac:`22780` is fixed::
+        Check that :issue:`22780` is fixed::
 
             sage: M = ModularForms(1, 12)
             sage: M._compute_hecke_matrix(2)
@@ -830,7 +822,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def hecke_polynomial(self, n, var='x'):
         r"""
-        Compute the characteristic polynomial of the Hecke operator T_n acting
+        Compute the characteristic polynomial of the Hecke operator `T_n` acting
         on this space. Except in level 1, this is computed via modular symbols,
         and in particular is faster to compute than the matrix itself.
 

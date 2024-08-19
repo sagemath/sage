@@ -4,9 +4,9 @@
 
 .. _chapter-tools:
 
-========================================
-Additional Development and Testing Tools
-========================================
+=============================
+Development and Testing Tools
+=============================
 
 .. _section-tools-tox:
 
@@ -21,19 +21,19 @@ Sage includes tox as a standard package and uses it for three purposes:
 
 - For portability testing of the Sage distribution, as we explain in
   :ref:`chapter-portability_testing`.  This is configured in the file
-  ``SAGE_ROOT/tox.ini``.
+  :sage_root:`tox.ini`.
 
 - For testing modularized distributions of the Sage library. This is configured
-  in ``tox.ini`` files in subdirectories of ``SAGE_ROOT/pkgs/``, such as
-  ``SAGE_ROOT/pkgs/sagemath-standard/tox.ini``. Each distribution's configuration
+  in ``tox.ini`` files in subdirectories of :sage_root:`pkgs/`, such as
+  :sage_root:`pkgs/sagemath-standard/tox.ini`. Each distribution's configuration
   defines tox environments for testing the distribution with different Python
   versions and different ways how the dependencies are provided.
   We explain this in :ref:`chapter-modularization`.
 
 - As an entry point for testing and linting of the Sage library, as we describe below.
-  This is configured in the file ``SAGE_ROOT/src/tox.ini``.
+  This is configured in the file :sage_root:`src/tox.ini`.
 
-The tox configuration ``SAGE_ROOT/src/tox.ini`` can be invoked by using the command
+The tox configuration :sage_root:`src/tox.ini` can be invoked by using the command
 ``./sage --tox``.  (If ``tox`` is available in your system installation,
 you can just type ``tox`` instead.)
 
@@ -49,7 +49,7 @@ available::
   --tox [options] <files|dirs> -- general entry point for testing
                                   and linting of the Sage library
      -e <envlist>     -- run specific test environments; default:
-                         doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst
+                         doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst,ruff-minimal
         doctest                -- run the Sage doctester
                                   (same as "sage -t")
         coverage               -- give information about doctest coverage of files
@@ -58,14 +58,15 @@ available::
                                   (same as "sage --startuptime")
         pycodestyle-minimal    -- check against Sage's minimal style conventions
         relint                 -- check whether some forbidden patterns appear
-                                  (includes all patchbot pattern-exclusion plugins)
         codespell              -- check for misspelled words in source code
         rst                    -- validate Python docstrings markup as reStructuredText
+        ruff-minimal           -- check against Sage's minimal style conventions
         coverage.py            -- run the Sage doctester with Coverage.py
         coverage.py-html       -- run the Sage doctester with Coverage.py, generate HTML report
         pyright                -- run the static typing checker pyright
         pycodestyle            -- check against the Python style conventions of PEP8
         cython-lint            -- check Cython files for code style
+        ruff                   -- check against Python style conventions
      -p auto          -- run test environments in parallel
      --help           -- show tox help
 
@@ -97,7 +98,7 @@ for code coverage analysis.
 If invoked as ``./sage -tox -e coverage.py-html``, additionally a
 detailed HTML report is generated.
 
-*Configuration:* ``[coverage:run]`` block in ``SAGE_ROOT/src/tox.ini``
+*Configuration:* ``[coverage:run]`` block in :sage_root:`src/tox.ini`
 
 *Documentation:* https://coverage.readthedocs.io
 
@@ -107,6 +108,7 @@ detailed HTML report is generated.
    been built already. A virtual environment is created by tox, but the
    **coverage** package is installed into the normal Sage environment, and
    Sage is invoked from there.
+
 
 .. _section-tools-coverage:
 
@@ -179,9 +181,7 @@ As of Sage 9.5, the entire Sage library conforms to this configuration::
     congratulations :)
 
 When preparing a branch for a Sage ticket, developers should verify that ``./sage -tox -e
-pycodestyle-minimal`` passes.  When the Sage patchbot runs on the ticket, it will perform similar
-coding style checks; but running the check locally reduces the turnaround time from hours
-to seconds.
+pycodestyle-minimal`` passes.
 
 The second configuration is used with the command ``./sage -tox -e pycodestyle`` and runs a
 more thorough check::
@@ -258,13 +258,13 @@ or a few related issues::
 - Manual: Run ``pycodestyle path/to/the/file.py``.
 
 - VS Code: The minimal version of pycodestyle is activated by default in
-  ``SAGE_ROOT/.vscode/settings.json`` (the corresponding setting is
+  :sage_root:`.vscode/settings.json` (the corresponding setting is
   ``"python.linting.pycodestyleEnabled": true``). Note that the
   ``settings.json`` file is not ignored by Git so be aware to keep it in sync
   with the Sage repo on GitHub. For further details, see the
   `official VS Code documentation <https://code.visualstudio.com/docs/python/linting>`__.
 
-*Configuration:* ``[pycodestyle]`` block in ``SAGE_ROOT/src/tox.ini``
+*Configuration:* ``[pycodestyle]`` block in :sage_root:`src/tox.ini`
 
 *Documentation:* https://pycodestyle.pycqa.org/en/latest/index.html
 
@@ -277,6 +277,7 @@ Cython-lint
 `Cython-lint <https://pypi.org/project/cython-lint/>`_ checks Cython source files
 for coding style.
 
+
 .. _section-tools-ruff:
 
 Ruff
@@ -287,6 +288,21 @@ for Python code, written in Rust.
 
 It comes with a large choice of possible checks, and has the capacity
 to fix some of the warnings it emits.
+
+Sage defines two configurations for ruff.  The command ``./sage -tox -e ruff-minimal`` uses
+ruff in a minimal configuration. As of Sage 10.3, the entire Sage library conforms to this
+configuration. When preparing a Sage PR, developers should verify that
+``./sage -tox -e ruff-minimal`` passes.
+
+The second configuration is used with the command ``./sage -tox -e ruff`` and runs a
+more thorough check.  When preparing a PR that adds new code,
+developers should verify that ``./sage -tox -e ruff`` does not
+issue warnings for the added code.  This will avoid later cleanup
+PRs as the Sage codebase is moving toward full PEP 8 compliance.
+
+On the other hand, it is usually not advisable to mix coding-style
+fixes with productive changes on the same PR because this would
+makes it harder for reviewers to evaluate the changes.
 
 .. _section-tools-relint:
 
@@ -300,7 +316,7 @@ Our configuration of relint flags some outdated Python constructions, plain TeX
 commands when equivalent LaTeX commands are available, common mistakes in
 documentation markup, and modularization anti-patterns.
 
-*Configuration:* ``SAGE_ROOT/src/.relint.yml``
+*Configuration:* :sage_root:`src/.relint.yml`
 
 *Documentation:* https://pypi.org/project/relint/
 
@@ -333,9 +349,9 @@ Sage defines a configuration for codespell::
 
 *Configuration:*
 
-- ``[testenv:codespell]`` block in ``SAGE_ROOT/src/tox.ini``
+- ``[testenv:codespell]`` block in :sage_root:`src/tox.ini`
 
-- ``SAGE_ROOT/src/.codespell-dictionary.txt`` and ``SAGE_ROOT/src/.codespell-ignore.txt``
+- :sage_root:`src/.codespell-dictionary.txt` and :sage_root:`src/.codespell-ignore.txt`
 
 
 .. _section-tools-pytest:
@@ -364,9 +380,9 @@ package :mod:`sage.numerical.backends` and some modules in
   ``./sage -pytest -n auto`` will spawn a number of workers processes equal
   to the number of available CPUs.
 
-- VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `offical VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
+- VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `official VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
 
-*Configuration:* ``SAGE_ROOT/src/conftest.py``
+*Configuration:* :sage_root:`src/conftest.py`
 
 *Documentation:* https://docs.pytest.org/en/stable/index.html
 
@@ -392,7 +408,7 @@ Pyright
 
 - VS Code: Install the `Pylance <https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance>`__ extension.
 
-*Configuration:* ``SAGE_ROOT/pyrightconfig.json``
+*Configuration:* :sage_root:`pyrightconfig.json`
 
 *Documentation:* https://github.com/microsoft/pyright#documentation
 
@@ -402,3 +418,59 @@ Pyright
 Pyflakes
 ========
 `Pyflakes <https://github.com/PyCQA/pyflakes>`_ checks for common coding errors.
+
+
+.. _section-act:
+
+Act
+===
+
+`act <https://github.com/nektos/act>`_ is a tool, written in Go, and using Docker,
+to run GitHub Actions locally; in particular, it speeds up developing Actions.
+We recommend using ``gh extension`` facility to install ``act``. ::
+
+    [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
+
+Extra steps needed for configuration of Docker to run Actions locally can be found on
+`act's GitHub <https://github.com/nektos/act>`_
+
+Here we give a very short sampling of ``act``'s capabilities. If you installed standalone
+``act``, it should be invoked as ``act``, not as ``gh act``.
+After the set up, one can e.g. list all the available linting actions::
+
+    [alice@localhost sage]$ gh act -l | grep lint
+    0      lint-pycodestyle        Code style check with pycodestyle                          Lint                                               lint.yml                push,pull_request
+    0      lint-relint             Code style check with relint                               Lint                                               lint.yml                push,pull_request
+    0      lint-rst                Validate docstring markup as RST                           Lint                                               lint.yml                push,pull_request
+    [alice@localhost sage]$
+
+run a particular action ``lint-rst`` ::
+
+    [alice@localhost sage]$ gh act -j lint-rst
+    ...
+
+and so on.
+
+By default, ``act`` pulls all the data needed from the next, but it can also cache it,
+speeding up repeated runs quite a lot. The following repeats running of ``lint-rst`` using cached data::
+
+    [alice@localhost sage]$ gh act -p false -r -j lint-rst
+    [Lint/Validate docstring markup as RST]   Start image=catthehacker/ubuntu:act-latest
+    ...
+    | rst: commands[0] /home/alice/work/software/sage/src> flake8 --select=RST
+    |   rst: OK (472.60=setup[0.09]+cmd[472.51] seconds)
+    |   congratulations :) (474.10 seconds)
+    ...
+    [Lint/Validate docstring markup as RST]     Success - Main Lint using tox -e rst
+    [Lint/Validate docstring markup as RST]  Run Post Set up Python
+    [Lint/Validate docstring markup as RST]     docker exec cmd=[node /var/run/act/actions/actions-setup-python@v4/dist/cache-save/index.js] user= workdir=
+    [Lint/Validate docstring markup as RST]     Success - Post Set up Python
+    [Lint/Validate docstring markup as RST]   Job succeeded
+
+Here ``-p false`` means using already pulled Docker images, and ``-r`` means do not remove Docker images
+after a successful run which used them. This, and many more details, can be found by running ``gh act -h``, as well
+as reading ``act``'s documentation.
+
+.. This section is a stub.
+   More Sage-specfic details for using ``act`` should be added. PRs welcome!
+

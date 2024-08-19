@@ -39,7 +39,6 @@ def HarborthGraph():
         Harborth Graph: Graph on 52 vertices
         sage: g.is_regular(4)
         True
-
     """
     g = Graph(':s_OGKI?@_?g[QABAo__YEFCp@?iIEbqHWuWLbbh?}[OfcXpGhNHdYPY_SgdYX]'
               'pZkfJPuo[lfZHys^mFcDs}`pG{UNNgoHC}DIgrI[qjMhTyDQrQlVydrBYmWkn',
@@ -133,7 +132,7 @@ def HarriesGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -252,7 +251,7 @@ def HarriesWongGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -449,7 +448,7 @@ def Cell600(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two different embeddings for a
+    - ``embedding`` -- integer (default: `1`); two different embeddings for a
       plot
 
     EXAMPLES::
@@ -802,7 +801,7 @@ def Balaban10Cage(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to be either 1 or 2
 
     EXAMPLES::
@@ -870,7 +869,7 @@ def Balaban11Cage(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); three embeddings are available,
+    - ``embedding`` -- integer (default: `1`); three embeddings are available,
       and can be selected by setting ``embedding`` to be 1, 2, or 3
 
       - The first embedding is the one appearing on page 9 of the Fifth Annual
@@ -1111,7 +1110,7 @@ def BiggsSmithGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to be 1 or 2
 
     EXAMPLES:
@@ -1142,7 +1141,6 @@ def BiggsSmithGraph(embedding=1):
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
-
     """
     L = [16, 24, -38, 17, 34, 48, -19, 41, -35, 47, -20, 34, -36,
          21, 14, 48, -16, -36, -43, 28, -17, 21, 29, -43, 46, -24,
@@ -1752,7 +1750,7 @@ def CameronGraph():
     from sage.groups.perm_gps.permgroup_named import MathieuGroup
     from itertools import combinations
     g = Graph(name="Cameron Graph")
-    sets = MathieuGroup(22).orbit((1, 2, 3, 7, 10, 20), action="OnSets")
+    sets = MathieuGroup(22).orbit((1, 2, 3, 7, 10, 20), action='OnSets')
     for s in sets:
         for a, b, c, d in combinations(set(s), 4):
             g.add_edges([((a, b), (c, d)), ((a, c), (b, d)), ((a, d), (b, c))])
@@ -2196,7 +2194,7 @@ def EllinghamHorton54Graph():
         40: [41, 45, 46], 41: [47], 42: [48, 43], 43: [49, 44], 44: [50, 45],
         45: [51], 46: [49], 50: [52], 51: [53], 52: [53]}
 
-    g = Graph(data=edge_dict, format="dict_of_lists",
+    g = Graph(data=edge_dict, format='dict_of_lists',
               name="Ellingham-Horton 54-graph")
 
     # The set of vertices on top is 0..15
@@ -2429,7 +2427,7 @@ def FlowerSnark():
     d = {0: [1, 14, 15], 1: [2, 11], 2: [3, 7], 3: [2, 4, 16], 4: [5, 14],
          5: [6, 10], 6: [5, 7, 17], 8: [7, 9, 13], 9: [10, 18], 11: [10, 12],
          12: [13, 19], 13: [14], 15: [19], 16: [15, 17], 18: [17, 19]}
-    g = Graph(d, format="dict_of_lists", name="Flower Snark")
+    g = Graph(d, format='dict_of_lists', name="Flower Snark")
     g._circle_embedding(range(15), radius=2.5, angle=pi/2)
     g._circle_embedding(range(15, 20), radius=1, angle=pi/2)
     return g
@@ -2718,7 +2716,7 @@ def GrayGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -2925,8 +2923,8 @@ def GritsenkoGraph():
     r"""
     Return SRG(65, 32, 15, 16) constructed by Gritsenko.
 
-    We took the adjacency matrix from O.Gritsenko's [Gri2021]_ and extracted orbits
-    of the automorphism group on the edges.
+    We took the adjacency matrix from O. Gritsenko's [Gri2021]_ and extracted
+    orbits of the automorphism group on the edges.
 
     EXAMPLES::
 
@@ -2953,7 +2951,7 @@ def GritsenkoGraph():
              (33, 49), (33, 51), (33, 57), (33, 61)]
     # use the union of the orbits of a on the edges
     return Graph(reduce(lambda x, y: x + y,
-                        map(lambda o: a.orbit(o, action='OnSets'), edges)),
+                        (a.orbit(o, action='OnSets') for o in edges)),
                  format='list_of_edges',
                  name="Gritsenko strongly regular graph")
 
@@ -2986,9 +2984,7 @@ def HigmanSimsGraph(relabel=True):
       vertex `z` (zero through four) of that pentagon or pentagram. See
       [Haf2004]_ for more.
 
-    OUTPUT:
-
-    The Higman-Sims graph.
+    OUTPUT: the Higman-Sims graph
 
     EXAMPLES:
 
@@ -3419,7 +3415,7 @@ def LjubljanaGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -3515,7 +3511,7 @@ def LivingstoneGraph():
     from sage.graphs.graph import Graph
     G = JankoGroup(1)
     g = Graph(name="Livingstone Graph")
-    g.add_edges(map(tuple, G.orbit((1, 24), action="OnSets")))
+    g.add_edges(map(tuple, G.orbit((1, 24), action='OnSets')))
     return g
 
 
@@ -3541,7 +3537,7 @@ def M22Graph():
         (77, 16, 0, 4)
     """
     from sage.groups.perm_gps.permgroup_named import MathieuGroup
-    sets = [tuple(_) for _ in MathieuGroup(22).orbit((1, 2, 3, 7, 10, 20), action="OnSets")]
+    sets = [tuple(_) for _ in MathieuGroup(22).orbit((1, 2, 3, 7, 10, 20), action='OnSets')]
     g = Graph([sets, lambda x, y: not any(xx in y for xx in x)], name="M22 Graph")
     g.relabel()
     ordering = [0, 1, 3, 4, 5, 6, 7, 10, 12, 19, 20, 31, 2, 24, 35, 34, 22, 32,
@@ -3611,7 +3607,7 @@ def McGeeGraph(embedding=2):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``2``); two embeddings are available,
+    - ``embedding`` -- integer (default: `2`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -3825,7 +3821,7 @@ def NauruGraph(embedding=2):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``2``); two embeddings are available,
+    - ``embedding`` -- integer (default: `2`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -4464,7 +4460,7 @@ def TutteCoxeterGraph(embedding=2):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``2``); two embeddings are available,
+    - ``embedding`` -- integer (default: `2`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -4738,7 +4734,7 @@ def _EllipticLinesProjectivePlaneScheme(k):
     gp = libgap.Action(g, libgap.Orbit(g, l, libgap.OnLines), libgap.OnLines)
     orbitals = gp.Orbits(list(product(gp.Orbit(1), gp.Orbit(1))),
                          libgap.OnTuples)
-    mats = map(lambda o: [(int(x[0]) - 1, int(x[1]) - 1) for x in o], orbitals)
+    mats = ([(int(x[0]) - 1, int(x[1]) - 1) for x in o] for o in orbitals)
     return [matrix((q * (q - 1)) // 2, lambda i, j: 1 if (i, j) in x else 0)
             for x in mats]
 
@@ -4768,7 +4764,6 @@ def MathonStronglyRegularGraph(t):
         sage: G = graphs.MathonStronglyRegularGraph(2)
         sage: G.is_strongly_regular(parameters=True)
         (784, 297, 116, 110)
-
     """
     from sage.graphs.generators.families import MathonPseudocyclicMergingGraph
     ES = _EllipticLinesProjectivePlaneScheme(3)
@@ -4868,7 +4863,7 @@ def JankoKharaghaniGraph(v):
 
     return Graph([e for e, v in D.dict().items() if v == 1],
                  multiedges=False,
-                 name="Janko-Kharaghani")
+                 name='Janko-Kharaghani')
 
 
 def JankoKharaghaniTonchevGraph():
@@ -4939,7 +4934,7 @@ def JankoKharaghaniTonchevGraph():
             301, 304, 308, 309, 310, 312, 313, 314, 316, 317, 318)
     Gamma = Graph(multiedges=False, name='Janko-Kharaghani-Tonchev')
     for i, b in ((1, B1), (163, B163)):
-        for j in map(lambda x: x[0], st.OrbitsDomain(b)):
+        for j in (x[0] for x in st.OrbitsDomain(b)):
             Gamma.add_edges(map(tuple, G.Orbit(libgap.Set([i, j]), libgap.OnSets)))
     Gamma.relabel(range(Gamma.order()))
     return Gamma
@@ -5114,7 +5109,7 @@ def IoninKharaghani765Graph():
         int_to_matrix[i + 1] = N(vec)
 
     M2 = matrix.block([[int_to_matrix[x] for x in R] for R in W.rows()])
-    g = Graph(M2, name="Ionin-Kharaghani")
+    g = Graph(M2, name='Ionin-Kharaghani')
     return g
 
 
@@ -5136,7 +5131,7 @@ def U42Graph216():
     from sage.libs.gap.libgap import libgap
     from sage.features.gap import GapPackage
 
-    GapPackage("grape", spkg="gap_packages").require()
+    GapPackage("grape", spkg='gap_packages').require()
 
     adj_list = libgap.function_factory("""function()
                 local gg, hl, o216, a216, x, h, re, G;
@@ -5183,7 +5178,7 @@ def U42Graph540():
     from sage.libs.gap.libgap import libgap
     from sage.features.gap import GapPackage
 
-    GapPackage("grape", spkg="gap_packages").require()
+    GapPackage("grape", spkg='gap_packages').require()
 
     adj_list = libgap.function_factory("""function()
                 local f, o540, a540, x, oh, h, lo, G;

@@ -11,7 +11,7 @@ AUTHORS:
 - Nick Alexander (Sage interface)
 
 - Jeroen Demeyer (2014-09-23): use PARI instead of GP scripts,
-  return vectors instead of tuples (:trac:`16997`).
+  return vectors instead of tuples (:issue:`16997`).
 
 - Tyler Gaona (2015-11-14): added the `solve` method
 """
@@ -129,11 +129,11 @@ def solve(self, c=0):
 
     - ``c`` -- (default: 0) a rational number
 
-    OUTPUT: A non-zero vector `x` satisfying ``self(x) == c``.
+    OUTPUT: a nonzero vector `x` satisfying ``self(x) == c``
 
     ALGORITHM:
 
-    Uses PARI's :pari:`qfsolve`. Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
+    Uses PARI's :pari:`qfsolve`. Algorithm described by Jeroen Demeyer; see comments on :issue:`19112`
 
     EXAMPLES::
 

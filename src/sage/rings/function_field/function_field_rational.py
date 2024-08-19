@@ -102,7 +102,7 @@ class RationalFunctionField(FunctionField):
         sage: R.<x> = FunctionField(QQ)
         sage: L.<y> = R[]
         sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # needs sage.rings.function_field
-        sage: (y/x).divisor()                                                           # needs sage.modules sage.rings.function_field
+        sage: (y/x).divisor()                                                           # needs sage.rings.function_field
         - Place (x, y - 1)
          - Place (x, y + 1)
          + Place (x^2 + 1, y)
@@ -112,20 +112,17 @@ class RationalFunctionField(FunctionField):
         sage: NF.<i> = NumberField(z^2 + 1)
         sage: R.<x> = FunctionField(NF)
         sage: L.<y> = R[]
-        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # needs sage.modules sage.rings.function_field
-
-        sage: (x/y*x.differential()).divisor()                                          # needs sage.modules sage.rings.function_field sage.rings.number_field
+        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # needs sage.rings.function_field
+        sage: (x/y*x.differential()).divisor()                                          # needs sage.rings.function_field
         -2*Place (1/x, 1/x*y - 1)
          - 2*Place (1/x, 1/x*y + 1)
          + Place (x, y - 1)
          + Place (x, y + 1)
-
-        sage: (x/y).divisor()                                                           # needs sage.modules sage.rings.function_field sage.rings.number_field
+        sage: (x/y).divisor()                                                           # needs sage.rings.function_field
         - Place (x - i, y)
          + Place (x, y - 1)
          + Place (x, y + 1)
          - Place (x + i, y)
-
     """
     Element = FunctionFieldElement_rational
 
@@ -134,7 +131,6 @@ class RationalFunctionField(FunctionField):
         Initialize.
 
         EXAMPLES::
-
 
             sage: K.<t> = FunctionField(CC); K                                          # needs sage.rings.real_mpfr
             Rational function field in t over Complex Field with 53 bits of precision
@@ -207,7 +203,6 @@ class RationalFunctionField(FunctionField):
             sage: K.<t> = FunctionField(QQ)
             sage: hash(K) == hash((K.constant_base_field(), K.variable_names()))
             True
-
         """
         return self._hash
 
@@ -256,7 +251,6 @@ class RationalFunctionField(FunctionField):
             sage: I = S * [x^2 - y^2, y - t]
             sage: I.groebner_basis()                                                    # needs sage.rings.function_field
             [x^2 - t^2, y - t]
-
         """
         if isinstance(x, FunctionFieldElement):
             return self.element_class(self, self._field(x._x))
@@ -278,7 +272,7 @@ class RationalFunctionField(FunctionField):
         INPUT:
 
         - ``f`` -- element of the rational function field which is a
-          constant of the underlying rational function field.
+          constant of the underlying rational function field
 
         EXAMPLES::
 
@@ -292,13 +286,12 @@ class RationalFunctionField(FunctionField):
 
         TESTS:
 
-        Verify that :trac:`21872` has been resolved::
+        Verify that :issue:`21872` has been resolved::
 
             sage: K(1) in QQ
             True
             sage: x in QQ
             False
-
         """
         K = self.constant_base_field()
         if f.denominator() in K and f.numerator() in K:
@@ -313,7 +306,8 @@ class RationalFunctionField(FunctionField):
 
         INPUT:
 
-        - ``f`` -- an element of this rational function field whose denominator is a constant.
+        - ``f`` -- an element of this rational function field whose denominator
+          is a constant
 
         EXAMPLES::
 
@@ -335,9 +329,7 @@ class RationalFunctionField(FunctionField):
 
         - ``f`` -- univariate polynomial over the function field
 
-        OUTPUT:
-
-        - bivariate polynomial, denominator
+        OUTPUT: bivariate polynomial, denominator
 
         EXAMPLES::
 
@@ -408,7 +400,6 @@ class RationalFunctionField(FunctionField):
             sage: F = t*x
             sage: F.factor(proof=False)
             (x) * t
-
         """
         old_variable_name = f.variable_name()
         # the variables of the bivariate polynomial must be distinct
@@ -448,9 +439,7 @@ class RationalFunctionField(FunctionField):
 
         - ``names`` -- string or length-1 tuple
 
-        OUTPUT:
-
-        - a function field
+        OUTPUT: a function field
 
         EXAMPLES::
 
@@ -509,7 +498,8 @@ class RationalFunctionField(FunctionField):
 
         - ``basis`` -- (ignored) a basis for the vector space
 
-        - ``map`` -- (default ``True``), whether to return maps to and from the vector space
+        - ``map`` -- (default: ``True``) whether to return maps to and from the
+          vector space
 
         OUTPUT:
 
@@ -541,7 +531,6 @@ class RationalFunctionField(FunctionField):
              Isomorphism:
               From: Rational function field in x over Rational Field
               To:   Vector space of dimension 1 over Rational function field in x over Rational Field)
-
         """
         if basis is not None:
             raise NotImplementedError
@@ -651,11 +640,9 @@ class RationalFunctionField(FunctionField):
           ``base_morphism``; this is not checked.
 
         - ``base_morphism`` -- a homomorphism from the base field into the
-          other ring.  If ``None``, try to use a coercion map.
+          other ring; if ``None``, try to use a coercion map
 
-        OUTPUT:
-
-        - a map between function fields
+        OUTPUT: a map between function fields
 
         EXAMPLES:
 
@@ -709,7 +696,6 @@ class RationalFunctionField(FunctionField):
         .. SEEALSO::
 
             :meth:`sage.rings.fraction_field.FractionField_1poly_field.function_field`
-
         """
         return self._field
 
@@ -803,7 +789,7 @@ class RationalFunctionField(FunctionField):
 
         INPUT:
 
-        - ``name`` -- a string or a tuple consisting of a single string, the
+        - ``name`` -- string or tuple consisting of a single string; the
           name of the new variable
 
         OUTPUT:
@@ -828,7 +814,6 @@ class RationalFunctionField(FunctionField):
               Defn: x |--> y)
             sage: L.change_variable_name('x')[0] is K
             True
-
         """
         if isinstance(name, tuple):
             if len(name) != 1:
@@ -977,7 +962,7 @@ class RationalFunctionField_global(RationalFunctionField):
 
         INPUT:
 
-        - ``degree`` -- a positive integer
+        - ``degree`` -- positive integer
 
         EXAMPLES::
 
@@ -993,7 +978,6 @@ class RationalFunctionField_global(RationalFunctionField):
             Place (x^4 + x + 1)
             sage: K.get_place(5)                                                        # needs sage.libs.pari
             Place (x^5 + x^2 + 1)
-
         """
         for p in self._places_finite(degree):
             return p

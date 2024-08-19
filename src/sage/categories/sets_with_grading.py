@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Sets With a Grading
 """
@@ -21,7 +22,7 @@ class SetsWithGrading(Category):
 
     A *set with a grading* is a set `S` equipped with a
     grading by some other set `I` (by default the set `\NN` of the
-    non-negative integers):
+    nonnegative integers):
 
     .. MATH::
 
@@ -53,7 +54,7 @@ class SetsWithGrading(Category):
 
     EXAMPLES:
 
-    A typical example of a set with a grading is the set of non-negative
+    A typical example of a set with a grading is the set of nonnegative
     integers graded by themselves::
 
         sage: N = SetsWithGrading().example(); N
@@ -136,7 +137,7 @@ class SetsWithGrading(Category):
         def grading_set(self):
             """
             Return the set ``self`` is graded by. By default, this is
-            the set of non-negative integers.
+            the set of nonnegative integers.
 
             EXAMPLES::
 
@@ -202,9 +203,7 @@ class SetsWithGrading(Category):
             """
             Default implementation for generating series.
 
-            OUTPUT:
-
-            A series, indexed by the grading set.
+            OUTPUT: a series, indexed by the grading set
 
             EXAMPLES::
 
@@ -224,7 +223,7 @@ class SetsWithGrading(Category):
             from sage.rings.lazy_series_ring import LazyPowerSeriesRing
             from sage.sets.non_negative_integers import NonNegativeIntegers
             if isinstance(self.grading_set(), NonNegativeIntegers):
-                R = LazyPowerSeriesRing(ZZ, names="z")
+                R = LazyPowerSeriesRing(ZZ, names='z')
                 return R(lambda n: self.graded_component(n).cardinality())
             raise NotImplementedError
 

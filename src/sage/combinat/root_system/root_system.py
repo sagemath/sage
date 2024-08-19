@@ -301,7 +301,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @staticmethod
     def __classcall__(cls, cartan_type, as_dual_of=None):
         """
-        Straighten arguments to enable unique representation
+        Straighten arguments to enable unique representation.
 
         .. SEEALSO:: :class:`UniqueRepresentation`
 
@@ -341,7 +341,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def _test_root_lattice_realizations(self, **options):
         """
-        Runs tests on all the root lattice realizations of this root
+        Run tests on all the root lattice realizations of this root
         system.
 
         EXAMPLES::
@@ -483,12 +483,14 @@ class RootSystem(UniqueRepresentation, SageObject):
         Return the (restricted) root poset associated to ``self``.
 
         The elements are given by the positive roots (resp. non-simple, positive roots), and
-        `\alpha \leq \beta` iff `\beta - \alpha` is a non-negative linear combination of simple roots.
+        `\alpha \leq \beta` iff `\beta - \alpha` is a nonnegative linear combination of simple roots.
 
         INPUT:
 
-        - ``restricted`` -- (default:False) if True, only non-simple roots are considered.
-        - ``facade`` -- (default:False) passes facade option to the poset generator.
+        - ``restricted`` -- boolean (default: ``False``); if ``True``, only
+          non-simple roots are considered
+        - ``facade`` -- boolean (default: ``False``); passes facade option to
+          the poset generator
 
         EXAMPLES::
 
@@ -558,7 +560,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @cached_method
     def weight_space(self, base_ring=QQ, extended=False):
         """
-        Returns the weight space associated to ``self``.
+        Return the weight space associated to ``self``.
 
         .. SEEALSO::
 
@@ -792,11 +794,9 @@ def WeylDim(ct, coeffs):
 
     INPUT:
 
+    - ``ct`` -- a Cartan type
 
-    -  ``ct`` -- a Cartan type
-
-    -  ``coeffs`` -- a list of nonnegative integers
-
+    - ``coeffs`` -- list of nonnegative integers
 
     The length of the list must equal the rank type[1]. A dominant
     weight hwv is constructed by summing the fundamental weights with

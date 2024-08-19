@@ -1,16 +1,17 @@
 r"""
 Echelon matrices over finite fields.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.matrix.matrix0 cimport Matrix
+
 
 def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, bint set_immutable=False):
     r"""
@@ -24,13 +25,13 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
 
     - ``n`` -- number of columns (or the dimension of the ambient space)
 
-    - ``sparse`` -- boolean (default is ``False``)
+    - ``sparse`` -- boolean (default: ``False``)
 
-    - ``copy`` -- boolean. If set to ``False`` then iterator yields the same matrix
-      over and over (but with different entries).  Default is ``True`` which is
-      safer but might be slower.
+    - ``copy`` -- boolean (default: ``True``); if set to ``False`` then
+      iterator yields the same matrix over and over (but with different
+      entries).  Default is ``True`` which is safer but might be slower.
 
-    - ``set_immutable`` -- boolean. If set to ``True`` then the output matrices
+    - ``set_immutable`` -- boolean; if set to ``True`` then the output matrices
       are immutable. This option automatically turns ``copy`` into ``True``.
 
 

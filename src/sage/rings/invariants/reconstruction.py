@@ -26,10 +26,10 @@ def binary_quadratic_coefficients_from_invariants(discriminant, invariant_choice
 
     INPUT:
 
-    - ``discriminant`` -- The value of the discriminant of the
-      binary quadratic.
+    - ``discriminant`` -- the value of the discriminant of the
+      binary quadratic
 
-    - ``invariant_choice`` -- The type of invariants provided. The accepted
+    - ``invariant_choice`` -- the type of invariants provided. The accepted
       options are ``'discriminant'`` and ``'default'``, which are the same. No
       other options are implemented.
 
@@ -67,10 +67,10 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
 
     INPUT:
 
-    - ``discriminant`` -- The value of the discriminant of the
-      binary cubic.
+    - ``discriminant`` -- the value of the discriminant of the
+      binary cubic
 
-    - ``invariant_choice`` -- The type of invariants provided. The accepted
+    - ``invariant_choice`` -- the type of invariants provided. The accepted
       options are ``'discriminant'`` and ``'default'``, which are the same. No
       other options are implemented.
 
@@ -113,17 +113,17 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
 
     INPUT:
 
-    - ``invariants`` -- A list or tuple of values of the three or four
+    - ``invariants`` -- list or tuple of values of the three or four
       invariants. The default option requires the Clebsch invariants `A`, `B`,
       `C` and `R` of the binary quintic.
 
-    - ``K`` -- The field over which the quintic is defined.
+    - ``K`` -- the field over which the quintic is defined
 
-    - ``invariant_choice`` -- The type of invariants provided. The accepted
+    - ``invariant_choice`` -- the type of invariants provided. The accepted
       options are ``'clebsch'`` and ``'default'``, which are the same. No
       other options are implemented.
 
-    - ``scaling`` -- How the coefficients should be scaled. The accepted
+    - ``scaling`` -- how the coefficients should be scaled. The accepted
       values are ``'none'`` for no scaling, ``'normalized'`` to scale in such
       a way that the resulting coefficients are independent of the scaling of
       the input invariants and ``'coprime'`` which scales the input invariants
@@ -136,7 +136,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
 
     EXAMPLES:
 
-    First we check the general case, where the invariant `M` is non-zero::
+    First we check the general case, where the invariant `M` is nonzero::
 
         sage: R.<x0, x1> = QQ[]
         sage: p = 3*x1^5 + 6*x1^4*x0 + 3*x1^3*x0^2 + 4*x1^2*x0^3 - 5*x1*x0^4 + 4*x0^5
@@ -229,7 +229,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
         (1, 0, 0, 0, 1, 0)
 
     For fields of characteristic 2, 3 or 5, there is no reconstruction
-    implemented. This is part of :trac:`26786`.::
+    implemented. This is part of :issue:`26786`.::
 
         sage: binary_quintic_coefficients_from_invariants([3,1,2], K=GF(5))
         Traceback (most recent call last):
@@ -363,9 +363,9 @@ def _reduce_invariants(invariants, weights):
 
     INPUT:
 
-    - ``invariants`` -- The values of the invariants.
+    - ``invariants`` -- the values of the invariants
 
-    - ``weights`` -- The respective weights of the invariants.
+    - ``weights`` -- the respective weights of the invariants
 
     OUTPUT:
 

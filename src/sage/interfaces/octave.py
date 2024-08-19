@@ -173,7 +173,7 @@ class Octave(Expect):
 
     TESTS:
 
-    We check that the interface can handle large inputs (see :trac:`940`)::
+    We check that the interface can handle large inputs (see :issue:`940`)::
 
         sage: t = '"{}"'.format(10^10000)
         sage: a = octave(t)                     # optional - octave
@@ -270,7 +270,7 @@ class Octave(Expect):
         return """
         You must get the program "octave" in order to use Octave
         from Sage.   You can read all about Octave at
-                http://www.gnu.org/software/octave/
+                https://www.gnu.org/software/octave/
 
         LINUX:
            Do apt-get install octave as root on your machine (Ubuntu/Debian).
@@ -303,12 +303,12 @@ class Octave(Expect):
             E = self._expect
             # debug
             # self._synchronize(cmd='1+%s\n')
-            verbose("in = '%s'" % line,level=3)
+            verbose("in = '%s'" % line, level=3)
             E.sendline(line)
             E.expect(self._prompt)
             out = bytes_to_str(E.before)
             # debug
-            verbose("out = '%s'" % out,level=3)
+            verbose("out = '%s'" % out, level=3)
         except EOF:
             if self._quit_string() in line:
                 return ''
@@ -329,7 +329,7 @@ class Octave(Expect):
             try:
                 self._expect.close(force=1)
             except pexpect.ExceptionPexpect as msg:
-                raise RuntimeError( "THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
+                raise RuntimeError("THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
             self._start()
             raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)" % self)
         else:
@@ -486,7 +486,7 @@ class Octave(Expect):
 
     def solve_linear_system(self, A, b):
         r"""
-        Use octave to compute a solution x to A\*x = b, as a list.
+        Use Octave to compute a solution x to ``A*x = b``, as a list.
 
         INPUT:
 
@@ -494,7 +494,7 @@ class Octave(Expect):
 
         - ``b`` -- m-vector b entries in `\QQ` or `\RR` (resp)
 
-        OUTPUT: A list x (if it exists) which solves M\*x = b
+        OUTPUT: list x (if it exists) which solves ``M*x = b``
 
         EXAMPLES::
 
@@ -514,16 +514,16 @@ class Octave(Expect):
             raise ValueError("dimensions of A and b must be compatible")
         from sage.matrix.matrix_space import MatrixSpace
         from sage.rings.rational_field import QQ
-        MS = MatrixSpace(QQ,m,1)
-        b = MS(list(b)) # converted b to a "column vector"
+        MS = MatrixSpace(QQ, m, 1)
+        b = MS(list(b))  # converted b to a "column vector"
         sA = self.sage2octave_matrix_string(A)
         sb = self.sage2octave_matrix_string(b)
-        self.eval("a = " + sA )
-        self.eval("b = " + sb )
+        self.eval("a = " + sA)
+        self.eval("b = " + sb)
         soln = octave.eval(r"c = a \ b")
-        soln = soln.replace("\n\n ","[")
+        soln = soln.replace("\n\n ", "[")
         soln = soln.rstrip() + "]"
-        soln = soln.replace("\n",",")
+        soln = soln.replace("\n", ",")
         sol = soln[3:]
         return eval(sol)
 
@@ -531,9 +531,11 @@ class Octave(Expect):
         """
         Return an octave matrix from a Sage matrix.
 
-        INPUT: A Sage matrix with entries in the rationals or reals.
+        INPUT:
 
-        OUTPUT: A string that evaluates to an Octave matrix.
+        - ``A`` - Sage matrix with entries in the rationals or reals
+
+        OUTPUT: string that evaluates to an Octave matrix
 
         EXAMPLES::
 
@@ -546,7 +548,7 @@ class Octave(Expect):
 
         - David Joyner and William Stein
         """
-        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')','')
+        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')', '')
 
     def de_system_plot(self, f, ics, trange):
         r"""
@@ -555,16 +557,13 @@ class Octave(Expect):
 
         INPUT:
 
+        - ``f`` -- a pair of strings representing the
+          differential equations; the independent variable must be called x
+          and the dependent variable must be called y
 
-        -  ``f`` - a pair of strings representing the
-           differential equations; The independent variable must be called x
-           and the dependent variable must be called y.
+        - ``ics`` -- a pair [x0,y0] such that x(t0) = x0, y(t0) = y0
 
-        -  ``ics`` - a pair [x0,y0] such that x(t0) = x0, y(t0)
-           = y0
-
-        -  ``trange`` - a pair [t0,t1]
-
+        - ``trange`` -- a pair [t0,t1]
 
         OUTPUT: a gnuplot window appears
 
@@ -580,8 +579,8 @@ class Octave(Expect):
 
                        x' = x+y, x(0) = 1;\qquad y' = x-y, y(0) = -1,                     \quad\text{for}\quad 0 < t < 2.
         """
-        eqn1 = f[0].replace('x','x(1)').replace('y','x(2)')
-        eqn2 = f[1].replace('x','x(1)').replace('y','x(2)')
+        eqn1 = f[0].replace('x', 'x(1)').replace('y', 'x(2)')
+        eqn2 = f[1].replace('x', 'x(1)').replace('y', 'x(2)')
         fcn = "function xdot = f(x,t) xdot(1) = %s; xdot(2) = %s; endfunction" % (eqn1, eqn2)
         self.eval(fcn)
         x0_eqn = "x0 = [%s; %s]" % (ics[0], ics[1])
@@ -604,9 +603,10 @@ class Octave(Expect):
 
 octave_functions = set()
 
+
 def to_complex(octave_string, R):
     r"""
-    Helper function to convert octave complex number
+    Helper function to convert octave complex number.
 
     TESTS::
 
@@ -711,7 +711,7 @@ class OctaveElement(ExpectElement):
         ncols = len(w[0])
 
         if self.iscomplex():
-            w = [[to_complex(x,R) for x in row] for row in w]
+            w = [[to_complex(x, R) for x in row] for row in w]
 
         from sage.matrix.matrix_space import MatrixSpace
         return MatrixSpace(R, nrows, ncols)(w)
@@ -819,6 +819,7 @@ class OctaveElement(ExpectElement):
 
 # An instance
 octave = Octave()
+
 
 def reduce_load_Octave():
     """
