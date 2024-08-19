@@ -12,6 +12,8 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.set import Set
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.misc.abstract_method import abstract_method
+from sage.combinat.posets.posets import Poset
+from sage.combinat.subset import Subsets
 
 class ChowRingIdeal(MPolynomialIdeal):
     @abstract_method
@@ -227,24 +229,42 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
         flats = list(self._flats_generator)
         gb = list()
-        R = self.ring()
-        for F in flats:
-            for G in flats: 
-                if not (F < G or G < F):
-                    gb.append(self._flats_generator[F]*self._flats_generator[G])
-                else:
-                    term = R.zero()
-                    for H in flats:
-                        if H > G:
-                            term += self._flats_generator[H]
-                    if term != R.zero():
-                        if Set(F).is_empty():
-                            gb.append(term**self._matroid.rank(G)) 
-                        elif F < G:
-                            gb.append(term**(self._matroid.rank(G)-self._matroid.rank(F)))
+        R = self.ring() 
+        if frozenset() in flats:
+            flats.remove(frozenset())
 
+        def m_n(i):
+            if flats[i] == frozenset():
+                return 0
+            else:
+                return ranks[i] - sum(m_n(j) for j in range(i))
+            
+        reln = lambda p,q : p < q
+        P = LatticePoset(flats)
+        subsets = Subsets(flats)
+        for subset in subsets:
+            if not P.subposet(subset).is_chain():
+                term = R.one()
+                for x in subset:
+                    term *= self._flats_generator[x]
+                gb.append(term)
+            
+            else:
+                for F in flats:
+                    if F > P.join(list(subset)): #Getting missing argument error here
+                        term = R.one()
+                        for x in subset:
+                            term *= self._flats_generator[x]
+                        term1 = R.zero()
+                        for G in flats:
+                            if G >= F:
+                                term1 += self._flats_generator[G]
+                        if term1 != R.zero():
+                            gb.append(term*(term1**m_n(flats.index(subset))))
+            
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
+
     
 class AugmentedChowRingIdeal_fy(ChowRingIdeal):
     r"""
