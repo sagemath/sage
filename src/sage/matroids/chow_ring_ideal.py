@@ -12,7 +12,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.set import Set
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.misc.abstract_method import abstract_method
-from sage.combinat.posets.posets import Poset
+from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.subset import Subsets
 
 class ChowRingIdeal(MPolynomialIdeal):
@@ -233,13 +233,19 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         if frozenset() in flats:
             flats.remove(frozenset())
 
+        ranks = [self._matroid.rank(F) for F in flats]
+
         def m_n(i):
             if flats[i] == frozenset():
                 return 0
             else:
-                return ranks[i] - sum(m_n(j) for j in range(i))
+                sum1 = 0
+                for j in range(len(flats)):
+                    if flats[j] < flats[i]:
+                        sum1 += m_n(j)
+
+                return ranks[i] - sum1
             
-        reln = lambda p,q : p < q
         P = LatticePoset(flats)
         subsets = Subsets(flats)
         for subset in subsets:
