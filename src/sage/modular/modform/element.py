@@ -2580,11 +2580,23 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             39443189760*q^12 + 476711357265*q^13 - 4910778324400*q^14 + 43440479153652*q^15 -
             331129448133120*q^16 + 2173189785854230*q^17 - 12199334429782080*q^18 +
             57636170473930920*q^19 + O(q^20)
+            sage: _ == (F.qexp(20)**5)
+            True
 
-            Exponentiation is a lot faster than chain multiplication:
+        Testing modular forms of nontrivial character::
 
-            sage: F = ModularForms(DirichletGroup(6).0, 3).0
-            sage: G = F**8                                                              # long time -- around 3 seconds
+            sage: F = ModularForms(DirichletGroup(17).0^2,2).2
+            sage: F3 = F^3; F3
+            q^3 + (-3*zeta8^2 + 6)*q^4 + (-12*zeta8^2 + 3*zeta8 + 18)*q^5 + O(q^6)
+            sage: F3.qexp(6) == F.qexp(6)^3
+            True
+            sage: F3.character() == F.character()^3
+            True
+
+        Testing modular forms of level greater than 1::
+
+            sage: for F in ModularForms(Gamma0(4), 2).gens():
+            ....:     assert (F**5).qexp(10) == F.qexp(10)**5
         """
         # shamelessly copied from above
         try:
