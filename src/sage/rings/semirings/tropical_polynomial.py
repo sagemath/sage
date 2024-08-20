@@ -207,11 +207,12 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         from itertools import combinations
         tropical_roots = []
         data = self.dict()
+        R = self.parent().base()
         if len(data) == 1:
             exponent = next(iter(data))
             if not exponent:
                 return tropical_roots
-            return [self.parent().base().zero()] * exponent
+            return [R.zero()] * exponent
         dict_root = {}
         dict_coeff = {i: c.lift() for i, c in data.items()}
         for comb in combinations(dict_coeff, 2):
@@ -222,21 +223,19 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             for key in dict_coeff:
                 if key not in comb:
                     val = dict_coeff[key] + key*root
-                    if self.base_ring()._use_min:
+                    if R._use_min:
                         if val < val_root:
                             check_maks = False
                             break
-                    else:
-                        if val > val_root:
-                            check_maks = False
-                            break
+                    elif val > val_root:
+                        check_maks = False
+                        break
             if check_maks:
                 order = abs(index1-index2)
                 if root not in dict_root:
                     dict_root[root] = order
-                else:
-                    if order > dict_root[root]:
-                        dict_root[root] = order
+                elif order > dict_root[root]:
+                    dict_root[root] = order
         for root in dict_root:
             tropical_roots += [root] * dict_root[root]
         return sorted(tropical_roots)
@@ -322,7 +321,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         from sage.structure.factorization import Factorization
         unit = self.dict()[self.degree()]
-        if (self != self.split_form()) or (not self.roots()):
+        if self != self.split_form() or not self.roots():
             factor = [(self * self.parent(-unit.lift()), 1)]
             return Factorization(factor, unit=unit)
 
@@ -376,7 +375,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         x = SR.var('x')
         data = self.dict()
-        R = self.base_ring()
+        R = self.parent().base()
         if not self.roots():
             f = data[0].lift()
             return f
@@ -384,7 +383,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         if len(data) == 1:
             gradient = list(data)[0]
             intercept = data[gradient].lift()
-            f = intercept + gradient * x
+            f = intercept + gradient*x
             return f
 
         unique_root = sorted(list(set(self.roots())))
@@ -524,8 +523,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             raise ValueError("expected 2 inputs for xmin and xmax, but got 1")
         elif xmin >= xmax:
             raise ValueError(f"xmin = {xmin} should be less than xmax = {xmax}")
-        else:
-            return plot(f, xmin=xmin, xmax=xmax)
+        return plot(f, xmin=xmin, xmax=xmax)
 
     def _repr_(self):
         r"""

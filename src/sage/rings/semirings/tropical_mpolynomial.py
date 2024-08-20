@@ -166,8 +166,6 @@ class TropicalMPolynomial(MPolynomial_polydict):
         Fix some given variables in ``self`` and return the changed
         tropical multivariate polynomials.
 
-        OUTPUT: new :class:`TropicalMPolynomial`
-
         .. SEEALSO::
 
             :meth:`sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict.subs`
