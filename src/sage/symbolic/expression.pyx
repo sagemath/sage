@@ -6082,6 +6082,44 @@ cdef class Expression(Expression_abc):
         from sage.symbolic.expression_conversions import DeMoivre
         return DeMoivre(self, force)()
 
+    def half_angle(self):
+        """
+        Replace all occurrences of trigonometric (or hyperbolic)
+        functions by rational fractions of the (hyperbolic) tangent
+        of half the original argument.
+
+        This can help highlight the algebraic structure of an expression,
+        which can be useful e.g. for integration.
+
+        This method has no direct relation with the ``half_angles``
+        argument of the :meth:`trig_expand` method.
+
+        EXAMPLES::
+
+            sage: x, t = var("x, t")
+            sage: cos(x).half_angle().subs(tan(x/2) == t)
+            -(t^2 - 1)/(t^2 + 1)
+
+        Note that this structure highlighting works better after expansion::
+
+            sage: x, t = var("x, t")
+            sage: a = (cos(3*x)/(4-cos(x)))
+            sage: b = a.trig_expand()
+            sage: a.half_angle().subs(tan(x/2) == t).simplify_full()
+            (2*(t^2 + 1)*cos(3/2*x)^2 - t^2 - 1)/(5*t^2 + 3)
+            sage: b.half_angle().subs(tan(x/2) == t).simplify_full()
+            -(t^6 - 15*t^4 + 15*t^2 - 1)/(5*t^6 + 13*t^4 + 11*t^2 + 3)
+
+        TESTS::
+
+            sage: all((u(x) == u(x).half_angle()).subs(x == 2*x).trig_simplify()
+            ....:     for u in (sin, cos, tan, csc, sec, cot,
+            ....:               sinh, cosh, tanh, csch, sech, coth))
+            True
+        """
+        from sage.symbolic.expression_conversions import HalfAngle
+        return HalfAngle(self)()
+
     def substitution_delayed(self, pattern, replacement):
         """
         Replace all occurrences of pattern by the result of replacement.
