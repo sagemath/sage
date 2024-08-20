@@ -45,6 +45,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.richcmp import richcmp, richcmp_not_equal
 
+from copy import copy
 
 class AffineGroupElement(MultiplicativeGroupElement):
     r"""
@@ -141,11 +142,9 @@ class AffineGroupElement(MultiplicativeGroupElement):
             parent._element_constructor_check(A, b)
         super().__init__(parent)
         if not A.is_immutable():
-            from copy import copy
             A = copy(A)
             A.set_immutable()
         if not b.is_immutable():
-            from copy import copy
             b = copy(b)
             b.set_immutable()
         self._A = A
