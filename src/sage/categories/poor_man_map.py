@@ -17,9 +17,9 @@ import sage.structure.sage_object
 
 class PoorManMap(sage.structure.sage_object.SageObject):
     """
-    A class for maps between sets which are not (yet) modeled by parents
+    A class for maps between sets which are not (yet) modeled by parents.
 
-    Could possibly disappear when all combinatorial classes / enumerated sets will be parents
+    Could possibly disappear when all combinatorial classes / enumerated sets will be parents.
 
     INPUT:
 
@@ -56,7 +56,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         sage: h = PoorManMap(sqrt, domain=(1, 4, 9), codomain=(1, 2, 3))
         sage: i == g*h
         True
-
     """
     def __init__(self, function, domain=None, codomain=None, name=None):
         """
@@ -68,7 +67,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
             sage: TestSuite(f).run()
             sage: TestSuite(f*g).run()
-
         """
         from collections.abc import Iterable
         if not isinstance(function, Iterable):
@@ -110,7 +108,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
     def codomain(self):
         """
-        Returns the codomain of ``self``
+        Return the codomain of ``self``.
 
         EXAMPLES::
 
@@ -135,7 +133,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: h4 = PoorManMap(lambda x: x, domain=(1,2,3), codomain=(1,2,6))
             sage: f == g, f == h1, f == h2, f == h3, f == h4, f == 1, 1 == f
             (True, False, False, False, False, False, False)
-
         """
         if isinstance(other, PoorManMap):
             return (self._functions == other._functions
@@ -160,7 +157,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: h4 = PoorManMap(lambda x: x, domain=(1,2,3), codomain=(1,2,6))
             sage: f != g, f != h1, f != h2, f != h3, f != h4, f != 1, 1 != f
             (False, True, True, True, True, True, True)
-
         """
         return not (self == other)
 
@@ -175,20 +171,19 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: g = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6))
             sage: hash(f) == hash(g)
             True
-
         """
         return hash((self._functions, self._domain, self._codomain, self._name))
 
     def __mul__(self, other):
         r"""
-        Composition
+        Composition.
 
         INPUT:
 
-         - ``self`` -- a map `f`
-         - ``other`` -- a map `g`
+        - ``self`` -- a map `f`
+        - ``other`` -- a map `g`
 
-        Returns the composition map `f\circ g` of `f`` and `g`
+        Returns the composition map `f\circ g` of `f` and `g`
 
         EXAMPLES::
 
@@ -255,7 +250,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: g = PoorManMap(lambda x: -x,  domain=(2,3,4), codomain=(-2,-3,-4))
             sage: (g*f)(2)
             -3
-
         """
         for function in reversed(self._functions):
             args = [function(*args)]

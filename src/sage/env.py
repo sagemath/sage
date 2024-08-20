@@ -74,17 +74,15 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
     INPUT:
 
-    - ``key`` -- string.
+    - ``key`` -- string
 
-    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values.
+    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values
 
-    - ``force`` -- boolean (default: ``False``). If
+    - ``force`` -- boolean (default: ``False``); if
       ``True``, skip the environment variable and only use the
-      fallbacks.
+      fallbacks
 
-    OUTPUT:
-
-    The value of the environment variable or its fallbacks.
+    OUTPUT: the value of the environment variable or its fallbacks
 
     EXAMPLES::
 
@@ -281,7 +279,7 @@ def sage_include_directories(use_sources=False):
 
     INPUT:
 
-    -  ``use_sources`` -- (default: ``False``) a boolean
+    - ``use_sources`` -- boolean (default: ``False``)
 
     OUTPUT:
 
@@ -344,8 +342,7 @@ default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular
 default_optional_modules = ('lapack',)
 
 
-def cython_aliases(required_modules=None,
-                   optional_modules=None):
+def cython_aliases(required_modules=None, optional_modules=None):
     """
     Return the aliases for compiling Cython code. These aliases are
     macros which can occur in ``# distutils`` headers.
@@ -353,10 +350,10 @@ def cython_aliases(required_modules=None,
     INPUT:
 
     - ``required_modules`` -- (default: taken from ``default_required_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     - ``optional_modules`` -- (default: taken from ``default_optional_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     EXAMPLES::
 
@@ -432,9 +429,9 @@ def cython_aliases(required_modules=None,
                 else:
                     continue
             aliases["ECL_CFLAGS"] = list(filter(lambda s: not s.startswith('-I'), ecl_cflags))
-            aliases["ECL_INCDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-I'), ecl_cflags)))
-            aliases["ECL_LIBDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-L'), ecl_libs)))
-            aliases["ECL_LIBRARIES"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-l'), ecl_libs)))
+            aliases["ECL_INCDIR"] = [s[2:] for s in filter(lambda s: s.startswith('-I'), ecl_cflags)]
+            aliases["ECL_LIBDIR"] = [s[2:] for s in filter(lambda s: s.startswith('-L'), ecl_libs)]
+            aliases["ECL_LIBRARIES"] = [s[2:] for s in filter(lambda s: s.startswith('-l'), ecl_libs)]
             aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l', '-L')), ecl_libs))
             continue
         else:
