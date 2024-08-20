@@ -263,8 +263,7 @@ cdef class Flag(Element):
                 self._blocks[xx] = [list(yy) for yy in params[xx]]
             else:
                 self._blocks[xx] = []
-        self._unique = None
-        
+        self._unique = ()
         self._ftype = None
         Element.__init__(self, theory)
     
@@ -549,7 +548,7 @@ cdef class Flag(Element):
         """
         if weak:
             return self.theory().identify(self._n, [self._ftype_points], **self._blocks)
-        if self._unique==None:
+        if self._unique==():
             self._unique = self.theory().identify(
                 self._n, self._ftype_points, **self._blocks)
         return self._unique
@@ -788,7 +787,11 @@ cdef class Flag(Element):
         if self.ftype() != other.ftype():
             return False
         for subp in itertools.combinations(other.not_ftype_points(), self.size()-self.ftype().size()):
-            if other.subflag(subp).__eq__(self):
+            sig_check()
+            osub = other.subflag(subp)
+            if osub==None or osub.unique()==None:
+                continue
+            if osub.unique()==self.unique():
                 return True
         return False
     
@@ -968,6 +971,7 @@ cdef class Flag(Element):
         ret = []
         lrp = list(range(target.size()))
         for ftype_points in itertools.permutations(range(target.size()), self._n):
+            sig_check()
             if target.subflag(ftype_points, ftype_points)==self:
                 ret.append(target.subflag(lrp, ftype_points))
         return ret
@@ -1008,6 +1012,9 @@ cdef class Flag(Element):
         cdef int large_size = large_ftype.size()
         cdef int ctr = 0
         cdef bint chk = 0
+        cdef int valid_ftypes = 0
+        cdef int correct_ftypes = 0
+        cdef int valid_flag_pairs = 0
         
         ret = {}
         small_points = self._ftype_points
@@ -1021,30 +1028,42 @@ cdef class Flag(Element):
                 else:
                     large_points[ii] = difference[vii-small_size]
             ind_large_ftype = self.subflag([], ftype_points=large_points)
+            if ind_large_ftype.unique()==None:
+                continue
+            
+            valid_ftypes += 1
             if ind_large_ftype==large_ftype:
+                correct_ftypes += 1
                 not_large_points = [ii for ii in range(N) if ii not in large_points]
                 for n1_extra_points in itertools.combinations(not_large_points, n1 - large_size):
-                    n2_extra_points = [ii for ii in not_large_points if ii not in n1_extra_points]
+                    n1_subf = self.subflag(n1_extra_points, ftype_points=large_points)
+                    if n1_subf.unique()==None:
+                        continue
                     try:
-                        n1_ind = n1flgs.index(self.subflag(n1_extra_points, ftype_points=large_points))
+                        n1_ind = n1flgs.index(n1_subf)
                     except ValueError:
-                        subf = self.subflag(n1_extra_points, ftype_points=large_points)
-                        raise ValueError("Could not find \n", subf, "\nin the list of ", \
+                        raise ValueError("Could not find \n", n1_subf, "\nin the list of ", \
                                          n1, " sized flags with ", large_ftype, \
                                          ".\nThis can happen if the generator and identifier ",\
                                          "(from the current CombinatorialTheory) is incompatible, ",\
                                          "or if the theory is not heredetary")
-                    try:
-                        n2_ind = n2flgs.index(self.subflag(n2_extra_points, ftype_points=large_points))
-                    except:
-                        subf = self.subflag(n2_extra_points, ftype_points=large_points)
-                        raise ValueError("Could not find \n", subf, "\nin the list of ", \
-                                         n2, " sized flags with ", large_ftype, \
-                                         ".\nThis can happen if the generator and identifier ",\
-                                         "(from the current CombinatorialTheory) is incompatible, ",\
-                                         "or if the theory is not heredetary")
-                    try:
-                        ret[(n1_ind, n2_ind)] += 1
-                    except:
-                        ret[(n1_ind, n2_ind)] = 1
-        return (len(n1flgs), len(n2flgs), ret)
+                    
+                    remaining_points = [ii for ii in not_large_points if ii not in n1_extra_points]
+                    for n2_extra_points in itertools.combinations(remaining_points, n2 - large_size):
+                        n2_subf = self.subflag(n2_extra_points, ftype_points=large_points)
+                        if n2_subf.unique()==None:
+                            continue
+                        valid_flag_pairs += 1
+                        try:
+                            n2_ind = n2flgs.index(n2_subf)
+                        except:
+                            raise ValueError("Could not find \n", n2_subf, "\nin the list of ", \
+                                             n2, " sized flags with ", large_ftype, \
+                                             ".\nThis can happen if the generator and identifier ",\
+                                             "(from the current CombinatorialTheory) is incompatible, ",\
+                                             "or if the theory is not heredetary")
+                        try:
+                            ret[(n1_ind, n2_ind)] += 1
+                        except:
+                            ret[(n1_ind, n2_ind)] = 1
+        return (len(n1flgs), len(n2flgs), ret, valid_ftypes, valid_flag_pairs, correct_ftypes)
