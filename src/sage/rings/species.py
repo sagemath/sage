@@ -1,21 +1,15 @@
-from itertools import accumulate, chain, combinations
-from math import prod
-from sage.arith.misc import binomial
-from sage.categories.cartesian_product import cartesian_product
+from itertools import accumulate, chain
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.monoids import Monoids
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.partition import Partitions
-from sage.combinat.permutation import Permutations
 from sage.groups.perm_gps.constructor import PermutationGroupElement
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedFreeAbelianMonoidElement, IndexedMonoid
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import Element, parent
@@ -665,10 +659,62 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         ElementCache.__init__(self)
         self._k = indices._k
 
-    # I don't think _element_constructor is ever called, so
-    def _element_constructor_(self, x=None):
-        print("molecular species element constructor is called!")
-        raise NotImplementedError
+    def _project(self, G, pi, part):
+        r"""
+        Project `G` onto a subset ``part`` of its domain.
+
+        ``part`` must be a union of cycles, but this is not checked.
+        """
+        restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part] for gen in G.gens()]
+        mapping = dict()
+        for k, v in pi.items():
+            es = [e for e in v if e in part]
+            if es:
+                mapping[k] = es
+        return PermutationGroup(gens=restricted_gens, domain=part), mapping
+
+    def _element_constructor_(self, G, pi=None):
+        r"""
+        Construct the `k`-variate molecular species with the given data.
+
+        INPUT:
+
+        - ``x`` can be any of the following:
+            - an element of ``self``.
+            - a tuple ``(H, M)`` where `H` is the permutation group
+              representation for the species and `M` is a ``dict``
+              mapping each element of the domain of `H` to integers
+              in `\{ 1 \ldots k \}`, representing the set to which
+              the element belongs.
+            - if `k=1`, i.e. we are working with univariate species,
+              the mapping `M` may be omitted and just the group `H`
+              may be passed.
+        """
+        if parent(G) == self:
+            if pi is not None:
+                raise ValueError("cannot reassign sorts to a molecular species")
+            return G
+        if not isinstance(G, PermutationGroup_generic):
+            raise ValueError(f"{G} must be a permutation group")
+        if pi is None:
+            if self._k == 1:
+                pi = {1: G.domain()}
+            else:
+                raise ValueError("the assignment of sorts to the domain elements must be provided")
+        if not set(pi.keys()).issubset(range(1, self._k + 1)):
+            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+        pi = {k: set(v) for k, v in pi.items()}
+        if sum(len(p) for p in pi.values()) != len(G.domain()) or set.union(*[p for p in pi.values()]) != set(G.domain()):
+            raise ValueError("values of pi must partition the domain of G")
+        for orbit in G.orbits():
+            if not any(set(orbit).issubset(p) for p in pi.values()):
+                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
+
+        domain_partition = G.disjoint_direct_product_decomposition()
+        elm = self.one()
+        for part in domain_partition:
+            elm *= self.gen(self._project(G, pi, part))
+        return elm
 
     @cached_method
     def one(self):
@@ -875,26 +921,23 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             # TODO: No checks are performed right now, must be added.
             # Checks: all args in compositions, sums must match cardinalities.
 
-            # NOTE: This method might not work correctly if self is multivariate.
-            # Or it might, I have not checked. Depends on the _canonicalize method.
-            # There are more problems actually.
-            # I think I need to do something with dompart.
-
             if self.parent()._k != 1:
                 raise ValueError("self must be univariate")
 
             res = 0
+            # conjugate self._group so that [1..k] is sort 1, [k+1,..] is sort 2, so on
+            conj = PermutationGroupElement(list(chain.from_iterable(self._dompart))).inverse()
+            G = libgap.ConjugateGroup(self._group, conj)
             # Create group of the composition
             Pn = PolynomialSpecies(len(args[0]))
             comp = list(chain.from_iterable(args))
             # Create the double coset representatives.
             S_down = SymmetricGroup(sum(comp)).young_subgroup(comp)
             S_up = SymmetricGroup(self._tc).young_subgroup(self._mc)
-            taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, self._group)
+            taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, G)
             # Sum over double coset representatives.
             for tau, _ in taus:
-                G = libgap.ConjugateGroup(self._group, tau)
-                H = libgap.Intersection(G, S_down)
+                H = libgap.Intersection(libgap.ConjugateGroup(G, tau), S_down)
                 grp = PermutationGroup(gap_group=H, domain=self.domain())
                 dpart = {i + 1: list(range(x - comp[i] + 1, x + 1)) for i, x in enumerate(accumulate(comp))}
                 res += Pn(grp, dpart)
@@ -903,7 +946,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         def substitution(self, *args):
             r"""
             Substitute M_1...M_k into self.
-            M_i must all have same arity and must be molecular.
+            M_i must all have same arity, same multicardinality,
+            and must be molecular.
             """
             if len(args) != self.parent()._k:
                 raise ValueError("number of args must match arity of self")
@@ -911,6 +955,35 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 raise ValueError("all args not molecular species")
             if len(set(arg.parent()._k for arg in args)) > 1:
                 raise ValueError("all args must have same arity")
+            if len(set(arg._mc for arg in args)) > 1:
+                raise ValueError("all args must have same multicardinality")
+
+            gens = []
+
+            # TODO: What happens if in F(G), G has a constant part? E(1+X)?
+            Mlist = [None for _ in range(self._group.degree())]
+            for i, v in enumerate(self._dompart):
+                for k in v:
+                    Mlist[k - 1] = args[i]
+            starts = list(accumulate([M._group.degree() for M in Mlist], initial=0))
+
+            # gens from self
+            for gen in self._group.gens():
+                newgen = []
+                for cyc in gen.cycle_tuples():
+                    for k in range(1, Mlist[cyc[0] - 1]._group.degree() + 1):
+                        newgen.append(tuple(k + starts[i - 1] for i in cyc))
+                gens.append(newgen)
+
+            # gens from M_i
+            dpart = {i: [] for i in range(1, args[0].parent()._k + 1)}
+            for start, M in zip(starts, Mlist):
+                for i, v in enumerate(M._dompart, 1):
+                    dpart[i].extend([start + k for k in v])
+                for gen in M._group.gens():
+                    gens.append([tuple(start + k for k in cyc) for cyc in gen.cycle_tuples()])
+
+            return args[0].parent()(PermutationGroup(gens, domain=range(1, starts[-1] + 1)), dpart)
 
 
 class PolynomialSpecies(CombinatorialFreeModule):
@@ -970,23 +1043,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
         """
         return m.grade()
 
-    def _project(self, G, pi, part):
-        r"""
-        Project `G` onto a subset ``part`` of its domain.
-
-        ``part`` must be a union of cycles, but this is not checked.
-        """
-        restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part] for gen in G.gens()]
-        mapping = dict()
-        for k, v in pi.items():
-            es = [e for e in v if e in part]
-            if es:
-                mapping[k] = es
-        return PermutationGroup(gens=restricted_gens, domain=part), mapping
-
     def _element_constructor_(self, G, pi=None):
         r"""
-        Construct the `k`-variate molecular species with the given data.
+        Construct the `k`-variate polynomial species with the given data.
 
         INPUT:
 
@@ -1005,27 +1064,12 @@ class PolynomialSpecies(CombinatorialFreeModule):
             if pi is not None:
                 raise ValueError("cannot reassign sorts to a polynomial species")
             return G
-        if not isinstance(G, PermutationGroup_generic):
-            raise ValueError(f"{G} must be a permutation group")
         if pi is None:
             if self._k == 1:
-                pi = {1: G.domain()}
+                return self._from_dict({self._indices(G): ZZ.one()})
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
-        pi = {k: set(v) for k, v in pi.items()}
-        if sum(len(p) for p in pi.values()) != len(G.domain()) or set.union(*[p for p in pi.values()]) != set(G.domain()):
-            raise ValueError("values of pi must partition the domain of G")
-        for orbit in G.orbits():
-            if not any(set(orbit).issubset(p) for p in pi.values()):
-                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
-
-        domain_partition = G.disjoint_direct_product_decomposition()
-        term = self._indices.one()
-        for part in domain_partition:
-            term *= self._indices.gen(self._project(G, pi, part))
-        return self._from_dict({term: ZZ.one()})
+        return self._from_dict({self._indices(G, pi): ZZ.one()})
 
     @cached_method
     def one_basis(self):
