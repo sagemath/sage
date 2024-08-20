@@ -2210,7 +2210,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
                         times.append(ll)
         res = []
         for xx in times:
-            der = subs(derivative(self, xx), point)
+            der = self.derivative(xx).subs(point)
             minnz = 1000000
             for xx in der.values():
                 if int(xx)!=0:
