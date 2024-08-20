@@ -531,6 +531,71 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     update_result(result)
         return result
 
+    def dual_subdivision(self):
+        """
+        Return the dual subdivision of ``self``.
+
+        Dual subdivision refers to a specific decomposition of the Newton
+        polygon associated with a tropical polynomial. The term "dual"
+        is used in the sense that the combinatorial structure of the
+        tropical variety is reflected in the dual subdivision of the
+        Newton polygon. Vertices of the dual subdivision correspond to
+        the intersection of multiple components. Edges of the dual
+        subdivision correspond to the individual components.
+
+        EXAMPLES:
+
+        Dual subdivision of a tropical curve::
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x^2 + y^2
+            sage: tv = p1.tropical_variety()
+            sage: G = tv.dual_subdivision()
+            sage: G.plot(vertex_labels=False)
+            Graphics object consisting of 10 graphics primitives
+
+        Dual subdivision of a tropical surface::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x + y + z + x^2 + R(1)
+            sage: tv = p1.tropical_variety()
+            sage: G = tv.dual_subdivision()
+            sage: G.plot3d()
+            Graphics3d Object
+
+        Dual subdivision of a tropical hypersurface::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<a,b,c,d> = PolynomialRing(T)
+            sage: p1 = a^2 + b^2 + c^2 + d^2 + a*b*c*d
+            sage: tv = p1.tropical_variety()
+            sage: G = tv.dual_subdivision()
+            sage: G.plot(vertex_labels=False)
+            Graphics object consisting of 11 graphics primitives
+
+        """
+        from sage.graphs.graph import Graph
+
+        G = Graph()
+        edges = [e for e in self._keys]
+        # for edge in self._keys:
+        #     edges.append(edge)
+        G.add_edges(edges)
+        pos = {}
+        for vertex in G.vertices():
+            pos[vertex] = list(vertex)
+
+        if self._poly.parent().ngens() == 2:
+            G.layout(pos=pos, save_pos=True)
+        elif self._poly.parent().ngens() == 3:
+            G.layout(dim=3, save_pos=True)
+            G._pos3d = pos
+        else:
+            G.layout("spring", save_pos=True)
+        return G
+
 
 class TropicalSurface(TropicalVariety):
     r"""
