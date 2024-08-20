@@ -865,6 +865,22 @@ class ComponentNumpy(SageObject):
     def __imatmul__(self, other):
         return self @ other
 
+    def trace(self, pos1, pos2):
+        if self._nid < 2:
+            raise ValueError("contraction can be performed only on " +
+                             "components with at least 2 indices")
+        if pos1 < 0 or pos1 > self._nid - 1:
+            raise IndexError("pos1 out of range")
+        if pos2 < 0 or pos2 > self._nid - 1:
+            raise IndexError("pos2 out of range")
+        if pos1 == pos2:
+            raise IndexError("the two positions must differ for the " +
+                             "contraction to be meaningful")
+        ret = ComponentNumpy(self._ring, self._frame, self._nid - 2,
+                                self._sindex, self._output_formatter)
+        ret._comp = np.trace(self._comp, axis1=pos1, axis2=pos2)
+        return ret
+
     # This function can be implemented after the product of basis is implemented
     # def khatri_rao_product(self, *args):
     #     if not all(isinstance(args, ComponentNumpy)):
@@ -964,9 +980,11 @@ class ComponentNumpy(SageObject):
             core_shape = (fmat[0].shape[1],) * len(fmat)
             order = len(core_shape)
             _rank = core_shape[0]
-            core = np.zeros(core_shape)
-            core[np.diag_indices(_rank, ndim=order)] = initial_core
-            t = core
+
+            t = np.zeros(core_shape)
+            t[np.diag_indices(_rank, ndim=order)] = initial_core
+
+            weights = np.array(initial_core)
             for _mode, f_mat in enumerate(fmat):
                 core_shape = list(core_shape)
                 core_shape[_mode] = f_mat.shape[0]
@@ -985,7 +1003,7 @@ class ComponentNumpy(SageObject):
             if converged:
                 break
 
-        out = list(fmat)
+        out = [weights, fmat]
         if return_reconstruction:
             out.append(t)
         if return_error:
@@ -999,9 +1017,8 @@ class ComponentNumpy(SageObject):
             raise ValueError("all elements in component are zero")
         cores = []
         sizes = self._shape
-        rank = (1,) + tuple(rank) + (1,)
         C = comp
-        for k in range(len(self._shape) - 1):
+        for k in range(self._nid - 1):
             rows = rank[k] * sizes[k]
             C = np.reshape(C, [rows, -1], order='F')
             U, S, V = scipy.linalg.svd(C)
@@ -1019,7 +1036,7 @@ class ComponentNumpy(SageObject):
         new_core = C
         cores.append(new_core)
 
-        if return_error:
+        if return_error or return_reconstruction:
             res = [core.copy() for core in cores]
             rank = tuple(core_values.shape[-1] for core_values in res[:-1]) + (1,)
             core = res[0]
@@ -1038,13 +1055,56 @@ class ComponentNumpy(SageObject):
                 data = np.dot(data, core_flat)
             data = np.reshape(data, shape, order='F')
 
-            residual = comp - data
-
-        out = list(cores)
+        out = list([cores])
 
         if return_reconstruction:
             out.append(data)
         if return_error:
+            residual = comp - data
             cost = abs(np.linalg.norm(residual.data) / np.linalg.norm(comp.data))
             out.append(cost)
+        return out
+
+    def Tucker(self, rank, process=(), return_error=False, return_reconstruction=False):
+        comp = self._comp
+        if np.all(comp == 0):
+            raise ValueError("all elements in component are zero")
+        fmat = [np.array([])] * self._nid
+        core = comp.copy()
+
+        if not process:
+            process = tuple(range(self._nid))
+        for mode in range(self._nid):
+            if mode not in process:
+                fmat[mode] = np.eye(self._shape[mode])
+                continue
+            tensor_unfolded = np.reshape(np.moveaxis(comp, mode, 0), (comp.shape[mode], -1))
+
+            U, _, _, = self._svd(tensor_unfolded, rank[mode])
+            fmat[mode] = U
+
+            new_shape = list(core.shape)
+            new_shape[mode] = U.T.shape[0]
+            full_shape = list(new_shape)
+            full_shape.insert(0, full_shape.pop(mode))
+            core = np.moveaxis(np.reshape(np.dot(U.T, np.reshape(np.moveaxis(core, mode, 0), (core.shape[mode], -1))), full_shape), 0, mode)
+
+        out = (core, fmat)
+        if return_error or return_reconstruction:
+            t = core
+            res = [mat.copy() for mat in fmat]
+            for mode, fmat in enumerate(res):
+                orig_shape = list(t.shape)
+                new_shape = orig_shape
+                new_shape[mode] = fmat.shape[0]
+                full_shape = list(new_shape)
+                mode_dim = full_shape.pop(mode)
+                full_shape.insert(0, mode_dim)
+                t = np.moveaxis(np.reshape(np.dot(fmat, np.reshape(np.moveaxis(t, mode, 0), (t.shape[mode], -1))), full_shape), 0, mode)
+        if return_reconstruction:
+            out += (t,)
+        if return_error:
+            residual = comp - t
+            error = abs(np.linalg.norm(residual.data) / np.linalg.norm(comp.data))
+            out += (error,)
         return out
