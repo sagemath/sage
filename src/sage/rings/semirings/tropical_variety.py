@@ -530,7 +530,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                         points[i] = new_eq
                     update_result(result)
         return result
-
+    
     def dual_subdivision(self):
         """
         Return the dual subdivision of ``self``.
@@ -580,8 +580,6 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
         G = Graph()
         edges = [e for e in self._keys]
-        # for edge in self._keys:
-        #     edges.append(edge)
         G.add_edges(edges)
         pos = {}
         for vertex in G.vertices():
@@ -1073,6 +1071,122 @@ class TropicalCurve(TropicalVariety):
                 y = parametric_function[1].subs(**{str(var): upper})
                 vertices.add((x,y))
         return vertices
+
+    def _components_of_vertices(self):
+        """
+        Return the index of components adjacent to each vertex of ``self``.
+
+        OUTPUT:
+
+        A dictionary where the keys represent the vertices, and the values
+        are lists of tuples. Each tuple consists of the index of an
+        adjacent edge (component) `e_i` and a string indicating the
+        directionality of `e_i` relative to the vertex. The string is
+        either "pos" or "neg", specifying whether it is positive or
+        negative.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(0) + x + y + x*y + x^2*y + x*y^2
+            sage: p1.tropical_variety()._components_of_vertices()
+            {(0, 0): [(0, 'pos'), (1, 'pos'), (2, 'pos'), (3, 'neg'), (4, 'neg')]}
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety()._components_of_vertices()
+            {(-2, 0): [(0, 'neg'), (1, 'pos'), (3, 'pos')],
+             (-1, -3): [(2, 'neg'), (4, 'pos'), (5, 'pos')],
+             (-1, 0): [(3, 'neg'), (4, 'neg'), (6, 'pos')],
+             (3, 4): [(6, 'neg'), (7, 'pos'), (8, 'pos')]}
+        """
+        comp_vert = {}
+        if len(self._hypersurface) >= 3:
+            for i, component in enumerate(self._hypersurface):
+                parametric_function = component[0]
+                v = component[1][0].variables()[0]
+                interval = self._parameter_intervals()[i]
+                lower = interval[0].lower()
+                upper = interval[0].upper()
+                if lower != -infinity:
+                    x = parametric_function[0].subs(v==lower)
+                    y = parametric_function[1].subs(v==lower)
+                    if (x,y) not in comp_vert:
+                        comp_vert[(x,y)] = [(i, 'pos')]
+                    else:
+                        comp_vert[(x,y)].append((i, 'pos'))
+                if upper != infinity:
+                    x = parametric_function[0].subs(v==upper)
+                    y = parametric_function[1].subs(v==upper)
+                    if (x,y) not in comp_vert:
+                        comp_vert[(x,y)] = [(i, 'neg')]
+                    else:
+                        comp_vert[(x,y)].append((i, 'neg'))
+        return comp_vert
+
+    def weight_vectors(self):
+        r"""
+        Return the weight vectors for all vertices of ``self``.
+
+        Suppose `v` is a vertex adjacent to the edges `e_1, ldots, e_k`
+        with respective weights `w_1, ldots, w_k`. Every edge `e_i` is
+        contained in a line (component) defined by an equation with
+        integer coefficients. Because of this there exists a unique
+        integer vector `v_i=(\alpha, \beta)` in the direction of `e_i`
+        such that `\gcd(\alpha, \beta)=1`. Then each vertex `v` yield
+        the vectors `w_1v_1,ldots,w_kv_k`. These vectors will satisfy
+        the following balancing condition:
+        `\sum_{i=1}^k w_i v_i = 0`.
+
+        OUTPUT:
+
+        A dictionary where the keys represent the vertices, and the values
+        are lists of vectors.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(-2)*x^2 + R(-1)*x + R(1/2)*y + R(1/6)
+            sage: p1.tropical_variety().weight_vectors()
+            {(1, -1/2): [(0, 1), (-1, -2), (1, 1)],
+             (7/6, -1/3): [(-1, -1), (0, 1), (1, 0)]}
+            sage: p3 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p3.tropical_variety().weight_vectors()
+            {(-2, 0): [(-1, -1), (0, 1), (1, 0)],
+             (-1, -3): [(-1, -1), (0, 1), (1, 0)],
+             (-1, 0): [(-1, 0), (0, -1), (1, 1)],
+             (3, 4): [(-1, -1), (0, 1), (1, 0)]}
+        """
+        from sage.calculus.functional import diff
+        from sage.arith.misc import gcd
+        from sage.rings.rational_field import QQ
+        from sage.modules.free_module_element import vector
+
+        if not self._components_of_vertices():
+            return {}
+
+        # finding the base vector in the direction of each edges
+        temp_vectors = []
+        par = self._hypersurface[0][1][0].variables()[0]
+        for comp in self._hypersurface:
+            dx = diff(comp[0][0], par)
+            dy = diff(comp[0][1], par)
+            multiplier = gcd(QQ(dx), QQ(dy))
+            temp_vectors.append(vector([dx/multiplier, dy/multiplier]))
+
+        # calculate the weight vectors of each vertex
+        cov = self._components_of_vertices()
+        result = {}
+        for vertex in cov:
+            vectors = []
+            for comp in cov[vertex]:
+                weight = self._hypersurface[comp[0]][2]
+                if comp[1] == 'pos':
+                    vectors.append(weight*temp_vectors[comp[0]])
+                else:
+                    vectors.append(weight*(-temp_vectors[comp[0]]))
+            result[vertex] = vectors
+        return result
 
     def _parameter_intervals(self):
         r"""
