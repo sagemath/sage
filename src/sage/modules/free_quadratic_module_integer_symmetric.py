@@ -1537,13 +1537,15 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice('A4')
             sage: t = vector([1.2, -3/11, 5.5, -9.1])
             sage: short = L.enumerate_short_vectors()   # implicit doctest
-            sage: [next(short) for _ in range(10)]  # random
+            sage: vecs = [next(short) for _ in range(10)]
+            sage: sorted(vecs, key=lambda v: L(v).inner_product(L(v)))
             [(0, 0, 0, 1), (0, 0, 1, 1), (0, 1, 1, 1), (1, 1, 1, 1), (0, 0, 1, 0),
              (1, 1, 1, 0), (0, 1, 1, 0), (0, 1, 0, 0), (1, 1, 0, 0), (1, 0, 0, 0)]
             sage: close = L.enumerate_close_vectors(t)  # implicit doctest
-            sage: [next(close) for _ in range(10)]  # random
-            [(1, 0, 6, -9), (1, -1, 5, -9), (2, 0, 6, -9), (1, 0, 5, -9), (1, -1, 5, -10),
-             (2, 1, 6, -9), (1, 0, 5, -10), (2, 0, 5, -9), (1, 0, 6, -8), (1, -1, 6, -9)]
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: sorted(vecs, key=lambda v: L(v).inner_product(L(v)))
+            [(1, 0, 6, -8), (1, 0, 5, -9), (2, 0, 5, -9), (1, -1, 5, -9), (2, 1, 6, -9),
+             (1, 0, 6, -9), (2, 0, 6, -9), (1, 0, 5, -10), (1, -1, 6, -9), (1, -1, 5, -10)]
         """
         L = self.LLL()
         dim = L.dimension()
@@ -1598,7 +1600,8 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
             sage: L = IntegralLattice(4, [[1,2,3,4], [7,7,8,8], [1,-1,1,0]])
             sage: short = L.enumerate_short_vectors()
-            sage: [next(short) for _ in range(20)]  # random
+            sage: vecs = [next(short) for _ in range(20)]
+            sage: sorted(vecs, key=lambda v: L(v).inner_product(L(v)))
             [(1, -1, 1, 0), (2, -2, 2, 0), (3, -3, 3, 0), (0, 3, 2, 4), (1, 2, 3, 4),
              (4, 4, 1, 0), (3, 2, -2, -4), (3, 5, 0, 0), (4, 1, -1, -4), (-1, 4, 1, 4),
              (2, 1, 4, 4), (5, 3, 2, 0), (2, 3, -3, -4), (2, 6, -1, 0), (5, 0, 0, -4),
@@ -1606,10 +1609,15 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         This example demonstrates that the lattice inner product is used for the norm::
 
-            sage: L = IntegralLattice(Matrix(QQ, [[1000, 0], [0, 1]]))
+            sage: Q = Matrix(QQ, [[1000, 0], [0, 1]])
+            sage: B = [[1, 1], [1, -1]]
+            sage: L = IntegralLattice(Q, basis=B)
             sage: short = L.enumerate_short_vectors()
-            sage: [next(short) for _ in range(10)]  # random
-            [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10)]
+            sage: vecs = [next(short) for _ in range(20)]
+            sage: sorted(vecs, key=lambda v: L(v).inner_product(L(v)))
+            [(0, -2), (0, -4), (0, -6), (0, -8), (0, -10), (0, -12), (0, -14), (0, -16),
+            (0, -18), (0, -20), (0, -22), (0, -24), (0, -26), (0, -28), (0, -30), (-1, -1),
+            (-1, 1), (-1, -3), (-1, 3), (0, -32)]
         """
         yield from self._fplll_enumerate()
 
@@ -1628,9 +1636,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice(4, [[1,2,3,4], [7,7,8,8], [1,-1,1,0]])
             sage: t = vector([1/2, -133/7, 123.44, -11])
             sage: close = L.enumerate_close_vectors(t)
-            sage: [next(close) for _ in range(10)]  # random
-            [(1, -18, 123, 148), (2, -19, 124, 148), (0, -17, 122, 148), (3, -20, 125, 148), (-1, -16, 121, 148),
-             (-2, -20, 125, 152), (-2, -23, 123, 148), (4, -21, 126, 148), (-3, -22, 122, 148), (-3, -19, 124, 152)]
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: sorted(vecs, key=lambda v: L(v).inner_product(L(v)))
+            [(-1, -16, 121, 148), (0, -17, 122, 148), (-3, -22, 122, 148), (1, -18, 123, 148), (-2, -23, 123, 148),
+             (2, -19, 124, 148), (3, -20, 125, 148), (4, -21, 126, 148), (-3, -19, 124, 152), (-2, -20, 125, 152)]
         """
         yield from self._fplll_enumerate(target)
 
