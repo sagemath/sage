@@ -337,12 +337,17 @@ class ModularForm_abstract(ModuleElement):
         return [q_exp[i] for i in X]
 
     def coefficients(self, X):
-        """
-        The coefficients a_n of self, for integers n>=0 in the list
-        X. If X is an Integer, return coefficients for indices from 1
-        to X.
+        r"""
+        Return the coefficients `a_n` of the `q`-expansion of this modular form.
 
         This function caches the results of the compute function.
+
+        INPUT:
+
+        - ``X`` -- an iterator or an integer. If ``X`` is an iterator, a list
+          containing all `a_{X_i}` is returned. If ``X`` is an integer, it must
+          be positive, in which case the coefficients `a_1` to `a_X` are
+          returned in a list.
 
         TESTS::
 
@@ -3443,10 +3448,16 @@ class GradedModularFormElement(ModuleElement):
 
     def coefficients(self, X):
         r"""
-        The coefficients a_n of self, for integers n>=0 in the list of X. If
-        X is an Integer, return coefficients for indices from 1 to X.
+        Return the coefficients `a_n` of the `q`-expansion of this modular form.
 
-        TESTS::
+        INPUT:
+
+        - ``X`` -- an iterator or an integer. If ``X`` is an iterator, a list
+          containing all `a_{X_i}` is returned. If ``X`` is an integer, it must
+          be positive, in which case the coefficients `a_1` to `a_X` are
+          returned in a list.
+
+        EXAMPLES::
 
             sage: M = ModularFormsRing(1)
             sage: E4 = M.0; E6 = M.1
@@ -3455,8 +3466,12 @@ class GradedModularFormElement(ModuleElement):
             [2, -264, -116256, -3997728]
             sage: F.coefficients(10)
             [-264, -14472, -116256, -515208, -1545264, -3997728, -8388672, -16907400, -29701992, -51719472]
-            sage: M = ModularFormsRing(13)
-            sage: (M.0^3).coefficients(range(10, 20))
+            sage: assert _ == F.coefficients(range(1, 11)) == list(F.qexp(11))[1:]
+
+        ::
+
+            sage: F = ModularFormsRing(13).0
+            sage: (F^3).coefficients(range(10, 20))
             [22812, 36552, 57680, 85686, 126744, 177408, 249246, 332172, 448926, 575736]
         """
         if isinstance(X, (int, Integer)):
