@@ -383,7 +383,7 @@ cdef class HeilbronnCremona(Heilbronn):
         # NOTE: In C, -p/2 means "round toward 0", but in Python it
         # means "round down."
         sig_on()
-        for r in range(-p/2, p/2+1):
+        for r in range(-p // 2, p // 2 + 1):
             x1 = p
             x2 = -r
             y1 = 0
@@ -394,7 +394,7 @@ cdef class HeilbronnCremona(Heilbronn):
             x3 = 0
             y3 = 0
             q = 0
-            list_append4(L, x1,x2,y1,y2)
+            list_append4(L, x1, x2, y1, y2)
             while b:
                 q = <int>roundf(<float>a / <float> b)
                 c = a - b*q
@@ -406,8 +406,8 @@ cdef class HeilbronnCremona(Heilbronn):
                 y3 = q*y2 - y1
                 y1 = y2
                 y2 = y3
-                list_append4(L, x1,x2, y1,y2)
-        self.length = L.i/4
+                list_append4(L, x1, x2, y1, y2)
+        self.length = L.i // 4
         sig_off()
 
 
@@ -491,7 +491,7 @@ cdef class HeilbronnMerel(Heilbronn):
         for a in range(1, n+1):
             ## We have ad-bc=n so c=0 and ad=n, or b=(ad-n)/c
             ## Must have ad - n >= 0, so d must be >= Ceiling(n/a).
-            q = n/a
+            q = n // a
             if q*a == n:
                 d = q
                 for b in range(a):
@@ -503,10 +503,10 @@ cdef class HeilbronnMerel(Heilbronn):
                 ## Divisor c of bc must satisfy Floor(bc/c) lt a and c lt d.
                 ## c ge (bc div a + 1)  <=>  Floor(bc/c) lt a  (for integers)
                 ## c le d - 1           <=>  c lt d
-                for c in range(bc/a + 1, d):
+                for c in range(bc // a + 1, d):
                     if bc % c == 0:
-                        list_append4(L,a,bc/c,c,d)
-        self.length = L.i/4
+                        list_append4(L, a, bc // c, c, d)
+        self.length = L.i // 4
         sig_off()
 
 
