@@ -1,3 +1,13 @@
+r"""
+Burnside Rings
+
+The Burnside ring of a finite group `G` is the ring of formal sums of conjugacy classes
+of subgroups of `G`. Any transitive group action `G \times X \rightarrow X` is isomorphic
+to a conjugacy class of subgroups of `G` by choosing a stabilizer subgroup of any
+element in `X`. Therefore, the Burnside ring also encodes all possible group actions
+of `G` on a finite set `X`.
+"""
+
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element import Element
