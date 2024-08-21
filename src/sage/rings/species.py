@@ -903,6 +903,52 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             """
             return FiniteEnumeratedSet(range(1, self._tc + 1))
         
+        def cartesian_product(self, other):
+            r"""
+            Compute the cartesian product of ``self`` and ``other``.
+
+            EXAMPLES:
+
+            Exercise 2.1.9 from the BLL book::
+
+                sage: P = PolynomialSpecies(["X"])
+                sage: M = P._indices
+                sage: C3 = M(CyclicPermutationGroup(3))
+                sage: X = M(SymmetricGroup(1))
+                sage: E2 = M(SymmetricGroup(2))
+                sage: C3.cartesian_product(C3) # C3 x C3 = 2*C3
+                2*{((1,2,3),): ((1, 2, 3),)}
+                sage: (X^3).cartesian_product(C3) # X^3 x C3 = 2*X^3
+                2*{((),): ((1,),)}^3
+                sage: (X*E2).cartesian_product(X*E2) # X*E2 x X*E2 = X*E2 + X^3
+                {((),): ((1,),)}*{((1,2),): ((1, 2),)} + {((),): ((1,),)}^3
+            """
+            if not isinstance(other, MolecularSpecies.Element):
+                raise ValueError("other must be a molecular species")
+            if self.parent()._k != other.parent()._k:
+                raise ValueError("other must have same arity")
+
+            Pn = PolynomialSpecies(self.parent()._k)
+            if self._mc != other._mc:
+                return Pn.zero()
+            # create S
+            S = SymmetricGroup(self._tc).young_subgroup(self._mc)
+            # conjugate self and other to match S
+            conj_self = PermutationGroupElement(list(chain.from_iterable(self._dompart))).inverse()
+            conj_other = PermutationGroupElement(list(chain.from_iterable(other._dompart))).inverse()
+            G = libgap.ConjugateGroup(self._group, conj_self)
+            H = libgap.ConjugateGroup(other._group, conj_other)
+            # create dompart
+            dpart = {i + 1: range(x - self._mc[i] + 1, x + 1) for i, x in enumerate(accumulate(self._mc))}
+            # create double coset representatives
+            taus = libgap.DoubleCosetRepsAndSizes(S, G, H)
+            # loop over representatives
+            res = 0
+            for tau, _ in taus:
+                F = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
+                res += Pn(PermutationGroup(gap_group=F, domain=self.domain()), dpart)
+            return res
+
         def inner_sum(self, *args):
             r"""
             Compute the inner sum of exercise 2.6.16 of BLL book.
@@ -914,15 +960,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             EXAMPLES::
 
                 sage: P = PolynomialSpecies(1)
-                sage: C4 = P(CyclicPermutationGroup(4))
-                sage: C4.support()[0].inner_sum([2, 2]) # X^2Y^2 + C2(XY)
+                sage: M = P._indices
+                sage: C4 = M(CyclicPermutationGroup(4))
+                sage: C4.inner_sum([2, 2]) # X^2Y^2 + C2(XY)
                 {((),): ((1,), ())}^2*{((),): ((), (1,))}^2 + {((1,2)(3,4),): ((1, 2), (3, 4))}
             """
             # TODO: No checks are performed right now, must be added.
             # Checks: all args in compositions, sums must match cardinalities.
-
-            if self.parent()._k != 1:
-                raise ValueError("self must be univariate")
 
             res = 0
             # conjugate self._group so that [1..k] is sort 1, [k+1,..] is sort 2, so on
@@ -939,20 +983,33 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             for tau, _ in taus:
                 H = libgap.Intersection(libgap.ConjugateGroup(G, tau), S_down)
                 grp = PermutationGroup(gap_group=H, domain=self.domain())
-                dpart = {i + 1: list(range(x - comp[i] + 1, x + 1)) for i, x in enumerate(accumulate(comp))}
+                dpart = {i + 1: range(x - comp[i] + 1, x + 1) for i, x in enumerate(accumulate(comp))}
                 res += Pn(grp, dpart)
             return res
 
-        def substitution(self, *args):
+        def __call__(self, *args):
             r"""
             Substitute M_1...M_k into self.
             M_i must all have same arity, same multicardinality,
             and must be molecular.
+
+            EXAMPLES::
+
+                sage: P = PolynomialSpecies(["X"])
+                sage: M = P._indices
+                sage: X = M(SymmetricGroup(1))
+                sage: E2 = M(SymmetricGroup(2))
+                sage: E2(X)
+                E_2
+                sage: X(E2)
+                E_2
+                sage: E2(E2)
+                {((1,2,3,4), (1,4)(2,3)): ((1, 2, 3, 4),)}
             """
             if len(args) != self.parent()._k:
                 raise ValueError("number of args must match arity of self")
             if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
-                raise ValueError("all args not molecular species")
+                raise ValueError("all args must be molecular species")
             if len(set(arg.parent()._k for arg in args)) > 1:
                 raise ValueError("all args must have same arity")
             if len(set(arg._mc for arg in args)) > 1:
@@ -975,7 +1032,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                         newgen.append(tuple(k + starts[i - 1] for i in cyc))
                 gens.append(newgen)
 
-            # gens from M_i
+            # gens from M_i and dompart
             dpart = {i: [] for i in range(1, args[0].parent()._k + 1)}
             for start, M in zip(starts, Mlist):
                 for i, v in enumerate(M._dompart, 1):
