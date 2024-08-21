@@ -1030,10 +1030,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             raise ValueError("For theory {}, size {} is not allowed.".format(self._name, target_size))
 
         base_flags = self.generate_flags(target_size)
-        print("Base flags generated")
+        print("Base flags generated, their number is {}".format(len(base_flags)))
         mult = -1 if maximize else 1
         target_vector_exact = (target_element.project()*(mult)<<(target_size - target_element.size())).values()
-
+        
         #
         # create the table data
         #
@@ -1394,7 +1394,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             return None
         
         ret = tuple([ \
-            MatrixArgs(QQ, mat[0], mat[1], entries=mat[2]).matrix()/(mat[4]*mat[3]/(max(1, mat[5]))) \
+            MatrixArgs(QQ, mat[0], mat[1], entries=mat[2]).matrix()/max(1, QQ(mat[4]*mat[3]/(max(1, mat[5])))) \
             for mat in mats])
         
         self._save(ind, ret, True)
