@@ -248,7 +248,7 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             elm = self.element_class(self, P)
             return self._cache_get(elm)
         raise ValueError(f"unable to convert {x} to {self}")
-    
+
     def __iter__(self):
         r"""
         An iterator over all conjugacy classes of directly indecomposable
@@ -261,7 +261,6 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             sage: iterC = iter(C)
             sage: for i in range(5):
             ....:     print(next(iterC))
-            ....: 
             ()
             ((),)
             ((1,2),)
@@ -902,7 +901,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             Return the domain of ``self``.
             """
             return FiniteEnumeratedSet(range(1, self._tc + 1))
-        
+
         def cartesian_product(self, other):
             r"""
             Compute the cartesian product of ``self`` and ``other``.
@@ -1004,7 +1003,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: X(E2)
                 E_2
                 sage: E2(E2)
-                {((1,2,3,4), (1,4)(2,3)): ((1, 2, 3, 4),)}
+                P_4
             """
             if len(args) != self.parent()._k:
                 raise ValueError("number of args must match arity of self")
