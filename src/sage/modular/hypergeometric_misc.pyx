@@ -6,7 +6,8 @@ from cpython cimport array
 from cysignals.signals cimport sig_check
 from sage.rings.integer cimport Integer
 
-cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
+cpdef hgm_coeffs(unsigned long long p, unsigned int f,
+                 int prec, gamma, m, int D,
                  gtable, int gtable_prec, bint use_longs):
     r"""
     Compute coefficients for the hypergeometric trace formula.

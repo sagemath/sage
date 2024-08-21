@@ -719,7 +719,7 @@ cdef class SageObject:
             try:
                 s = self._interface_init_(I)
             except Exception:
-                raise NotImplementedError("coercion of object %s to %s not implemented:\n%s\n%s" % (repr(self), I))
+                raise NotImplementedError("coercion of object %s to %s not implemented" % (repr(self), I))
         X = I(s)
         if c:
             try:
