@@ -952,6 +952,143 @@ class TropicalSurface(TropicalVariety):
             Tropical surface of 0*x^4 + 0*z^2
         """
         return f"Tropical surface of {self._poly}"
+    
+    def weight_vectors(self):
+        r"""
+        Return the weight vectors for each edge of ``self``.
+
+        Suppose `L` is an edge adjacent to the surface `S_1, ldots, S_k`
+        with respective weights `w_1, ldots, w_k`. This edge `L` has
+        a direction vector `d=[d_1,d_2,d_3]`. Each surface
+        `S_1, ldots, S_k` has a normal vector `n_1, \ldots, n_k`.
+        Make sure that the normal vector is scale to an integer vector
+        `n_k=(\alpha, \beta, \gamma)` such that
+        `\gcd(\alpha, \beta, \gamma)=1`. The weight vector of a surface
+        with respect to line `L` can be calculated with
+        `v_k=w_k \cdot (d\times n_k). These vectors will satisfy
+        the following balancing condition:
+        `\sum_{i=1}^k v_k = 0`.
+
+        OUTPUT:
+
+        A dictionary where the keys represent the vertices, and the values
+        are lists of vectors.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x^2 + y^2 + z^3
+            sage: tv1 = p1.tropical_variety()
+            sage: tv1.weight_vectors()
+            [[((3/2*t2, 3/2*t2, t2), {t2 < +Infinity}),
+             [(-2, -2, 6), (-9/2, 13/2, -3), (13/2, -9/2, -3)]]]
+
+            sage: p2 = x + y + z + x^2 + R(1)
+            sage: tv2 = p2.tropical_variety()
+            sage: tv2.weight_vectors()
+            [[((t2, t2, t2), {0 <= t2, t2 <= 1}), [(-1, -1, 2), (-1, 2, -1), (2, -1, -1)]],
+            [((0, 0, t2), {0 <= t2}), [(-1, -1, 0), (0, -1, 0), (1, 2, 0)]],
+            [((1, 1, t2), {1 <= t2}), [(1, 1, 0), (0, -1, 0), (-1, 0, 0)]],
+            [((0, t2, 0), {0 <= t2}), [(1, 0, 1), (0, 0, 1), (-1, 0, -2)]],
+            [((1, t2, 1), {1 <= t2}), [(-1, 0, -1), (0, 0, 1), (1, 0, 0)]],
+            [((t1, 1, 1), {1 <= t1}), [(0, -1, -1), (0, 0, 1), (0, 1, 0)]],
+            [((t1, 2*t1, 2*t1), {t1 <= 0}), [(4, -1, -1), (-2, -4, 5), (-2, 5, -4)]]]
+        """
+        from sage.symbolic.ring import SR
+        from sage.symbolic.relation import solve
+        from sage.calculus.functional import diff
+        from sage.arith.misc import gcd
+        from sage.rings.rational_field import QQ
+        from sage.modules.free_module_element import vector
+
+        t = SR.var('t')
+        CI = self._components_intersection()
+        unique_line = set()
+        index_line = {}
+        line_comps = {}
+        index = 0
+
+        # Identify the distinct line of intersection and determine which
+        # components contain this line.
+        for i, lines in CI.items():
+            for line in lines:
+                v1 = next(iter(line[1])).variables()[0]
+                eqn = line[0]
+                is_unique = True
+                for uniq in unique_line:
+                    subs_index = -1
+                    for j in range(3):
+                        if eqn[j] != uniq[j]:
+                            subs_index = j
+                            break
+                    if subs_index == -1:
+                        new_line = eqn
+                        is_unique = False
+                        break
+                    eq1 = eqn[subs_index].subs(v1 == t)
+                    eq2 = uniq[subs_index]
+                    temp_sol = solve(eq1 == eq2, t)
+                    if temp_sol:
+                        temp_sol = temp_sol[0].rhs()
+                        if not temp_sol.is_numeric():
+                            new_line = []
+                            for l in eqn:
+                                new_line.append(l.subs(v1 == temp_sol))
+                            if tuple(new_line) in unique_line:
+                                is_unique = False
+                                break
+                if is_unique:
+                    unique_line.add(eqn)
+                    index_line[index] = line
+                    line_comps[index] = [i]
+                    index += 1
+                else:
+                    match_key = [k for k, v in index_line.items() if v[0] == tuple(new_line)][0]
+                    line_comps[match_key].append(i)
+
+        WV = {i: [] for i in range(len(line_comps))}
+        for k, v in line_comps.items():
+
+            # Calculate direction vector of the line
+            dir_vec = []
+            line = index_line[k][0]
+            for l in line:
+                if l.variables():
+                    vpar = l.variables()[0]
+                    break
+            for l in line:
+                dir_vec.append(QQ(diff(l, vpar)))
+            dir_vec = vector(dir_vec)
+
+            # Calculate the outgoing normal vector of each surface in the
+            # direction of the line
+            for i in v:
+                surface = self._hypersurface[i][0]
+                vec1, vec2 = [], []
+                for s in surface:
+                    vec1.append(QQ(diff(s, self._vars[0])))
+                    vec2.append(QQ(diff(s, self._vars[1])))
+                vector1 = vector(vec1)
+                vector2 = vector(vec2)
+                nor_vec = vector1.cross_product(vector2)
+                nor_vec *= 1/gcd(nor_vec)
+                weight_vec = nor_vec.cross_product(dir_vec)
+                weight_vec = vector([QQ(w) for w in weight_vec])
+                order = self._hypersurface[i][2]
+                weight_vec *= order
+                WV[k].append(weight_vec)
+            for i in range(len(WV[k])):
+                test_vectors = [v for v in WV[k]]
+                test_vectors[i] = -test_vectors[i]
+                if sum(test_vectors) == vector([0,0,0]):
+                    WV[k] = test_vectors
+                    break
+
+        result = []
+        for k, v in WV.items():
+            result.append([index_line[k], v])
+        return result
 
 
 class TropicalCurve(TropicalVariety):
