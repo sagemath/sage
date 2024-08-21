@@ -68,9 +68,15 @@ class ElementCache():
         if it doesn't exist.
 
         ``elm`` must implement the following methods:
-          ``_element_key`` - hashable type for dict lookup.
-          ``__eq__`` - to compare two elements.
+            - ``_element_key`` - hashable type for dict lookup.
+            - ``__eq__`` - to compare two elements.
+        Additionally, if a method ``_canonicalize`` is implemented, it is used to preprocess the element.
         """
+        # TODO: Make _canonicalize optional.
+        # Possibly the following works:
+        # use getattr to check if name exists
+        # use callable to check if it is a function
+        # if both true, call _canonicalize
         key = elm._element_key()
         if key in self._cache:
             lookup = self._cache[key]
@@ -445,52 +451,34 @@ class AtomicSpeciesElement(Element):
 
 class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
     @staticmethod
-    def __classcall__(cls, k, singleton_names=None):
+    def __classcall__(cls, names):
         """
         Normalize the arguments.
 
         TESTS::
 
-            sage: A1 = AtomicSpecies(1, "X")
-            sage: A2 = AtomicSpecies(1)
-            sage: A3 = AtomicSpecies(["X", "Y"])
-            sage: A4 = AtomicSpecies(2, ["X", "Y"])
+            sage: A1 = AtomicSpecies("X")
+            sage: A2 = AtomicSpecies("Y")
             sage: A1 is A2
             False
-            sage: A3 is A4
-            True
         """
-        if singleton_names is None:
-            if k in ZZ:
-                k = ZZ(k)
-            else:
-                singleton_names = tuple(k)
-                k = len(singleton_names)
-        else:
-            k = ZZ(k)
-            singleton_names = tuple(singleton_names)
-
-        if (singleton_names is not None
-            and (len(singleton_names) != k
-                 or not all(isinstance(X, str) for X in singleton_names))):
+        if all(isinstance(X, str) for X in names):
             raise ValueError(f"singleton_names must be a tuple of {k} strings")
 
         return super().__classcall__(cls, k, singleton_names)
 
-    def __init__(self, k, singleton_names):
+    def __init__(self, names):
         r"""
-        Infinite set of `k`-variate atomic species graded by
-        integer vectors of length `k`.
+        Infinite set of multivariate atomic species.
 
         INPUT:
 
-        - ``k`` -- a non-negative integer, or an iterable of ``k`` strings
-        - ``singleton_names`` -- an iterable of ``k`` strings or ``None``
+        - ``names`` -- an iterable of ``k`` strings
 
         TESTS::
 
-            sage: At1 = AtomicSpecies(1)
-            sage: At2 = AtomicSpecies(2)
+            sage: At1 = AtomicSpecies(["X"])
+            sage: At2 = AtomicSpecies(["X", "Y"])
             sage: TestSuite(At1).run(skip="_test_graded_components")
             sage: TestSuite(At2).run(skip="_test_graded_components")
         """
@@ -642,7 +630,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             sage: At2 = AtomicSpecies(2); At2
             Infinite set of 2-variate atomic species
         """
-        return f"Infinite set of {self._k}-variate atomic species"
+        return f"Atomic species in sorts "
 
     Element = AtomicSpeciesElement
 
@@ -678,16 +666,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
 
         INPUT:
 
-        - ``x`` can be any of the following:
-            - an element of ``self``.
-            - a tuple ``(H, M)`` where `H` is the permutation group
-              representation for the species and `M` is a ``dict``
-              mapping each element of the domain of `H` to integers
-              in `\{ 1 \ldots k \}`, representing the set to which
-              the element belongs.
-            - if `k=1`, i.e. we are working with univariate species,
-              the mapping `M` may be omitted and just the group `H`
-              may be passed.
+        - ``G`` - an element of ``self`` (in this case pi must be ``None``)
+          or a permutation group.
+        - ``pi`` - a dict mapping sorts to iterables whose union is the domain.
+          If `k=1`, `pi` can be omitted.
         """
         if parent(G) == self:
             if pi is not None:
@@ -902,9 +884,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             """
             return FiniteEnumeratedSet(range(1, self._tc + 1))
 
-        def cartesian_product(self, other):
+        def hadamard_product(self, other):
             r"""
-            Compute the cartesian product of ``self`` and ``other``.
+            Compute the hadamard product of ``self`` and ``other``.
 
             EXAMPLES:
 
@@ -915,19 +897,23 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: C3 = M(CyclicPermutationGroup(3))
                 sage: X = M(SymmetricGroup(1))
                 sage: E2 = M(SymmetricGroup(2))
-                sage: C3.cartesian_product(C3) # C3 x C3 = 2*C3
-                2*{((1,2,3),): ((1, 2, 3),)}
-                sage: (X^3).cartesian_product(C3) # X^3 x C3 = 2*X^3
-                2*{((),): ((1,),)}^3
-                sage: (X*E2).cartesian_product(X*E2) # X*E2 x X*E2 = X*E2 + X^3
-                {((),): ((1,),)}*{((1,2),): ((1, 2),)} + {((),): ((1,),)}^3
+                sage: C3.hadamard_product(C3)
+                2*C_3
+                sage: (X^3).hadamard_product(C3)
+                2*X^3
+                sage: (X*E2).hadamard_product(X*E2)
+                X*E_2 + X^3
             """
             if not isinstance(other, MolecularSpecies.Element):
                 raise ValueError("other must be a molecular species")
             if self.parent()._k != other.parent()._k:
                 raise ValueError("other must have same arity")
 
-            Pn = PolynomialSpecies(self.parent()._k)
+            P = self.parent()
+            if not P is other.parent():
+                raise ValueError("the factors of a Hadamard product must be the same.")
+ 
+            Pn = PolynomialSpecies(names=P._indices.names)
             if self._mc != other._mc:
                 return Pn.zero()
             # create S
@@ -942,7 +928,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             # create double coset representatives
             taus = libgap.DoubleCosetRepsAndSizes(S, G, H)
             # loop over representatives
-            res = 0
+            res = Pn.zero()
             for tau, _ in taus:
                 F = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
                 res += Pn(PermutationGroup(gap_group=F, domain=self.domain()), dpart)
@@ -1043,13 +1029,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
 
 
 class PolynomialSpecies(CombinatorialFreeModule):
-    def __classcall__(cls, k, singleton_names=None, base_ring=ZZ):
+    def __classcall__(cls, names, base_ring=ZZ):
         r"""
         Normalize the arguments.
 
         TESTS::
 
-            sage: P1 = PolynomialSpecies(1, "X", ZZ)
+            sage: P1 = PolynomialSpecies("X", ZZ)
             sage: P2 = PolynomialSpecies(1, base_ring=ZZ)
             sage: P3 = PolynomialSpecies(["X", "Y"], base_ring=ZZ)
             sage: P4 = PolynomialSpecies(2, ["X", "Y"])
@@ -1070,19 +1056,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
         A = AtomicSpecies(k, singleton_names=singleton_names)
         return super().__classcall__(cls, A._k, A._singleton_names, base_ring)
 
-    def __init__(self, k, singleton_names, base_ring):
+    def __init__(self, base_ring, names):
         r"""
         Ring of `k`-variate polynomial (virtual) species.
 
         TESTS::
 
-            sage: P = PolynomialSpecies(1)
+            sage: P = PolynomialSpecies(["X"])
             sage: TestSuite(P).run()
-            sage: P2 = PolynomialSpecies(2)
+            sage: P2 = PolynomialSpecies(["X", "Y"])
             sage: TestSuite(P2).run()
         """
         # should we pass a category to basis_keys?
-        A = AtomicSpecies(k, singleton_names=singleton_names)
+        A = AtomicSpecies(names=names)
         basis_keys = MolecularSpecies(A, prefix='', bracket=False)
         category = GradedAlgebrasWithBasis(base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, base_ring,
@@ -1105,16 +1091,10 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` can be any of the following:
-            - an element of ``self``.
-            - a tuple ``(H, M)`` where `H` is the permutation group
-              representation for the species and `M` is a ``dict``
-              mapping each element of the domain of `H` to integers
-              in `\{ 1 \ldots k \}`, representing the set to which
-              the element belongs.
-            - if `k=1`, i.e. we are working with univariate species,
-              the mapping `M` may be omitted and just the group `H`
-              may be passed.
+        - ``G`` - an element of ``self`` (in this case pi must be ``None``)
+          or a permutation group.
+        - ``pi`` - a dict mapping sorts to iterables whose union is the domain.
+          If `k=1`, `pi` can be omitted.
         """
         if parent(G) == self:
             if pi is not None:
@@ -1123,8 +1103,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         if pi is None:
             if self._k == 1:
                 return self._from_dict({self._indices(G): ZZ.one()})
-            else:
-                raise ValueError("the assignment of sorts to the domain elements must be provided")
+            raise ValueError("the assignment of sorts to the domain elements must be provided")
         return self._from_dict({self._indices(G, pi): ZZ.one()})
 
     @cached_method
