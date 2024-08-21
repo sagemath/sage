@@ -731,8 +731,8 @@ class int_range:
             sage: J - I
             [(6, 1), (20, 4)]
         """
-        all = self.to_list()
-        diff = [i for i in right.to_list() if i not in all]
+        right_list = right.to_list()
+        diff = [i for i in self.to_list() if i not in right_list]
         return int_range(diff)
 
     def __mul__(self, right):
