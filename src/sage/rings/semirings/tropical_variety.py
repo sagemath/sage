@@ -1188,6 +1188,134 @@ class TropicalCurve(TropicalVariety):
             result[vertex] = vectors
         return result
 
+    def is_smooth(self):
+        r"""
+        Return ``True`` if ``self`` is smooth and ``False`` otherwise.
+
+        Suppose `C` is a tropical curve of degree `d`. A tropical curve
+        `C` is smooth if the dual subdivision of `C` consists of `d^2`
+        triangles each having unit area `1/2`. This is equivalent with
+        `C` having `d^2` vertices. These vertices are necessarily
+        trivalent (has three adjacent edges).
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = x^2 + x + R(1)
+            sage: p1.tropical_variety().is_smooth()
+            False
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety().is_smooth()
+            True
+        """
+        if len(self.vertices()) == self._poly.degree()**2:
+            return True
+        return False
+
+    def is_simple(self):
+        r"""
+        Return ``True`` if ``self`` is simple and ``False`` otherwise.
+
+        A tropical curve `C` is called simple if each vertex is either
+        trivalent or is locally the intersection of two line segments.
+        Equivalently, `C` is simple if the corresponding subdivision
+        consists only of triangles and parallelograms.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(0) + x + y + x*y + x^2*y + x*y^2
+            sage: p1.tropical_variety().is_simple()
+            False
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety().is_simple()
+            True
+        """
+        vov = self.weight_vectors()
+        for vertex in self.vertices():
+            if len(vov[vertex]) > 4:
+                return False
+            elif len(vov[vertex]) == 4:
+                for v in vov[vertex]:
+                    if -v not in vov[vertex]:
+                        return False
+        return True
+
+    def genus(self):
+        r"""
+        Return the genus of ``self``.
+
+        Let `t(C)` be the number of trivalent vertices, and let `r(C)` be
+        the number of unbounded edges of `C`. The genus of simple tropical
+        curve `C` is defined by the formula:
+        `g(C) = \frac{1}{2}t(C) - \frac{1}{2}r(C) + 1`.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = x^2 + y^2 + x*y
+            sage: p1.tropical_variety().genus()
+            1
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety().genus()
+            0
+        """
+        if not self.is_simple():
+            raise ValueError("tropical curve is not simple")
+        trivalent = 0  # number of trivalent vertices
+        for vectors in self.weight_vectors().values():
+            if len(vectors) == 3:
+                trivalent += 1
+        unbounded = 0  # number of unbounded edges
+        for component in self._hypersurface:
+            if len(component[1]) == 1:
+                unbounded += 1
+        return trivalent//2 - unbounded//2 + 1
+
+    def contribution(self):
+        r"""
+        Return the contribution of ``self``.
+
+        The contribution of a simple curve `C` is defined as the product
+        of the normalized areas of all triangles in the corresponding
+        dual subdivision. We just multiply positive integers attached to
+        the trivalent vertices. The contribution of a trivalent vertex
+        equals `w_1w_2|\det(v_1,v_2)|`, with `w_i` are the weights of
+        the adjacent edges and `v_i` are their weight vectors. That
+        formula is independent of the choice made because of the
+        balancing condition `w_1v_1+w_2v_2+w_3v_3=0`.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p1.tropical_variety().contribution()
+            1
+            sage: p2 = R(-1/3)*x^2 + R(1)*x*y + R(1)*y^2 + R(-1/3)*x + R(1/3)
+            sage: p2.tropical_variety().contribution()
+            16
+        """
+        if not self.is_simple():
+            raise ValueError("tropical curve is not simple")
+        result = 1
+        voc = self._components_of_vertices()
+        vov = self.weight_vectors()
+        for vertex in vov:
+            if len(vov[vertex]) == 3:
+                u1 = vov[vertex][0]
+                u2 = vov[vertex][1]
+                index1 = voc[vertex][0][0]
+                index2 = voc[vertex][1][0]
+                w1 = self._hypersurface[index1][2]
+                w2 = self._hypersurface[index2][2]
+                det = u1[0]*u2[1] - u1[1]*u2[0]
+                result *= w1 * w2 * abs(det)
+        return result
+
     def _parameter_intervals(self):
         r"""
         Return the intervals of each component's parameter of ``self``.
