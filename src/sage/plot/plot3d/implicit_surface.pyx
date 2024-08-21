@@ -851,18 +851,18 @@ cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
     """
     INPUT:
 
-    -  ``f`` -- a (fast!) callable function
+    - ``f`` -- a (fast!) callable function
 
-    -  ``xrange`` -- a 2-tuple (x_min, x_max)
+    - ``xrange`` -- a 2-tuple (x_min, x_max)
 
-    -  ``yrange`` -- a 2-tuple (y_min, y_may)
+    - ``yrange`` -- a 2-tuple (y_min, y_may)
 
-    -  ``zrange`` -- a 2-tuple (z_min, z_maz)
+    - ``zrange`` -- a 2-tuple (z_min, z_maz)
 
-    -  ``plot_points`` -- a triple of integers indicating the number of
-       function evaluations in each direction.
+    - ``plot_points`` -- a triple of integers indicating the number of
+      function evaluations in each direction
 
-    -  ``cube_marchers`` -- a list of cube marchers, one for each contour.
+    - ``cube_marchers`` -- list of cube marchers, one for each contour
 
     OUTPUT:
 
@@ -947,7 +947,7 @@ cdef class ImplicitSurface(IndexFaceSet):
     cdef readonly tuple plot_points
 
     def __init__(self, f, xrange, yrange, zrange,
-                 contour=0, plot_points="automatic",
+                 contour=0, plot_points='automatic',
                  region=None, smooth=True, gradient=None,
                  **kwds):
         """
@@ -1199,7 +1199,6 @@ cdef class ImplicitSurface(IndexFaceSet):
             sage: len(G.vertex_list()) > 0, len(G.face_list()) > 0
             (True, True)
             sage: G.show() # This should be fast, since the mesh is already triangulated.
-
         """
         if self.fcount != 0 and not force:
             # The mesh is already triangulated

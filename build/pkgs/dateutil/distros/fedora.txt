@@ -1,1 +1,1 @@
-python-dateutil
+python3-dateutil

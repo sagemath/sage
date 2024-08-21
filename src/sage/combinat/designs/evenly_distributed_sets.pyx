@@ -64,14 +64,14 @@ cdef class EvenlyDistributedSetsBacktracker:
 
     - ``K`` -- a finite field of cardinality `q`
 
-    - ``k`` -- a positive integer such that `k(k-1)` divides `q-1`
+    - ``k`` -- positive integer such that `k(k-1)` divides `q-1`
 
-    - ``up_to_isomorphism`` -- (boolean, default ``True``) whether only consider
+    - ``up_to_isomorphism`` -- boolean (default: ``True``); whether only consider
       evenly distributed sets up to automorphisms of the field of the form
       `x \mapsto ax + b`. If set to ``False`` then the iteration is over all
       evenly distributed sets that contain ``0`` and ``1``.
 
-    - ``check`` -- boolean (default is ``False``). Whether you want to check
+    - ``check`` -- boolean (default: ``False``); whether you want to check
       intermediate steps of the iterator. This is mainly intended for debugging
       purpose. Setting it to ``True`` will considerably slow the iteration.
 
@@ -284,7 +284,7 @@ cdef class EvenlyDistributedSetsBacktracker:
 
         - ``B`` -- an evenly distributed set
 
-        - ``check`` -- (boolean, default ``True``) whether to check the result
+        - ``check`` -- boolean (default: ``True``); whether to check the result
 
         EXAMPLES::
 
@@ -410,9 +410,7 @@ cdef class EvenlyDistributedSetsBacktracker:
         This is an internal function and should only be call by the backtracker
         implemented in the method `__iter__`.
 
-        OUTPUT:
-
-        - ``False`` if ``self.B`` is not minimal
+        OUTPUT: ``False`` if ``self.B`` is not minimal
 
         - the list of evenly distributed sets isomorphic to ``self.B``
           given as a list of tuples if ``self.up_to_isom=0`` or list

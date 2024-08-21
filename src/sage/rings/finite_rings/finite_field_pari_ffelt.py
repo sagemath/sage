@@ -195,7 +195,7 @@ class FiniteField_pari_ffelt(FiniteField):
 
     def degree(self):
         """
-        Returns the degree of ``self`` over its prime field.
+        Return the degree of ``self`` over its prime field.
 
         EXAMPLES::
 
@@ -222,7 +222,7 @@ class FiniteField_pari_ffelt(FiniteField):
         """
         k = k % self.degree()
         if k == 0:
-            raise ValueError("_pari_frobenius requires a non-zero exponent")
+            raise ValueError("_pari_frobenius requires a nonzero exponent")
         g = self.gen()
         i = len(self.__pari_frobenius_powers)
         if i == 0:

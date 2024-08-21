@@ -26,10 +26,9 @@ all curves of a given conductor. It lists the curves whose coefficients are not
    999, inclusive.
 
 -  The command ``SteinWatkinsPrimeData(n)`` returns an iterator over the curves
-   in the `n^{th}` Stein-Watkins prime table, which contains prime conductor
+   in the `n`-th Stein-Watkins prime table, which contains prime conductor
    elliptic curves of conductor between `n10^8` and `(n+1)10^8`. Here `n`
    varies between 0 and 99, inclusive.
-
 
 EXAMPLES: We obtain the first table of elliptic curves.
 
@@ -213,7 +212,7 @@ class SteinWatkinsAllData:
             Stein-Watkins isogeny class of conductor 20
         """
         try:
-            file = bz2.open(self._file, 'rt', encoding="utf-8")
+            file = bz2.open(self._file, 'rt', encoding='utf-8')
         except OSError:
             raise OSError("The Stein-Watkins data file %s must be installed." % self._file)
         C = None

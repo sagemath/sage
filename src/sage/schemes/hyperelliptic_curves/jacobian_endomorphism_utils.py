@@ -142,11 +142,11 @@ def get_is_geom_field(f, C, bad_primes, B=200):
 
     INPUT:
 
-    - ``f`` -- a polynomial defining the hyperelliptic curve.
+    - ``f`` -- a polynomial defining the hyperelliptic curve
 
-    - ``C`` -- the hyperelliptic curve.
+    - ``C`` -- the hyperelliptic curve
 
-    - ``bad_primes`` -- the list of odd primes of bad reduction.
+    - ``bad_primes`` -- the list of odd primes of bad reduction
 
     - ``B`` -- (default: 200) the bound which appears in the statement of
       the algorithm from [Lom2019]_
@@ -252,9 +252,9 @@ def is_geom_trivial_when_field(C, bad_primes, B=200):
 
     INPUT:
 
-    - ``C`` -- the hyperelliptic curve.
+    - ``C`` -- the hyperelliptic curve
 
-    - ``bad_primes`` -- the list of odd primes of bad reduction.
+    - ``bad_primes`` -- the list of odd primes of bad reduction
 
     - ``B`` -- (default: 200) the bound which appears in the statement of
       the algorithm from [Lom2019]_
