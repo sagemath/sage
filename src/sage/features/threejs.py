@@ -40,10 +40,10 @@ class Threejs(StaticFile):
             filename = 'unknown'
 
         StaticFile.__init__(
-            self, name="threejs",
+            self, name='threejs',
             filename=filename,
-            spkg="threejs",
-            type="standard",
+            spkg='threejs',
+            type='standard',
             search_path=threejs_search_path,
             description="JavaScript library to display 3D graphics")
 
@@ -54,7 +54,7 @@ class Threejs(StaticFile):
         Defining what version is required is delegated to the distribution package
         that provides the file ``threejs-version.txt`` in :mod:`sage.ext_data.threejs`.
 
-        If the file is not provided, :class:`FileNotFoundError` is raised.
+        If the file is not provided, :exc:`FileNotFoundError` is raised.
 
         EXAMPLES::
 

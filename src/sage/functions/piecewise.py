@@ -82,7 +82,7 @@ lazy_import('sage.symbolic.ring', 'SR')
 class PiecewiseFunction(BuiltinFunction):
     def __init__(self):
         """
-        Piecewise function
+        Piecewise function.
 
         EXAMPLES::
 
@@ -96,24 +96,24 @@ class PiecewiseFunction(BuiltinFunction):
             1/2*y^2
         """
         BuiltinFunction.__init__(self, "piecewise",
-                                 latex_name="piecewise",
+                                 latex_name='piecewise',
                                  conversions=dict(), nargs=2)
 
     def __call__(self, function_pieces, **kwds):
         r"""
-        Piecewise functions
+        Piecewise functions.
 
         INPUT:
 
-        - ``function_pieces`` -- a list of pairs consisting of a
-          domain and a symbolic function.
+        - ``function_pieces`` -- list of pairs consisting of a
+          domain and a symbolic function
 
-        - ``var=x`` -- a symbolic variable or ``None`` (default). The
-          real variable in which the function is piecewise in.
+        - ``var=x`` -- a symbolic variable or ``None`` (default); the
+          real variable in which the function is piecewise in
 
         OUTPUT:
 
-        A piecewise-defined function. A :class:`ValueError` will be raised
+        A piecewise-defined function. A :exc:`ValueError` will be raised
         if the domains of the pieces are not pairwise disjoint.
 
         EXAMPLES::
@@ -166,11 +166,9 @@ class PiecewiseFunction(BuiltinFunction):
 
     def _print_(self, parameters, variable):
         """
-        Return a string representation
+        Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -187,7 +185,7 @@ class PiecewiseFunction(BuiltinFunction):
 
     def _subs_(self, subs_map, options, parameters, x):
         """
-        Callback from Pynac `subs()`
+        Callback from Pynac ``subs()``.
 
         EXAMPLES:
 
@@ -235,15 +233,13 @@ class PiecewiseFunction(BuiltinFunction):
     def in_operands(ex):
         """
         Return whether a symbolic expression contains a piecewise
-        function as operand
+        function as operand.
 
         INPUT:
 
-        - ``ex`` -- a symbolic expression.
+        - ``ex`` -- a symbolic expression
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -266,7 +262,7 @@ class PiecewiseFunction(BuiltinFunction):
     @staticmethod
     def simplify(ex):
         """
-        Combine piecewise operands into single piecewise function
+        Combine piecewise operands into single piecewise function.
 
         OUTPUT:
 
@@ -340,11 +336,11 @@ class PiecewiseFunction(BuiltinFunction):
         def expression_at(self, parameters, variable, point):
             """
             Return the expression defining the piecewise function at
-            ``value``
+            ``value``.
 
             INPUT:
 
-            - ``point`` -- a real number.
+            - ``point`` -- a real number
 
             OUTPUT:
 
@@ -373,7 +369,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def domains(self, parameters, variable):
             """
-            Return the individual domains
+            Return the individual domains.
 
             See also :meth:`~expressions`.
 
@@ -393,7 +389,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def domain(self, parameters, variable):
             """
-            Return the domain
+            Return the domain.
 
             OUTPUT:
 
@@ -414,11 +410,9 @@ class PiecewiseFunction(BuiltinFunction):
 
         def __len__(self, parameters, variable):
             """
-            Return the number of "pieces"
+            Return the number of "pieces".
 
-            OUTPUT:
-
-            Integer.
+            OUTPUT: integer
 
             EXAMPLES::
 
@@ -431,13 +425,11 @@ class PiecewiseFunction(BuiltinFunction):
 
         def expressions(self, parameters, variable):
             """
-            Return the individual domains
+            Return the individual domains.
 
             See also :meth:`~domains`.
 
-            OUTPUT:
-
-            The collection of expressions of the component functions.
+            OUTPUT: the collection of expressions of the component functions
 
             EXAMPLES::
 
@@ -450,7 +442,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def items(self, parameters, variable):
             """
-            Iterate over the pieces of the piecewise function
+            Iterate over the pieces of the piecewise function.
 
             .. NOTE::
 
@@ -476,7 +468,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def __call__(self, parameters, variable, value=None, **kwds):
             """
-            Call the piecewise function
+            Call the piecewise function.
 
             EXAMPLES::
 
@@ -501,7 +493,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def _fast_callable_(self, parameters, variable, etb):
             """
-            Override the ``fast_callable``
+            Override the ``fast_callable``.
 
             OUTPUT:
 
@@ -522,7 +514,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def restriction(self, parameters, variable, restricted_domain):
             """
-            Restrict the domain
+            Restrict the domain.
 
             INPUT:
 
@@ -530,9 +522,7 @@ class PiecewiseFunction(BuiltinFunction):
               :class:`~sage.sets.real_set.RealSet` or something that
               defines one.
 
-            OUTPUT:
-
-            A new piecewise function obtained by restricting the domain.
+            OUTPUT: a new piecewise function obtained by restricting the domain
 
             EXAMPLES::
 
@@ -550,7 +540,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def extension(self, parameters, variable, extension, extension_domain=None):
             """
-            Extend the function
+            Extend the function.
 
             INPUT:
 
@@ -1100,9 +1090,9 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            -  ``x`` -- variable of ``self``
+            - ``x`` -- variable of ``self``
 
-            -  ``s`` -- variable of Laplace transform.
+            - ``s`` -- variable of Laplace transform
 
             We assume that a piecewise function is 0 outside of its domain and
             that the left-most endpoint of the domain is 0.
@@ -1171,15 +1161,13 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            - ``n`` -- a non-negative integer
+            - ``n`` -- nonnegative integer
 
             - ``L`` -- (default: ``None``) the half-period of `f`; if none
               is provided, `L` is assumed to be the half-width of the domain
               of ``self``
 
-            OUTPUT:
-
-            - the Fourier coefficient `a_n`, as defined above
+            OUTPUT: the Fourier coefficient `a_n`, as defined above
 
             EXAMPLES:
 
@@ -1224,7 +1212,6 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([[(-pi, pi/2), f1], [(pi/2, pi), f2]])
                 sage: f.fourier_series_cosine_coefficient(5, pi)
                 -3/5/pi
-
             """
             from sage.functions.trig import cos
             from sage.symbolic.constants import pi
@@ -1266,15 +1253,13 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            - ``n`` -- a non-negative integer
+            - ``n`` -- nonnegative integer
 
             - ``L`` -- (default: ``None``) the half-period of `f`; if none
               is provided, `L` is assumed to be the half-width of the domain
               of ``self``
 
-            OUTPUT:
-
-            - the Fourier coefficient `b_n`, as defined above
+            OUTPUT: the Fourier coefficient `b_n`, as defined above
 
             EXAMPLES:
 
@@ -1315,7 +1300,6 @@ class PiecewiseFunction(BuiltinFunction):
                 4/pi
                 sage: f2.fourier_series_sine_coefficient(6)
                 4/3/pi
-
             """
             from sage.functions.trig import sin
             from sage.symbolic.constants import pi
@@ -1339,7 +1323,7 @@ class PiecewiseFunction(BuiltinFunction):
         def fourier_series_partial_sum(self, parameters, variable, N,
                                        L=None):
             r"""
-            Returns the partial sum up to a given order of the Fourier series
+            Return the partial sum up to a given order of the Fourier series
             of the periodic function `f` extending the piecewise-defined
             function ``self``.
 
@@ -1359,7 +1343,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            - ``N`` -- a positive integer; the order of the partial sum
+            - ``N`` -- positive integer; the order of the partial sum
 
             - ``L`` -- (default: ``None``) the half-period of `f`; if none
               is provided, `L` is assumed to be the half-width of the domain
@@ -1404,7 +1388,6 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f.fourier_series_partial_sum(5)
                 -2*cos(2*pi*x)/pi^2 + 4/25*sin(5*pi*x)/pi^2
                  - 4/9*sin(3*pi*x)/pi^2 + 4*sin(pi*x)/pi^2 + 1/4
-
             """
             from sage.symbolic.constants import pi
             from sage.functions.trig import cos, sin
