@@ -1103,8 +1103,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         degs = [G.degree()]*len(L)
         for F in G.monomials():
             for i in range(len(L)):
-                if F.degree(L[i]) < degs[i]:
-                    degs[i] = F.degree(L[i])
+                degs[i] = min(F.degree(L[i]), degs[i])
         T = []
         for item in G.dict().items():
             tup = tuple([item[0][i] - degs[i] for i in range(len(L))])

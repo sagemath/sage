@@ -2614,8 +2614,7 @@ class SingularGBLogPrettyPrinter:
                     if verbosity >= 1:
                         print("Leading term degree: %2d." % int(token))
                     self.curr_deg = int(token)
-                    if self.max_deg < self.curr_deg:
-                        self.max_deg = self.curr_deg
+                    self.max_deg = max(self.max_deg, self.curr_deg)
 
                 elif re.match(SingularGBLogPrettyPrinter.red_para, token) and verbosity >= 3:
                     m, n = re.match(SingularGBLogPrettyPrinter.red_para, token).groups()

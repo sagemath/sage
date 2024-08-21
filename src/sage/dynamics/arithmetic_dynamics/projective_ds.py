@@ -2120,8 +2120,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                                 h = max([(Res*c).local_height_arch(vindex, prec=prec) for c in poly.coefficients()])
                         else: #non-archimedean
                             h = max([c.local_height(v, prec=prec) for c in poly.coefficients()])
-                        if h > maxh:
-                            maxh = h
+                        maxh = max(h, maxh)
             if maxh == 0:
                 maxh = 1  #avoid division by 0
             if isinstance(v, RingHomomorphism_im_gens): #archimedean
@@ -2334,8 +2333,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 if err is not None:
                     err = err / 2
                     N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log())/(R(d).log()))
-                    if N < 1:
-                        N = 1
+                    N = max(N, 1)
                     kwds.update({'error_bound': err})
                     kwds.update({'N': N})
                 for n in range(N):

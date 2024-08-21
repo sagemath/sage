@@ -258,8 +258,7 @@ def random_expr_helper(n_nodes, internal, leaves, verbose):
         n_nodes -= 1
         n_children = r[2]
         n_spare_nodes = n_nodes - n_children
-        if n_spare_nodes <= 0:
-            n_spare_nodes = 0
+        n_spare_nodes = max(0, n_spare_nodes)
         nodes_per_child = random_integer_vector(n_spare_nodes, n_children)
         children = [random_expr_helper(n + 1, internal, leaves, verbose)
                     for n in nodes_per_child]

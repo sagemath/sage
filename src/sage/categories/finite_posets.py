@@ -1479,8 +1479,7 @@ class FinitePosets(CategoryWithAxiom):
             max_orbit_size = 0
             for orb in self.rowmotion_orbits():
                 orb_plots = []
-                if len(orb) > max_orbit_size:
-                    max_orbit_size = len(orb)
+                max_orbit_size = max(len(orb), max_orbit_size)
                 for oi in orb:
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)
@@ -1565,8 +1564,7 @@ class FinitePosets(CategoryWithAxiom):
             max_orbit_size = 0
             for orb in self.toggling_orbits(vs):
                 orb_plots = []
-                if len(orb) > max_orbit_size:
-                    max_orbit_size = len(orb)
+                max_orbit_size = max(len(orb), max_orbit_size)
                 for oi in orb:
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)

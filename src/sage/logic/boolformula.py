@@ -568,12 +568,10 @@ class BooleanFormula:
         max = 2 ** len(self.__vars_order)
         if end < 0:
             end = max
-        if end > max:
-            end = max
+        end = min(end, max)
         if start < 0:
             start = 0
-        if start > max:
-            start = max
+        start = min(start, max)
         keys, table = [], []
         vars = {}
         for var in self.__vars_order:

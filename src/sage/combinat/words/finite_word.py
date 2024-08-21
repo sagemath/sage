@@ -1110,8 +1110,7 @@ class FiniteWord_class(Word_class):
         res = [l - p[-1]]*(l+1)
         for i in range(1, l+1):
             j = l - p[i - 1]
-            if res[j] > (i - p[i-1]):
-                res[j] = i - p[i-1]
+            res[j] = min(res[j], i - p[i-1])
         return res
 
     @cached_method
@@ -3455,8 +3454,7 @@ class FiniteWord_class(Word_class):
                     current_pos = k-j+l-1
                     pft[current_pos] = m
                     current_exp = QQ((current_pos+1, current_pos+1-m))
-                    if current_exp > best_exp:
-                        best_exp = current_exp
+                    best_exp = max(current_exp, best_exp)
                 for ((i, j), u) in st._transition_function[v].items():
                     if j is None:
                         j = self.length()
@@ -6319,8 +6317,7 @@ class FiniteWord_class(Word_class):
         for s in self:
             if s == ss:
                 c += 1
-                if c > max_c:
-                    max_c = c
+                max_c = max(c, max_c)
             else:
                 v.append(c)
                 ss = s

@@ -1943,8 +1943,7 @@ class DocTestDispatcher(SageObject):
                                 # has the messages pipe open).
                                 # Adjust deadline to read all messages:
                                 newdeadline = now + die_timeout
-                                if w.deadline > newdeadline:
-                                    w.deadline = newdeadline
+                                w.deadline = min(w.deadline, newdeadline)
                             new_workers.append(w)
                         else:
                             # Save the result and output of the worker
@@ -2041,8 +2040,7 @@ class DocTestDispatcher(SageObject):
                     # The master pselect() call
                     rlist = [w.rmessages for w in workers if w.rmessages is not None]
                     tmout = min(w.deadline for w in workers) - now
-                    if tmout > 5:  # Wait at most 5 seconds
-                        tmout = 5
+                    tmout = min(tmout, 5)
                     rlist, _, _, _ = sel.pselect(rlist, timeout=tmout)
 
                     # Read messages

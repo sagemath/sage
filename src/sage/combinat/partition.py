@@ -8229,8 +8229,7 @@ class RegularPartitions(Partitions):
             yield []
             return
 
-        if n < max_part:
-            max_part = n
+        max_part = min(n, max_part)
         bdry = self._ell - 1
 
         for i in reversed(range(1, max_part + 1)):
@@ -8421,8 +8420,7 @@ class RegularPartitions_truncated(RegularPartitions):
                 yield [n]
             return
 
-        if n < max_part:
-            max_part = n
+        max_part = min(n, max_part)
         bdry = self._ell - 1
 
         for i in reversed(range(1, max_part + 1)):
@@ -9066,8 +9064,7 @@ class RestrictedPartitions_generic(Partitions):
             yield []
             return
 
-        if n < max_part:
-            max_part = n
+        max_part = min(n, max_part)
 
         for i in range(max_part, 0, -1):
             for p in self._fast_iterator(n-i, i):

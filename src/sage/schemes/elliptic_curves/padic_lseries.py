@@ -629,8 +629,7 @@ class pAdicLseries(SageObject):
         res = [enj]
         for j in range(1,prec):
             bino = valuation(binomial(pn,j),self._p)
-            if bino < enj:
-                enj = bino
+            enj = min(bino, enj)
             res.append(enj)
         return res
 

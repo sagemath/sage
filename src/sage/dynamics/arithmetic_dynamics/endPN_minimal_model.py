@@ -1095,9 +1095,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         red_g = f.conjugate(M*MG)
         if G != pts_poly:
             R2 = get_bound_dynamical(G, red_g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
-            if R2 < R:
-                # use the better bound
-                R = R2
+            R = min(R2, R)
         red_g.normalize_coordinates()
         if red_g.global_height(prec=prec) == 0:
             return [red_g, M*MG]
@@ -1134,8 +1132,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
                 if new_size == 1:  # early exit
                     return [current_min[1], current_min[4]]
                 new_R = get_bound_dynamical(G, g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
-                if new_R < R:
-                    R = new_R
+                R = min(new_R, R)
 
             # add new points to check
             if label != 1 and min((rep+1).norm(), (rep-1).norm()) >= 1: # don't undo S

@@ -2537,11 +2537,9 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             s = RealSet(real_set)
             if s.n_components() > 0:
                 lower_s = s[0]._scan_lower()
-                if lower_s < lower_scan:
-                    lower_scan = lower_s
+                lower_scan = min(lower_s, lower_scan)
                 upper_s = s[-1]._scan_upper()
-                if upper_s > upper_scan:
-                    upper_scan = upper_s
+                upper_scan = max(upper_s, upper_scan)
         if lower_scan < upper_scan:
             lower, lower_closed = lower_scan[0][0], lower_scan[0][1] == 0
             upper, upper_closed = upper_scan[0][0], upper_scan[0][1] > 0
