@@ -1872,7 +1872,7 @@ cdef class FiniteField(Field):
             z3
 
         For finite fields, the algebraic closure is always (isomorphic
-        to) the algebraic closure of the prime field:
+        to) the algebraic closure of the prime field::
 
             sage: GF(5^2).algebraic_closure() == F
             True
