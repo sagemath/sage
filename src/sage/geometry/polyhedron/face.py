@@ -404,19 +404,18 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: for face in square.face_lattice():                                    # needs sage.combinat
+            sage: for face in sorted(square.face_lattice()):                                    # needs sage.combinat
             ....:     print(face.ambient_Hrepresentation())
-            (An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0,
-             An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
+            (An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0, An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
             (An inequality (-1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
-            (An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0)
             (An inequality (-1, 0) x + 1 >= 0,)
-            (An inequality (0, -1) x + 1 >= 0, An inequality (1, 0) x + 1 >= 0)
-            (An inequality (0, -1) x + 1 >= 0,)
-            (An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
-            (An inequality (0, 1) x + 1 >= 0,)
-            (An inequality (1, 0) x + 1 >= 0,)
             ()
+            (An inequality (0, 1) x + 1 >= 0,)
+            (An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0)
+            (An inequality (0, -1) x + 1 >= 0,)
+            (An inequality (0, -1) x + 1 >= 0, An inequality (1, 0) x + 1 >= 0)
+            (An inequality (1, 0) x + 1 >= 0,)
+            (An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
         """
         if index is None:
             return self._ambient_Hrepresentation
@@ -445,19 +444,18 @@ class PolyhedronFace(ConvexSet_closed):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: for fl in square.face_lattice():                                      # needs sage.combinat
+            sage: for fl in sorted(square.face_lattice()):                                      # needs sage.combinat
             ....:     print(fl.ambient_Vrepresentation())
             ()
             (A vertex at (1, -1),)
-            (A vertex at (1, 1),)
             (A vertex at (1, -1), A vertex at (1, 1))
-            (A vertex at (-1, 1),)
-            (A vertex at (1, 1), A vertex at (-1, 1))
-            (A vertex at (-1, -1),)
+            (A vertex at (1, -1), A vertex at (1, 1), A vertex at (-1, 1), A vertex at (-1, -1))
             (A vertex at (1, -1), A vertex at (-1, -1))
+            (A vertex at (1, 1),)
+            (A vertex at (1, 1), A vertex at (-1, 1))
+            (A vertex at (-1, 1),)
             (A vertex at (-1, 1), A vertex at (-1, -1))
-            (A vertex at (1, -1), A vertex at (1, 1),
-             A vertex at (-1, 1), A vertex at (-1, -1))
+            (A vertex at (-1, -1),)
         """
         if index is None:
             return self._ambient_Vrepresentation

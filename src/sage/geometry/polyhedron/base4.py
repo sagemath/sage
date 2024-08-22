@@ -315,8 +315,8 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: square = polytopes.hypercube(2)
             sage: fl = square.face_lattice();fl
             Finite lattice containing 10 elements
-            sage: list(f.ambient_V_indices() for f in fl)
-            [(), (0,), (1,), (0, 1), (2,), (1, 2), (3,), (0, 3), (2, 3), (0, 1, 2, 3)]
+            sage: list(f.ambient_V_indices() for f in sorted(fl))
+            [(), (0,), (0, 1), (0, 1, 2, 3), (0, 3), (1,), (1, 2), (2,), (2, 3), (3,)]
             sage: poset_element = fl[5]
             sage: a_face = poset_element
             sage: a_face

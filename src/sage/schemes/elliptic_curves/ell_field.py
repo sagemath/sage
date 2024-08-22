@@ -2247,20 +2247,20 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              '0*',
              ...
              '98*']
-            sage: G3.edges(sort=True)
+            sage: G3.edges(sort=True, sort_vertices=True)
             [('0', '0*', None),
-             ('0', '13', None),
+             ('106', '396', None),
              ...
-             ('48*', '98*', None)]
+             ('98*', '48*', None)]
              sage: G5 = E.isogeny_ell_graph(5, directed=False, label_by_j=True); G5
              Graph on 9 vertices
              sage: G5.vertices(sort=True)
              ['13', '13*', '407', '407*', '52', '62', '62*', '98', '98*']
-             sage: G5.edges(sort=True)
-             [('13', '52', None),
-              ('13', '98', None),
+             sage: G5.edges(sort=True, sort_vertices=True)
+             [('13', '98', None),
+              ('13*', '98*', None),
               ...
-              ('62*', '98*', None)]
+              ('98*', '62*', None)]
 
         Supersingular curve over finite extension field of degree 2::
 
@@ -2288,11 +2288,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              '102',
              ...
              '87*i + 190']
-            sage: H.edges(sort=True)
+            sage: H.edges(sort=True,sort_vertices=True)
             [('0', '125', None),
-             ('102', '125', None),
+             ('102', '319', None),
              ...
-             ('81*i + 65', '87*i + 190', None)]
+             ('87*i + 190', '81*i + 65', None)]
 
         Curve over a quadratic number field::
 
@@ -2305,23 +2305,24 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              'y^2 + x*y + y = x^3 + (-36)*x + (-70)',
              'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)',
              'y^2 + x*y + y = x^3 + 4*x + (-6)']
-            sage: G2.edges(sort=True)
-            [('y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)',
-              'y^2 + x*y + y = x^3 + (-36)*x + (-70)', None),
+            sage: G2.edges(sort=True,sort_vertices=True)
+            [('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
+              'y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)', None),
              ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
               'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)', None),
-             ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
-              'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
+             ('y^2 + x*y + y = x^3 + 4*x + (-6)',
+              'y^2 + x*y + y = x^3 + (-36)*x + (-70)', None)]
+
             sage: G3 = E.isogeny_ell_graph(3, directed=False)
             sage: G3.vertices(sort=True)
             ['y^2 + x*y + y = x^3 + (-1)*x',
              'y^2 + x*y + y = x^3 + (-171)*x + (-874)',
              'y^2 + x*y + y = x^3 + 4*x + (-6)']
-            sage: G3.edges(sort=True)
-            [('y^2 + x*y + y = x^3 + (-1)*x',
-              'y^2 + x*y + y = x^3 + 4*x + (-6)', None),
-             ('y^2 + x*y + y = x^3 + (-171)*x + (-874)',
-              'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
+            sage: G3.edges(sort=True,sort_vertices=True)
+            [('y^2 + x*y + y = x^3 + 4*x + (-6)',
+              'y^2 + x*y + y = x^3 + (-1)*x', None),
+             ('y^2 + x*y + y = x^3 + 4*x + (-6)',
+              'y^2 + x*y + y = x^3 + (-171)*x + (-874)', None)]
 
         TESTS::
 

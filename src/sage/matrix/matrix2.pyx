@@ -12444,14 +12444,9 @@ cdef class Matrix(Matrix1):
             sage: # needs sage.combinat sage.graphs sage.rings.finite_rings
             sage: cox = posets.TamariLattice(3).coxeter_transformation()
             sage: M = cox.change_ring(GF(3))
-            sage: M.is_similar(M**3, True)      # long time
-            (
-                  [1 0 0 0 0]
-                  [0 1 1 0 2]
-                  [0 0 0 0 1]
-                  [1 2 0 2 1]
-            True, [0 0 1 0 0]
-            )
+            sage: b, S = M.is_similar(M**3, True)      # long time
+            sage: b, S.inverse()*(M**3)*S == M  # long time
+            (True, True)
 
         Inexact rings and fields are not supported.  ::
 

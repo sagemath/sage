@@ -84,7 +84,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
 
         sage: DA = DiGraph([[1, 2], [2, 3]])
         sage: AR = DA.auslander_reiten_quiver()
-        sage: AR.digraph().edges(labels=False)
+        sage: AR.digraph().edges(labels=False,sort=True,sort_vertices=True)
         [(<1, 1>, <2, 2>), (<2, 1>, <1, 1>), (<2, 1>, <3, 2>), (<3, 1>, <2, 1>),
          (<2, 2>, <3, 3>), (<3, 2>, <2, 2>)]
 
@@ -368,7 +368,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             sage: D = DiGraph([[1,2,'a'], [1,2,'b']], multiedges=True)
             sage: AR = D.auslander_reiten_quiver()
             sage: G = AR.digraph_preprojectives(3)
-            sage: [node.dimension_vector() for node in G]
+            sage: [node.dimension_vector() for node in sorted(G)]
             [v1 + 2*v2, v2, 3*v1 + 4*v2, 2*v1 + 3*v2, 5*v1 + 6*v2, 4*v1 + 5*v2]
             sage: AR.digraph_preprojectives(0)
             Digraph on 0 vertices
@@ -407,7 +407,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             sage: D = DiGraph([[1,2,'a'], [1,2,'b']], multiedges=True)
             sage: AR = D.auslander_reiten_quiver()
             sage: G = AR.digraph_postinjectives(3)
-            sage: [node.dimension_vector() for node in G]
+            sage: [node.dimension_vector() for node in sorted(G)]
             [5*v1 + 4*v2, 6*v1 + 5*v2, 3*v1 + 2*v2, 4*v1 + 3*v2, v1, 2*v1 + v2]
             sage: AR.digraph_postinjectives(0)
             Digraph on 0 vertices
