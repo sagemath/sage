@@ -31,8 +31,8 @@ except ImportError:
 
 
 try:
-    # Python >= 3.3
+    # Use this for Python 3.  This function is available for Python >= 3.3
     from shlex import quote
 except ImportError:
-    # Python < 3.13
+    # Use this for Python 2.  This function is available for Python < 3.13
     from pipes import quote
