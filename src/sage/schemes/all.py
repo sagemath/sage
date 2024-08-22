@@ -24,6 +24,8 @@ from sage.schemes.jacobians.all import *
 
 from sage.schemes.hyperelliptic_curves.all import *
 
+from sage.schemes.hyperelliptic_curves_smooth_model.all import *
+
 from sage.schemes.curves.all import *
 
 from sage.schemes.plane_conics.all import *
