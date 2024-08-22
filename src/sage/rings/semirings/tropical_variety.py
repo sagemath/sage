@@ -12,6 +12,7 @@ AUTHORS:
 REFERENCES:
 
 - [Bru2014]_
+- [Mac2015]_
 - [Fil2017]_
 """
 
@@ -555,6 +556,17 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: G.plot(vertex_labels=False)
             Graphics object consisting of 10 graphics primitives
 
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x**2 + y**2
+            tv = p1.tropical_variety()
+            G = tv.dual_subdivision()
+            sphinx_plot(G.plot(vertex_labels=False))
+
         Dual subdivision of a tropical surface::
 
             sage: T = TropicalSemiring(QQ)
@@ -564,6 +576,17 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: G = tv.dual_subdivision()
             sage: G.plot3d()
             Graphics3d Object
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('x,y,z'))
+            x, y, z = R.gen(), R.gen(1), R.gen(2)
+            p1 = x + y + z + x**2 + R(1)
+            tv = p1.tropical_variety()
+            G = tv.dual_subdivision()
+            sphinx_plot(G.plot3d())
 
         Dual subdivision of a tropical hypersurface::
 
@@ -575,6 +598,16 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: G.plot(vertex_labels=False)
             Graphics object consisting of 11 graphics primitives
 
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('a,b,c,d'))
+            a, b, c, d = R.gen(), R.gen(1), R.gen(2), R.gen(3)
+            p1 = a**2 + b**2 + c**2 + d**2 + a*b*c*d
+            tv = p1.tropical_variety()
+            G = tv.dual_subdivision()
+            sphinx_plot(G.plot(vertex_labels=False))
         """
         from sage.graphs.graph import Graph
 
@@ -965,9 +998,8 @@ class TropicalSurface(TropicalVariety):
         `n_k=(\alpha, \beta, \gamma)` such that
         `\gcd(\alpha, \beta, \gamma)=1`. The weight vector of a surface
         with respect to line `L` can be calculated with
-        `v_k=w_k \cdot (d\times n_k). These vectors will satisfy
-        the following balancing condition:
-        `\sum_{i=1}^k v_k = 0`.
+        `v_k=d\times n_k. These vectors will satisfy the following
+        balancing condition: `\sum_{i=1}^k w_k v_k = 0`.
 
         OUTPUT:
 
@@ -1287,8 +1319,9 @@ class TropicalCurve(TropicalVariety):
             sage: p1.tropical_variety().weight_vectors()
             {(1, -1/2): [(0, 1), (-1, -2), (1, 1)],
              (7/6, -1/3): [(-1, -1), (0, 1), (1, 0)]}
-            sage: p3 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
-            sage: p3.tropical_variety().weight_vectors()
+
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety().weight_vectors()
             {(-2, 0): [(-1, -1), (0, 1), (1, 0)],
              (-1, -3): [(-1, -1), (0, 1), (1, 0)],
              (-1, 0): [(-1, 0), (0, -1), (1, 1)],
