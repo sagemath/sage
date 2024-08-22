@@ -511,12 +511,12 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
         if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._k}]")
         if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
-            raise ValueError("values of pi must partition the domain of G")
+            raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         for orbit in G.orbits():
             if not any(set(orbit).issubset(p) for p in pi.values()):
-                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
+                raise ValueError(f"All elements of orbit {orbit} must have the same sort")
         dis_elm = ConjugacyClassesOfDirectlyIndecomposableSubgroups()(G)
         mapping = {v: i for i, v in enumerate(G.domain(), 1)}
         mapping2 = PermutationGroupElement([mapping[e] for o in sorted(G.orbits(), key=len, reverse=True)
@@ -654,17 +654,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         If `G = (X, a)`, then `X` should be a finite set and `a` a transitive
         action of `G` on `X`.
 
-        EXAMPLES::
-
-            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-            sage: P(SymmetricGroup(4).young_subgroup([2, 2]), {1: [1,2], 2: [3,4]})
-            E_2(X)*E_2(Y)
-
-            sage: X = SetPartitions(4, 2)
-            sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
-            sage: P((X, a), {1: [1,2], 2: [3,4]})
-            X^2*E_2(Y) + X^2*Y^2 + E_2(X)*Y^2 + E_2(X)*E_2(Y)
-
         TESTS::
 
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
@@ -684,13 +673,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                     pi = {1: G.domain()}
                 else:
                     raise ValueError("the assignment of sorts to the domain elements must be provided")
-            if not set(pi.keys()).issubset(range(1, self._k + 1)):
-                raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
-            if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
-                raise ValueError("values of pi must partition X")
-            for orbit in G.orbits():
-                if not any(set(orbit).issubset(p) for p in pi.values()):
-                    raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
             domain_partition = G.disjoint_direct_product_decomposition()
             elm = self.one()
             for part in domain_partition:
@@ -703,8 +685,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 pi = {1: X}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
         # Make iteration over values of pi deterministic
         pi = {k: list(v) for k, v in pi.items()}
         # Create group
@@ -1112,6 +1092,17 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         If `G = (X, a)`, then `X` should be a finite set and `a` an action of
         `G` on `X`.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: P(SymmetricGroup(4).young_subgroup([2, 2]), {1: [1,2], 2: [3,4]})
+            E_2(X)*E_2(Y)
+
+            sage: X = SetPartitions(4, 2)
+            sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
+            sage: P((X, a), {1: [1,2], 2: [3,4]})
+            X^2*E_2(Y) + X^2*Y^2 + E_2(X)*Y^2 + E_2(X)*E_2(Y)
         """
         if parent(G) == self:
             if pi is not None:
@@ -1130,8 +1121,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 pi = {1: X}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
         # Make iteration over values of pi deterministic
         pi = {k: list(v) for k, v in pi.items()}
         # Create group
