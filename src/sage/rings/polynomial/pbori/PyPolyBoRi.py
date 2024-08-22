@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 r"""
 PolyBoRi's interface to libpolybori/BRiAL
 

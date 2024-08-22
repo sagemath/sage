@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 # Copyright (c) 2005-2007 by The PolyBoRi Team
 from time import process_time as clock
 from random import Random
