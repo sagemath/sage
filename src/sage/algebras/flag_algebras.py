@@ -821,153 +821,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         block_sizes += [-flag_num, -constr_num]
 
         return mat_inds, mat_vals, block_sizes
-
-    def _round_sdp_solution(self, sdp_result, table_constructor, block_sizes, target_vector_exact, phi_vectors_exact, positives_matrix_exact, denom=1024):
-        r"""
-        Round the SDP results output to get something exact.
-        """
-
-        phi_vector_exact = phi_vectors_exact[0] if len(phi_vectors_exact)!=0 else vector([0]*positives_matrix_exact.ncols())
-
-        positives_matrix_exact = positives_matrix_exact[:-2, :] # remove the equality constraints
-
-        flags_num = -block_sizes[-2] # same as |F_n|
-
-        c_vector_approx = vector(sdp_result['X'][-2]) # dim: |F_n|, c vector, primal slack for flags
-        c_vector_rounded = vector(_round_list(c_vector_approx, method=0, denom=denom)) # as above but rounded
-
-        # The F (FF) flag indecies where the c vector is zero/nonzero
-        c_zero_inds = [FF for FF, xx in enumerate(c_vector_approx) if (abs(xx)<1e-6 or phi_vector_exact[FF]!=0)]
-        c_nonzero_inds = [FF for FF in range(flags_num) if FF not in c_zero_inds]
-
-        
-        
-        positives_num = -block_sizes[-1] - 2 # same as m, number of positive constraints (-2 for the equality)
-
-        phi_pos_vector_exact = positives_matrix_exact*phi_vector_exact # dim: m, witness that phi is positive
-
-        e_vector_approx = vector(sdp_result['X'][-1][:-2]) # dim: m, the e vector, primal slack for positivitives
-        e_vector_rounded = vector(_round_list(e_vector_approx, method=0, denom=denom)) # as above but rounded
-
-        # The f (ff) positivity constraints where the e vector is zero/nonzero
-        e_zero_inds = [ff for ff, xx in enumerate(e_vector_approx) if (abs(xx)<1e-6 or phi_pos_vector_exact[ff]!=0)]
-        e_nonzero_inds = [ff for ff in range(positives_num) if ff not in e_zero_inds]
-        
-        
-
-        if len(phi_vectors_exact)==0: # the u value, the bound we want to prove
-            bound_exact = _round(sdp_result['primal']-1e-4, method=0, denom=denom)
-        else:
-            bound_exact = target_vector_exact*phi_vector_exact 
-        # the constraints for the flags that are exact
-        corrected_target_relevant_exact = vector([target_vector_exact[FF] - bound_exact for FF in c_zero_inds])
-        # the d^f_F matrix, but only the relevant parts for the rounding
-        # so F where c_F = 0 and f where e_f != 0
-        positives_matrix_relevant_exact = matrix(QQ, len(e_nonzero_inds), len(c_zero_inds), [[positives_matrix_exact[ff][FF] for FF in c_zero_inds] for ff in e_nonzero_inds])
-        # the e vector, but only the nonzero entries
-        e_nonzero_list_rounded = [e_vector_rounded[ff] for ff in e_nonzero_inds]
-        
-        
-        # 
-        # Flatten the matrices relevant for the rounding
-        # 
-        # M table transforms to a matrix, (with nondiagonal entries doubled)
-        # only the FF index matrices corresponding with tight constraints are used
-        # 
-        # X transforms to a vector
-        # only the semidefinite blocks are used
-        # 
-
-        # The relevant entries of M flattened to a matrix this will be indexed by 
-        # c_zero_inds and the triples from the types
-        M_flat_relevant_matrix_exact = matrix(QQ, len(c_zero_inds), 0, 0, sparse=True)
-        X_flat_vector_rounded = [] # The rounded X values flattened to a list
-        block_index = 0
-        block_info = []
-        for params in table_constructor.keys():
-            ns, ftype, target_size = params
-            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
-
-            for plus_index, base in enumerate(table_constructor[params]):
-                block_info.append([ftype, base])
-                X_approx = sdp_result['X'][block_index + plus_index]
-                X_flat_vector_rounded += _round_list(_flatten_matrix(X_approx), method=0, denom=denom)
-
-                M_extra = []
-
-                for FF in c_zero_inds:
-                    M_FF = table[FF]
-                    M_extra.append(_flatten_matrix((base * M_FF * base.T).rows(), doubled=True))
-
-                M_flat_relevant_matrix_exact = M_flat_relevant_matrix_exact.augment(matrix(M_extra))
-            block_index += len(table_constructor[params])
-
-        # 
-        # Append the relevant M matrix and the X with the additional values from
-        # the positivity constraints. 
-        #
-        # Then correct the x vector values
-        # 
-
-        M_matrix_final = M_flat_relevant_matrix_exact.augment(positives_matrix_relevant_exact.T)
-        x_vector_final = vector(X_flat_vector_rounded+e_nonzero_list_rounded)
-
-        # correct the values of the x vector, based on the minimal L_2 norm
-        x_vector_corr = x_vector_final - M_matrix_final.T * \
-        (M_matrix_final * M_matrix_final.T).pseudoinverse() * \
-        (M_matrix_final*x_vector_final - corrected_target_relevant_exact)
-        
-        #
-        # Recover the X matrices and e vector from the corrected x
-        #
-        
-        rounding_successful = True
-        
-        e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
-        e_vector_corr = vector(QQ, positives_num, dict(zip(e_nonzero_inds, e_nonzero_vector_corr)))
-
-        if len(e_vector_corr)>0 and min(e_vector_corr)<0:
-            rounding_successful = False
-            print("Linear coefficient is negative: {}".format(min(e_vector_corr)))
-
-        X_matrix_corr = []
-        for ii, block_dim in enumerate(block_sizes):
-            if block_dim<0:
-                break
-            X_matrix_ii_corr, x_vector_corr = _unflatten_matrix(x_vector_corr, block_dim)
-            X_matrix_corr.append(matrix(X_matrix_ii_corr))
-            if min(X_matrix_ii_corr.eigenvalues())<0:
-                rounding_successful = False
-                print("Rounded X matrix is not semidefinite: {}".format(min(X_matrix_ii_corr.eigenvalues())))
-        X_matrix_corr.append(e_vector_corr)
-
-        #
-        # Verify the bound and semidefiniteness
-        #
-
-        block_index = 0
-        slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
-
-        for params in table_constructor.keys():
-            ns, ftype, target_size = params
-            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
-
-            for plus_index, base in enumerate(table_constructor[params]):
-                X_flat_vector_corr = vector(_flatten_matrix(X_matrix_corr[block_index + plus_index].rows()))
-
-                for gg, morig in enumerate(table):
-                    mm = base * morig * base.T
-                    M_flat_vector_exact = vector(_flatten_matrix((base * morig * base.T).rows(), doubled=True))
-                    slacks[gg] -= M_flat_vector_exact*X_flat_vector_corr
-
-            block_index += len(table_constructor[params])
-
-        if rounding_successful:
-            print("The exact value after rounding is {}, numerically {}".format(min(slacks), min(slacks).n()))
-        else:
-            print("The rounding was unsuccessful, otherwise the result would be {}".format(min(slacks).n()))
-
-        return min(slacks), X_matrix_corr
+    
+    
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
                          construction=None, certificate=False, exact=False, ftype_pairs=None):
@@ -1015,7 +870,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             -OVGraphTheory: 5
             -OEGraphTheory: 4
         """
-        
         from csdpy import solve_sdp
         from tqdm import tqdm
         import sys
@@ -1033,7 +887,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         print("Base flags generated, their number is {}".format(len(base_flags)))
         mult = -1 if maximize else 1
         target_vector_exact = (target_element.project()*(mult)<<(target_size - target_element.size())).values()
-        
+
         #
         # create the table data
         #
@@ -1146,14 +1000,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             phi_vector_original = initial_sol['y']
             phi_vector_rounded = _round_adaptive(initial_sol['y'], one_vector.values())
             alg = FlagAlgebra(QQ, self)
-            print("rounded phi vector is: \n{}".format(alg(phi_vector_rounded)))
+            phipr = str(alg(target_size, phi_vector_rounded))
+            if len(phipr)<1000:
+                print("rounded phi vector is: \n{}".format(phipr))
             phi_vectors_exact = [phi_vector_rounded]
         else:
             if isinstance(construction, FlagAlgebraElement):
                 phi_vectors_exact = [construction.values()]
             else:
                 phi_vectors_exact = [xx.values() for xx in construction]
-        
+
         #
         # adjust the table to consider the kernel from y_rounded
         #
@@ -1165,7 +1021,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         sdp_data = self._constraints_to_sdp_data(len(base_flags), constraints_vals, positives_list_exact, sdp_data)
         mat_inds, mat_vals, block_sizes = sdp_data
 
-        print("running SDP after kernel correction. Used with block sizes are {}".format(block_sizes))
+        print("Running SDP after kernel correction. Used with block sizes are {}".format(block_sizes))
 
         time.sleep(float(0.1))
         final_sdp = solve_sdp(block_sizes, list(target_vector_exact), mat_inds, mat_vals)
@@ -1174,12 +1030,162 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if (not exact):
             res = final_sdp['primal'] * (-1 if maximize else 1)
             return res if (not certificate) else (res, final_sdp)
-        
+
         print("Starting the rounding of the result.")
         rounded = self._round_sdp_solution(final_sdp, table_constructor, block_sizes, target_vector_exact, phi_vectors_exact, positives_matrix_exact)
-        
+
         res = rounded[0] * (-1 if maximize else 1)
         return res if (not certificate) else (res, rounded)
+
+    def _round_sdp_solution(self, sdp_result, table_constructor, block_sizes, target_vector_exact, phi_vectors_exact, positives_matrix_exact, denom=1024):
+        r"""
+        Round the SDP results output to get something exact.
+        """
+
+        phi_vector_exact = phi_vectors_exact[0] if len(phi_vectors_exact)!=0 else vector([0]*positives_matrix_exact.ncols())
+
+        positives_matrix_exact = positives_matrix_exact[:-2, :] # remove the equality constraints
+
+        flags_num = -block_sizes[-2] # same as |F_n|
+
+        c_vector_approx = vector(sdp_result['X'][-2]) # dim: |F_n|, c vector, primal slack for flags
+        c_vector_rounded = vector(_round_list(c_vector_approx, method=0, denom=denom)) # as above but rounded
+
+        # The F (FF) flag indecies where the c vector is zero/nonzero
+        c_zero_inds = [FF for FF, xx in enumerate(c_vector_approx) if (abs(xx)<1e-6 or phi_vector_exact[FF]!=0)]
+        c_nonzero_inds = [FF for FF in range(flags_num) if FF not in c_zero_inds]
+
+
+
+        positives_num = -block_sizes[-1] - 2 # same as m, number of positive constraints (-2 for the equality)
+
+        phi_pos_vector_exact = positives_matrix_exact*phi_vector_exact # dim: m, witness that phi is positive
+
+        e_vector_approx = vector(sdp_result['X'][-1][:-2]) # dim: m, the e vector, primal slack for positivitives
+        e_vector_rounded = vector(_round_list(e_vector_approx, method=0, denom=denom)) # as above but rounded
+
+        # The f (ff) positivity constraints where the e vector is zero/nonzero
+        e_zero_inds = [ff for ff, xx in enumerate(e_vector_approx) if (abs(xx)<1e-6 or phi_pos_vector_exact[ff]!=0)]
+        e_nonzero_inds = [ff for ff in range(positives_num) if ff not in e_zero_inds]
+
+
+
+        if len(phi_vectors_exact)==0: # the u value, the bound we want to prove
+            bound_exact = _round(sdp_result['primal']-1e-4, method=0, denom=denom)
+        else:
+            bound_exact = target_vector_exact*phi_vector_exact 
+        # the constraints for the flags that are exact
+        corrected_target_relevant_exact = vector([target_vector_exact[FF] - bound_exact for FF in c_zero_inds])
+        # the d^f_F matrix, but only the relevant parts for the rounding
+        # so F where c_F = 0 and f where e_f != 0
+        positives_matrix_relevant_exact = matrix(QQ, len(e_nonzero_inds), len(c_zero_inds), [[positives_matrix_exact[ff][FF] for FF in c_zero_inds] for ff in e_nonzero_inds])
+        # the e vector, but only the nonzero entries
+        e_nonzero_list_rounded = [e_vector_rounded[ff] for ff in e_nonzero_inds]
+
+        
+        # 
+        # Flatten the matrices relevant for the rounding
+        # 
+        # M table transforms to a matrix, (with nondiagonal entries doubled)
+        # only the FF index matrices corresponding with tight constraints are used
+        # 
+        # X transforms to a vector
+        # only the semidefinite blocks are used
+        # 
+
+        # The relevant entries of M flattened to a matrix this will be indexed by 
+        # c_zero_inds and the triples from the types
+        M_flat_relevant_matrix_exact = matrix(QQ, len(c_zero_inds), 0, 0, sparse=True)
+        X_flat_vector_rounded = [] # The rounded X values flattened to a list
+        block_index = 0
+        block_info = []
+        for params in table_constructor.keys():
+            ns, ftype, target_size = params
+            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
+
+            for plus_index, base in enumerate(table_constructor[params]):
+                block_info.append([ftype, base])
+                X_approx = sdp_result['X'][block_index + plus_index]
+                X_flat_vector_rounded += _round_list(_flatten_matrix(X_approx), method=0, denom=denom)
+
+                M_extra = []
+
+                for FF in c_zero_inds:
+                    M_FF = table[FF]
+                    M_extra.append(_flatten_matrix((base * M_FF * base.T).rows(), doubled=True))
+
+                M_flat_relevant_matrix_exact = M_flat_relevant_matrix_exact.augment(matrix(M_extra))
+            block_index += len(table_constructor[params])
+
+
+        # 
+        # Append the relevant M matrix and the X with the additional values from
+        # the positivity constraints. 
+        #
+        # Then correct the x vector values
+        # 
+
+        M_matrix_final = M_flat_relevant_matrix_exact.augment(positives_matrix_relevant_exact.T)
+        x_vector_final = vector(X_flat_vector_rounded+e_nonzero_list_rounded)
+
+
+        # correct the values of the x vector, based on the minimal L_2 norm
+        x_vector_corr = x_vector_final - M_matrix_final.T * \
+        (M_matrix_final * M_matrix_final.T).pseudoinverse() * \
+        (M_matrix_final*x_vector_final - corrected_target_relevant_exact)
+        
+        #
+        # Recover the X matrices and e vector from the corrected x
+        #
+
+        rounding_successful = True
+
+        e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
+        e_vector_corr = vector(QQ, positives_num, dict(zip(e_nonzero_inds, e_nonzero_vector_corr)))
+
+        if len(e_vector_corr)>0 and min(e_vector_corr)<0:
+            rounding_successful = False
+            print("Linear coefficient is negative: {}".format(min(e_vector_corr)))
+
+        X_matrix_corr = []
+        for ii, block_dim in enumerate(block_sizes):
+            if block_dim<0:
+                break
+            X_matrix_ii_corr, x_vector_corr = _unflatten_matrix(x_vector_corr, block_dim)
+            X_matrix_corr.append(matrix(X_matrix_ii_corr))
+            if min(X_matrix_ii_corr.eigenvalues())<0:
+                rounding_successful = False
+                print("Rounded X matrix is not semidefinite: {}".format(min(X_matrix_ii_corr.eigenvalues())))
+        X_matrix_corr.append(e_vector_corr)
+
+
+        #
+        # Verify the bound and semidefiniteness
+        #
+
+        block_index = 0
+        slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
+
+        for params in table_constructor.keys():
+            ns, ftype, target_size = params
+            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
+
+            for plus_index, base in enumerate(table_constructor[params]):
+                X_flat_vector_corr = vector(_flatten_matrix(X_matrix_corr[block_index + plus_index].rows()))
+
+                for gg, morig in enumerate(table):
+                    mm = base * morig * base.T
+                    M_flat_vector_exact = vector(_flatten_matrix((base * morig * base.T).rows(), doubled=True))
+                    slacks[gg] -= M_flat_vector_exact*X_flat_vector_corr
+
+            block_index += len(table_constructor[params])
+
+        if rounding_successful:
+            print("The exact value after rounding is {}".format(_fraction_print(min(slacks))))
+        else:
+            print("The rounding was unsuccessful, otherwise the result would be {}".format(_fraction_print(min(slacks))))
+
+        return min(slacks), X_matrix_corr
     
     optimize = optimize_problem
     
@@ -1466,8 +1472,9 @@ def _round(value, method=1, quotient_bound=7, denom_bound=9, denom=1024):
     method=1 - continued fractions
     """
     if method==0:
-        return round(value*denom)/denom
+        return QQ(round(value*denom)/denom)
     else:
+        from sage.rings.continued_fraction import continued_fraction
         cf = continued_fraction(value)
         for ii, xx in enumerate(cf.quotients()):
             if xx>=2**quotient_bound or cf.denominator(ii)>2**(denom_bound):
@@ -1502,12 +1509,13 @@ def _round_ldl(mat, method=1, quotient_bound=7, denom_bound=9, denom=1024):
     pl = P*L
     return pl*D*pl.T
 
-def _round_adaptive(ls, onevec):
+def _round_adaptive(ls, onevec, denom=1024):
     r"""
     Adaptive rounding based on continued fraction and preserving an inner product
     with `onevec`
-    """
     
+    If the continued fraction rounding fails fall back to a simple denominator method
+    """
     best_vec = None
     best_error = 1000
     best_lcm = 1000000000
@@ -1523,8 +1531,21 @@ def _round_adaptive(ls, onevec):
             best_vec = rls/ip
             best_error = abs(ip - 1)
             best_lcm = ip.as_integer_ratio()[1]
+    if best_vec==None:
+        rvec = vector(QQ, _round_list(ls, True, method=0, denom=denom))
+        best_vec = rvec/(rvec*onevec)
     return best_vec
-    
+
+def _fraction_print(val, thr=20):
+    r"""
+    Print out a fraction. If it is too big, then print an approximation
+    indicating with a ? that it is not an exact value.
+    """
+    if len(str(val))>thr:
+        return str(val.n())+"?"
+    else:
+        return str(val)
+
 class FlagAlgebraElement(CommutativeAlgebraElement):
     def __init__(self, parent, n, values):
         r"""
