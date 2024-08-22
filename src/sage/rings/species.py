@@ -587,12 +587,12 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         if not isinstance(G, PermutationGroup_generic):
             raise ValueError(f"{G} must be a permutation group")
         if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._k}]")
         if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
-            raise ValueError("values of pi must partition the domain of G")
+            raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         for orbit in G.orbits():
             if not any(set(orbit).issubset(p) for p in pi.values()):
-                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
+                raise ValueError(f"All elements of orbit {orbit} must have the same sort")
         return len(G.disjoint_direct_product_decomposition()) <= 1
 
     def _repr_(self):
@@ -685,11 +685,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 pi = {1: X}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        # Make iteration over values of pi deterministic
-        pi = {k: list(v) for k, v in pi.items()}
+        L = [None for _ in range(self._k)]
+        for k, v in pi.items():
+            L[k - 1] = list(v)
         # Create group
         # TODO: Is this correct?
-        S = SymmetricGroup(list(chain.from_iterable(pi.values()))).young_subgroup([len(v) for v in pi.values()])
+        S = SymmetricGroup(list(chain.from_iterable(L))).young_subgroup([len(v) for v in L])
         H = PermutationGroup(S.gens(), action=a, domain=X)
         if len(H.orbits()) > 1:
             # Then it is not transitive
@@ -906,7 +907,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             """
             P = self.parent()
             if P is not other.parent():
-                raise ValueError("the factors of a Hadamard product must be the same.")
+                raise ValueError("the factors of a Hadamard product must be the same")
             Pn = PolynomialSpecies(ZZ, P._indices._names)
 
             if self._mc != other._mc:
@@ -928,6 +929,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 F = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
                 res += Pn(PermutationGroup(gap_group=F, domain=self.domain()), dpart)
             return res
+
+        def point(self):
+            r"""
+            Return the pointing of ``self``.
+            """
+            pass
 
         def inner_sum(self, base_ring, names, *args):
             r"""
@@ -1122,10 +1129,12 @@ class PolynomialSpecies(CombinatorialFreeModule):
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
         # Make iteration over values of pi deterministic
-        pi = {k: list(v) for k, v in pi.items()}
+        L = [None for _ in range(self._k)]
+        for k, v in pi.items():
+            L[k - 1] = list(v)
         # Create group
         # TODO: Is this correct?
-        S = SymmetricGroup(list(chain.from_iterable(pi.values()))).young_subgroup([len(v) for v in pi.values()])
+        S = SymmetricGroup(list(chain.from_iterable(L))).young_subgroup([len(v) for v in L])
         H = PermutationGroup(S.gens(), action=a, domain=X)
         res = self.zero()
         for orbit in H.orbits():
