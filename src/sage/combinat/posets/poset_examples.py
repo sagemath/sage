@@ -1463,7 +1463,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
             sage: P = posets.YoungsLattice(3); P
             Finite meet-semilattice containing 7 elements
-            sage: P.cover_relations()
+            sage: sorted(P.cover_relations())
             [[[], [1]],
              [[1], [1, 1]],
              [[1], [2]],

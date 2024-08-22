@@ -6353,8 +6353,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P = Poset({'a':['b'],'b':['d'],'c':['d'],'d':['f'],'e':['f'],'f':[]})
             sage: print(P.graphviz_string())
             graph {
-            "f";"d";"b";"a";"c";"e";
-            "f"--"e";"d"--"c";"b"--"a";"d"--"b";"f"--"d";
+            "f";"e";"d";"c";"b";"a";
+            "b"--"a";"d"--"b";"d"--"c";"f"--"d";"f"--"e";
             }
         """
         s = '%s {\n' % graph_string
@@ -6377,8 +6377,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             ....:            'd': ['f'], 'e': ['f']})
             sage: Q = P.subposet(['a', 'b', 'f']); Q
             Finite poset containing 3 elements
-            sage: Q.cover_relations()
-            [['b', 'f'], ['a', 'f']]
+            sage: sorted(Q.cover_relations())
+            [['a', 'f'], ['b', 'f']]
 
         A subposet of a non-facade poset is again a non-facade poset::
 
@@ -6658,8 +6658,8 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset((divisors(1000), attrcall("divides")))
-            sage: P.order_filter([20, 25])
-            [20, 40, 25, 50, 100, 200, 125, 250, 500, 1000]
+            sage: sorted(P.order_filter([20, 25]))
+            [20, 25, 40, 50, 100, 125, 200, 250, 500, 1000]
 
         .. SEEALSO::
 
@@ -6690,7 +6690,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset((divisors(1000), attrcall("divides")))
-            sage: P.order_ideal([20, 25])
+            sage: sorted(P.order_ideal([20, 25]))
             [1, 2, 4, 5, 10, 20, 25]
 
         .. SEEALSO::
@@ -6796,7 +6796,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset((divisors(1000), attrcall("divides")))
-            sage: P.closed_interval(2, 100)
+            sage: sorted(P.closed_interval(2, 100))
             [2, 4, 10, 20, 50, 100]
 
         .. SEEALSO::
@@ -6824,7 +6824,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset((divisors(1000), attrcall("divides")))
-            sage: P.open_interval(2, 100)
+            sage: sorted(P.open_interval(2, 100))
             [4, 10, 20, 50]
 
         .. SEEALSO::

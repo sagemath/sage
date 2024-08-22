@@ -2121,8 +2121,14 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
             sage: [next(it) for x in range(10)]
             [[],
              [[1]],
-             [[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]],
-             [[1, 2, 3]], [[1, 2], [3]], [[1, 3], [2]], [[None, 2, 3], [1]]]
+             [[1, 2]],
+             [[1], [2]],
+             [[None, 1], [2]],
+             [[None, 2], [1]],
+             [[1, 2, 3]],
+             [[1, 2], [3]],
+             [[1, 3], [2]],
+             [[None, 2, 3], [1]]]
         """
         n = 0
         while True:
@@ -2186,23 +2192,32 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
 
             sage: # needs sage.graphs sage.modules
             sage: StandardSkewTableaux(2).list()
-            [[[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]]]
+            [[[1, 2]], [[1], [2]], [[None, 1], [2]], [[None, 2], [1]]]
             sage: StandardSkewTableaux(3).list()
             [[[1, 2, 3]],
-             [[1, 2], [3]], [[1, 3], [2]],
-             [[None, 2, 3], [1]], [[None, 1, 2], [3]], [[None, 1, 3], [2]],
-             [[None, 2], [1, 3]], [[None, 1], [2, 3]],
-             [[None, None, 2], [1, 3]], [[None, None, 3], [1, 2]],
+             [[1, 2], [3]],
+             [[1, 3], [2]],
+             [[None, 2, 3], [1]],
+             [[None, 1, 2], [3]],
+             [[None, 1, 3], [2]],
+             [[None, 1], [2, 3]],
+             [[None, 2], [1, 3]],
              [[None, None, 1], [2, 3]],
-             [[1], [2], [3]], [[None, 2], [None, 3], [1]],
-             [[None, 1], [None, 2], [3]], [[None, 1], [None, 3], [2]],
-             [[None, 2], [1], [3]], [[None, 3], [1], [2]],
-             [[None, 1], [2], [3]], [[None, None, 3], [None, 2], [1]],
-             [[None, None, 2], [None, 3], [1]],
-             [[None, None, 1], [None, 3], [2]],
+             [[None, None, 3], [1, 2]],
+             [[None, None, 2], [1, 3]],
+             [[1], [2], [3]],
+             [[None, 2], [None, 3], [1]],
+             [[None, 1], [None, 2], [3]],
+             [[None, 1], [None, 3], [2]],
+             [[None, 1], [2], [3]],
+             [[None, 3], [1], [2]],
+             [[None, 2], [1], [3]],
              [[None, None, 1], [None, 2], [3]],
-             [[None, None, 2], [None, 1], [3]],
-             [[None, None, 3], [None, 1], [2]]]
+             [[None, None, 1], [None, 3], [2]],
+             [[None, None, 2], [None, 3], [1]],
+             [[None, None, 3], [None, 2], [1]],
+             [[None, None, 3], [None, 1], [2]],
+             [[None, None, 2], [None, 1], [3]]]
         """
         for skp in SkewPartitions(self.n):
             for sst in StandardSkewTableaux_shape(skp):

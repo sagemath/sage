@@ -349,8 +349,8 @@ class FiniteMeetSemilattice(FinitePoset):
             sage: L = posets.DivisorLattice(1000)
             sage: L_ = L.submeetsemilattice([200, 250, 125]); L_
             Finite meet-semilattice containing 5 elements
-            sage: L_.list()
-            [25, 50, 200, 125, 250]
+            sage: sorted(L_.list())
+            [25, 50, 125, 200, 250]
 
         .. SEEALSO::
 
@@ -3163,8 +3163,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         EXAMPLES::
 
             sage: L = LatticePoset(([], [[1,2],[1,17],[1,8],[2,3],[2,22],[2,5],[2,7],[17,22],[17,13],[8,7],[8,13],[3,16],[3,9],[22,16],[22,18],[22,10],[5,18],[5,14],[7,9],[7,14],[7,10],[13,10],[16,6],[16,19],[9,19],[18,6],[18,33],[14,33],[10,19],[10,33],[6,4],[19,4],[33,4]]))
-            sage: L.sublattice([14, 13, 22]).list()
-            [1, 2, 8, 7, 14, 17, 13, 22, 10, 33]
+            sage: sorted(L.sublattice([14, 13, 22]).list())
+            [1, 2, 7, 8, 10, 13, 14, 17, 22, 33]
 
             sage: L = posets.BooleanLattice(3)
             sage: L.sublattice([3,5,6,7])

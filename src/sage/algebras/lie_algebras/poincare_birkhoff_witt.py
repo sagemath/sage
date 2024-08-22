@@ -767,8 +767,8 @@ class PoincareBirkhoffWittBasisSemisimpleLieAlgebra(PoincareBirkhoffWittBasis):
             sage: f1, f2, f3, f4, f5, f6 = U.f()
             sage: e1, e2, e3, e4, e5, e6 = U.e()
             sage: elt = e1 * e4^2 * f1 * f2^3
-            sage: U._transpose_on_basis(elt.support()[0])
-            PBW[alpha[2]]^3*PBW[alpha[1]]*PBW[-alpha[4]]^2*PBW[-alpha[1]]
+            sage: U._transpose_on_basis(elt.support()[0]) == e2^3*e1*f1*f4^2
+            True
         """
         I = self._indices
         basis_mapping = self._g._transpose_basis_mapping

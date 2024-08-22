@@ -1777,7 +1777,7 @@ class Rule(UniqueRepresentation):
             ...
             ValueError: D U - U D differs from 1 I for vertex [2]:
             D U = [[2]]
-            U D + 1 I = [[1, 1], [2], [2]]
+            U D + 1 I = [[2], [1, 1], [2]]
         """
         if self.has_multiple_edges:
             def check_vertex(w, P, Q):
@@ -1843,8 +1843,8 @@ class Rule(UniqueRepresentation):
             sage: Q = Domino.Q_graph(3); Q
             Finite poset containing 8 elements
 
-            sage: Q.upper_covers(Partition([1,1]))
-            [[1, 1, 1, 1], [3, 1], [2, 2]]
+            sage: sorted(Q.upper_covers(Partition([1,1])))
+            [[1, 1, 1, 1], [2, 2], [3, 1]]
         """
         if self.has_multiple_edges:
             D = DiGraph([(x, y, e) for k in range(n - 1)

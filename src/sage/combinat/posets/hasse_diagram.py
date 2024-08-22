@@ -1076,9 +1076,9 @@ class HasseDiagram(DiGraph):
             True
             sage: H = posets.TamariLattice(3)._hasse_diagram
             sage: M = H.moebius_function_matrix('matrix'); M
-            [ 1 -1 -1  0  1]
-            [ 0  1  0  0 -1]
-            [ 0  0  1 -1  0]
+            [ 1 -1  0 -1  1]
+            [ 0  1 -1  0  0]
+            [ 0  0  1  0 -1]
             [ 0  0  0  1 -1]
             [ 0  0  0  0  1]
             sage: _ = H.__dict__.pop('_moebius_function_matrix')
