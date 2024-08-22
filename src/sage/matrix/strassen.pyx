@@ -703,9 +703,9 @@ class int_range:
             sage: I + J
             [(1, 6), (20, 4)]
         """
-        all = self.to_list()
-        all.extend(right.to_list())
-        return int_range(all)
+        full_list = self.to_list()
+        full_list.extend(right.to_list())
+        return int_range(full_list)
 
     def __sub__(self, right):
         r"""
@@ -731,7 +731,7 @@ class int_range:
             sage: J - I
             [(6, 1), (20, 4)]
         """
-        right_list = right.to_list()
+        right_list = set(right.to_list())
         diff = [i for i in self.to_list() if i not in right_list]
         return int_range(diff)
 
@@ -753,8 +753,8 @@ class int_range:
             sage: J * I
             [(4, 2)]
         """
-        all = self.to_list()
-        intersection = [i for i in right.to_list() if i in all]
+        self_list = set(self.to_list())
+        intersection = [i for i in right.to_list() if i in self_list]
         return int_range(intersection)
 
 
