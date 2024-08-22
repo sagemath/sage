@@ -510,12 +510,9 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
                 pi = {1: G.domain()}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        if any(len(set(v)) != len(v) for v in pi.values()):
-            raise ValueError("each sort must contain distinct elements")
-        pi = {k: set(v) for k, v in pi.items()}
         if not set(pi.keys()).issubset(range(1, self._k + 1)):
             raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
-        if sum(len(p) for p in pi.values()) != len(G.domain()) or set.union(*[p for p in pi.values()]) != set(G.domain()):
+        if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
             raise ValueError("values of pi must partition the domain of G")
         for orbit in G.orbits():
             if not any(set(orbit).issubset(p) for p in pi.values()):
@@ -591,8 +588,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             raise ValueError(f"{G} must be a permutation group")
         if not set(pi.keys()).issubset(range(1, self._k + 1)):
             raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
-        pi = {k: set(v) for k, v in pi.items()}
-        if sum(len(p) for p in pi.values()) != len(G.domain()) or set.union(*[p for p in pi.values()]) != set(G.domain()):
+        if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
             raise ValueError("values of pi must partition the domain of G")
         for orbit in G.orbits():
             if not any(set(orbit).issubset(p) for p in pi.values()):
@@ -649,35 +645,77 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         INPUT:
 
         - ``G`` - an element of ``self`` (in this case pi must be ``None``)
-          or a permutation group.
-        - ``pi`` - a dict mapping sorts to iterables whose union is the domain.
-          If `k=1`, `pi` can be omitted.
+          or a permutation group, or a pair ``(X, a)`` consisting of a
+          finite set and an action.
+        - ``pi`` - a dict mapping sorts to iterables whose union is the
+          domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``)
+          is a pair ``(X, a)``. If `k=1`, `pi` can be omitted.
+
+        If `G = (X, a)`, then `X` should be a finite set and `a` a transitive
+        action of `G` on `X`.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: P(SymmetricGroup(4).young_subgroup([2, 2]), {1: [1,2], 2: [3,4]})
+            E_2(X)*E_2(Y)
+
+            sage: X = SetPartitions(4, 2)
+            sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
+            sage: P((X, a), {1: [1,2], 2: [3,4]})
+            X^2*E_2(Y) + X^2*Y^2 + E_2(X)*Y^2 + E_2(X)*E_2(Y)
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: M = P._indices
+            sage: M(CyclicPermutationGroup(4), {1: [1,2], 2: [3,4]})
+            Traceback (most recent call last):
+            ...
+            ValueError: For each orbit of Cyclic group of order 4 as a permutation group, all elements must belong to the same sort
         """
         if parent(G) == self:
             if pi is not None:
                 raise ValueError("cannot reassign sorts to a molecular species")
             return G
-        if not isinstance(G, PermutationGroup_generic):
-            raise ValueError(f"{G} must be a permutation group")
+        if isinstance(G, PermutationGroup_generic):
+            if pi is None:
+                if self._k == 1:
+                    pi = {1: G.domain()}
+                else:
+                    raise ValueError("the assignment of sorts to the domain elements must be provided")
+            if not set(pi.keys()).issubset(range(1, self._k + 1)):
+                raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+            if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
+                raise ValueError("values of pi must partition X")
+            for orbit in G.orbits():
+                if not any(set(orbit).issubset(p) for p in pi.values()):
+                    raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
+            domain_partition = G.disjoint_direct_product_decomposition()
+            elm = self.one()
+            for part in domain_partition:
+                elm *= self.gen(self._project(G, pi, part))
+            return elm
+        # Assume G is a tuple (X, a)
+        X, a = G
         if pi is None:
             if self._k == 1:
-                pi = {1: G.domain()}
+                pi = {1: X}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
         if not set(pi.keys()).issubset(range(1, self._k + 1)):
             raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
-        pi = {k: set(v) for k, v in pi.items()}
-        if sum(len(p) for p in pi.values()) != len(G.domain()) or set.union(*[p for p in pi.values()]) != set(G.domain()):
-            raise ValueError("values of pi must partition the domain of G")
-        for orbit in G.orbits():
-            if not any(set(orbit).issubset(p) for p in pi.values()):
-                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
-
-        domain_partition = G.disjoint_direct_product_decomposition()
-        elm = self.one()
-        for part in domain_partition:
-            elm *= self.gen(self._project(G, pi, part))
-        return elm
+        # Make iteration over values of pi deterministic
+        pi = {k: list(v) for k, v in pi.items()}
+        # Create group
+        # TODO: Is this correct?
+        S = SymmetricGroup(list(chain.from_iterable(pi.values()))).young_subgroup([len(v) for v in pi.values()])
+        H = PermutationGroup(S.gens(), action=a, domain=X)
+        if len(H.orbits()) > 1:
+            # Then it is not transitive
+            raise ValueError("Action is not transitive")
+        stabG = PermutationGroup([g for g in S.gens() if a(g, H.orbits()[0][0]) == H.orbits()[0][0]], domain=S.domain())
+        return self(stabG, pi)
 
     @cached_method
     def one(self):
@@ -1054,7 +1092,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
                                          element_class=self.Element,
                                          prefix='', bracket=False)
         self._k = len(names)
-        self._atomic_basis = basis_keys.indices()
 
     def degree_on_basis(self, m):
         r"""
@@ -1072,16 +1109,40 @@ class PolynomialSpecies(CombinatorialFreeModule):
           or a permutation group.
         - ``pi`` - a dict mapping sorts to iterables whose union is the domain.
           If `k=1`, `pi` can be omitted.
+
+        If `G = (X, a)`, then `X` should be a finite set and `a` an action of
+        `G` on `X`.
         """
         if parent(G) == self:
             if pi is not None:
                 raise ValueError("cannot reassign sorts to a polynomial species")
             return G
+        if isinstance(G, PermutationGroup_generic):
+            if pi is None:
+                if self._k == 1:
+                    return self._from_dict({self._indices(G): ZZ.one()})
+                raise ValueError("the assignment of sorts to the domain elements must be provided")
+            return self._from_dict({self._indices(G, pi): ZZ.one()})
+        # Assume G is a tuple (X, a)
+        X, a = G
         if pi is None:
             if self._k == 1:
-                return self._from_dict({self._indices(G): ZZ.one()})
-            raise ValueError("the assignment of sorts to the domain elements must be provided")
-        return self._from_dict({self._indices(G, pi): ZZ.one()})
+                pi = {1: X}
+            else:
+                raise ValueError("the assignment of sorts to the domain elements must be provided")
+        if not set(pi.keys()).issubset(range(1, self._k + 1)):
+            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+        # Make iteration over values of pi deterministic
+        pi = {k: list(v) for k, v in pi.items()}
+        # Create group
+        # TODO: Is this correct?
+        S = SymmetricGroup(list(chain.from_iterable(pi.values()))).young_subgroup([len(v) for v in pi.values()])
+        H = PermutationGroup(S.gens(), action=a, domain=X)
+        res = self.zero()
+        for orbit in H.orbits():
+            stabG = PermutationGroup([g for g in S.gens() if a(g, orbit[0]) == orbit[0]], domain=S.domain())
+            res += self._from_dict({self._indices(stabG, pi): ZZ.one()})
+        return res
 
     @cached_method
     def one_basis(self):
