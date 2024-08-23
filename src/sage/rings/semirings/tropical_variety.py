@@ -1432,9 +1432,19 @@ class TropicalCurve(TropicalVariety):
             sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
             sage: p2.tropical_variety().genus()
             0
+
+        TESTS::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(0) + y + x^2*y + x*y^2
+            sage: p1.tropical_variety().genus()
+            Traceback (most recent call last):
+            ...
+            ValueError: Tropical curve of 0*x^2*y + 0*x*y^2 + 0*y + 0 is not simple
         """
         if not self.is_simple():
-            raise ValueError("tropical curve is not simple")
+            raise ValueError(f"{self} is not simple")
         trivalent = 0  # number of trivalent vertices
         for vectors in self.weight_vectors().values():
             if len(vectors) == 3:
@@ -1468,9 +1478,19 @@ class TropicalCurve(TropicalVariety):
             sage: p2 = R(-1/3)*x^2 + R(1)*x*y + R(1)*y^2 + R(-1/3)*x + R(1/3)
             sage: p2.tropical_variety().contribution()
             16
+
+        TESTS::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(0) + x + x^2*y + x*y^2
+            sage: p1.tropical_variety().contribution()
+            Traceback (most recent call last):
+            ...
+            ValueError: Tropical curve of 0*x^2*y + 0*x*y^2 + 0*x + 0 is not simple
         """
         if not self.is_simple():
-            raise ValueError("tropical curve is not simple")
+            raise ValueError(f"{self} is not simple")
         result = 1
         voc = self._components_of_vertices()
         vov = self.weight_vectors()
