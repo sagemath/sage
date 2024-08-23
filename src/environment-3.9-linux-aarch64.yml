@@ -38,7 +38,6 @@ dependencies:
   - brotli=1.1.0=h31becfc_1
   - brotli-bin=1.1.0=h31becfc_1
   - brotli-python=1.1.0=py39h387a81e_1
-  - build=0.7.0=pyhd8ed1ab_0
   - bwidget=1.9.14=h8af1aa0_1
   - bzip2=1.0.8=h31becfc_5
   - c-ares=1.28.1=h31becfc_0
@@ -320,6 +319,7 @@ dependencies:
   - pyrsistent=0.20.0=py39h7cc1d5f_0
   - pysocks=1.7.1=pyha2e5f31_6
   - python=3.9.19=h4ac3b42_0_cpython
+  - python-build=1.2.1=pyhd8ed1ab_0
   - python-dateutil=2.9.0=pyhd8ed1ab_0
   - python-fastjsonschema=2.20.0=pyhd8ed1ab_0
   - python-json-logger=2.0.7=pyhd8ed1ab_0
