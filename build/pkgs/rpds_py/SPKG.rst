@@ -6,6 +6,9 @@ Description
 
 Python bindings to Rust's persistent data structures (rpds)
 
+In SageMath, this package is used as a dependency package of the
+Jupyter notebook / JupyterLab.
+
 License
 -------
 
