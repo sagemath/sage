@@ -483,7 +483,7 @@ class Application(object):
             source = 'normal'
         if not pkg_type:
             pkg_type = 'optional'
-        log.debug('Creating %s: %s, %s, %s', package_name, version, tarball, pkg_type)
+        log.info('Creating build/pkgs/%s', package_name)
         creator = PackageCreator(package_name)
         if version:
             creator.set_version(version)
