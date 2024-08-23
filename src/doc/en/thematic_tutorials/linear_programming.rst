@@ -425,7 +425,7 @@ graph, in which all the edges have a capacity of 1::
 
 ::
 
-    sage: p.set_objective(p.sum(f[s,u] for u in g.neighbors_out(s)))
+    sage: p.set_objective(p.sum(f[s,u] for u in g.neighbors_out(s)) - p.sum(f[v,s] for v in g.neighbors_in(s)))
 
 .. link
 
