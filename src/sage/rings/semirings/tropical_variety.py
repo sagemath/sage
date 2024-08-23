@@ -531,7 +531,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                         points[i] = new_eq
                     update_result(result)
         return result
-    
+
     def dual_subdivision(self):
         """
         Return the dual subdivision of ``self``.
@@ -935,7 +935,7 @@ class TropicalSurface(TropicalVariety):
             p1 = x + z
             sphinx_plot(p1.tropical_variety().plot())
 
-        A tropical surface with multiple cell that exhibit complex and
+        A tropical surface with multiple cells that exhibit complex and
         intriguing geometric structures::
 
             sage: p2 = x^2 + x + y + z + R(1)
@@ -985,7 +985,7 @@ class TropicalSurface(TropicalVariety):
             Tropical surface of 0*x^4 + 0*z^2
         """
         return f"Tropical surface of {self._poly}"
-    
+
     def weight_vectors(self):
         r"""
         Return the weight vectors for each edge of ``self``.
@@ -1058,7 +1058,7 @@ class TropicalSurface(TropicalVariety):
                         new_line = eqn
                         is_unique = False
                         break
-                    eq1 = eqn[subs_index].subs(v1 == t)
+                    eq1 = eqn[subs_index].subs(**{str(v1): t})
                     eq2 = uniq[subs_index]
                     temp_sol = solve(eq1 == eq2, t)
                     if temp_sol:
@@ -1066,7 +1066,7 @@ class TropicalSurface(TropicalVariety):
                         if not temp_sol.is_numeric():
                             new_line = []
                             for l in eqn:
-                                new_line.append(l.subs(v1 == temp_sol))
+                                new_line.append(l.subs(**{str(v1): temp_sol}))
                             if tuple(new_line) in unique_line:
                                 is_unique = False
                                 break
@@ -1247,11 +1247,11 @@ class TropicalCurve(TropicalVariety):
 
         OUTPUT:
 
-        A dictionary where the keys represent the vertices, and the values
-        are lists of tuples. Each tuple consists of the index of an
-        adjacent edge (component) `e_i` and a string indicating the
-        directionality of `e_i` relative to the vertex. The string is
-        either "pos" or "neg", specifying whether it is positive or
+        A dictionary where the keys represent the vertices, and the
+        values are lists of tuples. Each tuple consists of the index
+        of an adjacent edge (component) `e_i` and a string indicating
+        the directionality of `e_i` relative to the vertex. The string
+        is either "pos" or "neg", specifying whether it is positive or
         negative.
 
         EXAMPLES::
@@ -1277,15 +1277,15 @@ class TropicalCurve(TropicalVariety):
                 lower = interval[0].lower()
                 upper = interval[0].upper()
                 if lower != -infinity:
-                    x = parametric_function[0].subs(v==lower)
-                    y = parametric_function[1].subs(v==lower)
+                    x = parametric_function[0].subs(**{str(v): lower})
+                    y = parametric_function[1].subs(**{str(v): lower})
                     if (x,y) not in comp_vert:
                         comp_vert[(x,y)] = [(i, 'pos')]
                     else:
                         comp_vert[(x,y)].append((i, 'pos'))
                 if upper != infinity:
-                    x = parametric_function[0].subs(v==upper)
-                    y = parametric_function[1].subs(v==upper)
+                    x = parametric_function[0].subs(**{str(v): upper})
+                    y = parametric_function[1].subs(**{str(v): upper})
                     if (x,y) not in comp_vert:
                         comp_vert[(x,y)] = [(i, 'neg')]
                     else:
