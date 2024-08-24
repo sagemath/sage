@@ -4,6 +4,7 @@ from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.monoids import Monoids
 from sage.categories.sets_with_grading import SetsWithGrading
+from sage.categories.cartesian_product import cartesian_product
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
 from sage.groups.perm_gps.constructor import PermutationGroupElement
@@ -661,7 +662,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             sage: M(CyclicPermutationGroup(4), {1: [1,2], 2: [3,4]})
             Traceback (most recent call last):
             ...
-            ValueError: For each orbit of Cyclic group of order 4 as a permutation group, all elements must belong to the same sort
+            ValueError: All elements of orbit (1, 2, 3, 4) must have the same sort
         """
         if parent(G) == self:
             if pi is not None:
@@ -930,11 +931,75 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 res += Pn(PermutationGroup(gap_group=F, domain=self.domain()), dpart)
             return res
 
-        def point(self):
+        def functorial_composition(self, other):
             r"""
-            Return the pointing of ``self``.
+            Return the functorial composition of ``self`` with ``other``.
+            Currrent this only works for univariate molecular species only.
+
+            TESTS::
+
+                sage: P = PolynomialSpecies(ZZ, ["X"])
+                sage: M = P._indices
+                sage: E = [None] + [M(SymmetricGroup(n)) for n in range(1, 4)]
+                sage: E[2].functorial_composition(E[2])
+                E_4
+                sage: E[1].functorial_composition(E[1])
+                X
+                sage: E[1].functorial_composition(E[2])
+                E_2
+                sage: E[2].functorial_composition(E[1])
+                X
+                sage: E[3].functorial_composition(E[2])
+                E_8
+                sage: E[2].functorial_composition(E[3])
+                E_9
             """
-            pass
+            if not isinstance(other, MolecularSpecies.Element):
+                raise ValueError(f"{other} must be a molecular species")
+            if other.parent()._k > 1:
+                raise ValueError(f"{other} must be univariate")
+            if self.parent()._k > 1:
+                raise ValueError(f"{self} must be univariate")
+
+            gens = []
+            dpart = {1: range(1, other.grade() ** self.grade() + 1)}
+
+            def to_number(l):
+                B = ZZ.one() # ZZ.one or 1?
+                R = 0 # Just 0 is fine?
+                for e in reversed(l):
+                    R += e * B
+                    B *= other.grade()
+                return R
+
+            # it is a base other.grade() representation
+            for pre in cartesian_product([range(other.grade())]*self.grade()):
+                pre_n = to_number(pre) + 1
+                # gens from self
+                for gen in self._group.gens():
+                    # gen swaps around the numbers in pre
+                    im = gen(list(pre))
+                    im_n = to_number(im) + 1
+                    if pre_n == im_n:
+                        continue
+                    gens.append([tuple([pre_n, im_n])])
+            print('after self',gens)
+
+            # gens from other
+            for gen in other._group.gens():
+                for pre in cartesian_product([range(other.grade())]*self.grade()):
+                    pre_n = to_number(pre) + 1
+                    for i in range(self.grade()):
+                        im_n = pre_n - pre[-i-1] * other.grade() ** i + (gen(pre[-i-1] + 1) - 1) * other.grade() ** i
+                        if pre_n == im_n:
+                            continue
+                        gens.append([tuple([pre_n, im_n])])
+            print('after others',gens)
+
+            G = PermutationGroup(gens,domain=range(1, other.grade() ** self.grade() + 1))
+            print('G',G)
+            print('dompart',dpart)
+            return other.parent()(G, dpart)
 
         def inner_sum(self, base_ring, names, *args):
             r"""
@@ -1014,17 +1079,17 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             gens = []
 
             # TODO: What happens if in F(G), G has a constant part? E(1+X)?
-            Mlist = [None for _ in range(self._group.degree())]
+            Mlist = [None for _ in range(self.grade())]
             for i, v in enumerate(self._dompart):
                 for k in v:
                     Mlist[k - 1] = args[i]
-            starts = list(accumulate([M._group.degree() for M in Mlist], initial=0))
+            starts = list(accumulate([M.grade() for M in Mlist], initial=0))
 
             # gens from self
             for gen in self._group.gens():
                 newgen = []
                 for cyc in gen.cycle_tuples():
-                    for k in range(1, Mlist[cyc[0] - 1]._group.degree() + 1):
+                    for k in range(1, Mlist[cyc[0] - 1].grade() + 1):
                         newgen.append(tuple(k + starts[i - 1] for i in cyc))
                 gens.append(newgen)
 
