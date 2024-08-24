@@ -386,7 +386,7 @@ just as much as they receive. We can model the flow problem with the
 following LP
 
 .. MATH::
-    \text{Max: } & \sum_{sv \in G} f_{sv}\\
+    \text{Max: } & \sum_{su \in G} f_{su} - \sum_{sv \in G} f_{sv}\\
     \text{Such that: } & \forall v \in G, {\substack{v \neq s \\ v \neq t}}, \sum_{vu \in G} f_{vu} - \sum_{uv \in G} f_{uv} = 0\\
     & \forall uv \in G, f_{uv} \leq 1\\
 
