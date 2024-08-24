@@ -4331,11 +4331,14 @@ class Graph(GenericGraph):
     def M_alternating_even_mark(self, vertex, matching):
         r"""
         Return the set of vertices each of which is reachable from the provided
-        vertex through an (even length matching-alternating) path starting with an
-        edge not in the matching and ending with an edge in the matching
+        vertex through an (even length matching-alternating) path starting with
+        an edge not in the matching and ending with an edge in the matching
 
-        This method implements the algorithm proposed in [LR2004]_. Note that the
-        complexity of the algorithm is linear in number of edges.
+        This method implements the algorithm proposed in [LR2004]_. Note that
+        the complexity of the algorithm is linear in number of edges. This
+        method is implemented only for simple graphs. Note that the result is
+        equivalent for the underlying simple graph of the provided graph if the
+        input parameters remain unchanged.
 
         INPUT:
 
@@ -4348,7 +4351,8 @@ class Graph(GenericGraph):
 
         - ``even`` -- the set of vertices each of which is reachable from the
           provided vertex through a path starting with an edge not in the
-          matching and ending with an edge in the matching
+          matching and ending with an edge in the matching; note that a note that a
+          :class:`ValueError` is returned if the graph is not simple
 
         EXAMPLES:
 
@@ -4366,14 +4370,15 @@ class Graph(GenericGraph):
             sage: S1
             {0, 1, 2}
 
-        The graph can have multiple edges::
+        If the graph has multiple edges, the underlying simple method shall be
+        applied on the underlying simple graph::
 
             sage: G = graphs.CompleteBipartiteGraph(3, 3)
             sage: G.allow_multiple_edges(True)
             sage: G.add_edge(0, 3)
             sage: M = G.matching()
             sage: u = 0
-            sage: S = G.M_alternating_even_mark(u, M)
+            sage: S = (G.to_simple()).M_alternating_even_mark(u, M)
             sage: S
             {0, 1, 2}
 
@@ -4462,6 +4467,28 @@ class Graph(GenericGraph):
             ...
             ValueError: the input is not a matching of the graph
 
+        Giving a non-simple graph (aka a graph with self-loops or a graph with
+        multiple edges or possibly both)::
+
+            sage: G = graphs.CompleteBipartiteGraph(3, 3)
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edge(0, 3)
+            sage: M = G.matching()
+            sage: u = 0
+            sage: S = G.M_alternating_even_mark(u, M)
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with multiedges. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow multiedges using allow_multiple_edges().
+            sage: H = graphs.CompleteBipartiteGraph(3, 3)
+            sage: H.allow_loops(True)
+            sage: H.add_edge(0, 0)
+            sage: M = H.matching()
+            sage: u = 0
+            sage: S = H.M_alternating_even_mark(u, M)
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with loops. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow loops using allow_loops().
+
         REFERENCES:
 
         - [LR2004]_
@@ -4475,7 +4502,8 @@ class Graph(GenericGraph):
 
         - Janmenjaya Panda (2024-06-17)
         """
-        G = self.to_simple()
+        # The method only considers simple graphs
+        self._scream_if_not_simple()
 
         # The input vertex must be a valid vertex of the graph
         if vertex not in self:
@@ -4485,7 +4513,7 @@ class Graph(GenericGraph):
         M = Graph(matching)
         if any(d != 1 for d in M.degree()):
             raise ValueError("the input is not a matching")
-        if not M.is_subgraph(G, induced=False):
+        if not M.is_subgraph(self, induced=False):
             raise ValueError("the input is not a matching of the graph")
 
         # Build an M-alternating tree T rooted at vertex
@@ -4508,7 +4536,7 @@ class Graph(GenericGraph):
 
         while not q.empty():
             x = q.get()
-            for y in G.neighbor_iterator(x):
+            for y in self.neighbor_iterator(x):
                 if y in odd:
                     continue
                 elif y in even:
@@ -4773,7 +4801,8 @@ class Graph(GenericGraph):
         in the theory of matching covered graphs.
 
         This method implements the algorithm proposed in [LZ2001]_ and we
-        assume that a graph of order two is bicritical. The time complexity of
+        assume that a connected graph of order two is bicritical, whereas a
+        disconnected graph of the same order is not. The time complexity of
         the algorithm is `\mathcal{O}(|V| \cdot |E|)`, if a perfect matching of
         the graph is given, where `|V|` and `|E|` are the order and the size of
         the graph respectively. Otherwise, time complexity may be dominated by
@@ -4797,10 +4826,10 @@ class Graph(GenericGraph):
 
           - ``'LP'`` uses a Linear Program formulation of the matching problem.
 
-        - coNP_certificate -- boolean (default: ``False``); if set to ``True``
-          a set of pair of vertices (say `u` and `v`) is returned such that
-          `G - u - v` does not have a perfect matching if `G` is not bicritical
-          or otherwise ``None`` is returned.
+        - ``coNP_certificate`` -- boolean (default: ``False``); if set to
+          ``True`` a set of pair of vertices (say `u` and `v`) is returned such
+          that `G - u - v` does not have a perfect matching if `G` is not
+          bicritical or otherwise ``None`` is returned.
 
         - ``solver`` -- string (default: ``None``); specify a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -4839,7 +4868,7 @@ class Graph(GenericGraph):
             sage: G = graphs.PetersenGraph()
             sage: G.allow_multiple_edges(True)
             sage: G.add_edge(0, 5)
-            sage: G.is_bicritical()
+            sage: (G.to_simple()).is_bicritical()
             True
 
         A nontrivial circular ladder graph whose order is not divisible by 4 is bicritical::
@@ -4853,7 +4882,8 @@ class Graph(GenericGraph):
             sage: # K(4) with one extra edge (say K(4)+) is bicritical
             sage: G = graphs.CompleteGraph(4)
             sage: G.allow_multiple_edges(True)
-            sage: G.is_bicritical()
+            sage: G.add_edge(0, 1)
+            sage: (G.to_simple()).is_bicritical()
             True
             sage: # Let H := K(4)+ ☉ #K(4)+ such that H has no multiple egde
             sage: H = Graph()
@@ -4887,14 +4917,15 @@ class Graph(GenericGraph):
             sage: G.is_bicritical()
             False
 
-        A graph of order two is assumed to be bicritical::
+        A connected graph of order two is assumed to be bicritical, whereas the
+        disconnected graph of the same order is not::
 
             sage: G = graphs.CompleteBipartiteGraph(1, 1)
             sage: G.is_bicritical()
             True
             sage: G = graphs.CompleteBipartiteGraph(2, 0)
             sage: G.is_bicritical()
-            True
+            False
 
         A bipartite graph of order three or more is not bicritical::
 
@@ -4962,6 +4993,24 @@ class Graph(GenericGraph):
             ...
             ValueError: the input is not a perfect matching of the graph
 
+        Providing with a non-simple graph (aka a graph with self-loops or a
+        graph with multiple edges or possibly both)::
+
+            sage: G = graphs.CompleteGraph(4)
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edge(0, 1)
+            sage: G.is_bicritical()
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with multiedges. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow multiedges using allow_multiple_edges().
+            sage: G = graphs.CompleteGraph(4)
+            sage: G.allow_loops(True)
+            sage: G.add_edge(0, 0)
+            sage: G.is_bicritical()
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with loops. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow loops using allow_loops().
+
         REFERENCES:
 
         - [LM2024]_
@@ -4976,13 +5025,19 @@ class Graph(GenericGraph):
 
         - Janmenjaya Panda (2024-06-17)
         """
+        # The graph must be simple
+        self._scream_if_not_simple()
+
         # The graph must be nontrivial
         if self.order() < 2:
             raise ValueError("the graph is trivial")
 
         # A graph of order two is assumed to be bicritical
         if self.order() == 2:
-            return (True, None) if coNP_certificate else True
+            if self.is_connected():
+                return (True, None) if coNP_certificate else True
+            else:
+                return (False, None) if coNP_certificate else False
 
         # The graph must have an even number of vertices
         if self.order() % 2:
@@ -5092,8 +5147,8 @@ class Graph(GenericGraph):
 
         The time complexity may be dominated by the time needed to compute a
         maximum matching of the graph, in case a perfect matching is not
-        provided. Also, note that for a disconnected or a trivial graph, a
-        :class:`ValueError` is returned.
+        provided. Also, note that for a disconnected or a trivial or a
+        non-simple graph, a :class:`ValueError` is returned.
 
         INPUT:
 
@@ -5110,10 +5165,10 @@ class Graph(GenericGraph):
 
           - ``'LP'`` uses a Linear Program formulation of the matching problem.
 
-        - coNP_certificate -- boolean (default: ``False``); if set to ``True``
-          an edge of the graph, that does not participate in any perfect
-          matching, is returned if `G` is not matching covered or otherwise
-          ``None`` is returned.
+        - ``coNP_certificate`` -- boolean (default: ``False``); if set to
+          ``True`` an edge of the graph, that does not participate in any
+          perfect matching, is returned if `G` is not matching covered or
+          otherwise ``None`` is returned.
 
         - ``solver`` -- string (default: ``None``); specify a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -5153,7 +5208,7 @@ class Graph(GenericGraph):
             sage: G = graphs.PetersenGraph()
             sage: G.allow_multiple_edges(True)
             sage: G.add_edge(0, 5)
-            sage: G.is_matching_covered()
+            sage: (G.to_simple()).is_matching_covered()
             True
 
         A corollary to Tutte's fundamental result [Tut1947]_, as a
@@ -5205,9 +5260,10 @@ class Graph(GenericGraph):
             sage: G.is_matching_covered()
             True
             sage: A, B = G.bipartite_sets()
+            sage: # needs random
             sage: import random
-            sage: a = random.choice(list(A))                                            # needs random
-            sage: b = random.choice(list(B))                                            # needs random
+            sage: a = random.choice(list(A))
+            sage: b = random.choice(list(B))
             sage: G.delete_vertices([a, b])
             sage: M = Graph(G.matching())
             sage: set(M.vertices()) == set(G.vertices())
@@ -5300,6 +5356,24 @@ class Graph(GenericGraph):
             ...
             ValueError: the input is not a perfect matching of the graph
 
+        Providing with a non-simple graph (aka a graph with self-loops or a
+        graph with multiple edges or possibly both)::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edge(0, 5)
+            sage: G.is_matching_covered()
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with multiedges. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow multiedges using allow_multiple_edges().
+            sage: G = graphs.PetersenGraph()
+            sage: G.allow_loops(True)
+            sage: G.add_edge(0, 0)
+            sage: G.is_matching_covered()
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with loops. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow loops using allow_loops().
+
         REFERENCES:
 
         - [LM2024]_
@@ -5316,6 +5390,8 @@ class Graph(GenericGraph):
 
         - Janmenjaya Panda (2024-06-23)
         """
+        self._scream_if_not_simple()
+
         # The graph must be nontrivial
         if self.order() < 2:
             raise ValueError("the graph is trivial")
@@ -5351,28 +5427,25 @@ class Graph(GenericGraph):
             if self.order() != M.order():
                 return (False, M.edges()[0]) if coNP_certificate else False
 
-        G = self.to_simple()
+        # Biparite graph:
+        #
+        # Given a connected bipartite graph G[A, B] with a perfect matching M.
+        # Construct a directed graph D from G such that V(D) := V(G) and
+        # for each edge in G direct the corresponding edge from A to B in D,
+        # if it is in M or otherwise direct it from B to A. The graph G is
+        # matching covered if and only if D is strongly connected.
 
-        '''
-        Biparite graph:
-
-        Given a connected bipartite graph G[A, B] with a perfect matching M.
-        Construct a directed graph D from G such that V(D) := V(G) and
-        for each edge in G direct the corresponding edge from A to B in D,
-        if it is in M or otherwise direct it from B to A. The graph G is
-        matching covered if and only if D is strongly connected.
-        '''
-        if G.is_bipartite():
-            A, _ = G.bipartite_sets()
+        if self.is_bipartite():
+            A, _ = self.bipartite_sets()
             color = dict()
 
-            for u in G:
+            for u in self:
                 color[u] = 0 if u in A else 1
 
             from sage.graphs.digraph import DiGraph
             H = DiGraph()
 
-            for edge in G.edges():
+            for edge in self.edges():
                 u, v = edge[0], edge[1]
 
                 if color[u] == 1:
@@ -5412,20 +5485,19 @@ class Graph(GenericGraph):
 
             return (True, None) if coNP_certificate else True
 
-        '''
-        Nonbipartite graph:
+        # Nonbipartite graph:
+        #
+        # Given a nonbipartite graph G with a perfect matching M. The graph G is
+        # matching covered if and only if for each edge uv not in M, there exists
+        # an M-alternating odd length uv-path starting and ending with edges not
+        # in M.
 
-        Given a nonbipartite graph G with a perfect matching M. The graph G is
-        matching covered if and only if for each edge uv not in M, there exists
-        an M-alternating odd length uv-path starting and ending with edges not
-        in M.
-        '''
-        for u in G:
+        for u in self:
             v = next(M.neighbor_iterator(u))
 
             even = self.M_alternating_even_mark(u, M)
 
-            for w in G.neighbor_iterator(v):
+            for w in self.neighbor_iterator(v):
                 if w != u and w not in even:
                     return (False, (v, w)) if coNP_certificate else False
 
