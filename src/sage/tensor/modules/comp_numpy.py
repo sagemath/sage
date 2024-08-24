@@ -1,4 +1,22 @@
-# Tensor Component Backend using numpy.ndarray
+r"""
+Tensor Component Backend using numpy.ndarray
+
+AUTHORS:
+
+- Aman Moon (2024-07-02): initial version
+
+"""
+
+# ****************************************************************************
+#       Copyright (C) 2024 Aman Moon
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
@@ -7,6 +25,7 @@ import numpy as np
 
 
 class ComponentNumpy(SageObject):
+
     def __init__(self, ring, frame, nb_indices, shape=None, start_index=0,
                  output_formatter=None):
         r"""
@@ -352,7 +371,7 @@ class ComponentNumpy(SageObject):
 
     def _broadcast(self, other):
         r"""
-        broadcast self with other
+        Broadcast self with other. refer ``https://data-apis.org/array-api/2021.12/API_specification/broadcasting.html``
 
         INPUT:
 
@@ -849,23 +868,231 @@ class ComponentNumpy(SageObject):
 ## In-place Operators
 
     def __iadd__(self, other):
+        r"""
+        Inplace addition operator.
+
+        OUTPUT:
+
+        - components resulting from the addition of ``self`` and ``other``
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: b = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: b[:] = 4, 5, 6
+            sage: a+=b; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([5., 5., 3.])
+            sage: b[:]
+            array([4., 5., 6.])
+
+        """
         return self + other
+
     def __isub__(self, other):
+        r"""
+        Inplace subtraction operator.
+
+        OUTPUT:
+
+        - components resulting from the subtraction of ``self`` and ``other``
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: b = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: b[:] = 4, 5, 6
+            sage: a -= b; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([-3., -5., -9.])
+            sage: b[:]
+            array([4., 5., 6.])
+
+        """
         return self - other
+
     def __imul__(self, other):
+        r"""
+        Inplace component tensor product.
+
+        INPUT:
+
+        - ``other`` -- components, on the same frame as ``self``
+
+        OUTPUT:
+
+        - the tensor product of ``self`` by ``other``
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: s = a.__mul__(3)
+            sage: a *= 3; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([  3.,   0., -9.])
+            sage: a == s
+            True
+            sage: b = ComponentNumpy(ZZ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: b[:] = 4, 5, 6
+            sage: s = a.__mul__(b)
+            sage: a *= b; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([  4.,   0., -18.])
+            sage: a == s
+            True
+
+        """
         return self * other
+
     def __itruediv__(self, other):
+        r"""
+        In-place division (by a scalar).
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 1, 0, -3
+            sage: s = a.__truediv__(3)
+            sage: a /= 3; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([ 0.33333333,  0.        , -1.        ])
+            sage: a == s
+            True
+
+        """
         return self / other
+
     def __ifloordiv__(self, other):
+        r"""
+        In-place operator for evaluating self_i // other_i for each element of Component
+        ``self`` with the respective element of ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 2, 0, -3
+            sage: s = a.__floordiv__(2)
+            sage: a //= 2; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([ 1.,  0., -2.])
+            sage: a == s
+            True
+            sage: b = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 2, 0, -3
+            sage: b[:] = 1, 4, -2
+            sage: s = a.__floordiv__(b)
+            sage: a //= b; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([2., 0., 1.])
+            sage: a == s
+            True
+
+        """
         return self // other
+
     def __ipow__(self, other):
+        r"""
+        In-place operator for evaluating self_i ^ other_i for each element of Component
+        ``self`` with the respective element of ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 3, 0, -3
+            sage: s = a.__pow__(2)
+            sage: a ^= 2; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([9., 0., 9.])
+            sage: a == s
+            True
+            sage: b = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 3, 0, -3
+            sage: b[:] = -1, 4, -2
+            sage: s = a.__pow__(b)
+            sage: a ^= b; a[:]
+            array([0.33333333, 0.        , 0.11111111])
+            sage: a == s
+            True
+
+        """
         return self ** other
+
     def __imod__(self, other):
+        r"""
+        In-place operator for evaluating self_i % other_i for each element of Component
+        ``self`` with the respective element of ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: a = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 1, 2, -3
+            sage: s = a.__mod__(2)
+            sage: a %= 2; a
+            1-index numpy components w.r.t. (1, 2, 3)
+            sage: a[:]
+            array([1., 0., 1.])
+            sage: a == s
+            True
+            sage: b = ComponentNumpy(QQ, [1,2,3], 1)
+            sage: a[:] = 1, 2, -3
+            sage: b[:] = 1, 4, -2
+            sage: s = a.__mod__(b)
+            sage: a %= b
+            sage: a[:]
+            array([ 0.,  2., -1.])
+            sage: a == s
+            True
+
+        """
         return self % other
-    def __imatmul__(self, other):
-        return self @ other
 
     def trace(self, pos1, pos2):
+        r"""
+        Index contraction.
+
+        INPUT:
+
+        - ``pos1`` -- position of the first index for the contraction (with the
+          convention position=0 for the first slot)
+        - ``pos2`` -- position of the second index for the contraction
+
+        OUTPUT:
+
+        - set of components resulting from the (pos1, pos2) contraction
+
+        EXAMPLES:
+
+        Self-contraction of a set of components with 2 indices::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: V = VectorSpace(QQ, 3)
+            sage: c = ComponentNumpy(QQ, V.basis(), 2)
+            sage: c[:] = [[1,2,3], [4,5,6], [7,8,9]]
+            sage: c.trace(0,1)
+            15.0
+            sage: c[0,0] + c[1,1] + c[2,2]  # check
+            15.0
+
+        """
         if self._nid < 2:
             raise ValueError("contraction can be performed only on " +
                              "components with at least 2 indices")
@@ -876,9 +1103,17 @@ class ComponentNumpy(SageObject):
         if pos1 == pos2:
             raise IndexError("the two positions must differ for the " +
                              "contraction to be meaningful")
-        ret = ComponentNumpy(self._ring, self._frame, self._nid - 2,
-                                self._sindex, self._output_formatter)
-        ret._comp = np.trace(self._comp, axis1=pos1, axis2=pos2)
+        
+        comp = self._comp
+        if self._nid == 2:
+            ret = 0
+            for i in range(self._shape[0]):
+                ret += comp[i,i]
+        else:
+            ret = ComponentNumpy(self._ring, self._frame, self._nid - 2,
+                                    self._sindex, self._output_formatter)
+            ret._comp = np.trace(self._comp, axis1=pos1, axis2=pos2)
+
         return ret
 
     # This function can be implemented after the product of basis is implemented
@@ -899,8 +1134,29 @@ class ComponentNumpy(SageObject):
     #     matrix = ComponentNumpy._khatri_rao_product(self._comp, *array)
     #     ret._comp = matrix
     #     return ret
-    
+
     def _khatri_rao_product(*args):
+        r"""
+        Compute the Khatri-Rao product of input numpy-arrays.
+
+        EXAMPLES:
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: import numpy as np
+            sage: a = np.array([[1, 2],[3, 4]])
+            sage: b = np.array([[5, 6],[7, 8]])
+            sage: c = np.array([[9, 10], [11, 12]])
+            sage: s = ComponentNumpy._khatri_rao_product(a, b, c); s
+            array([[ 45., 120.],
+                   [ 55., 144.],
+                   [ 63., 160.],
+                   [ 77., 192.],
+                   [135., 240.],
+                   [165., 288.],
+                   [189., 320.],
+                   [231., 384.]])
+
+        """
         cols = args[0].shape[1]
         rows = np.prod([arg.shape[0] for arg in args])
         ret = np.zeros((rows, cols))
@@ -911,7 +1167,26 @@ class ComponentNumpy(SageObject):
             ret[:, i] = temp
         return ret
 
-    def _svd(self, matrix, rank=None):
+    def _svd(matrix, rank=None):
+        r"""
+        Compute svd of input numpy-matrix.
+
+        EXAMPLES:
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: import numpy as np
+            sage: a = np.array([[1, 2],[3, 4]])
+            sage: u, s, v = ComponentNumpy._svd(a)
+            sage: u
+            array([[-0.40455358, -0.9145143 ],
+                   [-0.9145143 ,  0.40455358]])
+            sage: s
+            array([5.4649857 , 0.36596619])
+            sage: v
+            array([[-0.57604844, -0.81741556],
+                   [ 0.81741556, -0.57604844]])
+
+        """
         import scipy
         dim_1, dim_2 = matrix.shape
         if dim_1 <= dim_2:
@@ -934,9 +1209,45 @@ class ComponentNumpy(SageObject):
 
             U, S, V = U[:, ::-1], S[::-1], V[:, ::-1]
             return U, S, V.T
-    
-    def CPD(self, rank, iterations=1000, epsilon=10e-5, tolerance=10e-8, factor_matrix=None, algo='svd', return_error=False, return_reconstruction=False):
 
+    def CPD(self, rank, iterations=1000, epsilon=10e-5, tolerance=10e-8, factor_matrix=None, algo='svd', return_error=False, return_reconstruction=False):
+        r"""
+        Canonical polyadic decomposition (CPD) using ALS.
+
+        INPUT:
+
+        - ``rank`` -- Desired rank for the output tensor. This is the
+          number of rank-one components the tensor is decomposed into.
+        - ``iterations`` -- (default: ``1000``) The number of iterations 
+          to perform the ALS algorithm.
+        - ``epsilon`` -- (default: ``10e-5``) Convergence criterion for
+          the ALS algorithm. The algorithm stops if the relative change
+          in the factor matrices between iterations is less than this value.
+        - ``tolerance`` -- (default: ``10e-8``) Numerical tolerance for
+          the ALS optimization process. It sets the threshold for small
+          values to be considered as zero, improving numerical stability.
+        - ``factor_matrix`` -- (default: ``None``) Initial factor matrices
+          for the decomposition. If ``None``, they are initialized randomly
+          or via the specified ``algo`` method.
+        - ``algo`` -- (default: ``svd``) Initialization algorithm for
+          factor matrices. Common options include:
+            ``'svd'``: Singular Value Decomposition for a better starting point.
+        -   ``'random'``: Random initialization of factor matrices.
+        - ``return_error`` -- (default: ``False``) If ``True``, returns the
+          reconstruction error after the decomposition.
+        - ``return_reconstruction`` -- (default: ``False``) If ``True``,
+          returns the reconstructed tensor from the factor matrices.
+
+        OUTPUT:
+        
+        - If ``return_error`` is ``True``, returns a tuple with the factor
+          matrices and the reconstruction error.
+        - If ``return_reconstruction`` is ``True``, returns a tuple with the
+          factor matrices and the reconstructed tensor.
+        - Otherwise, returns only the factor matrices as a list, where each
+          element is a factor matrix corresponding to one mode of the tensor.
+
+        """
         comp = self._comp
         if np.all(comp == 0):
             raise ValueError("all elements in component are zero")
@@ -947,7 +1258,7 @@ class ComponentNumpy(SageObject):
                 for mode in range(self._nid):
                     k = np.reshape(np.moveaxis(comp, mode, 0), (comp.shape[mode], -1))
 
-                    fmat[mode], _, _ = self._svd(k, rank)
+                    fmat[mode], _, _ = ComponentNumpy._svd(k, rank)
             else:
                 fmat = [np.random.randn(mode_size, rank) for mode_size in self._shape]
         else:
@@ -1011,6 +1322,29 @@ class ComponentNumpy(SageObject):
         return tuple(out)
 
     def TT(self, rank, return_error=False, return_reconstruction=False):
+        r"""
+        Tensor Train (TT) Decomposition.
+
+        INPUT:
+
+        - ``rank`` -- Desired rank for the decomposition. This rank defines
+          the size of the intermediate tensor cores and controls the trade-off
+          between the accuracy of the decomposition and the computational cost.
+        - ``return_error`` -- (default: ``False``) If ``True``, returns the
+          reconstruction error after performing the decomposition.
+        - ``return_reconstruction`` -- (default: ``False``) If ``True``, returns
+          the reconstructed tensor from the decomposed TT cores.
+
+        OUTPUT:
+
+        - If ``return_error`` is ``True``, returns a tuple containing the TT
+          cores and the reconstruction error.
+        - If ``return_reconstruction`` is ``True``, returns a tuple containing
+          the TT cores and the reconstructed tensor.
+        - Otherwise, returns only the TT cores as a list, where each element is
+          a core tensor corresponding to one mode of the original tensor.
+
+        """
         import scipy
         comp = self._comp
         if np.all(comp == 0):
@@ -1066,6 +1400,35 @@ class ComponentNumpy(SageObject):
         return out
 
     def Tucker(self, rank, process=(), return_error=False, return_reconstruction=False):
+        r"""
+        Tucker Decomposition.
+
+        The Tucker decomposition, also known as Tucker decomposition or higher-order singular value decomposition (HOSVD), is a method for decomposing a tensor into a core tensor multiplied by a matrix along each mode. This decomposition generalizes the matrix singular value decomposition (SVD) to higher-order tensors.
+
+        INPUT:
+
+        - ``rank`` -- Desired rank for the decomposition. This can be either
+          a single integer (to specify the same rank for all modes) or a tuple/list
+          specifying the rank for each mode separately.
+        - ``process`` -- (default: ``()``) A tuple or list of mode indices to be
+          processed. If empty, all modes are processed. This allows for partial
+          decomposition along specific modes if needed.
+        - ``return_error`` -- (default: ``False``) If ``True``, returns the
+          reconstruction error after performing the decomposition.
+        - ``return_reconstruction`` -- (default: ``False``) If ``True``, returns
+          the reconstructed tensor from the decomposed core tensor and factor matrices.
+
+        OUTPUT:
+        
+        - If ``return_error`` is ``True``, returns a tuple containing the core tensor,
+          factor matrices, and the reconstruction error.
+        - If ``return_reconstruction`` is ``True``, returns a tuple containing the
+          core tensor, factor matrices, and the reconstructed tensor.
+        - Otherwise, returns a tuple containing the core tensor and the factor matrices.
+          The core tensor is a lower-dimensional representation of the original tensor,
+          and the factor matrices represent the mappings along each mode.
+
+    """
         comp = self._comp
         if np.all(comp == 0):
             raise ValueError("all elements in component are zero")
@@ -1080,7 +1443,7 @@ class ComponentNumpy(SageObject):
                 continue
             tensor_unfolded = np.reshape(np.moveaxis(comp, mode, 0), (comp.shape[mode], -1))
 
-            U, _, _, = self._svd(tensor_unfolded, rank[mode])
+            U, _, _, = ComponentNumpy._svd(tensor_unfolded, rank[mode])
             fmat[mode] = U
 
             new_shape = list(core.shape)

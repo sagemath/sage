@@ -291,21 +291,7 @@ def get_components_class(sym=None, implementation=None) -> type:
         elif sym == "kroneckerdelta":
             return comp_numpy.KroneckerDeltaNumpy
 
-    if implementation == "torch":
-        try:
-            from . import comp_torch
-        except:
-            raise ImportError('file comp_torch does not exist')
-        if sym is None:
-            return comp_torch.ComponentTorch
-        elif sym == "fullysym":
-            return comp_torch.CompTorchFullySym
-        elif sym == "fullyantisym":
-            return comp_torch.CompTorchFullyAntiSym
-        elif sym == "kroneckerdelta":
-            return comp_torch.KroneckerDeltaTorch
-
-    raise ValueError('sym must be numpy, torch or None.')
+    raise ValueError('sym must be numpy or None.')
 
 class Components(SageObject):
     r"""
