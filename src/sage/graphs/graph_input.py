@@ -145,7 +145,7 @@ def from_dig6(G, dig6_string):
         sage: g.is_isomorphic(digraphs.Circuit(10))
         True
 
-    The string may represent a graph with loops::
+    The string may represent a directed graph with loops::
 
         sage: L = DiGraph(loops=True)
         sage: from_dig6(L, 'CW`C')
