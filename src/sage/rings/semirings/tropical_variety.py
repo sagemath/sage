@@ -265,7 +265,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     temp_order.append(order)
                     temp_keys.append(keys)
 
-        # Changing all the operator symbol to be <= or >=
+        # Changing all the operator's symbol to <= or >=
         self._keys = []
         components = []
         dim_param = 0
@@ -1223,25 +1223,9 @@ class TropicalCurve(TropicalVariety):
         """
         if len(self._hypersurface) < 3:
             return set()
+        return set(self._vertices_components().keys())
 
-        vertices = set()
-        for i, component in enumerate(self._hypersurface):
-            parametric_function = component[0]
-            var = component[1][0].variables()[0]
-            interval = self._parameter_intervals()[i]
-            lower = interval[0].lower()
-            upper = interval[0].upper()
-            if lower != -infinity:
-                x = parametric_function[0].subs(**{str(var): lower})
-                y = parametric_function[1].subs(**{str(var): lower})
-                vertices.add((x,y))
-            if upper != infinity:
-                x = parametric_function[0].subs(**{str(var): upper})
-                y = parametric_function[1].subs(**{str(var): upper})
-                vertices.add((x,y))
-        return vertices
-
-    def _components_of_vertices(self):
+    def _vertices_components(self):
         """
         Return the index of components adjacent to each vertex of ``self``.
 
@@ -1259,10 +1243,10 @@ class TropicalCurve(TropicalVariety):
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: p1 = R(0) + x + y + x*y + x^2*y + x*y^2
-            sage: p1.tropical_variety()._components_of_vertices()
+            sage: p1.tropical_variety()._vertices_components()
             {(0, 0): [(0, 'pos'), (1, 'pos'), (2, 'pos'), (3, 'neg'), (4, 'neg')]}
             sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
-            sage: p2.tropical_variety()._components_of_vertices()
+            sage: p2.tropical_variety()._vertices_components()
             {(-2, 0): [(0, 'neg'), (1, 'pos'), (3, 'pos')],
              (-1, -3): [(2, 'neg'), (4, 'pos'), (5, 'pos')],
              (-1, 0): [(3, 'neg'), (4, 'neg'), (6, 'pos')],
@@ -1329,13 +1313,12 @@ class TropicalCurve(TropicalVariety):
         """
         from sage.calculus.functional import diff
         from sage.arith.misc import gcd
-        from sage.rings.rational_field import QQ
         from sage.modules.free_module_element import vector
 
-        if not self._components_of_vertices():
+        if not self._vertices_components():
             return {}
 
-        # finding the base vector in the direction of each edges
+        # Finding the base vector in the direction of each edge
         temp_vectors = []
         par = self._hypersurface[0][1][0].variables()[0]
         for comp in self._hypersurface:
@@ -1344,8 +1327,8 @@ class TropicalCurve(TropicalVariety):
             multiplier = gcd(QQ(dx), QQ(dy))
             temp_vectors.append(vector([dx/multiplier, dy/multiplier]))
 
-        # calculate the weight vectors of each vertex
-        cov = self._components_of_vertices()
+        # Calculate the weight vectors of each vertex
+        cov = self._vertices_components()
         result = {}
         for vertex in cov:
             vectors = []
@@ -1492,7 +1475,7 @@ class TropicalCurve(TropicalVariety):
         if not self.is_simple():
             raise ValueError(f"{self} is not simple")
         result = 1
-        voc = self._components_of_vertices()
+        voc = self._vertices_components()
         vov = self.weight_vectors()
         for vertex in vov:
             if len(vov[vertex]) == 3:
