@@ -5458,25 +5458,36 @@ class Graph(GenericGraph):
 
             # Check if H is strongly connected using Kosaraju's algorithm
             def dfs(J, v, visited, p, parent, orientation):
-                visited[v] = True
-                parent[v] = p
+                stack = [(v, p)] # a stack of (vertex, parent)
 
-                if orientation == 'in':
-                    for u in J.neighbors_out(v):
-                        if not visited[u]:
-                            dfs(J, u, visited, v, parent, orientation)
-                else:
-                    for u in J.neighbors_in(v):
-                        if not visited[u]:
-                            dfs(J, u, visited, v, parent, orientation)
+                while stack:
+                    v, p = stack.pop()
 
-            visited_in = {v: False for v in H.vertices()}
-            parent_in = {v: None for v in H.vertices()}
-            dfs(H, H.vertices()[0], visited_in, None, parent_in, 'in')
+                    if not visited[v]:
+                        visited[v] = True
+                        parent[v] = p
 
-            visited_out = {v: False for v in H.vertices()}
-            parent_out = {v: None for v in H.vertices()}
-            dfs(H, H.vertices()[0], visited_out, None, parent_out, 'out')
+                    if orientation == 'in':
+                        for u in J.neighbors_out(v):
+                            if not visited[u]:
+                                stack.append((u, v))
+
+                    elif orientation == 'out':
+                        for u in J.neighbors_in(v):
+                            if not visited[u]:
+                                stack.append((u, v))
+                    else:
+                        raise ValueError('Unknown orientation')
+
+            root = next(H.neighbor_iterator())
+
+            visited_in = {v: False for v in H}
+            parent_in = {v: None for v in H}
+            dfs(H, root, visited_in, None, parent_in, 'in')
+
+            visited_out = {v: False for v in H}
+            parent_out = {v: None for v in H}
+            dfs(H, root, visited_out, None, parent_out, 'out')
 
             for edge in H.edges():
                 if (not visited_in[edge[0]]) or (not visited_out[edge[1]]):
