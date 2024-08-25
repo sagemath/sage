@@ -9,6 +9,8 @@ PEP 621 metadata parsing
 License
 -------
 
+MIT
+
 Upstream Contact
 ----------------
 
