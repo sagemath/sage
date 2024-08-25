@@ -37,12 +37,10 @@ class ComponentNumpy(SageObject):
 
         """
         self._ring = ring
-        self._frame = tuple(frame) if all(isinstance(i, (list, tuple)) for i in frame) \
-                                    else (tuple(frame),)
+        self._frame = tuple(frame) if all(isinstance(i, (list, tuple)) for i in frame) else (tuple(frame),)
         self._nid = nb_indices
         self._shape = (len(self._frame[0]),) * nb_indices if shape is None else tuple(shape)
-        self._sindex = tuple(start_index) if isinstance(start_index, (list, tuple)) \
-                                            else (start_index,) * nb_indices
+        self._sindex = tuple(start_index) if isinstance(start_index, (list, tuple)) else (start_index,) * nb_indices
         self._output_formatter = output_formatter
         self._comp = np.zeros(shape=self._shape, dtype=np.float64)
 
@@ -90,8 +88,8 @@ class ComponentNumpy(SageObject):
             2-indices numpy components w.r.t. (1, 2, 3)
 
         """
-        return self.__class__(self._ring, self._frame, self._nid, self._shape,
-                          self._sindex, self._output_formatter)
+        return self.__class__(self._ring, self._frame, self._nid,
+                    self._shape, self._sindex, self._output_formatter)
 
     def copy(self):
         r"""
@@ -117,6 +115,31 @@ class ComponentNumpy(SageObject):
         """
         result = self._new_instance()
         result._comp = np.copy(self._comp)
+        return result
+
+    @property
+    def T(self):
+        """
+        Transpose of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import ComponentNumpy
+            sage: c = ComponentNumpy(ZZ, [1,2,3], 2)
+            sage: c.__setitem__(slice(None), [[0, 1, 2], [3, 4, 5], [6, 7, 8]])
+            sage: t = c.T; t
+            2-indices numpy components w.r.t. (1, 2, 3)
+            sage: t[:]
+            array([[0., 3., 6.],
+                   [1., 4., 7.],
+                   [2., 5., 8.]])
+            sage: c == t.T
+            True
+
+        """
+        result = self.__class__(self._ring, self._frame, self._nid, self._shape[::-1],
+                          self._sindex[::-1], self._output_formatter)
+        result._comp = np.copy(self._comp.T)
         return result
 
     def _check_indices(self, indices):
@@ -330,6 +353,7 @@ class ComponentNumpy(SageObject):
             Traceback (most recent call last):
             ...
             IndexError: [start:stop] not in range [1,4]
+
         """
         if isinstance(args, list):  # case of [[...]] syntax
             if isinstance(args[0], slice):
@@ -1103,7 +1127,7 @@ class ComponentNumpy(SageObject):
         if pos1 == pos2:
             raise IndexError("the two positions must differ for the " +
                              "contraction to be meaningful")
-        
+
         comp = self._comp
         if self._nid == 2:
             ret = 0
@@ -1115,25 +1139,6 @@ class ComponentNumpy(SageObject):
             ret._comp = np.trace(self._comp, axis1=pos1, axis2=pos2)
 
         return ret
-
-    # This function can be implemented after the product of basis is implemented
-    # def khatri_rao_product(self, *args):
-    #     if not all(isinstance(args, ComponentNumpy)):
-    #         raise TypeError('arguments for khatri_rao_product must be an instance of ComponentNumpy')
-    #     if self._nid != 2 or any(args._nid != 2):
-    #         raise ValueError('invalid dimension, dimension of input component must be 2 given')
-    #     col = self._shape[1]
-    #     if any(args._shape[1] != col):
-    #         raise ValueError('given component must have the same number of columns as self')
-
-    #     from functools import reduce
-    #     import operator
-    #     array = [arg._comp for arg in args]
-    #     rows = reduce(operator.mul, [arg._shape[0] for arg in args], self._shape[0])
-    #     ret = self._new_instance(self._ring, , 2, (rows, self._shape[1]))
-    #     matrix = ComponentNumpy._khatri_rao_product(self._comp, *array)
-    #     ret._comp = matrix
-    #     return ret
 
     def _khatri_rao_product(*args):
         r"""
@@ -1218,7 +1223,7 @@ class ComponentNumpy(SageObject):
 
         - ``rank`` -- Desired rank for the output tensor. This is the
           number of rank-one components the tensor is decomposed into.
-        - ``iterations`` -- (default: ``1000``) The number of iterations 
+        - ``iterations`` -- (default: ``1000``) The number of iterations
           to perform the ALS algorithm.
         - ``epsilon`` -- (default: ``10e-5``) Convergence criterion for
           the ALS algorithm. The algorithm stops if the relative change
@@ -1239,7 +1244,7 @@ class ComponentNumpy(SageObject):
           returns the reconstructed tensor from the factor matrices.
 
         OUTPUT:
-        
+
         - If ``return_error`` is ``True``, returns a tuple with the factor
           matrices and the reconstruction error.
         - If ``return_reconstruction`` is ``True``, returns a tuple with the
@@ -1253,7 +1258,7 @@ class ComponentNumpy(SageObject):
             raise ValueError("all elements in component are zero")
         if factor_matrix is None:
             fmat = [np.array([]) for _ in range(self._nid)]
-            
+
             if (np.array(self._shape) >= rank).sum() == self._nid and algo == 'svd':
                 for mode in range(self._nid):
                     k = np.reshape(np.moveaxis(comp, mode, 0), (comp.shape[mode], -1))
@@ -1407,8 +1412,7 @@ class ComponentNumpy(SageObject):
 
         INPUT:
 
-        - ``rank`` -- Desired rank for the decomposition. This can be either
-          a single integer (to specify the same rank for all modes) or a tuple/list
+        - ``rank`` -- Desired rank for the decomposition. This can be  a tuple/list
           specifying the rank for each mode separately.
         - ``process`` -- (default: ``()``) A tuple or list of mode indices to be
           processed. If empty, all modes are processed. This allows for partial
@@ -1419,7 +1423,7 @@ class ComponentNumpy(SageObject):
           the reconstructed tensor from the decomposed core tensor and factor matrices.
 
         OUTPUT:
-        
+
         - If ``return_error`` is ``True``, returns a tuple containing the core tensor,
           factor matrices, and the reconstruction error.
         - If ``return_reconstruction`` is ``True``, returns a tuple containing the
@@ -1471,3 +1475,225 @@ class ComponentNumpy(SageObject):
             error = abs(np.linalg.norm(residual.data) / np.linalg.norm(comp.data))
             out += (error,)
         return out
+
+class CompNumpyWithSym(ComponentNumpy):
+
+    def __init__(self, ring, frame, nb_indices, shape=None, start_index=0,
+                 output_formatter=None, sym=None, antisym=None):
+        r"""
+        TESTS::
+
+            sage: from sage.tensor.modules.comp_numpy import CompNumpyWithSym
+            sage: c = CompNumpyWithSym(ZZ, [1,2,3], 4, sym=(0,1), antisym=(2,3)); c
+            4-indices numpy components w.r.t. (1, 2, 3)
+
+        """
+        ComponentNumpy.__init__(self, ring, frame, nb_indices, shape, start_index, output_formatter)
+        if any(self._shape[0] != dim for dim in self._shape):
+            raise KeyError("symmetry can only be defined for cubic tensors")
+        from .comp import CompFullySym
+        self._sym, self._antisym = CompFullySym._canonicalize_sym_antisym(
+            nb_indices, sym, antisym)
+
+    def _new_instance(self):
+        r"""
+        Creates a :class:`CompNumpyWithSym` instance of the same number of indices
+        and w.r.t. the same frame.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import CompNumpyWithSym
+            sage: c = CompNumpyWithSym(ZZ, [1,2,3], 2)
+            sage: c._new_instance()
+            2-indices numpy components w.r.t. (1, 2, 3)
+
+        """
+        return self.__class__(self._ring, self._frame, self._nid, self._shape,
+                          self._sindex, self._output_formatter, self._sym, self._antisym)
+
+    def __setitem__(self, args, value):
+        r"""
+        Sets the component corresponding to the given indices.
+
+        INPUT:
+
+        - ``args`` -- list of indices (possibly a single integer if
+          self is a 1-index object); if ``[:]`` is provided, all the
+          components are set
+        - ``value`` -- the value to be set or a list of values if
+          ``args = [:]`` (``slice(None)``)
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import CompNumpyWithSym
+            sage: c = CompNumpyWithSym(ZZ, [1,2,3], 2, sym=(0,1))
+            sage: c.__setitem__((0,1), -4)
+            sage: c[:]
+            array([[ 0., -4.,  0.],
+                   [-4.,  0.,  0.],
+                   [ 0.,  0.,  0.]])
+            sage: c[0,1] = 4
+            sage: c[:]
+            array([[0., 4., 0.],
+                   [4., 0., 0.],
+                   [0., 0., 0.]])
+
+        """
+        if isinstance(args, list):  # case of [[...]] syntax
+            if isinstance(args[0], slice):
+                indices = args[0]
+            elif isinstance(args[0], (tuple, list)): # to ensure equivalence between
+                indices = args[0]           # [[(i,j,...)]] or [[[i,j,...]]] and [[i,j,...]]
+            else:
+                indices = tuple(args)
+        else:
+            # Determining from the input the list of indices and the format
+            if isinstance(args, (int, Integer, slice)):
+                indices = args
+            elif isinstance(args[0], slice):
+                indices = args[0]
+            elif len(args) == self._nid:
+                indices = args
+
+        if isinstance(indices, slice):
+            start, stop = indices.start, indices.stop
+            range_start, range_end = self._sindex[0], self._sindex[0] + self._shape[0]
+
+            if indices.start is not None:
+                start = indices.start - range_start
+            else:
+                start = 0
+            if indices.stop is not None:
+                stop = indices.stop - range_start
+            else:
+                stop = range_end - range_start
+            if not ((0 <= start <= range_end - range_start - 1) and
+                    (0 <= stop <= range_end - range_start)):
+                raise IndexError("[start:stop] not in range [{},{}]"
+                    .format(range_start, range_end))
+            #TODO: defining sym tensor for non-sym tensor input
+            self._comp[start:stop:indices.step] = value
+        else:
+            indices = self._check_indices(indices)
+            self._comp[indices] = value
+            from itertools import permutations
+            permuted_indices = [list(indices)]
+            for dims in self._sym:
+                symmetric_permutations = set(permutations([indices[i] for i in dims]))
+                for perm in symmetric_permutations:
+                    new_indices = list(indices)
+                    for i, dim in enumerate(dims):
+                        new_indices[dim] = perm[i]
+                    permuted_indices.append(new_indices)
+                    self._comp[tuple(new_indices)] = value
+
+            for ind_1, ind_2 in self._antisym:
+                ind = list(indices).copy()
+                ind[ind_1], ind[ind_2] = ind[ind_2], ind[ind_1]
+                self._comp[tuple(ind)] = - value
+
+class CompNumpyFullySym(CompNumpyWithSym):
+
+    def __init__(self, ring, frame, nb_indices, start_index=0,
+                 output_formatter=None):
+        r"""
+        TESTS::
+
+            sage: from sage.tensor.modules.comp_numpy import CompNumpyFullySym
+            sage: c = CompNumpyFullySym(ZZ, [1,2,3], 4, sym=(0,1), antisym=(2,3)); c
+            4-indices numpy components w.r.t. (1, 2, 3)
+
+        """
+        CompNumpyWithSym.__init__(self, ring, frame, nb_indices, start_index,
+                             output_formatter, sym=range(nb_indices))
+
+    def _new_instance(self):
+        r"""
+        Creates a :class:`CompNumpyFullySym` instance of the same number of indices
+        and w.r.t. the same frame.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import CompNumpyFullySym
+            sage: c = CompNumpyFullySym(ZZ, [1,2,3], 2)
+            sage: c._new_instance()
+            2-indices numpy components w.r.t. (1, 2, 3)
+
+        """
+        return self.__class__(self._ring, self._frame, self._nid, self._sindex,
+                            self._output_formatter)
+
+class CompNumpyFullyAntiSym(CompNumpyWithSym):
+
+    def __init__(self, ring, frame, nb_indices, start_index=0,
+                 output_formatter=None):
+        r"""
+        TESTS::
+
+            sage: from sage.tensor.modules.comp_numpy import CompNumpyFullyAntiSym
+            sage: c = CompNumpyFullyAntiSym(ZZ, [1,2,3], 4, sym=(0,1), antisym=(2,3)); c
+            4-indices numpy components w.r.t. (1, 2, 3)
+
+        """
+        CompNumpyWithSym.__init__(self, ring, frame, nb_indices, start_index,
+                             output_formatter, antisym=range(nb_indices))
+
+    def _new_instance(self):
+        r"""
+        Creates a :class:`CompNumpyFullyAntiSym` instance of the same number of indices
+        and w.r.t. the same frame.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import CompNumpyFullyAntiSym
+            sage: c = CompNumpyFullyAntiSym(ZZ, [1,2,3], 2)
+            sage: c._new_instance()
+            2-indices numpy components w.r.t. (1, 2, 3)
+
+        """
+        return self.__class__(self._ring, self._frame, self._nid, self._sindex,
+                                self._output_formatter)
+
+class KroneckerDeltaNumpy(CompNumpyFullySym):
+    def __init__(self, ring, frame, start_index=0, output_formatter=None):
+        r"""
+        TESTS::
+
+            sage: from sage.tensor.modules.comp_numpy import KroneckerDeltaNumpy
+            sage: d = KroneckerDeltaNumpy(ZZ, (1,2,3)); d
+
+        """
+        CompNumpyFullySym.__init__(self, ring, frame, 2, start_index,
+                              output_formatter)
+        for i in range(self._sindex, self._dim + self._sindex):
+            self._comp[(i,i)] = self._ring(1)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import KroneckerDeltaNumpy
+            sage: KroneckerDeltaNumpy(ZZ, (1,2,3))
+            Kronecker delta of size 3x3
+
+        """
+        n = str(self._dim)
+        return "Kronecker delta of size " + n + "x" + n
+
+    def __setitem__(self, args, value):
+        r"""
+        Should not be used (the components of a Kronecker delta are constant)
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.comp_numpy import KroneckerDeltaNumpy
+            sage: d = KroneckerDeltaNumpy(ZZ, (1,2,3))
+            sage: d.__setitem__((0,0), 1)
+            Traceback (most recent call last):
+            ...
+            TypeError: the components of a Kronecker delta cannot be changed
+
+        """
+        raise TypeError("the components of a Kronecker delta cannot be changed")
