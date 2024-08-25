@@ -338,8 +338,6 @@ class AtomicSpeciesElement(Element):
             sage: At = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
-            sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
-            Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
             sage: A._dompart
             ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))
@@ -404,8 +402,8 @@ class AtomicSpeciesElement(Element):
         for i in range(self.parent()._k):
             if len(self._dompart[i]) != len(other._dompart[i]):
                 return False
-            selflist.extend(self._dompart[i])
-            otherlist.extend(other._dompart[i])
+            selflist.extend(sorted(list(self._dompart[i])))
+            otherlist.extend(sorted(list(other._dompart[i])))
         mapping = libgap.MappingPermListList(selflist, otherlist)
         G = PermutationGroup(gap_group=libgap.ConjugateGroup(self._dis._C, mapping),
                              domain=self._dis._C.domain())
@@ -521,9 +519,9 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         mapping = {v: i for i, v in enumerate(G.domain(), 1)}
         mapping2 = PermutationGroupElement([mapping[e] for o in sorted(G.orbits(), key=len, reverse=True)
                                             for e in o]).inverse()
-        dpart = [tuple() for _ in range(self._k)]
+        dpart = [frozenset() for _ in range(self._k)]
         for k, v in pi.items():
-            dpart[k - 1] = tuple(mapping2(mapping[x]) for x in v)
+            dpart[k - 1] = frozenset(mapping2(mapping[x]) for x in v)
         elm = self._cache_get(self.element_class(self, dis_elm, tuple(dpart)))
         if elm._tc not in self._renamed:
             self._rename(elm._tc)
@@ -797,7 +795,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             self._group = PermutationGroup(gens, domain=range(1, elm1._tc + elm2._tc + 1))
             self._dompart = list(elm1._dompart)
             for i in range(elm2.parent()._k):
-                self._dompart[i] = tuple(list(self._dompart[i]) + [elm1._tc + e for e in elm2._dompart[i]])
+                self._dompart[i] = frozenset(list(self._dompart[i]) + [elm1._tc + e for e in elm2._dompart[i]])
             self._dompart = tuple(self._dompart)
 
         def __floordiv__(self, elt):
@@ -871,7 +869,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             sorted_orbits = sorted([sorted(orbit) for orbit in self._group.orbits()], key=len, reverse=True)
             pi = PermutationGroupElement(list(chain.from_iterable(sorted_orbits))).inverse()
             self._group = PermutationGroup(gap_group=libgap.ConjugateGroup(self._group, pi))
-            self._dompart = tuple(tuple(pi(k) for k in v) for v in self._dompart)
+            self._dompart = tuple(frozenset(pi(k) for k in v) for v in self._dompart)
 
         def grade(self):
             r"""
