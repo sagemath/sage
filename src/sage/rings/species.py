@@ -340,10 +340,10 @@ class AtomicSpeciesElement(Element):
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
             sage: A._dompart
-            ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))
+            (frozenset({5, 6, 7, 8}), frozenset({1, 2, 3, 4, 9, 10}))
             sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]})
             sage: C._dompart
-            ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))
+            (frozenset({5, 6, 7, 8}), frozenset({1, 2, 3, 4, 9, 10}))
         """
         # The canonicalization is done in the element constructor.
         pass
@@ -360,11 +360,11 @@ class AtomicSpeciesElement(Element):
             sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
             Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {((1,2,3,4)(5,6)(7,8)(9,10),): ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
             sage: B = At(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); B
-            {((1,2,3,4)(5,6)(7,8)(9,10),): ((1, 2, 3, 4), (5, 6, 7, 8, 9, 10))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({1, 2, 3, 4}), frozenset({5, 6, 7, 8, 9, 10}))}
             sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]}); C
-            {((1,2,3,4)(5,6)(7,8)(9,10),): ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
             sage: hash(A) == hash(B)
             True
             sage: hash(A) == hash(C)
@@ -420,7 +420,7 @@ class AtomicSpeciesElement(Element):
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {((1,2,3,4)(5,6)(7,8)(9,10),): ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
         """
         return "{" + f"{self._dis}: {self._dompart}" + "}"
 
@@ -480,7 +480,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             sage: At1.an_element()
             E_2
             sage: At2.an_element()
-            {((1,2)(3,4),): ((1, 2), (3, 4))}
+            {((1,2)(3,4),): (frozenset({1, 2}), frozenset({3, 4}))}
         """
         G = PermutationGroup([[(2 * i - 1, 2 * i) for i in range(1, self._k + 1)]])
         m = {i: [2 * i - 1, 2 * i] for i in range(1, self._k + 1)}
@@ -859,10 +859,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
                 sage: A = P(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
                 sage: A.support()[0]._dompart
-                ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))
+                (frozenset({5, 6, 7, 8}), frozenset({1, 2, 3, 4, 9, 10}))
                 sage: C = P(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]})
                 sage: C.support()[0]._dompart
-                ((5, 6, 7, 8), (9, 10, 1, 2, 3, 4))
+                (frozenset({5, 6, 7, 8}), frozenset({1, 2, 3, 4, 9, 10}))
             """
             if self._group is None or self._group == SymmetricGroup(0):
                 return
@@ -949,7 +949,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: M = P._indices
                 sage: C4 = M(CyclicPermutationGroup(4))
                 sage: C4.inner_sum(ZZ, "X, Y", [2, 2]) # X^2Y^2 + C2(XY)
-                {((1,2)(3,4),): ((1, 2), (3, 4))} + X^2*Y^2
+                {((1,2)(3,4),): (frozenset({1, 2}), frozenset({3, 4}))} + X^2*Y^2
 
             """
             # TODO: No checks are performed right now, must be added.
