@@ -4,6 +4,7 @@ from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.monoids import Monoids
 from sage.categories.sets_with_grading import SetsWithGrading
+from sage.categories.cartesian_product import cartesian_product
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
 from sage.groups.perm_gps.constructor import PermutationGroupElement
@@ -511,12 +512,12 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
         if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._k}]")
         if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
-            raise ValueError("values of pi must partition the domain of G")
+            raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         for orbit in G.orbits():
             if not any(set(orbit).issubset(p) for p in pi.values()):
-                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
+                raise ValueError(f"All elements of orbit {orbit} must have the same sort")
         dis_elm = ConjugacyClassesOfDirectlyIndecomposableSubgroups()(G)
         mapping = {v: i for i, v in enumerate(G.domain(), 1)}
         mapping2 = PermutationGroupElement([mapping[e] for o in sorted(G.orbits(), key=len, reverse=True)
@@ -587,12 +588,12 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         if not isinstance(G, PermutationGroup_generic):
             raise ValueError(f"{G} must be a permutation group")
         if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
+            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._k}]")
         if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
-            raise ValueError("values of pi must partition the domain of G")
+            raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         for orbit in G.orbits():
             if not any(set(orbit).issubset(p) for p in pi.values()):
-                raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
+                raise ValueError(f"All elements of orbit {orbit} must have the same sort")
         return len(G.disjoint_direct_product_decomposition()) <= 1
 
     def _repr_(self):
@@ -654,17 +655,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         If `G = (X, a)`, then `X` should be a finite set and `a` a transitive
         action of `G` on `X`.
 
-        EXAMPLES::
-
-            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-            sage: P(SymmetricGroup(4).young_subgroup([2, 2]), {1: [1,2], 2: [3,4]})
-            E_2(X)*E_2(Y)
-
-            sage: X = SetPartitions(4, 2)
-            sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
-            sage: P((X, a), {1: [1,2], 2: [3,4]})
-            X^2*E_2(Y) + X^2*Y^2 + E_2(X)*Y^2 + E_2(X)*E_2(Y)
-
         TESTS::
 
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
@@ -672,7 +662,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             sage: M(CyclicPermutationGroup(4), {1: [1,2], 2: [3,4]})
             Traceback (most recent call last):
             ...
-            ValueError: For each orbit of Cyclic group of order 4 as a permutation group, all elements must belong to the same sort
+            ValueError: All elements of orbit (1, 2, 3, 4) must have the same sort
         """
         if parent(G) == self:
             if pi is not None:
@@ -684,13 +674,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                     pi = {1: G.domain()}
                 else:
                     raise ValueError("the assignment of sorts to the domain elements must be provided")
-            if not set(pi.keys()).issubset(range(1, self._k + 1)):
-                raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
-            if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
-                raise ValueError("values of pi must partition X")
-            for orbit in G.orbits():
-                if not any(set(orbit).issubset(p) for p in pi.values()):
-                    raise ValueError(f"For each orbit of {G}, all elements must belong to the same sort")
             domain_partition = G.disjoint_direct_product_decomposition()
             elm = self.one()
             for part in domain_partition:
@@ -703,13 +686,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 pi = {1: X}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
-        # Make iteration over values of pi deterministic
-        pi = {k: list(v) for k, v in pi.items()}
+        L = [None for _ in range(self._k)]
+        for k, v in pi.items():
+            L[k - 1] = list(v)
         # Create group
         # TODO: Is this correct?
-        S = SymmetricGroup(list(chain.from_iterable(pi.values()))).young_subgroup([len(v) for v in pi.values()])
+        S = SymmetricGroup(list(chain.from_iterable(L))).young_subgroup([len(v) for v in L])
         H = PermutationGroup(S.gens(), action=a, domain=X)
         if len(H.orbits()) > 1:
             # Then it is not transitive
@@ -926,7 +908,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             """
             P = self.parent()
             if P is not other.parent():
-                raise ValueError("the factors of a Hadamard product must be the same.")
+                raise ValueError("the factors of a Hadamard product must be the same")
             Pn = PolynomialSpecies(ZZ, P._indices._names)
 
             if self._mc != other._mc:
@@ -948,6 +930,76 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 F = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
                 res += Pn(PermutationGroup(gap_group=F, domain=self.domain()), dpart)
             return res
+
+        def functorial_composition(self, other):
+            r"""
+            Return the functorial composition of ``self`` with ``other``.
+            Currrent this only works for univariate molecular species only.
+
+            TESTS::
+
+                sage: P = PolynomialSpecies(ZZ, ["X"])
+                sage: M = P._indices
+                sage: E = [None] + [M(SymmetricGroup(n)) for n in range(1, 4)]
+                sage: E[2].functorial_composition(E[2])
+                E_4
+                sage: E[1].functorial_composition(E[1])
+                X
+                sage: E[1].functorial_composition(E[2])
+                E_2
+                sage: E[2].functorial_composition(E[1])
+                X
+                sage: E[3].functorial_composition(E[2])
+                E_8
+                sage: E[2].functorial_composition(E[3])
+                E_9
+            """
+            if not isinstance(other, MolecularSpecies.Element):
+                raise ValueError(f"{other} must be a molecular species")
+            if other.parent()._k > 1:
+                raise ValueError(f"{other} must be univariate")
+            if self.parent()._k > 1:
+                raise ValueError(f"{self} must be univariate")
+
+            gens = []
+            dpart = {1: range(1, other.grade() ** self.grade() + 1)}
+
+            def to_number(l):
+                B = ZZ.one() # ZZ.one or 1?
+                R = 0 # Just 0 is fine?
+                for e in reversed(l):
+                    R += e * B
+                    B *= other.grade()
+                return R
+
+            # it is a base other.grade() representation
+            for pre in cartesian_product([range(other.grade())]*self.grade()):
+                pre_n = to_number(pre) + 1
+                # gens from self
+                for gen in self._group.gens():
+                    # gen swaps around the numbers in pre
+                    im = gen(list(pre))
+                    im_n = to_number(im) + 1
+                    if pre_n == im_n:
+                        continue
+                    gens.append([tuple([pre_n, im_n])])
+            print('after self',gens)
+
+            # gens from other
+            for gen in other._group.gens():
+                for pre in cartesian_product([range(other.grade())]*self.grade()):
+                    pre_n = to_number(pre) + 1
+                    for i in range(self.grade()):
+                        im_n = pre_n - pre[-i-1] * other.grade() ** i + (gen(pre[-i-1] + 1) - 1) * other.grade() ** i
+                        if pre_n == im_n:
+                            continue
+                        gens.append([tuple([pre_n, im_n])])
+            print('after others',gens)
+
+            G = PermutationGroup(gens,domain=range(1, other.grade() ** self.grade() + 1))
+            print('G',G)
+            print('dompart',dpart)
+            return other.parent()(G, dpart)
 
         def inner_sum(self, base_ring, names, *args):
             r"""
@@ -1027,17 +1079,17 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             gens = []
 
             # TODO: What happens if in F(G), G has a constant part? E(1+X)?
-            Mlist = [None for _ in range(self._group.degree())]
+            Mlist = [None for _ in range(self.grade())]
             for i, v in enumerate(self._dompart):
                 for k in v:
                     Mlist[k - 1] = args[i]
-            starts = list(accumulate([M._group.degree() for M in Mlist], initial=0))
+            starts = list(accumulate([M.grade() for M in Mlist], initial=0))
 
             # gens from self
             for gen in self._group.gens():
                 newgen = []
                 for cyc in gen.cycle_tuples():
-                    for k in range(1, Mlist[cyc[0] - 1]._group.degree() + 1):
+                    for k in range(1, Mlist[cyc[0] - 1].grade() + 1):
                         newgen.append(tuple(k + starts[i - 1] for i in cyc))
                 gens.append(newgen)
 
@@ -1112,6 +1164,17 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         If `G = (X, a)`, then `X` should be a finite set and `a` an action of
         `G` on `X`.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: P(SymmetricGroup(4).young_subgroup([2, 2]), {1: [1,2], 2: [3,4]})
+            E_2(X)*E_2(Y)
+
+            sage: X = SetPartitions(4, 2)
+            sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
+            sage: P((X, a), {1: [1,2], 2: [3,4]})
+            X^2*E_2(Y) + X^2*Y^2 + E_2(X)*Y^2 + E_2(X)*E_2(Y)
         """
         if parent(G) == self:
             if pi is not None:
@@ -1130,13 +1193,13 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 pi = {1: X}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi must be in the range [1, {self._k}]")
         # Make iteration over values of pi deterministic
-        pi = {k: list(v) for k, v in pi.items()}
+        L = [None for _ in range(self._k)]
+        for k, v in pi.items():
+            L[k - 1] = list(v)
         # Create group
         # TODO: Is this correct?
-        S = SymmetricGroup(list(chain.from_iterable(pi.values()))).young_subgroup([len(v) for v in pi.values()])
+        S = SymmetricGroup(list(chain.from_iterable(L))).young_subgroup([len(v) for v in L])
         H = PermutationGroup(S.gens(), action=a, domain=X)
         res = self.zero()
         for orbit in H.orbits():
