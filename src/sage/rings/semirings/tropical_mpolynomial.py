@@ -284,7 +284,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         T = self.parent().base()
         R = self.base_ring().base_ring()
 
-        # Finding the point of curve that touch the edge of the axes
+        # Find the point of curve that touch the edge of the axes
         for comp in tv.components():
             if len(comp[1]) == 1:
                 valid_int = RealSet(comp[1][0])
