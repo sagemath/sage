@@ -643,19 +643,17 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         `S_1, ldots, S_k` has a normal vector `n_1, \ldots, n_k`.
         Make sure that the normal vector is scale to an integer vector
         such that the greatest common divisor of its elements is 1.
-        
+
         The weight vector of a component `S_i` with respect to `L`
         can be found by calculating the cross product between direction
         vectors of `L` and normal vector `n_i`.These vectors will
-        satisfy the following balancing condition:
-        `\sum_{i=1}^k w_k v_k = 0`.
+        satisfy the balancing condition `\sum_{i=1}^k w_k v_k = 0`.
 
         OUTPUT:
 
-        A tuple of two dictionaries:
-        - The first dictionary contains equations representing the
-          intersections. 
-        - The second dictionary contains lists of vectors.
+        A tuple of two dictionaries. The first dictionary contains
+        equations representing the intersections. The second dictionary
+        contains lists of vectors.
 
         EXAMPLES:
 
@@ -683,13 +681,13 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: tv = p1.tropical_variety()
             sage: tv.weight_vectors()
             ({0: ((u1, u3 - 7/3, u3 - 10/3, u3), {u1 <= u3 - 22/3}),
-            1: ((u2 - 4, u2 + 1, u2, u3), {u2 <= u3 - 10/3}),
-            2: ((2*u1 - u3 - 2/3, u3 - 7/3, u1, u3), {u3 - 10/3 <= u1}),
-            3: ((u3 - 22/3, u2, u3 - 10/3, u3), {u3 - 7/3 <= u2})},
+             1: ((u2 - 4, u2 + 1, u2, u3), {u2 <= u3 - 10/3}),
+             2: ((2*u1 - u3 - 2/3, u3 - 7/3, u1, u3), {u3 - 10/3 <= u1}),
+             3: ((u3 - 22/3, u2, u3 - 10/3, u3), {u3 - 7/3 <= u2})},
             {0: [(0, 1, 1, -2), (0, 1, -2, 1), (0, -2, 1, 1)],
-            1: [(-2, 1, 1, 0), (3, -3, 0, 0), (-1, 2, -1, 0)],
-            2: [(-1, 5, 2, -6), (2, 1, -4, 1), (-1, -6, 2, 5)],
-            3: [(-1, 0, -1, 2), (-2, 0, 1, 1), (3, 0, 0, -3)]})
+             1: [(-2, 1, 1, 0), (3, -3, 0, 0), (-1, 2, -1, 0)],
+             2: [(-1, 5, 2, -6), (2, 1, -4, 1), (-1, -6, 2, 5)],
+             3: [(-1, 0, -1, 2), (-2, 0, 1, 1), (3, 0, 0, -3)]})
         """
         from sage.symbolic.ring import SR
         from sage.symbolic.relation import solve
