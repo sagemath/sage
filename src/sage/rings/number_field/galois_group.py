@@ -277,7 +277,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         You can specify the variable name for the Galois closure::
 
             sage: x = polygen(ZZ, 'x')
-            sage: G = NumberField(x^3 - 2, 'b').galois_group(names="c"); G
+            sage: G = NumberField(x^3 - 2, 'b').galois_group(names='c'); G
             Galois group 3T2 (S3) with order 6 of x^3 - 2
             sage: G._galois_closure
             Number Field in c with defining polynomial x^6 + 108
@@ -324,7 +324,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             sage: G = K.galois_group()
             sage: G._pol_galgp()
             PARI group [6, -1, 2, "S3"] of degree 3
-            sage: G._pol_galgp(algorithm="gap") # optional - gap_packages
+            sage: G._pol_galgp(algorithm='gap') # optional - gap_packages
             Transitive group number 2 of degree 3
         """
         algorithm = self._get_algorithm(algorithm)
@@ -342,7 +342,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             sage: R.<x> = ZZ[]
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
-            sage: G = K.galois_group(type="pari")
+            sage: G = K.galois_group(type='pari')
             ...DeprecationWarning: the different Galois types have been merged into one class
             See https://github.com/sagemath/sage/issues/28782 for details.
             sage: G.group()
@@ -357,7 +357,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
     @cached_method(key=_alg_key)
     def order(self, algorithm=None, recompute=False):
         """
-        Return the order of this Galois group
+        Return the order of this Galois group.
 
         EXAMPLES::
 
@@ -423,7 +423,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             2
             sage: x = polygen(ZZ, 'x')
             sage: L.<b> = NumberField(x^13 + 2*x + 2)
-            sage: H = L.galois_group(algorithm="gap")
+            sage: H = L.galois_group(algorithm='gap')
             sage: H.transitive_number() # optional - gap_packages
             9
         """
@@ -484,7 +484,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
     @lazy_attribute
     def _gcdata(self):
         """
-        Return the Galois closure, together with the embedding of the top field into it
+        Return the Galois closure, together with the embedding of the top field into it.
 
         EXAMPLES::
 
@@ -573,9 +573,8 @@ class GaloisGroup_v2(GaloisGroup_perm):
         """
         if self._gc_numbering:
             # PARI computes all the elements of self anyway, so we might as well store them
-            return sorted([self(x, check=False) for x in self._pari_data[5]])
-        else:
-            return sorted(list(self.iteration()))
+            return sorted(self(x, check=False) for x in self._pari_data[5])
+        return sorted(self.iteration())
 
     @lazy_attribute
     def _gens(self):
@@ -693,7 +692,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def _repr_(self):
         r"""
-        String representation of this Galois group
+        String representation of this Galois group.
 
         EXAMPLES::
 
@@ -1028,24 +1027,27 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
 class GaloisGroup_subgroup(GaloisSubgroup_perm):
     r"""
-    A subgroup of a Galois group, as returned by functions such as ``decomposition_group``.
+    A subgroup of a Galois group, as returned by functions such as
+    ``decomposition_group``.
 
     INPUT:
 
     - ``ambient`` -- the ambient Galois group
 
-    - ``gens`` -- a list of generators for the group
+    - ``gens`` -- list of generators for the group
 
     - ``gap_group`` -- a gap or libgap permutation group, or a string
         defining one (default: ``None``)
 
-    - ``domain`` -- a set on which this permutation group acts; extracted from ``ambient`` if not specified
+    - ``domain`` -- set on which this permutation group acts; extracted from
+      ``ambient`` if not specified
 
     - ``category`` -- the category for this object
 
     - ``canonicalize`` -- if ``True``, sorts and removes duplicates
 
-    - ``check`` -- whether to check that generators actually lie in the ambient group
+    - ``check`` -- whether to check that generators actually lie in the
+      ambient group
 
     EXAMPLES::
 
@@ -1106,7 +1108,7 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
 
         INPUT:
 
-        - ``name`` -- a variable name for the new field.
+        - ``name`` -- a variable name for the new field
 
         - ``polred`` -- whether to optimize the generator of the newly created field
             for a simpler polynomial, using PARI's :pari:`polredbest`.
@@ -1254,8 +1256,8 @@ class GaloisGroupElement(PermutationGroupElement):
 
     def __call__(self, x):
         r"""
-        Return the action of self on an element x in the number field of self
-        (or its Galois closure).
+        Return the action of ``self`` on an element x in the number field of
+        ``self`` (or its Galois closure).
 
         EXAMPLES::
 

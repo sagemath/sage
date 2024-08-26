@@ -22,9 +22,7 @@ def basis_of_short_vectors(self, show_lengths=False):
     r"""
     Return a basis for `\ZZ^n` made of vectors with minimal lengths `Q(v)`.
 
-    OUTPUT:
-
-    a tuple of vectors, and optionally a tuple of values for each vector.
+    OUTPUT: a tuple of vectors, and optionally a tuple of values for each vector
 
     This uses :pari:`qfminim`.
 
@@ -105,8 +103,8 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
 
     - ``len_bound`` -- bound for the length of the vectors
 
-    - ``up_to_sign_flag`` -- (default: ``False``) if set to True, then
-      only one of the vectors of the pair `[v, -v]` is listed.
+    - ``up_to_sign_flag`` -- boolean (default: ``False``); if set to ``True``,
+      then only one of the vectors of the pair `[v, -v]` is listed
 
     OUTPUT:
 
@@ -231,7 +229,7 @@ def short_primitive_vector_list_up_to_length(self, len_bound, up_to_sign_flag=Fa
 
         This processes the PARI/GP output to always give elements of type `\ZZ`.
 
-    OUTPUT: a list of lists of vectors.
+    OUTPUT: list of lists of vectors
 
     EXAMPLES::
 
@@ -262,7 +260,7 @@ def _compute_automorphisms(self):
 
     This uses :pari:`qfauto`.
 
-    OUTPUT: None, this just caches the result.
+    OUTPUT: none, this just caches the result
 
     TESTS::
 
@@ -338,7 +336,7 @@ def automorphisms(self):
     """
     Return the list of the automorphisms of the quadratic form.
 
-    OUTPUT: a list of matrices
+    OUTPUT: list of matrices
 
     EXAMPLES::
 
@@ -377,7 +375,7 @@ def number_of_automorphisms(self):
     Return the number of automorphisms (of det `1` and `-1`) of
     the quadratic form.
 
-    OUTPUT: an integer `\geq 2`.
+    OUTPUT: integer `\geq 2`
 
     EXAMPLES::
 
@@ -409,7 +407,7 @@ def set_number_of_automorphisms(self, num_autos):
     internal list of external initializations, accessible by the
     method :meth:`list_external_initializations`.
 
-    OUTPUT: None
+    OUTPUT: none
 
     EXAMPLES::
 

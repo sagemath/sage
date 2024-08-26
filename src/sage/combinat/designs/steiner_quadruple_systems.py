@@ -70,7 +70,7 @@ def two_n(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -80,7 +80,6 @@ def two_n(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not two_n(sqs).is_t_design(3,2*n,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
     Y = []
@@ -107,7 +106,7 @@ def three_n_minus_two(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -162,7 +161,7 @@ def three_n_minus_eight(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -172,7 +171,6 @@ def three_n_minus_eight(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_eight(sqs).is_t_design(3,3*n-8,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
 
@@ -222,8 +220,8 @@ def three_n_minus_four(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points where `n\equiv
-      10\pmod{12}`.
+    - ``B`` -- a Steiner Quadruple System on `n` points where `n\equiv
+      10\pmod{12}`
 
     EXAMPLES::
 
@@ -233,7 +231,6 @@ def three_n_minus_four(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_four(sqs).is_t_design(3,3*n-4,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
 
@@ -287,7 +284,7 @@ def four_n_minus_six(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -297,7 +294,6 @@ def four_n_minus_six(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not four_n_minus_six(sqs).is_t_design(3,4*n-6,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
     f = n-2
@@ -359,7 +355,7 @@ def twelve_n_minus_ten(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -369,7 +365,6 @@ def twelve_n_minus_ten(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not twelve_n_minus_ten(sqs).is_t_design(3,12*n-10,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
     B14 = steiner_quadruple_system(14)
@@ -453,11 +448,11 @@ def twelve_n_minus_ten(B):
 
 def relabel_system(B):
     r"""
-    Relabels the set so that `\{n-4, n-3, n-2, n-1\}` is in `B`.
+    Relabel the set so that `\{n-4, n-3, n-2, n-1\}` is in `B`.
 
     INPUT:
 
-    - ``B`` -- a list of 4-uples on `0,...,n-1`.
+    - ``B`` -- list of 4-uples on `0,...,n-1`
 
     EXAMPLES::
 
@@ -489,7 +484,7 @@ def relabel_system(B):
 
 def P(alpha, m):
     r"""
-    Return the collection of pairs `P_{\alpha}(m)`
+    Return the collection of pairs `P_{\alpha}(m)`.
 
     For more information on this system, see [Han1960]_.
 
@@ -552,7 +547,7 @@ def _missing_pair(n,l):
 
 def barP(eps, m):
     r"""
-    Return the collection of pairs `\overline P_{\alpha}(m)`
+    Return the collection of pairs `\overline P_{\alpha}(m)`.
 
     For more information on this system, see [Han1960]_.
 
@@ -567,7 +562,7 @@ def barP(eps, m):
 @cached_function
 def barP_system(m):
     r"""
-    Return the 1-factorization of `K_{2m}` `\overline P(m)`
+    Return the 1-factorization of `K_{2m}` `\overline P(m)`.
 
     For more information on this system, see [Han1960]_.
 
@@ -683,10 +678,10 @@ def steiner_quadruple_system(n, check=False):
 
     INPUT:
 
-    - ``n`` -- an integer such that `n\equiv 2,4\pmod 6`
+    - ``n`` -- integer such that `n\equiv 2,4\pmod 6`
 
-    - ``check`` (boolean) -- whether to check that the system is a Steiner
-      Quadruple System before returning it (`False` by default)
+    - ``check`` -- boolean (default: ``False``); whether to check that the
+      system is a Steiner Quadruple System before returning it
 
     EXAMPLES::
 

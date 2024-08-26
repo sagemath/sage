@@ -96,7 +96,7 @@ lazy_import('sage.combinat.sf.sf', 'SymmetricFunctions')
 class OrderedMultisetPartitionIntoSets(ClonableArray,
         metaclass=InheritComparisonClasscallMetaclass):
     r"""
-    Ordered Multiset Partition into sets
+    Ordered Multiset Partition into sets.
 
     An *ordered multiset partition into sets* `c` of a multiset `X` is a list
     `[c_1, \ldots, c_r]` of nonempty subsets of `X` (note: not
@@ -224,7 +224,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
 
     def _repr_(self):
         """
-        Return a string representation of ``self.``
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -432,7 +432,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
 
         INPUT:
 
-        - ``as_dict`` -- (default: ``False``) whether to return the multiset
+        - ``as_dict`` -- boolean (default: ``False``); whether to return the multiset
           as a tuple of a dict of multiplicities
 
         EXAMPLES::
@@ -1127,7 +1127,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
     - Two Arguments:
 
-      + `A` -- a list (representing allowable letters within blocks of `c`),
+      + `A` -- list (representing allowable letters within blocks of `c`),
         or a positive integer (representing the maximal allowable letter)
       + `n` -- a nonnegative integer (the total number of letters within `c`)
 
@@ -1912,7 +1912,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``size`` -- an integer representing a slice of all ordered
+        - ``size`` -- integer representing a slice of all ordered
           multiset partitions into sets
 
         The slice alluded to above is taken with respect to length, or
@@ -3089,7 +3089,7 @@ def _refine_block(S, strong=False):
 
 def _is_initial_segment(lst):
     r"""
-    Return True if ``lst`` is an interval in `\ZZ` of the form `[0, 1, \ldots, n]`.
+    Return ``True`` if ``lst`` is an interval in `\ZZ` of the form `[0, 1, \ldots, n]`.
 
     EXAMPLES::
 
@@ -3148,7 +3148,7 @@ def _to_minimaj_blocks(T):
 
     INPUT:
 
-    - ``T`` -- a sequence of row words corresponding to (skew-)tableaux.
+    - ``T`` -- a sequence of row words corresponding to (skew-)tableaux
 
     OUTPUT:
 
@@ -3416,7 +3416,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
             Minimaj elements `b` are stored internally as pairs
             ``(w, breaks)``, where:
 
-            - ``w`` is a word of length ``self.parent().ell`` over the
+            - ``w`` -- a word of length ``self.parent().ell`` over the
               letters `1` up to ``self.parent().n``;
             - ``breaks`` is a list of de-concatenation points to turn ``w``
               into a list of row words of (skew-)tableaux that represent

@@ -31,10 +31,10 @@ def sparse_2term_quotient_only_pm1(rels, n):
     INPUT:
 
     - ``rels`` -- iterable made of pairs ((i,s), (j,t)). The pair
-      represents the relation s*x_i + t*x_j = 0, where the i, j must
-      be Python int's, and the s,t must all be 1 or -1.
+      represents the relation `s x_i + t x_j = 0`, where the `i, j` must
+      be Python int's, and the `s, t` must all be 1 or -1.
 
-    - ``n`` -- int, the x_i are x_0, ..., x_n-1.
+    - ``n`` -- integer; the `x_i` are `x_0, \ldots, x_{n-1}`
 
     OUTPUT:
 
