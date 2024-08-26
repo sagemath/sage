@@ -813,6 +813,19 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
     def gen(self, x):
         r"""
         Create the molecular species from an atomic species.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(ZZ, "X, Y")
+            sage: At = AtomicSpecies("X, Y")
+            sage: G = PermutationGroup([[(1,2),(3,4)]]); G
+            sage: pi = {1: [1,2], 2: [3,4]}
+            sage: E2XY = At(G, pi)
+            sage: At(G, pi).rename("E_2(XY)"); E2XY
+            E_2(XY)
+            sage: m = P._indices.gen((G, pi)); m
+            E_2(XY)
+            sage: type(m)
         """
         if x not in self._indices:
             raise IndexError(f"{x} is not in the index set")
@@ -918,6 +931,17 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         def _mul_(self, other):
             r"""
             Multiply ``self`` by ``other``.
+
+            TESTS::
+
+                sage: P = PolynomialSpecies(ZZ, "X, Y")
+                sage: M = P._indices
+                sage: E2X = M(SymmetricGroup(2), {1: [1,2]}); E2X
+                sage: (E2X._group, E2X._dompart, E2X._mc, E2X._tc)
+                sage: E2Y = M(SymmetricGroup(2), {2: [1,2]}); E2Y
+                sage: (E2Y._group, E2Y._dompart, E2Y._mc, E2Y._tc)
+                sage: E2XE2Y = E2X * E2Y; E2XE2Y
+                sage: (E2XE2Y._group, E2XE2Y._dompart, E2XE2Y._mc, E2XE2Y._tc)
             """
             res = super()._mul_(other)
             elm = self.parent()._cache_get(res)
@@ -1232,6 +1256,18 @@ class PolynomialSpecies(CombinatorialFreeModule):
     def degree_on_basis(self, m):
         r"""
         Return the degree of the molecular species indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: E4X = P(SymmetricGroup(4), {1: range(1, 5)}); E4X
+            E_4(X)
+            sage: E4Y = P(SymmetricGroup(4), {2: range(1, 5)}); E4Y
+            E_4(Y)
+            sage: P.degree_on_basis(E4X.support()[0])
+            (4, 0)
+            sage: P.degree_on_basis(E4Y.support()[0])
+            (0, 4)
         """
         return m.grade()
 
