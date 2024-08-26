@@ -843,7 +843,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             elm._mc = at._mc
             elm._tc = at._tc
         return elm
-    
+
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
