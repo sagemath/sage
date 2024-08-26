@@ -1931,6 +1931,40 @@ cdef class FiniteField(Field):
         return (exists_conway_polynomial(p, n)
                 and self.polynomial() == self.polynomial_ring()(conway_polynomial(p, n)))
 
+    def an_embedding(self, K):
+        r"""
+        Return some embedding of this field into another field `K`,
+        and raise a :class:`ValueError` if none exists.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.ring.Field.an_embedding`
+
+        EXAMPLES::
+
+            sage: GF(4,'a').an_embedding(GF(2).algebraic_closure())
+            Ring morphism:
+              From: Finite Field in a of size 2^2
+              To:   Algebraic closure of Finite Field of size 2
+              Defn: a |--> ...
+        """
+        try:
+            return super().an_embedding(K)
+        except (NotImplementedError, ValueError):
+            pass
+        if K not in FiniteFields():
+            from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
+            if not isinstance(K, AlgebraicClosureFiniteField_generic):
+                raise NotImplementedError('computing embeddings into this ring not implemented')
+        g = self.gen()
+        if (emb := K.coerce_map_from(self)) is not None:
+            return self.hom([emb(g)])
+        try:
+            r = g.minpoly().change_ring(K).any_root()
+        except ValueError:
+            raise ValueError(f'no embedding from {self} to {K}')
+        return self.hom([r])
+
     def embeddings(self, K):
         r"""
         Return a list of all embeddings of this field in another field `K`.

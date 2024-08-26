@@ -6961,7 +6961,7 @@ cdef class Matrix(Matrix1):
             if f.degree() == 1:
                 res.extend([-f.constant_coefficient()]*e)
             else:
-                for r, ee in f.change_ring(A).roots():
+                for r, ee in f.change_ring(K.an_embedding(A)).roots():
                     res.extend([r]*(e*ee))
 
         eigenvalues = Sequence(res)
@@ -12524,7 +12524,7 @@ cdef class Matrix(Matrix1):
                 _, SA = A.jordan_form(transformation=True)
                 _, SB = B.jordan_form(transformation=True)
                 return (True, SB * SA.inverse())
-            except (ValueError, RuntimeError, NotImplementedError):
+            except (ValueError, RuntimeError, NotImplementedError, TypeError):
                 raise RuntimeError('unable to compute transformation for similar matrices')
 
     def symplectic_form(self):
