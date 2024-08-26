@@ -31,5 +31,5 @@ paid to making sure that the system does not become bloated and
 disorganized. The mission statement allows for a very wide variety of
 contributions.
 
-See [FAQ: Contributing to Sage](https://doc.sagemath.org/html/en/faq/faq-contribute.html)
+See [Sage Developer Guide](https://doc.sagemath.org/html/en/developer/index.html)
 for more information.
