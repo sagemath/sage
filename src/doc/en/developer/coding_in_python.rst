@@ -279,6 +279,8 @@ replacements are made:
   are very small.  Large Sage integers are much more efficient than
   Python integers since they are implemented using the GMP C library.
 
+- See also the `afterword`_ for more information.
+
 Consult the file ``preparser.py`` for more details about Sage
 preparsing, more examples involving raw literals, etc.
 
@@ -305,6 +307,60 @@ The following files are relevant to preparsing in Sage:
 
 In particular, the file ``preparse.py`` contains the Sage preparser
 code.
+
+When you manually move code that works in an interactive Sage session
+or in a ``.sage`` file to a ``.py`` file, you will need to make
+various changes. We only highlight two main differences here:
+
+- **Handling of integers:** You need to take care of the following
+  changes:
+
+  - Notation for exponentiation: In Python ``**`` means exponentiation
+    and ``^`` means "xor".
+  - If you need to return an integer to the user, write ``return
+    Integer(1)`` instead of ``return 1``. In Python, 1 is a python
+    ``int``, and ``Integer(1)`` is a Sage/Gmp integer. In addition,
+    ``Integer`` are much more powerful than ``int``; for
+    example, they know about being prime and factorization.
+  - You should also notice that ``2 / 3`` no longer means
+    ``Integer(2) / Integer(3)`` and returns ``2/3``, but rather
+    ``int(2) / int(3)``, and therefore returns ``0`` due to integer
+    division where it deregards any remainder. If you are dealing with
+    ``Integer`` but you really need an integer division you can use
+    ``Integer(2) // Integer(3)``.
+
+- **Importing stuff:** The second big change is the necessity to
+  import everything what you need. More precisely, each time you use
+  some Sage function, you need to import it at the beginning of the
+  file. For example, if you want ``PolynomialRing``, you need to
+  write:
+
+  .. CODE-BLOCK:: python
+
+      from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+  You can use ``import_statements`` to get the exact necessary line::
+
+      sage: import_statements(PolynomialRing)
+      from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+  If this fails, you can ask Sage where to find ``PolynomialRing`` using::
+
+      sage: PolynomialRing.__module__
+      'sage.rings.polynomial.polynomial_ring_constructor'
+
+  This also corresponds to the final segments of the path shown
+  when you ask Sage for ``PolynomialRing`` help. For example,
+  if you call ``PolynomialRing?``, you get:
+
+  .. CODE-BLOCK:: text
+
+      Type:    function
+      [...]
+      File: .../sage/rings/polynomial/polynomial_ring_constructor.py
+      [...]
+
+.. _afterword: https://doc.sagemath.org/html/en/tutorial/afterword.html
 
 
 The Sage coercion model
