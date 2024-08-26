@@ -455,9 +455,13 @@ class AtomicSpeciesElement(Element):
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
+            sage: A = At(G, {2: [1,2,3,4,5,6,7,8,9,10]}); A
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})}
         """
-        return "{" + f"{self._dis}: {self._dompart}" + "}"
+        dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
+                           for b in self._dompart)
+        return "{" + f"{self._dis}: ({dompart})" + "}"
 
 
 class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
@@ -1176,8 +1180,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         def __call__(self, *args):
             r"""
             Substitute M_1...M_k into self.
-            M_i must all have same arity, same multicardinality,
-            and must be molecular.
+            M_i must all have same arity and must be molecular.
 
             EXAMPLES::
 
@@ -1191,6 +1194,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 E_2
                 sage: E2(E2)
                 P_4
+
+                sage: P = PolynomialSpecies(ZZ, ["X","Y"])
+                sage: M = P._indices
+                sage: X = M(SymmetricGroup(1), {1:[1]})
+                sage: Y = M(SymmetricGroup(1), {2:[1]})
+                sage: (X*Y)(X, Y^2)
             """
             if len(args) != self.parent()._k:
                 raise ValueError("number of args must match arity of self")
@@ -1198,8 +1207,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 raise ValueError("all args must be molecular species")
             if len(set(arg.parent()._k for arg in args)) > 1:
                 raise ValueError("all args must have same arity")
-            if len(set(arg._mc for arg in args)) > 1:
-                raise ValueError("all args must have same multicardinality")
 
             gens = []
 
