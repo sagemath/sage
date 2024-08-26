@@ -108,8 +108,8 @@ behaves differently from Python in several ways.
 
 -  **Integer division:** The Python expression ``2/3`` does not
    behave the way mathematicians might expect:  ``2/3`` returns the
-   floating point number ``0.6666...``. (Note that ``//``
-   is the Euclidean division and ``2//3`` returns ``0``).
+   floating point number ``0.6666...``. Note that ``//``
+   is the Euclidean division and ``2//3`` returns ``0``.
 
    We deal with this in the Sage interpreter, by wrapping integer
    literals in ``Integer( )`` and making division a constructor for rational
