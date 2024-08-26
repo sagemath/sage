@@ -819,6 +819,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             sage: P = PolynomialSpecies(ZZ, "X, Y")
             sage: At = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2),(3,4)]]); G
+            Permutation Group with generators [(1,2)(3,4)]
             sage: pi = {1: [1,2], 2: [3,4]}
             sage: E2XY = At(G, pi)
             sage: At(G, pi).rename("E_2(XY)"); E2XY
@@ -826,6 +827,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             sage: m = P._indices.gen((G, pi)); m
             E_2(XY)
             sage: type(m)
+            <class 'sage.rings.species.MolecularSpecies_with_category.element_class'>
         """
         if x not in self._indices:
             raise IndexError(f"{x} is not in the index set")
@@ -937,11 +939,26 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: P = PolynomialSpecies(ZZ, "X, Y")
                 sage: M = P._indices
                 sage: E2X = M(SymmetricGroup(2), {1: [1,2]}); E2X
+                E_2(X)
                 sage: (E2X._group, E2X._dompart, E2X._mc, E2X._tc)
+                (Permutation Group with generators [(1,2)],
+                (frozenset({1, 2}), frozenset()),
+                (2, 0),
+                2)
                 sage: E2Y = M(SymmetricGroup(2), {2: [1,2]}); E2Y
+                E_2(Y)
                 sage: (E2Y._group, E2Y._dompart, E2Y._mc, E2Y._tc)
+                (Permutation Group with generators [(1,2)],
+                (frozenset(), frozenset({1, 2})),
+                (0, 2),
+                2)
                 sage: E2XE2Y = E2X * E2Y; E2XE2Y
+                E_2(X)*E_2(Y)
                 sage: (E2XE2Y._group, E2XE2Y._dompart, E2XE2Y._mc, E2XE2Y._tc)
+                (Permutation Group with generators [(3,4), (1,2)],
+                (frozenset({1, 2}), frozenset({3, 4})),
+                (2, 2),
+                4)
             """
             res = super()._mul_(other)
             elm = self.parent()._cache_get(res)
@@ -1130,7 +1147,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: M = P._indices
                 sage: C4 = M(CyclicPermutationGroup(4))
                 sage: C4.inner_sum(ZZ, "X, Y", [2, 2]) # X^2Y^2 + C2(XY)
-                {((1,2)(3,4),): (frozenset({1, 2}), frozenset({3, 4}))} + X^2*Y^2
+                E_2(XY) + X^2*Y^2
 
             """
             # TODO: No checks are performed right now, must be added.
