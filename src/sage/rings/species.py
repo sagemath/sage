@@ -170,7 +170,7 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
             return
         sorted_orbits = sorted([sorted(orbit) for orbit in self._C.orbits()], key=len, reverse=True)
         pi = PermutationGroupElement(list(chain.from_iterable(sorted_orbits))).inverse()
-        self._C = PermutationGroup(gap_group=libgap.ConjugateGroup(self._C, pi))
+        self._C = PermutationGroup(self._C.gens_small(), domain=self._C.domain()).conjugate(pi)
 
     def __eq__(self, other):
         r"""
@@ -1048,7 +1048,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 return
             sorted_orbits = sorted([sorted(orbit) for orbit in self._group.orbits()], key=len, reverse=True)
             pi = PermutationGroupElement(list(chain.from_iterable(sorted_orbits))).inverse()
-            self._group = PermutationGroup(gap_group=libgap.ConjugateGroup(self._group, pi))
+            self._group = self._group.conjugate(pi)
             self._dompart = tuple(frozenset(pi(k) for k in v) for v in self._dompart)
 
         def grade(self):
