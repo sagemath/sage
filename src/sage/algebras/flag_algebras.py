@@ -237,7 +237,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     Element = Flag
     
-    def __init__(self, name, generator, identifier, allowed_sizes=None, **signature):
+    def __init__(self, name, generator, identifier, size_combine=None, **signature):
         r"""
         Initialize a Combinatorial Theory
         
@@ -301,13 +301,14 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             -RamseyGraphTheory (see [LiPf2021]_ for explanation)
         """
         self._signature = signature
-        if allowed_sizes==None:
+        if size_combine==None:
             self._sizes = NN
-        elif 0 not in allowed_sizes:
-            raise ValueError("Size 0 must be allowed.")
+            self._size_combine = None
         else:
-            self._sizes = tuple(allowed_sizes)
+            self._size_combine = size_combine
+            self._sizes = [ii for ii in range(100) if size_combine(0, ii, 0) == ii]
         self._excluded = []
+        self._cache = {}
         self._generator = generator
         self._identifier = identifier
         self._name = name
@@ -354,18 +355,22 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         Saves the calculated data to persistent storage.
         """
         ns = self._calcs_dir() + self._name + "."
+        
         if is_table:
             excluded, n1, n2, N, large_ftype, ftype_inj = ind
             numsind = [0]
             for xx in excluded:
                 numsind += xx.raw_numbers()
             numsind += [n1, n2] + large_ftype.raw_numbers() + list(ftype_inj)
+            if len(ret)<3000:
+                self._cache[ind] = ret
         else:
             excluded, n, ftype = ind
             numsind = [1]
             for xx in excluded:
                 numsind += xx.raw_numbers()
             numsind += [n] + ftype.raw_numbers()
+            self._cache[ind] = ret
         save_name = ns + self._compress(numsind)
         os.makedirs(os.path.dirname(save_name), exist_ok=True)
         with open(save_name, 'wb') as file:
@@ -376,6 +381,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         Tries to load persistent data.
         """
         ns = self._calcs_dir() + self._name + "."
+        
+        if ind in self._cache.keys():
+            return self._cache[ind]
         
         if is_table:
             excluded, n1, n2, N, large_ftype, ftype_inj = ind
@@ -390,16 +398,14 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 numsind += xx.raw_numbers()
             numsind += [n] + ftype.raw_numbers()
         load_name = ns + self._compress(numsind)
-        
         if os.path.isfile(load_name):
             with open(load_name, 'rb') as file:
                 ret = pickle.load(file)
-                if is_table:
-                    return ret
-                else:
+                if not is_table:
                     for xx in ret:
                         xx._set_parent(self)
-                    return ret
+                self._cache[ind] = ret
+                return ret
         return None
     
     def _calcs_dir(self):
@@ -612,6 +618,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def sizes(self):
         return self._sizes
     
+    def size_combine(self, k, n1, n2):
+        if k<0 or n1<0 or n2<0:
+            raise ValueError("Can't have negative size.")
+        if n1<k or n2<k:
+            raise ValueError("Can't have larger ftype size than flag size.")
+        ret = n1+n2-k
+        if self._size_combine != None:
+            ret = self._size_combine(k, n1, n2)
+        if ret==None:
+            raise ValueError("Size combination is not allowed.")
+        if ret<0:
+            raise ValueError("The size combination resulted in a negative value.")
+        return ret
+    
     def identify(self, n, ftype_points, **blocks):
         r"""
         The function used to test for equality.
@@ -692,9 +712,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             
         """
         if type(flags)==Flag:
-            self._excluded = [flags]
+            if flags.unique() != None:
+                self._excluded = [flags]
+            else:
+                self._excluded = []
         else:
-            self._excluded = flags
+            self._excluded = [xx for xx in flags if xx.unique() != None]
     
     def _check_excluded(self, elms):
         r"""
@@ -805,9 +828,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         else:
             mat_inds, mat_vals, block_sizes = prev_data
         block_index = len(block_sizes) + 1
-
+        
         constr_num = len(constraints_vals)
-
+        
         for ii in range(constr_num):
             mat_inds.extend([0, block_index+1, 1+ii, 1+ii])
             mat_vals.append(constraints_vals[ii])
@@ -825,7 +848,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
-                         construction=None, certificate=False, exact=False, ftype_pairs=None):
+                         construction=None, certificate=False, exact=False):
         r"""
         Try to maximize or minimize the value of `target_element`
         
@@ -892,31 +915,26 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # create the table data
         #
 
-        if ftype_pairs==None:
-            plausible_sizes = []
-            for fs in self.sizes():
-                if fs>=target_size:
-                    break
-                if fs==0:
-                    continue
-                plausible_sizes.append(fs)
-            ftype_pairs = []
-            for fs, ns in itertools.combinations(plausible_sizes, r=int(2)):
-                if 2*ns-fs <= target_size:
-                    kk = ns-fs
-                    found = False
-                    for ii, (bfs, bns) in enumerate(ftype_pairs):
-                        if bns-bfs==kk:
-                            found = True
-                            if ns>bns:
-                                ftype_pairs[ii]=(fs, ns)
-                            break
-                    if not found:
-                        ftype_pairs.append((fs, ns))
-        else:
-            for xx, yy in ftype_pairs:
-                if xx not in self.sizes() or yy not in self.sizes():
-                    raise ValueError("The ftype pairs contain sizes that are not allowed.")
+        plausible_sizes = []
+        for fs in self.sizes():
+            if fs>=target_size:
+                break
+            if fs==0:
+                continue
+            plausible_sizes.append(fs)
+        ftype_pairs = []
+        for fs, ns in itertools.combinations(plausible_sizes, r=int(2)):
+            if self.size_combine(fs, ns, ns) <= target_size:
+                kk = ns-fs
+                found = False
+                for ii, (bfs, bns) in enumerate(ftype_pairs):
+                    if bns-bfs==kk:
+                        found = True
+                        if ns>bns:
+                            ftype_pairs[ii]=(fs, ns)
+                        break
+                if not found:
+                    ftype_pairs.append((fs, ns))
 
         ftype_data = []
         for fs, ns in ftype_pairs:
@@ -949,38 +967,50 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if asym_base.nrows()!=0:
                 bases.append(asym_base)
             table_constructor[dat] = bases
-            pbar.set_description("done with mult table for {}".format(ftype))
-        print("Tables constructed")
+            pbar.set_description("Done with mult table for {}".format(ftype))
 
         sdp_data = self._tables_to_sdp_data(table_constructor)
+        print("Tables finished", flush=True)
 
         #
         # add constraints data
         #
 
         if positives == None:
-            constraints_flags = []
+            positives_list_exact = []
             constraints_vals = []
         else:
-            constraints_flags = []
-            for ii in range(len(positives)):
+            positives_list_exact = []
+            for ii in (pbar:= tqdm(range(len(positives)))):
                 fv = positives[ii]
                 if isinstance(fv, Flag):
                     continue
-                d = target_size - fv.size()
-                k = fv.ftype().size()
-                terms = fv.afae().parent().generate_flags(k+d)
-                constraints_flags += [fv.mul_project(xx) for xx in terms]
-                print("Done with constraint for \n{}\n".format(fv))
-            constraints_vals = [0]*len(constraints_flags)
-        one_vector = target_element.ftype().project()<<(target_size - target_element.ftype().size())
-        constraints_flags.extend([one_vector, one_vector*(-1)])
+                kf = fv.ftype().size()
+                nf = fv.size()
+                if self._size_combine == None:
+                    df = target_size - nf + kf
+                else:
+                    df = -1
+                    for xx in self.sizes():
+                        if self._size_combine(kf, nf, xx)==target_size:
+                            df = xx
+                            break
+                mult_table = self.mul_project_table(nf, df, fv.ftype(), ftype_inj=[], target_size=target_size)
+                fvvals = fv.values()
+                m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
+                positives_list_exact += list(m.T)
+                pbar.set_description("Done with positivity constraint {}".format(ii))
+            constraints_vals = [0]*len(positives_list_exact)
+        if target_element.ftype().size()==0:
+            one_vector = vector([1]*len(base_flags))
+        else:
+            one_vector = target_element.ftype().project()<<(target_size - target_element.ftype().size()).values()
+        positives_list_exact.extend([one_vector, one_vector*(-1)])
         constraints_vals.extend([1, -1])
-        positives_list_exact = [(xx<<(target_size-xx.size())).values() for xx in constraints_flags]
         positives_matrix_exact = matrix(positives_list_exact)
-
         sdp_data = self._constraints_to_sdp_data(len(base_flags), constraints_vals, positives_list_exact, sdp_data)
-
+        print("Constraints finished")
+        
         #
         # if no y value provided, run the optimizer first, only to get the y values
         #
@@ -1021,7 +1051,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         sdp_data = self._constraints_to_sdp_data(len(base_flags), constraints_vals, positives_list_exact, sdp_data)
         mat_inds, mat_vals, block_sizes = sdp_data
 
-        print("Running SDP after kernel correction. Used with block sizes are {}".format(block_sizes))
+        print("Running SDP after kernel correction. Used block sizes are {}".format(block_sizes))
 
         time.sleep(float(0.1))
         final_sdp = solve_sdp(block_sizes, list(target_vector_exact), mat_inds, mat_vals)
@@ -1181,9 +1211,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             block_index += len(table_constructor[params])
 
         if rounding_successful:
-            print("The exact value after rounding is {}".format(_fraction_print(min(slacks))))
+            print("The exact value after rounding is {}".format(_fraction_print(-min(slacks))))
         else:
-            print("The rounding was unsuccessful, otherwise the result would be {}".format(_fraction_print(min(slacks))))
+            print("The rounding was unsuccessful, otherwise the result would be {}".format(_fraction_print(-min(slacks))))
 
         return min(slacks), X_matrix_corr
     
@@ -1287,6 +1317,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             return (ftype, )
         return self._gfe(tuple(self._excluded), n, ftype)
     
+    generate = generate_flags
+    
     def mul_project_table(self, n1, n2, large_ftype, ftype_inj=None, target_size=None):
         r"""
         Returns the multiplication projection table
@@ -1348,25 +1380,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if len(set(ftype_inj)) != len(ftype_inj):
                 raise ValueError('ftype_inj must be injective (no repeated elements)')
         if target_size==None:
-            target_size = self._next_allowed_size(n1 + n2 - large_size)
+            target_size = self.size_combine(large_size, n1, n2)
         elif target_size not in self.sizes():
             raise ValueError("For theory {}, size {} is not allowed.".format(self._name, target_size))
         return self._mpte(tuple(self._excluded), target_size, n1, n2, large_ftype, ftype_inj)
     
     mpt = mul_project_table
-    
-    def _next_allowed_size(self, start):
-        N = -1
-        for xx in self._sizes:
-            if xx<0:
-                raise ValueError("The allowed sizes can't contain negative numbers")
-            if xx>=start and (xx<N or N==-1):
-                N = xx
-            if xx>=100:
-                break
-        if N==-1:
-            raise ValueError("No suitable size found.")
-        return N
+    table = mul_project_table
     
     def _mpte(self, excluded, N, n1, n2, large_ftype, ftype_inj):
         r"""
@@ -1956,7 +1976,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
             vals = self.values() * other.values()[0]
             return self.__class__(self.parent(), self.size(), vals)
         table = self.parent().mpt(self.size(), other.size())
-        N = self.parent().theory()._next_allowed_size(self.size() + other.size() - self.ftype().size())
+        N = self.parent().theory().size_combine(self.ftype().size(), self.size(), other.size())
         vals = [self.values() * mat * other.values() for mat in table]
         return self.__class__(self.parent(), N, vals)
     
@@ -2073,7 +2093,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         """
         return self.mul_project(1, ftype_inj)
     
-    def mul_project(self, other, ftype_inj=tuple()):
+    def mul_project(self, other, ftype_inj=tuple(), target_size=None):
         r"""
         Multiply self with other, and the project the result.
 
@@ -2111,9 +2131,13 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         ftype_inj = tuple(ftype_inj)
         new_ftype = self.ftype().subflag([], ftype_points=ftype_inj)
         if new_ftype==None or new_ftype.unique()==None:
-            raise ValueError("The ftype injection maps from an invalid ftype.")
-        table = self.parent().mpt(self.size(), other.size(), ftype_inj)
-        N = self.parent().theory()._next_allowed_size(self.size() + other.size() - self.ftype().size())
+            raise ValueError("The ftype injection maps to an invalid ftype.")
+        N = self.parent().theory().size_combine(self.ftype().size(), self.size(), other.size())
+        if target_size!=None:
+            if target_size<N:
+                raise ValueError("Target size is smaller than minimum allowed size for this operation.")
+            N = target_size
+        table = self.parent().mpt(self.size(), other.size(), ftype_inj=ftype_inj, target_size=N)
         vals = [self.values() * mat * other.values() for mat in table]
         
         TargetAlgebra = FlagAlgebra(self.parent().base(), self.parent().combinatorial_theory(), new_ftype)
@@ -2949,6 +2973,19 @@ def _identify_cube_points(n, ftype_points, edges, points):
     blocks = tuple(g.canonical_label(partition=g_parts).edges(labels=None, sort=True))
     return (n, tuple([len(xx) for xx in ftype_points]), blocks)
 
+def _cube_size_combine(k, n1, n2):
+    if k==0 and n1==0 and n2==0:
+        return 0
+    if k==0:
+        if n1>0 and n2>0:
+            return None
+    n1 = max(n1, 1)
+    n2 = max(n2, 1)
+    k = max(k, 1)
+    if log(n1, 2) not in NN or log(n2, 2) not in NN or log(k, 2) not in NN:
+        return None
+    return QQ(n1*n2/k)
+
 def colored_identify(k, order_partition, n, ftype_points, **kwargs):
     r"""
     A general identifier code, it works on any edge arity and color number,
@@ -3052,12 +3089,12 @@ RamseyGraphTheory = CombinatorialTheory('RamseyGraph',
 HypercubeGraphTheory = CombinatorialTheory('HypercubeGraph', 
                                            _generator_cube_graphs, 
                                            _identify_cube_graphs, 
-                                           allowed_sizes=(0, 1, 2, 4, 8, 16), 
+                                           size_combine=_cube_size_combine, 
                                            edges=2)
 
 # should only be used up to size 16.
 HypercubeVertexTheory = CombinatorialTheory('HypercubeVertex', 
                                          _generator_cube_points, 
                                          _identify_cube_points, 
-                                         allowed_sizes=(0, 1, 2, 4, 8, 16, 32), 
+                                         size_combine=_cube_size_combine, 
                                          edges=2, points=1)
