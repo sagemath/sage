@@ -671,7 +671,7 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         OUTPUT: iterator over points
 
-        EXAMPLES::
+        TESTS::
 
             sage: E = EllipticCurve(GF(19), [1, 0])
             sage: list(E.point_homset())
