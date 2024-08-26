@@ -665,7 +665,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         By default, this calls the :meth:`points` method, which is implemented
         when the base ring is a field
 
-        - for affine homsets at :meth:`sage.schemes.affine.affine_homset.points`;
+        - for affine homsets at :meth:`sage.schemes.affine.affine_homset.SchemeHomset_points_affine.points`;
         - for projective homsets at :meth:`sage.schemes.projective.projective_homset.SchemeHomset_points_projective_field.points`;
         - and toric homsets at :meth:`sage.schemes.toric.homset.SchemeHomset_points_toric_field._enumerator`.
 
