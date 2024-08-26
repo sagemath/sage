@@ -63,15 +63,15 @@ class ElementCache():
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: A = M(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
             sage: C = M(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]}); C
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
             sage: from sage.rings.species import ElementCache
             sage: E = ElementCache()
             sage: E._cache_get(A)
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
             sage: E._cache_get(C)
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
         """
         # TODO: Make _canonicalize optional.
         # Possibly the following works:
@@ -170,7 +170,7 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
             return
         sorted_orbits = sorted([sorted(orbit) for orbit in self._C.orbits()], key=len, reverse=True)
         pi = PermutationGroupElement(list(chain.from_iterable(sorted_orbits))).inverse()
-        self._C = PermutationGroup(gap_group=libgap.ConjugateGroup(self._C, pi))
+        self._C = PermutationGroup(self._C.gens_small(), domain=self._C.domain()).conjugate(pi)
 
     def __eq__(self, other):
         r"""
@@ -356,7 +356,7 @@ class AtomicSpeciesElement(Element):
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
             sage: A._element_key()
             ((4, 6), ((1,2,3,4)(5,6)(7,8)(9,10),))
         """
@@ -395,11 +395,11 @@ class AtomicSpeciesElement(Element):
             sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
             Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
             sage: B = At(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); B
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({1, 2, 3, 4}), frozenset({5, 6, 7, 8, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({1, 2, 3, 4}, {5, 6, 7, 8, 9, 10})}
             sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]}); C
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
             sage: hash(A) == hash(B)
             True
             sage: hash(A) == hash(C)
@@ -455,9 +455,13 @@ class AtomicSpeciesElement(Element):
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-            {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
+            sage: A = At(G, {2: [1,2,3,4,5,6,7,8,9,10]}); A
+            {((1,2,3,4)(5,6)(7,8)(9,10),): ({}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})}
         """
-        return "{" + f"{self._dis}: {self._dompart}" + "}"
+        dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
+                           for b in self._dompart)
+        return "{" + f"{self._dis}: ({dompart})" + "}"
 
 
 class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
@@ -515,7 +519,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             sage: At1.an_element()
             E_2
             sage: At2.an_element()
-            {((1,2)(3,4),): (frozenset({1, 2}), frozenset({3, 4}))}
+            {((1,2)(3,4),): ({1, 2}, {3, 4})}
         """
         G = PermutationGroup([[(2 * i - 1, 2 * i) for i in range(1, self._k + 1)]])
         m = {i: [2 * i - 1, 2 * i] for i in range(1, self._k + 1)}
@@ -1044,7 +1048,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 return
             sorted_orbits = sorted([sorted(orbit) for orbit in self._group.orbits()], key=len, reverse=True)
             pi = PermutationGroupElement(list(chain.from_iterable(sorted_orbits))).inverse()
-            self._group = PermutationGroup(gap_group=libgap.ConjugateGroup(self._group, pi))
+            self._group = self._group.conjugate(pi)
             self._dompart = tuple(frozenset(pi(k) for k in v) for v in self._dompart)
 
         def grade(self):
@@ -1058,7 +1062,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
                 Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
                 sage: A = M(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-                {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+                {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
                 sage: A.grade()
                 (4, 6)
             """
@@ -1075,7 +1079,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
                 Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
                 sage: A = M(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
-                {((1,2,3,4)(5,6)(7,8)(9,10),): (frozenset({8, 5, 6, 7}), frozenset({1, 2, 3, 4, 9, 10}))}
+                {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
                 sage: A.domain()
                 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
             """
@@ -1176,8 +1180,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         def __call__(self, *args):
             r"""
             Substitute M_1...M_k into self.
-            M_i must all have same arity, same multicardinality,
-            and must be molecular.
+            M_i must all have same arity and must be molecular.
 
             EXAMPLES::
 
@@ -1191,6 +1194,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 E_2
                 sage: E2(E2)
                 P_4
+
+                sage: P = PolynomialSpecies(ZZ, ["X","Y"])
+                sage: M = P._indices
+                sage: X = M(SymmetricGroup(1), {1:[1]})
+                sage: Y = M(SymmetricGroup(1), {2:[1]})
+                sage: (X*Y)(X, Y^2)
+                X*Y^2
             """
             if len(args) != self.parent()._k:
                 raise ValueError("number of args must match arity of self")
@@ -1198,8 +1208,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 raise ValueError("all args must be molecular species")
             if len(set(arg.parent()._k for arg in args)) > 1:
                 raise ValueError("all args must have same arity")
-            if len(set(arg._mc for arg in args)) > 1:
-                raise ValueError("all args must have same multicardinality")
 
             gens = []
 
