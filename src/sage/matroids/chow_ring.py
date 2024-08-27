@@ -180,9 +180,9 @@ class ChowRing(QuotientRing_generic):
         """
         flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
-        flats.append(frozenset())
         maximum_rank = max(self._matroid.rank(F) for F in flats)
         flats_gen = self._ideal.flats_generator()
+        R = self._ideal.ring()
         flats = sorted(flats, key=lambda X: (len(X), sorted(X)))
         ranks = [self._matroid.rank(F) for F in flats]
         monomial_basis = []
@@ -203,15 +203,44 @@ class ChowRing(QuotientRing_generic):
                 
             elif self._presentation == 'atom-free': #all double equals need spacing
                 first_rank = self._matroid.rank(flats[len(flats) - 1])
-                print(first_rank)
-                for i in range(maximum_rank):
-                    pow = []
-                    for j in range(1, len(flats) - 1):
-                        if i < ranks[j] - ranks[j-1]:
-                            pow.append((j , i))
-                    if sum(p[1] for p in pow) == first_rank + 1:
-                        term = prod(flats_gen[flats[p[0]]] ** p[1] for p in pow) 
-                        monomial_basis.append(term)
+                reln = lambda p,q : p < q
+                P = Poset((flats, reln))
+                chains = P.chains()
+                def generate_combinations(current_combination, index, max_powers, x_dict):
+                # Base case: If index equals the length of max_powers, print the current combination
+                    if index == len(max_powers):
+                        expression_terms = [x_dict[i+1] if current_combination[i] == 1 
+                                            else x_dict[i+1]**{current_combination[i]}
+                                            for i in range(len(current_combination)) if current_combination[i] != 0]
+                        if expression_terms:
+                            term = R.one()
+                            for t in expression_terms:
+                                term *= t
+                                monomial_basis.append(term)
+                        else:
+                            monomial_basis.append(R.one())
+                        return
+    
+                    # Recursive case: Iterate over the range for the current index
+                    for power in range(max_powers[index]):
+                        current_combination[index] = power
+                        generate_combinations(current_combination, index + 1, max_powers, x_dict)
+                
+                for chain in chains:
+                    x_dict = dict()
+                    for i, F in enumerate(chain):
+                        if F == frozenset():
+                            x_dict[i] = R.one()
+                        else:
+                            x_dict[i] = flats_gen[F] 
+                    ranks = [self._matroid.rank(F) for F in chain]
+                    max_powers = [ranks[i-1] - ranks[i] for i in range(1, len(chain))]
+                    k = len(chain)
+                    current_combination = [0] * k
+                    print(max_powers, k, x_dict, chain)
+                    if sum(max_powers) == (first_rank + 1) and max_powers[len(chain) - 1] <= self._matroid.rank(chain[len(chain) - 1]):
+                        generate_combinations(current_combination, 0, max_powers, x_dict)
+                
 
         else:
             def generate_combinations(current_combination, index, max_powers, x_dict):
@@ -233,36 +262,29 @@ class ChowRing(QuotientRing_generic):
                 for power in range(max_powers[index]):
                     current_combination[index] = power
                     generate_combinations(current_combination, index + 1, max_powers, x_dict)
-
-            def m_n(i):
-                if flats[i] == frozenset():
-                    return 0
-                else:
-                    sum1 = 0
-                    for j in range(len(flats)):
-                        if flats[j] < flats[i]:
-                            sum1 += m_n(j)
-                    
-                    return ranks[i] - sum1
             
             print(ranks)
-            flats = list(self._ideal.flats_generator())
             R = self._ideal.ring()
-            if frozenset() in flats:
-                flats.remove(frozenset())
-            reln = lambda p,q : p < q
-            P = Poset((flats, reln))
-            chains = P.chains()
+            lattice_flats = self._matroid.lattice_of_flats()
+            chains = lattice_flats.chains()
             for chain in chains:
+                print(chain)
+                print(flats)
                 max_powers = []
                 x_dict = dict()
                 for F in chain:
-                    max_powers.append(m_n(flats.index(F)))
-                    x_dict[F] = flats_gen[F]
+                    if F == frozenset():
+                        max_powers.append(0)
+                        x_dict[F] = 1
+                    else:
+                        max_powers.append(ranks[flats.index(F)] - ranks[flats.index(F) - 1])
+                        x_dict[F] = flats_gen[F]
                 k = len(chain)
                 print(max_powers, x_dict, k)
                 current_combination = [0] * k
                 generate_combinations(current_combination, 0, max_powers, x_dict)
+
+        print(monomial_basis)
         from sage.sets.family import Family
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
 
