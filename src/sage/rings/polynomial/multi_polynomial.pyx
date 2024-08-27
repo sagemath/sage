@@ -2665,7 +2665,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         if gens:
             # substituting all variables (in a polynomial ring with variables) with 0
-            d = {str(gen): 0 for gen in gens}
+            d = {str(gen): self.base_ring().zero() for gen in gens}
             tester.assertEqual(self.subs(**d).parent(), self.parent().base_ring())
 
             # substituting all variables (in a polynomial ring with variables)
@@ -2678,7 +2678,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         if len(gens) > 1:
             # substituting one variable (in a polynomial ring with variables) with 0
-            d = {str(gens[0]): 0}
+            d = {str(gens[0]): self.base_ring().zero()}
             tester.assertEqual(self.subs(**d).parent(), self.parent())
 
             # test error checking: partial substitution by elements

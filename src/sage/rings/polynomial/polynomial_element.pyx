@@ -6051,7 +6051,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         - Naqi Jaffery (2006-01-24): examples
         """
-        return not self.is_zero() and self[self.degree()] == 1
+        return not self.is_zero() and self[self.degree()] == self.base_ring().one()
 
     def is_unit(self):
         r"""
