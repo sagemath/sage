@@ -71,6 +71,7 @@ from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
 from sage.misc.lazy_import import LazyImport
 from sage.misc.misc import run_once
 
+
 @magics_class
 class SageMagics(Magics):
 

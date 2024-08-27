@@ -27,6 +27,7 @@ from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.homset import SchemeHomset_points
 
+
 class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
     r"""
     Set of rational points of a product of projective spaces.
@@ -62,6 +63,7 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
             (4 : 2 , 2 : 0)
         """
         return self.codomain()._point(self, v, **kwds)
+
 
 class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_product_projective_spaces_ring):
     def points(self, **kwds):

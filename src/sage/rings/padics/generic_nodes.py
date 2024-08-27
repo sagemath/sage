@@ -70,6 +70,7 @@ class CappedAbsoluteGeneric(LocalGeneric):
         """
         return 'capped-abs'
 
+
 class CappedRelativeGeneric(LocalGeneric):
     def is_capped_relative(self):
         """
@@ -106,6 +107,7 @@ class CappedRelativeGeneric(LocalGeneric):
             'capped-rel'
         """
         return 'capped-rel'
+
 
 class FixedModGeneric(LocalGeneric):
     def is_fixed_mod(self):
@@ -144,6 +146,7 @@ class FixedModGeneric(LocalGeneric):
             'fixed-mod'
         """
         return 'fixed-mod'
+
 
 class FloatingPointGeneric(LocalGeneric):
     def is_floating_point(self):
@@ -257,14 +260,22 @@ class FloatingPointGeneric(LocalGeneric):
         for x,y,z in some_tuples(S, 3, tester._max_runs):
             tester.assertTrue(((x + y) + z).is_equal_to(x + (y + z), min(x.precision_absolute(), y.precision_absolute(), z.precision_absolute())))
 
+
 class FloatingPointRingGeneric(FloatingPointGeneric):
     pass
+
+
 class FloatingPointFieldGeneric(FloatingPointGeneric):#, sage.rings.ring.Field):
     pass
+
+
 class CappedRelativeRingGeneric(CappedRelativeGeneric):
     pass
+
+
 class CappedRelativeFieldGeneric(CappedRelativeGeneric):#, sage.rings.ring.Field):
     pass
+
 
 class pAdicLatticeGeneric(pAdicGeneric):
     r"""
@@ -1339,18 +1350,30 @@ class pAdicFieldGeneric(pAdicGeneric, sage.rings.abc.pAdicField):
     #def subfields_of_degree(self, n):
     #    raise NotImplementedError
 
+
 class pAdicFixedModRingGeneric(pAdicRingGeneric, FixedModGeneric):
     pass
+
+
 class pAdicCappedAbsoluteRingGeneric(pAdicRingGeneric, CappedAbsoluteGeneric):
     pass
+
+
 class pAdicCappedRelativeRingGeneric(pAdicRingGeneric, CappedRelativeRingGeneric):
     pass
+
+
 class pAdicCappedRelativeFieldGeneric(pAdicFieldGeneric, CappedRelativeFieldGeneric):
     pass
+
+
 class pAdicFloatingPointRingGeneric(pAdicRingGeneric, FloatingPointRingGeneric):
     pass
+
+
 class pAdicFloatingPointFieldGeneric(pAdicFieldGeneric, FloatingPointFieldGeneric):
     pass
+
 
 class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
     def construction(self, forbid_frac_field=False):
@@ -1442,6 +1465,7 @@ class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
 
     #def principal_unit_group(self):
     #    raise NotImplementedError
+
 
 class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
     def composite(self, subfield1, subfield2):

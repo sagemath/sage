@@ -41,6 +41,7 @@ from sage.misc.flatten import flatten
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import rich_to_bool
 
+
 class pAdicExtensionGeneric(pAdicGeneric):
     def __init__(self, poly, prec, print_mode, names, element_class):
         """
@@ -668,6 +669,8 @@ class pAdicExtensionGeneric(pAdicGeneric):
 # an object in two free module categories with
 # different base rings. So for now we
 # just stick with Map.
+
+
 class pAdicModuleIsomorphism(Map):
     r"""
     A base class for various isomorphisms between `p`-adic rings/fields and free modules.
@@ -728,6 +731,7 @@ class pAdicModuleIsomorphism(Map):
         else:
             return rich_to_bool(op, 1)
 
+
 class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
     """
     The isomorphism from the underlying module of a one-step `p`-adic extension
@@ -763,6 +767,7 @@ class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
         """
         return self.codomain()(list(x), *args, **kwds)
 
+
 class MapOneStepToFreeModule(pAdicModuleIsomorphism):
     """
     The isomorphism from a one-step `p`-adic extension to its underlying free module.
@@ -786,6 +791,7 @@ class MapOneStepToFreeModule(pAdicModuleIsomorphism):
             (1 + O(5^4), 1 + O(5^4), O(5^3))
         """
         return self.codomain()(x._polynomial_list(pad=True))
+
 
 class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
     """
@@ -834,6 +840,7 @@ class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
         """
         return self.codomain()(self._call_(x), *args, **kwds)
 
+
 class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
     """
     The isomorphism from a two-step `p`-adic extension to its underlying free module.
@@ -860,6 +867,7 @@ class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
         """
         v = flatten([c._polynomial_list(pad=True) for c in x._polynomial_list(pad=True)])
         return self.codomain()(v)
+
 
 class DefPolyConversion(Morphism):
     """

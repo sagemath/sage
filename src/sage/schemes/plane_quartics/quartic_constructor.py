@@ -13,6 +13,7 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 
 from .quartic_generic import QuarticCurve_generic
 
+
 def QuarticCurve(F, PP=None, check=False):
     """
     Return the quartic curve defined by the polynomial ``F``.

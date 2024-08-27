@@ -3,6 +3,7 @@
 
 from sage.structure.sage_object import SageObject
 
+
 class _ProofPref(SageObject):
     """
     An object that holds global proof preferences.  For now these are merely
@@ -203,7 +204,8 @@ class _ProofPref(SageObject):
         self._require_proof["polynomial"] = bool(t)
 
 
-_proof_prefs = _ProofPref(True) #Creates the global object that stores proof preferences.
+_proof_prefs = _ProofPref(True)  # Creates the global object that stores proof preferences.
+
 
 def get_flag(t=None, subsystem=None):
     """

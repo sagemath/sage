@@ -2379,6 +2379,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         G = J.group(self.base_ring())
         return G(P - P.degree()*Pinf)
 
+
 class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     """
     A point on an elliptic curve over a number field.

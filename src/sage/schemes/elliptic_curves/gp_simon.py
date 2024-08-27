@@ -27,6 +27,8 @@ from sage.rings.rational_field import QQ
 
 
 gp = None
+
+
 def init():
     """
     Function to initialize the gp process

@@ -542,6 +542,7 @@ class DIMACS(SatSolver):
         else:
             raise ValueError("When parsing the output(={}), no line starts with letter v or s".format(self._output))
 
+
 class RSat(DIMACS):
     """
     An instance of the RSat solver.
@@ -642,6 +643,7 @@ class Glucose(DIMACS):
     """
     command = "glucose -verb=0 -model {input}"
 
+
 class GlucoseSyrup(DIMACS):
     """
     An instance of the Glucose-syrup parallel solver.
@@ -704,6 +706,7 @@ class GlucoseSyrup(DIMACS):
         v -1 -2 ... 100 0
     """
     command = "glucose-syrup -model -verb=0 {input}"
+
 
 class Kissat(DIMACS):
     """

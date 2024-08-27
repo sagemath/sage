@@ -567,6 +567,7 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
     """
     return EllipticCurve(coefficients_from_Weierstrass_polynomial(f))
 
+
 def coefficients_from_Weierstrass_polynomial(f):
     r"""
     Return the coefficients `[a_1, a_2, a_3, a_4, a_6]` of a cubic in
@@ -1307,6 +1308,7 @@ def tangent_at_smooth_point(C,P):
         return C.tangents(P)[0]
     except NotImplementedError:
         return C.tangents(P,factor=False)[0]
+
 
 def chord_and_tangent(F, P):
     r"""Return the third point of intersection of a cubic with the tangent at one point.

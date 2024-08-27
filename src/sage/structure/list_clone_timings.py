@@ -134,6 +134,7 @@ def add1_internal(bla):
     blo.check()
     return blo
 
+
 def add1_immutable(bla):
     """
     TESTS::
@@ -146,6 +147,7 @@ def add1_immutable(bla):
     for i in range(len(lbla)):
         lbla[i] += 1
     return bla.__class__(bla.parent(), lbla)
+
 
 def add1_mutable(bla):
     """
@@ -161,6 +163,7 @@ def add1_mutable(bla):
     blo.set_immutable()
     blo.check()
     return blo
+
 
 def add1_with(bla):
     """

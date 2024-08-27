@@ -312,6 +312,7 @@ class SageTerminalInteractiveShell(SageShellOverride, TerminalInteractiveShell):
         pythonapi.PyOS_setsig(signal.SIGINT, sigint_os)
         return text
 
+
 class SageTestShell(SageShellOverride, TerminalInteractiveShell):
     """
     Test Shell.

@@ -7106,6 +7106,7 @@ def cremona_curves(conductors):
         conductors = [conductors]
     return sage.databases.cremona.CremonaDatabase().iter(conductors)
 
+
 def cremona_optimal_curves(conductors):
     r"""
     Return iterator over all known optimal curves (in database) with
@@ -7131,6 +7132,7 @@ def cremona_optimal_curves(conductors):
     if isinstance(conductors, (RingElement, int)):
         conductors = [conductors]
     return sage.databases.cremona.CremonaDatabase().iter_optimal(conductors)
+
 
 def integral_points_with_bounded_mw_coeffs(E, mw_base, N, x_bound):
     r"""
