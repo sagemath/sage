@@ -183,7 +183,7 @@ cdef class Map(Element):
         cdef Map out = Element.__copy__(self)
         # Element.__copy__ updates the __dict__, but not the slots.
         # Let's do this now, but with strong references.
-        out._parent = self.parent() # self._parent might be None
+        out._parent = self.parent()  # self._parent might be None
         out._update_slots(self._extra_slots())
         return out
 
@@ -462,10 +462,10 @@ cdef class Map(Element):
         Return a dict with attributes to pickle and copy this map.
         """
         return dict(
-                _domain=self.domain(),
-                _codomain=self._codomain,
-                _is_coercion=self._is_coercion,
-                _repr_type_str=self._repr_type_str)
+            _domain=self.domain(),
+            _codomain=self._codomain,
+            _is_coercion=self._is_coercion,
+            _repr_type_str=self._repr_type_str)
 
     def _extra_slots_test(self):
         """
@@ -801,7 +801,7 @@ cdef class Map(Element):
         """
         P = parent(x)
         cdef Parent D = self.domain()
-        if P is D: # we certainly want to call _call_/with_args
+        if P is D:  # we certainly want to call _call_/with_args
             if not args and not kwds:
                 return self._call_(x)
             return self._call_with_args(x, args, kwds)
@@ -1215,7 +1215,7 @@ cdef class Map(Element):
 
     def is_surjective(self):
         """
-        Tells whether the map is surjective (not implemented in the base class).
+        Tell whether the map is surjective (not implemented in the base class).
 
         TESTS::
 
