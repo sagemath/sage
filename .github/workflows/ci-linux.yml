@@ -90,6 +90,22 @@ jobs:
       # and 'minimal-pre' below
       max_parallel: 20
 
+  standard-constraints_pkgs-norequirements:
+    if: ${{ success() || failure() }}
+    needs: [standard-pre]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from previous stage (pre)
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      docker_targets: "with-targets-pre"
+      targets_pre: all-sage-local python3-ensure tox-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements
+      tox_packages_factors: >-
+          ["standard"]
+      max_parallel: 15
+
   standard-sitepackages:
     if: ${{ success() || failure() }}
     needs: [standard-pre]
