@@ -58,7 +58,7 @@ documentation, and tests, implements:
 - Thousands of different kinds of objects (classes):
 
   Integers, polynomials, matrices, groups, number fields, elliptic
-  curves, permutations, morphisms, languages, ... and a few racoons ...
+  curves, permutations, morphisms, languages, ... and a few raccoons ...
 
 - Tens of thousands methods and functions:
 
@@ -1277,7 +1277,7 @@ this axiom is available in the subcategory of groups::
 
 The meaning of each axiom is described in the documentation of the
 corresponding method, which can be obtained as usual by
-instrospection::
+introspection::
 
     sage: C = Groups()
     sage: C.Finite?              # not tested

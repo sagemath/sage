@@ -1751,7 +1751,7 @@ cdef class CachedMethodCaller(CachedFunction):
         """
         # initialize CachedFunction. Since the cached method is actually bound
         # to an instance, it now makes sense to initialise the ArgumentFixer
-        # and re-use it for all bound cached method callers of the unbound
+        # and reuse it for all bound cached method callers of the unbound
         # cached method.
         if cachedmethod._cachedfunc._argument_fixer is None:
             cachedmethod._cachedfunc.argfix_init()

@@ -105,7 +105,7 @@ def _xmrange_iter(iter_list, typ=list):
         sage: l1 is l2
         False
 
-    However, if you would like to re-use the list object::
+    However, if you would like to reuse the list object::
 
         sage: iter = sage.misc.mrange._xmrange_iter( [[1,2],[1,3]], lambda x: x )
         sage: l1 = next(iter)

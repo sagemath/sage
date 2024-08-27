@@ -103,7 +103,7 @@ def register_ring_hom(ring_hom):
         try:
             codomain.register_conversion(ring_hom)
         except ValueError:
-            verbose('\nthe map:\n%s\ncannot be registerd as conversion\n' % ring_hom)
+            verbose('\nthe map:\n%s\ncannot be registered as conversion\n' % ring_hom)
 
     return
 
@@ -317,7 +317,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
     def _coerce_map_from_(self, R):
         r"""
         The rings that canonically coerce to ``self`` ar the ones from
-        inheritence and the base ring of definition of the cubic Hecke algebra.
+        inheritance and the base ring of definition of the cubic Hecke algebra.
 
         EXAMPLES::
 
@@ -385,7 +385,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
             return super().hom(im_remain, codomain=codomain, check=check, base_map=hom_cycl_gen)
         else:
             if base_map is None:
-                raise ValueError('number of images must be four (inculding a '
+                raise ValueError('number of images must be four (including a '
                                  'third root of unity at first position) or a '
                                  'base_map (on %s) must be given' % self.base_ring())
             return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)

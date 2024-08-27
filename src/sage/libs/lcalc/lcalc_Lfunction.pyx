@@ -398,7 +398,7 @@ cdef class Lfunction:
         result.clear()
         return returnvalue
 
-    # Needs to be overriden
+    # Needs to be overridden
     cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         raise NotImplementedError
 

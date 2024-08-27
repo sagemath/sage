@@ -535,7 +535,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
 
     def __mul__(self, other):
         """
-        Compose construction functors to a composit construction functor, unless one of them is the identity.
+        Compose construction functors to a composite construction functor, unless one of them is the identity.
 
         .. NOTE::
 
@@ -688,7 +688,7 @@ class IdentityConstructionFunctor(ConstructionFunctor):
 
     def __mul__(self, other):
         """
-        Compose construction functors to a composit construction functor, unless one of them is the identity.
+        Compose construction functors to a composite construction functor, unless one of them is the identity.
 
         .. NOTE::
 
@@ -1420,10 +1420,10 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
                 if x.count('_') == 1:
                     g, n = x.split('_')
                     if n.isdigit():
-                        if g.isalnum(): # we can interprete x in any InfinitePolynomialRing
-                            if g in self._gens: # we can interprete x in self, hence, we will not use it as a variable anymore.
+                        if g.isalnum():  # we can interpret x in any InfinitePolynomialRing
+                            if g in self._gens:  # we can interpret x in self, hence, we will not use it as a variable anymore.
                                 RemainingVars.pop(RemainingVars.index(x))
-                                IsOverlap = True # some variables of other can be interpreted in self.
+                                IsOverlap = True  # some variables of other can be interpreted in self.
                                 if OverlappingVars:
                                     # Is OverlappingVars in the right order?
                                     g0, n0 = OverlappingVars[-1].split('_')

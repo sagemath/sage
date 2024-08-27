@@ -114,7 +114,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     Return a free abelian monoid on `n` generators or with the generators
     indexed by a set `I`.
 
-    We construct free abelian monoids by specifing either:
+    We construct free abelian monoids by specifying either:
 
     - the number of generators and/or the names of the generators
     - the indexing set for the generators (this ignores the other two inputs)

@@ -898,7 +898,7 @@ cdef class Matrix(Matrix1):
         # first coerce both elements to parent over same base ring
         P = K if L is K else coercion_model.common_parent(K, L)
         if P not in _Fields and P.is_integral_domain() and extend:
-            # the non-integral-domain case is handled separatedly below
+            # the non-integral-domain case is handled separately below
             P = P.fraction_field()
         if L is not P:
             B = B.change_ring(P)
@@ -16843,7 +16843,7 @@ cdef class Matrix(Matrix1):
                     nonzero = j
                     break
             if (nonzero != -1):
-                # swap column wih nonzero entry just outside block
+                # swap column with nonzero entry just outside block
                 if nonzero != c+1:
                     Z.swap_columns(c+1, nonzero)
                     Z.swap_rows(c+1, nonzero)

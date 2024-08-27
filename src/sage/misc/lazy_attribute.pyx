@@ -512,7 +512,7 @@ class lazy_class_attribute(lazy_attribute):
     A lazy class attribute for a class is like a usual class attribute,
     except that, instead of being computed when the class is constructed, it
     is computed on the fly the first time it is accessed, either through the
-    class itself or trough on of its objects.
+    class itself or through one of its objects.
 
     This is very similar to :class:`lazy_attribute` except that the attribute
     is a class attribute. More precisely, once computed, the lazy class

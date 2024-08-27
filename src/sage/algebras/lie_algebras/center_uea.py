@@ -742,7 +742,7 @@ class CenterUEA(CombinatorialFreeModule):
             True
         """
         # This should work except it needs the monomials of the PBW basis to be
-        # compariable. However, this does not work for, e.g., Lie algebras
+        # comparable. However, this does not work for, e.g., Lie algebras
         # in the Chevalley basis as ee are unable to pass a key for the
         # module morphism. Additionally, the implementation below does more
         # operations in-place than the module morphism.

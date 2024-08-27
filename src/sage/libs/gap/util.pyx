@@ -368,7 +368,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # here if the error handler was set; but in case it wasn't
         # let's still check the result...
         nresults = GAP_LenList(result)
-        if nresults > 1:  # to mimick the old libGAP
+        if nresults > 1:  # to mimic the old libGAP
             # TODO: Get rid of this restriction eventually?
             raise GAPError("can only evaluate a single statement")
 
