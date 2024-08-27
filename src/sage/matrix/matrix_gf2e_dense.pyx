@@ -1167,6 +1167,15 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: N = Matrix(K, 0, 1, 0)
             sage: M.augment(N)
             []
+
+            sage: A = matrix(K, 3, range(12))
+            sage: B = vector(QQ, [2,5/7,1.2]) # see issue: 38448
+            sage: A.augment(B).ncols()
+            5
+
+            sage: B = vector([])
+            sage: A.augment(B) == A
+            True
         """
         cdef Matrix_gf2e_dense _right
         cdef Matrix_gf2e_dense A
@@ -1174,12 +1183,15 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         if not isinstance(right, Matrix_gf2e_dense):
             # See issue: #36761 - Allow Vectors to be augmented
             if hasattr(right, '_vector_'):
-                if self._nrows != len(right):
+                rsize = len(right)
+                if rsize==0:
+                    return self.__copy__()
+                if self._nrows != rsize:
                     raise TypeError("Both numbers of rows must match.")
                 if self.base_ring() is not right.base_ring():
                     right = right.change_ring(self.base_ring())
                 from sage.matrix.matrix_space import MatrixSpace
-                M = MatrixSpace(self.base_ring(), nrows=len(right), ncols=1)
+                M = MatrixSpace(self.base_ring(), nrows=rsize, ncols=1)
                 _right = <Matrix_gf2e_dense>(M(right))
             else:
                 raise TypeError("a matrix must be augmented with another matrix, "
