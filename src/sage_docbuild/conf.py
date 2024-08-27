@@ -491,6 +491,7 @@ html_css_files = [
     'custom-furo.css',
     'custom-jupyter-sphinx.css',
     'custom-codemirror-monokai.css',
+    'custom-tabs.css',
 ]
 
 html_js_files = [
@@ -963,6 +964,8 @@ class SagecodeTransform(SphinxTransform):
                         parent.insert(index, Text(''))
                         index += 1
                     parent.remove(node)
+
+
                     # Tab for Sage code
                     container = TabContainer("", type="tab", new_set=False)
                     textnodes = [Text('Sage')]
@@ -972,6 +975,8 @@ class SagecodeTransform(SphinxTransform):
                     content += node
                     container += content
                     parent.insert(index, container)
+                    index += 1
+
                     if SAGE_PREPARSED_DOC == 'yes':
                         # Tab for preparsed version
                         from sage.repl.preparse import preparse
@@ -1002,7 +1007,11 @@ class SagecodeTransform(SphinxTransform):
                         preparsed_node = LiteralBlock(preparsed, preparsed, language='ipycon')
                         content += preparsed_node
                         container += content
-                        parent.insert(index + 1, container)
+                        parent.insert(index, container)
+                        index += 1
+
+
+
                     if SAGE_LIVE_DOC == 'yes':
                         # Tab for Jupyter-sphinx cell
                         from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
@@ -1034,7 +1043,12 @@ class SagecodeTransform(SphinxTransform):
                         content = Container("", is_div=True, classes=["tab-content"])
                         content += cell_node
                         container += content
-                        parent.insert(index + 1, container)
+                        parent.insert(index, container)
+                        index += 1
+
+
+
+
 
 
 # This replaces the setup() in sage.misc.sagedoc_conf
