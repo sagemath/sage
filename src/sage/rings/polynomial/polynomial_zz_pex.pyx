@@ -711,3 +711,67 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             ZZ_pEX_PowerMod_ZZ_pre(r.x, y, e_ZZ, mod)
         sig_off()
         return r
+
+    def compose_mod(self, other, modulus):
+        r"""
+        Compute `f(g) \bmod h`.
+
+        To be precise about the order fo compostion, given ``self``, ``other``
+        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \bmod h(x)`.
+
+        INPUT:
+
+        - ``other`` -- a polynomial `g(x)`
+        - ``modulus`` -- a polynomial `h(x)`
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(3**6)[]
+            sage: f = R.random_element()
+            sage: g = R.random_element()
+            sage: g.compose_mod(g, f) == g(g) % f
+            True
+
+            sage: F.<z3> = GF(3**6)
+            sage: R.<x> = F[]
+            sage: f = 2*z3^2*x^2 + (z3 + 1)*x + z3^2 + 2
+            sage: g = (z3^2 + 2*z3)*x^2 + (2*z3 + 2)*x + 2*z3^2 + z3 + 2
+            sage: h = (2*z3 + 2)*x^2 + (2*z3^2 + 1)*x + 2*z3^2 + z3 + 2
+            sage: f.compose_mod(g, h)
+            (z3^5 + z3^4 + z3^3 + z3^2 + z3)*x + z3^5 + z3^3 + 2*z3 + 2
+            sage: f.compose_mod(g, h) == f(g) % h
+            True
+
+        AUTHORS:
+
+        - Giacomo Pope (2024-08) initial implementation
+        """
+        self._parent._modulus.restore()
+
+        # Ensure all the parents match
+        if other.parent() is not self._parent:
+            other = self._parent.coerce(other)
+        if modulus.parent() is not self._parent:
+            modulus = self._parent.coerce(modulus)
+
+        # Create the output polynomial
+        cdef Polynomial_ZZ_pEX r
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+
+        # Create ZZ_pEX_Modulus type from modulus input
+        cdef ZZ_pEX_Modulus_c mod
+        ZZ_pEX_Modulus_build(mod, (<Polynomial_ZZ_pEX>modulus).x)
+
+        # Compute f(g) mod h
+        sig_on()
+        ZZ_pEX_CompMod(r.x, (<Polynomial_ZZ_pEX>self).x, (<Polynomial_ZZ_pEX>(other % modulus)).x, mod)
+        sig_off()
+
+        return r
+
+    # compose_mod is the natural name from the NTL bindings, but polynomial_gf2x
+    # has modular_composition as the method name so here we allow both
+    modular_composition = compose_mod
