@@ -48,7 +48,6 @@ class SAGE_SRC(StaticFile):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of the
     monolithic source tree of the Sage library.
-
     """
     def __init__(self):
         r"""
@@ -175,7 +174,7 @@ class sage__combinat(JoinFeature):
                              [PythonModule('sage.combinat'),                        # namespace package
                               PythonModule('sage.combinat.tableau'),                # representative
                              ],
-                             spkg='sagemath_combinat', type="standard")
+                             spkg='sagemath_combinat', type='standard')
 
 
 class sage__geometry__polyhedron(JoinFeature):
@@ -219,7 +218,7 @@ class sage__geometry__polyhedron(JoinFeature):
                               PythonModule('sage.schemes.toric'),                   # namespace package
                               PythonModule('sage.schemes.toric.variety'),           # representative
                              ],
-                             spkg='sagemath_polyhedra', type="standard")
+                             spkg='sagemath_polyhedra', type='standard')
 
 
 class sage__graphs(JoinFeature):
@@ -301,7 +300,7 @@ class sage__graphs(JoinFeature):
                               PythonModule('sage.topology'),                        # namespace package
                               PythonModule('sage.topology.simplicial_complex'),     # representative
                              ],
-                             spkg='sagemath_graphs', type="standard")
+                             spkg='sagemath_graphs', type='standard')
 
 
 class sage__groups(JoinFeature):
@@ -1063,7 +1062,7 @@ class sage__schemes(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.schemes',
                              [PythonModule('sage.schemes.elliptic_curves.ell_generic')],
-                             spkg="sagemath_schemes", type='standard')
+                             spkg='sagemath_schemes', type='standard')
 
 
 class sage__symbolic(JoinFeature):

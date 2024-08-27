@@ -461,7 +461,7 @@ We continue the calculation of this fraction in `R`::
     sage: fraction = - R(Px) / R(Py); fraction                                          # needs sage.symbolic
     (1/2/(x - 1/4))*ybar - 1/4/(x - 1/4)
 
-.. note::
+.. NOTE::
 
     The following variant does not work yet::
 
@@ -1540,7 +1540,7 @@ The strictly decreasing partitions of `5`::
 These sets share the same underlying algorithmic structure, implemented
 in the more general (and slightly more cumbersome) class
 ``IntegerListsLex``. This class models sets of vectors
-`(\ell_0,\dots,\ell_k)` of non-negative integers, with
+`(\ell_0,\dots,\ell_k)` of nonnegative integers, with
 constraints on the sum and the length, and bounds on the parts and on
 the consecutive differences between the parts. Here are some more
 examples::

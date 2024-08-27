@@ -188,6 +188,7 @@ cdef class OperandsWrapper(SageObject):
         """
         return restore_op_wrapper, (self._expr,)
 
+
 def restore_op_wrapper(expr):
     """
     TESTS::

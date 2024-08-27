@@ -295,7 +295,7 @@ def cographs(n, as_graph=True, immutable=False):
 
     INPUT:
 
-    - ``n`` -- an integer larger or equal to 1
+    - ``n`` -- integer larger or equal to 1
 
     - ``as_graph`` -- boolean (default: ``True``); whether to return graphs or
       the tree data structure encoding the graph

@@ -12,10 +12,10 @@ determined by specific data and fall into one of the four following types:
 
 - Type II points are represented by a center and a rational power of `p`.
 
-- Type III points are represented by a center and a non-negative real radius.
+- Type III points are represented by a center and a nonnegative real radius.
 
 - Type IV points are represented by a finite list of centers and a finite list of
-  non-negative radii.
+  nonnegative radii.
 
 For an exposition of Berkovich space over `\CC_p`, see Chapter 6 of [Ben2019]_. For a more
 involved exposition, see Chapter 1 and 2 of [BR2010]_.
@@ -35,11 +35,12 @@ AUTHORS:
 
 import sage.rings.abc
 
+from sage.categories.function_fields import FunctionFields
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR, RealNumber
+from sage.rings.real_mpfr import RealNumber, RR
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.element import Element, Expression
@@ -84,7 +85,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
             sage: B(4)
             Type I point centered at 4 + O(5^20)
         """
-        from sage.rings.function_field.element import is_FunctionFieldElement
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.fraction_field_element import FractionFieldElement_1poly_field
         self._type = None
@@ -109,8 +109,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
             if not error_check:
                 return
 
-        # is_FunctionFieldElement calls .parent
-        elif hasattr(center, "parent") and hasattr(radius, 'parent'):
+        elif isinstance(center, Element) and isinstance(radius, Element):
             from sage.rings.polynomial.multi_polynomial import MPolynomial
             if isinstance(center, MPolynomial):
                 try:
@@ -119,10 +118,10 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     raise TypeError('center was %s, a multivariable polynomial' % center)
 
             # check if the radius and the center are functions
-            center_func_check = is_FunctionFieldElement(center) or isinstance(center, Polynomial) or\
-                isinstance(center, FractionFieldElement_1poly_field) or isinstance(center, Expression)
-            radius_func_check = is_FunctionFieldElement(radius) or isinstance(radius, Polynomial) or\
-                isinstance(radius, FractionFieldElement_1poly_field) or isinstance(radius, Expression)
+            center_func_check = center.parent() in FunctionFields() or \
+                isinstance(center, (Polynomial, FractionFieldElement_1poly_field, Expression))
+            radius_func_check = radius.parent() in FunctionFields() or \
+                isinstance(radius, (Polynomial, FractionFieldElement_1poly_field, Expression))
 
             if center_func_check:
                 # check that both center and radii are supported univariate function
@@ -417,7 +416,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         Return the absolute value of ``x`` with respect to the norm on ``Cp``.
 
         Used to simplify code, as ``x`` may be a point of a number field
-        or a p-adic field.
+        or a `p`-adic field.
 
         EXAMPLES::
 
@@ -448,7 +447,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         Not defined unless this point is a type IV point created by using
         a univariate function to compute centers.
 
-        OUTPUT: A univariate function.
+        OUTPUT: a univariate function
 
         EXAMPLES::
 
@@ -476,7 +475,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         Not defined unless this point is a type IV point created by using
         a univariate function to compute radii.
 
-        OUTPUT: A univariate function.
+        OUTPUT: a univariate function
 
         EXAMPLES::
 
@@ -504,7 +503,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         This integer is the number of disks used in the approximation of the type IV point.
         Not defined for type I, II, or III points.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -528,7 +527,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         r"""
         The ideal which defines an embedding of the ``base_ring`` into `\CC_p`.
 
-        If this Berkovich space is backed by a p-adic field, then an embedding is
+        If this Berkovich space is backed by a `p`-adic field, then an embedding is
         already specified, and this returns ``None``.
 
         EXAMPLES::
@@ -541,7 +540,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
             sage: B = Berkovich_Cp_Projective(3)
             sage: B(0).ideal()
-
         """
         return self.parent().ideal()
 
@@ -580,8 +578,8 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         OUTPUT:
 
-        - A non-negative real number for type I, II, or III points.
-        - A list of non-negative real numbers for type IV points.
+        - A nonnegative real number for type I, II, or III points.
+        - A list of nonnegative real numbers for type IV points.
 
         EXAMPLES::
 
@@ -613,10 +611,10 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         INPUT:
 
-        - ``basepoint`` -- (default = Infinity) A point of the
-          same Berkovich space as this point.
+        - ``basepoint`` -- (default: ``Infinity``) a point of the
+          same Berkovich space as this point
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -659,7 +657,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                 if self._radius_func is None:
                     return self._radius_lst[-1]
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                R = PolynomialRing(QQ, names="x")
+                R = PolynomialRing(QQ, names='x')
                 x = R.gens()[0]
                 if isinstance(self._radius_func, Expression):
                     radius_func_variable = self._radius_func.variables()[0]
@@ -668,7 +666,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     radius_expr = self._radius_func(x)
                     from sage.symbolic.ring import SymbolicRing as SR
                     radius_expr = SR(RR)(radius_expr)
-                return radius_expr.limit(x="oo")
+                return radius_expr.limit(x='oo')
             return self._radius
         if not isinstance(basepoint, Berkovich_Element_Cp):
             raise TypeError('basepoint must be a point of Berkovich space, not %s' % basepoint)
@@ -689,9 +687,9 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
 
-        OUTPUT: A finite or infinite real number.
+        OUTPUT: a finite or infinite real number
 
         EXAMPLES::
 
@@ -739,10 +737,10 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
-        - ``basepoint`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
+        - ``basepoint`` -- a point of the same Berkovich space as this point
 
-        OUTPUT: A finite or infinite real number.
+        OUTPUT: a finite or infinite real number
 
         EXAMPLES::
 
@@ -761,7 +759,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
             sage: Q3 = B(1/2)
             sage: Q1.Hsia_kernel(Q2, Q3)
             +infinity
-
         """
         if not isinstance(other, type(self)):
             raise TypeError('other must be a point of Berkovich space. other was %s' % other)
@@ -786,9 +783,9 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -848,10 +845,10 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
-        - ``basepoint`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
+        - ``basepoint`` -- a point of the same Berkovich space as this point
 
-        OUTPUT: A finite or infinite real number.
+        OUTPUT: a finite or infinite real number
 
         EXAMPLES::
 
@@ -891,9 +888,9 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -929,9 +926,9 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -960,7 +957,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         Return the center of the corresponding disk (or sequence of disks)
         in `\CC_p`.
 
-        OUTPUT: An element of the ``base`` of the parent Berkovich space.
+        OUTPUT: an element of the ``base`` of the parent Berkovich space
 
         EXAMPLES::
 
@@ -992,7 +989,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         r"""
         Return the type of this point of Berkovich space over `\CC_p`.
 
-        OUTPUT: An integer between 1 and 4 inclusive.
+        OUTPUT: integer between 1 and 4 inclusive
 
         EXAMPLES::
 
@@ -1011,7 +1008,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         """
         The residue characteristic of the parent.
 
-        OUTPUT: A prime integer.
+        OUTPUT: a prime integer
 
         EXAMPLES::
 
@@ -1112,10 +1109,10 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
     INPUT:
 
-    - ``center`` -- For type I, II, and III points, the center of the
+    - ``center`` -- for type I, II, and III points, the center of the
       corresponding disk in `\CC_p`. If the parent Berkovich space was created using a number field
       `K`, then ``center`` must be an element of `K`. Otherwise, ``center`` must be an element of a
-      p-adic field. For type IV points, can be a list of centers used to approximate the point or a
+      `p`-adic field. For type IV points, can be a list of centers used to approximate the point or a
       univariate function that computes the centers (computation starts at 1).
 
     - ``radius`` -- (optional) For type I, II, and III points, the radius of the
@@ -1124,11 +1121,11 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
       computes the radii (computation starts at 1).
 
     - ``power`` -- (optional) Rational number. Used for constructing type II points; specifies
-      the power of ``p`` such that `p^\text{power}` = radius.
+      the power of ``p`` such that `p^\text{power}` = radius
 
-    - ``prec`` -- (default: 20) The number of disks to be used to approximate a type IV point.
+    - ``prec`` -- (default: 20) the number of disks to be used to approximate a type IV point
 
-    - ``error_check`` -- (default: ``True``) If error checking should be run on input. If
+    - ``error_check`` -- boolean (default: ``True``); if error checking should be run on input. If
       input is correctly formatted, can be set to ``False`` for better performance.
       WARNING: with error check set to ``False``, any error in the input will lead to
       incorrect results.
@@ -1269,7 +1266,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
             raise TypeError('use as_affine_point to convert to affine Berkovich space')
 
         Berkovich_Element_Cp.__init__(self, parent=parent, center=center, radius=radius, power=power,
-                                      prec=prec, space_type="affine", error_check=error_check)
+                                      prec=prec, space_type='affine', error_check=error_check)
 
     def as_projective_point(self):
         r"""
@@ -1413,12 +1410,12 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
 
         OUTPUT:
 
-        - ``True`` -- If this point is less than ``other`` in the standard partial order.
-        - ``False`` -- Otherwise.
+        - ``True`` -- if this point is less than ``other`` in the standard partial order
+        - ``False`` -- otherwise
 
         EXAMPLES::
 
@@ -1490,12 +1487,12 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
 
         OUTPUT:
 
-        - ``True`` -- If this point is greater than ``other`` in the standard partial order.
-        - ``False`` -- Otherwise.
+        - ``True`` -- if this point is greater than ``other`` in the standard partial order
+        - ``False`` -- otherwise
 
         EXAMPLES::
 
@@ -1558,11 +1555,11 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
-        - ``basepoint`` -- (default: Infinity) A point of the same
-          Berkovich space as this point or Infinity.
+        - ``other`` -- a point of the same Berkovich space as this point
+        - ``basepoint`` -- (default: ``Infinity``) a point of the same
+          Berkovich space as this point or ``Infinity``
 
-        OUTPUT: A point of the same Berkovich space.
+        OUTPUT: a point of the same Berkovich space
 
         EXAMPLES::
 
@@ -1639,7 +1636,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         then the image under the involution map is not defined. To avoid
         this error, increase precision.
 
-        OUTPUT: A point of the same Berkovich space.
+        OUTPUT: a point of the same Berkovich space
 
         EXAMPLES:
 
@@ -1728,8 +1725,8 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         INPUT:
 
-        - ``start`` -- A point of the same Berkovich space as this point.
-        - ``end`` -- A point of the same Berkovich space as this point.
+        - ``start`` -- a point of the same Berkovich space as this point
+        - ``end`` -- a point of the same Berkovich space as this point
 
         OUTPUT:
 
@@ -1792,10 +1789,10 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
     INPUT:
 
-    - ``center`` -- For type I, II, and III points, the center of the
+    - ``center`` -- for type I, II, and III points, the center of the
       corresponding disk in `P^1(\CC_p)`. If the parent Berkovich space was created using a number field
       `K`, then ``center`` can be an element of `P^1(K)`. Otherwise, ``center``
-      must be an element of a projective space of dimension 1 over a padic field.
+      must be an element of a projective space of dimension 1 over a `p`-adic field.
       For type IV points, can be a list of centers used to approximate the point or a
       univariate function that computes the centers (computation starts at 1).
 
@@ -1807,9 +1804,9 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
     - ``power`` -- (optional) Rational number. Used for constructing type II points; specifies
       the power of ``p`` such that `p^\text{power}` = radius
 
-    - ``prec`` -- (default: 20) The number of disks to be used to approximate a type IV point
+    - ``prec`` -- (default: 20) the number of disks to be used to approximate a type IV point
 
-    - ``error_check`` -- (default: ``True``) If error checking should be run on input. If
+    - ``error_check`` -- boolean (default: ``True``); if error checking should be run on input. If
       input is correctly formatted, can be set to ``False`` for better performance.
       WARNING: with error check set to ``False``, any error in the input will lead to
       incorrect results.
@@ -1908,13 +1905,13 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
             raise TypeError('use as_projective_point to convert to projective Berkovich space')
 
         Berkovich_Element_Cp.__init__(self, parent=parent, center=center, radius=radius, power=power,
-                                      prec=prec, space_type="projective", error_check=error_check)
+                                      prec=prec, space_type='projective', error_check=error_check)
 
     def as_affine_point(self):
         """
         Return the corresponding affine point after dehomogenizing at infinity.
 
-        OUTPUT: A point of affine Berkovich space.
+        OUTPUT: a point of affine Berkovich space
 
         EXAMPLES::
 
@@ -2061,12 +2058,12 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
 
         OUTPUT:
 
-        - ``True`` -- If this point is less than ``other`` in the standard partial order.
-        - ``False`` -- Otherwise.
+        - ``True`` -- if this point is less than ``other`` in the standard partial order
+        - ``False`` -- otherwise
 
         EXAMPLES::
 
@@ -2156,12 +2153,12 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- a point of the same Berkovich space as this point
 
         OUTPUT:
 
-        - ``True`` -- If this point is greater than ``other`` in the standard partial order.
-        - ``False`` -- Otherwise.
+        - ``True`` -- if this point is greater than ``other`` in the standard partial order
+        - ``False`` -- otherwise
 
         EXAMPLES::
 
@@ -2241,11 +2238,11 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         INPUT:
 
-        - ``other`` -- A point of the same Berkovich space as this point.
-        - ``basepoint`` -- (default: Infinity) A point of the same
-          Berkovich space as this point, or infinity.
+        - ``other`` -- a point of the same Berkovich space as this point
+        - ``basepoint`` -- (default: ``Infinity``) a point of the same
+          Berkovich space as this point, or ``Infinity``
 
-        OUTPUT: A point of the same Berkovich space.
+        OUTPUT: a point of the same Berkovich space
 
         EXAMPLES::
 
@@ -2403,7 +2400,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
         then the image under the involution map is not defined. To avoid
         this error, increase precision.
 
-        OUTPUT: A point of the same Berkovich space.
+        OUTPUT: a point of the same Berkovich space
 
         EXAMPLES:
 
@@ -2498,8 +2495,8 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         INPUT:
 
-        - ``start`` -- A point of the same Berkovich space as this point.
-        - ``end`` -- A point of the same Berkovich space as this point.
+        - ``start`` -- a point of the same Berkovich space as this point
+        - ``end`` -- a point of the same Berkovich space as this point
 
         OUTPUT:
 
