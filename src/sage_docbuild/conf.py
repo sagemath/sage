@@ -964,8 +964,6 @@ class SagecodeTransform(SphinxTransform):
                         parent.insert(index, Text(''))
                         index += 1
                     parent.remove(node)
-
-
                     # Tab for Sage code
                     container = TabContainer("", type="tab", new_set=False)
                     textnodes = [Text('Sage')]
@@ -976,7 +974,6 @@ class SagecodeTransform(SphinxTransform):
                     container += content
                     parent.insert(index, container)
                     index += 1
-
                     if SAGE_PREPARSED_DOC == 'yes':
                         # Tab for preparsed version
                         from sage.repl.preparse import preparse
@@ -1009,9 +1006,6 @@ class SagecodeTransform(SphinxTransform):
                         container += content
                         parent.insert(index, container)
                         index += 1
-
-
-
                     if SAGE_LIVE_DOC == 'yes':
                         # Tab for Jupyter-sphinx cell
                         from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
@@ -1045,10 +1039,6 @@ class SagecodeTransform(SphinxTransform):
                         container += content
                         parent.insert(index, container)
                         index += 1
-
-
-
-
 
 
 # This replaces the setup() in sage.misc.sagedoc_conf

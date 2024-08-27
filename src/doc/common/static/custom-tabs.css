@@ -1,7 +1,11 @@
 /* Additional css for tabs */
+p:has(+ div.tab-set) {
+    margin-bottom:-3em;
+    max-width:80%;
+}
+
 .tab-set {
     flex-direction: row-reverse;
-    margin: -3em 0 0.75em 0;
 }
 
 .tab-set > label {
