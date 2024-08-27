@@ -117,8 +117,8 @@ We can convert from symbolic expressions::
     1
     sage: QQbar((-8)^(1/3))
     1.000000000000000? + 1.732050807568878?*I
-    sage: AA((-8)^(1/3))
-    -2
+    sage: AA(8^(1/3))
+    2
     sage: QQbar((-4)^(1/4))
     1 + 1*I
     sage: AA((-4)^(1/4))
@@ -298,8 +298,8 @@ track of the computation steps used to produce that number::
     sage: n = (rt2 + rt3)^5; n
     308.3018001722975?
     sage: sage_input(n)
-    R.<x> = AA[]
-    v1 = AA.polynomial_root(AA.common_polynomial(x^2 - 2), RIF(RR(1.4142135623730949), RR(1.4142135623730951))) + AA.polynomial_root(AA.common_polynomial(x^2 - 3), RIF(RR(1.7320508075688772), RR(1.7320508075688774)))
+    R.<x> = QQbar[]
+    v1 = QQbar.polynomial_root(AA.common_polynomial(x^2 - 2), CIF(RIF(RR(1.4142135623730949), RR(1.4142135623730951)), RIF(RR(0)))).real() + QQbar.polynomial_root(AA.common_polynomial(x^2 - 3), CIF(RIF(RR(1.7320508075688772), RR(1.7320508075688774)), RIF(RR(0)))).real()
     v2 = v1*v1
     v2*v2*v1
 
@@ -335,8 +335,8 @@ fact that the third output is different than the first::
     sage: n = rt2^2
     sage: sage_input(n, verify=True)
     # Verified
-    R.<x> = AA[]
-    v = AA.polynomial_root(AA.common_polynomial(x^2 - 2), RIF(RR(1.4142135623730949), RR(1.4142135623730951)))
+    R.<x> = QQbar[]
+    v = QQbar.polynomial_root(AA.common_polynomial(x^2 - 2), CIF(RIF(RR(1.4142135623730949), RR(1.4142135623730951)), RIF(RR(0)))).real()
     v*v
     sage: sage_input(n, verify=True)
     # Verified
