@@ -144,6 +144,13 @@ def from_dig6(G, dig6_string):
         sage: from_dig6(g, digraphs.Circuit(10).dig6_string())
         sage: g.is_isomorphic(digraphs.Circuit(10))
         True
+
+    The string may represent a directed graph with loops::
+
+        sage: L = DiGraph(loops=True)
+        sage: from_dig6(L, 'CW`C')
+        sage: L.edges(labels=False, sort=True)
+        [(0, 1), (0, 2), (1, 2), (2, 3), (3, 3)]
     """
     from .generic_graph_pyx import length_and_string_from_graph6, binary_string_from_dig6
     if isinstance(dig6_string, bytes):
