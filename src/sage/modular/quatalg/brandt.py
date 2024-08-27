@@ -140,7 +140,9 @@ EXAMPLES::
     Order of Quaternion Algebra (-1, -23) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
 
     sage: B.right_ideals()
-    (Fractional ideal (2 + 2*j, 2*i + 2*k, 4*j, 4*k), Fractional ideal (2 + 2*j, 2*i + 6*k, 8*j, 8*k), Fractional ideal (2 + 10*j + 8*k, 2*i + 8*j + 6*k, 16*j, 16*k))
+    (Fractional ideal (4, 4*i, 2 + 2*j, 2*i + 2*k),
+         Fractional ideal (8, 8*i, 2 + 2*j, 6*i + 2*k),
+         Fractional ideal (16, 16*i, 10 + 8*i + 2*j, 8 + 6*i + 2*k))
 
     sage: B.hecke_matrix(2)
     [1 2 0]
@@ -395,9 +397,9 @@ def basis_for_left_ideal(R, gens):
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [i+j,i-j,2*k,A(3)])
         doctest:...:  DeprecationWarning: The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras
         See https://github.com/sagemath/sage/issues/37090 for details.
-        [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
+        [1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k]
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
-        [3/2 + 1/2*i + k, i + 2*k, 3/2*j + 3/2*k, 3*k]
+        [3, 3/2 + 3/2*i, 3*j, i + 3/2*j + 1/2*k]
     """
     from sage.misc.superseded import deprecation
     deprecation(37090, "The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras")
@@ -426,7 +428,7 @@ def right_order(R, basis):
         See https://github.com/sagemath/sage/issues/37090 for details.
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
         sage: basis
-        [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
+        [1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k]
 
         sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
         sage: basis = B.maximal_order()._left_ideal_basis([i*j - j])
@@ -803,14 +805,14 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: B = BrandtModule(11)
             sage: I = B.order_of_level_N().unit_ideal()
             sage: B.cyclic_submodules(I, 2)
-            [Fractional ideal (1/2 + 3/2*j + k, 1/2*i + j + 1/2*k, 2*j, 2*k),
-             Fractional ideal (1/2 + 1/2*i + 1/2*j + 1/2*k, i + k, j + k, 2*k),
-             Fractional ideal (1/2 + 1/2*j + k, 1/2*i + j + 3/2*k, 2*j, 2*k)]
+            [Fractional ideal (2, 2*i, 3/2 + i + 1/2*j, 1 + 1/2*i + 1/2*k),
+             Fractional ideal (2, 1 + i, 1 + j, 1/2 + 1/2*i + 1/2*j + 1/2*k),
+             Fractional ideal (2, 2*i, 1/2 + i + 1/2*j, 1 + 3/2*i + 1/2*k)]
             sage: B.cyclic_submodules(I, 3)
-            [Fractional ideal (1/2 + 1/2*j, 1/2*i + 5/2*k, 3*j, 3*k),
-             Fractional ideal (1/2 + 3/2*j + 2*k, 1/2*i + 2*j + 3/2*k, 3*j, 3*k),
-             Fractional ideal (1/2 + 3/2*j + k, 1/2*i + j + 3/2*k, 3*j, 3*k),
-             Fractional ideal (1/2 + 5/2*j, 1/2*i + 1/2*k, 3*j, 3*k)]
+            [Fractional ideal (3, 3*i, 1/2 + 1/2*j, 5/2*i + 1/2*k),
+             Fractional ideal (3, 3*i, 3/2 + 2*i + 1/2*j, 2 + 3/2*i + 1/2*k),
+             Fractional ideal (3, 3*i, 3/2 + i + 1/2*j, 1 + 3/2*i + 1/2*k),
+             Fractional ideal (3, 3*i, 5/2 + 1/2*j, 1/2*i + 1/2*k)]
             sage: B.cyclic_submodules(I, 11)
             Traceback (most recent call last):
             ...
@@ -873,16 +875,17 @@ class BrandtModule_class(AmbientHeckeModule):
 
         # right multiplication by X changes something to be written
         # in terms of the basis for I.
-        Y = I.basis_matrix()
-        X = Y**(-1)
+        basis = basis_for_quaternion_lattice(I.basis(), reverse=False)
+        Y = matrix(map(list, basis))
+        X = ~Y
 
         # Compute the matrix of right multiplication by alpha acting on
         # our fixed choice of basis for this ideal.
 
         M_alpha = (matrix([(i * alpha).coefficient_tuple()
-                           for i in I.basis()]) * X).change_ring(GF(p))
+                           for i in basis]) * X).change_ring(GF(p))
         M_beta = (matrix([(i * beta).coefficient_tuple()
-                          for i in I.basis()]) * X).change_ring(GF(p))
+                          for i in basis]) * X).change_ring(GF(p))
 
         # step 2: Find j such that if f=I[j], then mod 2 we have span(I[0],alpha*I[i])
         #         has trivial intersection with span(I[j],alpha*I[j]).
@@ -1251,9 +1254,9 @@ class BrandtModule_class(AmbientHeckeModule):
 
             sage: B = BrandtModule(23)
             sage: B.right_ideals()
-            (Fractional ideal (2 + 2*j, 2*i + 2*k, 4*j, 4*k),
-             Fractional ideal (2 + 2*j, 2*i + 6*k, 8*j, 8*k),
-             Fractional ideal (2 + 10*j + 8*k, 2*i + 8*j + 6*k, 16*j, 16*k))
+            (Fractional ideal (4, 4*i, 2 + 2*j, 2*i + 2*k),
+             Fractional ideal (8, 8*i, 2 + 2*j, 6*i + 2*k),
+             Fractional ideal (16, 16*i, 10 + 8*i + 2*j, 8 + 6*i + 2*k))
 
         TESTS::
 
@@ -1332,16 +1335,16 @@ class BrandtModule_class(AmbientHeckeModule):
 
             sage: B = BrandtModule(37)
             sage: B._ideal_products()
-            [[Fractional ideal (8 + 8*j + 8*k, 4*i + 8*j + 4*k, 16*j, 16*k)],
-             [Fractional ideal (8 + 24*j + 8*k, 4*i + 8*j + 4*k, 32*j, 32*k),
-              Fractional ideal (16 + 16*j + 48*k, 4*i + 8*j + 36*k, 32*j + 32*k, 64*k)],
-             [Fractional ideal (8 + 24*j + 24*k, 4*i + 24*j + 4*k, 32*j, 32*k),
-              Fractional ideal (8 + 4*i + 16*j + 28*k, 8*i + 16*j + 8*k, 32*j, 64*k),
-              Fractional ideal (16 + 16*j + 16*k, 4*i + 24*j + 4*k, 32*j + 32*k, 64*k)]]
+            [[Fractional ideal (16, 16*i, 8 + 8*i + 8*j, 8 + 12*i + 4*k)],
+             [Fractional ideal (32, 32*i, 8 + 24*i + 8*j, 24 + 12*i + 4*k),
+              Fractional ideal (32, 64*i, 16 + 48*i + 16*j, 36*i + 8*j + 4*k)],
+             [Fractional ideal (32, 32*i, 8 + 8*i + 8*j, 8 + 12*i + 4*k),
+              Fractional ideal (64, 32 + 32*i, 16 + 16*i + 16*j, 40 + 12*i + 4*k),
+              Fractional ideal (32, 64*i, 16 + 16*i + 16*j, 16 + 52*i + 8*j + 4*k)]]
             sage: B._ideal_products(diagonal_only=True)
-            [Fractional ideal (8 + 8*j + 8*k, 4*i + 8*j + 4*k, 16*j, 16*k),
-             Fractional ideal (16 + 16*j + 48*k, 4*i + 8*j + 36*k, 32*j + 32*k, 64*k),
-             Fractional ideal (16 + 16*j + 16*k, 4*i + 24*j + 4*k, 32*j + 32*k, 64*k)]
+            [Fractional ideal (16, 16*i, 8 + 8*i + 8*j, 8 + 12*i + 4*k),
+             Fractional ideal (32, 64*i, 16 + 48*i + 16*j, 36*i + 8*j + 4*k),
+             Fractional ideal (32, 64*i, 16 + 16*i + 16*j, 16 + 52*i + 8*j + 4*k)]
         """
         L = self.right_ideals()
         n = len(L)
