@@ -279,8 +279,8 @@ from sage.categories.pushout import InfinitePolynomialFunctor
 class InfinitePolynomialRingFactory(UniqueFactory):
     """
     A factory for creating infinite polynomial ring elements.  It
-    handles making sure that they are unique as well as handling
-    pickling.  For more details, see
+    makes sure that they are unique as well as handling pickling.
+    For more details, see
     :class:`~sage.structure.factory.UniqueFactory` and
     :mod:`~sage.rings.polynomial.infinite_polynomial_ring`.
 
@@ -564,7 +564,7 @@ class GenDictWithBasering:
 
     def __next__(self):
         """
-        Return a dictionary that can be used to interprete strings in the base ring of ``self``.
+        Return a dictionary that can be used to interpret strings in the base ring of ``self``.
 
         EXAMPLES::
 
@@ -701,7 +701,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             names = ['x']
         for n in names:
             if not (isinstance(n, str) and n.isalnum() and (not n[0].isdigit())):
-                raise ValueError("generator names must be alpha-numeric strings not starting with a  digit, but %s is not" % n)
+                raise ValueError("generator names must be alphanumeric strings not starting with a digit, but %s is not" % n)
         if len(names) != len(set(names)):
             raise ValueError("generator names must be pairwise different")
         self._names = tuple(names)
@@ -884,6 +884,17 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             Traceback (most recent call last):
             ...
             ValueError: cannot convert 1/3 into an element of Infinite polynomial ring in x over Integer Ring
+
+        .. WARNING::
+
+            The :issue:`37756` is not yet fixed::
+
+                sage: L.<x, y> = QQ[]
+                sage: R.<a> = InfinitePolynomialRing(QQ)
+                sage: M = InfinitePolynomialRing(L, names=["a"])
+                sage: c = a[0]
+                sage: M(c)  # known bug
+                a_0
         """
         from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
         # In many cases, the easiest solution is to "simply" evaluate
