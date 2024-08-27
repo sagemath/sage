@@ -230,8 +230,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         flats = list(self._flats_generator)
         gb = list()
         R = self.ring() 
-        if frozenset() in flats:
-            flats.remove(frozenset())
+        if frozenset() not in flats:
+            flats.append(frozenset())
 
         ranks = [self._matroid.rank(F) for F in flats]
 
@@ -257,7 +257,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             
             else:
                 for F in flats:
-                    if F > P.join(list(subset)): #Getting missing argument error here
+                    if F > P.join(list(subset)): 
                         term = R.one()
                         for x in subset:
                             term *= self._flats_generator[x]
@@ -440,7 +440,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         poly_ring = self.ring()
         for F in self._flats:
             for G in self._flats:
-                if not (F < G or G < F):
+                if not (F < G or G < F): #5.2
                         gb.append(self._flats_generator[F]*self._flats_generator[G])
                 for i in E:
                     term = poly_ring.zero()
@@ -448,19 +448,21 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
                     for H in self._flats:
                         if i in H:
                             term += self._flats_generator[H]
-                        if H > F:
+                        if H > G:
                             term1 += self._flats_generator[H]
+                    if term != poly_ring.zero():
+                        gb.append(self._flats_generator[i] + term) #5.7
+                    if term1 != poly_ring.zero():
+                        gb.append(term1**(self._matroid.rank(G)) + 1) #5.6
 
-                        gb.append(self._flats_generator[i] + term)
-                        gb.append(term1**(self._matroid.rank(F)) + 1)
-
-                    if i in F:
-                        gb.append(self._flats_generator[i]*((term1)**self._matroid.rank(F)))
+                    if i in G: #5.5
+                        if term1 != poly_ring.zero():
+                            gb.append(self._flats_generator[i]*((term1)**self._matroid.rank(G)))
             
-                    elif not i in F:
+                    elif not i in G: #5.3
                         gb.append(self._flats_generator[i]*self._flats_generator[F])
                     
-                    elif G < F:
+                    elif G < F: #5.4
                         gb.append(self._flats_generator[G]*term1**(self._matroid.rank(F)-self._matroid.rank(G)))
 
         g_basis = PolynomialSequence(poly_ring, [gb])
