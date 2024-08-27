@@ -9,7 +9,7 @@ cdef class Matroid(SageObject):
 
     # virtual methods
     cpdef frozenset groundset(self)
-    cpdef int _rank(self, frozenset X) except -1
+    cpdef int _rank(self, frozenset X) except? -1
 
     # internal methods, assuming verified input
     cpdef frozenset _max_independent(self, frozenset X)
