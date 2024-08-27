@@ -6227,8 +6227,8 @@ def dedekind_sum(p, q, algorithm='default'):
         return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':
-        import sage.interfaces.gp
-        x = sage.interfaces.gp.gp('sumdedekind(%s,%s)' % (p, q))
+        from sage.libs.pari import pari
+        x = pari.sumdedekind(p, q)
         return Rational(x)
 
     raise ValueError('unknown algorithm')
