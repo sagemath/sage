@@ -1103,7 +1103,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             """
             return FiniteEnumeratedSet(range(1, self._tc + 1))
 
-        def compose_with_singletons(self, base_ring, names, args):
+        def _compose_with_singletons(self, base_ring, names, args):
             r"""
             Compute the inner sum of exercise 2.6.16 of BLL book.
 
@@ -1123,7 +1123,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: P = PolynomialSpecies(ZZ, "X")
                 sage: M = P._indices
                 sage: C4 = M(CyclicPermutationGroup(4))
-                sage: C4.compose_with_singletons(ZZ, "X, Y", [[2, 2]]) # X^2Y^2 + C2(XY)
+                sage: C4._compose_with_singletons(ZZ, "X, Y", [[2, 2]]) # X^2Y^2 + C2(XY)
                 E_2(XY) + X^2*Y^2
 
                 sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
@@ -1131,9 +1131,15 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: F = M(PermutationGroup([[(1,2,3), (4,5,6)]]), {1: [1,2,3], 2: [4,5,6]})
                 sage: F
                 {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
-                sage: F.compose_with_singletons(ZZ, "X1, X2, X3, Y1, Y2", [[1, 1, 1], [2, 1]])
+                sage: F._compose_with_singletons(ZZ, "X1, X2, X3, Y1, Y2", [[1, 1, 1], [2, 1]])
                 6*X1*X2*X3*Y1^2*Y2
 
+            TESTS::
+
+                sage: P = PolynomialSpecies(ZZ, "X")
+                sage: M = P._indices
+                sage: M.one()._compose_with_singletons(ZZ, "X", [[1]])
+                1
             """
             # TODO: No checks are performed right now, must be added.
             # Checks: all args in Compositions, sums must match cardinalities.
@@ -1386,8 +1392,15 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: matrix([[F * G for F in L1] for G in L2])
             [    X^5 X^3*E_2 C_3*X^2 E_3*X^2]
             [X^3*E_2 X*E_2^2 C_3*E_2 E_3*E_2]
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(ZZ, "X")
+            sage: X = P(SymmetricGroup(1))
+            sage: type(list(X^2)[0][1])
+            <class 'sage.rings.integer.Integer'>
         """
-        return self._from_dict({H * K: 1})
+        return self._from_dict({H * K: ZZ(1)})
 
     def _repr_(self):
         r"""
@@ -1405,6 +1418,25 @@ class PolynomialSpecies(CombinatorialFreeModule):
             return f"Polynomial species in {names[0]} over {self.base_ring()}"
         return f"Polynomial species in {', '.join(names)} over {self.base_ring()}"
 
+    @cached_method
+    def powersum(self, s, n):
+        r"""
+        Return `P_n(X_s)`.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(ZZ, "X")
+            sage: P.powersum(1, 4)
+            4*E_4 - 4*X*E_3 + 4*X^2*E_2 - X^4 - 2*E_2^2
+        """
+        assert n in ZZ and n > 0
+        if n == 1:
+            return self(SymmetricGroup(1), {s: [1]})
+        return (ZZ(n) * self(SymmetricGroup(n), {s: range(1, n+1)})
+                - sum(self(SymmetricGroup(i), {s: range(1, i+1)})
+                      * self.powersum(s, n-i)
+                      for i in range(1, n)))
+
     def exponential(self, multiplicities, degrees):
         r"""
         Return `E(\sum_i m_i X_i)` in the specified degrees.
@@ -1412,47 +1444,59 @@ class PolynomialSpecies(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: P = PolynomialSpecies(QQ, ["X"])
-            sage: P.exponential([3/2], [7])
-            3/4*X*E_6 + 3/4*E_2*E_5 + 3/4*E_3*E_4 + 3/2*E_7 - 3/16*X^2*E_5
-             - 3/8*X*E_2*E_4 - 3/16*X*E_3^2 - 3/16*E_2^2*E_3 + 3/32*X^3*E_4
-             + 9/32*X^2*E_2*E_3 + 3/32*X*E_2^3 - 15/256*X^4*E_3 - 15/128*X^3*E_2^2
-             + 21/512*X^5*E_2 - 9/2048*X^7
+            sage: P.exponential([3/2], [7])  # random
+            3/2*E_7 + 3/4*X*E_6 - 3/16*X^2*E_5 + 3/32*X^3*E_4 - 15/256*E_3*X^4
+             + 21/512*X^5*E_2 - 9/2048*X^7 - 15/128*X^3*E_2^2 - 3/8*E_2*E_4*X
+             + 3/32*X*E_2^3 - 3/16*X*E_3^2 + 3/4*E_2*E_5 - 3/16*E_3*E_2^2
+             + 3/4*E_3*E_4 + 9/32*E_3*E_2*X^2
+
+        We support weights::
+
+            sage: R.<q> = QQ[]
+            sage: P = PolynomialSpecies(R, ["X"])
+            sage: P.exponential([1], [2])
+            E_2
+
+            sage: P.exponential([1+q], [3])
+            (q^3+1)*E_3 + (q^2+q)*X*E_2
+
+            sage: P.exponential([1-q], [2])
+            (-q^2+1)*E_2 + (q^2-q)*X^2
+
+            sage: P = PolynomialSpecies(R, ["X", "Y"])
+            sage: P.exponential([1, q], [2, 2])
+            q^2*E_2(X)*E_2(Y)
 
         TESTS::
 
-            sage: from sage.rings.lazy_species import LazySpecies
-            sage: L = LazySpecies(QQ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
-
-            sage: c = 3/2; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
-            True
-
-            sage: c = -5/3; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
-            True
-
-            sage: c = 0; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
-            True
-
-            sage: c = 1; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
-            True
-
-            sage: c = -1; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
-            True
+            sage: P = PolynomialSpecies(QQ, ["X"])
+            sage: P.exponential([1], [0]).parent()
+            Polynomial species in X over Rational Field
 
         """
-        def power(s, mu_exp):
-            return prod(self(SymmetricGroup(i), {s: range(1, i+1)}) ** m
-                        for i, m in enumerate(mu_exp, 1))
+        def stretch(c, k):
+            r"""
+            Return c
+            """
+            if callable(c):
+                B = self.base_ring()
+                return c(*[g ** k for g in B.gens() if g != B.one()])
+            return c
 
         def factor(s, c, d):
-            return sum(binomial(c, j)
-                       * sum(multinomial(mu_exp := mu.to_exp())
-                             * power(s, mu_exp)
-                             for mu in Partitions(d, length=j))
-                       for j in range(d+1))
+            r"""
+            Return `E(c X_s)_d`.
 
-        return prod(factor(s+1, multiplicities[s], degrees[s])
-                    for s in range(self._k))
+            We use Proposition 2 in Labelle, New combinatorial
+            computational methods arising from pseudo-singletons.
+            """
+            return self.sum(~ mu.centralizer_size()
+                            * self.prod(stretch(c, k)
+                                        * self.powersum(s, k) for k in mu)
+                            for mu in Partitions(d))
+
+        return self.prod(factor(s+1, multiplicities[s], degrees[s])
+                         for s in range(self._k))
 
     class Element(CombinatorialFreeModule.Element):
         def is_constant(self):
@@ -1558,7 +1602,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             """
             P = self.parent()
             if P is not other.parent():
-                raise ValueError("the factors of a Hadamard product must be the same")
+                raise ValueError("the factors of a Hadamard product must have the same parent")
 
             res = P.zero()
             # we should first collect matching multicardinalities.
@@ -1583,7 +1627,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             return res
 
-        def compose_with_weighted_singletons(self, base_ring, names, multiplicities, degrees):
+        def _compose_with_weighted_singletons(self, names, multiplicities, degrees):
             r"""
             Compute the composition with
             `(\sum_j m_{1,j} X_{1,j}, \sum_j m_{2,j} X_{2,j}, \dots)`
@@ -1605,34 +1649,33 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             Equation (2.5.41)::
 
-                sage: P = PolynomialSpecies(ZZ, ["X"])
+                sage: P = PolynomialSpecies(QQ, ["X"])
                 sage: E2 = P(SymmetricGroup(2))
-                sage: E2.compose_with_weighted_singletons(ZZ, ["X"], [-1], [[2]])
+                sage: E2._compose_with_weighted_singletons(["X"], [-1], [[2]])
                 -E_2 + X^2
 
                 sage: C4 = P(CyclicPermutationGroup(4))
-                sage: C4.compose_with_weighted_singletons(ZZ, ["X"], [-1], [[4]])
-                {((1,2)(3,4),): ({1, 2, 3, 4})} - C_4
+                sage: C4._compose_with_weighted_singletons(["X"], [-1], [[4]])
+                -C_4 + {((1,2)(3,4),): ({1, 2, 3, 4})}
 
             Exercise (2.5.17)::
 
-                sage: C4.compose_with_weighted_singletons(ZZ, ["X", "Y"], [1, 1], [[2, 2]])
+                sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[2, 2]])
                 E_2(XY) + X^2*Y^2
-                sage: C4.compose_with_weighted_singletons(ZZ, ["X", "Y"], [1, 1], [[3, 1]])
+                sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[3, 1]])
                 X^3*Y
-                sage: C4.compose_with_weighted_singletons(ZZ, ["X", "Y"], [1, 1], [[4, 0]])
+                sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[4, 0]])
                 C_4(X)
 
             Auger et al., Equation (4.60)::
 
-                sage: C4.compose_with_weighted_singletons(ZZ, ["X", "Y"], [1, -1], [[2, 2]])
+                sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, -1], [[2, 2]])
                 -E_2(XY) + 2*X^2*Y^2
 
             TESTS::
 
-                sage: (C4+E2^2).compose_with_weighted_singletons(ZZ, ["X"], [-1], [[4]])
-                {((1,2)(3,4),): ({1, 2, 3, 4})} - C_4 - 2*X^2*E_2 + E_2^2 + X^4
-
+                sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
+                -C_4 + {((1,2)(3,4),): ({1, 2, 3, 4})} + E_2^2 - 2*X^2*E_2 + X^4
             """
             P = self.parent()
             if not self.support():
@@ -1640,9 +1683,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
             if not self.is_homogeneous():
                 raise ValueError("element is not homogeneous")
 
-            left = sum(c * M.compose_with_singletons(P.base_ring(),
-                                                     names,
-                                                     degrees)
+            left = sum(c * M._compose_with_singletons(P.base_ring(),
+                                                      names,
+                                                      degrees)
                        for M, c in self)
             P = left.parent()
             right = P.exponential(multiplicities,
@@ -1654,7 +1697,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             EXAMPLES::
 
-                sage: P = PolynomialSpecies(ZZ, ["X"])
+                sage: P = PolynomialSpecies(QQ, ["X"])
                 sage: X = P(SymmetricGroup(1))
                 sage: E2 = P(SymmetricGroup(2))
                 sage: E2(-X)
@@ -1665,7 +1708,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 sage: E2(X + X^2)
                 E_2 + X^3 + {((1,2)(3,4),): ({1, 2, 3, 4})}
 
-                sage: P2 = PolynomialSpecies(ZZ, ["X", "Y"])
+                sage: P2 = PolynomialSpecies(QQ, ["X", "Y"])
                 sage: X = P2(SymmetricGroup(1), {1:[1]})
                 sage: Y = P2(SymmetricGroup(1), {2:[1]})
                 sage: E2(X + Y)
@@ -1674,17 +1717,23 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 sage: E2(X*Y)(E2(X), E2(Y))
                 {((7,8), (5,6), (3,4), (1,2), (1,3)(2,4)(5,7)(6,8)): ({1, 2, 3, 4}, {5, 6, 7, 8})}
 
+                sage: R.<q> = QQ[]
+                sage: P = PolynomialSpecies(R, ["X"])
+                sage: X = P(SymmetricGroup(1))
+                sage: E2 = P(SymmetricGroup(2))
+                sage: E2(q*X)
+                q^2*E_2
+
             """
             P = self.parent()
             if not self.support():
                 return P.zero()
             P0 = args[0].parent()
             assert all(P0 == arg.parent() for arg in args), "all parents must be the same"
-            R = P.base_ring()
             args = [sorted(g, key=lambda x: x[0]._mc)
                     for g in args]
-            multiplicities = [[c for _, c in g] for g in args]
-            molecules = [[M for M, _ in g] for g in args]
+            multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
+            molecules = list(chain.from_iterable([[M for M, _ in g] for g in args]))
             F_degrees = sorted(set(M._mc for M, _ in self))
 
             result = P0.zero()
@@ -1694,10 +1743,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
                                                   for n_i, arg in zip(n, args)]):
                     # each degree is a weak composition of the degree of F in sort i
                     names = ["X%s" % i for i in range(sum(len(arg) for arg in args))]
-                    FX = F.compose_with_weighted_singletons(R, names,
-                                                            list(chain.from_iterable(multiplicities)),
-                                                            degrees)
-                    FG = [(M(*list(chain.from_iterable(molecules))), c)
-                          for M, c in FX]
+                    FX = F._compose_with_weighted_singletons(names,
+                                                             multiplicities,
+                                                             degrees)
+                    FG = [(M(*molecules), c) for M, c in FX]
                     result += P0.sum_of_terms(FG)
             return result
