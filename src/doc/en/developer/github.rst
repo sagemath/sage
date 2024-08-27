@@ -499,3 +499,34 @@ Final notes
   priorities of bugs very differently from us, so please let us know
   if you see a problem with specific PRs.
 
+* If your pull request is not getting any attention from the Sage community:
+  There are several possible reasons. First of all, most people who work on
+  Sage do so in their scarce free time. There are many open pull requests
+  that keep contributors busy.  And understanding the changes requires
+  knowledge that only very few people may have.
+
+* It is thus important to make the job for potential reviewers as easy as possible.
+  Here are some tips on making your PR easy to review:
+
+  * Clearly describe the problem your PR is trying to
+    solve.
+  * Provide background information relevant to the problem
+    that your PR is solving. Such information can include links to
+    online resources and any relevant papers, books and reference
+    materials.
+  * Clearly describe how your PR solves the problem under
+    consideration.
+  * Clearly describe how to test the changes in your PR.
+  * List any Issues or Pull Requests that your PR depends on.
+  * Make sure your PR is based on a recent (preferably, the latest) Sage beta version.
+  * Follow the :ref:`relevant coding conventions <chapter-code-basics>`
+    as documented in the Developer Guide.
+
+* It is appropriate to join the
+  `sage-devel <https://groups.google.com/group/sage-devel>`_
+  mailing list and to post there about the PRs that you care about.
+  Although it may at times feel intimidating to post there, many
+  developers are eager to join the discusssion and help.
+
+* You can also try to find developers interested in reviewing your PRs
+  in our `SageMath Zulip chat channel <https://sagemath.zulipchat.com/>`_.
