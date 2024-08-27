@@ -25,6 +25,8 @@ from sage.matrix.constructor import matrix
 from sage.misc.misc_c import prod
 
 ####################### Linear algebra system solving ###############################
+
+
 def _flatten_once(lstlst):
     r"""
     Flattens a list of list into a list, but only flattening one layer and
@@ -51,6 +53,7 @@ def _flatten_once(lstlst):
 #*************************************************************
 #  Linear algebraic Interpolation algorithm, helper functions
 #*************************************************************
+
 
 def _monomial_list(maxdeg, l, wy):
     r"""
@@ -155,6 +158,7 @@ def _interpolation_max_weighted_deg(n, tau, s):
         35
     """
     return (n-tau) * s
+
 
 def _interpolation_matrix_problem(points, tau, parameters, wy):
     r"""
@@ -286,6 +290,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
     return Q
 
 ####################### Lee-O'Sullivan's method ###############################
+
 
 def lee_osullivan_module(points, parameters, wy):
     r"""

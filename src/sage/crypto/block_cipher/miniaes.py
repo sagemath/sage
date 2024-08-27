@@ -35,6 +35,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 
+
 class MiniAES(SageObject):
     r"""
     This class implements the Mini Advanced Encryption Standard (Mini-AES)

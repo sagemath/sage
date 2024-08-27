@@ -22,6 +22,7 @@ from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 from sage.homology.chain_complex import ChainComplex_class
 
+
 class BGGResolution(UniqueRepresentation, ChainComplex_class):
     r"""
     The BGG resolution of a simple module.

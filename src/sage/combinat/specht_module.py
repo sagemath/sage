@@ -37,6 +37,7 @@ from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModu
 from sage.modules.free_module_element import vector
 from sage.categories.modules_with_basis import ModulesWithBasis
 
+
 class SymmetricGroupRepresentation(Representation_abstract):
     """
     Mixin class for symmetric group (algebra) representations.

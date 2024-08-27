@@ -1285,6 +1285,7 @@ def read_basis(num_strands=3):
         -1], [2, -1, 2], [1, 2, -1, 2], [-1, 2, -1, 2]]
     return data[num_strands]
 
+
 def read_irr(variables, num_strands=3):
     r"""
     Return precomputed data of Ivan Marin.
@@ -1327,6 +1328,7 @@ def read_irr(variables, num_strands=3):
         -1/(a*b), (2, 2): 1/a}, {(0, 0): 1/a, (0, 1): 1/(a*b), (0, 2):
         1/b, (1, 1): 1/b, (1, 2): a/b + b/c, (2, 2): 1/c}]])
     return data[num_strands]
+
 
 def read_regl(variables, num_strands=3):
     r"""
@@ -1400,6 +1402,7 @@ def read_regl(variables, num_strands=3):
         (20, 20): v/w, (20, 23): v, (21, 13): -v/w, (21, 19): 1/w,
         (22, 6): 1/w, (22, 13): u/w, (22, 22): v/w, (23, 13): 1}]])
     return data[num_strands]
+
 
 def read_regr(variables, num_strands=3):
     r"""

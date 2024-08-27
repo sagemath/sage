@@ -913,6 +913,8 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
 
 from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+
+
 class DualBasisFunctor(SymmetricFunctionsFunctor):
     """
     A constructor for algebras of symmetric functions constructed by

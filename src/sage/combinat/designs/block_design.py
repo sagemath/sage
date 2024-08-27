@@ -71,6 +71,7 @@ BlockDesign = IncidenceStructure
 
 ###  utility functions  -------------------------------------------------------
 
+
 def tdesign_params(t, v, k, L):
     """
     Return the design's parameters: `(t, v, b, r , k, L)`. Note that `t` must be
@@ -90,6 +91,7 @@ def tdesign_params(t, v, k, L):
     y = binomial(k-1, t-1)
     r = integer_floor(L * x/y)
     return (t, v, b, r, k, L)
+
 
 def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parameters=False):
     r"""
@@ -166,6 +168,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
         return (False,(None,None)) if return_parameters else False
 
     return (True, (q,d)) if return_parameters else True
+
 
 def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, check=True):
     r"""
@@ -392,6 +395,7 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
 
     return B
 
+
 def q3_minus_one_matrix(K):
     r"""
     Return a companion matrix in `GL(3, K)` whose multiplicative order is `q^3 - 1`.
@@ -438,6 +442,7 @@ def q3_minus_one_matrix(K):
         if m.multiplicative_order() == q**3 - 1:
             return m
 
+
 def normalize_hughes_plane_point(p, q):
     r"""
     Return the normalized form of point ``p`` as a 3-tuple.
@@ -480,6 +485,7 @@ def normalize_hughes_plane_point(p, q):
                 return (p[0] * k,p[1] * k,p[2] * k)
             else:
                 return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
+
 
 def HughesPlane(q2, check=True):
     r"""
@@ -619,6 +625,7 @@ def HughesPlane(q2, check=True):
                 blcks.append([relabel[normalize_hughes_plane_point(p,q)] for p in l])
     from .bibd import BalancedIncompleteBlockDesign
     return BalancedIncompleteBlockDesign(q2**2+q2+1, blcks, check=check)
+
 
 def projective_plane_to_OA(pplane, pt=None, check=True):
     r"""
@@ -774,6 +781,7 @@ def projective_plane(n, check=True, existence=False):
         return True
     else:
         return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
+
 
 def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
     r"""

@@ -31,6 +31,7 @@ import os
 from sage.misc.persist import load
 from sage.env import SAGE_SHARE
 
+
 def zeta_zeros():
     r"""
     List of the imaginary parts of the first 2,001,052 zeros of the

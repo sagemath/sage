@@ -141,6 +141,7 @@ def _matA(n):
         A.append(I+O)
     return A
 
+
 def _matId(n):
     r"""
     For internal use; returns a list of identity matrices over GF(2)
@@ -177,6 +178,7 @@ def _MS2(n):
     n2 = n.quo_rem(2)[0]
     return MatrixSpace(_F, n2, n2)
 
+
 def _I2(n):
     r"""
     Internal function.
@@ -195,6 +197,7 @@ def _I2(n):
         [0 0 1]
     """
     return _MS2(n).identity_matrix()
+
 
 @cached_function
 def _And7():
@@ -252,6 +255,7 @@ def _H8():
 # Remark: The above matrix constructions aid in computing some "small" self-dual codes.
 
 ############## main functions ##############
+
 
 def self_dual_binary_codes(n):
     r"""
