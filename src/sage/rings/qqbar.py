@@ -134,11 +134,10 @@ symbolic expressions are algebraic numbers::
     sage: QQbar(sqrt(2) + QQbar(sqrt(3)))                                               # needs sage.symbolic
     3.146264369941973?
 
-Note the different behavior in taking roots: for ``AA`` we prefer real
-roots if they exist, but for ``QQbar`` we take the principal root::
+Note that both for ``AA`` and ``QQbar``, we take the principal root::
 
     sage: AA(-1)^(1/3)
-    -1
+    0.500000000000000? + 0.866025403784439?*I
     sage: QQbar(-1)^(1/3)
     0.500000000000000? + 0.866025403784439?*I
 
@@ -4324,14 +4323,13 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         .. WARNING::
 
             Note that for odd `n`, all ``False`` and negative real numbers,
-            ``AlgebraicReal`` and ``AlgebraicNumber`` values give different
-            answers: ``AlgebraicReal`` values prefer real results, and
-            ``AlgebraicNumber`` values return the principal root.
+            ``AlgebraicReal`` and ``AlgebraicNumber`` values return the
+            principal root.
 
         EXAMPLES::
 
             sage: AA(-8).nth_root(3)
-            -2
+            1.000000000000000? + 1.732050807568878?*I
             sage: QQbar(-8).nth_root(3)
             1.000000000000000? + 1.732050807568878?*I
             sage: QQbar.zeta(12).nth_root(15)
@@ -6373,9 +6371,9 @@ class AlgebraicNumberPowQQAction(Action):
     TESTS::
 
         sage: AA(-8)^(1/3)
-        -2
+        1.000000000000000? + 1.732050807568878?*I
         sage: AA(-8)^(2/3)
-        4
+        -2.000000000000000? + 3.464101615137755?*I
         sage: AA(32)^(3/5)
         8
         sage: AA(-16)^(1/2)
@@ -6437,11 +6435,8 @@ class AlgebraicNumberPowQQAction(Action):
             rt = rational_exact_root(abs(x._descr._value), d)
             if rt is not None:
                 if x._descr._value < 0:
-                    if S is AA:
-                        return AlgebraicReal(ANRational((-rt)**n))
-                    else:
-                        z = QQbar.zeta(2 * d)._pow_int(n)
-                        return z * AlgebraicNumber(ANRational(rt**n))
+                    z = QQbar.zeta(2 * d)._pow_int(n)
+                    return z * AlgebraicNumber(ANRational(rt**n))
                 return S(ANRational(rt**n))
 
         if S is AA:
