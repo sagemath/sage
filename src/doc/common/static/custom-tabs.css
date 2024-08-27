@@ -1,7 +1,11 @@
 /* Additional css for tabs */
+
 p:has(+ div.tab-set) {
     margin-bottom:-3em;
     max-width:80%;
+}
+p.example:has(+ div.tab-set) {
+    margin-bottom:-1em;
 }
 
 .tab-set {
