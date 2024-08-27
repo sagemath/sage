@@ -27,6 +27,8 @@ def _make_parser():
 
         sage: from sage.doctest.control import DocTestDefaults
         sage: from sage.doctest.__main__ import _make_parser
+        sage: os.environ.pop('SAGE_DOCTEST_RANDOM_SEED', None)
+        ...
         sage: parser = _make_parser()
         sage: args = parser.parse_args([])
         sage: DD = DocTestDefaults(runtest_default=True); DD
