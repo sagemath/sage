@@ -952,7 +952,7 @@ class SagecodeTransform(SphinxTransform):
     default_priority = 170
 
     def apply(self):
-        for node in self.document.traverse(nodes.paragraph):
+        for node in self.document.findall(nodes.paragraph):
             if isinstance(node.children[0], nodes.Text) and node.children[0].astext().strip() in ['EXAMPLE:', 'EXAMPLES:']:
                 text = node.children[0].astext()
                 parent = node.parent
@@ -969,6 +969,7 @@ class SagecodeTransform(SphinxTransform):
                     from sphinx_inline_tabs._impl import TabContainer
                     parent = node.parent
                     index = parent.index(node)
+                    prev_node = node.previous_sibling()
                     if isinstance(node.previous_sibling(), TabContainer):
                         # Make sure not to merge inline tabs for adjacent literal blocks
                         parent.insert(index, Text(''))
@@ -984,6 +985,9 @@ class SagecodeTransform(SphinxTransform):
                     container += content
                     parent.insert(index, container)
                     index += 1
+                    if isinstance(prev_node, nodes.paragraph):
+                        prev_node['classes'].append('with-sage-tab')
+
                     if SAGE_PREPARSED_DOC == 'yes':
                         # Tab for preparsed version
                         from sage.repl.preparse import preparse
@@ -1016,6 +1020,8 @@ class SagecodeTransform(SphinxTransform):
                         container += content
                         parent.insert(index, container)
                         index += 1
+                        if isinstance(prev_node, nodes.paragraph):
+                            prev_node['classes'].append('with-python-tab')
                     if SAGE_LIVE_DOC == 'yes':
                         # Tab for Jupyter-sphinx cell
                         from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
@@ -1049,6 +1055,9 @@ class SagecodeTransform(SphinxTransform):
                         container += content
                         parent.insert(index, container)
                         index += 1
+                        if isinstance(prev_node, nodes.paragraph):
+                            prev_node['classes'].append('with-sage-live-tab')
+
 
 
 # This replaces the setup() in sage.misc.sagedoc_conf

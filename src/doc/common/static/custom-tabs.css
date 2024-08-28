@@ -1,10 +1,22 @@
 /* Additional css for tabs */
 
-p:has(+ div.tab-set) {
+p.with-sage-tab {
+    --sage-tab-width: 2.5em;
+    --python-tab-width: 0em;
+    --sage-live-tab-width: 0em;
     margin-bottom:-3em;
-    max-width:80%;
+    max-width:calc(100% - var(--sage-tab-width) - var(--python-tab-width) - var(--sage-live-tab-width));
 }
-p.example:has(+ div.tab-set) {
+
+p.with-python-tab {
+    --python-tab-width: calc(3.5em + var(--tabs--margin-x));
+}
+
+p.with-sage-live-tab {
+    --sage-live-tab-width: calc(5em + var(--tabs--margin-x));
+}
+
+p.example.with-sage-tab {
     margin-bottom:-1em;
 }
 
