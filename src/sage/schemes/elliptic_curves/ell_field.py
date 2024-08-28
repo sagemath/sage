@@ -4,13 +4,13 @@ Elliptic curves over a general field
 This module defines the class :class:`EllipticCurve_field`, based on
 :class:`EllipticCurve_generic`, for elliptic curves over general fields.
 """
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 import sage.rings.abc
 from sage.categories.number_fields import NumberFields
@@ -2016,7 +2016,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         from .isogeny_small_degree import isogenies_prime_degree
         return sum([isogenies_prime_degree(self, d) for d in L], [])
 
-    def isogenies_degree(self, n, *, _intermediate=False):
+    def isogenies_degree(self, n, *, _intermediate=False, _prefix=None):
         r"""
         Return an iterator of all separable isogenies of given degree (up to
         post-composition with isomorphisms) with domain equal to ``self``,
@@ -2065,6 +2065,21 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: all(phi.degree() == 2^2 for phi in it)
             True
 
+        We verify that the isogenies outputted are distinct. Note that we do
+        not use a ``set`` or any hash-based data structure, as hashing
+        isogenies is slow::
+
+            sage: import itertools
+            sage: all_distinct = lambda arr: all(x != y for x, y in itertools.combinations(arr, 2))
+            sage: K.<z> = GF((19, 2))
+            sage: E = EllipticCurve(K, [11*z+5, 14*z+3])
+            sage: S = list(E.isogenies_degree(5^2)); len(S), all_distinct(S)
+            (3, True)
+            sage: S = list(E.isogenies_degree(5^2*11)); len(S), all_distinct(S)
+            (6, True)
+            sage: S = list(E.isogenies_degree(5^2*11^4)); len(S), all_distinct(S)       # long time (2s)
+            (15, True)
+
         ::
 
             sage: pol = PolynomialRing(QQ, 'x')([1, -3, 5, -5, 5, -3, 1])
@@ -2104,8 +2119,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: list(E.isogenies_degree(5 * product(prime_range(7, 100))))
             []
         """
-        from sage.structure.factorization import Factorization
+        def compute_key(phi):
+            """
+            Data used in ``hash(phi)`` excluding the expensive `.kernel_polynomial`.
+            """
+            return (phi.domain(), phi.codomain(), phi.scaling_factor())
+
         from sage.schemes.elliptic_curves.weierstrass_morphism import identity_morphism
+        from sage.structure.factorization import Factorization
 
         if not isinstance(n, Factorization):
             n = Integer(n).factor()
@@ -2114,14 +2135,35 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             yield identity_morphism(self)
             return
 
-        p = n[-1][0]
-        for iso in self.isogenies_degree(n / p, _intermediate=_intermediate):
-            if _intermediate:
-                yield iso
+        if _prefix is None:
+            _prefix = self.identity_morphism()
 
-            Eiso = iso.codomain()
-            for next_iso in Eiso.isogenies_prime_degree(p):
-                yield next_iso * iso
+        p = n[-1][0]
+        seen = {}
+
+        def insert_seen(phi):
+            nonlocal seen
+            key = compute_key(phi)
+            if key not in seen:
+                seen[key] = [phi]
+                return phi
+            for psi in seen[key]:
+                if psi == phi:
+                    return
+            seen[key].append(phi)
+            return phi
+
+        for isog in self.isogenies_prime_degree(p):
+            if _intermediate:
+                psi = isog * _prefix
+                if insert_seen(psi):
+                    yield psi
+
+            Eiso = isog.codomain()
+            for next_isog in Eiso.isogenies_degree(n / p, _intermediate=_intermediate, _prefix=isog * _prefix):
+                psi = next_isog * isog
+                if insert_seen(psi):
+                    yield psi
 
     def is_isogenous(self, other, field=None):
         """
