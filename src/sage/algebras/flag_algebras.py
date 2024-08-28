@@ -361,7 +361,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             numsind = [0]
             for xx in excluded:
                 numsind += xx.raw_numbers()
-            numsind += [n1, n2] + large_ftype.raw_numbers() + list(ftype_inj)
+            numsind += [n1, n2, N] + large_ftype.raw_numbers() + list(ftype_inj)
             if len(ret)<3000:
                 self._cache[ind] = ret
         else:
@@ -375,6 +375,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         os.makedirs(os.path.dirname(save_name), exist_ok=True)
         with open(save_name, 'wb') as file:
             pickle.dump(ret, file)
+    
+    def _other_save(self, name, data):
+        save_name = self._calcs_dir() + name
+        with open(save_name, 'wb') as file:
+            pickle.dump(ret, file)
+    
+    def _other_load(self, name):
+        save_name = self._calcs_dir() + name
+        with open(save_name, 'rb') as file:
+            pickle.load(ret, file)
     
     def _load(self, ind, is_table):
         r"""
@@ -390,7 +400,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             numsind = [0]
             for xx in excluded:
                 numsind += xx.raw_numbers()
-            numsind += [n1, n2] + large_ftype.raw_numbers() + list(ftype_inj)
+            numsind += [n1, n2, N] + large_ftype.raw_numbers() + list(ftype_inj)
         else:
             excluded, n, ftype = ind
             numsind = [1]
@@ -848,7 +858,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
-                         construction=None, certificate=False, exact=False):
+                         construction=None, certificate=False, exact=False, denom=1024):
         r"""
         Try to maximize or minimize the value of `target_element`
         
@@ -971,7 +981,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             pbar.set_description("Done with mult table for {}".format(ftype))
 
         sdp_data = self._tables_to_sdp_data(table_constructor)
-        print("Tables finished", flush=True)
+        print("Tables finished")
 
         #
         # add constraints data
@@ -1023,7 +1033,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             time.sleep(float(0.1))
             initial_sol = solve_sdp(block_sizes, list(target_vector_exact), mat_inds, mat_vals)
             time.sleep(float(0.1))
-
+			
             if (not exact):
                 res = initial_sol['primal'] * (-1 if maximize else 1)
                 return res if (not certificate) else (res, initial_sol)
@@ -1063,7 +1073,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             return res if (not certificate) else (res, final_sdp)
 
         print("Starting the rounding of the result.")
-        rounded = self._round_sdp_solution(final_sdp, table_constructor, block_sizes, target_vector_exact, phi_vectors_exact, positives_matrix_exact)
+        rounded = self._round_sdp_solution(final_sdp, table_constructor, block_sizes, target_vector_exact, phi_vectors_exact, positives_matrix_exact, denom=denom)
 
         res = rounded[0] * (-1 if maximize else 1)
         return res if (not certificate) else (res, rounded)
@@ -1216,7 +1226,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         else:
             print("The rounding was unsuccessful, otherwise the result would be {}".format(_fraction_print(-min(slacks))))
 
-        return min(slacks), X_matrix_corr
+        return min(slacks), X_matrix_corr, slacks
     
     optimize = optimize_problem
     
