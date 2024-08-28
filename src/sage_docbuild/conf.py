@@ -963,7 +963,7 @@ class SagecodeTransform(SphinxTransform):
                 parent.insert(index, para)
 
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
-            for node in self.document.traverse(nodes.literal_block):
+            for node in self.document.findall(nodes.literal_block):
                 if node.get('language') is None and node.astext().startswith('sage:'):
                     from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
                     from sphinx_inline_tabs._impl import TabContainer
