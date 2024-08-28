@@ -26,6 +26,7 @@ from sage.functions.all import exp
 from sage.symbolic.expression_conversions import Converter
 from sage.symbolic.operators import add_vararg, mul_vararg
 from sage.symbolic.ring import SR
+from sage.rings.qqbar import AlgebraicRealField
 
 
 #############
@@ -73,6 +74,15 @@ class AlgebraicConverter(Converter):
             sage: a = AlgebraicConverter(QQbar)
             sage: a.arithmetic(f, f.operator())
             1.414213562373095?
+
+        Note that converting an expression where an odd root is taken will take the real root
+        if the target is ``AA``, but this behavior will change in the future::
+
+            sage: AA((-1)^(2/3))
+            doctest:warning...
+            DeprecationWarning: Taking the root of an algebraic real number will yield the principal root in the future.
+            See https://github.com/sagemath/sage/issues/38362 for details.
+            1
 
         TESTS::
 

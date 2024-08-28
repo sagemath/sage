@@ -118,6 +118,9 @@ We can convert from symbolic expressions::
     sage: QQbar((-8)^(1/3))
     1.000000000000000? + 1.732050807568878?*I
     sage: AA((-8)^(1/3))
+    doctest:warning...
+    DeprecationWarning: Taking the root of an algebraic real number will yield the principal root in the future.
+    See https://github.com/sagemath/sage/issues/38362 for details.
     -2
     sage: QQbar((-4)^(1/4))
     1 + 1*I
@@ -134,10 +137,13 @@ symbolic expressions are algebraic numbers::
     sage: QQbar(sqrt(2) + QQbar(sqrt(3)))                                               # needs sage.symbolic
     3.146264369941973?
 
-Note the different behavior in taking roots: for ``AA`` we prefer real
-roots if they exist, but for ``QQbar`` we take the principal root::
+Currently for ``AA`` we prefer real roots if they exist, but for ``QQbar`` we take the principal root.
+However, this behavior will change in the future::
 
     sage: AA(-1)^(1/3)
+    doctest:warning...
+    DeprecationWarning: Taking the root of an algebraic real number will yield the principal root in the future.
+    See https://github.com/sagemath/sage/issues/38362 for details.
     -1
     sage: QQbar(-1)^(1/3)
     0.500000000000000? + 0.866025403784439?*I
@@ -4360,10 +4366,13 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: AA(-2).nth_root(5, all=True) == QQbar(-2).nth_root(5, all=True)   # long time
             True
         """
+        n = ZZ(n)
         if not all:
-            return self ** ~ZZ(n)
+            if self.parent() is AA and self.sign() < 0 and n % 2 != 0 and abs(n) > 1:
+                return -((-self) ** ~n)
+            return self ** ~n
         else:
-            root = QQbar(self) ** ~ZZ(n)
+            root = QQbar(self) ** ~n
             zlist = [root]
             zeta = QQbar.zeta(n)
             for k in range(1, n):
@@ -6373,6 +6382,9 @@ class AlgebraicNumberPowQQAction(Action):
     TESTS::
 
         sage: AA(-8)^(1/3)
+        doctest:warning...
+        DeprecationWarning: Taking the root of an algebraic real number will yield the principal root in the future.
+        See https://github.com/sagemath/sage/issues/38362 for details.
         -2
         sage: AA(-8)^(2/3)
         4
@@ -6398,6 +6410,9 @@ class AlgebraicNumberPowQQAction(Action):
             sage: act = AlgebraicNumberPowQQAction(QQ, AA); act
             Right Rational Powering by Rational Field on Algebraic Real Field
             sage: act(AA(-2), 1/3)
+            doctest:warning...
+            DeprecationWarning: Taking the root of an algebraic real number will yield the principal root in the future.
+            See https://github.com/sagemath/sage/issues/38362 for details.
             -1.259921049894873?
 
         ::
@@ -6429,8 +6444,13 @@ class AlgebraicNumberPowQQAction(Action):
 
         # Parent of the result
         S = self.codomain()
-        if S is AA and d % 2 == 0 and x.sign() < 0:
-            S = QQbar
+        if S is AA and x.sign() < 0:
+            if d % 2 == 0:
+                S = QQbar
+            elif d != 1:
+                from sage.misc.superseded import deprecation
+                deprecation(38362, "Taking the root of an algebraic real number "
+                            "will yield the principal root in the future.")
 
         # First, check for exact roots.
         if isinstance(x._descr, ANRational):
