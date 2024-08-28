@@ -24,7 +24,7 @@ Here is what the module can do:
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
     :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
-    :meth:`is_edge_cut` | Check whether ``edges`` is an edge cut of ``G``.
+    :meth:`is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
     :meth:`edge_connectivity` | Return the edge connectivity of the graph.
     :meth:`vertex_connectivity` | Return the vertex connectivity of the graph.
@@ -736,7 +736,7 @@ def blocks_and_cuts_tree(G):
 
 def is_edge_cut(G, edges):
     """
-    Check whether ``edges`` is an edge cut of ``G``.
+    Check whether the input edges form an edge cut.
 
     A set of edges is an edge cut of a graph if its removal increases the number
     of connected components. In a digraph, we consider the number of (weakly)
@@ -747,9 +747,9 @@ def is_edge_cut(G, edges):
 
     INPUT:
 
-    - ``G`` -- a Sage (Di)Graph
+    - ``G`` -- a (di)graph
 
-    - ``edges`` -- an iterable container of edges
+    - ``edges`` -- a list of edges
 
     EXAMPLES:
 
@@ -829,15 +829,6 @@ def is_edge_cut(G, edges):
         sage: G = digraphs.Circuit(4) * 2
         sage: is_edge_cut(G, [(0, 1), (1, 2)])
         True
-
-    TESTS:
-
-    If `G` is not a Sage graph, an error is raised::
-
-        sage: is_edge_cut('I am not a graph', [(0, 0)])
-        Traceback (most recent call last):
-        ...
-        TypeError: the input must be a Sage graph
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
