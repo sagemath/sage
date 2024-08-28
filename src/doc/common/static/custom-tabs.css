@@ -1,5 +1,18 @@
 /* Additional css for tabs */
 
+.tab-set {
+    margin-top: 0px;
+}
+
+.tab-set > label {
+    padding: 0.1em var(--tabs--pading-x);
+}
+
+p.with-sage-tab { 
+    margin-bottom:0.25rem
+}
+
+/*
 p.with-sage-tab {
     --sage-tab-width: 2.5em;
     --python-tab-width: 0em;
@@ -47,4 +60,4 @@ p.example.with-sage-tab {
 .tab-set > label:nth-of-type(3) {
   order:8;
 }
-
+*/
