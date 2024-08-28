@@ -942,6 +942,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             ftypes = [flag.subflag([], ftype_points=list(range(fs))) for flag in ftype_flags]
             for xx in ftypes:
                 ftype_data.append((ns, xx, target_size))
+        ftype_data.sort()
 
         print("The relevant ftypes are constructed, their number is {}".format(len(ftype_data)))
 
@@ -975,7 +976,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
         # add constraints data
         #
-
+        
         if positives == None:
             positives_list_exact = []
             constraints_vals = []
@@ -1004,7 +1005,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if target_element.ftype().size()==0:
             one_vector = vector([1]*len(base_flags))
         else:
-            one_vector = target_element.ftype().project()<<(target_size - target_element.ftype().size()).values()
+            one_vector = (target_element.ftype().project()<<(target_size - target_element.ftype().size())).values()
         positives_list_exact.extend([one_vector, one_vector*(-1)])
         constraints_vals.extend([1, -1])
         positives_matrix_exact = matrix(positives_list_exact)
