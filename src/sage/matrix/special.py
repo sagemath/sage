@@ -3102,7 +3102,7 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     with a check that if eigenvectors were calculated by hand
     entries would all be integers. ::
 
-        sage: eigenvalues = [ZZ.random_element() for _ in range(3)]
+        sage: eigenvalues = sample(range(-20, 21), 3)
         sage: B = random_matrix(QQ, 6, algorithm='diagonalizable',
         ....:                   eigenvalues=eigenvalues, dimensions=[2,3,1])
         sage: all(x in ZZ for x in (B-(-12*identity_matrix(6))).rref().list())
