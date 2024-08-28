@@ -948,88 +948,92 @@ class Documenter:
         True, only generate if the object is defined in the module name it is
         imported from. If *all_members* is True, document all members.
         """
-        if not self.parse_name():
-            # need a module to import
-            logger.warning(
-                __("don't know which module to import for autodocumenting "
-                   '%r (try placing a "module" or "currentmodule" directive '
-                   'in the document, or giving an explicit module name)') %
-                self.name, type='autodoc')
-            return
 
-        # now, import the module and get object to document
-        if not self.import_object():
-            return
-
-        # If there is no real module defined, figure out which to use.
-        # The real module is used in the module analyzer to look up the module
-        # where the attribute documentation would actually be found in.
-        # This is used for situations where you have a module that collects the
-        # functions and classes of internal submodules.
-        guess_modname = self.get_real_modname()
-        self.real_modname: str = real_modname or guess_modname
-
-        # try to also get a source code analyzer for attribute docs
-        try:
-            self.analyzer = ModuleAnalyzer.for_module(self.real_modname)
-            # parse right now, to get PycodeErrors on parsing (results will
-            # be cached anyway)
-            self.analyzer.find_attr_docs()
-        except PycodeError as exc:
-            logger.debug('[autodoc] module analyzer failed: %s', exc)
-            # no source file -- e.g. for builtin and C modules
-            self.analyzer = None
-            # at least add the module.__file__ as a dependency
-            if module___file__ := getattr(self.module, '__file__', ''):
-                self.directive.record_dependencies.add(module___file__)
-        else:
-            self.directive.record_dependencies.add(self.analyzer.srcname)
-
-        if self.real_modname != guess_modname:
-            # Add module to dependency list if target object is defined in other module.
-            try:
-                analyzer = ModuleAnalyzer.for_module(guess_modname)
-                self.directive.record_dependencies.add(analyzer.srcname)
-            except PycodeError:
-                pass
-
-        docstrings: list[str] = functools.reduce(operator.iadd, self.get_doc() or [], [])
-        if ismock(self.object) and not docstrings:
-            logger.warning(__('A mocked object is detected: %r'),
-                           self.name, type='autodoc')
-
-        # check __module__ of object (for members not given explicitly)
-        if check_module:
-            if not self.check_module():
+        import warnings
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=DeprecationWarning)
+            if not self.parse_name():
+                # need a module to import
+                logger.warning(
+                    __("don't know which module to import for autodocumenting "
+                       '%r (try placing a "module" or "currentmodule" directive '
+                       'in the document, or giving an explicit module name)') %
+                    self.name, type='autodoc')
                 return
 
-        sourcename = self.get_sourcename()
+            # now, import the module and get object to document
+            if not self.import_object():
+                return
 
-        # make sure that the result starts with an empty line.  This is
-        # necessary for some situations where another directive preprocesses
-        # reST and no starting newline is present
-        self.add_line('', sourcename)
+            # If there is no real module defined, figure out which to use.
+            # The real module is used in the module analyzer to look up the module
+            # where the attribute documentation would actually be found in.
+            # This is used for situations where you have a module that collects the
+            # functions and classes of internal submodules.
+            guess_modname = self.get_real_modname()
+            self.real_modname: str = real_modname or guess_modname
 
-        # format the object's signature, if any
-        try:
-            sig = self.format_signature()
-        except Exception as exc:
-            logger.warning(__('error while formatting signature for %s: %s'),
-                           self.fullname, exc, type='autodoc')
-            return
+            # try to also get a source code analyzer for attribute docs
+            try:
+                self.analyzer = ModuleAnalyzer.for_module(self.real_modname)
+                # parse right now, to get PycodeErrors on parsing (results will
+                # be cached anyway)
+                self.analyzer.find_attr_docs()
+            except PycodeError as exc:
+                logger.debug('[autodoc] module analyzer failed: %s', exc)
+                # no source file -- e.g. for builtin and C modules
+                self.analyzer = None
+                # at least add the module.__file__ as a dependency
+                if module___file__ := getattr(self.module, '__file__', ''):
+                    self.directive.record_dependencies.add(module___file__)
+            else:
+                self.directive.record_dependencies.add(self.analyzer.srcname)
 
-        # generate the directive header and options, if applicable
-        self.add_directive_header(sig)
-        self.add_line('', sourcename)
+            if self.real_modname != guess_modname:
+                # Add module to dependency list if target object is defined in other module.
+                try:
+                    analyzer = ModuleAnalyzer.for_module(guess_modname)
+                    self.directive.record_dependencies.add(analyzer.srcname)
+                except PycodeError:
+                    pass
 
-        # e.g. the module directive doesn't have content
-        self.indent += self.content_indent
+            docstrings: list[str] = functools.reduce(operator.iadd, self.get_doc() or [], [])
+            if ismock(self.object) and not docstrings:
+                logger.warning(__('A mocked object is detected: %r'),
+                               self.name, type='autodoc')
 
-        # add all content (from docstrings, attribute docs etc.)
-        self.add_content(more_content)
+            # check __module__ of object (for members not given explicitly)
+            if check_module:
+                if not self.check_module():
+                    return
 
-        # document members, if possible
-        self.document_members(all_members)
+            sourcename = self.get_sourcename()
+
+            # make sure that the result starts with an empty line.  This is
+            # necessary for some situations where another directive preprocesses
+            # reST and no starting newline is present
+            self.add_line('', sourcename)
+
+            # format the object's signature, if any
+            try:
+                sig = self.format_signature()
+            except Exception as exc:
+                logger.warning(__('error while formatting signature for %s: %s'),
+                               self.fullname, exc, type='autodoc')
+                return
+
+            # generate the directive header and options, if applicable
+            self.add_directive_header(sig)
+            self.add_line('', sourcename)
+
+            # e.g. the module directive doesn't have content
+            self.indent += self.content_indent
+
+            # add all content (from docstrings, attribute docs etc.)
+            self.add_content(more_content)
+
+            # document members, if possible
+            self.document_members(all_members)
 
 
 class ModuleDocumenter(Documenter):

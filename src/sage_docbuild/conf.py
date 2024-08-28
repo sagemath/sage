@@ -751,87 +751,90 @@ def find_sage_dangling_links(app, env, node, contnode):
     r"""
     Try to find dangling link in local module imports or all.py.
     """
-    debug_inf(app, "==================== find_sage_dangling_links ")
+    import warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        debug_inf(app, "==================== find_sage_dangling_links ")
 
-    reftype = node['reftype']
-    reftarget = node['reftarget']
-    try:
-        doc = node['refdoc']
-    except KeyError:
-        debug_inf(app, "-- no refdoc in node %s" % node)
-        return None
-
-    debug_inf(app, "Searching %s from %s" % (reftarget, doc))
-
-    # Workaround: in Python's doc 'object', 'list', ... are documented as a
-    # function rather than a class
-    if reftarget in base_class_as_func and reftype == 'class':
-        node['reftype'] = 'func'
-
-    res = call_intersphinx(app, env, node, contnode)
-    if res:
-        debug_inf(app, "++ DONE %s" % (res['refuri']))
-        return res
-
-    if node.get('refdomain') != 'py':  # not a python file
-        return None
-
-    try:
-        module = node['py:module']
-        cls = node['py:class']
-    except KeyError:
-        debug_inf(app, "-- no module or class for :%s:%s" % (reftype,
-                                                             reftarget))
-        return None
-
-    basename = reftarget.split(".")[0]
-    try:
-        target_module = getattr(sys.modules['sage.all'], basename).__module__
-        debug_inf(app, "++ found %s using sage.all in %s" % (basename, target_module))
-    except AttributeError:
+        reftype = node['reftype']
+        reftarget = node['reftarget']
         try:
-            target_module = getattr(sys.modules[node['py:module']], basename).__module__
-            debug_inf(app, "++ found %s in this module" % (basename,))
-        except AttributeError:
-            debug_inf(app, "-- %s not found in sage.all or this module" % (basename))
-            return None
+            doc = node['refdoc']
         except KeyError:
-            target_module = None
-    if target_module is None:
-        target_module = ""
-        debug_inf(app, "?? found in None !!!")
+            debug_inf(app, "-- no refdoc in node %s" % node)
+            return None
 
-    newtarget = target_module+'.'+reftarget
-    node['reftarget'] = newtarget
+        debug_inf(app, "Searching %s from %s" % (reftarget, doc))
 
-    # adapted  from sphinx/domains/python.py
-    builder = app.builder
-    searchmode = node.hasattr('refspecific') and 1 or 0
-    matches = builder.env.domains['py'].find_obj(
-        builder.env, module, cls, newtarget, reftype, searchmode)
-    if not matches:
-        debug_inf(app, "?? no matching doc for %s" % newtarget)
-        return call_intersphinx(app, env, node, contnode)
-    elif len(matches) > 1:
-        env.warn(target_module,
-                 'more than one target found for cross-reference '
-                 '%r: %s' % (newtarget,
-                             ', '.join(match[0] for match in matches)),
-                 node.line)
-    name, obj = matches[0]
-    debug_inf(app, "++ match = %s %s" % (name, obj))
+        # Workaround: in Python's doc 'object', 'list', ... are documented as a
+        # function rather than a class
+        if reftarget in base_class_as_func and reftype == 'class':
+            node['reftype'] = 'func'
 
-    from docutils import nodes
-    newnode = nodes.reference('', '', internal=True)
-    if name == target_module:
-        newnode['refid'] = name
-    else:
-        newnode['refuri'] = builder.get_relative_uri(node['refdoc'], obj[0])
-        newnode['refuri'] += '#' + name
-        debug_inf(app, "++ DONE at URI %s" % (newnode['refuri']))
-    newnode['reftitle'] = name
-    newnode.append(contnode)
-    return newnode
+        res = call_intersphinx(app, env, node, contnode)
+        if res:
+            debug_inf(app, "++ DONE %s" % (res['refuri']))
+            return res
+
+        if node.get('refdomain') != 'py':  # not a python file
+            return None
+
+        try:
+            module = node['py:module']
+            cls = node['py:class']
+        except KeyError:
+            debug_inf(app, "-- no module or class for :%s:%s" % (reftype,
+                                                                 reftarget))
+            return None
+
+        basename = reftarget.split(".")[0]
+        try:
+            target_module = getattr(sys.modules['sage.all'], basename).__module__
+            debug_inf(app, "++ found %s using sage.all in %s" % (basename, target_module))
+        except AttributeError:
+            try:
+                target_module = getattr(sys.modules[node['py:module']], basename).__module__
+                debug_inf(app, "++ found %s in this module" % (basename,))
+            except AttributeError:
+                debug_inf(app, "-- %s not found in sage.all or this module" % (basename))
+                return None
+            except KeyError:
+                target_module = None
+        if target_module is None:
+            target_module = ""
+            debug_inf(app, "?? found in None !!!")
+
+        newtarget = target_module+'.'+reftarget
+        node['reftarget'] = newtarget
+
+        # adapted  from sphinx/domains/python.py
+        builder = app.builder
+        searchmode = node.hasattr('refspecific') and 1 or 0
+        matches = builder.env.domains['py'].find_obj(
+            builder.env, module, cls, newtarget, reftype, searchmode)
+        if not matches:
+            debug_inf(app, "?? no matching doc for %s" % newtarget)
+            return call_intersphinx(app, env, node, contnode)
+        elif len(matches) > 1:
+            env.warn(target_module,
+                     'more than one target found for cross-reference '
+                     '%r: %s' % (newtarget,
+                                 ', '.join(match[0] for match in matches)),
+                     node.line)
+        name, obj = matches[0]
+        debug_inf(app, "++ match = %s %s" % (name, obj))
+
+        from docutils import nodes
+        newnode = nodes.reference('', '', internal=True)
+        if name == target_module:
+            newnode['refid'] = name
+        else:
+            newnode['refuri'] = builder.get_relative_uri(node['refdoc'], obj[0])
+            newnode['refuri'] += '#' + name
+            debug_inf(app, "++ DONE at URI %s" % (newnode['refuri']))
+        newnode['reftitle'] = name
+        newnode.append(contnode)
+        return newnode
 
 
 # lists of basic Python class which are documented as functions
@@ -952,7 +955,7 @@ class SagecodeTransform(SphinxTransform):
 
     def apply(self):
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
-            for node in self.document.traverse(nodes.literal_block):
+            for node in self.document.findall(nodes.literal_block):
                 if node.get('language') is None and node.astext().startswith('sage:'):
                     from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
                     from sphinx_inline_tabs._impl import TabContainer
