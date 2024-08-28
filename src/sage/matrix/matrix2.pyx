@@ -6961,7 +6961,7 @@ cdef class Matrix(Matrix1):
             if f.degree() == 1:
                 res.extend([-f.constant_coefficient()]*e)
             else:
-                for r, ee in f.change_ring(K.an_embedding(A)).roots():
+                for r, ee in f.change_ring(A).roots():
                     res.extend([r]*(e*ee))
 
         eigenvalues = Sequence(res)
@@ -17098,7 +17098,7 @@ cdef class Matrix(Matrix1):
             sage: A.eigenvalues()
             Traceback (most recent call last):
             ...
-            NotImplementedError: algebraic closures of finite fields are only implemented for prime fields
+            TypeError: no canonical coercion from Finite Field in a of size 5^4 to Finite Field in z4 of size 5^4
 
         Subdivisions are optional.  ::
 
@@ -17460,7 +17460,7 @@ cdef class Matrix(Matrix1):
             sage: A.eigenvalues()
             Traceback (most recent call last):
             ...
-            NotImplementedError: algebraic closures of finite fields are only implemented for prime fields
+            TypeError: no canonical coercion from Finite Field in a of size 7^2 to Finite Field in z2 of size 7^2
 
         Companion matrices may be selected as any one of four different types.
         See the documentation for the companion matrix constructor,
