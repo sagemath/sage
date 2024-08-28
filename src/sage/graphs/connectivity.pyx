@@ -749,7 +749,7 @@ def is_edge_cut(G, edges):
 
     - ``G`` -- a (di)graph
 
-    - ``edges`` -- a list of edges
+    - ``edges`` -- a set of edges
 
     EXAMPLES:
 
