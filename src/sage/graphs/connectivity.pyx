@@ -830,10 +830,6 @@ def is_edge_cut(G, edges):
         sage: is_edge_cut(G, [(0, 1), (1, 2)])
         True
     """
-    from sage.graphs.generic_graph import GenericGraph
-    if not isinstance(G, GenericGraph):
-        raise TypeError("the input must be a Sage graph")
-
     G._scream_if_not_simple(allow_loops=True)
 
     cdef set C = set()  # set of edges of the potential cut
@@ -940,20 +936,7 @@ def is_cut_edge(G, u, v=None, label=None):
         Traceback (most recent call last):
         ...
         ValueError: edge not in graph
-
-    TESTS:
-
-    If ``G`` is not a Sage graph, an error is raised::
-
-        sage: is_cut_edge('I am not a graph',0)
-        Traceback (most recent call last):
-        ...
-        TypeError: the input must be a Sage graph
     """
-    from sage.graphs.generic_graph import GenericGraph
-    if not isinstance(G, GenericGraph):
-        raise TypeError("the input must be a Sage graph")
-
     if label is None:
         if v is None:
             try:
