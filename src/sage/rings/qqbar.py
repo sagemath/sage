@@ -117,10 +117,12 @@ We can convert from symbolic expressions::
     1
     sage: QQbar((-8)^(1/3))
     1.000000000000000? + 1.732050807568878?*I
-    sage: AA(8^(1/3))
-    2
     sage: QQbar((-4)^(1/4))
     1 + 1*I
+    sage: AA((-8)^(1/3))
+    Traceback (most recent call last):
+    ...
+    ValueError: Cannot coerce algebraic number with nonzero imaginary part to algebraic real
     sage: AA((-4)^(1/4))
     Traceback (most recent call last):
     ...
@@ -4329,7 +4331,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: AA(-8).nth_root(3)
-            1.000000000000000? + 1.732050807568878?*I
+            -2
             sage: QQbar(-8).nth_root(3)
             1.000000000000000? + 1.732050807568878?*I
             sage: QQbar.zeta(12).nth_root(15)
@@ -4359,6 +4361,9 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             True
         """
         if not all:
+            if self.parent() is AA and self.sign() < 0:
+                if n % 2:
+                    return -((-self) ** ~ZZ(n))
             return self ** ~ZZ(n)
         else:
             root = QQbar(self) ** ~ZZ(n)
@@ -6396,7 +6401,7 @@ class AlgebraicNumberPowQQAction(Action):
             sage: act = AlgebraicNumberPowQQAction(QQ, AA); act
             Right Rational Powering by Rational Field on Algebraic Real Field
             sage: act(AA(-2), 1/3)
-            -1.259921049894873?
+            0.6299605249474365? + 1.091123635971722?*I
 
         ::
 
@@ -6430,7 +6435,7 @@ class AlgebraicNumberPowQQAction(Action):
         if S is AA and x.sign() < 0:
             S = QQbar
 
-        # First, check for exact roots.
+        # First, check for exact roots
         if isinstance(x._descr, ANRational):
             rt = rational_exact_root(abs(x._descr._value), d)
             if rt is not None:
