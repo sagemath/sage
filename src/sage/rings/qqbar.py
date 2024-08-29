@@ -6427,7 +6427,7 @@ class AlgebraicNumberPowQQAction(Action):
 
         # Parent of the result
         S = self.codomain()
-        if S is AA and d % 2 == 0 and x.sign() < 0:
+        if S is AA and x.sign() < 0:
             S = QQbar
 
         # First, check for exact roots.
