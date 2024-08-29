@@ -736,7 +736,7 @@ def blocks_and_cuts_tree(G):
 
 def is_edge_cut(G, edges):
     """
-    Check whether the input edges form an edge cut.
+    Check whether ``edges`` form an edge cut.
 
     A set of edges is an edge cut of a graph if its removal increases the number
     of connected components. In a digraph, we consider the number of (weakly)
@@ -883,7 +883,7 @@ def is_edge_cut(G, edges):
 
 def is_cut_edge(G, u, v=None, label=None):
     """
-    Check whether the input edge is a cut-edge or a bridge.
+    Check whether the edge ``(u, v)`` is a cut-edge or a bridge of graph ``G``.
 
     A cut edge (or bridge) is an edge that when removed increases
     the number of connected components. This function works with
