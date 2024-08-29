@@ -128,7 +128,7 @@ jobs:
         if: (success() || failure()) && steps.packages.outcome == 'success'
         run: |
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
-          make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
+          make doc-clean doc-uninstall; make playwright-ensure sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy doc

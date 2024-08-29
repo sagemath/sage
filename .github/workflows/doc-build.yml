@@ -175,7 +175,7 @@ jobs:
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall
           export SAGE_USE_CDNS=yes
-          ./config.status && make sagemath_doc_html-no-deps
+          ./config.status && make playwright-ensure sagemath_doc_html-no-deps
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy doc
@@ -239,7 +239,7 @@ jobs:
           export SAGE_LIVE_DOC=yes
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
           make doc-clean doc-uninstall
-          ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
+          ./config.status && make playwright-ensure sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy live doc
