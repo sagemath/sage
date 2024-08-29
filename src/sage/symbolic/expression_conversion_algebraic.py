@@ -28,9 +28,7 @@ from sage.symbolic.operators import add_vararg, mul_vararg
 from sage.symbolic.ring import SR
 from sage.rings.abc import AlgebraicRealField
 
-#############
-# Algebraic #
-#############
+
 class AlgebraicConverter(Converter):
     def __init__(self, field):
         """
