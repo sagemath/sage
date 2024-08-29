@@ -325,6 +325,22 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                 +E_2*{((1,2)(3,4),):({1,2,3,4})}*X+X*E_6)
              + O^8
 
+            sage: R.<q> = QQ[]
+            sage: L = LazySpecies(R, "X")
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E1 = L(lambda n: SymmetricGroup(n) if n else 0)
+            sage: E(q*E1)
+            1 + q*X + ((q^2+q)*E_2) + ((q^3+q)*E_3+q^2*X*E_2)
+             + ((q^4+q)*E_4+q^2*P_4+q^2*X*E_3+q^3*E_2^2)
+             + ((q^5+q)*E_5+(q^4+q^3+q^2)*E_3*E_2+q^2*X*E_4+q^3*P_4*X)
+             + ((q^6+q)*E_6+q^2*{((1,2,3)(4,6),(1,4)(2,5)(3,6)):({1,2,3,4,5,6})}
+                +(q^5+q^3+q^2)*E_4*E_2+q^2*X*E_5
+                +q^3*{((1,4)(2,3),(1,6,3,2,5,4)):({1,2,3,4,5,6})}
+                +q^3*E_3*E_2*X+q^4*E_2*P_4+q^4*E_3^2)
+             + O^7
+
+
         TESTS::
 
             sage: L = LazySpecies(QQ, "X")
