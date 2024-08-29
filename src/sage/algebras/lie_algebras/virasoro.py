@@ -206,7 +206,7 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
         matrix over the base ring as part of the test::
 
             sage: L = lie_algebras.pwitt(Zmod(6), 6)
-            sage: TestSuite(L).run(skip="_test_grading")
+            sage: TestSuite(L).run(skip='_test_grading')
         """
         if R(p) != 0:
             raise ValueError("{} is not 0 in {}".format(p, R))
@@ -326,6 +326,7 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
     class Element(LieAlgebraElement):
         pass
 
+
 def _basis_key(x):
     """
     Helper function that generates a key for the basis elements
@@ -343,6 +344,7 @@ def _basis_key(x):
         from sage.rings.infinity import infinity
         return infinity
     return x
+
 
 class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
     r"""
@@ -651,6 +653,7 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
 
 #####################################################################
 ## Representations
+
 
 class ChargelessRepresentation(CombinatorialFreeModule):
     r"""
@@ -1014,7 +1017,7 @@ class VermaModule(CombinatorialFreeModule):
         """
         if index in ZZ:
             if index >= 0:
-                raise ValueError("sequence must have non-positive entries")
+                raise ValueError("sequence must have nonpositive entries")
             index = (index,)
         return super()._monomial(index)
 

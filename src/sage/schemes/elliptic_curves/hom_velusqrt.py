@@ -699,7 +699,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 385*x + 42 over Finite Field of size 419
-            sage: EllipticCurveHom_velusqrt(E, K, model="montgomery")
+            sage: EllipticCurveHom_velusqrt(E, K, model='montgomery')
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Finite Field of size 419
@@ -1012,7 +1012,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
         INPUT:
 
-        - ``left, right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom` objects
+        - ``left``, ``right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+          objects
 
         ALGORITHM:
 

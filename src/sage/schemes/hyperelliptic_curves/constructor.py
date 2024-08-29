@@ -14,8 +14,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.projective.projective_space import ProjectiveSpace
-
 from .hyperelliptic_generic import HyperellipticCurve_generic
 from .hyperelliptic_finite_field import HyperellipticCurve_finite_field
 from .hyperelliptic_rational_field import HyperellipticCurve_rational_field
@@ -26,29 +24,28 @@ import sage.rings.abc
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
+from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.dynamic_class import dynamic_class
 
 
 def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     r"""
-    Returns the hyperelliptic curve `y^2 + h y = f`, for
+    Return the hyperelliptic curve `y^2 + h y = f`, for
     univariate polynomials `h` and `f`. If `h`
     is not given, then it defaults to 0.
 
     INPUT:
 
-    -  ``f`` - univariate polynomial
+    - ``f`` -- univariate polynomial
 
-    -  ``h`` - optional univariate polynomial
+    - ``h`` -- (optional) univariate polynomial
 
-    -  ``names``  (default: ``["x","y"]``) - names for the
-       coordinate functions
+    - ``names`` -- (default: ``["x","y"]``) names for the coordinate functions
 
-    -  ``check_squarefree`` (default: ``True``) - test if
-       the input defines a hyperelliptic curve when f is
-       homogenized to degree `2g+2` and h to degree
-       `g+1` for some g.
+    - ``check_squarefree`` -- boolean (default: ``True``); test if the input
+      defines a hyperelliptic curve when f is homogenized to degree `2g+2` and
+      h to degree `g+1` for some `g`
 
     .. WARNING::
 
@@ -164,7 +161,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     Input with integer coefficients creates objects with the integers
     as base ring, but only checks smoothness over `\QQ`, not over Spec(`\ZZ`).
-    In other words, it is checked that the discriminant is non-zero, but it is
+    In other words, it is checked that the discriminant is nonzero, but it is
     not checked whether the discriminant is a unit in `\ZZ^*`.::
 
         sage: P.<x> = ZZ[]
@@ -223,7 +220,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
             # characteristic 2
             if h == 0:
                 raise ValueError(
-                    f"for characteristic 2, argument {h = } must be non-zero"
+                    f"for characteristic 2, argument {h = } must be nonzero"
                 )
             if h[g + 1] == 0 and f[2 * g + 1] ** 2 == f[2 * g + 2] * h[g] ** 2:
                 raise ValueError(
@@ -269,20 +266,14 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     # For certain base fields, we specialise to subclasses
     # with special case methods
-    def is_FiniteField(x):
-        return isinstance(x, FiniteField)
-
-    def is_pAdicField(x):
-        return isinstance(x, sage.rings.abc.pAdicField)
-
     fields = [
-        ("FiniteField", is_FiniteField, HyperellipticCurve_finite_field),
-        ("RationalField", is_RationalField, HyperellipticCurve_rational_field),
-        ("pAdicField", is_pAdicField, HyperellipticCurve_padic_field),
+        ("FiniteField", FiniteField, HyperellipticCurve_finite_field),
+        ("RationalField", RationalField, HyperellipticCurve_rational_field),
+        ("pAdicField", sage.rings.abc.pAdicField, HyperellipticCurve_padic_field),
     ]
 
-    for name, test, cls in fields:
-        if test(R):
+    for name, base_ring_cls, cls in fields:
+        if isinstance(R, base_ring_cls):
             bases.append(cls)
             cls_name.append(name)
             break

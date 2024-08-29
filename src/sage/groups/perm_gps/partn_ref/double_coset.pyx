@@ -81,7 +81,6 @@ REFERENCE:
 - [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
   Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
   533-583.
-
 """
 
 #*****************************************************************************
@@ -116,6 +115,7 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
         if j != 0:
             return j
     return 0
+
 
 def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2,3,4,5,0]]):
     """
@@ -168,7 +168,6 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
         ....:       reps.append(p)
         sage: len(reps)
         8
-
     """
     cdef int i, n = len(perm1)
     assert all(len(g) == n for g in gens+[perm2])
@@ -199,9 +198,10 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
     sig_free(isomorphism)
     return x
 
+
 cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
     r"""
-    Allocates work space for the double_coset function. It can be
+    Allocate work space for the double_coset function. It can be
     input to the function in which case it must be deallocated after the
     function is called.
     """
@@ -251,7 +251,7 @@ cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
 
 cdef void deallocate_dc_work_space(dc_work_space *work_space) noexcept:
     r"""
-    Deallocates work space for the double_coset function.
+    Deallocate work space for the double_coset function.
     """
     if work_space is NULL:
         return
@@ -280,38 +280,38 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     Traverse the search space for double coset calculation.
 
     INPUT:
-    S1, S2 -- pointers to the structures
-    partition1 -- PartitionStack of depth 0 and degree n,
-        whose first partition is of the points of S1
-    ordering2 -- an ordering of the points of S2 representing a second partition
-    n -- the number of points (points are assumed to be 0,1,...,n-1)
-    all_children_are_equivalent -- pointer to a function
+    - ``S1``, ``S2`` -- pointers to the structures
+    - ``partition1`` -- PartitionStack of depth 0 and degree n,
+      whose first partition is of the points of S1
+    - ``ordering2`` -- an ordering of the points of S2 representing a second partition
+    - ``n`` -- the number of points (points are assumed to be 0,1,...,n-1)
+    - ``all_children_are_equivalent`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
+        - ``PS`` -- pointer to a partition stack
+        - ``S`` -- pointer to the structure
         OUTPUT:
-        bint -- returns True if it can be determined that all refinements below
-            the current one will result in an equivalent discrete partition
-    refine_and_return_invariant -- pointer to a function
+        bint; returns True if it can be determined that all refinements below
+        the current one will result in an equivalent discrete partition
+    - ``refine_and_return_invariant`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
-        alpha -- an array consisting of numbers, which indicate the starting
-            positions of the cells to refine against (will likely be modified)
+        - ``PS`` -- pointer to a partition stack
+        -n``S`` -- pointer to the structure
+        - ``alpha`` -- an array consisting of numbers, which indicate the starting
+          positions of the cells to refine against (will likely be modified)
         OUTPUT:
-        int -- returns an invariant under application of arbitrary permutations
+        integer; returns an invariant under application of arbitrary permutations
     compare_structures -- pointer to a function
         INPUT:
-        gamma_1, gamma_2 -- (list) permutations of the points of S1 and S2
-        S1, S2 -- pointers to the structures
-        degree -- degree of gamma_1 and 2
+        - ``gamma_1``, ``gamma_2`` -- (list) permutations of the points of S1 and S2
+        - ``S1``, ``S2`` -- pointers to the structures
+        - ``degree`` -- degree of gamma_1 and 2
         OUTPUT:
-        int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
-            such that the set of all structures is well-ordered
-    input_group -- either a specified group to limit the search to,
-        or NULL for the full symmetric group
-    isom -- space to store the isomorphism to,
-        or NULL if isomorphism is not needed
+        integer; 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
+        such that the set of all structures is well-ordered
+    - ``input_group`` -- either a specified group to limit the search to,
+      or NULL for the full symmetric group
+    - ``isom`` -- space to store the isomorphism to,
+      or NULL if isomorphism is not needed
 
     .. NOTE::
 

@@ -20,6 +20,7 @@ from sage.misc.sagedoc_conf import *
 
 import sys
 import os
+import re
 import importlib
 import dateutil.parser
 import sphinx
@@ -353,7 +354,7 @@ def set_intersphinx_mappings(app, config):
     for directory in os.listdir(os.path.join(invpath)):
         if directory == 'jupyter_execute':
             # This directory is created by jupyter-sphinx extension for
-            # internal use and should be ignored here. See trac #33507.
+            # internal use and should be ignored here. See Issue #33507.
             continue
         if os.path.isdir(os.path.join(invpath, directory)):
             src = os.path.join(refpath, directory)
@@ -399,7 +400,7 @@ def linkcode_resolve(domain, info):
             anchor = f'#L{lineno}'
         else:
             anchor = ''
-        return f"{source_repository}blob/{version}/src/{filename}{anchor}"
+        return f"{source_repository}blob/develop/src/{filename}{anchor}"
     return None
 
 
@@ -440,12 +441,29 @@ html_theme_options = {
     # "source_directory" is defined in conf.py customized for the doc
 }
 
-if not version.split('.')[-1].isnumeric():  # develop version
-    html_theme_options.update({
-        "announcement": f'This is documentation for Sage development version {version}. '
-                         'The documentation for the latest stable version is available '
-                         '<a href="https://doc.sagemath.org/html/en/index.html">here</a>.'
-})
+# Check the condition for announcement banner
+github_ref = os.environ.get('GITHUB_REF', '')
+if github_ref:
+    match = re.search(r'refs/pull/(\d+)/merge', github_ref)
+    if match:
+        pr_number = match.group(1)
+is_for_develop = github_ref.startswith('refs/heads/develop')
+is_for_github_pr = github_ref and match and pr_number
+is_stable_release = version.split('.')[-1].isnumeric()
+
+if is_for_develop or is_for_github_pr or not is_stable_release:  # condition for announcement banner
+    # This URL is hardcoded in the file .github/workflows/doc-publish.yml.
+    # See NETLIFY_ALIAS of the "Deploy to Netlify" step.
+    ver = f'<a href="https://doc-develop--sagemath.netlify.app/html/en/index.html">{version}</a>'
+    if is_for_github_pr:
+        pr_url = f'https://github.com/sagemath/sage/pull/{pr_number}'
+        pr_sha = os.environ.get('PR_SHA', '')
+        pr_commit = pr_url + f'/commits/{pr_sha}'
+        ver += f' built with GitHub PR <a href="{pr_url}">#{pr_number}</a>' \
+               f' on <a href="{pr_commit}">{pr_sha[:7]}</a>' \
+               f' [<a href="/changes.html">changes</a>]'
+    banner = f'This is documentation for Sage version {ver} for development purpose.'
+    html_theme_options.update({ "announcement": banner })
 
 # The name of the Pygments (syntax highlighting) style to use. This
 # overrides a HTML theme's corresponding setting.
@@ -457,6 +475,7 @@ html_sidebars = {
     "**": [
         "sidebar/scroll-start.html",
         "sidebar/brand.html",
+        "sidebar/version-selector.html",
         "sidebar/search.html",
         "sidebar/home.html",
         "sidebar/navigation.html",
@@ -617,7 +636,7 @@ latex_elements['preamble'] = r"""
 \let\textLaTeX\LaTeX
 \AtBeginDocument{\renewcommand*{\LaTeX}{\hbox{\textLaTeX}}}
 
-% Workaround for a LaTeX bug -- see trac #31397 and
+% Workaround for a LaTeX bug -- see Issue #31397 and
 % https://tex.stackexchange.com/questions/583391/mactex-2020-error-with-report-hyperref-mathbf-in-chapter.
 \makeatletter
 \pdfstringdefDisableCommands{%
@@ -663,7 +682,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
     path2 = os.path.join(SAGE_DOC, 'html', 'en')
     relpath = os.path.relpath(path2, path1)
     context['release'] = release
-    context['documentation_title'] = 'Sage {}'.format(release) + ' Documentation'
+    context['documentation_title'] = f'Version {release} Documentation'
     context['documentation_root'] = os.path.join(relpath, 'index.html')
     if 'website' in path1:
         context['title'] = 'Documentation'
@@ -672,20 +691,21 @@ def add_page_context(app, pagename, templatename, context, doctree):
     if 'reference' in path1 and not path1.endswith('reference'):
         path2 = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         relpath = os.path.relpath(path2, path1)
-        context['reference_title'] = 'Sage {}'.format(release) + ' Reference Manual'
+        context['reference_title'] = f'Version {release} Reference Manual'
         context['reference_root'] = os.path.join(relpath, 'index.html')
         context['refsub'] = True
         if pagename.startswith('sage/'):
-            # This is for adding small edit button using Furo's feature:
-            # https://pradyunsg.me/furo/customisation/edit-button/#adding-an-edit-button
+            # This is for adding small view/edit buttons using Furo's feature:
+            # https://pradyunsg.me/furo/customisation/top-of-page-buttons/
             # This works well if the source file is '.rst' file. But the '.rst'
             # files in the directory 'sage/' are generated by the Sphinx
-            # autodoc from the Python or Cython source files. Hence we teak
+            # autodoc from the Python or Cython source files. Hence we tweak
             # here template context variables so that links to the correct
             # source files are generated.
             suffix = '.py' if importlib.import_module(pagename.replace('/','.')).__file__.endswith('.py') else '.pyx'
             context['page_source_suffix'] = suffix
-            context['theme_source_edit_link'] = os.path.join(source_repository, f'blob/develop/src', '{filename}')
+            context['theme_source_view_link'] = os.path.join(source_repository, f'blob/develop/src', '{filename}')
+            context['theme_source_edit_link'] = os.path.join(source_repository, f'edit/develop/src', '{filename}')
 
 
 dangling_debug = False
@@ -820,25 +840,14 @@ base_class_as_func = [
     'frozenset', 'int', 'list', 'long', 'object',
     'set', 'slice', 'str', 'tuple', 'type', 'unicode', 'xrange']
 
-# Nit picky option configuration: Put here broken links we want to ignore. For
+
+# nitpicky option configuration: Put here broken links we want to ignore. For
 # link to the Python documentation several links where broken because there
 # where class listed as functions. Expand the list 'base_class_as_func' above
 # instead of marking the link as broken.
 nitpick_ignore = [
     ('py:class', 'twisted.web2.resource.Resource'),
     ('py:class', 'twisted.web2.resource.PostableResource')]
-
-def nitpick_patch_config(app):
-    """
-    Patch the default config for nitpicky
-
-    Calling path_config ensure that nitpicky is not considered as a Sphinx
-    environment variable but rather as a Sage environment variable. As a
-    consequence, changing it doesn't force the recompilation of the entire
-    documentation.
-    """
-    app.config.values['nitpicky'] = (False, 'sage')
-    app.config.values['nitpick_ignore'] = ([], 'sage')
 
 
 skip_picklability_check_modules = [
@@ -1055,7 +1064,6 @@ def setup(app):
         # in find_sage_dangling_links.
         #   app.connect('missing-reference', missing_reference)
         app.connect('missing-reference', find_sage_dangling_links)
-        app.connect('builder-inited', nitpick_patch_config)
         app.connect('html-page-context', add_page_context)
 
 

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Extended code
 
@@ -37,7 +37,7 @@ class ExtendedCode(AbstractLinearCode):
 
     INPUT:
 
-    -  ``C`` -- A linear code
+    - ``C`` -- a linear code
 
     EXAMPLES::
 
@@ -71,7 +71,7 @@ class ExtendedCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between two extended codes.
+        Test equality between two extended codes.
 
         EXAMPLES::
 
@@ -186,7 +186,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of ``self``.
+    - ``code`` -- the associated code of ``self``
     """
 
     def __init__(self, code):
@@ -234,7 +234,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between GRSEvaluationVectorEncoder objects.
+        Test equality between GRSEvaluationVectorEncoder objects.
 
         EXAMPLES::
 
@@ -285,7 +285,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this decoder
+    - ``code`` -- the associated code of this decoder
 
     - ``original_decoder`` -- (default: ``None``) the decoder that will be used over the original code.
       It has to be a decoder object over the original code.
@@ -397,6 +397,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
         Another example, with a list decoder::
 
+            sage: # needs sage.symbolic
             sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'a').list()[:15], 7)
             sage: Ce = codes.ExtendedCode(C)
             sage: Dgrs = C.decoder('GuruswamiSudan', tau=4)
@@ -443,7 +444,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
         INPUT:
 
         - ``*args``, ``**kwargs`` -- arguments and optional arguments are
-          forwarded to original decoder's ``decoding_radius`` method.
+          forwarded to original decoder's ``decoding_radius`` method
 
         EXAMPLES::
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Rich Output for the Browser
 """
@@ -15,7 +16,7 @@ class OutputHtml(OutputBase):
 
     def __init__(self, html):
         """
-        HTML Output
+        HTML Output.
 
         INPUT:
 
@@ -51,14 +52,12 @@ class OutputHtml(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample Html output container
+        Construct a sample Html output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputHtml`.
+        OUTPUT: an instance of :class:`OutputHtml`
 
         EXAMPLES::
 
@@ -87,7 +86,7 @@ class OutputHtml(OutputBase):
 
     def with_html_tag(self):
         r"""
-        Return the HTML code surrounded by ``<html>`` tag
+        Return the HTML code surrounded by ``<html>`` tag.
 
         This is just a convenience method.
 

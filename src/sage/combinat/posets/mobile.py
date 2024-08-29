@@ -28,13 +28,13 @@ class MobilePoset(FinitePoset):
 
     EXAMPLES::
 
-        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                      # optional - sage.combinat
+        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                      # needs sage.combinat sage.modules
         ....:                        {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
         ....:                         3: [posets.DoubleTailedDiamond(6)]},
         ....:                        anchor=(4, 2, posets.ChainPoset(6)))
-        sage: len(P._ribbon)                                                            # optional - sage.combinat
+        sage: len(P._ribbon)                                                            # needs sage.combinat sage.modules
         8
-        sage: P._anchor                                                                 # optional - sage.combinat
+        sage: P._anchor                                                                 # needs sage.combinat sage.modules
         (4, 5)
 
     This example is Example 5.9 in [GGMM2020]_::
@@ -53,7 +53,7 @@ class MobilePoset(FinitePoset):
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
         sage: P2._anchor
         (8, (8, 0))
-        sage: P2.linear_extensions().cardinality()                                      # optional - sage.modules
+        sage: P2.linear_extensions().cardinality()                                      # needs sage.modules
         21399440939
 
         sage: EP = posets.MobilePoset(posets.ChainPoset(0), {})
@@ -91,7 +91,7 @@ class MobilePoset(FinitePoset):
 
         INPUT:
 
-        - ``ribbon`` -- a list of elements that form a ribbon in your poset
+        - ``ribbon`` -- list of elements that form a ribbon in your poset
 
         TESTS::
 

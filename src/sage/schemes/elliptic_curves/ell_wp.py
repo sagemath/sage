@@ -36,7 +36,6 @@ AUTHORS:
 
 - Jeroen Demeyer (2014-03-06): code clean up, fix characteristic bound
   for quadratic algorithm (see :issue:`15855`)
-
 """
 
 #*****************************************************************************
@@ -65,9 +64,9 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     - ``prec`` -- precision
 
-    - ``algorithm`` -- string or ``None`` (default: ``None``):
-      a choice of algorithm among ``"pari"``, ``"fast"``, ``"quadratic"``;
-      or ``None`` to let this function determine the best algorithm to use.
+    - ``algorithm`` -- string or ``None`` (default: ``None``);
+      a choice of algorithm among ``'pari'``, ``'fast'``, ``'quadratic'``,
+      or ``None`` to let this function determine the best algorithm to use
 
     OUTPUT:
 
@@ -111,7 +110,7 @@ def weierstrass_p(E, prec=20, algorithm=None):
         NotImplementedError: currently no algorithms for computing the Weierstrass
         p-function for that characteristic / precision pair is implemented.
         Lower the precision below char(k) - 2
-        sage: E.weierstrass_p(prec=9, algorithm="quadratic")
+        sage: E.weierstrass_p(prec=9, algorithm='quadratic')
         Traceback (most recent call last):
         ...
         ValueError: for computing the Weierstrass p-function via the quadratic
@@ -168,7 +167,7 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
 def compute_wp_pari(E,prec):
     r"""
-    Computes the Weierstrass `\wp`-function with the ``ellwp`` function
+    Compute the Weierstrass `\wp`-function with the ``ellwp`` function
     from PARI.
 
     EXAMPLES::
@@ -207,7 +206,7 @@ def compute_wp_quadratic(k, A, B, prec):
     - ``k`` -- the field of definition of the curve
     - ``A`` -- and
     - ``B`` -- the coefficients of the elliptic curve
-    - ``prec`` -- the precision to which we compute the series.
+    - ``prec`` -- the precision to which we compute the series
 
     OUTPUT:
 
@@ -254,7 +253,7 @@ def compute_wp_quadratic(k, A, B, prec):
 
 def compute_wp_fast(k, A, B, m):
     r"""
-    Computes the Weierstrass function of an elliptic curve defined by short Weierstrass model:
+    Compute the Weierstrass function of an elliptic curve defined by short Weierstrass model:
     `y^2 = x^3 + Ax + B`. It does this with as fast as polynomial of degree `m` can be multiplied
     together in the base ring, i.e. `O(M(n))` in the notation of [BMSS2006]_.
 
@@ -265,11 +264,9 @@ def compute_wp_fast(k, A, B, m):
     - ``k`` -- the base field of the curve
     - ``A`` -- and
     - ``B`` -- as the coefficients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
-    - ``m`` -- the precision to which the function is computed to.
+    - ``m`` -- the precision to which the function is computed to
 
-    OUTPUT:
-
-    the Weierstrass `\wp` function as a Laurent series to precision `m`.
+    OUTPUT: the Weierstrass `\wp` function as a Laurent series to precision `m`
 
     ALGORITHM:
 
@@ -319,7 +316,7 @@ def compute_wp_fast(k, A, B, m):
 
 def solve_linear_differential_system(a, b, c, alpha):
     r"""
-    Solves a system of linear differential equations: `af' + bf = c` and `f'(0) = \alpha`
+    Solve a system of linear differential equations: `af' + bf = c` and `f'(0) = \alpha`
     where `a`, `b`, and `c` are power series in one variable and `\alpha` is a constant in the coefficient ring.
 
     ALGORITHM:

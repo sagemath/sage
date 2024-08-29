@@ -16,7 +16,6 @@ REFERENCES:
 
 - Chap. 13, 14 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
-
 """
 # *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -60,7 +59,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
     INPUT:
 
-    - ``parent`` -- hom-set Hom(M,N) to which the homomorphism belongs
+    - ``parent`` -- Hom-set Hom(M,N) to which the homomorphism belongs
     - ``matrix_rep`` -- matrix representation of the homomorphism with
       respect to the bases ``bases``; this entry can actually
       be any material from which a matrix of size rank(N)*rank(M) of
@@ -72,7 +71,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
       default bases of each module is assumed.
     - ``name`` -- (default: ``None``) string; name given to the homomorphism
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote the
-      homomorphism; if ``None``, ``name`` will be used.
+      homomorphism. If ``None``, ``name`` will be used.
 
     EXAMPLES:
 
@@ -269,7 +268,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: phi = M.hom(N, [[-1,2,0], [5,1,2]])
             sage: phi._latex_()
             '\\mbox{Generic morphism:\n  From: Rank-3 free module M over the Integer Ring\n  To:   Rank-2 free module N over the Integer Ring}'
-
         """
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
@@ -284,9 +282,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         - ``other`` -- a free module morphism (or 0)
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
 
         EXAMPLES::
 
@@ -342,7 +338,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: phi.__eq__(Hom(M,N).zero())
             True
-
         """
         if isinstance(other, (int, Integer)): # other should be 0
             if other == 0:
@@ -392,7 +387,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: Hom(M,N).zero().__ne__(0)
             False
-
         """
         return not self == other
 
@@ -436,9 +430,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         - ``other`` -- a free module morphism (same parent as ``self``)
 
-        OUTPUT:
-
-        - the homomorphism resulting from the addition of ``self`` and ``other``
+        OUTPUT: the homomorphism resulting from the addition of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -483,7 +475,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
             sage: phi._add_(Hom(M,N).zero()) == phi
             True
-
         """
         # No need for consistency checks since self and other are guaranteed
         # to have the same parents
@@ -564,7 +555,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: phi._sub_(phi).is_zero()
             True
-
         """
         # No need for consistency checks since self and other are guaranteed
         # to have the same parents
@@ -592,12 +582,10 @@ class FiniteRankFreeModuleMorphism(Morphism):
         INPUT:
 
         - ``scalar`` -- element of the ring over which the parent of ``self``
-          is a module.
+          is a module
 
-        OUTPUT:
-
-        - the homomorphism resulting from the multiplication of ``self`` by
-          ``scalar``
+        OUTPUT: the homomorphism resulting from the multiplication of ``self``
+        by ``scalar``
 
         EXAMPLES::
 
@@ -629,9 +617,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         r"""
         Unary plus operator.
 
-        OUTPUT:
-
-        - an exact copy of ``self``
+        OUTPUT: an exact copy of ``self``
 
         EXAMPLES::
 
@@ -650,7 +636,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: s is phi
             False
-
         """
         resu = self.__class__(self.parent(), 0, is_identity=self._is_identity)
                                            # 0 = provisory value
@@ -666,9 +651,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         r"""
         Unary minus operator.
 
-        OUTPUT:
-
-        - the homomorphism `-f`, where `f` is ``self``
+        OUTPUT: the homomorphism `-f`, where `f` is ``self``
 
         EXAMPLES::
 
@@ -688,7 +671,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             [-5 -1 -2]
             sage: s.matrix() == -phi.matrix()
             True
-
         """
         resu = self.__class__(self.parent(), 0)  # 0 = provisory value
         for bases, mat in self._matrices.items():
@@ -713,9 +695,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         - ``element`` -- element of the domain of ``self``
 
-        OUTPUT:
-
-        - the image of ``element`` by ``self``
+        OUTPUT: the image of ``element`` by ``self``
 
         EXAMPLES:
 
@@ -762,7 +742,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
             sage: phi(M.zero()) == N.zero()
             True
-
         """
         if self._is_identity:
             return element
@@ -848,7 +827,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: End(N).one().is_injective()
             True
-
         """
         # Some matrix representation is picked at random:
         matrix_rep = next(iter(self._matrices.values()))
@@ -883,7 +861,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: End(N).one().is_surjective()
             True
-
         """
         if self._is_identity:
             return True
@@ -932,7 +909,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: phi.matrix(ep)
             [1 0]
             [0 1]
-
         """
         if self._is_identity:
             return True
@@ -1090,7 +1066,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             [  1  -3   1]
             [-18  39 -18]
             [-25  54 -25]
-
         """
         from sage.matrix.constructor import matrix
         fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
@@ -1199,7 +1174,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: psi._common_bases(phi) # matrix of phi w.r.t. (ep,f) computed
             (Basis (ep_0,ep_1,ep_2) on the Rank-3 free module M over the Integer Ring,
              Basis (f_0,f_1) on the Rank-2 free module N over the Integer Ring)
-
         """
         resu = None
         for bases in self._matrices:
@@ -1307,7 +1281,7 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
 
     INPUT:
 
-    - ``parent`` -- hom-set Hom(M,M) to which the endomorphism belongs
+    - ``parent`` -- Hom-set Hom(M,M) to which the endomorphism belongs
     - ``matrix_rep`` -- matrix representation of the endomorphism with
       respect to the basis ``bases``; this entry can actually
       be any material from which a matrix of size rank(N)*rank(M) of
@@ -1319,9 +1293,9 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
       the default basis of `M` is used for both.
     - ``name`` -- (default: ``None``) string; name given to the endomorphism
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote the
-      endomorphism; if ``None``, ``name`` will be used.
-    - ``is_identity`` -- (default: ``False``) determines whether the
-      constructed object is the identity endomorphism; if set to ``True``,
+      endomorphism. If ``None``, ``name`` will be used.
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
+      constructed object is the identity endomorphism. If set to ``True``,
       then the entry ``matrix_rep`` is not used.
 
     EXAMPLES:
@@ -1603,6 +1577,5 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
             sage: id = M.identity_map()
             sage: id.trace()
             3
-
         """
         return self._some_matrix().trace

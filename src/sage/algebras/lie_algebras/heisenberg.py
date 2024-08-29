@@ -32,6 +32,7 @@ from sage.sets.family import Family
 from sage.sets.positive_integers import PositiveIntegers
 from sage.sets.set import Set
 
+
 class HeisenbergAlgebra_abstract(IndexedGenerators):
     """
     The common methods for the (non-matrix) Heisenberg algebras.
@@ -226,7 +227,7 @@ class HeisenbergAlgebra_fd:
             sage: H = lie_algebras.Heisenberg(QQ, 3)
             sage: H.n()
             3
-            sage: H = lie_algebras.Heisenberg(QQ, 3, representation="matrix")
+            sage: H = lie_algebras.Heisenberg(QQ, 3, representation='matrix')
             sage: H.n()
             3
         """
@@ -312,7 +313,7 @@ class HeisenbergAlgebra_fd:
         EXAMPLES::
 
             sage: HB = lie_algebras.Heisenberg(QQ, 3)
-            sage: HM = lie_algebras.Heisenberg(QQ, 3, representation="matrix")
+            sage: HM = lie_algebras.Heisenberg(QQ, 3, representation='matrix')
             sage: HB.has_coerce_map_from(HM)
             True
             sage: HM.has_coerce_map_from(HB)
@@ -335,7 +336,7 @@ class HeisenbergAlgebra_fd:
             True
             sage: HB(HZ.p(2))
             p2
-            sage: HZ = lie_algebras.Heisenberg(ZZ, 2, representation="matrix")
+            sage: HZ = lie_algebras.Heisenberg(ZZ, 2, representation='matrix')
             sage: HB.has_coerce_map_from(HZ)
             True
             sage: HB(HZ.p(2))
@@ -547,7 +548,7 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
             True
             sage: phi(HZ.p(3)).leading_coefficient().parent()
             Rational Field
-            sage: HF = lie_algebras.Heisenberg(QQ, 3, representation="matrix")
+            sage: HF = lie_algebras.Heisenberg(QQ, 3, representation='matrix')
             sage: H.has_coerce_map_from(HF)
             True
             sage: H(HF.p(2))
@@ -630,7 +631,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
 
     EXAMPLES::
 
-        sage: L = lie_algebras.Heisenberg(QQ, 1, representation="matrix")
+        sage: L = lie_algebras.Heisenberg(QQ, 1, representation='matrix')
         sage: p = L.p(1)
         sage: q = L.q(1)
         sage: z = L.bracket(p, q); z
@@ -642,7 +643,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
         sage: L.dimension()
         3
 
-        sage: L = lie_algebras.Heisenberg(QQ, 2, representation="matrix")
+        sage: L = lie_algebras.Heisenberg(QQ, 2, representation='matrix')
         sage: sorted(dict(L.basis()).items())
         [(
               [0 1 0 0]
@@ -675,7 +676,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
         'z', [0 0 0 0]
         )]
 
-        sage: L = lie_algebras.Heisenberg(QQ, 0, representation="matrix")
+        sage: L = lie_algebras.Heisenberg(QQ, 0, representation='matrix')
         sage: sorted(dict(L.basis()).items())
         [(
              [0 1]
@@ -696,7 +697,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
 
         EXAMPLES::
 
-            sage: L = lie_algebras.Heisenberg(QQ, 2, representation="matrix")
+            sage: L = lie_algebras.Heisenberg(QQ, 2, representation='matrix')
             sage: TestSuite(L).run()
         """
         HeisenbergAlgebra_fd.__init__(self, n)
@@ -717,7 +718,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
 
         EXAMPLES::
 
-            sage: lie_algebras.Heisenberg(QQ, 3, representation="matrix")
+            sage: lie_algebras.Heisenberg(QQ, 3, representation='matrix')
             Heisenberg algebra of rank 3 over Rational Field
         """
         return "Heisenberg algebra of rank {} over {}".format(self._n, self.base_ring())
@@ -728,7 +729,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
 
         EXAMPLES::
 
-            sage: L = lie_algebras.Heisenberg(QQ, 1, representation="matrix")
+            sage: L = lie_algebras.Heisenberg(QQ, 1, representation='matrix')
             sage: L.p(1)
             [0 1 0]
             [0 0 0]
@@ -742,7 +743,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
 
         EXAMPLES::
 
-            sage: L = lie_algebras.Heisenberg(QQ, 1, representation="matrix")
+            sage: L = lie_algebras.Heisenberg(QQ, 1, representation='matrix')
             sage: L.q(1)
             [0 0 0]
             [0 0 1]
@@ -758,7 +759,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
 
         EXAMPLES::
 
-            sage: L = lie_algebras.Heisenberg(QQ, 1, representation="matrix")
+            sage: L = lie_algebras.Heisenberg(QQ, 1, representation='matrix')
             sage: L.z()
             [0 0 1]
             [0 0 0]
@@ -772,7 +773,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
 
         EXAMPLES::
 
-            sage: h = lie_algebras.Heisenberg(ZZ, 2, representation="matrix")
+            sage: h = lie_algebras.Heisenberg(ZZ, 2, representation='matrix')
             sage: h.step()
             2
         """
@@ -791,7 +792,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
 
             EXAMPLES::
 
-                sage: L = lie_algebras.Heisenberg(QQ, 3, representation="matrix")
+                sage: L = lie_algebras.Heisenberg(QQ, 3, representation='matrix')
                 sage: elt = L(Matrix(QQ, [[0, 1, 3, 0, 3], [0, 0, 0, 0, 0], [0, 0, 0, 0, -3],
                 ....:                     [0, 0, 0, 0, 7], [0, 0, 0, 0, 0]]))
                 sage: elt

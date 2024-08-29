@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -9,7 +10,7 @@ Object persistence
 You can load and save most Sage object to disk using the load and
 save member functions and commands.
 
-.. note::
+.. NOTE::
 
    It is impossible to save certain Sage objects to disk. For example,
    if `x` is a MAGMA object, i.e., a wrapper around an object
@@ -141,7 +142,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     Files with a ``.sage`` extension are preparsed. Also note that we
     can access global variables::
 
-        sage: t = tmp_filename(ext=".sage")
+        sage: t = tmp_filename(ext='.sage')
         sage: with open(t, 'w') as f:
         ....:     _ = f.write("a += Mod(2/3, 11)")  # This evaluates to Mod(8, 11)
         sage: a = -1
@@ -152,7 +153,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     We can load Fortran files::
 
         sage: code = '      subroutine hello\n         print *, "Hello World!"\n      end subroutine hello\n'
-        sage: t = tmp_filename(ext=".F")
+        sage: t = tmp_filename(ext='.F')
         sage: with open(t, 'w') as f:
         ....:     _ = f.write(code)
         sage: load(t)                                                                   # needs numpy
@@ -272,7 +273,7 @@ def save(obj, filename, compress=True, **kwargs):
     Check that :issue:`11577` is fixed::
 
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".bar") as f:
+        sage: with tempfile.NamedTemporaryFile(suffix='.bar') as f:
         ....:     save((1,1), f.name)
         ....:     load(f.name)
         (1, 1)
@@ -339,6 +340,7 @@ def dumps(obj, compress=True):
 
 # This is used below, and also by explain_pickle.py
 unpickle_override = {}
+
 
 def register_unpickle_override(module, name, callable, call_name=None):
     r"""
@@ -523,7 +525,6 @@ def register_unpickle_override(module, name, callable, call_name=None):
             # tuple as input. All kinds of problems happen
             # if we don't do this.
             return sage.rings.integer.make_integer, (self.str(32),)
-
     """
     unpickle_override[(module, name)] = (callable, call_name)
 
@@ -712,7 +713,7 @@ class SagePickler(_BasePickler):
     INPUT:
 
     - ``file_obj`` -- a readable file-like object returning ``bytes`` from
-      which the pickle data will be loaded.
+      which the pickle data will be loaded
 
     - ``persistent_id`` -- callable or None; if given this callable takes a
       single object to be pickled, and returns an "ID" (a key with which to
@@ -786,7 +787,6 @@ class SagePickler(_BasePickler):
         Traceback (most recent call last):
         ...
         UnicodeDecodeError: 'ascii' codec can...t decode byte 0x80 in position 0: ordinal not in range(128)
-
     """
 
     def __init__(self, file_obj, persistent_id=None, py2compat=True):
@@ -806,14 +806,12 @@ class SagePickler(_BasePickler):
 
         INPUT:
 
-        - ``obj`` - the object to pickle.
+        - ``obj`` -- the object to pickle
 
-        - ``kwargs`` - keyword arguments passed to the
-          :class:`sage.misc.persist.SagePickler` constructor.
+        - ``kwargs`` -- keyword arguments passed to the
+          :class:`sage.misc.persist.SagePickler` constructor
 
-        OUTPUT:
-
-        - ``pickle`` - the pickled object as ``bytes``.
+        OUTPUT: ``pickle`` -- the pickled object as ``bytes``
 
         EXAMPLES::
 
@@ -845,7 +843,7 @@ class SageUnpickler(_BaseUnpickler):
     INPUT:
 
     - ``file_obj`` -- a readable file-like object returning ``bytes`` from
-      which the pickle data will be loaded.
+      which the pickle data will be loaded
 
     - ``persistent_load`` -- callable or None; if given this callable
       implements loading of persistent external objects.  The function
@@ -854,7 +852,7 @@ class SageUnpickler(_BaseUnpickler):
       for more details.
 
     - ``kwargs`` -- additional keyword arguments passed to the
-      ``pickle.Unpickler`` constructor.
+      ``pickle.Unpickler`` constructor
 
     .. _pickling and unpickling external objects: https://docs.python.org/2.7/library/pickle.html#pickling-and-unpickling-external-objects
 
@@ -892,15 +890,12 @@ class SageUnpickler(_BaseUnpickler):
 
         INPUT:
 
-        - ``data`` - the pickle data as ``bytes``.
+        - ``data`` -- the pickle data as ``bytes``
 
-        - ``kwargs`` - keyword arguments passed to the
-          :class:`sage.misc.persist.SageUnpickler` constructor.
+        - ``kwargs`` -- keyword arguments passed to the
+          :class:`sage.misc.persist.SageUnpickler` constructor
 
-        OUTPUT:
-
-        - ``obj`` - the object that was serialized to the given pickle data.
-
+        OUTPUT: ``obj`` -- the object that was serialized to the given pickle data
 
         EXAMPLES::
 
@@ -929,9 +924,9 @@ def loads(s, compress=True, **kwargs):
         [   1    2]
         [   3 -4/3]
 
-    If compress is True (the default), it will try to decompress
+    If compress is ``True`` (the default), it will try to decompress
     the data with zlib and with bz2 (in turn); if neither succeeds,
-    it will assume the data is actually uncompressed.  If compress=False
+    it will assume the data is actually uncompressed.  If ``compress==False``
     is explicitly specified, then no decompression is attempted.
     Further arguments are passed to python's :func:`pickle.load`.
 
@@ -999,6 +994,7 @@ def loads(s, compress=True, **kwargs):
 
 cdef bint make_pickle_jar = 'SAGE_PICKLE_JAR' in os.environ
 
+
 def picklejar(obj, dir=None):
     """
     Create pickled sobj of ``obj`` in ``dir``, with name the absolute
@@ -1017,7 +1013,7 @@ def picklejar(obj, dir=None):
 
     - ``obj`` -- a pickleable object
 
-    - ``dir`` -- a string or None; if None then ``dir`` defaults to
+    - ``dir`` -- string or ``None``; if ``None`` then ``dir`` defaults to
       ``DOT_SAGE/pickle_jar``
 
     EXAMPLES::
@@ -1095,14 +1091,14 @@ def unpickle_all(target, debug=False, run_test_suite=False):
 
     INPUT:
 
-    - ``target`` -- a string; the name of a directory or of a (possibly
+    - ``target`` -- string; the name of a directory or of a (possibly
       compressed) tar archive that contains a single directory of
       ``.sobj`` files.  The tar archive can be in any format that
       python's ``tarfile`` module understands; for example,
       ``.tar.gz`` or ``.tar.bz2``.
-    - ``debug`` -- a boolean (default: ``False``)
+    - ``debug`` -- boolean (default: ``False``)
       whether to report a stacktrace in case of failure
-    - ``run_test_suite`` -- a boolean (default: ``False``)
+    - ``run_test_suite`` -- boolean (default: ``False``)
       whether to run ``TestSuite(x).run()`` on the unpickled objects
 
     OUTPUT:
@@ -1111,7 +1107,7 @@ def unpickle_all(target, debug=False, run_test_suite=False):
     of successfully unpickled files, and the second reporting the
     number (zero) of failures. If there are failures, however, then a
     list of failed files will be printed before either of those lines,
-    and the failure count will of course be non-zero.
+    and the failure count will of course be nonzero.
 
     .. WARNING::
 
@@ -1144,7 +1140,7 @@ def unpickle_all(target, debug=False, run_test_suite=False):
             # 706 for background.
             with tarfile.open(target) as tf:
                 if hasattr(tarfile, "data_filter"):
-                    tf.extractall(T, filter="data")
+                    tf.extractall(T, filter='data')
                 else:
                     tf.extractall(T)
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``pynormaliz``
 """
@@ -35,7 +36,7 @@ class PyNormaliz(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'pynormaliz',
-                             [PythonModule('PyNormaliz', spkg="pynormaliz")])
+                             [PythonModule('PyNormaliz', spkg='pynormaliz')])
 
 
 def all_features():

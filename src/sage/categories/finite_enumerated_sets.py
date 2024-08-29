@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite Enumerated Sets
 """
@@ -12,7 +13,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.sets_cat import Sets
 from sage.categories.cartesian_product import CartesianProductsCategory
-from sage.categories.isomorphic_objects   import IsomorphicObjectsCategory
+from sage.categories.isomorphic_objects import IsomorphicObjectsCategory
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.cpython.getattr import raw_getattr
@@ -21,7 +22,7 @@ lazy_import("sage.rings.integer", "Integer")
 
 class FiniteEnumeratedSets(CategoryWithAxiom):
     """
-    The category of finite enumerated sets
+    The category of finite enumerated sets.
 
     EXAMPLES::
 
@@ -115,7 +116,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
                 sage: from sage.categories.examples.finite_enumerated_sets import Example
                 sage: class FreshExample(Example): pass
-                sage: C = FreshExample(); C.rename("FreshExample")
+                sage: C = FreshExample(); C.rename('FreshExample')
                 sage: C.cardinality
                 <bound method FiniteEnumeratedSets.ParentMethods._cardinality_from_iterator of FreshExample>
 
@@ -190,15 +191,15 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             return Integer(len(self.tuple()))
 
         def _unrank_from_list(self, r):
-            """
-            The ``r``-th element of ``self``
+            r"""
+            The `r`-th element of ``self``.
 
             INPUT:
 
-              - ``r`` -- an integer between ``0`` and ``n-1``,
-                where ``n`` is the cardinality of ``self``.
+              - ``r`` -- integer between `0` and `n-1`,
+                where `n` is the cardinality of ``self``
 
-            OUTPUT: the ``r``-th element of ``self``
+            OUTPUT: the `r`-th element of ``self``
 
             This implementation of :meth:`unrank` uses the method
             :meth:`list` (which is cached). Reciprocally, calling
@@ -309,7 +310,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
                 sage: from sage.categories.examples.finite_enumerated_sets import Example
                 sage: class FreshExample(Example): pass
-                sage: C = FreshExample(); C.rename("FreshExample")
+                sage: C = FreshExample(); C.rename('FreshExample')
                 sage: C.list
                 <bound method EnumeratedSets.ParentMethods.list of FreshExample>
                 sage: C.unrank
@@ -527,7 +528,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
         def _test_enumerated_set_iter_cardinality(self, **options):
             """
-            Checks that the methods :meth:`.cardinality` and
+            Check that the methods :meth:`.cardinality` and
             :meth:`.__iter__` are consistent. Also checks that
             :meth:`.cardinality` returns an ``Integer``.
 
@@ -608,7 +609,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             def last(self):
                 r"""
-                Return the last element
+                Return the last element.
 
                 EXAMPLES::
 
@@ -677,12 +678,12 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             def unrank(self, i):
                 r"""
-                Return the ``i``-th element of this Cartesian product.
+                Return the `i`-th element of this Cartesian product.
 
                 INPUT:
 
-                - ``i`` -- integer between ``0`` and ``n-1`` where
-                  ``n`` is the cardinality of this set.
+                - ``i`` -- integer between `0` and `n-1` where
+                  `n` is the cardinality of this set
 
                 .. SEEALSO::
 
@@ -710,7 +711,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 i = ZZ(i)
                 if i < 0:
-                    raise IndexError("i (={}) must be a non-negative integer")
+                    raise IndexError("i (={}) must be a nonnegative integer")
                 elt = []
                 for c in reversed(self.cartesian_factors()):
                     card = c.cardinality()
@@ -724,7 +725,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
         def example(self):
             """
-            Returns an example of isomorphic object of a finite
+            Return an example of isomorphic object of a finite
             enumerated set, as per :meth:`Category.example
             <sage.categories.category.Category.example>`.
 
@@ -740,7 +741,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             def cardinality(self):
                 r"""
-                Returns the cardinality of ``self`` which is the same
+                Return the cardinality of ``self`` which is the same
                 as that of the ambient set ``self`` is isomorphic to.
 
                 EXAMPLES::
@@ -754,7 +755,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             def __iter__(self):
                 r"""
-                Returns an iterator over ``self``, using the bijection
+                Return an iterator over ``self``, using the bijection
                 with the ambient space.
 
                 EXAMPLES::

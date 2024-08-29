@@ -31,7 +31,6 @@ And the Texture objects keep track of all their data::
 AUTHOR:
 
 - Robert Bradshaw (2007-07-07) Initial version.
-
 """
 from textwrap import dedent
 
@@ -89,12 +88,10 @@ def parse_color(info, base=None):
 
     INPUT:
 
-    - ``info`` - color, valid color str or number
-    - ``base`` - tuple of length 3 (optional, default: ``None``)
+    - ``info`` -- color, valid color str or number
+    - ``base`` -- tuple of length 3 (default: ``None``)
 
-    OUTPUT:
-
-    A tuple or color.
+    OUTPUT: a tuple or color
 
     EXAMPLES:
 
@@ -184,22 +181,20 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``id`` - a texture (optional, default: None), a dict, a color, a
-          str, a tuple, None or any other type acting as an ID. If ``id`` is
-          None and keyword ``texture`` is empty, then it returns a unique texture object.
-        - ``texture`` - a texture
-        - ``color`` - tuple or str, (optional, default: (.4, .4, 1))
-        - ``opacity`` - number between 0 and 1 (optional, default: 1)
-        - ``ambient`` - number (optional, default: 0.5)
-        - ``diffuse`` - number (optional, default: 1)
-        - ``specular`` - number (optional, default: 0)
-        - ``shininess`` - number (optional, default: 1)
-        - ``name`` - str (optional, default: None)
-        - ``**kwds`` - other valid keywords
+        - ``id`` -- a texture (default: ``None``), a dictionary, a color, a
+          string, a tuple, ``None`` or any other type acting as an ID. If ``id`` is
+          ``None`` and keyword ``texture`` is empty, then it returns a unique texture object.
+        - ``texture`` -- a texture
+        - ``color`` -- tuple or string (default: (.4, .4, 1))
+        - ``opacity`` -- number between 0 and 1 (default: 1)
+        - ``ambient`` -- number (default: 0.5)
+        - ``diffuse`` -- number (default: 1)
+        - ``specular`` -- number (default: 0)
+        - ``shininess`` -- number (default: 1)
+        - ``name`` -- string (default: ``None``)
+        - ``**kwds`` -- other valid keywords
 
-        OUTPUT:
-
-        A texture object.
+        OUTPUT: a texture object
 
         EXAMPLES:
 
@@ -437,7 +432,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``obj`` - str
+        - ``obj`` -- str
 
         EXAMPLES::
 

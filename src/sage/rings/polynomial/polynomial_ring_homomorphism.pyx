@@ -13,7 +13,6 @@ This module currently implements the canonical ring homomorphism from
 AUTHORS:
 
 - Peter Bruin (March 2014): initial version
-
 """
 
 from sage.rings.morphism cimport RingHomomorphism_from_base
@@ -34,7 +33,6 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
                 Natural morphism:
                   From: Integer Ring
                   To:   Rational Field
-
     """
     cpdef Element _call_(self, x):
         """
@@ -56,7 +54,6 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)
             sage: G(A.gen()^1000000)
             1.0...*x^1000000
-
         """
         P = self.codomain()
         f = self.underlying_map()
@@ -87,7 +84,6 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)
             sage: G(A.gen()^1000000, True, construct=False)
             x^1000000
-
         """
         P = self.codomain()
         f = self.underlying_map()
@@ -106,7 +102,6 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: S.<x> = QQ[]
             sage: R.hom(S).is_injective()
             True
-
         """
         return self.underlying_map().is_injective()
 
@@ -120,6 +115,5 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: S.<x> = Zmod(2)[]
             sage: R.hom(S).is_surjective()
             True
-
         """
         return self.underlying_map().is_surjective()

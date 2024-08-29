@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Random Numbers with Python API
 
@@ -57,6 +58,7 @@ Python Software Foundation License Version 2.
 
 from sage.misc.randstate import current_randstate
 
+
 def _pyrand():
     r"""
     A tiny private helper function to return an instance of
@@ -75,6 +77,7 @@ def _pyrand():
     """
     return current_randstate().python_random()
 
+
 def getrandbits(k):
     r"""
     getrandbits(k) -> x.  Generates a long int with k random bits.
@@ -89,6 +92,7 @@ def getrandbits(k):
         True
     """
     return _pyrand().getrandbits(k)
+
 
 def randrange(start, stop=None, step=1):
     r"""
@@ -121,6 +125,7 @@ def randrange(start, stop=None, step=1):
     """
     return _pyrand().randrange(start, stop, step)
 
+
 def randint(a, b):
     r"""
     Return random integer in range [a, b], including both end points.
@@ -136,6 +141,7 @@ def randint(a, b):
     """
     return _pyrand().randint(a, b)
 
+
 def choice(seq):
     r"""
     Choose a random element from a non-empty sequence.
@@ -149,6 +155,7 @@ def choice(seq):
     """
     return _pyrand().choice(seq)
 
+
 def shuffle(x):
     r"""
     x, random=random.random -> shuffle list x in place; return None.
@@ -161,6 +168,7 @@ def shuffle(x):
         sage: shuffle([1 .. 10])
     """
     return _pyrand().shuffle(x)
+
 
 def sample(population, k):
     r"""
@@ -201,6 +209,7 @@ def sample(population, k):
     """
     return _pyrand().sample(population, k)
 
+
 def random():
     r"""
     Get the next random number in the range [0.0, 1.0).
@@ -213,6 +222,7 @@ def random():
         True
     """
     return _pyrand().random()
+
 
 def uniform(a, b):
     r"""
@@ -234,6 +244,7 @@ def uniform(a, b):
     """
     return _pyrand().uniform(a, b)
 
+
 def betavariate(alpha, beta):
     r"""
     Beta distribution.
@@ -254,6 +265,7 @@ def betavariate(alpha, beta):
         True
     """
     return _pyrand().betavariate(alpha, beta)
+
 
 def expovariate(lambd):
     r"""
@@ -282,9 +294,10 @@ def expovariate(lambd):
     """
     return _pyrand().expovariate(lambd)
 
+
 def gammavariate(alpha, beta):
     r"""
-    Gamma distribution.  Not the gamma function!
+    Gamma distribution.  (Not the gamma function.)
 
     Conditions on the parameters are alpha > 0 and beta > 0.
 
@@ -300,6 +313,7 @@ def gammavariate(alpha, beta):
         True
     """
     return _pyrand().gammavariate(alpha, beta)
+
 
 def gauss(mu, sigma):
     r"""
@@ -320,6 +334,7 @@ def gauss(mu, sigma):
     """
     return _pyrand().gauss(mu, sigma)
 
+
 def lognormvariate(mu, sigma):
     r"""
     Log normal distribution.
@@ -334,6 +349,7 @@ def lognormvariate(mu, sigma):
         [2.9410355688290246e+37, 2.2257548162070125e+38, 4.142299451717446e+43]
     """
     return _pyrand().lognormvariate(mu, sigma)
+
 
 def normalvariate(mu, sigma):
     r"""
@@ -351,6 +367,7 @@ def normalvariate(mu, sigma):
        [1008.5303090383741, 989.8624892644895, 985.7728921150242]
     """
     return _pyrand().normalvariate(mu, sigma)
+
 
 def vonmisesvariate(mu, kappa):
     r"""
@@ -370,6 +387,7 @@ def vonmisesvariate(mu, kappa):
     """
     return _pyrand().vonmisesvariate(mu, kappa)
 
+
 def paretovariate(alpha):
     r"""
     Pareto distribution.  alpha is the shape parameter.
@@ -382,6 +400,7 @@ def paretovariate(alpha):
         True
     """
     return _pyrand().paretovariate(alpha)
+
 
 def weibullvariate(alpha, beta):
     r"""

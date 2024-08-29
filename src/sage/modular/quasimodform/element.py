@@ -19,7 +19,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.modular.arithgroup.congroup_sl2z import is_SL2Z
+from sage.modular.arithgroup.congroup_sl2z import SL2Z_class
 from sage.modular.modform.constructor import EisensteinForms
 from sage.modular.modform.eis_series import eisenstein_series_qexp
 from sage.modular.modform.element import GradedModularFormElement
@@ -98,14 +98,12 @@ class QuasiModularFormsElement(ModuleElement):
         r"""
         INPUT:
 
-        - ``parent`` - a quasimodular forms ring
-        - ``polynomial`` - a polynomial `f_0 + f_1 E_2 + ... + f_n E_2^n` where
+        - ``parent`` -- a quasimodular forms ring
+        - ``polynomial`` -- a polynomial `f_0 + f_1 E_2 + ... + f_n E_2^n` where
           each `f_i` are modular forms ring elements and `E_2` correspond to the
           weight 2 Eisenstein series
 
-        OUTPUT:
-
-        ``QuasiModularFormsElement``
+        OUTPUT: ``QuasiModularFormsElement``
 
         TESTS::
 
@@ -152,7 +150,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         TESTS::
 
@@ -180,7 +178,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _richcmp_(self, other, op):
         r"""
-        Compare self with other.
+        Compare ``self`` with ``other``.
 
         TESTS::
 
@@ -208,7 +206,7 @@ class QuasiModularFormsElement(ModuleElement):
 
         INPUT:
 
-        - ``other`` - ``QuasiModularFormElement``
+        - ``other`` -- ``QuasiModularFormElement``
 
         OUTPUT: a ``QuasiModularFormElement``
 
@@ -227,7 +225,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def __neg__(self):
         r"""
-        The negation of ``self```
+        The negation of ``self``.
 
         TESTS::
 
@@ -242,11 +240,11 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _mul_(self, other):
         r"""
-        The multiplication of two ``QuasiModularFormElement``
+        The multiplication of two ``QuasiModularFormElement``.
 
         INPUT:
 
-        - ``other`` - ``QuasiModularFormElement``
+        - ``other`` -- ``QuasiModularFormElement``
 
         OUTPUT: a ``QuasiModularFormElement``
 
@@ -265,11 +263,11 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _lmul_(self, c):
         r"""
-        The left action of the base ring on self.
+        The left action of the base ring on ``self``.
 
         INPUT:
 
-        - ``other`` - ``QuasiModularFormElement``
+        - ``other`` -- ``QuasiModularFormElement``
 
         OUTPUT: a ``QuasiModularFormElement``
 
@@ -287,7 +285,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def __bool__(self):
         r"""
-        Return whether ``self`` is non-zero.
+        Return whether ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -454,13 +452,13 @@ class QuasiModularFormsElement(ModuleElement):
 
         INPUT:
 
-        - ``names`` (str, default: ``None``) -- a list or tuple of names
+        - ``names``-- string (default: ``None``); list or tuple of names
           (strings), or a comma separated string. Defines the names for the
           generators of the multivariate polynomial ring. The default names are
           of the form ``ABCk`` where ``k`` is a number corresponding to the
           weight of the form ``ABC``.
 
-        OUTPUT: A multivariate polynomial in the variables ``names``
+        OUTPUT: a multivariate polynomial in the variables ``names``
 
         EXAMPLES::
 
@@ -477,7 +475,6 @@ class QuasiModularFormsElement(ModuleElement):
             5
             sage: (QM.0 + QM.1 + QM.2*QM.1 + QM.3*QM.4).polynomial()
             E3_1*E4_0 + E2_0*E3_0 + E2 + E2_0
-
         """
         P = self.parent().polynomial_ring(names)
         poly_gens = P.gens()
@@ -712,7 +709,7 @@ class QuasiModularFormsElement(ModuleElement):
         QM = self.parent()
         R = QM.base_ring()
         E2 = QM.gen(0)
-        if is_SL2Z(QM.group()):
+        if isinstance(QM.group(), SL2Z_class):
             E4 = QM.gen(1)
         else:
             E4 = QM(EisensteinForms(group=1, weight=4, base_ring=R).gen(0))
@@ -777,7 +774,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _compute(self, X):
         r"""
-        Compute the coefficients of `q^n` of the q-expansion of this,
+        Compute the coefficients of `q^n` of the `q`-expansion of this,
         graded quasimodular form for `n` in the list `X`.
 
         The results are not cached.  (Use coefficients for cached results).
@@ -800,7 +797,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def coefficients(self, X):
         r"""
-        Return the coefficients of `q^n` of the q-expansion of this,
+        Return the coefficients of `q^n` of the `q`-expansion of this,
         graded quasimodular form for `n` in the list `X`.
 
         If X is an integer, return coefficients for indices from 1

@@ -6,21 +6,21 @@ PLOT OPTIONS:
 Beside the usual plot options (enter ``plot?``), the plot command for
 hyperplane arrangements includes the following:
 
-- ``hyperplane_colors`` -- Color or list of colors, one for each
-  hyperplane (default: equally spread range of hues).
+- ``hyperplane_colors`` -- color or list of colors, one for each
+  hyperplane (default: equally spread range of hues)
 
-- ``hyperplane_labels`` -- Boolean, ``'short'``, ``'long'`` (default:
+- ``hyperplane_labels`` -- boolean, ``'short'``, ``'long'`` (default:
   ``False``).  If ``False``, no labels are shown; if 'short' or 'long',
   the hyperplanes are given short or long labels, respectively.  If
   ``True``, the hyperplanes are given long labels.
 
-- ``label_colors`` -- Color or list of colors, one for each hyperplane
-  (default: black).
+- ``label_colors`` -- color or list of colors, one for each hyperplane
+  (default: black)
 
-- ``label_fontsize`` -- Size for hyperplane_label font (default:
-  ``14``).  This does not work for 3d plots.
+- ``label_fontsize`` -- size for hyperplane_label font (default:
+  ``14``); this does not work for 3d plots
 
-- ``label_offsets`` -- Amount be which labels are offset from
+- ``label_offsets`` -- amount be which labels are offset from
   h.point() for each hyperplane h.  The format is different for each
   dimension: if the hyperplanes have dimension 0, the offset can be a
   single number or a list of numbers, one for each hyperplane; if the
@@ -30,20 +30,20 @@ hyperplane arrangements includes the following:
   3-tuples, one for each hyperplane.  (Defaults: 0-dim: ``0.1``,
   1-dim: ``(0,1)``, 2-dim: ``(0,0,0.2)``).
 
-- ``hyperplane_legend`` -- Boolean, ``'short'``, ``'long'`` (default:
+- ``hyperplane_legend`` -- boolean, ``'short'``, ``'long'`` (default:
   ``'long'``; in 3-d: ``False``).  If ``False``, no legend is shown;
   if ``True``, ``'short'``, or ``'long'``, the legend is shown with
   the default, long, or short labeling, respectively. (For
   arrangements of lines or planes, only.)
 
-- ``hyperplane_opacities`` -- A number or list of numbers, one for each
-  hyperplane, between 0 and 1.  Only applies to 3d plots.
+- ``hyperplane_opacities`` -- a number or list of numbers, one for each
+  hyperplane, between 0 and 1;  only applies to 3d plots
 
-- ``point_sizes`` -- Number or list of numbers, one for each hyperplane
+- ``point_sizes`` -- number or list of numbers, one for each hyperplane
   giving the sizes of points in a zero-dimensional arrangement
-  (default: ``50``).
+  (default: ``50``)
 
-- ``ranges`` -- Range for the parameters or a list of ranges of
+- ``ranges`` -- range for the parameters or a list of ranges of
   parameters, one for each hyperplane, for the parametric plots of the
   hyperplanes.  If a single positive number `r` is given for
   ``ranges``, then all parameters run from -r to r.  Otherwise, for a
@@ -115,7 +115,6 @@ lazy_import("sage.plot.line", "line")
 lazy_import("sage.plot.text", "text")
 lazy_import("sage.plot.point", "point")
 lazy_import("sage.plot.plot", "parametric_plot")
-from sage.symbolic.ring import SR
 
 
 def plot(hyperplane_arrangement, **kwds):
@@ -137,11 +136,9 @@ def plot(hyperplane_arrangement, **kwds):
     - ``hyperplane_arrangement`` -- the hyperplane arrangement to plot
 
     - ``**kwds`` -- plot options: see
-      :mod:`sage.geometry.hyperplane_arrangement.plot`.
+      :mod:`sage.geometry.hyperplane_arrangement.plot`
 
-    OUTPUT:
-
-    A graphics object of the plot.
+    OUTPUT: a graphics object of the plot
 
     EXAMPLES::
 
@@ -293,33 +290,31 @@ def plot_hyperplane(hyperplane, **kwds):
 
     - ``**kwds`` -- plot options: see below
 
-    OUTPUT:
-
-    A graphics object of the plot.
+    OUTPUT: a graphics object of the plot
 
     .. RUBRIC:: Plot Options
 
     Beside the usual plot options (enter ``plot?``), the plot command for
     hyperplanes includes the following:
 
-    - ``hyperplane_label`` -- Boolean value or string (default: ``True``).
-      If ``True``, the hyperplane is labeled with its equation, if a
+    - ``hyperplane_label`` -- boolean value or string (default: ``True``);
+      if ``True``, the hyperplane is labeled with its equation, if a
       string, it is labeled by that string, otherwise it is not
-      labeled.
+      labeled
 
-    - ``label_color`` -- (Default: ``'black'``) Color for hyperplane_label.
+    - ``label_color`` -- (default: ``'black'``) color for hyperplane_label
 
-    - ``label_fontsize`` -- Size for ``hyperplane_label`` font (default: 14)
-      (does not work in 3d, yet).
+    - ``label_fontsize`` -- size for ``hyperplane_label`` font (default: 14)
+      (does not work in 3d, yet)
 
-    - ``label_offset`` -- (Default: 0-dim: 0.1, 1-dim: (0,1),
-      2-dim: (0,0,0.2)) Amount by which label is offset from
-      ``hyperplane.point()``.
+    - ``label_offset`` -- (default: 0-dim: 0.1, 1-dim: (0,1),
+      2-dim: (0,0,0.2)); amount by which label is offset from
+      ``hyperplane.point()``
 
-    - ``point_size`` -- (Default: 50) Size of points in a zero-dimensional
-      arrangement or of an arrangement over a finite field.
+    - ``point_size`` -- (default: 50) size of points in a zero-dimensional
+      arrangement or of an arrangement over a finite field
 
-    - ``ranges`` -- Range for the parameters for the parametric plot of the
+    - ``ranges`` -- range for the parameters for the parametric plot of the
       hyperplane. If a single positive number ``r`` is given for the
       value of ``ranges``, then the ranges for all parameters are set to
       `[-r, r]`.  Otherwise, for a line in the plane, ``ranges`` has the
@@ -423,6 +418,7 @@ def plot_hyperplane(hyperplane, **kwds):
     elif hyperplane.dimension() == 1: # a line in the plane
         pnt = hyperplane.point()
         w = hyperplane.linear_part().matrix()
+        from sage.symbolic.ring import SR
         t = SR.var('t')
         if ranges_set:
             if isinstance(ranges, (list, tuple)):
@@ -443,6 +439,7 @@ def plot_hyperplane(hyperplane, **kwds):
     elif hyperplane.dimension() == 2: # a plane in 3-space
         pnt = hyperplane.point()
         w = hyperplane.linear_part().matrix()
+        from sage.symbolic.ring import SR
         s, t = SR.var('s t')
         if ranges_set:
             if isinstance(ranges, (list, tuple)):
@@ -481,9 +478,7 @@ def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
 
     - ``length`` -- either ``'short'`` or ``'long'``
 
-    OUTPUT:
-
-    - A graphics object.
+    OUTPUT: a graphics object
 
     EXAMPLES::
 

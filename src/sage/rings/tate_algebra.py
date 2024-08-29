@@ -95,7 +95,7 @@ We can also evaluate series in a point of the domain of convergence
     1 + 2^2 + a*2^4 + O(2^5)
 
     sage: u = polygen(ZZ, 'u')
-    sage: L.<pi> = K.change(print_mode="series").extension(u^3 - 2)
+    sage: L.<pi> = K.change(print_mode='series').extension(u^3 - 2)
     sage: g(pi, 2*pi)
     pi^7 + pi^8 + pi^19 + pi^20 + O(pi^21)
 
@@ -117,7 +117,6 @@ Computations with ideals in Tate algebras are also supported::
 AUTHORS:
 
 - Xavier Caruso, Thibaut Verron (2018-09)
-
 """
 
 
@@ -174,14 +173,14 @@ class TateAlgebraFactory(UniqueFactory):
     - ``base`` -- a `p`-adic ring or field; if a ring is given, the
       Tate algebra over its fraction field will be constructed
 
-    - ``prec`` -- an integer or ``None`` (default: ``None``), the
-      precision cap; it is used if an exact object must be truncated
+    - ``prec`` -- integer or ``None`` (default: ``None``); the
+      precision cap. It is used if an exact object must be truncated
       in order to do an arithmetic operation.
       If left as ``None``, it will be set to the precision cap of
       the base field.
 
-    - ``log_radii`` -- an integer or a list or a tuple of integers
-      (default: ``0``), the value(s) `v_i`.
+    - ``log_radii`` -- integer or a list or a tuple of integers
+      (default: ``0``); the value(s) `v_i`.
       If an integer is given, this will be the common value for all
       `v_i`.
 
@@ -252,14 +251,14 @@ class TateAlgebraFactory(UniqueFactory):
 
         - ``base`` -- a `p`-adic ring or field
 
-        - ``prec`` -- an integer or ``None`` (default: ``None``)
+        - ``prec`` -- integer or ``None`` (default: ``None``)
 
-        - ``log_radii`` -- an integer or a list or a tuple of integers
+        - ``log_radii`` -- integer or a list or a tuple of integers
           (default: ``0``)
 
         - ``names`` -- names of the indeterminates
 
-        - ``order`` - a monomial ordering (default: ``degrevlex``)
+        - ``order`` -- a monomial ordering (default: ``degrevlex``)
 
         EXAMPLES::
 
@@ -292,7 +291,6 @@ class TateAlgebraFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             ValueError: unknown term order 'myorder'
-
         """
         if not isinstance(base, pAdicGeneric):
             raise TypeError("the base ring must be a p-adic ring or a p-adic field")
@@ -329,7 +327,6 @@ class TateAlgebraFactory(UniqueFactory):
             sage: key = TateAlgebra.create_key(Zp(2), names=('x','y'))
             sage: TateAlgebra.create_object((8,4,6), key)
             Tate Algebra in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 20
-
         """
         (base, prec, log_radii, names, order) = key
         return TateAlgebra_generic(base, prec, log_radii, names, order)
@@ -343,20 +340,19 @@ TateAlgebra = TateAlgebraFactory("TateAlgebra")
 
 class TateTermMonoid(Monoid_class, UniqueRepresentation):
     r"""
-    A base class for Tate algebra terms
+    A base class for Tate algebra terms.
 
     A term in a Tate algebra `K\{X_1,\dots,X_n\}` (resp. in its ring of
     integers) is a monomial in this ring.
 
     Those terms form a pre-ordered monoid, with term multiplication and the
     term order of the parent Tate algebra.
-
     """
     Element = TateAlgebraTerm
 
     def __init__(self, A):
         r"""
-        Initialize the Tate term monoid
+        Initialize the Tate term monoid.
 
         INPUT:
 
@@ -374,7 +370,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             sage: A.<x,y> = TateAlgebra(Zp(2), log_radii=1)
             sage: T = A.monoid_of_terms()
             sage: TestSuite(T).run()
-
         """
         # This function is not exposed to the user
         # so we do not check the inputs
@@ -393,15 +388,14 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
 
     def _repr_(self):
         r"""
-        Return a string representation of this Tate term monoid
+        Return a string representation of this Tate term monoid.
 
         EXAMPLES::
 
             sage: R = pAdicRing(2, 10)
-            sage: A.<x,y> = TateAlgebra(R, log_radii=[1,1], order="lex")
+            sage: A.<x,y> = TateAlgebra(R, log_radii=[1,1], order='lex')
             sage: A.monoid_of_terms()  # indirect doctest
             Monoid of terms in x (val >= -1), y (val >= -1) over 2-adic Field with capped relative precision 10
-
         """
         if self._ngens == 0:
             return "Monoid of terms over %s" % self._base
@@ -411,16 +405,15 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
 
     def _latex_(self):
         r"""
-        Return a LaTeX representation of this Tate term monoid
+        Return a LaTeX representation of this Tate term monoid.
 
         EXAMPLES::
 
             sage: R = pAdicRing(2, 10)
-            sage: A.<x,y> = TateAlgebra(R, log_radii=[1,1], order="lex")
+            sage: A.<x,y> = TateAlgebra(R, log_radii=[1,1], order='lex')
             sage: M = A.monoid_of_terms()
             sage: M._latex_()
             '\\verb"Terms"(\\Bold{Q}_{2}\\{x,y\\}_{(1,1)})'
-
         """
         return '\\verb"Terms"(%s)' % self._parent_algebra._latex_()
 
@@ -480,7 +473,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
 
         Term orders must also match::
 
-            sage: B.<x,y> = TateAlgebra(R, order="lex")
+            sage: B.<x,y> = TateAlgebra(R, order='lex')
             sage: U = B.monoid_of_terms()
             sage: T.has_coerce_map_from(U) # indirect doctest
             False
@@ -520,7 +513,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             Tate Algebra in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 10
             sage: T.algebra_of_series() is A
             True
-
         """
         return self._parent_algebra
 
@@ -553,7 +545,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             2-adic Ring with capped relative precision 10
             sage: Ao.base_ring() is R
             True
-
         """
         return self._base
 
@@ -568,7 +559,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             sage: T = A.monoid_of_terms()
             sage: T.variable_names()
             ('x', 'y')
-
         """
         return self._names
 
@@ -587,7 +577,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             sage: B.<x,y> = TateAlgebra(R, log_radii=[1,2])
             sage: B.monoid_of_terms().log_radii()
             (1, 2)
-
         """
         return tuple(self._log_radii)
 
@@ -607,13 +596,12 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             sage: T = A.monoid_of_terms()
             sage: T.term_order()
             Lexicographic term order
-
         """
         return self._order
 
     def ngens(self):
         r"""
-        Return the number of variables in the Tate term monoid
+        Return the number of variables in the Tate term monoid.
 
         EXAMPLES::
 
@@ -622,7 +610,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             sage: T = A.monoid_of_terms()
             sage: T.ngens()
             2
-
         """
         return self._ngens
 
@@ -637,17 +624,16 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             sage: T = A.monoid_of_terms()
             sage: T.gens()
             (...0000000001*x, ...0000000001*y)
-
         """
         return tuple([self(g) for g in self._parent_algebra.gens()])
 
     def gen(self, n=0):
         r"""
-        Return the ``n``-th generator of this monoid of terms.
+        Return the `n`-th generator of this monoid of terms.
 
         INPUT:
 
-        - ``n`` - an integer (default: ``0``), the index of
+        - ``n`` -- integer (default: `0`); the index of
           the requested generator
 
         EXAMPLES::
@@ -665,7 +651,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             ValueError: generator not defined
-
         """
         return self(self._parent_algebra.gen(n))
 
@@ -680,7 +665,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             sage: T = A.monoid_of_terms()
             sage: T.some_elements()
             [...00000000010, ...0000000001*x, ...0000000001*y, ...00000000010*x*y]
-
         """
         elts = [ self(self._field.uniformizer()) ] + list(self.gens())
         elts.append(prod(elts))
@@ -693,7 +677,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
 class TateAlgebra_generic(Parent):
     def __init__(self, field, prec, log_radii, names, order, integral=False):
         """
-        Initialize the Tate algebra
+        Initialize the Tate algebra.
 
         TESTS::
 
@@ -703,7 +687,6 @@ class TateAlgebra_generic(Parent):
         We check that univariate Tate algebras work correctly::
 
             sage: B.<t> = TateAlgebra(Zp(3))
-
         """
         from sage.misc.latex import latex_variable_name
         from sage.rings.polynomial.polynomial_ring_constructor import _multi_variate
@@ -741,14 +724,13 @@ class TateAlgebra_generic(Parent):
 
     def _an_element_(self):
         r"""
-        Return an element of this Tate algebra
+        Return an element of this Tate algebra.
 
         EXAMPLES::
 
             sage: A.<x,y> = TateAlgebra(Zp(2), log_radii=1)
             sage: A.an_element()  # indirect doctest
             (1 + O(2^20))*x
-
         """
         return self.gen()
 
@@ -758,7 +740,7 @@ class TateAlgebra_generic(Parent):
 
         INPUT:
 
-        - ``R`` - a ring
+        - ``R`` -- a ring
 
         EXAMPLES::
 
@@ -798,7 +780,7 @@ class TateAlgebra_generic(Parent):
 
         If the tame order changes, there is no coercion either::
 
-            sage: B.<x,y> = TateAlgebra(R, order="lex")
+            sage: B.<x,y> = TateAlgebra(R, order='lex')
             sage: B.has_coerce_map_from(A)  # indirect doctest
             False
 
@@ -816,7 +798,6 @@ class TateAlgebra_generic(Parent):
             sage: C.<x,y> = TateAlgebra(S, log_radii=[2,-2])
             sage: C.has_coerce_map_from(B)  # indirect doctest
             True
-
         """
         base = self._base
         if base.has_coerce_map_from(R):
@@ -839,8 +820,8 @@ class TateAlgebra_generic(Parent):
         """
         Return the pushout of this Tate algebra with ``R``.
 
-        This is only implemented when ``R`` is a p-adic ring or
-        a p-adic field.
+        This is only implemented when ``R`` is a `p`-adic ring or
+        a `p`-adic field.
 
         EXAMPLES::
 
@@ -877,7 +858,6 @@ class TateAlgebra_generic(Parent):
             (pi + O(pi^41))*v
             sage: (pi*v).parent() is A2
             True
-
         """
         if isinstance(R, pAdicGeneric):
             base = pushout(self._base, R)
@@ -890,13 +870,13 @@ class TateAlgebra_generic(Parent):
             else:
                 return A.integer_ring()
 
-    def _ideal_class_(self, n):
+    def _ideal_class_(self, n=0):
         r"""
         Return the class that handles ideals in this Tate algebra.
 
         INPUT:
 
-        - ``n`` - number of generators
+        - ``n`` -- integer (default: ``0``); the number of generators
 
         EXAMPLES::
 
@@ -927,11 +907,11 @@ class TateAlgebra_generic(Parent):
 
     def gen(self, n=0):
         r"""
-        Return the ``n``-th generator of this Tate algebra.
+        Return the `n`-th generator of this Tate algebra.
 
         INPUT:
 
-        - ``n`` - an integer (default: ``0``), the index of
+        - ``n`` -- integer (default: `0`); the index of
           the requested generator
 
         EXAMPLES::
@@ -948,7 +928,6 @@ class TateAlgebra_generic(Parent):
             Traceback (most recent call last):
             ...
             ValueError: generator not defined
-
         """
         try:
             return self._gens[n]
@@ -965,7 +944,6 @@ class TateAlgebra_generic(Parent):
             sage: A.<x,y> = TateAlgebra(R)
             sage: A.gens()
             (...0000000001*x, ...0000000001*y)
-
         """
         return tuple(self._gens)
 
@@ -979,7 +957,6 @@ class TateAlgebra_generic(Parent):
             sage: A.<x,y> = TateAlgebra(R)
             sage: A.ngens()
             2
-
         """
         return self._ngens
 
@@ -1007,7 +984,6 @@ class TateAlgebra_generic(Parent):
              ...0000000010*y,
              ...0000000001*y + ...00000000010*x*y,
              ...00000000100*x*y]
-
         """
         terms = [ self.zero() ] + [ self(t) for t in self.monoid_of_terms().some_elements() ]
         return [ terms[i] + terms[j] for i in range(len(terms)) for j in range(i, len(terms)) ]
@@ -1025,7 +1001,6 @@ class TateAlgebra_generic(Parent):
 
             sage: A.integer_ring()
             Integer ring of the Tate Algebra in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 10
-
         """
         vars = ", ".join("%s (val >= %s)" % (var, -r)
                          for var, r in zip(self._names, self._log_radii))
@@ -1050,7 +1025,6 @@ class TateAlgebra_generic(Parent):
             sage: B.<u1,u2> = TateAlgebra(R, log_radii=[1,2])
             sage: B._latex_()
             '\\Bold{Q}_{2}\\{u_{1},u_{2}\\}_{(1,2)}'
-
         """
         from sage.misc.latex import latex
         s = r"%s\{%s\}" % (latex(self._field), ",".join(self._latex_names))
@@ -1073,7 +1047,6 @@ class TateAlgebra_generic(Parent):
             sage: A.<x,y> = TateAlgebra(R)
             sage: A.variable_names()
             ('x', 'y')
-
         """
         return self._names
 
@@ -1096,7 +1069,6 @@ class TateAlgebra_generic(Parent):
             sage: C.<x,y> = TateAlgebra(R, log_radii=(1,-1))
             sage: C.log_radii()
             (1, -1)
-
         """
         return self._log_radii
 
@@ -1117,7 +1089,6 @@ class TateAlgebra_generic(Parent):
             True
             sage: x/2 in Ao
             False
-
         """
         return self._integer_ring
 
@@ -1131,7 +1102,6 @@ class TateAlgebra_generic(Parent):
             sage: A.<x,y> = TateAlgebra(R)
             sage: A.monoid_of_terms()
             Monoid of terms in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 10
-
         """
         return self._parent_terms
 
@@ -1149,7 +1119,6 @@ class TateAlgebra_generic(Parent):
             sage: A.<x,y> = TateAlgebra(R, order='lex')
             sage: A.term_order()
             Lexicographic term order
-
         """
         return self._order
 
@@ -1183,7 +1152,6 @@ class TateAlgebra_generic(Parent):
             sage: A.<x,y> = TateAlgebra(R, prec=20)
             sage: A.precision_cap()
             20
-
         """
         return self._cap
 
@@ -1212,7 +1180,6 @@ class TateAlgebra_generic(Parent):
             sage: A.<u,v> = TateAlgebra(S)
             sage: A.absolute_e()
             2
-
         """
         return self._base.absolute_e()
 
@@ -1226,7 +1193,6 @@ class TateAlgebra_generic(Parent):
             sage: A.<x,y> = TateAlgebra(R)
             sage: A.characteristic()
             0
-
         """
         return self.base_ring().characteristic()
 
@@ -1236,20 +1202,20 @@ class TateAlgebra_generic(Parent):
 
         INPUT:
 
-        - ``degree`` -- an integer (default: 2), an upper bound on
+        - ``degree`` -- integer (default: 2); an upper bound on
           the total degree of the result
 
-        - ``terms`` -- an integer (default: 5), the maximal number
+        - ``terms`` -- integer (default: 5); the maximal number
           of terms of the result
 
-        - ``integral`` -- a boolean (default: ``False``); if ``True``
+        - ``integral`` -- boolean (default: ``False``); if ``True``
           the result will be in the ring of integers
 
         - ``prec`` -- (optional) an integer, the precision of the result
 
         EXAMPLES::
 
-            sage: R = Zp(2, prec=10, print_mode="digits")
+            sage: R = Zp(2, prec=10, print_mode='digits')
             sage: A.<x,y> = TateAlgebra(R)
             sage: A.random_element()  # random
             (...00101000.01)*y + ...1111011111*x^2 + ...0010010001*x*y
@@ -1279,7 +1245,6 @@ class TateAlgebra_generic(Parent):
             sage: B.random_element(integral=True)  # random
             (...1111111.001)*x*y + (...111000101.1)*x + (...11010111.01)*y^2
              + ...0010011011*y + ...0010100011000
-
         """
         if integral or self._integral:
             polring = self._polynomial_ring.change_ring(self._field.integer_ring())

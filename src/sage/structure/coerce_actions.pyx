@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Coerce actions
 """
@@ -72,7 +73,6 @@ cdef class GenericAction(Action):
 
             sage: GenericAction(QQ, Z6, True, check=False)
             Left action by Rational Field on Ring of integers modulo 6
-
         """
         Action.__init__(self, G, S, is_left, operator.mul)
         if check:
@@ -83,7 +83,7 @@ cdef class GenericAction(Action):
 
     def codomain(self):
         """
-        Returns the "codomain" of this action, i.e. the Parent in which the
+        Return the "codomain" of this action, i.e. the Parent in which the
         result elements live. Typically, this should be the same as the
         acted upon set.
 
@@ -106,7 +106,6 @@ cdef class GenericAction(Action):
             sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)
             sage: A.codomain()
             Multivariate Polynomial Ring in x, y, z over Rational Field
-
         """
         if self._codomain is None:
             self._codomain = parent(self.act(an_element(self.G),
@@ -252,12 +251,12 @@ cdef class ModuleAction(Action):
 
     INPUT:
 
-    - ``G`` -- the actor, an instance of :class:`~sage.structure.parent.Parent`.
-    - ``S`` -- the object that is acted upon.
-    - ``g`` -- optional, an element of ``G``.
-    - ``a`` -- optional, an element of ``S``.
-    - ``check`` -- if True (default), then there will be no consistency tests
-      performed on sample elements.
+    - ``G`` -- the actor, an instance of :class:`~sage.structure.parent.Parent`
+    - ``S`` -- the object that is acted upon
+    - ``g`` -- (optional) an element of ``G``
+    - ``a`` -- (optional) an element of ``S``
+    - ``check`` -- if ``True`` (default), then there will be no consistency tests
+      performed on sample elements
 
     NOTE:
 
@@ -274,7 +273,6 @@ cdef class ModuleAction(Action):
     assumption that the inputs lie exactly in the base ring and may
     segfault otherwise. Thus we handle all possible base extensions
     manually here.
-
     """
     def __init__(self, G, S, g=None, a=None, check=True):
         """
@@ -331,7 +329,6 @@ cdef class ModuleAction(Action):
             sage: G.gen() * S.gen()
             [x 0]
             [0 x]*y
-
         """
         Action.__init__(self, G, S, not isinstance(self, RightModuleAction), operator.mul)
         if not isinstance(G, Parent):
@@ -430,7 +427,6 @@ cdef class ModuleAction(Action):
             sage: RightModuleAction(GF5, GF5t)
             Right scalar multiplication by Finite Field of size 5
              on Power Series Ring in t over Finite Field of size 5
-
         """
         return "scalar multiplication"
 

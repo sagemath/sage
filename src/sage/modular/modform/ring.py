@@ -28,7 +28,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
+from sage.modular.arithgroup.all import Gamma0, CongruenceSubgroupBase
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -40,8 +40,8 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
 
 from .constructor import ModularForms
-from .element import is_ModularFormElement, GradedModularFormElement
-from .space import is_ModularFormsSpace
+from .element import ModularFormElement, GradedModularFormElement
+from .space import ModularFormsSpace
 
 
 def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=False):
@@ -54,15 +54,15 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
 
     - ``forms`` -- list of pairs `(k, f)` with k an integer and f a power
       series (all over the same base ring)
-    - ``weight`` -- an integer
-    - ``prec`` -- an integer (less than or equal to the precision of all the
-      forms in ``forms``) -- precision to use in power series computations.
-    - ``stop_dim`` -- an integer: stop as soon as we have enough forms to span
+    - ``weight`` -- integer
+    - ``prec`` -- integer (less than or equal to the precision of all the
+      forms in ``forms``); precision to use in power series computations
+    - ``stop_dim`` -- integer; stop as soon as we have enough forms to span
       a submodule of this rank (a saturated one if the base ring is `\ZZ`).
-      Ignored if ``use_random`` is False.
-    - ``use_random`` -- which algorithm to use. If True, tries random products
+      Ignored if ``use_random`` is ``False``.
+    - ``use_random`` -- which algorithm to use. If ``True``, tries random products
       of the generators of the appropriate weight until a large enough
-      submodule is found (determined by ``stop_dim``). If False, just tries
+      submodule is found (determined by ``stop_dim``). If ``False``, just tries
       everything.
 
     Note that if the given forms do generate the whole space, then
@@ -189,7 +189,6 @@ class ModularFormsRing(Parent):
         1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)
         sage: M((E4^3 - E6^2)/1728)
         q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-
     """
 
     Element = GradedModularFormElement
@@ -201,8 +200,9 @@ class ModularFormsRing(Parent):
         - ``group`` -- a congruence subgroup of `\SL_2(\ZZ)`, or a
           positive integer `N` (interpreted as `\Gamma_0(N)`)
 
-        - ``base_ring`` -- (default: `\QQ`) a base ring, which should be
-          `\QQ`, `\ZZ`, or the integers mod `p` for some prime `p`
+        - ``base_ring`` -- ring (default: `\QQ`); a base ring, which
+          should be `\QQ`, `\ZZ`, or the integers mod `p` for some prime
+          `p`
 
         TESTS:
 
@@ -231,7 +231,7 @@ class ModularFormsRing(Parent):
         """
         if isinstance(group, (int, Integer)):
             group = Gamma0(group)
-        elif not is_CongruenceSubgroup(group):
+        elif not isinstance(group, CongruenceSubgroupBase):
             raise ValueError("group (=%s) should be a congruence subgroup" % group)
 
         if base_ring != ZZ and not base_ring.is_field() and not base_ring.is_finite():
@@ -253,7 +253,7 @@ class ModularFormsRing(Parent):
         INPUT:
 
         - ``base_ring`` -- a base ring, which should be `\QQ`, `\ZZ`, or
-          the integers mod `p` for some prime `p`.
+          the integers mod `p` for some prime `p`
 
         EXAMPLES::
 
@@ -296,11 +296,9 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - ``i`` -- integer corresponding to the `i`-th generator of this
-          ring.
+        - ``i`` -- integer
 
-        OUTPUT: A generator of this ring, which is an instance of
-        :class:`~sage.modular.modform.GradedModularFormElement`
+        OUTPUT: an instance of :class:`~sage.modular.modform.GradedModularFormElement`
 
         EXAMPLES::
 
@@ -349,9 +347,9 @@ class ModularFormsRing(Parent):
           generators returned by the method
           :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead. Note that we do not check if the list is
-          indeed a generating set.
+          indeed a generating set
 
-        OUTPUT: A multivariate polynomial ring in the variable
+        OUTPUT: a multivariate polynomial ring in the variable
         ``names``. Each variable of the polynomial ring correspond to a
         generator given in the list ``gens`` (following the ordering of
         the list).
@@ -392,7 +390,7 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - ``poly_parent`` -- A polynomial ring
+        - ``poly_parent`` -- a polynomial ring
         - ``gen`` -- list of generators of the modular forms ring
 
         TESTS::
@@ -421,19 +419,19 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - ``polynomial`` -- A multivariate polynomial. The variables
+        - ``polynomial`` -- a multivariate polynomial. The variables
           names of the polynomial should be different from ``'q'``. The
           number of variable of this polynomial should equal the number
-          of given generators.
+          of given generators
         - ``gens`` -- list of modular forms generating this ring
           (default: ``None``); if ``gens`` is ``None`` then the list of
           generators returned by the method
           :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead. Note that we do not check if the list is
-          indeed a generating set.
+          indeed a generating set
 
-        OUTPUT: A ``GradedModularFormElement`` given by the polynomial
-        relation ``polynomial``.
+        OUTPUT: a ``GradedModularFormElement`` given by the polynomial
+        relation ``polynomial``
 
         EXAMPLES::
 
@@ -491,9 +489,9 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - ``forms_datum`` (dict, list, ModularFormElement,
-          GradedModularFormElement, RingElement, Multivariate polynomial) -- Try
-          to coerce ``forms_datum`` into self.
+        - ``forms_datum`` -- dictionary, list, ModularFormElement,
+          GradedModularFormElement, RingElement, or Multivariate polynomial; try
+          to coerce ``forms_datum`` into ``self``
 
         TESTS::
 
@@ -535,7 +533,7 @@ class ModularFormsRing(Parent):
             forms_dictionary = forms_datum
         elif isinstance(forms_datum, self.element_class):
             forms_dictionary = forms_datum._forms_dictionary
-        elif is_ModularFormElement(forms_datum):
+        elif isinstance(forms_datum, ModularFormElement):
             if self.group().is_subgroup(forms_datum.group()) and self.base_ring().has_coerce_map_from(forms_datum.base_ring()):
                 forms_dictionary = {forms_datum.weight(): forms_datum}
             else:
@@ -611,7 +609,7 @@ class ModularFormsRing(Parent):
             sage: M(D) + 53
             54 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)
         """
-        if is_ModularFormsSpace(M):
+        if isinstance(M, ModularFormsSpace):
             if M.group() == self.group() and self.has_coerce_map_from(M.base_ring()):
                 return True
         if self.base_ring().has_coerce_map_from(M):
@@ -620,7 +618,7 @@ class ModularFormsRing(Parent):
 
     def __richcmp__(self, other, op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         Rings are equal if and only if their groups and base rings are.
 
@@ -641,7 +639,7 @@ class ModularFormsRing(Parent):
 
     def _repr_(self):
         r"""
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -687,7 +685,7 @@ class ModularFormsRing(Parent):
         - ``prec`` -- integer (default: 10); return `q`-expansions to
           this precision
 
-        - ``start_gens`` -- list (default: empty list); list of pairs
+        - ``start_gens`` -- list (default: ``[]``); list of pairs
           `(k, f)`, or triples `(k, f, F)`, where:
 
           - `k` is an integer,
@@ -702,12 +700,12 @@ class ModularFormsRing(Parent):
           form object `F`.
 
         - ``start_weight`` -- integer (default: 2); calculate the graded
-          subalgebra of forms of weight at least ``start_weight``.
+          subalgebra of forms of weight at least ``start_weight``
 
         OUTPUT:
 
-        a list of pairs `(k, f)`, where `f` is the `q`-expansion to precision
-        ``prec`` of a modular form of weight `k`.
+        a list of pairs (k, f), where f is the `q`-expansion to precision
+        ``prec`` of a modular form of weight k.
 
         .. SEEALSO::
 
@@ -845,7 +843,7 @@ class ModularFormsRing(Parent):
         - ``maxweight`` -- integer (default: 8); calculate forms
           generating all forms up to this weight
 
-        - ``start_gens`` -- list (default: empty list); a list of
+        - ``start_gens`` -- list (default: ``[]``); a list of
           modular forms. If this list is nonempty, we find a minimal
           generating set containing these forms
 
@@ -868,7 +866,6 @@ class ModularFormsRing(Parent):
              q - 9*q^4 - 10*q^5 + O(q^6)]
             sage: A[0].parent()
             Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
-
         """
         sgs = tuple((F.weight(), None, F) for F in start_gens)
         G = self._find_generators(maxweight, sgs, start_weight)
@@ -891,12 +888,10 @@ class ModularFormsRing(Parent):
         - ``start_weight`` -- minimum weight to try
         - ``start_gens`` -- a sequence of tuples of the form `(k, f, F)`, where
           `F` is a modular form of weight `k` and `f` is its `q`-expansion
-          coerced into ``self.base_ring()`. Either (but not both) of `f` and `F`
+          coerced into ``self.base_ring()``. Either (but not both) of `f` and `F`
           may be ``None``.
 
-        OUTPUT:
-
-        a list of tuples, formatted as with ``start_gens``.
+        OUTPUT: list of tuples, formatted as with ``start_gens``
 
         EXAMPLES::
 

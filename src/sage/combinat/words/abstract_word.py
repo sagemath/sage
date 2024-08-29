@@ -44,11 +44,11 @@ from sage.structure.richcmp import richcmp_method, rich_to_bool, richcmp_item
 class Word_class(SageObject):
     def parent(self):
         r"""
-        Returns the parent of self.
+        Return the parent of ``self``.
 
         TESTS::
 
-            sage: Word(iter([1,2,3]), length="unknown").parent()
+            sage: Word(iter([1,2,3]), length='unknown').parent()
             Finite words over Set of Python objects of class 'object'
             sage: Word(range(12)).parent()
             Finite words over Set of Python objects of class 'object'
@@ -61,13 +61,13 @@ class Word_class(SageObject):
 
     def _repr_(self):
         r"""
-        Returns a string representation of self.
+        Return a string representation of ``self``.
 
         TESTS::
 
-            sage: Word(iter([1,2,3]), length="unknown")._repr_()
+            sage: Word(iter([1,2,3]), length='unknown')._repr_()
             'word: 123'
-            sage: Word(range(100), length="unknown")._repr_()
+            sage: Word(range(100), length='unknown')._repr_()
             'word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...'
             sage: Word(lambda x:x%3)._repr_()
             'word: 0120120120120120120120120120120120120120...'
@@ -78,7 +78,7 @@ class Word_class(SageObject):
 
     def string_rep(self):
         r"""
-        Returns the (truncated) raw sequence of letters as a string.
+        Return the (truncated) raw sequence of letters as a string.
 
         EXAMPLES::
 
@@ -157,21 +157,21 @@ class Word_class(SageObject):
 
     def length(self):
         r"""
-        Returns the length of self.
+        Return the length of ``self``.
 
         TESTS::
 
             sage: from sage.combinat.words.word import Word_class
-            sage: w = Word(iter('abba'*100), length="unknown")
+            sage: w = Word(iter('abba'*100), length='unknown')
             sage: w.length() is None
             True
-            sage: w = Word(iter('abba'), length="finite")
+            sage: w = Word(iter('abba'), length='finite')
             sage: w.length()
             4
-            sage: w = Word(iter([0,1,1,0,1,0,0,1]*100), length="unknown")
+            sage: w = Word(iter([0,1,1,0,1,0,0,1]*100), length='unknown')
             sage: w.length() is None
             True
-            sage: w = Word(iter([0,1,1,0,1,0,0,1]), length="finite")
+            sage: w = Word(iter([0,1,1,0,1,0,0,1]), length='finite')
             sage: w.length()
             8
         """
@@ -179,7 +179,7 @@ class Word_class(SageObject):
 
     def is_finite(self):
         r"""
-        Returns whether this word is known to be finite.
+        Return whether this word is known to be finite.
 
         .. WARNING::
 
@@ -201,22 +201,19 @@ class Word_class(SageObject):
             sage: w = Word(iter('a'*100))
             sage: w.is_finite()
             False
-
         """
         return False
 
     def __len__(self):
         r"""
-        Return the length of self (as a python integer).
+        Return the length of ``self`` (as a Python integer).
 
         .. NOTE::
 
             For infinite words or words of unknown length,
             use `length()` method instead.
 
-        OUTPUT:
-
-        positive integer
+        OUTPUT: positive integer
 
         EXAMPLES::
 
@@ -375,26 +372,24 @@ class Word_class(SageObject):
 
     def _longest_common_prefix_iterator(self, other):
         r"""
-        Return an iterator of the longest common prefix of self and other.
+        Return an iterator of the longest common prefix of ``self`` and ``other``.
 
         INPUT:
 
-        -  ``other`` - word
+        - ``other`` -- word
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
             sage: f = words.FibonacciWord()
             sage: it = f._longest_common_prefix_iterator(f)
-            sage: w = Word(it, length="unknown"); w
+            sage: w = Word(it, length='unknown'); w
             word: 0100101001001010010100100101001001010010...
             sage: w[:6]
             word: 010010
             sage: it = w._longest_common_prefix_iterator(w[:10])
-            sage: w = Word(it, length="finite"); w
+            sage: w = Word(it, length='finite'); w
             word: 0100101001
         """
         for (b, c) in zip(self, other):
@@ -405,19 +400,19 @@ class Word_class(SageObject):
 
     def longest_common_prefix(self, other, length='unknown'):
         r"""
-        Returns the longest common prefix of self and other.
+        Return the longest common prefix of ``self`` and ``other``.
 
         INPUT:
 
-        -  ``other`` - word
+        - ``other`` -- word
 
-        -  ``length`` - string (optional, default: ``'unknown'``)
-           the length type of the resulting word if known. It may be one of
-           the following:
+        - ``length`` -- string (default: ``'unknown'``)
+          the length type of the resulting word if known. It may be one of
+          the following:
 
-           - ``'unknown'``
-           - ``'finite'``
-           - ``'infinite'``
+          - ``'unknown'``
+          - ``'finite'``
+          - ``'infinite'``
 
         EXAMPLES::
 
@@ -501,16 +496,14 @@ class Word_class(SageObject):
 
     def _longest_periodic_prefix_iterator(self, period=1):
         r"""
-        Returns an iterator of the longest prefix of self having the given
+        Return an iterator of the longest prefix of ``self`` having the given
         period.
 
         INPUT:
 
-        - ``period`` - positive integer (optional, default 1)
+        - ``period`` -- positive integer (default: 1)
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -537,15 +530,13 @@ class Word_class(SageObject):
 
     def longest_periodic_prefix(self, period=1):
         r"""
-        Returns the longest prefix of self having the given period.
+        Return the longest prefix of ``self`` having the given period.
 
         INPUT:
 
-        - ``period`` - positive integer (optional, default 1)
+        - ``period`` -- positive integer (default: 1)
 
-        OUTPUT:
-
-        word
+        OUTPUT: word
 
         EXAMPLES::
 
@@ -573,7 +564,7 @@ class Word_class(SageObject):
 
     def is_empty(self):
         r"""
-        Returns True if the length of self is zero, and False otherwise.
+        Return ``True`` if the length of ``self`` is zero, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -595,15 +586,15 @@ class Word_class(SageObject):
 
     def _to_integer_iterator(self, use_parent_alphabet=False):
         r"""
-        Returns an iterator over the letters of an integer representation of
-        self.
+        Return an iterator over the letters of an integer representation of
+        ``self``.
 
         INPUT:
 
-        - ``use_parent_alphabet`` - Bool (default: False). When True and if
-          the self parent's alphabet is finite, it uses the index of
+        - ``use_parent_alphabet`` -- boolean (default: ``False``); when ``True``
+          and if the ``self`` parent's alphabet is finite, it uses the index of
           the letters in the alphabet. Otherwise, the first letter occurring in
-          self is mapped to zero, and every letter that hasn't yet occurred in
+          ``self`` is mapped to zero, and every letter that hasn't yet occurred in
           the word is mapped to the next available integer.
 
         EXAMPLES::
@@ -648,7 +639,7 @@ class Word_class(SageObject):
 
     def to_integer_word(self):
         r"""
-        Returns a word over the integers whose letters are those output by
+        Return a word over the integers whose letters are those output by
         self._to_integer_iterator()
 
         EXAMPLES::
@@ -658,11 +649,11 @@ class Word_class(SageObject):
             word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...
             sage: w.to_integer_word()
             word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...
-            sage: w = Word(iter("abbacabba"), length="finite"); w
+            sage: w = Word(iter("abbacabba"), length='finite'); w
             word: abbacabba
             sage: w.to_integer_word()
             word: 011020110
-            sage: w = Word(iter("abbacabba"), length="unknown"); w
+            sage: w = Word(iter("abbacabba"), length='unknown'); w
             word: abbacabba
             sage: w.to_integer_word()
             word: 011020110
@@ -673,7 +664,7 @@ class Word_class(SageObject):
 
     def lex_less(self, other):
         r"""
-        Returns True if self is lexicographically less than other.
+        Return ``True`` if ``self`` is lexicographically less than ``other``.
 
         EXAMPLES::
 
@@ -703,7 +694,7 @@ class Word_class(SageObject):
 
     def lex_greater(self, other):
         r"""
-        Returns True if self is lexicographically greater than other.
+        Return ``True`` if ``self`` is lexicographically greater than ``other``.
 
         EXAMPLES::
 
@@ -733,12 +724,12 @@ class Word_class(SageObject):
 
     def apply_morphism(self, morphism):
         r"""
-        Returns the word obtained by applying the morphism to self.
+        Return the word obtained by applying the morphism to ``self``.
 
         INPUT:
 
-        -  ``morphism`` - Can be an instance of WordMorphism, or
-           anything that can be used to construct one.
+        - ``morphism`` -- can be an instance of WordMorphism, or
+          anything that can be used to construct one
 
         EXAMPLES::
 
@@ -772,13 +763,11 @@ class Word_class(SageObject):
 
     def _delta_iterator(self):
         r"""
-        Returns an iterator of the image of self under the delta morphism.
+        Return an iterator of the image of ``self`` under the delta morphism.
         This is the word composed of the length of consecutive runs of the
         same letter in a given word.
 
-        OUTPUT:
-
-            generator object
+        OUTPUT: generator object
 
         EXAMPLES::
 
@@ -803,14 +792,12 @@ class Word_class(SageObject):
 
     def delta(self):
         r"""
-        Returns the image of self under the delta morphism.
+        Return the image of ``self`` under the delta morphism.
 
         This is the word composed of the length of consecutive runs of
         the same letter in a given word.
 
-        OUTPUT:
-
-        Word over integers
+        OUTPUT: word over integers
 
         EXAMPLES:
 
@@ -838,16 +825,14 @@ class Word_class(SageObject):
 
     def _iterated_right_palindromic_closure_iterator(self, f=None):
         r"""
-        Returns an iterator over the iterated (`f`-)palindromic closure of self.
+        Return an iterator over the iterated (`f`-)palindromic closure of ``self``.
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of self. It must
-           be callable on letters as well as words (e.g. WordMorphism).
+        - ``f`` -- involution on the alphabet of ``self`` (default: ``None``);
+          it must be callable on letters as well as words (e.g. WordMorphism)
 
-        OUTPUT:
-
-            iterator -- the iterated (`f`-)palindromic closure of self
+        OUTPUT: iterator; the iterated (`f`-)palindromic closure of ``self``
 
         EXAMPLES::
 
@@ -904,16 +889,14 @@ class Word_class(SageObject):
 
     def _iterated_right_palindromic_closure_recursive_iterator(self, f=None):
         r"""
-        Returns an iterator over the iterated (`f`-)palindromic closure of self.
+        Return an iterator over the iterated (`f`-)palindromic closure of ``self``.
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of self. It must
-           be callable on letters as well as words (e.g. WordMorphism).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. WordMorphism)
 
-        OUTPUT:
-
-            iterator -- the iterated (`f`-)palindromic closure of self
+        OUTPUT: iterator; the iterated (`f`-)palindromic closure of ``self``
 
         ALGORITHM:
 
@@ -994,26 +977,24 @@ class Word_class(SageObject):
 
     def iterated_right_palindromic_closure(self, f=None, algorithm='recursive'):
         r"""
-        Returns the iterated (`f`-)palindromic closure of self.
+        Return the iterated (`f`-)palindromic closure of ``self``.
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of self. It must
-           be callable on letters as well as words (e.g. WordMorphism).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. WordMorphism)
 
-        -  ``algorithm`` - string (default: ``'recursive'``) specifying which
-           algorithm to be used when computing the iterated palindromic closure.
-           It must be one of the two following values:
+        - ``algorithm`` -- string (default: ``'recursive'``); specifying which
+          algorithm to be used when computing the iterated palindromic closure.
+          It must be one of the two following values:
 
-           - ``'definition'`` - computed using the definition
-           - ``'recursive'`` - computation based on an efficient formula
-             that recursively computes the iterated right palindromic closure
-             without having to recompute the longest `f`-palindromic suffix
-             at each iteration [2].
+          - ``'definition'`` -- computed using the definition
+          - ``'recursive'`` -- computation based on an efficient formula
+            that recursively computes the iterated right palindromic closure
+            without having to recompute the longest `f`-palindromic suffix
+            at each iteration [2].
 
-        OUTPUT:
-
-            word -- the iterated (`f`-)palindromic closure of self
+        OUTPUT: word; the iterated (`f`-)palindromic closure of ``self``
 
         EXAMPLES::
 
@@ -1111,16 +1092,14 @@ class Word_class(SageObject):
 
     def prefixes_iterator(self, max_length=None):
         r"""
-        Returns an iterator over the prefixes of self.
+        Return an iterator over the prefixes of ``self``.
 
         INPUT:
 
-        - ``max_length`` - non negative integer or None (optional,
-          default: None) the maximum length of the prefixes
+        - ``max_length`` -- nonnegative integer or ``None`` (default); the
+          maximum length of the prefixes
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -1165,16 +1144,14 @@ class Word_class(SageObject):
 
     def palindrome_prefixes_iterator(self, max_length=None):
         r"""
-        Returns an iterator over the palindrome prefixes of self.
+        Return an iterator over the palindrome prefixes of ``self``.
 
         INPUT:
 
-        - ``max_length`` - non negative integer or None (optional,
-          default: None) the maximum length of the prefixes
+        - ``max_length`` -- nonnegative integer or ``None`` (default); the
+          maximum length of the prefixes
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -1206,13 +1183,13 @@ class Word_class(SageObject):
 
     def _partial_sums_iterator(self, start, mod=None):
         r"""
-        Iterator over the partial sums of the prefixes of self.
+        Iterator over the partial sums of the prefixes of ``self``.
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``start`` - integer, the first letter of the resulting word.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- a word over the integers
+        - ``start`` -- integer; the first letter of the resulting word
+        - ``mod`` -- (default: ``None``) it can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1233,7 +1210,6 @@ class Word_class(SageObject):
             sage: w = Word([1,1,1,1,1,1,1,1,1,1,1,1])
             sage: list(w._partial_sums_iterator(0))
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-
         """
         if mod in (None, 0):
             sum = start
@@ -1252,13 +1228,13 @@ class Word_class(SageObject):
 
     def partial_sums(self, start, mod=None):
         r"""
-        Returns the word defined by the partial sums of its prefixes.
+        Return the word defined by the partial sums of its prefixes.
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``start`` - integer, the first letter of the resulting word.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- a word over the integers
+        - ``start`` -- integer; the first letter of the resulting word
+        - ``mod`` -- (default: ``None``) it can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1317,8 +1293,8 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- a word over the integers
+        - ``mod`` -- (default: ``None``) it can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1393,8 +1369,8 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- a word over the integers
+        - ``mod`` -- (default: ``None``) it can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1455,16 +1431,14 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``self`` - word over natural numbers
+        - ``self`` -- word over natural numbers
 
-        -  ``base`` - integer (default : 2), greater or equal to 2
+        - ``base`` -- integer (default: 2) greater or equal to 2
 
-        -  ``mod`` - modulo (default: ``None``), can take the following
-           values:
-
-           - integer -- the modulo
-
-           - ``None`` - the value ``base`` is considered for the modulo.
+        - ``mod`` -- modulo (default: ``None``); can take the following
+          values:
+          - ``integer`` -- the modulo
+          - ``None`` -- the value ``base`` is considered for the modulo
 
         EXAMPLES:
 
@@ -1555,11 +1529,9 @@ class Word_class(SageObject):
         INPUT:
 
         - ``other`` -- a finite word
-        - ``start`` -- integer (default:``0``), where the search starts
+        - ``start`` -- integer (default: `0`) where the search starts
 
-        OUTPUT:
-
-        integer or ``None``
+        OUTPUT: integer or ``None``
 
         EXAMPLES::
 
@@ -1616,16 +1588,14 @@ class Word_class(SageObject):
 
     def factor_occurrences_iterator(self, fact):
         r"""
-        Returns an iterator over all occurrences (including overlapping ones)
-        of fact in self in their order of appearance.
+        Return an iterator over all occurrences (including overlapping ones)
+        of fact in ``self`` in their order of appearance.
 
         INPUT:
 
-        - ``fact`` - a non empty finite word
+        - ``fact`` -- a non empty finite word
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -1657,16 +1627,14 @@ class Word_class(SageObject):
 
     def return_words_iterator(self, fact):
         r"""
-        Returns an iterator over all the return words of fact in self
+        Return an iterator over all the return words of fact in self
         (without unicity).
 
         INPUT:
 
-        - ``fact`` - a non empty finite word
+        - ``fact`` -- a non empty finite word
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -1705,8 +1673,8 @@ class Word_class(SageObject):
 
     def complete_return_words_iterator(self, fact):
         r"""
-        Returns an iterator over all the complete return words of fact in
-        self (without unicity).
+        Return an iterator over all the complete return words of fact in
+        ``self`` (without unicity).
 
         A complete return words `u` of a factor `v`  is a factor starting
         by the given factor `v` and ending just after the next occurrence
@@ -1714,11 +1682,9 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``fact`` - a non empty finite word
+        - ``fact`` -- a non empty finite word
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 

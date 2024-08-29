@@ -171,12 +171,12 @@ def GU(n, R, var='a', invariant_form=None):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     - ``R`` -- ring or an integer; if an integer is specified, the
       corresponding finite field is used
 
-    - ``var`` -- (optional, default: ``'a'``) variable used to
+    - ``var`` -- (default: ``'a'``) variable used to
       represent generator of the finite field, if needed
 
     - ``invariant_form`` -- (optional) instances being accepted by
@@ -283,12 +283,12 @@ def SU(n, R, var='a', invariant_form=None):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     - ``R`` -- ring or an integer; if an integer is specified, the
       corresponding finite field is used
 
-    - ``var`` -- (optional, default: ``'a'``) variable used to
+    - ``var`` -- (default: ``'a'``) variable used to
       represent generator of the finite field, if needed
 
     - ``invariant_form`` -- (optional) instances being accepted by

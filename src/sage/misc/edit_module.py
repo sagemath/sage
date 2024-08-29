@@ -46,14 +46,14 @@ edit_template = None
 # we can set some defaults, however. Add your own if you like.
 
 template_defaults = {
-      'vi'       : Template('vi -c ${line} ${file}'),
-      'vim'      : Template('vim -c ${line} ${file}'),
-      'emacs'    : Template('emacs ${opts} +${line} ${file}'),
-      'nedit-nc' : Template('nedit-nc -line ${line} ${file}'),
-      'nedit-client' : Template('nedit-client -line ${line} ${file}'),
-      'ncl'      : Template('ncl -line ${line} ${file}'),
-      'gedit'    : Template('gedit +${line} ${file} &'),
-      'kate'     : Template('kate -u --line +${line} ${file} &')   }
+    'vi': Template('vi -c ${line} ${file}'),
+    'vim': Template('vim -c ${line} ${file}'),
+    'emacs': Template('emacs ${opts} +${line} ${file}'),
+    'nedit-nc': Template('nedit-nc -line ${line} ${file}'),
+    'nedit-client': Template('nedit-client -line ${line} ${file}'),
+    'ncl': Template('ncl -line ${line} ${file}'),
+    'gedit': Template('gedit +${line} ${file} &'),
+    'kate': Template('kate -u --line +${line} ${file} &')}
 
 
 def file_and_line(obj):
@@ -214,7 +214,7 @@ def edit(obj, editor=None, bg=None):
 
     INPUT:
 
-    - editor -- str (default: None); If given, use specified editor.
+    - editor -- string (default: ``None``); if given, use specified editor.
       Choice is stored for next time.
 
     AUTHOR:

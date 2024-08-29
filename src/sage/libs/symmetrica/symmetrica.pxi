@@ -240,7 +240,6 @@ cdef extern from 'symmetrica/macro.h':
         data n_data
 
 
-
     #MACROS
     #S_PA_I(OP a, INT i)
     OBJECTKIND s_o_k(OP a)
@@ -523,9 +522,10 @@ cdef int _op(object a, OP result) except -1:
     else:
         raise TypeError("cannot convert a (= %s) to OP" % a)
 
+
 def test_integer(object x):
     """
-    Tests functionality for converting between Sage's integers
+    Test functionality for converting between Sage's integers
     and symmetrica's integers.
 
     EXAMPLES::
@@ -614,7 +614,6 @@ cdef object _py_longint(OP a):
         res *= Integer(-1)
 
     return res
-
 
 
 ###########
@@ -794,13 +793,12 @@ cdef object _py_polynom(OP a):
 
 cdef object _py_polynom_alphabet(OP a, object alphabet, object length):
     """
-    Converts a symmetrica multivariate polynomial a to a Sage multivariate
+    Convert a symmetrica multivariate polynomial a to a Sage multivariate
     polynomials.  Alphabet specifies the names of the variables which are
     fed into PolynomialRing.  length specifies the number of variables; if
     it is set to 0, then the number of variables is autodetected based on
     the number of variables in alphabet or the result obtained from
     symmetrica.
-
     """
     late_import()
     cdef OP pointer = a
@@ -859,7 +857,6 @@ cdef object _op_polynom(object d, OP res):
     freeall(c)
     freeall(v)
     return None
-
 
 
 #######################################
@@ -1018,7 +1015,6 @@ cdef void* _op_schur_general_dict(object d, OP res) noexcept:
         insert(next, res, NULL, NULL)
 
 
-
 ######################
 #Schubert Polynomials#
 ######################
@@ -1168,8 +1164,6 @@ cdef object _py_tableau(OP t):
         return SkewTableau(res)
     else:
         return Tableau(res)
-
-
 
 
 def start():

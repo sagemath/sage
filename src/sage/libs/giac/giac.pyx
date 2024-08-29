@@ -1,5 +1,6 @@
 # distutils: libraries = giac
 # distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 r"""
 Interface to the c++ giac library.
 
@@ -176,6 +177,7 @@ def decstring23(s):
 def encstring23(s):
     return bytes(s, 'UTF-8')
 
+
 listrange = list, range
 # End of Python3 compatibility #####################
 
@@ -301,7 +303,7 @@ def _giac(s):
         sage: A = libgiac.table(()); A  # create an empty giac table
         table(
         )
-        sage: A[2,3] = 33; A[0,2] = '2/7' # set non zero entries of the sparse matrix
+        sage: A[2,3] = 33; A[0,2] = '2/7' # set nonzero entries of the sparse matrix
         sage: A*A  # basic matrix operation are supported with sparse matrices
         table(
         (0,3) = 66/7
@@ -536,7 +538,6 @@ def _giac(s):
    - *Set*
 
          * ``intersect``, ``minus``, ``union``, ``is_element``, ``is_included``
-
     """
     return Pygen(s).eval()
 
@@ -546,7 +547,7 @@ def _giac(s):
 #######################################
 cdef class GiacSetting(Pygen):
     """
-    A class to customise the Computer Algebra  System settings
+    A class to customise the Computer Algebra System settings.
 
     EXAMPLES::
 
@@ -647,7 +648,6 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[6])._val
 
-
         def __set__(self,value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
@@ -660,7 +660,6 @@ cdef class GiacSetting(Pygen):
         """
         def __get__(self):
             return (self.cas_setup()[9])._val == 1
-
 
         def __set__(self,value):
             l = Pygen('cas_setup()').eval()
@@ -907,7 +906,6 @@ cdef class Pygen(GiacMethods_base):
            sage: from sage.libs.giac.giac import libgiac
            sage: l=libgiac("seq[]");len(l) # 29552 comment28
            0
-
         """
         if (self._type == 7):
             sig_on()
@@ -921,8 +919,7 @@ cdef class Pygen(GiacMethods_base):
             #GIAC_size return a gen. we take the int: val
             return rep
 
-
-    def __getitem__(self,i):  #TODO?: add gen support for indexes
+    def __getitem__(self, i):  #TODO?: add gen support for indexes
         """
         Lists of 10^6 integers should be translated to giac easily
 
@@ -994,8 +991,7 @@ cdef class Pygen(GiacMethods_base):
                 raise TypeError("Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s"%(cmd, ans))
             return ans
 
-
-    def __setitem__(self,key,value):
+    def __setitem__(self, key, value):
         """
         Set the value of a coefficient of a giac vector or matrix or list.
            Warning: It is an in place affectation.
@@ -1045,11 +1041,9 @@ cdef class Pygen(GiacMethods_base):
         sig_off()
         return
 
-
-
     def __iter__(self):
         """
-        Pygen lists of 10^6 elements should be yield
+        Pygen lists of 10^6 elements should be yield.
 
         TESTS::
 
@@ -1068,14 +1062,12 @@ cdef class Pygen(GiacMethods_base):
         for i in range(len(self)):
             yield self[i]
 
-
     def eval(self):
         cdef gen result
         sig_on()
         result=GIAC_protecteval(self.gptr[0],giacsettings.eval_level,context_ptr)
         sig_off()
         return _wrap_gen(result)
-
 
     def __add__(self, right):
         cdef gen result
@@ -1089,7 +1081,6 @@ cdef class Pygen(GiacMethods_base):
         result= (<Pygen>self).gptr[0] + (<Pygen>right).gptr[0]
         sig_off()
         return _wrap_gen(result)
-
 
     def __call__(self, *args):
         cdef gen result
@@ -1129,7 +1120,6 @@ cdef class Pygen(GiacMethods_base):
         finally:
             sig_off()
         return _wrap_gen(result)
-
 
     def __sub__(self, right):
         cdef gen result
@@ -1198,7 +1188,6 @@ cdef class Pygen(GiacMethods_base):
         sig_off()
         return _wrap_gen(result)
 
-
     def __pow__(self, right ,ignored):
         cdef gen result
         if not isinstance(right, Pygen):
@@ -1241,7 +1230,6 @@ cdef class Pygen(GiacMethods_base):
     def cas_setup(self,*args):
         return Pygen('cas_setup')(self,*args)
 
-
     def savegen(self, str filename):
         """
           Archive a Pygen element to a file in giac compressed format.
@@ -1272,7 +1260,7 @@ cdef class Pygen(GiacMethods_base):
 
     def redim(self, a, b=None):
         """
-        Increase the size of a matrix when possible, otherwise return self.
+        Increase the size of a matrix when possible, otherwise return ``self``.
 
         EXAMPLES::
 
@@ -1297,10 +1285,9 @@ cdef class Pygen(GiacMethods_base):
         else:
             raise TypeError("self is not a giac List")
 
-
     # def htmlhelp(self, str lang='en'):
     #     """
-    #     Open the giac  html  detailled help about self in an external  browser
+    #     Open the giac  html  detailled help about ``self`` in an external  browser
 
     #     There are currently 3 supported languages: 'en', 'fr', 'el'
 
@@ -1318,17 +1305,11 @@ cdef class Pygen(GiacMethods_base):
     #        url='file:'+url
     #        wwwbrowseropen(url)
 
-
-
     def _help(self):
         return self.findhelp().__str__()
 
-#     def help(self):
-#        return self._help()
-
     def _sage_doc_(self):
         return self._help()
-
 
     def __doc__(self):
         return self._help()
@@ -1361,10 +1342,9 @@ cdef class Pygen(GiacMethods_base):
         sig_off()
         return result
 
-
     def _integer_(self,Z=None):
         """
-        Convert giac integers or modular integers to sage Integers (via gmp)
+        Convert giac integers or modular integers to sage Integers (via gmp).
 
         EXAMPLES::
 
@@ -1378,11 +1358,10 @@ cdef class Pygen(GiacMethods_base):
            sage: c=libgiac('2 % nextprime(2**40)')
            sage: ZZ(c^1000)
            -233775163595
-           sage: Mod(2,next_prime(2^40))^1000 - ZZ(c^1000)
+          sage: Mod(2,next_prime(2^40))^1000 - ZZ(c^1000)
            0
            sage: 2^320-(c^320).sage()
            0
-
         """
         cdef Integer n = PY_NEW(Integer)
         typ = self._type
@@ -1411,10 +1390,9 @@ cdef class Pygen(GiacMethods_base):
         else:
             raise TypeError("cannot convert non giac integers to Integer")
 
-
-    def _rational_(self,Z=None):
+    def _rational_(self, Z=None):
         """
-        Convert giac rationals to sage rationals
+        Convert giac rationals to sage rationals.
 
         EXAMPLES::
 
@@ -1435,7 +1413,6 @@ cdef class Pygen(GiacMethods_base):
             return ZZ(self.numer()) / ZZ(self.denom())
         else:
             raise TypeError("cannot convert non giac _FRAC_ to QQ")
-
 
     def sage(self):
         r"""
@@ -1493,7 +1470,6 @@ cdef class Pygen(GiacMethods_base):
             sage: sage.symbolic.expression.register_symbol(sin, {'giac':'myFun'})
             sage: ex.sage()
             sin(x)
-
         """
         typ = self._type
 
@@ -1531,11 +1507,9 @@ cdef class Pygen(GiacMethods_base):
             sig_off()
             return result
 
-
     def _symbolic_(self, R):
         r"""
-        Convert self object to the ring R via a basic string evaluation. (slow)
-
+        Convert ``self`` object to the ring R via a basic string evaluation. (slow)
 
         EXAMPLES::
 
@@ -1579,13 +1553,10 @@ cdef class Pygen(GiacMethods_base):
             except Exception:
                 raise NotImplementedError("Unable to parse Giac output: %s" % self.__repr__())
 
-
-
     def _matrix_(self, R=ZZ):
         r"""
         Return matrix over the (Sage) ring R  where self
         should be a  Giac matrix. The default ring is ZZ.
-
 
         EXAMPLES::
 
@@ -1621,7 +1592,6 @@ cdef class Pygen(GiacMethods_base):
         Return vector over the (Sage) ring R where self
         should be a  Giac matrix. The default ring is ZZ.
 
-
         EXAMPLES::
 
             sage: from sage.libs.giac.giac import *
@@ -1647,7 +1617,6 @@ cdef class Pygen(GiacMethods_base):
 
     # # # # # # # # # # # # # # #
 
-
     def mplot(self):
         """
         Basic export of some 2D plots to sage. Only generic plots are supported.
@@ -1668,14 +1637,12 @@ cdef class Pygen(GiacMethods_base):
                 for g in G:
                     xyscat=xyscat+[[(g.real())._double,(g.im())._double]]
 
-
             else:
                 if G[1].type()=='DOM_LIST':
                     l=G[1].op()
                 else:
                     l=G[1][2].op()
                 xyplot=[[(u.real())._double,(u.im())._double] for u in l]
-
 
         if xyscat:
             result = scatter_plot(xyscat)
@@ -1715,7 +1682,6 @@ cdef class Pygen(GiacMethods_base):
             result = self.gptr.type
             sig_off()
             return result
-
 
     property _subtype:
         def __get__(self):
@@ -1813,8 +1779,6 @@ cdef inline _wrap_gen(gen  g)except +:
 #    else:
 #      raise MemoryError("empty gen")
 
-
-
 ################################################################
 #    A wrapper from a python list to a vector of gen           #
 ################################################################
@@ -1856,9 +1820,6 @@ cdef  vecteur _getgiacslice(Pygen L,slice sl) except +:
         return V[0]
     else:
         raise TypeError("argument must be a Pygen list and a slice")
-
-
-
 
 
 cdef  gen pylongtogen(a) except +:
@@ -1996,6 +1957,7 @@ class GiacFunctionNoEV(Pygen):
         a
     """
 
+
 #############################################################
 # Some convenient settings
 ############################################################
@@ -2028,7 +1990,6 @@ for i in mostkeywords+moremethods:
 __all__=['Pygen','giacsettings','libgiac','loadgiacgen','GiacFunction','GiacMethods','GiacMethods_base']
 
 
-
 def loadgiacgen(str filename):
     """
       Open a file in giac compressed format to create a Pygen element.
@@ -2059,7 +2020,6 @@ def loadgiacgen(str filename):
     return _wrap_gen(result)
 
 
-
 class GiacInstance:
     """
     This class is used to create the giac interpreter object.
@@ -2082,14 +2042,11 @@ class GiacInstance:
     def __init__(self):
         self.__dict__.update(GiacMethods)
 
-
     def __call__(self,s):
         return _giac(s)
 
-
     def _sage_doc_(self):
         return _giac.__doc__
-
 
     def eval(self, code, strip=True, **kwds):
 
@@ -2097,12 +2054,10 @@ class GiacInstance:
             code = code.replace("\n","").strip()
         return self(code)
 
-
     __doc__ = _giac.__doc__
 
 
-
-libgiac=GiacInstance()
+libgiac = GiacInstance()
 
 # Issue #23976 (bound threads with SAGE_NUM_THREADS)
 import os

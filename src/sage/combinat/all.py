@@ -43,7 +43,6 @@ Related topics
 - :ref:`sage.coding`
 - :ref:`sage.dynamics`
 - :ref:`sage.graphs`
-
 """
 from sage.misc.namespace_package import install_doc, install_dict
 # install the docstring of this module to the containing package
@@ -73,7 +72,7 @@ from sage.combinat.rigged_configurations.all import *
 
 from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
 
-# block designs, etc
+# block designs, etc.
 from sage.combinat.designs.all import *
 
 # Free modules and friends

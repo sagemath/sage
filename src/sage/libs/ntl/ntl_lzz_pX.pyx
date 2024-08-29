@@ -4,7 +4,6 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 ntl_lzz_pX.pyx
 
@@ -178,7 +177,7 @@ cdef class ntl_zz_pX():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -190,7 +189,7 @@ cdef class ntl_zz_pX():
 
     def __getitem__(self, long i):
         """
-        Return the ith coefficient of f.
+        Return the i-th coefficient of f.
 
         EXAMPLES::
 
@@ -213,7 +212,7 @@ cdef class ntl_zz_pX():
 
     def __setitem__(self, long i, val):
         """
-        Set the ith coefficient of self to val. If
+        Set the i-th coefficient of ``self`` to val. If
         i is out of range, raise an exception.
 
         EXAMPLES::
@@ -235,7 +234,7 @@ cdef class ntl_zz_pX():
     cdef ntl_zz_pX _new(self):
         """
         Quick and dirty method for creating a new object with the
-        same zz_pContext as self.
+        same zz_pContext as ``self``.
 
         EXAMPLES::
 
@@ -250,7 +249,7 @@ cdef class ntl_zz_pX():
 
     def __add__(ntl_zz_pX self, other):
         """
-        Return self + other.
+        Return ``self + other``.
 
         EXAMPLES::
 
@@ -273,7 +272,7 @@ cdef class ntl_zz_pX():
 
     def __sub__(ntl_zz_pX self, other):
         """
-        Return self - other.
+        Return ``self - other``.
 
         EXAMPLES::
 
@@ -319,7 +318,7 @@ cdef class ntl_zz_pX():
 
     def __truediv__(ntl_zz_pX self, other):
         """
-        Compute quotient self / other, if the quotient is a polynomial.
+        Compute quotient ``self / other``, if the quotient is a polynomial.
         Otherwise an Exception is raised.
 
         EXAMPLES::
@@ -387,7 +386,7 @@ cdef class ntl_zz_pX():
 
     def __pow__(ntl_zz_pX self, long n, ignored):
         """
-        Return the n-th nonnegative power of self.
+        Return the `n`-th nonnegative power of ``self``.
 
         EXAMPLES::
 
@@ -406,9 +405,9 @@ cdef class ntl_zz_pX():
 
     def quo_rem(ntl_zz_pX self, ntl_zz_pX right):
         """
-        Returns the quotient and remainder when self is divided by right.
+        Return the quotient and remainder when ``self`` is divided by ``right``.
 
-        Specifically, this return r, q such that `self = q * right + r`
+        Specifically, this returns `r`, `q` such that ``self = q * right + r``.
 
         EXAMPLES::
 
@@ -433,14 +432,13 @@ cdef class ntl_zz_pX():
 
     def __floordiv__(ntl_zz_pX self, ntl_zz_pX right):
         """
-        Returns the whole part of `self / right`.
+        Return the whole part of ``self / right``.
 
         EXAMPLES::
 
             sage: f = ntl.zz_pX(range(10), 19); g = ntl.zz_pX([1]*5, 19)
             sage: f // g ## indirect doctest
             [8, 18, 18, 18, 18, 9]
-
         """
         cdef ntl_zz_pX q = self._new()
         self.c.restore_c()
@@ -451,7 +449,7 @@ cdef class ntl_zz_pX():
 
     def __lshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the left, which is multiplication by `x^n`.
+        Shift this polynomial to the left, which is multiplication by `x^n`.
 
         EXAMPLES::
 
@@ -466,7 +464,7 @@ cdef class ntl_zz_pX():
 
     def __rshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the right, which is division by `x^n` (and truncation).
+        Shift this polynomial to the right, which is division by `x^n` (and truncation).
 
         EXAMPLES::
 
@@ -481,7 +479,7 @@ cdef class ntl_zz_pX():
 
     def diff(self):
         """
-        The formal derivative of self.
+        The formal derivative of ``self``.
 
         EXAMPLES::
 
@@ -496,7 +494,7 @@ cdef class ntl_zz_pX():
 
     def reverse(self):
         """
-        Returns self with coefficients reversed, i.e. `x^n self(x^{-n})`.
+        Return ``self`` with coefficients reversed, i.e. ``x^n self(x^{-n})``.
 
         EXAMPLES::
 
@@ -511,7 +509,8 @@ cdef class ntl_zz_pX():
 
     def __neg__(self):
         """
-        Return the negative of self.
+        Return the negative of ``self``.
+
         EXAMPLES::
 
             sage: f = ntl.zz_pX([2,0,0,1],20)
@@ -528,7 +527,7 @@ cdef class ntl_zz_pX():
 
     def __richcmp__(ntl_zz_pX self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -721,8 +720,8 @@ cdef class ntl_zz_pX():
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo `x^m`.
-        The constant term of self must be 1 or -1.
+        Compute and return the inverse of ``self`` modulo `x^m`.
+        The constant term of ``self`` must be 1 or -1.
 
         EXAMPLES::
 
@@ -750,10 +749,9 @@ cdef class ntl_zz_pX():
             sig_off()
         return y
 
-
     def is_zero(self):
         """
-        Return True exactly if this polynomial is 0.
+        Return ``True`` exactly if this polynomial is 0.
 
         EXAMPLES::
 
@@ -771,7 +769,7 @@ cdef class ntl_zz_pX():
 
     def is_one(self):
         """
-        Return True exactly if this polynomial is 1.
+        Return ``True`` exactly if this polynomial is 1.
 
         EXAMPLES::
 
@@ -787,7 +785,7 @@ cdef class ntl_zz_pX():
 
     def is_monic(self):
         """
-        Return True exactly if this polynomial is monic.
+        Return ``True`` exactly if this polynomial is monic.
 
         EXAMPLES::
 
@@ -825,14 +823,13 @@ cdef class ntl_zz_pX():
         Though f and g are equal, they are not the same objects in memory:
             sage: f is g
             False
-
         """
         self.c.restore_c()
         zz_pX_SetX(self.x)
 
     def is_x(self):
         """
-        True if this is the polynomial "x".
+        ``True`` if this is the polynomial "x".
 
         EXAMPLES::
 

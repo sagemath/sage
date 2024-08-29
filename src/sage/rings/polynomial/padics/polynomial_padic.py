@@ -9,7 +9,6 @@ AUTHORS:
 - Jeroen Demeyer (2013-11-22): initial version, split off from other
   files, made Polynomial_padic the common base class for all p-adic
   polynomials.
-
 """
 
 #*****************************************************************************
@@ -143,7 +142,6 @@ class Polynomial_padic(Polynomial):
             sage: f = 13*t^3 + K(0,1)*t
             sage: f.content()
             13 + O(13^8)
-
         """
         if self.is_zero():
             return self[0]
@@ -271,11 +269,11 @@ class Polynomial_padic(Polynomial):
 
         INPUT:
 
-        * ``names`` -- name of the generator of the extension
+        - ``names`` -- name of the generator of the extension
 
-        * ``check_irreducible`` -- check whether the polynomial is irreducible
+        - ``check_irreducible`` -- check whether the polynomial is irreducible
 
-        * ``kwds`` -- see :meth:`sage.ring.padics.padic_generic.pAdicGeneric.extension`
+        - ``kwds`` -- see :meth:`sage.rings.padics.padic_generic.pAdicGeneric.extension`
 
         EXAMPLES::
 
@@ -299,7 +297,6 @@ class Polynomial_padic(Polynomial):
             Traceback (most recent call last):
             ...
             ValueError: polynomial must be irreducible
-
         """
 
         if check_irreducible and not self.is_irreducible():
@@ -318,7 +315,7 @@ def _pari_padic_factorization_to_sage(G, R, leading_coeff):
 
     INPUT:
 
-    - ``G`` -- PARI factorization matrix, returned by ``factorpadic``.
+    - ``G`` -- PARI factorization matrix, returned by ``factorpadic``
 
     - ``R`` -- polynomial ring to be used as parent ring of the factors
 
@@ -326,10 +323,7 @@ def _pari_padic_factorization_to_sage(G, R, leading_coeff):
       was factored. This can belong to any ring which can be coerced
       into ``R.base_ring()``.
 
-    OUTPUT:
-
-    - A Sage :class:`Factorization`.
-
+    OUTPUT: a Sage :class:`Factorization`
     """
     B = R.base_ring()
     p = B.prime()

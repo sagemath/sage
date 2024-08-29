@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Specific category classes
 
@@ -31,6 +32,8 @@ lazy_import('sage.categories.chain_complexes', 'ChainComplexes',
 #############################################################
 # Category of elements of some object
 #############################################################
+
+
 class Elements(Category):
     """
     The category of all elements of a given parent.
@@ -59,7 +62,7 @@ class Elements(Category):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 
@@ -144,7 +147,7 @@ class Elements(Category):
 #############################################################
 class Category_over_base(CategoryWithParameters):
     r"""
-    A base class for categories over some base object
+    A base class for categories over some base object.
 
     INPUT:
 
@@ -250,7 +253,7 @@ class Category_over_base(CategoryWithParameters):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 
@@ -326,6 +329,8 @@ class Category_over_base(CategoryWithParameters):
 #############################################################
 # Category of objects over some base ring
 #############################################################
+
+
 class AbelianCategory(Category):
     def is_abelian(self):
         """
@@ -337,6 +342,7 @@ class AbelianCategory(Category):
             True
         """
         return True
+
 
 class Category_over_base_ring(Category_over_base):
     def __init__(self, base, name=None):
@@ -380,7 +386,7 @@ class Category_over_base_ring(Category_over_base):
         OUTPUT:
 
         A boolean if it is certain that ``C`` is (or is not) a
-        subcategory of self. :obj:`~sage.misc.unknown.Unknown`
+        subcategory of ``self``. :obj:`~sage.misc.unknown.Unknown`
         otherwise.
 
         EXAMPLES:
@@ -508,7 +514,6 @@ class Category_over_base_ring(Category_over_base):
 
             sage: QQ['x'] in Algebras(Fields()) # todo: not implemented
             True
-
         """
         try:
             # The issubclass test handles extension types or when the
@@ -568,8 +573,10 @@ class Category_in_ambient(Category):
 #    def construction(self):
 #        return (self.__class__, self.__ambient)
 
+
 class Category_module(AbelianCategory, Category_over_base_ring):
     pass
+
 
 class Category_ideal(Category_in_ambient):
 
@@ -608,8 +615,8 @@ class Category_ideal(Category_in_ambient):
         """
         if super().__contains__(x):
             return True
-        from sage.rings.ideal import is_Ideal
-        return is_Ideal(x) and x.ring() == self.ring()
+        from sage.rings.ideal import Ideal_generic
+        return isinstance(x, Ideal_generic) and x.ring() == self.ring()
 
     def __call__(self, v):
         """

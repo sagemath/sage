@@ -356,7 +356,6 @@ def other_ordering_pre(I, option_set, kwds):
         sage: from sage.rings.polynomial.pbori.gbcore import groebner_basis
         sage: groebner_basis(id)
         [1]
-
     """
     if not I:
         return (I, None)
@@ -541,7 +540,7 @@ def groebner_basis(I, heuristic=True, unique_ideal_generator=False,
                    fglm_bound=40000,
                    modified_linear_algebra=True, preprocessor=None,
                    deg_bound=False,
-                   implementation="Python", full_prot=False, prot=False,
+                   implementation='Python', full_prot=False, prot=False,
                    draw_matrices=False, preprocess_only=False, **impl_options):
     """Computes a Groebner basis of a given ideal I, w.r.t options."""
 
@@ -624,7 +623,6 @@ def build_groebner_basis_doc_string():
 Turn off heuristic by setting heuristic=False
   Additional options come from the actual buchberger implementation.
   In case of our standard Python implementation these are the following:
-
 """
     gdoc += "\n".join(k + "  :  " + repr(additional_options_from_buchberger[k])
                       for k in additional_options_from_buchberger)

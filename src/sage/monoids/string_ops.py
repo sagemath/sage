@@ -8,7 +8,10 @@
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.real_mpfr import RealField
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.real_mpfr', 'RealField')
+
 from .string_monoid_element import StringMonoidElement
 
 
@@ -92,8 +95,8 @@ def coincidence_discriminant(S, n=2):
     """
     INPUT:
 
-    A tuple of strings, e.g. produced as decimation of transposition
-    ciphertext, or a sample plaintext.
+    - ``S`` --tuple of strings; e.g. produced as decimation of transposition
+      ciphertext, or a sample plaintext
 
     OUTPUT:
 

@@ -35,7 +35,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         EXAMPLES::
@@ -263,7 +263,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     """
     def __bool__(self):
         """
-        Return if ``self`` is non-zero.
+        Return if ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -305,7 +305,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         .. TODO::
@@ -475,7 +475,7 @@ cdef class LieAlgebraMatrixWrapper(LieAlgebraElementWrapper):
 
         EXAMPLES::
 
-            sage: L = lie_algebras.Heisenberg(QQ, 1, representation="matrix")
+            sage: L = lie_algebras.Heisenberg(QQ, 1, representation='matrix')
             sage: z = L.z()
             sage: z.value.is_immutable()
             True
@@ -543,7 +543,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         x_lift = (<LieSubalgebraElementWrapper> x).value
         return type(self)(self._parent, self.value._bracket_(x_lift))
 
-    def to_vector(self, order=None, sparse=False):
+    def _vector_(self, sparse=False, order=None):
         r"""
         Return the vector in ``g.module()`` corresponding to the
         element ``self`` of ``g`` (where ``g`` is the parent of ``self``).
@@ -573,6 +573,8 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         """
         return self._parent.module()(self.value.to_vector(sparse=sparse))
 
+    to_vector = _vector_
+
     cpdef dict monomial_coefficients(self, bint copy=True):
         r"""
         Return a dictionary whose keys are indices of basis elements
@@ -581,7 +583,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
           represented by a dictionary ``d``, then make a copy of ``d``;
           if ``False``, then this can cause undesired behavior by
           mutating ``d``
@@ -833,7 +835,22 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             if v != zero:
                 yield (I[i], v)
 
-    cpdef to_vector(self, bint sparse=False):
+    cpdef _vector_(self, bint sparse=False, order=None):
+        """
+        Return ``self`` as a vector.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: a = x + 3*y - z/5
+            sage: vector(a)
+            (1, 3, -1/5)
+        """
+        if sparse:
+            return self.value.sparse_vector()
+        return self.value
+
+    cpdef to_vector(self, bint sparse=False, order=None):
         """
         Return ``self`` as a vector.
 
@@ -844,9 +861,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             sage: a.to_vector()
             (1, 3, -1/2)
         """
-        if sparse:
-            return self.value.sparse_vector()
-        return self.value
+        return self._vector_(sparse=sparse)
 
     def lift(self):
         """

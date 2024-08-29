@@ -269,7 +269,6 @@ Let us check whether this form represents the Euler class correctly::
 
 As we can see, the integral coincides with the Euler characteristic of `S^2` so
 that our form actually represents the Euler class appropriately.
-
 """
 
 # *****************************************************************************
@@ -345,7 +344,7 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
             self._latex_name = self._name
         else:
             self._latex_name = latex_name
-        self._mixed_forms = {}  # dict. of characteristic forms of `self`
+        self._mixed_forms = {}  # dict. of characteristic forms of self
                                 # (key: bundle connection)
         super().__init__(parent, x)
 
@@ -503,9 +502,9 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
                 # set names of components
                 from sage.arith.misc import gcd
 
-                step = gcd(parent._degrees)  # step size of (possibly) non-zero
+                step = gcd(parent._degrees)  # step size of (possibly) nonzero
                 for i in range(dom._dim // step + 1):
-                    # enumerate (possibly) non-zero components
+                    # enumerate (possibly) nonzero components
                     comp_name = name + f'_{i}' + append_name
                     comp_latex_name = latex_name + r'_{' + str(i) + '}'
                     comp_latex_name += append_latex_name
@@ -906,7 +905,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                     name = 'c'
                 class_type = 'multiplicative'
                 val = 1 + x
-            if val == 'Pontryagin':
+            elif val == 'Pontryagin':
                 if vbundle._field_type != 'real':
                     raise ValueError(f'total Pontryagin class not defined on {vbundle}')
                 if name is None:
@@ -967,7 +966,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 class_type = 'Pfaffian'
                 val = x
             else:
-                ValueError(f'predefined class "{val}" unknown')
+                raise ValueError(f'predefined class "{val}" unknown')
 
         # turn symbolic expression into a polynomial via Taylor expansion
         if isinstance(val, Expression):
@@ -979,7 +978,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             elif vbundle._field_type == 'complex':
                 pow_range = dim // 2
             else:
-                ValueError(f'field type of {vbundle} must be real or complex')
+                raise ValueError(f'field type of {vbundle} must be real or complex')
 
             val = P(val.taylor(x, 0, pow_range))
 
@@ -1005,7 +1004,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 val = P([(-1) ** k * val[2 * k + 1] for k in range(n + 1)])
                 sym = multiplicative_sequence(val, n)
             else:
-                AttributeError('unkown class type')
+                raise AttributeError('unkown class type')
 
             d = {}
             w_vec = self._weighted_vectors
@@ -1066,13 +1065,11 @@ def multiplicative_sequence(q, n=None):
 
     INPUT:
 
-    - ``q`` -- polynomial to turn into its multiplicative sequence.
+    - ``q`` -- polynomial to turn into its multiplicative sequence
     - ``n`` -- (default: ``None``) the highest order `n` of the sequence;
-      if ``None``, the order of ``q`` is assumed.
+      if ``None``, the order of ``q`` is assumed
 
-    OUTPUT:
-
-    - A symmetric polynomial representing the multiplicative sequence.
+    OUTPUT: a symmetric polynomial representing the multiplicative sequence
 
     EXAMPLES::
 
@@ -1123,14 +1120,12 @@ def additive_sequence(q, k, n=None):
 
     INPUT:
 
-    - ``q`` -- polynomial to turn into its additive sequence.
+    - ``q`` -- polynomial to turn into its additive sequence
     - ``k`` -- maximal index `k` of the sum
     - ``n`` -- (default: ``None``) the highest order of the sequence `n`;
-      if ``None``, the order of ``q`` is assumed.
+      if ``None``, the order of ``q`` is assumed
 
-    OUTPUT:
-
-    - A symmetric polynomial representing the additive sequence.
+    OUTPUT: a symmetric polynomial representing the additive sequence
 
     EXAMPLES::
 
@@ -1171,7 +1166,7 @@ def fast_wedge_power(form, n):
     INPUT:
 
     - ``form`` -- a differential form
-    - ``n`` -- a non-negative integer
+    - ``n`` -- nonnegative integer
 
     EXAMPLES::
 
@@ -1191,7 +1186,7 @@ def fast_wedge_power(form, n):
     if n == 0:
         return form._domain._one_scalar_field
     elif n < 0:
-        raise ValueError("'n' must be non-negative")
+        raise ValueError("'n' must be nonnegative")
     val = form
     while not (n & 1):
         val = val.wedge(val)
@@ -1285,9 +1280,7 @@ class Algorithm_generic(SageObject):
         Abstract method to get the local forms of the generators w.r.t. a given
         curvature form matrix ``cmat``.
 
-        OUTPUT:
-
-        - a list containing the generator's local characteristic forms
+        OUTPUT: list containing the generator's local characteristic forms
 
         ALGORITHM:
 
@@ -1482,9 +1475,7 @@ class PontryaginAlgorithm(Singleton, Algorithm_generic):
         r"""
         Return the local Pontryagin forms w.r.t. a given curvature form matrix.
 
-        OUTPUT:
-
-        - a list containing the local characteristic Pontryagin forms
+        OUTPUT: list containing the local characteristic Pontryagin forms
 
         ALGORITHM::
 
@@ -1567,11 +1558,9 @@ class EulerAlgorithm(Singleton, Algorithm_generic):
 
         INPUT:
 
-        - a metric connection `\nabla`
+        - ``nab`` -- a metric connection `\nabla`
 
-        OUTPUT:
-
-        - a list containing the global characteristic Euler form
+        OUTPUT: list containing the global characteristic Euler form
 
         ALGORITHM:
 
@@ -1655,9 +1644,7 @@ class EulerAlgorithm(Singleton, Algorithm_generic):
         `\left(\frac{1}{2 \pi}\right)^{\frac{k}{2}}`, where `k` is the
         dimension of the curvature matrix.
 
-        OUTPUT:
-
-        - a list containing the normalized Pfaffian of a given curvature form
+        OUTPUT: list containing the normalized Pfaffian of a given curvature form
 
         .. NOTE::
 

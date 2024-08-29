@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Load Python, Sage, Cython, Fortran and Magma files in Sage
 """
@@ -28,11 +29,9 @@ def is_loadable_filename(filename):
 
     INPUT:
 
-    - ``filename`` -- a string or :class:`Path` object
+    - ``filename`` -- string or :class:`Path` object
 
-    OUTPUT:
-
-    - a boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -90,13 +89,13 @@ def load(filename, globals, attach=False):
 
     INPUT:
 
-    - ``filename`` -- a string (denoting a filename or URL) or a :class:`Path` object
+    - ``filename`` -- string (denoting a filename or URL) or a :class:`Path` object
 
-    - ``globals`` -- a string:object dictionary; the context in which
-      to execute the file contents.
+    - ``globals`` -- string:object dictionary; the context in which
+      to execute the file contents
 
-    - ``attach`` -- a boolean (default: ``False``); whether to add the
-      file to the list of attached files.
+    - ``attach`` -- boolean (default: ``False``); whether to add the
+      file to the list of attached files
 
     Loading an executable Sage script from the command prompt will run whatever
     code is inside an
@@ -142,10 +141,10 @@ def load(filename, globals, attach=False):
         sage: z
         -7
 
-    If the file is not a Cython, Python, or Sage file, a :class:`ValueError`
+    If the file is not a Cython, Python, or Sage file, a :exc:`ValueError`
     is raised::
 
-        sage: sage.repl.load.load(tmp_filename(ext=".foo"), globals())
+        sage: sage.repl.load.load(tmp_filename(ext='.foo'), globals())
         Traceback (most recent call last):
         ...
         ValueError: unknown file extension '.foo' for load or attach (supported extensions: .py, .pyx, .sage, .spyx, .f, .f90, .m)
@@ -300,13 +299,13 @@ def load_wrap(filename, attach=False):
 
     INPUT:
 
-    - ``filename`` -- a string or :class:`Path` object; the argument
+    - ``filename`` -- string or :class:`Path` object; the argument
       to the load or attach command
 
-    - ``attach`` -- a boolean (default: ``False``); whether to attach
+    - ``attach`` -- boolean (default: ``False``); whether to attach
       ``filename``, instead of loading it
 
-    OUTPUT: a string
+    OUTPUT: string
 
     EXAMPLES::
 

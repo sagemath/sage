@@ -90,6 +90,7 @@ def _inverse(f, R):
         g *= f
     return g
 
+
 cdef class SemimonomialTransformation(MultiplicativeGroupElement):
     r"""
     An element in the semimonomial group over a ring `R`. See
@@ -234,7 +235,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
     def __repr__(self):
         """
-        String representation of `self`.
+        String representation of ``self``.
 
         EXAMPLES::
 

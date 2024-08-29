@@ -38,18 +38,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-#as it turns out, computing the nodes can easily turn out to be more
-#expensive than computing the integrals. So it's worth optimizing this.
-#making the function into a cython routine helps a little bit. If we really
-#want to we can optimize this further, probably to a point where
-#we don't have to bother with node computation routines that have a better order
-#than this naive approach (which is quadratic)
+# as it turns out, computing the nodes can easily turn out to be more
+# expensive than computing the integrals. So it's worth optimizing this.
+# making the function into a cython routine helps a little bit. If we really
+# want to we can optimize this further, probably to a point where
+# we don't have to bother with node computation routines that have
+# a better order than this naive approach (which is quadratic)
 
 from sage.libs.mpfr cimport *
 import math
 from sage.rings.real_mpfr import RealField
 from sage.misc.cachefunc import cached_function
 from sage.rings.real_mpfr cimport RealNumber, RealField_class
+
 
 def nodes_uncached(degree, prec):
     r"""
@@ -61,14 +62,12 @@ def nodes_uncached(degree, prec):
 
     INPUT:
 
-     - ``degree`` -- integer. The number of nodes. Must be 3 or even.
+    - ``degree`` -- integer; the number of nodes (must be 3 or even)
 
-     - ``prec`` -- integer (minimal value 53). Binary precision with which the
-       nodes and weights are computed.
+    - ``prec`` -- integer (minimal value 53); binary precision with which the
+      nodes and weights are computed
 
-    OUTPUT:
-
-    A list of (node, weight) pairs.
+    OUTPUT: list of (node, weight) pairs
 
     EXAMPLES:
 
@@ -160,6 +159,7 @@ def nodes_uncached(degree, prec):
     mpfr_clear(v)
     return nodes
 
+
 @cached_function
 def nodes(degree, prec):
     r"""
@@ -170,14 +170,12 @@ def nodes(degree, prec):
 
     INPUT:
 
-     - ``degree`` -- integer. The number of nodes. Must be 3 or even.
+    - ``degree`` -- integer; the number of nodes (must be 3 or even)
 
-     - ``prec`` -- integer (minimal value 53). Binary precision with which the
-       nodes and weights are computed.
+    - ``prec`` -- integer (minimal value 53); binary precision with which the
+      nodes and weights are computed
 
-    OUTPUT:
-
-    A list of (node, weight) pairs.
+    OUTPUT: list of (node, weight) pairs.
 
     EXAMPLES:
 
@@ -209,9 +207,9 @@ def nodes(degree, prec):
         [(0.11270166537925831148207346002, 0.27777777777777777777777777778),
          (0.50000000000000000000000000000, 0.44444444444444444444444444444),
          (0.88729833462074168851792653998, 0.27777777777777777777777777778)]
-
     """
     return nodes_uncached(degree, prec)
+
 
 def estimate_error(results, prec, epsilon):
     r"""
@@ -227,15 +225,15 @@ def estimate_error(results, prec, epsilon):
 
     INPUT:
 
-     - ``results`` -- list. List of approximations to estimate the error from. Should be at least length 2.
+    - ``results`` -- list of approximations to estimate the error from; should
+      be at least length 2
 
-     - ``prec`` -- integer. Binary precision at which computations are happening.
+    - ``prec`` -- integer; binary precision at which computations are happening
 
-     - ``epsilon`` -- multiprecision float. Default error estimate in case of insufficient data.
+    - ``epsilon`` -- multiprecision float; default error estimate in case of
+      insufficient data
 
-    OUTPUT:
-
-    An estimate of the error.
+    OUTPUT: an estimate of the error
 
     EXAMPLES::
 
@@ -267,6 +265,7 @@ def estimate_error(results, prec, epsilon):
         e.append(D4.exp())
     return max(e)
 
+
 def integrate_vector_N(f, prec, N=3):
     r"""
     Integrate a one-argument vector-valued function numerically using Gauss-Legendre,
@@ -279,15 +278,13 @@ def integrate_vector_N(f, prec, N=3):
 
     INPUT:
 
-     - ``f`` -- callable. Vector-valued integrand.
+    - ``f`` -- callable; vector-valued integrand
 
-     - ``prec`` -- integer. Binary precision to be used.
+    - ``prec`` -- integer; binary precision to be used
 
-     - ``N`` -- integer (default: 3). Number of nodes to use.
+    - ``N`` -- integer (default: 3); number of nodes to use
 
-     OUTPUT:
-
-     Vector approximating value of the integral.
+     OUTPUT: vector approximating value of the integral
 
      EXAMPLES::
 
@@ -304,7 +301,7 @@ def integrate_vector_N(f, prec, N=3):
         The nodes and weights are calculated in the real field with ``prec``
         bits of precision. If the vector space in which ``f`` takes values
         is over a field which is incompatible with this field (e.g. a finite
-        field) then a :class:`TypeError` occurs.
+        field) then a :exc:`TypeError` occurs.
     """
     # We use nodes_uncached, because caching takes up memory, and numerics in
     # Bruin-DisneyHogg-Gao suggest that caching provides little benefit in the
@@ -315,6 +312,7 @@ def integrate_vector_N(f, prec, N=3):
         I += nodelist[i][1]*f(nodelist[i][0])
     return I
 
+
 def integrate_vector(f, prec, epsilon=None):
     r"""
     Integrate a one-argument vector-valued function numerically using Gauss-Legendre.
@@ -324,15 +322,14 @@ def integrate_vector(f, prec, epsilon=None):
 
     INPUT:
 
-     - ``f`` -- callable. Vector-valued integrand.
+    - ``f`` -- callable; vector-valued integrand
 
-     - ``prec`` -- integer. Binary precision to be used.
+    - ``prec`` -- integer; binary precision to be used
 
-     - ``epsilon`` -- multiprecision float (default: `2^{(-\text{prec}+3)}`). Target error bound.
+    - ``epsilon`` -- multiprecision float (default: `2^{(-\text{prec}+3)}`);
+      target error bound
 
-    OUTPUT:
-
-    Vector approximating value of the integral.
+    OUTPUT: vector approximating value of the integral
 
     EXAMPLES::
 

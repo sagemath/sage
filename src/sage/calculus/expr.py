@@ -3,7 +3,7 @@ Constructor for symbolic expressions
 """
 
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
 
@@ -19,9 +19,7 @@ def symbolic_expression(x):
 
     - ``x`` - an object
 
-    OUTPUT:
-
-    - a symbolic expression.
+    OUTPUT: a symbolic expression
 
     EXAMPLES::
 
@@ -178,7 +176,7 @@ def symbolic_expression(x):
         if isinstance(expressions[0], FreeModuleElement):
             return matrix(expressions)
         return vector(expressions)
-    elif is_Matrix(x):
+    elif isinstance(x, Matrix):
         if not x.nrows() or not x.ncols():
             # Make sure it is symbolic and of correct dimensions
             # also when a matrix dimension is 0

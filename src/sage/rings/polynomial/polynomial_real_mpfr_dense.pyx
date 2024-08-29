@@ -55,7 +55,6 @@ cdef class PolynomialRealDense(Polynomial):
         sage: from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
         sage: isinstance(f, PolynomialRealDense)
         True
-
     """
 
     cdef Py_ssize_t _degree
@@ -259,7 +258,7 @@ cdef class PolynomialRealDense(Polynomial):
 
     cpdef Polynomial truncate(self, long n):
         r"""
-        Returns the polynomial of degree `< n` which is equivalent to self
+        Return the polynomial of degree `< n` which is equivalent to ``self``
         modulo `x^n`.
 
         EXAMPLES::
@@ -312,7 +311,7 @@ cdef class PolynomialRealDense(Polynomial):
 
     cpdef shift(self, Py_ssize_t n):
         r"""
-        Returns this polynomial multiplied by the power `x^n`. If `n`
+        Return this polynomial multiplied by the power `x^n`. If `n`
         is negative, terms below `x^n` will be discarded. Does not
         change this polynomial.
 
@@ -567,8 +566,8 @@ cdef class PolynomialRealDense(Polynomial):
 
         INPUT:
 
-        - ``degree`` (``None`` or an integer) - if specified, truncate or zero
-          pad the list of coefficients to this degree before reversing it.
+        - ``degree`` -- ``None`` or an integer; if specified, truncate or zero
+          pad the list of coefficients to this degree before reversing it
 
         EXAMPLES::
 

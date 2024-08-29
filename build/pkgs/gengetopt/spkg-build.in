@@ -1,4 +1,5 @@
 cd src
+cp "$SAGE_ROOT"/config/config.* build-aux/
 sdh_configure
 
 # Don't run "make" at the top-level because the documentation build
