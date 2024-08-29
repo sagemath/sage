@@ -1,0 +1,12 @@
+include VERSION.txt
+include pyproject.toml
+include test
+include tox.ini
+# Avoid the "src" symlinks, which would be expanded to copies of the trees.
+prune sage_bootstrap/sage_root_source/build/pkgs/*/src
+#
+global-exclude .tox
+global-exclude *~*
+global-exclude *.bak
+global-exclude __pycache__
+global-exclude *.pyc

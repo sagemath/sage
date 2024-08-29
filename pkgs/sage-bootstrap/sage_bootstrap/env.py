@@ -35,6 +35,18 @@ SAGE_SRC = os.environ.get('SAGE_SRC',
 SAGE_DISTFILES = os.environ.get('SAGE_DISTFILES',
                                 os.path.join(SAGE_ROOT, 'upstream'))
 
+SAGE_ROOT_SOURCE = os.path.join(os.path.dirname(__file__), 'sage_root_source')
+
+# For reading from source tree or installed package data
+SAGE_PKGS = os.path.join(SAGE_ROOT_SOURCE, 'build', 'pkgs')
+
+# For writing to the source tree
+SAGE_PKGS_WRITE = SAGE_PKGS
+
+### TODO: Check if it is source dir by looking for MANIFEST.in or setup.cfg ...
+### (which are not installed in site-packages)
+
+
 
 assert os.path.isfile(os.path.join(SAGE_ROOT, 'configure.ac')), SAGE_ROOT
 

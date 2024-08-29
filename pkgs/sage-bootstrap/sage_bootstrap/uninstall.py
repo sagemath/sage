@@ -44,11 +44,9 @@ import subprocess
 import sys
 import argparse
 
-from .env import SAGE_ROOT
+from .env import SAGE_ROOT, SAGE_SPKG
 
 pth = os.path
-PKGS = pth.join(SAGE_ROOT, 'build', 'pkgs')
-"""Directory where all spkg sources are found."""
 
 
 def uninstall(spkg_name, sage_local, keep_files=False,
@@ -116,7 +114,7 @@ def legacy_uninstall(spkg_name,
     Run the spkg's legacy uninstall script, if one exists; otherwise do
     nothing.
     """
-    spkg_dir = pth.join(PKGS, spkg_name)
+    spkg_dir = pth.join(SAGE_PKGS, spkg_name)
 
     # Any errors from this, including a non-zero return code will
     # bubble up and exit the uninstaller

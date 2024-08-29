@@ -19,14 +19,14 @@ import os
 import logging
 log = logging.getLogger()
 
-from sage_bootstrap.env import SAGE_ROOT
+from sage_bootstrap.env import SAGE_ROOT, SAGE_PKGS_WRITE
 
 
 class PackageCreator(object):
 
     def __init__(self, package_name):
         self.package_name = package_name
-        self.path = os.path.join(SAGE_ROOT, 'build', 'pkgs', package_name)
+        self.path = os.path.join(SAGE_PKGS_WRITE, package_name)
         try:
             os.mkdir(self.path)
         except OSError:

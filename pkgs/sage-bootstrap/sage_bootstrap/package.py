@@ -19,7 +19,7 @@ import re
 import os
 import logging
 
-from sage_bootstrap.env import SAGE_ROOT
+from sage_bootstrap.env import SAGE_ROOT, SAGE_PKGS
 
 
 log = logging.getLogger()
@@ -460,7 +460,7 @@ class Package(object):
         """
         Return all packages
         """
-        base = os.path.join(SAGE_ROOT, 'build', 'pkgs')
+        base = os.path.join(SAGE_PKGS)
         for subdir in os.listdir(base):
             path = os.path.join(base, subdir)
             if not os.path.isfile(os.path.join(path, "type")):
@@ -477,7 +477,7 @@ class Package(object):
         """
         Return the package directory
         """
-        return os.path.join(SAGE_ROOT, 'build', 'pkgs', self.name)
+        return os.path.join(SAGE_PKGS, self.name)
 
     def has_file(self, filename):
         """
