@@ -1816,6 +1816,10 @@ end_scene""".format(
             try:
                 scene = self._rich_repr_threejs(**opts)
                 from playwright.sync_api import sync_playwright
+                import subprocess
+                # From https://github.com/jupyter/nbconvert/blob/55ff3e9ac1d892165bfb4352379672019b66ddff/nbconvert/exporters/webpdf.py#L87
+                cmd = [sys.executable, "-m", "playwright", "install", "chromium"]
+                subprocess.check_call(cmd)
                 with sync_playwright() as p:
                     browser_type = getattr(p, kwds.pop('browser_type', 'chromium'))
                     browser = browser_type.launch()
