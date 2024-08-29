@@ -11,11 +11,11 @@ from sage.rings.species import AtomicSpecies, PolynomialSpecies
 from sage.libs.gap.libgap import libgap
 from sage.categories.sets_cat import cartesian_product
 from sage.combinat.set_partition import SetPartitions
+from sage.combinat.integer_vector import IntegerVectors
 from sage.structure.element import parent
 import itertools
-
-
-def weighted_compositions(n, d, weights):
+from collections import defaultdict
+def weighted_compositions(n, d, weights, offset=0):
     r"""
     Return all compositions of `n` of weight `d`.
 
@@ -41,8 +41,6 @@ def weighted_compositions(n, d, weights):
         [[0, 2, 0, 1], [0, 2, 1], [1, 1, 0, 1], [1, 1, 1], [2, 0, 0, 1], [2, 0, 1]]
 
     """
-    n = int(n)
-    d = int(d)
     # the empty composition exists if and only if n == d == 0
     if not n:
         if not d:
@@ -52,13 +50,48 @@ def weighted_compositions(n, d, weights):
         return
 
     # otherwise we iterate over the possibilities for the first part
-    w0 = weights[0]
+    if offset < len(weights):
+        w0 = weights[offset]
+    else:
+        return
     if w0 > d:
         return
-    wr = weights[1:]
     for i in range(min(n, d // w0) + 1):
-        for c in weighted_compositions(n - i, d - i * w0, wr):
+        for c in weighted_compositions(n - i, d - i * w0, weights, offset=offset+1):
             yield [i] + c
+
+def weighted_vector_compositions(n_vec, d, weights_vec):
+    r"""
+    Return all compositions of the vector `n` of weight `d`.
+
+    INPUT:
+
+    - ``n_vec``, a `k`-tuple of non-negative integers.
+
+    - ``d``, a non-negative integer.
+
+    - ``weights_vec``, `k`-tuple of weakly increasing lists of
+      positive integers.
+
+    EXAMPLES::
+
+        sage: list(weighted_vector_compositions([1,1], 2, [[1,1,2,3], [1,2,3]]))
+        [([0, 1], [1]), ([1], [1])]
+
+        sage: list(weighted_vector_compositions([3,1], 4, [[1,1,2,5], [1,1,2,5]]))
+        [([0, 3], [0, 1]),
+         ([0, 3], [1]),
+         ([1, 2], [0, 1]),
+         ([1, 2], [1]),
+         ([2, 1], [0, 1]),
+         ([2, 1], [1]),
+         ([3], [0, 1]),
+         ([3], [1])]
+
+    """
+    k = len(n_vec)
+    for d_vec in IntegerVectors(d, length=k):
+        yield from itertools.product(*map(weighted_compositions, n_vec, d_vec, weights_vec))
 
 
 ######################################################################
@@ -258,62 +291,105 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         return R.sum(self[:m])
 
-    def __call__(self, *g):
+    def __call__(self, *args):
         """
         EXAMPLES::
 
             sage: from sage.rings.lazy_species import LazySpecies
-            sage: L = LazySpecies(ZZ, "X")
-            sage: L(SymmetricGroup(2))(L(SymmetricGroup(2)))
-            P_4
+            sage: L = LazySpecies(QQ, "X")
+            sage: E2 = L(SymmetricGroup(2))
+            sage: E2(E2)
+            P_4 + O^11
+
+            sage: P = PolynomialSpecies(QQ, "X")
+            sage: Gc = L(lambda n: sum(P(G.automorphism_group()) for G in graphs(n) if G.is_connected()) if n else 0)
+            sage: E = L(lambda n: SymmetricGroup(n))
+
+            sage: G = L(lambda n: sum(P(G.automorphism_group()) for G in graphs(n)))
+            sage: (E-1)(Gc) - G
+            (-1) + O^7
+
+
+            sage: A = L.undefined(1)
+            sage: X = L(SymmetricGroup(1))
+            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: A.define(X*(E-1)(A) + X)
+            sage: A
+
+        TESTS::
+
+            sage: X = L(SymmetricGroup(1))
+            sage: X(X + E2)
+            X + E_2 + O^8
+            sage: E2(X + E2)
+            E_2 + X*E_2 + P_4 + O^9
+
+            sage: (1+E2)(E2)
         """
         fP = parent(self)
-        if len(g) != fP._arity:
+        if len(args) != fP._arity:
             raise ValueError("arity of must be equal to the number of arguments provided")
 
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
-        P = cm.common_parent(self.base_ring(), *[parent(h) for h in g])
+        P = cm.common_parent(self.base_ring(), *[parent(g) for g in args])
 
         # f = 0
         if isinstance(self._coeff_stream, Stream_zero):
             return P.zero()
 
-        # g = (0, ..., 0)
-        if all((not isinstance(h, LazyModuleElement) and not h)
-               or (isinstance(h, LazyModuleElement)
-                   and isinstance(h._coeff_stream, Stream_zero))
-               for h in g):
+        # args = (0, ..., 0)
+        if all((not isinstance(g, LazyModuleElement) and not g)
+               or (isinstance(g, LazyModuleElement)
+                   and isinstance(g._coeff_stream, Stream_zero))
+               for g in args):
             return P(self[0])
 
-        # f has finite length and f != 0
+        # f is a constant polynomial
         if (isinstance(self._coeff_stream, Stream_exact)
-            and not self._coeff_stream._constant):
-            # constant polynomial
-            poly = self.polynomial()
-            if poly.is_constant():
-                return P(poly)
-            return P(poly(g))
+            and not self._coeff_stream._constant
+            and self.polynomial().is_constant()):
+            return P(self.polynomial())
 
-        g = [P(h) for h in g]
-        R = P._internal_poly_ring.base_ring()
+        args = [P(g) for g in args]
 
-        for h in g:
-            if h._coeff_stream._approximate_order == 0:
-                if not h._coeff_stream.is_uninitialized() and h[0]:
+        for g in args:
+            if g._coeff_stream._approximate_order == 0:
+                if not g._coeff_stream.is_uninitialized() and g[0]:
                     raise ValueError("can only compose with a positive valuation series")
-                h._coeff_stream._approximate_order = 1
+                g._coeff_stream._approximate_order = 1
 
         sorder = self._coeff_stream._approximate_order
-        gv = min(h._coeff_stream._approximate_order for h in g)
+        gv = min(g._coeff_stream._approximate_order for g in args)
+        R = P._internal_poly_ring.base_ring()
 
         def coefficient(n):
-            r = R.zero()
+            args_flat = [[(M, c) for i in range(n+1) for M, c in g[i]]
+                         for g in args]
+            weights = [[M._tc for i in range(n+1) for M, _ in g[i]]
+                       for g in args]
+            result = R.zero()
             for i in range(n // gv + 1):
-                # Make sure the element returned from the composition is in P
-                r += P(self[i](g))[n]
-            return r
+                # compute homogeneous components
+                lF = defaultdict(R)
+                for M, c in self[i]:
+                    lF[M._mc] += R._from_dict({M: c})
+                for mc, F in lF.items():
+                    for degrees in weighted_vector_compositions(mc, n, weights):
+                        multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
+                                          for d, (_, c) in zip(alpha, g_flat) if d]
+                        molecules = [M for alpha, g_flat in zip(degrees, args_flat)
+                                          for d, (M, _) in zip(alpha, g_flat) if d]
+                        non_zero_degrees = [[d for d in alpha if d] for alpha in degrees]
+                        names = ["X%s" % i for i in range(len(molecules))]
+                        FX = F._compose_with_weighted_singletons(names,
+                                                                 multiplicities,
+                                                                 non_zero_degrees)
+                        FG = [(M(*molecules), c) for M, c in FX]
+                        result += R.sum_of_terms(FG)
+            return result
+
         coeff_stream = Stream_function(coefficient, P._sparse, sorder * gv)
         return P.element_class(P, coeff_stream)
 

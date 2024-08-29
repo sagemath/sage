@@ -1469,10 +1469,29 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         TESTS::
 
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: P = PolynomialSpecies(QQ, ["X"])
+
+            sage: c = 3/2; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            True
+
+            sage: c = -5/3; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            True
+
+            sage: c = 0; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            True
+
+            sage: c = 1; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            True
+
+            sage: c = -1; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            True
+
             sage: P = PolynomialSpecies(QQ, ["X"])
             sage: P.exponential([1], [0]).parent()
             Polynomial species in X over Rational Field
-
         """
         def stretch(c, k):
             r"""
@@ -1513,8 +1532,32 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 True
                 sage: P(0).is_constant()
                 True
+                sage: (1 + X).is_constant()
             """
-            return self.is_zero() or not self.degree()
+            return self.is_zero() or not self.maximal_degree()
+
+        def homogeneous_degree(self):
+            """
+
+            ..TODO::
+
+               This implementation should not be necessary.
+
+            EXAMPLES::
+
+                sage: P = PolynomialSpecies(ZZ, ["X"])
+                sage: C3 = P(CyclicPermutationGroup(3))
+                sage: X = P(SymmetricGroup(1))
+                sage: E2 = P(SymmetricGroup(2))
+                sage: (E2*X + C3).homogeneous_degree()
+                3
+            """
+            if not self.support():
+                raise ValueError("the zero element does not have a well-defined degree")
+            if not self.is_homogeneous():
+                raise ValueError("element is not homogeneous")
+            return self.parent().degree_on_basis(self.support()[0])
+
 
         def is_virtual(self):
             r"""
@@ -1735,6 +1778,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
             molecules = list(chain.from_iterable([[M for M, _ in g] for g in args]))
             F_degrees = sorted(set(M._mc for M, _ in self))
+            names = ["X%s" % i for i in range(sum(len(arg) for arg in args))]
 
             result = P0.zero()
             for n in F_degrees:
@@ -1742,7 +1786,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 for degrees in cartesian_product([IntegerVectors(n_i, length=len(arg))
                                                   for n_i, arg in zip(n, args)]):
                     # each degree is a weak composition of the degree of F in sort i
-                    names = ["X%s" % i for i in range(sum(len(arg) for arg in args))]
                     FX = F._compose_with_weighted_singletons(names,
                                                              multiplicities,
                                                              degrees)
