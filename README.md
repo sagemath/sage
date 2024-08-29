@@ -489,7 +489,7 @@ Troubleshooting
 ---------------
 
 If you have problems building Sage, check the Sage Installation Guide,
-as well as the version-specific Sage Installation FAQ in the [release
+as well as the version-specific installation help in the [release
 tour](https://github.com/sagemath/sage/releases) corresponding to the
 version that you are installing.
 
