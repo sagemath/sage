@@ -1,20 +1,17 @@
-from sage.rings.integer_ring import ZZ
 from sage.rings.lazy_series import LazyCompletionGradedAlgebraElement, LazyModuleElement
 from sage.rings.lazy_series_ring import LazyCompletionGradedAlgebra
-from sage.data_structures.stream import (
-    Stream_zero,
-    Stream_exact,
-    Stream_function,
-    Stream_cauchy_compose,
-)
-from sage.rings.species import AtomicSpecies, PolynomialSpecies
+from sage.data_structures.stream import (Stream_zero,
+                                         Stream_exact,
+                                         Stream_function)
+from sage.rings.species import PolynomialSpecies
 from sage.libs.gap.libgap import libgap
 from sage.categories.sets_cat import cartesian_product
-from sage.combinat.set_partition import SetPartitions
 from sage.combinat.integer_vector import IntegerVectors
 from sage.structure.element import parent
 import itertools
 from collections import defaultdict
+
+
 def weighted_compositions(n, d, weights, offset=0):
     r"""
     Return all compositions of `n` of weight `d`.
@@ -60,6 +57,7 @@ def weighted_compositions(n, d, weights, offset=0):
         for c in weighted_compositions(n - i, d - i * w0, weights, offset=offset+1):
             yield [i] + c
 
+
 def weighted_vector_compositions(n_vec, d, weights_vec):
     r"""
     Return all compositions of the vector `n` of weight `d`.
@@ -75,6 +73,7 @@ def weighted_vector_compositions(n_vec, d, weights_vec):
 
     EXAMPLES::
 
+        sage: from sage.rings.lazy_species import weighted_vector_compositions
         sage: list(weighted_vector_compositions([1,1], 2, [[1,1,2,3], [1,2,3]]))
         [([0, 1], [1]), ([1], [1])]
 
@@ -306,25 +305,53 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E = L(lambda n: SymmetricGroup(n))
 
             sage: G = L(lambda n: sum(P(G.automorphism_group()) for G in graphs(n)))
-            sage: (E-1)(Gc) - G
-            (-1) + O^7
-
+            sage: E(Gc) - G
+            O^7
 
             sage: A = L.undefined(1)
             sage: X = L(SymmetricGroup(1))
             sage: E = L(lambda n: SymmetricGroup(n))
-            sage: A.define(X*(E-1)(A) + X)
+            sage: A.define(X*E(A))
             sage: A
+            X + X^2 + (X^3+X*E_2) + (X^2*E_2+2*X^4+X*E_3)
+             + (X^2*E_3+3*X^5+3*X^3*E_2+X*{((1,2)(3,4),):({1,2,3,4})}+X*E_4)
+             + (X^2*E_4+2*X^2*{((1,2)(3,4),):({1,2,3,4})}+6*X^4*E_2+6*X^6
+                +3*X^3*E_3+X^2*E_2^2+X*E_5)
+             + (X^2*E_5+2*X^3*E_2^2+6*X^4*E_3+12*X^7+14*X^5*E_2
+                +3*X^3*{((1,2)(3,4),):({1,2,3,4})}+3*X^3*E_4
+                +X*{((3,4),(1,2),(1,3)(2,4)(5,6)):({1,2,3,4,5,6})}
+                +X*{((1,2)(3,4)(5,6),):({1,2,3,4,5,6})}
+                +X*{((2,3)(4,5),(1,3)(5,6)):({1,2,3,4,5,6})}+2*X^2*E_2*E_3
+                +E_2*{((1,2)(3,4),):({1,2,3,4})}*X+X*E_6)
+             + O^8
 
         TESTS::
 
+            sage: L = LazySpecies(QQ, "X")
             sage: X = L(SymmetricGroup(1))
+            sage: E2 = L(SymmetricGroup(2))
             sage: X(X + E2)
             X + E_2 + O^8
             sage: E2(X + E2)
             E_2 + X*E_2 + P_4 + O^9
 
-            sage: (1+E2)(E2)
+            sage: (1+E2)(X)
+            1 + E_2 + O^7
+
+            sage: L = LazySpecies(QQ, "X, Y")
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: X = L(P(SymmetricGroup(1), {1: [1]}))
+            sage: Y = L(P(SymmetricGroup(1), {2: [1]}))
+            sage: X(Y, 0)
+            Y + O^8
+
+            sage: L1 = LazySpecies(QQ, "X")
+            sage: L = LazySpecies(QQ, "X, Y")
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: X = L(P(SymmetricGroup(1), {1:[1]}))
+            sage: E = L1(lambda n: SymmetricGroup(n))
+            sage: E(X)
+            1 + X + E_2(X) + E_3(X) + E_4(X) + E_5(X) + E_6(X) + O^7
         """
         fP = parent(self)
         if len(args) != fP._arity:
@@ -365,6 +392,10 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         R = P._internal_poly_ring.base_ring()
 
         def coefficient(n):
+            if not n:
+                if self[0]:
+                    return R(list(self[0])[0][1])
+                return R.zero()
             args_flat = [[(M, c) for i in range(n+1) for M, c in g[i]]
                          for g in args]
             weights = [[M._tc for i in range(n+1) for M, _ in g[i]]
@@ -416,5 +447,5 @@ class LazySpecies(LazyCompletionGradedAlgebra):
         return super().__classcall__(cls, base_ring, names, sparse)
 
     def __init__(self, base_ring, names, sparse):
-        self._arity = len(names)
         super().__init__(PolynomialSpecies(base_ring, names))
+        self._arity = len(names)

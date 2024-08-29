@@ -1,6 +1,4 @@
 from itertools import accumulate, chain
-
-from sage.arith.misc import multinomial
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.monoids import Monoids
@@ -14,11 +12,9 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
 from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement,
                                               IndexedMonoid)
-from sage.functions.other import binomial
 from sage.rings.integer_ring import ZZ
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.structure.element import Element, parent
@@ -1166,8 +1162,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
 
         def __call__(self, *args):
             r"""
-            Substitute M_1...M_k into self.
-            M_i must all have same arity and must be molecular.
+            Substitute `M_1,\dots, M_k` into ``self``.
+
+            The arguments must all have the same parent and must all
+            be molecular.  The number of arguments must be equal to
+            the arity of ``self``.
+
+            The result is a molecular species, whose parent is the
+            same as those of the arguments.
 
             EXAMPLES::
 
@@ -1198,13 +1200,21 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: Y = M2(SymmetricGroup(1), {2: [1]})
                 sage: C3(X*Y)
                 {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
-            """
+
+            TESTS::
+
+                sage: P = PolynomialSpecies(QQ, ["X"])
+                sage: P.one()()
+                Traceback (most recent call last):
+                ...
+                ValueError: number of args must match arity of self
+                """
             if len(args) != self.parent()._k:
                 raise ValueError("number of args must match arity of self")
+            if len(set(arg.parent() for arg in args)) > 1:
+                raise ValueError("all args must have the same parent")
             if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
                 raise ValueError("all args must be molecular species")
-            if len(set(arg.parent()._k for arg in args)) > 1:
-                raise ValueError("all args must have same arity")
 
             gens = []
 
@@ -1533,6 +1543,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 sage: P(0).is_constant()
                 True
                 sage: (1 + X).is_constant()
+                False
             """
             return self.is_zero() or not self.maximal_degree()
 
@@ -1557,7 +1568,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             if not self.is_homogeneous():
                 raise ValueError("element is not homogeneous")
             return self.parent().degree_on_basis(self.support()[0])
-
 
         def is_virtual(self):
             r"""
@@ -1769,12 +1779,16 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             """
             P = self.parent()
-            if not self.support():
-                return P.zero()
+            if len(args) != P._k:
+                raise ValueError("number of args must match arity of self")
+            if len(set(arg.parent() for arg in args)) > 1:
+                raise ValueError("all args must have the same parent")
+
             P0 = args[0].parent()
-            assert all(P0 == arg.parent() for arg in args), "all parents must be the same"
-            args = [sorted(g, key=lambda x: x[0]._mc)
-                    for g in args]
+            if not self.support():
+                return P0.zero()
+
+            args = [sorted(g, key=lambda x: x[0]._mc) for g in args]
             multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
             molecules = list(chain.from_iterable([[M for M, _ in g] for g in args]))
             F_degrees = sorted(set(M._mc for M, _ in self))
