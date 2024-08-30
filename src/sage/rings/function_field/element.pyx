@@ -224,19 +224,27 @@ cdef class FunctionFieldElement(FieldElement):
         sage: f.subs(x=1, y=3, t=5)
         8
         """
-        if not in_dict:
-            if not kwds:
-                return self
-            # Being able to refer to in_dict simplifies the logic.
-            in_dict = dict()
+        if not in_dict and not kwds:
+            return self
 
         function_field = self.parent()
-        value = self._x.subs({function_field.gen(): in_dict.get(function_field.gen())}, **kwds)
-        made_substitution = (in_dict.get(function_field.gen()) is not None) or any(k == str(function_field.gen()) for k in kwds)
+
+        if not in_dict:
+            value = self._x.subs(**kwds)
+            made_substitution = any(k == str(function_field.gen()) for k in kwds)
+        else:
+            value = self._x.subs({function_field.gen(): in_dict.get(function_field.gen())})
+            made_substitution = in_dict.get(function_field.gen()) is not None
+
         while function_field.base_field() != function_field:
             function_field = function_field.base_field()
-            value = function_field(value)._x.subs({function_field.gen(): in_dict.get(function_field.gen())}, **kwds)
-            made_substitution |= (in_dict.get(function_field.gen()) is not None) or any(k == str(function_field.gen()) for k in kwds)
+
+            if not in_dict:
+                value = function_field(value)._x.subs(**kwds)
+                made_substitution |= any(k == str(function_field.gen()) for k in kwds)
+            else:
+                value = function_field(value)._x.subs({function_field.gen(): in_dict.get(function_field.gen())})
+                made_substitution |= in_dict.get(function_field.gen()) is not None
 
         if made_substitution:
             return self.parent()(value)
