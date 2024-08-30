@@ -442,7 +442,7 @@ class AtomicSpeciesElement(Element):
             return False
         # If they do, construct the mapping between the groups
         selflist, otherlist = [], []
-        for i in range(self.parent()._k):
+        for i in range(self.parent()._arity):
             if len(self._dompart[i]) != len(other._dompart[i]):
                 return False
             selflist.extend(sorted(list(self._dompart[i])))
@@ -467,7 +467,7 @@ class AtomicSpeciesElement(Element):
             sage: A = At(G, {2: [1,2,3,4,5,6,7,8,9,10]}); A
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})}
         """
-        if self.parent()._k == 1:
+        if self.parent()._arity == 1:
             return "{" + f"{self._dis}" + "}"
         dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
                            for b in self._dompart)
@@ -513,8 +513,8 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, names=names, category=category)
         ElementCache.__init__(self)
-        self._k = len(names)
-        self._grading_set = IntegerVectors(length=self._k)
+        self._arity = len(names)
+        self._grading_set = IntegerVectors(length=self._arity)
         self._renamed = set()  # the degrees that have been renamed already
 
     @cached_method
@@ -531,8 +531,8 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             sage: At2.an_element()
             {((1,2)(3,4),): ({1, 2}, {3, 4})}
         """
-        G = PermutationGroup([[(2 * i - 1, 2 * i) for i in range(1, self._k + 1)]])
-        m = {i: [2 * i - 1, 2 * i] for i in range(1, self._k + 1)}
+        G = PermutationGroup([[(2 * i - 1, 2 * i) for i in range(1, self._arity + 1)]])
+        m = {i: [2 * i - 1, 2 * i] for i in range(1, self._arity + 1)}
         return self._element_constructor_(G, m)
 
     def _element_constructor_(self, G, pi=None):
@@ -553,12 +553,12 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         if not isinstance(G, PermutationGroup_generic):
             raise ValueError(f"{G} must be a permutation group")
         if pi is None:
-            if self._k == 1:
+            if self._arity == 1:
                 pi = {1: G.domain()}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._k}]")
+        if not set(pi.keys()).issubset(range(1, self._arity + 1)):
+            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._arity}]")
         if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
             raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         for orbit in G.orbits():
@@ -568,7 +568,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         mapping = {v: i for i, v in enumerate(G.domain(), 1)}
         mapping2 = PermutationGroupElement([mapping[e] for o in sorted(G.orbits(), key=len, reverse=True)
                                             for e in o]).inverse()
-        dpart = [frozenset() for _ in range(self._k)]
+        dpart = [frozenset() for _ in range(self._arity)]
         for k, v in pi.items():
             dpart[k - 1] = frozenset(mapping2(mapping[x]) for x in v)
         elm = self._cache_get(self.element_class(self, dis_elm, tuple(dpart)))
@@ -608,11 +608,11 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
         # prevent infinite recursion in self._element_constructor_
         self._renamed.add(n)
-        for i in range(self._k):
+        for i in range(self._arity):
             if n == 1:
                 self(SymmetricGroup(1), {i+1: [1]}).rename(self._names[i])
 
-            if self._k == 1:
+            if self._arity == 1:
                 sort = ""
             else:
                 sort = f"({self._names[i]})"
@@ -657,7 +657,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             return True
         G, pi = None, None
         if isinstance(x, PermutationGroup_generic):
-            if self._k == 1:
+            if self._arity == 1:
                 G = x
                 pi = {1: G.domain()}
             else:
@@ -666,8 +666,8 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             G, pi = x
         if not isinstance(G, PermutationGroup_generic):
             raise ValueError(f"{G} must be a permutation group")
-        if not set(pi.keys()).issubset(range(1, self._k + 1)):
-            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._k}]")
+        if not set(pi.keys()).issubset(range(1, self._arity + 1)):
+            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._arity}]")
         if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
             raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         for orbit in G.orbits():
@@ -716,7 +716,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         category = Monoids() & SetsWithGrading().Infinite()
         IndexedFreeAbelianMonoid.__init__(self, indices, prefix=prefix, category=category, **kwds)
         ElementCache.__init__(self)
-        self._k = indices._k
+        self._arity = indices._arity
 
     def _project(self, G, pi, part):
         r"""
@@ -779,7 +779,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             return G
         if isinstance(G, PermutationGroup_generic):
             if pi is None:
-                if self._k == 1:
+                if self._arity == 1:
                     pi = {1: G.domain()}
                 else:
                     raise ValueError("the assignment of sorts to the domain elements must be provided")
@@ -791,11 +791,11 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         # Assume G is a tuple (X, a)
         X, a = G
         if pi is None:
-            if self._k == 1:
+            if self._arity == 1:
                 pi = {1: X}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        L = [None for _ in range(self._k)]
+        L = [None for _ in range(self._arity)]
         for k, v in pi.items():
             L[k - 1] = list(v)
         # Create group
@@ -822,7 +822,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         elm = super().one()
         elm._group = SymmetricGroup(0)
         elm._dompart = tuple()
-        elm._mc = tuple(0 for _ in range(self._k))
+        elm._mc = tuple(0 for _ in range(self._arity))
         elm._tc = 0
         return elm
 
@@ -925,7 +925,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             if elm2._tc == 0:
                 self._assign_group_info(elm1)
                 return
-            self._mc = tuple(elm1._mc[i] + elm2._mc[i] for i in range(self.parent()._k))
+            self._mc = tuple(elm1._mc[i] + elm2._mc[i] for i in range(self.parent()._arity))
             self._tc = elm1._tc + elm2._tc
             gens1 = elm1._group.gens()
             # Try to avoid gens_small unless necessary
@@ -943,7 +943,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 gens.append([tuple(elm1._tc + k for k in cyc) for cyc in gen.cycle_tuples()])
             self._group = PermutationGroup(gens, domain=range(1, elm1._tc + elm2._tc + 1))
             self._dompart = list(elm1._dompart)
-            for i in range(elm2.parent()._k):
+            for i in range(elm2.parent()._arity):
                 self._dompart[i] = frozenset(list(self._dompart[i]) + [elm1._tc + e for e in elm2._dompart[i]])
             self._dompart = tuple(self._dompart)
 
@@ -1210,8 +1210,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 Traceback (most recent call last):
                 ...
                 ValueError: number of args must match arity of self
-                """
-            if len(args) != self.parent()._k:
+            """
+            if len(args) != self.parent()._arity:
                 raise ValueError("number of args must match arity of self")
             if len(set(arg.parent() for arg in args)) > 1:
                 raise ValueError("all args must have the same parent")
@@ -1236,7 +1236,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 gens.append(newgen)
 
             # gens from M_i and dompart
-            dpart = {i: [] for i in range(1, args[0].parent()._k + 1)}
+            dpart = {i: [] for i in range(1, args[0].parent()._arity + 1)}
             for start, M in zip(starts, Mlist):
                 for i, v in enumerate(M._dompart, 1):
                     dpart[i].extend([start + k for k in v])
@@ -1285,7 +1285,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                                          category=category,
                                          element_class=self.Element,
                                          prefix='', bracket=False)
-        self._k = len(names)
+        self._arity = len(names)
 
     def degree_on_basis(self, m):
         r"""
@@ -1336,19 +1336,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
             return G
         if isinstance(G, PermutationGroup_generic):
             if pi is None:
-                if self._k == 1:
+                if self._arity == 1:
                     return self._from_dict({self._indices(G): ZZ.one()})
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
             return self._from_dict({self._indices(G, pi): ZZ.one()})
         # Assume G is a tuple (X, a)
         X, a = G
         if pi is None:
-            if self._k == 1:
+            if self._arity == 1:
                 pi = {1: X}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
         # Make iteration over values of pi deterministic
-        L = [None for _ in range(self._k)]
+        L = [None for _ in range(self._arity)]
         for k, v in pi.items():
             L[k - 1] = list(v)
         # Create group
@@ -1527,7 +1527,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                             for mu in Partitions(d))
 
         return self.prod(factor(s+1, multiplicities[s], degrees[s])
-                         for s in range(self._k))
+                         for s in range(self._arity))
 
     class Element(CombinatorialFreeModule.Element):
         def is_constant(self):
@@ -1711,7 +1711,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
                 sage: C4 = P(CyclicPermutationGroup(4))
                 sage: C4._compose_with_weighted_singletons(["X"], [-1], [[4]])
-                -C_4 + {((1,2)(3,4),): ({1, 2, 3, 4})}
+                -C_4 + {((1,2)(3,4),)}
 
             Exercise (2.5.17)::
 
@@ -1730,7 +1730,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
             TESTS::
 
                 sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
-                -C_4 + {((1,2)(3,4),): ({1, 2, 3, 4})} + E_2^2 - 2*X^2*E_2 + X^4
+                -C_4 + {((1,2)(3,4),)} + E_2^2 - 2*X^2*E_2 + X^4
+
             """
             P = self.parent()
             if not self.support():
@@ -1758,10 +1759,10 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 sage: E2(-X)
                 -E_2 + X^2
                 sage: E2(X^2)
-                {((1,2)(3,4),): ({1, 2, 3, 4})}
+                {((1,2)(3,4),)}
 
                 sage: E2(X + X^2)
-                E_2 + X^3 + {((1,2)(3,4),): ({1, 2, 3, 4})}
+                E_2 + X^3 + {((1,2)(3,4),)}
 
                 sage: P2 = PolynomialSpecies(QQ, ["X", "Y"])
                 sage: X = P2(SymmetricGroup(1), {1:[1]})
@@ -1781,7 +1782,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             """
             P = self.parent()
-            if len(args) != P._k:
+            if len(args) != P._arity:
                 raise ValueError("number of args must match arity of self")
             if len(set(arg.parent() for arg in args)) > 1:
                 raise ValueError("all args must have the same parent")
