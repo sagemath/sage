@@ -1635,7 +1635,7 @@ class TropicalCurve(TropicalVariety):
             ....:       + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4
             ....:       + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4)
             sage: p2.tropical_variety().plot()
-            Graphics object consisting of 11 graphics primitives
+            Graphics object consisting of 23 graphics primitives
 
         .. PLOT::
             :width: 300 px
