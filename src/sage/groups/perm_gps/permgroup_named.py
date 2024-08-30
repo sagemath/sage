@@ -2767,7 +2767,8 @@ class PSL(PermutationGroup_plg):
         """
         from sage.categories.finite_fields import FiniteFields
         if q in FiniteFields():
-            name = q.gen()
+            if q.degree() > 1:
+                name = q.gen()
             q = q.cardinality()
         if q not in NonNegativeIntegers():
             raise ValueError('q must be a prime power or a finite field')
