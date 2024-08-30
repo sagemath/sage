@@ -1,6 +1,5 @@
 from itertools import accumulate, chain
 
-from sage.arith.misc import multinomial
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.monoids import Monoids
@@ -18,7 +17,6 @@ from sage.misc.misc_c import prod
 from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement,
                                               IndexedMonoid)
-from sage.functions.other import binomial
 from sage.rings.integer_ring import ZZ
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.structure.element import Element, parent
@@ -1657,8 +1655,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 -E_2 + X^2
 
                 sage: C4 = P(CyclicPermutationGroup(4))
-                sage: C4.compose_with_weighted_singletons(ZZ, ["X"], [-1], [[4]])
-                {((1,2)(3,4),)} - C_4
+                sage: C4._compose_with_weighted_singletons(["X"], [-1], [[4]])
+                -C_4 + {((1,2)(3,4),)}
 
             Exercise (2.5.17)::
 
@@ -1676,8 +1674,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             TESTS::
 
-                sage: (C4+E2^2).compose_with_weighted_singletons(ZZ, ["X"], [-1], [[4]])
-                {((1,2)(3,4),)} - C_4 - 2*X^2*E_2 + E_2^2 + X^4
+                sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
+                -C_4 + {((1,2)(3,4),)} + E_2^2 - 2*X^2*E_2 + X^4
 
             """
             P = self.parent()
