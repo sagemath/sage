@@ -1574,7 +1574,7 @@ class TropicalCurve(TropicalVariety):
             intervals.append(interval)
         return intervals
 
-    def plot(self):
+    def plot(self, dominant_term=False):
         """
         Return the plot of ``self``.
 
@@ -1631,8 +1631,9 @@ class TropicalCurve(TropicalVariety):
         Another tropical polynomial with numerous components, resulting
         in a more intricate structure::
 
-            sage: p2 = (x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4 + x*y^5
-            ....:       + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10))
+            sage: p2 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
+            ....:       + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4
+            ....:       + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4)
             sage: p2.tropical_variety().plot()
             Graphics object consisting of 11 graphics primitives
 
@@ -1642,8 +1643,9 @@ class TropicalCurve(TropicalVariety):
             T = TropicalSemiring(QQ)
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
-            p2 = x**6 + R(4)*x**4*y**2 + R(2)*x**3*y**3 + R(3)*x**2*y**4 + \
-            x*y**5 + R(7)*x**2 + R(5)*x*y + R(3)*y**2 + R(2)*x + y + R(10)
+            p2 = R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2 \
+            + R(2)*x**3 + x**2*y + x*y**2 + R(4)*y**3 + R(8)*x**4 \
+            + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4
             sphinx_plot(p2.tropical_variety().plot())
         """
         from sage.plot.plot import plot

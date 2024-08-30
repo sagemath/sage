@@ -11,8 +11,6 @@ EXAMPLES::
     sage: R.<x,y,z> = PolynomialRing(T)
     sage: z.parent()
     Multivariate Tropical Polynomial Semiring in x, y, z over Rational Field
-    sage: R(2)*x + R(-1)*x + R(5)*y + R(-3)
-    (-1)*x + 5*y + (-3)
     sage: (x+y+z)^2
     0*x^2 + 0*x*y + 0*y^2 + 0*x*z + 0*y*z + 0*z^2
 
