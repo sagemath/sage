@@ -174,6 +174,76 @@ cdef class FunctionFieldElement(FieldElement):
         """
         return self._x._latex_()
 
+
+    def subs(self, in_dict=None, **kwds):
+        r"""
+        Substitutes given generators with given values while not touching
+        other generators.
+
+        INPUT:
+
+        - ``in_dict`` -- (optional) dictionary of inputs
+
+        - ``**kwds`` -- named parameters
+
+        OUTPUT: new object if substitution is possible, otherwise ``self``
+
+        EXAMPLES::
+
+            sage: K = GF(7)
+            sage: Kx.<x> = FunctionField(K)
+            sage: y = polygen(Kx)
+            sage: f = x^6 + 3; f
+            x^6 + 3
+
+        TESTS:
+
+        Make sure that we return the same object when there is no
+        substitution.::
+
+            sage: K = GF(7)
+            sage: Kx.<x> = FunctionField(K)
+            sage: y = polygen(Kx)
+            sage: f = x^6 + 3
+            sage: g = f.subs(z=2)
+            sage: g == f
+            True
+            sage: g is f
+            True
+            sage: id(g) == id(f)
+            True
+
+        Check that we correctly handle extension fields.::
+
+        sage: K.<x> = FunctionField(QQ)
+        sage: R.<y> = K[]
+        sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+        sage: S.<t> = L[]
+        sage: M.<t> = L.extension(t^2 - x*y)
+        sage: f = t + x*y
+        sage: f.subs(x=1, y=3, t=5)
+        8
+        """
+        if not in_dict:
+            if not kwds:
+                return self
+            # Being able to refer to in_dict simplifies the logic.
+            in_dict = dict()
+
+        function_field = self.parent()
+        value = self._x.subs({function_field.gen(): in_dict.get(function_field.gen())}, **kwds)
+        made_substitution = (in_dict.get(function_field.gen()) is not None) or any(k == str(function_field.gen()) for k in kwds)
+        while function_field.base_field() != function_field:
+            function_field = function_field.base_field()
+            value = function_field(value)._x.subs({function_field.gen(): in_dict.get(function_field.gen())}, **kwds)
+            made_substitution |= (in_dict.get(function_field.gen()) is not None) or any(k == str(function_field.gen()) for k in kwds)
+
+        if made_substitution:
+            return self.parent()(value)
+        else:
+            return self
+
+
     @cached_method
     def matrix(self, base=None):
         r"""
