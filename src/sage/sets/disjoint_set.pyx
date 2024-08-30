@@ -448,7 +448,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         for i, parent in enumerate(l):
             self.union(parent, i)
 
-    cpdef int find(self, int i):
+    cpdef int find(self, int i) noexcept:
         r"""
         Return the representative of the set that ``i`` currently belongs to.
 
@@ -492,7 +492,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             raise ValueError('i must be between 0 and %s (%s given)' % (card - 1, i))
         return OP_find(self._nodes, i)
 
-    cpdef void union(self, int i, int j):
+    cpdef void union(self, int i, int j) noexcept:
         r"""
         Combine the set of ``i`` and the set of ``j`` into one.
 
@@ -797,7 +797,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         cdef int r = <int> OP_find(self._nodes, i)
         return self._int_to_el[r]
 
-    cpdef void union(self, e, f):
+    cpdef void union(self, e, f) noexcept:
         r"""
         Combine the set of ``e`` and the set of ``f`` into one.
 

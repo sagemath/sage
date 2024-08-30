@@ -179,7 +179,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return frozenset(self._groundset)
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) noexcept:
         """
         Return the rank of a set ``X``.
 
@@ -221,7 +221,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return self._matroid_rank
 
-    cpdef bint _is_independent(self, frozenset F):
+    cpdef bint _is_independent(self, frozenset F) noexcept:
         """
         Test if input is independent.
 

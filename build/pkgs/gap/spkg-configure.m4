@@ -3,7 +3,7 @@ SAGE_SPKG_CONFIGURE([gap], [
   sage_spkg_install_gap=yes
 
   m4_pushdef([GAP_MINVER],["4.12.2"])
-  m4_pushdef([GAP_LTVER],["4.13.0"])
+  m4_pushdef([GAP_LTVER],["4.14.0"])
 
   SAGE_SPKG_DEPCHECK([ncurses readline zlib], [
     AC_PATH_PROG(GAP, gap)
