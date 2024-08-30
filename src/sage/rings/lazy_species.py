@@ -470,5 +470,17 @@ class LazySpecies(LazyCompletionGradedAlgebra):
         return super().__classcall__(cls, base_ring, names, sparse)
 
     def __init__(self, base_ring, names, sparse):
+        """
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: LazySpecies(QQ, "X, Y")
+            Lazy completion of Polynomial species in X, Y over Rational Field
+
+        TESTS::
+
+            sage: LazySpecies(QQ, "X, Y, Z")._arity
+            3
+        """
         super().__init__(PolynomialSpecies(base_ring, names))
         self._arity = len(names)
