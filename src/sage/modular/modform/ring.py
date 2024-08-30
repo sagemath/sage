@@ -347,7 +347,7 @@ class ModularFormsRing(Parent):
           generators returned by the method
           :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead. Note that we do not check if the list is
-          indeed a generating set
+          indeed a generating set.
 
         OUTPUT: a multivariate polynomial ring in the variable
         ``names``. Each variable of the polynomial ring correspond to a
@@ -422,13 +422,13 @@ class ModularFormsRing(Parent):
         - ``polynomial`` -- a multivariate polynomial. The variables
           names of the polynomial should be different from ``'q'``. The
           number of variable of this polynomial should equal the number
-          of given generators
+          of given generators.
         - ``gens`` -- list of modular forms generating this ring
           (default: ``None``); if ``gens`` is ``None`` then the list of
           generators returned by the method
           :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead. Note that we do not check if the list is
-          indeed a generating set
+          indeed a generating set.
 
         OUTPUT: a ``GradedModularFormElement`` given by the polynomial
         relation ``polynomial``
@@ -845,7 +845,7 @@ class ModularFormsRing(Parent):
 
         - ``start_gens`` -- list (default: ``[]``); a list of
           modular forms. If this list is nonempty, we find a minimal
-          generating set containing these forms
+          generating set containing these forms.
 
         - ``start_weight`` -- integer (default: 2); calculate the graded
           subalgebra of forms of weight at least ``start_weight``
