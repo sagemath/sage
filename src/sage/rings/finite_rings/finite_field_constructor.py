@@ -174,7 +174,7 @@ AUTHORS:
 # ****************************************************************************
 
 from collections import defaultdict
-from sage.structure.category_object import normalize_names
+from sage.structure.category_object import normalize_names, certify_names
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
 
@@ -207,7 +207,7 @@ class FiniteFieldFactory(UniqueFactory):
 
     INPUT:
 
-    - ``order`` -- a prime power
+    - ``order`` -- a prime power `p^n`, or a pair `(p,n)`
 
     - ``name`` -- string, optional.  Note that there can be a
       substantial speed penalty (in creating extension fields) when
@@ -488,6 +488,15 @@ class FiniteFieldFactory(UniqueFactory):
         sage: q=2**152
         sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
         True
+
+    Check that error is raised if user accidentally pass a number for ``name``::
+
+        sage: GF(5, 2)
+        Traceback (most recent call last):
+        ...
+        TypeError: variable name 2 must be a string, not <class 'sage.rings.integer.Integer'>
+        sage: GF((5, 2))
+        Finite Field in z2 of size 5^2
     """
     def __init__(self, *args, **kwds):
         """
@@ -603,6 +612,8 @@ class FiniteFieldFactory(UniqueFactory):
             if n == 1:
                 if impl is None:
                     impl = 'modn'
+                if name is not None:
+                    certify_names((name,))
                 name = ('x',)  # Ignore name
                 # Every polynomial of degree 1 is irreducible
                 check_irreducible = False
