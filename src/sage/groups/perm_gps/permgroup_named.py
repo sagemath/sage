@@ -2764,6 +2764,17 @@ class PSL(PermutationGroup_plg):
             Traceback (most recent call last):
             ...
             ValueError: q must be a prime power or a finite field
+
+        Coverage test. Note that generator name of ``q`` is used if ``q`` is a field::
+
+            sage: PSL(2,GF(2^2,'a'),name='b')
+            Permutation Group with generators [(3,4,5), (1,2,3)]
+            sage: _.base_ring()
+            Finite Field in a of size 2^2
+            sage: PSL(2,2^2,name='b')
+            Permutation Group with generators [(3,4,5), (1,2,3)]
+            sage: _.base_ring()
+            Finite Field in b of size 2^2
         """
         from sage.categories.finite_fields import FiniteFields
         if q in FiniteFields():
