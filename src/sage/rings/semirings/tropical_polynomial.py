@@ -165,7 +165,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         Return the list of all tropical roots of ``self``, counted with
         multiplicity.
 
-        OUTPUT: a list of tropical numbers
+        OUTPUT: A list of tropical numbers
 
         ALGORITHM:
 
@@ -291,7 +291,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         `x + x_0` is `x_0` and not `-x_0`. However, not every tropical
         polynomial can be factored.
 
-        OUTPUT: a :class:'Factorization'
+        OUTPUT: :class:'Factorization'
 
         EXAMPLES::
 
@@ -798,7 +798,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         r"""
         Return a random tropical polynomial of given degrees (bounds).
 
-        OUTPUT: a :class:`TropicalPolynomial`
+        OUTPUT: :class:`TropicalPolynomial`
 
         .. SEEALSO::
 
@@ -873,7 +873,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         - ``points`` -- a list of tuples ``(x, y)``
 
-        OUTPUT: a :class:`TropicalPolynomial`
+        OUTPUT: :class:`TropicalPolynomial`
 
         EXAMPLES::
 

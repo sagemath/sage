@@ -539,13 +539,15 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         """
         Return the dual subdivision of ``self``.
 
-        Dual subdivision refers to a specific decomposition of the Newton
-        polygon associated with a tropical polynomial. The term "dual"
-        is used in the sense that the combinatorial structure of the
-        tropical variety is reflected in the dual subdivision of the
-        Newton polygon. Vertices of the dual subdivision correspond to
-        the intersection of multiple components. Edges of the dual
-        subdivision correspond to the individual components.
+        Dual subdivision refers to a specific decomposition of the
+        Newton polygon of a tropical polynomial. This Newton polygon
+        is the convex hull of all the points corresponding to the
+        exponents of the terms of the tropical polynomial. The term
+        "dual" is used in the sense that the combinatorial structure
+        of the tropical variety is reflected in the dual subdivision.
+        Vertices of the dual subdivision correspond to the intersection
+        of multiple components. Edges of the dual subdivision correspond
+        to the individual components.
 
         OUTPUT: :class:`sage.geometry.polyhedral_complex.PolyhedralComplex`
 
@@ -622,14 +624,19 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         Return the weight vectors for each unique intesection of
         components of ``self``.
 
+        Weight vectors are a list of vectors associated with each
+        unique intersection of the components of tropical variety.
+        Each vector is a normal vector to a component with respect
+        to the unique intersection lying within that component.
+
         Assume ``self`` is a `n`-dimensional tropical variety.
-        Suppose `L` is an intersection adjacent to the components
+        Suppose `L` is an intersection lying within the components
         `S_1, ldots, S_k` with respective weights `w_1, ldots, w_k`.
         This `L` is a linear structure in `\RR^{n-1}` and has `n-1`
         direction vectors `d_1,d_2,\dots, d_{n-1}`. Each component
         `S_1, ldots, S_k` has a normal vector `n_1, \ldots, n_k`.
-        Make sure that the normal vector is scale to an integer vector
-        such that the greatest common divisor of its elements is 1.
+        Then, we scale each normal vector to an integer vector such
+        that the greatest common divisor of its elements is 1.
 
         The weight vector of a component `S_i` with respect to `L`
         can be found by calculating the cross product between direction
@@ -1331,14 +1338,17 @@ class TropicalCurve(TropicalVariety):
         r"""
         Return the weight vectors for all vertices of ``self``.
 
+        Weight vectors are a list of vectors associated with each vertex
+        of the curve. Each vector corresponds to an edge emanating from
+        that vertex and points in the direction of the edge.
+
         Suppose `v` is a vertex adjacent to the edges `e_1, ldots, e_k`
         with respective weights `w_1, ldots, w_k`. Every edge `e_i` is
-        contained in a line (component) defined by an equation with
-        integer coefficients. Because of this there exists a unique
-        integer vector `v_i=(\alpha, \beta)` in the direction of `e_i`
-        such that `\gcd(\alpha, \beta)=1`. Then each vertex `v` yield
-        the vectors `w_1v_1,ldots,w_kv_k`. These vectors will satisfy
-        the following balancing condition:
+        contained in a line (component) defined by an equation. Therefore,
+        there exists a unique integer vector `v_i=(\alpha, \beta)` in
+        the direction of `e_i` such that `\gcd(\alpha, \beta)=1`. Then,
+        each vertex `v` yield the vectors `w_1v_1,ldots,w_kv_k`.
+        These vectors will satisfy the following balancing condition:
         `\sum_{i=1}^k w_i v_i = 0`.
 
         OUTPUT:
@@ -1574,7 +1584,7 @@ class TropicalCurve(TropicalVariety):
             intervals.append(interval)
         return intervals
 
-    def plot(self, dominant_term=False):
+    def plot(self):
         """
         Return the plot of ``self``.
 

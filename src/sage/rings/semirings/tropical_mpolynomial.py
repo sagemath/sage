@@ -593,7 +593,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         r"""
         Return a random multivariate tropical polynomial from ``self``.
 
-        OUTPUT: a :class:`TropicalMPolynomial`
+        OUTPUT: :class:`TropicalMPolynomial`
 
         .. SEEALSO::
 
