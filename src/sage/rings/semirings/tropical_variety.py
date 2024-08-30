@@ -152,10 +152,10 @@ class TropicalVariety(UniqueRepresentation, SageObject):
     a tropical hypersurface embedded in a real space `\RR^n`::
 
         sage: T = TropicalSemiring(QQ)
-        sage: R.<a,x,y,z> = PolynomialRing(T)
-        sage: p1 = x*y + R(-1/2)*x*z + R(4)*z^2 + a*x
+        sage: R.<w,x,y,z> = PolynomialRing(T)
+        sage: p1 = x*y + R(-1/2)*x*z + R(4)*z^2 + w*x
         sage: tv = p1.tropical_variety(); tv
-        Tropical hypersurface of 0*a*x + 0*x*y + (-1/2)*x*z + 4*z^2
+        Tropical hypersurface of 0*w*x + 0*x*y + (-1/2)*x*z + 4*z^2
         sage: tv.components()
         [[(t1, t2, t3 - 1/2, t3), [t2 - 9/2 <= t3, t3 <= t1 + 1/2, t2 - 5 <= t1], 1],
         [(t1, 2*t2 - t3 + 4, t3, t2), [t3 + 1/2 <= t2, t3 <= t1], 1],
@@ -547,6 +547,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         the intersection of multiple components. Edges of the dual
         subdivision correspond to the individual components.
 
+        OUTPUT: :class:`sage.geometry.polyhedral_complex.PolyhedralComplex`
+
         EXAMPLES:
 
         Dual subdivision of a tropical curve::
@@ -555,9 +557,9 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: R.<x,y> = PolynomialRing(T)
             sage: p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x^2 + y^2
             sage: tv = p1.tropical_variety()
-            sage: G = tv.dual_subdivision()
-            sage: G.plot(vertex_labels=False)
-            Graphics object consisting of 10 graphics primitives
+            sage: pc = tv.dual_subdivision()
+            sage: pc.plot()
+            Graphics object consisting of 20 graphics primitives
 
         .. PLOT::
             :width: 300 px
@@ -567,8 +569,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             x, y = R.gen(), R.gen(1)
             p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x**2 + y**2
             tv = p1.tropical_variety()
-            G = tv.dual_subdivision()
-            sphinx_plot(G.plot(vertex_labels=False))
+            pc = tv.dual_subdivision()
+            sphinx_plot(pc.plot())
 
         Dual subdivision of a tropical surface::
 
@@ -576,8 +578,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = x + y + z + x^2 + R(1)
             sage: tv = p1.tropical_variety()
-            sage: G = tv.dual_subdivision()
-            sage: G.plot3d()
+            sage: pc = tv.dual_subdivision()
+            sage: pc.plot()
             Graphics3d Object
 
         .. PLOT::
@@ -588,8 +590,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             x, y, z = R.gen(), R.gen(1), R.gen(2)
             p1 = x + y + z + x**2 + R(1)
             tv = p1.tropical_variety()
-            G = tv.dual_subdivision()
-            sphinx_plot(G.plot3d())
+            pc = tv.dual_subdivision()
+            sphinx_plot(pc.plot())
 
         Dual subdivision of a tropical hypersurface::
 
@@ -597,38 +599,23 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: R.<a,b,c,d> = PolynomialRing(T)
             sage: p1 = a^2 + b^2 + c^2 + d^2 + a*b*c*d
             sage: tv = p1.tropical_variety()
-            sage: G = tv.dual_subdivision()
-            sage: G.plot(vertex_labels=False)
-            Graphics object consisting of 11 graphics primitives
-
-        .. PLOT::
-            :width: 300 px
-
-            T = TropicalSemiring(QQ,  use_min=False)
-            R = PolynomialRing(T, ('a,b,c,d'))
-            a, b, c, d = R.gen(), R.gen(1), R.gen(2), R.gen(3)
-            p1 = a**2 + b**2 + c**2 + d**2 + a*b*c*d
-            tv = p1.tropical_variety()
-            G = tv.dual_subdivision()
-            sphinx_plot(G.plot(vertex_labels=False))
+            sage: pc = tv.dual_subdivision(); pc
+            Polyhedral complex with 6 maximal cells
         """
         from sage.graphs.graph import Graph
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.geometry.polyhedral_complex import PolyhedralComplex
 
         G = Graph()
         edges = [e for e in self._keys]
         G.add_edges(edges)
-        pos = {}
-        for vertex in G.vertices():
-            pos[vertex] = list(vertex)
 
-        if self._poly.parent().ngens() == 2:
-            G.layout(pos=pos, save_pos=True)
-        elif self._poly.parent().ngens() == 3:
-            G.layout(dim=3, save_pos=True)
-            G._pos3d = pos
-        else:
-            G.layout("spring", save_pos=True)
-        return G
+        polyhedron_lst = []
+        for cycle in G.cycle_basis():
+            polyhedron = Polyhedron(vertices=cycle)
+            polyhedron_lst.append(polyhedron)
+        pc = PolyhedralComplex(polyhedron_lst)
+        return pc
 
     def weight_vectors(self):
         r"""

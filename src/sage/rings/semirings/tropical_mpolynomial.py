@@ -359,7 +359,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         curve. For dimensions higher than two, it is referred to as a
         tropical hypersurface.
 
-        OUTPUT: a :class:`sage.rings.semirings.tropical_variety.TropicalVariety`
+        OUTPUT: :class:`sage.rings.semirings.tropical_variety.TropicalVariety`
 
         EXAMPLES:
 
