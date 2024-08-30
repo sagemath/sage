@@ -642,7 +642,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: AA(UCF.gen(5))
             Traceback (most recent call last):
             ...
-            ValueError: cannot coerce algebraic number with nonzero imaginary
+            ValueError: cannot convert algebraic number with nonzero imaginary
             part to algebraic real
         """
         return R(QQbar(self))
