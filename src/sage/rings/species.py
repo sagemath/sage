@@ -845,6 +845,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             sage: type(m)
             <class 'sage.rings.species.MolecularSpecies_with_category.element_class'>
 
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: M = P._indices
+            sage: A = AtomicSpecies("X")
+            sage: a = A(CyclicPermutationGroup(4))
+            sage: M.gen(a)
+            C_4
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: M = P._indices
             sage: m = M(SymmetricGroup(6).young_subgroup([2, 2, 2]), {1: [1,2], 2: [3,4,5,6]})
             sage: list(m)
