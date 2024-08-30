@@ -1,5 +1,4 @@
 # distutils: extra_compile_args = -D_XPG6
-
 """
 Heilbronn matrix computation
 """
@@ -105,7 +104,7 @@ cdef class Heilbronn:
 
         (This function is automatically called during initialization.)
 
-        .. note::
+        .. NOTE::
 
            This function must be overridden by all derived classes!
 
@@ -121,8 +120,8 @@ cdef class Heilbronn:
         raise NotImplementedError
 
     def __getitem__(self, int n):
-        """
-        Return the n-th matrix in ``self``.
+        r"""
+        Return the `n`-th matrix in ``self``.
 
         EXAMPLES::
 
@@ -154,7 +153,7 @@ cdef class Heilbronn:
         """
         Return the list of Heilbronn matrices corresponding to ``self``.
 
-        Each matrix is given as a list of four ints.
+        Each matrix is given as a list of four integers.
 
         EXAMPLES::
 
@@ -171,17 +170,14 @@ cdef class Heilbronn:
         return L
 
     cdef apply_only(self, int u, int v, int N, int* a, int* b):
-        """
+        r"""
         INPUT:
 
+        - ``u``, ``v``, ``N`` -- integers
 
-        -  ``u, v, N`` - integers
+        - ``a``, ``b`` -- preallocated integer arrays of the length of ``self``
 
-        -  ``a, b`` - preallocated int arrays of the length
-           self.
-
-
-        OUTPUT: sets the entries of a,b
+        OUTPUT: sets the entries of `a`, `b`
 
         EXAMPLES::
 
@@ -214,12 +210,12 @@ cdef class Heilbronn:
         r"""
         INPUT:
 
-        -  ``ans`` - fmpz_poly_t\*; pre-allocated an
-           initialized array of self.length fmpz_poly_t's
-        -  ``i`` - integer
-        -  ``k`` - integer
+        - ``ans`` -- ``fmpz_poly_t*``; pre-allocated an
+          initialized array of ``self.length`` ``fmpz_poly_t``s
+        - ``i`` -- integer
+        - ``k`` -- integer
 
-        OUTPUT: sets entries of ans
+        OUTPUT: sets entries of ``ans``
         """
         cdef int j, m = k - 2
         for j in range(self.length):
@@ -230,24 +226,24 @@ cdef class Heilbronn:
                                               self.list.v[4 * j + 3])
 
     def apply(self, int u, int v, int N):
-        """
-        Return a list of pairs ((c,d),m), which is obtained as follows:
+        r"""
+        Return a list of pairs `((c,d),m)`, which is obtained as follows:
 
-        1) Compute the images (a,b) of the vector (u,v) (mod N) acted on by
-        each of the HeilbronnCremona matrices in self.
+        1) Compute the images `(a,b)` of the vector `(u,v) \pmod N` acted on by
+        each of the HeilbronnCremona matrices in ``self``.
 
-        2) Reduce each (a,b) to canonical form (c,d) using p1normalize.
+        2) Reduce each `(a,b)` to canonical form `(c,d)` using ``p1normalize``.
 
         3) Sort.
 
-        4) Create the list ((c,d),m), where m is the number of times
-        that (c,d) appears in the list created in steps 1-3
-        above. Note that the pairs ((c,d),m) are sorted
-        lexicographically by (c,d).
+        4) Create the list `((c,d),m)`, where `m` is the number of times
+        that `(c,d)` appears in the list created in steps 1-3
+        above. Note that the pairs `((c,d),m)` are sorted
+        lexicographically by `(c,d)`.
 
         INPUT:
 
-        - ``u, v, N`` -- integers
+        - ``u``, ``v``, ``N`` -- integers
 
         OUTPUT: list
 
@@ -305,8 +301,8 @@ cdef class HeilbronnCremona(Heilbronn):
     cdef public int p
 
     def __init__(self, int p):
-        """
-        Create the list of Heilbronn-Cremona matrices of determinant p.
+        r"""
+        Create the list of Heilbronn-Cremona matrices of determinant `p`.
 
         EXAMPLES::
 
@@ -522,17 +518,17 @@ cdef class HeilbronnMerel(Heilbronn):
 
 
 def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
-    """
+    r"""
     INPUT:
 
-    - ``u, v, N`` - integers so that gcd(u,v,N) = 1
-    - ``indices`` - a list of positive integers
-    - ``R`` - matrix over QQ that writes each elements of
-      P1 = P1List(N) in terms of a subset of P1.
+    - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
+    - ``indices`` -- list of positive integers
+    - ``R`` -- matrix over `\QQ` that writes each elements of
+      `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
+      subset of `\textnormal{P1}`
 
-
-    OUTPUT: a dense matrix whose columns are the images T_n(x)
-    for n in indices and x the Manin symbol (u,v), expressed
+    OUTPUT: a dense matrix whose columns are the images `T_n(x)`
+    for `n` in indices and `x` the Manin symbol `(u,v)`, expressed
     in terms of the basis.
 
     EXAMPLES::
@@ -552,11 +548,10 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
         sage: D = N.decomposition()
         sage: D[1].q_eigenform(10, 'a') # indirect doctest
         q + 4*q^2 + 2*q^3 + 6*q^5 + q^6 + 5*q^7 + 6*q^8 + q^9 + O(q^10)
-
     """
     cdef p1list.P1List P1 = p1list.P1List(N)
 
-    # Create a zero dense matrix over QQ with len(indices) rows
+    # Create a zero dense matrix over `\QQ` with len(indices) rows
     # and #P^1(N) columns.
     cdef Matrix_rational_dense T
     from sage.matrix.constructor import matrix
@@ -640,27 +635,27 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
 
 
 def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R):
-    """
+    r"""
     Return images of the Hecke operators `T_n` for `n`
-    in the list indices, where chi must be a quadratic Dirichlet
-    character with values in QQ.
+    in the list indices, where `\chi` must be a quadratic Dirichlet
+    character with values in `\QQ`.
 
-    R is assumed to be the relation matrix of a weight modular symbols
-    space over QQ with character chi.
+    `R` is assumed to be the relation matrix of a weight modular symbols
+    space over `\QQ` with character `\chi`.
 
     INPUT:
 
-    - ``u, v, N`` - integers so that gcd(u,v,N) = 1
-    - ``indices`` - a list of positive integers
-    - ``chi`` - a Dirichlet character that takes values
-      in a nontrivial extension of QQ.
-    - ``R`` - matrix over QQ that writes each elements of
-      P1 = P1List(N) in terms of a subset of P1.
+    - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
+    - ``indices`` -- list of positive integers
+    - ``chi`` -- a Dirichlet character that takes values
+      in a nontrivial extension of `\QQ`
+    - ``R`` -- matrix over `\QQ` that writes each elements of
+      `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
+      subset of `\textnormal{P1}`
 
-
-    OUTPUT: a dense matrix with entries in the field QQ(chi) (the
-    values of chi) whose columns are the images T_n(x) for n in
-    indices and x the Manin symbol (u,v), expressed in terms of the
+    OUTPUT: a dense matrix with entries in the field `\QQ(\chi)` (the
+    values of `\chi`) whose columns are the images `T_n(x)` for `n` in
+    indices and `x` the Manin symbol `(u,v)`, expressed in terms of the
     basis.
 
     EXAMPLES::
@@ -752,19 +747,19 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
 
 
 def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
-    """
+    r"""
     INPUT:
 
-    - ``u, v, N`` - integers so that gcd(u,v,N) = 1
-    - ``indices`` - a list of positive integers
-    - ``chi`` - a Dirichlet character that takes values in QQ
-    - ``R`` - matrix over QQ(chi) that writes each elements of P1 =
-       P1List(N) in terms of a subset of P1.
+    - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
+    - ``indices`` -- list of positive integers
+    - ``chi`` -- a Dirichlet character that takes values in `\QQ`
+    - ``R`` -- matrix over `\QQ(\chi)` that writes each elements of
+      `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a subset
+      of `\textnormal{P1}`
 
-
-    OUTPUT: a dense matrix with entries in the rational field QQ (the
-    values of chi) whose columns are the images T_n(x) for n in
-    indices and x the Manin symbol (u,v), expressed in terms of the
+    OUTPUT: a dense matrix with entries in the rational field `\QQ` (the
+    values of `\chi`) whose columns are the images `T_n(x)` for `n` in
+    indices and `x` the Manin symbol `(u,v)`, expressed in terms of the
     basis.
 
     EXAMPLES::
@@ -788,7 +783,7 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
     if chi.base_ring() != QQ:
         raise TypeError("character must takes values in QQ")
 
-    # Create a zero dense matrix over QQ with len(indices) rows
+    # Create a zero dense matrix over `\QQ` with len(indices) rows
     # and #P^1(N) columns.
     cdef Matrix_rational_dense T
     from sage.matrix.constructor import matrix
@@ -850,19 +845,20 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
 # ##########################################################################
 
 def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
-    """
+    r"""
     INPUT:
 
-    -  ``u, v, N`` - integers so that gcd(u,v,N) = 1
-    -  ``i`` - integer with 0 <= i <= k-2
-    -  ``k`` - weight
-    -  ``indices`` - a list of positive integers
-    -  ``R`` - matrix over QQ that writes each elements of
-       P1 = P1List(N) in terms of a subset of P1.
+    - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
+    - ``i`` -- integer with `0 \le i \le k-2`
+    - ``k`` -- weight
+    - ``indices`` -- list of positive integers
+    - ``R`` -- matrix over `\QQ` that writes each elements of
+      `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
+      subset of `\textnormal{P1}`
 
     OUTPUT: a dense matrix with rational entries whose columns are the
-    images T_n(x) for n in indices and x the Manin symbol
-    [`X^i*Y^(k-2-i), (u,v)`], expressed in terms of the basis.
+    images `T_n(x)` for `n` in indices and `x` the Manin symbol
+    [`X^i*Y^{(k-2-i)}`, `(u,v)`], expressed in terms of the basis.
 
     EXAMPLES::
 
@@ -881,7 +877,7 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
     # The Manin symbols are enumerated as
     #   all [0, (u,v)] for (u,v) in P^1(N) then
     #   all [1, (u,v)] for (u,v) in P^1(N) etc.
-    # So we create a zero dense matrix over QQ with len(indices) rows
+    # So we create a zero dense matrix over `\QQ` with len(indices) rows
     # and #P^1(N) * (k-1) columns.
     cdef Matrix_rational_dense T
     from sage.matrix.constructor import matrix

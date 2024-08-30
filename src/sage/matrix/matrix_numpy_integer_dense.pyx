@@ -2,7 +2,6 @@
 r"""
 Dense integer matrices using a NumPy backend
 
-
 EXAMPLES::
 
     sage: from sage.matrix.matrix_numpy_integer_dense import Matrix_numpy_integer_dense

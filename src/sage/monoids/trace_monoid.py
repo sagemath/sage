@@ -42,21 +42,22 @@ AUTHORS:
 
 from itertools import repeat, chain, product
 
+from sage.combinat.words.alphabet import Alphabet
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
-
-from sage.graphs.digraph import DiGraph
-from sage.graphs.graph import Graph
 from sage.monoids.free_monoid import FreeMonoid
 from sage.monoids.monoid import Monoid_class
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.infinity import infinity
-from sage.combinat.words.alphabet import Alphabet
 from sage.structure.element import MonoidElement
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.graphs.graph', 'Graph')
 
 
 class TraceMonoidElement(ElementWrapper, MonoidElement):
@@ -130,9 +131,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return the lexicographic normal form of ``self``.
 
-        OUTPUT:
-
-        A free monoid element.
+        OUTPUT: a free monoid element
 
         EXAMPLES::
 
@@ -152,9 +151,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return the Foata normal form of ``self``.
 
-        OUTPUT:
-
-        Tuple of free monoid elements.
+        OUTPUT: tuple of free monoid elements
 
         EXAMPLES::
 
@@ -185,9 +182,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return flatten list of generator numbers representing the trace.
 
-        OUTPUT:
-
-        A list of generator indexes.
+        OUTPUT: list of generator indexes
 
         TESTS::
 
@@ -209,9 +204,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         generators are connected by edges which
         direction depend on the generator position in the trace.
 
-        OUTPUT:
-
-        Directed graph of generator indexes.
+        OUTPUT: directed graph of generator indexes
 
         EXAMPLES::
 
@@ -219,7 +212,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.dependence_graph()
+            sage: x.dependence_graph()                                                  # needs sage.graphs
             Digraph on 6 vertices
         """
         elements = self._flat_elements()
@@ -227,10 +220,8 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         graph = {}
 
         for i, e in enumerate(elements):
-            edges = []
-            for v in graph:
-                if (e, elements[v]) not in independence:
-                    edges.append((v, i))
+            edges = [(v, i) for v in graph
+                     if (e, elements[v]) not in independence]
             graph[i] = []
             for v1, v2 in edges:
                 graph[v1].append(v2)
@@ -238,7 +229,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         return DiGraph(graph)
 
     @cached_method
-    def hasse_diagram(self, algorithm="naive"):
+    def hasse_diagram(self, algorithm='naive'):
         r"""
         Return Hasse diagram of the trace.
 
@@ -250,9 +241,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
           that will be used to compute Hasse diagram; there are two
           variants: ``'naive'`` and ``'min'``.
 
-        OUTPUT:
-
-        Directed graph of generator indexes.
+        OUTPUT: directed graph of generator indexes
 
         .. SEEALSO::
 
@@ -265,7 +254,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.hasse_diagram()
+            sage: x.hasse_diagram()                                                     # needs sage.graphs
             Digraph on 6 vertices
 
         TESTS::
@@ -274,10 +263,10 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.hasse_diagram(algorithm='naive') == x.hasse_diagram(algorithm='min')
+            sage: x.hasse_diagram(algorithm='naive') == x.hasse_diagram(algorithm='min')            # needs sage.graphs
             True
             sage: y = b * a^3 * d * a * c * b^2
-            sage: y.hasse_diagram(algorithm='naive') == y.hasse_diagram(algorithm='min')
+            sage: y.hasse_diagram(algorithm='naive') == y.hasse_diagram(algorithm='min')            # needs sage.graphs
             True
         """
         if algorithm == "naive":
@@ -291,9 +280,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return Hasse diagram of the trace.
 
-        OUTPUT:
-
-        Directed graph of generator indexes.
+        OUTPUT: directed graph of generator indexes
 
         .. SEEALSO::
 
@@ -306,7 +293,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.min_hasse_diagram()
+            sage: x.min_hasse_diagram()                                                 # needs sage.graphs
             Digraph on 6 vertices
         """
         elements = self._flat_elements()
@@ -349,9 +336,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         In loop check for every two pair of edges if they
         have common vertex, remove their transitive edge.
 
-        OUTPUT:
-
-        Directed graph of generator indexes.
+        OUTPUT: directed graph of generator indexes
 
         .. SEEALSO::
 
@@ -364,7 +349,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
             sage: x = b * a * d * a * c * b
-            sage: x.naive_hasse_diagram()
+            sage: x.naive_hasse_diagram()                                               # needs sage.graphs
             Digraph on 6 vertices
         """
         d = self.dependence_graph()
@@ -382,9 +367,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return alphabet of ``self``.
 
-        OUTPUT:
-
-        A set of free monoid generators.
+        OUTPUT: a set of free monoid generators
 
         EXAMPLES::
 
@@ -406,9 +389,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         - ``letters`` -- set of generators; defines set of letters that will be
           used to filter the trace
 
-        OUTPUT:
-
-        A trace
+        OUTPUT: a trace
 
         EXAMPLES::
 
@@ -484,7 +465,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
 
         sage: from sage.monoids.trace_monoid import TraceMonoid
         sage: M.<a,b,c> = TraceMonoid(I=(('a','c'), ('c','a')))
-        sage: M.number_of_words(3) == len(M.words(3))
+        sage: M.number_of_words(3) == len(M.words(3))                                   # needs sage.graphs
         True
     """
     Element = TraceMonoidElement
@@ -612,9 +593,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         Return generator stacks formed from trace
         subelements with respect to non-commutativity.
 
-        OUTPUT:
-
-        Used generators and list of stacks as tuple.
+        OUTPUT: used generators and list of stacks as tuple
 
         ALGORITHM:
 
@@ -655,9 +634,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         Return lexicographic normal form of the free monoid
         element in free monoid terms.
 
-        OUTPUT:
-
-        Trace monoid element.
+        OUTPUT: trace monoid element
 
         ALGORITHM:
 
@@ -771,7 +748,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         r"""
         Return independence relation over the monoid.
 
-        OUTPUT: set of commuting generator pairs.
+        OUTPUT: set of commuting generator pairs
 
         EXAMPLES::
 
@@ -789,9 +766,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         r"""
         Return dependence relation over the monoid.
 
-        OUTPUT:
-
-        Set of non-commuting generator pairs.
+        OUTPUT: set of non-commuting generator pairs
 
         EXAMPLES::
 
@@ -815,12 +790,12 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: F.<a,b,c> = FreeMonoid()
             sage: M.<ai,bi,ci> = TraceMonoid(F, I=((a,c), (c,a)))
-            sage: M.dependence_graph() == Graph({a:[a,b], b:[b], c:[c,b]})
+            sage: M.dependence_graph() == Graph({a:[a,b], b:[b], c:[c,b]})              # needs sage.graphs
             True
         """
         return Graph({frozenset((e1, e2)) if e1 != e2 else (e1, e2)
                       for e1, e2 in self.dependence()}, loops=True,
-                     format="list_of_edges",
+                     format='list_of_edges',
                      immutable=True)
 
     @cached_method
@@ -828,16 +803,14 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         r"""
         Return the digraph of independence relations.
 
-        OUTPUT:
-
-        Independence graph with generators as vertices.
+        OUTPUT: independence graph with generators as vertices
 
         TESTS::
 
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: F.<a,b,c> = FreeMonoid()
             sage: M.<ai,bi,ci> = TraceMonoid(F, I=((a,c), (c,a)))
-            sage: M.independence_graph() == Graph({a:[c], b:[], c:[]})
+            sage: M.independence_graph() == Graph({a:[c], b:[], c:[]})                  # needs sage.graphs
             True
         """
         verts = list(self._free_monoid.gens())
@@ -853,16 +826,14 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         where `c_i` equals to number of full subgraphs
         of size `i` in the independence graph.
 
-        OUTPUT:
-
-        A rational function in ``t`` with coefficients in the integer ring.
+        OUTPUT: a rational function in ``t`` with coefficients in the integer ring
 
         EXAMPLES::
 
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
-            sage: M.dependence_polynomial()
+            sage: M.dependence_polynomial()                                             # needs sage.graphs
             1/(2*t^2 - 4*t + 1)
         """
         if t is None:
@@ -890,7 +861,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: I = (('a','d'), ('d','a'), ('b','c'), ('c','b'))
             sage: M.<a,b,c,d> = TraceMonoid(I=I)
-            sage: M.number_of_words(3)
+            sage: M.number_of_words(3)                                                  # needs sage.graphs
             48
         """
         psr = PowerSeriesRing(ZZ, default_prec=length + 1)
@@ -930,10 +901,8 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
 
             sage: from sage.monoids.trace_monoid import TraceMonoid
             sage: M.<a,b,c> = TraceMonoid(I=(('a','b'), ('b','a'), ('b', 'c'), ('c', 'b')))
-            sage: for i in range(10):
+            sage: for i in range(10):                                                   # needs sage.graphs
             ....:    assert len(M.words(i)) == M.number_of_words(i)
-            sage: True
-            True
         """
         if length < 0:
             raise ValueError("bad length of words; expected zero or positive number")
@@ -951,7 +920,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         r"""
         Return independence relation over the monoid.
 
-        OUTPUT: sorted list of sorted commuting generator pairs.
+        OUTPUT: sorted list of sorted commuting generator pairs
 
         EXAMPLES::
 

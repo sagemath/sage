@@ -4,7 +4,6 @@
 # distutils: library_dirs = SINGULAR_LIBDIR
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
-
 """
 Declarations of Singular's C/C++ Functions
 
@@ -17,7 +16,6 @@ Declarations of Singular's C/C++ Functions
 AUTHOR:
 
 - Martin Albrecht (2009-07): initial implementation
-
 """
 #*****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <malb@informatik.uni-bremen.de>
@@ -48,6 +46,13 @@ cdef extern from "factory/factory.h":
     cdef int SW_USE_NTL_SORT
 
 cdef extern from "singular/Singular/libsingular.h":
+    """
+    // compatibility for singular 4.3.2p10 and before
+    #if SINGULAR_VERSION <= 4330
+    #define ringorder_ip ringorder_rp
+    #define BIGINTVEC_CMD INTVEC_CMD
+    #endif
+    """
 
     #
     # OPTIONS
@@ -147,7 +152,6 @@ cdef extern from "singular/Singular/libsingular.h":
         void    (*cfNormalize)(number* a,  const n_Procs_s* r)
 
 
-
         bint (*cfDivBy)(number* a, number* b, const n_Procs_s* r)
         bint (*cfEqual)(number* a,number* b, const n_Procs_s* )
         bint (*cfIsZero)(number* a, const n_Procs_s* ) # algebraic number comparison with zero
@@ -243,7 +247,7 @@ cdef extern from "singular/Singular/libsingular.h":
         ringorder_s
         ringorder_lp
         ringorder_dp
-        ringorder_rp
+        ringorder_ip
         ringorder_Dp
         ringorder_wp
         ringorder_Wp
@@ -290,6 +294,10 @@ cdef extern from "singular/Singular/libsingular.h":
         int (*get "operator[]")(int i)
         int row
         int col
+
+    cdef cppclass bigintmat:
+        int (*length)()
+        number* (*get)(int i)
 
     # omalloc bins
 
@@ -417,6 +425,7 @@ cdef extern from "singular/Singular/libsingular.h":
     cdef int si_opt_2    #  previously 'verbose'
     cdef void * currentVoice
     cdef int myynest
+    cdef int printlevel
 
     ctypedef char * const_char_ptr "const char *"
     cdef extern void (*WerrorS_callback)(const_char_ptr)
@@ -921,6 +930,7 @@ cdef extern from "singular/Singular/libsingular.h":
     cdef int MATRIX_CMD
     cdef int LIST_CMD
     cdef int INTVEC_CMD
+    cdef int BIGINTVEC_CMD
     cdef int NONE
     cdef int RESOLUTION_CMD
     cdef int PACKAGE_CMD
@@ -1159,7 +1169,3 @@ cdef extern from "singular/kernel/GBEngine/syz.h":
 cdef extern from "singular/polys/ext_fields/transext.h":
     ctypedef struct TransExtInfo:
         ring * r
-
-
-
-

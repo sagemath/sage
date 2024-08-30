@@ -39,7 +39,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         - ``mon`` -- (default: ``None``) a tuple specifying the shift
           in the exponents
 
-        - ``reduce`` -- (default: ``True``) a boolean
+        - ``reduce`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -259,7 +259,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -401,7 +401,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     cpdef long number_of_terms(self) except -1:
         """
-        Return the number of non-zero coefficients of ``self``.
+        Return the number of nonzero coefficients of ``self``.
 
         Also called weight, hamming weight or sparsity.
 
@@ -495,7 +495,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         `n` is a tuple of length `k` and `k` is the number of variables.
 
         If the number of inputs is not equal to the number of variables, this
-        raises a ``TypeError``.
+        raises a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -572,7 +572,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             -t2inv^2 + t1
             sage: _.parent()
             Multivariate Polynomial Ring in t1, t1inv, t2, t2inv over Rational Field
-
         """
         dres = {}
         for (e, c) in self.dict().items():
@@ -700,9 +699,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``mon`` -- a monomial
 
-        OUTPUT:
-
-        Element of the parent of ``self``.
+        OUTPUT: element of the parent of ``self``
 
         .. NOTE::
 
@@ -1059,9 +1056,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``right`` -- a Laurent polynomial
 
-        OUTPUT:
-
-        A pair of Laurent polynomials.
+        OUTPUT: a pair of Laurent polynomials
 
         EXAMPLES::
 
@@ -1151,7 +1146,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: e = a.exponents()
             sage: e.sort(); e
             [(0, 0), (2, -1)]
-
         """
         return [a.eadd(self._mon) for a in self._poly.exponents()]
 
@@ -1284,7 +1278,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         INPUT:
 
-        - ``i`` -- The index of a generator of ``self.parent()``
+        - ``i`` -- the index of a generator of ``self.parent()``
 
         OUTPUT:
 
@@ -1313,7 +1307,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def has_any_inverse(self):
         """
-        Return ``True`` if ``self`` contains any monomials with a negative exponent, False otherwise.
+        Return ``True`` if ``self`` contains any monomials with a negative
+        exponent, ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1405,9 +1400,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``**kwds`` -- keyword arguments
 
-        OUTPUT:
-
-        A Laurent polynomial.
+        OUTPUT: a Laurent polynomial
 
         EXAMPLES::
 
@@ -1602,10 +1595,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         INPUT:
 
-        - ``R`` - (default: ``None``) a univariate Laurent polynomial ring
+        - ``R`` -- (default: ``None``) a univariate Laurent polynomial ring
 
         If this polynomial is not in at most one variable, then a
-        :class:`ValueError` exception is raised.  The new polynomial is over
+        :exc:`ValueError` exception is raised.  The new polynomial is over
         the same base ring as the given :class:`LaurentPolynomial` and in the
         variable ``x`` if no ring ``R`` is provided.
 
@@ -1734,10 +1727,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         INPUT:
 
-        - ``root`` - boolean (default ``False``) - if set to ``True``
+        - ``root`` -- boolean (default: ``False``); if set to ``True``
           then return a pair ``(True, sqrt)`` with ``sqrt`` a square
           root of this Laurent polynomial when it exists or
-          ``(False, None)``.
+          ``(False, None)``
 
         EXAMPLES::
 
@@ -1862,7 +1855,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: p.toric_coordinate_change(Matrix([[1,-3], [1,1]]),
             ....:                           new_ring=L.change_ring(F))
             x^-2*y^2 + x^-3*y
-
         """
         cdef int n, i, j, x
         cdef dict d, dr

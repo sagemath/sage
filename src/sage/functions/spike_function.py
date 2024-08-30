@@ -32,13 +32,11 @@ class SpikeFunction:
 
     INPUT:
 
-    -  ``v`` -- list of pairs (x, height)
+    - ``v`` -- list of pairs (x, height)
 
-    -  ``eps`` -- parameter that determines approximation to a true spike
+    - ``eps`` -- parameter that determines approximation to a true spike
 
-    OUTPUT:
-
-    a function with spikes at each point ``x`` in ``v`` with the given height.
+    OUTPUT: a function with spikes at each point ``x`` in ``v`` with the given height
 
     EXAMPLES::
 
@@ -71,7 +69,7 @@ class SpikeFunction:
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: S.height
             [4.0, 1.0, 3.0]
-            sage: S.eps
+            sage: S.eps                                                                 # needs sage.rings.real_mpfr
             0.00100000000000000
         """
         if not v:

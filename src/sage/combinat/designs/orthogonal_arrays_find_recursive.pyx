@@ -55,7 +55,7 @@ from sage.arith.misc import prime_powers
 @cached_function
 def find_recursive_construction(k, n):
     r"""
-    Find a recursive construction of an `OA(k,n)` (calls all others ``find_*`` functions)
+    Find a recursive construction of an `OA(k,n)` (calls all others ``find_*`` functions).
 
     This determines whether an `OA(k,n)` can be built through the following
     constructions:
@@ -73,7 +73,7 @@ def find_recursive_construction(k, n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -129,7 +129,7 @@ cpdef find_product_decomposition(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers) -- see above.
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -167,7 +167,7 @@ cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers) -- see above
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -218,7 +218,7 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers) -- see above
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -272,11 +272,11 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
 
 cpdef find_construction_3_3(int k,int n):
     r"""
-    Find a decomposition for construction 3.3 from [AC07]_
+    Find a decomposition for construction 3.3 from [AC07]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -311,11 +311,11 @@ cpdef find_construction_3_3(int k,int n):
 
 cpdef find_construction_3_4(int k,int n):
     r"""
-    Find a decomposition for construction 3.4 from [AC07]_
+    Find a decomposition for construction 3.4 from [AC07]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -354,11 +354,11 @@ cpdef find_construction_3_4(int k,int n):
 
 cpdef find_construction_3_5(int k,int n):
     r"""
-    Find a decomposition for construction 3.5 from [AC07]_
+    Find a decomposition for construction 3.5 from [AC07]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -404,11 +404,11 @@ cpdef find_construction_3_5(int k,int n):
 
 cpdef find_construction_3_6(int k,int n):
     r"""
-    Find a decomposition for construction 3.6 from [AC07]_
+    Find a decomposition for construction 3.6 from [AC07]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -461,7 +461,7 @@ cpdef find_q_x(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -623,7 +623,7 @@ cpdef find_thwart_lemma_4_1(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -668,11 +668,11 @@ cpdef find_thwart_lemma_4_1(int k,int n):
 
 cpdef find_three_factor_product(int k,int n):
     r"""
-    Find `n_1n_2n_3=n` to obtain an `OA(k,n)` by the three-factor product from [DukesLing14]_
+    Find `n_1n_2n_3=n` to obtain an `OA(k,n)` by the three-factor product from [DukesLing14]_.
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -717,7 +717,7 @@ cpdef find_brouwer_separable_design(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     The assumptions made on the parameters `t,q,x` are explained in the
     documentation of
@@ -818,11 +818,11 @@ def int_as_sum(int value, list S, int k_max):
 
     INPUT:
 
-    - ``value`` (integer)
+    - ``value`` -- integer
 
-    - ``S`` -- a list of integers
+    - ``S`` -- list of integers
 
-    - ``k_max`` (integer)
+    - ``k_max`` -- integer
 
     EXAMPLES::
 
@@ -898,7 +898,7 @@ cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     EXAMPLES::
 
@@ -957,7 +957,7 @@ cdef int is_available(int k,int n) except -1:
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
     """
     if n >= _OA_cache_size:
         return orthogonal_array(k,n,existence=True) is True

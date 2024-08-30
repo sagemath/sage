@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Golay code
 
@@ -37,11 +38,11 @@ class GolayCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``base_field`` -- The base field over which the code is defined.
-      Can only be ``GF(2)`` or ``GF(3)``.
+    - ``base_field`` -- the base field over which the code is defined;
+      can only be ``GF(2)`` or ``GF(3)``
 
-    - ``extended`` -- (default: ``True``) if set to ``True``, creates an extended Golay
-      code.
+    - ``extended`` -- boolean (default: ``True``); if set to ``True``, creates
+      an extended Golay code
 
     EXAMPLES::
 
@@ -237,7 +238,7 @@ class GolayCode(AbstractLinearCode):
 
     def weight_distribution(self):
         r"""
-        Return the list whose `i`'th entry is the number of words of weight `i`
+        Return the list whose `i`-th entry is the number of words of weight `i`
         in ``self``.
 
         The weight distribution of all Golay codes are known, and are thus returned
@@ -261,11 +262,11 @@ class GolayCode(AbstractLinearCode):
             True
 
             sage: C = codes.GolayCode(GF(3))
-            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()
+            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()        # needs sage.libs.gap
             True
 
             sage: C = codes.GolayCode(GF(3), extended=False)
-            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()
+            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()        # needs sage.libs.gap
             True
         """
         n = self.length()
@@ -281,7 +282,7 @@ class GolayCode(AbstractLinearCode):
 
     def generator_matrix(self):
         r"""
-        Return a generator matrix of ``self``
+        Return a generator matrix of ``self``.
 
         Generator matrices of all Golay codes are known, and are thus returned
         by this method without performing any computation

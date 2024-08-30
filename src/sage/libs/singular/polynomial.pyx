@@ -57,10 +57,10 @@ cdef int singular_polynomial_add(poly **ret, poly *p, poly *q, ring *r) noexcept
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``q`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -84,10 +84,10 @@ cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r) noexcept
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``q`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -111,10 +111,10 @@ cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r) n
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``n`` - a Sage coefficient
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``n`` -- a Sage coefficient
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -139,14 +139,13 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``r`` - a Singular ring
-    - ``args`` - a list/tuple of elements which can be converted to
-      Singular polynomials using the ``(get_element)`` function
-      provided.
-    - ``(*get_element)`` - a function to turn a Sage element into a
-      Singular element.
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
+    - ``args`` -- list/tuple of elements which can be converted to Singular
+      polynomials using the ``(get_element)`` function provided
+    - ``(*get_element)`` -- a function to turn a Sage element into a
+      Singular element
 
     EXAMPLES::
 
@@ -178,7 +177,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
 
     Loop (at most 30 times) until we have 6 consecutive zeros when
     calling ``leak(10000)``. Depending on the operating system, it is
-    possible to have several non-zero leak values in the beginning, but
+    possible to have several nonzero leak values in the beginning, but
     after a while we should get only zeros. The fact that we require 6
     zeros also means that Singular's pre-allocated buckets should not
     be sufficient if there really would be a memory leak. ::
@@ -238,9 +237,9 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
 
     INPUT:
 
-    - ``p`` - a Singular polynomial
-    - ``q`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -301,10 +300,10 @@ cdef int singular_polynomial_mul(poly** ret, poly *p, poly *q, ring *r) except -
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``q`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -332,10 +331,10 @@ cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) ex
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``q`` - a constant Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a constant Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -366,10 +365,10 @@ cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``exp`` - integer
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``exp`` -- integer
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -408,9 +407,9 @@ cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r) noexcept:
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -432,8 +431,8 @@ cdef object singular_polynomial_str(poly *p, ring *r):
 
     INPUT:
 
-    - ``p`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``p`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -457,8 +456,8 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
 
     INPUT:
 
-    - ``p`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``p`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -590,8 +589,8 @@ cdef int singular_polynomial_length_bounded(poly *p, int bound) noexcept:
 
     INPUT:
 
-    - ``p`` - a Singular polynomial
-    - ``bound`` - an integer > 0
+    - ``p`` -- a Singular polynomial
+    - ``bound`` -- integer > 0
     """
     cdef int count = 0
     while p != NULL and count < bound:
@@ -604,8 +603,8 @@ cdef int singular_vector_maximal_component(poly *v, ring *r) except -1:
     returns the maximal module component of the vector ``v``.
     INPUT:
 
-    - ``v`` - a polynomial/vector
-    - ``r`` - a ring
+    - ``v`` -- a polynomial/vector
+    - ``r`` -- a ring
     """
     cdef int res=0
     while v!=NULL:
@@ -619,10 +618,10 @@ cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r
 
     INPUT:
 
-    - ``p`` - a polynomial
-    - ``var_index`` - an integer < ngens (zero based indexing)
-    - ``value`` - a polynomial
-    - ``r`` - a ring
+    - ``p`` -- a polynomial
+    - ``var_index`` -- integer < ngens (zero based indexing)
+    - ``value`` -- a polynomial
+    - ``r`` -- a ring
     """
 
     if r != currRing:

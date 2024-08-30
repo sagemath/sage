@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 """
 Temporary file handling
 
@@ -40,7 +41,7 @@ atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 # temporary directory
 #################################################################
 
-def tmp_dir(name="dir_", ext=""):
+def tmp_dir(name='dir_', ext=''):
     r"""
     Create and return a temporary directory in
     ``$HOME/.sage/temp/hostname/pid/``
@@ -49,9 +50,9 @@ def tmp_dir(name="dir_", ext=""):
 
     INPUT:
 
-    - ``name`` -- (default: ``"dir_"``) A prefix for the directory name.
+    - ``name`` -- (default: ``'dir_'``) a prefix for the directory name
 
-    - ``ext`` -- (default: ``""``) A suffix for the directory name.
+    - ``ext`` -- (default: ``''``) a suffix for the directory name
 
     OUTPUT:
 
@@ -83,7 +84,7 @@ def tmp_dir(name="dir_", ext=""):
 # temporary filename
 #################################################################
 
-def tmp_filename(name="tmp_", ext=""):
+def tmp_filename(name='tmp_', ext=''):
     r"""
     Create and return a temporary file in
     ``$HOME/.sage/temp/hostname/pid/``
@@ -93,22 +94,20 @@ def tmp_filename(name="tmp_", ext=""):
     .. warning::
 
         If you need a particular file extension always use
-        ``tmp_filename(ext=".foo")``, this will ensure that the file
+        ``tmp_filename(ext='.foo')``, this will ensure that the file
         does not yet exist. If you were to use
         ``tmp_filename()+".foo"``, then you might overwrite an
         existing file!
 
     INPUT:
 
-    - ``name`` -- (default: ``"tmp_"``) A prefix for the file name.
+    - ``name`` -- (default: ``'tmp_'``) a prefix for the file name
 
-    - ``ext`` -- (default: ``""``) A suffix for the file name. If you
+    - ``ext`` -- (default: ``''``) a suffix for the file name. If you
       want a filename extension in the usual sense, this should start
       with a dot.
 
-    OUTPUT:
-
-    The absolute path of the temporary file created.
+    OUTPUT: the absolute path of the temporary file created
 
     EXAMPLES::
 
@@ -134,7 +133,7 @@ def tmp_filename(name="tmp_", ext=""):
 #################################################################
 # write to a temporary file and move it in place
 #################################################################
-class atomic_write():
+class atomic_write:
     """
     Write to a given file using a temporary file and then rename it
     to the target file. This renaming should be atomic on modern
@@ -149,10 +148,10 @@ class atomic_write():
 
     INPUT:
 
-    - ``target_filename`` -- the name of the file to be written.
-      Normally, the contents of this file will be overwritten.
+    - ``target_filename`` -- the name of the file to be written
+      Normally, the contents of this file will be overwritten
 
-    - ``append`` -- (boolean, default: False) if True and
+    - ``append`` -- boolean (default: ``False``); if ``True`` and
       ``target_filename`` is an existing file, then copy the current
       contents of ``target_filename`` to the temporary file when
       entering the ``with`` statement. Otherwise, the temporary file is
@@ -164,12 +163,13 @@ class atomic_write():
       mode bits of the file were changed manually). (Not to be confused with
       the file opening mode.)
 
-    - ``binary`` -- (boolean, default: True on Python 2, False on Python 3) the
-      underlying file is opened in binary mode.  If False then it is opened in
-      text mode and an encoding with which to write the file may be supplied.
+    - ``binary`` -- boolean (default: ``True`` on Python 2, ``False`` on Python
+      3); the underlying file is opened in binary mode.  If ``False`` then it is
+      opened in text mode and an encoding with which to write the file may be
+      supplied.
 
     - ``**kwargs`` -- additional keyword arguments passed to the underlying
-      `io.open` call.
+      `io.open` call
 
     EXAMPLES::
 
@@ -334,7 +334,7 @@ class atomic_write():
         If ``self.append``, then copy the current contents of
         ``self.target`` to the temporary file.
 
-        OUTPUT: a file returned by :func:`tempfile.NamedTemporaryFile`.
+        OUTPUT: a file returned by :func:`tempfile.NamedTemporaryFile`
 
         TESTS::
 
@@ -413,7 +413,9 @@ class atomic_write():
 #################################################################
 # write to a temporary directory and move it in place
 #################################################################
-class atomic_dir():
+
+
+class atomic_dir:
     """
     Write to a given directory using a temporary directory and then rename it
     to the target directory. This is for creating a directory whose contents
@@ -426,8 +428,8 @@ class atomic_dir():
 
     INPUT:
 
-    - ``target_directory`` -- the name of the directory to be written.
-      If it exists then the previous contents will be kept.
+    - ``target_directory`` -- the name of the directory to be written;
+      if it exists then the previous contents will be kept
 
     EXAMPLES::
 
@@ -476,7 +478,7 @@ class atomic_dir():
         Create and return a temporary directory in ``self.tmpdir`` (normally
         the same directory as the target file).
 
-        OUTPUT: a directory returned by :func:`tempfile.TemporaryDirectory`.
+        OUTPUT: a directory returned by :func:`tempfile.TemporaryDirectory`
 
         TESTS::
 
@@ -524,6 +526,8 @@ class atomic_dir():
 
 
 _spyx_tmp = None
+
+
 def spyx_tmp():
     r"""
     The temporary directory used to store pyx files.

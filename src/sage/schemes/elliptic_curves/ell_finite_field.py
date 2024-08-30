@@ -95,8 +95,8 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``*args, **kwds`` -- all other options are passed
-          to the circle graphing primitive.
+        - ``*args``, ``**kwds`` -- all other options are passed
+          to the circle graphing primitive
 
         EXAMPLES::
 
@@ -240,11 +240,9 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``n`` (int) -- a positive integer
+        - ``n`` -- positive integer
 
-        OUTPUT:
-
-        If `n=1`, returns the cardinality of the curve over its base field.
+        OUTPUT: if `n=1`, returns the cardinality of the curve over its base field
 
         If `n>1`, returns a list `[c_1, c_2, ..., c_n]` where `c_d` is
         the cardinality of the curve over the extension of degree `d`
@@ -296,9 +294,9 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         Choose the point at infinity with probability `1/(2q + 1)`.
         Otherwise, take a random element from the field as x-coordinate
-        and compute the possible y-coordinates. Return the i'th
+        and compute the possible y-coordinates. Return the i-th
         possible y-coordinate, where i is randomly chosen to be 0 or 1.
-        If the i'th y-coordinate does not exist (either there is no
+        If the i-th y-coordinate does not exist (either there is no
         point with the given x-coordinate or we hit a 2-torsion point
         with i == 1), try again.
 
@@ -431,24 +429,24 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         - ``algorithm`` -- (optional) string:
 
-          - ``'pari'`` -- use the PARI C-library function ``ellcard``.
+          - ``'pari'`` -- use the PARI C-library function ``ellcard``
 
           - ``'bsgs'`` -- use the baby-step giant-step method as
              implemented in Sage, with the Cremona-Sutherland version
-             of Mestre's trick.
+             of Mestre's trick
 
-          - ``'exhaustive'`` -- naive point counting.
+          - ``'exhaustive'`` -- naive point counting
 
           - ``'subfield'`` -- reduce to a smaller field, provided that
-            the j-invariant lies in a subfield.
+            the j-invariant lies in a subfield
 
           - ``'all'`` -- compute cardinality with both ``'pari'`` and
             ``'bsgs'``; return result if they agree or raise a
-            ``AssertionError`` if they do not
+            :exc:`AssertionError` if they do not
 
-        - ``extension_degree`` -- an integer `d` (default: 1): if the
+        - ``extension_degree`` -- integer `d` (default: 1); if the
           base field is `\GF{q}`, return the cardinality of ``self``
-          over the extension `\GF{q^d}` of degree `d`.
+          over the extension `\GF{q^d}` of degree `d`
 
         OUTPUT:
 
@@ -503,12 +501,12 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(11^100)
             sage: E1 = EllipticCurve(k, [3,3])
-            sage: N1 = E1.cardinality(algorithm="subfield"); N1
+            sage: N1 = E1.cardinality(algorithm='subfield'); N1
             137806123398222701841183371720896367762643312000384671846835266941791510341065565176497846502742959856128
             sage: E1.cardinality_pari() == N1
             True
             sage: E2 = E1.quadratic_twist()
-            sage: N2 = E2.cardinality(algorithm="subfield"); N2
+            sage: N2 = E2.cardinality(algorithm='subfield'); N2
             137806123398222701841183371720896367762643312000384656816094284101308193849980588362304472492174093035876
             sage: E2.cardinality_pari() == N2
             True
@@ -823,7 +821,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         the same each time, although they should remain fixed within a
         single run of Sage unless :meth:`abelian_group` is called.)
 
-        OUTPUT: a tuple of points on the curve.
+        OUTPUT: a tuple of points on the curve
 
         - if the group is trivial: an empty tuple.
 
@@ -928,7 +926,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
     def __getitem__(self, n):
         """
-        Return the n'th point in self's __points list.
+        Return the n-th point in ``self``'s ``__points`` list.
 
         This enables users to iterate over the curve's point set.
 
@@ -1163,28 +1161,27 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
     def is_isogenous(self, other, field=None, proof=True):
         """
-        Return whether or not self is isogenous to other.
+        Return whether or not ``self`` is isogenous to ``other``.
 
         INPUT:
 
-        - ``other`` -- another elliptic curve.
+        - ``other`` -- another elliptic curve
 
-        - ``field`` (default None) -- a field containing the base
+        - ``field`` -- (default: ``None``) a field containing the base
           fields of the two elliptic curves into which the two curves
           may be extended to test if they are isogenous over this
           field. By default is_isogenous will not try to find this
           field unless one of the curves can be extended into the base
-          field of the other, in which case it will test over the
+          field of the ``other``, in which case it will test over the
           larger base field.
 
-        - ``proof`` (default True) -- this parameter is here only to
-          be consistent with versions for other types of elliptic
-          curves.
+        - ``proof`` -- boolean (default: ``True``); this parameter is here only
+          to be consistent with versions for other types of elliptic curves
 
         OUTPUT:
 
-        (bool) True if there is an isogeny from curve ``self`` to
-        curve ``other`` defined over ``field``.
+        boolean; ``True`` if there is an isogeny from curve ``self`` to
+        curve ``other`` defined over ``field``
 
         EXAMPLES::
 
@@ -1252,8 +1249,8 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E1.is_isogenous(E7,GF(13^30,'j'))
             False
         """
-        from .ell_generic import is_EllipticCurve
-        if not is_EllipticCurve(other):
+        from .ell_generic import EllipticCurve_generic
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True
@@ -1286,13 +1283,13 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
     def is_supersingular(self, proof=True):
         r"""
-        Return True if this elliptic curve is supersingular, else False.
+        Return ``True`` if this elliptic curve is supersingular, else ``False``.
 
         INPUT:
 
-        - ``proof`` (boolean, default True) -- If True, returns a
-          proved result.  If False, then a return value of False is
-          certain but a return value of True may be based on a
+        - ``proof``-- boolean (default: ``True``); if ``True``, returns a
+          proved result.  If ``False``, then a return value of ``False`` is
+          certain but a return value of ``True`` may be based on a
           probabilistic test.  See the documentation of the function
           :meth:`is_j_supersingular` for more details.
 
@@ -1320,13 +1317,13 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
     def is_ordinary(self, proof=True):
         r"""
-        Return True if this elliptic curve is ordinary, else False.
+        Return ``True`` if this elliptic curve is ordinary, else ``False``.
 
         INPUT:
 
-        - ``proof`` (boolean, default True) -- If True, returns a
-          proved result.  If False, then a return value of True is
-          certain but a return value of False may be based on a
+        - ``proof``-- boolean (default: ``True``); if ``True``, returns a
+          proved result.  If ``False``, then a return value of ``True`` is
+          certain but a return value of ``False`` may be based on a
           probabilistic test.  See the documentation of the function
           :meth:`is_j_supersingular` for more details.
 
@@ -1353,19 +1350,16 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``value`` -- integer in the Hasse-Weil range for this
-          curve.
+        - ``value`` -- integer in the Hasse-Weil range for this curve
 
-        - ``check`` (boolean, default: ``True``) -- whether or
-          not to run sanity checks on the input.
+        - ``check``-- boolean (default: ``True``); whether or
+          not to run sanity checks on the input
 
-        - ``num_checks`` (integer, default: 8) -- if ``check`` is
+        - ``num_checks``-- integer (default: 8); if ``check`` is
           ``True``, the number of times to check whether ``value``
-          times a random point on this curve equals the identity.
+          times a random point on this curve equals the identity
 
-        OUTPUT:
-
-        None
+        OUTPUT: none
 
         EXAMPLES:
 
@@ -1538,7 +1532,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         INPUT:
 
         - ``ell`` -- a prime number
-        - ``e`` -- a non-negative integer, the ell-adic valuation of
+        - ``e`` -- nonnegative integer, the `\ell`-adic valuation of
           the conductor the Frobenius order
 
 
@@ -1565,7 +1559,6 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             -1 * 2^10 * 11 * 61
             sage: E.height_above_floor(2,8)
             5
-
         """
         if self.is_supersingular():
             raise ValueError("{} is not ordinary".format(self))
@@ -1606,13 +1599,13 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``h`` -- a positive integer
+        - ``h`` -- positive integer
 
         OUTPUT:
 
-        (integer) The discriminant of the endomorphism ring `\text{End}(E)`, if
+        integer; the discriminant of the endomorphism ring `\text{End}(E)`, if
         this has class number ``h``.  If `\text{End}(E)` does not have class
-        number ``h``, a ``ValueError`` is raised.
+        number ``h``, a :exc:`ValueError` is raised.
 
         ALGORITHM:
 
@@ -1622,7 +1615,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         must be a multiple of `h_0`, compute the possible conductors,
         using :meth:`height_above_floor` for each prime `\ell`
         dividing the quotient `h/h_0`.  If exactly one conductor `f`
-        remains, return `f^2D_0`, otherwise raise a ``ValueError``;
+        remains, return `f^2D_0`, otherwise raise a :exc:`ValueError`;
         this can onlyhappen when the input value of `h` was incorrect.
 
         .. NOTE::
@@ -1644,7 +1637,6 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: H = hilbert_class_polynomial(-671)
             sage: H(E.j_invariant()) == 0 and H.degree()==30
             True
-
         """
         F = self.base_field()
         if not F.is_finite():
@@ -2266,9 +2258,9 @@ def supersingular_j_polynomial(p, use_cache=True):
 
     INPUT:
 
-    - `p` (integer) -- a prime number.
+    - ``p`` -- integer; a prime number
 
-    - ``use_cache`` (boolean, default ``True``) -- use cached coefficients if they exist
+    - ``use_cache`` -- boolean (default: ``True``); use cached coefficients if they exist
 
     ALGORITHM:
 
@@ -2342,20 +2334,18 @@ def supersingular_j_polynomial(p, use_cache=True):
 
 def is_j_supersingular(j, proof=True):
     r"""
-    Return True if `j` is a supersingular `j`-invariant.
+    Return ``True`` if `j` is a supersingular `j`-invariant.
 
     INPUT:
 
-    - ``j`` (finite field element) -- an element of a finite field
+    - ``j`` -- finite field element
 
-    - ``proof`` (boolean, default True) -- If True, returns a proved
-      result.  If False, then a return value of False is certain but a
-      return value of True may be based on a probabilistic test.  See
+    - ``proof``-- boolean (default: ``True``); if ``True``, returns a proved
+      result.  If ``False``, then a return value of ``False`` is certain but a
+      return value of ``True`` may be based on a probabilistic test.  See
       the ALGORITHM section below for more details.
 
-    OUTPUT:
-
-    (boolean) True if `j` is supersingular, else False.
+    OUTPUT: boolean; ``True`` if `j` is supersingular, else ``False``
 
     ALGORITHM:
 
@@ -2366,9 +2356,9 @@ def is_j_supersingular(j, proof=True):
     `j=1728`, the curve is supersingular if and only if `p=3` or
     `p\equiv2\pmod{3}`.  Next, if the base field is the prime field
     `{\rm GF}(p)`, we check that `(p+1)P=0` for several random points
-    `P`, returning False if any fail: supersingular curves over `{\rm
+    `P`, returning ``False`` if any fail: supersingular curves over `{\rm
     GF}(p)` have cardinality `p+1`.  If Proof is false we now return
-    True.  Otherwise we compute the cardinality and return True if and
+    ``True``.  Otherwise we compute the cardinality and return ``True`` if and
     only if it is divisible by `p`.
 
     EXAMPLES::
@@ -2498,9 +2488,9 @@ def special_supersingular_curve(F, *, endomorphism=False):
 
     - ``F`` -- finite field `\mathbb F_{p^r}`;
 
-    - ``endomorphism`` -- boolean (optional, default ``False``):
-      When set to ``True``, it is required that `2 \mid r`, and
-      the function then additionally returns `\vartheta`.
+    - ``endomorphism`` -- boolean (default: ``False``); when set to ``True``,
+      it is required that `2 \mid r`, and the function then additionally
+      returns `\vartheta`
 
     EXAMPLES::
 

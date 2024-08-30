@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Singleton categories
 """
@@ -23,7 +24,7 @@ from cpython.type cimport PyType_IsSubtype
 
 cdef class Category_contains_method_by_parent_class:
     """
-    Returns whether ``x`` is an object in this category.
+    Return whether ``x`` is an object in this category.
 
     More specifically, returns ``True`` if and only if ``x`` has a
     category which is a subcategory of this one.
@@ -84,7 +85,7 @@ cdef class Category_contains_method_by_parent_class:
 
 class Category_singleton(Category):
     """
-    A base class for implementing singleton category
+    A base class for implementing singleton category.
 
     A *singleton* category is a category whose class takes no
     parameters like ``Fields()`` or ``Rings()``. See also the
@@ -217,14 +218,15 @@ class Category_singleton(Category):
              <class 'sage.categories.category_singleton.Category_singleton'>,
              <class 'sage.categories.category.Category'>,
              <class 'sage.structure.unique_representation.UniqueRepresentation'>,
-             <class 'sage.structure.unique_representation.CachedRepresentation'>,
              <class 'sage.misc.fast_methods.WithEqualityById'>,
+             <class 'sage.structure.unique_representation.CachedRepresentation'>,
+             <class 'sage.structure.unique_representation.WithPicklingByInitArgs'>,
              <class 'sage.structure.sage_object.SageObject'>,
              <class '__main__.R.subcategory_class'>,
              <class 'sage.categories.sets_cat.Sets.subcategory_class'>,
              <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.subcategory_class'>,
              <class 'sage.categories.objects.Objects.subcategory_class'>,
-             <... 'object'>]
+             <class 'object'>]
             sage: R() is R()
             True
             sage: R() is R().__class__()
@@ -258,7 +260,6 @@ class Category_singleton(Category):
             False
 
         Oh well; it's not really relevant for those tests.
-
     """
 
     # That is just an optimized constant cached_method

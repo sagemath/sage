@@ -29,7 +29,7 @@ EXAMPLES: We illustrate each of the calculus functional functions.
 from sage.structure.element import Expression
 
 
-def simplify(f, algorithm="maxima", **kwds):
+def simplify(f, algorithm='maxima', **kwds):
     r"""
     Simplify the expression `f`.
 
@@ -53,7 +53,7 @@ def simplify(f, algorithm="maxima", **kwds):
         sage: ex = 1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
         sage: simplify(ex)
         1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
-        sage: simplify(ex, algorithm="giac")
+        sage: simplify(ex, algorithm='giac')
         I*sqrt(x^2 - 1)
     """
     try:
@@ -158,7 +158,6 @@ def derivative(f, *args, **kwds):
         2-form da on the 2-dimensional differentiable manifold M
         sage: derivative(a).display()
         da = 2 dx∧dy
-
     """
     try:
         return f.derivative(*args, **kwds)
@@ -215,8 +214,8 @@ def integral(f, *args, **kwds):
     symbolically::
 
         sage: f(x) = 1/(sqrt(2*pi)) * e^(-x^2/2)
-        sage: P = plot(f, -4, 4, hue=0.8, thickness=2)
-        sage: P.show(ymin=0, ymax=0.4)
+        sage: P = plot(f, -4, 4, hue=0.8, thickness=2)                                  # needs sage.plot
+        sage: P.show(ymin=0, ymax=0.4)                                                  # needs sage.plot
         sage: numerical_integral(f, -4, 4)                    # random output
         (0.99993665751633376, 1.1101527003413533e-14)
         sage: integrate(f, x)
@@ -336,16 +335,16 @@ def limit(f, dir=None, taylor=False, **argv):
 
     INPUT:
 
-    - ``dir`` - (default: None); dir may have the value
-       'plus' (or 'above') for a limit from above, 'minus' (or 'below')
-       for a limit from below, or may be omitted (implying a two-sided
-       limit is to be computed).
+    - ``dir`` -- (default: ``None``) dir may have the value ``'plus'`` (or
+      ``'above'``) for a limit from above, ``'minus'`` (or ``'below'``) for a
+      limit from below, or may be omitted (implying a two-sided limit is to be
+      computed).
 
-    - ``taylor`` - (default: False); if True, use Taylor
-       series, which allows more limits to be computed (but may also
-       crash in some obscure cases due to bugs in Maxima).
+    - ``taylor`` -- (default: ``False``) if ``True``, use Taylor
+      series, which allows more limits to be computed (but may also
+      crash in some obscure cases due to bugs in Maxima).
 
-    - ``\*\*argv`` - 1 named parameter
+    - ``\*\*argv`` -- 1 named parameter
 
     ALIAS: You can also use lim instead of limit.
 
@@ -381,18 +380,19 @@ lim = limit
 
 def taylor(f, *args):
     """
-    Expands self in a truncated Taylor or Laurent series in the
+    Expand ``self`` in a truncated Taylor or Laurent series in the
     variable `v` around the point `a`, containing terms
     through `(x - a)^n`. Functions in more variables are also
     supported.
 
     INPUT:
 
-    - ``*args`` - the following notation is supported
+    - ``*args`` -- the following notation is supported
 
-    - ``x, a, n`` - variable, point, degree
+    - ``x``, ``a``, ``n`` -- variable, point, degree
 
-    - ``(x, a), (y, b), ..., n`` - variables with points, degree of polynomial
+    - ``(x, a)``, ``(y, b)``, ..., ``n`` -- variables with points, degree of
+      polynomial
 
     EXAMPLES::
 

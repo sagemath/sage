@@ -25,7 +25,6 @@ on:
            "ubuntu-lunar",
            "ubuntu-mantic",
            "ubuntu-noble",
-           "debian-buster-gcc_spkg",
            "debian-bullseye",
            "debian-bookworm",
            "debian-trixie",
@@ -48,8 +47,6 @@ on:
            "fedora-38",
            "fedora-39",
            "fedora-40",
-           "centos-7-devtoolset-gcc_11",
-           "centos-stream-8-python3.9",
            "centos-stream-9-python3.9",
            "almalinux-8-python3.9",
            "almalinux-9-python3.11",
@@ -183,8 +180,10 @@ jobs:
           sudo apt-get clean
           df -h
       - name: Update Sage packages from upstream artifact
+        # Handle both the old and new location of write-dockerfile.sh,
+        # because docker.yml is a reusable workflow.
         run: |
-          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore && echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - build/bin/write-dockerfile.sh && git diff)
+          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore; for a in build/bin/write-dockerfile.sh .ci/write-dockerfile.sh; do if [ -r $a ]; then echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - $a; fi; done; git diff)
         if: inputs.upstream_artifact
 
       - name: Try to login to ghcr.io

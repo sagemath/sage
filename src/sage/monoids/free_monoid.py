@@ -44,6 +44,10 @@ def is_FreeMonoid(x):
 
         sage: from sage.monoids.free_monoid import is_FreeMonoid
         sage: is_FreeMonoid(5)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeMonoid is deprecated;
+        use 'isinstance(..., (FreeMonoid, IndexedFreeMonoid))' instead
+        See https://github.com/sagemath/sage/issues/37897 for details.
         False
         sage: is_FreeMonoid(FreeMonoid(7,'a'))
         True
@@ -56,6 +60,8 @@ def is_FreeMonoid(x):
         sage: is_FreeMonoid(FreeAbelianMonoid(index_set=ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37897, "the function is_FreeMonoid is deprecated; use 'isinstance(..., (FreeMonoid, IndexedFreeMonoid))' instead")
     if isinstance(x, FreeMonoid):
         return True
     from sage.monoids.indexed_free_monoid import IndexedFreeMonoid
@@ -79,12 +85,10 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
     - ``names`` -- names of generators
 
-    - ``commutative`` -- (default: ``False``) whether the free
+    - ``commutative`` -- boolean (default: ``False``); whether the free
       monoid is commutative or not
 
-    OUTPUT:
-
-    A free monoid.
+    OUTPUT: a free monoid
 
     EXAMPLES::
 

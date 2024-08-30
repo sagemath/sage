@@ -70,7 +70,7 @@ from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.power_series_ring_element import is_PowerSeries
+from sage.rings.power_series_ring_element import PowerSeries
 from sage.rings.rational_field import QQ
 from sage.categories.rings import Rings
 
@@ -87,18 +87,23 @@ WARN = False
 
 def is_ModularFormsSpace(x):
     r"""
-    Return True if x is a ```ModularFormsSpace```.
+    Return ``True`` if x is a ``ModularFormsSpace``.
 
     EXAMPLES::
 
         sage: from sage.modular.modform.space import is_ModularFormsSpace
         sage: is_ModularFormsSpace(ModularForms(11,2))
+        doctest:warning...
+        DeprecationWarning: The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_ModularFormsSpace(CuspForms(11,2))
         True
         sage: is_ModularFormsSpace(3)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.")
     return isinstance(x, ModularFormsSpace)
 
 
@@ -140,7 +145,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         if WARN:
             print("Modular forms -- under development -- do not trust yet.")
             WARN = False
-        if not arithgroup.is_CongruenceSubgroup(group):
+        if not isinstance(group, arithgroup.CongruenceSubgroupBase):
             raise TypeError("group (=%s) must be a congruence subgroup" % group)
         weight = Integer(weight)
         if not ((character is None) or isinstance(character, dirichlet.DirichletCharacter)):
@@ -158,11 +163,9 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         INPUT:
 
+        - ``new_prec`` -- positive integer (default: ``None``)
 
-        -  ``new_prec`` - positive integer (default: None)
-
-
-        OUTPUT: if new_prec is None, returns the current precision.
+        OUTPUT: if new_prec is None, returns the current precision
 
         EXAMPLES::
 
@@ -190,9 +193,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         INPUT:
 
-
-        -  ``new_prec`` - positive integer
-
+        - ``new_prec`` -- positive integer
 
         EXAMPLES::
 
@@ -341,11 +342,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def has_character(self):
         r"""
-        Return True if this space of modular forms has a specific
+        Return ``True`` if this space of modular forms has a specific
         character.
 
-        This is True exactly when the character() function does not return
-        None.
+        This is ``True`` exactly when the ``character()`` function does not
+        return ``None``.
 
         EXAMPLES: A space for `\Gamma_0(N)` has trivial character,
         hence has a character.
@@ -369,7 +370,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def is_ambient(self):
         """
-        Return True if this an ambient space of modular forms.
+        Return ``True`` if this an ambient space of modular forms.
 
         EXAMPLES::
 
@@ -412,7 +413,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     @cached_method
     def echelon_form(self):
         r"""
-        Return a space of modular forms isomorphic to self but with basis
+        Return a space of modular forms isomorphic to ``self`` but with basis
         of `q`-expansions in reduced echelon form.
 
         This is useful, e.g., the default basis for spaces of modular forms
@@ -485,7 +486,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     @cached_method
     def echelon_basis(self):
         """
-        Return a basis for self in reduced echelon form. This means that if
+        Return a basis for ``self`` in reduced echelon form. This means that if
         we view the `q`-expansions of the basis as defining rows of
         a matrix (with infinitely many columns), then this matrix is in
         reduced echelon form.
@@ -614,7 +615,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     @cached_method
     def _q_expansion_module(self):
         """
-        Return module spanned by coefficients of q-expansions to sufficient
+        Return module spanned by coefficients of `q`-expansions to sufficient
         precision to determine elements of this space.
 
         EXAMPLES::
@@ -637,20 +638,20 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def q_expansion_basis(self, prec=None):
         """
-        Return a sequence of q-expansions for the basis of this space
+        Return a sequence of `q`-expansions for the basis of this space
         computed to the given input precision.
 
         INPUT:
 
-        - ``prec`` - integer (>=0) or None
+        - ``prec`` -- integer (>=0) or None
 
         If prec is None, the prec is computed to be *at least* large
-        enough so that each q-expansion determines the form as an element
+        enough so that each `q`-expansion determines the form as an element
         of this space.
 
-        .. note::
+        .. NOTE::
 
-           In fact, the q-expansion basis is always computed to
+           In fact, the `q`-expansion basis is always computed to
            *at least* ``self.prec()``.
 
         EXAMPLES::
@@ -744,7 +745,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     def q_echelon_basis(self, prec=None):
         r"""
         Return the echelon form of the basis of `q`-expansions of
-        self up to precision prec.
+        ``self`` up to precision ``prec``.
 
         The `q`-expansions are power series (not actual modular
         forms). The number of `q`-expansions returned equals the
@@ -797,12 +798,12 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     def q_integral_basis(self, prec=None):
         r"""
         Return a `\ZZ`-reduced echelon basis of
-        `q`-expansions for self.
+        `q`-expansions for ``self``.
 
         The `q`-expansions are power series with coefficients in
         `\ZZ`; they are *not* actual modular forms.
 
-        The base ring of self must be `\QQ`. The number of
+        The base ring of ``self`` must be `\QQ`. The number of
         `q`-expansions returned equals the dimension.
 
         EXAMPLES::
@@ -847,7 +848,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     @cached_method
     def _q_expansion_ring(self):
         """
-        Returns the parent for q-expansions of modular forms in self.
+        Return the parent for `q`-expansions of modular forms in ``self``.
 
         EXAMPLES::
 
@@ -860,7 +861,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     @cached_method
     def _q_expansion_zero(self):
         """
-        Returns the q-expansion of the modular form 0.
+        Return the `q`-expansion of the modular form 0.
 
         EXAMPLES::
 
@@ -874,8 +875,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def _q_expansion(self, element, prec):
         """
-        Take an element of self (specified as a list, tuple, or vector),
-        and return the corresponding q-expansion.
+        Take an element of ``self`` (specified as a list, tuple, or vector),
+        and return the corresponding `q`-expansion.
 
         EXAMPLES::
 
@@ -894,7 +895,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def __add__(self, right):
         """
-        If self and right live inside the same ambient module, return the
+        If ``self`` and ``right`` live inside the same ambient module, return the
         sum of the two spaces (as modules).
 
         EXAMPLES::
@@ -924,15 +925,13 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     def _has_natural_inclusion_map_to(self, right):
         """
         Return true if there is a natural inclusion map from modular forms
-        in self to modular forms in right.
+        in ``self`` to modular forms in right.
 
         INPUT:
 
+        - ``self``, ``right`` -- spaces of modular forms
 
-        -  ``self, right`` - spaces of modular forms
-
-
-        OUTPUT: True if self embeds in right, and False otherwise.
+        OUTPUT: ``True`` if ``self`` embeds in ``right``, ``False`` otherwise
 
         TODO: Barring a few trivial cases, this only works in the case that
         right.is_ambient() returns True.
@@ -992,11 +991,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def _element_constructor_(self, x, check=True):
         """
-        Try to coerce x into self. If x is a vector of length
-        self.dimension(), interpret it as a list of coefficients for
-        self.basis() and return that linear combination. If x is a power
-        series, it tries to determine whether or not x lives in self. If
-        so, it returns x as an element of M, and throws an error if not.
+        Try to coerce ``x`` into ``self``. If ``x`` is a vector of length
+        ``self.dimension()``, interpret it as a list of coefficients for
+        ``self.basis()`` and return that linear combination. If ``x`` is a power
+        series, it tries to determine whether or not ``x`` lives in ``self``. If
+        so, it returns ``x`` as an element of M, and throws an error if not.
 
         EXAMPLES::
 
@@ -1061,7 +1060,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: ModularForms(1, 12)(R(1))
             Traceback (most recent call last):
             ...
-            TypeError: unable to create modular form from exact non-zero polynomial
+            TypeError: unable to create modular form from exact nonzero polynomial
 
             sage: E = ModularForms(3,12).cuspidal_subspace()
             sage: f = E.gens()[0]
@@ -1116,12 +1115,12 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             return self(x.q_expansion(self._q_expansion_module().degree()))
 
-        elif is_PowerSeries(x):
+        elif isinstance(x, PowerSeries):
             if x.prec() == PlusInfinity():
                 if x == 0:
                     return self.element_class(self, self.free_module().zero())
                 else:
-                    raise TypeError("unable to create modular form from exact non-zero polynomial")
+                    raise TypeError("unable to create modular form from exact nonzero polynomial")
             W = self._q_expansion_module()
             if W.degree() <= x.prec():
                 try:
@@ -1147,7 +1146,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         - ``other`` -- ``ModularFormSpace`` or a ``ModularFormRing``
 
-        OUTPUT: If ``self`` and ``other`` have the same groups and base rings, then this method returns
+        OUTPUT: if ``self`` and ``other`` have the same groups and base rings, then this method returns
         ``self`` if the weights of the two spaces are equal, otherwise it returns a ``ModularFormsRing``.
 
 
@@ -1179,7 +1178,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def __richcmp__(self, x, op):
         """
-        Compare self and x.
+        Compare ``self`` and ``x``.
 
         For spaces of modular forms, we order first by signature, then by
         dimension, and then by the ordering on the underlying free
@@ -1222,7 +1221,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def span_of_basis(self, B):
         """
-        Take a set B of forms, and return the subspace of self with B as a
+        Take a set B of forms, and return the subspace of ``self`` with B as a
         basis.
 
         EXAMPLES::
@@ -1257,7 +1256,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def __submodule_from_subset_of_basis(self, x):
         """
-        Return the submodule of self generated by the elements of x.
+        Return the submodule of ``self`` generated by the elements of x.
 
         EXAMPLES::
 
@@ -1273,7 +1272,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def _compute_hecke_matrix_prime(self, p, prec=None):
         """
-        Compute the matrix of the Hecke operator T_p acting on self.
+        Compute the matrix of the Hecke operator `T_p` acting on ``self``.
 
         EXAMPLES::
 
@@ -1316,7 +1315,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def _compute_hecke_matrix(self, n):
         """
-        Compute the matrix of the Hecke operator T_n acting on self.
+        Compute the matrix of the Hecke operator `T_n` acting on ``self``.
 
         EXAMPLES::
 
@@ -1373,7 +1372,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     @cached_method
     def basis(self):
         """
-        Return a basis for self.
+        Return a basis for ``self``.
 
         EXAMPLES::
 
@@ -1390,7 +1389,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def gen(self, n):
         """
-        Return the nth generator of self.
+        Return the `n`-th generator of ``self``.
 
         EXAMPLES::
 
@@ -1428,7 +1427,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def gens(self):
         """
-        Return a complete set of generators for self.
+        Return a complete set of generators for ``self``.
 
         EXAMPLES::
 
@@ -1447,10 +1446,10 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     def sturm_bound(self, M=None):
         r"""
         For a space M of modular forms, this function returns an integer B
-        such that two modular forms in either self or M are equal if and
-        only if their q-expansions are equal to precision B (note that this
+        such that two modular forms in either ``self`` or M are equal if and
+        only if their `q`-expansions are equal to precision B (note that this
         is 1+ the usual Sturm bound, since `O(q^\mathrm{prec})` has
-        precision prec). If M is none, then M is set equal to self.
+        precision ``prec``). If M is none, then M is set equal to ``self``.
 
         EXAMPLES::
 
@@ -1503,8 +1502,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             raise NotImplementedError
         if self.__sturm_bound is None:
             G = self.group()
-            from sage.modular.arithgroup.all import is_Gamma1
-            if is_Gamma1(G) and self.character() is not None:
+            from sage.modular.arithgroup.all import Gamma1_class
+            if isinstance(G, Gamma1_class) and self.character() is not None:
                 from sage.modular.arithgroup.all import Gamma0
                 G = Gamma0(self.level())
             # the +1 below is because O(q^prec) has precision prec.
@@ -1513,7 +1512,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def cuspidal_submodule(self):
         """
-        Return the cuspidal submodule of self.
+        Return the cuspidal submodule of ``self``.
 
         EXAMPLES::
 
@@ -1582,7 +1581,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def is_cuspidal(self):
         r"""
-        Return True if this space is cuspidal.
+        Return ``True`` if this space is cuspidal.
 
         EXAMPLES::
 
@@ -1596,7 +1595,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def is_eisenstein(self):
         r"""
-        Return True if this space is Eisenstein.
+        Return ``True`` if this space is Eisenstein.
 
         EXAMPLES::
 
@@ -1610,11 +1609,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def new_submodule(self, p=None):
         """
-        Return the new submodule of self.
+        Return the new submodule of ``self``.
 
-        If p is specified, return the p-new submodule of self.
+        If `p` is specified, return the `p`-new submodule of ``self``.
 
-        .. note::
+        .. NOTE::
 
             This function should be overridden by all derived classes.
 
@@ -1646,7 +1645,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         Compute the Eisenstein series associated to this space.
 
-        .. note::
+        .. NOTE::
 
            This function should be overridden by all derived classes.
 
@@ -1668,7 +1667,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         self, if possible. The space `V(f_i,t)` is the image under
         `g(q)` maps to `g(q^t)` of the intersection with
         `R[[q]]` of the space spanned by the conjugates of
-        `f_i`, where `R` is the base ring of self.
+        `f_i`, where `R` is the base ring of ``self``.
 
         TODO: Implement this function.
 
@@ -1683,7 +1682,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def newforms(self, names=None):
         """
-        Return all newforms in the cuspidal subspace of self.
+        Return all newforms in the cuspidal subspace of ``self``.
 
         EXAMPLES::
 
@@ -1761,7 +1760,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def embedded_submodule(self):
         """
-        Return the underlying module of self.
+        Return the underlying module of ``self``.
 
         EXAMPLES::
 
@@ -1818,7 +1817,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def level(self):
         """
-        Return the level of self.
+        Return the level of ``self``.
 
         EXAMPLES::
 
@@ -1830,7 +1829,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def modular_symbols(self, sign=0):
         """
-        Return the space of modular symbols corresponding to self with the
+        Return the space of modular symbols corresponding to ``self`` with the
         given sign.
 
         .. NOTE::
@@ -1851,27 +1850,25 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         INPUT:
 
+        - ``f`` -- a modular form or power series
 
-        -  ``f`` - a modular form or power series
+        - ``forms`` -- (default: ``None``) a specific list of
+          modular forms or `q`-expansions
 
-        -  ``forms`` - (default: None) a specific list of
-           modular forms or q-expansions.
+        - ``prec`` -- if forms are given, compute with them to
+          the given precision
 
-        -  ``prec`` - if forms are given, compute with them to
-           the given precision
+        - ``indep`` -- boolean (default: ``True``); whether the given list
+          of forms are assumed to form a basis
 
-        -  ``indep`` - (default: True) whether the given list
-           of forms are assumed to form a basis.
-
-
-        OUTPUT: A list of numbers that give f as a linear combination of
+        OUTPUT: list of numbers that give f as a linear combination of
         the basis for this space or of the given forms if
         independent=True.
 
-        .. note::
+        .. NOTE::
 
            If the list of forms is given, they do *not* have to be in
-           self.
+           ``self``.
 
         EXAMPLES::
 
@@ -1909,7 +1906,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
                 B = V.span_of_basis(w)
             else:
                 B = V.span(w)
-        if is_PowerSeries(f) and f.prec() < n:
+        if isinstance(f, PowerSeries) and f.prec() < n:
             raise ValueError("you need at least %s terms of precision" % n)
         x = V(f.padded_list(n))
         return B.coordinates(x)

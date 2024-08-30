@@ -56,16 +56,16 @@ class ScatterPlot(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
             sage: s = scatter_plot([[0,1],[2,4],[3.2,6]])
             sage: d = s.get_minmax_data()
             sage: d['xmin']
-            0.0
+            ...0.0...
             sage: d['ymin']
-            1.0
+            ...1.0...
         """
         return {'xmin': self.xdata.min(),
                 'xmax': self.xdata.max(),
@@ -142,26 +142,26 @@ class ScatterPlot(GraphicPrimitive):
 @options(alpha=1, markersize=50, marker='o', zorder=5, facecolor='#fec7b8', edgecolor='black', clip=True, aspect_ratio='automatic')
 def scatter_plot(datalist, **options):
     """
-    Returns a Graphics object of a scatter plot containing all points in
+    Return a Graphics object of a scatter plot containing all points in
     the datalist.  Type ``scatter_plot.options`` to see all available
     plotting options.
 
     INPUT:
 
-    - ``datalist`` -- a list of tuples ``(x,y)``
+    - ``datalist`` -- list of tuples ``(x,y)``
 
-    - ``alpha`` -- default: 1
+    - ``alpha`` -- (default: 1)
 
-    - ``markersize`` -- default: 50
+    - ``markersize`` -- (default: 50)
 
-    - ``marker``  - The style of the markers (default ``"o"``). See the
-      documentation of :func:`plot` for the full list of markers.
+    - ``marker`` -- the style of the markers (default: ``'o'``); see the
+      documentation of :func:`plot` for the full list of markers
 
-    - ``facecolor`` -- default: ``'#fec7b8'``
+    - ``facecolor`` -- (default: ``'#fec7b8'``)
 
-    - ``edgecolor`` -- default: ``'black'``
+    - ``edgecolor`` -- (default: ``'black'``)
 
-    - ``zorder`` -- default: 5
+    - ``zorder`` -- (default: 5)
 
     EXAMPLES::
 

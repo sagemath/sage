@@ -53,6 +53,12 @@
     "sage.rings.function_field.drinfeld_modules.morphism": {
         "failed": "unreported random failure seen in https://github.com/sagemath/sage/actions/runs/6840502530/job/18599835766#step:11:10107"
     },
+    "sage.rings.number_field.galois_group": {
+        "failed": "unreported failure on macOS (sort order) in GaloisGroup_v2.artin_symbol, https://github.com/sagemath/sage/actions/runs/9525536510/job/26259809272?pr=37998"
+    },
+    "sage.rings.number_field.number_field": {
+        "failed": "unreported failure on macOS (sort order) in NumberField_absolute.[optimized_]subfields, https://github.com/sagemath/sage/actions/runs/9525536510/job/26259809272?pr=37998"
+    },
     "sage.rings.polynomial.multi_polynomial_ideal": {
         "failed": true
     },
@@ -64,6 +70,9 @@
     },
     "sage.rings.polynomial.skew_polynomial_finite_field": {
         "failed": true
+    },
+    "sage.rings.qqbar": {
+        "failed": "unreported failure on macOS seen in https://github.com/sagemath/sage/actions/runs/9525536510/job/26259809272?pr=37998"
     },
     "sage.schemes.elliptic_curves.descent_two_isogeny": {
         "failed": "random segfault (macOS) https://github.com/sagemath/sage/issues/36949"

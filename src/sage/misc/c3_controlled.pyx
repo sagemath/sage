@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 The C3 algorithm, under control of a total order
 
@@ -154,7 +155,7 @@ class as its bases. However, this would have several drawbacks:
   point of truth for calculating the bases of each class.
 
 - It increases the complexity of the calculation of the MRO with
-  ``C3``. For example, for a linear hierachy of classes, the
+  ``C3``. For example, for a linear hierarchy of classes, the
   complexity goes from `O(n^2)` to `O(n^3)` which is not acceptable.
 
 - It increases the complexity of inspecting the classes. For example,
@@ -295,7 +296,7 @@ Depending on the linear extension `l` it was necessary to add between
 one and five bases for control; for example, `216` linear extensions
 required the addition of four bases::
 
-    sage: sorted(Word(stats).evaluation_sparse())                                       # needs sage.graphs sage.modules
+    sage: sorted(Word(stats).evaluation_sparse())                                       # needs sage.combinat sage.graphs sage.modules
     [(1, 36), (2, 108), (3, 180), (4, 216), (5, 180)]
 
 We now consider a hierarchy of categories::
@@ -319,9 +320,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    70
+    72
     sage: x.all_bases_controlled_len()
-    74
+    76
 
     sage: C = GradedHopfAlgebrasWithBasis(QQ)
     sage: x = HierarchyElement(C, attrcall("super_categories"), attrgetter("_cmp_key"))
@@ -495,7 +496,7 @@ cdef class CmpKey:
 
     def __init__(self):
         """
-        Sets the internal category counter to zero.
+        Set the internal category counter to zero.
 
         EXAMPLES::
 
@@ -506,7 +507,7 @@ cdef class CmpKey:
 
     def __get__(self, object inst, object cls):
         """
-        Bind the comparison key to the given instance
+        Bind the comparison key to the given instance.
 
         EXAMPLES::
 
@@ -554,7 +555,6 @@ cdef class CmpKeyNamed:
         True
         sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key
         True
-
     """
     def __get__(self, object inst, object cls):
         """
@@ -564,7 +564,6 @@ cdef class CmpKeyNamed:
             True
             sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key
             True
-
         """
         cdef dict D = cls._make_named_class_cache
         cdef str name = "_cmp_key"
@@ -580,6 +579,7 @@ cdef class CmpKeyNamed:
         return result
 
 _cmp_key_named = CmpKeyNamed()
+
 
 ##############################################################################
 
@@ -658,6 +658,7 @@ def C3_merge(list lists):
             # No head is available
             raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
+
 
 cpdef identity(x):
     r"""
@@ -910,7 +911,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                 tailsets[-1].add(key(heads[-1]))
                 heads[-1] = O
             elif O != heads[-1]:
-                assert O_key not in tailsets[-1], "C3 should not have choosen this O"
+                assert O_key not in tailsets[-1], "C3 should not have chosen this O"
                 # Use a heap or something for fast sorted insertion?
                 # Since Python uses TimSort, that's probably not so bad.
                 tails[-1].append(O)
@@ -989,7 +990,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     EXAMPLES:
 
     See the introduction of this module :mod:`sage.misc.c3_controlled`
-    for many examples. Here we consider a large example, originaly
+    for many examples. Here we consider a large example, originally
     taken from the hierarchy of categories above
     :class:`HopfAlgebrasWithBasis`::
 
@@ -1205,7 +1206,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     @lazy_attribute
     def _bases_controlled(self):
         """
-        A list of bases controlled by :meth:`C3_sorted_merge`
+        A list of bases controlled by :meth:`C3_sorted_merge`.
 
         This triggers the calculation of the MRO using
         :meth:`C3_sorted_merge`, which sets this attribute as a side
@@ -1228,7 +1229,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     @lazy_attribute
     def mro_standard(self):
         """
-        The MRO for this object, calculated with :meth:`C3_merge`
+        The MRO for this object, calculated with :meth:`C3_merge`.
 
         EXAMPLES::
 
@@ -1353,7 +1354,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         if not super_classes:
             super_classes = (object,)
         return dynamic_class("%s.cls"%self, super_classes)
-
 
     @cached_method
     def all_bases(self):

@@ -16,7 +16,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.cpython.string cimport str_to_bytes
+from sage.cpython.string cimport str_to_bytes, bytes_to_str
 
 from sage.libs.gmp.types cimport __mpz_struct
 from sage.libs.gmp.mpz cimport mpz_init_set_ui
@@ -24,7 +24,7 @@ from sage.libs.gmp.mpz cimport mpz_init_set_ui
 from sage.libs.singular.decl cimport ring, currRing
 from sage.libs.singular.decl cimport rChangeCurrRing, rComplete, rDelete, idInit
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc
-from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
+from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_ip, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
 from sage.libs.singular.decl cimport prCopyR
 from sage.libs.singular.decl cimport n_unknown, n_algExt, n_transExt, n_Z, n_Zn,  n_Znm, n_Z2m
 from sage.libs.singular.decl cimport n_coeffType
@@ -51,16 +51,12 @@ from cpython.object cimport Py_EQ, Py_NE
 from collections import defaultdict
 
 
-
-
-
-
 # mapping str --> SINGULAR representation
 order_dict = {
     "dp": ringorder_dp,
     "Dp": ringorder_Dp,
     "lp": ringorder_lp,
-    "rp": ringorder_rp,
+    "ip": ringorder_ip,
     "ds": ringorder_ds,
     "Ds": ringorder_Ds,
     "ls": ringorder_ls,
@@ -71,6 +67,16 @@ order_dict = {
     "a":  ringorder_a,
 }
 
+cdef extern from "singular/Singular/libsingular.h":
+    cdef char * rSimpleOrdStr(rRingOrder_t)
+
+if bytes_to_str(rSimpleOrdStr(ringorder_ip)) == "rp":
+    # compatibility for singular 4.3.2p10 and before
+    order_dict["rp"] = ringorder_ip
+    # also patch term_order mappings
+    from sage.rings.polynomial import term_order
+    term_order.singular_name_mapping['invlex'] = 'rp'
+    term_order.inv_singular_name_mapping['rp'] = 'invlex'
 
 #############################################################################
 cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
@@ -81,13 +87,13 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     INPUT:
 
-    - ``base_ring`` - a Sage ring
+    - ``base_ring`` -- a Sage ring
 
-    - ``n`` - the number of variables (> 0)
+    - ``n`` -- the number of variables (> 0)
 
-    - ``names`` - a list of names of length ``n``
+    - ``names`` -- list of names of length ``n``
 
-    - ``term_order`` - a term ordering
+    - ``term_order`` -- a term ordering
 
     EXAMPLES::
 
@@ -164,7 +170,6 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         sage: sing_print = singular_function('print')
         sage: sing_print(R)
         'polynomial ring, over a field, global ordering\n// coefficients: QQ(s, t)\n// number of vars : 3\n//        block   1 : ordering dp\n//                  : names    x y z\n//        block   2 : ordering C'
-
     """
     cdef long cexponent
     cdef GFInfo* _param
@@ -293,7 +298,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), RationalField):
         characteristic = 1
         k = PolynomialRing(RationalField(),
-            names=base_ring.variable_names(), order="lex", implementation="singular")
+            names=base_ring.variable_names(), order='lex', implementation='singular')
 
         ngens = len(k.gens())
 
@@ -309,7 +314,6 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
-
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
@@ -320,7 +324,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             raise NotImplementedError("Transcental extension are not implemented for non-prime finite fields")
         characteristic = int(base_ring.characteristic())
         k = PolynomialRing(base_ring.base_ring(),
-            names=base_ring.variable_names(), order="lex", implementation="singular")
+            names=base_ring.variable_names(), order='lex', implementation='singular')
 
         ngens = len(k.gens())
 
@@ -336,17 +340,15 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
-
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
         _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
-
     elif isinstance(base_ring, NumberField) and base_ring.is_absolute():
         characteristic = 1
         k = PolynomialRing(RationalField(),
-            name=base_ring.variable_name(), order="lex", implementation="singular")
+            name=base_ring.variable_name(), order='lex', implementation='singular')
 
         minpoly = base_ring.polynomial()(k.gen())
 
@@ -392,7 +394,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         # TODO: This is lazy, it should only call Singular stuff not PolynomialRing()
         k = PolynomialRing(base_ring.prime_subfield(),
-            name=base_ring.variable_name(), order="lex", implementation="singular")
+            name=base_ring.variable_name(), order='lex', implementation='singular')
         minpoly = base_ring.polynomial()(k.gen())
 
         ch = base_ring.characteristic()
@@ -542,9 +544,7 @@ cdef class ring_wrapper_Py():
         """
         Return a hash value so that instances can be used as dictionary keys.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -559,9 +559,7 @@ cdef class ring_wrapper_Py():
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -585,9 +583,7 @@ cdef class ring_wrapper_Py():
 
         - ``right`` -- a :class:`ring_wrapper_Py`
 
-        OUTPUT:
-
-        True if both ``ring_wrapper_Py`` wrap the same pointer.
+        OUTPUT: ``True`` if both ``ring_wrapper_Py`` wrap the same pointer
 
         EXAMPLES::
 
@@ -624,7 +620,7 @@ cdef wrap_ring(ring* R):
 
     INPUT:
 
-    - ``R`` -- a singular ring (a C datastructure).
+    - ``R`` -- a singular ring (a C datastructure)
 
     OUTPUT:
 
@@ -641,7 +637,7 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
 
     INPUT:
 
-    - ``existing_ring`` -- a Singular ring.
+    - ``existing_ring`` -- a Singular ring
 
     OUTPUT:
 
@@ -757,7 +753,7 @@ cpdef poison_currRing(frame, event, arg):
     INPUT:
 
     - ``frame``, ``event``, ``arg`` -- the standard arguments for the
-      CPython debugger hook. They are not used.
+      CPython debugger hook; they are not used
 
     OUTPUT:
 
@@ -799,7 +795,8 @@ cpdef print_currRing():
 
 def currRing_wrapper():
     """
-    Returns a wrapper for the current ring, for use in debugging ring_refcount_dict.
+    Return a wrapper for the current ring, for use in debugging
+    ``ring_refcount_dict``.
 
     EXAMPLES::
 

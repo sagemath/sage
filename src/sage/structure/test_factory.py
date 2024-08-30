@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Test of the :mod:`~sage.structure.factory` module
 """

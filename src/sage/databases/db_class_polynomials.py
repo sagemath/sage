@@ -17,7 +17,6 @@ EXAMPLES::
 AUTHORS:
 
 - David Kohel (2006-08-04): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>

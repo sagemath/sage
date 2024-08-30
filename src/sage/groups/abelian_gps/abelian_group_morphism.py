@@ -25,6 +25,10 @@ from sage.misc.misc_c import prod
 
 
 def is_AbelianGroupMorphism(f):
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_AbelianGroupMorphism is deprecated; "
+                "use 'isinstance(..., AbelianGroupMorphism)' instead.")
     return isinstance(f, AbelianGroupMorphism)
 
 
@@ -51,10 +55,10 @@ class AbelianGroupMorphism(Morphism):
 
     EXAMPLES::
 
-        sage: G = AbelianGroup(3,[2,3,4],names="abc"); G
+        sage: G = AbelianGroup(3,[2,3,4],names='abc'); G
         Multiplicative Abelian group isomorphic to C2 x C3 x C4
         sage: a,b,c = G.gens()
-        sage: H = AbelianGroup(2,[2,3],names="xy"); H
+        sage: H = AbelianGroup(2,[2,3],names='xy'); H
         Multiplicative Abelian group isomorphic to C2 x C3
         sage: x,y = H.gens()
 
@@ -120,10 +124,10 @@ class AbelianGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(3,[2,3,4],names="abc"); G
+            sage: G = AbelianGroup(3,[2,3,4],names='abc'); G
             Multiplicative Abelian group isomorphic to C2 x C3 x C4
             sage: a,b,c = G.gens()
-            sage: H = AbelianGroup(2,[2,3],names="xy"); H
+            sage: H = AbelianGroup(2,[2,3],names='xy'); H
             Multiplicative Abelian group isomorphic to C2 x C3
             sage: x,y = H.gens()
             sage: phi = AbelianGroupMorphism(H,G,[x,y],[a,b])  # optional - gap_package_polycyclic
@@ -152,19 +156,19 @@ class AbelianGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: H = AbelianGroup(3,[2,3,4],names="abc"); H
+            sage: H = AbelianGroup(3,[2,3,4],names='abc'); H
             Multiplicative Abelian group isomorphic to C2 x C3 x C4
             sage: a,b,c = H.gens()
-            sage: G = AbelianGroup(2,[2,3],names="xy"); G
+            sage: G = AbelianGroup(2,[2,3],names='xy'); G
             Multiplicative Abelian group isomorphic to C2 x C3
             sage: x,y = G.gens()
             sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])  # optional - gap_package_polycyclic
             sage: phi.kernel()                                 # optional - gap_package_polycyclic
             Group([  ])
 
-            sage: H = AbelianGroup(3,[2,2,2],names="abc")
+            sage: H = AbelianGroup(3,[2,2,2],names='abc')
             sage: a,b,c = H.gens()
-            sage: G = AbelianGroup(2,[2,2],names="x")
+            sage: G = AbelianGroup(2,[2,2],names='x')
             sage: x,y = G.gens()
             sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,a])  # optional - gap_package_polycyclic
             sage: phi.kernel()                                 # optional - gap_package_polycyclic
@@ -184,10 +188,10 @@ class AbelianGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(2,[2,3],names="xy")
+            sage: G = AbelianGroup(2,[2,3],names='xy')
             sage: x,y = G.gens()
             sage: subG = G.subgroup([x])                       # optional - gap_package_polycyclic
-            sage: H = AbelianGroup(3,[2,3,4],names="abc")
+            sage: H = AbelianGroup(3,[2,3,4],names='abc')
             sage: a,b,c = H.gens()
             sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])  # optional - gap_package_polycyclic
             sage: phi.image(subG)                              # optional - gap_package_polycyclic
@@ -202,9 +206,9 @@ class AbelianGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: H = AbelianGroup(3, [2,3,4], names="abc")
+            sage: H = AbelianGroup(3, [2,3,4], names='abc')
             sage: a,b,c = H.gens()
-            sage: G = AbelianGroup(2, [2,3], names="xy")
+            sage: G = AbelianGroup(2, [2,3], names='xy')
             sage: x,y = G.gens()
             sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])  # optional - gap_package_polycyclic
             sage: phi(y*x)                                     # optional - gap_package_polycyclic

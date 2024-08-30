@@ -15,7 +15,6 @@ Elements of Finite Algebras
 import re
 
 from sage.matrix.matrix_space import MatrixSpace
-from sage.structure.element import is_Matrix
 from sage.rings.integer import Integer
 
 from cpython.object cimport PyObject_RichCompare as richcmp
@@ -32,7 +31,6 @@ cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A
         sage: x = B([1,2,3])
         sage: loads(dumps(x)) == x      # indirect doctest
         True
-
     """
     cdef FiniteDimensionalAlgebraElement x = A.element_class.__new__(A.element_class)
     AlgebraElement.__init__(x, A)
@@ -119,7 +117,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
                     raise TypeError("algebra is not unitary")
             elif isinstance(elt, Vector):
                 self._vector = MatrixSpace(k, 1, n)(list(elt))
-            elif is_Matrix(elt):
+            elif isinstance(elt, Matrix):
                 if elt.ncols() != n:
                     raise ValueError("matrix does not define an element of the algebra")
                 if elt.nrows() == 1:
@@ -146,7 +144,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             True
             sage: loads(dumps(x)) is x
             False
-
         """
         return unpickle_FiniteDimensionalAlgebraElement, (self._parent, self._vector, self.__matrix)
 
@@ -173,7 +170,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
             sage: x.vector()
             (1, 1, 1)
-
         """
         self._parent, D = state
         v = D.pop('_vector')
@@ -340,7 +336,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
     def __getitem__(self, m):
         """
-        Return the `m`-th coefficient of ``self``
+        Return the `m`-th coefficient of ``self``.
 
         EXAMPLES::
 

@@ -79,13 +79,22 @@ reconfigure:
 	fi
 
 # Preemptively download all source tarballs of normal packages.
+DOWNLOAD_PACKAGES=:all:
 download:
 	export SAGE_ROOT=$$(pwd) && \
 	export PATH=$$SAGE_ROOT/build/bin:$$PATH && \
-	sage-package download :all:
+	sage-package download $(DOWNLOAD_PACKAGES)
 
 dist: build/make/Makefile
 	./sage --sdist
+
+ci-build-with-fallback:
+	$(MAKE) build && $(MAKE) SAGE_CHECK=no pypi-wheels; 	\
+	if [ $$? != 0 ]; then					\
+            echo "Incremental build failed, falling back";	\
+	    $(MAKE) doc-clean doc-uninstall sagelib-clean;	\
+	    $(MAKE) build && $(MAKE) SAGE_CHECK=no pypi-wheels;	\
+	fi
 
 ###############################################################################
 # Cleaning up
@@ -164,12 +173,22 @@ distclean: build-clean
 bootstrap-clean:
 	rm -rf config/install-sh config/compile config/config.guess config/config.sub config/missing configure build/make/Makefile-auto.in
 	rm -f src/doc/en/installation/*.txt
-	rm -rf src/doc/en/reference/spkg/*.rst
+	find src/doc/en/reference/spkg -name index.rst -prune -o -maxdepth 1 -name "*.rst" -exec rm -f {} \+
 	for a in environment environment-optional src/environment src/environment-dev src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
 	rm -f src/Pipfile
-	rm -f src/pyproject.toml
 	rm -f src/requirements.txt
 	rm -f src/setup.cfg
+	rm -f build/pkgs/cypari/version_requirements.txt
+	rm -f build/pkgs/cysignals/version_requirements.txt
+	rm -f build/pkgs/cython/version_requirements.txt
+	rm -f build/pkgs/gmpy2/version_requirements.txt
+	rm -f build/pkgs/jupyter_core/version_requirements.txt
+	rm -f build/pkgs/memory_allocator/version_requirements.txt
+	rm -f build/pkgs/numpy/version_requirements.txt
+	rm -f build/pkgs/pkgconfig/version_requirements.txt
+	rm -f build/pkgs/pplpy/version_requirements.txt
+	rm -f build/pkgs/setuptools/version_requirements.txt
+	rm -f build/pkgs/wheel/version_requirements.txt
 
 # Remove absolutely everything which isn't part of the git repo
 maintainer-clean: distclean bootstrap-clean
@@ -332,6 +351,7 @@ ptestoptionallong-nodoc:
 # CONFIGURE_DEPENDENCIES is the list of files that influence the generation of 'configure'.
 CONFIGURE_DEPENDENCIES =							\
 	configure.ac src/bin/sage-version.sh m4/*.m4				\
+	src/pyproject.toml							\
 	build/pkgs/*/spkg-configure.m4						\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/checksums.ini build/pkgs/*/requirements.txt		\

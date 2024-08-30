@@ -34,7 +34,6 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef tuple Vrep(self)
     cdef tuple facet_names(self)
     cdef tuple equations(self)
-    cdef tuple equalities(self)
     cdef unsigned int n_Vrepresentation(self) noexcept
     cdef unsigned int n_Hrepresentation(self) noexcept
     cdef bint is_bounded(self) noexcept

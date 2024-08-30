@@ -237,7 +237,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
 
     def ascii_art(self, label=None, node=None):
         """
-        Return an ascii art representation of this Cartan type
+        Return an ascii art representation of this Cartan type.
 
         (by hacking the ascii art representation of the dual Cartan type)
 
@@ -528,7 +528,7 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
 class CartanType_affine(CartanType, cartan_type.CartanType_affine):
     def classical(self):
         """
-        Return the classical Cartan type associated with self (which should
+        Return the classical Cartan type associated with ``self`` (which should
         be affine).
 
         EXAMPLES::
@@ -576,7 +576,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def special_node(self):
         """
-        Implement :meth:`CartanType_affine.special_node`
+        Implement :meth:`CartanType_affine.special_node`.
 
         The special node of the dual of an affine type `T` is the
         special node of `T`.

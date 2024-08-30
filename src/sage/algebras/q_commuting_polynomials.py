@@ -173,7 +173,7 @@ class qCommutingPolynomials_generic(CombinatorialFreeModule):
             Finite family {'x': x, 'y': y, 'z': z}
         """
         d = {v: self.gen(i) for i, v in enumerate(self.variable_names())}
-        return Family(self.variable_names(), d.__getitem__, name="generator")
+        return Family(self.variable_names(), d.__getitem__, name='generator')
 
     def degree_on_basis(self, m):
         r"""

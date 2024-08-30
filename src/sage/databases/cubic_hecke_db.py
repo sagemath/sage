@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Cubic Hecke database
 
@@ -49,7 +48,6 @@ AUTHORS:
 
 - Sebastian Oehms (2020-05): initial version
 - Sebastian Oehms (2022-03): PyPi version and Markov trace functionality
-
 """
 
 ##############################################################################
@@ -131,9 +129,9 @@ class CubicHeckeDataSection(Enum):
 
     The following choices are possible:
 
-    - ``basis``  -- list of basis elements
-    - ``reg_left_reprs``  -- data for the left regular representation
-    - ``reg_right_reprs``  -- data for the right regular representation
+    - ``basis`` -- list of basis elements
+    - ``reg_left_reprs`` -- data for the left regular representation
+    - ``reg_right_reprs`` -- data for the right regular representation
     - ``irr_reprs`` -- data for the split irreducible representations
     - ``markov_tr_cfs`` -- data for the coefficients of the formal Markov traces
 
@@ -238,12 +236,10 @@ class CubicHeckeDataBase(SageObject):
 
         INPUT:
 
-        ``section`` -- instance of enum :class:`CubicHeckeDataSection`
+        - ``section`` -- instance of enum :class:`CubicHeckeDataSection`
           to select the data to be read in
 
-        OUTPUT:
-
-        A dictionary containing the data corresponding to the section.
+        OUTPUT: a dictionary containing the data corresponding to the section
 
         EXAMPLES::
 
@@ -311,8 +307,6 @@ class CubicHeckeDataBase(SageObject):
         - ``representation_type`` -- an element of
           :class:`~sage.algebras.hecke_algebras.cubic_hecke_matrix_rep.RepresentationType`
           specifying the type of the representation
-
-        OUTPUT:
 
         EXAMPLES::
 
@@ -420,9 +414,7 @@ class MarkovTraceModuleBasis(Enum):
         - ``strands_embed`` -- (optional) the number of strands of the braid
           if strands should be added
 
-        OUTPUT:
-
-        A tuple representing the braid in Tietze form.
+        OUTPUT: a tuple representing the braid in Tietze form
 
         EXAMPLES::
 
@@ -662,9 +654,9 @@ class CubicHeckeFileCache(SageObject):
         Enum for the different sections of file cache. The following choices are
         possible:
 
-        - ``matrix_representations``  -- file cache for representation matrices
+        - ``matrix_representations`` -- file cache for representation matrices
           of basis elements
-        - ``braid_images``  -- file cache for images of braids
+        - ``braid_images`` -- file cache for images of braids
         - ``basis_extensions`` -- file cache for a dynamical growing basis used
           in the case of cubic Hecke algebras on more than 4 strands
         - ``markov_trace`` -- file cache for intermediate results of long
@@ -1178,7 +1170,6 @@ template = """def %s(%snum_strands=3):
     data[2] = %s
     data[3] = %s
     return data[num_strands]
-
 """
 
 
@@ -1499,7 +1490,6 @@ def read_markov(bas_ele, variables, num_strands=4):
     - ``variables`` -- tuple consisting of the variables used in
       the coefficients
     - ``num_strands`` -- integer (default: 4); the number of strands
-
 
     OUTPUT:
 

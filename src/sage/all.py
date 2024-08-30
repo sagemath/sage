@@ -59,7 +59,7 @@ import math
 
 ################ end setup warnings ###############################
 
-from .all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sagemath_environment
+from sage.all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sagemath_environment
 
 ###################################################################
 
@@ -104,7 +104,6 @@ from sage.interfaces.all import *
 from sage.functions.all  import *
 from sage.calculus.all   import *
 
-lazy_import('sage.tests', 'all', as_='tests', deprecation=27337)
 from sage.cpython.all    import *
 
 from sage.crypto.all     import *
@@ -190,15 +189,6 @@ from sage.misc.copying import license
 copying = license
 copyright = license
 
-def quit_sage(verbose=True):
-    """
-    Does nothing. Code that needs cleanup should register its own
-    handler using the atexit module.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(8784, 'quit_sage is deprecated and now does nothing; please simply delete it')
-
-
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.categories.category', 'Sets', Sets)
 register_unpickle_override('sage.categories.category_types', 'HeckeModules', HeckeModules)
@@ -217,11 +207,6 @@ sage.misc.lazy_import.save_cache_file()
 ### Debugging for Singular, see trac #10903
 # from sage.libs.singular.ring import poison_currRing
 # sys.settrace(poison_currRing)
-
-
-# Deprecated leftover of monkey-patching inspect.isfunction() to support Cython functions.
-lazy_import('sage.misc.sageinspect', 'is_function_or_cython_function',
-            as_='isfunction', namespace=sage.__dict__, deprecation=32479)
 
 
 # Set a new random number seed as the very last thing

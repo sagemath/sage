@@ -135,8 +135,8 @@ class UniformSampler(SageObject):
 
         INPUT:
 
-        - ``lower_bound`` - integer
-        - ``upper_bound`` - integer
+        - ``lower_bound`` -- integer
+        - ``upper_bound`` -- integer
 
         EXAMPLES::
 
@@ -194,10 +194,10 @@ class UniformPolynomialSampler(SageObject):
 
         INPUT:
 
-        - ``P`` - a univariate polynomial ring over the Integers
-        - ``n`` - number of coefficients to be sampled
-        - ``lower_bound`` - integer
-        - ``upper_bound`` - integer
+        - ``P`` -- a univariate polynomial ring over the Integers
+        - ``n`` -- number of coefficients to be sampled
+        - ``lower_bound`` -- integer
+        - ``upper_bound`` -- integer
 
         EXAMPLES::
 
@@ -253,17 +253,18 @@ class LWE(SageObject):
 
         INPUT:
 
-        - ``n`` - dimension (integer > 0)
-        - ``q`` - modulus typically > n (integer > 0)
-        - ``D`` - an error distribution such as an instance of
+        - ``n`` -- dimension (integer > 0)
+        - ``q`` -- modulus typically > n (integer > 0)
+        - ``D`` -- an error distribution such as an instance of
           :class:`DiscreteGaussianDistributionIntegerSampler` or :class:`UniformSampler`
-        - ``secret_dist`` - distribution of the secret (default: 'uniform'); one of
+        - ``secret_dist`` -- distribution of the secret (default: ``'uniform'``); one of
 
-          - "uniform" - secret follows the uniform distribution in `\Zmod{q}`
-          - "noise" - secret follows the noise distribution
-          - ``(lb,ub)`` - the secret is chosen uniformly from ``[lb,...,ub]`` including both endpoints
+          - ``'uniform'`` -- secret follows the uniform distribution in `\Zmod{q}`
+          - ``'noise'`` -- secret follows the noise distribution
+          - ``(lb, ub)`` -- the secret is chosen uniformly from ``[lb,...,ub]``
+            including both endpoints
 
-        - ``m`` - number of allowed samples or ``None`` if no such limit exists
+        - ``m`` -- number of allowed samples or ``None`` if no such limit exists
           (default: ``None``)
 
         EXAMPLES:
@@ -381,10 +382,10 @@ class Regev(LWE):
 
         INPUT:
 
-        - ``n`` - security parameter (integer > 0)
-        - ``secret_dist`` - distribution of the secret. See documentation of :class:`LWE`
+        - ``n`` -- security parameter (integer > 0)
+        - ``secret_dist`` -- distribution of the secret. See documentation of :class:`LWE`
           for details (default='uniform')
-        - ``m`` - number of allowed samples or ``None`` if no such limit exists
+        - ``m`` -- number of allowed samples or ``None`` if no such limit exists
           (default: ``None``)
 
         EXAMPLES::
@@ -412,9 +413,9 @@ class LindnerPeikert(LWE):
 
         INPUT:
 
-        - ``n`` - security parameter (integer > 0)
-        - ``delta`` - error probability per symbol (default: 0.01)
-        - ``m`` - number of allowed samples or ``None`` in which case ``m=2*n +
+        - ``n`` -- security parameter (integer > 0)
+        - ``delta`` -- error probability per symbol (default: 0.01)
+        - ``m`` -- number of allowed samples or ``None`` in which case ``m=2*n +
           128`` as in [LP2011]_ (default: ``None``)
 
         EXAMPLES::
@@ -460,14 +461,14 @@ class UniformNoiseLWE(LWE):
 
         INPUT:
 
-        - ``n`` - security parameter (integer >= 89)
-        - ``instance`` - one of
+        - ``n`` -- security parameter (integer >= 89)
+        - ``instance`` -- one of
 
-          - "key" - the LWE-instance that hides the secret key is generated
-          - "encrypt" - the LWE-instance that hides the message is generated
-            (default: ``key``)
+          - ``'key'`` -- the LWE-instance that hides the secret key is generated
+          - ``'encrypt'`` -- the LWE-instance that hides the message is generated
+            (default: ``'key'``)
 
-        - ``m`` - number of allowed samples or ``None`` in which case ``m`` is
+        - ``m`` -- number of allowed samples or ``None`` in which case ``m`` is
           chosen as in [CGW2013]_.  (default: ``None``)
 
         EXAMPLES::
@@ -525,15 +526,15 @@ class RingLWE(SageObject):
 
         INPUT:
 
-        - ``N`` - index of cyclotomic polynomial (integer > 0, must be power of 2)
-        - ``q`` - modulus typically > N (integer > 0)
-        - ``D`` - an error distribution such as an instance of
+        - ``N`` -- index of cyclotomic polynomial (integer > 0, must be power of 2)
+        - ``q`` -- modulus typically > N (integer > 0)
+        - ``D`` -- an error distribution such as an instance of
           :class:`DiscreteGaussianDistributionPolynomialSampler` or :class:`UniformSampler`
-        - ``poly`` - a polynomial of degree ``phi(N)``. If ``None`` the
+        - ``poly`` -- a polynomial of degree ``phi(N)``. If ``None`` the
           cyclotomic polynomial used (default: ``None``).
-        - ``secret_dist`` - distribution of the secret. See documentation of
+        - ``secret_dist`` -- distribution of the secret. See documentation of
           :class:`LWE` for details (default='uniform')
-        - ``m`` - number of allowed samples or ``None`` if no such limit exists
+        - ``m`` -- number of allowed samples or ``None`` if no such limit exists
           (default: ``None``)
 
         EXAMPLES::
@@ -620,9 +621,9 @@ class RingLindnerPeikert(RingLWE):
 
         INPUT:
 
-        - ``N`` - index of cyclotomic polynomial (integer > 0, must be power of 2)
-        - ``delta`` - error probability per symbol (default: 0.01)
-        - ``m`` - number of allowed samples or ``None`` in which case ``3*n`` is
+        - ``N`` -- index of cyclotomic polynomial (integer > 0, must be power of 2)
+        - ``delta`` -- error probability per symbol (default: 0.01)
+        - ``m`` -- number of allowed samples or ``None`` in which case ``3*n`` is
           used (default: ``None``)
 
         EXAMPLES::
@@ -661,7 +662,7 @@ class RingLWEConverter(SageObject):
         """
         INPUT:
 
-        - ``ringlwe`` - an instance of a :class:`RingLWE`
+        - ``ringlwe`` -- an instance of a :class:`RingLWE`
 
         EXAMPLES::
 
@@ -708,7 +709,6 @@ class RingLWEConverter(SageObject):
             sage: lwe = RingLWEConverter(rlwe)
             sage: lwe
             RingLWEConverter(RingLWE(20, 257, Discrete Gaussian sampler for polynomials of degree < 8 with σ=5.000000 in each component, x^8 - x^6 + x^4 - x^2 + 1, 'uniform', None))
-
         """
         return "RingLWEConverter(%s)" % str(self.ringlwe)
 
@@ -718,19 +718,19 @@ def samples(m, n, lwe, seed=None, balanced=False, **kwds):
 
     INPUT:
 
-    - ``m`` - the number of samples (integer > 0)
-    - ``n`` - the security parameter (integer > 0)
-    - ``lwe`` - either
+    - ``m`` -- the number of samples (integer > 0)
+    - ``n`` -- the security parameter (integer > 0)
+    - ``lwe`` -- either
 
       - a subclass of :class:`LWE` such as :class:`Regev` or :class:`LindnerPeikert`
       - an instance of :class:`LWE` or any subclass
       - the name of any such class (e.g., "Regev", "LindnerPeikert")
 
-    - ``seed`` - seed to be used for generation or ``None`` if no specific seed
+    - ``seed`` -- seed to be used for generation or ``None`` if no specific seed
       shall be set (default: ``None``)
-    - ``balanced`` - use function :func:`balance_sample` to return balanced
+    - ``balanced`` -- use function :func:`balance_sample` to return balanced
       representations of finite field elements (default: ``False``)
-    - ``**kwds`` - passed through to LWE constructor
+    - ``**kwds`` -- passed through to LWE constructor
 
     EXAMPLES::
 
@@ -748,7 +748,6 @@ def samples(m, n, lwe, seed=None, balanced=False, **kwds):
         sage: samples(2, 20, 'LindnerPeikert')
         [((506, 1205, 398, 0, 337, 106, 836, 75, 1242, 642, 840, 262, 1823, 1798, 1831, 1658, 1084, 915, 1994, 163), 1447),
          ((463, 250, 1226, 1906, 330, 933, 1014, 1061, 1322, 2035, 1849, 285, 1993, 1975, 864, 1341, 41, 1955, 1818, 1357), 312)]
-
     """
     if seed is not None:
         set_random_seed(seed)
@@ -780,8 +779,8 @@ def balance_sample(s, q=None):
 
     INPUT:
 
-    - ``s`` - sample of the form (a,c) where a is a vector and c is a scalar
-    - ``q`` - modulus (default: ``None``)
+    - ``s`` -- sample of the form (a,c) where a is a vector and c is a scalar
+    - ``q`` -- modulus (default: ``None``)
 
     EXAMPLES::
 
@@ -802,7 +801,7 @@ def balance_sample(s, q=None):
         ....:     assert all(-257//2 <= c <= 257//2 for bi in b for c in bi)
         ....:     assert all(s[i][j] == b[i][j] % 257 for i in range(2) for j in range(8))
 
-    .. note::
+    .. NOTE::
 
         This function is useful to convert between Sage's standard
         representation of elements in `\Zmod{q}` as integers between 0 and q-1

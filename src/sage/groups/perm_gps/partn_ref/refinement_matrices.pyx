@@ -13,7 +13,6 @@ REFERENCE:
 - [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
   Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
   533-583.
-
 """
 
 #*****************************************************************************
@@ -131,7 +130,7 @@ cdef class MatrixStruct:
         INPUT:
 
         - ``partition`` -- an optional list of lists partition of the columns;
-          default is the unit partition.
+          default is the unit partition
 
         EXAMPLES::
 
@@ -169,7 +168,6 @@ cdef class MatrixStruct:
         self.output = get_aut_gp_and_can_lab(<void *> self, part, self.degree, &all_matrix_children_are_equivalent, &refine_matrix, &compare_matrices, 1, NULL, NULL, NULL)
 
         PS_dealloc(part)
-
 
     def automorphism_group(self):
         """
@@ -296,6 +294,7 @@ cdef int compare_matrices(int *gamma_1, int *gamma_2, void *S1, void *S2, int de
 cdef bint all_matrix_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0
 
+
 def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_matrix=5, density_range=(.1,.9)):
     """
     Test to make sure that ``C(gamma(M)) == C(M)`` for random permutations ``gamma``
@@ -304,11 +303,11 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
 
     INPUT:
 
-    - n -- run tests on this many matrices
-    - nrows_max -- test matrices with at most this many rows
-    - ncols_max -- test matrices with at most this many columns
-    - perms_per_matrix -- test each matrix with this many random permutations
-    - nsymbols_max -- maximum number of distinct symbols in the matrix
+    - ``n`` -- run tests on this many matrices
+    - ``nrows_max`` -- test matrices with at most this many rows
+    - ``ncols_max`` -- test matrices with at most this many columns
+    - ``perms_per_matrix`` -- test each matrix with this many random permutations
+    - ``nsymbols_max`` -- maximum number of distinct symbols in the matrix
 
     This code generates n random matrices M on at most ncols_max columns and at
     most nrows_max rows. The density of entries in the basis is chosen randomly

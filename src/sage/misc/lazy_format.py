@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Lazy format strings
 """
@@ -5,7 +6,7 @@ Lazy format strings
 
 class LazyFormat(str):
     """
-    Lazy format strings
+    Lazy format strings.
 
     .. NOTE::
 
@@ -83,7 +84,7 @@ class LazyFormat(str):
 
     def __mod__(self, args):
         """
-        Binds the lazy format string with its parameters
+        Bind the lazy format string with its parameters.
 
         EXAMPLES::
 
@@ -94,7 +95,7 @@ class LazyFormat(str):
             sage: form%"params"
             <params>
         """
-        if hasattr(self, "_args"): # self is already bound...
+        if hasattr(self, "_args"):  # self is already bound...
             self = LazyFormat(""+self)
         self._args = args
         return self

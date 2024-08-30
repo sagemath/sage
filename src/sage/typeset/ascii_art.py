@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 ASCII Art
 
@@ -196,14 +196,14 @@ empty_ascii_art = _ascii_art_factory.build_empty()
 
 def ascii_art(*obj, **kwds):
     r"""
-    Return an ASCII art representation
+    Return an ASCII art representation.
 
     INPUT:
 
     - ``*obj`` -- any number of positional arguments, of arbitrary
       type. The objects whose ascii art representation we want.
 
-    - ``sep`` -- optional ``'sep=...'`` keyword argument (or ``'separator'``).
+    - ``sep`` -- (optional) ``'sep=...'`` keyword argument (or ``'separator'``).
       Anything that can be converted to ascii art (default: empty ascii
       art). The separator in-between a list of objects. Only used if
       more than one object given.
@@ -212,9 +212,7 @@ def ascii_art(*obj, **kwds):
 
     - ``sep_baseline`` -- (default: 0) the baseline for the separator
 
-    OUTPUT:
-
-    :class:`AsciiArt` instance.
+    OUTPUT: :class:`AsciiArt` instance
 
     EXAMPLES::
 

@@ -913,7 +913,7 @@ def L8(groundset=None):
 
         sage: K4 = matroids.catalog.K4(range(6))
         sage: Bext = [list(b) for b in K4.bases()] + [list(I)+[6] for I in
-        ....:                                         K4.independent_r_sets(2)]
+        ....:                                         K4.independent_sets(2)]
         sage: K4ext = Matroid(bases=Bext)
         sage: import random
         sage: e = random.choice(list(M.groundset()))
@@ -1236,6 +1236,7 @@ def K33dual(groundset='abcdefghi'):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: M = matroids.catalog.K33dual(); M
         M*(K3, 3): Regular matroid of rank 4 on 9 elements with 81 bases
         sage: any(N.is_3connected() for N in M.linear_extensions(simple=True))
@@ -1266,6 +1267,7 @@ def K33(groundset='abcdefghi'):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: M = matroids.catalog.K33(); M
         M(K3, 3): Regular matroid of rank 5 on 9 elements with 81 bases
         sage: M.is_valid()
@@ -1489,7 +1491,7 @@ def K5dual(groundset='abcdefghij'):
     EXAMPLES::
 
         sage: M = matroids.catalog.K5dual(); M
-        M*(K5): Matroid of rank 6 on 10 elements with 15 circuits
+        M*(K5): Dual of 'Graphic matroid of rank 4 on 10 elements'
         sage: M.is_3connected()
         True
         sage: G1 = M.automorphism_group()
@@ -1502,7 +1504,6 @@ def K5dual(groundset='abcdefghij'):
     [Oxl2011]_, p. 656.
     """
     M = CompleteGraphic(5).dual()
-    M = Matroid(circuits=list(M.circuits()))
     M = _rename_and_relabel(M, "M*(K5)", groundset)
     return M
 
@@ -1775,12 +1776,12 @@ def Wheel(r, field=None, ring=None, groundset=None):
 
     INPUT:
 
-    - ``r`` -- a positive integer; the rank of the desired matroid
+    - ``r`` -- positive integer; the rank of the matroid
     - ``ring`` -- any ring; if provided, output will be a linear matroid
       over the ring or field ``ring``. If the ring is `\ZZ`, then output
       will be a regular matroid.
     - ``field`` -- any field; same as ``ring``, but only fields are allowed
-    - ``groundset`` -- a string (optional); the groundset of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
     OUTPUT: the rank-`r` wheel matroid, represented as a regular matroid
 
@@ -1852,8 +1853,8 @@ def Whirl(r, groundset=None):
 
     INPUT:
 
-    - ``r`` -- a positive integer; the rank of the desired matroid.
-    - ``groundset`` -- a string (optional); the groundset of the matroid
+    - ``r`` -- positive integer; the rank of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
     OUTPUT: the rank-`r` whirl matroid, represented as a ternary matroid
 
@@ -1923,10 +1924,10 @@ def Uniform(r, n, groundset=None):
 
     INPUT:
 
-    - ``r`` -- a nonnegative integer; the rank of the uniform matroid
-    - ``n`` -- a nonnegative integer; the number of elements of the uniform
+    - ``r`` -- nonnegative integer; the rank of the uniform matroid
+    - ``n`` -- nonnegative integer; the number of elements of the uniform
       matroid
-    - ``groundset`` -- a string (optional); the groundset of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
     OUTPUT: the uniform matroid `U_{r,n}`
 
@@ -1967,19 +1968,19 @@ def Uniform(r, n, groundset=None):
 
 def PG(n, q, x=None, groundset=None):
     """
-    Return the projective geometry of dimension ``n`` over the finite field
-    of order ``q``.
+    Return the projective geometry of dimension `n` over the finite field
+    of order `q`.
 
     INPUT:
 
-    - ``n`` -- a positive integer; the dimension of the projective space. This
+    - ``n`` -- positive integer; the dimension of the projective space. This
       is one less than the rank of the resulting matroid.
-    - ``q`` -- a positive integer that is a prime power; the order of the
+    - ``q`` -- positive integer that is a prime power; the order of the
       finite field
-    - ``x`` -- a string (default: ``None``); the name of the generator of a
+    - ``x`` -- string (default: ``None``); the name of the generator of a
       non-prime field, used for non-prime fields. If not supplied, ``'x'`` is
       used.
-    - ``groundset`` -- a string (optional); the groundset of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
     OUTPUT: a linear matroid whose elements are the points of `PG(n, q)`
 
@@ -2018,14 +2019,14 @@ def AG(n, q, x=None, groundset=None):
 
     INPUT:
 
-    - ``n`` -- a positive integer; the dimension of the projective space. This
+    - ``n`` -- positive integer; the dimension of the projective space. This
       is one less than the rank of the resulting matroid.
-    - ``q`` -- a positive integer that is a prime power; the order of the
+    - ``q`` -- positive integer that is a prime power; the order of the
       finite field
-    - ``x`` -- a string (default: ``None``); the name of the generator of a
+    - ``x`` -- string (default: ``None``); the name of the generator of a
       non-prime field, used for non-prime fields. If not supplied, ``'x'`` is
       used.
-    - ``groundset`` -- a string (optional); the groundset of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
     OUTPUT: a linear matroid whose elements are the points of `AG(n, q)`
 
@@ -2063,11 +2064,11 @@ def Z(r, t=True, groundset=None):
 
     INPUT:
 
-    - ``r`` -- an integer (`r \ge 3`); the rank of the spike
+    - ``r`` -- integer (`r \ge 3`); the rank of the spike
     - ``t`` -- boolean (default: ``True``); whether the spike is tipped
-    - ``groundset`` -- a string (optional); the groundset of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT: a matroid; the unique rank-`r` binary spike (tipped or tipless)
+    OUTPUT: matroid; the unique rank-`r` binary spike (tipped or tipless)
 
     EXAMPLES::
 
@@ -2167,13 +2168,13 @@ def Spike(r, t=True, C3=[], groundset=None):
 
     INPUT:
 
-    - ``r`` -- an integer (`r \ge 3`); the rank of the spike
+    - ``r`` -- integer (`r \ge 3`); the rank of the spike
     - ``t`` -- boolean (default: ``True``); whether the spike is tipped
-    - ``C3`` -- a list (default: ``[]``); a list of extra nonspanning circuits.
-      The default (i.e. the empty list) results in a free `r`-spike
-    - ``groundset`` -- a string (optional); the groundset of the matroid
+    - ``C3`` -- list (default: ``[]``); a list of extra nonspanning circuits.
+      The default (i.e. the empty list) results in a free `r`-spike.
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT: a matroid; a rank-`r` spike (tipped or tipless)
+    OUTPUT: matroid; a rank-`r` spike (tipped or tipless)
 
     EXAMPLES::
 
@@ -2288,10 +2289,10 @@ def Theta(n, groundset=None):
 
     INPUT:
 
-    - ``n`` -- an integer (`n \ge 2`); the rank of the matroid
-    - ``groundset`` -- a string (optional); the groundset of the matroid
+    - ``n`` -- integer (`n \ge 2`); the rank of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT: a matroid (`\Theta_n`)
+    OUTPUT: matroid (`\Theta_n`)
 
     EXAMPLES::
 
@@ -2361,10 +2362,10 @@ def Psi(r, groundset=None):
 
     INPUT:
 
-    - ``r`` -- an integer (`r \ge 3`); the rank of the matroid
-    - ``groundset`` -- a string (optional); the groundset of the matroid
+    - ``r`` -- integer (`r \ge 3`); the rank of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT: a matroid (`\Psi_r`)
+    OUTPUT: matroid (`\Psi_r`)
 
     EXAMPLES::
 
@@ -3021,7 +3022,7 @@ def KR9(groundset=None):
     Return the matroid `KR9`.
 
     An excluded minor for `G`-representable matroids (and
-    `GF(5)`-representable matroids.) In a `DY`-equivalence class of `4`
+    `GF(5)`-representable matroids). In a `DY`-equivalence class of `4`
     matroids. Has a :func:`KP8 <sage.matroids.database_matroids.KP8>`-minor
     (delete `8`). UPF is `GF(4)`.
 
@@ -3056,7 +3057,7 @@ def KQ9(groundset=None):
     Return the matroid `KQ9`.
 
     An excluded minor for `G`-representable matroids (and
-    `GF(5)`-representable matroids.) Has a
+    `GF(5)`-representable matroids). Has a
     :func:`TQ8 <sage.matroids.database_matroids.TQ8>`-minor` (delete `6`) and a
     :func:`KP8 <sage.matroids.database_matroids.KP8>`-minor (delete `8`). UPF
     is `GF(4)`.
@@ -4510,7 +4511,7 @@ def VP14(groundset=None):
 
 def FV14(groundset=None):
     """
-    Return the matroid `FV14`
+    Return the matroid `FV14`.
 
     An excluded minor for `P_4`-representable matroids. Not self-dual. UPF is
     `PT`.
@@ -5186,10 +5187,10 @@ def CompleteGraphic(n, groundset=None):
 
     INPUT:
 
-    - ``n`` -- an integer, the number of vertices of the underlying complete
-      graph.
+    - ``n`` -- integer; the number of vertices of the underlying complete
+      graph
 
-    OUTPUT: The graphic matroid associated with the `n`-vertex complete graph.
+    OUTPUT: the graphic matroid associated with the `n`-vertex complete graph.
     This matroid has rank `n - 1`.
 
     EXAMPLES::
@@ -5230,16 +5231,16 @@ def _rename_and_relabel(M, name=None, groundset=None):
 
     INPUT:
 
-    - ``M`` -- a matroid
-    - ``name`` -- a string (optional)
-    - ``groundset`` -- a string (optional)
+    - ``M`` -- matroid
+    - ``name`` -- string (optional)
+    - ``groundset`` -- string (optional)
 
-    OUTPUT: a matroid
+    OUTPUT: matroid
     """
     if groundset is not None:
         if len(groundset) != len(M.groundset()):
             raise ValueError(
-                "The groundset should be of size %s (%s given)." %
+                "the groundset should be of size %s (%s given)" %
                 (len(M.groundset()), len(groundset))
             )
         M = M.relabel(dict(zip(M.groundset(), groundset)))

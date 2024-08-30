@@ -11,11 +11,11 @@ the ridges and the face lattice.
 
 Terminology used in this module:
 
-- Vrep                  -- ``[vertices, rays, lines]`` of the polyhedron.
-- Hrep                  -- inequalities and equations of the polyhedron.
-- Facets                -- facets of the polyhedron.
-- Vrepresentation       -- represents a face by the list of Vrep it contains.
-- Hrepresentation       -- represents a face by a list of Hrep it is contained in.
+- Vrep                  -- ``[vertices, rays, lines]`` of the polyhedron
+- Hrep                  -- inequalities and equations of the polyhedron
+- Facets                -- facets of the polyhedron
+- Vrepresentation       -- represents a face by the list of Vrep it contains
+- Hrepresentation       -- represents a face by a list of Hrep it is contained in
 - bit representation    -- represents incidences as bitset, where each bit
   represents one incidence. There might be trailing zeros, to fit alignment
   requirements.  In most instances, faces are represented by the bit
@@ -543,7 +543,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cdef _init_from_ListOfFaces(self, ListOfFaces facets, ListOfFaces Vrep):
         """
-        Initialize self from two ``ListOfFaces``.
+        Initialize ``self`` from two ``ListOfFaces``.
         """
         self._bitrep_facets = facets
         self._bitrep_Vrep = Vrep
@@ -1300,7 +1300,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         edges = tuple(edge for edge in self.edges(names=names, algorithm=algorithm)
                       if edge[0] in vertices and edge[1] in vertices)
 
-        return Graph([vertices, edges], format="vertices_and_edges")
+        return Graph([vertices, edges], format='vertices_and_edges')
 
     graph = vertex_graph
 
@@ -1359,7 +1359,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
-    def ridges(self, add_equations=False, names=True, add_equalities=False, algorithm=None):
+    def ridges(self, add_equations=False, names=True, algorithm=None):
         r"""
         Return the ridges.
 
@@ -1376,7 +1376,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         - ``add_equations`` -- if ``True``, then equations of the polyhedron
           will be added (only applicable when ``names`` is ``True``)
 
-        - ``names`` -- boolean (default: `True`);
+        - ``names`` -- boolean (default: ``True``);
           if ``False``, then the facets are given by their indices
 
         - ``algorithm`` -- string (optional);
@@ -1453,21 +1453,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C = CombinatorialPolyhedron(polytopes.simplex())
             sage: C.ridges(names=False, add_equations=True)
             ((2, 3), (1, 3), (0, 3), (1, 2), (0, 2), (0, 1))
-
-        The keyword ``add_equalities`` is deprecated::
-
-            sage: C = CombinatorialPolyhedron(polytopes.simplex())
-            sage: r = C.ridges(add_equations=True)
-            sage: r1 = C.ridges(add_equalities=True)
-            doctest:...: DeprecationWarning: the keyword ``add_equalities`` is deprecated; use ``add_equations``
-            See https://github.com/sagemath/sage/issues/31834 for details.
-            sage: r == r1
-            True
         """
-        if add_equalities:
-            from sage.misc.superseded import deprecation
-            deprecation(31834, "the keyword ``add_equalities`` is deprecated; use ``add_equations``", 3)
-            add_equations = True
         self._compute_ridges(self._algorithm_to_dual(algorithm))
         cdef size_t n_ridges = self._ridges.length
 
@@ -1597,7 +1583,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             # If names is false, the ridges are given as tuple of indices,
             # i.e. (1,2) instead of (('f1',), ('f2',)).
             V = list(v[0] for v in V)
-        return Graph([V, E], format="vertices_and_edges")
+        return Graph([V, E], format='vertices_and_edges')
 
     @cached_method
     def vertex_facet_graph(self, names=True):
@@ -1795,14 +1781,14 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         INPUT:
 
-        - ``args`` -- integers (optional); specify an entry of the
-          flag-f-vector; must be an increasing sequence of integers
+        - ``args`` -- integer (optional); specify an entry of the
+          flag-f-vector (must be an increasing sequence of integers)
 
         OUTPUT:
 
         - a dictionary, if no arguments were given
 
-        - an Integer, if arguments were given
+        - an integer, if arguments were given
 
         EXAMPLES:
 
@@ -2673,7 +2659,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         return self.face_generator().meet_of_Hrep(*indices)
 
-    def face_generator(self, dimension=None, algorithm=None, **kwds):
+    def face_generator(self, dimension=None, algorithm=None):
         r"""
         Iterator over all proper faces of specified dimension.
 
@@ -2688,9 +2674,7 @@ cdef class CombinatorialPolyhedron(SageObject):
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
 
-        OUTPUT:
-
-        - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`
+        OUTPUT: :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`
 
         .. NOTE::
 
@@ -2760,16 +2744,6 @@ cdef class CombinatorialPolyhedron(SageObject):
             (A ray in the direction (1, 0), A vertex at (1, 0))
             (A ray in the direction (0, 1), A vertex at (0, 1))
 
-        TESTS:
-
-        The kewword ``dual`` is deprecated::
-
-            sage: C = CombinatorialPolyhedron([[0,1,2],[0,1,3],[0,2,3],[1,2,3]])
-            sage: it = C.face_generator(1, False)
-            doctest:...: DeprecationWarning: the keyword dual is deprecated; use algorithm instead
-            See https://github.com/sagemath/sage/issues/33646 for details.
-            sage: it = C.face_generator(1, dual=True)
-
         .. SEEALSO::
 
             :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`,
@@ -2777,18 +2751,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         cdef int dual
 
-        if algorithm in (False, True):
-            from sage.misc.superseded import deprecation
-            deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
-            dual = int(algorithm)
-        else:
-            dual = self._algorithm_to_dual(algorithm)
-
-        if kwds:
-            from sage.misc.superseded import deprecation
-            deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
-            if 'dual' in kwds and dual == -1 and kwds['dual'] in (False, True):
-                dual = int(kwds['dual'])
+        dual = self._algorithm_to_dual(algorithm)
 
         if dual == -1:
             # Determine the faster way, to iterate through all faces.
@@ -2822,9 +2785,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         r"""
         Generate the face-lattice.
 
-        OUTPUT:
-
-        - :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
+        OUTPUT: :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
 
         .. NOTE::
 
@@ -3207,7 +3168,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     def _test_a_maximal_chain(self, tester=None, **options):
         """
-        Run tests on the method :meth:`.a_maximal_chain`
+        Run tests on the method :meth:`.a_maximal_chain`.
 
         TESTS::
 
@@ -3273,11 +3234,6 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         return self._equations
 
-    cdef tuple equalities(self):
-        from sage.misc.superseded import deprecation
-        deprecation(31834, "the method equalities of CombinatorialPolyhedron is deprecated; use equations", 3)
-        return self.equations()
-
     cdef unsigned int n_Vrepresentation(self) noexcept:
         r"""
         Return the number of elements in the Vrepresentation.
@@ -3292,7 +3248,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     def is_compact(self):
         r"""
-        Return whether the polyhedron is compact
+        Return whether the polyhedron is compact.
 
         EXAMPLES::
 
@@ -3354,7 +3310,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cpdef CombinatorialPolyhedron dual(self):
         r"""
-        Return the dual/polar of self.
+        Return the dual/polar of ``self``.
 
         Only defined for bounded polyhedra.
 
@@ -3634,9 +3590,7 @@ cdef class CombinatorialPolyhedron(SageObject):
           * ``'edges'``
           * ``'ridges'``
 
-        OUTPUT:
-
-        Either ``'primal'`` or ``'dual'``.
+        OUTPUT: either ``'primal'`` or ``'dual'``
 
         EXAMPLES::
 

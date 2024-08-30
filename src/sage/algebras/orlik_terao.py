@@ -25,7 +25,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
     r"""
     An Orlik-Terao algebra.
 
-    Let `R` be a commutative ring. Let `M` be a matroid with ground set
+    Let `R` be a commutative ring. Let `M` be a matroid with groundset
     `X` with some fixed ordering and representation `A = (a_x)_{x \in X}`
     (so `a_x` is a (column) vector). Let `C(M)` denote the set of circuits
     of `M`. Let `P` denote the quotient algebra `R[e_x \mid x \in X] /
@@ -65,7 +65,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
 
     - ``R`` -- the base ring
     - ``M`` -- the defining matroid
-    - ``ordering`` -- (optional) an ordering of the ground set
+    - ``ordering`` -- (optional) an ordering of the groundset
 
     EXAMPLES:
 
@@ -164,7 +164,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             self._broken_circuits[frozenset(L[1:])] = L[0]
 
         cat = Algebras(R).FiniteDimensional().Commutative().WithBasis().Graded()
-        CombinatorialFreeModule.__init__(self, R, M.no_broken_circuits_sets(ordering),
+        CombinatorialFreeModule.__init__(self, R, list(M.no_broken_circuits_sets(ordering)),
                                          prefix='OT', bracket='{',
                                          sorting_key=self._sort_key,
                                          category=cat)
@@ -252,7 +252,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         r"""
         Return the algebra generators of ``self``.
 
-        These form a family indexed by the ground set `X` of `M`. For
+        These form a family indexed by the groundset `X` of `M`. For
         each `x \in X`, the `x`-th element is `e_x`.
 
         EXAMPLES::
@@ -323,7 +323,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         TESTS:
 
         Let us check that `e_{s_1} e_{s_2} \cdots e_{s_k} = e_S` for any
-        subset `S = \{ s_1 < s_2 < \cdots < s_k \}` of the ground set::
+        subset `S = \{ s_1 < s_2 < \cdots < s_k \}` of the groundset::
 
             sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,2]], multiedges=True)
@@ -355,11 +355,11 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
     def subset_image(self, S):
         r"""
         Return the element `e_S` of ``self`` corresponding to a
-        subset ``S`` of the ground set of the defining matroid.
+        subset ``S`` of the groundset of the defining matroid.
 
         INPUT:
 
-        - ``S`` -- a frozenset which is a subset of the ground set of `M`
+        - ``S`` -- frozenset which is a subset of the groundset of `M`
 
         EXAMPLES::
 
@@ -613,7 +613,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
         Finite family {0: B[0], 1: B[1]}
         sage: [OTG.lift(b) for b in OTG.basis()]
         [OT{}, OT{0} + OT{1} + OT{2} + OT{3} + OT{4} + OT{5}]
-
     """
     def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs):
         r"""
@@ -630,7 +629,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: import __main__; __main__.on_groundset = on_groundset
             sage: OTG = M.orlik_terao_algebra(QQ, invariant = (G,on_groundset))
             sage: TestSuite(OTG).run()
-
         """
         ordering = kwargs.pop('ordering', None)
         OT = OrlikTeraoAlgebra(R, M, ordering)

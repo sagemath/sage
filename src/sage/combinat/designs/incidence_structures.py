@@ -73,12 +73,12 @@ class IncidenceStructure:
               ['a', 'b', 'c', 'd', 'e']
 
     - ``blocks`` -- (i.e. edges, i.e. sets) the blocks defining the incidence
-      structure. Can be any iterable.
+      structure; can be any iterable
 
-    - ``incidence_matrix`` -- a binary incidence matrix. Each column represents
-      a set.
+    - ``incidence_matrix`` -- a binary incidence matrix; each column represents
+      a set
 
-    - ``name`` (a string, such as "Fano plane").
+    - ``name`` -- string (such as "Fano plane")
 
     - ``check`` -- whether to check the input
 
@@ -336,11 +336,11 @@ class IncidenceStructure:
 
     def __contains__(self, block):
         r"""
-        Tests if a block belongs to the incidence structure
+        Test if a block belongs to the incidence structure.
 
         INPUT:
 
-        - ``block`` -- a block.
+        - ``block`` -- a block
 
         EXAMPLES::
 
@@ -422,11 +422,10 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``other`` -- an incidence structure.
+        - ``other`` -- an incidence structure
 
-        - ``certificate`` (boolean) -- whether to return an
-          isomorphism from ``self`` to ``other`` instead of a boolean
-          answer.
+        - ``certificate`` -- boolean (default: ``False``); whether to return an
+          isomorphism from ``self`` to ``other`` instead of a boolean answer
 
         EXAMPLES::
 
@@ -473,7 +472,6 @@ class IncidenceStructure:
             True
             sage: IS1._canonical_label is None or IS2._canonical_label is None
             False
-
         """
         if (self.num_points() != other.num_points() or
             self.num_blocks() != other.num_blocks() or
@@ -497,7 +495,7 @@ class IncidenceStructure:
 
     def isomorphic_substructures_iterator(self, H2,induced=False):
         r"""
-        Iterates over all copies of ``H2`` contained in ``self``.
+        Iterate over all copies of ``H2`` contained in ``self``.
 
         A hypergraph `H_1` contains an isomorphic copy of a hypergraph `H_2` if
         there exists an injection `f:V(H_2)\mapsto V(H_1)` such that for any set
@@ -514,10 +512,10 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``H2`` an :class:`IncidenceStructure` object.
+        - ``H2`` -- an :class:`IncidenceStructure` object
 
-        - ``induced`` (boolean) -- whether to require the copies to be
-          induced. Set to ``False`` by default.
+        - ``induced`` -- boolean (default: ``False``); whether to require the copies to be
+          induced
 
         EXAMPLES:
 
@@ -570,7 +568,7 @@ class IncidenceStructure:
 
         EXAMPLES::
 
-            sage: IS = IncidenceStructure([[1,2,3,"e"]],name="Test")
+            sage: IS = IncidenceStructure([[1,2,3,"e"]], name='Test')
             sage: IS
             Incidence structure with 4 points and 1 blocks
             sage: copy(IS)
@@ -600,7 +598,7 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``points`` -- a set of points.
+        - ``points`` -- set of points
 
         .. NOTE::
 
@@ -661,13 +659,13 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``points`` -- a set of points.
+        - ``points`` -- set of points
 
-        - ``min_size`` (integer; default 1) -- minimum size of the sets to
-          keep. By default all empty sets are discarded, i.e. ``min_size=1``.
+        - ``min_size`` -- integer (default: 1); minimum size of the sets to
+          keep. By default all empty sets are discarded, i.e. ``min_size=1``
 
-        - ``multiset`` (boolean; default ``True``) -- whether to keep multiple
-          copies of the same set.
+        - ``multiset`` -- boolean (default: ``True``); whether to keep multiple
+          copies of the same set
 
         .. NOTE::
 
@@ -776,7 +774,6 @@ class IncidenceStructure:
             sage: BD = IncidenceStructure(7,[[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
             sage: BD.blocks()
             [[0, 1, 2], [0, 3, 4], [0, 5, 6], [1, 3, 5], [1, 4, 6], [2, 3, 6], [2, 4, 5]]
-
         """
         if self._point_to_index is None:
             return [b[:] for b in self._blocks]
@@ -807,10 +804,10 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``p`` -- a point (or a set of points) of the incidence structure.
+        - ``p`` -- a point (or a set of points) of the incidence structure
 
-        - ``subset`` (boolean) -- whether to interpret the argument as a set of
-          point (``subset=True``) or as a point (``subset=False``, default).
+        - ``subset`` -- boolean (default: ``False``); whether to interpret the
+          argument as a set of point or as a point (default)
 
         EXAMPLES::
 
@@ -856,7 +853,7 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``size`` (integer) -- return the degree of all subsets of points of
+        - ``size`` -- integer; return the degree of all subsets of points of
           cardinality ``size``. When ``size=None``, the function outputs the
           degree of all points.
 
@@ -866,9 +863,7 @@ class IncidenceStructure:
               ``size=1`` it is indexed by tuples of size 1. This is the same
               information, stored slightly differently.
 
-        OUTPUT:
-
-        A dictionary whose values are degrees and keys are either:
+        OUTPUT: a dictionary whose values are degrees and keys are either:
 
         - the points of the incidence structure if ``size=None`` (default)
 
@@ -923,7 +918,7 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``r`` (integer)
+        - ``r`` -- integer
 
         OUTPUT:
 
@@ -974,7 +969,7 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``k`` (integer)
+        - ``k`` -- integer
 
         OUTPUT:
 
@@ -1094,7 +1089,7 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``sizes`` -- a list/set of integers. For convenience, setting
+        - ``sizes`` -- list/set of integers; for convenience, setting
           ``sizes`` to ``5`` has the same effect as ``sizes=[5]``. When set to
           ``None`` (default), behaves as ``sizes=PositiveIntegers()``.
 
@@ -1147,9 +1142,9 @@ class IncidenceStructure:
             [1 1 0 0]
             [0 1 1 1]
         """
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
         from sage.rings.integer_ring import ZZ
-        A = Matrix(ZZ, self.num_points(), self.num_blocks(), sparse=True)
+        A = matrix(ZZ, self.num_points(), self.num_blocks(), sparse=True)
         for j, b in enumerate(self._blocks):
             for i in b:
                 A[i, j] = 1
@@ -1157,17 +1152,17 @@ class IncidenceStructure:
 
     def incidence_graph(self,labels=False):
         r"""
-        Return the incidence graph of the incidence structure
+        Return the incidence graph of the incidence structure.
 
         A point and a block are adjacent in this graph whenever they are
         incident.
 
         INPUT:
 
-        - ``labels`` (boolean) -- whether to return a graph whose vertices are
-          integers, or labelled elements.
+        - ``labels`` -- boolean; whether to return a graph whose vertices are
+          integers, or labelled elements
 
-          - ``labels is False`` (default) -- in this case the first vertices
+          - ``labels is False`` -- default; in this case the first vertices
             of the graphs are the elements of :meth:`ground_set`, and appear
             in the same order. Similarly, the following vertices represent the
             elements of :meth:`blocks`, and appear in the same order.
@@ -1257,7 +1252,7 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``uniform`` (boolean) --
+        - ``uniform`` -- boolean
 
           - if set to ``False`` (default), returns the incidence structure whose
             blocks are the complements of all blocks of the incidence structure.
@@ -1326,7 +1321,7 @@ class IncidenceStructure:
 
     def relabel(self, perm=None, inplace=True):
         r"""
-        Relabel the ground set
+        Relabel the ground set.
 
         INPUT:
 
@@ -1340,11 +1335,10 @@ class IncidenceStructure:
               ``l[1]``, ...
 
             - ``None`` -- the incidence structure is relabeled to be on
-              `\{0,1,...,n-1\}` in the ordering given by :meth:`ground_set`.
+              `\{0,1,...,n-1\}` in the ordering given by :meth:`ground_set`
 
-        - ``inplace`` -- If ``True`` then return a relabeled graph and does not
-          touch ``self`` (default is ``False``).
-
+        - ``inplace`` -- boolean (default: ``False``); if ``True`` then return
+          a relabeled graph and does not touch ``self``
 
         EXAMPLES::
 
@@ -1417,7 +1411,7 @@ class IncidenceStructure:
 
     def packing(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
-        Return a maximum packing
+        Return a maximum packing.
 
         A maximum packing in a hypergraph is collection of disjoint sets/blocks
         of maximal cardinality. This problem is NP-complete in general, and in
@@ -1428,7 +1422,7 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear
           Programming (MILP) solver to be used. If set to ``None``, the default
           one is used. For more information on LP solvers and which default
           solver is used, see the method :meth:`solve
@@ -1436,7 +1430,7 @@ class IncidenceStructure:
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``). Sets the level of
+        - ``verbose`` -- integer (default: 0); sets the level of
           verbosity. Set to 0 by default, which means quiet.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over
@@ -1486,12 +1480,12 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``t,v,k,l`` (integers) -- their value is set to ``None`` by
-          default. The function tests whether the design is a ``t-(v,k,l)``
-          design using the provided values and guesses the others. Note that
-          `l`` cannot be specified if ``t`` is not.
+        - ``t``, ``v``, ``k``, ``l`` -- integers; their value is set to
+          ``None`` by default. The function tests whether the design is a
+          `t-(v,k,l)` design using the provided values and guesses the
+          others. Note that ``l`` cannot be specified if ``t`` is not.
 
-        - ``return_parameters`` (boolean)-- whether to return the parameters of
+        - ``return_parameters`` -- boolean; whether to return the parameters of
           the `t`-design. If set to ``True``, the function returns a pair
           ``(boolean_answer,(t,v,k,l))``.
 
@@ -1703,10 +1697,10 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``verbose`` (boolean) -- whether to print an explanation when the
-          instance is not a generalized quadrangle.
+        - ``verbose`` -- boolean; whether to print an explanation when the
+          instance is not a generalized quadrangle
 
-        - ``parameters`` (boolean; ``False``) -- if set to ``True``, the
+        - ``parameters`` -- (boolean; ``False``); if set to ``True``, the
           function returns a pair ``(s,t)`` instead of ``True`` answers. In this
           case, `s` and `t` are the integers defined above if they exist (each
           can be set to ``False`` otherwise).
@@ -1777,11 +1771,11 @@ class IncidenceStructure:
         INPUT:
 
         - ``algorithm`` -- whether to use Sage's implementation
-          (``algorithm=None``, default) or use GAP's (``algorithm="gap"``).
+          (``algorithm=None``, default) or use GAP's (``algorithm='gap'``)
 
           .. NOTE::
 
-              The ``algorithm="gap"`` option requires GAP's Design package
+              The ``algorithm='gap'`` option requires GAP's Design package
               (included in the ``gap_packages`` Sage spkg).
 
         EXAMPLES:
@@ -1798,12 +1792,12 @@ class IncidenceStructure:
             Incidence structure with 4 points and 3 blocks
             sage: D.dual()                                                              # needs sage.modules
             Incidence structure with 3 points and 4 blocks
-            sage: print(D.dual(algorithm="gap"))            # optional - gap_package_design
+            sage: print(D.dual(algorithm='gap'))            # optional - gap_package_design
             Incidence structure with 3 points and 4 blocks
             sage: blocks = [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]]
-            sage: BD = IncidenceStructure(7, blocks, name="FanoPlane"); BD
+            sage: BD = IncidenceStructure(7, blocks, name='FanoPlane'); BD
             Incidence structure with 7 points and 7 blocks
-            sage: print(BD.dual(algorithm="gap"))           # optional - gap_package_design
+            sage: print(BD.dual(algorithm='gap'))           # optional - gap_package_design
             Incidence structure with 7 points and 7 blocks
             sage: BD.dual()                                                             # needs sage.modules
             Incidence structure with 7 points and 7 blocks
@@ -1879,7 +1873,7 @@ class IncidenceStructure:
     def is_resolvable(self, certificate=False, solver=None, verbose=0, check=True,
                       *, integrality_tolerance=1e-3):
         r"""
-        Test whether the hypergraph is resolvable
+        Test whether the hypergraph is resolvable.
 
         A hypergraph is said to be resolvable if its sets can be partitionned
         into classes, each of which is a partition of the ground set.
@@ -1893,10 +1887,10 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``certificate`` (boolean) -- whether to return the classes along with
-          the binary answer (see examples below).
+        - ``certificate`` -- boolean; whether to return the classes along with
+          the binary answer (see examples below)
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear
           Programming (MILP) solver to be used. If set to ``None``, the default
           one is used. For more information on MILP solvers and which default
           solver is used, see the method :meth:`solve
@@ -1904,17 +1898,15 @@ class IncidenceStructure:
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``). Sets the level of
+        - ``verbose`` -- integer (default: 0); sets the level of
           verbosity. Set to 0 by default, which means quiet.
 
-        - ``check`` (boolean) -- whether to check that output is correct before
-          returning it. As this is expected to be useless (but we are cautious
-          guys), you may want to disable it whenever you want speed. Set to
-          ``True`` by default.
+        - ``check`` -- boolean (default: ``True``); whether to check that
+          output is correct before returning it. As this is expected to be
+          useless, you may want to disable it whenever you want speed.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over
-          an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
+          an inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
         EXAMPLES:
 
@@ -2026,18 +2018,18 @@ class IncidenceStructure:
     def coloring(self, k=None, solver=None, verbose=0,
                  *, integrality_tolerance=1e-3):
         r"""
-        Compute a (weak) `k`-coloring of the hypergraph
+        Compute a (weak) `k`-coloring of the hypergraph.
 
         A weak coloring of a hypergraph `\mathcal H` is an assignment of colors
         to its vertices such that no set is monochromatic.
 
         INPUT:
 
-        - ``k`` (integer) -- compute a coloring with `k` colors if an integer is
+        - ``k`` -- integer; compute a coloring with `k` colors if an integer is
           provided, otherwise returns an optimal coloring (i.e. with the minimum
           possible number of colors).
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear
           Programming (MILP) solver to be used. If set to ``None``, the default
           one is used. For more information on MILP solvers and which default
           solver is used, see the method :meth:`solve
@@ -2045,15 +2037,14 @@ class IncidenceStructure:
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- non-negative integer (default: ``0``). Set the level
+        - ``verbose`` -- nonnegative integer (default: `0`); set the level
           of verbosity you want from the linear program solver. Since the
           problem is `NP`-complete, its solving may take some time depending on
-          the graph. A value of 0 means that there will be no message printed by
+          the graph. A value of `0` means that there will be no message printed by
           the solver.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over
-          an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
+          an inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
         EXAMPLES:
 
@@ -2130,9 +2121,7 @@ class IncidenceStructure:
         receive different colors. The coloring returned minimizes the number of
         colors.
 
-        OUTPUT:
-
-        A partition of the sets into color classes.
+        OUTPUT: a partition of the sets into color classes
 
         EXAMPLES::
 
@@ -2150,7 +2139,7 @@ class IncidenceStructure:
         g = Graph([list(range(self.num_blocks())),
                    lambda x, y: len(blocks_sets[x] & blocks_sets[y])],
                   loops=False)
-        return [[blocks[i] for i in C] for C in g.coloring(algorithm="MILP")]
+        return [[blocks[i] for i in C] for C in g.coloring(algorithm='MILP')]
 
     def _spring_layout(self):
         r"""
@@ -2204,7 +2193,7 @@ class IncidenceStructure:
 
     def _latex_(self):
         r"""
-        Return a TikZ representation of the incidence structure
+        Return a TikZ representation of the incidence structure.
 
         EXAMPLES::
 
@@ -2236,7 +2225,6 @@ class IncidenceStructure:
              \draw node...;
              \draw node...;
             \end{tikzpicture}
-
         """
         from sage.functions.trig import arctan2
 

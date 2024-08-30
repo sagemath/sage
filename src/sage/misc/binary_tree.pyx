@@ -98,7 +98,6 @@ cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self) noexcept:
     return left
 
 
-
 cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *right
     cdef binary_tree_node *cur
@@ -176,7 +175,6 @@ cdef object binary_tree_list(binary_tree_node *cur, int behavior):
         arry.append(item)
 
     return arry
-
 
 
 cdef class BinaryTree:
@@ -310,7 +308,7 @@ cdef class BinaryTree:
             sage: t = BinaryTree()
             sage: t.contains(1)
             False
-            sage: t.insert(1,1)
+            sage: t.insert(1, 1)
             sage: t.contains(1)
             True
         """
@@ -440,7 +438,7 @@ cdef class BinaryTree:
         """
         return self.head == NULL
 
-    def keys(BinaryTree self, order="inorder"):
+    def keys(BinaryTree self, order='inorder'):
         """
         Return the keys sorted according to "order" parameter.
 
@@ -459,7 +457,7 @@ cdef class BinaryTree:
 
         return binary_tree_list(self.head, LIST_KEYS + o)
 
-    def values(BinaryTree self, order="inorder"):
+    def values(BinaryTree self, order='inorder'):
         """
         Return the keys sorted according to "order" parameter.
 

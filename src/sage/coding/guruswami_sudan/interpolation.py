@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 """
 Interpolation algorithms for the Guruswami-Sudan decoder
 
@@ -36,7 +36,7 @@ def _flatten_once(lstlst):
 
     INPUT:
 
-    - ``lstlst`` -- a list of lists.
+    - ``lstlst`` -- list of lists
 
     EXAMPLES::
 
@@ -54,16 +54,14 @@ def _flatten_once(lstlst):
 
 def _monomial_list(maxdeg, l, wy):
     r"""
-    Returns a list of all non-negative integer pairs `(i,j)` such that ``i + wy
+    Return a list of all nonnegative integer pairs `(i,j)` such that ``i + wy
     * j < maxdeg`` and ``j \geq l``.
 
     INPUT:
 
-    - ``maxdeg``, ``l``, ``wy`` -- integers.
+    - ``maxdeg``, ``l``, ``wy`` -- integers
 
-    OUTPUT:
-
-    - a list of pairs of integers.
+    OUTPUT: list of pairs of integers
 
     EXAMPLES::
 
@@ -90,7 +88,7 @@ def _monomial_list(maxdeg, l, wy):
 
 def _interpolation_matrix_given_monomials(points, s, monomials):
     r"""
-    Returns a matrix whose nullspace is a basis for all interpolation
+    Return a matrix whose nullspace is a basis for all interpolation
     polynomials, each polynomial having its coefficients laid out according to
     the given list of monomials.
 
@@ -100,11 +98,11 @@ def _interpolation_matrix_given_monomials(points, s, monomials):
 
     INPUT:
 
-    - ``points`` -- a list of pairs of field elements, the interpolation points.
+    - ``points`` -- list of pairs of field elements, the interpolation points
 
-    - ``s`` -- an integer, the multiplicity parameter from Guruswami-Sudan algorithm.
+    - ``s`` -- integer; the multiplicity parameter from Guruswami-Sudan algorithm
 
-    - ``monomials`` -- a list of monomials, each represented by the powers as an integer pair `(i,j)`.
+    - ``monomials`` -- list of monomials, each represented by the powers as an integer pair `(i,j)`
 
     EXAMPLES::
 
@@ -160,25 +158,25 @@ def _interpolation_max_weighted_deg(n, tau, s):
 
 def _interpolation_matrix_problem(points, tau, parameters, wy):
     r"""
-    Returns the linear system of equations which ``Q`` should be a solution to.
+    Return the linear system of equations which ``Q`` should be a solution to.
 
     This linear system is returned as a matrix ``M`` and a list of monomials ``monomials``,
     where a vector in the right nullspace of ``M`` corresponds to an
-    interpolation polynomial `Q`, by mapping the `t`'th element of such a vector
-    to the coefficient to `x^iy^j`, where `(i,j)` is the `t`'th element of ``monomials``.
+    interpolation polynomial `Q`, by mapping the `t`-th element of such a vector
+    to the coefficient to `x^iy^j`, where `(i,j)` is the `t`-th element of ``monomials``.
 
     INPUT:
 
-    - ``points`` -- a list of interpolation points, as pairs of field elements.
+    - ``points`` -- list of interpolation points, as pairs of field elements
 
-    - ``tau`` -- an integer, the number of errors one wants to decode.
+    - ``tau`` -- integer; the number of errors one wants to decode
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
         - the first integer is the multiplicity parameter of Guruswami-Sudan algorithm and
         - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer specifying the `y`-weighted degree that is to be
+    - ``wy`` -- integer; specifying the `y`-weighted degree that is to be
       minimised in the interpolation polynomial. In Guruswami-Sudan, this is
       `k-1`, where `k` is the dimension of the GRS code.
 
@@ -235,10 +233,10 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
 
     INPUT:
 
-    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek ``Q`` with
-      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``.
+    - ``points`` -- list of tuples ``(xi, yi)`` such that we seek ``Q`` with
+      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``
 
-    - ``tau`` -- an integer, the number of errors one wants to decode.
+    - ``tau`` -- integer; the number of errors one wants to decode
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
@@ -246,8 +244,8 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
         algorithm and
       - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
-      ``(1, wy)``-weighted degree.
+    - ``wy`` -- integer; the `y`-weight, where we seek `Q` of low
+      ``(1, wy)``-weighted degree
 
     EXAMPLES:
 
@@ -279,7 +277,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
     """
     M, monomials = _interpolation_matrix_problem(points, tau, parameters, wy)
     Ker = M.right_kernel()
-    # Pick a non-zero element from the right kernel
+    # Pick a nonzero element from the right kernel
     sol = Ker.basis()[0]
     # Construct the Q polynomial
     PF = M.base_ring()['x', 'y'] #make that ring a ring in <x>
@@ -298,7 +296,7 @@ def lee_osullivan_module(points, parameters, wy):
     The module is constructed in the following way: Let `R(x)` be the Lagrange
     interpolation polynomial through the sought interpolation points `(x_i,
     y_i)`, i.e. `R(x_i) = y_i`. Let `G(x) = \prod_{i=1}^n (x-x_i)`. Then the
-    `i`'th row of the basis matrix of the module is the coefficient-vector of
+    `i`-th row of the basis matrix of the module is the coefficient-vector of
     the following polynomial in `\GF{q}[x][y]`:
 
         `P_i(x,y) = G(x)^{[i-s]} (y - R(x))^{i - [i-s]} y^{[i-s]}` ,
@@ -310,8 +308,8 @@ def lee_osullivan_module(points, parameters, wy):
 
     INPUT:
 
-    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek `Q` with
-      ``(xi,yi)`` being a root of `Q` with multiplicity `s`.
+    - ``points`` -- list of tuples ``(xi, yi)`` such that we seek `Q` with
+      ``(xi,yi)`` being a root of `Q` with multiplicity `s`
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
@@ -319,8 +317,8 @@ def lee_osullivan_module(points, parameters, wy):
         algorithm and
       - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
-      ``(1,wy)`` weighted degree.
+    - ``wy`` -- integer; the `y`-weight, where we seek `Q` of low
+      ``(1,wy)`` weighted degree
 
     EXAMPLES::
 
@@ -353,7 +351,7 @@ def lee_osullivan_module(points, parameters, wy):
 
 def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
     r"""
-    Returns an interpolation polynomial Q(x,y) for the given input using the
+    Return an interpolation polynomial Q(x,y) for the given input using the
     module-based algorithm of Lee and O'Sullivan.
 
     This algorithm constructs an explicit `(\ell+1) \times (\ell+1)` polynomial
@@ -364,10 +362,10 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
 
     INPUT:
 
-    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek ``Q`` with
-      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``.
+    - ``points`` -- list of tuples ``(xi, yi)`` such that we seek ``Q`` with
+      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``
 
-    - ``tau`` -- an integer, the number of errors one wants to decode.
+    - ``tau`` -- integer; the number of errors one wants to decode
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
@@ -375,8 +373,8 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
         algorithm and
       - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek ``Q`` of low
-      ``(1,wy)`` weighted degree.
+    - ``wy`` -- integer; the `y`-weight, where we seek ``Q`` of low
+      ``(1,wy)`` weighted degree
 
     EXAMPLES::
 

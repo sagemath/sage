@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 """
 Performance Test for Clone Protocol
 
@@ -88,7 +88,7 @@ class IncreasingArraysPy(IncreasingArrays):
 
     class Element(ClonableArray):
         """
-        A small class for testing :class:`ClonableArray`: Increasing Lists
+        A small class for testing :class:`ClonableArray`: Increasing Lists.
 
         TESTS::
 

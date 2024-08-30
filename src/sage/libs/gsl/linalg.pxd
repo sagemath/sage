@@ -81,7 +81,6 @@ cdef extern from "gsl/gsl_linalg.h":
   gsl_complex  gsl_linalg_complex_LU_sgndet(gsl_matrix_complex * LU, int signum)
 
 
-
   # QR decomposition
 
   int  gsl_linalg_QR_decomp(gsl_matrix * A, gsl_vector * tau)

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Reporting doctest results
 
@@ -10,7 +10,7 @@ It also computes the exit status in the ``error_status`` attribute of
 - 1: Doctest failure
 - 2: Bad command line syntax or invalid options
 - 4: Test timed out
-- 8: Test exited with non-zero status
+- 8: Test exited with nonzero status
 - 16: Test crashed with a signal (e.g. segmentation fault)
 - 32: TAB character found
 - 64: Internal error in the doctesting framework
@@ -41,6 +41,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import re
 from sys import stdout
 from signal import (SIGABRT, SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL,
                     SIGINT, SIGKILL, SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM)
@@ -101,9 +102,9 @@ class DocTestReporter(SageObject):
         INPUT:
 
         - ``controller`` -- a
-          :class:`sage.doctest.control.DocTestController` instance.
+          :class:`sage.doctest.control.DocTestController` instance;
           Note that some methods assume that appropriate tests have
-          been run by the controller.
+          been run by the controller
 
         EXAMPLES::
 
@@ -145,12 +146,12 @@ class DocTestReporter(SageObject):
         When latex is available, doctests marked with optional tag
         ``latex`` are run by default since :issue:`32174`::
 
-            sage: filename = os.path.join(SAGE_SRC,'sage','misc','latex.py')
+            sage: # needs SAGE_SRC
+            sage: filename = os.path.join(SAGE_SRC, 'sage', 'misc', 'latex.py')
             sage: DC = DocTestController(DocTestDefaults(), [filename])
             sage: DTR = DocTestReporter(DC)
             sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
             True
-
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
@@ -217,6 +218,69 @@ class DocTestReporter(SageObject):
                 cmd += f" [failed in baseline: {failed}]"
         return cmd
 
+    def _log_failure(self, source, fail_msg, event, output=None):
+        r"""
+        Report on the result of a failed doctest run.
+
+        INPUT:
+
+        - ``source`` -- a source from :mod:`sage.doctest.sources`
+
+        - ``fail_msg`` -- string
+
+        - ``event`` -- string
+
+        - ``output`` -- (optional) string
+
+        EXAMPLES::
+
+            sage: from sage.doctest.reporting import DocTestReporter
+            sage: from sage.doctest.control import DocTestController, DocTestDefaults
+            sage: from sage.doctest.sources import FileDocTestSource
+            sage: from sage.env import SAGE_SRC
+            sage: import os
+            sage: filename = os.path.join(SAGE_SRC, 'sage', 'doctest', 'reporting.py')
+            sage: DD = DocTestDefaults()
+            sage: FDS = FileDocTestSource(filename, DD)
+            sage: DC = DocTestController(DD,[filename])
+            sage: DTR = DocTestReporter(DC)
+            sage: DTR._log_failure(FDS, "Timed out", "process (pid=1234) timed out", "Output so far...")
+                Timed out
+            **********************************************************************
+            Tests run before process (pid=1234) timed out:
+            Output so far...
+            **********************************************************************
+        """
+        log = self.controller.log
+        format = self.controller.options.format
+        if format == 'sage':
+            stars = "*" * 70
+            log(f"    {fail_msg}\n{stars}\n")
+            if output:
+                log(f"Tests run before {event}:")
+                log(output)
+                log(stars)
+        elif format == 'github':
+            # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
+            command = f'::error title={fail_msg}'
+            command += f',file={source.printpath}'
+            if output:
+                if m := re.search("## line ([0-9]+) ##\n-{40,100}\n(.*)", output, re.MULTILINE | re.DOTALL):
+                    lineno = m.group(1)
+                    message = m.group(2)
+                    command += f',line={lineno}'
+                else:
+                    message = output
+                # Urlencoding trick for multi-line annotations
+                # https://github.com/actions/starter-workflows/issues/68#issuecomment-581479448
+                message = message.replace('\n', '%0A')
+            else:
+                message = ""
+            command += f'::{message}'
+            log(command)
+        else:
+            raise ValueError(f'unknown format option: {format}')
+
     def report(self, source, timeout, return_code, results, output, pid=None):
         """
         Report on the result of running doctests on a given source.
@@ -228,25 +292,22 @@ class DocTestReporter(SageObject):
 
         - ``source`` -- a source from :mod:`sage.doctest.sources`
 
-        - ``timeout`` -- a boolean, whether doctests timed out
+        - ``timeout`` -- boolean; whether doctests timed out
 
-        - ``return_code`` -- an int, the return code of the process
-          running doctests on that file.
+        - ``return_code`` -- integer; the return code of the process
+          running doctests on that file
 
-        - ``results`` -- (irrelevant if ``timeout`` or
-          ``return_code``), a tuple
+        - ``results`` -- (irrelevant if ``timeout`` or ``return_code``) a tuple
 
           - ``ntests`` -- the number of doctests
 
           - ``timings`` -- a
             :class:`sage.doctest.sources.DictAsObject` instance
-            storing timing data.
+            storing timing data
 
-        - ``output`` -- a string, printed if there was some kind of
-          failure
+        - ``output`` -- string; printed if there was some kind of failure
 
-        - ``pid`` -- optional integer (default: ``None``). The pid of
-          the worker process.
+        - ``pid`` -- integer (default: ``None``); the pid of the worker process
 
         EXAMPLES::
 
@@ -434,9 +495,7 @@ class DocTestReporter(SageObject):
                         fail_msg += " (and interrupt failed)"
                     else:
                         fail_msg += " (with %s after interrupt)" % signal_name(sig)
-                log("    %s\n%s\nTests run before %s timed out:" % (fail_msg, "*"*70, process_name))
-                log(output)
-                log("*"*70)
+                self._log_failure(source, fail_msg, f"{process_name} timed out", output)
                 postscript['lines'].append(self.report_head(source, fail_msg))
                 stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
                 if not baseline.get('failed', False):
@@ -448,9 +507,7 @@ class DocTestReporter(SageObject):
                     fail_msg = "Killed due to %s" % signal_name(-return_code)
                 if ntests > 0:
                     fail_msg += " after testing finished"
-                log("    %s\n%s\nTests run before %s failed:" % (fail_msg,"*"*70, process_name))
-                log(output)
-                log("*"*70)
+                self._log_failure(source, fail_msg, f"{process_name} failed", output)
                 postscript['lines'].append(self.report_head(source, fail_msg))
                 stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
                 if not baseline.get('failed', False):
@@ -465,15 +522,11 @@ class DocTestReporter(SageObject):
                 else:
                     cpu = 1e6
                 if result_dict.err == 'badresult':
-                    log("    Error in doctesting framework (bad result returned)\n%s\nTests run before error:" % ("*"*70))
-                    log(output)
-                    log("*"*70)
+                    self._log_failure(source, "Error in doctesting framework (bad result returned)", "error", output)
                     postscript['lines'].append(self.report_head(source, "Testing error: bad result"))
                     self.error_status |= 64
                 elif result_dict.err == 'noresult':
-                    log("    Error in doctesting framework (no result returned)\n%s\nTests run before error:" % ("*"*70))
-                    log(output)
-                    log("*"*70)
+                    self._log_failure(source, "Error in doctesting framework (no result returned)", "error", output)
                     postscript['lines'].append(self.report_head(source, "Testing error: no result"))
                     self.error_status |= 64
                 elif result_dict.err == 'tab':
@@ -499,11 +552,7 @@ class DocTestReporter(SageObject):
                         else:
                             err = repr(result_dict.err)
                         fail_msg = "%s in doctesting framework" % err
-
-                    log("    %s\n%s" % (fail_msg, "*"*70))
-                    if output:
-                        log("Tests run before doctest exception:\n" + output)
-                        log("*"*70)
+                    self._log_failure(source, fail_msg, "exception", output)
                     postscript['lines'].append(self.report_head(source, fail_msg))
                     if hasattr(result_dict, 'tb'):
                         log(result_dict.tb)

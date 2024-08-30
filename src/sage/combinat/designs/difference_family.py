@@ -135,8 +135,8 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
     INPUT:
 
     - ``G`` -- group of cardinality ``v``
-    - ``D`` -- a set of ``k``-subsets of ``G``
-    - ``v``, ``k`` and ``l`` -- optional parameters of the difference family
+    - ``D`` -- set of ``k``-subsets of ``G``
+    - ``v``, ``k``, ``l`` -- (optional) parameters of the difference family
     - ``verbose`` -- boolean (default: ``False``); whether to print additional
       information
 
@@ -710,11 +710,9 @@ def one_radical_difference_family(K, k):
     INPUT:
 
     - ``K`` -- a finite field of cardinality `q`
-    - ``k`` -- a positive integer so that `k(k-1)` divides `q-1`
+    - ``k`` -- positive integer so that `k(k-1)` divides `q-1`
 
-    OUTPUT:
-
-    Either a difference family or ``None`` if it does not exist.
+    OUTPUT: either a difference family or ``None`` if it does not exist
 
     ALGORITHM:
 
@@ -832,9 +830,9 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
 
     INPUT:
 
-    - ``K`` - a finite field
+    - ``K`` -- a finite field
     - ``k`` -- positive integer; the size of the blocks
-    - ``l`` -- integer (default: ``1``); the `\lambda` parameter
+    - ``l`` -- integer (default: `1`); the `\lambda` parameter
     - ``existence`` -- if ``True``, then return either ``True`` if Sage knows
       how to build such design, ``Unknown`` if it does not and ``False`` if it
       knows that the design does not exist
@@ -991,8 +989,8 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
 
     INPUT:
 
-    - ``v``, ``k``, ``lmbda`` - integers; parameters of the difference family
-    - ``return_parameters`` -- boolean (default ``False``); if ``True``, return a
+    - ``v``, ``k``, ``lmbda`` -- integers; parameters of the difference family
+    - ``return_parameters`` -- boolean (default: ``False``); if ``True``, return a
       pair ``(True, (q, s))`` so that ``(q,s)`` can be used in the function
       :func:`mcfarland_1973_construction` to actually build a
       ``(v,k,lmbda)``-difference family. Or ``(False, None)`` if the
@@ -1070,7 +1068,7 @@ def mcfarland_1973_construction(q, s):
 
     INPUT:
 
-    - ``q``, ``s`` - integers; parameters for the difference set (see the above
+    - ``q``, ``s`` -- integers; parameters for the difference set (see the above
       formulas for the expression of ``v``, ``k``, ``l`` in terms of ``q`` and
       ``s``)
 
@@ -1123,7 +1121,7 @@ def are_hadamard_difference_set_parameters(v, k, lmbda):
 
     INPUT:
 
-    - ``(v,k,lmbda)`` -- parameters of a difference set
+    - ``(v, k, lmbda)`` -- parameters of a difference set
 
     EXAMPLES::
 
@@ -1143,7 +1141,7 @@ def hadamard_difference_set_product_parameters(N):
     Check whether a product construction is available for Hadamard difference
     set with parameter ``N``.
 
-    This function looks for two integers `N_1` and `N_2`` greater than `1`
+    This function looks for two integers `N_1` and `N_2` greater than `1`
     and so that `N = 2 N_1 N_2` and there exists Hadamard difference set with
     parameters `(4 N_i^2, 2N_i^2 - N_i, N_i^2 - N_i)`. If such pair exists,
     the output is the pair ``(N_1, N_2)`` otherwise it is ``None``.
@@ -1188,7 +1186,7 @@ def hadamard_difference_set_product(G1, D1, G2, D2):
 
     INPUT:
 
-    - ``G1,D1``, ``G2,D2`` -- two Hadamard difference sets
+    - ``G1, D1``, ``G2, D2`` -- two Hadamard difference sets
 
     EXAMPLES::
 
@@ -1329,7 +1327,6 @@ def _create_m_sequence(q, n, check=True):
         Traceback (most recent call last):
         ...
         ValueError: q must be a prime power
-
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
 
@@ -1475,8 +1472,8 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
     INPUT:
 
     - ``q`` -- a prime power
-    - ``N`` -- an integer greater than 1
-    - ``d`` -- an integer which divides `q-1`
+    - ``N`` -- integer greater than 1
+    - ``d`` -- integer which divides `q-1`
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the
       result is a relative difference set before returning it
     - ``return_group`` -- boolean (default: ``False``); if ``True``, the function
@@ -1561,7 +1558,7 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
     - ``R`` -- list; the relative diffeence set of length `k`
     - ``G`` -- an additive abelian group of order `mn`
     - ``H`` -- list; a submodule of ``G`` of order `n`
-    - ``params`` -- a tuple in the form `(m, n, k, d)`
+    - ``params`` -- tuple in the form `(m, n, k, d)`
     - ``verbose`` -- boolean (default: ``False``); if ``True``, the function
       will be verbose when the sequences do not satisfy the contraints
 
@@ -1638,7 +1635,7 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
 
     INPUT:
 
-    - ``Ks`` -- a list of sets to be checked
+    - ``Ks`` -- list of sets to be checked
     - ``v`` -- integer; the parameter `v` of the supplementary difference sets
     - ``lmbda`` -- integer; the parameter `\lambda` of the supplementary difference sets
     - ``G`` -- a group of order `v`
@@ -1733,9 +1730,9 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     INPUT:
 
     - ``q`` -- an odd prime power
-    - ``existence`` -- boolean (default: ``False``); If ``True``, only check
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
       whether the supplementary difference sets can be constructed
-    - ``check`` -- boolean (default: ``True``); If ``True``, check that the sets
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
       are supplementary difference sets before returning them
 
     OUTPUT:
@@ -1989,9 +1986,9 @@ def is_fixed_relative_difference_set(R, q):
 
     INPUT:
 
-    - ``R`` -- a list containing elements of an abelian group; the relative
+    - ``R`` -- list containing elements of an abelian group; the relative
       difference set
-    - ``q`` -- an integer
+    - ``q`` -- integer
 
     EXAMPLES::
 
@@ -2193,6 +2190,317 @@ def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=
     return G, [S1, S2, S3, S4]
 
 
+def _construct_gs_difference_family_from_full(S1, S2, mu):
+    r"""
+    Construct a spin type Goethals-Seidel difference family given the first two
+    sets.
+
+    This construction is described in [Djo2024]_. Given the first two sets
+    `S_1, S_2`, and the multiplier `\mu`, the last two sets are computed as
+    `S_3 = \mu S_2`, `S_4 =\mu S_3`.
+
+    The sets should contain elements of the additive group of integers modulo `n`.
+
+    INPUT:
+
+    - ``S1`` -- list of integer modulo `n`; the first set
+    - ``S2`` -- list of integer modulo `n`; the second set
+
+    OUTPUT:
+
+    The Goethals-Seidel difference family ``(S_1, S_2, S_3, S_4)``.
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import _construct_gs_difference_family_from_full
+        sage: G = Zmod(9)
+        sage: S1 = list(map(G, [0,3,6]))
+        sage: S2 = list(map(G, [0, 1, 8]))
+        sage: _construct_gs_difference_family_from_full(S1, S2, 4)
+        [[0, 3, 6], [0, 1, 8], [0, 4, 5], [0, 7, 2]]
+    """
+    S3 = [mu * el for el in S2]
+    S4 = [mu * el for el in S3]
+    return [S1, S2, S3, S4]
+
+
+def _construct_gs_difference_family_from_compact(rep1, rep2, H, mu):
+    r"""
+    Construct a spin type Goethals-Seidel difference family given a compact
+    representation of the first two sets.
+
+    This construction is described in [Djo2024]_. Given a subgroup `H` of a group
+    `G`, and two sets of representatives `rep_1, rep_2` we can construct the first
+    two sets: `S_1 = \bigcup_{x \in rep_1} x H` and  `S_2 = \bigcup_{x \in rep_2} x H`.
+    The list ``H`` should contain elements of the additive group of integers
+    modulo `n`.
+
+    The other two sets are constructed using
+    :func:`_construct_gs_difference_family_from_full`.
+
+    INPUT:
+
+    - ``rep1`` -- list of integers; the first set of representatives
+    - ``rep2`` -- list of integers; the second set of representatives
+    - ``H`` -- list of integers modulo `n`; the subgroup used to generate the
+      first two sets
+
+    OUTPUT:
+
+    The Goethals-Seidel difference family ``(S_1, S_2, S_3, S_4)``.
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import _construct_gs_difference_family_from_compact, is_supplementary_difference_set
+        sage: G = Zmod(61)
+        sage: H = list(map(G, [1, 9, 20, 34, 58]))
+        sage: rep1 = [3, 4, 5, 6, 8, 10]
+        sage: rep2 = [0, 8, 10, 13, 23, 26]
+        sage: [S1, S2, S3, S4] = _construct_gs_difference_family_from_compact(rep1, rep2, H, 13)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], G=G)
+        True
+    """
+    S1 = set()
+    S2 = set()
+    for el in H:
+        S1 = S1.union({x * el for x in rep1})
+        S2 = S2.union({x * el for x in rep2})
+    S1 = list(S1)
+    S2 = list(S2)
+    return _construct_gs_difference_family_from_full(S1, S2, mu)
+
+
+def spin_goethals_seidel_difference_family(n, existence=False, check=True):
+    r"""
+    Construct a spin type Goethals-Seidel difference family with parameters
+    `(n; k_1, k_2, k_3, k_4; \lambda)`.
+
+    The construction is described in [Djo2024]_. This function contains, for
+    each value of `n`, either a full representation of `S_1, S_2` together with
+    the multiplier `\mu`, or a subgroup `H`, two sets of representatives, and the
+    multiplier.
+    This data is used to construct the difference family using the functions
+    :func:`_construct_gs_difference_family_from_full` and
+    :func:`_construct_gs_difference_family_from_compact`.
+
+    Additionally, this function also checks if a (skew) difference family can be
+    constructed using :func:`skew_spin_goethals_seidel_difference_family`.
+
+    INPUT:
+
+    - ``n`` -- integer; the parameter of the GS difference family
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the difference family can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are a difference family before returning them;
+      setting this parameter to ``False`` may speed up the computation considerably
+
+    OUTPUT:
+
+    If ``existence=False``, the function returns the group G of integers modulo
+    ``n`` and a list containing 4 sets, or raises an error if data for the given
+    ``n`` is not available.
+    If ``existence=True``, the function returns a boolean representing whether
+    the difference family can be constructed.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import spin_goethals_seidel_difference_family
+        sage: G, [S1, S2, S3, S4] = spin_goethals_seidel_difference_family(73)
+
+    If existence is ``True``, the function returns a boolean::
+
+        sage: spin_goethals_seidel_difference_family(73, existence=True)
+        True
+        sage: spin_goethals_seidel_difference_family(5, existence=True)
+        False
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
+        sage: G, [S1, S2, S3, S4] = spin_goethals_seidel_difference_family(9, check=False)
+        sage: lmbda = len(S1) + len(S2) + len(S3) + len(S4) - 9
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
+        True
+        sage: spin_goethals_seidel_difference_family(5)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Data for spin type Goethals Seidel family of order 5 not yet implemented
+    """
+    full_data = {
+        7: ([0], [0, 1, 6], 2),
+        9: ([0, 3, 6], [0, 1, 8], 4),
+        13: ([0, 1, 4, 6],  [0, 4, 6, 7, 9], 3),
+        19: ([4, 6, 9, 10, 13, 15], [0, 1, 5, 8, 9, 10, 11, 13], 7),
+        21: ([1, 4, 5, 8, 10, 11, 12, 17, 19], [1, 3, 8, 9, 12, 13, 18, 20], 4),
+        31: ([2, 4, 6, 12, 14, 16, 17, 19, 25, 26, 28, 29],
+             [0, 3, 9, 11, 13, 14, 15, 16, 17, 18, 20, 22, 28], 5),
+        37: ([0, 3, 4, 5, 7, 13, 18, 19, 24, 30, 32, 33, 34],
+             [0, 1, 2, 3, 4, 6, 12, 13, 18, 19, 24, 25, 31, 33, 34, 35, 36], 10),
+        39: ([1, 4, 6, 10, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 29, 33, 35, 38],
+             [0, 2, 4, 6, 7, 10, 11, 14, 16, 19, 20, 22, 26, 32, 33, 38], 16),
+        57: ([0, 4, 11, 12, 18, 19, 20, 25, 26, 27, 28, 29, 30, 31, 32, 37, 38, 39, 45, 46, 53],
+             [1, 2, 5, 6, 7, 8, 9, 10, 12, 17, 19, 21, 22, 24, 25, 28, 30, 31, 34, 37, 39, 41, 42, 43, 44, 46, 53, 54],
+             7)
+    }
+    compact_data = {
+        73: ([1, 8, 64],
+             [0, 9, 13, 18, 25, 26, 27, 35, 36, 43],
+             [1, 2, 4, 9, 11, 14, 18, 21, 26, 34, 36, 43], 4),
+        91: ([1, 16, 74],
+             [0, 3, 4, 5, 8, 11, 19, 25, 27, 43, 45, 50, 55],
+             [0, 1, 4, 5, 13, 14, 15, 25, 28, 33, 38, 43, 44, 49, 55], 9),
+        93: ([1, 4, 16, 64, 70],
+             [3, 10, 11, 14, 21, 23, 33, 34, 46],
+             [3, 9, 11, 17, 23, 33, 34, 46, 62], 25),
+        129: ([1, 4, 16, 64, 97, 121, 127],
+              [1, 9, 10, 14, 19, 21, 23, 26, 27],
+              [2, 5, 9, 10, 13, 18, 22, 27, 43, 86], 13),
+        397: ([1, 16, 31, 99, 126, 167, 256, 273, 290, 333, 393],
+              [3, 5, 9, 10, 11, 12, 18, 20, 21, 23, 29, 33, 36, 40, 44, 47, 61, 72],
+              [2, 3, 6, 10, 17, 22, 24, 33, 34, 36, 40, 46, 47, 53, 58, 71, 72],
+              34)
+    }
+
+    exist = n in full_data or n in compact_data or \
+        skew_spin_goethals_seidel_difference_family(n, existence=True)
+    if existence:
+        return exist
+
+    if not exist:
+        raise NotImplementedError(f'Data for spin type Goethals Seidel family of order {n} not yet implemented')
+
+    G = Zmod(n)
+    if skew_spin_goethals_seidel_difference_family(n, existence=True):
+        G, [S1, S2, S3, S4] = skew_spin_goethals_seidel_difference_family(n, check=False)
+    elif n in full_data:
+        S1, S2, mu = full_data[n]
+        S1 = list(map(G, S1))
+        S2 = list(map(G, S2))
+        S1, S2, S3, S4 = _construct_gs_difference_family_from_full(S1, S2, mu)
+    elif n in compact_data:
+        H, rep1, rep2, mu = compact_data[n]
+        H = list(map(G, H))
+        S1, S2, S3, S4 = _construct_gs_difference_family_from_compact(rep1, rep2, H, mu)
+
+    if check:
+        lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
+    return G, [S1, S2, S3, S4]
+
+
+def skew_spin_goethals_seidel_difference_family(n, existence=False, check=True):
+    r"""
+    Construct skew spin type Goethals-Seidel difference family with parameters
+    `(n; k_1, k_2, k_3, k_4; \lambda)`.
+
+    The construction is described in [Djo2024]_. This function contains, for
+    each value of `n`, either a full representation of `S_1, S_2` together with
+    the multiplier `\mu`, or a subgroup `H`, two sets of representatives, and the
+    multiplier.
+
+    This data is used to construct the difference family using the functions
+    :func:`_construct_gs_difference_family_from_full` and
+    :func:`_construct_gs_difference_family_from_compact`.
+
+    INPUT:
+
+    - ``n`` -- integer; the parameter of the GS difference family
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the skew difference family can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are a skew difference family before returning them;
+      setting this parameter to ``False`` may speed up the computation considerably
+
+    OUTPUT:
+
+    If ``existence=False``, the function returns the group G of integers modulo
+    ``n`` and a list containing 4 sets, or raises an error if data for the given
+    ``n`` is not available.
+    If ``existence=True``, the function returns a boolean representing whether
+    the skew difference family can be constructed.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import skew_spin_goethals_seidel_difference_family
+        sage: G, [S1, S2, S3, S4] = skew_spin_goethals_seidel_difference_family(61)
+
+    If existence is ``True``, the function returns a boolean::
+
+        sage: skew_spin_goethals_seidel_difference_family(61, existence=True)
+        True
+        sage: skew_spin_goethals_seidel_difference_family(5, existence=True)
+        False
+
+    TESTS::
+        sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set, _is_skew_set
+        sage: G, [S1, S2, S3, S4] = skew_spin_goethals_seidel_difference_family(7, check=False)
+        sage: lmbda = len(S1) + len(S2) + len(S3) + len(S4) - 7
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
+        True
+        sage: _is_skew_set(G, S1)
+        True
+        sage: skew_spin_goethals_seidel_difference_family(5)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Data for skew spin type Goethals Seidel family of order 5 not yet implemented
+    """
+    full_data = {
+        7: ([1, 2, 4], [1, 6], 2),
+        19: ([1, 4, 5, 6, 7, 9, 11, 16, 17], [0, 1, 7, 8, 11, 12, 18], -2),
+        37: ([2, 3, 4, 6, 8, 11, 15, 18, 20, 21, 23, 24, 25, 27, 28, 30, 32, 36],
+             [0, 1, 2, 5, 9, 13, 14, 15, 22, 23, 24, 28, 32, 35, 36],
+             10)
+    }
+    compact_data = {
+        61: ([1, 9, 20, 34, 58],  [3, 4, 5, 6, 8, 10],  [0, 8, 10, 13, 23, 26], 13),
+        127: ([1, 2, 4, 8, 16, 32, 64],
+              [1, 3, 7, 9, 11, 19, 21, 23, 47],
+              [0, 3, 7, 9, 11, 15, 29, 31, 55], 19),
+        271: ([1, 28, 106, 125, 169, 178, 242, 248, 258],
+              [1, 4, 5, 7, 8, 11, 14, 16, 19, 21, 22, 25, 31, 43, 44],
+              [1, 2, 3, 5, 7, 8, 12, 19, 22, 27, 38, 42, 44, 51], 5),
+        331: ([1, 74, 80, 85, 111, 120, 167, 180, 270, 274, 293],
+              [5, 10, 11, 13, 16, 19, 20, 22, 32, 38, 53, 56, 64, 76, 101],
+              [0, 4, 11, 16, 20, 28, 31, 37, 41, 49, 53, 56, 73, 88, 101], 31),
+        397: ([1, 16, 31, 99, 126, 167, 256, 273, 290, 333, 393],
+              [1, 6, 7, 8, 9, 10, 11, 12, 17, 18, 20, 21, 29, 34, 46, 47, 53, 106],
+              [2, 11, 12, 17, 18, 20, 24, 27, 33, 34, 36, 40, 46, 47, 53, 58, 71],
+              34),
+        547: ([1, 46, 237, 261, 293, 350, 353, 375, 440, 475, 509, 517, 519],
+              [1, 4, 5, 6, 10, 11, 13, 14, 17, 25, 29, 34, 35, 40, 49, 52, 55, 64, 69, 110, 123],
+              [1, 4, 5, 11, 16, 17, 20, 26, 32, 33, 34, 41, 49, 52, 55, 64, 70, 80, 123, 207],
+              40),
+        631: ([1, 8, 43, 64, 79, 188, 228, 242, 279, 310, 339, 344, 512, 562, 587],
+              [1, 2, 3, 4, 6, 7, 12, 13, 14, 17, 19, 21, 26, 27, 31, 38, 42, 52, 62, 76, 124],
+              [0, 11, 13, 14, 18, 19, 21, 22, 29, 35, 39, 46, 62, 63, 65, 66, 67, 92, 117, 124, 187],
+              2)
+    }
+
+    if existence:
+        return n in full_data or n in compact_data
+
+    if n not in full_data and n not in compact_data:
+        raise NotImplementedError(f'Data for skew spin type Goethals Seidel family of order {n} not yet implemented')
+
+    G = Zmod(n)
+    if n in full_data:
+        S1, S2, mu = full_data[n]
+        S1 = list(map(G, S1))
+        S2 = list(map(G, S2))
+        S1, S2, S3, S4 = _construct_gs_difference_family_from_full(S1, S2, mu)
+    if n in compact_data:
+        H, rep1, rep2, mu = compact_data[n]
+        H = list(map(G, H))
+        S1, S2, S3, S4 = _construct_gs_difference_family_from_compact(rep1, rep2, H, mu)
+
+    if check:
+        lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
+        assert _is_skew_set(G, S1)
+    return G, [S1, S2, S3, S4]
+
+
 def skew_supplementary_difference_set(n, existence=False, check=True, return_group=False):
     r"""
     Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets,
@@ -2266,11 +2574,11 @@ def skew_supplementary_difference_set(n, existence=False, check=True, return_gro
         True
         sage: _is_skew_set(G, S1)
         True
-        sage: skew_supplementary_difference_set(7)
+        sage: skew_supplementary_difference_set(17)
         Traceback (most recent call last):
         ...
-        ValueError: Skew SDS of order 7 not yet implemented.
-        sage: skew_supplementary_difference_set(7, existence=True)
+        ValueError: Skew SDS of order 17 not yet implemented.
+        sage: skew_supplementary_difference_set(17, existence=True)
         False
         sage: skew_supplementary_difference_set(127, existence=True)
         True
@@ -2471,6 +2779,10 @@ def skew_supplementary_difference_set(n, existence=False, check=True, return_gro
         if existence:
             return True
         G, [S1, S2, S3, S4] = skew_supplementary_difference_set_with_paley_todd(n, check=False)
+    elif skew_spin_goethals_seidel_difference_family(n, existence=True):
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = skew_spin_goethals_seidel_difference_family(n, check=False)
 
     if existence:
         return False
@@ -2641,11 +2953,11 @@ def supplementary_difference_set_hadamard(n, existence=False, check=True):
         sage: G, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(37, check=False)
         sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-37, G=G)
         True
-        sage: supplementary_difference_set_hadamard(7)
+        sage: supplementary_difference_set_hadamard(11)
         Traceback (most recent call last):
         ...
-        ValueError: SDS of order 7 not yet implemented.
-        sage: supplementary_difference_set_hadamard(7, existence=True)
+        ValueError: SDS of order 11 not yet implemented.
+        sage: supplementary_difference_set_hadamard(11, existence=True)
         False
         sage: supplementary_difference_set_hadamard(127, existence=True)
         True
@@ -2687,6 +2999,10 @@ def supplementary_difference_set_hadamard(n, existence=False, check=True):
         G, sets = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
     elif skew_supplementary_difference_set(n, existence=True):
         G, sets = skew_supplementary_difference_set(n, check=False, return_group=True)
+    elif spin_goethals_seidel_difference_family(n, existence=True):
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = spin_goethals_seidel_difference_family(n, check=False)
 
     if sets is None:
         raise ValueError(f'SDS of order {n} not yet implemented.')
@@ -2746,8 +3062,8 @@ def are_complementary_difference_sets(G, A, B, verbose=False):
     INPUT:
 
     - ``G`` -- a group of odd order
-    - ``A`` -- a set of elements of ``G``
-    - ``B`` -- a set of elements of ``G``
+    - ``A`` -- set of elements of ``G``
+    - ``B`` -- set of elements of ``G``
     - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will
       be verbose when the sets do not satisfy the contraints
 
@@ -2808,7 +3124,7 @@ def complementary_difference_setsI(n, check=True):
     Construct complementary difference sets in a group of order `n \cong 3 \mod 4`, `n` a prime power.
 
     Let `G` be a Galois Field of order `n`, where `n` satisfies the requirements
-    above. Let `A` be the set of non-zero quadratic elements in `G`, and `B = A`.
+    above. Let `A` be the set of nonzero quadratic elements in `G`, and `B = A`.
     Then `A` and `B` are complementary difference sets over a group of order `n`.
     This construction is described in [Sze1971]_.
 
@@ -2873,11 +3189,11 @@ def complementary_difference_setsII(n, check=True):
     the corresponding multiplicative group. Then, there are two different constructions,
     depending on whether `t` is even or odd.
 
-    If `t \cong 2 \mod 4`, let `C_0` be the set of non-zero octic residues in `G`,
+    If `t \cong 2 \mod 4`, let `C_0` be the set of nonzero octic residues in `G`,
     and let `C_i = \rho^i C_0` for `1 \le i \le  7`.
     Then, `A = C_0 \cup C_1 \cup C_2 \cup C_3` and  `B = C_0 \cup C_1 \cup C_6 \cup C_7`.
 
-    If `t` is odd, let `C_0` be the set of non-zero fourth powers in `G`, and let
+    If `t` is odd, let `C_0` be the set of nonzero fourth powers in `G`, and let
     `C_i = \rho^i C_0` for `1 \le i \le  3`.
     Then, `A = C_0 \cup C_1` and  `B = C_0 \cup C_3`.
 
@@ -2936,7 +3252,7 @@ def complementary_difference_setsII(n, check=True):
     if t % 2 == 0:
         rho = G.multiplicative_generator()
         C0 = list({el**8 for el in G if el != 0})
-        C1, C2, C3, C6, C7 = map(lambda i: [rho**i * el for el in C0], [1, 2, 3, 6, 7])
+        C1, C2, C3, C6, C7 = ([rho**i * el for el in C0] for i in [1, 2, 3, 6, 7])
         A = C0 + C1 + C2 + C3
         B = C0 + C1 + C6 + C7
     else:
@@ -2958,7 +3274,7 @@ def complementary_difference_setsIII(n, check=True):
     Construct complementary difference sets in a group of order `n = 2m + 1`, where `4m + 3` is a prime power.
 
     Consider a finite field `G` of order `n` and let `\rho` be a primite element
-    of this group. Now let `Q` be the set of non zero quadratic residues in `G`,
+    of this group. Now let `Q` be the set of nonzero quadratic residues in `G`,
     and let `A = \{ a | \rho^{2a} - 1 \in Q\}`, `B' = \{ b | -(\rho^{2b} + 1) \in Q\}`.
     Then `A` and `B = Q \setminus B'` are complementary difference sets over the ring
     of integers modulo `n`. For more details, see [Sz1969]_.
@@ -3138,14 +3454,14 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     See also :wikipedia:`Difference_set`.
 
-    If there is no such difference family, an ``EmptySetError`` is raised and
-    if there is no construction at the moment :class:`NotImplementedError`
+    If there is no such difference family, an :exc:`EmptySetError` is raised and
+    if there is no construction at the moment :exc:`NotImplementedError`
     is raised.
 
     INPUT:
 
-    - ``v,k,l`` -- parameters of the difference family. If ``l`` is not provided
-      it is assumed to be ``1``
+    - ``v``, ``k``, ``l`` -- parameters of the difference family. If ``l`` is
+      not provided it is assumed to be ``1``
     - ``existence`` -- if ``True``, then return either ``True`` if Sage knows
       how to build such design, ``Unknown`` if it does not and ``False`` if it
       knows that the design does not exist
@@ -3158,7 +3474,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
     OUTPUT:
 
     A pair ``(G,D)`` made of a group `G` and a difference family `D` on that
-    group. Or, if ``existence=True``` a troolean or if
+    group. Or, if ``existence=True`` a troolean or if
     ``explain_construction=True`` a string.
 
     EXAMPLES::

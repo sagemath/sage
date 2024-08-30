@@ -30,7 +30,6 @@ AUTHORS:
 REFERENCES:
 
 - \J. M. Lee:  *Introduction to Smooth Manifolds* [Lee2013]_
-
 """
 
 
@@ -124,8 +123,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
     Let `N` be a 2-dimensional submanifold of a 3-dimensional manifold `M`::
 
-        sage: M = Manifold(3, 'M', structure="topological")
-        sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+        sage: M = Manifold(3, 'M', structure='topological')
+        sage: N = Manifold(2, 'N', ambient=M, structure='topological')
         sage: N
         2-dimensional topological submanifold N immersed in the 3-dimensional
          topological manifold M
@@ -174,7 +173,6 @@ class TopologicalSubmanifold(TopologicalManifold):
     .. SEEALSO::
 
         :mod:`~sage.manifolds.manifold`
-
     """
     def __init__(self, n, name, field, structure, ambient=None,
                  base_manifold=None, latex_name=None, start_index=0,
@@ -184,12 +182,11 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         TESTS::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: N
             2-dimensional topological submanifold N immersed in the
              3-dimensional topological manifold M
-
         """
         TopologicalManifold.__init__(self, n, name, field, structure,
                                      base_manifold=base_manifold,
@@ -216,7 +213,6 @@ class TopologicalSubmanifold(TopologicalManifold):
             sage: M = Manifold(2, 'M', structure='topological')
             sage: N = Manifold(1, 'N', ambient=M, structure='topological')
             sage: N._init_immersion(ambient=M)
-
         """
         self._immersion = None
         self._immersion_inv = None
@@ -245,8 +241,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         TESTS::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: N
             2-dimensional topological submanifold N immersed in the
              3-dimensional topological manifold M
@@ -255,7 +251,6 @@ class TopologicalSubmanifold(TopologicalManifold):
             sage: N
             2-dimensional topological submanifold N embedded in the
              3-dimensional topological manifold M
-
         """
         if self is not self._manifold:
             return "Open subset {} of the {}".format(self._name, self._manifold)
@@ -283,7 +278,7 @@ class TopologicalSubmanifold(TopologicalManifold):
         INPUT:
 
         - ``name`` -- name given to the open subset
-        - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote
           the subset; if none are provided, it is set to ``name``
         - ``coord_def`` -- (default: {}) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
@@ -292,14 +287,12 @@ class TopologicalSubmanifold(TopologicalManifold):
         - ``supersets`` -- (default: only ``self``) list of sets that the
           new open subset is a subset of
 
-        OUTPUT:
-
-        - the open subset, as an instance of :class:`TopologicalSubmanifold`
+        OUTPUT: the open subset, as an instance of :class:`TopologicalSubmanifold`
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological"); N
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological'); N
             2-dimensional topological submanifold N immersed in the
              3-dimensional topological manifold M
             sage: S = N.subset('S'); S
@@ -324,7 +317,6 @@ class TopologicalSubmanifold(TopologicalManifold):
             Open subset O of the
              2-dimensional topological submanifold N embedded in the
               3-dimensional topological manifold M
-
         """
         resu = TopologicalSubmanifold(self._dim, name, self._field,
                                       self._structure, self._ambient,
@@ -344,7 +336,7 @@ class TopologicalSubmanifold(TopologicalManifold):
         INPUT:
 
         - ``resu`` -- an instance of :class:`TopologicalManifold` or
-          a subclass.
+          a subclass
 
         - ``coord_def`` -- (default: ``{}``) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
@@ -353,8 +345,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: phi = N.continuous_map(M)
             sage: N.set_embedding(phi)
             sage: N
@@ -414,8 +406,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: N
             2-dimensional topological submanifold N immersed in the
              3-dimensional topological manifold M
@@ -436,7 +428,6 @@ class TopologicalSubmanifold(TopologicalManifold):
             (x, y, z) ↦ -x^2 - y^2 + z
             sage: N.set_immersion(phi, inverse=phi_inv, var=t,
             ....:                 t_inverse={t: phi_inv_t})
-
         """
         if not isinstance(phi, ContinuousMap):
             raise TypeError("the argument phi must be a continuous map")
@@ -483,8 +474,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: N
             2-dimensional topological submanifold N immersed in the
              3-dimensional topological manifold M
@@ -505,7 +496,6 @@ class TopologicalSubmanifold(TopologicalManifold):
             True
             sage: N._embedded
             True
-
         """
         if not self._immersed:
             raise ValueError("please declare an embedding using set_immersion "
@@ -540,8 +530,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: N
             2-dimensional topological submanifold N immersed in the
              3-dimensional topological manifold M
@@ -568,7 +558,6 @@ class TopologicalSubmanifold(TopologicalManifold):
             sage: N
             2-dimensional topological submanifold N embedded in the
              3-dimensional topological manifold M
-
         """
         self.set_immersion(phi, inverse, var, t_inverse)
         self.declare_embedding()
@@ -607,15 +596,13 @@ class TopologicalSubmanifold(TopologicalManifold):
           of the parameters `(t_1,\ldots,t_{m-n})`, If ``None``,
           ``"_" + self.ambient()._latex_()`` is used
 
-        OUTPUT:
-
-        - list of adapted charts on `M` created from the charts of ``self``
+        OUTPUT: list of adapted charts on `M` created from the charts of ``self``
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological",
+            sage: M = Manifold(3, 'M', structure='topological',
             ....:              latex_name=r"\mathcal{M}")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: N
             2-dimensional topological submanifold N immersed in the
              3-dimensional topological manifold M
@@ -646,7 +633,6 @@ class TopologicalSubmanifold(TopologicalManifold):
             [Chart (M, (u1, v1, t1))]
             sage: latex(_)
             \left[\left(\mathcal{M},({{u}_1}, {{v}_1}, {{t}_1})\right)\right]
-
         """
         if not self._embedded:
             raise ValueError("an embedding is required")
@@ -731,7 +717,7 @@ class TopologicalSubmanifold(TopologicalManifold):
         INPUT:
 
         - ``param`` -- dictionary of values indexed by the free variables
-          appearing in the foliation.
+          appearing in the foliation
         - ``u`` -- iterable of the values taken by the first coordinate of the
           surface to plot
         - ``v`` -- iterable of the values taken by the second coordinate of the
@@ -745,8 +731,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient = M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient = M, structure='topological')
             sage: CM.<x,y,z> = M.chart()
             sage: CN.<u,v> = N.chart()
             sage: t = var('t')
@@ -770,8 +756,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         .. PLOT::
 
-            M = Manifold(3, 'M', structure="topological")
-            N = Manifold(2, 'N', ambient = M, structure="topological")
+            M = Manifold(3, 'M', structure='topological')
+            N = Manifold(2, 'N', ambient = M, structure='topological')
             CM = M.chart('x y z'); x, y, z = CM[:]
             CN = N.chart('u v'); u, v = CN[:]
             t = var('t')
@@ -794,7 +780,6 @@ class TopologicalSubmanifold(TopologicalManifold):
         .. SEEALSO::
 
             :class:`~sage.plot.plot3d.parametric_surface.ParametricSurface`
-
         """
 
         if self._dim != 2 or self._ambient._dim != 3:
@@ -818,8 +803,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: N.ambient()
             3-dimensional topological manifold M
         """
@@ -831,8 +816,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: CM.<x,y,z> = M.chart()
             sage: CN.<u,v> = N.chart()
             sage: t = var('t')
@@ -845,7 +830,6 @@ class TopologicalSubmanifold(TopologicalManifold):
             Continuous map from the 2-dimensional topological submanifold N
              immersed in the 3-dimensional topological manifold M to the
              3-dimensional topological manifold M
-
         """
         if not self._immersed:
             raise ValueError("the submanifold is not immersed")
@@ -858,8 +842,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="topological")
-            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(3, 'M', structure='topological')
+            sage: N = Manifold(2, 'N', ambient=M, structure='topological')
             sage: CM.<x,y,z> = M.chart()
             sage: CN.<u,v> = N.chart()
             sage: t = var('t')
@@ -872,7 +856,6 @@ class TopologicalSubmanifold(TopologicalManifold):
             Continuous map from the 2-dimensional topological submanifold N
              embedded in the 3-dimensional topological manifold M to the
              3-dimensional topological manifold M
-
         """
         if not self._embedded:
             raise ValueError("the submanifold is not embedded")
@@ -887,8 +870,8 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         EXAMPLES::
 
-            sage: M = Manifold(2, 'M', structure="topological")
-            sage: N = Manifold(1, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: N = Manifold(1, 'N', ambient=M, structure='topological')
             sage: CM.<x,y> = M.chart()
             sage: CN.<u> = N.chart(coord_restrictions=lambda u: [u > -1, u < 1])
             sage: phi = N.continuous_map(M, {(CN,CM): [u, u^2]})
@@ -901,6 +884,5 @@ class TopologicalSubmanifold(TopologicalManifold):
               from the 1-dimensional topological submanifold N
                 embedded in the 2-dimensional topological manifold M
               to the 2-dimensional topological manifold M
-
         """
         return self.embedding().image()

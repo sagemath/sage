@@ -32,6 +32,7 @@ Base class for polyhedra: Miscellaneous methods
 
 from sage.misc.cachefunc import cached_method
 
+import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
@@ -63,45 +64,48 @@ def is_Polyhedron(X):
 
     INPUT:
 
-    - ``X`` -- anything.
+    - ``X`` -- anything
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
         sage: p = polytopes.hypercube(2)
         sage: from sage.geometry.polyhedron.base import is_Polyhedron
         sage: is_Polyhedron(p)
+        doctest:warning...
+        DeprecationWarning: is_Polyhedron is deprecated, use isinstance instead
+        See https://github.com/sagemath/sage/issues/34307 for details.
         True
         sage: is_Polyhedron(123456)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_Polyhedron is deprecated, use isinstance instead")
     return isinstance(X, Polyhedron_base)
 
 
 #########################################################################
 class Polyhedron_base(Polyhedron_base7):
     """
-    Base class for Polyhedron objects
+    Base class for Polyhedron objects.
 
     INPUT:
 
     - ``parent`` -- the parent, an instance of
-      :class:`~sage.geometry.polyhedron.parent.Polyhedra`.
+      :class:`~sage.geometry.polyhedron.parent.Polyhedra`
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``. The
-      V-representation of the polyhedron. If ``None``, the polyhedron
-      is determined by the H-representation.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``. The
+      V-representation of the polyhedron; if ``None``, the polyhedron
+      is determined by the H-representation
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``. The
-      H-representation of the polyhedron. If ``None``, the polyhedron
-      is determined by the V-representation.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``. The
+      H-representation of the polyhedron; if ``None``, the polyhedron
+      is determined by the V-representation
 
-    - ``Vrep_minimal`` (optional) -- see below
+    - ``Vrep_minimal`` -- (optional) see below
 
-    - ``Hrep_minimal`` (optional) -- see below
+    - ``Hrep_minimal`` -- (optional) see below
 
     - ``pref_rep`` -- string (default: ``None``);
       one of ``Vrep`` or ``Hrep`` to pick this in case the backend
@@ -193,7 +197,7 @@ class Polyhedron_base(Polyhedron_base7):
         - ``solver`` -- select a solver (MIP backend). See the documentation
           of for :class:`MixedIntegerLinearProgram`. Set to ``None`` by default.
 
-        - ``return_variable`` -- (default: ``False``) If ``True``, return a tuple
+        - ``return_variable`` -- boolean (default: ``False``); if ``True``, return a tuple
           ``(p, x)``, where ``p`` is the :class:`MixedIntegerLinearProgram` object
           and ``x`` is the vector-valued MIP variable in this problem, indexed
           from 0.  If ``False``, only return ``p``.
@@ -234,7 +238,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         Irrational algebraic linear program over an embedded number field::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: p = polytopes.icosahedron()
             sage: lp, x = p.to_linear_program(return_variable=True)
             sage: lp.set_objective(x[0] + x[1] + x[2])
@@ -243,21 +247,23 @@ class Polyhedron_base(Polyhedron_base7):
 
         Same example with floating point::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)
             sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve()                                               # tol 1e-5   # needs sage.rings.number_field
+            sage: lp.solve()                                               # tol 1e-5
             1.3090169943749475
 
         Same example with a specific floating point solver::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')
             sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve()                                               # tol 1e-8   # needs sage.rings.number_field
+            sage: lp.solve()                                               # tol 1e-8
             1.3090169943749475
 
         Irrational algebraic linear program over `AA`::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: p = polytopes.icosahedron(base_ring=AA)
             sage: lp, x = p.to_linear_program(return_variable=True)
             sage: lp.set_objective(x[0] + x[1] + x[2])
@@ -272,8 +278,8 @@ class Polyhedron_base(Polyhedron_base7):
             sage: p.to_linear_program().polyhedron() == p
             True
 
-            sage: p = polytopes.icosahedron()                                           # needs sage.rings.number_field
-            sage: p.to_linear_program(solver='PPL')                                     # needs sage.rings.number_field
+            sage: p = polytopes.icosahedron()                                           # needs sage.groups sage.rings.number_field
+            sage: p.to_linear_program(solver='PPL')                                     # needs sage.groups sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The PPL backend only supports rational data.
@@ -349,11 +355,11 @@ class Polyhedron_base(Polyhedron_base7):
             ...
             ValueError: self should be compact
         """
-        from sage.topology.simplicial_complex import SimplicialComplex
         if not self.is_compact():
             raise ValueError("self should be compact")
 
         if self.is_simplicial():
+            from sage.topology.simplicial_complex import SimplicialComplex
             inc_mat_cols = self.incidence_matrix().columns()
             ineq_indices = [inc_mat_cols[i].nonzero_positions()
                             for i in range(self.n_Hrepresentation())
@@ -374,7 +380,7 @@ class Polyhedron_base(Polyhedron_base7):
         OUTPUT:
 
         The center of the polyhedron. All rays and lines are
-        ignored. Raises a ``ZeroDivisionError`` for the empty
+        ignored. Raises a :exc:`ZeroDivisionError` for the empty
         polytope.
 
         EXAMPLES::
@@ -451,12 +457,10 @@ class Polyhedron_base(Polyhedron_base7):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) boolean; specifies whether to
-          return the circumcenter, if found.
+        - ``certificate`` -- boolean (default: ``False``); specifies whether to
+          return the circumcenter, if found
 
-        OUTPUT:
-
-        If ``certificate`` is true, returns a tuple containing:
+        OUTPUT: if ``certificate`` is true, returns a tuple containing:
 
         1. Boolean.
         2. The circumcenter of the polytope or None.
@@ -767,8 +771,8 @@ class Polyhedron_base(Polyhedron_base7):
 
         The polytope has to have rational coordinates::
 
-            sage: S = polytopes.dodecahedron()                                          # needs sage.rings.number_field
-            sage: S.face_fan()                                                          # needs sage.rings.number_field
+            sage: S = polytopes.dodecahedron()                                          # needs sage.groups sage.rings.number_field
+            sage: S.face_fan()                                                          # needs sage.groups sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: face fan handles only polytopes over the rationals
@@ -790,10 +794,8 @@ class Polyhedron_base(Polyhedron_base7):
 
         See :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.minkowski_sum`.
 
-        OUTPUT:
-
-        Boolean. Whether there exists another polyhedron `Z` such that
-        ``self`` can be written as `Y\oplus Z`.
+        OUTPUT: boolean; whether there exists another polyhedron `Z` such that
+        ``self`` can be written as `Y\oplus Z`
 
         EXAMPLES::
 
@@ -841,9 +843,7 @@ class Polyhedron_base(Polyhedron_base7):
           the value should be smaller than `\frac{1}{2}`. The subdivision is
           computed on the polar polyhedron.
 
-        OUTPUT:
-
-        A Polyhedron object, subdivided as described above.
+        OUTPUT: a Polyhedron object, subdivided as described above
 
         EXAMPLES::
 
@@ -950,13 +950,13 @@ class Polyhedron_base(Polyhedron_base7):
 
         INPUT:
 
-        - ``conj_class_reps`` -- list. A list of representatives of the
-          conjugacy classes of the ``acting_group``.
+        - ``conj_class_reps`` -- list; a list of representatives of the
+          conjugacy classes of the ``acting_group``
 
         - ``acting_group`` -- a subgroup of polytope's
-          :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`.
+          :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`
 
-        - ``additional_elts`` -- list (default=None). A subset of the
+        - ``additional_elts`` -- list (default: ``None``); a subset of the
           :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`
           of the polytope expressed as permutations.
 
@@ -1044,12 +1044,12 @@ class Polyhedron_base(Polyhedron_base7):
 
         INPUT:
 
-        - ``integral`` -- Boolean (default: ``False``). Whether to
-          only allow integral coordinates in the bounding box.
+        - ``integral`` -- boolean (default: ``False``); whether to
+          only allow integral coordinates in the bounding box
 
-        - ``integral_hull`` -- Boolean (default: ``False``). If ``True``, return a
+        - ``integral_hull`` -- boolean (default: ``False``); if ``True``, return a
           box containing the integral points of the polytope, or ``None, None`` if it
-          is known that the polytope has no integral points.
+          is known that the polytope has no integral points
 
         OUTPUT:
 
@@ -1162,15 +1162,16 @@ class Polyhedron_base(Polyhedron_base7):
 
         Algebraic polyhedron::
 
-            sage: P = polytopes.dodecahedron(); P                                       # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
+            sage: P = polytopes.dodecahedron(); P
             A 3-dimensional polyhedron
              in (Number Field in sqrt5 with defining polynomial x^2 - 5
                  with sqrt5 = 2.236067977499790?)^3
              defined as the convex hull of 20 vertices
-            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake, needs sage.rings.number_field
+            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake
             Maybe recompile warning...
             Polytope<QuadraticExtension<Rational>>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake, needs sage.rings.number_field
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake
             1 -1+1r5 -4+2r5 0
 
         Floating-point polyhedron::
@@ -1183,7 +1184,6 @@ class Polyhedron_base(Polyhedron_base7):
             Polytope<Float>[...]
             sage: sorted(PP.VERTICES[:], key=repr)[0]
             1 -0.472135955 0 -1.236067978
-
         """
         from sage.interfaces.polymake import polymake
         polymake_field = polymake(self.base_ring().fraction_field())

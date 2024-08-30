@@ -89,7 +89,8 @@ if __name__ == '__main__':
     print(list(power_set([Variable(i) for i in range(4)])))
     print(list(power_set([])))
     # every monomial in the first 8 var, which is at most linear in the first 5
-    print(list(mod_mon_set(power_set([Variable(i) for i in range(8)]),
+    print(list(mod_mon_set(
+        power_set([Variable(i) for i in range(8)]),
         all_monomials_of_degree_d(2, [Variable(i) for i in range(5)]))))
 
     # specialized normal form computation
@@ -97,7 +98,8 @@ if __name__ == '__main__':
         mod_mon_set(
             (x(1) * x(2) + x(1) + 1).set(),
             all_monomials_of_degree_d(2, [Variable(i) for i in range(1000)]))))
-    print(list(mod_mon_set(power_set([Variable(i) for i in range(50)]),
+    print(list(mod_mon_set(
+        power_set([Variable(i) for i in range(50)]),
         all_monomials_of_degree_d(2, [Variable(i) for i in range(1000)]))))
 
 

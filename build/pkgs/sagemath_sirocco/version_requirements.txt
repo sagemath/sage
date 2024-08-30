@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagemath-sirocco ~= 10.4b4
+sagemath-sirocco ~= 10.5b2

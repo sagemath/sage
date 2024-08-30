@@ -25,6 +25,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+import itertools
+
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.arith.power import generic_power
@@ -37,19 +39,19 @@ from sage.combinat.combinat_cython import (perfect_matchings_iterator,
                                            set_partition_composition)
 from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
 from sage.combinat.set_partition_iterator import set_partition_iterator
-from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra_n
 from sage.combinat.permutation import Permutations
-from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.flatten import flatten
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.misc import integer_floor as floor
 from sage.arith.misc import integer_ceil as ceil
 
-import itertools
+lazy_import('sage.graphs.graph', 'Graph')
+lazy_import('sage.combinat.symmetric_group_algebra', 'SymmetricGroupAlgebra_n')
 
 
 def partition_diagrams(k):
@@ -114,7 +116,7 @@ def brauer_diagrams(k):
 
     INPUT:
 
-     - ``k`` -- the order of the Brauer diagrams
+    - ``k`` -- the order of the Brauer diagrams
 
     EXAMPLES::
 
@@ -447,9 +449,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         r"""
         Return the underlying implementation of the diagram.
 
-        OUTPUT:
-
-        - tuple of tuples of integers
+        OUTPUT: tuple of tuples of integers
 
         EXAMPLES::
 
@@ -530,7 +530,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -934,14 +934,14 @@ class BrauerDiagram(AbstractPartitionDiagram):
         The compact representation ``[A/B;pi]`` of the Brauer algebra diagram
         (see [GL1996]_) has the following components:
 
-        - ``A`` -- is a list of pairs of positive elements (upper row) that
-          are connected,
+        - ``A`` -- list of pairs of positive elements (upper row) that
+          are connected
 
-        - ``B`` -- is a list of pairs of negative elements (lower row) that
-          are connected, and
+        - ``B`` -- list of pairs of negative elements (lower row) that
+          are connected
 
-        - ``pi`` --  is a permutation that is to be interpreted as the relative
-          order of the remaining elements in the top row and the bottom row.
+        - ``pi`` -- a permutation that is to be interpreted as the relative
+          order of the remaining elements in the top row and the bottom row
 
         EXAMPLES::
 
@@ -963,7 +963,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
         NAME = 'Brauer diagram'
         module = 'sage.combinat.diagram_algebras'
         option_class = 'BrauerDiagram'
-        display = dict(default="normal",
+        display = dict(default='normal',
                        description='Specifies how the Brauer diagrams should be printed',
                        values=dict(normal="Using the normal representation",
                                    compact="Using the compact representation"),
@@ -1019,9 +1019,9 @@ class BrauerDiagram(AbstractPartitionDiagram):
 
         INPUT:
 
-        - ``curt`` -- (default: ``True``) if ``True``, then return bijection
-          on free nodes as a one-line notation (standardized to look like a
-          permutation), else, return the honest mapping, a list of pairs
+        - ``curt`` -- boolean (default: ``True``); if ``True``, then return
+          bijection on free nodes as a one-line notation (standardized to look
+          like a permutation), else, return the honest mapping, a list of pairs
           `(i, -j)` describing the bijection on free nodes
 
         EXAMPLES::
@@ -1069,7 +1069,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
             sage: elm2.bijection_on_free_nodes(two_line=True)
             [[1, 2, 3], [-2, -3, -1]]
         """
-        terms = sorted(sorted(list(v), reverse=True) for v in self.diagram()
+        terms = sorted(sorted(v, reverse=True) for v in self.diagram()
                        if max(v) > 0 and min(v) < 0)
         if two_line:
             terms = [[t[i] for t in terms] for i in range(2)]
@@ -1145,7 +1145,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
     INPUT:
 
     - ``order`` -- integer or integer `+ 1/2`; the order of the diagrams
-    - ``category`` -- (default: ``FiniteEnumeratedSets()``); the category
+    - ``category`` -- (default: ``FiniteEnumeratedSets()``) the category
 
     All concrete classes should implement attributes
 
@@ -1499,7 +1499,6 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
             sage: bd = da.BrauerDiagrams(3/2)
             sage: bd.an_element() in bd
             True
-
         """
         if self.order in ZZ:
             r = ZZ(self.order)
@@ -1587,7 +1586,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
 
         INPUT:
 
-        - ``D1_D2_pi``-- a list or tuple where the first entry is a list of
+        - ``D1_D2_pi`` -- list or tuple where the first entry is a list of
           arcs on the top of the diagram, the second entry is a list of arcs
           on the bottom of the diagram, and the third entry is a permutation
           on the free nodes.
@@ -2284,12 +2283,10 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if
       ``None``, then Sage automatically chooses the parent of ``q``
 
-    - ``prefix`` -- (default ``"P"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'P'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -2514,7 +2511,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         True
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="P"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='P'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -2749,7 +2746,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- an integer between 1 and `k-1`
+        - ``i`` -- integer between 1 and `k-1`
 
         EXAMPLES::
 
@@ -2790,7 +2787,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- a half integer between 1/2 and `k-1/2`
+        - ``i`` -- half integer between `1/2` and `k-1/2`
 
         EXAMPLES::
 
@@ -2849,7 +2846,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- an integer between 1 and `k-1`
+        - ``i`` -- integer between 1 and `k-1`
 
         EXAMPLES::
 
@@ -2883,7 +2880,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- a half integer between 1/2 and `k-1/2`
+        - ``i`` -- half integer between `1/2` and `k-1/2`
 
         .. NOTE::
 
@@ -2979,7 +2976,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- a half integer between 1/2 and `k`
+        - ``i`` -- half integer between `1/2` and `k`
 
         ALGORITHM:
 
@@ -3117,7 +3114,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``y`` -- (option) an integer between 1 and `d`; ignored
+        - ``y`` -- (optional) an integer between 1 and `d`; ignored
           if the order of ``self`` is an integer, otherwise the
           default is `1`
 
@@ -3201,7 +3198,7 @@ class OrbitBasis(DiagramAlgebra):
 
         O_\pi = \sum_{\tau \geq \pi} \mu_{2k}(\pi, \tau) D_\tau.
 
-    If `\tau` is a partition of `\ell` blocks and the `i^{th}` block of
+    If `\tau` is a partition of `\ell` blocks and the `i`-th block of
     `\tau` is a union of `b_i` blocks of `\pi`, then
 
     .. MATH::
@@ -3713,12 +3710,10 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if ``None``
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if ``None``
       then just takes the parent of ``q``
 
-    - ``prefix`` -- (default ``"B"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'B'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -3758,7 +3753,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
     """
 
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="B"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='B'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4154,12 +4149,10 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if ``None``
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if ``None``
       then just takes the parent of ``q``
 
-    - ``prefix`` -- (default ``"T"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'T'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -4243,7 +4236,7 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
           1  7 20 21 13
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="T"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='T'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4521,12 +4514,10 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if ``None``
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if ``None``
       then just takes the parent of ``q``
 
-    - ``prefix`` -- (default ``"Pl"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'Pl'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -4562,7 +4553,7 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         True
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="Pl"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='Pl'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4651,7 +4642,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
         True
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="I"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='I'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4709,7 +4700,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             EXAMPLES::
 
@@ -4734,9 +4725,9 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
 
     INPUT:
 
-    - ``diagram`` -- a list of pairs of matchings of the set
+    - ``diagram`` -- list of pairs of matchings of the set
       `\{-1, \ldots, -n, 1, \ldots, n\}`
-    - ``use_unicode`` -- (default: ``False``): whether or not
+    - ``use_unicode`` -- boolean (default: ``False``); whether or not
       to use unicode art instead of ascii art
     - ``blobs`` -- (optional) a list of matchings with blobs on them
 
@@ -5784,7 +5775,7 @@ def propagating_number(sp):
 
 def to_set_partition(l, k=None):
     r"""
-    Convert input to a set partition of `\{1, \ldots, k, -1, \ldots, -k\}`
+    Convert input to a set partition of `\{1, \ldots, k, -1, \ldots, -k\}`.
 
     Convert a list of a list of numbers to a set partitions. Each list
     of numbers in the outer list specifies the numbers contained in one
@@ -5796,12 +5787,10 @@ def to_set_partition(l, k=None):
 
     INPUT:
 
-    - ``l`` - a list of lists of integers
-    - ``k`` - integer (optional, default ``None``)
+    - ``l`` -- list of lists of integers
+    - ``k`` -- integer (default: ``None``)
 
-    OUTPUT:
-
-    - a list of sets
+    OUTPUT: list of sets
 
     EXAMPLES::
 

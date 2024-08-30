@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 "Exceptions raised by the coercion model"
 
 ###############################################################################

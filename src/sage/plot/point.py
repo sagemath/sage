@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Points
 
@@ -46,7 +45,7 @@ class Point(GraphicPrimitive_xydata):
 
     - ``ydata`` -- list of y values for points in Point object
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -70,7 +69,7 @@ class Point(GraphicPrimitive_xydata):
     """
     def __init__(self, xdata, ydata, options):
         """
-        Initializes base class Point.
+        Initialize base class Point.
 
         EXAMPLES::
 
@@ -142,9 +141,8 @@ class Point(GraphicPrimitive_xydata):
 
         INPUT:
 
-
-        -  ``z`` - optional 3D height above `xy`-plane.  May be a list
-           if self is a list of points.
+        - ``z`` -- (optional) 3D height above `xy`-plane; may be a list
+          if ``self`` is a list of points
 
         EXAMPLES:
 
@@ -267,7 +265,7 @@ class Point(GraphicPrimitive_xydata):
 
     def __getitem__(self, i):
         """
-        Returns tuple of coordinates of point.
+        Return tuple of coordinates of point.
 
         EXAMPLES::
 
@@ -323,8 +321,8 @@ def point(points, **kwds):
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers.
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     For information regarding additional arguments, see either point2d?
     or point3d?.
@@ -406,8 +404,8 @@ def point2d(points, **options):
 
     INPUT:
 
-    -  ``points`` -- either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     - ``alpha`` -- how transparent the point is
 
@@ -582,7 +580,7 @@ def point2d(points, **options):
 
     Verify that :issue:`36153` does not arise::
 
-        sage: P = point((0.5, 0.5), legend_label="test")
+        sage: P = point((0.5, 0.5), legend_label='test')
     """
     from sage.plot.plot import xydata_from_point_list
     from sage.plot.all import Graphics

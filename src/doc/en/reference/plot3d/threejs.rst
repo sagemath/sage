@@ -33,7 +33,7 @@ Options currently supported by the viewer:
   set to True to automatically scale down the corresponding direction if it is too
   large
 
-- ``axes`` -- (default: False) Boolean determining whether coordinate axes are drawn
+- ``axes`` -- (default: ``False``) Boolean determining whether coordinate axes are drawn
 
 - ``axes_labels`` -- (default: ['x','y','z']) list or tuple of three strings;
   set to False to remove all labels
@@ -47,13 +47,13 @@ Options currently supported by the viewer:
 
 - ``decimals`` -- (default: 2) integer determining decimals displayed in labels
 
-- ``depth_write`` -- (default: True for opaque surfaces, False for transparent surfaces)
+- ``depth_write`` -- (default: ``True`` for opaque surfaces, False for transparent surfaces)
   whether to write the surface's depth into the depth buffer for the purpose of occluding
   objects behind it
 
-- ``frame`` -- (default: True) Boolean determining whether frame is drawn
+- ``frame`` -- (default: ``True``) Boolean determining whether frame is drawn
 
-- ``online`` -- (default: False) Boolean determining whether the local standard package
+- ``online`` -- (default: ``False``) Boolean determining whether the local standard package
   files are replaced by links to an online content delivery network
 
 - ``opacity`` -- (default: 1) numeric value for transparency of lines and surfaces
@@ -71,7 +71,7 @@ Options currently supported by the viewer:
 - ``render_order`` -- (default: 0) numeric value for rendering order of transparent surfaces;
   objects render from lowest to highest value ensuring that lower-valued objects render completely
 
-- ``single_side`` -- (default: False) Boolean determining whether both sides of a surface material
+- ``single_side`` -- (default: ``False``) Boolean determining whether both sides of a surface material
   are rendered; set to True to reduce rendering artifacts for closed transparent surfaces
 
 - ``theme`` -- (default: 'light') the color scheme to use for the scene and user interface;
@@ -89,16 +89,16 @@ In addition, the following animation-related options are supported:
   if animation data is present in the plot. If ``False``, all frames of animation will be displayed
   simultaneously.
 
-- ``animation_controls`` -- (default: True) whether to include the playback slider and buttons
+- ``animation_controls`` -- (default: ``True``) whether to include the playback slider and buttons
   (play, pause, etc.) in the page
 
-- ``auto_play`` -- (default: True) whether to immediately start playing the animation when the page
+- ``auto_play`` -- (default: ``True``) whether to immediately start playing the animation when the page
   loads. Recommend setting ``animation_controls=True`` to be able to start playback.
 
 - ``delay`` -- (default: 20) an integer amount of time between consecutive frames of animation,
   in hundredths of a second
 
-- ``loop`` -- (default: True) whether to loop the animation or have it stop after reaching the end.
+- ``loop`` -- (default: ``True``) whether to loop the animation or have it stop after reaching the end.
   Can be toggled on the page itself if ``animation_controls`` is set.
 
 Clicking on the information icon in the lower right-hand corner of the viewer opens
@@ -142,7 +142,6 @@ An :meth:`~sage.plot.animate.Animation.interactive` animation::
 
 .. RAW:: html
     :file: threejs_examples/animation.html
-
 
 
 .. RAW:: html

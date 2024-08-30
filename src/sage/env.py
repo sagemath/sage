@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Sage Runtime Environment
 
@@ -16,7 +17,6 @@ environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
 AUTHORS:
 
 - \R. Andrew Ohana (2012): initial version
-
 """
 
 # ****************************************************************************
@@ -74,17 +74,15 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
     INPUT:
 
-    - ``key`` -- string.
+    - ``key`` -- string
 
-    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values.
+    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values
 
-    - ``force`` -- boolean (optional, default is ``False``). If
+    - ``force`` -- boolean (default: ``False``); if
       ``True``, skip the environment variable and only use the
-      fallbacks.
+      fallbacks
 
-    OUTPUT:
-
-    The value of the environment variable or its fallbacks.
+    OUTPUT: the value of the environment variable or its fallbacks
 
     EXAMPLES::
 
@@ -187,6 +185,11 @@ SAGE_DOC_SRC = var("SAGE_DOC_SRC", join(SAGE_ROOT, "src", "doc"), SAGE_DOC)
 SAGE_PKGS = var("SAGE_PKGS", join(SAGE_ROOT, "build", "pkgs"))
 SAGE_ROOT_GIT = var("SAGE_ROOT_GIT", join(SAGE_ROOT, ".git"))
 
+# Sage doc server (local server with PORT if URL is not given)
+SAGE_DOC_SERVER_URL = var("SAGE_DOC_SERVER_URL")
+# The default port is 0 so that the system will assign a random unused port > 1024
+SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "0")
+
 # ~/.sage
 DOT_SAGE = var("DOT_SAGE", join(os.environ.get("HOME"), ".sage"))
 SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
@@ -276,7 +279,7 @@ def sage_include_directories(use_sources=False):
 
     INPUT:
 
-    -  ``use_sources`` -- (default: False) a boolean
+    - ``use_sources`` -- boolean (default: ``False``)
 
     OUTPUT:
 
@@ -291,7 +294,7 @@ def sage_include_directories(use_sources=False):
         sage: import sage.env
         sage: sage.env.sage_include_directories()
         ['...',
-         '.../numpy/core/include',
+         '.../numpy/...core/include',
          '.../include/python...']
 
     To check that C/C++ files are correctly found, we verify that we can
@@ -339,8 +342,7 @@ default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular
 default_optional_modules = ('lapack',)
 
 
-def cython_aliases(required_modules=None,
-                   optional_modules=None):
+def cython_aliases(required_modules=None, optional_modules=None):
     """
     Return the aliases for compiling Cython code. These aliases are
     macros which can occur in ``# distutils`` headers.
@@ -348,10 +350,10 @@ def cython_aliases(required_modules=None,
     INPUT:
 
     - ``required_modules`` -- (default: taken from ``default_required_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     - ``optional_modules`` -- (default: taken from ``default_optional_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     EXAMPLES::
 
@@ -427,9 +429,9 @@ def cython_aliases(required_modules=None,
                 else:
                     continue
             aliases["ECL_CFLAGS"] = list(filter(lambda s: not s.startswith('-I'), ecl_cflags))
-            aliases["ECL_INCDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-I'), ecl_cflags)))
-            aliases["ECL_LIBDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-L'), ecl_libs)))
-            aliases["ECL_LIBRARIES"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-l'), ecl_libs)))
+            aliases["ECL_INCDIR"] = [s[2:] for s in filter(lambda s: s.startswith('-I'), ecl_cflags)]
+            aliases["ECL_LIBDIR"] = [s[2:] for s in filter(lambda s: s.startswith('-L'), ecl_libs)]
+            aliases["ECL_LIBRARIES"] = [s[2:] for s in filter(lambda s: s.startswith('-l'), ecl_libs)]
             aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l', '-L')), ecl_libs))
             continue
         else:

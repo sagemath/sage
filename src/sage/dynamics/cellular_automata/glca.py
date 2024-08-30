@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Graftal Lace Cellular Automata
 
@@ -35,7 +34,7 @@ class GraftalLaceCellularAutomata(SageObject):
 
     INPUT:
 
-    - ``rule`` -- a list of length 8 with integer entries `0 \leq x < 8`
+    - ``rule`` -- list of length 8 with integer entries `0 \leq x < 8`
 
     EXAMPLES::
 
@@ -106,7 +105,6 @@ class GraftalLaceCellularAutomata(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: invalid rule
-
         """
         if len(rule) != 8 or any(x not in range(8) for x in rule):
             raise ValueError("invalid rule")

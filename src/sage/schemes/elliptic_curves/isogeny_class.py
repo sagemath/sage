@@ -57,7 +57,7 @@ class IsogenyClass_EC(SageObject):
         INPUT:
 
         - ``label`` -- string or ``None``, a Cremona or LMFDB label, used
-          in printing.  Ignored if base field is not `\QQ`.
+          in printing; ignored if base field is not `\QQ`
 
         EXAMPLES::
 
@@ -102,7 +102,7 @@ class IsogenyClass_EC(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('990j1')
-            sage: iso = E.isogeny_class(order="lmfdb") # orders lexicographically on a-invariants
+            sage: iso = E.isogeny_class(order='lmfdb') # orders lexicographically on a-invariants
             sage: iso[2] == E # indirect doctest
             True
         """
@@ -114,17 +114,17 @@ class IsogenyClass_EC(SageObject):
 
         INPUT:
 
-        - ``C`` -- an elliptic curve in this isogeny class.
+        - ``C`` -- an elliptic curve in this isogeny class
 
         OUTPUT:
 
-        - ``i`` -- an integer so that the ``i`` th curve in the class
+        - ``i`` -- integer so that the ``i`` th curve in the class
           is isomorphic to ``C``
 
         EXAMPLES::
 
             sage: E = EllipticCurve('990j1')
-            sage: iso = E.isogeny_class(order="lmfdb") # orders lexicographically on a-invariants
+            sage: iso = E.isogeny_class(order='lmfdb') # orders lexicographically on a-invariants
             sage: iso.index(E.short_weierstrass_model())
             2
         """
@@ -235,12 +235,10 @@ class IsogenyClass_EC(SageObject):
         """
         INPUT:
 
-        - ``x`` -- a Python object.
+        - ``x`` -- a Python object
 
-        OUTPUT:
-
-        - boolean -- ``True`` iff ``x`` is an elliptic curve in this
-          isogeny class.
+        OUTPUT: boolean; ``True`` iff ``x`` is an elliptic curve in this
+        isogeny class
 
         .. NOTE::
 
@@ -267,8 +265,8 @@ class IsogenyClass_EC(SageObject):
 
         INPUT:
 
-        - ``fill`` -- boolean (default ``True``).  If ``False`` then the
-          matrix will contain only zeros and prime entries; if ``True`` it
+        - ``fill`` -- boolean (default: ``True``); if ``False`` then the
+          matrix will contain only zeros and prime entries. If ``True`` it
           will fill in the other degrees.
 
         EXAMPLES::
@@ -341,7 +339,7 @@ class IsogenyClass_EC(SageObject):
 
         INPUT:
 
-        - ``fill`` -- boolean (default ``False``).  Whether to only return
+        - ``fill`` -- boolean (default: ``False``); whether to only return
           prime degree isogenies.  Currently only implemented for
           ``fill=False``.
 
@@ -501,15 +499,15 @@ class IsogenyClass_EC(SageObject):
 
         INPUT:
 
-        - ``order`` -- None, a string or an iterable over all curves
-          in this class.  See
+        - ``order`` -- ``None``, a string or an iterable over all curves in
+          this class.  See
           :meth:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.isogeny_class`
           for more details.
 
         OUTPUT:
 
-        - Another :class:`IsogenyClass_EC` with the curves reordered
-          (and matrices and maps changed as appropriate)
+        Another :class:`IsogenyClass_EC` with the curves reordered (and
+        matrices and maps changed as appropriate).
 
         EXAMPLES::
 
@@ -588,19 +586,18 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         r"""
         INPUT:
 
-        - ``E`` -- an elliptic curve over a number field.
+        - ``E`` -- an elliptic curve over a number field
 
-        - ``reducible_primes`` (list of ints, or ``None`` (default)) -- if
-          not ``None`` then this should be a list of primes; in computing
-          the isogeny class, only composites isogenies of these
-          degrees will be used.
+        - ``reducible_primes`` -- list of integers, or ``None`` (default); if
+          not ``None`` then this should be a list of primes; in computing the
+          isogeny class, only composites isogenies of these degrees will be used.
 
-        - ``algorithm`` (string, default ``'Billerey'``) -- the algorithm
+        - ``algorithm`` -- string (default: ``'Billerey'``); the algorithm
           to use to compute the reducible primes.  Ignored for CM
           curves or if ``reducible_primes`` is provided.  Values are
           ``'Billerey'`` (default), ``'Larson'``, and ``'heuristic'``.
 
-        - ``minimal_models`` (bool, default ``True``) -- if ``True``,
+        - ``minimal_models`` -- boolean (default: ``True``); if ``True``,
           all curves in the class will be minimal or semi-minimal
           models.  Over fields of larger degree it can be expensive to
           compute these so set to ``False``.
@@ -995,23 +992,23 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
     r"""
     Isogeny classes for elliptic curves over `\QQ`.
     """
-    def __init__(self, E, algorithm="sage", label=None, empty=False):
+    def __init__(self, E, algorithm='sage', label=None, empty=False):
         r"""
         INPUT:
 
-        - ``E`` -- an elliptic curve over `\QQ`.
+        - ``E`` -- an elliptic curve over `\QQ`
 
-        - ``algorithm`` -- a string (default ``"sage"``).  One of the
+        - ``algorithm`` -- string (default: ``'sage'``); one of the
           following:
 
-          - ``"sage"`` -- Use sage's implementation to compute the curves,
+          - ``'sage'`` -- use sage's implementation to compute the curves,
             matrix and isogenies
 
-          - ``"database"`` -- Use the Cremona database (only works if the
+          - ``'database'`` -- use the Cremona database (only works if the
             curve is in the database)
 
-        - ``label`` -- a string, the label of this isogeny class
-          (e.g. '15a' or '37.b').  Used in printing.
+        - ``label`` -- string; the label of this isogeny class
+          (e.g. '15a' or '37.b'), used in printing
 
         - ``empty`` -- don't compute the curves right now (used when reordering)
 
@@ -1129,7 +1126,7 @@ def isogeny_degrees_cm(E, verbose=False):
 
     INPUT:
 
-    - ``E`` -- An elliptic curve defined over a number field.
+    - ``E`` -- an elliptic curve defined over a number field
 
     OUTPUT:
 
@@ -1202,7 +1199,6 @@ def isogeny_degrees_cm(E, verbose=False):
         sage: from sage.schemes.elliptic_curves.isogeny_class import isogeny_degrees_cm
         sage: isogeny_degrees_cm(E)
         [3, 5]
-
     """
     if not E.has_cm():
         raise ValueError("possible_isogeny_degrees_cm(E) requires E to be an elliptic curve with CM")
@@ -1331,24 +1327,24 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
 
     INPUT:
 
-    - ``E`` -- An elliptic curve defined over a number field.
+    - ``E`` -- an elliptic curve defined over a number field
 
-    - ``algorithm`` (string, default ``'Billerey'``) -- Algorithm to be
+    - ``algorithm`` -- string (default: ``'Billerey'``); algorithm to be
       used for non-CM curves: either ``'Billerey'``, ``'Larson'``, or
       ``'heuristic'``.  Only relevant for non-CM curves and base fields
       other than `\QQ`.
 
-    - ``max_l`` (int or ``None``) -- only relevant for non-CM curves
+    - ``max_l`` -- integer or ``None``; only relevant for non-CM curves
       and algorithms ``'Billerey'`` and ``'heuristic'``.  Controls the maximum
       prime used in either algorithm.  If ``None``, use the default
       for that algorithm.
 
-    - ``num_l`` (int or ``None``) -- only relevant for non-CM curves
+    - ``num_l`` -- integer or ``None``; only relevant for non-CM curves
       and algorithm ``'Billerey'``.  Controls the maximum number of primes
       used in the algorithm.  If ``None``, use the default for that
       algorithm.
 
-    - ``exact`` (bool, default ``True``) -- if ``True``, perform an
+    - ``exact`` -- boolean (default: ``True``); if ``True``, perform an
       additional check that the primes returned are all reducible.  If
       ``False``, skip this step, in which case some of the primes
       returned may be irreducible.
@@ -1399,7 +1395,7 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
     Over an extension field::
 
         sage: E3 = E.change_ring(CyclotomicField(3))
-        sage: possible_isogeny_degrees(E3)
+        sage: possible_isogeny_degrees(E3)                                              # long time (5s)
         [5]
         sage: [phi.degree() for phi in E3.isogenies_prime_degree()]
         [5, 5]
@@ -1421,7 +1417,7 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
 
         sage: K.<a> = NumberField(x^4 - 5*x^2 + 3)
         sage: E = EllipticCurve(K, [a^2 - 2, -a^2 + 3, a^2 - 2, -50*a^2 + 35, 95*a^2 - 67])
-        sage: possible_isogeny_degrees(E, exact=False, algorithm='Billerey')
+        sage: possible_isogeny_degrees(E, exact=False, algorithm='Billerey')            # long time (6.5s)
         [2, 5]
         sage: possible_isogeny_degrees(E, exact=False, algorithm='Larson')
         [2, 5]
@@ -1432,7 +1428,7 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
 
     This function only returns the primes which are isogeny degrees::
 
-        sage: Set(E.isogeny_class().matrix().list())
+        sage: Set(E.isogeny_class().matrix().list())                                    # long time (7s)
         {1, 2, 4, 5, 20, 10}
 
     For curves with CM by a quadratic order of class number greater

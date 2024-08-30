@@ -20,13 +20,44 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Same as in build.yml
+  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-incremental"
+  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:ci"
+  FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
+  FROM_DOCKER_TARGET:     "with-targets"
+  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
+  EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+
 jobs:
-  get_ci_fixes:
+  build-doc-pdf:
     runs-on: ubuntu-latest
+    services:
+      # https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
     steps:
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v10
+        with:
+          # need space in /var for Docker images
+          root-reserve-mb:      30000
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+          remove-docker-images: true
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v4
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
       - name: Merge CI fixes from sagemath/sage
         run: |
           mkdir -p upstream
@@ -34,97 +65,86 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
-      - name: Store CI fixes in upstream artifact
-        run: |
-          if git format-patch --stdout test_base > ci_fixes.patch; then
-            cp ci_fixes.patch upstream/
-          fi
-      - uses: actions/upload-artifact@v3
-        with:
-          path: upstream
-          name: upstream
 
-  build-docs-pdf:
-    runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
-    needs: [get_ci_fixes]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      # Building
+
+      - name: Generate Dockerfile
+        # From docker.yml
+        run: |
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Build Docker image
+        id: image
+        uses: docker/build-push-action@v5
+        with:
+          # push and load may not be set together at the moment
+          push:       true
+          load:       false
+          context:    .
+          tags:       ${{ env.BUILD_IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=ci-build-with-fallback
+
+      - name: Start container
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure())
+        run: |
+          docker run --name BUILD -dit \
+                     --mount type=bind,src=$(pwd),dst=$(pwd) \
+                     --workdir $(pwd) \
+                     ${{ env.BUILD_IMAGE }} /bin/sh
+
+      #
+      # On PRs and pushes to branches
+      #
 
       - name: Update system packages
+        id: packages
+        if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           export PATH="build/bin:$PATH"
           eval $(sage-print-system-package-command auto update)
           eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
           eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive texlive_luatex free_fonts xindy)
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Add prebuilt tree as a worktree
-        id: worktree
-        run: |
-          git config --global --add safe.directory $(pwd)
-          git config --global user.email "ci-sage@example.com"
-          git config --global user.name "Build & Test workflow"
-          .ci/retrofit-worktree.sh worktree-image /sage
-
-      - name: Download upstream artifact
-        uses: actions/download-artifact@v3
-        with:
-          path: upstream
-          name: upstream
-
-      - name: Apply CI fixes from sagemath/sage
-        # After applying the fixes, make sure all changes are marked as uncommitted changes.
-        run: |
-          if [ -r upstream/ci_fixes.patch ]; then
-            (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
-          fi
-
-      - name: Incremental build
-        id: incremental
-        run: |
-          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          ./bootstrap && make build
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j4 --output-sync=recurse
-          SAGE_NUM_THREADS: 4
-
-      - name: Build (fallback to non-incremental)
-        id: build
-        if: (success() || failure()) && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
-        run: |
-          set -ex
-          make sagelib-clean && git clean -fx src/sage && ./config.status && make build
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j4 --output-sync=recurse
-          SAGE_NUM_THREADS: 4
-
-      - name: Build docs (PDF)
+      - name: Build doc (PDF)
         id: docbuild
-        if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: (success() || failure()) && steps.packages.outcome == 'success'
         run: |
+          export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j4 --output-sync=recurse
-          SAGE_NUM_THREADS: 4
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Copy docs
+      - name: Copy doc
         id: copy
         if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
-          # For some reason the deploy step below cannot find /sage/...
-          # So copy everything from there to local folder
-          mkdir -p ./docs
-          cp -r -L /sage/local/share/doc/sage/pdf ./docs
+          mkdir -p ./doc
+          # We copy everything to a local folder
+          docker cp BUILD:/sage/local/share/doc/sage/pdf doc
           # Zip everything for increased performance
-          zip -r docs-pdf.zip docs
+          zip -r doc-pdf.zip doc
 
-      - name: Upload docs
+      - name: Upload doc
         if: (success() || failure()) && steps.copy.outcome == 'success'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: docs-pdf
-          path: docs-pdf.zip
+          name: doc-pdf
+          path: doc-pdf.zip

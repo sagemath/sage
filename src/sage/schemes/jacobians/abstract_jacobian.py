@@ -6,7 +6,6 @@ This module defines the base class of Jacobians as an abstract scheme.
 AUTHORS:
 
 - William Stein (2005)
-
 """
 
 # ****************************************************************************
@@ -29,7 +28,7 @@ _Fields = Fields()
 
 def is_Jacobian(J):
     """
-    Return True if `J` is of type Jacobian_generic.
+    Return ``True`` if `J` is of type ``Jacobian_generic``.
 
     EXAMPLES::
 
@@ -133,7 +132,7 @@ class Jacobian_generic(Scheme):
             TypeError: C (=Projective Plane Curve over Ring of integers modulo 6
             defined by x + y + z) must be defined over a field.
         """
-        if not is_Scheme(C):
+        if not isinstance(C, Scheme):
             raise TypeError("Argument (=%s) must be a scheme." % C)
         if C.base_ring() not in _Fields:
             raise TypeError("C (=%s) must be defined over a field." % C)
@@ -189,7 +188,7 @@ class Jacobian_generic(Scheme):
 
         OUTPUT:
 
-        This method always raises a :class:`NotImplementedError`; it is
+        This method always raises a :exc:`NotImplementedError`; it is
         only abstract.
 
         EXAMPLES::
@@ -226,9 +225,9 @@ class Jacobian_generic(Scheme):
 
         INPUT:
 
-        - ``R`` -- a field. The new base ring.
+        - ``R`` -- a field; the new base ring
 
-        OUTPUT: The Jacobian over the ring `R`.
+        OUTPUT: the Jacobian over the ring `R`
 
         EXAMPLES::
 
@@ -249,9 +248,9 @@ class Jacobian_generic(Scheme):
 
         INPUT:
 
-        - ``R`` -- a field. The new base field.
+        - ``R`` -- a field; the new base field
 
-        OUTPUT: The Jacobian over the ring `R`.
+        OUTPUT: the Jacobian over the ring `R`
 
         EXAMPLES::
 

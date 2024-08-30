@@ -23,11 +23,11 @@ from collections import defaultdict
 
 def runsnake(command):
     """
-    Graphical profiling with ``runsnake``
+    Graphical profiling with ``runsnake``.
 
     INPUT:
 
-    - ``command`` -- the command to be run as a string.
+    - ``command`` -- the command to be run as a string
 
     EXAMPLES::
 
@@ -60,7 +60,6 @@ def runsnake(command):
         - `The runsnake website <http://www.vrplumber.com/programming/runsnakerun/>`_
         - ``%prun``
         - :class:`Profiler`
-
     """
     import cProfile
     from sage.misc.temporary_file import tmp_filename
@@ -80,10 +79,10 @@ def import_statement_string(module, names, lazy):
 
     - ``module`` -- the name of a module
 
-    - ``names`` -- a list of 2-tuples containing names and alias to
+    - ``names`` -- list of 2-tuples containing names and alias to
       import
 
-    - ``lazy`` -- a boolean: whether to return a lazy import statement
+    - ``lazy`` -- boolean; whether to return a lazy import statement
 
     EXAMPLES::
 
@@ -140,10 +139,10 @@ def load_submodules(module=None, exclude_pattern=None):
 
     INPUT:
 
-    - ``module`` - an optional module
+    - ``module`` -- an optional module
 
-    - ``exclude_pattern`` - an optional regular expression pattern of module
-      names that have to be excluded.
+    - ``exclude_pattern`` -- an optional regular expression pattern of module
+      names that have to be excluded
 
     EXAMPLES::
 
@@ -160,6 +159,7 @@ def load_submodules(module=None, exclude_pattern=None):
     The second argument allows to exclude a pattern::
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry, "database$|lattice")
+        load sage.geometry.cone... succeeded
         load sage.geometry.cone_catalog... succeeded
         load sage.geometry.fan_isomorphism... succeeded
         ...
@@ -260,7 +260,7 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     :class:`~sage.misc.lazy_import.LazyImport` objects that are resolving to the
     same object may be included in the output::
 
-        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)
+        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)                # needs sage.rings.real_mpfr
         [Real Field with 53 bits of precision,
          ...
          Real Field with 53 bits of precision,
@@ -367,16 +367,16 @@ def import_statements(*objects, **kwds):
 
     INPUT:
 
-    - ``*objects`` -- a sequence of objects or comma-separated strings of names.
+    - ``*objects`` -- a sequence of objects or comma-separated strings of names
 
-    - ``lazy`` -- a boolean (default: ``False``)
-      Whether to print a lazy import statement.
+    - ``lazy`` -- boolean (default: ``False``); whether to print a lazy import
+      statement
 
-    - ``verbose`` -- a boolean (default: ``True``)
-      Whether to print information in case of ambiguity.
+    - ``verbose`` -- boolean (default: ``True``); whether to print information
+      in case of ambiguity
 
-    - ``answer_as_str`` -- a boolean (default: ``False``)
-      If ``True`` return a string instead of printing the statement.
+    - ``answer_as_str`` -- boolean (default: ``False``); if ``True`` return a
+      string instead of printing the statement
 
     EXAMPLES::
 
@@ -680,10 +680,7 @@ def import_statements(*objects, **kwds):
         # is a best one (i.e. the object "obj" is contained in the module and
         # has name "name")
         if name is not None:
-            good_modules = []
-            for mod in modules:
-                if name in modules[mod]:
-                    good_modules.append(mod)
+            good_modules = [mod for mod in modules if name in modules[mod]]
 
             if len(good_modules) == 1:
                 answer[good_modules[0]].append((name, name))
@@ -732,9 +729,8 @@ def import_statements(*objects, **kwds):
     if lazy:
         res.append("from sage.misc.lazy_import import lazy_import")
 
-    for module_name in sorted(answer):
-        res.append(import_statement_string(module_name, answer[module_name],
-                                           lazy))
+    res.extend(import_statement_string(module_name, answer[module_name], lazy)
+               for module_name in sorted(answer))
 
     if answer_as_str:
         return '\n'.join(res)

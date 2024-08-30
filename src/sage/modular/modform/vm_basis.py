@@ -53,17 +53,15 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
     INPUT:
 
-    - ``k`` -- an integer
+    - ``k`` -- integer
 
     - ``prec`` -- (default: 10) a positive integer
 
-    - ``cusp_only`` -- bool (default: False)
+    - ``cusp_only`` -- boolean (default: ``False``)
 
-    - ``var`` -- string (default: 'q')
+    - ``var`` -- string (default: ``'q'``)
 
-    OUTPUT:
-
-        A sequence whose entries are power series in ``ZZ[[var]]``.
+    OUTPUT: a sequence whose entries are power series in ``ZZ[[var]]``
 
     EXAMPLES::
 
@@ -132,7 +130,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     if k % 2 == 1 or k == 2:
         return Sequence([])
     elif k < 0:
-        raise ValueError("k must be non-negative")
+        raise ValueError("k must be nonnegative")
     elif k == 0:
         return Sequence([PowerSeriesRing(ZZ,var)(1).add_bigoh(prec)], cr=True)
     e = k.mod(12)
@@ -218,7 +216,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
 def _delta_poly(prec=10):
     """
-    Return the q-expansion of Delta as a FLINT polynomial. Used internally by
+    Return the `q`-expansion of Delta as a FLINT polynomial. Used internally by
     the :func:`~delta_qexp` function. See the docstring of :func:`~delta_qexp`
     for more information.
 
@@ -228,7 +226,7 @@ def _delta_poly(prec=10):
 
     OUTPUT:
 
-        the q-expansion of Delta to precision ``prec``, as a FLINT
+        the `q`-expansion of Delta to precision ``prec``, as a FLINT
         :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly` object.
 
     EXAMPLES::
@@ -274,13 +272,13 @@ def _delta_poly(prec=10):
 
 def _delta_poly_modulo(N, prec=10):
     r"""
-    Return the q-expansion of `\Delta` modulo `N`. Used internally by
+    Return the `q`-expansion of `\Delta` modulo `N`. Used internally by
     the :func:`~delta_qexp` function. See the docstring of :func:`~delta_qexp`
     for more information.
 
     INPUT:
 
-    - `N` -- positive integer modulo which we want to compute `\Delta`
+    - ``N`` -- positive integer modulo which we want to compute `\Delta`
 
     - ``prec`` -- integer; the absolute precision of the output
 
@@ -333,16 +331,14 @@ def delta_qexp(prec=10, var='q', K=ZZ) :
 
     INPUT:
 
-    - ``prec`` -- integer (default 10), the absolute precision of the output
+    - ``prec`` -- integer (default: 10); the absolute precision of the output
       (must be positive)
 
-    - ``var`` -- string (default: 'q'), variable name
+    - ``var`` -- string (default: ``'q'``); variable name
 
-    - ``K`` -- ring (default: `\ZZ`), base ring of answer
+    - ``K`` -- ring (default: `\ZZ`); base ring of answer
 
-    OUTPUT:
-
-    a power series over K in the variable ``var``
+    OUTPUT: a power series over K in the variable ``var``
 
     ALGORITHM:
 
