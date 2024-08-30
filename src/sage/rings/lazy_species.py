@@ -308,9 +308,10 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E(Gc) - G
             O^7
 
-            sage: A = L.undefined(1)
+            sage: L = LazySpecies(QQ, "X")
             sage: X = L(SymmetricGroup(1))
             sage: E = L(lambda n: SymmetricGroup(n))
+            sage: A = L.undefined(1)
             sage: A.define(X*E(A))
             sage: A
             X + X^2 + (X^3+X*E_2) + (X^2*E_2+2*X^4+X*E_3)
@@ -325,9 +326,16 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                 +E_2*{((1,2)(3,4),):({1,2,3,4})}*X+X*E_6)
              + O^8
 
+            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: F = E(C(A))
+            sage: [sum(F[n].monomial_coefficients().values()) for n in range(1, 7)]
+            [1, 3, 7, 19, 47, 130]
+            sage: oeis(_)
+            0: A001372: Number of unlabeled mappings (or mapping patterns) from n points to themselves; number of unlabeled endofunctions.
+
+
             sage: R.<q> = QQ[]
             sage: L = LazySpecies(R, "X")
-            sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: E1 = L(lambda n: SymmetricGroup(n) if n else 0)
             sage: E(q*E1)
