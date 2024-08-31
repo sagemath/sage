@@ -284,8 +284,6 @@ class Asir(Expect):
         """
         Return the version of Asir.
 
-        bug: it returns error because sage tries to set sage0=version();
-             instead of Sage0=version();
         OUTPUT: string
 
         EXAMPLES::
