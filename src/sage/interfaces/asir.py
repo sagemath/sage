@@ -1,5 +1,6 @@
 # $OpenXM: OpenXM/src/sage/asir.py,v 1.2 2019/03/06 02:38:33 takayama Exp $
 import os
+import pexpect
 from sage.interfaces.expect import Expect, ExpectElement
 from sage.misc.verbose import verbose
 from sage.cpython.string import bytes_to_str
