@@ -10,7 +10,8 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.structure.element import parent
 import itertools
 from collections import defaultdict
-
+from sage.rings.lazy_series_ring import LazyPowerSeriesRing, LazySymmetricFunctions
+from sage.combinat.sf.sf import SymmetricFunctions
 
 def weighted_compositions(n, d, weights, offset=0):
     r"""
@@ -97,6 +98,9 @@ def weighted_vector_compositions(n_vec, d, weights_vec):
 
 class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
     r"""
+
+    EXAMPLES:
+
     Compute the molecular expansion of `E(-X)`::
 
         sage: from sage.rings.lazy_species import LazySpecies
@@ -117,14 +121,129 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         sage: all(coefficient(m) == (1/E)[m] for m in range(10))
         True
     """
-    def generating_series(self):
-        pass
-
     def isotype_generating_series(self):
-        pass
+        r"""
+        Return the isotype generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E.isotype_generating_series()
+            1 + X + X^2 + X^3 + X^4 + X^5 + X^6 + O(X^7)
+
+            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: E(C).isotype_generating_series()
+            1 + X + 2*X^2 + 3*X^3 + 5*X^4 + 7*X^5 + 11*X^6 + O(X^7)
+
+            sage: L2 = LazySpecies(QQ, "X, Y")
+            sage: P2 = PolynomialSpecies(QQ, "X, Y")
+            sage: X = L2(P2(SymmetricGroup(1), {1: [1]}))
+            sage: Y = L2(P2(SymmetricGroup(1), {2: [1]}))
+            sage: E(X + Y).isotype_generating_series()
+            1 + (X+Y) + (X^2+X*Y+Y^2) + (X^3+X^2*Y+X*Y^2+Y^3)
+            + (X^4+X^3*Y+X^2*Y^2+X*Y^3+Y^4)
+            + (X^5+X^4*Y+X^3*Y^2+X^2*Y^3+X*Y^4+Y^5)
+            + (X^6+X^5*Y+X^4*Y^2+X^3*Y^3+X^2*Y^4+X*Y^5+Y^6)
+            + O(X,Y)^7
+
+            sage: C(X + Y).isotype_generating_series()
+            (X+Y) + (X^2+X*Y+Y^2) + (X^3+X^2*Y+X*Y^2+Y^3)
+            + (X^4+X^3*Y+2*X^2*Y^2+X*Y^3+Y^4)
+            + (X^5+X^4*Y+2*X^3*Y^2+2*X^2*Y^3+X*Y^4+Y^5)
+            + (X^6+X^5*Y+3*X^4*Y^2+4*X^3*Y^3+3*X^2*Y^4+X*Y^5+Y^6)
+            + O(X,Y)^7
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        if P._arity == 1:
+            def coefficient(n):
+                return sum(c for M, c in self[n].monomial_coefficients().items())
+        else:
+            def coefficient(n):
+                return sum(c * P.base_ring().prod(v ** d for v, d in zip(L.gens(), M.grade()))
+                           for M, c in self[n].monomial_coefficients().items())
+        return L(coefficient)
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(ZZ, "X")
+            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E.generating_series()
+            1 + X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + O(X^7)
+
+            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: C.generating_series()
+            X + 1/2*X^2 + 1/3*X^3 + 1/4*X^4 + 1/5*X^5 + 1/6*X^6 + O(X^7)
+
+            sage: L2 = LazySpecies(QQ, "X, Y")
+            sage: P2 = PolynomialSpecies(QQ, "X, Y")
+            sage: X = L2(P2(SymmetricGroup(1), {1: [1]}))
+            sage: Y = L2(P2(SymmetricGroup(1), {2: [1]}))
+            sage: E(X + Y).generating_series()
+            1 + (X+Y) + (1/2*X^2+X*Y+1/2*Y^2)
+            + (1/6*X^3+1/2*X^2*Y+1/2*X*Y^2+1/6*Y^3)
+            + (1/24*X^4+1/6*X^3*Y+1/4*X^2*Y^2+1/6*X*Y^3+1/24*Y^4)
+            + (1/120*X^5+1/24*X^4*Y+1/12*X^3*Y^2+1/12*X^2*Y^3+1/24*X*Y^4+1/120*Y^5)
+            + (1/720*X^6+1/120*X^5*Y+1/48*X^4*Y^2+1/36*X^3*Y^3+1/48*X^2*Y^4+1/120*X*Y^5+1/720*Y^6)
+            + O(X,Y)^7
+
+            sage: C(X + Y).generating_series()
+            (X+Y) + (1/2*X^2+X*Y+1/2*Y^2) + (1/3*X^3+X^2*Y+X*Y^2+1/3*Y^3)
+            + (1/4*X^4+X^3*Y+3/2*X^2*Y^2+X*Y^3+1/4*Y^4)
+            + (1/5*X^5+X^4*Y+2*X^3*Y^2+2*X^2*Y^3+X*Y^4+1/5*Y^5)
+            + (1/6*X^6+X^5*Y+3*X^4*Y^2+4*X^3*Y^3+3*X^2*Y^4+X*Y^5+1/6*Y^6)
+            + O(X,Y)^7
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        if P._arity == 1:
+            def coefficient(n):
+                return sum(c / M._group.cardinality()
+                           for M, c in self[n].monomial_coefficients().items())
+        else:
+            def coefficient(n):
+                return sum(c / M._group.cardinality()
+                           * P.base_ring().prod(v ** d for v, d in zip(L.gens(), M.grade()))
+                           for M, c in self[n].monomial_coefficients().items())
+        return L(coefficient)
 
     def cycle_index_series(self):
-        pass
+        r"""
+        Return the cycle index series for this species.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(ZZ, "X")
+            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: LazySymmetricFunctions(h)(E.cycle_index_series())
+            h[] + h[1] + h[2] + h[3] + h[4] + h[5] + h[6] + O^7
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: s(C.cycle_index_series()[5])
+            s[1, 1, 1, 1, 1] + s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[5]
+        """
+        P = self.parent()
+        p = SymmetricFunctions(P.base_ring().fraction_field()).p()
+        if P._arity == 1:
+            L = LazySymmetricFunctions(p)
+            def coefficient(n):
+                return sum(c * M._group.cycle_index()
+                           for M, c in self[n].monomial_coefficients().items())
+        else:
+            raise NotImplementedError
+        return L(coefficient)
 
     def _add_(self, other):
         r"""
@@ -145,13 +264,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             [((1, 2, 3), E_3), ((1, 2, 3), E_3)]
 
         """
-        def add_structures(labels):
-            yield from self.structures(labels)
-            yield from other.structures(labels)
-
-        result = super()._add_(other)
-        result.structures = add_structures
-        return result
+        return SumSpeciesElement(self, other)
 
     def _mul_(self, other):
         """
@@ -174,19 +287,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
              (((1, 3), E_2), ((2,), X)),
              (((2, 3), E_2), ((1,), X))]
         """
-        def mul_structures(labels):
-            n = len(labels)
-            l = set(labels)
-            assert len(l) == n, f"The argument labels must be a set, but {labels} has duplicates"
-            for k in range(n):
-                for U in itertools.combinations(l, k):
-                    V = l.difference(U)
-                    yield from itertools.product(self.structures(U),
-                                                 other.structures(V))
-
-        result = super()._mul_(other)
-        result.structures = mul_structures
-        return result
+        return ProductSpeciesElement(self, other)
 
     def structures(self, labels):
         r"""
@@ -447,6 +548,33 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         coeff_stream = Stream_function(coefficient, P._sparse, sorder * gv)
         return P.element_class(P, coeff_stream)
 
+class SumSpeciesElement(LazySpeciesElement):
+    def __init__(self, left, right):
+        self._left = left
+        self._right = right
+        add = super(LazySpeciesElement, type(left))._add_(left, right)
+        super().__init__(add.parent(), add._coeff_stream)
+
+    def structures(self, labels):
+        yield from self._left.structures(labels)
+        yield from self._right.structures(labels)
+
+class ProductSpeciesElement(LazySpeciesElement):
+    def __init__(self, left, right):
+        self._left = left
+        self._right = right
+        add = super(LazySpeciesElement, type(left))._mul_(left, right)
+        super().__init__(add.parent(), add._coeff_stream)
+
+    def structures(self, labels):
+        n = len(labels)
+        l = set(labels)
+        assert len(l) == n, f"The argument labels must be a set, but {labels} has duplicates"
+        for k in range(n):
+            for U in itertools.combinations(l, k):
+                V = l.difference(U)
+                yield from itertools.product(self._left.structures(U),
+                                             self._right.structures(V))
 
 class LazySpecies(LazyCompletionGradedAlgebra):
     """
