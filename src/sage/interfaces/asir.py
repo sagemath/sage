@@ -4,6 +4,7 @@ import pexpect
 
 from sage.cpython.string import bytes_to_str
 from sage.interfaces.expect import Expect, ExpectElement
+from sage.modules.free_module_element import vector
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.verbose import verbose
 from sage.rings.cc import CC
@@ -417,7 +418,7 @@ class AsirElement(ExpectElement):
         s = str(self)
         return s != ' [](0x0)' and any(x != '0' for x in s.split())
 
-    def _matrix_(self):
+    def _matrix_(self, R=None):
         r"""
         Return Sage matrix from this ``asir`` element.
 
@@ -426,10 +427,10 @@ class AsirElement(ExpectElement):
             sage: # optional - asir
             sage: A = asir('newmat(2,2,[[1,2],[3,4.5]])')
             sage: matrix(A)
-            [1.0 2.0]
-            [3.0 4.5]
+            [  1   2]
+            [  3 9/2]
             sage: _.base_ring()
-            Real Double Field
+            Rational Field
 
             sage: A = asir('newmat(2,2,[[@i,1],[-1,0]])')
             sage: matrix(A)
@@ -451,7 +452,8 @@ class AsirElement(ExpectElement):
 
         w = [[x.sage() for x in row] for row in self]
 
-        R = w[0][0].parent()
+        if R is None:
+            R = w[0][0].parent()
 
         return MatrixSpace(R, nrows, ncols)(w)
 
@@ -467,50 +469,17 @@ class AsirElement(ExpectElement):
             (1, 2, 3, 4)
             sage: A = asir('[1,2.3,4.5]')
             sage: vector(A)
-            (1.0, 2.3, 4.5)
-            sage: A = asir('[1,I]')
+            (1, 23/10, 9/2)
+            sage: A = asir('[1,@i]')
             sage: vector(A)
             (1.0, 1.0*I)
         """
+        w = [x.sage() for x in self]
         if R is None:
-            R = self._get_sage_ring()
-
-        s = str(self).strip('\n ')
-        w = s.strip().split(' ')
-        nrows = len(w)
-
-        w = [x.sage() for x in w]
-
+            return vector(w)
+        nrows = int(self.length())
         from sage.modules.free_module import FreeModule
         return FreeModule(R, nrows)(w)
-
-    def _scalar_(self):
-        """
-        Return Sage scalar from this asir element.
-
-        EXAMPLES::
-
-            sage: # optional - asir
-            sage: A = asir('2833')
-            sage: As = A.sage(); As
-            2833
-            sage: As.parent()
-            Rational Field
-
-            sage: B = sqrt(A)
-            sage: Bs = B.sage(); Bs
-            53.2259
-            sage: Bs.parent()
-            Real Double Field
-
-            sage: C = sqrt(-A)
-            sage: Cs = C.sage(); Cs
-            53.2259*I
-            sage: Cs.parent()
-            Complex Double Field
-        """
-        R = self._get_sage_ring()
-        return R(str(self))
 
     def asir_type(self):
         try:
@@ -519,7 +488,7 @@ class AsirElement(ExpectElement):
             number = int(str(self.type()).splitlines()[-1])
         typ = types[number]
         if typ != "number":
-            return types[number]
+            return typ
         try:
             number = int(str(self.ntype()))
         except ValueError:
@@ -527,17 +496,22 @@ class AsirElement(ExpectElement):
         return number_types[number]
 
     def __iter__(self):
-        if self.asir_type() == "list":
+        typ = self.asir_type()
+        if typ == "list":
             L = int(self.length())
             for i in range(L):
                 yield self[i]
-        elif self.asir_type() == "matrix":
+        elif typ == "vector":
+            L = int(self.length())
+            for i in range(L):
+                yield self[i]
+        elif typ == "matrix":
             m, n = self.size()
             m = int(m)
             for i in range(m):
                 yield self[i]
         else:
-            raise TypeError('can only iterate over lists or matrices')
+            raise TypeError(f'can iterate over lists, vectors, matrices, not {typ}')
 
     def _sage_(self):
         """
@@ -564,6 +538,24 @@ class AsirElement(ExpectElement):
             sage: A = asir('[1,2.3*@i,4.5]')
             sage: A.sage()
             [1, 2.30000000000000*I, 4.50000000000000]
+
+            sage: A = asir('2833')
+            sage: As = A.sage(); As
+            2833
+            sage: As.parent()
+            Rational Field
+
+            sage: B = sqrt(A)
+            sage: Bs = B.sage(); Bs
+            53.2259
+            sage: Bs.parent()
+            Real Double Field
+
+            sage: C = sqrt(-A)
+            sage: Cs = C.sage(); Cs
+            53.2259*I
+            sage: Cs.parent()
+            Complex Double Field
         """
         if self.asir_type() == "rational":
             return QQ(str(self))
@@ -581,7 +573,7 @@ class AsirElement(ExpectElement):
             return self._matrix_()
         if self.asir_type() == "list":
             return [elt.sage() for elt in self]
-        raise NotImplementedError(f'asir type {self.Asir_type()} is not yet recognized')
+        raise NotImplementedError(f'asir type {self.asir_type()} is not yet recognized')
 
 
 # An instance
