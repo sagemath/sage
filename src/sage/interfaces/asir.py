@@ -358,6 +358,14 @@ class AsirElement(ExpectElement):
         s = str(self)
         return s != ' [](0x0)' and any(x != '0' for x in s.split())
 
+    def to_complex(self, R):
+        """
+        typical complex looks like (4+1.41421356*@i)
+        """
+        real_part = self.real()
+        imag_part = self.imag()
+        return R(float(real_part), float(imag_part))
+
     def _matrix_(self, R=None):
         r"""
         Return Sage matrix from this ``asir`` element.
@@ -398,7 +406,7 @@ class AsirElement(ExpectElement):
         ncols = len(w[0])
 
         if self.iscomplex():
-            w = [[to_complex(x, R) for x in row] for row in w]
+            w = [[x.to_complex(R) for x in row] for row in w]
 
         from sage.matrix.all import MatrixSpace
         return MatrixSpace(R, nrows, ncols)(w)
@@ -430,7 +438,7 @@ class AsirElement(ExpectElement):
         nrows = len(w)
 
         if self.iscomplex():
-            w = [to_complex(x, R) for x in w]
+            w = [x.to_complex(R) for x in w]
 
         from sage.modules.free_module import FreeModule
         return FreeModule(R, nrows)(w)
@@ -464,7 +472,7 @@ class AsirElement(ExpectElement):
 
         R = self._get_sage_ring()
         if self.iscomplex():
-            return to_complex(str(self), R)
+            return self.to_complex(R)
         else:
             return R(str(self))
 
