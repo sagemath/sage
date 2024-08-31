@@ -1,9 +1,11 @@
 # $OpenXM: OpenXM/src/sage/asir.py,v 1.2 2019/03/06 02:38:33 takayama Exp $
 import os
 import pexpect
-from sage.interfaces.expect import Expect, ExpectElement
-from sage.misc.verbose import verbose
+
 from sage.cpython.string import bytes_to_str
+from sage.interfaces.expect import Expect, ExpectElement
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.verbose import verbose
 
 # Ref: @s/2018/09/20180907-sage-asir-proj,
 # Using External Libraries and Interfaces
@@ -429,7 +431,6 @@ class AsirElement(ExpectElement):
         if self.iscomplex():
             w = [[x.to_complex(R) for x in row] for row in w]
 
-        from sage.matrix.all import MatrixSpace
         return MatrixSpace(R, nrows, ncols)(w)
 
     def _vector_(self, R=None):
