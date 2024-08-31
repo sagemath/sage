@@ -251,9 +251,10 @@ class Asir(Expect):
         """
         EXAMPLES::
 
-            sage: asir('0 == 1')  # optional - asir
+            sage: # optional - asir
+            sage: asir('0 == 1')
             0
-            sage: asir('1 == 1')  # optional - asir
+            sage: asir('1 == 1')
             1
         """
         return '=='
@@ -282,8 +283,9 @@ class Asir(Expect):
 
         EXAMPLES::
 
-            sage: asir.set('X', '2') # optional - asir
-            sage: asir.get('X') # optional - asir
+            sage: # optional - asir
+            sage: asir.set('X', '2')
+            sage: asir.get('X')
             '2'
         """
         cmd = '%s=%s' % (var, value)
@@ -421,26 +423,27 @@ class AsirElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: A = asir('newmat(2,2,[[1,2],[3,4.5]])')     # optional - asir
-            sage: matrix(A)                     # optional - asir
+            sage: # optional - asir
+            sage: A = asir('newmat(2,2,[[1,2],[3,4.5]])')
+            sage: matrix(A)
             [1.0 2.0]
             [3.0 4.5]
-            sage: _.base_ring()                 # optional - asir
+            sage: _.base_ring()
             Real Double Field
 
-            sage: A = asir('newmat(2,2,[[@i,1],[-1,0]])')      # optional - asir
-            sage: matrix(A)                     # optional - asir
+            sage: A = asir('newmat(2,2,[[@i,1],[-1,0]])')
+            sage: matrix(A)
             [1.0*I   1.0]
             [ -1.0   0.0]
-            sage: _.base_ring()                 # optional - asir
+            sage: _.base_ring()
             Complex Double Field
 
-            sage: A = asir('newmat(2,2,[[1,2],[3,4]])')       # optional - asir
-            sage: matrix(ZZ, A)                 # optional - asir
+            sage: A = asir('newmat(2,2,[[1,2],[3,4]])')
+            sage: matrix(ZZ, A)
             [1 2]
             [3 4]
-            sage: A = asir('newmat(2,2,[[1,2],[3,4.5]])')     # optional - asir
-            sage: matrix(RR, A)                 # optional - asir
+            sage: A = asir('newmat(2,2,[[1,2],[3,4.5]])')
+            sage: matrix(RR, A)
             [1.00000000000000 2.00000000000000]
             [3.00000000000000 4.50000000000000]
         """
@@ -458,14 +461,15 @@ class AsirElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: A = asir('[1,2,3,4]')       # optional - asir
-            sage: vector(ZZ, A)                 # optional - asir
+            sage: # optional - asir
+            sage: A = asir('[1,2,3,4]')
+            sage: vector(ZZ, A)
             (1, 2, 3, 4)
-            sage: A = asir('[1,2.3,4.5]')     # optional - asir
-            sage: vector(A)                     # optional - asir
+            sage: A = asir('[1,2.3,4.5]')
+            sage: vector(A)
             (1.0, 2.3, 4.5)
-            sage: A = asir('[1,I]')           # optional - asir
-            sage: vector(A)                     # optional - asir
+            sage: A = asir('[1,I]')
+            sage: vector(A)
             (1.0, 1.0*I)
         """
         if R is None:
@@ -486,22 +490,23 @@ class AsirElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: A = asir('2833')      # optional - asir
-            sage: As = A.sage(); As       # optional - asir
+            sage: # optional - asir
+            sage: A = asir('2833')
+            sage: As = A.sage(); As
             2833
-            sage: As.parent()             # optional - asir
+            sage: As.parent()
             Rational Field
 
-            sage: B = sqrt(A)             # optional - asir
-            sage: Bs = B.sage(); Bs       # optional - asir
+            sage: B = sqrt(A)
+            sage: Bs = B.sage(); Bs
             53.2259
-            sage: Bs.parent()             # optional - asir
+            sage: Bs.parent()
             Real Double Field
 
-            sage: C = sqrt(-A)            # optional - asir
-            sage: Cs = C.sage(); Cs       # optional - asir
+            sage: C = sqrt(-A)
+            sage: Cs = C.sage(); Cs
             53.2259*I
-            sage: Cs.parent()             # optional - asir
+            sage: Cs.parent()
             Complex Double Field
         """
         R = self._get_sage_ring()
