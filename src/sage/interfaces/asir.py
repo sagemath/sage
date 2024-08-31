@@ -16,6 +16,7 @@ from sage.rings.real_mpfr import RR
 
 # conversion according to OpenXM doc
 types = {-1: "void",
+         0: "nothing",
          1: "number",
          2: "polynomial",
          3: "rational expression",
@@ -54,6 +55,7 @@ class Asir(Expect):
     EXAMPLES::
 
         sage: asir.evall("F=fctr(x^10-1)")    # optional - asir
+        '[[1,1],[x-1,1],[x+1,1],[x^4-x^3+x^2-x+1,1],[x^4+x^3+x^2+x+1,1]]'
     """
     def __init__(self, maxread=None, script_subdirectory=None, logfile=None,
                  server=None, server_tmpdir=None, seed=None, command=None):
@@ -116,9 +118,9 @@ class Asir(Expect):
         EXAMPLES::
 
             sage: asir._quit_string()
-            'quit;'
+            'quit();'
         """
-        return '!quit;'
+        return 'quit();'
 
     def _install_hints(self):
         """
@@ -144,10 +146,13 @@ class Asir(Expect):
         EXAMPLES::
 
             sage: asir.eval('1+2;'); asir.evall('3+3')   #optional - asir
+            '3'
+            '6'
         """
         return self.eval(cmd + ';;')
 
     def _default_var_name(self):
+        # because the usual "sage" fails
         return "Sage"
 
     def _eval_line(self, line, reformat=True, allow_use_file=False,
@@ -156,7 +161,7 @@ class Asir(Expect):
         EXAMPLES::
 
             sage: print(asir._eval_line('2+2'))  #optional - asir
-            '4'
+            4
         """
         from pexpect.exceptions import EOF
         if not wait_for_prompt:
@@ -277,7 +282,7 @@ class Asir(Expect):
 
             sage: asir.set('X', '2') # optional - asir
             sage: asir.get('X') # optional - asir
-            ' 2'
+            '2'
         """
         cmd = '%s=%s' % (var, value)
         out = self.evall(cmd)
@@ -292,7 +297,7 @@ class Asir(Expect):
 
             sage: asir.set('X', '2') # optional - asir
             sage: asir.get('X') # optional - asir
-            ' 2'
+            '2'
         """
         s = self.evall('%s;' % var)
         i = s.find('=')
@@ -353,15 +358,15 @@ class AsirElement(ExpectElement):
         TESTS::
 
             sage: asir('1')._get_sage_ring()  # optional - asir
-            Real Double Field
-            sage: asir('I')._get_sage_ring()  # optional - asir
+            Rational Field
+            sage: asir('@i')._get_sage_ring()  # optional - asir
             Complex Double Field
-            sage: asir('[]')._get_sage_ring() # optional - asir
+            sage: asir('1.2')._get_sage_ring() # optional - asir
             Real Double Field
         """
         if self.asir_type() == 'rational':
             import sage.rings.rational_field
-            return sage.rings.ratonal_field.QQ
+            return sage.rings.rational_field.QQ
         if self.asir_type() == 'real':
             import sage.rings.real_double
             return sage.rings.real_double.RDF
@@ -372,10 +377,14 @@ class AsirElement(ExpectElement):
             import sage.rings.qqbar
             return sage.rings.qqbar.QQbar
         if self.asir_type() == 'finitefield':
-            raise TypeError('finite fields arenot handled yet')
+            raise TypeError('finite fields are not handled yet')
+        if self.asir_type() == 'polynomial':
+            raise TypeError('polynomials are not handled yet')
+        if self.asir_type() == 'rational expression':
+            raise TypeError('rational expression are not handled yet')
         raise TypeError("no Sage ring associated to this element.")
 
-    def __nonzero__(self) -> bool:
+    def __bool__(self) -> bool:
         r"""
         Test whether this element is nonzero.
 
@@ -402,14 +411,6 @@ class AsirElement(ExpectElement):
 
         s = str(self)
         return s != ' [](0x0)' and any(x != '0' for x in s.split())
-
-    def to_complex(self, R):
-        """
-        typical complex looks like (4+1.41421356*@i)
-        """
-        real_part = self.real()
-        imag_part = self.imag()
-        return R(float(real_part), float(imag_part))
 
     def _matrix_(self, R=None):
         r"""
@@ -448,8 +449,7 @@ class AsirElement(ExpectElement):
         nrows = len(w)
         ncols = len(w[0])
 
-        if self.iscomplex():
-            w = [[x.to_complex(R) for x in row] for row in w]
+        w = [[x.sage() for x in row] for row in w]
 
         return MatrixSpace(R, nrows, ncols)(w)
 
@@ -476,8 +476,7 @@ class AsirElement(ExpectElement):
         w = s.strip().split(' ')
         nrows = len(w)
 
-        if self.iscomplex():
-            w = [x.to_complex(R) for x in w]
+        w = [x.sage() for x in w]
 
         from sage.modules.free_module import FreeModule
         return FreeModule(R, nrows)(w)
@@ -490,9 +489,9 @@ class AsirElement(ExpectElement):
 
             sage: A = asir('2833')      # optional - asir
             sage: As = A.sage(); As       # optional - asir
-            2833.0
+            2833
             sage: As.parent()             # optional - asir
-            Real Double Field
+            Rational Field
 
             sage: B = sqrt(A)             # optional - asir
             sage: Bs = B.sage(); Bs       # optional - asir
@@ -507,10 +506,7 @@ class AsirElement(ExpectElement):
             Complex Double Field
         """
         R = self._get_sage_ring()
-        if self.iscomplex():
-            return self.to_complex(R)
-        else:
-            return R(str(self))
+        return R(str(self))
 
     def asir_type(self):
         try:
@@ -541,7 +537,7 @@ class AsirElement(ExpectElement):
 
             sage: A = asir('2833')           # optional - asir
             sage: A.sage()                     # optional - asir
-            2833.0
+            2833
             sage: B = sqrt(A)                  # optional - asir
             sage: B.sage()                     # optional - asir
             53.2259
@@ -550,11 +546,11 @@ class AsirElement(ExpectElement):
             53.2259*I
             sage: A = asir('[1,2,3,4]')      # optional - asir
             sage: A.sage()                     # optional - asir
-            (1.0, 2.0, 3.0, 4.0)
+            (1, 2, 3, 4)
             sage: A = asir('[1,2.3,4.5]')    # optional - asir
             sage: A.sage()                     # optional - asir
-            (1.0, 2.3, 4.5)
-            sage: A = asir('[1,2.3+I,4.5]')  # optional - asir
+            (1, 2.3, 4.5)
+            sage: A = asir('[1,2.3@I,4.5]')  # optional - asir
             sage: A.sage()                     # optional - asir
             (1.0, 2.3 + 1.0*I, 4.5)
         """
