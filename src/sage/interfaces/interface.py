@@ -504,13 +504,16 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         self._available_vars.append(var)
 
+    def _default_var_name(self):
+        return "sage"
+
     def _next_var_name(self):
         if len(self._available_vars) != 0:
             v = self._available_vars[0]
             del self._available_vars[0]
             return v
         self.__seq += 1
-        return "sage%s" % self.__seq
+        return self._default_var_name() + str(self.__seq)
 
     def _create(self, value, name=None):
         name = self._next_var_name() if name is None else name
