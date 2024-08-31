@@ -6,6 +6,10 @@ from sage.cpython.string import bytes_to_str
 from sage.interfaces.expect import Expect, ExpectElement
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.verbose import verbose
+from sage.rings.cc import CC
+from sage.rings.qqbar import QQbar
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
 
 # Ref: @s/2018/09/20180907-sage-asir-proj,
 # Using External Libraries and Interfaces
@@ -30,6 +34,17 @@ types = {-1: "void",
          16: "byte array",
          26: "distributed module polynomial",
          }
+
+# http://www.math.sci.kobe-u.ac.jp/OpenXM/Current/doc/asir2000/html-en/man/man_35.html#ntype
+number_types = {0: "rational",
+                1: "real",
+                2: "algebraic",
+                3: "real",
+                4: "complex",
+                5: "finitefield",
+                6: "finitefield",
+                7: "finitefield"
+                }
 
 
 class Asir(Expect):
@@ -344,18 +359,21 @@ class AsirElement(ExpectElement):
             sage: asir('[]')._get_sage_ring() # optional - asir
             Real Double Field
         """
-        # not clear how to distinguish these types in asir
-        if self.isinteger():
-            import sage.rings.integer_ring
-            return sage.rings.integer_ring.ZZ
-        elif self.isreal():
+        if self.asir_type() == 'rational':
+            import sage.rings.rational_field
+            return sage.rings.ratonal_field.QQ
+        if self.asir_type() == 'real':
             import sage.rings.real_double
             return sage.rings.real_double.RDF
-        elif self.iscomplex():
+        if self.asir_type() == 'complex':
             import sage.rings.complex_double
             return sage.rings.complex_double.CDF
-        else:
-            raise TypeError("no Sage ring associated to this element.")
+        if self.asir_type() == 'algebraic':
+            import sage.rings.qqbar
+            return sage.rings.qqbar.QQbar
+        if self.asir_type() == 'finitefield':
+            raise TypeError('finite fields arenot handled yet')
+        raise TypeError("no Sage ring associated to this element.")
 
     def __nonzero__(self) -> bool:
         r"""
@@ -379,6 +397,9 @@ class AsirElement(ExpectElement):
             sage: bool(asir('[0,0,-0.1;0,0,0]'))  # optional - asir
             True
         """
+        if self.asir_type() == 'list':
+            return int(self.length()) != 0
+
         s = str(self)
         return s != ' [](0x0)' and any(x != '0' for x in s.split())
 
@@ -496,7 +517,14 @@ class AsirElement(ExpectElement):
             number = int(str(self.type()))
         except ValueError:
             number = int(str(self.type()).splitlines()[-1])
-        return types[number]
+        typ = types[number]
+        if typ != "number":
+            return types[number]
+        try:
+            number = int(str(self.ntype()))
+        except ValueError:
+            number = int(str(self.ntype()).splitlines()[-1])
+        return number_types[number]
 
     def __iter__(self):
         if self.asir_type() != "list":
@@ -530,9 +558,16 @@ class AsirElement(ExpectElement):
             sage: A.sage()                     # optional - asir
             (1.0, 2.3 + 1.0*I, 4.5)
         """
-        if self.asir_type() == "number":
-            # all kinds of numbers
-            return self._scalar_()
+        if self.asir_type() == "rational":
+            return QQ(str(self))
+        if self.asir_type() == "real":
+            return RR(str(self))
+        if self.asir_type() == "complex":
+            return CC((str(self.real()), str(self.imag())))
+        if self.asir_type() == "algebraic":
+            return QQbar(self)
+        if self.asir_type() == "finitefield":
+            raise NotImplementedError
         if self.asir_type() == "vector":
             return self._vector_()
         if self.asir_type() == "matrix":
