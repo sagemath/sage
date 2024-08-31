@@ -8,6 +8,27 @@ from sage.cpython.string import bytes_to_str
 # Ref: @s/2018/09/20180907-sage-asir-proj,
 # Using External Libraries and Interfaces
 
+# conversion according to OpenXM doc
+types = {-1: "void",
+         1: "number",
+         2: "polynomial",
+         3: "rational expression",
+         4: "list",
+         5: "vector",
+         6: "matrix",
+         7: "string",
+         8: "structure",
+         9: "distributed polynomial",
+         10: "32bit unsigned integer",
+         11: "error object",
+         12: "matrix over GF(2)",
+         13: "MATHCAP object",
+         14: "first order formula",
+         15: "matrix over GF(p)",
+         16: "byte array",
+         26: "distributed module polynomial",
+         }
+
 
 class Asir(Expect):
     r"""
@@ -467,9 +488,6 @@ class AsirElement(ExpectElement):
             sage: Cs.parent()             # optional - asir
             Complex Double Field
         """
-        if not self.isscalar():
-            raise TypeError("not an asir scalar")
-
         R = self._get_sage_ring()
         if self.iscomplex():
             return self.to_complex(R)
@@ -501,12 +519,14 @@ class AsirElement(ExpectElement):
             sage: A.sage()                     # optional - asir
             (1.0, 2.3 + 1.0*I, 4.5)
         """
-        if self.isscalar():
+        if types[self.type().sage()] == "number":
             return self._scalar_()
-        if self.isvector():
+        if types[self.type().sage()] == "vector":
             return self._vector_()
-        if self.ismatrix():
+        if types[self.type().sage()] == "matrix":
             return self._matrix_()
+        if types[self.type().sage()] == "list":
+            return self._list_()
         raise NotImplementedError('asir type is not recognized')
 
 
