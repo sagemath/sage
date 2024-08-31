@@ -558,7 +558,7 @@ class AsirElement(ExpectElement):
             [1, 2.30000000000000, 4.50000000000000]
             sage: A = asir('[1,2.3*@i,4.5]')
             sage: A.sage()
-            [1, 2.30000000000000, 4.50000000000000]
+            [1, 2.30000000000000*I, 4.50000000000000]
         """
         if self.asir_type() == "rational":
             return QQ(str(self))
