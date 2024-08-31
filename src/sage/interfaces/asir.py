@@ -128,7 +128,7 @@ class Asir(Expect):
 
         EXAMPLES::
 
-            sage: asir.eval('1+2;'); asir.evall('3+3')
+            sage: asir.eval('1+2;'); asir.evall('3+3')   #optional - asir
         """
         return self.eval(cmd + ';;')
 
@@ -344,6 +344,7 @@ class AsirElement(ExpectElement):
             sage: asir('[]')._get_sage_ring() # optional - asir
             Real Double Field
         """
+        # not clear how to distinguish these types in asir
         if self.isinteger():
             import sage.rings.integer_ring
             return sage.rings.integer_ring.ZZ
@@ -356,7 +357,7 @@ class AsirElement(ExpectElement):
         else:
             raise TypeError("no Sage ring associated to this element.")
 
-    def __nonzero__(self):
+    def __nonzero__(self) -> bool:
         r"""
         Test whether this element is nonzero.
 
@@ -418,8 +419,6 @@ class AsirElement(ExpectElement):
             [1.00000000000000 2.00000000000000]
             [3.00000000000000 4.50000000000000]
         """
-        if not self.ismatrix():
-            raise TypeError('not an asir matrix')
         if R is None:
             R = self._get_sage_ring()
 
@@ -449,9 +448,6 @@ class AsirElement(ExpectElement):
             sage: vector(A)                     # optional - asir
             (1.0, 1.0*I)
         """
-        oc = self.parent()
-        if not self.isvector():
-            raise TypeError('not an asir vector')
         if R is None:
             R = self._get_sage_ring()
 
@@ -495,6 +491,20 @@ class AsirElement(ExpectElement):
         else:
             return R(str(self))
 
+    def asir_type(self):
+        try:
+            number = int(str(self.type()))
+        except ValueError:
+            number = int(str(self.type()).splitlines()[-1])
+        return types[number]
+
+    def __iter__(self):
+        if self.asir_type() != "list":
+            raise TypeError('can only iterate over lists')
+        L = int(self.length())
+        for i in range(L):
+            yield self[i]
+
     def _sage_(self):
         """
         Try to parse the asir object and return a sage object.
@@ -520,15 +530,16 @@ class AsirElement(ExpectElement):
             sage: A.sage()                     # optional - asir
             (1.0, 2.3 + 1.0*I, 4.5)
         """
-        if types[self.type().sage()] == "number":
+        if self.asir_type() == "number":
+            # all kinds of numbers
             return self._scalar_()
-        if types[self.type().sage()] == "vector":
+        if self.asir_type() == "vector":
             return self._vector_()
-        if types[self.type().sage()] == "matrix":
+        if self.asir_type() == "matrix":
             return self._matrix_()
-        if types[self.type().sage()] == "list":
-            return self._list_()
-        raise NotImplementedError('asir type is not recognized')
+        if self.asir_type() == "list":
+            return [elt.sage() for elt in self]
+        raise NotImplementedError(f'asir type {self.Asir_type()} is not yet recognized')
 
 
 # An instance
