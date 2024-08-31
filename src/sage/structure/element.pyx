@@ -2976,6 +2976,46 @@ cdef class RingElement(ModuleElement):
             return False
         return self._parent.ideal(self).is_prime()
 
+    def pow(self, exponent):
+        """
+        Return ``self`` raised to the power of ``exponent``.
+
+        INPUT:
+
+        - ``exponent`` -- integer or rational number
+
+        If ``exponent`` is a rational number, this method returns the
+        fractional power of ``self``, computed via :meth:`nth_root`.
+
+        Unlike powering by ``**``, the returned value is always
+        an element of the parent of ``self``.
+
+        EXAMPLES:
+
+            sage: ZZ(-8).pow(2/3)
+            4
+            sage: QQ(-8).pow(2/3)
+            4
+            sage: RR(-8).pow(2/3)
+            4.00000000000000
+            sage: CC(-8).pow(2/3)
+            -2.00000000000000 + 3.46410161513776*I
+
+            sage: # needs sage.rings.number_field
+            sage: AA(-8).pow(2/3)
+            4
+            sage: QQbar(-8).pow(2/3)
+            -2.000000000000000? + 3.464101615137755?*I
+        """
+        if isinstance(exponent, int):
+            return self**exponent
+        try:
+            n = exponent.numerator()
+            d = exponent.denominator()
+        except AttributeError:
+            raise ArithmeticError("exponent must be an integer or a rational number")
+        return self.nth_root(d)**n
+
 
 def is_CommutativeRingElement(x):
     """

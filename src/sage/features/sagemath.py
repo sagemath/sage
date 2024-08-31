@@ -880,7 +880,7 @@ class sage__rings__number_field(JoinFeature):
 
         sage: # needs sage.rings.number_field
         sage: AA(-1)^(1/3)
-        -1
+        0.500000000000000? + 0.866025403784439?*I
         sage: QQbar(-1)^(1/3)
         0.500000000000000? + 0.866025403784439?*I
 
