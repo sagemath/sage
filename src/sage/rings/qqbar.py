@@ -4487,7 +4487,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
     def is_integral(self):
         r"""
-        Determine if a number is an algebraic integer.
+        Check if this number is an algebraic integer.
 
         EXAMPLES::
 
