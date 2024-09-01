@@ -438,6 +438,7 @@ class AsirElement(ExpectElement):
             sage: _.base_ring()
             Rational Field
 
+            sage: # optional - asir
             sage: A = asir('newmat(2,2,[[@i,1],[-1,0]])')
             sage: matrix(A)
             [1.0*I   1.0]
@@ -445,6 +446,7 @@ class AsirElement(ExpectElement):
             sage: _.base_ring()
             Complex Double Field
 
+            sage: # optional - asir
             sage: A = asir('newmat(2,2,[[1,2],[3,4]])')
             sage: matrix(ZZ, A)
             [1 2]
