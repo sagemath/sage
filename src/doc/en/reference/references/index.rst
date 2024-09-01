@@ -1828,8 +1828,8 @@ REFERENCES:
              With an appendix by Ernst Kani.
              Canad. Math. Bull. 48 (2005), no. 1, 16--31.
 
-.. [Colb2004] C.J. Colbourn. “Combinatorial aspects of covering arrays”.
-              Matematiche (Catania) 59 (2004), pp. 125–172.
+.. [Colb2004] C.J. Colbourn. *Combinatorial aspects of covering arrays*.
+              Matematiche (Catania) 59 (2004), pp. 125-172.
 
 .. [Col2004] Pierre Colmez, Invariant `\mathcal{L}` et derivees de
              valeurs propres de Frobenius, preprint, 2004.
@@ -3008,7 +3008,10 @@ REFERENCES:
             Texts in Mathematics, Springer, 2001.
 
 .. [Gre2006] \R. M. Green, *Star reducible Coxeter groups*, Glasgow
-            Mathematical Journal, Volume 48, Issue 3, pp. 583-609.
+             Mathematical Journal, Volume 48, Issue 3, pp. 583-609.
+
+.. [Ger2008] Gert-Martin Greuel and Gerhard Pfister. A Singular introduction
+             to commutative algebra. Vol. 348. Berlin: Springer, 2008.
 
 .. [Gri2021] \O. Gritsenko, *On strongly regular graph with parameters (65; 32; 15; 16)*,
               :arxiv:`2102.05432`.
@@ -3778,6 +3781,10 @@ REFERENCES:
 .. [Kas2018] András Kaszanyitzky. *The GraftalLace Cellular Automata*.
              Preprint, :arxiv:`1805.11532`.
 
+.. [Kat1973] G. Katona. *Two applications (for search theory and truth
+             functions) of Sperner type theorems*. Periodica Math.,
+             3:19-26, 1973.
+
 .. [Kat1991] Nicholas M. Katz, *Exponential sums and differential equations*,
              Princeton University Press, Princeton NJ, 1991.
 
@@ -4085,6 +4092,9 @@ REFERENCES:
 
 .. [KS] Sheldon Katz and Stein Arild Stromme, "Schubert",
         A Maple package for intersection theory and enumerative geometry.
+
+.. [KS1973] D. Kleitman and J. Spencer. *Families of k-independent sets*.
+            Discrete Math, 6:255-262, 1973.
 
 .. [KS1998] Maximilian Kreuzer and Harald Skarke, *Classification of
             Reflexive Polyhedra in Three Dimensions*,
@@ -5137,6 +5147,9 @@ REFERENCES:
             :doi:`10.1007/s00453-006-1225-y`,
             http://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf
 
+.. [Nur2004] K. Nurmela. *Upper bounds for covering arrays by tabu search*.
+             Discrete Applied Math., 138 (2004), 143-152.
+
 .. [NWS2002] Newman, M.E.J., Watts, D.J. and Strogatz, S.H.  *Random
              graph models of social networks*. Proc. Nat. Acad. Sci. USA
              99:1 (2002), 2566-2572. :doi:`10.1073/pnas.012582999`
@@ -5913,8 +5926,8 @@ REFERENCES:
 
 .. [SloaHada] \N.J.A. Sloane's Library of Hadamard Matrices, at https://neilsloane.com/hadamard/
 
-.. [SMC2006] \G.B. Sherwood, S.S Martirosyan, and C.J. Colbourn, "Covering
-              arrays of higher strength from permutation vectors". J. Combin.
+.. [SMC2006] \G.B. Sherwood, S.S Martirosyan, and C.J. Colbourn, *Covering
+              arrays of higher strength from permutation vectors*. J. Combin.
               Designs, 14 (2006) pp. 202-213.
 
 .. [SMMK2013] \T. Suzaki, K. Minematsu, S. Morioka, and E. Kobayashi,
@@ -6617,8 +6630,8 @@ REFERENCES:
 .. [Wat2010] Watkins, David S. Fundamentals of Matrix Computations,
              Third Edition.  Wiley, Hoboken, New Jersey, 2010.
 
-.. [WC2007] \R.A. Walker II, and C.J. Colbourn, "Perfect Hash Families:
-             Constructions and Existence". J. Math. Crypt. 1 (2007),
+.. [WC2007] \R.A. Walker II, and C.J. Colbourn, *Perfect Hash Families:
+             Constructions and Existence*. J. Math. Crypt. 1 (2007),
              pp.125-150
 
 .. [Web2007] James Webb. *Game theory: decisions, interaction and
