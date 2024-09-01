@@ -91,6 +91,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     """
     def __init__(self, parent, entries=None, copy=None, bint coerce=True, immutable=True):
         r"""
+        Create a sparse matrix with 8-bit integer entries implemented in CMR.
+
+        INPUT:
+
+        - ``parent`` -- a matrix space
+
+        - ``entries`` -- see :func:`matrix`
+
+        - ``copy`` -- ignored (for backwards compatibility)
+
+        - ``coerce`` -- if False, assume without checking that the
+          entries lie in the base ring
+
+        - ``immutable`` -- ignored (for backwards compatibility)?
+
         TESTS::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -106,6 +121,20 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         self._init_from_dict(d, ma.nrows, ma.ncols, immutable=True)
 
     cdef _init_from_dict(self, dict d, int nrows, int ncols, bint immutable=True):
+        r"""
+        Create ``self._mat`` (a ``CMR_CHRMAT``) from a dictionary via CMR functions.
+
+        INPUT:
+
+        - ``dict`` -- a dictionary of all nonzero elements.
+
+        - ``nrows`` -- the number of rows.
+
+        - ``ncols`` -- the number of columns.
+
+        - ``immutable`` -- (boolean) make the matrix immutable. By default,
+            the output matrix is mutable.
+        """
         if cmr == NULL:
             CMRcreateEnvironment(&cmr)
         CMR_CALL(CMRchrmatCreate(cmr, &self._mat, nrows, ncols, len(d)))
@@ -198,6 +227,30 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return Matrix_cmr_chr_sparse._from_cmr(cmr_submatrix)
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+        """
+        Return ``(i, j)`` entry of this matrix as an integer.
+
+        .. warning::
+
+           This is very unsafe; it assumes ``i`` and ``j`` are in the right
+           range.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 2, 3], [4, 0, 6]]); M
+            [1 2 3]
+            [4 0 6]
+            sage: M[1, 2]
+            6
+            sage: M[1, 3]
+            Traceback (most recent call last):
+            ...
+            IndexError: matrix index out of range
+            sage: M[-1, 0]
+            4
+        """
         cdef size_t index
         CMR_CALL(CMRchrmatFindEntry(self._mat, i, j, &index))
         if index == SIZE_MAX:
@@ -216,12 +269,44 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return d
 
     def __copy__(self):
+        """
+        Matrix_cmr_chr_sparse matrices are immutable.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 2, 3], [4, 0, 6]])
+            sage: copy(M) is M
+            True
+        """
         return self
 
     def __deepcopy__(self, memo):
+        """
+        Matrix_cmr_chr_sparse matrices are immutable.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 2, 3], [4, 0, 6]])
+            sage: deepcopy(M) is M
+            True
+        """
         return self
 
     def __dealloc__(self):
+        """
+        Frees all the memory allocated for this matrix.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 2, 3], [4, 0, 6]])
+            sage: del M
+        """
         if self._root is None or self._root is self:
             # We own it, so we have to free it.
             CMR_CALL(CMRchrmatFree(cmr, &self._mat))
@@ -230,6 +315,17 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return
 
     def _pickle(self):
+        """
+        Utility function for pickling.
+
+        TESTS::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                           [[1, 2, 3], [4, 0, 6]])
+            sage: loads(dumps(M)) == M
+            True
+        """
         version = 0
         return self._dict(), version
 
@@ -243,6 +339,27 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     @staticmethod
     def _from_data(data, immutable=True):
+        """
+        Create a matrix (:class:`Matrix_cmr_chr_sparse`) from data or a matrix.
+
+        INPUT:
+
+        - ``data`` -- a matrix or data to construct a matrix.
+
+        - ``immutable`` -- (boolean) make the matrix immutable. By default,
+            the output matrix is mutable.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse._from_data([[1, 2, 3], [4, 0, 6]]); M
+            [1 2 3]
+            [4 0 6]
+            sage: N = matrix(ZZ, [[1, 2, 3], [4, 0, 6]])
+            sage: Matrix_cmr_chr_sparse._from_data(N)
+            [1 2 3]
+            [4 0 6]
+        """
         if not isinstance(data, Matrix):
             data = matrix(ZZ, data, sparse=True)
         if not isinstance(data, Matrix_cmr_chr_sparse):
