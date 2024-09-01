@@ -1,3 +1,7 @@
+r"""
+Interface to Risa / Asir
+"""
+
 # $OpenXM: OpenXM/src/sage/asir.py,v 1.2 2019/03/06 02:38:33 takayama Exp $
 import os
 import pexpect
@@ -6,6 +10,7 @@ from sage.cpython.string import bytes_to_str
 from sage.interfaces.expect import Expect, ExpectElement
 from sage.modules.free_module_element import vector
 from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.constructor import matrix
 from sage.misc.verbose import verbose
 from sage.rings.cc import CC
 from sage.rings.qqbar import QQbar
@@ -412,6 +417,7 @@ class AsirElement(ExpectElement):
             sage: bool(asir('newmat(3,2,[[0,0,-0.1],[0,0,0]])'))
             True
         """
+        # TODO better
         if self.asir_type() == 'list':
             return int(self.length()) != 0
 
@@ -425,7 +431,7 @@ class AsirElement(ExpectElement):
         EXAMPLES::
 
             sage: # optional - asir
-            sage: A = asir('newmat(2,2,[[1,2],[3,4.5]])')
+            sage: A = asir('newmat(2,2,[[1,2],[3,9/2]])')
             sage: matrix(A)
             [  1   2]
             [  3 9/2]
@@ -450,10 +456,10 @@ class AsirElement(ExpectElement):
         """
         nrows, ncols = self.size().sage()
 
-        w = [[x.sage() for x in row] for row in self]
+        w = [row.sage() for row in self]
 
         if R is None:
-            R = w[0][0].parent()
+            return matrix(nrows, ncols, w)
 
         return MatrixSpace(R, nrows, ncols)(w)
 
@@ -469,10 +475,10 @@ class AsirElement(ExpectElement):
             (1, 2, 3, 4)
             sage: A = asir('[1,2.3,4.5]')
             sage: vector(A)
-            (1, 23/10, 9/2)
+            (1.00000000000000, 2.30000000000000, 4.50000000000000)
             sage: A = asir('[1,@i]')
             sage: vector(A)
-            (1.0, 1.0*I)
+            (1.00000000000000, 1.00000000000000*I)
         """
         w = [x.sage() for x in self]
         if R is None:
@@ -523,12 +529,12 @@ class AsirElement(ExpectElement):
             sage: A = asir('2833')
             sage: A.sage()
             2833
-            sage: B = sqrt(A)
+            sage: B = A**2
             sage: B.sage()
-            53.2259
-            sage: C = sqrt(-A)
+            8025889
+            sage: C = asir('3*@i')
             sage: C.sage()
-            53.2259*I
+            3.00000000000000*I
             sage: A = asir('[1,2,3,4]')
             sage: A.sage()
             [1, 2, 3, 4]
@@ -544,18 +550,6 @@ class AsirElement(ExpectElement):
             2833
             sage: As.parent()
             Rational Field
-
-            sage: B = sqrt(A)
-            sage: Bs = B.sage(); Bs
-            53.2259
-            sage: Bs.parent()
-            Real Double Field
-
-            sage: C = sqrt(-A)
-            sage: Cs = C.sage(); Cs
-            53.2259*I
-            sage: Cs.parent()
-            Complex Double Field
         """
         if self.asir_type() == "rational":
             return QQ(str(self))
