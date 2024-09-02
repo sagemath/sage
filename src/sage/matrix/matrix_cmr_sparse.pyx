@@ -1784,6 +1784,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         This is an internal method because it should really be exposed
         as a method of :class:`Matroid`.
 
+        .. SEEALSO::
+
+            :meth:`M._is_graphic_cmr() <sage.matroids.linear_matroid.
+            BinaryMatroid._is_graphic_cmr>`
+            :meth:`M.is_graphic() <sage.matroids.matroid.
+            Matroid.is_graphic>`
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1954,6 +1961,29 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     def is_network_matrix(self, *, time_limit=60.0, certificate=False,
                           row_keys=None, column_keys=None):
         r"""
+        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a network matrix.
+
+        Let `D = (V,A)` be a digraph and let `T` be an (arbitrarily) directed
+        spanning forest of the underlying undirected graph.
+        The matrix `M(D,T) \in \{-1,0,1\}^{T \times (A \setminus T)}` defined via
+        `
+        M(D,T)_{a,(v,w)} := \begin{cases}
+            +1 & \text{if the unique $v$-$w$-path in $T$ passes through $a$ forwardly}, \\
+            -1 & \text{if the unique $v$-$w$-path in $T$ passes through $a$ backwardly}, \\
+            0  & \text{otherwise}
+        \end{cases}
+        `
+        is called the network matrix of `D` with respect to `T`.
+        A matrix `M` is called network matrix if there exists a digraph `D`
+        with a directed spanning forest `T` such that `M = M(D,T)`.
+        Moreover, `M` is called conetwork matrix if `M^T` is a network matrix.
+
+        ALGORITHM:
+
+        The implemented recognition algorithm first tests the binary matroid of
+        the support matrix of `M` for being graphic and
+        uses camion for testing whether `M` is signed correctly.
+
         EXAMPLES:
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -2059,6 +2089,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     def is_conetwork_matrix(self, *, time_limit=60.0, certificate=False,
                                row_keys=None, column_keys=None):
         r"""
+        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a network matrix.
+
+        .. SEEALSO:: :meth:`is_network_matrix`,
+
         EXAMPLES:
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -2154,6 +2188,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         This is an internal method because it should really be exposed
         as a method of :class:`Matroid`.
+
+        .. SEEALSO::
+
+            :meth:`M.is_regular() <sage.matroids.matroid.
+            Matroid.is_regular>`
 
         INPUT:
 
@@ -2517,6 +2556,93 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
 
 cdef _set_cmr_seymour_parameters(CMR_SEYMOUR_PARAMS *params, dict kwds):
+    """
+    Set the parameters for Seymour's decomposition from the dictionary ``kwds``.
+
+    INPUT:
+
+    - ``params`` -- the parameters object to be set
+
+    Keyword arguments:
+
+    - ``stop_when_irregular`` -- boolean
+      Whether to stop decomposing once irregularity is determined.
+
+    - ``stop_when_nongraphic`` -- boolean
+      Whether to stop decomposing once non-graphicness (or being non-network) is determined.
+
+    - ``stop_when_noncographic`` -- boolean
+      Whether to stop decomposing once non-cographicness (or being non-conetwork) is determined.
+
+    - ``stop_when_nongraphic_and_noncographic`` -- boolean
+      Whether to stop decomposing once non-graphicness and non-cographicness
+      (or not being network and not being conetwork) is determined.
+
+    - ``series_parallel_ok`` -- boolean (default: ``True``);
+      Whether to allow series-parallel operations in the decomposition tree.
+
+    - ``check_graphic_minors_planar`` -- boolean (default: ``False``);
+      Whether minors identified as graphic should still be checked for cographicness.
+
+    - ``use_direct_graphicness_test`` -- boolean (default: ``True``);
+      Whether to use fast graphicness routines.
+
+    - ``prefer_graphicness`` -- boolean
+      Whether to first test for (co)graphicness (or being (co)network)
+      before applying series-parallel reductions
+
+    - ``three_sum_pivot_children`` -- boolean
+      Whether pivots for 3-sums shall be applied such that the matrix contains
+      both child matrices as submatrices, if possible.
+
+    - ``three_sum_strategy`` -- ``"Mixed_Mixed"`` or ``"Wide_Wide"`` or integer;
+      Whether to perform pivots to change the rank distribution, and how to construct the children.
+
+      The value is a bit-wise or of three decisions.
+
+      The first decision is that of the rank distribution:
+        - CMR_SEYMOUR_THREESUM_FLAG_NO_PIVOTS to not change the rank distribution (default), or
+        - CMR_SEYMOUR_THREESUM_FLAG_DISTRIBUTED_RANKS to enforce distributed ranks (1 + 1), or
+        - CMR_SEYMOUR_THREESUM_FLAG_CONCENTRATED_RANK to enforce concentrated ranks (2 + 0).
+
+      The second decision determines the layout of the first child matrix:
+        - CMR_SEYMOUR_THREESUM_FLAG_FIRST_WIDE for a wide first child (default)
+          in case of distributed ranks, or
+        - CMR_SEYMOUR_THREESUM_FLAG_FIRST_TALL for a tall first child in that case.
+        - CMR_SEYMOUR_THREESUM_FLAG_FIRST_MIXED for a mixed first child (default)
+          in case of concentrated ranks, or
+        - CMR_SEYMOUR_THREESUM_FLAG_FIRST_ALLREPR for a first child
+          with all representing rows in that case.
+
+      Similarly, the third decision determines the layout of the second child matrix:
+        - CMR_SEYMOUR_THREESUM_FLAG_SECOND_WIDE for a wide second child (default)
+          in case of distributed ranks, or
+        - CMR_SEYMOUR_THREESUM_FLAG_SECOND_TALL for a tall second child in that case.
+        - CMR_SEYMOUR_THREESUM_FLAG_SECOND_MIXED for a mixed second child (default)
+          in case of concentrated ranks, or
+        - CMR_SEYMOUR_THREESUM_FLAG_SECOND_ALLREPR for a first second
+          with all representing rows in that case.
+
+    .. SEEALSO:: :meth:`three_sum_wide_wide`, :meth:`three_sum_mixed_mixed`
+
+    .. NOTE::
+
+        A decomposition as described by Seymour can be selected via CMR_SEYMOUR_THREESUM_FLAG_SEYMOUR.
+        A decomposition as used by Truemper can be selected via CMR_SEYMOUR_THREESUM_FLAG_TRUEMPER.
+
+        The default (``None``) is to not carry out any pivots and
+        choose Seymour's or Truemper's definition depending on the rank distribution.
+
+        ``"Mixed_Mixed"`` is to allow pivots and choose CMR_SEYMOUR_THREESUM_FLAG_TRUEMPER
+
+        ``"Wide_Wide"`` is to allow pivots and choose CMR_SEYMOUR_THREESUM_FLAG_SEYMOUR
+
+    - ``construct_leaf_graphs`` -- boolean
+      Whether to construct (co)graphs for all leaf nodes that are (co)graphic or (co)network.
+
+    - ``construct_all_graphs`` -- boolean
+      Whether to construct (co)graphs for all nodes that are (co)graphic or (co)network.
+    """
     CMR_CALL(CMRseymourParamsInit(params))
     params.stopWhenIrregular = kwds['stop_when_irregular']
     params.stopWhenNongraphic = kwds['stop_when_nongraphic']
