@@ -580,6 +580,9 @@ asir = Asir()
 
 def reduce_load_Asir():
     """
+    Return the Asir interface object defined in
+    sage.interfaces.asir.
+
     EXAMPLES::
 
         sage: from sage.interfaces.asir import reduce_load_Asir
