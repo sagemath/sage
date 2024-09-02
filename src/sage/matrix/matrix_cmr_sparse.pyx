@@ -1227,6 +1227,55 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
     def binary_pivot(self, row, column):
+        r"""
+        Apply a pivot to ``self`` and returns the resulting matrix.
+        Calculations are done over the binary field.
+
+        Suppose a matrix is `\begin{bmatrix} 1 & c^T \\ b & D\end{bmatrix}`.
+        Then the pivot of the matrix with respect to `1` is
+        `\begin{bmatrix} 1 & c^T \\ b & D - bc^T\end{bmatrix}`.
+
+        The terminology "pivot" is defined in [Sch1986]_, Ch. 19.4.
+
+        .. SEEALSO:: :meth:`binary_pivots`, :meth:`ternary_pivot`, :meth:`ternary_pivots`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 10, 10, sparse=True), [
+            ....:     [1, 1, 0, 0, 0, 1, 0, 1, 0, 0],
+            ....:     [1, 0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:     [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+            ....:     [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:     [0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:     [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:     [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+            ....:     [0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+            ....:     [1, 0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:     [1, 1, 0, 0, 0, 1, 0, 0, 0, 0]
+            ....: ]); M
+            [1 1 0 0 0 1 0 1 0 0]
+            [1 0 0 0 0 1 1 0 1 0]
+            [0 0 0 0 1 1 0 0 0 0]
+            [0 0 0 1 1 0 0 0 0 0]
+            [0 0 1 1 0 0 0 0 0 0]
+            [0 1 1 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0 1 0]
+            [0 0 0 0 0 1 0 0 0 1]
+            [1 0 0 0 0 0 1 0 1 1]
+            [1 1 0 0 0 1 0 0 0 0]
+            sage: M.binary_pivot(0, 0)
+            [1 1 0 0 0 1 0 1 0 0]
+            [1 1 0 0 0 0 1 1 1 0]
+            [0 0 0 0 1 1 0 0 0 0]
+            [0 0 0 1 1 0 0 0 0 0]
+            [0 0 1 1 0 0 0 0 0 0]
+            [0 1 1 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0 1 0]
+            [0 0 0 0 0 1 0 0 0 1]
+            [1 1 0 0 0 1 1 1 1 1]
+            [1 0 0 0 0 0 0 1 0 0]
+        """
         cdef Matrix_cmr_chr_sparse result
         cdef size_t pivot_row = row
         cdef size_t pivot_column = column
@@ -1237,6 +1286,49 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return result
 
     def binary_pivots(self, rows, columns):
+        r"""
+        Apply a sequence of pivots to ``self`` and returns the resulting matrix.
+        Calculations are done over the binary field.
+
+        .. SEEALSO:: :meth:`binary_pivot`, :meth:`ternary_pivot`, :meth:`ternary_pivots`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 10, 10, sparse=True), [
+            ....:     [1, 1, 0, 0, 0, 1, 0, 1, 0, 0],
+            ....:     [1, 0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:     [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+            ....:     [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:     [0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:     [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:     [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+            ....:     [0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+            ....:     [1, 0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:     [1, 1, 0, 0, 0, 1, 0, 0, 0, 0]
+            ....: ]); M
+            [1 1 0 0 0 1 0 1 0 0]
+            [1 0 0 0 0 1 1 0 1 0]
+            [0 0 0 0 1 1 0 0 0 0]
+            [0 0 0 1 1 0 0 0 0 0]
+            [0 0 1 1 0 0 0 0 0 0]
+            [0 1 1 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0 1 0]
+            [0 0 0 0 0 1 0 0 0 1]
+            [1 0 0 0 0 0 1 0 1 1]
+            [1 1 0 0 0 1 0 0 0 0]
+            sage: M.binary_pivots([5, 4, 3, 2], [2, 3, 4, 5])
+            [1 0 1 1 1 1 0 1 0 0]
+            [1 1 1 1 1 1 1 0 1 0]
+            [0 1 1 1 1 1 0 0 0 0]
+            [0 1 1 1 1 0 0 0 0 0]
+            [0 1 1 1 0 0 0 0 0 0]
+            [0 1 1 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0 1 0]
+            [0 1 1 1 1 1 0 0 0 1]
+            [1 0 0 0 0 0 1 0 1 1]
+            [1 0 1 1 1 1 0 0 0 0]
+        """
         npivots = len(rows)
         if len(columns) != npivots:
             raise ValueError("The pivot rows and columns must have the same length")
@@ -1257,6 +1349,94 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sig_free(pivot_columns)
 
     def ternary_pivot(self, row, column):
+        r"""
+        Apply a pivot to ``self`` and returns the resulting matrix.
+        Calculations are done over the ternary field.
+
+        Suppose a matrix is `\begin{bmatrix} \epsilon & c^T \\ b & D\end{bmatrix}`,
+        where `\epsilon\in\{\pm 1\}`.
+        Then the pivot of the matrix with respect to `\epsilon` is
+        `\begin{bmatrix} -\epsilon & \epsilon c^T \\ \epsilon b & D-\epsilon bc^T\end{bmatrix}`.
+
+        The terminology "pivot" is defined in [Sch1986]_, Ch. 19.4.
+
+        .. SEEALSO:: :meth:`binary_pivot`, :meth:`binary_pivots`, :meth:`ternary_pivots`
+
+        EXAMPLES::
+
+        Single pivot on a `1`-entry:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 10, 10, sparse=True), [
+            ....:     [ 1,  1, 0, 0, 0, -1, 0, 1, 0, 0],
+            ....:     [-1,  0, 0, 0, 0,  1, 1, 0, 1, 0],
+            ....:     [ 0,  0, 0, 0, 1,  1, 0, 0, 0, 0],
+            ....:     [ 0,  0, 0, 1, 1,  0, 0, 0, 0, 0],
+            ....:     [ 0,  0, 1, 1, 0,  0, 0, 0, 0, 0],
+            ....:     [ 0,  1, 1, 0, 0,  0, 0, 0, 0, 0],
+            ....:     [ 0,  0, 0, 0, 0,  0, 0, 0, 1, 0],
+            ....:     [ 0,  0, 0, 0, 0,  1, 0, 0, 0, 1],
+            ....:     [ 1,  0, 0, 0, 0,  0, 1, 0, 1, 1],
+            ....:     [ 1,  1, 0, 0, 0,  1, 0, 0, 0, 0]
+            ....: ]); M
+            [ 1  1  0  0  0 -1  0  1  0  0]
+            [-1  0  0  0  0  1  1  0  1  0]
+            [ 0  0  0  0  1  1  0  0  0  0]
+            [ 0  0  0  1  1  0  0  0  0  0]
+            [ 0  0  1  1  0  0  0  0  0  0]
+            [ 0  1  1  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0  1  0]
+            [ 0  0  0  0  0  1  0  0  0  1]
+            [ 1  0  0  0  0  0  1  0  1  1]
+            [ 1  1  0  0  0  1  0  0  0  0]
+            sage: M.ternary_pivot(0, 0)
+            [-1  1  0  0  0 -1  0  1  0  0]
+            [-1  1  0  0  0  0  1  1  1  0]
+            [ 0  0  0  0  1  1  0  0  0  0]
+            [ 0  0  0  1  1  0  0  0  0  0]
+            [ 0  0  1  1  0  0  0  0  0  0]
+            [ 0  1  1  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0  1  0]
+            [ 0  0  0  0  0  1  0  0  0  1]
+            [ 1 -1  0  0  0  1  1 -1  1  1]
+            [ 1  0  0  0  0 -1  0 -1  0  0]
+
+        Single pivot on a `-1`-entry:
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 10, 10, sparse=True), [
+            ....:     [-1,  1, 0, 0, 0, -1, 0,  1, 0, 0],
+            ....:     [-1,  0, 0, 0, 0,  1, 1,  0, 1, 0],
+            ....:     [ 0,  0, 0, 0, 1,  1, 0,  0, 0, 0],
+            ....:     [ 0,  0, 0, 1, 1,  0, 0,  0, 0, 0],
+            ....:     [ 0,  0, 1, 1, 0,  0, 0,  0, 0, 0],
+            ....:     [ 0,  1, 1, 0, 0,  0, 0,  0, 0, 0],
+            ....:     [ 0,  0, 0, 0, 0,  0, 0,  0, 1, 0],
+            ....:     [ 0,  0, 0, 0, 0,  1, 0,  0, 0, 1],
+            ....:     [ 1,  0, 0, 0, 0,  0, 1,  0, 1, 1],
+            ....:     [ 1,  1, 0, 0, 0,  1, 0,  0, 0, 0]
+            ....: ]); M
+            [-1  1  0  0  0 -1  0  1  0  0]
+            [-1  0  0  0  0  1  1  0  1  0]
+            [ 0  0  0  0  1  1  0  0  0  0]
+            [ 0  0  0  1  1  0  0  0  0  0]
+            [ 0  0  1  1  0  0  0  0  0  0]
+            [ 0  1  1  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0  1  0]
+            [ 0  0  0  0  0  1  0  0  0  1]
+            [ 1  0  0  0  0  0  1  0  1  1]
+            [ 1  1  0  0  0  1  0  0  0  0]
+            sage: M.ternary_pivot(0, 0)
+            [ 1 -1  0  0  0  1  0 -1  0  0]
+            [ 1 -1  0  0  0 -1  1 -1  1  0]
+            [ 0  0  0  0  1  1  0  0  0  0]
+            [ 0  0  0  1  1  0  0  0  0  0]
+            [ 0  0  1  1  0  0  0  0  0  0]
+            [ 0  1  1  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0  1  0]
+            [ 0  0  0  0  0  1  0  0  0  1]
+            [-1  1  0  0  0 -1  1  1  1  1]
+            [-1 -1  0  0  0  0  0  1  0  0]
+        """
         cdef size_t pivot_row = row
         cdef size_t pivot_column = column
         cdef CMR_CHRMAT *result_mat
@@ -1265,6 +1445,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return Matrix_cmr_chr_sparse._from_cmr(result_mat)
 
     def ternary_pivots(self, rows, columns):
+        r"""
+        Apply a sequence of pivots to ``self`` and returns the resulting matrix.
+        Calculations are done over the ternary field.
+
+        .. SEEALSO:: :meth:`binary_pivot`, :meth:`binary_pivots`, :meth:`ternary_pivot`
+        """
         cdef size_t npivots = len(rows)
         if len(columns) != npivots:
             raise ValueError("The pivot rows and columns must have the same length")
