@@ -410,6 +410,7 @@ class AsirElement(ExpectElement):
             sage: bool(asir('newmat(3,2,[[0,0,0],[0,0,0]])'))
             False
 
+            sage: # optional - asir
             sage: bool(asir('0.1'))
             True
             sage: bool(asir('[0,1,0]'))
@@ -547,6 +548,7 @@ class AsirElement(ExpectElement):
             sage: A.sage()
             [1, 2.30000000000000*I, 4.50000000000000]
 
+            sage: # optional - asir
             sage: A = asir('2833')
             sage: As = A.sage(); As
             2833
