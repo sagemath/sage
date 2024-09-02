@@ -1192,15 +1192,69 @@ class TropicalCurve(TropicalVariety):
     condition ensures that the sum of the outgoing slopes at each vertex
     is zero, reflecting the equilibrium.
 
-    EXAMPLES::
+    EXAMPLES:
+
+    We define some tropical curves::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<x,y> = PolynomialRing(T)
         sage: p1 = x + y + R(0)
-        sage: tv = p1.tropical_variety(); tv
+        sage: tv1 = p1.tropical_variety(); tv1
         Tropical curve of 0*x + 0*y + 0
-        sage: tv.components()
+        sage: tv1.components()
         [[(t1, t1), [t1 >= 0], 1], [(0, t1), [t1 <= 0], 1], [(t1, 0), [t1 <= 0], 1]]
+        sage: tv1.plot()
+        Graphics object consisting of 3 graphics primitives
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R = PolynomialRing(T, ('x,y'))
+        x, y = R.gen(), R.gen(1)
+        p1 = x + y + R(0)
+        sphinx_plot(p1.tropical_variety().plot())
+
+    ::
+
+        sage: p2 = R(-2)*x^2 + R(-1)*x + R(1/2)*y + R(1/6)
+        sage: tv2 = p2.tropical_variety()
+        sage: tv2.components()
+        [[(1/2*t1 + 5/4, t1), [(-1/3) <= t1], 1],
+         [(13/12, t1), [t1 <= (-1/3)], 2],
+         [(t1, -1/3), [t1 <= (13/12)], 1]]
+        sage: tv2.plot()
+        Graphics object consisting of 4 graphics primitives
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R = PolynomialRing(T, ('x,y'))
+        x, y = R.gen(), R.gen(1)
+        p2 = R(-2)*x**2 + R(-1)*x + R(1/2)*y + R(1/6)
+        sphinx_plot(p2.tropical_variety().plot())
+
+    When two tropical polynomials are multiplied, the tropical curve of
+    the resulting polynomial is the union of the tropical curves of the
+    original polynomials::
+
+        sage: p3 = p1 * p2; p3
+        (-2)*x^3 + (-2)*x^2*y + (-1)*x^2 + 1/2*x*y + 1/2*y^2 + 1/6*x + 1/2*y + 1/6
+        sage: tv3 = p3.tropical_variety()
+        sage: tv3.plot()
+        Graphics object consisting of 11 graphics primitives
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R = PolynomialRing(T, ('x,y'))
+        x, y = R.gen(), R.gen(1)
+        p1 = x + y + R(0)
+        p2 = R(-2)*x**2 + R(-1)*x + R(1/2)*y + R(1/6)
+        p3 = p1 * p2
+        sphinx_plot(p3.tropical_variety().plot())
     """
     def _axes(self):
         """
