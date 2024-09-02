@@ -329,7 +329,7 @@ class Asir(Expect):
             5
             [nnnn] quit();
 
-        quit(); exits the asir console and returns you to Sage.
+        The command ``quit();`` exits the ``asir`` console and returns you to Sage.
         """
         asir_console()
 
