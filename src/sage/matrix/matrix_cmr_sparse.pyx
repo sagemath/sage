@@ -2197,6 +2197,20 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         INPUT:
 
         - ``certificate``: ``False`` or ``True``
+          If ``True``, then return a :class:`DecompositionNode`
+          if the linear matroid of ``self`` over `\GF{2}` is regular;
+          If not, NotImplemented.
+
+        - ``stop_when_irregular`` -- boolean (default: ``True``)
+          Whether to stop decomposing once irregularity is determined.
+
+          For a description of other parameters, see :meth:`_set_cmr_seymour_parameters`
+
+        - ``row_keys`` -- a finite or enumerated family of arbitrary objects
+        that index the rows of the matrix
+
+        - ``column_keys`` -- a finite or enumerated family of arbitrary objects
+        that index the columns of the matrix
 
         EXAMPLES::
 
@@ -2376,6 +2390,20 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         INPUT:
 
         - ``certificate``: ``False`` or ``True``
+          If ``True``, then return
+          a :class:`DecompositionNode` if ``self`` is totally unimodular;
+          a submatrix with determinant not in `\{0, \pm1\}` if not.
+
+        - ``stop_when_nonTU`` -- boolean (default: ``True``)
+          Whether to stop decomposing once not TU is determined.
+
+          For a description of other parameters, see :meth:`_set_cmr_seymour_parameters`
+
+        - ``row_keys`` -- a finite or enumerated family of arbitrary objects
+        that index the rows of the matrix
+
+        - ``column_keys`` -- a finite or enumerated family of arbitrary objects
+        that index the columns of the matrix
 
         EXAMPLES::
 
