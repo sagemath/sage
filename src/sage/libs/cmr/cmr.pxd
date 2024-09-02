@@ -234,7 +234,7 @@ cdef extern from "cmr/separation.h":
     CMR_ERROR CMRsepaComputeSizes(CMR_SEPA* sepa, size_t* pnumRowsTopLeft, size_t* pnumColumnsTopLeft, size_t* pnumRowsBottomRight, size_t* pnumColumnsBottomRight)
     CMR_ERROR CMRsepaFindBinaryRepresentatives(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_CHRMAT* transpose, bool* pswapped, CMR_SUBMAT** pviolator)
     CMR_ERROR CMRsepaFindBinaryRepresentativesSubmatrix(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_CHRMAT* transpose, CMR_SUBMAT* submatrix, bool* pswapped, CMR_SUBMAT** pviolator)
-    CMR_ERROR CMRsepaGetRepresentatives(CMR* cmr, CMR_SEPA* sepa, size_t reprRows[2][3], size_t reprColumns[2][3])
+    CMR_ERROR CMRsepaGetRepresentatives(CMR_SEPA* sepa, size_t reprRows[2][3], size_t reprColumns[2][3])
     CMR_ERROR CMRsepaGetProjection(CMR_SEPA* sepa, size_t part, size_t* rowsToPart, size_t* columnsToPart, size_t* pnumPartRows, size_t* pnumPartColumns)
     CMR_ERROR CMRsepaCheckTernary(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, bool* pisTernary, CMR_SUBMAT** pviolator)
     CMR_ERROR CMRsepaCheckTernarySubmatrix(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_SUBMAT* submatrix, bool* pisTernary, CMR_SUBMAT** pviolator)
@@ -449,6 +449,7 @@ cdef extern from "cmr/tu.h":
         CMR_SEYMOUR_PARAMS seymour
         bool ternary
         bool camionFirst
+        bool naiveSubmatrix
 
     CMR_ERROR CMRtuParamsInit(CMR_TU_PARAMS* params)
 
