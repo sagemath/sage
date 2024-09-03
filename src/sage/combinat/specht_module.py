@@ -920,9 +920,9 @@ class SpechtModuleTableauxBasis(SpechtModule):
         G = self._semigroup
 
         def t(i, j):
-            ret = [i for i in range(1, SGA.n+1)]
-            ret[i-1] = j
-            ret[j-1] = i
+            ret = list(range(1, SGA.n + 1))
+            ret[i - 1] = j
+            ret[j - 1] = i
             return SGA(G(ret))
 
         # Construct the hyperplanes

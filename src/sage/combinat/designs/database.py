@@ -12,6 +12,8 @@ These functions can all be obtained through the ``designs.<tab>`` functions.
 
 This module implements:
 
+- {LIST_OF_CA_CONSTRUCTIONS}
+
 - {LIST_OF_OA_CONSTRUCTIONS}
 
 - {LIST_OF_MOLS_CONSTRUCTIONS}
@@ -5030,6 +5032,462 @@ LIST_OF_EDS = "\n".join("    - `k = {}`: {}".format(
                         k, ', '.join('`{}`'.format(q) for q in sorted(EDS[k]) if EDS[k][q] is not False))
                         for k in sorted(EDS))
 
+
+def ca_11_2_5_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_11_2_5_3
+        sage: C = ca_11_2_5_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 1, 0, 1],
+            [0, 0, 2, 1, 0],
+            [0, 1, 0, 1, 2],
+            [0, 2, 1, 2, 2],
+            [1, 0, 0, 2, 1],
+            [1, 1, 1, 2, 0],
+            [1, 1, 2, 0, 2],
+            [1, 2, 2, 1, 1],
+            [2, 0, 2, 2, 2],
+            [2, 1, 1, 1, 1],
+            [2, 2, 0, 0, 0]]
+
+
+def ca_12_2_7_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_12_2_7_3
+        sage: C = ca_12_2_7_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 0, 2, 2, 0, 0],
+            [0, 0, 2, 1, 1, 1, 1],
+            [0, 1, 0, 0, 0, 1, 2],
+            [0, 2, 1, 2, 0, 2, 1],
+            [1, 0, 2, 0, 0, 2, 0],
+            [1, 1, 1, 1, 2, 0, 1],
+            [1, 1, 1, 2, 1, 1, 0],
+            [1, 2, 0, 1, 1, 2, 2],
+            [2, 0, 1, 0, 1, 0, 2],
+            [2, 1, 2, 2, 2, 2, 2],
+            [2, 2, 0, 0, 2, 1, 1],
+            [2, 2, 2, 1, 0, 0, 0]]
+
+
+def ca_13_2_9_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_13_2_9_3
+        sage: C = ca_13_2_9_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 0, 2, 0, 2, 2, 2, 0],
+            [0, 0, 2, 0, 1, 1, 1, 2, 1],
+            [0, 1, 1, 1, 2, 0, 1, 2, 0],
+            [0, 1, 2, 1, 0, 1, 2, 0, 2],
+            [0, 2, 2, 2, 2, 1, 0, 1, 0],
+            [1, 0, 1, 0, 2, 1, 2, 0, 0],
+            [1, 0, 2, 1, 2, 2, 0, 2, 2],
+            [1, 1, 0, 0, 0, 0, 0, 1, 1],
+            [1, 2, 0, 2, 1, 0, 1, 0, 2],
+            [2, 0, 2, 1, 1, 0, 2, 1, 0],
+            [2, 1, 1, 2, 1, 2, 0, 0, 1],
+            [2, 2, 0, 1, 2, 1, 2, 2, 1],
+            [2, 2, 1, 0, 0, 2, 1, 1, 2]]
+
+
+def ca_14_2_10_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_14_2_10_3
+        sage: C = ca_14_2_10_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 0, 0, 2, 2, 2, 1, 1, 0],
+            [0, 0, 0, 2, 1, 0, 0, 2, 1, 1],
+            [0, 0, 1, 1, 1, 2, 1, 0, 2, 2],
+            [0, 1, 0, 2, 0, 1, 2, 0, 1, 2],
+            [0, 2, 2, 2, 1, 2, 2, 1, 0, 0],
+            [1, 0, 2, 1, 0, 1, 1, 1, 1, 1],
+            [1, 1, 1, 2, 1, 1, 1, 2, 2, 0],
+            [1, 1, 2, 0, 0, 2, 2, 2, 2, 1],
+            [1, 1, 2, 1, 0, 0, 0, 0, 0, 0],
+            [1, 2, 0, 1, 2, 0, 1, 2, 2, 2],
+            [2, 0, 0, 0, 1, 0, 1, 2, 0, 2],
+            [2, 1, 2, 2, 2, 2, 0, 1, 2, 2],
+            [2, 2, 1, 0, 2, 1, 0, 0, 0, 1],
+            [2, 2, 1, 1, 0, 0, 2, 1, 1, 0]]
+
+
+def ca_15_2_20_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from [Nur2004]_
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_15_2_20_3
+        sage: C = ca_15_2_20_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 1, 1, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+            [0, 1, 1, 1, 1, 0, 1, 2, 2, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2],
+            [0, 2, 2, 2, 2, 2, 2, 0, 1, 0, 0, 0, 0, 1, 2, 2, 0, 1, 1, 1],
+            [1, 0, 1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 2, 0, 0, 1, 1, 0, 1, 2],
+            [1, 1, 2, 2, 2, 1, 0, 1, 0, 2, 1, 1, 0, 0, 2, 1, 2, 2, 1, 0],
+            [1, 2, 0, 1, 2, 0, 2, 1, 0, 2, 0, 2, 2, 1, 0, 2, 1, 0, 2, 1],
+            [1, 2, 1, 0, 2, 2, 1, 2, 0, 1, 2, 1, 1, 0, 1, 2, 0, 2, 0, 1],
+            [1, 2, 1, 2, 0, 2, 1, 1, 2, 2, 1, 0, 1, 2, 0, 0, 2, 1, 0, 0],
+            [2, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 2, 0, 2, 2, 0, 1, 0, 1, 2],
+            [2, 1, 0, 2, 1, 2, 0, 2, 2, 2, 1, 2, 2, 0, 1, 2, 0, 1, 2, 0],
+            [2, 1, 2, 0, 1, 1, 2, 0, 2, 1, 0, 1, 1, 2, 1, 0, 2, 0, 2, 1],
+            [2, 1, 2, 1, 0, 1, 2, 2, 1, 1, 2, 0, 2, 1, 0, 0, 1, 2, 0, 0],
+            [2, 2, 1, 1, 1, 1, 0, 1, 0, 0, 2, 2, 1, 2, 2, 1, 0, 1, 0, 2]]
+
+
+def ca_19_2_6_4():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_19_2_6_4
+        sage: C = ca_19_2_6_4()
+        sage: is_covering_array(C,2,4)
+        True
+
+    """
+    return [[0, 0, 0, 2, 0, 0],
+            [0, 0, 1, 0, 1, 1],
+            [0, 1, 3, 1, 2, 1],
+            [0, 2, 2, 3, 0, 2],
+            [0, 3, 3, 2, 3, 3],
+            [1, 0, 3, 1, 1, 2],
+            [1, 1, 0, 3, 1, 3],
+            [1, 1, 2, 0, 3, 0],
+            [1, 2, 1, 2, 2, 0],
+            [1, 3, 1, 3, 0, 1],
+            [2, 0, 2, 3, 2, 3],
+            [2, 1, 1, 2, 3, 2],
+            [2, 2, 0, 1, 3, 1],
+            [2, 2, 3, 0, 0, 3],
+            [2, 3, 2, 1, 1, 0],
+            [3, 0, 3, 3, 3, 0],
+            [3, 1, 1, 1, 0, 3],
+            [3, 2, 2, 2, 1, 1],
+            [3, 3, 0, 0, 2, 2]]
+
+
+def ca_21_2_7_4():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+    This CA is also uniform.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_21_2_7_4
+        sage: C = ca_21_2_7_4()
+        sage: is_covering_array(C,2,4)
+        True
+
+    """
+    return [[0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 3, 1, 1, 1, 1],
+            [0, 1, 1, 2, 2, 2, 2],
+            [0, 1, 2, 3, 0, 1, 3],
+            [0, 2, 0, 3, 3, 0, 2],
+            [0, 3, 1, 3, 3, 3, 1],
+            [1, 0, 0, 3, 2, 3, 3],
+            [1, 1, 3, 1, 3, 3, 0],
+            [1, 2, 1, 2, 1, 0, 3],
+            [1, 2, 3, 2, 0, 2, 1],
+            [1, 3, 2, 0, 1, 1, 2],
+            [2, 0, 3, 0, 3, 2, 3],
+            [2, 1, 2, 1, 2, 0, 1],
+            [2, 2, 1, 1, 0, 3, 2],
+            [2, 2, 2, 3, 1, 2, 0],
+            [2, 3, 0, 2, 3, 1, 0],
+            [3, 0, 2, 2, 3, 3, 2],
+            [3, 1, 0, 0, 1, 3, 1],
+            [3, 2, 1, 0, 2, 1, 0],
+            [3, 3, 0, 1, 0, 2, 3],
+            [3, 3, 3, 3, 2, 0, 2]]
+
+
+def ca_29_2_7_5():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_29_2_7_5
+        sage: C = ca_29_2_7_5()
+        sage: is_covering_array(C,2,5)
+        True
+
+    """
+    return [[0, 2, 2, 3, 0, 0, 0],
+            [1, 4, 3, 4, 2, 3, 0],
+            [2, 3, 0, 0, 4, 2, 0],
+            [3, 0, 1, 2, 3, 4, 0],
+            [4, 1, 4, 1, 1, 1, 0],
+            [0, 0, 2, 4, 1, 2, 1],
+            [1, 2, 4, 0, 2, 4, 1],
+            [1, 3, 1, 2, 1, 0, 1],
+            [2, 1, 2, 2, 4, 3, 1],
+            [3, 3, 3, 1, 0, 1, 1],
+            [4, 4, 0, 3, 3, 0, 1],
+            [0, 1, 3, 0, 3, 0, 2],
+            [1, 0, 3, 3, 4, 1, 2],
+            [2, 2, 1, 4, 3, 1, 2],
+            [2, 4, 4, 2, 0, 2, 2],
+            [3, 2, 0, 1, 1, 3, 2],
+            [4, 3, 2, 4, 2, 4, 2],
+            [0, 3, 4, 3, 3, 3, 3],
+            [1, 1, 0, 4, 0, 4, 3],
+            [2, 0, 4, 1, 2, 0, 3],
+            [3, 1, 1, 3, 2, 2, 3],
+            [3, 4, 2, 0, 1, 1, 3],
+            [4, 2, 3, 2, 4, 2, 3],
+            [0, 0, 0, 2, 2, 1, 4],
+            [0, 4, 1, 1, 4, 4, 4],
+            [1, 1, 2, 1, 3, 2, 4],
+            [2, 2, 3, 3, 1, 4, 4],
+            [3, 3, 4, 4, 4, 0, 4],
+            [4, 0, 1, 0, 0, 3, 4]]
+
+
+def ca_37_2_4_6():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_37_2_4_6
+        sage: C = ca_37_2_4_6()
+        sage: is_covering_array(C,2,6)
+        True
+
+    """
+    return [[0, 0, 1, 0],
+            [0, 0, 2, 1],
+            [0, 1, 0, 2],
+            [0, 2, 0, 5],
+            [0, 3, 3, 3],
+            [0, 4, 4, 4],
+            [0, 5, 5, 5],
+            [1, 0, 0, 4],
+            [1, 1, 1, 5],
+            [1, 2, 3, 1],
+            [1, 3, 4, 0],
+            [1, 4, 5, 3],
+            [1, 5, 2, 2],
+            [2, 0, 0, 3],
+            [2, 1, 4, 1],
+            [2, 2, 5, 4],
+            [2, 3, 1, 2],
+            [2, 4, 2, 5],
+            [2, 5, 3, 0],
+            [3, 0, 5, 2],
+            [3, 1, 3, 4],
+            [3, 2, 2, 0],
+            [3, 3, 0, 5],
+            [3, 4, 1, 1],
+            [3, 5, 4, 3],
+            [4, 0, 3, 5],
+            [4, 1, 2, 3],
+            [4, 2, 4, 2],
+            [4, 3, 5, 1],
+            [4, 4, 0, 0],
+            [4, 5, 1, 4],
+            [5, 0, 4, 5],
+            [5, 1, 5, 0],
+            [5, 2, 1, 3],
+            [5, 3, 2, 4],
+            [5, 4, 3, 2],
+            [5, 5, 0, 1]]
+
+
+def ca_39_2_5_6():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_39_2_5_6
+        sage: C = ca_39_2_5_6()
+        sage: is_covering_array(C,2,6)
+        True
+
+    """
+    return [[0, 0, 1, 1, 0],
+            [1, 5, 2, 2, 0],
+            [2, 4, 5, 4, 0],
+            [3, 2, 0, 3, 0],
+            [4, 3, 4, 5, 0],
+            [5, 1, 3, 0, 0],
+            [0, 4, 4, 3, 1],
+            [1, 3, 5, 0, 1],
+            [2, 2, 1, 2, 1],
+            [3, 0, 3, 5, 1],
+            [4, 1, 2, 1, 1],
+            [5, 5, 0, 4, 1],
+            [0, 5, 5, 5, 2],
+            [1, 1, 1, 3, 2],
+            [2, 3, 0, 1, 2],
+            [3, 4, 2, 0, 2],
+            [4, 2, 3, 4, 2],
+            [5, 0, 4, 2, 2],
+            [0, 1, 0, 4, 3],
+            [0, 3, 3, 2, 3],
+            [1, 0, 2, 4, 3],
+            [2, 2, 4, 0, 3],
+            [3, 5, 4, 1, 3],
+            [4, 0, 5, 3, 3],
+            [5, 4, 1, 5, 3],
+            [0, 0, 0, 0, 4],
+            [1, 2, 0, 5, 4],
+            [1, 4, 3, 1, 4],
+            [2, 1, 4, 4, 4],
+            [3, 1, 5, 2, 4],
+            [4, 5, 1, 0, 4],
+            [5, 3, 2, 3, 4],
+            [0, 2, 2, 0, 5],
+            [1, 1, 4, 5, 5],
+            [2, 0, 2, 5, 5],
+            [2, 5, 3, 3, 5],
+            [3, 3, 1, 4, 5],
+            [4, 4, 0, 2, 5],
+            [5, 2, 5, 1, 5]]
+
+
+def ca_41_2_6_6():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+    This CA is also uniform.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_41_2_6_6
+        sage: C = ca_41_2_6_6()
+        sage: is_covering_array(C,2,6)
+        True
+
+    """
+    return [[0, 0, 0, 0, 0, 0],
+            [1, 1, 4, 5, 4, 0],
+            [2, 3, 3, 5, 2, 0],
+            [3, 0, 2, 3, 3, 0],
+            [3, 5, 5, 2, 1, 0],
+            [4, 2, 1, 4, 5, 0],
+            [5, 4, 4, 1, 1, 0],
+            [0, 0, 1, 1, 1, 1],
+            [1, 2, 5, 1, 2, 1],
+            [2, 4, 4, 3, 5, 1],
+            [2, 5, 2, 4, 0, 1],
+            [3, 1, 3, 0, 4, 1],
+            [4, 4, 0, 5, 3, 1],
+            [5, 3, 1, 2, 0, 1],
+            [0, 1, 2, 2, 2, 2],
+            [1, 3, 1, 3, 4, 2],
+            [1, 5, 4, 0, 3, 2],
+            [2, 0, 5, 5, 1, 2],
+            [3, 3, 0, 1, 5, 2],
+            [4, 4, 3, 2, 0, 2],
+            [5, 2, 3, 4, 3, 2],
+            [0, 2, 3, 3, 1, 3],
+            [0, 5, 1, 5, 5, 3],
+            [1, 4, 2, 1, 0, 3],
+            [2, 2, 0, 2, 4, 3],
+            [3, 3, 5, 4, 3, 3],
+            [4, 0, 4, 4, 2, 3],
+            [5, 1, 5, 0, 5, 3],
+            [0, 3, 4, 2, 3, 4],
+            [1, 1, 0, 4, 1, 4],
+            [2, 2, 2, 0, 5, 4],
+            [3, 4, 1, 0, 2, 4],
+            [4, 1, 5, 3, 0, 4],
+            [4, 5, 3, 1, 4, 4],
+            [5, 0, 2, 5, 4, 4],
+            [0, 4, 5, 4, 4, 5],
+            [1, 0, 3, 2, 5, 5],
+            [2, 1, 1, 1, 3, 5],
+            [3, 2, 4, 5, 0, 5],
+            [4, 3, 2, 0, 1, 5],
+            [5, 5, 0, 3, 2, 5]]
+
+
+# Make dictionary with keys (t, v) and values (N, k) which are the
+# smallest N and largest k such that a CA(N; t, k, v) can be made using
+# the database.
+CA_constructions = {
+    (2,3): ((11,5), (12,7), (13,9), (14,10), (15,20)),
+    (2,4): ((19,6), (21,7)),
+    (2,5): ((29,7),),
+    (2,6): ((37,4), (39,5), (41,6))
+}
+
+# Add this data to the module's doc.
+LIST_OF_CA_CONSTRUCTIONS = ", ".join(":func:`CA({},{},{},{}) <ca_{}_{}_{}_{}>`".format(N,t,k,v,N,t,k,v)
+                                     for (t,v) in CA_constructions for (N,k) in CA_constructions[(t,v)])
+
+
 __doc__ = __doc__.format(
     LIST_OF_OA_CONSTRUCTIONS=LIST_OF_OA_CONSTRUCTIONS,
     LIST_OF_MOLS_CONSTRUCTIONS=LIST_OF_MOLS_CONSTRUCTIONS,
@@ -5038,6 +5496,7 @@ __doc__ = __doc__.format(
     LIST_OF_DF=LIST_OF_DF,
     LIST_OF_DM=LIST_OF_DM,
     LIST_OF_QDM=LIST_OF_QDM,
-    LIST_OF_EDS=LIST_OF_EDS)
-del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD
+    LIST_OF_EDS=LIST_OF_EDS,
+    LIST_OF_CA_CONSTRUCTIONS=LIST_OF_CA_CONSTRUCTIONS)
+del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD, LIST_OF_CA_CONSTRUCTIONS
 del PolynomialRing, ZZ, a,

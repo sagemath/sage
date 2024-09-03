@@ -1108,7 +1108,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             if nproc != 1:
                 # Parallel computation
                 lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                ind_list = [ind for ind in new_comp.non_redundant_index_generator()]
+                ind_list = list(new_comp.non_redundant_index_generator())
                 ind_step = max(1, int(len(ind_list)/nproc/2))
                 local_list = lol(ind_list, ind_step)
                 # list of input parameters
