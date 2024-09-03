@@ -321,6 +321,8 @@ class Subsets_s(Parent):
             True
             sage: 2 in S
             False
+            sage: {1, 2} in S
+            True
         """
         if value not in Sets():
             if isinstance(value, set):
