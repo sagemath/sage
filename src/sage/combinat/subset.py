@@ -325,10 +325,7 @@ class Subsets_s(Parent):
             True
         """
         if value not in Sets():
-            if isinstance(value, set):
-                value = Set(value)
-            else:
-                return False
+            return False
         return all(v in self._s for v in value)
 
     def cardinality(self):
