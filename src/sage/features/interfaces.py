@@ -254,7 +254,8 @@ def all_features():
 
         sage: from sage.features.interfaces import all_features
         sage: list(all_features())
-        [Feature('magma'),
+        [Feature('asir'),
+         Feature('magma'),
          Feature('matlab'),
          Feature('mathematica'),
          Feature('mathics'),
