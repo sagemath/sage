@@ -201,7 +201,7 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f = x^6 + 3; f
             x^6 + 3
 
-        We also substitute the generators in any base fields.::
+        We also substitute the generators in any base fields::
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
@@ -217,10 +217,11 @@ cdef class FunctionFieldElement(FieldElement):
             25
 
         Because of the possibility of extension fields, a generator to
-        substitute must be specified.::
+        substitute must be specified::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: f = x; f.subs(2)
+            sage: f = x
+            sage: f.subs(2)
             Traceback (most recent call last):
             ...
             TypeError: in_dict must be a dict
@@ -232,7 +233,7 @@ cdef class FunctionFieldElement(FieldElement):
             ...
             TypeError: in_dict must be a dict
 
-        We can also substitute using dictionary syntax.::
+        We can also substitute using dictionary syntax::
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
@@ -268,7 +269,7 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f_sub.parent() == M
             True
 
-        Test that substitution works for rational functions.::
+        Test that substitution works for rational functions::
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
@@ -336,7 +337,7 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f.subs(x=0, y=y)
             3*y
 
-        Test error handling for wrong argument type.::
+        Test error handling for wrong argument type::
 
             sage: K.<x> = FunctionField(QQ)
             sage: f = x
@@ -346,7 +347,7 @@ cdef class FunctionFieldElement(FieldElement):
             TypeError: in_dict must be a dict
 
         Test error handling for dictionary with keys that don't match
-        generators.::
+        generators::
 
             sage: K.<x> = FunctionField(QQ)
             sage: f = x
