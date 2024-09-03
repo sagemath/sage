@@ -12,6 +12,7 @@ import itertools
 from collections import defaultdict
 from sage.rings.lazy_series_ring import LazyPowerSeriesRing, LazySymmetricFunctions
 from sage.combinat.sf.sf import SymmetricFunctions
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 
 def weighted_compositions(n, d, weights, offset=0):
     r"""
@@ -289,7 +290,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         return ProductSpeciesElement(self, other)
 
-    def structures(self, labels):
+    def structures(self, *labels):
         r"""
         Iterate over the structures on the given set of labels.
 
@@ -326,14 +327,28 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
              ((2, 1, 3), X^3),
              ((2, 3, 1), X^3),
              ((1, 3, 2), X^3)]
+
+            sage: L2 = LazySpecies(QQ, "X, Y")
+            sage: P2 = PolynomialSpecies(QQ, "X, Y")
+            sage: X = L2(P2(SymmetricGroup(1), {1: [1]}))
+            sage: Y = L2(P2(SymmetricGroup(1), {2: [1]}))
+            sage: list((X*Y).structures([1],[2]))
+            [((1, 2), X*Y)]
+
+            sage: list(E(X*Y).structures([1,2],[3,4]))
+            [((3, 4, 1, 2), {((1,2)(3,4),): ({1, 2}, {3, 4})}),
+             ((4, 3, 1, 2), {((1,2)(3,4),): ({1, 2}, {3, 4})})]
+
         """
-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-        n = len(labels)
-        l = set(labels)
-        assert len(l) == n, f"The argument labels must be a set, but {labels} has duplicates"
-        S = SymmetricGroup(n)
-        F = self[n]
-        l = list(l)[::-1]
+        fP = parent(self)
+        if len(labels) != fP._arity:
+            raise ValueError("arity of must be equal to the number of arguments provided")
+        assert all(len(U) == len(set(U)) for U in labels), f"The argument labels must be a set, but {labels} has duplicates"
+
+        n = tuple([len(U) for U in labels])
+        S = SymmetricGroup(sum(n)).young_subgroup(n)
+        F = self[sum(n)]
+        l = [e for l in labels for e in l][::-1]
         for M, c in F.monomial_coefficients().items():
             if c < 0:
                 raise NotImplementedError("only implemented for proper non-virtual species")
@@ -555,9 +570,9 @@ class SumSpeciesElement(LazySpeciesElement):
         add = super(LazySpeciesElement, type(left))._add_(left, right)
         super().__init__(add.parent(), add._coeff_stream)
 
-    def structures(self, labels):
-        yield from self._left.structures(labels)
-        yield from self._right.structures(labels)
+    def structures(self, *labels):
+        yield from self._left.structures(*labels)
+        yield from self._right.structures(*labels)
 
 class ProductSpeciesElement(LazySpeciesElement):
     def __init__(self, left, right):
@@ -566,15 +581,15 @@ class ProductSpeciesElement(LazySpeciesElement):
         add = super(LazySpeciesElement, type(left))._mul_(left, right)
         super().__init__(add.parent(), add._coeff_stream)
 
-    def structures(self, labels):
-        n = len(labels)
-        l = set(labels)
-        assert len(l) == n, f"The argument labels must be a set, but {labels} has duplicates"
-        for k in range(n):
-            for U in itertools.combinations(l, k):
-                V = l.difference(U)
-                yield from itertools.product(self._left.structures(U),
-                                             self._right.structures(V))
+#    def structures(self, labels):
+#        n = len(labels)
+#        l = set(labels)
+#        assert len(l) == n, f"The argument labels must be a set, but {labels} has duplicates"
+#        for k in range(n):
+#            for U in itertools.combinations(l, k):
+#                V = l.difference(U)
+#                yield from itertools.product(self._left.structures(U),
+#                                             self._right.structures(V))
 
 class LazySpecies(LazyCompletionGradedAlgebra):
     """
