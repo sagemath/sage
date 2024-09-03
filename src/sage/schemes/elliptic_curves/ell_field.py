@@ -2016,7 +2016,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         from .isogeny_small_degree import isogenies_prime_degree
         return sum([isogenies_prime_degree(self, d) for d in L], [])
 
-    def isogenies_degree(self, n, *, _intermediate=False, _prefix=None):
+    def isogenies_degree(self, n, *, _intermediate=False):
         r"""
         Return an iterator of all separable isogenies of given degree (up to
         post-composition with isomorphisms) with domain equal to ``self``,
@@ -2024,32 +2024,32 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         ALGORITHM:
 
-        The prime factors `p` of `n` are processed one by one, each time
-        "branching" out by taking isogenies of degree `p`.
+        The prime factors `p` of `n` are processed one by one in decreasing
+        order, each time "branching" out by taking isogenies of degree `p`.
 
         INPUT:
 
         - ``n`` -- integer, or its
-          :class:`~sage.structure.factorization.Factorization`
+          :class:`~sage.structure.factorization.Factorization`.
 
-        - ``_intermediate`` -- (bool, default: False): If set, the curves
-          traversed within the depth-first search are returned. This is for
-          internal use only.
+        - ``_intermediate`` -- (bool, default: False): If set, the isogenies
+          from this curve to the curves traversed within the depth-first search
+          are returned. This is for internal use only.
 
         EXAMPLES::
 
             sage: E = EllipticCurve(GF(11), [1, 1])
             sage: list(E.isogenies_degree(23 * 19))
-            [Composite morphism of degree 437 = 19*23:
+            [Composite morphism of degree 437 = 23*19:
                From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
                To:   Elliptic Curve defined by y^2 = x^3 + 8*x + 7 over Finite Field of size 11,
-             Composite morphism of degree 437 = 19*23:
-               From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
-               To:   Elliptic Curve defined by y^2 = x^3 + 2*x + 6 over Finite Field of size 11,
-             Composite morphism of degree 437 = 19*23:
+             Composite morphism of degree 437 = 23*19:
                From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
                To:   Elliptic Curve defined by y^2 = x^3 + 6*x + 2 over Finite Field of size 11,
-             Composite morphism of degree 437 = 19*23:
+             Composite morphism of degree 437 = 23*19:
+               From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
+               To:   Elliptic Curve defined by y^2 = x^3 + 2*x + 6 over Finite Field of size 11,
+             Composite morphism of degree 437 = 23*19:
                From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
                To:   Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 11]
 
@@ -2057,9 +2057,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             sage: E = EllipticCurve(GF(next_prime(2^32)), j=1728)
             sage: sorted([phi.codomain().j_invariant() for phi in E.isogenies_degree(11 * 17 * 19^2)])
-            [1348157279, 1348157279, 1713365879, 1713365879, 3153894341, 3153894341, 3153894341,
-            3153894341, 3225140514, 3225140514, 3673460198, 3673460198, 3994312564, 3994312564,
-            3994312564, 3994312564]
+            [1348157279, 1348157279, 1713365879, 1713365879, 3153894341, 3153894341,
+             3225140514, 3225140514, 3673460198, 3673460198, 3994312564, 3994312564]
             sage: it = E.isogenies_degree(2^2); it
             <generator object EllipticCurve_field.isogenies_degree at 0x...>
             sage: all(phi.degree() == 2^2 for phi in it)
@@ -2089,7 +2088,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             3
             sage: E = EllipticCurve(j=js[0])
             sage: len(list(E.isogenies_degree(2**2)))
-            7
+            6
             sage: len(list(E.isogenies_degree(2**5))) # long time (15s)
             99
 
@@ -2099,10 +2098,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: list(E.isogenies_degree(2^2, _intermediate=True))
             [Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 4294967311
                Via:  (u,r,s,t) = (1, 0, 0, 0),
-             Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 4294967311 to Elliptic Curve defined by
-              y^2 = x^3 + 4294967307*x over Finite Field of size 4294967311,
-             Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 4294967311 to Elliptic Curve defined by
-              y^2 = x^3 + 4294967307*x over Finite Field of size 4294967311,
+             Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 4294967311
+              to Elliptic Curve defined by y^2 = x^3 + 4294967307*x over Finite Field of size 4294967311,
              Composite morphism of degree 4 = 2^2:
                From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 4294967311
                To:   Elliptic Curve defined by y^2 = x^3 + 16*x over Finite Field of size 4294967311,
@@ -2112,11 +2109,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              Composite morphism of degree 4 = 2^2:
                From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 4294967311
                To:   Elliptic Curve defined by y^2 = x^3 + 4294967267*x + 112 over Finite Field of size 4294967311]
+            sage: all(isog.domain() is E for isog in _)
+            True
+            sage: all(isog.domain() is E for isog in E.isogenies_degree(2^5, _intermediate=True))
+            True
 
-        The following curve has no degree-`5` isogenies, so the code is quick::
+        The following curve has no degree-`53` isogenies, so the code is quick::
 
             sage: E = EllipticCurve(GF(103), [3, 5])
-            sage: list(E.isogenies_degree(5 * product(prime_range(7, 100))))
+            sage: E.isogenies_prime_degree(53)
+            []
+            sage: list(E.isogenies_degree(product(prime_range(3, 53)) * 53))
             []
         """
         def compute_key(phi):
@@ -2135,9 +2138,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             yield identity_morphism(self)
             return
 
-        if _prefix is None:
-            _prefix = self.identity_morphism()
-
         p = n[-1][0]
         seen = {}
 
@@ -2153,16 +2153,23 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             seen[key].append(phi)
             return phi
 
+        if _intermediate:
+            yield identity_morphism(self)
+
+        # isog: self -> E1
         for isog in self.isogenies_prime_degree(p):
             if _intermediate:
-                psi = isog * _prefix
-                if insert_seen(psi):
-                    yield psi
+                if insert_seen(isog):
+                    # self -> E1
+                    yield isog
 
             Eiso = isog.codomain()
-            for next_isog in Eiso.isogenies_degree(n / p, _intermediate=_intermediate, _prefix=isog * _prefix):
+            # next_isog : E1 -> E2
+            for next_isog in Eiso.isogenies_degree(n / p, _intermediate=_intermediate):
+                # psi: self -> E2
                 psi = next_isog * isog
                 if insert_seen(psi):
+                    # self -> E2
                     yield psi
 
     def is_isogenous(self, other, field=None):
