@@ -45,6 +45,8 @@ AUTHORS:
 - Maarten Derickx (2011-09-11): added doctests, fixed pickling
 
 - Kwankyu Lee (2017-04-30): added elements for global function fields
+
+- Vincent Macri (2024-09-03): added subs method
 """
 # *****************************************************************************
 #       Copyright (C) 2010      William Stein <wstein@gmail.com>
@@ -57,6 +59,7 @@ AUTHORS:
 #                     2018-2020 Travis Scrimshaw
 #                     2019      Brent Baccala
 #                     2021      Saher Amasha
+#                     2024      Vincent Macri
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -188,7 +191,9 @@ cdef class FunctionFieldElement(FieldElement):
 
         OUTPUT: new object if substitution is possible, otherwise ``self``
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Basic substitution::
 
             sage: K = GF(7)
             sage: Kx.<x> = FunctionField(K)
@@ -196,10 +201,75 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f = x^6 + 3; f
             x^6 + 3
 
+        We also substitute the generators in any base fields.::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: S.<t> = L[]
+            sage: M.<t> = L.extension(t^2 - x*y)
+            sage: f = 7 * t + 3*x*y
+            sage: f.subs(t=9)
+            3*x*y + 63
+            sage: f.subs(x=2, y=4)
+            7*t + 24
+            sage: f.subs(t=1, x=2, y=3)
+            25
+
+        Because of the possibility of extension fields, a generator to
+        substitute must be specified.::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: f = x; f.subs(2)
+            Traceback (most recent call last):
+            ...
+            TypeError: in_dict must be a dict
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: f = x + y
+            sage: f.subs(0)
+            Traceback (most recent call last):
+            ...
+            TypeError: in_dict must be a dict
+
+        We can also substitute using dictionary syntax.::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: S.<t> = L[]
+            sage: M.<t> = L.extension(t^2 - x*y)
+            sage: f = x + y + t
+            sage: f.subs({x: 1, y: 3, t: 4})
+            8
+            sage: f.subs({x: 1, t: 4})
+            y + 5
+
         TESTS:
 
+        Check that we correctly handle extension fields::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: S.<t> = L[]
+            sage: M.<t> = L.extension(t^2 - x*y)
+            sage: f = t + x*y
+            sage: f.subs(x=1, y=3, t=5)
+            8
+            sage: f_sub = f.subs(x=1); f_sub
+            t + y
+            sage: f_sub.parent() == f.parent()
+            True
+            sage: f.subs(y=2)
+            t + 2*x
+            sage: f_sub = f.subs(x=1, y=1, t=1); f_sub
+            2
+            sage: f_sub.parent() == M
+            True
+
         Make sure that we return the same object when there is no
-        substitution.::
+        substitution::
 
             sage: K = GF(7)
             sage: Kx.<x> = FunctionField(K)
@@ -210,46 +280,141 @@ cdef class FunctionFieldElement(FieldElement):
             True
             sage: g is f
             True
-            sage: id(g) == id(f)
+
+        Same purpose as above but over an extension field over the rationals::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: S.<t> = L[]
+            sage: M.<t> = L.extension(t^2 - x*y)
+            sage: f = t + x*y
+            sage: f.subs() is f
+            True
+            sage: f.subs(w=7) is f
+            True
+            sage: f.subs(w=7) is f.subs(w=7)
+            True
+            sage: f.subs(y=y) is f
+            True
+            sage: f.subs({y: y}) is f
+            True
+            sage: f.subs(x=x, y=y, t=t) is f
             True
 
-        Check that we correctly handle extension fields.::
+        Test proper handling of not making substitutions::
 
-        sage: K.<x> = FunctionField(QQ)
-        sage: R.<y> = K[]
-        sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
-        sage: S.<t> = L[]
-        sage: M.<t> = L.extension(t^2 - x*y)
-        sage: f = t + x*y
-        sage: f.subs(x=1, y=3, t=5)
-        8
+            sage: K.<x> = FunctionField(QQ)
+            sage: f = x
+            sage: f.subs() is f
+            True
+            sage: f.subs(dict()) is f
+            True
+            sage: f.subs(w=0) is f
+            True
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: f = 3*y
+            sage: f.subs(x=0)
+            3*y
+            sage: f = 3*y
+            sage: f.subs(x=0, y=y)
+            3*y
+
+        Test error handling for wrong argument type.::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: f = x
+            sage: f.subs(0)
+            Traceback (most recent call last):
+            ...
+            TypeError: in_dict must be a dict
+
+        Test error handling for dictionary with keys that don't match
+        generators.::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: f = x
+            sage: f.subs({1: 1})
+            Traceback (most recent call last):
+            ...
+            TypeError: key does not match any field generators
+
+        Test error handling with ambiguously named generators::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<x> = K[]
+            sage: L.<x> = K.extension(x^3 - x)
+            sage: str(L.gen()) == str(K.gen())
+            True
+            sage: f = K.gen() - L.gen()
+            sage: f.subs(x=2)
+            Traceback (most recent call last):
+            ...
+            TypeError: multiple generators have the same name, making substitution ambiguous. Rename generators or pass substitution values in using dictionary format
+            sage: f.subs({K.gen(): 1})
+            -x + 1
+            sage: f.subs({L.gen(): 2})
+            x - 2
+            sage: f.subs({K.gen(): 1, L.gen(): 2})
+            -1
+            sage: f.subs({K.gen(): 2, L.gen(): 1})
+            1
         """
-        if not in_dict and not kwds:
+        # Helper method to do the recursion through base fields.
+        def sub_recurse(self, sub_dict):
+            ff = self.parent()
+            if ff.base_field() == ff:
+                return ff(self._x.subs({ff.gen(): sub_dict[ff.gen()]}))
+            else:
+                total = ff.zero()
+                for i, v in enumerate(list(self._x)):
+                    total += sub_recurse(v, sub_dict) * sub_dict[ff.gen()]**i
+                return ff(total)
+
+
+        if in_dict is None and kwds is None:
             return self
 
-        function_field = self.parent()
+        if in_dict is not None and not isinstance(in_dict, dict):
+            raise TypeError('in_dict must be a dict')
 
-        if not in_dict:
-            value = self._x.subs(**kwds)
-            made_substitution = any(k == str(function_field.gen()) for k in kwds)
+        field_tower = [self.parent()]
+        ff = self.parent()
+
+        while ff.base_field() != ff:
+            ff = ff.base_field()
+            field_tower.append(ff)
+        sub_dict = {f.gen(): f.gen() for f in field_tower}
+
+        made_substitution = False
+        if in_dict is not None:
+            for k, v in in_dict.items():
+                if k in sub_dict:
+                    sub_dict[k] = v
+                    if v != k:
+                        made_substitution = True
+                else:
+                    raise TypeError('key does not match any field generators')
         else:
-            value = self._x.subs({function_field.gen(): in_dict.get(function_field.gen())})
-            made_substitution = in_dict.get(function_field.gen()) is not None
-
-        while function_field.base_field() != function_field:
-            function_field = function_field.base_field()
-
-            if not in_dict:
-                value = function_field(value)._x.subs(**kwds)
-                made_substitution |= any(k == str(function_field.gen()) for k in kwds)
-            else:
-                value = function_field(value)._x.subs({function_field.gen(): in_dict.get(function_field.gen())})
-                made_substitution |= in_dict.get(function_field.gen()) is not None
+            used_kwds = {k: False for k in kwds}
+            for g in sub_dict:
+                for k, v in kwds.items():
+                    if str(g) == k:
+                        sub_dict[g] = v
+                        if used_kwds[k]:
+                            raise TypeError('multiple generators have the '
+                                            'same name, making substitution '
+                                            'ambiguous. Rename generators '
+                                            'or pass substitution values in '
+                                            'using dictionary format')
+                        used_kwds[k] = True
+                        if g != v:
+                            made_substitution = True
 
         if made_substitution:
-            return self.parent()(value)
-        else:
-            return self
+            return sub_recurse(self, sub_dict)
+        return self
 
 
     @cached_method
