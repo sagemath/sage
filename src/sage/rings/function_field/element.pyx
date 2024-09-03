@@ -268,6 +268,21 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f_sub.parent() == M
             True
 
+        Test that substitution works for rational functions.::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^4 - 3)
+            sage: f = x / y
+            sage: f.subs(x=2) == 2 / y
+            True
+            sage: f.subs(y=3)
+            9*x
+            sage: f.subs(t=-1) is f
+            True
+            sage: f.subs({x: 2, y: 4})
+            128/3
+
         Make sure that we return the same object when there is no
         substitution::
 
