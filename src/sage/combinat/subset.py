@@ -324,7 +324,7 @@ class Subsets_s(Parent):
             sage: {1, 2} in S
             True
         """
-        if value not in Sets():
+        if value not in Sets() and not isinstance(value, (set,frozenset)):
             return False
         return all(v in self._s for v in value)
 
