@@ -148,6 +148,7 @@ def mwrank_two_descent_work(E, two_tor_rk):
     sha2_upper_bd = MWRC.selmer_rank() - two_tor_rk - rank_lower_bd
     return rank_lower_bd, rank_upper_bd, sha2_lower_bd, sha2_upper_bd, gens
 
+
 def pari_two_descent_work(E):
     r"""
     Prepare the output from pari by two-isogeny.
