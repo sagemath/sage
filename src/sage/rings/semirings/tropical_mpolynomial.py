@@ -37,6 +37,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 
+
 class TropicalMPolynomial(MPolynomial_polydict):
     r"""
     A multivariate tropical polynomial.
@@ -305,7 +306,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         corner = set()
         for i in axes[0]:
             for j in axes[1]:
-                corner.add((i,j))
+                corner.add((i, j))
         marks = corner | vertices | edge
 
         # Calculate the value of polynomial at each marked point
@@ -316,9 +317,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
             mark_terms = []
             value = self(T(mark[0]), T(mark[1]))
             value_terms = [term(T(mark[0]), T(mark[1])) for term in terms]
-            for i in range(len(terms)):
-                if value_terms[i] == value:
-                    mark_terms.append(terms[i])
+            mark_terms.extend(terms[i] for i in range(len(terms))
+                              if value_terms[i] == value)
             point_terms[(R(mark[0]), R(mark[1]), value.lift())] = mark_terms
 
         # Plot the points that attained its value at one term only
