@@ -15,6 +15,11 @@ from sage.env import SAGE_DOC_SRC, SAGE_DOC
 from sage_docbuild.conf import release, exclude_patterns
 from sage_docbuild.conf import *
 
+
+for tag in feature_tags():
+    tags.add(tag)
+
+
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite the
