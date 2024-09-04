@@ -404,6 +404,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+
 class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric):
     r"""
     An implementation of the `p`-adic integers with floating point
@@ -498,6 +499,7 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
             if N == p**n:
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
+
 
 class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
     r"""
@@ -604,6 +606,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
             if N == p**n:
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
+
 
 class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGeneric):
     r"""
@@ -740,6 +743,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
         else:
             raise NotImplementedError("Don't know %s algorithm" % algorithm)
 
+
 class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGeneric):
     r"""
     An implementation of the `p`-adic rationals with floating point
@@ -840,6 +844,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 
 # Lattice precision
 ###################
+
 
 class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
     """
@@ -970,6 +975,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
             if prec is None and v > 0:
                 x += p**cap * ZZ.random_element(p**v)
             return self._element_class(self, x, prec=prec)
+
 
 class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
     """
@@ -1110,6 +1116,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
 # Relaxed
 #########
 
+
 class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
     r"""
     An implementation of relaxed arithmetics over `\ZZ_p`.
@@ -1147,6 +1154,7 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
         pAdicRingBaseGeneric.__init__(self, p, self._default_prec, print_mode, names, padic_relaxed_element.pAdicRelaxedElement)
         self._element_class_module = padic_relaxed_element
         self._element_class_prefix = "pAdicRelaxedElement_"
+
 
 class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
     r"""

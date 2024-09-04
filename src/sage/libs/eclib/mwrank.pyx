@@ -830,7 +830,7 @@ cdef class _mw:
           and the computed bound.
 
         - ``sat_low_bd`` -- integer (default: 2); only do saturation at
-          prime not less than this.  For exampe, if the points have
+          prime not less than this.  For example, if the points have
           been found via 2-descent they should already be 2-saturated,
           and ``sat_low_bd=3`` is appropriate.
 
