@@ -283,8 +283,8 @@ $ADD .upstream.d /new/.upstream.d
 ADD .ci /.ci
 RUN if [ -d /sage ]; then                                               \
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" &&  \
-        printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
-        printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \
+        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
+        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \
         if ! (cd /new && /.ci/retrofit-worktree.sh worktree-image /sage); then \
             echo "retrofit-worktree.sh failed, falling back to replacing /sage"; \
             for a in local logs; do                                     \
@@ -354,7 +354,7 @@ RUN cd /new && rm -rf .git && \
         mv src /sage/src;                                    \
         cd /sage && ./bootstrap && ./config.status;          \
     fi; \
-    cd /sage && rm -rf /new .git
+    cd /sage && rm -rf .git; rm -rf /new || echo "(error ignored)"
 
 ARG TARGETS="build"
 $RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN $THEN_SAVE_STATUS

@@ -101,9 +101,9 @@ def FractionField(R, names=None):
 
     INPUT:
 
-    -  ``R`` -- an integral domain
+    - ``R`` -- an integral domain
 
-    -  ``names`` -- ignored
+    - ``names`` -- ignored
 
     EXAMPLES:
 
@@ -178,7 +178,7 @@ class FractionField_generic(ring.Field):
 
         INPUT:
 
-        -  ``R`` -- an integral domain
+        - ``R`` -- an integral domain
 
         EXAMPLES::
 
@@ -398,11 +398,9 @@ class FractionField_generic(ring.Field):
 
         INPUT:
 
-        -  ``x`` -- Number field element
+        - ``x`` -- number field element
 
-        OUTPUT:
-
-        -  Element of ``self``
+        OUTPUT: Element of ``self``
 
         TESTS:
 
@@ -446,7 +444,6 @@ class FractionField_generic(ring.Field):
 
             sage: Frac(QQ['a','b','c']).is_finite()
             False
-
         """
         return self._R.is_finite()
 
@@ -1049,7 +1046,6 @@ class FractionField_1poly_field(FractionField_generic):
             sage: f = x^3 + a
             sage: f.factor()
             (x + 2*a + 1)^3
-
         """
         # The default implementation would try to convert this element to singular and factor there.
         # This fails silently over some base fields, see #23642, so we convert
@@ -1070,7 +1066,6 @@ class FractionField_1poly_field(FractionField_generic):
         .. SEEALSO::
 
             :meth:`sage.rings.function_field.RationalFunctionField.field`
-
         """
         from sage.rings.function_field.constructor import FunctionField
         return FunctionField(self.base_ring(), names=self.variable_name())
@@ -1092,7 +1087,6 @@ class FractionField_1poly_field(FractionField_generic):
                      over Finite Field of size 5
             sage: f(~L.gen())
             1/t
-
         """
         from sage.rings.function_field.function_field_rational import (
             RationalFunctionField,
@@ -1133,7 +1127,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
         True
         sage: R.is_subring(R.fraction_field())
         True
-
     """
     def is_surjective(self):
         r"""
@@ -1144,7 +1137,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             sage: R.<x> = QQ[]
             sage: R.fraction_field().coerce_map_from(R).is_surjective()
             False
-
         """
         return self.domain().is_field()
 
@@ -1160,7 +1152,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             sage: R.<x> = QQ[]
             sage: R.fraction_field().coerce_map_from(R).is_injective()
             True
-
         """
         return True
 
@@ -1175,7 +1166,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             Section map:
               From: Fraction Field of Univariate Polynomial Ring in x over Rational Field
               To:   Univariate Polynomial Ring in x over Rational Field
-
         """
         from sage.categories.homset import Hom
         from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
@@ -1197,7 +1187,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             False
             sage: f == f
             True
-
         """
         if type(self) is not type(other):
             return NotImplemented
@@ -1212,7 +1201,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             sage: R.<x> = QQ[]
             sage: hash(R.fraction_field().coerce_map_from(R)) == hash(R.fraction_field().coerce_map_from(R))
             True
-
         """
         return hash((type(self), self.domain()))
 
@@ -1236,7 +1224,6 @@ class FractionFieldEmbeddingSection(Section):
         sage: isinstance(f, FractionFieldEmbeddingSection)
         True
         sage: TestSuite(f).run()
-
     """
     def _call_(self, x, check=True):
         r"""
@@ -1330,7 +1317,6 @@ class FractionFieldEmbeddingSection(Section):
             False
             sage: f == f
             True
-
         """
         if type(self) is not type(other):
             return NotImplemented
@@ -1345,6 +1331,5 @@ class FractionFieldEmbeddingSection(Section):
             sage: R.<x> = QQ[]
             sage: hash(R.fraction_field().coerce_map_from(R).section()) == hash(R.fraction_field().coerce_map_from(R).section())
             True
-
         """
         return hash((type(self), self.codomain()))

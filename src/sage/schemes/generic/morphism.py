@@ -74,20 +74,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 import operator
-from sage.structure.element import Element, parent, coercion_model
+
 from sage.arith.power import generic_power
-from sage.structure.richcmp import richcmp
-from sage.structure.sequence import Sequence
 from sage.categories.homset import Homset, Hom, End
-from sage.rings.fraction_field_element import FractionFieldElement
-from sage.rings.fraction_field import FractionField_generic
 from sage.categories.map import FormalCompositeMap, Map
+from sage.categories.morphism import SetMorphism
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.morphism import SetMorphism
+from sage.rings.fraction_field import FractionField_generic
+from sage.rings.fraction_field_element import FractionFieldElement
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
+from sage.structure.element import Element, parent, coercion_model
+from sage.structure.richcmp import richcmp
+from sage.structure.sequence import Sequence
 
 
 def is_SchemeMorphism(f):
@@ -96,11 +96,11 @@ def is_SchemeMorphism(f):
 
     INPUT:
 
-    - ``f`` -- anything.
+    - ``f`` -- anything
 
     OUTPUT:
 
-    Boolean. Return ``True`` if ``f`` is a scheme morphism or a point
+    boolean; return ``True`` if ``f`` is a scheme morphism or a point
     on an elliptic curve.
 
     EXAMPLES::
@@ -111,22 +111,26 @@ def is_SchemeMorphism(f):
           Defn: Defined on coordinates by sending (x, y) to (y, x^2 + y)
         sage: from sage.schemes.generic.morphism import is_SchemeMorphism
         sage: is_SchemeMorphism(f)
+        doctest:warning...
+        DeprecationWarning: The function is_SchemeMorphism is deprecated;
+        use 'isinstance(..., SchemeMorphism)' instead.
+        See https://github.com/sagemath/sage/issues/38296 for details.
         True
     """
-    try:
-        from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-    except ImportError:
-        EllipticCurvePoint_field = ()
-    return isinstance(f, (SchemeMorphism, EllipticCurvePoint_field))
+    from sage.misc.superseded import deprecation
+    deprecation(38296,
+                "The function is_SchemeMorphism is deprecated; "
+                "use 'isinstance(..., SchemeMorphism)' instead.")
+    return isinstance(f, SchemeMorphism)
 
 
 class SchemeMorphism(Element):
     """
-    Base class for scheme morphisms
+    Base class for scheme morphisms.
 
     INPUT:
 
-    - ``parent`` -- the parent of the morphism.
+    - ``parent`` -- the parent of the morphism
 
     .. TODO::
 
@@ -277,9 +281,7 @@ class SchemeMorphism(Element):
         r"""
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -298,9 +300,7 @@ class SchemeMorphism(Element):
         r"""
         Return a string representation of the type of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -317,9 +317,7 @@ class SchemeMorphism(Element):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -412,11 +410,9 @@ class SchemeMorphism(Element):
 
         INPUT:
 
-        - ``n`` -- integer. The exponent.
+        - ``n`` -- integer; the exponent
 
-        OUTPUT:
-
-        A composite map that belongs to the same endomorphism set as ``self``.
+        OUTPUT: a composite map that belongs to the same endomorphism set as ``self``
 
         EXAMPLES::
 
@@ -439,9 +435,7 @@ class SchemeMorphism(Element):
         """
         Return the category of the Hom-set.
 
-        OUTPUT:
-
-        A category.
+        OUTPUT: a category
 
         EXAMPLES::
 
@@ -467,9 +461,7 @@ class SchemeMorphism(Element):
         """
         Return whether the morphism is an endomorphism.
 
-        OUTPUT:
-
-        Boolean. Whether the domain and codomain are identical.
+        OUTPUT: boolean; whether the domain and codomain are identical
 
         EXAMPLES::
 
@@ -486,9 +478,7 @@ class SchemeMorphism(Element):
         Return the base ring of ``self``, that is, the ring over which
         the defining polynomials of ``self`` are defined.
 
-        OUTPUT:
-
-        - ring
+        OUTPUT: ring
 
         EXAMPLES::
 
@@ -608,11 +598,11 @@ class SchemeMorphism(Element):
 
     def glue_along_domains(self, other):
         r"""
-        Glue two morphism
+        Glue two morphisms.
 
         INPUT:
 
-        - ``other`` -- a scheme morphism with the same domain.
+        - ``other`` -- a scheme morphism with the same domain
 
         OUTPUT:
 
@@ -678,7 +668,7 @@ class SchemeMorphism_id(SchemeMorphism):
 
     INPUT:
 
-    - ``X`` -- the scheme.
+    - ``X`` -- the scheme
 
     EXAMPLES::
 
@@ -705,9 +695,7 @@ class SchemeMorphism_id(SchemeMorphism):
         r"""
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -719,12 +707,12 @@ class SchemeMorphism_id(SchemeMorphism):
 
 class SchemeMorphism_structure_map(SchemeMorphism):
     r"""
-    The structure morphism
+    The structure morphism.
 
     INPUT:
 
     - ``parent`` -- Hom-set with codomain equal to the base scheme of
-      the domain.
+      the domain
 
     EXAMPLES::
 
@@ -755,9 +743,7 @@ class SchemeMorphism_structure_map(SchemeMorphism):
         r"""
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -769,16 +755,16 @@ class SchemeMorphism_structure_map(SchemeMorphism):
 
 class SchemeMorphism_spec(SchemeMorphism):
     """
-    Morphism of spectra of rings
+    Morphism of spectra of rings.
 
     INPUT:
 
-    - ``parent`` -- Hom-set whose domain and codomain are affine schemes.
+    - ``parent`` -- Hom-set whose domain and codomain are affine schemes
 
-    - ``phi`` -- a ring morphism with matching domain and codomain.
+    - ``phi`` -- a ring morphism with matching domain and codomain
 
-    - ``check`` -- boolean (default:``True``). Whether to
-      check the input for consistency.
+    - ``check`` -- boolean (default: ``True``); whether to
+      check the input for consistency
 
     EXAMPLES::
 
@@ -841,11 +827,9 @@ class SchemeMorphism_spec(SchemeMorphism):
 
         INPUT:
 
-        - ``x`` -- a scheme point.
+        - ``x`` -- a scheme point
 
-        OUTPUT:
-
-        The image scheme point.
+        OUTPUT: the image scheme point
 
         EXAMPLES:
 
@@ -871,9 +855,7 @@ class SchemeMorphism_spec(SchemeMorphism):
         r"""
         Return a string representation of the type of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -890,9 +872,7 @@ class SchemeMorphism_spec(SchemeMorphism):
         r"""
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -912,9 +892,7 @@ class SchemeMorphism_spec(SchemeMorphism):
         """
         Return the underlying ring homomorphism.
 
-        OUTPUT:
-
-        A ring homomorphism.
+        OUTPUT: a ring homomorphism
 
         EXAMPLES::
 
@@ -945,13 +923,13 @@ class SchemeMorphism_polynomial(SchemeMorphism):
     INPUT:
 
     - ``parent`` -- Hom-set whose domain and codomain are affine or
-      projective schemes.
+      projective schemes
 
-    - ``polys`` -- a list/tuple/iterable of polynomials defining the
-      scheme morphism.
+    - ``polys`` -- list/tuple/iterable of polynomials defining the
+      scheme morphism
 
-    - ``check`` -- boolean (default:``True``). Whether to
-      check the input for consistency.
+    - ``check`` -- boolean (default: ``True``); whether to
+      check the input for consistency
 
     EXAMPLES:
 
@@ -981,7 +959,6 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         ...
         TypeError: polys (=[e^x, e^y]) must be elements of Multivariate
         Polynomial Ring in x, y over Rational Field
-
     """
     def __init__(self, parent, polys, check=True):
         """
@@ -1069,11 +1046,9 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         INPUT:
 
         - ``x`` -- a point in the domain or a list or tuple that
-          defines a point in the domain.
+          defines a point in the domain
 
-        OUTPUT:
-
-        A point in the codomain.
+        OUTPUT: a point in the codomain
 
         EXAMPLES::
 
@@ -1141,16 +1116,15 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
     def _call_with_args(self, x, args, kwds):
         """
-        Apply this morphism to a point in the domain, with additional arguments
+        Apply this morphism to a point in the domain, with additional arguments.
 
         INPUT:
 
-        - ``x`` -- a point in the domain or a list or tuple that defines a point in the domain.
-        - ``check``, a boolean, either provided by position or name.
+        - ``x`` -- a point in the domain or a list or tuple that defines a
+          point in the domain
+        - ``check`` -- boolean; either provided by position or name
 
-        OUTPUT:
-
-        A point in the codomain.
+        OUTPUT: a point in the codomain
 
         EXAMPLES::
 
@@ -1233,9 +1207,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         """
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1252,15 +1224,13 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
     def __getitem__(self, i):
         """
-        Return the i-th poly with self[i].
+        Return the i-th poly with ``self[i]``.
 
         INPUT:
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        - element of the coordinate ring of the domain
+        OUTPUT: element of the coordinate ring of the domain
 
         EXAMPLES::
 
@@ -1276,9 +1246,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         r"""
         Return a copy of ``self``.
 
-        OUTPUT:
-
-        - :class:`SchemeMorphism_polynomial`
+        OUTPUT: :class:`SchemeMorphism_polynomial`
 
         EXAMPLES::
 
@@ -1306,7 +1274,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         r"""
         Return the coordinate ring of the ambient projective space.
 
-        OUTPUT: A multivariable polynomial ring over the base ring.
+        OUTPUT: a multivariable polynomial ring over the base ring
 
         EXAMPLES::
 
@@ -1330,19 +1298,19 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
     def change_ring(self, R, check=True):
         r"""
-        Returns a new :class:`SchemeMorphism_polynomial` which is this map coerced to ``R``.
+        Return a new :class:`SchemeMorphism_polynomial` which is this map
+        coerced to ``R``.
 
         If ``check`` is ``True``, then the initialization checks are performed.
 
         INPUT:
 
-        - ``R`` -- ring or morphism.
+        - ``R`` -- ring or morphism
 
-        - ``check`` -- Boolean
+        - ``check`` -- boolean
 
-        OUTPUT:
-
-        - A new :class:`SchemeMorphism_polynomial` which is this map coerced to ``R``.
+        OUTPUT: a new :class:`SchemeMorphism_polynomial` which is this map
+        coerced to ``R``
 
         TESTS::
 
@@ -1372,7 +1340,6 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             Traceback (most recent call last):
             ...
             ValueError: no canonical coercion of base ring of morphism to domain of embedding
-
 
         EXAMPLES::
 
@@ -1811,9 +1778,7 @@ class SchemeMorphism_point(SchemeMorphism):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1828,9 +1793,7 @@ class SchemeMorphism_point(SchemeMorphism):
         r"""
         Return a latex representation of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1847,9 +1810,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Return the ``n``-th coordinate.
 
-        OUTPUT:
-
-        The coordinate values as an element of the base ring.
+        OUTPUT: the coordinate values as an element of the base ring
 
         EXAMPLES::
 
@@ -1866,9 +1827,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Iterate over the coordinates of the point.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -1888,9 +1847,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Return the coordinates as a tuple.
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: a tuple
 
         EXAMPLES::
 
@@ -1905,9 +1862,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Return the number of coordinates.
 
-        OUTPUT:
-
-        Integer. The number of coordinates used to describe the point.
+        OUTPUT: integer. The number of coordinates used to describe the point
 
         EXAMPLES::
 
@@ -1924,12 +1879,10 @@ class SchemeMorphism_point(SchemeMorphism):
 
         INPUT:
 
-        - ``other`` -- anything. To compare against the scheme
-          morphism ``self``.
+        - ``other`` -- anything; to compare against the scheme
+          morphism ``self``
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1952,9 +1905,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Return the scheme whose point is represented.
 
-        OUTPUT:
-
-        A scheme.
+        OUTPUT: a scheme
 
         EXAMPLES::
 
@@ -1967,15 +1918,16 @@ class SchemeMorphism_point(SchemeMorphism):
 
     def change_ring(self, R, check=True):
         r"""
-        Returns a new :class:`SchemeMorphism_point` which is this point coerced to ``R``.
+        Return a new :class:`SchemeMorphism_point` which is this point coerced
+        to ``R``.
 
         If ``check`` is true, then the initialization checks are performed.
 
         INPUT:
 
-        - ``R`` -- ring or morphism.
+        - ``R`` -- ring or morphism
 
-        - ``check`` -- Boolean
+        - ``check`` -- boolean
 
         OUTPUT: :class:`SchemeMorphism_point`
 
@@ -2051,11 +2003,10 @@ class SchemeMorphism_point(SchemeMorphism):
 
     def __copy__(self):
         r"""
-        Returns a copy of the :class:`SchemeMorphism_point` self coerced to `R`.
+        Return a copy of the :class:`SchemeMorphism_point` ``self`` coerced to
+        `R`.
 
-        OUTPUT:
-
-        - :class:`SchemeMorphism_point`
+        OUTPUT: :class:`SchemeMorphism_point`
 
         EXAMPLES::
 

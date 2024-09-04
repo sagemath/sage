@@ -343,7 +343,7 @@ An example::
     ....:         return C(key)
 
 Now, we define an instance of the factory, stating that it can be found under
-the name ``"F"`` in the ``__main__`` module. By consequence, pickling works::
+the name ``'F'`` in the ``__main__`` module. By consequence, pickling works::
 
     sage: F = MyFactory("__main__.F")
     sage: __main__.F = F                # not needed in an interactive session
@@ -1201,7 +1201,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
             del cache[k]
 
 
-class UniqueRepresentation(CachedRepresentation, WithEqualityById):
+class UniqueRepresentation(WithEqualityById, CachedRepresentation):
     r"""
     Classes derived from ``UniqueRepresentation`` inherit a unique
     representation behavior for their instances.

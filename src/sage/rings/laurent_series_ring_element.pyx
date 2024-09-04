@@ -78,6 +78,10 @@ from sage.misc.derivative import multi_derivative
 
 
 def is_LaurentSeries(x):
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38266,
+                       "The function is_LaurentSeries is deprecated; "
+                       "use 'isinstance(..., LaurentSeries)' instead.")
     return isinstance(x, LaurentSeries)
 
 
@@ -231,7 +235,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def is_monomial(self):
         """
-        Return ``True`` if this element is a monomial.  That is, if self is
+        Return ``True`` if this element is a monomial.  That is, if ``self`` is
         `x^n` for some integer `n`.
 
         EXAMPLES::
@@ -403,7 +407,7 @@ cdef class LaurentSeries(AlgebraElement):
             5*x^-1 + 3 + 2*x
         """
         if n == 0:
-            raise ValueError('n must be non zero')
+            raise ValueError('n must be nonzero')
 
         if n < 0:
             if not self.prec() is infinity:
@@ -626,7 +630,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def exponents(self):
         """
-        Return the exponents appearing in self with nonzero coefficients.
+        Return the exponents appearing in ``self`` with nonzero coefficients.
 
         EXAMPLES::
 
@@ -662,7 +666,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or ``None`` (default: ``None``), the
+        - ``absprec`` -- integer or ``None`` (default: ``None``); the
           absolute precision of the result. If ``None``, lifts to an exact
           element.
 
@@ -954,7 +958,6 @@ cdef class LaurentSeries(AlgebraElement):
             sage: h = x^2 + 2*x^4 + x^6
             sage: h^(1/2)
             x + x^3
-
         """
         cdef LaurentSeries self = _self
 
@@ -986,7 +989,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def shift(self, k):
         r"""
-        Returns this Laurent series multiplied by the power `t^n`.
+        Return this Laurent series multiplied by the power `t^n`.
         Does not change this series.
 
         .. NOTE::
@@ -1026,7 +1029,7 @@ cdef class LaurentSeries(AlgebraElement):
     def truncate(self, long n):
         r"""
         Return the Laurent series of degree ` < n` which is
-        equivalent to self modulo `x^n`.
+        equivalent to ``self`` modulo `x^n`.
 
         EXAMPLES::
 
@@ -1069,7 +1072,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         This is equivalent to::
 
-            self - self.truncate(n)
+            ``self - self.truncate(n)``
 
         EXAMPLES::
 
@@ -1402,7 +1405,7 @@ cdef class LaurentSeries(AlgebraElement):
         ``precision`` is not given, then the precision of the reverse defaults
         to the default precision of ``f.parent()``.
 
-        Note that this is only possible if the valuation of self is exactly
+        Note that this is only possible if the valuation of ``self`` is exactly
         1.
 
         The implementation depends on the underlying power series element

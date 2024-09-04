@@ -27,6 +27,7 @@ from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.homset import SchemeHomset_points
 
+
 class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
     r"""
     Set of rational points of a product of projective spaces.
@@ -47,11 +48,9 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
 
         INPUT:
 
-        - ``v`` -- anything that determines a scheme morphism in the Hom-set.
+        - ``v`` -- anything that determines a scheme morphism in the Hom-set
 
-        OUTPUT:
-
-        The scheme morphism determined by ``v``.
+        OUTPUT: the scheme morphism determined by ``v``
 
         EXAMPLES::
 
@@ -64,6 +63,7 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
             (4 : 2 , 2 : 0)
         """
         return self.codomain()._point(self, v, **kwds)
+
 
 class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_product_projective_spaces_ring):
     def points(self, **kwds):
@@ -91,14 +91,17 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
 
         - ``bound`` -- a real number
 
-        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm algorithm 4
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+          algorithm 4
 
-        - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
+        - ``precision`` -- the precision to use for computing the elements of
+          bounded height of number fields
 
-        - ``algorithm`` -- either ``'sieve'`` or ``'enumerate'`` algorithms can be used over `\QQ`. If
-          not specified, ``'enumerate'`` is used only for small height bounds.
+        - ``algorithm`` -- either ``'sieve'`` or ``'enumerate'`` algorithms can
+          be used over `\QQ`. If not specified, ``'enumerate'`` is used only
+          for small height bounds
 
-        OUTPUT: A list of rational points of the projective scheme.
+        OUTPUT: list of rational points of the projective scheme
 
         EXAMPLES::
 

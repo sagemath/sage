@@ -95,6 +95,7 @@ AUTHORS:
 
 from sage.rings.integer_ring import ZZ
 
+
 class Small_primes_of_degree_one_iter():
     r"""
     Iterator that finds primes of a number field of absolute degree
@@ -102,17 +103,15 @@ class Small_primes_of_degree_one_iter():
 
     INPUT:
 
-    - ``field`` -- a :class:`NumberField`.
+    - ``field`` -- a :class:`NumberField`
 
-    - ``num_integer_primes`` -- (default: 10000) an integer.  We try to find
-      primes of absolute norm no greater than the
-      ``num_integer_primes``-th prime number. For example, if
-      ``num_integer_primes`` is 2, the largest norm found will be 3, since
-      the second prime is 3.
+    - ``num_integer_primes`` -- integer (default: 10000); we try to find
+      primes of absolute norm no greater than the ``num_integer_primes``-th
+      prime number. For example, if ``num_integer_primes`` is 2, the largest
+      norm found will be 3, since the second prime is 3.
 
-    - ``max_iterations`` -- (default: 100) an integer. We test
-      ``max_iterations`` integers to find small primes before raising
-      :class:`StopIteration`.
+    - ``max_iterations`` -- integer (default: 100); we test ``max_iterations``
+      integers to find small primes before raising :class:`StopIteration`
 
     AUTHOR:
 
@@ -145,7 +144,7 @@ class Small_primes_of_degree_one_iter():
 
     def __iter__(self):
         r"""
-        Return self as an iterator.
+        Return ``self`` as an iterator.
 
         EXAMPLES::
 

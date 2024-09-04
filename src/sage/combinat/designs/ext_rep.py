@@ -466,6 +466,7 @@ v2_b2_k2_icgsa = \
 </list_of_designs>
 """
 
+
 def dump_to_tmpfile(s):
     """
     Utility function to dump a string to a temporary file.
@@ -482,6 +483,7 @@ def dump_to_tmpfile(s):
     f.write(v2_b2_k2_icgsa)
     f.close()
     return file_loc
+
 
 def check_dtrs_protocols(input_name, input_pv):
     """
@@ -505,6 +507,7 @@ def check_dtrs_protocols(input_name, input_pv):
     if ppv_major != ipv_major or int(ppv_minor) < int(ipv_minor):
         msg = ('''Incompatible dtrs_protocols: program: %s %s: %s''' % (program_pv, input_name, input_pv))
         raise RuntimeError(msg)
+
 
 def open_extrep_file(fname):
     """
@@ -533,6 +536,7 @@ def open_extrep_file(fname):
         else:
             f = open(fname, 'rb')
     return f
+
 
 def open_extrep_url(url):
     """
@@ -569,6 +573,7 @@ pattern_integer = re.compile(r'\d+$')
 pattern_decimal = re.compile(r'-?\d+\.\d+$')
 pattern_rational = re.compile(r'-?\d+/\d+$')
 
+
 def _encode_attribute(string):
     """
     Convert numbers in attributes into binary format.
@@ -600,6 +605,7 @@ def _encode_attribute(string):
     else:
         return string
 
+
 class XTree:
     '''
     A lazy class to wrap a rooted tree representing an XML document.
@@ -611,7 +617,7 @@ class XTree:
 
     - ``t.attribute`` -- attribute named
     - ``t.child`` -- first child named
-    - ``t[i]`` -- i-th child
+    - ``t[i]`` -- `i`-th child
     - ``for child in t:`` -- iterate over ``t``'s children
     - ``len(t)`` -- number of ``t``'s children
 
@@ -772,6 +778,7 @@ class XTree:
         """
 
         return len(self.xt_children)
+
 
 class XTreeProcessor:
     '''
@@ -1029,6 +1036,7 @@ def designs_from_XML(fname):
     f.close()
 
     return proc.list_of_designs
+
 
 def designs_from_XML_url(url):
     """

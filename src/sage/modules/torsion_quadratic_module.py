@@ -97,7 +97,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
 
     - ``x`` -- element of ``parent.V()``
 
-    - ``check`` -- bool (default: ``True``)
+    - ``check`` -- boolean (default: ``True``)
 
     TESTS::
 
@@ -205,7 +205,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
     - ``W`` -- a submodule of ``V`` of the same rank as ``V``
 
-    - ``check`` -- bool (default: ``True``)
+    - ``check`` -- boolean (default: ``True``)
 
     - ``modulus`` -- a rational number dividing `m` (default: `m`);
       the inner product `b` is defined in `\QQ /` ``modulus`` `\ZZ`
@@ -328,14 +328,12 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         - ``W`` -- a submodule of ``V`` over the same base ring
 
-        - ``check`` -- bool (default: ``False``);
+        - ``check`` -- boolean (default: ``False``)
 
           * if ``False``, then the value modulus is inherited from ``self``
           * if ``True``, it figures it out on its own. But that is expensive
 
-        OUTPUT:
-
-        The quotient ``V / W`` as a :class:`TorsionQuadraticModule`.
+        OUTPUT: the quotient ``V / W`` as a :class:`TorsionQuadraticModule`
 
         EXAMPLES::
 
@@ -423,9 +421,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         The Brown invariant is additive with respect to direct sums of
         torsion quadratic modules.
 
-        OUTPUT:
-
-        - an element of `\Zmod{8}`
+        OUTPUT: an element of `\Zmod{8}`
 
         EXAMPLES::
 
@@ -544,7 +540,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         r"""
         Return the genus defined by ``self`` and the ``signature_pair``.
 
-        If no such genus exists, raise a :class:`ValueError`.
+        If no such genus exists, raise a :exc:`ValueError`.
 
         REFERENCES:
 
@@ -754,8 +750,8 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - ``signature_pair`` -- a tuple of non negative integers ``(s_plus, s_minus)``
-        - ``even`` -- bool (default: ``True``)
+        - ``signature_pair`` -- tuple of nonnegative integers ``(s_plus, s_minus)``
+        - ``even`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -776,7 +772,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         s_plus = ZZ(signature_pair[0])
         s_minus = ZZ(signature_pair[1])
         if s_plus < 0 or s_minus < 0:
-            raise ValueError("signature invariants must be non negative")
+            raise ValueError("signature invariants must be nonnegative")
         rank = s_plus + s_minus
         signature = s_plus - s_minus
         D = self.cardinality()
@@ -829,7 +825,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - ``gens`` --  a list of generators, for instance square matrices,
+        - ``gens`` -- a list of generators, for instance square matrices,
           something that acts on ``self``, or an automorphism
           of the underlying abelian group
         - ``check`` -- perform additional checks on the generators
@@ -985,12 +981,10 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - ``partial`` -- bool (default: ``False``) return only a partial normal form;
-          it is not unique but still useful to extract invariants
+        - ``partial`` -- boolean (default: ``False``); return only a partial
+          normal form. It is not unique but still useful to extract invariants.
 
-        OUTPUT:
-
-        - a torsion quadratic module
+        OUTPUT: a torsion quadratic module
 
         EXAMPLES::
 
@@ -1125,11 +1119,9 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - ``m`` -- an integer
+        - ``m`` -- integer
 
-        OUTPUT:
-
-        - a submodule
+        OUTPUT: a submodule
 
         EXAMPLES::
 
@@ -1162,11 +1154,9 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - ``gens`` -- a list of generators that convert into ``self``
+        - ``gens`` -- list of generators that convert into ``self``
 
-        OUTPUT:
-
-        - a submodule with the specified generators
+        OUTPUT: a submodule with the specified generators
 
         EXAMPLES::
 
