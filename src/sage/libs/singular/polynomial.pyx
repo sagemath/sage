@@ -467,7 +467,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         sage: latex(10*x^2 + 1/2*y)
         10 x^{2} + \frac{1}{2} y
 
-    Demonstrate that coefficients over non-atomic representated rings are
+    Demonstrate that coefficients over non-atomic represented rings are
     properly parenthesized (:issue:`11186`)::
 
         sage: x = var('x')
