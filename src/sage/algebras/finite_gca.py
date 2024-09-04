@@ -78,12 +78,12 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
     - ``degrees`` -- (optional) a tuple or list specifying the degrees
       of the generators; if omitted, each generator is given degree
       1, and if both ``names`` and ``degrees`` are omitted, an error is
-      raised.
-    - ``max_degree`` -- the maximal degree of the graded algebra.
-    - ``mul_symbol`` -- (optional) symbol used for multiplication. If omitted,
-      the string "*" is used.
-    - ``mul_latex_symbol`` -- (optional) latex symbol used for multiplication.
-      If omitted, the empty string is used.
+      raised
+    - ``max_degree`` -- the maximal degree of the graded algebra
+    - ``mul_symbol`` -- (optional) symbol used for multiplication; if omitted,
+      the string "*" is used
+    - ``mul_latex_symbol`` -- (optional) latex symbol used for multiplication;
+      if omitted, the empty string is used
 
     EXAMPLES::
 
@@ -132,7 +132,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,2,6,6))
             sage: type(A)
             <class 'sage.algebras.commutative_dga.GCAlgebra_with_category'>
-
     """
     @staticmethod
     def __classcall_private__(cls, base, names=None, degrees=None,
@@ -146,7 +145,7 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
         - ``base`` -- the base ring of the algebra
         - ``max_degree`` -- the maximal degree of the algebra
         - ``names`` -- the names of the variables; by default, set to ``x1``,
-          ``x2``, etc.
+          ``x2``, etc
         - ``degrees`` -- the degrees of the generators; by default, set to 1
 
         TESTS::
@@ -155,7 +154,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             sage: A2 = GradedCommutativeAlgebra(GF(2), ['x', 'y'], [3, 6], max_degree=12)
             sage: A1 is A2
             True
-
         """
         if max_degree is None:
             raise TypeError("max_degree must be specified")

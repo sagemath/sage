@@ -1,1 +1,1 @@
-python-pickleshare
+python3-pickleshare

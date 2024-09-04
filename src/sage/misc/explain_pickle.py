@@ -184,25 +184,25 @@ def explain_pickle(pickle=None, file=None, compress=True, **kwargs):
 
     INPUT:
 
-     - ``pickle``   -- the pickle to explain, as a string (default: ``None``)
-     - ``file``     -- a filename of a pickle (default: ``None``)
-     - ``compress`` -- if ``False``, don't attempt to decompress the pickle
-       (default: ``True``)
-     - ``in_current_sage`` -- if ``True``, produce potentially simpler code that is
-       tied to the current version of Sage. (default: ``False``)
-     - ``default_assumptions`` -- if ``True``, produce potentially simpler code that
-       assumes that generic unpickling code will be
-       used.  This code may not actually work.
-       (default: ``False``)
-     - ``eval`` -- if ``True``, then evaluate the resulting code and return the
-       evaluated result. (default: ``False``)
-     - ``preparse`` -- if ``True``, then produce code to be evaluated with
-       Sage's preparser; if ``False``, then produce standard
-       Python code; if ``None``, then produce code that will work
-       either with or without the preparser.  (default: ``True``)
-     - ``pedantic`` -- if ``True``, then carefully ensures that the result has
-       at least as much sharing as the result of cPickle
-       (it may have more, for immutable objects).  (default: ``False``)
+    - ``pickle`` -- string (default: ``None``); the pickle to explain
+    - ``file`` -- a filename of a pickle (default: ``None``)
+    - ``compress`` -- boolean (default: ``True``); if ``False``, don't attempt
+      to decompress the pickle
+    - ``in_current_sage`` -- boolean (default: ``False``); if ``True``,
+      produce potentially simpler code that is tied to the current version of
+      Sage
+    - ``default_assumptions`` -- boolean (default: ``False``); if ``True``,
+      produce potentially simpler code that assumes that generic unpickling
+      code will be used.  This code may not actually work.
+    - ``eval`` -- boolean (default: ``False``); if ``True``, then evaluate the
+      resulting code and return the evaluated result
+    - ``preparse`` -- if ``True``, then produce code to be evaluated with
+      Sage's preparser; if ``False``, then produce standard
+      Python code; if ``None``, then produce code that will work
+      either with or without the preparser.  (default: ``True``)
+    - ``pedantic`` -- boolean (default: ``False``); if ``True``, then carefully
+      ensures that the result has at least as much sharing as the result of
+      cPickle (it may have more, for immutable objects)
 
     Exactly one of ``pickle`` (a string containing a pickle) or
     ``file`` (the filename of a pickle) must be provided.
@@ -2482,7 +2482,7 @@ unpickle_persistent_loader = None
 
 def unpickle_persistent(s):
     r"""
-    Takes an integer index and returns the persistent object with that
+    Take an integer index and return the persistent object with that
     index; works by calling whatever callable is stored in
     ``unpickle_persistent_loader``.  Used by :func:`explain_pickle`.
 
@@ -2498,7 +2498,7 @@ def unpickle_persistent(s):
 
 def unpickle_extension(code):
     r"""
-    Takes an integer index and returns the extension object with that
+    Take an integer index and return the extension object with that
     index.  Used by :func:`explain_pickle`.
 
     EXAMPLES::

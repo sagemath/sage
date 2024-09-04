@@ -85,7 +85,7 @@ class HyperbolicPoint(Element):
     - ``coordinates`` -- the coordinates of a hyperbolic point in the
       appropriate model
     - ``is_boundary`` -- whether the point is a boundary point
-    - ``check`` -- (default: ``True``) if ``True``, then check to make sure
+    - ``check`` -- boolean (default: ``True``); if ``True``, then check to make sure
       the coordinates give a valid point in the model
 
     EXAMPLES:
@@ -270,7 +270,7 @@ class HyperbolicPoint(Element):
 
     def _richcmp_(self, other, op):
         r"""
-        Comparison of self and other.
+        Comparison of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -443,7 +443,7 @@ class HyperbolicPoint(Element):
 
         EXAMPLES::
 
-            sage: p = HyperbolicPlane().UHP().get_point(2 + I, color="red")
+            sage: p = HyperbolicPlane().UHP().get_point(2 + I, color='red')
             sage: p.graphics_options()
             {'color': 'red'}
         """

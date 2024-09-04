@@ -412,7 +412,7 @@ def shortest_path_all_pairs(G):
 
 cdef unsigned short * c_distances_all_pairs(G, vertex_list=None) noexcept:
     r"""
-    Returns the matrix of distances in G.
+    Return the matrix of distances in G.
 
     The matrix `M` returned is of length `n^2`, and the distance between
     vertices `u` and `v` is `M[u,v]`. The integer corresponding to a vertex is
@@ -491,7 +491,7 @@ def distances_all_pairs(G):
 
 def is_distance_regular(G, parameters=False):
     r"""
-    Test if the graph is distance-regular
+    Test if the graph is distance-regular.
 
     A graph `G` is distance-regular if for any integers `j,k` the value of
     `|\{x:d_G(x,u)=j,x\in V(G)\} \cap \{y:d_G(y,v)=j,y\in V(G)\}|` is constant
@@ -545,7 +545,6 @@ def is_distance_regular(G, parameters=False):
         ([1, None], [None, 1])
         sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)                 # needs networkx
         ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
-
     """
     cdef int i, u, v, d, b, c, k
     cdef int n = G.order()
@@ -938,28 +937,28 @@ cdef uint32_t * c_eccentricity_DHV(short_digraph sd) except NULL:
     return ecc_upper_bound
 
 
-def eccentricity(G, algorithm="standard", vertex_list=None):
+def eccentricity(G, algorithm='standard', vertex_list=None):
     r"""
     Return the vector of eccentricities in G.
 
     The array returned is of length `n`, and its `i`-th component is the
-    eccentricity of the ith vertex in ``G.vertices(sort=True)``.
+    eccentricity of the `i`-th vertex in ``G.vertices(sort=True)``.
 
     INPUT:
 
-    - ``G`` -- a Graph or a DiGraph.
+    - ``G`` -- a Graph or a DiGraph
 
     - ``algorithm`` -- string (default: ``'standard'``); name of the method used
-      to compute the eccentricity of the vertices.
+      to compute the eccentricity of the vertices
 
-      - ``'standard'`` -- Computes eccentricity by performing a BFS from each
-        vertex.
+      - ``'standard'`` -- computes eccentricity by performing a BFS from each
+        vertex
 
-      - ``'bounds'`` -- Computes eccentricity using the fast algorithm proposed
-        in [TK2013]_ for undirected graphs.
+      - ``'bounds'`` -- computes eccentricity using the fast algorithm proposed
+        in [TK2013]_ for undirected graphs
 
-      - ``'DHV'`` -- Computes all eccentricities of undirected graph using the
-        algorithm proposed in [Dragan2018]_.
+      - ``'DHV'`` -- computes all eccentricities of undirected graph using the
+        algorithm proposed in [Dragan2018]_
 
     - ``vertex_list`` -- list (default: ``None``); a list of `n` vertices
       specifying a mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When
@@ -1164,7 +1163,7 @@ cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
 
     - ``g`` -- a short_digraph
 
-    - ``rev_g`` -- a copy of `g` with edges reversed.
+    - ``rev_g`` -- a copy of `g` with edges reversed
 
     - ``source`` -- starting node of the forward and backward BFS
 
@@ -1277,7 +1276,6 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
     - ``g`` -- a short_digraph
 
     - ``source`` -- starting node of the BFS
-
     """
     # The while loop below might not be entered so we have to make sure that
     # s and d which are returned are initialized.
@@ -1349,7 +1347,6 @@ cdef uint32_t diameter_iFUB(short_digraph g,
     - ``g`` -- a short_digraph
 
     - ``source`` -- starting node of the first BFS
-
     """
     cdef uint32_t i, LB, m
     cdef uint32_t n = g.n
@@ -1680,11 +1677,11 @@ def diameter(G, algorithm=None, source=None):
     - ``algorithm`` -- string (default: ``None``); specifies the algorithm to
       use among:
 
-      - ``'standard'`` -- Computes the diameter of the input (di)graph as the
+      - ``'standard'`` -- computes the diameter of the input (di)graph as the
         largest eccentricity of its vertices. This is the classical algorithm
         with time complexity in `O(nm)`.
 
-      - ``'2sweep'`` -- Computes a lower bound on the diameter of an
+      - ``'2sweep'`` -- computes a lower bound on the diameter of an
         unweighted undirected graph using 2 BFS, as proposed in [MLH2008]_.  It
         first selects a vertex `v` that is at largest distance from an initial
         vertex source using BFS. Then it performs a second BFS from `v`. The
@@ -1692,15 +1689,15 @@ def diameter(G, algorithm=None, source=None):
         of `G`.  The time complexity of this algorithm is linear in the size of
         `G`.
 
-      - ``'2Dsweep'`` -- Computes lower bound on the diameter of an unweighted
+      - ``'2Dsweep'`` -- computes lower bound on the diameter of an unweighted
         directed graph using directed version of ``2sweep`` as proposed in
         [Broder2000]_. If the digraph is not strongly connected, the returned
         value is infinity.
 
-      - ``'DHV'`` -- Computes diameter of unweighted undirected graph using the
-        algorithm proposed in [Dragan2018]_.
+      - ``'DHV'`` -- computes diameter of unweighted undirected graph using the
+        algorithm proposed in [Dragan2018]_
 
-      - ``'multi-sweep'`` -- Computes a lower bound on the diameter of an
+      - ``'multi-sweep'`` -- computes a lower bound on the diameter of an
         unweighted undirected graph using several iterations of the ``2sweep``
         algorithms [CGHLM2013]_. Roughly, it first uses ``2sweep`` to identify
         two vertices `u` and `v` that are far apart. Then it selects a vertex
@@ -1710,7 +1707,7 @@ def diameter(G, algorithm=None, source=None):
         This process is repeated as long as the lower bound on the diameter
         is improved.
 
-      - ``'iFUB'`` -- The iFUB (iterative Fringe Upper Bound) algorithm,
+      - ``'iFUB'`` -- the iFUB (iterative Fringe Upper Bound) algorithm,
         proposed in [CGILM2010]_, computes the exact value of the diameter of an
         unweighted undirected graph. It is based on the following observation:
 
@@ -1738,7 +1735,7 @@ def diameter(G, algorithm=None, source=None):
         by the remark above. The worst case time complexity of the iFUB
         algorithm is `O(nm)`, but it can be very fast in practice.
 
-      - ``'DiFUB'`` -- The directed version of iFUB (iterative Fringe Upper
+      - ``'DiFUB'`` -- the directed version of iFUB (iterative Fringe Upper
         Bound) algorithm. See the code's documentation and [CGLM2012]_ for more
         details. If the digraph is not strongly connected, the returned value is
         infinity.
@@ -2112,7 +2109,7 @@ cdef uint64_t c_szeged_index_low_memory(short_digraph sd) noexcept:
 
     EXAMPLES::
 
-        sage: graphs.CycleGraph(4).szeged_index(algorithm="low")
+        sage: graphs.CycleGraph(4).szeged_index(algorithm='low')
         16
     """
     cdef size_t n = sd.n
@@ -2208,7 +2205,7 @@ cdef uint64_t c_szeged_index_high_memory(short_digraph sd) noexcept:
 
     EXAMPLES::
 
-        sage: graphs.CycleGraph(4).szeged_index(algorithm="high")
+        sage: graphs.CycleGraph(4).szeged_index(algorithm='high')
         16
     """
     cdef int n = sd.n
@@ -2267,16 +2264,16 @@ def szeged_index(G, algorithm=None):
 
     - ``algorithm`` -- string (default: ``None``); algorithm to use among:
 
-      - ``"low"`` -- algorithm with time complexity in `O(nm)` and space
+      - ``'low'`` -- algorithm with time complexity in `O(nm)` and space
         complexity in `O(m)`. This implementation is currently valid only for
         simple (without loops or multiple edges) connected graphs.
 
-      - ``"high"`` -- algorithm with time complexity in `O(nm)` and space
+      - ``'high'`` -- algorithm with time complexity in `O(nm)` and space
         complexity in `O(n^2)`. It cannot be used on graphs with more than
         `65536 = 2^{16}` vertices.
 
-      By default (``None``), the ``"low"`` algorithm is used for graphs and the
-      ``"high"`` algorithm for digraphs.
+      By default (``None``), the ``'low'`` algorithm is used for graphs and the
+      ``'high'`` algorithm for digraphs.
 
     EXAMPLES:
 
@@ -2326,22 +2323,22 @@ def szeged_index(G, algorithm=None):
 
     Wrong name of algorithm::
 
-        sage: szeged_index(Graph(1), algorithm="wheel")
+        sage: szeged_index(Graph(1), algorithm='wheel')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm 'wheel'
 
     Algorithm `"low"` is for graphs without loops or multiple edges::
 
-        sage: szeged_index(Graph([(0, 0)], loops=True), algorithm="low")
+        sage: szeged_index(Graph([(0, 0)], loops=True), algorithm='low')
         Traceback (most recent call last):
         ...
         ValueError: the 'low' algorithm is for simple connected undirected graphs only
-        sage: szeged_index(Graph([(0, 1), (0, 1)], multiedges=True), algorithm="low")
+        sage: szeged_index(Graph([(0, 1), (0, 1)], multiedges=True), algorithm='low')
         Traceback (most recent call last):
         ...
         ValueError: the 'low' algorithm is for simple connected undirected graphs only
-        sage: szeged_index(digraphs.Circuit(3), algorithm="low")
+        sage: szeged_index(digraphs.Circuit(3), algorithm='low')
         Traceback (most recent call last):
         ...
         ValueError: the 'low' algorithm cannot be used on digraphs
@@ -2630,7 +2627,7 @@ def floyd_warshall(gg, paths=True, distances=False):
 
     INPUT:
 
-    - ``gg`` -- the graph on which to work.
+    - ``gg`` -- the graph on which to work
 
     - ``paths`` -- boolean (default: ``True``); whether to return the dictionary
       of shortest paths

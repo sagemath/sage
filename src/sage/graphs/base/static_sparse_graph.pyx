@@ -33,14 +33,14 @@ Data structure
 The data structure is actually pretty simple and compact. ``short_digraph`` has
 five fields
 
-- ``n`` (``int``); the number of vertices in the graph
+- ``n`` -- integer; the number of vertices in the graph
 
-- ``m`` (``int``); the number of edges in the graph
+- ``m`` -- integer; the number of edges in the graph
 
-- ``edges`` (``uint32_t *``); array whose length is the number of edges of the
+- ``edges`` -- ``uint32_t *``; array whose length is the number of edges of the
   graph
 
-- ``neighbors`` (``uint32_t **``); this array has size `n+1`, and describes how
+- ``neighbors`` -- ``uint32_t **``; this array has size `n+1`, and describes how
   the data of ``edges`` should be read : the neighbors of vertex `i` are the
   elements of ``edges`` addressed by ``neighbors[i]...neighbors[i+1]-1``. The
   element ``neighbors[n]``, which corresponds to no vertex (they are numbered
@@ -51,7 +51,7 @@ five fields
   complexity for deciding if ``g`` has edge `(u, v)` is `O(\log{m})` using
   binary search.
 
-- ``edge_labels`` (``list``); this cython list associates a label to each edge
+- ``edge_labels`` -- list; this cython list associates a label to each edge
   of the graph. If a given edge is represented by ``edges[i]``, this its
   associated label can be found at ``edge_labels[i]``. This object is usually
   NULL, unless the call to ``init_short_digraph`` explicitly requires the labels
@@ -528,7 +528,6 @@ cdef uint32_t simple_BFS(short_digraph g,
     - ``seen`` -- bitset of size ``n`` that must be initialized before calling
       this method (i.e., bitset_init(seen, n)). However, there is no need to
       clear it.
-
     """
     cdef uint32_t v, u
     cdef uint32_t waiting_beginning = 0
@@ -978,7 +977,7 @@ def triangles_count(G):
 
     INPUT:
 
-    - `G` -- a graph
+    - ``G`` -- a graph
 
     EXAMPLES::
 
@@ -1042,11 +1041,11 @@ def spectral_radius(G, prec=1e-10):
 
     INPUT:
 
-    - ``prec`` -- (default ``1e-10``) an upper bound for the relative precision
+    - ``prec`` -- (default: ``1e-10``) an upper bound for the relative precision
       of the interval
 
-    The algorithm is iterative and uses an inequality valid for non-negative
-    matrices. Namely, if `A` is a non-negative square matrix with
+    The algorithm is iterative and uses an inequality valid for nonnegative
+    matrices. Namely, if `A` is a nonnegative square matrix with
     Perron-Frobenius eigenvalue `\lambda` then the following inequality is valid
     for any vector `x`
 

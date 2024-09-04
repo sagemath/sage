@@ -1,10 +1,10 @@
-pytest_xdist: pytest xdist plugin for distributed testing and loop-on-failing modes
-===================================================================================
+pytest_xdist: Pytest xdist plugin for distributed testing, most importantly across multiple CPUs
+================================================================================================
 
 Description
 -----------
 
-pytest xdist plugin for distributed testing and loop-on-failing modes
+Pytest xdist plugin for distributed testing, most importantly across multiple CPUs
 
 License
 -------

@@ -69,7 +69,7 @@ def eisen(p):
 
     - ``p`` -- a prime
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -96,13 +96,13 @@ def CO_delta(r, p, N, eps):
 
     INPUT:
 
-    -  ``r`` -- positive integer
+    - ``r`` -- positive integer
 
-    -  ``p`` -- a prime
+    - ``p`` -- a prime
 
-    -  ``N`` -- positive integer
+    - ``N`` -- positive integer
 
-    -  ``eps`` -- character
+    - ``eps`` -- character
 
     OUTPUT: element of the base ring of the character
 
@@ -140,13 +140,13 @@ def CO_nu(r, p, N, eps):
 
     INPUT:
 
-    -  ``r`` -- positive integer
+    - ``r`` -- positive integer
 
-    -  ``p`` -- a prime
+    - ``p`` -- a prime
 
-    -  ``N`` -- positive integer
+    - ``N`` -- positive integer
 
-    -  ``eps`` -- character
+    - ``eps`` -- character
 
     OUTPUT: element of the base ring of the character
 
@@ -185,11 +185,11 @@ def CohenOesterle(eps, k):
 
     INPUT:
 
-    -  ``eps`` -- Dirichlet character
+    - ``eps`` -- Dirichlet character
 
-    -  ``k`` -- integer
+    - ``k`` -- integer
 
-    OUTPUT: element of the base ring of eps.
+    OUTPUT: element of the base ring of eps
 
     EXAMPLES::
 
@@ -219,9 +219,9 @@ def CohenOesterle(eps, k):
 
         INPUT:
 
-        -  ``r, s, p`` -- integers
+        - ``r``, ``s``, ``p`` -- integers
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES: (indirect doctest)
 
@@ -258,12 +258,12 @@ def dimension_new_cusp_forms(X, k=2, p=0):
 
     INPUT:
 
-    -  ``X`` -- integer, congruence subgroup or Dirichlet
-       character
+    - ``X`` -- integer, congruence subgroup or Dirichlet
+      character
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- weight (integer)
 
-    -  ``p`` -- 0 or a prime
+    - ``p`` -- 0 or a prime
 
     EXAMPLES::
 
@@ -320,10 +320,10 @@ def dimension_cusp_forms(X, k=2):
 
     INPUT:
 
-    -  ``X`` -- congruence subgroup or Dirichlet character
-       or integer
+    - ``X`` -- congruence subgroup or Dirichlet character
+      or integer
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- weight (integer)
 
     EXAMPLES::
 
@@ -416,10 +416,10 @@ def dimension_eis(X, k=2):
 
     INPUT:
 
-    -  ``X`` -- congruence subgroup or Dirichlet character
-       or integer
+    - ``X`` -- congruence subgroup or Dirichlet character
+      or integer
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- integer; weight
 
     EXAMPLES::
 
@@ -488,9 +488,9 @@ def dimension_modular_forms(X, k=2):
 
     INPUT:
 
-    -  ``X`` -- congruence subgroup or Dirichlet character
+    - ``X`` -- congruence subgroup or Dirichlet character
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- integer; weight
 
     EXAMPLES::
 
@@ -539,10 +539,10 @@ def sturm_bound(level, weight=2):
 
     INPUT:
 
-    - ``level`` -- an integer (interpreted as a level for Gamma0) or a
-       congruence subgroup
+    - ``level`` -- integer (interpreted as a level for `\Gamma0`) or a
+      congruence subgroup
 
-    -  ``weight`` -- an integer `\geq 2` (default: 2)
+    - ``weight`` -- integer `\geq 2` (default: 2)
 
     EXAMPLES::
 

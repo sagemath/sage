@@ -33,12 +33,12 @@ class CryptoMiniSat(SatSolver):
 
     INPUT:
 
-    - ``verbosity`` -- an integer between 0 and 15 (default: 0). Verbosity.
+    - ``verbosity`` -- integer between 0 and 15 (default: 0)
 
-    - ``confl_limit`` -- an integer (default: ``None``). Abort after this many
+    - ``confl_limit`` -- integer (default: ``None``); abort after this many
       conflicts. If set to ``None``, never aborts.
 
-    - ``threads`` -- an integer (default: None). The number of thread to
+    - ``threads`` -- integer (default: ``None``); the number of thread to
       use. If set to ``None``, the number of threads used corresponds to the
       number of cpus.
 
@@ -74,7 +74,7 @@ class CryptoMiniSat(SatSolver):
 
         INPUT:
 
-        - ``decision`` -- accepted for compatibility with other solvers, ignored.
+        - ``decision`` -- accepted for compatibility with other solvers; ignored
 
         EXAMPLES::
 
@@ -119,9 +119,9 @@ class CryptoMiniSat(SatSolver):
 
         INPUT:
 
-        - ``lits`` -- a tuple of nonzero integers.
+        - ``lits`` -- tuple of nonzero integers
 
-        .. note::
+        .. NOTE::
 
             If any element ``e`` in ``lits`` has ``abs(e)`` greater
             than the number of variables generated so far, then new
@@ -147,10 +147,10 @@ class CryptoMiniSat(SatSolver):
 
         INPUT:
 
-        - ``lits`` -- a tuple of positive integers.
+        - ``lits`` -- tuple of positive integers
 
-        - ``rhs`` -- boolean (default: ``True``). Whether this XOR clause should
-          be evaluated to ``True`` or ``False``.
+        - ``rhs`` -- boolean (default: ``True``); whether this XOR clause should
+          be evaluated to ``True`` or ``False``
 
         EXAMPLES::
 

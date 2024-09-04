@@ -1,1 +1,1 @@
-python-pandocfilters
+python3-pandocfilters

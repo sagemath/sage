@@ -169,7 +169,7 @@ cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pre
     Lex BFS ordering of the 3-sun graph::
 
         sage: g = Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5), (3, 5), (3, 6), (4, 5), (5, 6)])
-        sage: g.lex_BFS(algorithm="fast")
+        sage: g.lex_BFS(algorithm='fast')
         [1, 2, 3, 5, 4, 6]
     """
     cdef uint32_t n = sd.n
@@ -234,7 +234,7 @@ cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pre
             pred[w] = v
 
 
-def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast"):
+def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm='fast'):
     r"""
     Perform a lexicographic breadth first search (LexBFS) on the graph.
 
@@ -249,12 +249,12 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
-    - ``algorithm`` -- string (default: ``"fast"``); algorithm to use among:
+    - ``algorithm`` -- string (default: ``'fast'``); algorithm to use among:
 
-      - ``"slow"`` -- This algorithm maintains for each vertex left in the graph
+      - ``'slow'`` -- this algorithm maintains for each vertex left in the graph
         a code corresponding to the vertices already removed. The vertex of
         maximal code (according to the lexicographic order) is then removed, and
         the codes are updated. See for instance [CK2008]_ for more details.  The
@@ -262,7 +262,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         `O(n + m)`, where `n` is the number of vertices and `m` is the number of
         edges, but our implementation is in `O(n^2)`.
 
-      - ``"fast"`` -- This algorithm uses the notion of *slices* to refine the
+      - ``'fast'`` -- this algorithm uses the notion of *slices* to refine the
         position of the vertices in the ordering. The time complexity of this
         algorithm is in `O(n + m)`, and our implementation follows that
         complexity for ``SparseGraph``. For ``DenseGraph``, the complexity is
@@ -273,7 +273,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     ALGORITHM:
 
-    The ``"fast"`` algorithm is the `O(n + m)` time algorithm proposed in
+    The ``'fast'`` algorithm is the `O(n + m)` time algorithm proposed in
     [HMPV2000]_, where `n` is the number of vertices and `m` is the number of
     edges. It uses the notion of *slices*, i.e., subsets of consecutive vertices
     in the ordering, and iteratively refines the slices by subdividing them into
@@ -328,9 +328,9 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
         sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
-        sage: G.lex_BFS(initial_vertex=2, algorithm="slow") in correct_anwsers
+        sage: G.lex_BFS(initial_vertex=2, algorithm='slow') in correct_anwsers
         True
-        sage: G.lex_BFS(initial_vertex=2, algorithm="fast") in correct_anwsers
+        sage: G.lex_BFS(initial_vertex=2, algorithm='fast') in correct_anwsers
         True
 
     For a Chordal Graph, a reversed Lex BFS is a Perfect Elimination Order::
@@ -353,9 +353,9 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
         sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
-        sage: G.lex_BFS(initial_vertex='000', algorithm="fast")
+        sage: G.lex_BFS(initial_vertex='000', algorithm='fast')
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_BFS(initial_vertex='000', algorithm="slow")
+        sage: G.lex_BFS(initial_vertex='000', algorithm='slow')
         ['000', '001', '100', '010', '011', '110', '101', '111']
         sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
@@ -371,18 +371,18 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         sage: from sage.graphs.traversals import _is_valid_lex_BFS_order
         sage: G = graphs.RandomChordalGraph(15)
         sage: v0 = ZZ.random_element(G.order())
-        sage: L = G.lex_BFS(initial_vertex=v0, algorithm="fast")
+        sage: L = G.lex_BFS(initial_vertex=v0, algorithm='fast')
         sage: _is_valid_lex_BFS_order(G, L)
         True
-        sage: L = G.lex_BFS(initial_vertex=v0, algorithm="slow")
+        sage: L = G.lex_BFS(initial_vertex=v0, algorithm='slow')
         sage: _is_valid_lex_BFS_order(G, L)
         True
         sage: G = digraphs.RandomDirectedGNP(15, .3)
         sage: v0 = ZZ.random_element(G.order())
-        sage: L = G.lex_BFS(initial_vertex=v0, algorithm="fast")
+        sage: L = G.lex_BFS(initial_vertex=v0, algorithm='fast')
         sage: _is_valid_lex_BFS_order(G, L)
         True
-        sage: L = G.lex_BFS(initial_vertex=v0, algorithm="slow")
+        sage: L = G.lex_BFS(initial_vertex=v0, algorithm='slow')
         sage: _is_valid_lex_BFS_order(G, L)
         True
 
@@ -412,7 +412,6 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -506,7 +505,7 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     Loops and multiple edges are ignored during the computation of ``lex_UP``
@@ -598,7 +597,6 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -683,7 +681,7 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     Loops and multiple edges are ignored during the computation of ``lex_DFS``
@@ -774,7 +772,6 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -860,7 +857,7 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     Loops and multiple edges are ignored during the computation of ``lex_DOWN``
@@ -952,7 +949,6 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -1045,7 +1041,7 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
     - ``labels`` -- boolean (default: ``False``); whether to return the labels
       assigned to each vertex
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     - ``algorithm`` -- string (default: ``None``); one of the following
@@ -1150,7 +1146,6 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in self:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -1206,7 +1201,7 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
     - ``labels`` -- boolean (default: ``False``); whether to return the labels
       assigned to each vertex
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider. If not specified, an arbitrary vertex is chosen.
 
     OUTPUT:
@@ -1273,7 +1268,6 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -1360,7 +1354,7 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
     - ``triangulation`` -- boolean (default: ``False``); whether to return the
       triangulation of given graph produced by the method
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to consider
 
     OUTPUT:
 
@@ -1421,7 +1415,6 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -1630,7 +1623,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to consider
 
     OUTPUT:
 
@@ -1761,7 +1754,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     if tree:
         D = DiGraph([int_to_vertex, [(int_to_vertex[i], int_to_vertex[pred[i]])
                                      for i in range(N) if pred[i] != i]],
-                    format="vertices_and_edges")
+                    format='vertices_and_edges')
         return alpha, D
 
     return alpha
@@ -1805,7 +1798,7 @@ cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_ve
     - ``sd`` -- a ``short_digraph`` as documented in
       :mod:`~sage.graphs.base.static_sparse_graph`
 
-    - ``initial_vertex`` -- int; initial vertex for the search
+    - ``initial_vertex`` -- integer; initial vertex for the search
 
     - ``alpha`` -- int array of size `N`; the computed ordering of MCS-M
 
@@ -1957,7 +1950,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
 
     - ``G`` -- a Sage graph
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to consider
 
     OUTPUT: a tuple `(\alpha, F, X)`, where
 

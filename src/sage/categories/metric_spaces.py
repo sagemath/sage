@@ -227,7 +227,7 @@ class MetricSpaces(MetricSpacesCategory):
 
     class Homsets(HomsetsCategory):
         """
-        The category of homsets of metric spaces
+        The category of homsets of metric spaces.
 
         It consists of the metric maps, that is, the Lipschitz functions
         with Lipschitz constant 1.

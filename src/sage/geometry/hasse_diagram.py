@@ -30,11 +30,11 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
 
     INPUT:
 
-    - ``atom_to_coatoms`` -- list, ``atom_to_coatom[i]`` should list all
-      coatoms over the ``i``-th atom;
+    - ``atom_to_coatoms`` -- list; ``atom_to_coatom[i]`` should list all
+      coatoms over the ``i``-th atom
 
-    - ``coatom_to_atoms`` -- list, ``coatom_to_atom[i]`` should list all
-      atoms under the ``i``-th coatom;
+    - ``coatom_to_atoms`` -- list; ``coatom_to_atom[i]`` should list all
+      atoms under the ``i``-th coatom
 
     - ``face_constructor`` -- function or class taking as the first two
       arguments sorted :class:`tuple` of integers and any keyword arguments.
@@ -42,15 +42,15 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
       argument and under coatoms passed as the second argument. Default
       implementation will just return these two tuples as a tuple;
 
-    - ``required_atoms`` -- list of atoms (default:None). Each
+    - ``required_atoms`` -- list of atoms (default: ``None``); each
       non-empty "face" requires at least one of the specified atoms
       present. Used to ensure that each face has a vertex.
 
-    - ``key`` -- any hashable value (default: None). It is passed down
-      to :class:`~sage.combinat.posets.posets.FinitePoset`.
+    - ``key`` -- any hashable value (default: ``None``); it is passed down
+      to :class:`~sage.combinat.posets.posets.FinitePoset`
 
     - all other keyword arguments will be passed to ``face_constructor`` on
-      each call.
+      each call
 
     OUTPUT:
 

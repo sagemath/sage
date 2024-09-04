@@ -139,7 +139,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
     - ``x`` -- a number
 
-    - ``method`` -- should be either ``"floor"`` or ``"ceil"``
+    - ``method`` -- should be either ``'floor'`` or ``'ceil'``
 
     - ``bits`` -- how many bits to use before giving up
 
@@ -320,7 +320,6 @@ class Function_ceil(BuiltinFunction):
         #. If none of the above work, Sage returns a
            ``Expression`` object.
 
-
         EXAMPLES::
 
             sage: # needs sage.symbolic
@@ -416,7 +415,7 @@ class Function_ceil(BuiltinFunction):
     #FIXME: this should be moved to _eval_
     def __call__(self, x, **kwds):
         """
-        Allows an object of this class to behave like a function. If
+        Allow an object of this class to behave like a function. If
         ``ceil`` is an instance of this class, we can do ``ceil(n)`` to get
         the ceiling of ``n``.
 
@@ -493,7 +492,6 @@ class Function_floor(BuiltinFunction):
 
         #. If none of the above work, Sage returns a
            symbolic ``Expression`` object.
-
 
         EXAMPLES::
 
@@ -585,7 +583,7 @@ class Function_floor(BuiltinFunction):
     #FIXME: this should be moved to _eval_
     def __call__(self, x, **kwds):
         """
-        Allows an object of this class to behave like a function. If
+        Allow an object of this class to behave like a function. If
         ``floor`` is an instance of this class, we can do ``floor(n)`` to
         obtain the floor of ``n``.
 
@@ -846,7 +844,6 @@ class Function_real_nth_root(BuiltinFunction):
             sage: f = real_nth_root(x, 3)                                               # needs sage.symbolic
             sage: f._sympy_()                                                           # needs sympy sage.symbolic
             Piecewise((Abs(x)**(1/3)*sign(x), Eq(im(x), 0)), (x**(1/3), True))
-
         """
         BuiltinFunction.__init__(self, "real_nth_root", nargs=2,
                                  conversions=dict(sympy='real_root',
@@ -1048,7 +1045,6 @@ class Function_arg(BuiltinFunction):
             0
             sage: arg(sqrt(2)+i)
             arg(sqrt(2) + I)
-
         """
         if isinstance(x,Expression):
             if x.is_trivial_zero():
@@ -1123,7 +1119,7 @@ arg = Function_arg()
 class Function_real_part(GinacFunction):
     def __init__(self):
         r"""
-        Returns the real part of the (possibly complex) input.
+        Return the real part of the (possibly complex) input.
 
         It is possible to prevent automatic evaluation using the
         ``hold`` parameter::
@@ -1199,7 +1195,7 @@ class Function_real_part(GinacFunction):
                                                 sympy='re',
                                                 mathematica='Re',
                                                 giac='re', fricas='real'),
-                               alt_name="real")
+                               alt_name='real')
 
     def __call__(self, x, **kwargs):
         r"""
@@ -1220,7 +1216,7 @@ real = real_part = Function_real_part()
 class Function_imag_part(GinacFunction):
     def __init__(self):
         r"""
-        Returns the imaginary part of the (possibly complex) input.
+        Return the imaginary part of the (possibly complex) input.
 
         It is possible to prevent automatic evaluation using the
         ``hold`` parameter::
@@ -1263,7 +1259,7 @@ class Function_imag_part(GinacFunction):
                                                 mathematica='Im',
                                                 fricas='imag',
                                                 giac='im'),
-                               alt_name="imag")
+                               alt_name='imag')
 
     def __call__(self, x, **kwargs):
         r"""
@@ -1287,7 +1283,7 @@ imag = imag_part = imaginary = Function_imag_part()
 class Function_conjugate(GinacFunction):
     def __init__(self):
         r"""
-        Returns the complex conjugate of the input.
+        Return the complex conjugate of the input.
 
         It is possible to prevent automatic evaluation using the
         ``hold`` parameter::
@@ -1376,15 +1372,14 @@ conjugate = Function_conjugate()
 class Function_factorial(GinacFunction):
     def __init__(self):
         r"""
-        Returns the factorial of `n`.
+        Return the factorial of `n`.
 
         INPUT:
 
-        -  ``n`` -- a non-negative integer, a complex number (except negative
-           integers) or any symbolic expression
+        - ``n`` -- a nonnegative integer, a complex number (except negative
+          integers) or any symbolic expression
 
-
-        OUTPUT: an integer or symbolic expression
+        OUTPUT: integer or symbolic expression
 
         EXAMPLES::
 
@@ -1433,7 +1428,7 @@ class Function_factorial(GinacFunction):
             sage: factorial(-32)
             Traceback (most recent call last):
             ...
-            ValueError: factorial only defined for non-negative integers
+            ValueError: factorial only defined for nonnegative integers
 
         And very large integers remain unevaluated::
 
@@ -1572,7 +1567,7 @@ factorial = Function_factorial()
 class Function_binomial(GinacFunction):
     def __init__(self):
         r"""
-        Return the binomial coefficient
+        Return the binomial coefficient.
 
         .. MATH::
 
@@ -1591,8 +1586,8 @@ class Function_binomial(GinacFunction):
 
         INPUT:
 
-        -  ``x``, ``m`` -- numbers or symbolic expressions. Either ``m``
-           or ``x-m`` must be an integer, else the output is symbolic.
+        - ``x``, ``m`` -- numbers or symbolic expressions; either ``m``
+          or ``x-m`` must be an integer, else the output is symbolic
 
         OUTPUT: number or symbolic expression (if input is symbolic)
 
@@ -1829,7 +1824,6 @@ class Function_sum(BuiltinFunction):
             Sum(k, (k, 1, n))
             sage: s._sympy_().doit()                                                    # needs sympy
             n**2/2 + n/2
-
         """
         import sympy
         return sympy.Sum(term, (k, a, n))
