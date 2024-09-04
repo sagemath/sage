@@ -68,9 +68,9 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
     - ``twisting_map`` -- either an endomorphism of the base ring, or
       a (twisted) derivation of it
 
-    - ``names`` -- a string or a list of strings
+    - ``names`` -- string or list of strings
 
-    - ``sparse`` -- a boolean (default: ``False``); currently not supported
+    - ``sparse`` -- boolean (default: ``False``); currently not supported
 
     EXAMPLES:
 
@@ -304,7 +304,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             <class 'sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_field_with_category'>
 
         If there is no twisting derivation and that the twisting morphism is
-        `None` ot the identity, a regular `PolynomialRing` is created, unless
+        ``None`` ot the identity, a regular `PolynomialRing` is created, unless
         specified otherwise::
 
             sage: # needs sage.rings.finite_rings
@@ -348,7 +348,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         except IndexError:
             raise NotImplementedError("multivariate Ore polynomials rings not supported")
 
-        # If `polcast` is `True` and there is no twisting morphism and no
+        # If `polcast` is ``True`` and there is no twisting morphism and no
         # twisting derivation we return a classical polynomial ring
         if polcast and derivation is None and morphism is None:
             return PolynomialRing(base_ring, names, sparse=sparse)
@@ -660,7 +660,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``var`` -- a string representing the name of the new variable
+        - ``var`` -- string representing the name of the new variable
 
         EXAMPLES::
 
@@ -709,7 +709,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         EXAMPLES::
 
@@ -972,7 +972,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         - ``degree`` -- (default: ``(-1,2)``) integer with degree
           or a tuple of integers with minimum and maximum degrees
 
-        - ``monic`` -- (default: ``False``) if ``True``, return a monic
+        - ``monic`` -- boolean (default: ``False``); if ``True``, return a monic
           Ore polynomial
 
         - ``*args``, ``**kwds`` -- passed on to the ``random_element`` method
@@ -1014,7 +1014,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         TESTS:
 
         If the first tuple element is greater than the second, a
-        :class:`ValueError` is raised::
+        :exc:`ValueError` is raised::
 
             sage: S.random_element(degree=(5,4))                                        # needs sage.rings.finite_rings
             Traceback (most recent call last):
@@ -1062,14 +1062,14 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``degree`` -- Integer with degree (default: 2)
-           or a tuple of integers with minimum and maximum degrees
+        - ``degree`` -- integer with degree (default: 2)
+          or a tuple of integers with minimum and maximum degrees
 
-        -  ``monic`` -- if ``True``, returns a monic Ore polynomial
-           (default: ``True``)
+        - ``monic`` -- if ``True``, returns a monic Ore polynomial
+          (default: ``True``)
 
-        -  ``*args, **kwds`` -- passed in to the ``random_element`` method for
-           the base ring
+        - ``*args``, ``**kwds`` -- passed in to the ``random_element`` method for
+          the base ring
 
         EXAMPLES::
 

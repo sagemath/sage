@@ -627,7 +627,7 @@ def _qepcad_atoms(formula):
 
     INPUT:
 
-    - `formula` (string) -- a quantifier-free formula.
+    - ``formula`` -- string; a quantifier-free formula
 
     .. NOTE::
 
@@ -773,7 +773,7 @@ class Qepcad_expect(ExtraTabCompletion, Expect):
             Qepcad
         """
         Expect.__init__(self,
-                        name="QEPCAD",
+                        name='QEPCAD',
                         # yuck: when QEPCAD first starts,
                         # it doesn't give prompts
                         prompt="\nEnter an .*:\r",
@@ -1528,7 +1528,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         sage: qepcad(qf.all_but_finitely_many(x, a*x^2 + b*x + c != 0))    # not tested (random order)
         b /= 0 \/ a /= 0 \/ c /= 0
 
-    The non-zeroes are continuous iff there are no zeroes or if
+    The nonzeroes are continuous iff there are no zeroes or if
     the polynomial is zero. ::
 
         sage: qepcad(qf.connected_subset(x, a*x^2 + b*x + c != 0))         # not tested (random order)
@@ -1871,12 +1871,12 @@ class qepcad_formula_factory:
 
         INPUT:
 
-        - ``formulas`` -- a list of unquantified formulas
+        - ``formulas`` -- list of unquantified formulas
 
         OUTPUT:
 
-        - form_strs -- a list of formulas as strings
-        - vars -- a frozenset of all variables in the formulas
+        - ``form_strs`` -- list of formulas as strings
+        - ``vars`` -- frozenset of all variables in the formulas
 
         EXAMPLES::
 
@@ -1947,7 +1947,7 @@ class qepcad_formula_factory:
 
     def formula(self, formula):
         r"""
-        Constructs a QEPCAD formula from the given input.
+        Construct a QEPCAD formula from the given input.
 
         INPUT:
 

@@ -57,7 +57,7 @@ cdef size_t PyLong_nails = 8*sizeof(digit) - PyLong_SHIFT
 
 cdef mpz_get_pylong_large(mpz_srcptr z):
     """
-    Convert a non-zero ``mpz`` to a Python ``long``.
+    Convert a nonzero ``mpz`` to a Python ``long``.
     """
     cdef size_t nbits = mpz_sizeinbase(z, 2)
     cdef size_t pylong_size = (nbits + PyLong_SHIFT - 1) // PyLong_SHIFT

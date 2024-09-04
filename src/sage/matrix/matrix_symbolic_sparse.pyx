@@ -177,7 +177,6 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
         """
         Echelonize using the classical algorithm.
 
-
         TESTS::
 
             sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]], sparse=True)
@@ -185,7 +184,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             [1 0]
             [0 1]
         """
-        return super().echelonize(algorithm="classical", **kwds)
+        return super().echelonize(algorithm='classical', **kwds)
 
     def eigenvalues(self, extend=True):
         """
@@ -486,7 +485,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         INPUT:
 
-        - ``var`` -- (default: 'x') name of variable of charpoly
+        - ``var`` -- (default: ``'x'``) name of variable of charpoly
 
         EXAMPLES::
 
@@ -576,7 +575,6 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             sage: m = matrix([[x]], sparse=True)
             sage: m.minimal_polynomial('y')
             y - x
-
         """
         mp = self.fetch('minpoly')
         if mp is None:
@@ -593,7 +591,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         INPUT:
 
-        - ``var`` -- (default: 'x') name of variable of charpoly
+        - ``var`` -- (default: ``'x'``) name of variable of charpoly
 
         EXAMPLES::
 
@@ -612,7 +610,6 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             (x^2 - 65*x - 250) * x^3
             sage: list(a.fcp())
             [(x^2 - 65*x - 250, 1), (x, 3)]
-
         """
         from sage.symbolic.ring import SR
         sub_dict = {var: SR.var(var)}
@@ -786,11 +783,9 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         INPUT:
 
-        - ``self`` -- the matrix whose entries we should simplify.
+        - ``self`` -- the matrix whose entries we should simplify
 
-        OUTPUT:
-
-        A copy of ``self`` with all of its entries simplified.
+        OUTPUT: a copy of ``self`` with all of its entries simplified
 
         EXAMPLES:
 
@@ -805,7 +800,6 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             sage: A.simplify_full()
             [                1    sin(1/(x + 1))]
             [     factorial(n) x^(-a + 1)*sin(2)]
-
         """
         M = self.parent()
         return M([expr.simplify_full() for expr in self])

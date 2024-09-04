@@ -37,7 +37,7 @@ class MultiGraphics(WithEqualityById, SageObject):
 
     INPUT:
 
-    - ``graphics_list`` -- a list of graphics along with their positions on the
+    - ``graphics_list`` -- list of graphics along with their positions on the
       common canvas; each element of ``graphics_list`` is either
 
       - a pair ``(graphics, position)``, where ``graphics`` is a
@@ -123,7 +123,6 @@ class MultiGraphics(WithEqualityById, SageObject):
          Graphics object consisting of 1 graphics primitive]
         sage: len(G)
         3
-
     """
     def __init__(self, graphics_list):
         r"""
@@ -164,7 +163,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             'Graphics Array of size 1 x 3'
             sage: G
             Graphics Array of size 1 x 3
-
         """
         return str(self)
 
@@ -186,7 +184,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             sage: G = graphics_array([Graphics(), Graphics()], 1, 2)
             sage: G._rich_repr_(dm)
             OutputImagePng container
-
         """
         types = display_manager.types
         prefer_raster = (
@@ -214,7 +211,7 @@ class MultiGraphics(WithEqualityById, SageObject):
 
     def __getitem__(self, i):
         r"""
-        Return the ``i``th element of the list of graphics composing ``self``.
+        Return the ``i``-th element of the list of graphics composing ``self``.
 
         EXAMPLES:
 
@@ -232,13 +229,12 @@ class MultiGraphics(WithEqualityById, SageObject):
             sage: G = graphics_array(L, 5, 2)
             sage: G[3]
             Graphics object consisting of 2 graphics primitives
-
         """
         return self._glist[i]
 
     def __setitem__(self, i, g):
         r"""
-        Set the ``i``th element of the list of graphics composing ``self``.
+        Set the ``i``-th element of the list of graphics composing ``self``.
 
         EXAMPLES::
 
@@ -253,7 +249,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             ....:                                  color='purple')
             sage: G[1] # a circle and some purple points
             Graphics object consisting of 2 graphics primitives
-
         """
         self._glist[i] = g
 
@@ -267,7 +262,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             sage: G = graphics_array(L, 2, 3)
             sage: len(G)
             6
-
         """
         return len(self._glist)
 
@@ -355,7 +349,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             <Figure size 640x480 with 3 Axes>
             sage: fig2
             <Figure size 640x480 with 3 Axes>
-
         """
         from matplotlib.figure import Figure
         glist = self._glist
@@ -394,7 +387,7 @@ class MultiGraphics(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``filename`` -- (string) the file name; the image format is given by
+        - ``filename`` -- string; the file name. The image format is given by
           the extension, which can be one of the following:
 
             * ``.eps``,
@@ -429,7 +422,6 @@ class MultiGraphics(WithEqualityById, SageObject):
 
             sage: graphics_array([]).save(F)
             sage: graphics_array([[]]).save(F)
-
         """
         from matplotlib import rcParams
         ext = os.path.splitext(filename)[1].lower()
@@ -516,7 +508,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             ....:           for n in range(3)] for m in range(1,3)]
             sage: G = graphics_array(plots)
             sage: G.save_image(tmp_filename(ext='.png'))
-
         """
         self.save(filename, *args, **kwds)
 
@@ -526,11 +517,9 @@ class MultiGraphics(WithEqualityById, SageObject):
 
         INPUT:
 
-        All keyword arguments will be passed to the plotter.
+        - ``**kwds`` -- all keyword arguments will be passed to the plotter
 
-        OUTPUT:
-
-        A string of PGF commands to plot ``self``
+        OUTPUT: string of PGF commands to plot ``self``
 
         EXAMPLES::
 
@@ -539,7 +528,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             '%% Creator: Matplotlib, PGF backend\n%%\n%'
 
         The above doctest fails on macOS due to the following Matplotlib issue: https://github.com/matplotlib/matplotlib/issues/10307
-
         """
         tmpfilename = tmp_filename(ext='.pgf')
         self.save(filename=tmpfilename, **kwds)
@@ -617,7 +605,6 @@ class MultiGraphics(WithEqualityById, SageObject):
                                 [plot(tan), plot(sec)]])
             sphinx_plot(G, axes=False, frame=True, figsize=4, fontsize=8, \
                         gridlines='major')
-
         """
         from sage.repl.rich_output import get_display_manager
         dm = get_display_manager()
@@ -634,7 +621,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             sage: G = multi_graphics([g1, g2])
             sage: G.plot() is G
             True
-
         """
         return self
 
@@ -658,9 +644,7 @@ class MultiGraphics(WithEqualityById, SageObject):
           ``fontsize`` has been explicitly set in the construction of
           ``graphics`` (in this case, it is not overwritten here)
 
-        OUTPUT:
-
-        - instance of :class:`~sage.plot.multigraphics.MultiGraphics`
+        OUTPUT: instance of :class:`~sage.plot.multigraphics.MultiGraphics`
 
         EXAMPLES:
 
@@ -698,7 +682,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             G = graphics_array([plot(sin, (0, 2*pi)), plot(cos, (0, 2*pi))])
             c = circle((0,0), 1, color='red', thickness=2, frame=True)
             sphinx_plot(G.inset(c, pos=(0.3, 0.7, 0.2, 0.2), fontsize=8))
-
         """
         if pos is None:
             pos = (0.7, 0.7, 0.2, 0.2)
@@ -718,7 +701,7 @@ class MultiGraphics(WithEqualityById, SageObject):
     #
     def __str__(self):
         r"""
-        String representation of ``self``
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -735,7 +718,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             sage: G = MultiGraphics([c, c, c])
             sage: str(G)
             'Multigraphics with 3 elements'
-
         """
         n = len(self._glist)
         if n <= 1:
@@ -753,12 +735,10 @@ class MultiGraphics(WithEqualityById, SageObject):
         INPUT:
 
         - ``figure`` -- a Matplotlib ``Figure`` object
-        - ``index`` -- integer specifiying the element of ``self``
+        - ``index`` -- integer specifying the element of ``self``
         - ``options`` -- extra options to be passed to ``Figure.add_axes``
 
-        OUTPUT:
-
-        - a Matplotlib ``Axes`` object
+        OUTPUT: a Matplotlib ``Axes`` object
 
         EXAMPLES::
 
@@ -789,7 +769,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             ....:     numpy.set_printoptions(legacy="1.25")
             sage: ax1.get_position().bounds  # tol 1.0e-13
             (0.2, 0.3, 0.4000000000000001, 0.10000000000000003)
-
         """
         # Note: using label=str(index) ensures that a new Axes is generated
         # for each element of ``self``, even if some elements share the same
@@ -804,7 +783,7 @@ class MultiGraphics(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``index`` -- integer specifiying which element of ``self``
+        - ``index`` -- integer specifying which element of ``self``
 
         OUTPUT:
 
@@ -821,7 +800,6 @@ class MultiGraphics(WithEqualityById, SageObject):
             (0.125, 0.11, 0.775, 0.77)
             sage: G.position(1)  # tol 1.0e-13
             (0.15, 0.2, 0.1, 0.15)
-
         """
         return self._positions[index]
 
@@ -906,7 +884,6 @@ class MultiGraphics(WithEqualityById, SageObject):
         .. SEEALSO::
 
             :meth:`inset`
-
         """
         from matplotlib import rcParams
         if not isinstance(graphics, Graphics):
@@ -1084,7 +1061,6 @@ class GraphicsArray(MultiGraphics):
         G = graphics_array([[g1, g2], [g3, g4]])
         G[0] = g4
         sphinx_plot(G)
-
     """
     def __init__(self, array):
         r"""
@@ -1138,7 +1114,6 @@ class GraphicsArray(MultiGraphics):
             Traceback (most recent call last):
             ...
             TypeError: every element of array must be a Graphics object
-
         """
         MultiGraphics.__init__(self, [])
         if not isinstance(array, (list, tuple)):
@@ -1178,7 +1153,6 @@ class GraphicsArray(MultiGraphics):
             'Graphics Array of size 2 x 3'
             sage: str(G)
             'Graphics Array of size 2 x 3'
-
         """
         return f"Graphics Array of size {self._rows} x {self._cols}"
 
@@ -1193,12 +1167,10 @@ class GraphicsArray(MultiGraphics):
         INPUT:
 
         - ``figure`` -- a Matplotlib ``Figure`` object
-        - ``index`` -- integer specifiying the element of ``self``
+        - ``index`` -- integer specifying the element of ``self``
         - ``options`` -- extra options to be passed to ``Figure.add_subplot``
 
-        OUTPUT:
-
-        - a Matplotlib ``Axes`` object
+        OUTPUT: a Matplotlib ``Axes`` object
 
         EXAMPLES::
 
@@ -1212,7 +1184,6 @@ class GraphicsArray(MultiGraphics):
             sage: ax2 = G._add_subplot(fig, 1)
             sage: fig.get_axes() == [ax1, ax2]
             True
-
         """
         if self._rows == 0 or self._cols == 0:
             rows = 1
@@ -1236,7 +1207,6 @@ class GraphicsArray(MultiGraphics):
             2
             sage: graphics_array(L).nrows()
             1
-
         """
         return self._rows
 
@@ -1272,7 +1242,6 @@ class GraphicsArray(MultiGraphics):
             ...
             NotImplementedError: Appending to a graphics array is not yet
              implemented
-
         """
         # Not clear if there is a way to do this
         raise NotImplementedError('Appending to a graphics array is not '
@@ -1285,7 +1254,7 @@ class GraphicsArray(MultiGraphics):
 
         INPUT:
 
-        - ``index`` -- integer specifiying which element of ``self``
+        - ``index`` -- integer specifying which element of ``self``
 
         OUTPUT:
 
@@ -1311,7 +1280,6 @@ class GraphicsArray(MultiGraphics):
              0.20212705964722733,
              0.4489880779745068,
              0.5986507706326758)
-
         """
         if not self._positions:
             # self._positions must be generated, by invoking get_position() on
