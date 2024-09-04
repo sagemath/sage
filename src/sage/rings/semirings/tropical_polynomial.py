@@ -383,7 +383,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         if len(data) == 1:
             gradient = list(data)[0]
             intercept = data[gradient].lift()
-            f = intercept + gradient * x
+            f = intercept + gradient*x
             return f
 
         unique_root = sorted(set(self.roots()))
