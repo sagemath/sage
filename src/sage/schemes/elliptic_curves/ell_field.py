@@ -2312,7 +2312,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
               'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)', None),
              ('y^2 + x*y + y = x^3 + 4*x + (-6)',
               'y^2 + x*y + y = x^3 + (-36)*x + (-70)', None)]
-
             sage: G3 = E.isogeny_ell_graph(3, directed=False)
             sage: G3.vertices(sort=True)
             ['y^2 + x*y + y = x^3 + (-1)*x',

@@ -331,7 +331,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
             #dereference(g.neighbors[j]) = i
             if edge_labelled:
                 edge_labels[g.neighbors[j] - g.edges] = e[2]
-            postincrement(g.neighbors[j]) # increment pointer to next item
+            postincrement(g.neighbors[j])  # increment pointer to next item
 
     # Reinitializing the value of neighbors
     for i in range(g.n-1, 0, -1):

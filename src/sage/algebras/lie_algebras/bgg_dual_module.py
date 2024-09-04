@@ -202,7 +202,11 @@ class BGGDualModule(CombinatorialFreeModule):
             sage: M = g.verma_module(La[1] + La[4] - 1/3*La[5])
             sage: Mc = M.dual()
             sage: elt = Mc.an_element(); elt
-            f[-alpha[2]]^2*f[-alpha[5]]^2*f[-alpha[3]]^3*v[Lambda[1] + Lambda[4] - 1/3*Lambda[5]]^* + 2*f[-alpha[2]]*v[Lambda[1] + Lambda[4] - 1/3*Lambda[5]]^* + 3*f[-alpha[5]]*v[Lambda[1] + Lambda[4] - 1/3*Lambda[5]]^* + v[Lambda[1] + Lambda[4] - 1/3*Lambda[5]]^*
+            f[-alpha[2]]^2*f[-alpha[5]]^2*f[-alpha[3]]^3*v[Lambda[1]
+             + Lambda[4] - 1/3*Lambda[5]]^* + 2*f[-alpha[2]]*v[Lambda[1]
+             + Lambda[4] - 1/3*Lambda[5]]^* + 3*f[-alpha[5]]*v[Lambda[1]
+             + Lambda[4] - 1/3*Lambda[5]]^* + v[Lambda[1] + Lambda[4]
+             - 1/3*Lambda[5]]^*
             sage: [M.degree_on_basis(m) for m in elt.support()]
             [3*Lambda[1] - Lambda[2] - 2*Lambda[3] + 4*Lambda[4] - 4/3*Lambda[5],
              Lambda[1] + Lambda[4] - 1/3*Lambda[5],
