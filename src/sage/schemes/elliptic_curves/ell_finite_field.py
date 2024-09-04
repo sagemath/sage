@@ -2868,7 +2868,7 @@ def EllipticCurve_with_prime_order(N):
 
     ALGORITHM: [BS2007]_, Algorithm 2.2
     """
-    from sage.arith.misc import is_prime, kronecker
+    from sage.arith.misc import is_prime, legendre_symbol
     from sage.combinat.subset import powerset
     from sage.functions.other import ceil
     from sage.misc.functional import symbolic_prod as product, log
@@ -2879,7 +2879,7 @@ def EllipticCurve_with_prime_order(N):
     if not is_prime(N):
         raise ValueError("input order is not prime")
 
-    # The algorithm consists of multiple ‘search rounds’ for a suitable
+    # The algorithm consists of multiple "search rounds" for a suitable
     # discriminant `D`, `r` defines the number of rounds. We expect this
     # algorithm to terminate after a number of rounds that is polynomial in
     # loglog N.
@@ -2890,8 +2890,10 @@ def EllipticCurve_with_prime_order(N):
 
     while True:
         # Iterating over the odd primes by chunks of size log(`N`).
-        S.extend(p for p in prime_range(prime_start, prime_end)
-                 if kronecker(N, p) == 1)
+        for p in prime_range(prime_start, prime_end):
+            if legendre_symbol(N, p) == 1:
+                # Equivalent to p* = (-1)^((p - 1) / 2) * p in [BS2007]_ page 5.
+                S.append(-p if p >> 1 & 1 else p)
 
         # Every possible products of distinct elements of `S`.
         # There probably is a more optimal way to compute all possible products
@@ -2899,32 +2901,31 @@ def EllipticCurve_with_prime_order(N):
         # done multiple times.
         for e in powerset(S):
             D = product(e)
-            if -D % 8 != 5:
+            if D % 8 != 5 or D >= 0 or D >= prime_start^2:
                 continue
 
-            Q = BinaryQF([1, 0, D])
-            sol = Q.solve_integer(4 * N)
+            Q = BinaryQF([1, 0, -D])
+            sol = Q.solve_integer(4 * N, algorithm='cornacchia')
             if sol is None:
                 continue
 
             x, _ = sol
-            p1 = N + 1 - x
-            p2 = N + 1 + x
-            for p_i in [p1, p2]:
+            for p_i in [N + 1 - x, N + 1 + x]:
                 if is_prime(p_i):
-                    H = hilbert_class_polynomial(-D)
-                    for j0, _ in H.roots(ring=GF(p_i)):
+                    H = hilbert_class_polynomial(D)
+                    for j0 in H.roots(ring=GF(p_i), multiplicities=False):
                         E = EllipticCurve(j=j0)
-                        if E.order() == N:
-                            return E
-                        else:
-                            for Et in E.twists():
-                                if Et.order() == N:
-                                    return Et
+                        # `E.twists()` also contains E.
+                        for Et in E.twists():
+                            if Et.order() == N:
+                                return Et
 
         # At this point, no discriminant has been found, moving to next round
         # and extending the prime list.
         r += 1
 
-        prime_start = prime_end
+        # For small `N`, the value `(r+1)log(N)` can be less than 3. When that's
+        # the case, we don't need to worry about prime duplicates in `S` since
+        # it will be empty.
+        prime_start = max(3, prime_end)
         prime_end = ceil((r + 1) * log(N))
