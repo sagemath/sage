@@ -180,7 +180,7 @@ cdef hypergraph h_init(int n,list H) noexcept:
     cdef hypergraph h
     h.n          = n
     h.m          = len(H)
-    h.limbs      = (n+63)//64 # =ceil(n/64)
+    h.limbs      = (n+63) // 64  # =ceil(n/64)
     h.names      = <int *>  sig_malloc(sizeof(int)*n)
     h.sets       = <uint64_t **> sig_malloc(h.m*sizeof(uint64_t *))
     h.set_space  = <uint64_t *>  sig_calloc(h.m*(h.limbs+1),sizeof(uint64_t))

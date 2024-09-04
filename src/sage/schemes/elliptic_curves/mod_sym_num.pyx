@@ -456,7 +456,7 @@ cdef int best_proj_point(llong u, llong v, llong N,
     else:  # cases like (p:q) mod p*q drop here
         p = llgcd(u, N)
         q = llgcd(v, N)
-        Nnew = N // p // q
+        Nnew = (N // p) // q
         w = ((u // p) * llinvmod(v // q, Nnew)) % Nnew
         y0 = N // q
         y1 = <llong>0
