@@ -313,7 +313,7 @@ def find_object_modules(obj):
     from sage.misc import sageinspect
 
     # see if the object is defined in its own module
-    # might be wrong for class instances as the instanciation might appear
+    # might be wrong for class instances as the instantiation might appear
     # outside of the module !!
     module_name = None
     if sageinspect.isclassinstance(obj):
