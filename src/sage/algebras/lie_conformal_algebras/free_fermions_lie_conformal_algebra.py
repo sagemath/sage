@@ -125,7 +125,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
         names,index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)
-        fermiondict = {(i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
+        fermiondict = {(i,j): {0: {('K', 0): gram_matrix[index_set.rank(i),
                     index_set.rank(j)]}} for i in index_set for j in index_set}
 
         from sage.rings.rational_field import QQ
