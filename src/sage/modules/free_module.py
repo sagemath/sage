@@ -213,6 +213,8 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sequence import Sequence
+from sage.categories.morphism import Morphism
+from sage.matrix.constructor import matrix
 
 
 ###############################################################################
@@ -3109,6 +3111,41 @@ class FreeModule_generic(Module_free_ambient):
             R = pushout(self.base_ring(), im_gens.base_ring())
             codomain = R**n
         return super().hom(im_gens, codomain, **kwds)
+
+    def PseudoHom(self, twist=None, codomain=None):
+        r"""
+        Create the Pseudo Hom space corresponding to given twist data.
+
+        EXAMPLES::
+
+            sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(twist); PHS
+            Set of Pseudomorphisms from Vector space of dimension 2 over Finite Field in z2 of size 5^2 to Vector space of dimension 2 over Finite Field in z2 of size 5^2
+            Twisted by the morphism Frobenius endomorphism z2 |--> z2^5 on Finite Field in z2 of size 5^2
+
+        """
+        from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
+        return FreeModulePseudoHomspace(self, codomain=codomain, twist=twist)
+
+    def pseudohom(self, morphism, twist=None, codomain=None, **kwds):
+        r"""
+        Create a pseudomorphism defined by a given morphism and twist.
+        Let A be a ring and M a free module over A. Let \theta: A \to A
+
+        EXAMPLES::
+
+            sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism()
+            sage: ph = M.pseudohom([[1, 2], [0, 1]], twist, side="right"); ph
+            Free module pseudomorphism defined as left-multiplication by the matrix
+            [1 2]
+            [0 1]
+            twisted by the morphism Frobenius endomorphism z2 |--> z2^5 on Finite Field in z2 of size 5^2
+            Domain: Vector space of dimension 2 over Finite Field in z2 of size 5^2
+            Codomain: Vector space of dimension 2 over Finite Field in z2 of size 5^2
+        """
+        from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
+        side = kwds.get("side", "left")
+        return FreeModulePseudoMorphism(self.PseudoHom(twist=twist, codomain=codomain), morphism, side)
 
     def inner_product_matrix(self):
         """
