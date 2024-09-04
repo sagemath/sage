@@ -40,6 +40,7 @@ REFERENCES:
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.comp import Components, CompFullyAntiSym
 
+
 class FreeModuleAltForm(FreeModuleTensor):
     r"""
     Alternating form on a free module of finite rank over a commutative ring.
