@@ -50,7 +50,7 @@ dependencies = [
     'ipython >=7.13.0',
     'pexpect >=4.8.0',
     # From Makefile.in: DOC_DEPENDENCIES
-    'sphinx >=7.4.7, <9'
+    'sphinx >=7.4.7, <9',
     'networkx >=2.4',
     # 1.8 is known good version.
     # Per https://docs.scipy.org/doc/scipy/dev/core-dev/index.html#version-numbering
