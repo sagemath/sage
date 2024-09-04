@@ -832,8 +832,11 @@ class GenericGraph(GenericGraph_pyx):
 
     def _bit_vector(self):
         """
-        Return a string representing the edges of the (simple) graph for
-        ``graph6`` and ``dig6`` strings.
+        Return a string representing the edges of the graph for ``graph6``
+        and ``dig6`` strings.
+
+        The graph must be simple; loops are allowed only if the graph is
+        directed, and multiple edges are never allowed.
 
         EXAMPLES::
 
@@ -863,7 +866,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: P.canonical_label(algorithm='sage')._bit_vector()
             '001100001111000000011010100110100011'
         """
-        self._scream_if_not_simple()
+        self._scream_if_not_simple(allow_loops=self._directed)
         n = self.order()
         if self._directed:
             total_length = n * n

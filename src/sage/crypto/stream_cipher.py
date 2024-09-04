@@ -14,6 +14,7 @@ from .lfsr import lfsr_sequence
 from .cipher import SymmetricKeyCipher
 from sage.monoids.string_monoid_element import StringMonoidElement
 
+
 class LFSRCipher(SymmetricKeyCipher):
     def __init__(self, parent, poly, IS):
         """
@@ -142,6 +143,7 @@ class LFSRCipher(SymmetricKeyCipher):
             [0, 1]
         """
         return self.key()[1]
+
 
 class ShrinkingGeneratorCipher(SymmetricKeyCipher):
     def __init__(self, parent, e1, e2):

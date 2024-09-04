@@ -2770,10 +2770,27 @@ def spqr_tree_to_graph(T):
         sage: H.is_isomorphic(G)
         True
 
-    TESTS::
+    TESTS:
+
+    Check that the method is working for the empty SPQR tree::
 
         sage: H = spqr_tree_to_graph(Graph())
         sage: H.is_isomorphic(Graph())
+        True
+
+    Check that :issue:`38527` is fixed::
+
+        sage: from sage.graphs.connectivity import spqr_tree, spqr_tree_to_graph
+        sage: G = Graph('LlCG{O@?GBoMw?')
+        sage: T1 = spqr_tree(G, algorithm="Hopcroft_Tarjan")
+        sage: T2 = spqr_tree(G, algorithm="cleave")
+        sage: T1.is_isomorphic(T2)
+        True
+        sage: G1 = spqr_tree_to_graph(T1)
+        sage: G2 = spqr_tree_to_graph(T2)
+        sage: G.is_isomorphic(G1)
+        True
+        sage: G.is_isomorphic(G2)
         True
     """
     from sage.graphs.graph import Graph
@@ -2781,11 +2798,23 @@ def spqr_tree_to_graph(T):
 
     count_G = Counter()
     count_P = Counter()
+    vertex_to_int = dict()
     for t, g in T:
+        for u in g:
+            if u not in vertex_to_int:
+                vertex_to_int[u] = len(vertex_to_int)
         if t in ['P', 'Q']:
-            count_P.update(g.edge_iterator())
+            for u, v, label in g.edge_iterator():
+                if vertex_to_int[u] < vertex_to_int[v]:
+                    count_P[u, v, label] += 1
+                else:
+                    count_P[v, u, label] += 1
         else:
-            count_G.update(g.edge_iterator())
+            for u, v, label in g.edge_iterator():
+                if vertex_to_int[u] < vertex_to_int[v]:
+                    count_G[u, v, label] += 1
+                else:
+                    count_G[v, u, label] += 1
 
     G = Graph(multiedges=True)
     for e, num in count_G.items():

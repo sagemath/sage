@@ -93,7 +93,7 @@ cpdef tuple _unflatten_coeffs(field, tuple eq_tup):
     Restore cyclotomic coefficient object from its tuple of rational
     coefficients representation.
 
-    Used to circumvent pickling issue introduced by PARI settigs
+    Used to circumvent pickling issue introduced by PARI settings
     in :issue:`30537`.
 
     EXAMPLES::
@@ -447,7 +447,7 @@ cpdef dict compute_known_powers(max_degs, dict val_dict, one):
     - ``max_deg`` -- an ``ETuple`` indicating the maximal degree of
       each variable
     - ``val_dict`` -- dictionary of ``(var_idx, poly_tup)`` key-value pairs
-    - ``poly_tup`` -- tuple of ``(ETuple, coeff)`` pairs reperesenting a
+    - ``poly_tup`` -- tuple of ``(ETuple, coeff)`` pairs representing a
       multivariate polynomial
 
     EXAMPLES::
