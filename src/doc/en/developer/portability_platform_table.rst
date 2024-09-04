@@ -1564,59 +1564,167 @@
 .. |codespace-fedora-40-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-40-maximal%2Fdevcontainer.json
 
-.. |image-centos-stream-9-python3.9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-system-packages
+.. |image-fedora-41-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-minimal-with-system-packages
 
-.. |image-centos-stream-9-python3.9-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-minimal-configured
+.. |image-fedora-41-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-minimal-configured
 
-.. |image-centos-stream-9-python3.9-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-targets-pre
+.. |image-fedora-41-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-minimal-with-targets-pre
 
-.. |image-centos-stream-9-python3.9-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-targets
+.. |image-fedora-41-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-minimal-with-targets
 
-.. |image-centos-stream-9-python3.9-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-targets-optional
+.. |image-fedora-41-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-minimal-with-targets-optional
 
-.. |codespace-centos-stream-9-python3.9-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.9-minimal%2Fdevcontainer.json
+.. |codespace-fedora-41-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-41-minimal%2Fdevcontainer.json
 
-.. |image-centos-stream-9-python3.9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-system-packages
+.. |image-fedora-41-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-standard-with-system-packages
 
-.. |image-centos-stream-9-python3.9-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-standard-configured
+.. |image-fedora-41-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-standard-configured
 
-.. |image-centos-stream-9-python3.9-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-targets-pre
+.. |image-fedora-41-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-standard-with-targets-pre
 
-.. |image-centos-stream-9-python3.9-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-targets
+.. |image-fedora-41-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-standard-with-targets
 
-.. |image-centos-stream-9-python3.9-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-targets-optional
+.. |image-fedora-41-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-standard-with-targets-optional
 
-.. |codespace-centos-stream-9-python3.9-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.9-standard%2Fdevcontainer.json
+.. |codespace-fedora-41-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-41-standard%2Fdevcontainer.json
 
-.. |image-centos-stream-9-python3.9-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-maximal-with-system-packages
+.. |image-fedora-41-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-maximal-with-system-packages
 
-.. |image-centos-stream-9-python3.9-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-maximal-configured
+.. |image-fedora-41-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-maximal-configured
 
-.. |image-centos-stream-9-python3.9-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-maximal-with-targets-pre
+.. |image-fedora-41-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-maximal-with-targets-pre
 
-.. |image-centos-stream-9-python3.9-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-maximal-with-targets
+.. |image-fedora-41-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-maximal-with-targets
 
-.. |image-centos-stream-9-python3.9-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-maximal-with-targets-optional
+.. |image-fedora-41-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-fedora-41-maximal-with-targets-optional
 
-.. |codespace-centos-stream-9-python3.9-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.9-maximal%2Fdevcontainer.json
+.. |codespace-fedora-41-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-41-maximal%2Fdevcontainer.json
+
+.. |image-centos-stream-9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-minimal-with-system-packages
+
+.. |image-centos-stream-9-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-minimal-configured
+
+.. |image-centos-stream-9-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-minimal-with-targets-pre
+
+.. |image-centos-stream-9-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-minimal-with-targets
+
+.. |image-centos-stream-9-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-minimal-with-targets-optional
+
+.. |codespace-centos-stream-9-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-minimal%2Fdevcontainer.json
+
+.. |image-centos-stream-9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-standard-with-system-packages
+
+.. |image-centos-stream-9-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-standard-configured
+
+.. |image-centos-stream-9-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-standard-with-targets-pre
+
+.. |image-centos-stream-9-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-standard-with-targets
+
+.. |image-centos-stream-9-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-standard-with-targets-optional
+
+.. |codespace-centos-stream-9-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-standard%2Fdevcontainer.json
+
+.. |image-centos-stream-9-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-maximal-with-system-packages
+
+.. |image-centos-stream-9-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-maximal-configured
+
+.. |image-centos-stream-9-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-maximal-with-targets-pre
+
+.. |image-centos-stream-9-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-maximal-with-targets
+
+.. |image-centos-stream-9-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-maximal-with-targets-optional
+
+.. |codespace-centos-stream-9-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-maximal%2Fdevcontainer.json
+
+.. |image-centos-stream-9-python3.12-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-minimal-with-system-packages
+
+.. |image-centos-stream-9-python3.12-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-minimal-configured
+
+.. |image-centos-stream-9-python3.12-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-minimal-with-targets-pre
+
+.. |image-centos-stream-9-python3.12-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-minimal-with-targets
+
+.. |image-centos-stream-9-python3.12-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-minimal-with-targets-optional
+
+.. |codespace-centos-stream-9-python3.12-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.12-minimal%2Fdevcontainer.json
+
+.. |image-centos-stream-9-python3.12-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-system-packages
+
+.. |image-centos-stream-9-python3.12-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-standard-configured
+
+.. |image-centos-stream-9-python3.12-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-targets-pre
+
+.. |image-centos-stream-9-python3.12-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-targets
+
+.. |image-centos-stream-9-python3.12-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-targets-optional
+
+.. |codespace-centos-stream-9-python3.12-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.12-standard%2Fdevcontainer.json
+
+.. |image-centos-stream-9-python3.12-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-maximal-with-system-packages
+
+.. |image-centos-stream-9-python3.12-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-maximal-configured
+
+.. |image-centos-stream-9-python3.12-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-maximal-with-targets-pre
+
+.. |image-centos-stream-9-python3.12-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-maximal-with-targets
+
+.. |image-centos-stream-9-python3.12-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-maximal-with-targets-optional
+
+.. |codespace-centos-stream-9-python3.12-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.12-maximal%2Fdevcontainer.json
 
 .. |image-almalinux-8-python3.9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-system-packages
@@ -2593,16 +2701,38 @@
    * -    ‑*maximal*
      - |image-fedora-40-maximal-with-system-packages| |image-fedora-40-maximal-with-targets-pre|
      -
-   * - **centos**-stream-9-python3.9 
+   * - **fedora**-41 
        
           ‑*minimal*
-     - |image-centos-stream-9-python3.9-minimal-with-system-packages| |image-centos-stream-9-python3.9-minimal-with-targets-pre| |image-centos-stream-9-python3.9-minimal-with-targets| |image-centos-stream-9-python3.9-minimal-with-targets-optional|
-     - |codespace-centos-stream-9-python3.9-minimal|
+     - |image-fedora-41-minimal-with-system-packages| |image-fedora-41-minimal-with-targets-pre| |image-fedora-41-minimal-with-targets| |image-fedora-41-minimal-with-targets-optional|
+     - |codespace-fedora-41-minimal|
    * -    ‑*standard*
-     - |image-centos-stream-9-python3.9-standard-with-system-packages| |image-centos-stream-9-python3.9-standard-with-targets-pre| |image-centos-stream-9-python3.9-standard-with-targets| |image-centos-stream-9-python3.9-standard-with-targets-optional|
-     - |codespace-centos-stream-9-python3.9-standard|
+     - |image-fedora-41-standard-with-system-packages| |image-fedora-41-standard-with-targets-pre| |image-fedora-41-standard-with-targets| |image-fedora-41-standard-with-targets-optional|
+     - |codespace-fedora-41-standard|
    * -    ‑*maximal*
-     - |image-centos-stream-9-python3.9-maximal-with-system-packages| |image-centos-stream-9-python3.9-maximal-with-targets-pre|
+     - |image-fedora-41-maximal-with-system-packages| |image-fedora-41-maximal-with-targets-pre|
+     -
+   * - **centos**-stream-9 
+       
+          ‑*minimal*
+     - |image-centos-stream-9-minimal-with-system-packages| |image-centos-stream-9-minimal-with-targets-pre| |image-centos-stream-9-minimal-with-targets| |image-centos-stream-9-minimal-with-targets-optional|
+     - |codespace-centos-stream-9-minimal|
+   * -    ‑*standard*
+     - |image-centos-stream-9-standard-with-system-packages| |image-centos-stream-9-standard-with-targets-pre| |image-centos-stream-9-standard-with-targets| |image-centos-stream-9-standard-with-targets-optional|
+     - |codespace-centos-stream-9-standard|
+   * -    ‑*maximal*
+     - |image-centos-stream-9-maximal-with-system-packages| |image-centos-stream-9-maximal-with-targets-pre|
+     -
+   * - **centos**-stream-9-python3.12 
+       
+          ‑*minimal*
+     - |image-centos-stream-9-python3.12-minimal-with-system-packages| |image-centos-stream-9-python3.12-minimal-with-targets-pre| |image-centos-stream-9-python3.12-minimal-with-targets| |image-centos-stream-9-python3.12-minimal-with-targets-optional|
+     - |codespace-centos-stream-9-python3.12-minimal|
+   * -    ‑*standard*
+     - |image-centos-stream-9-python3.12-standard-with-system-packages| |image-centos-stream-9-python3.12-standard-with-targets-pre| |image-centos-stream-9-python3.12-standard-with-targets| |image-centos-stream-9-python3.12-standard-with-targets-optional|
+     - |codespace-centos-stream-9-python3.12-standard|
+   * -    ‑*maximal*
+     - |image-centos-stream-9-python3.12-maximal-with-system-packages| |image-centos-stream-9-python3.12-maximal-with-targets-pre|
      -
    * - **almalinux**-8-python3.9 
        

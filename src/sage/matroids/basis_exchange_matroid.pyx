@@ -652,7 +652,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__max_independent(self._output, self._input)
         return self.__unpack(self._output)
 
-    cpdef int _rank(self, frozenset F):
+    cpdef int _rank(self, frozenset F) except? -1:
         """
         Compute the rank of a subset of the groundset.
 
@@ -796,7 +796,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__max_coindependent(self._output, self._input)
         return self.__unpack(self._output)
 
-    cpdef int _corank(self, frozenset F):
+    cpdef int _corank(self, frozenset F) noexcept:
         """
         Return the corank of a set.
 
@@ -940,7 +940,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__augment(self._output, self._input, self._input2)
         return self.__unpack(self._output)
 
-    cpdef bint _is_independent(self, frozenset F):
+    cpdef bint _is_independent(self, frozenset F) noexcept:
         """
         Test if input is independent.
 
@@ -2231,7 +2231,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         return self._characteristic_setsystem()._isomorphism(other._characteristic_setsystem(), PS, PO) is not None
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if the data obey the matroid axioms.
 

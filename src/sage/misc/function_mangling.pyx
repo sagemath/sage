@@ -295,7 +295,7 @@ cdef class ArgumentFixer:
         cdef Py_ssize_t i
         for i in range(lenargs, nargs):
             # in addition to the positional arguments, we take the
-            # ones with default values, unless they are overridded by
+            # ones with default values, unless they are overridden by
             # the named arguments.
             name = arg_names[i]
             if name in kwargs:
