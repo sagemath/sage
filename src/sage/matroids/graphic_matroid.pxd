@@ -7,23 +7,23 @@ cdef class GraphicMatroid(Matroid):
     cdef dict _vertex_map
     cdef dict _groundset_edge_map
     cpdef frozenset groundset(self)
-    cpdef int _rank(self, frozenset X)
+    cpdef int _rank(self, frozenset X) except? -1
     cpdef _vertex_stars(self)
     cpdef _minor(self, contractions, deletions)
     cpdef _has_minor(self, N, bint certificate=*)
-    cpdef int _corank(self, frozenset X)
-    cpdef bint _is_circuit(self, frozenset X)
+    cpdef int _corank(self, frozenset X) noexcept
+    cpdef bint _is_circuit(self, frozenset X) noexcept
     cpdef frozenset _closure(self, frozenset X)
     cpdef frozenset _max_independent(self, frozenset X)
     cpdef frozenset _max_coindependent(self, frozenset X)
     cpdef frozenset _circuit(self, frozenset X)
     cpdef frozenset _coclosure(self, frozenset X)
-    cpdef bint _is_closed(self, frozenset X)
+    cpdef bint _is_closed(self, frozenset X) noexcept
     cpdef _is_isomorphic(self, other, certificate=*)
     cpdef _isomorphism(self, other)
-    cpdef bint is_valid(self)
-    cpdef bint is_graphic(self)
-    cpdef bint is_regular(self)
+    cpdef bint is_valid(self) noexcept
+    cpdef bint is_graphic(self) noexcept
+    cpdef bint is_regular(self) noexcept
     cpdef graph(self)
     cpdef vertex_map(self)
     cpdef list groundset_to_edges(self, X)

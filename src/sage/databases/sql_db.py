@@ -98,6 +98,7 @@ sqlite_keywords = ['ABORT','ACTION','ADD','AFTER','ALL','ALTER','ANALYZE',
     'UNIQUE','UPDATE','USING','VACUUM','VALUES','VIEW','VIRTUAL','WHEN',
     'WHERE']
 
+
 def regexp(expr, item):
     """
     Function to define regular expressions in pysqlite.
@@ -178,6 +179,7 @@ def verify_column(col_dict):
     if verify_type(col_dict['sql']):
         d['sql'] = col_dict['sql']
     return d
+
 
 def verify_operator(operator):
     """
@@ -274,6 +276,8 @@ def construct_skeleton(database):
 
 
 p = 0
+
+
 def _create_print_table(cur, col_titles, **kwds):
     r"""
     Create a nice printable table from the cursor given with the given
@@ -396,6 +400,7 @@ def _create_print_table(cur, col_titles, **kwds):
         ret += '\n' + '-' * max_field_size * len(col_titles) + '\n'
         ret += '\n'.join([row_str(row, False) for row in cur])
     return ret
+
 
 class SQLQuery(SageObject):
     def __init__(self, database, *args, **kwds):
