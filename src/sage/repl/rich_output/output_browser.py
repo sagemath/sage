@@ -12,6 +12,7 @@ from sage.repl.rich_output.buffer import OutputBuffer
 latex_re = re.compile(r'<html>(?P<mathstart>\\\[|\\\()(?P<latex>.*)(?P<mathend>\\\]|\\\))</html>',
                       flags=re.DOTALL)
 
+
 class OutputHtml(OutputBase):
 
     def __init__(self, html):

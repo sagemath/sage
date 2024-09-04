@@ -42,6 +42,7 @@ import sage.rings.integer_ring as integer_ring
 QQ = rational_field.RationalField()
 ZZ = integer_ring.IntegerRing()
 
+
 class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
     """
     An ideal of a relative number field.
@@ -881,6 +882,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         if p.ring() != self.number_field():
             raise ValueError("p (= %s) must be an ideal in %s" % self.number_field())
         return self.absolute_ideal().valuation(p.absolute_ideal())
+
 
 def is_NumberFieldFractionalIdeal_rel(x):
     """

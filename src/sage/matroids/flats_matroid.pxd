@@ -8,9 +8,9 @@ cdef class FlatsMatroid(Matroid):
     cdef object _L  # lattice of flats
     cpdef frozenset groundset(self)
 
-    cpdef int _rank(self, frozenset X)
+    cpdef int _rank(self, frozenset X) except? -1
     cpdef frozenset _closure(self, frozenset X)
-    cpdef bint _is_closed(self, frozenset X)
+    cpdef bint _is_closed(self, frozenset X) noexcept
 
     cpdef full_rank(self)
 
@@ -24,4 +24,4 @@ cdef class FlatsMatroid(Matroid):
     cpdef relabel(self, mapping)
 
     # verification
-    cpdef bint is_valid(self)
+    cpdef bint is_valid(self) noexcept
