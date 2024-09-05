@@ -873,7 +873,7 @@ class DiGraph(GenericGraph):
         r"""
         Return the ``dig6`` representation of the digraph as an ASCII string.
 
-        This is only valid for single (no multiple edges) digraphs on at most
+        This is only valid for simple (no multiple edges) digraphs on at most
         `2^{18} - 1 = 262143` vertices.
 
         .. NOTE::
@@ -893,6 +893,9 @@ class DiGraph(GenericGraph):
             sage: D = DiGraph({0: [1, 2], 1: [2], 2: [3], 3: [0]})
             sage: D.dig6_string()
             'CW`_'
+            sage: L = DiGraph({0: [1, 2], 1: [2], 2: [3], 3: [3]})
+            sage: L.dig6_string()
+            'CW`C'
 
         TESTS::
 

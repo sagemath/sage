@@ -2054,6 +2054,7 @@ def OA_from_wider_OA(OA,k):
         return OA
     return [L[:k] for L in OA]
 
+
 class OAMainFunctions:
     r"""
     Functions related to orthogonal arrays.

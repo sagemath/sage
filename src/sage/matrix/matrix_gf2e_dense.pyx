@@ -443,7 +443,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         finite field is small, there is a very high chance that
         ``e * B[j]`` is computed more than once for any ``e`` in the finite
         field. Instead, we compute all possible
-        multiples of ``B[j]`` and re-use this data in the inner loop.
+        multiples of ``B[j]`` and reuse this data in the inner loop.
         This is what is called a "Newton-John" table in M4RIE.
 
         INPUT:
