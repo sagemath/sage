@@ -1062,8 +1062,8 @@ cdef class SliceDecomposition(SageObject):
         for i in range(len(self.sigma)):
             l = self.xslice_len[i]
             label = r"\ ".join(sigma_latex[i:i+l])
-            lines.append(f"  v{i}[as={bo}{label}{bc}];")
-            lines.append(f"  l{i}[draw=none,as={bo}{sigma_latex[i]}{bc}];")
+            lines.append(f"  v{i}[as={bo}${label}${bc}];")
+            lines.append(f"  l{i}[draw=none,as={bo}${sigma_latex[i]}${bc}];")
             j = i + 1
             slices[i].append(f"l{i}")
             while j < i + l:
