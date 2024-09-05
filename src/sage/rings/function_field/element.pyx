@@ -124,6 +124,7 @@ cdef class FunctionFieldElement(FieldElement):
         sage: isinstance(t, sage.rings.function_field.element.FunctionFieldElement)
         True
     """
+
     def __reduce__(self):
         """
         EXAMPLES::
@@ -138,7 +139,7 @@ cdef class FunctionFieldElement(FieldElement):
 
     cdef FunctionFieldElement _new_c(self):
         cdef type t = type(self)
-        cdef FunctionFieldElement x = <FunctionFieldElement>t.__new__(t)
+        cdef FunctionFieldElement x = <FunctionFieldElement > t.__new__(t)
         x._parent = self._parent
         return x
 
@@ -176,7 +177,6 @@ cdef class FunctionFieldElement(FieldElement):
             \frac{t + \frac{1}{2}}{t^{67}}
         """
         return self._x._latex_()
-
 
     def subs(self, in_dict=None, **kwds):
         r"""
@@ -378,6 +378,7 @@ cdef class FunctionFieldElement(FieldElement):
             1
         """
         # Helper method to do the recursion through base fields.
+
         def sub_recurse(self, sub_dict):
             ff = self.parent()
             if ff.base_field() == ff:
@@ -387,7 +388,6 @@ cdef class FunctionFieldElement(FieldElement):
                 for i, v in enumerate(list(self._x)):
                     total += sub_recurse(v, sub_dict) * sub_dict[ff.gen()]**i
                 return ff(total)
-
 
         if in_dict is None and kwds is None:
             return self
@@ -431,7 +431,6 @@ cdef class FunctionFieldElement(FieldElement):
         if made_substitution:
             return sub_recurse(self, sub_dict)
         return self
-
 
     @cached_method
     def matrix(self, base=None):
@@ -507,7 +506,7 @@ cdef class FunctionFieldElement(FieldElement):
         # with this element; make matrix whose rows are the coefficients of the
         # result, and transpose
         V, f, t = self.parent().vector_space(base)
-        rows = [ t(self*f(b)) for b in V.basis() ]
+        rows = [t(self*f(b)) for b in V.basis()]
         from sage.matrix.matrix_space import MatrixSpace
         MS = MatrixSpace(V.base_field(), V.dimension())
         ret = MS(rows)
@@ -585,7 +584,7 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f.degree()
             1
         """
-        return max(self._x.denominator().degree(),self._x.numerator().degree())
+        return max(self._x.denominator().degree(),s elf._x.numerator().degree())
 
     def characteristic_polynomial(self, *args, **kwds):
         """
@@ -940,7 +939,7 @@ cdef class FunctionFieldElement(FieldElement):
         v = self.valuation(place)
         if v > 0:
             return R.zero()
-        if v  == 0:
+        if v == 0:
             return to_R(self)
         # v < 0
         raise ValueError('has a pole at the place')
