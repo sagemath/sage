@@ -335,7 +335,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
                     f'The polynomial {p} does not define a ZZ-divisor!'
                 m_coeffs = dualcone.Hilbert_coefficients(m)
                 result += coefficient * prod(R.gen(i)**m_coeffs[i]
-                                             for i in range(0, R.ngens()))
+                                             for i in range(R.ngens()))
             return result
 
         # construct the affine algebraic scheme to use as patch
@@ -353,7 +353,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         if cone.is_smooth():
             x = ambient.coordinate_ring().gens()
             phi = []
-            for i in range(0, fan.nrays()):
+            for i in range(fan.nrays()):
                 if i in cone.ambient_ray_indices():
                     phi.append(pullback_polynomial(x[i]))
                 else:
@@ -512,7 +512,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         if '_dimension' in self.__dict__:
             return self._dimension
         npatches = self.ambient_space().fan().ngenerating_cones()
-        dims = [self.affine_patch(i).dimension() for i in range(0, npatches)]
+        dims = [self.affine_patch(i).dimension() for i in range(npatches)]
         self._dimension = max(dims)
         return self._dimension
 
@@ -581,7 +581,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         if '_smooth' in self.__dict__:
             return self._smooth
         npatches = self.ambient_space().fan().ngenerating_cones()
-        self._smooth = all(self.affine_patch(i).is_smooth() for i in range(0, npatches))
+        self._smooth = all(self.affine_patch(i).is_smooth()
+                           for i in range(npatches))
         return self._smooth
 
     def is_nondegenerate(self):
@@ -691,7 +692,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
                                 enumerate(SR.subs(divide).gens())])
             return ideal, Jac_patch + SR_patch
 
-        for dim in range(0, fan.dim() + 1):
+        for dim in range(fan.dim() + 1):
             for cone in fan(dim):
                 ideal1, ideal2 = restrict(cone)
                 if ideal1.is_zero() or ideal2.dimension() != -1:
