@@ -1053,7 +1053,6 @@ class SagecodeTransform(SphinxTransform):
                             prev_node['classes'].append('with-sage-live-tab')
 
 
-
 class Ignore(SphinxDirective):
 
     has_content = True
