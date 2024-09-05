@@ -21,7 +21,7 @@ The class inheritance hierarchy is:
   - :class:`Algebra` (deprecated and essentially removed)
   - :class:`CommutativeRing`
 
-    - :class:`NoetherianRing` (deprecated)
+    - :class:`NoetherianRing` (deprecated and essentially removed)
     - :class:`CommutativeAlgebra` (deprecated and essentially removed)
     - :class:`IntegralDomain` (deprecated)
 
@@ -1160,8 +1160,7 @@ cdef class IntegralDomain(CommutativeRing):
          - ``category`` -- (default: ``None``) a category, or ``None``
 
         This method is used by all the abstract subclasses of
-        :class:`IntegralDomain`, like :class:`NoetherianRing`,
-        :class:`Field`, ... in order to
+        :class:`IntegralDomain`, like :class:`Field`, ... in order to
         avoid cascade calls Field.__init__ ->
         IntegralDomain.__init__ ->
         ...
@@ -1247,7 +1246,7 @@ cdef class NoetherianRing(CommutativeRing):
     _default_category = NoetherianRings()
 
     def __init__(self, *args, **kwds):
-        deprecation(37234, "use the category DedekindDomains")
+        deprecation(37234, "use the category NoetherianRings")
         super().__init__(*args, **kwds)
 
 
@@ -1306,6 +1305,11 @@ _Fields = Fields()
 cdef class Field(CommutativeRing):
     """
     Generic field
+
+    TESTS::
+
+        sage: QQ.is_noetherian()
+        True
     """
     _default_category = _Fields
 
@@ -1421,17 +1425,6 @@ cdef class Field(CommutativeRing):
         EXAMPLES::
 
             sage: Frac(ZZ['x,y']).is_integrally_closed()
-            True
-        """
-        return True
-
-    def is_noetherian(self):
-        """
-        Return ``True`` since fields are Noetherian rings.
-
-        EXAMPLES::
-
-            sage: QQ.is_noetherian()
             True
         """
         return True
