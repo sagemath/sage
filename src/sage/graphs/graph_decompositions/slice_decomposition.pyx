@@ -1057,7 +1057,7 @@ cdef class SliceDecomposition(SageObject):
                      r"tail anchor=center,head anchor=north,"
                      r"nodes={draw,rectangle,inner xsep=0.2em},edges={thick}]")
         lines.append("{")
-        bo, bc = "{", "}"  # to write { and } if f-strings
+        bo, bc = "{", "}"  # to write { and } in f-strings
         # Create the nodes and leaves of the slice decomposition tree
         for i in range(len(self.sigma)):
             l = self.xslice_len[i]
