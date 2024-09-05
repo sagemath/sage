@@ -584,7 +584,7 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f.degree()
             1
         """
-        return max(self._x.denominator().degree(),s elf._x.numerator().degree())
+        return max(self._x.denominator().degree(), self._x.numerator().degree())
 
     def characteristic_polynomial(self, *args, **kwds):
         """
