@@ -36,6 +36,7 @@ from sage.coding.guruswami_sudan.utils import (johnson_radius,
 from sage.functions.other import floor
 from sage.misc.functional import sqrt
 
+
 def n_k_params(C, n_k):
     r"""
     Internal helper function for the :class:`GRSGuruswamiSudanDecoder` class for
@@ -85,6 +86,7 @@ def n_k_params(C, n_k):
     elif n_k is not None:
         return n_k
 
+
 def roth_ruckenstein_root_finder(p, maxd=None, precision=None):
     """
     Wrapper for Roth-Ruckenstein algorithm to compute the roots of a polynomial
@@ -104,6 +106,7 @@ def roth_ruckenstein_root_finder(p, maxd=None, precision=None):
         p = p.polynomial(gens[1])
     return p.roots(multiplicities=False, degree_bound=maxd, algorithm='Roth-Ruckenstein')
 
+
 def alekhnovich_root_finder(p, maxd=None, precision=None):
     """
     Wrapper for Alekhnovich's algorithm to compute the roots of a polynomial
@@ -122,6 +125,7 @@ def alekhnovich_root_finder(p, maxd=None, precision=None):
     if len(gens) == 2:
         p = p.polynomial(gens[1])
     return p.roots(multiplicities=False, degree_bound=maxd, algorithm='Alekhnovich')
+
 
 class GRSGuruswamiSudanDecoder(Decoder):
     r"""

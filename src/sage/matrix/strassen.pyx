@@ -809,7 +809,7 @@ def test(n, m, R, c=2):
 
 ##         TODO -- the doctests below are currently not
 ##         tested/enabled/working -- enable them when linear algebra
-##         restructing gets going.
+##         restructuring gets going.
 
 ##         sage: dim1 = 64; dim2 = 83; dim3 = 101
 ##         sage: R = MatrixSpace(QQ, dim1, dim2)
