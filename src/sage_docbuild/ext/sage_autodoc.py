@@ -1578,7 +1578,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         cls: type[Documenter], member: Any, membername: str, isattr: bool, parent: Any,
     ) -> bool:
         return isinstance(member, type) or (
-            isattr and isinstance(member, NewType | TypeVar))
+            isattr and (inspect.isNewType(member) or isinstance(member, TypeVar)))
 
     def import_object(self, raiseerror: bool = False) -> bool:
         ret = super().import_object(raiseerror)
@@ -1651,7 +1651,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             # -------------------------------------------------------------------
             else:
                 self.doc_as_attr = True
-            if isinstance(self.object, NewType | TypeVar):
+            if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
                 modname = getattr(self.object, '__module__', self.modname)
                 if modname != self.modname and self.modname.startswith(modname):
                     bases = self.modname[len(modname):].strip('.').split('.')
@@ -1660,7 +1660,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         return ret
 
     def _get_signature(self) -> tuple[Any | None, str | None, Signature | None]:
-        if isinstance(self.object, NewType | TypeVar):
+        if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
             # Suppress signature
             return None, None, None
 
@@ -1845,14 +1845,14 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             self.directivetype = 'attribute'
         super().add_directive_header(sig)
 
-        if isinstance(self.object, NewType | TypeVar):
+        if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
             return
 
         if self.analyzer and '.'.join(self.objpath) in self.analyzer.finals:
             self.add_line('   :final:', sourcename)
 
         canonical_fullname = self.get_canonical_fullname()
-        if (not self.doc_as_attr and not isinstance(self.object, NewType)
+        if (not self.doc_as_attr and not inspect.isNewType(self.object)
                 and canonical_fullname and self.fullname != canonical_fullname):
             self.add_line('   :canonical: %s' % canonical_fullname, sourcename)
 
@@ -1989,7 +1989,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             return None
 
     def add_content(self, more_content: StringList | None) -> None:
-        if isinstance(self.object, NewType):
+        if inspect.isNewType(self.object):
             if self.config.autodoc_typehints_format == "short":
                 supertype = restify(self.object.__supertype__, "smart")
             else:
