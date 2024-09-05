@@ -46,8 +46,8 @@ body:
           - **OS**: Ubuntu 20.04
           - Sage Version: 9.2
       value: |
-          - **OS**:
-          - **Sage Version**:
+          - **OS**: 
+          - **Sage Version**: 
       render: markdown
     validations:
       required: true
