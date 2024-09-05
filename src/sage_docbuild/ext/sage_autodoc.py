@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import functools
 import operator
+import sys
 import re
 from inspect import Parameter, Signature
 from typing import TYPE_CHECKING, Any, ClassVar, NewType, TypeVar
