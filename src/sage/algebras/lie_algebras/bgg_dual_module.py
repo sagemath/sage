@@ -1153,6 +1153,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
         _lmul_ = _acted_upon_
         _rmul_ = _acted_upon_
 
+
 class FiniteDimensionalSimpleModule(SimpleModule):
     """
     A finite dimensional simple module.

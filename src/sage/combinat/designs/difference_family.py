@@ -85,6 +85,7 @@ def group_law(G):
     else:
         raise ValueError("%s does not seem to be a group" % G)
 
+
 def block_stabilizer(G, B):
     r"""
     Compute the left stabilizer of the block ``B`` under the action of ``G``.
@@ -328,6 +329,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
         print("It is a ({},{},{})-difference family".format(v, k, l))
     return True
 
+
 def singer_difference_set(q,d):
     r"""
     Return a difference set associated to the set of hyperplanes in a projective
@@ -411,6 +413,7 @@ def singer_difference_set(q,d):
 
     return Zmod((q**(d+1)-1)//(q-1)), [powers]
 
+
 def df_q_6_1(K, existence=False, check=True):
     r"""
     Return a `(q,6,1)`-difference family over the finite field `K`.
@@ -469,6 +472,7 @@ def df_q_6_1(K, existence=False, check=True):
         raise RuntimeError("Wilson 1972 construction failed! Please e-mail sage-devel@googlegroups.com")
 
     return D
+
 
 def radical_difference_set(K, k, l=1, existence=False, check=True):
     r"""
@@ -635,6 +639,7 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
 
     return D
 
+
 def one_cyclic_tiling(A,n):
     r"""
     Given a subset ``A`` of the cyclic additive group `G = Z / nZ` return
@@ -697,6 +702,7 @@ def one_cyclic_tiling(A,n):
     M = DLXMatrix(rows)
     for c in M:
         return [i-1 for i in c]
+
 
 def one_radical_difference_family(K, k):
     r"""
@@ -815,6 +821,7 @@ def one_radical_difference_family(K, k):
             d.insert(K.zero(),0)
     return D
 
+
 def radical_difference_family(K, k, l=1, existence=False, check=True):
     r"""
     Return a ``(v,k,l)``-radical difference family.
@@ -925,6 +932,7 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
 
     return D
 
+
 def twin_prime_powers_difference_set(p, check=True):
     r"""
     Return a difference set on `GF(p) \times GF(p+2)`.
@@ -979,6 +987,7 @@ def twin_prime_powers_difference_set(p, check=True):
                            "sage-devel@googlegroups.com".format(p))
 
     return G, [d]
+
 
 def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
     r"""
@@ -1052,6 +1061,7 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
 
     return (True, (q, a1//a2)) if return_parameters else True
 
+
 def mcfarland_1973_construction(q, s):
     r"""
     Return a difference set.
@@ -1115,6 +1125,7 @@ def mcfarland_1973_construction(q, s):
 
     return G,[D]
 
+
 def are_hadamard_difference_set_parameters(v, k, lmbda):
     r"""
     Check whether ``(v,k,lmbda)`` is of the form ``(4N^2, 2N^2 - N, N^2 - N)``.
@@ -1134,6 +1145,7 @@ def are_hadamard_difference_set_parameters(v, k, lmbda):
     N = k - 2*lmbda
     N2 = N*N
     return v == 4*N2 and k == 2*N2 - N and lmbda == N2 - N
+
 
 @cached_function
 def hadamard_difference_set_product_parameters(N):
@@ -1178,6 +1190,7 @@ def hadamard_difference_set_product_parameters(N):
 
     return None
 
+
 def hadamard_difference_set_product(G1, D1, G2, D2):
     r"""
     Make a product of two Hadamard difference sets.
@@ -1216,6 +1229,7 @@ def hadamard_difference_set_product(G1, D1, G2, D2):
                     (G((s1,s2)) for s1 in D1c for s2 in D2c))
 
     return G, [[s for s in G if s not in D]]
+
 
 def turyn_1965_3x3xK(k=4):
     r"""
@@ -1296,6 +1310,7 @@ def _is_periodic_sequence(seq, period):
         return False
     return True
 
+
 def _create_m_sequence(q, n, check=True):
     r"""
     Create an m-sequence over GF(q) with period `q^n - 1`.
@@ -1358,6 +1373,7 @@ def _create_m_sequence(q, n, check=True):
         assert _is_periodic_sequence(seq, period)
     return seq[:period]
 
+
 def _get_submodule_of_order(G, order):
     r"""
     Construct a submodule of the given order from group ``G``.
@@ -1386,6 +1402,7 @@ def _get_submodule_of_order(G, order):
         if H.order() == order:
             return H
     return None
+
 
 def relative_difference_set_from_m_sequence(q, N, check=True, return_group=False):
     r"""
@@ -1461,6 +1478,7 @@ def relative_difference_set_from_m_sequence(q, N, check=True, return_group=False
     if return_group:
         return G, set1
     return set1
+
 
 def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=False):
     r"""
