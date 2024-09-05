@@ -952,16 +952,6 @@ class SagecodeTransform(SphinxTransform):
     default_priority = 170
 
     def apply(self):
-        for node in self.document.findall(nodes.paragraph):
-            if isinstance(node.children[0], nodes.Text) and node.children[0].astext().strip() in ['EXAMPLE:', 'EXAMPLES:']:
-                text = node.children[0].astext()
-                parent = node.parent
-                index = parent.index(node)
-                parent.remove(node)
-                para = nodes.paragraph(classes=["example"])
-                para += nodes.Text(text)
-                parent.insert(index, para)
-
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
             for node in self.document.findall(nodes.literal_block):
                 if node.get('language') is None and node.astext().startswith('sage:'):
