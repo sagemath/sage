@@ -192,7 +192,7 @@ def divisors_to_string(divs):
 
     - ``divs`` -- a (possibly empty) list of numbers
 
-    OUTPUT: a string representation of these numbers
+    OUTPUT: string representation of these numbers
 
     EXAMPLES::
 

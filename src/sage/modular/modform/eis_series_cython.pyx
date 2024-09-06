@@ -23,12 +23,10 @@ cpdef Ek_ZZ(int k, int prec=10):
 
     INPUT:
 
-    - `k` -- int
-    - ``prec`` -- int
+    - ``k`` -- integer
+    - ``prec`` -- integer
 
-    OUTPUT:
-
-    - list of Sage Integers.
+    OUTPUT: list of integers
 
     EXAMPLES::
 
@@ -142,7 +140,7 @@ cpdef Ek_ZZ(int k, int prec=10):
 
 cpdef eisenstein_series_poly(int k, int prec=10):
     r"""
-    Return the q-expansion up to precision ``prec`` of the weight `k`
+    Return the `q`-expansion up to precision ``prec`` of the weight `k`
     Eisenstein series, as a FLINT :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly`
     object, normalised so the coefficients are integers with no common factor.
 

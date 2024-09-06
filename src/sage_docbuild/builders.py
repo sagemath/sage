@@ -442,6 +442,11 @@ class WebsiteBuilder(DocBuilder):
         """
         super().html()
         html_output_dir = self._output_dir('html')
+
+        # This file is used by src/doc/common/static/jupyter-sphinx-furo.js
+        # for doc version selector
+        shutil.copy2(os.path.join(self.dir, 'versions.txt'), html_output_dir)
+
         for f in os.listdir(html_output_dir):
             src = os.path.join(html_output_dir, f)
             dst = os.path.join(html_output_dir, '..', f)
@@ -451,9 +456,8 @@ class WebsiteBuilder(DocBuilder):
             else:
                 shutil.copy2(src, dst)
 
-        root_index_file = os.path.join(html_output_dir, '../../../index.html')
-        shutil.copy2(os.path.join(SAGE_DOC_SRC, self.lang, 'website', 'root_index.html'),
-                     root_index_file)
+        shutil.copy2(os.path.join(self.dir, 'root_index.html'),
+                     os.path.join(html_output_dir, '../../../index.html'))
 
     def pdf(self):
         """

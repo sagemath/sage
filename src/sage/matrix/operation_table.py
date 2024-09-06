@@ -61,13 +61,14 @@ class OperationTable(SageObject):
     - ``elements`` -- (default: ``None``)  A list of elements of ``S``,
       in forms that can be coerced into the structure, eg. their
       string representations. This may be used to impose an alternate
-      ordering on the elements of `S``, perhaps when this is used in
+      ordering on the elements of ``S``, perhaps when this is used in
       the context of a particular structure. The default is to use
-      whatever ordering the ``S.list()`` method returns. `elements``
+      whatever ordering the ``S.list()`` method returns. ``elements``
       can also be a subset which is closed under the operation, useful
       perhaps when the set is infinite.
 
     OUTPUT:
+
     An object with methods that abstracts multiplication tables,
     addition tables, Cayley tables, etc. It should be general
     enough to be useful for any finite algebraic structure
@@ -493,17 +494,18 @@ class OperationTable(SageObject):
         Helper function to create names of elements of algebraic structures.
 
         INPUT:
+
         Identical to the input for :class:`OperationTable` and :meth:`change_names`,
         so look there for details.
 
         OUTPUT:
 
-        - ``width`` -- an integer giving the maximum width of the strings
+        - ``width`` -- integer giving the maximum width of the strings
           describing the elements.  This is used for formatting the ASCII
           version of the table.
-        - ``name_list`` -- a list of strings naming the elements, in the
-          same order as given by the :meth:`list` method.
-        - ``name_dict`` -- a dictionary giving the correspondence between the
+        - ``name_list`` -- list of strings naming the elements, in the
+          same order as given by the :meth:`list` method
+        - ``name_dict`` -- dictionary giving the correspondence between the
           strings and the actual elements.  So the keys are the strings and
           the values are the elements of the structure.
 
@@ -599,12 +601,14 @@ class OperationTable(SageObject):
 
     def __getitem__(self, pair):
         r"""
-        Returns the element of the table, given the elements indexing its position.
+        Return the element of the table, given the elements indexing its position.
 
         INPUT:
-        - pair -- two elements of the structure
+
+        - ``pair`` -- two elements of the structure
 
         OUTPUT:
+
         The element of the structure computed by the operation for
         the two input elements (in the order provided).
 
@@ -659,13 +663,14 @@ class OperationTable(SageObject):
 
     def __eq__(self, other):
         r"""
-        Returns the comparison between two tables.
+        Return the comparison between two tables.
 
         INPUT:
 
-        - ``other`` -- a second table to compare to ``self``.
+        - ``other`` -- a second table to compare to ``self``
 
         OUTPUT:
+
         Tables are equal if they have the same operation and elements.
 
         EXAMPLES::
@@ -704,7 +709,7 @@ class OperationTable(SageObject):
 
     def _repr_(self):
         r"""
-        Returns a printable version of the operation table.
+        Return a printable version of the operation table.
 
         EXAMPLES::
 
@@ -729,8 +734,8 @@ class OperationTable(SageObject):
         INPUT:
 
         - ``ascii`` -- a single character for text table
-        - ``latex`` -- a string to represent an operation in LaTeX math mode.
-          Note the need for double-backslashes to escape properly.
+        - ``latex`` -- string to represent an operation in LaTeX math mode;
+          note the need for double-backslashes to escape properly
 
         EXAMPLES::
 
@@ -778,9 +783,9 @@ class OperationTable(SageObject):
 
     def column_keys(self):
         r"""
-        Returns a tuple of the elements used to build the table.
+        Return a tuple of the elements used to build the table.
 
-        .. note:: ``column_keys`` and ``row_keys`` are identical.
+        .. NOTE:: ``column_keys`` and ``row_keys`` are identical.
            Both list the elements in the order used to label the table.
 
         OUTPUT:
@@ -809,9 +814,10 @@ class OperationTable(SageObject):
 
     def translation(self):
         r"""
-        Returns a dictionary associating names with elements.
+        Return a dictionary associating names with elements.
 
         OUTPUT:
+
         A dictionary whose keys are strings used as names
         for entries of the table and values that are the
         actual elements of the algebraic structure.
@@ -828,10 +834,11 @@ class OperationTable(SageObject):
 
     def table(self):
         r"""
-        Returns the table as a list of lists,
+        Return the table as a list of lists,
         using integers to reference the elements.
 
         OUTPUT:
+
         The rows of the table, as a list of rows, each row
         being a list of integer entries.  The integers correspond
         to the order of the elements in the headings of the table
@@ -968,7 +975,8 @@ class OperationTable(SageObject):
 
         INPUT:
 
-        - ``element_names`` -- (default : ``True``) Whether to display text with element names on the image
+        - ``element_names`` -- (default: ``True``) whether to display text with
+          element names on the image
 
         - ``cmap`` -- (default: :obj:`matplotlib.cm.gist_rainbow`) color map for plot, see :mod:`matplotlib.cm`
 
@@ -1029,7 +1037,8 @@ class OperationTable(SageObject):
 
         INPUT:
 
-        - ``element_names`` -- (default: ``True``) whether to display text with element names on the image
+        - ``element_names`` -- boolean (default: ``True``); whether to display
+          text with element names on the image
 
         - ``**options`` -- passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
 
@@ -1051,7 +1060,7 @@ class OperationTable(SageObject):
 
     def _ascii_table(self):
         r"""
-        Returns a string that is an ASCII version of the table.
+        Return a string that is an ASCII version of the table.
 
         EXAMPLES::
 
@@ -1142,7 +1151,7 @@ class OperationTable(SageObject):
 
     def _latex_(self):
         r"""
-        Returns a `LaTeX` version of the operation table as a string,
+        Return a `LaTeX` version of the operation table as a string,
         using a `LaTeX` ``array`` environment.
 
         EXAMPLES::

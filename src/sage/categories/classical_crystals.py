@@ -82,7 +82,7 @@ class ClassicalCrystals(Category_singleton):
 
     def example(self, n=3):
         """
-        Returns an example of highest weight crystals, as per
+        Return an example of highest weight crystals, as per
         :meth:`Category.example`.
 
         EXAMPLES::
@@ -191,7 +191,7 @@ class ClassicalCrystals(Category_singleton):
 
         def character(self, R=None):
             """
-            Returns the character of this crystal.
+            Return the character of this crystal.
 
             INPUT:
 
@@ -214,7 +214,7 @@ class ClassicalCrystals(Category_singleton):
 
             One may specify an alternate :class:`WeylCharacterRing`::
 
-                sage: R = WeylCharacterRing("A2", style="coroots")
+                sage: R = WeylCharacterRing("A2", style='coroots')
                 sage: chiT = T.character(R); chiT
                 A2(0,0) + 2*A2(1,1) + A2(0,3) + A2(3,0) + A2(2,2)
                 sage: chiT in R
@@ -223,12 +223,11 @@ class ClassicalCrystals(Category_singleton):
             It should have the same Cartan type and use the same
             realization of the weight lattice as ``self``::
 
-                sage: R = WeylCharacterRing("A3", style="coroots")
+                sage: R = WeylCharacterRing("A3", style='coroots')
                 sage: T.character(R)
                 Traceback (most recent call last):
                 ...
                 ValueError: Weyl character ring does not have the right Cartan type
-
             """
             from sage.combinat.root_system.weyl_characters import WeylCharacterRing
             if R is None:
@@ -241,7 +240,7 @@ class ClassicalCrystals(Category_singleton):
 
         def __iter__(self):
             r"""
-            Returns an iterator over the elements of this crystal.
+            Return an iterator over the elements of this crystal.
 
             This iterator uses little memory, storing only one element
             of the crystal at a time. For details on the complexity, see
@@ -385,7 +384,7 @@ class ClassicalCrystals(Category_singleton):
 
         def _test_fast_iter(self, **options):
             r"""
-            Tests whether the elements returned by :meth:`.__iter__`
+            Test whether the elements returned by :meth:`.__iter__`
             and ``Crystal.list(self)`` are the same (the two
             algorithms are different).
 
@@ -403,7 +402,7 @@ class ClassicalCrystals(Category_singleton):
 
         def cardinality(self):
             r"""
-            Returns the number of elements of the crystal, using Weyl's
+            Return the number of elements of the crystal, using Weyl's
             dimension formula on each connected component.
 
             EXAMPLES::

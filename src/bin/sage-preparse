@@ -74,7 +74,7 @@ def do_preparse(f, files_before=[]):
     - ``f`` -- string: the name of a file
     - ``files_before`` -- list of strings of previous filenames loaded (to avoid circular loops)
 
-    OUTPUT: None (writes a file with extension .sage.py to disk).
+    OUTPUT: none (writes a file with extension .sage.py to disk)
     """
     if f in files_so_far:
         return

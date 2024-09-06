@@ -322,9 +322,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         r"""
         Return the realization of the powersum basis of ``self``.
 
-        OUTPUT:
-
-        - The powersum basis of symmetric functions in non-commuting variables.
+        OUTPUT: the powersum basis of symmetric functions in non-commuting variables
 
         EXAMPLES::
 
@@ -386,11 +384,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the powersum basis
+            OUTPUT: an element of the powersum basis
 
             TESTS::
 
@@ -420,11 +416,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{cp}` basis
+            OUTPUT: an element of the `\mathbf{cp}` basis
 
             TESTS::
 
@@ -457,9 +451,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             - ``f`` -- an element of the symmetric functions
 
-            OUTPUT:
-
-            - An element of the `\mathbf{m}` basis
+            OUTPUT: an element of the `\mathbf{m}` basis
 
             EXAMPLES::
 
@@ -500,9 +492,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             r"""
             Return the dual basis to the monomial basis.
 
-            OUTPUT:
-
-            - the `\mathbf{w}` basis of the dual Hopf algebra
+            OUTPUT: the `\mathbf{w}` basis of the dual Hopf algebra
 
             EXAMPLES::
 
@@ -524,9 +514,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             - ``y`` -- an element of the dual of symmetric functions in
               non-commuting variables
 
-            OUTPUT:
-
-            - an element of the base ring of ``self``
+            OUTPUT: an element of the base ring of ``self``
 
             EXAMPLES::
 
@@ -564,9 +552,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             - ``A``, ``B`` -- set partitions
 
-            OUTPUT:
-
-            - an element of the `\mathbf{m}` basis
+            OUTPUT: an element of the `\mathbf{m}` basis
 
             EXAMPLES::
 
@@ -621,7 +607,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT:
 
@@ -695,11 +681,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element of the tensor square of the `\mathbf{m}` basis
+            OUTPUT: an element of the tensor square of the `\mathbf{m}` basis
 
             EXAMPLES::
 
@@ -746,11 +730,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``la`` -- an integer partition
+            - ``la`` -- integer partition
 
-            OUTPUT:
-
-            - an element of the `\mathbf{m}` basis
+            OUTPUT: an element of the `\mathbf{m}` basis
 
             EXAMPLES::
 
@@ -789,8 +771,8 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- an integer
-                - ``alphabet`` -- (default: ``'x'``) a string
+                - ``n`` -- integer
+                - ``alphabet`` -- string (default: ``'x'``)
 
                 OUTPUT:
 
@@ -845,9 +827,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 taking the sizes of the parts and `n_i(\mu)` is the
                 multiplicity of `i` in `\mu`.
 
-                OUTPUT:
-
-                - an element of the symmetric functions in the monomial basis
+                OUTPUT: an element of the symmetric functions in the monomial basis
 
                 EXAMPLES::
 
@@ -894,15 +874,15 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             #   get the coercion path m -> p -> e
             p = NCSym.p()
             self.module_morphism(self._e_to_p_on_basis, codomain=p,
-                                 triangular="upper").register_as_coercion()
+                                 triangular='upper').register_as_coercion()
             p.module_morphism(p._p_to_e_on_basis, codomain=self,
-                              triangular="upper").register_as_coercion()
+                              triangular='upper').register_as_coercion()
             # homogeneous
             h = NCSym.h()
             self.module_morphism(self._e_to_h_on_basis, codomain=h,
-                                 triangular="upper").register_as_coercion()
+                                 triangular='upper').register_as_coercion()
             h.module_morphism(h._h_to_e_on_basis, codomain=self,
-                              triangular="upper").register_as_coercion()
+                              triangular='upper').register_as_coercion()
 
         @cached_method
         def _e_to_m_on_basis(self, A):
@@ -911,11 +891,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{m}` basis
+            OUTPUT: an element of the `\mathbf{m}` basis
 
             TESTS::
 
@@ -940,11 +918,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{h}` basis
+            OUTPUT: an element of the `\mathbf{h}` basis
 
             TESTS::
 
@@ -968,11 +944,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{p}` basis
+            OUTPUT: an element of the `\mathbf{p}` basis
 
             TESTS::
 
@@ -1000,9 +974,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 The involution `\omega` on `NCSym` is defined by
                 `\omega(\mathbf{e}_A) = \mathbf{h}_A`.
 
-                OUTPUT:
-
-                - an element in the basis ``self``
+                OUTPUT: an element in the basis ``self``
 
                 EXAMPLES::
 
@@ -1038,9 +1010,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 where `\lambda(A)` is the partition associated with `A` by
                 taking the sizes of the parts.
 
-                OUTPUT:
-
-                - An element of the symmetric functions in the elementary basis
+                OUTPUT: an element of the symmetric functions in the elementary basis
 
                 EXAMPLES::
 
@@ -1096,11 +1066,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{m}` basis
+            OUTPUT: an element of the `\mathbf{m}` basis
 
             TESTS::
 
@@ -1124,11 +1092,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{e}` basis
+            OUTPUT: an element of the `\mathbf{e}` basis
 
             TESTS::
 
@@ -1153,11 +1119,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{p}` basis
+            OUTPUT: an element of the `\mathbf{p}` basis
 
             TESTS::
 
@@ -1185,9 +1149,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 The involution `\omega` on `NCSym` is defined by
                 `\omega(\mathbf{h}_A) = \mathbf{e}_A`.
 
-                OUTPUT:
-
-                - an element in the basis ``self``
+                OUTPUT: an element in the basis ``self``
 
                 EXAMPLES::
 
@@ -1223,9 +1185,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 where `\lambda(A)` is the partition associated with `A` by
                 taking the sizes of the parts.
 
-                OUTPUT:
-
-                - An element of the symmetric functions in the complete basis
+                OUTPUT: an element of the symmetric functions in the complete basis
 
                 EXAMPLES::
 
@@ -1283,14 +1243,14 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             # Register coercions
             m = NCSym.m()
             self.module_morphism(self._p_to_m_on_basis, codomain=m,
-                                 unitriangular="lower").register_as_coercion()
+                                 unitriangular='lower').register_as_coercion()
             m.module_morphism(m._m_to_p_on_basis, codomain=self,
-                              unitriangular="lower").register_as_coercion()
+                              unitriangular='lower').register_as_coercion()
             x = NCSym.x()
             self.module_morphism(self._p_to_x_on_basis, codomain=x,
-                                 unitriangular="upper").register_as_coercion()
+                                 unitriangular='upper').register_as_coercion()
             x.module_morphism(x._x_to_p_on_basis, codomain=self,
-                              unitriangular="upper").register_as_coercion()
+                              unitriangular='upper').register_as_coercion()
 
         @cached_method
         def _p_to_m_on_basis(self, A):
@@ -1299,11 +1259,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{m}` basis
+            OUTPUT: an element of the `\mathbf{m}` basis
 
             TESTS::
 
@@ -1324,11 +1282,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{e}` basis
+            OUTPUT: an element of the `\mathbf{e}` basis
 
             TESTS::
 
@@ -1352,11 +1308,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{h}` basis
+            OUTPUT: an element of the `\mathbf{h}` basis
 
             TESTS::
 
@@ -1380,11 +1334,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - An element of the `\mathbf{x}` basis
+            OUTPUT: an element of the `\mathbf{x}` basis
 
             TESTS::
 
@@ -1405,7 +1357,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT:
 
@@ -1469,11 +1421,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element of the tensor square of ``self``
+            OUTPUT: an element of the tensor square of ``self``
 
             EXAMPLES::
 
@@ -1507,11 +1457,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element in the basis ``self``
+            OUTPUT: an element in the basis ``self``
 
             EXAMPLES::
 
@@ -1571,13 +1519,11 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
             - ``i`` -- (default: 1) index in the base set for ``A`` specifying
               which set of primitives this belongs to
 
-            OUTPUT:
-
-            - an element in the basis ``self``
+            OUTPUT: an element in the basis ``self``
 
             EXAMPLES::
 
@@ -1621,9 +1567,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 where `\lambda(A)` is the partition associated with `A` by
                 taking the sizes of the parts.
 
-                OUTPUT:
-
-                - an element of symmetric functions in the power sum basis
+                OUTPUT: an element of symmetric functions in the power sum basis
 
                 EXAMPLES::
 
@@ -1696,9 +1640,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             # Register coercions
             m = NCSym.m()
             self.module_morphism(self._cp_to_m_on_basis, codomain=m,
-                                 unitriangular="lower").register_as_coercion()
+                                 unitriangular='lower').register_as_coercion()
             m.module_morphism(m._m_to_cp_on_basis, codomain=self,
-                              unitriangular="lower").register_as_coercion()
+                              unitriangular='lower').register_as_coercion()
 
         @cached_method
         def _cp_to_m_on_basis(self, A):
@@ -1707,11 +1651,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element of the `\mathbf{m}` basis
+            OUTPUT: an element of the `\mathbf{m}` basis
 
             TESTS::
 
@@ -1776,11 +1718,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element of the `\mathbf{p}` basis
+            OUTPUT: an element of the `\mathbf{p}` basis
 
             TESTS::
 
@@ -1904,11 +1844,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element of the `\mathbf{m}` basis
+            OUTPUT: an element of the `\mathbf{m}` basis
 
             TESTS::
 
@@ -1933,11 +1871,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element of the `\rho` basis
+            OUTPUT: an element of the `\rho` basis
 
             TESTS::
 
@@ -2050,11 +1986,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element of the `\mathbf{m}` basis
+            OUTPUT: an element of the `\mathbf{m}` basis
 
             TESTS::
 
@@ -2117,11 +2051,9 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element of the `\chi` basis
+            OUTPUT: an element of the `\chi` basis
 
             TESTS::
 

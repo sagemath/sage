@@ -305,7 +305,7 @@ anziché Integer di Sage. Ad esempio::
     sage: RealNumber = float; Integer = int
     sage: from scipy import stats
     sage: stats.ttest_ind([1,2,3,4,5], [2,3,4,5,.6])
-    Ttest...Result(statistic=0.0767529..., pvalue=0.940704...)
+    Ttest...Result(statistic=...0.0767529..., pvalue=...0.940704...)
     sage: stats.uniform(0,15).ppf([0.5,0.7])
     array([  7.5,  10.5])
 

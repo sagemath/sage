@@ -573,7 +573,7 @@ class Function_lambert_w(BuiltinFunction):
 
     INPUT:
 
-    - ``n`` -- an integer. `n=0` corresponds to the principal branch.
+    - ``n`` -- integer; `n=0` corresponds to the principal branch
 
     - ``z`` -- a complex number
 
@@ -920,7 +920,7 @@ class Function_exp_polar(BuiltinFunction):
 
         INPUT:
 
-        - ``z`` -- a complex number `z = a + ib`.
+        - ``z`` -- a complex number `z = a + ib`
 
         OUTPUT:
 
@@ -989,7 +989,6 @@ class Function_exp_polar(BuiltinFunction):
             Traceback (most recent call last):
             ...
             ValueError: invalid attempt to numerically evaluate exp_polar()
-
         """
         if (not isinstance(z, Expression) and
                 bool(-const_pi < imag(z) <= const_pi)):

@@ -135,6 +135,7 @@ from .constructor import EllipticCurve
 from .ell_finite_field import EllipticCurve_finite_field
 from .hom import EllipticCurveHom, compare_via_evaluation
 
+
 class _VeluBoundObj:
     """
     Helper object to define the point in which isogeny
@@ -164,6 +165,7 @@ class _VeluBoundObj:
 
 
 _velu_sqrt_bound = _VeluBoundObj()
+
 
 def _choose_IJK(n):
     r"""
@@ -200,6 +202,7 @@ def _choose_IJK(n):
     J = range(1, 2*b, 2)
     K = range(4*b*c+1, n, 2)
     return I, J, K
+
 
 def _points_range(rr, P, Q=None):
     r"""
@@ -699,7 +702,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 385*x + 42 over Finite Field of size 419
-            sage: EllipticCurveHom_velusqrt(E, K, model="montgomery")
+            sage: EllipticCurveHom_velusqrt(E, K, model='montgomery')
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Finite Field of size 419

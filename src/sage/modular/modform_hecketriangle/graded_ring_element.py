@@ -88,11 +88,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``parent`` -- An (non abstract) instance of ``FormsRing_abstract``.
+        - ``parent`` -- (non abstract) instance of ``FormsRing_abstract``
 
-        - ``rat``    -- A rational function in ``parent.rat_field()``, the
-                        fraction field of the polynomial ring in ``x,y,z,d``
-                        over the base ring of ``parent``.
+        - ``rat`` -- a rational function in ``parent.rat_field()``, the
+          fraction field of the polynomial ring in ``x,y,z,d`` over the base
+          ring of ``parent``
 
         OUTPUT:
 
@@ -1014,7 +1014,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``op`` -- An element of ``self.parent().diff_alg()``.
+        - ``op`` -- an element of ``self.parent().diff_alg()``.
           I.e. an element of the algebra over ``QQ``
           of differential operators generated
           by ``X, Y, Z, dX, dY, DZ``, where e.g. ``X``
@@ -1026,13 +1026,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
           should be homogeneous operator (with respect
           to the usual, special grading).
 
-        - ``new_parent``  -- Try to convert the result to the specified
+        - ``new_parent`` -- try to convert the result to the specified
           ``new_parent``. If ``new_parent == None`` (default)
           then the parent is extended to a "quasi meromorphic" ring.
 
-        OUTPUT:
-
-        The new element.
+        OUTPUT: the new element
 
         EXAMPLES::
 
@@ -1522,7 +1520,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
     @cached_method
     def _q_expansion_cached(self, prec, fix_d, subs_d, d_num_prec, fix_prec=False):
         """
-        Returns the Fourier expansion of self (cached).
+        Return the Fourier expansion of ``self`` (cached).
         Don't call this function, instead use :meth:`q_expansion`.
         Also see :meth:`q_expansion` for a description of the arguments.
 
@@ -1593,27 +1591,25 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``prec`` -- An integer, the desired output precision O(q^prec).
+        - ``prec`` -- integer, the desired output precision O(q^prec).
           Default: ``None`` in which case the default precision
           of ``self.parent()`` is used.
 
-        - ``fix_d`` -- If ``False`` (default) a formal parameter is used for ``d``.
-          If ``True`` then the numerical value of ``d`` is used
+        - ``fix_d`` -- if ``False`` (default) a formal parameter is used for
+          ``d``. If ``True`` then the numerical value of ``d`` is used
           (resp. an exact value if the group is arithmetic).
           Otherwise the given value is used for ``d``.
 
-        - ``d_num_prec`` -- The precision to be used if a numerical value for ``d`` is substituted.
-          Default: ``None`` in which case the default
-          numerical precision of ``self.parent()`` is used.
+        - ``d_num_prec`` -- the precision to be used if a numerical value for
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
-        - ``fix_prec`` -- If ``fix_prec`` is not ``False`` (default)
+        - ``fix_prec`` -- if ``fix_prec`` is not ``False`` (default)
           then the precision of the ``MFSeriesConstructor`` is
           increased such that the output has exactly the specified
           precision O(q^prec).
 
-        OUTPUT:
-
-        The Fourier expansion of ``self`` as a ``FormalPowerSeries`` or ``FormalLaurentSeries``.
+        OUTPUT: the Fourier expansion of ``self`` as a ``FormalPowerSeries`` or ``FormalLaurentSeries``
 
         EXAMPLES::
 
@@ -1700,21 +1696,21 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``prec`` -- An integer, the desired output precision O(q^prec).
-          Default: ``None`` in which case the default precision of ``self.parent()`` is used.
+        - ``prec`` -- integer; the desired output precision O(q^prec).
+          Default: ``None``, in which case the default precision of
+          ``self.parent()`` is used.
 
-        - ``d_num_prec`` -- The precision to be used if a numerical value for ``d`` is substituted.
-          Default: ``None`` in which case the default
-          numerical precision of ``self.parent()`` is used.
+        - ``d_num_prec`` -- the precision to be used if a numerical value for
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
-        - ``fix_prec`` -- If ``fix_prec`` is not ``False`` (default)
+        - ``fix_prec`` -- if ``fix_prec`` is not ``False`` (default)
           then the precision of the ``MFSeriesConstructor`` is
           increased such that the output has exactly the specified
           precision O(q^prec).
 
-        OUTPUT:
-
-        The Fourier expansion of self as a ``FormalPowerSeries`` or ``FormalLaurentSeries``.
+        OUTPUT: the Fourier expansion of ``self`` as a ``FormalPowerSeries`` or
+        ``FormalLaurentSeries``
 
         EXAMPLES::
 
@@ -1759,16 +1755,17 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``min_exp`` -- An integer, specifying the first coefficient to be
+        - ``min_exp`` -- integer specifying the first coefficient to be
           used for the vector. Default: ``None``, meaning that
           the first non-trivial coefficient is used.
 
-        - ``max_exp`` -- An integer, specifying the last coefficient to be
+        - ``max_exp`` -- integer specifying the last coefficient to be
           used for the vector. Default: ``None``, meaning that
           the default precision + 1 is used.
 
-        - ``prec`` -- An integer, specifying the precision of the underlying
-          Laurent series. Default: ``None``, meaning that ``max_exp + 1`` is used.
+        - ``prec`` -- integer specifying the precision of the underlying
+          Laurent series. Default: ``None``, meaning that ``max_exp + 1`` is
+          used.
 
         OUTPUT:
 
@@ -1845,16 +1842,16 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         - ``tau`` -- ``infinity`` or an element of the upper
           half plane. E.g. with parent ``AA`` or ``CC``.
 
-        - ``prec`` -- An integer, namely the precision used for the
+        - ``prec`` -- integer, namely the precision used for the
           Fourier expansion. If ``prec == None`` (default)
-          then the default precision of ``self.parent()`` is used.
+          then the default precision of ``self.parent()`` is used
 
-        - ``num_prec`` -- An integer, namely the minimal numerical precision
+        - ``num_prec`` -- integer, namely the minimal numerical precision
           used for ``tau`` and ``d``. If ``num_prec == None``
           (default) then the default numerical precision of
           ``self.parent()`` is used.
 
-        - ``check`` -- If ``True`` then the order of ``tau`` is checked.
+        - ``check`` -- if ``True`` then the order of ``tau`` is checked.
           Otherwise the order is only considered for
           ``tau = infinity, i, rho, -1/rho``. Default: ``False``.
 
@@ -1879,7 +1876,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
            #. The evaluation at ``w`` is calculated by
               evaluating the truncated Fourier expansion of
-              self at ``q(w)``.
+              ``self`` at ``q(w)``.
 
            Note that this is much faster and more precise
            than a direct evaluation at ``tau``.

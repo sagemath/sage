@@ -45,7 +45,7 @@ class ShardPosetElement(tuple):
 
     - ``p`` -- the permutation itself as a tuple
     - ``runs`` -- the decreasing runs as a tuple of tuples
-    - ``run_indices`` -- a list ``integer -> index of the run``
+    - ``run_indices`` -- list; ``integer -> index of the run``
     - ``dpg`` -- the transitive closure of the shard preorder graph
     - ``spg`` -- the transitive reduction of the shard preorder graph
 
@@ -60,7 +60,7 @@ class ShardPosetElement(tuple):
     """
     def __new__(cls, p):
         r"""
-        Initialization of the underlying tuple
+        Initialization of the underlying tuple.
 
         TESTS::
 
@@ -172,13 +172,13 @@ def shard_preorder_graph(runs):
 
     INPUT:
 
-    - a tuple of tuples, the runs of a permutation, or
+    - ``runs`` -- either
 
-    - a tuple of pairs `(i,j)`, each one standing for a run from `i` to `j`.
+      - a tuple of tuples, the runs of a permutation, or
 
-    OUTPUT:
+      - a tuple of pairs `(i,j)`, each one standing for a run from `i` to `j`
 
-    a directed graph, with vertices labelled by integers
+    OUTPUT: a directed graph, with vertices labelled by integers
 
     EXAMPLES::
 

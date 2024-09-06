@@ -10,7 +10,7 @@ with the set of morphisms `\mathrm{Spec}(K) \to X`. In Sage the rational points
 are implemented by such scheme morphisms. This is done by
 :class:`SchemeHomset_points` and its subclasses.
 
-.. note::
+.. NOTE::
 
     You should not create the Hom-sets manually. Instead, use the
     :meth:`~sage.structure.parent.Hom` method that is inherited by all
@@ -129,18 +129,18 @@ class SchemeHomsetFactory(UniqueFactory):
 
         INPUT:
 
-        - ``X`` -- a scheme. The domain of the morphisms.
+        - ``X`` -- a scheme; the domain of the morphisms
 
-        - ``Y`` -- a scheme. The codomain of the morphisms.
+        - ``Y`` -- a scheme; the codomain of the morphisms
 
         - ``category`` -- a category for the Hom-sets (default: schemes over
-          given base).
+          given base)
 
-        - ``base`` -- a scheme or a ring. The base scheme of domain
+        - ``base`` -- a scheme or a ring; the base scheme of domain
           and codomain schemes. If a ring is specified, the spectrum
           of that ring will be used as base scheme.
 
-        - ``check`` -- boolean (default: ``True``).
+        - ``check`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -190,11 +190,11 @@ class SchemeHomsetFactory(UniqueFactory):
 
         INPUT:
 
-        - ``version`` -- object version. Currently not used.
+        - ``version`` -- object version; currently not used
 
-        - ``key`` -- a key created by :meth:`create_key_and_extra_args`.
+        - ``key`` -- a key created by :meth:`create_key_and_extra_args`
 
-        - ``extra_args`` -- a dictionary of extra keyword arguments.
+        - ``extra_args`` -- dictionary of extra keyword arguments
 
         EXAMPLES::
 
@@ -235,15 +235,15 @@ class SchemeHomset_generic(HomsetWithBase):
 
     INPUT:
 
-    - ``X`` -- a scheme. The domain of the Hom-set.
+    - ``X`` -- a scheme; the domain of the Hom-set
 
-    - ``Y`` -- a scheme. The codomain of the Hom-set.
+    - ``Y`` -- a scheme; the codomain of the Hom-set
 
-    - ``category`` -- a category (optional). The category of the
-      Hom-set.
+    - ``category`` -- a category (optional); the category of the
+      Hom-set
 
-    - ``check`` -- boolean (default: ``True``). Whether to
-      check the defining data for consistency.
+    - ``check`` -- boolean (default: ``True``); whether to
+      check the defining data for consistency
 
     EXAMPLES::
 
@@ -293,9 +293,7 @@ class SchemeHomset_generic(HomsetWithBase):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -318,8 +316,7 @@ class SchemeHomset_generic(HomsetWithBase):
         OUTPUT:
 
         A :class:`SchemeMorphism` if there is a natural map from
-        domain to codomain. Otherwise, a :class:`NotImplementedError` is
-        raised.
+        domain to codomain. Otherwise, a :exc:`NotImplementedError` is raised.
 
         EXAMPLES::
 
@@ -342,12 +339,12 @@ class SchemeHomset_generic(HomsetWithBase):
 
         INPUT:
 
-        - `x` -- a ring morphism, or a list or a tuple that define a
-          ring morphism.
+        - ``x`` -- a ring morphism, or a list or a tuple that define a
+          ring morphism
 
-        - ``check`` -- boolean (default: ``True``) passed onto
+        - ``check`` -- boolean (default: ``True``); passed onto
           functions called by this one to be more careful about input
-          argument type checking.
+          argument type checking
 
         EXAMPLES::
 
@@ -630,11 +627,9 @@ class SchemeHomset_points(SchemeHomset_generic):
         INPUT:
 
         - ``v`` -- anything that determines a scheme morphism in the
-          Hom-set.
+          Hom-set
 
-        OUTPUT:
-
-        The scheme morphism determined by ``v``.
+        OUTPUT: the scheme morphism determined by ``v``
 
         EXAMPLES::
 
@@ -662,6 +657,56 @@ class SchemeHomset_points(SchemeHomset_generic):
         if len(v) == 1:
             v = v[0]
         return self.extended_codomain()._point(self, v, **kwds)
+
+    def __iter__(self):
+        r"""
+        Return an iterator for the set of rational points on this scheme.
+
+        By default, this calls the :meth:`points` method, which is implemented
+        when the base ring is a field
+
+        - for affine homsets at :meth:`sage.schemes.affine.affine_homset.SchemeHomset_points_affine.points`;
+        - for projective homsets at :meth:`sage.schemes.projective.projective_homset.SchemeHomset_points_projective_field.points`;
+        - and toric homsets at :meth:`sage.schemes.toric.homset.SchemeHomset_points_toric_field._enumerator`.
+
+        OUTPUT: iterator over points
+
+        TESTS::
+
+            sage: E = EllipticCurve(GF(19), [1, 0])
+            sage: list(E.point_homset())
+            [(0 : 1 : 0), (0 : 0 : 1), (3 : 7 : 1), (3 : 12 : 1), (4 : 7 : 1),
+             (4 : 12 : 1), (5 : 4 : 1), (5 : 15 : 1), (8 : 8 : 1), (8 : 11 : 1),
+             (9 : 4 : 1), (9 : 15 : 1), (12 : 7 : 1), (12 : 12 : 1), (13 : 5 : 1),
+             (13 : 14 : 1), (17 : 3 : 1), (17 : 16 : 1), (18 : 6 : 1), (18 : 13 : 1)]
+            sage: _ == list(E)
+            True
+            sage: E.point_homset().cardinality()
+            20
+
+        ::
+
+            sage: A.<x, y> = AffineSpace(2, GF(5))
+            sage: list(A.point_homset())
+            [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4),
+             (1, 0), (1, 1), (1, 2), (1, 3), (1, 4),
+             (2, 0), (2, 1), (2, 2), (2, 3), (2, 4),
+             (3, 0), (3, 1), (3, 2), (3, 3), (3, 4),
+             (4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]
+            sage: _ == list(A)
+            True
+            sage: A.point_homset().cardinality()
+            25
+
+        ::
+
+            sage: P1 = toric_varieties.P1(base_ring=GF(3))
+            sage: list(P1.point_homset())
+            [[0 : 1], [1 : 0], [1 : 1], [1 : 2]]
+            sage: P1.point_homset().cardinality()
+            4
+        """
+        yield from self.points()
 
     def extended_codomain(self):
         r"""
@@ -708,9 +753,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -724,9 +767,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         r"""
         Return `R` for a point Hom-set `X(\mathrm{Spec}(R))`.
 
-        OUTPUT:
-
-        A commutative ring.
+        OUTPUT: a commutative ring
 
         EXAMPLES::
 
@@ -743,9 +784,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         """
         Return the number of points.
 
-        OUTPUT:
-
-        An integer or infinity.
+        OUTPUT: integer or infinity
 
         EXAMPLES::
 
@@ -767,9 +806,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         """
         Return a tuple containing all points.
 
-        OUTPUT:
-
-        A tuple containing all points of the toric variety.
+        OUTPUT: a tuple containing all points of the toric variety
 
         EXAMPLES::
 

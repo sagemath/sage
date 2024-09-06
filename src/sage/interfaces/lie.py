@@ -17,7 +17,6 @@ using LiE (and get the result back as a string).
 
 To access the LiE interpreter directly, run lie_console().
 
-
 EXAMPLES::
 
     sage: a4 = lie('A4')             # optional - lie
@@ -805,7 +804,6 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
             [ 3 -5 -2  9]
             sage: lie('-1X[1,1]').sage() # optional - lie
             -x0*x1
-
         """
         t = self.type()
         if t == 'grp':
