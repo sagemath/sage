@@ -43,14 +43,12 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
           `Z^- \subseteq (X^- \cup Y^-) \backslash \left\{e\right\}` and
           `(X \backslash Y) \cup (Y \backslash X) \cup (X^+ \cap Y^+) \cup (X^- \cap Y^-) \subseteq Z`.
 
-
-
     INPUT:
 
     - ``data`` -- a tuple containing SignedSubsetElement elements or data
       that can be used to construct :class:`SignedSubsetElement` elements
-    - ``goundset`` -- (default: ``None``) is the groundset for the
-      data. If not provided, we grab the data from the signed subsets.
+    - ``groundset`` -- (default: ``None``) the groundset for the data; if not
+      provided, we grab the data from the signed subsets
 
     EXAMPLES::
 

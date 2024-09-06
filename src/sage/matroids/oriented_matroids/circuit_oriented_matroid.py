@@ -44,8 +44,8 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
 
     - ``data`` -- a tuple containing SignedSubsetElement elements or data
       that can be used to construct :class:`SignedSubsetElement` elements
-    - ``goundset`` -- (default: ``None``) is the groundset for the
-      data. If not provided, we grab the data from the signed subsets.
+    - ``groundset`` -- (default: ``None``) the groundset for the data; if not
+      provided, we grab the data from the signed subsets
 
     EXAMPLES::
 

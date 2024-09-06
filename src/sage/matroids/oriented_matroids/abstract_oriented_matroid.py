@@ -1,13 +1,13 @@
 r"""
 Abstract class for oriented matroids
 
-
 AUTHORS:
 
 - Aram Dermenjian (2019-07-12): Initial version
 - Elizabeth Flight (2023-08-01): Beta version
 - Tudor Tanasa (2023-08-01): Beta version
 """
+
 # *****************************************************************************
 #  Copyright (C) 2019 Aram Dermenjian <aram.dermenjian.math at gmail.com>
 #
