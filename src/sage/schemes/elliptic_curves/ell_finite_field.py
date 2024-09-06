@@ -2800,60 +2800,71 @@ def EllipticCurve_with_prime_order(N):
     - ``N`` -- integer; the order for which we seek an elliptic curve. Must be a
       prime number.
 
-    OUTPUT: an elliptic curve `E/\mathbb F_p` of order ``N``
+    OUTPUT: an iterator of elliptic curves `E/\mathbb F_p` of order ``N``
 
     EXAMPLES::
 
         sage: N = next_prime(int(b'sagemath'.hex(), 16))
-        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E = next(EllipticCurve_with_prime_order(N))
         sage: E
         Elliptic Curve defined by y^2 = x^3 + 4757897140353078952*x +
         1841350074072114366 over Finite Field of size 8314040074357871443
         sage: E.order() == N
         True
 
+    You can directly iterate over the function call; here only on the first 10
+    curves::
+
+        sage: N = 54675917
+        sage: for _, E in zip(range(10), EllipticCurve_with_prime_order(N)):
+        ....:     assert E.order() == N
+
     It works for large primes::
 
         sage: N = 0x6cbc824032974516623e732462f4b74b56c4ffbd984380d9
-        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E = next(EllipticCurve_with_prime_order(N))
         sage: E.order() == N
         True
 
     But the execution time largely depends on the input::
 
         sage: N = 200396817641911230625970463749415493753
-        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E = next(EllipticCurve_with_prime_order(N))
         sage: E.order() == N
         True
 
     TESTS::
 
         sage: for N in prime_range(3, 100):
-        ....:     E = EllipticCurve_with_prime_order(N)
+        ....:     E = next(EllipticCurve_with_prime_order(N))
+        ....:     assert E.order() == N
+
+        sage: N = 113
+        sage: for _, E in zip(range(30), EllipticCurve_with_prime_order(N)):
         ....:     assert E.order() == N
 
         sage: N = 15175980689839334471
-        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E = next(EllipticCurve_with_prime_order(N))
         sage: E.order() == N
         True
 
         sage: N = next_prime(123456789)
-        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E = next(EllipticCurve_with_prime_order(N))
         sage: E.order() == N
         True
 
         sage: N = 123456789
-        sage: E = EllipticCurve_with_prime_order(N)
+        sage: E = next(EllipticCurve_with_prime_order(N))
         Traceback (most recent call last):
         ...
         ValueError: input order is not prime
 
-        sage: E = EllipticCurve_with_prime_order(0)
+        sage: E = next(EllipticCurve_with_prime_order(0))
         Traceback (most recent call last):
         ...
         ValueError: input order is not prime
 
-        sage: E = EllipticCurve_with_prime_order(-7)
+        sage: E = next(EllipticCurve_with_prime_order(-7))
         Traceback (most recent call last):
         ...
         ValueError: input order is not prime
@@ -2901,7 +2912,7 @@ def EllipticCurve_with_prime_order(N):
         # done multiple times.
         for e in powerset(S):
             D = product(e)
-            if D % 8 != 5 or D >= 0 or D >= prime_start^2:
+            if D % 8 != 5 or D >= 0:
                 continue
 
             Q = BinaryQF([1, 0, -D])
@@ -2918,7 +2929,7 @@ def EllipticCurve_with_prime_order(N):
                         # `E.twists()` also contains E.
                         for Et in E.twists():
                             if Et.order() == N:
-                                return Et
+                                yield Et
 
         # At this point, no discriminant has been found, moving to next round
         # and extending the prime list.
