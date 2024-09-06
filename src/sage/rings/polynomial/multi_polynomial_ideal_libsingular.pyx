@@ -69,8 +69,8 @@ from sage.rings.polynomial.plural cimport NCPolynomialRing_plural, NCPolynomial_
 
 cdef object singular_ideal_to_sage_sequence(ideal *i, ring *r, object parent):
     """
-    convert a SINGULAR ideal to a Sage Sequence (the format Sage
-    stores a Groebner basis in)
+    Convert a SINGULAR ideal to a Sage Sequence (the format Sage
+    stores a Groebner basis in).
 
     INPUT:
 
@@ -102,7 +102,8 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
     INPUT:
 
     - ``I`` -- a Sage ideal in a ring of type
-      :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular` or a list of generators.
+      :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular`
+      or a list of generators
 
     TESTS:
 
@@ -144,6 +145,7 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
             id_Delete(&i, r)
             raise TypeError("All generators must be of type MPolynomial_libsingular.")
     return i
+
 
 def kbase_libsingular(I, degree=None):
     """
@@ -201,6 +203,7 @@ def kbase_libsingular(I, degree=None):
 
     return res
 
+
 def std_libsingular(I):
     """
     SINGULAR's ``std()`` algorithm.
@@ -223,7 +226,6 @@ def std_libsingular(I):
     sig_off()
 
     idSkipZeroes(result)
-
 
     id_Delete(&i,r)
 
@@ -272,6 +274,7 @@ def slimgb_libsingular(I):
     id_Delete(&result,r)
     return res
 
+
 def interred_libsingular(I):
     """
     SINGULAR's ``interred()`` command.
@@ -317,7 +320,6 @@ def interred_libsingular(I):
     result = kInterRed(i,NULL)
     sig_off()
     singular_options = bck
-
 
     # divide head by coefficients
     if r.cf.type != n_Z and r.cf.type != n_Znm and r.cf.type != n_Zn and r.cf.type != n_Z2m :

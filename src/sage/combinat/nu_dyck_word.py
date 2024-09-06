@@ -93,7 +93,7 @@ def replace_dyck_char(x):
     - If ``x`` is a closing character, replace ``x`` with the
       constant ``ndw_close_symbol``.
 
-    - Raise a :class:`ValueError` if ``x`` is neither an opening nor a
+    - Raise a :exc:`ValueError` if ``x`` is neither an opening nor a
       closing character.
 
     .. SEEALSO:: :func:`replace_dyck_symbol`
@@ -128,20 +128,18 @@ def replace_dyck_symbol(x, open_char='N', close_char='E') -> str:
 
     INPUT:
 
-    - ``x`` -- either ``ndw_open_symbol`` or ``ndw_close_symbol``.
+    - ``x`` -- either ``ndw_open_symbol`` or ``ndw_close_symbol``
 
-    - ``open_char`` -- str (optional) default ``'N'``
+    - ``open_char`` -- string (optional) default ``'N'``
 
-    - ``close_char`` -- str (optional) default ``'E'``
+    - ``close_char`` -- string (optional) default ``'E'``
 
-    OUTPUT:
-
-    - If ``x`` is ``ndw_open_symbol``, replace ``x`` with ``open_char``.
+    OUTPUT: if ``x`` is ``ndw_open_symbol``, replace ``x`` with ``open_char``
 
     - If ``x`` is ``ndw_close_symbol``, replace ``x`` with ``close_char``.
 
     - If ``x`` is neither ``ndw_open_symbol`` nor ``ndw_close_symbol``, a
-      :class:`ValueError` is raised.
+      :exc:`ValueError` is raised.
 
     .. SEEALSO:: :func:`replace_dyck_char`
 
@@ -178,9 +176,9 @@ class NuDyckWord(CombinatorialElement):
 
     INPUT:
 
-    - k1 -- A path for the `\nu`-Dyck word
+    - ``k1`` -- a path for the `\nu`-Dyck word
 
-    - k2 -- A path for `\nu`
+    - ``k2`` -- a path for `\nu`
 
     EXAMPLES::
 
@@ -324,7 +322,6 @@ class NuDyckWord(CombinatorialElement):
             True
             sage: ND3 <= ND1
             True
-
         """
         if self._nu == other._nu:
             return path_weakly_above_other(other._path, self._path)
@@ -332,7 +329,7 @@ class NuDyckWord(CombinatorialElement):
 
     def __lt__(self, other):
         """
-        Return if one path is strictly included in another
+        Return if one path is strictly included in another.
 
         EXAMPLES::
 
@@ -354,7 +351,7 @@ class NuDyckWord(CombinatorialElement):
 
     def __ge__(self, other):
         """
-        Return if one path is included in another
+        Return if one path is included in another.
 
         EXAMPLES::
 
@@ -378,7 +375,7 @@ class NuDyckWord(CombinatorialElement):
 
     def __gt__(self, other):
         """
-        Return if one path is strictly included in another
+        Return if one path is strictly included in another.
 
         EXAMPLES::
 
@@ -428,32 +425,32 @@ class NuDyckWord(CombinatorialElement):
 
         The default values are set in the ``__init__`` function.
 
-        - ``color`` -- (default: black) the line color.
+        - ``color`` -- (default: black) the line color
 
         - ``line width`` -- (default: `2 \times` ``tikz_scale``) value
-          representing the line width.
+          representing the line width
 
         - ``nu_options`` -- (default: ``'rounded corners=1, color=red, line
-          width=1'``) str to indicate what the tikz options should be for path
-          of `\nu`.
+          width=1'``) string to indicate what the tikz options should be for
+          path of `\nu`
 
         - ``points_color`` -- (default: ``'black'``) str to indicate color
-          points should be drawn with.
+          points should be drawn with
 
-        - ``show_grid`` -- (default: ``True``) boolean value to indicate if
-          grid should be shown.
+        - ``show_grid`` -- boolean (default: ``True``); value to indicate if
+          grid should be shown
 
-        - ``show_nu`` -- (default: ``True``) boolean value to indicate if `\nu`
-          should be shown.
+        - ``show_nu`` -- boolean (default: ``True``); value to indicate if `\nu`
+          should be shown
 
-        - ``show_points`` -- (default: ``False``) boolean value to indicate
-          if points should be shown on path.
+        - ``show_points`` -- boolean (default: ``False``); value to indicate
+          if points should be shown on path
 
-        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
+        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package
 
         INPUT:
 
-        - ``D`` -- a dictionary with a list of latex parameters to change
+        - ``D`` -- dictionary with a list of latex parameters to change
 
         EXAMPLES::
 
@@ -475,28 +472,28 @@ class NuDyckWord(CombinatorialElement):
 
         The default values are set using the options.
 
-        - ``color`` -- (default: black) the line color.
+        - ``color`` -- (default: black) the line color
 
         - ``line width`` -- (default: 2*``tikz_scale``) value representing the
-          line width.
+          line width
 
         - ``nu_options`` -- (default: ``'rounded corners=1, color=red, line
-          width=1'``) str to indicate what the tikz options should be for path
-          of `\nu`.
+          width=1'``) string to indicate what the tikz options should be for
+          path of `\nu`
 
         - ``points_color`` -- (default: ``'black'``) str to indicate color
-          points should be drawn with.
+          points should be drawn with
 
-        - ``show_grid`` -- (default: ``True``) boolean value to indicate if
-          grid should be shown.
+        - ``show_grid`` -- boolean (default: ``True``); value to indicate if
+          grid should be shown
 
-        - ``show_nu`` -- (default: ``True``) boolean value to indicate if `\nu`
-          should be shown.
+        - ``show_nu`` -- boolean (default: ``True``); value to indicate if `\nu`
+          should be shown
 
-        - ``show_points`` -- (default: ``False``) boolean value to indicate
-          if points should be shown on path.
+        - ``show_points`` -- boolean (default: ``False``); value to indicate
+          if points should be shown on path
 
-        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
+        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package
 
         EXAMPLES::
 
@@ -668,7 +665,6 @@ class NuDyckWord(CombinatorialElement):
                    ___| . . . . .
                   | . . . . . . .
             ______| . . . . . . .
-
         """
         from sage.typeset.ascii_art import AsciiArt
         rep = self.parent().options.ascii_art
@@ -708,10 +704,10 @@ class NuDyckWord(CombinatorialElement):
           - "N-E" to show ``self`` as a path of north and east steps, or
 
         - ``labelling`` -- (if style is "N-E") a list of labels assigned to
-          the up steps in ``self``.
+          the up steps in ``self``
 
-        - ``underpath`` -- (if style is "N-E", default: ``True``) If ``True``,
-          an ``x`` to show the boxes between `\nu` and the `\nu`-Dyck Path.
+        - ``underpath`` -- (if style is "N-E", default: ``True``) if ``True``,
+          an ``x`` to show the boxes between `\nu` and the `\nu`-Dyck Path
 
         EXAMPLES::
 
@@ -1050,9 +1046,7 @@ class NuDyckWord(CombinatorialElement):
         Can only mutate if an east step is followed by a north step at height
         `i`.
 
-        OUTPUT:
-
-        Whether we can mutate at height of `i`.
+        OUTPUT: whether we can mutate at height of `i`
 
         EXAMPLES::
 
@@ -1142,7 +1136,7 @@ class NuDyckWords(Parent):
 
     INPUT:
 
-    - ``nu`` -- the base lattice path.
+    - ``nu`` -- the base lattice path
 
     EXAMPLES::
 
@@ -1404,9 +1398,7 @@ def to_word_path(word):
 
     - ``word`` -- word to convert to wordpath
 
-    OUTPUT:
-
-    - A ``FiniteWordPath_north_east`` object.
+    OUTPUT: a ``FiniteWordPath_north_east`` object
 
     EXAMPLES::
 
@@ -1449,13 +1441,11 @@ def path_weakly_above_other(path, other) -> bool:
 
     INPUT:
 
-    - ``path`` -- The path to verify is weakly above the other path.
+    - ``path`` -- the path to verify is weakly above the other path
 
-    - ``other`` -- The other path to verify is weakly below the path.
+    - ``other`` -- the other path to verify is weakly below the path
 
-    OUTPUT:
-
-    bool
+    OUTPUT: boolean
 
     EXAMPLES::
 

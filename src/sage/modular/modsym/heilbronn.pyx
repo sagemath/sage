@@ -104,7 +104,7 @@ cdef class Heilbronn:
 
         (This function is automatically called during initialization.)
 
-        .. note::
+        .. NOTE::
 
            This function must be overridden by all derived classes!
 
@@ -173,9 +173,9 @@ cdef class Heilbronn:
         r"""
         INPUT:
 
-        -  ``u``, ``v``, ``N`` -- integers
+        - ``u``, ``v``, ``N`` -- integers
 
-        -  ``a``, ``b`` -- preallocated int arrays of the length of ``self``
+        - ``a``, ``b`` -- preallocated integer arrays of the length of ``self``
 
         OUTPUT: sets the entries of `a`, `b`
 
@@ -210,10 +210,10 @@ cdef class Heilbronn:
         r"""
         INPUT:
 
-        -  ``ans`` -- ``fmpz_poly_t*``; pre-allocated an
-           initialized array of ``self.length`` ``fmpz_poly_t``s
-        -  ``i`` -- integer
-        -  ``k`` -- integer
+        - ``ans`` -- ``fmpz_poly_t*``; pre-allocated an
+          initialized array of ``self.length`` ``fmpz_poly_t``s
+        - ``i`` -- integer
+        - ``k`` -- integer
 
         OUTPUT: sets entries of ``ans``
         """
@@ -230,7 +230,7 @@ cdef class Heilbronn:
         Return a list of pairs `((c,d),m)`, which is obtained as follows:
 
         1) Compute the images `(a,b)` of the vector `(u,v) \pmod N` acted on by
-        each of the HeilbronnCremona matrices in self.
+        each of the HeilbronnCremona matrices in ``self``.
 
         2) Reduce each `(a,b)` to canonical form `(c,d)` using ``p1normalize``.
 
@@ -522,11 +522,10 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
     INPUT:
 
     - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
-    - ``indices`` -- a list of positive integers
+    - ``indices`` -- list of positive integers
     - ``R`` -- matrix over `\QQ` that writes each elements of
       `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
-      subset of `\textnormal{P1}`.
-
+      subset of `\textnormal{P1}`
 
     OUTPUT: a dense matrix whose columns are the images `T_n(x)`
     for `n` in indices and `x` the Manin symbol `(u,v)`, expressed
@@ -549,7 +548,6 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
         sage: D = N.decomposition()
         sage: D[1].q_eigenform(10, 'a') # indirect doctest
         q + 4*q^2 + 2*q^3 + 6*q^5 + q^6 + 5*q^7 + 6*q^8 + q^9 + O(q^10)
-
     """
     cdef p1list.P1List P1 = p1list.P1List(N)
 
@@ -648,13 +646,12 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
     INPUT:
 
     - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
-    - ``indices`` -- a list of positive integers
+    - ``indices`` -- list of positive integers
     - ``chi`` -- a Dirichlet character that takes values
-      in a nontrivial extension of `\QQ`.
+      in a nontrivial extension of `\QQ`
     - ``R`` -- matrix over `\QQ` that writes each elements of
       `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
-      subset of `\textnormal{P1}`.
-
+      subset of `\textnormal{P1}`
 
     OUTPUT: a dense matrix with entries in the field `\QQ(\chi)` (the
     values of `\chi`) whose columns are the images `T_n(x)` for `n` in
@@ -754,12 +751,11 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
     INPUT:
 
     - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
-    - ``indices`` -- a list of positive integers
+    - ``indices`` -- list of positive integers
     - ``chi`` -- a Dirichlet character that takes values in `\QQ`
     - ``R`` -- matrix over `\QQ(\chi)` that writes each elements of
       `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a subset
-      of `\textnormal{P1}`.
-
+      of `\textnormal{P1}`
 
     OUTPUT: a dense matrix with entries in the rational field `\QQ` (the
     values of `\chi`) whose columns are the images `T_n(x)` for `n` in
@@ -852,13 +848,13 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
     r"""
     INPUT:
 
-    -  ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
-    -  ``i`` -- integer with `0 \le i \le k-2`
-    -  ``k`` -- weight
-    -  ``indices`` -- a list of positive integers
-    -  ``R`` -- matrix over `\QQ` that writes each elements of
-       `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
-       subset of `\textnormal{P1}`.
+    - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
+    - ``i`` -- integer with `0 \le i \le k-2`
+    - ``k`` -- weight
+    - ``indices`` -- list of positive integers
+    - ``R`` -- matrix over `\QQ` that writes each elements of
+      `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
+      subset of `\textnormal{P1}`
 
     OUTPUT: a dense matrix with rational entries whose columns are the
     images `T_n(x)` for `n` in indices and `x` the Manin symbol

@@ -11,26 +11,26 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
 
     INPUT:
 
-    -  ``f`` -- function
+    - ``f`` -- function
 
-    -  ``xrange`` -- a 2-tuple (x_min, x_max) or a 3-tuple (x, x_min, x_max)
+    - ``xrange`` -- a 2-tuple (x_min, x_max) or a 3-tuple (x, x_min, x_max)
 
-    -  ``yrange`` -- a 2-tuple (y_min, y_max) or a 3-tuple (y, y_min, y_max)
+    - ``yrange`` -- a 2-tuple (y_min, y_max) or a 3-tuple (y, y_min, y_max)
 
-    -  ``zrange`` -- a 2-tuple (z_min, z_max) or a 3-tuple (z, z_min, z_max)
+    - ``zrange`` -- a 2-tuple (z_min, z_max) or a 3-tuple (z, z_min, z_max)
 
-    -  ``plot_points`` -- (default: "automatic", which is 40) the number of
-       function evaluations in each direction. (The number of cubes in the
-       marching cubes algorithm will be one less than this). Can be a triple of
-       integers, to specify a different resolution in each of x,y,z.
+    - ``plot_points`` -- (default: "automatic", which is 40) the number of
+      function evaluations in each direction. (The number of cubes in the
+      marching cubes algorithm will be one less than this). Can be a triple of
+      integers, to specify a different resolution in each of x,y,z.
 
-    -  ``contour`` -- (default: 0) plot the isosurface ``f(x,y,z) == contour``.
-       Can be a list, in which case multiple contours are plotted.
+    - ``contour`` -- (default: 0) plot the isosurface ``f(x,y,z) == contour``.
+      Can be a list, in which case multiple contours are plotted
 
-    -  ``region`` -- (default: None) If region is given, it must be a Python
-       callable. Only segments of the surface where ``region(x,y,z)`` returns a
-       number `>0` will be included in the plot. (Note that returning a Python
-       boolean is acceptable, since ``True == 1`` and ``False == 0``).
+    - ``region`` -- (default: ``None``) if region is given, it must be a Python
+      callable. Only segments of the surface where ``region(x,y,z)`` returns a
+      number `>0` will be included in the plot. (Note that returning a Python
+      boolean is acceptable, since ``True == 1`` and ``False == 0``).
 
     EXAMPLES::
 

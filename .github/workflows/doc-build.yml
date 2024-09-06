@@ -95,7 +95,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           # push and load may not be set together at the moment
           push:       true
@@ -132,6 +132,7 @@ jobs:
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build documentation workflow"
+          mkdir -p doc
           # Check if we are on PR
           PR_NUMBER=""
           if [[ -n "$GITHUB_REF" ]]; then
@@ -146,14 +147,15 @@ jobs:
             # mathjax path in new doc
             mathjax_path_to=$(docker exec -e SAGE_USE_CDNS=yes BUILD /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
             new_version=$(docker exec BUILD cat src/VERSION.txt)
-            mkdir -p doc/
             docker cp BUILD:/sage/local/share/doc/sage/html doc/
             # Wipe out chronic diffs between old doc and new doc
             (cd doc && \
              find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
                                                   -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/' \
                                                   -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
-                                                  -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
+                                                  -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d' \
+                                                  -e 's;#L[0-9]*";";' \
+             && true)
             # Create git repo from old doc
             (cd doc && \
              git init && \
@@ -196,14 +198,16 @@ jobs:
             (cd doc && git commit -a -m 'new')
             # Wipe out chronic diffs of new doc against old doc before creating CHANGES.html
             (cd doc && \
-             find . -name "*.html" | xargs sed -i -e '/This is documentation of/ s/ built with GitHub PR .* for development/ for development/' \
+             find . -name "*.html" | xargs sed -i -e '/This is documentation/ s/ built with GitHub PR .* for development/ for development/' \
                                                   -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/' \
                                                   -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d' \
+                                                  -e 's;#L[0-9]*";";' \
              && git commit -a -m 'wipe-out')
             # Since HEAD is at commit 'wipe-out', HEAD~1 is commit 'new' (new doc), HEAD~2 is commit 'old' (old doc)
-            .ci/create-changes-html.sh $(cd doc && git rev-parse HEAD~2) doc
-            # Restore the new doc with changes made in create-changes-html.sh but dropping changes by "wipe out"
-            (cd doc && git stash -q && git checkout -q -f HEAD~1 && git stash pop -q)
+            (cd doc && git diff $(git rev-parse HEAD~2) -- "*.html") > diff.txt
+            # Restore the new doc dropping changes by "wipe out"
+            (cd doc && git checkout -q -f HEAD~1)
+            .ci/create-changes-html.sh diff.txt doc
             # Sometimes rm -rf .git errors out because of some diehard hidden files
             # So we simply move it out of the doc directory
             (cd doc && mv .git ../git && mv .gitattributes ../gitattributes)

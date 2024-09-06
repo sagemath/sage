@@ -474,13 +474,13 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
 
     INPUT:
 
-    - ``x`` -- polynomial; the base.
+    - ``x`` -- polynomial; the base
 
-    - ``e`` -- integer; the exponent.
+    - ``e`` -- integer; the exponent
 
-    - ``modulus`` -- polynomial or NULL; if not NULL, then perform a modular exponentiation.
+    - ``modulus`` -- polynomial or NULL; if not NULL, then perform a modular exponentiation
 
-    - ``n`` -- integer; not used, but all polynomials' coefficients are understood modulo ``n``.
+    - ``n`` -- integer; not used, but all polynomials' coefficients are understood modulo ``n``
 
     EXAMPLES::
 
@@ -617,8 +617,26 @@ cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmo
         True
         sage: (G//d)*d == G
         True
+
+    TESTS:
+
+    Ensure that :issue:`38537` is fixed::
+
+        sage: k = Zmod(2**16)
+        sage: R.<x> = k[]
+        sage: u = x + 10161
+        sage: v = x + 10681
+        sage: u.xgcd(v)
+        Traceback (most recent call last):
+        ...
+        ValueError: non-invertible elements encountered during XGCD
     """
-    nmod_poly_xgcd(res, s, t, a, b)
+    try:
+        sig_on()
+        nmod_poly_xgcd(res, s, t, a, b)
+        sig_off()
+    except RuntimeError:
+        raise ValueError("non-invertible elements encountered during XGCD")
 
 
 cdef factor_helper(Polynomial_zmod_flint poly, bint squarefree=False):

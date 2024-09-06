@@ -84,7 +84,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         sage: M(T*f1 + f2^3 + T^2 + 1)
         g2^3 + T*g1 + (T^2 + 1)
 
-    .. note::
+    .. NOTE::
 
         This class should not be directly instanciated, instead create
         an instance of the parent
@@ -341,9 +341,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         Return this graded Drinfeld forms as a multivariate polynomial
         over the generators of the ring.
 
-        OUTPUT:
-
-        A multivariate polynomial over the base ring.
+        OUTPUT: a multivariate polynomial over the base ring
 
         EXAMPLES::
 

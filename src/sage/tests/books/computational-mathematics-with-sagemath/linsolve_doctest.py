@@ -398,7 +398,7 @@ Sage example in ./linsolve.tex, line 2828::
   sage: n = 1000
   sage: m = 5
   sage: # build a stochastic matrix of size n
-  sage: # with m non-zero coefficients per row
+  sage: # with m nonzero coefficients per row
   sage: A1 = sparse.lil_matrix((n, n))
   sage: for i in range(0,n):
   ....:     for j in range(0,m):
