@@ -124,7 +124,7 @@ Conversions::
     sage: maxima(hypergeometric([1, 1, 1], [3, 3, 3], x))                               # needs sage.symbolic
     hypergeometric([1,1,1],[3,3,3],_SAGE_VAR_x)
     sage: hypergeometric((5, 4), (4, 4), 3)._sympy_()                                   # needs sympy sage.symbolic
-    hyper((5, 4), (4, 4), 3)
+    hyper((5,), (4,), 3)
     sage: hypergeometric((5, 4), (4, 4), 3)._mathematica_init_()                        # needs sage.symbolic
     'HypergeometricPFQ[{5,4},{4,4},3]'
 

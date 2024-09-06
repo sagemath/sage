@@ -2,26 +2,19 @@ suitesparse: A suite of sparse matrix software
 ==============================================
 
 SuiteSparse is a collection of software to deal with sparse matrix. It is
-hosted at http://faculty.cse.tamu.edu/davis/suitesparse.html
+hosted at https://people.engr.tamu.edu/davis/suitesparse.html with source code
+now on github at https://github.com/DrTimothyAldenDavis/SuiteSparse
 
-This spkg does a minimal install of suitesparse disabling the following
+This spkg does a minimal install of suitesparse, only intalling the following
 
--  metis
--  GraphBLAS (need cmake)
--  Mongoose (need cmake)
+-  AMD
+-  CAMD
+-  COLAMD
+-  CCOLAMD
+-  CHOLMOD
+-  UMFPACK
 
-An external metis package can be used but we just disable its use.
-
-Patches:
-
--  The first patch disable the building of package using cmake.
--  The second patch make sure we use sage's blas/lapack on OS X. By
-   default
-   suitesparse discard any configurations to use the accelerate framework.
-
-The building of metis is diabled by passing MY_METIS_LIB=none to make
-(any value would have done) We also configure cholmod so it doesn't
-require metis by passing CHOLMOD_CONFIG=-DNPARTITION to make.
+Those are all the packages needed for cvxopt.
 
 Other configurations are self explanatory.
 

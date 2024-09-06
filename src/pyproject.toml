@@ -15,6 +15,7 @@ requires = [
     # per https://github.com/scipy/scipy/blob/maintenance/1.13.x/pyproject.toml
     'numpy >=1.22.4',
     'pkgconfig',
+    'jinja2',
 ]
 build-backend = "setuptools.build_meta"
 

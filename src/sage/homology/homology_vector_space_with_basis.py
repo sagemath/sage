@@ -633,7 +633,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
                 = \langle f, \phi_L (a \otimes x) \rangle,
 
             for `f \in H_m`, `a \in A^n`, and `x \in
-            H^{m-n}`. Somewhat more succintly, we define the action `f
+            H^{m-n}`. Somewhat more succinctly, we define the action `f
             \cdot a` by
 
             .. MATH::

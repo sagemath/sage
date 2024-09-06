@@ -107,6 +107,7 @@ from .constructor import EllipticCurve
 oo = Cusps(infinity)
 zero = Integer(0)
 
+
 def modular_symbol_space(E, sign, base_ring, bound=None):
     r"""
     Create the space of modular symbols of a given sign over a give base_ring,
@@ -219,6 +220,7 @@ class ModularSymbol(SageObject):
         """
         return "Modular symbol with sign %s over %s attached to %s" % (
             self._sign, self._base_ring, self._E)
+
 
 class ModularSymbolECLIB(ModularSymbol):
     def __init__(self, E, sign, nap=1000):

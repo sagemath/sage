@@ -96,6 +96,7 @@ def construction_3_3(k,n,m,i,explain_construction=False):
     assert is_orthogonal_array(OA,k,n*m+i)
     return OA
 
+
 def construction_3_4(k,n,m,r,s,explain_construction=False):
     r"""
     Return a `OA(k,nm+rs)`.
@@ -177,6 +178,7 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
     OA = OA_relabel(master_design,k+r+1,n, matrix=matrix)
     OA = wilson_construction(OA,k,n,m,[1]*r+[s],check=False)
     return OA
+
 
 def construction_3_5(k,n,m,r,s,t,explain_construction=False):
     r"""
@@ -272,6 +274,7 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
     OA = wilson_construction(OA,k,q,m,[r,s,t], check=False)
     return OA
 
+
 def construction_3_6(k,n,m,i,explain_construction=False):
     r"""
     Return a `OA(k,nm+i)`.
@@ -327,6 +330,7 @@ def construction_3_6(k,n,m,i,explain_construction=False):
     OA = wilson_construction(OA,k,n,m,[1]*i)
     assert is_orthogonal_array(OA,k,n*m+i)
     return OA
+
 
 def OA_and_oval(q, *, solver=None, integrality_tolerance=1e-3):
     r"""
@@ -752,6 +756,7 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
 
     return wilson_construction(OA,k,n,m,sizes, check=False)
 
+
 def thwart_lemma_4_1(k,n,m,explain_construction=False):
     r"""
     Return an `OA(k,nm+4(n-2))`.
@@ -879,6 +884,7 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
                 B[k+i] = None
 
     return wilson_construction(OA,k,n,m,[n-2,]*4,check=False)
+
 
 def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
     r"""
@@ -1145,6 +1151,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
     return OA
 
+
 def _reorder_matrix(matrix):
     r"""
     Return a matrix which is obtained from ``matrix`` by permutation of each row
@@ -1194,6 +1201,7 @@ def _reorder_matrix(matrix):
         g.delete_edges(matching)
 
     return list(zip(*matrix))
+
 
 def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construction=False):
     r"""
