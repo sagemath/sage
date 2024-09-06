@@ -671,7 +671,7 @@ class Documenter:
 
         # add additional content (e.g. from document), if present
         if more_content:
-            for line, src in zip(more_content.data, more_content.items, strict=True):
+            for line, src in zip(more_content.data, more_content.items):
                 self.add_line(line, src[0], src[1])
 
     def get_object_members(self, want_all: bool) -> tuple[bool, list[ObjectMember]]:
@@ -1042,7 +1042,7 @@ class ModuleDocumenter(Documenter):
         super().add_content(None)
         self.indent = old_indent
         if more_content:
-            for line, src in zip(more_content.data, more_content.items, strict=True):
+            for line, src in zip(more_content.data, more_content.items):
                 self.add_line(line, src[0], src[1])
 
     @classmethod
