@@ -10,8 +10,7 @@ from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRin
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.commutative_rings import CommutativeRings
-from sage.misc.misc_c import prod
-from itertools import product
+from sage.sets.set import Set
 from sage.combinat.posets.posets import Poset
 from sage.combinat.subset import Subsets
 
@@ -180,11 +179,12 @@ class ChowRing(QuotientRing_generic):
         """
         flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
+        flats.append(frozenset())
         maximum_rank = max(self._matroid.rank(F) for F in flats)
         flats_gen = self._ideal.flats_generator()
         R = self._ideal.ring()
         flats = sorted(flats, key=lambda X: (len(X), sorted(X)))
-        ranks = [self._matroid.rank(F) for F in flats]
+        ranks = {F:self._matroid.rank(F) for F in flats}
         monomial_basis = []
         if self._augmented is True:
             if self._presentation == 'fy':
@@ -263,24 +263,32 @@ class ChowRing(QuotientRing_generic):
                     current_combination[index] = power
                     generate_combinations(current_combination, index + 1, max_powers, x_dict)
             
-            print(ranks)
             R = self._ideal.ring()
             lattice_flats = self._matroid.lattice_of_flats()
             chains = lattice_flats.chains()
             for chain in chains:
                 print(chain)
-                print(flats)
+            for chain in chains:
+                print(chain)
+                print(subset)
+                flag = False
+                for i in range(len(subset)):
+                    if len(subset) != 1:
+                        if (i != 0) & ((len(subset[i]) == len(subset[i-1]))):
+                            flag = True
+                            break
+                if flag is True:
+                    break
                 max_powers = []
                 x_dict = dict()
-                for F in chain:
-                    if F == frozenset():
+                for i in range(len(subset)):
+                    if subset[i] == frozenset():
                         max_powers.append(0)
-                        x_dict[F] = 1
+                        x_dict[subset[i]] = 1
                     else:
-                        max_powers.append(ranks[flats.index(F)] - ranks[flats.index(F) - 1])
-                        x_dict[F] = flats_gen[F]
-                k = len(chain)
-                print(max_powers, x_dict, k)
+                        max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
+                        x_dict[subset[i]] = flats_gen[subset[i]]
+                k = len(subset)
                 current_combination = [0] * k
                 generate_combinations(current_combination, 0, max_powers, x_dict)
 
