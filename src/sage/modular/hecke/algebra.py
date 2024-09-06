@@ -35,12 +35,12 @@ from sage.arith.functions import lcm
 from sage.arith.misc import gcd
 from sage.misc.latex import latex
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.ring import CommutativeRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.element import Element
 from sage.structure.unique_representation import CachedRepresentation
 from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
 
 
@@ -111,7 +111,7 @@ def _heckebasis(M):
 
 
 @richcmp_method
-class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
+class HeckeAlgebra_base(CachedRepresentation, Parent):
     """
     Base class for algebras of Hecke operators on a fixed Hecke module.
 
@@ -186,8 +186,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             raise TypeError(msg)
         self.__M = M
         cat = Algebras(M.base_ring()).Commutative()
-        CommutativeRing.__init__(self, base_ring=M.base_ring(),
-                                 category=cat)
+        Parent.__init__(self, base=M.base_ring(), category=cat)
 
     def _an_element_(self):
         r"""

@@ -650,6 +650,7 @@ class IndexedGenerators():
             return left + s + right
         return "%s_{%s}" % (prefix, s)
 
+
 def split_index_keywords(kwds):
     """
     Split the dictionary ``kwds`` into two dictionaries, one containing

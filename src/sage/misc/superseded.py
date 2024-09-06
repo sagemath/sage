@@ -327,7 +327,7 @@ class __experimental_self_test:
     The test below does not issue a warning message because that warning has
     already been issued by a previous doc-test in the @experimental code. Note
     that this behaviour cannot be demonstrated within a single documentation
-    string: Sphinx will itself supress multiple issued warnings.
+    string: Sphinx will itself suppress multiple issued warnings.
 
     TESTS::
 

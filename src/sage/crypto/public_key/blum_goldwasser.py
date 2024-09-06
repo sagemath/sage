@@ -44,6 +44,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
 floor = Function_floor()
 IntegerModRing = IntegerModFactory("IntegerModRing")
 
+
 class BlumGoldwasser(PublicKeyCryptosystem):
     r"""
     The Blum-Goldwasser probabilistic public-key encryption scheme.

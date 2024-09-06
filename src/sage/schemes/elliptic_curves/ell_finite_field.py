@@ -1868,6 +1868,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         return [self, self.quadratic_twist(D)]
 
+
 def curves_with_j_0(K):
     r"""
     Return a complete list of pairwise nonisomorphic elliptic curves with `j`-invariant 0 over the finite field `K`.
@@ -1937,6 +1938,7 @@ def curves_with_j_0(K):
     # then you can also compute the orders!
     return curves
 
+
 def curves_with_j_1728(K):
     r"""
     Return a complete list of pairwise nonisomorphic elliptic curves with `j`-invariant 1728 over the finite field `K`.
@@ -1992,6 +1994,7 @@ def curves_with_j_1728(K):
         D = K.random_element()
     curves = [EllipticCurve(K, [D**i, 0]) for i in range(4)]
     return curves
+
 
 def curves_with_j_0_char2(K):
     r"""
@@ -2085,6 +2088,7 @@ def curves_with_j_0_char2(K):
         e = K.random_element()
     return [EllipticCurve(K, ai) for ai in
             [[0,0,1,0,0], [0,0,1,0,b], [0,0,1,c,0], [0,0,a,0,0], [0,0,a,0,d], [0,0,asq,0,0], [0,0,asq,0,e]]]
+
 
 def curves_with_j_0_char3(K):
     r"""
@@ -2182,6 +2186,7 @@ def curves_with_j_0_char3(K):
 
 supersingular_j_polynomials = {}
 
+
 def fill_ss_j_dict():
     r"""
     Fill the global cache of supersingular j-_polynomials.
@@ -2250,6 +2255,7 @@ def fill_ss_j_dict():
         supersingular_j_polynomials[281] = [230, 15, 146, 69, 41, 23, 142, 232, 18, 80, 58, 134, 270, 62, 272, 70, 247, 189, 118, 255, 274, 159, 60, 1]
         supersingular_j_polynomials[283] = [212, 4, 42, 155, 38, 1, 270, 175, 172, 256, 264, 232, 50, 82, 244, 127, 148, 46, 249, 72, 59, 124, 75, 1]
         supersingular_j_polynomials[293] = [264, 66, 165, 144, 243, 25, 163, 210, 18, 107, 160, 153, 70, 255, 91, 211, 22, 7, 256, 50, 150, 94, 225, 60, 1]
+
 
 def supersingular_j_polynomial(p, use_cache=True):
     r"""
@@ -2331,6 +2337,7 @@ def supersingular_j_polynomial(p, use_cache=True):
         R = R // (J - 1728)
     supersingular_j_polynomials[p] = R.coefficients(sparse=False)
     return R
+
 
 def is_j_supersingular(j, proof=True):
     r"""
@@ -2464,6 +2471,7 @@ def is_j_supersingular(j, proof=True):
     # expensive since it involves counting the number of points on E):
 
     return E.trace_of_frobenius() % p == 0
+
 
 def special_supersingular_curve(F, *, endomorphism=False):
     r"""
@@ -2661,6 +2669,7 @@ def special_supersingular_curve(F, *, endomorphism=False):
     endo._degree = ZZ(q)
     endo.trace.set_cache(ZZ.zero())
     return E, endo
+
 
 def EllipticCurve_with_order(m, *, D=None):
     r"""

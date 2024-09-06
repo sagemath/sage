@@ -22,6 +22,7 @@ from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 from sage.homology.chain_complex import ChainComplex_class
 
+
 class BGGResolution(UniqueRepresentation, ChainComplex_class):
     r"""
     The BGG resolution of a simple module.
@@ -81,7 +82,7 @@ class BGGResolution(UniqueRepresentation, ChainComplex_class):
         self._cartan_type = ct
         self._simple = L
         self._W = WeylGroup(ct, prefix='s')
-        # finish intialization
+        # finish initialization
         R = self._simple.base_ring()
         differentials, mod_order = build_differentials(self._W)
         differentials = {deg: mat.change_ring(R) for deg, mat in differentials.items()}
@@ -212,7 +213,7 @@ def build_differentials(W):
                 vind = dv[0]
                 vpind = dvp[0]
                 for uind in dv[1] & dvp[1]:
-                    # set the entires corresponding to the square
+                    # set the entries corresponding to the square
                     if not mat[j, vind]:
                         if not mat[j, vpind]:
                             mat[j, vpind] = one
